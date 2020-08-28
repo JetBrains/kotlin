@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
@@ -85,10 +86,14 @@ class Fir2IrTypeConverter(
                     val firSymbol = this.lookupTag.toSymbol(session) ?: return createErrorType()
                     firSymbol.toSymbol(session, classifierStorage, typeContext)
                 }
+                val typeAnnotations: MutableList<IrConstructorCall> =
+                    if (attributes.extensionFunctionType == null) mutableListOf()
+                    else mutableListOf(builtIns.extensionFunctionTypeAnnotationConstructorCall())
+                typeAnnotations += with(annotationGenerator) { annotations.toIrAnnotations() }
                 IrSimpleTypeImpl(
                     irSymbol, !typeContext.definitelyNotNull && this.isMarkedNullable,
                     fullyExpandedType(session).typeArguments.map { it.toIrTypeArgument() },
-                    with(annotationGenerator) { annotations.toIrAnnotations() }
+                    typeAnnotations
                 )
             }
             is ConeFlexibleType -> {

@@ -9,6 +9,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiDocCommentOwner
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
@@ -74,7 +75,7 @@ fun isDeprecatedAtCallSite(descriptor: DeclarationDescriptor, languageVersionSet
     if (!isDeprecatedAtDeclarationSite) return false
 
     return computeLevelForDeprecatedSinceKotlin(
-        descriptor.original.annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.deprecatedSinceKotlin) ?: return true,
+        descriptor.original.annotations.findAnnotation(StandardNames.FqNames.deprecatedSinceKotlin) ?: return true,
         languageVersionSettings.apiVersion
     ) != null
 }

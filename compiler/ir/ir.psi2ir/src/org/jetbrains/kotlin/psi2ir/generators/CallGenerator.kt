@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -122,7 +121,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
     ) =
         if (descriptor is LocalVariableDescriptor && descriptor.isDelegated) {
             val getterDescriptor = descriptor.getter!!
-            val getterSymbol = context.symbolTable.referenceFunction(getterDescriptor.original)
+            val getterSymbol = context.symbolTable.referenceSimpleFunction(getterDescriptor.original)
             IrCallImpl(
                 startOffset, endOffset, descriptor.type.toIrType(), getterSymbol, origin ?: IrStatementOrigin.GET_LOCAL_PROPERTY
             ).apply {
@@ -207,7 +206,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                         dispatchReceiver
                     )
                 } else {
-                    val getterSymbol = context.symbolTable.referenceFunction(getMethodDescriptor.original)
+                    val getterSymbol = context.symbolTable.referenceSimpleFunction(getMethodDescriptor.original)
                     IrCallImpl(
                         startOffset, endOffset,
                         irType,
@@ -333,7 +332,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                         )
                 }
             } else {
-                val originalSymbol = context.symbolTable.referenceFunction(functionDescriptor.original)
+                val originalSymbol = context.symbolTable.referenceSimpleFunction(functionDescriptor.original)
                 IrCallImpl(
                     startOffset, endOffset,
                     irType,

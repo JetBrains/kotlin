@@ -7,8 +7,8 @@ class MyClass {
 
 class MyClass2 {}
 
-fun MyClass2.component1() = 1.2
-fun MyClass2.component1() = 1.3
+<!CONFLICTING_OVERLOADS!>fun MyClass2.component1() = 1.2<!>
+<!CONFLICTING_OVERLOADS!>fun MyClass2.component1() = 1.3<!>
 
 fun test(mc1: MyClass, mc2: MyClass2) {
     val (<!INAPPLICABLE_CANDIDATE!>a<!>, <!UNRESOLVED_REFERENCE!>b<!>) = mc1

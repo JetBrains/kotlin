@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor;
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind;
 import org.jetbrains.kotlin.config.LanguageVersion;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
@@ -67,7 +68,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.jetbrains.kotlin.descriptors.FindClassInModuleKt.findClassAcrossModuleDependencies;
-import static org.jetbrains.kotlin.js.translate.context.Namer.*;
+import static org.jetbrains.kotlin.js.translate.context.Namer.GET_KCLASS_FROM_EXPRESSION;
+import static org.jetbrains.kotlin.js.translate.context.Namer.getCapturedVarAccessor;
 import static org.jetbrains.kotlin.js.translate.general.Translation.translateAsExpression;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.*;
 import static org.jetbrains.kotlin.js.translate.utils.ErrorReportingUtils.message;
@@ -331,7 +333,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
             default: {
                 if (descriptor instanceof FunctionClassDescriptor) {
                     FunctionClassDescriptor functionClassDescriptor = (FunctionClassDescriptor) descriptor;
-                    if (functionClassDescriptor.getFunctionKind() == FunctionClassDescriptor.Kind.Function) {
+                    if (functionClassDescriptor.getFunctionKind() == FunctionClassKind.Function) {
                         ClassDescriptor primitivesObject = findPrimitiveClassesObject(context);
                         assert primitivesObject != null;
                         FunctionDescriptor function = DescriptorUtils.getFunctionByName(

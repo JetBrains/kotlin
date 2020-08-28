@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.fir.deserialization
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
@@ -58,7 +57,7 @@ fun deserializeClassToSymbol(
     val kind = Flags.CLASS_KIND.get(flags)
     val modality = ProtoEnumFlags.modality(Flags.MODALITY.get(flags))
     val status = FirResolvedDeclarationStatusImpl(
-        ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
+        FirProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
         modality
     ).apply {
         isExpect = Flags.IS_EXPECT_CLASS.get(flags)
@@ -154,7 +153,7 @@ fun deserializeClassToSymbol(
                     name = enumEntryName
                     this.symbol = FirVariableSymbol(CallableId(classId, enumEntryName))
                     this.status = FirResolvedDeclarationStatusImpl(
-                        Visibilities.PUBLIC,
+                        Visibilities.Public,
                         Modality.FINAL
                     ).apply {
                         isStatic = true
@@ -211,7 +210,7 @@ private fun FirRegularClassBuilder.addSerializableIfNeeded(classId: ClassId) {
 }
 
 private fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId) {
-    if (classId.packageFqName != KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) return
+    if (classId.packageFqName != StandardNames.BUILT_INS_PACKAGE_FQ_NAME) return
     if (classId.shortClassName !in ARRAY_CLASSES) return
     superTypeRefs += buildResolvedTypeRef {
         type = ConeClassLikeTypeImpl(
@@ -240,7 +239,7 @@ private fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId) {
                 isNullable = false
             )
         }
-        status = FirResolvedDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL).apply {
+        status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL).apply {
             isOverride = true
         }
         name = CLONE

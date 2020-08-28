@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.fir.extensions.registerExtensions
 import java.io.File
 
 abstract class AbstractFirAllOpenDiagnosticTest : AbstractFirDiagnosticsTest() {
+    override val pluginPhasesEnabled: Boolean
+        get() = true
+
     override fun registerFirExtensions(service: FirExtensionService) {
         service.registerExtensions(FirAllOpenComponentRegistrar().configure())
     }

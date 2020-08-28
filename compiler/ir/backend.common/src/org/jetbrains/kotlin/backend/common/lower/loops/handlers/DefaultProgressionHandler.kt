@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
 
 /** Builds a [HeaderInfo] for progressions not handled by more specialized handlers. */
-internal class DefaultProgressionHandler(private val context: CommonBackendContext) :
+internal class DefaultProgressionHandler(private val context: CommonBackendContext, private val allowUnsignedBounds: Boolean = false) :
     ExpressionHandler {
 
     private val symbols = context.ir.symbols
@@ -26,7 +26,8 @@ internal class DefaultProgressionHandler(private val context: CommonBackendConte
 
     override fun matchIterable(expression: IrExpression) = ProgressionType.fromIrType(
         expression.type,
-        symbols
+        symbols,
+        allowUnsignedBounds
     ) != null
 
     override fun build(expression: IrExpression, scopeOwner: IrSymbol): HeaderInfo? =
@@ -53,7 +54,7 @@ internal class DefaultProgressionHandler(private val context: CommonBackendConte
             val direction = if (isRange) ProgressionDirection.INCREASING else ProgressionDirection.UNKNOWN
 
             ProgressionHeaderInfo(
-                ProgressionType.fromIrType(progressionExpression.type, symbols)!!,
+                ProgressionType.fromIrType(progressionExpression.type, symbols, allowUnsignedBounds)!!,
                 first,
                 last,
                 step,

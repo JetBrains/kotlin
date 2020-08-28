@@ -52,6 +52,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
     protected abstract fun IrBlockBodyBuilder.generateCoroutineStart(invokeSuspendFunction: IrFunction, receiver: IrExpression)
 
+    @Suppress("UNUSED_PARAMETER")
     protected fun initializeStateMachine(coroutineConstructors: List<IrConstructor>, coroutineClassThis: IrValueDeclaration) {
         // Do nothing by default
         // TODO find out if Kotlin/Native needs this method.

@@ -55,7 +55,7 @@ class Case3() : I {
 
     fun case() {
         I.<!AMBIGUITY!>invoke<!>(<!UNRESOLVED_REFERENCE!>::x<!>)
-        <!UNRESOLVED_REFERENCE!>I<!>(<!UNRESOLVED_REFERENCE!>::x<!>)
+        <!AMBIGUITY!>I<!>(<!UNRESOLVED_REFERENCE!>::x<!>)
         <!AMBIGUITY!>Case3<!>(<!UNRESOLVED_REFERENCE!>::x<!>)
     }
 }

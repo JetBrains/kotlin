@@ -125,7 +125,7 @@ private class TypeVariableImpl(private val typeParameter: KTypeParameter) : Type
 
     // [TypeVariable] extends [AnnotatedElement] starting from JDK 8. The following are copies of methods from there.
     // Suppression of VIRTUAL_MEMBER_HIDDEN is needed for cases when environment variable JDK_16 points to JDK 8+.
-    @Suppress("VIRTUAL_MEMBER_HIDDEN")
+    @Suppress("VIRTUAL_MEMBER_HIDDEN", "UNUSED_PARAMETER")
     fun <T : Annotation> getAnnotation(annotationClass: Class<T>): T? = null
 
     @Suppress("VIRTUAL_MEMBER_HIDDEN")

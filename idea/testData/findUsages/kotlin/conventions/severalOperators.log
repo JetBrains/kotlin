@@ -1,23 +1,14 @@
 Checked type of a
-Checked type of a
-Checked type of b
 Checked type of b
 Checked type of c
-Checked type of c
-Checked type of d
 Checked type of d
 Checked type of dInT2
 Checked type of dInT3
 Checked type of div(other: A)
 Checked type of indirectDiction()
-Checked type of indirectDiction()
-Checked type of indirectDiction()
 Checked type of indirectPlusDiction()
-Checked type of indirectPlusDiction()
-Checked type of t
 Checked type of t
 Checked type of times(other: Diction)
-Checked type of tt
 Checked type of tt
 ExpressionOfTypeProcessor is already started for Diction. Exit for operator Diction.minus(other: Diction).
 ExpressionOfTypeProcessor is already started for Diction. Exit for operator Diction.plus(other: Diction).

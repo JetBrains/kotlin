@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -59,7 +59,7 @@ class JvmStandardLibraryBuiltInsLowering(val context: JvmBackendContext) : FileL
 
     // Originals are so far only instance methods, and the replacements are
     // statics, so we copy dispatch receivers to a value argument if needed.
-    private fun IrCall.replaceWithCallTo(replacement: IrFunctionSymbol) =
+    private fun IrCall.replaceWithCallTo(replacement: IrSimpleFunctionSymbol) =
         IrCallImpl(
             startOffset,
             endOffset,

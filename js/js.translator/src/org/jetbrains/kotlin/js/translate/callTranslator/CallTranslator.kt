@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.callTranslator
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -177,10 +177,10 @@ private fun mayBeMarkByRangeMetadata(resolvedCall: ResolvedCall<out FunctionDesc
             callExpression.range = Pair(RangeType.LONG, RangeKind.RANGE_TO)
         }
         untilFqName -> when (resolvedCall.resultingDescriptor.returnType?.constructor?.declarationDescriptor?.fqNameUnsafe) {
-            KotlinBuiltIns.FQ_NAMES.intRange -> {
+            StandardNames.FqNames.intRange -> {
                 callExpression.range = Pair(RangeType.INT, RangeKind.UNTIL)
             }
-            KotlinBuiltIns.FQ_NAMES.longRange -> {
+            StandardNames.FqNames.longRange -> {
                 callExpression.range = Pair(RangeType.LONG, RangeKind.UNTIL)
             }
         }

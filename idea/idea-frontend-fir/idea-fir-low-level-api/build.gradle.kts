@@ -9,6 +9,8 @@ dependencies {
     compile(project(":idea:idea-frontend-api"))
     compile(project(":idea:idea-core"))
     compile(project(":compiler:fir:fir2ir"))
+    compile(project(":compiler:fir:fir2ir:jvm-backend"))
+    compile(project(":compiler:ir.serialization.common"))
     compile(project(":compiler:fir:resolve"))
     compile(project(":compiler:fir:checkers"))
     compile(project(":compiler:fir:java"))

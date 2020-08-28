@@ -173,19 +173,19 @@ class JsIrBackendContext(
 
     override val ir = object : Ir<JsIrBackendContext>(this, irModuleFragment) {
         override val symbols = object : Symbols<JsIrBackendContext>(this@JsIrBackendContext, irBuiltIns, symbolTable) {
-            override val ThrowNullPointerException =
+            override val throwNullPointerException =
                 symbolTable.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_NPE"))).single())
 
-            override val ThrowNoWhenBranchMatchedException =
+            override val throwNoWhenBranchMatchedException =
                 symbolTable.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("noWhenBranchMatchedException"))).single())
 
-            override val ThrowTypeCastException =
+            override val throwTypeCastException =
                 symbolTable.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_CCE"))).single())
 
-            override val ThrowUninitializedPropertyAccessException =
+            override val throwUninitializedPropertyAccessException =
                 symbolTable.referenceSimpleFunction(getFunctions(FqName("kotlin.throwUninitializedPropertyAccessException")).single())
 
-            override val ThrowKotlinNothingValueException: IrSimpleFunctionSymbol =
+            override val throwKotlinNothingValueException: IrSimpleFunctionSymbol =
                 symbolTable.referenceSimpleFunction(getFunctions(FqName("kotlin.throwKotlinNothingValueException")).single())
 
             override val defaultConstructorMarker =

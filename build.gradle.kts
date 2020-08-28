@@ -187,7 +187,7 @@ extra["versions.kotlinx-collections-immutable-jvm"] = immutablesVersion
 extra["versions.ktor-network"] = "1.0.1"
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.4-M3-dev-15627"
+    extra["versions.kotlin-native"] = "1.4.20-dev-16314"
 }
 
 val intellijUltimateEnabled by extra(project.kotlinBuildProperties.intellijUltimateEnabled)
@@ -265,17 +265,17 @@ extra["compilerModules"] = arrayOf(
     ":kotlin-build-common",
     ":core:metadata",
     ":core:metadata.jvm",
+    ":core:compiler.common",
     ":core:descriptors",
     ":core:descriptors.jvm",
     ":core:descriptors.runtime",
     ":core:deserialization",
     ":core:util.runtime",
-    ":core:type-system",
     ":compiler:fir:cones",
     ":compiler:fir:resolve",
     ":compiler:fir:fir-serialization",
     ":compiler:fir:tree",
-    ":compiler:fir:raw-fir:fir-common",
+    ":compiler:fir:raw-fir:raw-fir.common",
     ":compiler:fir:raw-fir:psi2fir",
     ":compiler:fir:raw-fir:light-tree2fir",
     ":compiler:fir:fir2ir",
@@ -287,7 +287,6 @@ extra["compilerModules"] = arrayOf(
 )
 
 extra["compilerModulesForJps"] = listOf(
-    ":core:type-system",
     ":kotlin-build-common",
     ":kotlin-util-io",
     ":kotlin-util-klib",
@@ -296,6 +295,7 @@ extra["compilerModulesForJps"] = listOf(
     ":kotlin-compiler-runner",
     ":daemon-common",
     ":daemon-common-new",
+    ":core:compiler.common",
     ":core:descriptors",
     ":core:descriptors.jvm",
     ":idea:idea-jps-common",
@@ -455,6 +455,16 @@ allprojects {
 
     tasks.withType<Test> {
         outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KT-37089") { true }
+    }
+
+    tasks.withType<SourceTask>().configureEach {
+        doFirst {
+            source.visit {
+                if (file.isDirectory && file.listFiles()?.isEmpty() == true) {
+                    logger.warn("Empty source directories may cause build cache misses: " + file.absolutePath)
+                }
+            }
+        }
     }
 
     normalization {

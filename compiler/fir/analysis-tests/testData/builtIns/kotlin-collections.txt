@@ -1,3 +1,10 @@
+public/*package*/ open class ArraysUtilJVM : R|kotlin/Any| {
+    public/*package*/ open static fun <T : R|ft<kotlin/Any, kotlin/Any?>!|> asList(p0: ):
+
+    public/*package*/ constructor(): R|kotlin/collections/ArraysUtilJVM|
+
+}
+
 public abstract class BooleanIterator : R|kotlin/collections/Iterator<kotlin/Boolean>| {
     public final operator fun next(): R|kotlin/Boolean|
 

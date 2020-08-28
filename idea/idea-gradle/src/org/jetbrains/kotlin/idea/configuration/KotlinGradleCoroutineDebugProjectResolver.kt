@@ -31,9 +31,9 @@ class KotlinGradleCoroutineDebugProjectResolver : AbstractProjectResolverExtensi
                 if (task instanceof Test || task instanceof JavaExec) {
                     def kotlinxCoroutinesCoreJar = task.classpath.find { it.name.startsWith("kotlinx-coroutines-core") }
                     if (kotlinxCoroutinesCoreJar) {
-                        def results = (kotlinxCoroutinesCoreJar.getName() =~ /kotlinx-coroutines-core[a-z\-]+(\d[\w\.\-]+)\.jar${'$'}/).findAll()
+                        def results = (kotlinxCoroutinesCoreJar.getName() =~ /kotlinx-coroutines-core(\-jvm)?-(\d[\w\.\-]+)\.jar${'$'}/).findAll()
                         if (results) {
-                            def version = results.first()[1]
+                            def version = results.first()[2]
                             def referenceVersion = org.gradle.util.VersionNumber.parse('1.3.7-255')
                             if (org.gradle.util.VersionNumber.parse(version) > referenceVersion) {
                                 task.jvmArgs ("-javaagent:${'$'}{kotlinxCoroutinesCoreJar?.absolutePath}", "-ea")

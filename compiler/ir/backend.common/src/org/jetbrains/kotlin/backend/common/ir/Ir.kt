@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.ir
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.builtins.*
+import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
@@ -118,6 +119,8 @@ open class BuiltinSymbolsBase(protected val irBuiltIns: IrBuiltIns, protected va
     val longRange = progression("LongRange")
     val rangeClasses = listOfNotNull(charRange, intRange, longRange, uIntRange, uLongRange)
 
+    val closedRange = progression("ClosedRange")
+
     val getProgressionLastElementByReturnType = builtInsPackage("kotlin", "internal")
         .getContributedFunctions(Name.identifier("getProgressionLastElement"), NoLookupLocation.FROM_BACKEND)
         .filter { it.containingDeclaration !is BuiltInsPackageFragment }
@@ -156,6 +159,8 @@ open class BuiltinSymbolsBase(protected val irBuiltIns: IrBuiltIns, protected va
     val short = symbolTable.referenceClass(builtIns.short)
     val int = symbolTable.referenceClass(builtIns.int)
     val long = symbolTable.referenceClass(builtIns.long)
+    val float = symbolTable.referenceClass(builtIns.float)
+    val double = symbolTable.referenceClass(builtIns.double)
 
     val integerClasses = listOf(byte, short, int, long)
 
@@ -219,6 +224,7 @@ open class BuiltinSymbolsBase(protected val irBuiltIns: IrBuiltIns, protected va
     val mutableIterable = symbolTable.referenceClass(builtIns.mutableIterable)
     val mutableIterator = symbolTable.referenceClass(builtIns.mutableIterator)
     val mutableListIterator = symbolTable.referenceClass(builtIns.mutableListIterator)
+    val comparable = symbolTable.referenceClass(builtIns.comparable)
 
     private val binaryOperatorCache = mutableMapOf<Triple<Name, KotlinType, KotlinType>, IrSimpleFunctionSymbol>()
 
@@ -274,13 +280,13 @@ open class BuiltinSymbolsBase(protected val irBuiltIns: IrBuiltIns, protected va
 @Suppress("MemberVisibilityCanBePrivate", "PropertyName")
 abstract class Symbols<out T : CommonBackendContext>(val context: T, irBuiltIns: IrBuiltIns, symbolTable: SymbolTable) :
     BuiltinSymbolsBase(irBuiltIns, context.builtIns, symbolTable) {
-    abstract val ThrowNullPointerException: IrFunctionSymbol
-    abstract val ThrowNoWhenBranchMatchedException: IrFunctionSymbol
-    abstract val ThrowTypeCastException: IrFunctionSymbol
+    abstract val throwNullPointerException: IrSimpleFunctionSymbol
+    abstract val throwNoWhenBranchMatchedException: IrSimpleFunctionSymbol
+    abstract val throwTypeCastException: IrSimpleFunctionSymbol
 
-    abstract val ThrowUninitializedPropertyAccessException: IrSimpleFunctionSymbol
+    abstract val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol
 
-    abstract val ThrowKotlinNothingValueException: IrSimpleFunctionSymbol
+    abstract val throwKotlinNothingValueException: IrSimpleFunctionSymbol
 
     abstract val stringBuilder: IrClassSymbol
 
@@ -312,7 +318,7 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, irBuiltIns:
                         function.getPackageFragment()!!.fqName.asString() == "kotlin" &&
                         function.valueParameters.isEmpty() &&
                         symbol.owner.extensionReceiverParameter?.type?.classOrNull?.owner.let { receiverClass ->
-                            receiverClass?.fqNameWhenAvailable?.toUnsafe() == KotlinBuiltIns.FQ_NAMES.kProperty0
+                            receiverClass?.fqNameWhenAvailable?.toUnsafe() == StandardNames.FqNames.kProperty0
                         }
             }
 

@@ -11,12 +11,12 @@ abstract class Base {
 }
 
 class Case1 : Base() {
-    override fun foo(): Any
+    override fun foo(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>Any<!>
     {
         return ""
     }
 
-    override val a: Any?
+    override val a: <!PROPERTY_TYPE_MISMATCH_ON_OVERRIDE!>Any?<!>
     get() = TODO()
     override var b: String
     get() = TODO()
@@ -30,7 +30,7 @@ class Case1 : Base() {
 */
 
 class Case2(override val a: String, override var b: String) : Base() {
-    override fun foo(): CharSequence? {
+    override fun foo(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>CharSequence?<!> {
         return ""
     }
 }

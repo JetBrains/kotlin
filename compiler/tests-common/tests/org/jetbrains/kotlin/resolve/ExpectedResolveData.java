@@ -22,7 +22,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.StandardNames;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
@@ -346,7 +346,7 @@ public abstract class ExpectedResolveData {
         FqName fqName =
                 nameOrFqName.contains(".")
                 ? new FqName(nameOrFqName)
-                : KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier(nameOrFqName));
+                : StandardNames.BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier(nameOrFqName));
         ClassDescriptor expectedClass = DescriptorUtilKt.resolveClassByFqName(module, fqName, NoLookupLocation.FROM_TEST);
         assertNotNull("Expected class not found: " + nameOrFqName, expectedClass);
 

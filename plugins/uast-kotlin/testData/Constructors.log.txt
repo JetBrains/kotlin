@@ -12,7 +12,7 @@ UFile (package = )
             UBlockExpression
                 UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1))
                     UIdentifier (Identifier (this))
-                    USimpleNameReferenceExpression (identifier = <init>, resolvesTo = A)
+                    USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: A)
                     UQualifiedReferenceExpression
                         USimpleNameReferenceExpression (identifier = i)
                         UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
@@ -36,7 +36,7 @@ UFile (package = )
             UBlockExpression
                 UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1))
                     UIdentifier (Identifier (this))
-                    USimpleNameReferenceExpression (identifier = <init>, resolvesTo = AWithInit)
+                    USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: AWithInit)
                     UQualifiedReferenceExpression
                         USimpleNameReferenceExpression (identifier = i)
                         UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
@@ -66,7 +66,7 @@ UFile (package = )
             UBlockExpression
                 UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1))
                     UIdentifier (Identifier (this))
-                    USimpleNameReferenceExpression (identifier = <init>, resolvesTo = AWith2Init)
+                    USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: AWith2Init)
                     UQualifiedReferenceExpression
                         USimpleNameReferenceExpression (identifier = i)
                         UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
@@ -98,7 +98,7 @@ UFile (package = )
             UBlockExpression
                 UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))
                     UIdentifier (Identifier ())
-                    USimpleNameReferenceExpression (identifier = <init>, resolvesTo = Object)
+                    USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Object)
                 UBinaryExpression (operator = =)
                     USimpleNameReferenceExpression (identifier = a)
                     UQualifiedReferenceExpression
@@ -112,7 +112,7 @@ UFile (package = )
             UBlockExpression
                 UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))
                     UIdentifier (Identifier ())
-                    USimpleNameReferenceExpression (identifier = <init>, resolvesTo = Object)
+                    USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Object)
                 UBinaryExpression (operator = =)
                     USimpleNameReferenceExpression (identifier = a)
                     USimpleNameReferenceExpression (identifier = s)
@@ -129,7 +129,7 @@ UFile (package = )
             UBlockExpression
                 UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))
                     UIdentifier (Identifier ())
-                    USimpleNameReferenceExpression (identifier = <init>, resolvesTo = Object)
+                    USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Object)
                 UBlockExpression
                     UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
                         UIdentifier (Identifier (println))
@@ -147,7 +147,7 @@ UFile (package = )
             UBlockExpression
                 UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))
                     UIdentifier (Identifier ())
-                    USimpleNameReferenceExpression (identifier = <init>, resolvesTo = Object)
+                    USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Object)
                 UBinaryExpression (operator = =)
                     USimpleNameReferenceExpression (identifier = a)
                     USimpleNameReferenceExpression (identifier = s)

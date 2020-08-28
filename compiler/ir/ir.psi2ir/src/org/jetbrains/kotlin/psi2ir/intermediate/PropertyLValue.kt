@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 
@@ -126,9 +126,9 @@ class AccessorPropertyLValue(
     endOffset: Int,
     origin: IrStatementOrigin?,
     type: IrType,
-    val getter: IrFunctionSymbol?,
+    val getter: IrSimpleFunctionSymbol?,
     val getterDescriptor: FunctionDescriptor?,
-    val setter: IrFunctionSymbol?,
+    val setter: IrSimpleFunctionSymbol?,
     val setterDescriptor: FunctionDescriptor?,
     val typeArguments: List<IrType>?,
     callReceiver: CallReceiver,

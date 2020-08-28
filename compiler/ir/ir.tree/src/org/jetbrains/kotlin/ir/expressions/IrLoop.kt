@@ -16,13 +16,14 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-interface IrLoop : IrExpression {
-    val origin: IrStatementOrigin?
-    var body: IrExpression?
-    var condition: IrExpression
-    var label: String?
+abstract class IrLoop : IrExpression() {
+    abstract val origin: IrStatementOrigin?
+
+    var body: IrExpression? = null
+    lateinit var condition: IrExpression
+    var label: String? = null
 }
 
-interface IrWhileLoop : IrLoop
+abstract class IrWhileLoop : IrLoop()
 
-interface IrDoWhileLoop : IrLoop
+abstract class IrDoWhileLoop : IrLoop()

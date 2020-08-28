@@ -37,10 +37,8 @@ abstract class UIComponentDelegatingSettingComponent<V : Any, T : SettingType<V>
     override fun onValueUpdated(reference: SettingReference<*, *>?) {
         super.onValueUpdated(reference)
         if (reference == this.reference) {
-            ApplicationManager.getApplication().invokeLater {
-                if (uiComponent.getUiValue() != value) {
-                    value?.let(uiComponent::updateUiValue)
-                }
+            if (uiComponent.getUiValue() != value) {
+                value?.let(uiComponent::updateUiValue)
             }
         }
     }

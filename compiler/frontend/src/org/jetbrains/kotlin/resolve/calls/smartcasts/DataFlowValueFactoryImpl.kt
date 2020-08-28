@@ -24,10 +24,8 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.isError
 
-class DataFlowValueFactoryImpl
-@Deprecated("Please, avoid to use that implementation explicitly. If you need DataFlowValueFactory, use injection")
-constructor(private val languageVersionSettings: LanguageVersionSettings) : DataFlowValueFactory {
-
+// Please, avoid using this implementation explicitly. If you need DataFlowValueFactory, use injection.
+class DataFlowValueFactoryImpl constructor(private val languageVersionSettings: LanguageVersionSettings) : DataFlowValueFactory {
     // Receivers
     override fun createDataFlowValue(
         receiverValue: ReceiverValue,

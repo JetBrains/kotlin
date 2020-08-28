@@ -19,8 +19,7 @@ object Annotator {
         val levelToOffset = mutableMapOf(0 to 0)
 
         for (ann in annotations) {
-            var lastLevel = 0
-            lastLevel = levelToOffset.values.takeWhile { ann.range.startOffset + ann.text.length >= it }.size
+            val lastLevel = levelToOffset.values.takeWhile { ann.range.startOffset + ann.text.length >= it }.size
 
             if (annotationLines.size <= lastLevel) {
                 annotationLines.add(StringBuilder(comment + " ".repeat(lineSize - comment.length)))

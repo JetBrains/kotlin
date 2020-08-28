@@ -1,0 +1,35 @@
+FILE: inAnonymousObject.kt
+    @R|kotlin/contracts/ExperimentalContracts|() public final fun foo(a: R|() -> kotlin/Unit|, b: R|() -> kotlin/Unit|, c: R|() -> kotlin/Unit|, d: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(a, AT_MOST_ONCE)
+            CallsInPlace(b, AT_MOST_ONCE)
+            CallsInPlace(c, AT_MOST_ONCE)
+            CallsInPlace(d, AT_MOST_ONCE)
+        >
+     {
+        [StubStatement]
+        lval obj: R|<anonymous>| = object : R|java/lang/Runnable| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val leakedVal: R|() -> kotlin/Unit| = R|<local>/a|
+                public get(): R|() -> kotlin/Unit|
+
+            public final val leaked: R|kotlin/Any|
+                public get(): R|kotlin/Any|
+
+            init {
+                this@R|/<anonymous>|.R|/<anonymous>.leaked| = R|<local>/b|
+            }
+
+            public final override fun run(): R|kotlin/Unit| {
+                R|<local>/c|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+            }
+
+        }
+
+        R|<local>/obj|.R|/<anonymous>.run|()
+        R|<local>/d|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+    }

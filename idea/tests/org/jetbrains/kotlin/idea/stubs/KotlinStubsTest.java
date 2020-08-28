@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.stubs;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor;
 import org.jetbrains.kotlin.psi.KtClass;
 import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtScript;
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
@@ -43,5 +45,23 @@ public class KotlinStubsTest extends LightCodeInsightFixtureTestCase {
         KtClass ktClass = (KtClass) declarations.get(0);
         KotlinClassStub stub = KtStubElementTypes.CLASS.createStub(ktClass, null);
         assertEquals(true, stub.isInterface());
+    }
+
+    public void testScriptDeclaration() {
+        PsiFile psiFile = myFixture.configureByText("foo.kts", "fun foo() {}");
+        KtFile ktFile = (KtFile) psiFile;
+
+        assertNull("file is parsed from AST", ktFile.getStub());
+        List<KtDeclaration> astDeclarations = ktFile.getDeclarations();
+        assertEquals(1, astDeclarations.size());
+        assertTrue(astDeclarations.get(0) instanceof KtScript);
+
+        // clean up AST
+        ApplicationManager.getApplication().runWriteAction(() -> ktFile.onContentReload());
+
+        assertNotNull("file is parsed from AST", ktFile.getStub());
+        List<KtDeclaration> stubDeclarations = ktFile.getDeclarations();
+        assertEquals(1, stubDeclarations.size());
+        assertTrue(stubDeclarations.get(0) instanceof KtScript);
     }
 }

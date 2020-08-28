@@ -26,7 +26,7 @@ import java.io.File
 abstract class AbstractDiagnosticsUsingJavacTest : AbstractDiagnosticsTest() {
 
     override fun shouldSkipTest(wholeFile: File, files: List<TestFile>): Boolean {
-        return isJavacSkipTest(wholeFile, files)
+        return isJavacSkipTest(wholeFile)
     }
 
     override fun setupEnvironment(environment: KotlinCoreEnvironment, testDataFile: File, files: List<TestFile>) {

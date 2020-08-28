@@ -161,7 +161,7 @@ open class MutableController(val context: JsIrBackendContext, val lowerings: Lis
     private var restricted: Boolean = false
     private var declarationListsRestricted = false
 
-    private inline fun <T> (() -> T).withRestrictions(
+    private fun <T> (() -> T).withRestrictions(
         newRestrictedToDeclaration: IrDeclaration? = null,
         newBodiesEnabled: Boolean? = null,
         newRestricted: Boolean? = null,

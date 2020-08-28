@@ -41,7 +41,7 @@ abstract class FirProperty : FirVariable<FirProperty>(), FirTypeParametersOwner,
     abstract override val setter: FirPropertyAccessor?
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val typeParameters: List<FirTypeParameter>
-    abstract override val controlFlowGraphReference: FirControlFlowGraphReference
+    abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val containerSource: DeserializedContainerSource?
     abstract override val symbol: FirPropertySymbol
     abstract val backingFieldSymbol: FirBackingFieldSymbol
@@ -55,6 +55,8 @@ abstract class FirProperty : FirVariable<FirProperty>(), FirTypeParametersOwner,
     abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
 
     abstract override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
+
+    abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirProperty
 
@@ -71,8 +73,6 @@ abstract class FirProperty : FirVariable<FirProperty>(), FirTypeParametersOwner,
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirProperty
 
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirProperty
-
-    abstract override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirProperty
 
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirProperty
 

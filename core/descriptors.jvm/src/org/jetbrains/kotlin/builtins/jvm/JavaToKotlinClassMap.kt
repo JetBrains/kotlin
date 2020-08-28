@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.builtins.jvm
 
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
+import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMap
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.*
@@ -23,13 +24,13 @@ import java.util.*
 
 object JavaToKotlinClassMap : PlatformToKotlinClassMap {
     private val NUMBERED_FUNCTION_PREFIX =
-        FunctionClassDescriptor.Kind.Function.packageFqName.toString() + "." + FunctionClassDescriptor.Kind.Function.classNamePrefix
+        FunctionClassKind.Function.packageFqName.toString() + "." + FunctionClassKind.Function.classNamePrefix
     private val NUMBERED_K_FUNCTION_PREFIX =
-        FunctionClassDescriptor.Kind.KFunction.packageFqName.toString() + "." + FunctionClassDescriptor.Kind.KFunction.classNamePrefix
+        FunctionClassKind.KFunction.packageFqName.toString() + "." + FunctionClassKind.KFunction.classNamePrefix
     private val NUMBERED_SUSPEND_FUNCTION_PREFIX =
-        FunctionClassDescriptor.Kind.SuspendFunction.packageFqName.toString() + "." + FunctionClassDescriptor.Kind.SuspendFunction.classNamePrefix
+        FunctionClassKind.SuspendFunction.packageFqName.toString() + "." + FunctionClassKind.SuspendFunction.classNamePrefix
     private val NUMBERED_K_SUSPEND_FUNCTION_PREFIX =
-        FunctionClassDescriptor.Kind.KSuspendFunction.packageFqName.toString() + "." + FunctionClassDescriptor.Kind.KSuspendFunction.classNamePrefix
+        FunctionClassKind.KSuspendFunction.packageFqName.toString() + "." + FunctionClassKind.KSuspendFunction.classNamePrefix
 
     private val FUNCTION_N_CLASS_ID = ClassId.topLevel(FqName("kotlin.jvm.functions.FunctionN"))
     val FUNCTION_N_FQ_NAME = FUNCTION_N_CLASS_ID.asSingleFqName()
@@ -56,28 +57,28 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
     }
 
     val mutabilityMappings = listOf(
-        mutabilityMapping<Iterable<*>>(ClassId.topLevel(FQ_NAMES.iterable), FQ_NAMES.mutableIterable),
-        mutabilityMapping<Iterator<*>>(ClassId.topLevel(FQ_NAMES.iterator), FQ_NAMES.mutableIterator),
-        mutabilityMapping<Collection<*>>(ClassId.topLevel(FQ_NAMES.collection), FQ_NAMES.mutableCollection),
-        mutabilityMapping<List<*>>(ClassId.topLevel(FQ_NAMES.list), FQ_NAMES.mutableList),
-        mutabilityMapping<Set<*>>(ClassId.topLevel(FQ_NAMES.set), FQ_NAMES.mutableSet),
-        mutabilityMapping<ListIterator<*>>(ClassId.topLevel(FQ_NAMES.listIterator), FQ_NAMES.mutableListIterator),
-        mutabilityMapping<Map<*, *>>(ClassId.topLevel(FQ_NAMES.map), FQ_NAMES.mutableMap),
+        mutabilityMapping<Iterable<*>>(ClassId.topLevel(FqNames.iterable), FqNames.mutableIterable),
+        mutabilityMapping<Iterator<*>>(ClassId.topLevel(FqNames.iterator), FqNames.mutableIterator),
+        mutabilityMapping<Collection<*>>(ClassId.topLevel(FqNames.collection), FqNames.mutableCollection),
+        mutabilityMapping<List<*>>(ClassId.topLevel(FqNames.list), FqNames.mutableList),
+        mutabilityMapping<Set<*>>(ClassId.topLevel(FqNames.set), FqNames.mutableSet),
+        mutabilityMapping<ListIterator<*>>(ClassId.topLevel(FqNames.listIterator), FqNames.mutableListIterator),
+        mutabilityMapping<Map<*, *>>(ClassId.topLevel(FqNames.map), FqNames.mutableMap),
         mutabilityMapping<Map.Entry<*, *>>(
-            ClassId.topLevel(FQ_NAMES.map).createNestedClassId(FQ_NAMES.mapEntry.shortName()), FQ_NAMES.mutableMapEntry
+            ClassId.topLevel(FqNames.map).createNestedClassId(FqNames.mapEntry.shortName()), FqNames.mutableMapEntry
         )
     )
 
     init {
-        addTopLevel(Any::class.java, FQ_NAMES.any)
-        addTopLevel(String::class.java, FQ_NAMES.string)
-        addTopLevel(CharSequence::class.java, FQ_NAMES.charSequence)
-        addTopLevel(Throwable::class.java, FQ_NAMES.throwable)
-        addTopLevel(Cloneable::class.java, FQ_NAMES.cloneable)
-        addTopLevel(Number::class.java, FQ_NAMES.number)
-        addTopLevel(Comparable::class.java, FQ_NAMES.comparable)
-        addTopLevel(Enum::class.java, FQ_NAMES._enum)
-        addTopLevel(Annotation::class.java, FQ_NAMES.annotation)
+        addTopLevel(Any::class.java, FqNames.any)
+        addTopLevel(String::class.java, FqNames.string)
+        addTopLevel(CharSequence::class.java, FqNames.charSequence)
+        addTopLevel(Throwable::class.java, FqNames.throwable)
+        addTopLevel(Cloneable::class.java, FqNames.cloneable)
+        addTopLevel(Number::class.java, FqNames.number)
+        addTopLevel(Comparable::class.java, FqNames.comparable)
+        addTopLevel(Enum::class.java, FqNames._enum)
+        addTopLevel(Annotation::class.java, FqNames.annotation)
 
         for (platformCollection in mutabilityMappings) {
             addMapping(platformCollection)
@@ -86,7 +87,7 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
         for (jvmType in JvmPrimitiveType.values()) {
             add(
                 ClassId.topLevel(jvmType.wrapperFqName),
-                ClassId.topLevel(KotlinBuiltIns.getPrimitiveFqName(jvmType.primitiveType))
+                ClassId.topLevel(StandardNames.getPrimitiveFqName(jvmType.primitiveType))
             )
         }
 
@@ -98,16 +99,16 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
         }
 
         for (i in 0 until FunctionInvokeDescriptor.BIG_ARITY) {
-            add(ClassId.topLevel(FqName("kotlin.jvm.functions.Function$i")), KotlinBuiltIns.getFunctionClassId(i))
+            add(ClassId.topLevel(FqName("kotlin.jvm.functions.Function$i")), StandardNames.getFunctionClassId(i))
             addKotlinToJava(FqName(NUMBERED_K_FUNCTION_PREFIX + i), K_FUNCTION_CLASS_ID)
         }
         for (i in 0 until FunctionInvokeDescriptor.BIG_ARITY - 1) {
-            val kSuspendFunction = FunctionClassDescriptor.Kind.KSuspendFunction
+            val kSuspendFunction = FunctionClassKind.KSuspendFunction
             val kSuspendFun = kSuspendFunction.packageFqName.toString() + "." + kSuspendFunction.classNamePrefix
             addKotlinToJava(FqName(kSuspendFun + i), K_FUNCTION_CLASS_ID)
         }
 
-        addKotlinToJava(FQ_NAMES.nothing.toSafe(), classId(Void::class.java))
+        addKotlinToJava(FqNames.nothing.toSafe(), classId(Void::class.java))
     }
 
     /**
@@ -132,7 +133,7 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
 
     fun mapJavaToKotlin(fqName: FqName, builtIns: KotlinBuiltIns, functionTypeArity: Int? = null): ClassDescriptor? {
         val kotlinClassId =
-            if (functionTypeArity != null && fqName == FUNCTION_N_FQ_NAME) KotlinBuiltIns.getFunctionClassId(functionTypeArity)
+            if (functionTypeArity != null && fqName == FUNCTION_N_FQ_NAME) StandardNames.getFunctionClassId(functionTypeArity)
             else mapJavaToKotlin(fqName)
         return if (kotlinClassId != null) builtIns.getBuiltInClassByFqName(kotlinClassId.asSingleFqName()) else null
     }

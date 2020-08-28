@@ -348,6 +348,11 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
         runTest("compiler/testData/compileKotlinAgainstKotlin/simpleValAnonymousObject.kt");
     }
 
+    @TestMetadata("specialBridgesInDependencies.kt")
+    public void testSpecialBridgesInDependencies() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/specialBridgesInDependencies.kt");
+    }
+
     @TestMetadata("starImportEnum.kt")
     public void testStarImportEnum() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/starImportEnum.kt");

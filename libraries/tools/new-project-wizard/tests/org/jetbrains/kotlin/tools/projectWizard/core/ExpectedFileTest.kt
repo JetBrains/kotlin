@@ -38,9 +38,9 @@ class ExpectedFileTest {
         }.mppFiles.first()
         val generatedFileText = file.printForModuleSubType(ModuleSubType.common)
         val expectedFileText = """
-           expected class A expected constructor()
+           expect class A()
 
-           expected class B expected constructor()  
+           expect class B()
         """.trimIndent().trim()
         assertEquals(expectedFileText, generatedFileText)
     }

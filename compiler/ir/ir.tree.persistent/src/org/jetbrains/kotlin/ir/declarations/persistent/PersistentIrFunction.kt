@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 internal abstract class PersistentIrFunctionCommon(
     override val startOffset: Int,
@@ -34,6 +36,7 @@ internal abstract class PersistentIrFunctionCommon(
     override val isOperator: Boolean,
     override val isInfix: Boolean,
     override val isExpect: Boolean,
+    override val containerSource: DeserializedContainerSource? = null
 ) : IrSimpleFunction(),
     PersistentIrDeclarationBase<FunctionCarrier>,
     FunctionCarrier {
@@ -58,10 +61,9 @@ internal abstract class PersistentIrFunctionCommon(
             }
         }
 
-    @Suppress("DEPRECATION")
     final override var returnType: IrType
         get() = returnTypeField.let {
-            if (it !== org.jetbrains.kotlin.ir.types.impl.IrUninitializedType) it else error("Return type is not initialized")
+            if (it !== IrUninitializedType) it else error("Return type is not initialized")
         }
         set(c) {
             returnTypeField = c
@@ -189,9 +191,11 @@ internal class PersistentIrFunction(
     isInfix: Boolean,
     isExpect: Boolean,
     override val isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+    containerSource: DeserializedContainerSource?
 ) : PersistentIrFunctionCommon(
     startOffset, endOffset, origin, name, visibility, returnType, isInline,
     isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect,
+    containerSource
 ) {
     @ObsoleteDescriptorBasedAPI
     override val descriptor: FunctionDescriptor

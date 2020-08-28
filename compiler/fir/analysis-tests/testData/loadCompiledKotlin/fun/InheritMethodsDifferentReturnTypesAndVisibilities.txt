@@ -14,3 +14,4 @@ public abstract interface Super2 : R|kotlin/Any| {
     private final fun foo(): R|kotlin/String|
 
 }
+

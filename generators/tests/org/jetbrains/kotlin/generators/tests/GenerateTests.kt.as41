@@ -1002,6 +1002,10 @@ fun main(args: Array<String>) {
                 model("basic/multifile", extension = null, recursive = false)
             }
 
+            testClass<AbstractMultiFileJvmBasicCompletionTest>("MultiFilePrimitiveJvmBasicCompletionTestGenerated") {
+                model("basic/multifilePrimitive", extension = null, recursive = false)
+            }
+
             testClass<AbstractMultiFileSmartCompletionTest> {
                 model("smartMultiFile", extension = null, recursive = false)
             }

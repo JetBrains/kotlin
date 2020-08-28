@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -111,6 +112,7 @@ fun PsiClass.resolveToDescriptor(
     } as? ClassDescriptor
 }
 
+@OptIn(FrontendInternals::class)
 private fun PsiElement.getJavaDescriptorResolver(resolutionFacade: ResolutionFacade): JavaDescriptorResolver? {
     return resolutionFacade.tryGetFrontendService(this, JavaDescriptorResolver::class.java)
 }

@@ -74,6 +74,7 @@ interface PersistentIrElementBase<T : Carrier> : IrElement, Carrier {
 
     fun ensureLowered()
 
+    @Suppress("UNCHECKED_CAST")
     fun getCarrier(): T {
         stageController.currentStage.let { stage ->
             ensureLowered()
@@ -104,6 +105,7 @@ interface PersistentIrElementBase<T : Carrier> : IrElement, Carrier {
     }
 
     // TODO naming? e.g. `mutableCarrier`
+    @Suppress("UNCHECKED_CAST")
     fun setCarrier(): T {
         val stage = stageController.currentStage
 

@@ -1370,6 +1370,39 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/newSyntax")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class NewSyntax extends AbstractDiagnosticsTestWithStdLib {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInNewSyntax() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/newSyntax"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @TestMetadata("complexContractDescription.kt")
+            public void testComplexContractDescription() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/newSyntax/complexContractDescription.kt");
+            }
+
+            @TestMetadata("onelineFunctionsContractDescription.kt")
+            public void testOnelineFunctionsContractDescription() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/newSyntax/onelineFunctionsContractDescription.kt");
+            }
+
+            @TestMetadata("propertyAccessorsContractDescription.kt")
+            public void testPropertyAccessorsContractDescription() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/newSyntax/propertyAccessorsContractDescription.kt");
+            }
+
+            @TestMetadata("simpleFunctionsContractDescription.kt")
+            public void testSimpleFunctionsContractDescription() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/newSyntax/simpleFunctionsContractDescription.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -1973,6 +2006,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/builderInferenceForMaterializeWithExpectedType.kt");
             }
 
+            @TestMetadata("callableReferenceAndCoercionToUnit.kt")
+            public void testCallableReferenceAndCoercionToUnit() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/callableReferenceAndCoercionToUnit.kt");
+            }
+
             @TestMetadata("callableReferenceToASuspendFunction.kt")
             public void testCallableReferenceToASuspendFunction() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/callableReferenceToASuspendFunction.kt");
@@ -2096,6 +2134,21 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             @TestMetadata("kt38667.kt")
             public void testKt38667() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt38667.kt");
+            }
+
+            @TestMetadata("kt38766.kt")
+            public void testKt38766() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt38766.kt");
+            }
+
+            @TestMetadata("kt41164.kt")
+            public void testKt41164() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt41164.kt");
+            }
+
+            @TestMetadata("kt41308.kt")
+            public void testKt41308() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt41308.kt");
             }
 
             @TestMetadata("nestedLambdaInferenceWithListMap.kt")
@@ -3073,6 +3126,16 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("kt38143.kt")
         public void testKt38143() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/inference/kt38143.kt");
+        }
+
+        @TestMetadata("kt38737.kt")
+        public void testKt38737() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/inference/kt38737.kt");
+        }
+
+        @TestMetadata("kt38801.kt")
+        public void testKt38801() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/inference/kt38801.kt");
         }
 
         @TestMetadata("kt4975.kt")

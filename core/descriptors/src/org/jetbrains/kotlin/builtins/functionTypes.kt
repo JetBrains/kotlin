@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.builtins
 
+import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_NAME
 import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -58,16 +59,16 @@ fun KotlinType.isFunctionTypeOrSubtype(predicate: (KotlinType) -> Boolean): Bool
     isTypeOrSubtypeOf { it.isFunctionType && predicate(it) }
 
 val KotlinType.isFunctionType: Boolean
-    get() = constructor.declarationDescriptor?.getFunctionalClassKind() == FunctionClassDescriptor.Kind.Function
+    get() = constructor.declarationDescriptor?.getFunctionalClassKind() == FunctionClassKind.Function
 
 val KotlinType.isKFunctionType: Boolean
-    get() = constructor.declarationDescriptor?.getFunctionalClassKind() == FunctionClassDescriptor.Kind.KFunction
+    get() = constructor.declarationDescriptor?.getFunctionalClassKind() == FunctionClassKind.KFunction
 
 val KotlinType.isSuspendFunctionType: Boolean
-    get() = constructor.declarationDescriptor?.getFunctionalClassKind() == FunctionClassDescriptor.Kind.SuspendFunction
+    get() = constructor.declarationDescriptor?.getFunctionalClassKind() == FunctionClassKind.SuspendFunction
 
 val KotlinType.isKSuspendFunctionType: Boolean
-    get() = constructor.declarationDescriptor?.getFunctionalClassKind() == FunctionClassDescriptor.Kind.KSuspendFunction
+    get() = constructor.declarationDescriptor?.getFunctionalClassKind() == FunctionClassKind.KSuspendFunction
 
 val KotlinType.isFunctionOrSuspendFunctionType: Boolean
     get() = isFunctionType || isSuspendFunctionType
@@ -81,16 +82,16 @@ val KotlinType.isBuiltinFunctionalType: Boolean
 val DeclarationDescriptor.isBuiltinFunctionalClassDescriptor: Boolean
     get() {
         val functionalClassKind = getFunctionalClassKind()
-        return functionalClassKind == FunctionClassDescriptor.Kind.Function ||
-                functionalClassKind == FunctionClassDescriptor.Kind.SuspendFunction
+        return functionalClassKind == FunctionClassKind.Function ||
+                functionalClassKind == FunctionClassKind.SuspendFunction
     }
 
 fun isBuiltinFunctionClass(classId: ClassId): Boolean {
-    if (!classId.startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)) return false
+    if (!classId.startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)) return false
 
     val kind = classId.asSingleFqName().toUnsafe().getFunctionalClassKind()
-    return kind == FunctionClassDescriptor.Kind.Function ||
-           kind == FunctionClassDescriptor.Kind.SuspendFunction
+    return kind == FunctionClassKind.Function ||
+           kind == FunctionClassKind.SuspendFunction
 }
 
 val KotlinType.isNonExtensionFunctionType: Boolean
@@ -103,28 +104,28 @@ val KotlinType.isBuiltinExtensionFunctionalType: Boolean
     get() = isBuiltinFunctionalType && isTypeAnnotatedWithExtensionFunctionType
 
 private val KotlinType.isTypeAnnotatedWithExtensionFunctionType: Boolean
-    get() = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.extensionFunctionType) != null
+    get() = annotations.findAnnotation(StandardNames.FqNames.extensionFunctionType) != null
 
 /**
  * @return true if this is an FQ name of a fictitious class representing the function type,
  * e.g. kotlin.Function1 (but NOT kotlin.reflect.KFunction1)
  */
 fun isNumberedFunctionClassFqName(fqName: FqNameUnsafe): Boolean {
-    return fqName.startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME) &&
-           fqName.getFunctionalClassKind() == FunctionClassDescriptor.Kind.Function
+    return fqName.startsWith(BUILT_INS_PACKAGE_NAME) &&
+           fqName.getFunctionalClassKind() == FunctionClassKind.Function
 }
 
-fun DeclarationDescriptor.getFunctionalClassKind(): FunctionClassDescriptor.Kind? {
+fun DeclarationDescriptor.getFunctionalClassKind(): FunctionClassKind? {
     if (this !is ClassDescriptor) return null
     if (!KotlinBuiltIns.isUnderKotlinPackage(this)) return null
 
     return fqNameUnsafe.getFunctionalClassKind()
 }
 
-private fun FqNameUnsafe.getFunctionalClassKind(): FunctionClassDescriptor.Kind? {
+private fun FqNameUnsafe.getFunctionalClassKind(): FunctionClassKind? {
     if (!isSafe || isRoot) return null
 
-    return BuiltInFictitiousFunctionClassFactory.getFunctionalClassKind(shortName().asString(), toSafe().parent())
+    return FunctionClassKind.getFunctionalClassKind(shortName().asString(), toSafe().parent())
 }
 
 
@@ -173,7 +174,7 @@ fun KotlinType.getPureArgumentsForFunctionalTypeOrSubtype(): List<KotlinType> {
 }
 
 fun KotlinType.extractParameterNameFromFunctionTypeArgument(): Name? {
-    val annotation = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.parameterName) ?: return null
+    val annotation = annotations.findAnnotation(StandardNames.FqNames.parameterName) ?: return null
     val name = (annotation.allValueArguments.values.singleOrNull() as? StringValue)
                        ?.value
                        ?.takeIf { Name.isValidIdentifier(it) }
@@ -196,9 +197,9 @@ fun getFunctionTypeArgumentProjections(
         val name = parameterNames?.get(index)?.takeUnless { it.isSpecial }
         val typeToUse = if (name != null) {
             val parameterNameAnnotation = BuiltInAnnotationDescriptor(
-                    builtIns,
-                    KotlinBuiltIns.FQ_NAMES.parameterName,
-                    mapOf(Name.identifier("name") to StringValue(name.asString()))
+                builtIns,
+                StandardNames.FqNames.parameterName,
+                mapOf(Name.identifier("name") to StringValue(name.asString()))
             )
             type.replaceAnnotations(Annotations.create(type.annotations + parameterNameAnnotation))
         }
@@ -233,16 +234,16 @@ fun createFunctionType(
     return KotlinTypeFactory.simpleNotNullType(typeAnnotations, classDescriptor, arguments)
 }
 
-fun Annotations.hasExtensionFunctionAnnotation() = hasAnnotation(KotlinBuiltIns.FQ_NAMES.extensionFunctionType)
+fun Annotations.hasExtensionFunctionAnnotation() = hasAnnotation(StandardNames.FqNames.extensionFunctionType)
 
 fun Annotations.withoutExtensionFunctionAnnotation() =
-    FilteredAnnotations(this, true) { it != KotlinBuiltIns.FQ_NAMES.extensionFunctionType }
+    FilteredAnnotations(this, true) { it != StandardNames.FqNames.extensionFunctionType }
 
 fun Annotations.withExtensionFunctionAnnotation(builtIns: KotlinBuiltIns) =
-    if (hasAnnotation(KotlinBuiltIns.FQ_NAMES.extensionFunctionType)) {
+    if (hasAnnotation(StandardNames.FqNames.extensionFunctionType)) {
         this
     } else {
-        Annotations.create(this + BuiltInAnnotationDescriptor(builtIns, KotlinBuiltIns.FQ_NAMES.extensionFunctionType, emptyMap()))
+        Annotations.create(this + BuiltInAnnotationDescriptor(builtIns, StandardNames.FqNames.extensionFunctionType, emptyMap()))
     }
 
 fun getFunctionDescriptor(builtIns: KotlinBuiltIns, parameterCount: Int, isSuspendFunction: Boolean) =

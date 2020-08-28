@@ -21,7 +21,7 @@ fun test_2() {
 fun test_3() {
     sequence {
         yield(materialize<Int>())
-        <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>materialize()<!>
+        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()
     }
 }
 

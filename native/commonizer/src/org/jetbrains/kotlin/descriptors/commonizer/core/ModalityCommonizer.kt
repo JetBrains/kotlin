@@ -12,7 +12,7 @@ class ModalityCommonizer : Commonizer<Modality, Modality> {
     private var error = false
 
     override val result: Modality
-        get() = temp?.takeIf { !error } ?: throw IllegalCommonizerStateException()
+        get() = checkState(temp, error)
 
     override fun commonizeWith(next: Modality): Boolean {
         if (error)

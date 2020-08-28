@@ -1,0 +1,11 @@
+class: kotlin/collections/MutableMap.MutableEntry
+
+// SYMBOLS:
+KtFirClassOrObjectSymbol:
+  classIdIfNonLocal: kotlin/collections/MutableMap.MutableEntry
+  classKind: INTERFACE
+  modality: ABSTRACT
+  name: MutableEntry
+  origin: LIBRARY
+  symbolKind: MEMBER
+  typeParameters: [KtFirTypeParameterSymbol(K), KtFirTypeParameterSymbol(V)]

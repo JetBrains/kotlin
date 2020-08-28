@@ -429,6 +429,7 @@ object Elements : TemplateGroupBase() {
         include(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         doc { "Returns ${f.element.prefixWithArticle()} at the given [index] or `null` if the [index] is out of bounds of this ${f.collection}." }
+        sample("samples.collections.Collections.Elements.getOrNull")
         returns("T?")
         body {
             """
@@ -561,6 +562,7 @@ object Elements : TemplateGroupBase() {
     } builder {
         inline(Inline.Only)
         doc { "Returns the first ${f.element} matching the given [predicate], or `null` if no such ${f.element} was found." }
+        sample("samples.collections.Collections.Elements.find")
         returns("T?")
         body { "return firstOrNull(predicate)"}
     }
@@ -755,6 +757,7 @@ object Elements : TemplateGroupBase() {
     } builder {
         inline(Inline.Only)
         doc { "Returns the last ${f.element} matching the given [predicate], or `null` if no such ${f.element} was found." }
+        sample("samples.collections.Collections.Elements.find")
         returns("T?")
         body { "return lastOrNull(predicate)"}
     }

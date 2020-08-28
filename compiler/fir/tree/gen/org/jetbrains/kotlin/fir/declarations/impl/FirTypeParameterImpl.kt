@@ -60,4 +60,9 @@ internal class FirTypeParameterImpl(
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
     }
+
+    override fun replaceBounds(newBounds: List<FirTypeRef>) {
+        bounds.clear()
+        bounds.addAll(newBounds)
+    }
 }

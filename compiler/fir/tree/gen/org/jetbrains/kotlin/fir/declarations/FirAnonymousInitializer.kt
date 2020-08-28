@@ -25,7 +25,7 @@ abstract class FirAnonymousInitializer : FirPureAbstractElement(), FirDeclaratio
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
-    abstract override val controlFlowGraphReference: FirControlFlowGraphReference
+    abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract val body: FirBlock?
     abstract override val symbol: FirAnonymousInitializerSymbol
 
@@ -33,5 +33,5 @@ abstract class FirAnonymousInitializer : FirPureAbstractElement(), FirDeclaratio
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
-    abstract override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirAnonymousInitializer
+    abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 }

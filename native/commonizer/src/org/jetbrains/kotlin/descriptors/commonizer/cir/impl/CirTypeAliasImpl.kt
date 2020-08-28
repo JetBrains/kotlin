@@ -18,7 +18,7 @@ data class CirTypeAliasImpl(
     override val typeParameters: List<CirTypeParameter>,
     override val visibility: Visibility,
     override val underlyingType: CirSimpleType,
-    override val expandedType: CirSimpleType
+    override val expandedType: CirSimpleType // only for commonization algorithm; does not participate in building resulting declarations
 ) : CirTypeAlias {
     // any TA in "common" fragment is already lifted up
     override val isLiftedUp get() = true

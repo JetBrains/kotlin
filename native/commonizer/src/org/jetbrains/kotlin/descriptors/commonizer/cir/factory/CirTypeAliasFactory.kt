@@ -22,7 +22,7 @@ object CirTypeAliasFactory {
         typeParameters = source.declaredTypeParameters.map(CirTypeParameterFactory::create),
         visibility = source.visibility,
         underlyingType = CirTypeFactory.create(source.underlyingType),
-        expandedType = CirTypeFactory.create(source.expandedType)
+        expandedType = CirTypeFactory.create(source.expandedType, useAbbreviation = false)
     )
 
     @Suppress("NOTHING_TO_INLINE")

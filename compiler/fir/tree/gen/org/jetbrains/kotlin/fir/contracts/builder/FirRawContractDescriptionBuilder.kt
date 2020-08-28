@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirRawContractDescriptionImpl
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -21,19 +21,19 @@ import org.jetbrains.kotlin.fir.visitors.*
 @FirBuilderDsl
 class FirRawContractDescriptionBuilder {
     var source: FirSourceElement? = null
-    lateinit var contractCall: FirFunctionCall
+    val rawEffects: MutableList<FirExpression> = mutableListOf()
 
     fun build(): FirRawContractDescription {
         return FirRawContractDescriptionImpl(
             source,
-            contractCall,
+            rawEffects,
         )
     }
 
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildRawContractDescription(init: FirRawContractDescriptionBuilder.() -> Unit): FirRawContractDescription {
+inline fun buildRawContractDescription(init: FirRawContractDescriptionBuilder.() -> Unit = {}): FirRawContractDescription {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }

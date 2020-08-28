@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -36,7 +35,6 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.*
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 interface IrBuilderExtension {
     val compilerContext: SerializationPluginContext
 
@@ -92,7 +90,7 @@ interface IrBuilderExtension {
         irInvoke(
             dispatchReceiver,
             callee,
-            args = *valueArguments.toTypedArray(),
+            args = valueArguments.toTypedArray(),
             typeHint = returnTypeHint
         ).also { call -> typeArguments.forEachIndexed(call::putTypeArgument) }
 
@@ -502,11 +500,10 @@ interface IrBuilderExtension {
             property.type,
             genericIndex = property.genericIndex
         )
-            ?.let { expr -> wrapWithNullableSerializerIfNeeded(property.module, property.type, expr, nullableSerClass) }
+            ?.let { expr -> wrapWithNullableSerializerIfNeeded(property.type, expr, nullableSerClass) }
     }
 
     private fun IrBuilderWithScope.wrapWithNullableSerializerIfNeeded(
-        module: ModuleDescriptor,
         type: KotlinType,
         expression: IrExpression,
         nullableSerializerClass: IrClassSymbol
@@ -584,7 +581,7 @@ interface IrBuilderExtension {
                 type.genericIndex,
                 genericGetter
             ) ?: return null
-            return wrapWithNullableSerializerIfNeeded(module, type, expr, nullableSerClass)
+            return wrapWithNullableSerializerIfNeeded(type, expr, nullableSerClass)
         }
 
         var serializerClass = serializerClassOriginal
@@ -663,7 +660,7 @@ interface IrBuilderExtension {
                                         (genericType.constructor.declarationDescriptor as TypeParameterDescriptor).representativeUpperBound
                                     )!!
                                 }!!
-                                wrapWithNullableSerializerIfNeeded(module, type, expr, nullableSerClass)
+                                wrapWithNullableSerializerIfNeeded(type, expr, nullableSerClass)
                             }
                         )
                     )

@@ -25,16 +25,13 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrSetVariableImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val type: IrType,
     override val symbol: IrVariableSymbol,
     override var value: IrExpression,
     override val origin: IrStatementOrigin?
-) :
-    IrExpressionBase(startOffset, endOffset, type),
-    IrSetVariable {
-
+) : IrSetVariable() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitSetVariable(this, data)
     }

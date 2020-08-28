@@ -376,6 +376,7 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> FUN_INTERFACE_CONSTRUCTOR_REFERENCE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> FUN_INTERFACE_WITH_SUSPEND_FUNCTION = DiagnosticFactory0.create(ERROR);
 
     // Secondary constructors
 
@@ -900,6 +901,8 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, CallableDescriptor> DSL_SCOPE_VIOLATION = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, CallableDescriptor> DSL_SCOPE_VIOLATION_WARNING = DiagnosticFactory1.create(WARNING);
 
+    DiagnosticFactory0<PsiElement> NULLABLE_EXTENSION_OPERATOR_WITH_SAFE_CALL_RECEIVER = DiagnosticFactory0.create(WARNING);
+
     // Labels
 
     DiagnosticFactory0<KtSimpleNameExpression> LABEL_NAME_CLASH = DiagnosticFactory0.create(WARNING);
@@ -1177,6 +1180,7 @@ public interface Errors {
             initializeFactoryNamesAndDefaultErrorMessages(aClass, DiagnosticFactoryToRendererMap::new);
         }
 
+        @SuppressWarnings({"unchecked", "rawtypes"})
         public static void initializeFactoryNamesAndDefaultErrorMessages(
                 @NotNull Class<?> aClass,
                 @NotNull DefaultErrorMessages.Extension defaultErrorMessages
@@ -1190,7 +1194,6 @@ public interface Errors {
                             DiagnosticFactory<?> factory = (DiagnosticFactory<?>)value;
                             factory.setName(field.getName());
 
-                            //noinspection rawtypes, unchecked
                             factory.setDefaultRenderer((DiagnosticRenderer) diagnosticToRendererMap.get(factory));
                         }
                     }

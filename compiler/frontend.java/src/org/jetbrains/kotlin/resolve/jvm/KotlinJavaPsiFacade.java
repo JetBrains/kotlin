@@ -86,6 +86,7 @@ public class KotlinJavaPsiFacade {
             private long lastTimeSeen = -1L;
 
             @Override
+            @SuppressWarnings("deprecation")
             public void modificationCountChanged() {
                 long now = modificationTracker.getJavaStructureModificationCount();
                 if (lastTimeSeen != now) {

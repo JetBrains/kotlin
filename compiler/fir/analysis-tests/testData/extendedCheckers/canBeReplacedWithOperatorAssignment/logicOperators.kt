@@ -1,4 +1,4 @@
 fun foo(something: Boolean) {
     var res = false
-    res = res and something
+    <!ASSIGNED_VALUE_IS_NEVER_READ!>res<!> = res and something
 }

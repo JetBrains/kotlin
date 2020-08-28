@@ -9,7 +9,7 @@ FILE: lambda.kt
     }
     public final fun main(): R|kotlin/Unit| {
         R|/foo|(<L> = foo@fun <anonymous>(): R|kotlin/Unit| {
-            ^ String(This is test)
+            String(This is test)
         }
         )
         R|/bar|(<L> = bar@fun <anonymous>(): R|kotlin/String| {

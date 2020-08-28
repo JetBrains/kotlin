@@ -44,9 +44,9 @@ import com.intellij.util.ui.table.JBTableRow
 import com.intellij.util.ui.table.JBTableRowEditor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor.Kind
 import org.jetbrains.kotlin.idea.refactoring.validateElement
@@ -138,7 +138,7 @@ class KotlinChangeSignatureDialog(
     }
 
     private fun getColumnTextMaxLength(nameFunction: Function1<ParameterTableModelItemBase<KotlinParameterInfo>, String?>) =
-        parametersTableModel.items.asSequence().map { nameFunction(it)?.length ?: 0 }.max() ?: 0
+        parametersTableModel.items.maxOfOrNull { nameFunction(it)?.length ?: 0 } ?: 0
 
     private fun getParamNamesMaxLength() = getColumnTextMaxLength { getPresentationName(it) }
 

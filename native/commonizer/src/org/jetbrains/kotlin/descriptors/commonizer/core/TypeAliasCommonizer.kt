@@ -14,28 +14,65 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCach
 import org.jetbrains.kotlin.name.Name
 
 /**
- * Main (optimistic) branch:
+ * Primary (optimistic) branch:
+ * - Make sure that all TAs expand to the same type, so the resulting TA can be short-circuited and lifted up into "common" fragment.
+ *
+ * Secondary (less optimistic) branch:
  * - Make sure that all TAs are identical, so the resulting TA can be lifted up into "common" fragment.
  *
- * Secondary (backup) branch:
+ * Tertiary (backup) branch:
  * - Produce an "expect class" for "common" fragment and the corresponding "actual typealias" declarations for each platform fragment.
  */
 class TypeAliasCommonizer(cache: CirClassifiersCache) : AbstractStandardCommonizer<CirTypeAlias, CirClassifier>() {
-    private val main = TypeAliasLiftingUpCommonizer(cache)
-    private val secondary = TypeAliasExpectClassCommonizer()
+    private val primary = TypeAliasShortCircuitingCommonizer(cache)
+    private val secondary = TypeAliasLiftingUpCommonizer(cache)
+    private val tertiary = TypeAliasExpectClassCommonizer()
 
-    override fun commonizationResult(): CirClassifier = main.resultOrNull ?: secondary.result
+    override fun commonizationResult(): CirClassifier = primary.resultOrNull ?: secondary.resultOrNull ?: tertiary.result
 
     override fun initialize(first: CirTypeAlias) = Unit
 
     @Suppress("ReplaceNegatedIsEmptyWithIsNotEmpty")
     override fun doCommonizeWith(next: CirTypeAlias): Boolean {
-        val mainResult = main.commonizeWith(next)
+        val primaryResult = primary.commonizeWith(next)
         val secondaryResult = secondary.commonizeWith(next)
+        val tertiaryResult = tertiary.commonizeWith(next)
 
         // Note: don't call commonizeWith() functions in return statement to avoid short-circuiting!
-        return mainResult || secondaryResult
+        return primaryResult || secondaryResult || tertiaryResult
     }
+}
+
+private class TypeAliasShortCircuitingCommonizer(cache: CirClassifiersCache) : AbstractStandardCommonizer<CirTypeAlias, CirTypeAlias>() {
+    private lateinit var name: Name
+    private val expandedType = TypeCommonizer(cache)
+    private val visibility = VisibilityCommonizer.lowering()
+
+    override fun commonizationResult(): CirTypeAlias {
+        val expandedType = expandedType.result as CirSimpleType
+
+        return CirTypeAliasFactory.create(
+            annotations = emptyList(),
+            name = name,
+            typeParameters = emptyList(),
+            visibility = visibility.result,
+            underlyingType = expandedType, // pass expanded type as underlying type
+            expandedType = expandedType
+        )
+    }
+
+    val resultOrNull: CirTypeAlias?
+        get() = if (hasResult) commonizationResult() else null
+
+    override fun initialize(first: CirTypeAlias) {
+        name = first.name
+    }
+
+    override fun doCommonizeWith(next: CirTypeAlias) =
+        next.typeParameters.isEmpty() // short-circuiting of TAs with type parameters is too complex case, consider implementing it later
+                && next.expandedType.arguments.isEmpty() // short-circuiting of TAs with type arguments in expanded type is too complex case
+                && expandedType.commonizeWith(next.expandedType)
+                && visibility.commonizeWith(next)
 }
 
 private class TypeAliasLiftingUpCommonizer(cache: CirClassifiersCache) : AbstractStandardCommonizer<CirTypeAlias, CirTypeAlias>() {

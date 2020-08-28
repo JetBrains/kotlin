@@ -17,12 +17,16 @@ class DeclarationCheckersDiagnosticComponent(
 ) : AbstractDiagnosticCollectorComponent(collector) {
     private val checkers = session.checkersComponent.declarationCheckers
 
+    override fun visitFile(file: FirFile, data: CheckerContext) {
+        runCheck { checkers.fileCheckers.check(file, data, it) }
+    }
+
     override fun visitProperty(property: FirProperty, data: CheckerContext) {
         runCheck { checkers.memberDeclarationCheckers.check(property, data, it) }
     }
 
     override fun visitRegularClass(regularClass: FirRegularClass, data: CheckerContext) {
-        runCheck { checkers.memberDeclarationCheckers.check(regularClass, data, it) }
+        runCheck { checkers.regularClassCheckers.check(regularClass, data, it) }
     }
 
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: CheckerContext) {

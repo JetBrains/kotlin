@@ -19,6 +19,7 @@ import kotlinx.dom.isText as newIsText
     message = "This API is moved to another package, use 'kotlinx.dom.isText' instead.",
     replaceWith = ReplaceWith("this.isText", "kotlinx.dom.isText")
 )
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public val Node.isText: Boolean
     inline get() = this.newIsText
 
@@ -30,5 +31,6 @@ public val Node.isText: Boolean
     message = "This API is moved to another package, use 'kotlinx.dom.isElement' instead.",
     replaceWith = ReplaceWith("this.isElement", "kotlinx.dom.isElement")
 )
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public val Node.isElement: Boolean
     inline get() = this.newIsElement

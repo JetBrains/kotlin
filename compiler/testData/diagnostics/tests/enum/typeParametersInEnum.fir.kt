@@ -2,6 +2,6 @@
 
 package bug
 
-public enum class Foo<T> {
+public enum class Foo<<!TYPE_PARAMETERS_IN_ENUM!>T<!>> {
     A()
 }

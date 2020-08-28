@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.deserialization
 
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
@@ -169,7 +169,7 @@ class FirTypeDeserializer(
 
         val valueParameters = arguments.dropLast(2)
 
-        val kind = FunctionClassDescriptor.Kind.SuspendFunction
+        val kind = FunctionClassKind.SuspendFunction
         return ConeClassLikeTypeImpl(
             ConeClassLikeLookupTagImpl(ClassId(kind.packageFqName, kind.numberedClassName(valueParameters.size))),
             (valueParameters + suspendReturnType).toTypedArray(),
@@ -191,7 +191,7 @@ class FirTypeDeserializer(
                 1 -> {
                     val arity = arguments.size - 1
                     if (arity >= 0) {
-                        val kind = FunctionClassDescriptor.Kind.SuspendFunction
+                        val kind = FunctionClassKind.SuspendFunction
                         ConeClassLikeTypeImpl(
                             ConeClassLikeLookupTagImpl(ClassId(kind.packageFqName, kind.numberedClassName(arity))),
                             arguments,

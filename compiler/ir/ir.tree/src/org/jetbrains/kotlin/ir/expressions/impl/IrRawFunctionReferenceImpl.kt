@@ -22,12 +22,11 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrRawFunctionReferenceImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    symbol: IrFunctionSymbol
-) : IrTerminalDeclarationReferenceBase<IrFunctionSymbol>(startOffset, endOffset, type, symbol), IrRawFunctionReference {
-
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val type: IrType,
+    override val symbol: IrFunctionSymbol,
+) : IrRawFunctionReference() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitRawFunctionReference(this, data)
     }

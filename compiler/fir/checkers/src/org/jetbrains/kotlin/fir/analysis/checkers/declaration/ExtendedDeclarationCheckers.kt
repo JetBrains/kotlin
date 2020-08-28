@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.*
 
@@ -20,7 +21,10 @@ object ExtendedDeclarationCheckers : DeclarationCheckers() {
         RedundantSetterParameterTypeChecker
     )
 
+    override val variableAssignmentCfaBasedCheckers: List<AbstractFirPropertyInitializationChecker> = listOf(
+        CanBeValChecker,
+    )
     override val controlFlowAnalyserCheckers: List<FirControlFlowChecker> = listOf(
-        VariableAssignmentChecker
+        UnusedChecker
     )
 }

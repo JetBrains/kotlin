@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -14,7 +13,6 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.references.FirSuperReference
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.inference.*
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
@@ -23,7 +21,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.ClassId
@@ -375,10 +372,11 @@ internal object DiscriminateSynthetics : CheckerStage() {
 
 internal object CheckVisibility : CheckerStage() {
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
+        val visibilityChecker = callInfo.session.visibilityChecker
         val symbol = candidate.symbol
         val declaration = symbol.fir
         if (declaration is FirMemberDeclaration) {
-            if (!checkVisibility(declaration, symbol, sink, candidate)) {
+            if (!checkVisibility(declaration, symbol, sink, candidate, visibilityChecker)) {
                 return
             }
         }
@@ -392,172 +390,23 @@ internal object CheckVisibility : CheckerStage() {
                 if (classSymbol.fir.classKind.isSingleton) {
                     sink.yieldApplicability(CandidateApplicability.HIDDEN)
                 }
-                checkVisibility(classSymbol.fir, classSymbol, sink, candidate)
+                checkVisibility(classSymbol.fir, classSymbol, sink, candidate, visibilityChecker)
             }
         }
     }
-
-    private fun canSeePrivateMemberOf(
-        containingDeclarationOfUseSite: List<FirDeclaration>,
-        ownerId: ClassId,
-        session: FirSession
-    ): Boolean {
-        ownerId.ownerIfCompanion(session)?.let { companionOwnerClassId ->
-            return canSeePrivateMemberOf(containingDeclarationOfUseSite, companionOwnerClassId, session)
-        }
-
-        for (declaration in containingDeclarationOfUseSite) {
-            if (declaration !is FirClass<*>) continue
-            val boundSymbol = declaration.symbol
-            if (boundSymbol.classId.isSame(ownerId)) {
-                return true
-            }
-        }
-
-        return false
-    }
-
-    // 'local' isn't taken into account here
-    private fun ClassId.isSame(other: ClassId): Boolean =
-        packageFqName == other.packageFqName && relativeClassName == other.relativeClassName
-
-    private fun ClassId.ownerIfCompanion(session: FirSession): ClassId? {
-        if (outerClassId == null || isLocal) return null
-        val ownerSymbol = session.firSymbolProvider.getClassLikeSymbolByFqName(this) as? FirRegularClassSymbol
-
-        return outerClassId.takeIf { ownerSymbol?.fir?.isCompanion == true }
-    }
-
-    private fun canSeeProtectedMemberOf(
-        containingUseSiteClass: FirClass<*>,
-        dispatchReceiver: ReceiverValue?,
-        ownerId: ClassId, session: FirSession
-    ): Boolean {
-        dispatchReceiver?.ownerIfCompanion(session)?.let { companionOwnerClassId ->
-            if (containingUseSiteClass.isSubClass(companionOwnerClassId, session)) return true
-        }
-
-        // TODO: Add check for receiver, see org.jetbrains.kotlin.descriptors.Visibility#doesReceiverFitForProtectedVisibility
-        return containingUseSiteClass.isSubClass(ownerId, session)
-    }
-
-    private fun FirClass<*>.isSubClass(ownerId: ClassId, session: FirSession): Boolean {
-        if (classId.isSame(ownerId)) return true
-
-        return lookupSuperTypes(this, lookupInterfaces = true, deep = true, session).any { superType ->
-            (superType as? ConeClassLikeType)?.fullyExpandedType(session)?.lookupTag?.classId?.isSame(ownerId) == true
-        }
-    }
-
-    private fun ReceiverValue?.ownerIfCompanion(session: FirSession): ClassId? =
-        (this?.type as? ConeClassLikeType)?.lookupTag?.classId?.ownerIfCompanion(session)
 
     private suspend fun checkVisibility(
         declaration: FirMemberDeclaration,
         symbol: AbstractFirBasedSymbol<*>,
         sink: CheckerSink,
-        candidate: Candidate
+        candidate: Candidate,
+        visibilityChecker: FirVisibilityChecker
     ): Boolean {
-        val callInfo = candidate.callInfo
-        val useSiteFile = callInfo.containingFile
-        val containingDeclarations = callInfo.containingDeclarations
-        val session = callInfo.session
-        val provider = session.firProvider
-        val ownerId = symbol.getOwnerId()
-        val visible = when (declaration.visibility) {
-            JavaVisibilities.PACKAGE_VISIBILITY -> {
-                symbol.packageFqName() == useSiteFile.packageFqName
-            }
-            Visibilities.INTERNAL -> {
-                declaration.session == callInfo.session
-            }
-            Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS -> {
-                if (declaration.session == callInfo.session) {
-                    if (ownerId == null || declaration is FirConstructor && declaration.isFromSealedClass) {
-                        val candidateFile = when (symbol) {
-                            is FirClassLikeSymbol<*> -> provider.getFirClassifierContainerFileIfAny(symbol)
-                            is FirCallableSymbol<*> -> provider.getFirCallableContainerFile(symbol)
-                            else -> null
-                        }
-                        // Top-level: visible in file
-                        candidateFile == useSiteFile
-                    } else {
-                        // Member: visible inside parent class, including all its member classes
-                        canSeePrivateMemberOf(containingDeclarations, ownerId, session)
-                    }
-                } else {
-                    declaration is FirSimpleFunction && declaration.isAllowedToBeAccessedFromOutside()
-                }
-            }
-            Visibilities.PROTECTED -> {
-                ownerId != null && canSeeProtectedMemberOf(containingDeclarations, candidate.dispatchReceiverValue, ownerId, session)
-            }
-            JavaVisibilities.PROTECTED_AND_PACKAGE, JavaVisibilities.PROTECTED_STATIC_VISIBILITY -> {
-                if (symbol.packageFqName() == useSiteFile.packageFqName) {
-                    true
-                } else {
-                    ownerId != null && canSeeProtectedMemberOf(containingDeclarations, candidate.dispatchReceiverValue, ownerId, session)
-                }
-            }
-            else -> true
-        }
-
-        if (!visible) {
+        if (!visibilityChecker.isVisible(declaration, symbol, candidate)) {
             sink.yieldApplicability(CandidateApplicability.HIDDEN)
             return false
         }
         return true
-    }
-
-    // monitorEnter/monitorExit are the only functions which are accessed "illegally" (see kotlin/util/Synchronized.kt).
-    // Since they are intrinsified in the codegen, FIR should treat it as visible.
-    private fun FirSimpleFunction.isAllowedToBeAccessedFromOutside(): Boolean {
-        if (!isFromLibrary) return false
-        val packageName = symbol.callableId.packageName.asString()
-        val name = name.asString()
-        return packageName == "kotlin.jvm.internal.unsafe" &&
-                (name == "monitorEnter" || name == "monitorExit")
-    }
-
-    private fun AbstractFirBasedSymbol<*>.getOwnerId(): ClassId? {
-        return when (this) {
-            is FirClassLikeSymbol<*> -> {
-                val ownerId = classId.outerClassId
-                if (classId.isLocal) {
-                    ownerId?.asLocal() ?: classId
-                } else {
-                    ownerId
-                }
-            }
-            is FirCallableSymbol<*> -> callableId.classId
-            else -> error("Unsupported owner search for ${fir.javaClass}: ${fir.render()}")
-        }
-    }
-
-    private fun ClassId.asLocal(): ClassId = ClassId(packageFqName, relativeClassName, true)
-
-    private fun canSeeProtectedMemberOf(
-        containingDeclarationOfUseSite: List<FirDeclaration>,
-        dispatchReceiver: ReceiverValue?,
-        ownerId: ClassId, session: FirSession
-    ): Boolean {
-        if (canSeePrivateMemberOf(containingDeclarationOfUseSite, ownerId, session)) return true
-
-        for (containingDeclaration in containingDeclarationOfUseSite) {
-            if (containingDeclaration !is FirClass<*>) continue
-            val boundSymbol = containingDeclaration.symbol
-            if (canSeeProtectedMemberOf(boundSymbol.fir, dispatchReceiver, ownerId, session)) return true
-        }
-
-        return false
-    }
-
-    private fun AbstractFirBasedSymbol<*>.packageFqName(): FqName {
-        return when (this) {
-            is FirClassLikeSymbol<*> -> classId.packageFqName
-            is FirCallableSymbol<*> -> callableId.packageName
-            else -> error("No package fq name for $this")
-        }
     }
 }
 

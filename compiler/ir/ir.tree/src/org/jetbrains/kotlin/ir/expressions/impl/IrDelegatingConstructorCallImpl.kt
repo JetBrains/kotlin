@@ -18,27 +18,22 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrDelegatingConstructorCallImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val type: IrType,
     override val symbol: IrConstructorSymbol,
     typeArgumentsCount: Int,
     valueArgumentsCount: Int
-) :
-    IrCallWithIndexedArgumentsBase(
-        startOffset,
-        endOffset,
-        type,
-        typeArgumentsCount = typeArgumentsCount,
-        valueArgumentsCount = valueArgumentsCount
-    ),
-    IrDelegatingConstructorCall {
+) : IrDelegatingConstructorCall(typeArgumentsCount, valueArgumentsCount) {
+    override val origin: IrStatementOrigin?
+        get() = null
 
     @ObsoleteDescriptorBasedAPI
     constructor(

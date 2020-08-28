@@ -18,3 +18,5 @@ open class B: A<String>() {
             super<A>.foo = value
         }
 }
+
+// DISABLE-ERRORS

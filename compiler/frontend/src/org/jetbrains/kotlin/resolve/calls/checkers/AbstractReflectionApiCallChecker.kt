@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.builtins.KOTLIN_REFLECT_FQ_NAME
+import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 private val ALLOWED_MEMBER_NAMES = setOf(
     "equals", "hashCode", "toString", "invoke", "name"

@@ -5,15 +5,9 @@
 
 package org.jetbrains.kotlin.idea.test
 
-import com.intellij.codeInsight.daemon.impl.EditorTracker
 import com.intellij.ide.startup.impl.StartupManagerImpl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupManager
-
-// FIX ME WHEN BUNCH 192 REMOVED
-fun editorTrackerProjectOpened(project: Project) {
-    EditorTracker.getInstance(project)
-}
 
 // FIX ME WHEN BUNCH 193 REMOVED
 fun runPostStartupActivitiesOnce(project: Project) {

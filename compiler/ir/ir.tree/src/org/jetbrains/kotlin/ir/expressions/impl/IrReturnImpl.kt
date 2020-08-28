@@ -24,15 +24,12 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrReturnImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val type: IrType,
     override val returnTargetSymbol: IrReturnTargetSymbol,
     override var value: IrExpression
-) :
-    IrExpressionBase(startOffset, endOffset, type),
-    IrReturn {
-
+) : IrReturn() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitReturn(this, data)
 

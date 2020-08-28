@@ -12,7 +12,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.fir.highlighter.visitors.FirAfterResolveHighlightingVisitor
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
-import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.analyze
 import org.jetbrains.kotlin.idea.highlighter.AbstractKotlinPsiChecker
 import org.jetbrains.kotlin.idea.highlighter.Diagnostic2Annotation
 import org.jetbrains.kotlin.idea.highlighter.IdeErrorMessages
@@ -29,17 +29,17 @@ class KotlinFirPsiChecker : AbstractKotlinPsiChecker() {
         if (ApplicationManager.getApplication().isDispatchThread) {
             throw ProcessCanceledException()
         }
-        val analysisSession = KtFirAnalysisSession(element)
+        analyze(element) {
+            highlightDiagnostics(element, this, holder)
 
-        highlightDiagnostics(element, analysisSession, holder)
-
-        FirAfterResolveHighlightingVisitor
-            .createListOfVisitors(analysisSession, holder)
-            .forEach(element::accept)
+            FirAfterResolveHighlightingVisitor
+                .createListOfVisitors(this, holder)
+                .forEach(element::accept)
+        }
     }
 
-    private fun highlightDiagnostics(element: KtElement, analysisSession: KtAnalysisSession, holder: AnnotationHolder) {
-        val diagnostics = analysisSession.getDiagnosticsForElement(element)
+    private fun highlightDiagnostics(element: KtElement, analysisSession: KtAnalysisSession, holder: AnnotationHolder) = with(analysisSession) {
+        val diagnostics = element.getDiagnostics()
         if (diagnostics.isEmpty()) return
 
         if (diagnostics.none(Diagnostic::isValid)) return

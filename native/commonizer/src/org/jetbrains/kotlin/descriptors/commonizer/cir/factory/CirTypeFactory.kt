@@ -25,21 +25,22 @@ object CirTypeFactory {
         }
     }
 
-    fun create(source: SimpleType): CirSimpleType {
-        val abbreviation: SimpleType = (source as? AbbreviatedType)?.abbreviation ?: source
-        val classifierDescriptor: ClassifierDescriptor = abbreviation.declarationDescriptor
+    fun create(source: SimpleType, useAbbreviation: Boolean = true): CirSimpleType {
+        @Suppress("NAME_SHADOWING")
+        val source = if (useAbbreviation && source is AbbreviatedType) source.abbreviation else source
+        val classifierDescriptor: ClassifierDescriptor = source.declarationDescriptor
 
         return create(
             classifierId = CirClassifierIdFactory.create(classifierDescriptor),
             visibility = (classifierDescriptor as? ClassifierDescriptorWithTypeParameters)?.visibility ?: Visibilities.UNKNOWN,
-            arguments = abbreviation.arguments.map { projection ->
+            arguments = source.arguments.map { projection ->
                 CirTypeProjection(
                     projectionKind = projection.projectionKind,
                     isStarProjection = projection.isStarProjection,
                     type = create(projection.type)
                 )
             },
-            isMarkedNullable = abbreviation.isMarkedNullable
+            isMarkedNullable = source.isMarkedNullable
         )
     }
 

@@ -6218,6 +6218,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                     runTest("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/inferenceFromReceiver2.kt");
                 }
 
+                @TestMetadata("kt38714.kt")
+                public void testKt38714() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/kt38714.kt");
+                }
+
                 @TestMetadata("localDelegatedProperty.kt")
                 public void testLocalDelegatedProperty() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/localDelegatedProperty.kt");
@@ -11929,6 +11934,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                     runTest("compiler/testData/diagnostics/tests/inference/regressions/kt37650.kt");
                 }
 
+                @TestMetadata("kt38549.kt")
+                public void testKt38549() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/regressions/kt38549.kt");
+                }
+
                 @TestMetadata("kt38691.kt")
                 public void testKt38691() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/regressions/kt38691.kt");
@@ -15816,6 +15826,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
             @TestMetadata("safeCallOnTypeWithNullableUpperBound.kt")
             public void testSafeCallOnTypeWithNullableUpperBound() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/nullableTypes/safeCallOnTypeWithNullableUpperBound.kt");
+            }
+
+            @TestMetadata("safeCallOperators.kt")
+            public void testSafeCallOperators() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/nullableTypes/safeCallOperators.kt");
             }
 
             @TestMetadata("safeCallWithInvoke.kt")
@@ -21725,6 +21740,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
             @TestMetadata("smartCastOnIf.kt")
             public void testSmartCastOnIf() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/smartCastOnIf.kt");
+            }
+
+            @TestMetadata("smartCastOnLastExpressionOfLambdaAfterNothing.kt")
+            public void testSmartCastOnLastExpressionOfLambdaAfterNothing() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/smartCastOnLastExpressionOfLambdaAfterNothing.kt");
             }
 
             @TestMetadata("smartCastOnWhen.kt")

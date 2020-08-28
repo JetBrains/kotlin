@@ -1,6 +1,6 @@
 fun foo() {
-    var x = 0
+    var <!VARIABLE_NEVER_READ!>x<!> = 0
     val y = 0
     val z = 0
-    x = y + z
+    <!ASSIGNED_VALUE_IS_NEVER_READ!>x<!> = y + z
 }

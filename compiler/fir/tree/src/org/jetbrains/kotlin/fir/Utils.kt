@@ -52,6 +52,11 @@ fun <R : FirTypeRef> R.copyWithNewSourceKind(newKind: FirFakeSourceElementKind):
         is FirFunctionTypeRefImpl -> buildFunctionTypeRefCopy(typeRef) {
             source = newSource
         }
+        is FirDynamicTypeRef -> buildDynamicTypeRef {
+            source = newSource
+            isMarkedNullable = typeRef.isMarkedNullable
+            annotations += typeRef.annotations
+        }
         is FirImplicitBuiltinTypeRef -> typeRef.withFakeSource(newKind)
         else -> TODO("Not implemented for ${typeRef::class}")
     } as R

@@ -253,6 +253,7 @@ open class KtLightMethodImpl protected constructor(
 
     override fun getBody() = null
 
+    @Suppress("DEPRECATION")
     override fun findDeepestSuperMethod() = clsDelegate.findDeepestSuperMethod()
 
     override fun findDeepestSuperMethods() = clsDelegate.findDeepestSuperMethods()

@@ -20,7 +20,7 @@ abstract class VisibilityCommonizer : Commonizer<CirHasVisibility, Visibility> {
     private var temp: Visibility? = null
 
     override val result: Visibility
-        get() = temp?.takeIf { it != Visibilities.UNKNOWN } ?: throw IllegalCommonizerStateException()
+        get() = checkState(temp, temp == Visibilities.UNKNOWN)
 
     override fun commonizeWith(next: CirHasVisibility): Boolean {
         if (temp == Visibilities.UNKNOWN)

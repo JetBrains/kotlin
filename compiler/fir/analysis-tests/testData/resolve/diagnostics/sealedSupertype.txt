@@ -1,0 +1,117 @@
+FILE: sealedSupertype.kt
+    public sealed class A : R|kotlin/Any| {
+        private constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+    }
+    public abstract interface C : R|A| {
+    }
+    public abstract interface D : R|C|, R|A| {
+    }
+    public final class E : R|B|, R|A| {
+        public constructor(): R|E| {
+            super<R|A|>()
+        }
+
+    }
+    public sealed class P : R|kotlin/Any| {
+        private constructor(): R|P| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final object H : R|P| {
+            private constructor(): R|P.H| {
+                super<R|P|>()
+            }
+
+        }
+
+        public final class J : R|P| {
+            public constructor(): R|P.J| {
+                super<R|P|>()
+            }
+
+        }
+
+        public final object T : R|kotlin/Any| {
+            private constructor(): R|P.T| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final object V : R|P| {
+                private constructor(): R|P.T.V| {
+                    super<R|P|>()
+                }
+
+            }
+
+            public final class M : R|P| {
+                public constructor(): R|P.T.M| {
+                    super<R|P|>()
+                }
+
+            }
+
+        }
+
+        public final val p: R|P| = object : R|P| {
+            private constructor(): R|<anonymous>| {
+                super<R|P|>()
+            }
+
+        }
+
+            public get(): R|P|
+
+        public final val r: R|<anonymous>| = object : R|P| {
+            private constructor(): R|<anonymous>| {
+                super<R|P|>()
+            }
+
+        }
+
+            public get(): R|<anonymous>|
+
+    }
+    public final class K : R|P| {
+        public constructor(): R|K| {
+            super<R|P|>()
+        }
+
+    }
+    public final object B : R|kotlin/Any| {
+        private constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final class I : R|P| {
+            public constructor(): R|B.I| {
+                super<R|P|>()
+            }
+
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        local final class L : R|P| {
+            public constructor(): R|L| {
+                super<R|P|>()
+            }
+
+        }
+
+        lval a: R|<anonymous>| = object : R|P| {
+            private constructor(): R|<anonymous>| {
+                super<R|P|>()
+            }
+
+        }
+
+    }

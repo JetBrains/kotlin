@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.types
 
+import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.idea.frontend.api.*
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 
-internal interface KtFirType : KtType, ValidityOwnerByValidityToken {
+internal interface KtFirType : KtType, ValidityTokenOwner {
     val coneType: ConeKotlinType
     val typeCheckerContext: ConeTypeCheckerContext
 
@@ -45,12 +46,14 @@ internal interface KtFirType : KtType, ValidityOwnerByValidityToken {
         )
     }
 
+    override val isBuiltInFunctionalType: Boolean
+        get() = coneType.isBuiltinFunctionalType(typeCheckerContext.session)
 }
 
 internal class KtFirClassType(
     coneType: ConeClassLikeTypeImpl,
     typeCheckerContext: ConeTypeCheckerContext,
-    override val token: ValidityOwner,
+    override val token: ValidityToken,
     private val firBuilder: KtSymbolByFirBuilder,
 ) : KtClassType(), KtFirType {
     override val coneType by weakRef(coneType)
@@ -65,6 +68,7 @@ internal class KtFirClassType(
             firBuilder.buildTypeArgument(typeArgument)
         }
     }
+    override val nullability: KtTypeNullability get() = withValidityAssertion { KtTypeNullability.create(coneType.isNullable) }
 
     override fun asString(): String = withValidityAssertion {
         coneType.render() //todo
@@ -74,7 +78,7 @@ internal class KtFirClassType(
 internal class KtFirErrorType(
     coneType: ConeClassErrorType,
     typeCheckerContext: ConeTypeCheckerContext,
-    override val token: ValidityOwner,
+    override val token: ValidityToken,
 ) : KtErrorType(), KtFirType {
     override val coneType by weakRef(coneType)
     override val typeCheckerContext by weakRef(typeCheckerContext)
@@ -85,7 +89,7 @@ internal class KtFirErrorType(
 internal class KtFirTypeParameterType(
     coneType: ConeTypeParameterType,
     typeCheckerContext: ConeTypeCheckerContext,
-    override val token: ValidityOwner,
+    override val token: ValidityToken,
     private val firBuilder: KtSymbolByFirBuilder,
 ) : KtTypeParameterType(), KtFirType {
     override val coneType by weakRef(coneType)
@@ -97,6 +101,8 @@ internal class KtFirTypeParameterType(
             ?: error("Type parameter ${coneType.lookupTag} was not found")
     }
 
+    override val nullability: KtTypeNullability get() = withValidityAssertion { KtTypeNullability.create(coneType.isNullable) }
+
     override fun asString(): String = withValidityAssertion {
         coneType.render() //todo
     }
@@ -105,7 +111,7 @@ internal class KtFirTypeParameterType(
 internal class KtFirFlexibleType(
     coneType: ConeFlexibleType,
     typeCheckerContext: ConeTypeCheckerContext,
-    override val token: ValidityOwner,
+    override val token: ValidityToken,
     private val firBuilder: KtSymbolByFirBuilder,
 ) : KtFlexibleType(), KtFirType {
     override val coneType by weakRef(coneType)
@@ -118,7 +124,7 @@ internal class KtFirFlexibleType(
 internal class KtFirIntersectionType(
     coneType: ConeIntersectionType,
     typeCheckerContext: ConeTypeCheckerContext,
-    override val token: ValidityOwner,
+    override val token: ValidityToken,
     private val firBuilder: KtSymbolByFirBuilder,
 ) : KtIntersectionType(), KtFirType {
     override val coneType by weakRef(coneType)

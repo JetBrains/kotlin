@@ -272,17 +272,6 @@ val IrDeclaration.parentAsClass: IrClass
     get() = parent as? IrClass
         ?: error("Parent of this declaration is not a class: ${render()}")
 
-fun IrClass.isLocalClass(): Boolean {
-    var current: IrDeclarationParent? = this
-    while (current != null && current !is IrPackageFragment) {
-        if (current is IrDeclarationWithVisibility && current.visibility == Visibilities.LOCAL)
-            return true
-        current = (current as? IrDeclaration)?.parent
-    }
-
-    return false
-}
-
 tailrec fun IrElement.getPackageFragment(): IrPackageFragment? {
     if (this is IrPackageFragment) return this
     return when (val parent = (this as? IrDeclaration)?.parent) {
@@ -411,7 +400,7 @@ fun irConstructorCall(
 
 fun irCall(
     call: IrFunctionAccessExpression,
-    newFunction: IrFunction,
+    newFunction: IrSimpleFunction,
     receiversAsArguments: Boolean = false,
     argumentsAsReceivers: Boolean = false,
     newSuperQualifierSymbol: IrClassSymbol? = null
@@ -426,7 +415,7 @@ fun irCall(
 
 fun irCall(
     call: IrFunctionAccessExpression,
-    newSymbol: IrFunctionSymbol,
+    newSymbol: IrSimpleFunctionSymbol,
     receiversAsArguments: Boolean = false,
     argumentsAsReceivers: Boolean = false,
     newSuperQualifierSymbol: IrClassSymbol? = null
@@ -547,3 +536,9 @@ fun IrExpression.isSafeToUseWithoutCopying() =
             this is IrGetEnumValue ||
             this is IrConst<*> ||
             this is IrGetValue && symbol.isBound && symbol.owner.isImmutable
+
+val IrFunction.originalFunction: IrFunction
+    get() = (this as? IrAttributeContainer)?.attributeOwnerId as? IrFunction ?: this
+
+val IrProperty.originalProperty: IrProperty
+    get() = attributeOwnerId as? IrProperty ?: this

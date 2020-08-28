@@ -49,6 +49,9 @@ fun ControlFlowGraphBuilder.createBlockEnterNode(fir: FirBlock): BlockEnterNode 
 
 fun ControlFlowGraphBuilder.createBlockExitNode(fir: FirBlock): BlockExitNode = BlockExitNode(currentGraph, fir, levelCounter, createId())
 
+fun ControlFlowGraphBuilder.createPartOfClassInitializationNode(fir: FirControlFlowGraphOwner): PartOfClassInitializationNode =
+    PartOfClassInitializationNode(currentGraph, fir, levelCounter, createId())
+
 fun ControlFlowGraphBuilder.createPropertyInitializerExitNode(fir: FirProperty): PropertyInitializerExitNode =
     PropertyInitializerExitNode(currentGraph, fir, levelCounter, createId())
 
@@ -64,6 +67,9 @@ fun ControlFlowGraphBuilder.createFunctionExitNode(fir: FirFunction<*>): Functio
     FunctionExitNode(currentGraph, fir, levelCounter, createId()).also {
         currentGraph.exitNode = it
     }
+
+fun ControlFlowGraphBuilder.createLocalFunctionDeclarationNode(fir: FirFunction<*>): LocalFunctionDeclarationNode =
+    LocalFunctionDeclarationNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createBinaryOrEnterNode(fir: FirBinaryLogicExpression): BinaryOrEnterNode =
     BinaryOrEnterNode(currentGraph, fir, levelCounter, createId())

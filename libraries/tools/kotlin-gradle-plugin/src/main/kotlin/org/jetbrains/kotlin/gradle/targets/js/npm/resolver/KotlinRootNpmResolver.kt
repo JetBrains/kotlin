@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.plugins.RootResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
+import org.jetbrains.kotlin.gradle.targets.js.yarn.toVersionString
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 
 /**
@@ -108,9 +110,13 @@ internal class KotlinRootNpmResolver internal constructor(
 
             gradleNodeModules.close()
 
+            val yarn = YarnPlugin.apply(rootProject)
+
             nodeJs.packageManager.prepareRootProject(
                 rootProject,
-                allNpmPackages
+                allNpmPackages,
+                yarn.resolutions
+                    .associate { it.path to it.toVersionString() }
             )
 
             return Installation(

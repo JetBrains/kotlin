@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.fir.symbols.PossiblyFirFakeOverrideSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -22,10 +23,11 @@ open class FirVariableSymbol<D : FirVariable<D>>(override val callableId: Callab
 
 open class FirPropertySymbol(
     callableId: CallableId,
-    val isFakeOverride: Boolean = false,
+    override val isFakeOverride: Boolean = false,
     // Actual for fake override only
-    override val overriddenSymbol: FirPropertySymbol? = null
-) : FirVariableSymbol<FirProperty>(callableId) {
+    override val overriddenSymbol: FirPropertySymbol? = null,
+    override val isIntersectionOverride: Boolean = false,
+) : FirVariableSymbol<FirProperty>(callableId), PossiblyFirFakeOverrideSymbol<FirProperty, FirPropertySymbol> {
     // TODO: should we use this constructor for local variables?
     constructor(name: Name) : this(CallableId(name))
 }

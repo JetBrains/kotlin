@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 fun ConeTypeProjection.createArrayOf(nullable: Boolean = false): ConeKotlinType {
     if (this is ConeKotlinTypeProjection) {
         val type = type.lowerBoundIfFlexible()
-        if (type is ConeClassLikeType) {
+        if (type is ConeClassLikeType && type.nullability != ConeNullability.NULLABLE) {
             val classId = type.lookupTag.classId
             val primitiveArrayId =
                 StandardClassIds.primitiveArrayTypeByElementType[classId] ?: StandardClassIds.unsignedArrayTypeByElementType[classId]

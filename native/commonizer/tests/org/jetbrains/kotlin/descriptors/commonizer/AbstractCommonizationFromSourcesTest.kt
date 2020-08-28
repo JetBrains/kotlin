@@ -16,18 +16,25 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.SourceModuleRoot.Companion.COMMON_TARGET_NAME
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ClassCollector
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.FunctionCollector
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.collectMembers
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.collectNonEmptyPackageMemberScopes
 import org.jetbrains.kotlin.descriptors.commonizer.utils.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.MockBuiltInsProvider
+import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
+import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.test.KotlinTestUtils.*
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import java.io.File
@@ -218,7 +225,7 @@ private class AnalyzedModule<T : Target>(
                 .map { psiFactory.createFile(it.name, doLoadFile(it)) }
                 .toList()
 
-            return CommonResolverForModuleFactory.analyzeFiles(
+            val module = CommonResolverForModuleFactory.analyzeFiles(
                 files = psiFiles,
                 moduleName = Name.special("<$moduleName>"),
                 dependOnBuiltIns = true,
@@ -228,6 +235,10 @@ private class AnalyzedModule<T : Target>(
             ) { content ->
                 environment.createPackagePartProvider(content.moduleContentScope)
             }.moduleDescriptor
+
+            module.accept(PatchingTestDescriptorVisitor, Unit)
+
+            return module
         }
     }
 }
@@ -317,9 +328,51 @@ private class CommonizedCommonDependenciesContainer(
     override val refinesModuleInfos: List<ModuleInfo> get() = listOf(commonModuleInfo)
 }
 
-private fun Map<InputTarget, ModuleDescriptor>.toCommonizationParameters(): Parameters = Parameters().also {
+private object PatchingTestDescriptorVisitor : DeclarationDescriptorVisitorEmptyBodies<Unit, Unit>() {
+    override fun visitModuleDeclaration(descriptor: ModuleDescriptor, data: Unit) {
+        descriptor.collectNonEmptyPackageMemberScopes { _, memberScope ->
+            visitMemberScope(memberScope)
+        }
+    }
+
+    private fun visitMemberScope(memberScope: MemberScope) {
+        memberScope.collectMembers(
+            ClassCollector {
+                it.constructors.forEach(::visitCallableMemberDescriptor)
+                visitMemberScope(it.unsubstitutedMemberScope)
+            },
+            FunctionCollector {
+                visitCallableMemberDescriptor(it)
+            },
+            {
+                true // eat and ignore everything else
+            }
+        )
+    }
+
+    private fun visitCallableMemberDescriptor(callableDescriptor: CallableMemberDescriptor) {
+        val comment = callableDescriptor.findPsi()?.text?.lineSequence()?.firstOrNull()?.takeIf { it.startsWith("//") } ?: return
+        val (key, value) = comment.substringAfter("//").split('=', limit = 2).takeIf { it.size == 2 }?.map { it.trim() } ?: return
+
+        when (key) {
+            "hasStableParameterNames" -> {
+                if (!value.toBoolean()) (callableDescriptor as FunctionDescriptorImpl).setHasStableParameterNames(false)
+            }
+            else -> {
+                // more custom actions may be added here in the future
+            }
+        }
+    }
+}
+
+private fun Map<InputTarget, ModuleDescriptor>.toCommonizationParameters(): Parameters = Parameters().also { parameters ->
     forEach { (target, moduleDescriptor) ->
-        it.addTarget(
+        if (!parameters.extendedLookupForBuiltInsClassifiers) {
+            if (moduleDescriptor.hasSomethingUnderStandardKotlinPackages)
+                parameters.extendedLookupForBuiltInsClassifiers = true
+        }
+
+        parameters.addTarget(
             TargetProvider(
                 target = target,
                 builtInsClass = moduleDescriptor.builtIns::class.java,

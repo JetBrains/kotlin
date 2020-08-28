@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 abstract class IrFunctionCommonImpl(
     override val startOffset: Int,
@@ -32,6 +34,7 @@ abstract class IrFunctionCommonImpl(
     override val isOperator: Boolean,
     override val isInfix: Boolean,
     override val isExpect: Boolean,
+    override val containerSource: DeserializedContainerSource?,
 ) : IrSimpleFunction() {
     override val factory: IrFactory
         get() = IrFactoryImpl
@@ -39,9 +42,8 @@ abstract class IrFunctionCommonImpl(
     override lateinit var parent: IrDeclarationParent
     override var annotations: List<IrConstructorCall> = emptyList()
 
-    @Suppress("DEPRECATION")
     override var returnType: IrType = returnType
-        get() = if (field === org.jetbrains.kotlin.ir.types.impl.IrUninitializedType) {
+        get() = if (field === IrUninitializedType) {
             error("Return type is not initialized")
         } else {
             field
@@ -82,9 +84,11 @@ class IrFunctionImpl(
     isInfix: Boolean,
     isExpect: Boolean,
     override val isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+    containerSource: DeserializedContainerSource? = null,
 ) : IrFunctionCommonImpl(
     startOffset, endOffset, origin, name, visibility, returnType, isInline,
     isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect,
+    containerSource,
 ) {
     @ObsoleteDescriptorBasedAPI
     override val descriptor: FunctionDescriptor
@@ -113,6 +117,7 @@ class IrFakeOverrideFunctionImpl(
 ) : IrFunctionCommonImpl(
     startOffset, endOffset, origin, name, visibility, returnType, isInline,
     isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect,
+    containerSource = null,
 ), IrFakeOverrideFunction {
     override val isFakeOverride: Boolean
         get() = true

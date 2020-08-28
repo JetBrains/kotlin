@@ -34,11 +34,6 @@ class ClassicTypeSystemContextForCS(override val builtIns: KotlinBuiltIns) : Typ
         return this.freshTypeConstructor
     }
 
-    override fun KotlinTypeMarker.mayBeTypeVariable(): Boolean {
-        require(this is KotlinType, this::errorMessage)
-        return this.constructor is TypeVariableTypeConstructor
-    }
-
     override fun createCapturedType(
         constructorProjection: TypeArgumentMarker,
         constructorSupertypes: List<KotlinTypeMarker>,

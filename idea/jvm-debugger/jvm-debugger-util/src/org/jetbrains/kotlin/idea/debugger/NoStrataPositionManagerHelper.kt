@@ -145,7 +145,7 @@ private fun readClassFileImpl(
 }
 
 private fun findClassFileByPaths(packageName: String, className: String, paths: List<String>): File? =
-    paths.mapNotNull { path -> findClassFileByPath(packageName, className, path) }.maxBy { it.lastModified() }
+    paths.mapNotNull { path -> findClassFileByPath(packageName, className, path) }.maxByOrNull { it.lastModified() }
 
 private fun findClassFileByPath(packageName: String, className: String, outputDirPath: String): File? {
     val outDirFile = File(outputDirPath).takeIf(File::exists) ?: return null

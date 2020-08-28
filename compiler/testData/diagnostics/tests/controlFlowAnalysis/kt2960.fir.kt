@@ -21,7 +21,7 @@ val o = object {
 
 val g = { ->
     val x: Int
-    doSmth(x)
+    doSmth(<!UNINITIALIZED_VARIABLE!>x<!>)
 }
 
 class A {

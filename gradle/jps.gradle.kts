@@ -432,13 +432,25 @@ fun NamedDomainObjectContainer<TopLevelArtifact>.jarFromProject(project: Project
 fun RecursiveArtifact.archiveFromProject(project: Project, name: String? = null, configureAction: RecursiveArtifact.() -> Unit = {}) {
     val jarName = name ?: project.name + ".jar"
     archive(jarName) {
-        (project.tasks["jar"] as? Jar)?.let { jar ->
-            val manifestPath = jar.temporaryDir.resolve("MANIFEST.MF")
-            jar.manifest.writeTo(manifestPath)
-            directory("META-INF") {
-                file(manifestPath)
+
+        var foundManifest = false
+        fun extractManifest(jar: Jar) {
+            if (jar.enabled && !foundManifest) {
+                val manifestPath = jar.temporaryDir.resolve("MANIFEST.MF")
+                jar.manifest.writeTo(manifestPath)
+                directory("META-INF") {
+                    file(manifestPath)
+                }
+                foundManifest = true
             }
         }
+
+
+        (project.tasks.findByName("modularJar") as? Jar)?.let(::extractManifest)
+        (project.tasks.findByName("resultJar") as? Jar)?.let(::extractManifest)
+        (project.tasks["jar"] as? Jar)?.let(::extractManifest)
+
+        if (!foundManifest) error("No manifest found for jar: $jarName in ${project.name}")
 
         if (project.sourceSets.names.contains("main")) {
             moduleOutput(moduleName(project.path))

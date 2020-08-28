@@ -15,6 +15,7 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.TestsCompilerError
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.context.SimpleGlobalContext
 import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleCapability
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
@@ -125,7 +127,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
 
             val languageVersionSettings =
                 if (coroutinesPackage.isNotEmpty()) {
-                    val isExperimental = coroutinesPackage == DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString()
+                    val isExperimental = coroutinesPackage == StandardNames.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString()
                     CompilerTestLanguageVersionSettings(
                         DEFAULT_DIAGNOSTIC_TESTS_FEATURES,
                         if (isExperimental) ApiVersion.KOTLIN_1_2 else ApiVersion.KOTLIN_1_3,
@@ -660,7 +662,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             val dependencies = ArrayList<ModuleDescriptorImpl>()
             dependencies.add(module)
             for (dependency in testModule.dependencies) {
-                dependencies.add(modules[dependency]!!)
+                dependencies.add(modules[dependency as TestModule?]!!)
             }
 
             dependencies.add(module.builtIns.builtInsModule)
@@ -758,6 +760,6 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
     companion object {
         private val HASH_SANITIZER = fun(s: String): String = s.replace("@(\\d)+".toRegex(), "")
 
-        private val MODULE_FILES = ModuleDescriptor.Capability<List<KtFile>>("")
+        private val MODULE_FILES = ModuleCapability<List<KtFile>>("")
     }
 }

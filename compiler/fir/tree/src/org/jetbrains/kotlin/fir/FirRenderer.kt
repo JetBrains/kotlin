@@ -5,14 +5,9 @@
 
 package org.jetbrains.kotlin.fir
 
-import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.fir.contracts.FirContractDescription
-import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
-import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
+import org.jetbrains.kotlin.fir.contracts.*
 import org.jetbrains.kotlin.fir.contracts.description.ConeContractRenderer
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
@@ -45,13 +40,19 @@ fun FirElement.render(mode: FirRenderer.RenderMode = FirRenderer.RenderMode.Norm
 class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderMode.Normal) : FirVisitorVoid() {
     companion object {
         private val visibilitiesToRenderEffectiveSet = setOf(
-            Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS, Visibilities.INTERNAL,
-            Visibilities.PROTECTED, Visibilities.PUBLIC, Visibilities.LOCAL
+            Visibilities.Private, Visibilities.PrivateToThis, Visibilities.Internal,
+            Visibilities.Protected, Visibilities.Public, Visibilities.Local
         )
     }
 
-    abstract class RenderMode(val renderLambdaBodies: Boolean, val renderCallArguments: Boolean) {
-        object Normal : RenderMode(renderLambdaBodies = true, renderCallArguments = true)
+    abstract class RenderMode(
+        val renderLambdaBodies: Boolean,
+        val renderCallArguments: Boolean,
+        val renderCallableFqNames: Boolean
+    ) {
+        object Normal : RenderMode(renderLambdaBodies = true, renderCallArguments = true, renderCallableFqNames = false)
+
+        object WithFqNames: RenderMode(renderLambdaBodies = true, renderCallArguments = true, renderCallableFqNames = true)
     }
 
     private val printer = Printer(builder)
@@ -105,6 +106,16 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         }
     }
 
+    private fun List<FirElement>.renderSeparatedWithNewlines() {
+        for ((index, element) in this.withIndex()) {
+            if (index > 0) {
+                print(",")
+                newLine()
+            }
+            element.accept(this@FirRenderer)
+        }
+    }
+
     private fun List<ConeKotlinType>.renderTypesSeparated() {
         for ((index, element) in this.withIndex()) {
             if (index > 0) {
@@ -150,8 +161,20 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
             print(".")
         }
         when (callableDeclaration) {
-            is FirSimpleFunction -> print(callableDeclaration.name)
-            is FirVariable<*> -> print(callableDeclaration.name)
+            is FirSimpleFunction -> {
+                if (!mode.renderCallableFqNames) {
+                    print(callableDeclaration.name)
+                } else {
+                    print(callableDeclaration.symbol.callableId)
+                }
+            }
+            is FirVariable<*> -> {
+                if (!mode.renderCallableFqNames) {
+                    print(callableDeclaration.name)
+                } else {
+                    print(callableDeclaration.symbol.callableId)
+                }
+            }
         }
 
         if (callableDeclaration is FirFunction<*>) {
@@ -171,13 +194,13 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
 
     private fun Visibility.asString(effectiveVisibility: FirEffectiveVisibility? = null): String {
         val itself = when (this) {
-            Visibilities.UNKNOWN -> return "public?"
+            Visibilities.Unknown -> return "public?"
             else -> toString()
         }
         if (effectiveVisibility == null || effectiveVisibility == FirEffectiveVisibility.Default) return itself
         val effectiveAsVisibility = effectiveVisibility.toVisibility()
         if (effectiveAsVisibility == this) return itself
-        if (effectiveAsVisibility == Visibilities.PRIVATE && this == Visibilities.PRIVATE_TO_THIS) return itself
+        if (effectiveAsVisibility == Visibilities.Private && this == Visibilities.PrivateToThis) return itself
         if (this !in visibilitiesToRenderEffectiveSet) return itself
         return itself + "[${effectiveVisibility.name}]"
     }
@@ -856,10 +879,10 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         print("|")
     }
 
-    private val FirResolvedTypeRef.functionTypeKind: FunctionClassDescriptor.Kind?
+    private val FirResolvedTypeRef.functionTypeKind: FunctionClassKind?
         get() {
             val classId = (type as? ConeClassLikeType)?.lookupTag?.classId ?: return null
-            return BuiltInFictitiousFunctionClassFactory.getFunctionalClassKind(
+            return FunctionClassKind.getFunctionalClassKind(
                 classId.shortClassName.asString(), classId.packageFqName
             )
         }
@@ -1165,12 +1188,29 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         visitNamedReference(errorNamedReference)
     }
 
+    override fun visitLegacyRawContractDescription(legacyRawContractDescription: FirLegacyRawContractDescription) {
+        newLine()
+        print("[Contract description]")
+        renderInBraces("<", ">") {
+            legacyRawContractDescription.contractCall.accept(this)
+            newLine()
+        }
+    }
+
     override fun visitRawContractDescription(rawContractDescription: FirRawContractDescription) {
         newLine()
         print("[Contract description]")
         renderInBraces("<", ">") {
-            rawContractDescription.contractCall.accept(this)
+            rawContractDescription.rawEffects.renderSeparatedWithNewlines()
             newLine()
+        }
+    }
+
+    override fun visitEffectDeclaration(effectDeclaration: FirEffectDeclaration) {
+        newLine()
+        print("[Effect declaration]")
+        renderInBraces("<", ">") {
+            println(buildString { effectDeclaration.effect.accept(ConeContractRenderer(this), null) })
         }
     }
 
@@ -1178,9 +1218,11 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         newLine()
         println("[R|Contract description]")
         renderInBraces("<", ">") {
-            for (effect in resolvedContractDescription.effects) {
-                println(buildString { effect.accept(ConeContractRenderer(this), null) })
-            }
+            resolvedContractDescription.effects
+                .map { it.effect }
+                .forEach {
+                    println(buildString { it.accept(ConeContractRenderer(this), null) })
+                }
         }
     }
 

@@ -1,37 +1,37 @@
-val a : Int = 1
-val a : Int = 1
-val a : Int = 1
+<!REDECLARATION!>val a : Int = 1<!>
+<!REDECLARATION!>val a : Int = 1<!>
+<!REDECLARATION!>val a : Int = 1<!>
 
-val b : Int = 1
-val b : Int = 1
-val b : Int = 1
-val b : Int = 1
+<!REDECLARATION!>val b : Int = 1<!>
+<!REDECLARATION!>val b : Int = 1<!>
+<!REDECLARATION!>val b : Int = 1<!>
+<!REDECLARATION!>val b : Int = 1<!>
 
-fun foo() {} // and here too
-fun foo() {} // and here
-fun foo() {} // and here
-fun foo() {} // and here
+<!CONFLICTING_OVERLOADS!>fun foo() {}<!> // and here too
+<!CONFLICTING_OVERLOADS!>fun foo() {}<!> // and here
+<!CONFLICTING_OVERLOADS!>fun foo() {}<!> // and here
+<!CONFLICTING_OVERLOADS!>fun foo() {}<!> // and here
 
-fun bar() {} // and here
-fun bar() {} // and here
-fun bar() {} // and here
+<!CONFLICTING_OVERLOADS!>fun bar() {}<!> // and here
+<!CONFLICTING_OVERLOADS!>fun bar() {}<!> // and here
+<!CONFLICTING_OVERLOADS!>fun bar() {}<!> // and here
 
 class A {
-    val a : Int = 1
-    val a : Int = 1
-    val a : Int = 1
+    <!REDECLARATION!>val a : Int = 1<!>
+    <!REDECLARATION!>val a : Int = 1<!>
+    <!REDECLARATION!>val a : Int = 1<!>
 
-    val b : Int = 1
-    val b : Int = 1
-    val b : Int = 1
-    val b : Int = 1
+    <!REDECLARATION!>val b : Int = 1<!>
+    <!REDECLARATION!>val b : Int = 1<!>
+    <!REDECLARATION!>val b : Int = 1<!>
+    <!REDECLARATION!>val b : Int = 1<!>
 
-    fun foo() {} // and here too
-    fun foo() {} // and here
-    fun foo() {} // and here
-    fun foo() {} // and here
+    <!CONFLICTING_OVERLOADS!>fun foo() {}<!> // and here too
+    <!CONFLICTING_OVERLOADS!>fun foo() {}<!> // and here
+    <!CONFLICTING_OVERLOADS!>fun foo() {}<!> // and here
+    <!CONFLICTING_OVERLOADS!>fun foo() {}<!> // and here
 
-    fun bar() {} // and here
-    fun bar() {} // and here
-    fun bar() {} // and here
+    <!CONFLICTING_OVERLOADS!>fun bar() {}<!> // and here
+    <!CONFLICTING_OVERLOADS!>fun bar() {}<!> // and here
+    <!CONFLICTING_OVERLOADS!>fun bar() {}<!> // and here
 }

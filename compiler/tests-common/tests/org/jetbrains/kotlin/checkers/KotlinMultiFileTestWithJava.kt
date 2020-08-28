@@ -4,15 +4,14 @@
  */
 package org.jetbrains.kotlin.checkers
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.createForTests
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.TestFiles.TestFileFactory
@@ -87,8 +86,8 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
         if (InTextDirectivesUtils.isDirectiveDefined(fileText, "STDLIB_JDK8")) {
             result.add(ForTestCompileRuntime.runtimeJarForTestsWithJdk8())
         }
-        if (DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString() == coroutinesPackage ||
-            fileText.contains(DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString())
+        if (StandardNames.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString() == coroutinesPackage ||
+            fileText.contains(StandardNames.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString())
         ) {
             result.add(ForTestCompileRuntime.coroutinesCompatForTests())
         }
@@ -131,7 +130,7 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
                 directives: Directives
             ): F? {
                 if (fileName.endsWith(".java")) {
-                    writeSourceFile(fileName, text, javaFilesDir!!)
+                    writeSourceFile(fileName, text, javaFilesDir)
                 }
                 if ((fileName.endsWith(".kt") || fileName.endsWith(".kts")) && kotlinSourceRoot != null) {
                     writeSourceFile(fileName, text, kotlinSourceRoot!!)
@@ -147,9 +146,9 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
             }
 
             private fun writeSourceFile(fileName: String, content: String, targetDir: File) {
-                val file = File(targetDir, fileName)
-                KotlinTestUtils.mkdirs(file.parentFile)
-                file.writeText(content, Charsets.UTF_8)
+                val tmpFile = File(targetDir, fileName)
+                KotlinTestUtils.mkdirs(tmpFile.parentFile)
+                tmpFile.writeText(content, Charsets.UTF_8)
             }
         }, coroutinesPackage)
     }

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.name.Name
@@ -117,7 +118,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
 
     private fun irBinaryOp(
         call: IrFunctionAccessExpression,
-        intrinsic: IrFunctionSymbol,
+        intrinsic: IrSimpleFunctionSymbol,
         toInt32: Boolean = false
     ): IrExpression {
         val newCall = irCall(call, intrinsic, receiversAsArguments = true)
@@ -170,7 +171,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
     private fun transformDecrement(call: IrFunctionAccessExpression) =
         transformCrement(call, intrinsics.jsMinus)
 
-    private fun transformCrement(call: IrFunctionAccessExpression, correspondingBinaryOp: IrFunctionSymbol): IrExpression {
+    private fun transformCrement(call: IrFunctionAccessExpression, correspondingBinaryOp: IrSimpleFunctionSymbol): IrExpression {
         val operation = irCall(call, correspondingBinaryOp, receiversAsArguments = true).apply {
             putValueArgument(1, buildInt(1))
         }
@@ -262,7 +263,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
             }
         }
 
-    fun IrFunctionSymbol.call(vararg arguments: IrExpression) =
+    fun IrSimpleFunctionSymbol.call(vararg arguments: IrExpression) =
         JsIrBuilder.buildCall(this, owner.returnType).apply {
             for ((idx, arg) in arguments.withIndex()) {
                 putValueArgument(idx, arg)

@@ -839,6 +839,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/class/ClassShadowing.java");
         }
 
+        @TestMetadata("classToObjectWithAnnotations.java")
+        public void testClassToObjectWithAnnotations() throws Exception {
+            runTest("nj2k/testData/newJ2k/class/classToObjectWithAnnotations.java");
+        }
+
         @TestMetadata("classWithEmptyMethods.java")
         public void testClassWithEmptyMethods() throws Exception {
             runTest("nj2k/testData/newJ2k/class/classWithEmptyMethods.java");
@@ -2722,6 +2727,24 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
     }
 
+    @TestMetadata("nj2k/testData/newJ2k/implicitCasts")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ImplicitCasts extends AbstractNewJavaToKotlinConverterSingleFileTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInImplicitCasts() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("nj2k/testData/newJ2k/implicitCasts"), Pattern.compile("^([^\\.]+)\\.java$"), null, true);
+        }
+
+        @TestMetadata("arithmeticInFunctionCall.java")
+        public void testArithmeticInFunctionCall() throws Exception {
+            runTest("nj2k/testData/newJ2k/implicitCasts/arithmeticInFunctionCall.java");
+        }
+    }
+
     @TestMetadata("nj2k/testData/newJ2k/importStatement")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -3046,6 +3069,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         @TestMetadata("kt-19943.java")
         public void testKt_19943() throws Exception {
             runTest("nj2k/testData/newJ2k/issues/kt-19943.java");
+        }
+
+        @TestMetadata("kt-20421.java")
+        public void testKt_20421() throws Exception {
+            runTest("nj2k/testData/newJ2k/issues/kt-20421.java");
         }
 
         @TestMetadata("kt-21189.java")

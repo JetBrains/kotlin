@@ -9,3 +9,5 @@ interface TraitWithImpl {
 public class TraitWithDelegatedWithImpl(f: TraitWithImpl): TraitWithImpl by f
 
 fun test(twdwi: TraitWithDelegatedWithImpl) = twdwi.foo()
+
+// ERROR: Modifier 'internal' is not applicable inside 'interface'

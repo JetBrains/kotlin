@@ -84,7 +84,8 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
                 .replace("expected version is " + JvmMetadataVersion.INSTANCE, "expected version is $ABI_VERSION$")
                 .replace("expected version is " + JsMetadataVersion.INSTANCE, "expected version is $ABI_VERSION$")
                 .replace("\\", "/")
-                .replace(KotlinCompilerVersion.VERSION, "$VERSION$");
+                .replace(KotlinCompilerVersion.VERSION, "$VERSION$")
+                .replaceAll("log4j:WARN.*\n", "");
 
         return normalizedOutputWithoutExitCode + exitCode + "\n";
     }

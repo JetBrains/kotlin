@@ -35,7 +35,6 @@ interface TowerScopeLevel {
     sealed class Token<out T : AbstractFirBasedSymbol<*>> {
         object Properties : Token<FirVariableSymbol<*>>()
         object Functions : Token<FirFunctionSymbol<*>>()
-        object Constructors : Token<FirConstructorSymbol>()
         object Objects : Token<AbstractFirBasedSymbol<*>>()
     }
 
@@ -79,7 +78,6 @@ class MemberScopeTowerLevel(
 ) : SessionBasedTowerLevel(session) {
     private fun <T : AbstractFirBasedSymbol<*>> processMembers(
         output: TowerScopeLevel.TowerScopeLevelProcessor<T>,
-        forInnerConstructorDelegationCalls: Boolean = false,
         processScopeMembers: FirScope.(processor: (T) -> Unit) -> Unit
     ): ProcessorAction {
         var empty = true
@@ -89,10 +87,8 @@ class MemberScopeTowerLevel(
             if (candidate is FirCallableSymbol<*> &&
                 (implicitExtensionInvokeMode || candidate.hasConsistentExtensionReceiver(extensionReceiver))
             ) {
-                val fir = candidate.fir
-                if (forInnerConstructorDelegationCalls && candidate !is FirConstructorSymbol) {
-                    return@processScopeMembers
-                } else if ((fir as? FirConstructor)?.isInner == false) {
+                val fir = with(bodyResolveComponents) { candidate.phasedFir }
+                if ((fir as? FirConstructor)?.isInner == false) {
                     return@processScopeMembers
                 }
                 val dispatchReceiverValue = NotNullableReceiverValue(dispatchReceiver)
@@ -114,7 +110,7 @@ class MemberScopeTowerLevel(
             }
         }
 
-        if (!forInnerConstructorDelegationCalls && extensionReceiver == null) {
+        if (extensionReceiver == null) {
             val withSynthetic = FirSyntheticPropertiesScope(session, scope)
             withSynthetic.processScopeMembers { symbol ->
                 empty = false
@@ -158,17 +154,6 @@ class MemberScopeTowerLevel(
                     @Suppress("UNCHECKED_CAST")
                     consumer(it as T)
                 }
-            }
-            TowerScopeLevel.Token.Constructors -> processMembers(processor, forInnerConstructorDelegationCalls = true) { consumer ->
-                this.processConstructorsByName(
-                    name, session, bodyResolveComponents,
-                    includeSyntheticConstructors = false,
-                    includeInnerConstructors = true,
-                    processor = {
-                        @Suppress("UNCHECKED_CAST")
-                        consumer(it as T)
-                    }
-                )
             }
         }
     }
@@ -275,40 +260,6 @@ class ScopeTowerLevel(
                     it as T, dispatchReceiverValue = null,
                     implicitExtensionReceiverValue = null
                 )
-            }
-            TowerScopeLevel.Token.Constructors -> {
-                throw AssertionError("Should not be here")
-            }
-        }
-        return if (empty) ProcessorAction.NONE else ProcessorAction.NEXT
-    }
-}
-
-class ConstructorScopeTowerLevel(
-    session: FirSession,
-    val scope: FirScope
-) : SessionBasedTowerLevel(session) {
-    override fun <T : AbstractFirBasedSymbol<*>> processElementsByName(
-        token: TowerScopeLevel.Token<T>,
-        name: Name,
-        processor: TowerScopeLevel.TowerScopeLevelProcessor<T>
-    ): ProcessorAction {
-        var empty = true
-        when (token) {
-            TowerScopeLevel.Token.Constructors -> scope.processDeclaredConstructors { candidate ->
-                // NB: here we cannot resolve inner constructors, because they should have dispatch receiver
-                if (!candidate.fir.isInner) {
-                    empty = false
-                    @Suppress("UNCHECKED_CAST")
-                    processor.consumeCandidate(
-                        candidate as T,
-                        dispatchReceiverValue = null,
-                        implicitExtensionReceiverValue = null
-                    )
-                }
-            }
-            else -> {
-                throw AssertionError("Should not be here: token = $token")
             }
         }
         return if (empty) ProcessorAction.NONE else ProcessorAction.NEXT

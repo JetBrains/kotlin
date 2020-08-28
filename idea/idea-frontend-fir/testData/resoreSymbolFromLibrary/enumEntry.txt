@@ -1,0 +1,11 @@
+// RUNTIME
+
+callable: kotlin/LazyThreadSafetyMode.SYNCHRONIZED
+
+// SYMBOLS:
+KtFirEnumEntrySymbol:
+  containingEnumClassIdIfNonLocal: kotlin/LazyThreadSafetyMode
+  name: SYNCHRONIZED
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/LazyThreadSafetyMode

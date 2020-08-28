@@ -57,6 +57,7 @@ interface BodyResolveComponents : SessionHolder {
     val dataFlowAnalyzer: FirDataFlowAnalyzer<*>
     val integerLiteralTypeApproximator: IntegerLiteralTypeApproximationTransformer
     val integerOperatorsTypeUpdater: IntegerOperatorsTypeUpdater
+    val outerClassManager: FirOuterClassManager
 
     val <D> AbstractFirBasedSymbol<D>.phasedFir: D where D : FirDeclaration, D : FirSymbolOwner<D>
         get() = phasedFir(FirResolvePhase.DECLARATIONS)

@@ -145,12 +145,12 @@ abstract class KlibMetadataSerializer(
 
     protected fun serializeDescriptors(
         fqName: FqName,
-        classifierDescriptors: List<DeclarationDescriptor>,
-        topLevelDescriptors: List<DeclarationDescriptor>
+        allClassifierDescriptors: List<DeclarationDescriptor>,
+        allTopLevelDescriptors: List<DeclarationDescriptor>
     ): List<ProtoBuf.PackageFragment> {
 
-        val classifierDescriptors = classifierDescriptors.filterOutExpects()
-        val topLevelDescriptors = topLevelDescriptors.filterOutExpects()
+        val classifierDescriptors = allClassifierDescriptors.filterOutExpects()
+        val topLevelDescriptors = allTopLevelDescriptors.filterOutExpects()
 
         if (TOP_LEVEL_CLASS_DECLARATION_COUNT_PER_FILE == null &&
             TOP_LEVEL_DECLARATION_COUNT_PER_FILE == null) {

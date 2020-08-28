@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 LineBreakpoint created at smartStepIntoInterfaceImpl.kt:91
 LineBreakpoint created at smartStepIntoInterfaceImpl.kt:96
 LineBreakpoint created at smartStepIntoInterfaceImpl.kt:101

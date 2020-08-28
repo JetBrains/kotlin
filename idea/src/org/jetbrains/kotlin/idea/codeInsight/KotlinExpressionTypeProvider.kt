@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.resolve.frontendService
+import org.jetbrains.kotlin.idea.resolve.getDataFlowValueFactory
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.parents
@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
@@ -113,7 +112,7 @@ class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
 
         val result = expressionType?.let { typeRenderer.renderType(it) } ?: return KotlinBundle.message("type.provider.unknown.type")
 
-        val dataFlowValueFactory = element.getResolutionFacade().frontendService<DataFlowValueFactory>()
+        val dataFlowValueFactory = element.getResolutionFacade().getDataFlowValueFactory()
         val dataFlowValue =
             dataFlowValueFactory.createDataFlowValue(element, expressionType, bindingContext, element.findModuleDescriptor())
         val types = expressionTypeInfo.dataFlowInfo.getStableTypes(dataFlowValue, element.languageVersionSettings)

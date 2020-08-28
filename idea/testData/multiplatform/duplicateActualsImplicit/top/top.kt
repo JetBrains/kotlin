@@ -1,3 +1,5 @@
+// !RENDER_DIAGNOSTICS_MESSAGES
+
 package foo
 
 expect class <!AMBIGUOUS_ACTUALS("Class 'ActualInMiddleCompatibleInBottom'", "bottom, middle")!>ActualInMiddleCompatibleInBottom<!>

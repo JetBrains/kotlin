@@ -17,23 +17,23 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 interface IrVarargElement : IrElement
 
-interface IrVararg : IrExpression {
-    val varargElementType: IrType
+abstract class IrVararg : IrExpression() {
+    abstract val varargElementType: IrType
 
-    val elements: List<IrVarargElement>
+    abstract val elements: List<IrVarargElement>
 
-    fun putElement(i: Int, element: IrVarargElement)
+    abstract fun putElement(i: Int, element: IrVarargElement)
 }
 
-interface IrSpreadElement : IrVarargElement {
-    var expression: IrExpression
+abstract class IrSpreadElement : IrElementBase(), IrVarargElement {
+    abstract var expression: IrExpression
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrElement =
         accept(transformer, data) as IrSpreadElement
 }
-

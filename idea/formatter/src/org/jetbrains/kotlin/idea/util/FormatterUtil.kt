@@ -15,9 +15,7 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
-import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 
 /*
  * ASTBlock.node is nullable, this extension was introduced to minimize changes
@@ -31,19 +29,19 @@ val isDefaultOfficialCodeStyle by lazy { !KotlinCodeStyleSettings.defaultSetting
 
 // Copied from idea-core
 fun PsiElement.getLineCount(): Int {
-    val doc = containingFile?.let { PsiDocumentManager.getInstance(project).getDocument(it) }
-    if (doc != null) {
-        val spaceRange = textRange ?: TextRange.EMPTY_RANGE
+    val spaceRange = textRange ?: TextRange.EMPTY_RANGE
+    return getLineCountByDocument(spaceRange.startOffset, spaceRange.endOffset)
+        ?: StringUtil.getLineBreakCount(text ?: error("Cannot count number of lines")) + 1
+}
 
-        if (spaceRange.endOffset <= doc.textLength && spaceRange.startOffset < spaceRange.endOffset) {
-            val startLine = doc.getLineNumber(spaceRange.startOffset)
-            val endLine = doc.getLineNumber(spaceRange.endOffset)
+fun PsiElement.getLineCountByDocument(startOffset: Int, endOffset: Int): Int? {
+    val doc = containingFile?.let { PsiDocumentManager.getInstance(project).getDocument(it) } ?: return null
+    if (endOffset > doc.textLength || startOffset >= endOffset) return null
 
-            return endLine - startLine + 1
-        }
-    }
+    val startLine = doc.getLineNumber(startOffset)
+    val endLine = doc.getLineNumber(endOffset)
 
-    return StringUtil.getLineBreakCount(text ?: error("Cannot count number of lines")) + 1
+    return endLine - startLine + 1
 }
 
 fun PsiElement.isMultiline() = getLineCount() > 1
@@ -62,7 +60,9 @@ fun PsiElement.leaf(forward: Boolean = true, filter: (PsiElement) -> Boolean): P
 
 val PsiElement.isComma: Boolean get() = PsiUtil.getElementType(this) == KtTokens.COMMA
 
-fun PsiElement.containsLineBreakInThis(globalStartOffset: Int, globalEndOffset: Int): Boolean {
-    val textRange = TextRange.create(globalStartOffset, globalEndOffset).shiftLeft(startOffset)
-    return StringUtil.containsLineBreak(textRange.subSequence(text))
-}
+fun PsiElement.containsLineBreakInChild(globalStartOffset: Int, globalEndOffset: Int): Boolean =
+    getLineCountByDocument(globalStartOffset, globalEndOffset)?.let { it > 1 }
+        ?: firstChild.siblings(forward = true, withItself = true)
+            .dropWhile { it.startOffset < globalStartOffset }
+            .takeWhile { it.endOffset <= globalEndOffset }
+            .any { it.textContains('\n') || it.textContains('\r') }

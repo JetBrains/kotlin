@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.ir.interpreter.state
 
-import org.jetbrains.kotlin.ir.interpreter.getLastOverridden
-import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.interpreter.getLastOverridden
+import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -33,7 +33,7 @@ internal class Primitive<T>(var value: T, val type: IrType) : State {
         // must add property's getter to declaration's list because they are not present in ir class for primitives
         val declarations = irClass.declarations.map { if (it is IrProperty) it.getter else it }
         return declarations.filterIsInstance<IrFunction>()
-            .firstOrNull { it.symbol == owner.symbol || (it is IrSimpleFunction && owner is IrSimpleFunction && it.overrides(owner)) }
+            .firstOrNull { it.symbol == owner.symbol || (it is IrSimpleFunction && it.overrides(owner)) }
             ?.let { if (it.isFakeOverride) it.getLastOverridden() else it }
     }
 

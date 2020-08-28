@@ -23,14 +23,11 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrDoWhileLoopImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    origin: IrStatementOrigin?
-) :
-    IrLoopBase(startOffset, endOffset, type, origin),
-    IrDoWhileLoop {
-
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val type: IrType,
+    override val origin: IrStatementOrigin?,
+) : IrDoWhileLoop() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitDoWhileLoop(this, data)
     }

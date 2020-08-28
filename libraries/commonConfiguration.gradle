@@ -136,6 +136,7 @@ ext.configureLegacyPublishing = { Project project ->
             signing {
                 required { (project.properties["signingRequired"] ?: project.isSonatypeRelease) }
                 sign configurations.archives
+                useGpgCmd()
             }
 
             signArchives {

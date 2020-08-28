@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -51,7 +50,7 @@ class ParcelableIrTransformer(private val context: IrPluginContext, private val 
     private fun IrPluginContext.createIrBuilder(symbol: IrSymbol) =
         DeclarationIrBuilder(this, symbol, symbol.owner.startOffset, symbol.owner.endOffset)
 
-    private val symbolMap = mutableMapOf<IrFunctionSymbol, IrFunctionSymbol>()
+    private val symbolMap = mutableMapOf<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>()
 
     private val irFactory: IrFactory = IrFactoryImpl
 
@@ -91,7 +90,7 @@ class ParcelableIrTransformer(private val context: IrPluginContext, private val 
             override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
                 // Remap overridden symbols, otherwise the code might break in BridgeLowering
                 declaration.overriddenSymbols = declaration.overriddenSymbols.map { symbol ->
-                    (symbolMap[symbol] ?: symbol) as IrSimpleFunctionSymbol
+                    symbolMap[symbol] ?: symbol
                 }
                 return super.visitSimpleFunction(declaration)
             }

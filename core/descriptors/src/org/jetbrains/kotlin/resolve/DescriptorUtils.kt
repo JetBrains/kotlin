@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.resolve.descriptorUtil
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.StandardNames.ENUM_VALUE_OF
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.ClassKind.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
@@ -200,14 +202,14 @@ fun ValueParameterDescriptor.declaresOrInheritsDefaultValue(): Boolean {
 }
 
 fun Annotated.isRepeatableAnnotation(): Boolean =
-    annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.repeatable) != null
+    annotations.findAnnotation(StandardNames.FqNames.repeatable) != null
 
 fun Annotated.isDocumentedAnnotation(): Boolean =
-    annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.mustBeDocumented) != null
+    annotations.findAnnotation(StandardNames.FqNames.mustBeDocumented) != null
 
 fun Annotated.getAnnotationRetention(): KotlinRetention? {
     val retentionArgumentValue =
-        annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.retention)?.allValueArguments?.get(RETENTION_PARAMETER_NAME)
+        annotations.findAnnotation(StandardNames.FqNames.retention)?.allValueArguments?.get(RETENTION_PARAMETER_NAME)
                 as? EnumValue ?: return null
 
     val retentionArgumentValueName = retentionArgumentValue.enumEntryName.asString()
@@ -344,7 +346,7 @@ private fun ClassDescriptor.getAllSuperClassesTypesIncludeItself(): List<KotlinT
 fun FunctionDescriptor.isEnumValueOfMethod(): Boolean {
     val methodTypeParameters = valueParameters
     val nullableString = builtIns.stringType.makeNullable()
-    return DescriptorUtils.ENUM_VALUE_OF == name
+    return ENUM_VALUE_OF == name
             && methodTypeParameters.size == 1
             && KotlinTypeChecker.DEFAULT.isSubtypeOf(methodTypeParameters[0].type, nullableString)
 }
@@ -403,7 +405,7 @@ fun computeSealedSubclasses(sealedClass: ClassDescriptor): Collection<ClassDescr
 
 fun DeclarationDescriptor.isPublishedApi(): Boolean {
     val descriptor = if (this is CallableMemberDescriptor) DescriptorUtils.getDirectMember(this) else this
-    return descriptor.annotations.hasAnnotation(KotlinBuiltIns.FQ_NAMES.publishedApi)
+    return descriptor.annotations.hasAnnotation(StandardNames.FqNames.publishedApi)
 }
 
 fun DeclarationDescriptor.isAncestorOf(descriptor: DeclarationDescriptor, strict: Boolean): Boolean =
@@ -435,8 +437,6 @@ fun MemberDescriptor.isEffectivelyExternal(): Boolean {
     val containingClass = getContainingClass(this)
     return containingClass != null && containingClass.isEffectivelyExternal()
 }
-
-fun DeclarationDescriptor.isEffectivelyExternal() = this is MemberDescriptor && this.isEffectivelyExternal()
 
 fun isParameterOfAnnotation(parameterDescriptor: ParameterDescriptor): Boolean =
     parameterDescriptor.containingDeclaration.isAnnotationConstructor()

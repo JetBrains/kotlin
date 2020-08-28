@@ -5,37 +5,68 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.symbols
 
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-abstract class KtVariableLikeSymbol : KtTypedSymbol, KtNamedSymbol, KtSymbolWithKind
-
-abstract class KtEnumEntrySymbol : KtVariableLikeSymbol() {
-    final override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
+sealed class KtVariableLikeSymbol : KtCallableSymbol(), KtTypedSymbol, KtNamedSymbol, KtSymbolWithKind {
+    abstract override fun createPointer(): KtSymbolPointer<KtVariableLikeSymbol>
 }
 
-abstract class KtParameterSymbol : KtVariableLikeSymbol()
+abstract class KtEnumEntrySymbol : KtVariableLikeSymbol(), KtSymbolWithKind {
+    final override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
+    abstract val containingEnumClassIdIfNonLocal: ClassId?
 
-abstract class KtVariableSymbol : KtVariableLikeSymbol() {
+    abstract override fun createPointer(): KtSymbolPointer<KtEnumEntrySymbol>
+}
+
+sealed class KtParameterSymbol : KtVariableLikeSymbol() {
+    abstract val hasDefaultValue: Boolean
+
+    abstract override fun createPointer(): KtSymbolPointer<KtParameterSymbol>
+}
+
+sealed class KtVariableSymbol : KtVariableLikeSymbol() {
     abstract val isVal: Boolean
+    abstract override fun createPointer(): KtSymbolPointer<KtVariableSymbol>
 }
 
-abstract class KtFieldSymbol : KtVariableSymbol(), KtSymbolWithModality<KtCommonSymbolModality> {
+abstract class KtJavaFieldSymbol : KtVariableSymbol(), KtSymbolWithModality<KtCommonSymbolModality>, KtSymbolWithKind {
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
+
+    abstract val callableIdIfNonLocal: FqName?
+
+    abstract override fun createPointer(): KtSymbolPointer<KtJavaFieldSymbol>
 }
 
 // TODO getters & setters
-abstract class KtPropertySymbol : KtVariableSymbol(), KtPossibleExtensionSymbol, KtSymbolWithModality<KtCommonSymbolModality> {
-    abstract val fqName: FqName
+abstract class KtPropertySymbol : KtVariableSymbol(),
+    KtPossibleExtensionSymbol,
+    KtSymbolWithModality<KtCommonSymbolModality>,
+    KtSymbolWithKind {
+
+    abstract val callableIdIfNonLocal: FqName?
+
+    abstract override fun createPointer(): KtSymbolPointer<KtPropertySymbol>
 }
 
-abstract class KtLocalVariableSymbol : KtVariableSymbol()
+abstract class KtLocalVariableSymbol : KtVariableSymbol(), KtSymbolWithKind {
+    abstract override fun createPointer(): KtSymbolPointer<KtLocalVariableSymbol>
+}
 
-abstract class KtFunctionParameterSymbol : KtParameterSymbol() {
+abstract class KtFunctionParameterSymbol : KtParameterSymbol(), KtSymbolWithKind {
     abstract val isVararg: Boolean
+
+    override val symbolKind: KtSymbolKind get() = KtSymbolKind.NON_PROPERTY_PARAMETER
+
+    abstract override fun createPointer(): KtSymbolPointer<KtFunctionParameterSymbol>
 }
 
-abstract class KtConstructorParameterSymbol : KtParameterSymbol(), KtNamedSymbol {
+abstract class KtConstructorParameterSymbol : KtParameterSymbol(), KtNamedSymbol, KtSymbolWithKind {
     abstract val constructorParameterKind: KtConstructorParameterSymbolKind
+
+    abstract override fun createPointer(): KtSymbolPointer<KtConstructorParameterSymbol>
 }
 
 enum class KtConstructorParameterSymbolKind {

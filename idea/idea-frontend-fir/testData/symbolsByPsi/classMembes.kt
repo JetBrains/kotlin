@@ -6,7 +6,7 @@ class A {
 // SYMBOLS:
 /*
 KtFirPropertySymbol:
-  fqName: A.a
+  callableIdIfNonLocal: A.a
   isExtension: false
   isVal: true
   modality: FINAL
@@ -17,20 +17,21 @@ KtFirPropertySymbol:
   type: kotlin/Int
 
 KtFirFunctionSymbol:
-  fqName: A.x
+  callableIdIfNonLocal: A.x
   isExtension: false
   isOperator: false
   isSuspend: false
   modality: FINAL
   name: x
   origin: SOURCE
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
   valueParameters: []
 
 KtFirClassOrObjectSymbol:
-  classId: A
+  classIdIfNonLocal: A
   classKind: CLASS
   modality: FINAL
   name: A

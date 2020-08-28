@@ -5,31 +5,27 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
-import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirFakeSourceElement
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirMemberDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.implicitModality
+import org.jetbrains.kotlin.fir.analysis.checkers.toToken
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_MODALITY_MODIFIER
+import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.toFirPsiSourceElement
-import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
-import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.psiUtil.modalityModifier
+import org.jetbrains.kotlin.fir.declarations.modality
 
 object RedundantModalityModifierChecker : FirMemberDeclarationChecker() {
     override fun check(declaration: FirMemberDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration.source is FirFakeSourceElement<*>) return
+        if (declaration.source?.kind is FirFakeSourceElementKind) return
 
-        val modalityModifier = (declaration.psi as? KtDeclaration)?.modalityModifier() ?: return
-        val modality = (modalityModifier as? LeafPsiElement)?.elementType as? KtModifierKeywordToken ?: return
+        val modality = declaration.modality ?: return
         if (
-            modality == KtTokens.FINAL_KEYWORD
+            modality == Modality.FINAL
             && (context.containingDeclarations.last() as? FirClass<*>)?.classKind == ClassKind.INTERFACE
         ) return
 
@@ -37,6 +33,7 @@ object RedundantModalityModifierChecker : FirMemberDeclarationChecker() {
 
         if (modality != implicitModality) return
 
-        reporter.report(modalityModifier.toFirPsiSourceElement(), REDUNDANT_MODALITY_MODIFIER)
+        val modalityModifierSource = declaration.source?.getChild(modality.toToken(), depth = 2)
+        reporter.report(modalityModifierSource, REDUNDANT_MODALITY_MODIFIER)
     }
 }

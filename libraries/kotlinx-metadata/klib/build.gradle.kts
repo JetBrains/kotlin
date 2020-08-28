@@ -25,8 +25,7 @@ configurations.getByName("testCompile").extendsFrom(shadows)
 dependencies {
     compile(kotlinStdlib())
     shadows(project(":kotlinx-metadata"))
-    // TODO: Get rid of this heavyweight dependency.
-    shadows(project(":core:descriptors"))
+    shadows(project(":core:compiler.common"))
     shadows(project(":core:metadata"))
     shadows(project(":core:deserialization"))
     shadows(project(":compiler:serialization"))
@@ -41,7 +40,7 @@ if (deployVersion != null) {
 
 noDefaultJar()
 
-val shadowJar = tasks.register<ShadowJar>("shadowJar") {
+runtimeJar(tasks.register<ShadowJar>("shadowJar")) {
     callGroovy("manifestAttributes", manifest, project)
     manifest.attributes["Implementation-Version"] = version
 
@@ -50,8 +49,6 @@ val shadowJar = tasks.register<ShadowJar>("shadowJar") {
     configurations = listOf(shadows)
     relocate("org.jetbrains.kotlin", "kotlinx.metadata.internal")
 }
-
-runtimeJarArtifactBy(shadowJar, shadowJar)
 
 sourcesJar {
     for (dependency in shadows.dependencies) {

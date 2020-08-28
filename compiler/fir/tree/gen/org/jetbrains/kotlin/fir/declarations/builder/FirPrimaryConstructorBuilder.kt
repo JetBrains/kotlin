@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
@@ -72,7 +71,7 @@ class FirPrimaryConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotatio
 
 
     @Deprecated("Modification of 'controlFlowGraphReference' has no impact for FirPrimaryConstructorBuilder", level = DeprecationLevel.HIDDEN)
-    override var controlFlowGraphReference: FirControlFlowGraphReference
+    override var controlFlowGraphReference: FirControlFlowGraphReference?
         get() = throw IllegalStateException()
         set(value) {
             throw IllegalStateException()

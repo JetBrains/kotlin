@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.fir.java.declarations
 
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.Visibility
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
@@ -84,7 +84,7 @@ class FirJavaMethodBuilder : FirSimpleFunctionBuilder() {
     @Deprecated("Modification of 'origin' has no impact for FirJavaFunctionBuilder", level = DeprecationLevel.HIDDEN)
     override var origin: FirDeclarationOrigin
         get() = throw IllegalStateException()
-        set(value) {
+        set(@Suppress("UNUSED_PARAMETER") value) {
             throw IllegalStateException()
         }
 

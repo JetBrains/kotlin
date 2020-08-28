@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.IrArrayBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.irArray
 import org.jetbrains.kotlin.backend.jvm.ir.irArrayOf
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -106,7 +106,7 @@ private class VarargLowering(val context: JvmBackendContext) : FileLoweringPass,
 
     private val IrFunctionSymbol.isEmptyArray: Boolean
         get() = owner.name.asString() == "emptyArray" &&
-                (owner.parent as? IrPackageFragment)?.fqName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
+                (owner.parent as? IrPackageFragment)?.fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
 
     companion object {
         private val PRIMITIVE_ARRAY_OF_NAMES: Set<String> =
@@ -122,7 +122,7 @@ private class VarargLowering(val context: JvmBackendContext) : FileLoweringPass,
                     is IrPackageFragment -> directParent
                     else -> return false
                 }
-                return parent.fqName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME &&
+                return parent.fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME &&
                         name.asString().let { it in PRIMITIVE_ARRAY_OF_NAMES || it == ARRAY_OF_NAME } &&
                         extensionReceiverParameter == null &&
                         dispatchReceiverParameter == null &&

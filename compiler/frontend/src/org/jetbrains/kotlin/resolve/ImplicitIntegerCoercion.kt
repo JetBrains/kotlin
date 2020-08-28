@@ -5,15 +5,12 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.ParameterDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
 
 object ImplicitIntegerCoercion {
 
-    val MODULE_CAPABILITY = ModuleDescriptor.Capability<Boolean>("ImplicitIntegerCoercion")
+    val MODULE_CAPABILITY = ModuleCapability<Boolean>("ImplicitIntegerCoercion")
 
     fun isEnabledForParameter(descriptor: ParameterDescriptor): Boolean = isEnabledFor(descriptor)
 

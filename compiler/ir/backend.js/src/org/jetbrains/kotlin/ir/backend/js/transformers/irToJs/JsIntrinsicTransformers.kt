@@ -187,7 +187,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             }
 
             add(intrinsics.jsBoxIntrinsic) { call, context ->
-                val arg = translateCallArguments(call as IrCall, context).single()
+                val arg = translateCallArguments(call, context).single()
                 val inlineClass = call.getTypeArgument(0)!!.getInlinedClass()!!
                 val constructor = inlineClass.declarations.filterIsInstance<IrConstructor>().single { it.isPrimary }
                 JsNew(context.getNameForConstructor(constructor).makeRef(), listOf(arg))

@@ -10,7 +10,7 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_CALL_RESULT_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.Variance
@@ -51,40 +50,6 @@ class JvmSymbols(
     private val javaLangPackage: IrPackageFragment = createPackage(FqName("java.lang"))
 
     private val generateOptimizedCallableReferenceSuperClasses = context.state.generateOptimizedCallableReferenceSuperClasses
-
-    private val nullPointerExceptionClass: IrClassSymbol =
-        createClass(FqName("java.lang.NullPointerException")) { klass ->
-            klass.addConstructor().apply {
-                addValueParameter("message", irBuiltIns.stringType)
-            }
-        }
-
-    override val ThrowNullPointerException: IrFunctionSymbol =
-        nullPointerExceptionClass.constructors.single()
-
-    override val ThrowNoWhenBranchMatchedException: IrSimpleFunctionSymbol
-        get() = error("Unused in JVM IR")
-
-    private val typeCastExceptionClass: IrClassSymbol =
-        createClass(FqName("kotlin.TypeCastException")) { klass ->
-            klass.addConstructor().apply {
-                addValueParameter("message", irBuiltIns.stringType)
-            }
-        }
-
-    override val ThrowTypeCastException: IrFunctionSymbol =
-        typeCastExceptionClass.constructors.single()
-
-    private val unsupportedOperationExceptionClass: IrClassSymbol =
-        createClass(FqName("java.lang.UnsupportedOperationException")) { klass ->
-            klass.addConstructor().apply {
-                addValueParameter("message", irBuiltIns.stringType.makeNullable())
-            }
-        }
-
-    val ThrowUnsupportOperationExceptionClass: IrFunctionSymbol =
-        unsupportedOperationExceptionClass.constructors.single()
-
 
     private fun createPackage(fqName: FqName): IrPackageFragment =
         IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(context.state.module, fqName)
@@ -119,9 +84,19 @@ class JvmSymbols(
     private val intrinsicsClass: IrClassSymbol = createClass(
         JvmClassName.byInternalName(IrIntrinsicMethods.INTRINSICS_CLASS_NAME).fqNameForTopLevelClassMaybeWithDollars
     ) { klass ->
+        klass.addFunction("throwNullPointerException", irBuiltIns.nothingType, isStatic = true).apply {
+            addValueParameter("message", irBuiltIns.stringType)
+        }
+        klass.addFunction("throwTypeCastException", irBuiltIns.nothingType, isStatic = true).apply {
+            addValueParameter("message", irBuiltIns.stringType)
+        }
+        klass.addFunction("throwUnsupportedOperationException", irBuiltIns.nothingType, isStatic = true).apply {
+            addValueParameter("message", irBuiltIns.stringType)
+        }
         klass.addFunction("throwUninitializedPropertyAccessException", irBuiltIns.unitType, isStatic = true).apply {
             addValueParameter("propertyName", irBuiltIns.stringType)
         }
+        klass.addFunction("throwKotlinNothingValueException", irBuiltIns.nothingType, isStatic = true)
         klass.addFunction("checkExpressionValueIsNotNull", irBuiltIns.unitType, isStatic = true).apply {
             addValueParameter("value", irBuiltIns.anyNType)
             addValueParameter("expression", irBuiltIns.stringType)
@@ -159,8 +134,23 @@ class JvmSymbols(
     val throwNpe: IrSimpleFunctionSymbol =
         intrinsicsClass.functions.single { it.owner.name.asString() == "throwNpe" }
 
-    override val ThrowUninitializedPropertyAccessException: IrSimpleFunctionSymbol =
+    override val throwNullPointerException: IrSimpleFunctionSymbol =
+        intrinsicsClass.functions.single { it.owner.name.asString() == "throwNullPointerException" }
+
+    override val throwNoWhenBranchMatchedException: IrSimpleFunctionSymbol
+        get() = error("Unused in JVM IR")
+
+    override val throwTypeCastException: IrSimpleFunctionSymbol =
+        intrinsicsClass.functions.single { it.owner.name.asString() == "throwTypeCastException" }
+
+    val throwUnsupportedOperationException: IrSimpleFunctionSymbol =
+        intrinsicsClass.functions.single { it.owner.name.asString() == "throwUnsupportedOperationException" }
+
+    override val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol =
         intrinsicsClass.functions.single { it.owner.name.asString() == "throwUninitializedPropertyAccessException" }
+
+    override val throwKotlinNothingValueException: IrSimpleFunctionSymbol =
+        intrinsicsClass.functions.single { it.owner.name.asString() == "throwKotlinNothingValueException" }
 
     val intrinsicStringPlus: IrFunctionSymbol =
         intrinsicsClass.functions.single { it.owner.name.asString() == "stringPlus" }
@@ -210,7 +200,7 @@ class JvmSymbols(
         get() = TODO("not implemented")
 
     private val kDeclarationContainer: IrClassSymbol =
-        createClass(KotlinBuiltIns.FQ_NAMES.kDeclarationContainer.toSafe(), ClassKind.INTERFACE, Modality.ABSTRACT)
+        createClass(StandardNames.FqNames.kDeclarationContainer.toSafe(), ClassKind.INTERFACE, Modality.ABSTRACT)
 
     val javaLangClass: IrClassSymbol =
         createClass(FqName("java.lang.Class")) { klass ->
@@ -235,12 +225,12 @@ class JvmSymbols(
     val assertionErrorConstructor = javaLangAssertionError.constructors.single()
 
     val continuationClass: IrClassSymbol =
-        createClass(DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME_RELEASE, ClassKind.INTERFACE) { klass ->
+        createClass(StandardNames.CONTINUATION_INTERFACE_FQ_NAME_RELEASE, ClassKind.INTERFACE) { klass ->
             klass.addTypeParameter("T", irBuiltIns.anyNType, Variance.IN_VARIANCE)
         }
 
     private val resultClassStub: IrClassSymbol =
-        createClass(DescriptorUtils.RESULT_FQ_NAME, classIsInline = true) { klass ->
+        createClass(StandardNames.RESULT_FQ_NAME, classIsInline = true) { klass ->
             klass.addTypeParameter("T", irBuiltIns.anyNType, Variance.OUT_VARIANCE)
             klass.addConstructor { isPrimary = true }.apply {
                 addValueParameter("value", irBuiltIns.anyNType)
@@ -444,7 +434,7 @@ class JvmSymbols(
                 }
 
                 val receiverFieldName = Name.identifier("receiver")
-                klass.addProperty {
+                klass.addProperty() {
                     name = receiverFieldName
                 }.apply {
                     backingField = irFactory.buildField {
@@ -570,7 +560,7 @@ class JvmSymbols(
         collectionToArrayClass.functions.single { it.owner.name.asString() == "toArray" && it.owner.valueParameters.size == 2 }
 
     val kClassJava: IrPropertySymbol =
-        irFactory.buildProperty {
+        irFactory.buildProperty() {
             name = Name.identifier("java")
         }.apply {
             parent = kotlinJvmPackage
@@ -744,15 +734,6 @@ class JvmSymbols(
 
     val runSuspendFunction: IrSimpleFunctionSymbol =
         kotlinCoroutinesJvmInternalRunSuspendKt.functionByName("runSuspend")
-
-    override val ThrowKotlinNothingValueException: IrSimpleFunctionSymbol =
-        irFactory.buildFun {
-            name = Name.identifier("ThrowKotlinNothingValueException")
-            origin = IrDeclarationOrigin.IR_BUILTINS_STUB
-            returnType = irBuiltIns.nothingType
-        }.apply {
-            parent = kotlinJvmInternalPackage
-        }.symbol
 }
 
 private fun IrClassSymbol.functionByName(name: String): IrSimpleFunctionSymbol =

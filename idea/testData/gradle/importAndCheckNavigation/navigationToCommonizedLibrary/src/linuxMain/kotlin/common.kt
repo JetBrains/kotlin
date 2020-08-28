@@ -1,13 +1,12 @@
 package common
 
-import kotlinx.cinterop.CPointer
-import platform.posix.FILE
-import platform.posix.fopen
-import platform.posix.fprintf
-import platform.zlib.uInt
+import kotlinx.cinterop.*
+import platform.posix.*
 
 fun test() {
-    val file: CPointer< /* NAVIGATION-TARGET:expect class FILE */ FILE> = /* NAVIGATION-TARGET:external expect fun fopen */ fopen("file.txt", "r") ?: return
-    fun f1(): /* NAVIGATION-TARGET:expect class uInt */ uInt = TODO()
+    val file: CPointer< /* NAVIGATION-TARGET:typealias FILE = */ FILE> = /* NAVIGATION-TARGET:external expect fun fopen */ fopen("file.txt", "r") ?: return
     /* NAVIGATION-TARGET:external expect fun fprintf */ fprintf(null, "")
+    memScoped {
+        val addr: CPointerVarOf<CPointer< /* NAVIGATION-TARGET:final expect class sockaddr_in */ sockaddr_in>> = allocPointerTo()
+    }
 }

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.builtins.replaceReturnType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -204,6 +205,7 @@ fun KotlinType.isAbstract(): Boolean {
  * NOTE: this is a very shaky implementation of [PsiType] to [KotlinType] conversion,
  * produced types are fakes and are usable only for code generation. Please be careful using this method.
  */
+@OptIn(FrontendInternals::class)
 fun PsiType.resolveToKotlinType(resolutionFacade: ResolutionFacade): KotlinType {
     if (this == PsiType.NULL) {
         return resolutionFacade.moduleDescriptor.builtIns.nullableAnyType

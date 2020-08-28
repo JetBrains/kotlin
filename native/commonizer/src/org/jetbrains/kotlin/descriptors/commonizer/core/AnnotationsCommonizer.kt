@@ -61,7 +61,7 @@ private class DeprecatedAnnotationCommonizer : Commonizer<CirAnnotation, CirAnno
 
     override val result: CirAnnotation
         get() {
-            val level: DeprecationLevel = level ?: throw IllegalCommonizerStateException()
+            val level: DeprecationLevel = level ?: failInEmptyState()
             val messageValue: StringValue = message.toDeprecationMessageValue()
 
             val constantValueArguments: Map<Name, ConstantValue<*>> = if (level == WARNING) {

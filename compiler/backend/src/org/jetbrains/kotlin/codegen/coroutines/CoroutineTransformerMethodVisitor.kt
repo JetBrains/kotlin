@@ -64,7 +64,9 @@ class CoroutineTransformerMethodVisitor(
     // JVM_IR backend generates $completion, while old backend does not
     private val putContinuationParameterToLvt: Boolean = true,
     // New SourceInterpreter-less analyser can be somewhat unstable, disable it
-    private val useOldSpilledVarTypeAnalysis: Boolean = false
+    private val useOldSpilledVarTypeAnalysis: Boolean = false,
+    // Parameters of suspend lambda are put to the same fields as spilled variables
+    private val initialVarsCountByType: Map<Type, Int> = emptyMap()
 ) : TransformationMethodVisitor(delegate, access, name, desc, signature, exceptions) {
 
     private val classBuilderForCoroutineState: ClassBuilder by lazy(obtainClassBuilderForCoroutineState)
@@ -200,7 +202,6 @@ class CoroutineTransformerMethodVisitor(
     // In this case the variables are uninitialized, initialize them
     private fun initializeFakeInlinerVariables(methodNode: MethodNode, stateLabels: List<LabelNode>) {
         for (stateLabel in stateLabels) {
-            val unitializedFakeInlinerVariables = arrayListOf<LocalVariableNode>()
             for (record in methodNode.localVariables) {
                 if (isFakeLocalVariableForInline(record.name) &&
                     methodNode.instructions.indexOf(record.start) < methodNode.instructions.indexOf(stateLabel) &&
@@ -597,6 +598,14 @@ class CoroutineTransformerMethodVisitor(
         fun AbstractInsnNode.index() = instructions.indexOf(this)
 
         val maxVarsCountByType = mutableMapOf<Type, Int>()
+        var initialSpilledVariablesCount = 0
+        for ((type, count) in initialVarsCountByType) {
+            if (type == AsmTypes.OBJECT_TYPE) {
+                initialSpilledVariablesCount = count
+            }
+            maxVarsCountByType[type] = count
+        }
+
         val livenessFrames = analyzeLiveness(methodNode)
 
         // References shall be cleaned up after uspill (during spill in next suspension point) to prevent memory leaks,
@@ -703,7 +712,8 @@ class CoroutineTransformerMethodVisitor(
             val currentSpilledReferencesCount = countVariablesToSpill(suspensionPointIndex)
             val preds = predSuspensionPoints[suspensionPoint]
             val predSpilledReferencesCount =
-                if (preds.isNullOrEmpty()) 0 else preds.maxOf { countVariablesToSpill(suspensionPoints.indexOf(it)) }
+                if (preds.isNullOrEmpty()) initialSpilledVariablesCount
+                else preds.maxOf { countVariablesToSpill(suspensionPoints.indexOf(it)) }
             referencesToCleanBySuspensionPointIndex += currentSpilledReferencesCount to predSpilledReferencesCount
         }
 
@@ -779,7 +789,7 @@ class CoroutineTransformerMethodVisitor(
 
         for (entry in maxVarsCountByType) {
             val (type, maxIndex) = entry
-            for (index in 0..maxIndex) {
+            for (index in (initialVarsCountByType[type]?.plus(1) ?: 0)..maxIndex) {
                 classBuilderForCoroutineState.newField(
                     JvmDeclarationOrigin.NO_ORIGIN, AsmUtil.NO_FLAG_PACKAGE_PRIVATE,
                     type.fieldNameForVar(index), type.descriptor, null, null
@@ -835,7 +845,7 @@ class CoroutineTransformerMethodVisitor(
     private val SuspensionPoint.tryCatchBlockEndLabelAfterSuspensionCall: LabelNode
         get() {
             assert(suspensionCallEnd.next is LabelNode) {
-                "Next instruction after ${this} should be a label, but " +
+                "Next instruction after $this should be a label, but " +
                         "${suspensionCallEnd.next::class.java}/${suspensionCallEnd.next.opcode} was found"
             }
 
@@ -936,9 +946,11 @@ class CoroutineTransformerMethodVisitor(
     private fun nextDefinitelyHitLineNumber(suspension: SuspensionPoint): LineNumberNode? {
         var next = suspension.suspensionCallEnd.next
         while (next != null) {
-            if (next.isBranchOrCall) return null
-            else if (next is LineNumberNode) return next
-            else next = next.next
+            when {
+                next.isBranchOrCall -> return null
+                next is LineNumberNode -> return next
+                else -> next = next.next
+            }
         }
         return next
     }
@@ -1072,7 +1084,7 @@ inline fun withInstructionAdapter(block: InstructionAdapter.() -> Unit): InsnLis
     return tmpMethodNode.instructions
 }
 
-private fun Type.normalize() =
+internal fun Type.normalize() =
     when (sort) {
         Type.ARRAY, Type.OBJECT -> AsmTypes.OBJECT_TYPE
         else -> this

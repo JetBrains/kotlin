@@ -16,8 +16,11 @@
 
 package org.jetbrains.kotlin.descriptors.runtime.components
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.descriptors.runtime.structure.classId
+import org.jetbrains.kotlin.descriptors.runtime.structure.desc
+import org.jetbrains.kotlin.descriptors.runtime.structure.isEnumClassOrSpecializedEnumEntryClass
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.header.ReadKotlinClassHeaderAnnotationVisitor
@@ -28,9 +31,6 @@ import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.lang.reflect.Method
-import org.jetbrains.kotlin.descriptors.runtime.structure.classId
-import org.jetbrains.kotlin.descriptors.runtime.structure.desc
-import org.jetbrains.kotlin.descriptors.runtime.structure.isEnumClassOrSpecializedEnumEntryClass
 
 @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 private val TYPES_ELIGIBLE_FOR_SIMPLE_VISIT = setOf<Class<*>>(
@@ -196,7 +196,7 @@ private object ReflectClassStructure {
         if (currentClass.isPrimitive) {
             if (currentClass == Void.TYPE) {
                 // void.class is not representable in Kotlin, we approximate it by Unit::class
-                return ClassLiteralValue(ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.unit.toSafe()), dimensions)
+                return ClassLiteralValue(ClassId.topLevel(StandardNames.FqNames.unit.toSafe()), dimensions)
             }
 
             val primitiveType = JvmPrimitiveType.get(currentClass.name).primitiveType

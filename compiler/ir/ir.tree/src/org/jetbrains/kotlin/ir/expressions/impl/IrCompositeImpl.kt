@@ -22,16 +22,12 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-
 class IrCompositeImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    origin: IrStatementOrigin? = null
-) :
-    IrContainerExpressionBase(startOffset, endOffset, type, origin),
-    IrComposite {
-
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val type: IrType,
+    override val origin: IrStatementOrigin? = null,
+) : IrComposite() {
     constructor(
         startOffset: Int,
         endOffset: Int,
@@ -44,5 +40,4 @@ class IrCompositeImpl(
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitComposite(this, data)
-
 }

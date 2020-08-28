@@ -24,6 +24,13 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     private var irTranslationStart: Long = 0
     private var irGenerationStart: Long = 0
 
+    private var targetDescription: String? = null
+    protected var files: Int? = null
+    protected var lines: Int? = null
+
+    fun getTargetInfo(): String =
+        "$targetDescription, $files files ($lines lines)"
+
     fun getMeasurementResults(): List<PerformanceMeasurement> = measurements
 
     fun enableCollectingPerformanceStatistics() {
@@ -34,9 +41,13 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
 
     private fun deltaTime(start: Long): Long = PerformanceCounter.currentTime() - start
 
-    open fun notifyCompilerInitialized() {
+    open fun notifyCompilerInitialized(files: Int, lines: Int, targetDescription: String) {
         if (!isEnabled) return
         recordInitializationTime()
+
+        this.files = files
+        this.lines = lines
+        this.targetDescription = targetDescription
     }
 
     open fun notifyCompilationFinished() {
@@ -50,32 +61,30 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
         analysisStart = PerformanceCounter.currentTime()
     }
 
-    open fun notifyAnalysisFinished(files: Int, lines: Int, additionalDescription: String?) {
+    open fun notifyAnalysisFinished() {
         val time = PerformanceCounter.currentTime() - analysisStart
-        measurements += CodeAnalysisMeasurement(files, lines, TimeUnit.NANOSECONDS.toMillis(time), additionalDescription)
+        measurements += CodeAnalysisMeasurement(lines, TimeUnit.NANOSECONDS.toMillis(time))
     }
 
     open fun notifyGenerationStarted() {
         generationStart = PerformanceCounter.currentTime()
     }
 
-    open fun notifyGenerationFinished(files: Int, lines: Int, additionalDescription: String) {
+    open fun notifyGenerationFinished() {
         val time = PerformanceCounter.currentTime() - generationStart
-        measurements += CodeGenerationMeasurement(files, lines, TimeUnit.NANOSECONDS.toMillis(time), additionalDescription)
+        measurements += CodeGenerationMeasurement(lines, TimeUnit.NANOSECONDS.toMillis(time))
     }
 
     open fun notifyIRTranslationStarted() {
         irTranslationStart = PerformanceCounter.currentTime()
     }
 
-    open fun notifyIRTranslationFinished(files: Int, lines: Int, additionalDescription: String?) {
+    open fun notifyIRTranslationFinished() {
         val time = deltaTime(irTranslationStart)
         measurements += IRMeasurement(
-            files,
             lines,
             TimeUnit.NANOSECONDS.toMillis(time),
-            additionalDescription,
-            IRMeasurement.Kind.Translation
+            IRMeasurement.Kind.TRANSLATION
         )
     }
 
@@ -83,14 +92,12 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
         irGenerationStart = PerformanceCounter.currentTime()
     }
 
-    open fun notifyIRGenerationFinished(files: Int, lines: Int, additionalDescription: String) {
+    open fun notifyIRGenerationFinished() {
         val time = deltaTime(irGenerationStart)
         measurements += IRMeasurement(
-            files,
             lines,
             TimeUnit.NANOSECONDS.toMillis(time),
-            additionalDescription,
-            IRMeasurement.Kind.Generation
+            IRMeasurement.Kind.GENERATION
         )
     }
 

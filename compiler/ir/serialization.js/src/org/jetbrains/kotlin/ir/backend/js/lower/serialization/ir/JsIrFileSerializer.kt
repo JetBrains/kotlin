@@ -9,7 +9,10 @@ import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.name.FqName
 
 class JsIrFileSerializer(
     logger: LoggingContext,
@@ -23,4 +26,12 @@ class JsIrFileSerializer(
     expectDescriptorToSymbol,
     bodiesOnlyForInlines = bodiesOnlyForInlines,
     skipExpects = skipExpects
-)
+) {
+    companion object {
+        private val JS_EXPORT_FQN = FqName("kotlin.js.JsExport")
+    }
+
+    override fun backendSpecificExplicitRoot(node: IrAnnotationContainer): Boolean {
+        return node.annotations.hasAnnotation(JS_EXPORT_FQN)
+    }
+}

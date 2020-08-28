@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.js.backend.ast.JsNameRef
 import org.jetbrains.kotlin.js.backend.ast.JsReturn
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.declaration.DeclarationBodyVisitor
-import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCompanionCodegen
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializer
@@ -62,7 +61,7 @@ class SerializableCompanionJsTranslator(
     }
 
     companion object {
-        fun translate(declaration: KtPureClassOrObject, descriptor: ClassDescriptor, translator: DeclarationBodyVisitor, context: TranslationContext) {
+        fun translate(descriptor: ClassDescriptor, translator: DeclarationBodyVisitor, context: TranslationContext) {
             val serializableClass = getSerializableClassDescriptorByCompanion(descriptor) ?: return
             if (serializableClass.shouldHaveGeneratedMethodsInCompanion)
                 SerializableCompanionJsTranslator(descriptor, translator, context).generate()

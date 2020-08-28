@@ -2,8 +2,8 @@
 @kotlin.Metadata
 final class FieldKt$test$1 {
     // source: 'field.kt'
+    private synthetic field L$0: java.lang.Object
     field label: int
-    private synthetic field p$: Foo
     inner (anonymous) class FieldKt$test$1
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation

@@ -232,7 +232,7 @@ private fun PropertyDescriptor.formatReadFromParcel(parcelName: String): String?
     fun KotlinType.formatJavaClassloader() = "${this.constructor.declarationDescriptor?.fqNameSafe}::class.java.classLoader"
 
     // There is no read/write short array methods
-    if (KotlinBuiltIns.isPrimitiveArray(type) && KotlinBuiltIns.getPrimitiveArrayElementType(type) != PrimitiveType.SHORT) {
+    if (StandardNames.isPrimitiveArray(type) && KotlinBuiltIns.getPrimitiveArrayElementType(type) != PrimitiveType.SHORT) {
         return "$parcelName.create${type.getName()}()"
     }
 
@@ -271,7 +271,7 @@ private fun PropertyDescriptor.formatWriteToParcel(parcelName: String, flagsName
     val type = returnType ?: return null
 
     // There is no read/write short array methods
-    if (KotlinBuiltIns.isPrimitiveArray(type) && KotlinBuiltIns.getPrimitiveArrayElementType(type) != PrimitiveType.SHORT) {
+    if (StandardNames.isPrimitiveArray(type) && KotlinBuiltIns.getPrimitiveArrayElementType(type) != PrimitiveType.SHORT) {
         return "$parcelName.write${type.getName()}($name)"
     }
 

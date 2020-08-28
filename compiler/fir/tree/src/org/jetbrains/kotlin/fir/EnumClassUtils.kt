@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
@@ -48,7 +47,7 @@ fun FirRegularClassBuilder.generateValuesFunction(
             )
         }
         name = ENUM_VALUES
-        this.status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL).apply {
+        this.status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL).apply {
             isStatic = true
             isExpect = makeExpect
         }
@@ -75,7 +74,7 @@ fun FirRegularClassBuilder.generateValueOfFunction(
             )
         }
         name = ENUM_VALUE_OF
-        status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL).apply {
+        status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL).apply {
             isStatic = true
             isExpect = makeExpect
         }

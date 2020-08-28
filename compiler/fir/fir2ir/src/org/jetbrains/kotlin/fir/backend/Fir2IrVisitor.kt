@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.generators.AnnotationGenerator
 import org.jetbrains.kotlin.fir.backend.generators.ClassMemberGenerator
@@ -42,6 +41,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.coerceToUnitIfNeeded
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
@@ -154,7 +154,7 @@ class Fir2IrVisitor(
     }
 
     override fun visitRegularClass(regularClass: FirRegularClass, data: Any?): IrElement {
-        if (regularClass.visibility == Visibilities.LOCAL) {
+        if (regularClass.visibility == Visibilities.Local) {
             val irParent = conversionScope.parentFromStack()
             // NB: for implicit types it is possible that local class is already cached
             val irClass = classifierStorage.getCachedIrClass(regularClass)?.apply { this.parent = irParent }
@@ -222,7 +222,7 @@ class Fir2IrVisitor(
     }
 
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?): IrElement {
-        val irFunction = if (simpleFunction.visibility == Visibilities.LOCAL) {
+        val irFunction = if (simpleFunction.visibility == Visibilities.Local) {
             declarationStorage.createIrFunction(
                 simpleFunction, irParent = conversionScope.parent(), isLocal = true
             )
@@ -590,7 +590,7 @@ class Fir2IrVisitor(
                 } else {
                     emptyList()
                 }
-            )
+            ).insertImplicitCasts()
         }
     }
 
@@ -604,11 +604,46 @@ class Fir2IrVisitor(
         val type =
             (statements.lastOrNull() as? FirExpression)?.typeRef?.toIrType() ?: irBuiltIns.unitType
         return convertWithOffsets { startOffset, endOffset ->
-            IrBlockImpl(
-                startOffset, endOffset, type, origin,
-                mapToIrStatements().filterNotNull()
-            )
+            if (origin == IrStatementOrigin.DO_WHILE_LOOP) {
+                IrCompositeImpl(
+                    startOffset, endOffset, type, origin,
+                    mapToIrStatements().filterNotNull()
+                ).insertImplicitCasts()
+            } else {
+                IrBlockImpl(
+                    startOffset, endOffset, type, origin,
+                    mapToIrStatements().filterNotNull()
+                ).insertImplicitCasts()
+            }
         }
+    }
+
+    private fun IrBlockBody.insertImplicitCasts(): IrBlockBody {
+        if (statements.isEmpty()) return this
+
+        statements.forEachIndexed { i, irStatement ->
+            if (irStatement !is IrErrorCallExpression && irStatement is IrExpression) {
+                statements[i] = irStatement.coerceToUnitIfNeeded(irStatement.type, irBuiltIns)
+            }
+        }
+        return this
+    }
+
+    private fun IrContainerExpression.insertImplicitCasts(): IrContainerExpression {
+        if (statements.isEmpty()) return this
+
+        val lastIndex = statements.lastIndex
+        statements.forEachIndexed { i, irStatement ->
+            if (irStatement !is IrErrorCallExpression && irStatement is IrExpression) {
+                if (i != lastIndex) {
+                    statements[i] = irStatement.coerceToUnitIfNeeded(irStatement.type, irBuiltIns)
+                } else {
+                    // TODO: for the last statement, need to cast to the return type if mismatched
+                }
+            }
+        }
+
+        return this
     }
 
     override fun visitErrorExpression(errorExpression: FirErrorExpression, data: Any?): IrElement {
@@ -632,7 +667,7 @@ class Fir2IrVisitor(
             symbol = FirPropertySymbol(name)
             isVar = false
             isLocal = true
-            status = FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
+            status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
         }
         val irLhsVariable = firLhsVariable.accept(this, null) as IrVariable
         return elvisExpression.convertWithOffsets { startOffset, endOffset ->
@@ -776,7 +811,7 @@ class Fir2IrVisitor(
             ).apply {
                 loopMap[doWhileLoop] = this
                 label = doWhileLoop.label?.name
-                body = doWhileLoop.block.convertToIrExpressionOrBlock()
+                body = doWhileLoop.block.convertToIrExpressionOrBlock(origin)
                 condition = convertToIrExpression(doWhileLoop.condition)
                 loopMap.remove(doWhileLoop)
             }

@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.arrayElementType
+import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.resolve.calls.results.*
 import org.jetbrains.kotlin.types.checker.requireOrDescribe
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -108,7 +111,7 @@ abstract class AbstractConeCallConflictResolver(
     protected fun createFlatSignature(call: Candidate, variable: FirVariable<*>): FlatSignature<Candidate> {
         return FlatSignature(
             call,
-            (variable as? FirProperty)?.typeParameters?.map { it.symbol }.orEmpty(),
+            (variable as? FirProperty)?.typeParameters?.map { it.symbol.toLookupTag() }.orEmpty(),
             listOfNotNull(variable.receiverTypeRef?.coneType),
             variable.receiverTypeRef != null,
             false,
@@ -121,7 +124,7 @@ abstract class AbstractConeCallConflictResolver(
     protected fun createFlatSignature(call: Candidate, constructor: FirConstructor): FlatSignature<Candidate> {
         return FlatSignature(
             call,
-            constructor.typeParameters.map { it.symbol },
+            constructor.typeParameters.map { it.symbol.toLookupTag() },
             computeParameterTypes(call, constructor),
             //constructor.receiverTypeRef != null,
             false,
@@ -135,7 +138,7 @@ abstract class AbstractConeCallConflictResolver(
     protected fun createFlatSignature(call: Candidate, function: FirSimpleFunction): FlatSignature<Candidate> {
         return FlatSignature(
             call,
-            function.typeParameters.map { it.symbol },
+            function.typeParameters.map { it.symbol.toLookupTag() },
             computeParameterTypes(call, function),
             function.receiverTypeRef != null,
             function.valueParameters.any { it.isVararg },
@@ -163,7 +166,7 @@ abstract class AbstractConeCallConflictResolver(
     private fun createFlatSignature(call: Candidate, klass: FirClass<*>): FlatSignature<Candidate> {
         return FlatSignature(
             call,
-            (klass as? FirRegularClass)?.typeParameters?.map { it.symbol }.orEmpty(),
+            (klass as? FirRegularClass)?.typeParameters?.map { it.symbol.toLookupTag() }.orEmpty(),
             valueParameterTypes = emptyList(),
             hasExtensionReceiver = false,
             hasVarargs = false,

@@ -11,3 +11,5 @@ fun foo(): Any {
 }
 
 val x = Bar()
+
+// DISABLE-ERRORS

@@ -31,9 +31,13 @@ abstract class AttributeArrayOwner<K : Any, T : Any> : AbstractArrayMapOwner<K, 
             }
 
             1 -> {
-                arrayMap = ArrayMapImpl<T>().apply {
-                    val map = arrayMap as OneElementArrayMap<T>
-                    this[map.index] = map.value
+                val map = arrayMap as OneElementArrayMap<T>
+                if (map.index == id) {
+                    arrayMap = OneElementArrayMap(value, id)
+                    return
+                } else {
+                    arrayMap = ArrayMapImpl()
+                    arrayMap[map.index] = map.value
                 }
             }
         }

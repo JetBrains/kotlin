@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 
@@ -31,7 +31,7 @@ class BinaryJavaField(
         override val type: JavaType,
         override val initializerValue: Any?
 ) : JavaField, MapBasedJavaAnnotationOwner, BinaryJavaModifierListOwner {
-    override val annotations: MutableCollection<JavaAnnotation> = ContainerUtil.newSmartList()
+    override val annotations: MutableCollection<JavaAnnotation> = SmartList()
     override val annotationsByFqName by buildLazyValueForMap()
 
     override val hasConstantNotNullInitializer: Boolean
@@ -53,7 +53,7 @@ class BinaryJavaValueParameter(
         override val type: JavaType,
         override val isVararg: Boolean
 ) : JavaValueParameter, MapBasedJavaAnnotationOwner {
-    override val annotations: MutableCollection<JavaAnnotation> = ContainerUtil.newSmartList()
+    override val annotations: MutableCollection<JavaAnnotation> = SmartList()
     override val annotationsByFqName by buildLazyValueForMap()
 
     override var name: Name? = null

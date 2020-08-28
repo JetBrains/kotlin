@@ -2,6 +2,7 @@ Test key, Issue, State (optional: MUTE or FAIL), Status (optional: FLAKY)
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerTestGenerated.JavaAgainstKotlin.testExtendingMutableInterfaces, KT-34105,,
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerTestGenerated.JavaAgainstKotlin.testExtendingReadOnlyInterfaces, KT-34105,,
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerTestGenerated.JavaAgainstKotlin.testUsingMutableInterfaces, ERROR: Incompatible types. Found: 'E' required: 'E',, FLAKY
+org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerTestGenerated.JavaAgainstKotlin.testUsingReadOnlyInterfaces, Incompatible types. Found: 'java.util.Set<K>' required: 'java.util.Set<E>',, FLAKY
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerWithoutUltraLightTestGenerated.JavaAgainstKotlin.testExtendingMutableInterfaces, KT-34105,,
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerWithoutUltraLightTestGenerated.JavaAgainstKotlin.testUsingMutableInterfaces,,, FLAKY
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerWithoutUltraLightTestGenerated.JavaAgainstKotlin.testUsingReadOnlyInterfaces,,, FLAKY
@@ -51,3 +52,29 @@ org.jetbrains.kotlin.idea.debugger.test.KotlinSteppingTestGenerated.StepOver.tes
 org.jetbrains.kotlin.incremental.IncrementalJsKlibCompilerRunnerTestGenerated.ClassHierarchyAffected.testMethodRemoved, full fledged FO in klib required,,
 org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.ConvertToAnonymousObject.testHasConcreateMember2, Unprocessed,,
 org.jetbrains.kotlin.idea.quickfix.QuickFixMultiFileTestGenerated.MakePrivateAndOverrideMember.testSetter, Unprocessed,,
+org.jetbrains.uast.test.kotlin.KotlinUastTypesTest.testEa101715, Unprocessed,,
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.CreateFromUsage.CreateFunction.Invoke.testLambdaArgument, Unprocessed,,
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateJavaToLibrarySourceTestGenerated.testClassAndConstuctors, Unprocessed,,
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateJavaToLibrarySourceTestGenerated.testOverloadedFun, Unprocessed,,
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateJavaToLibrarySourceTestGenerated.testRenamedElements, Unprocessed,,
+org.jetbrains.kotlin.idea.navigation.GotoWithMultipleLibrariesTest.testOneHasSourceAndOneDoesNot,,, FLAKY
+org.jetbrains.kotlin.idea.navigation.GotoWithMultipleLibrariesTest.testOneHasSourceAndManyDoNot,,, FLAKY
+org.jetbrains.kotlin.idea.navigation.GotoWithMultipleLibrariesTest.testSeveralWithSource,,, FLAKY
+org.jetbrains.kotlin.idea.resolve.ReferenceResolveTestGenerated.DelegatedPropertyAccessors.InStandardLibrary.testNotNull,,,
+org.jetbrains.kotlin.tools.projectWizard.wizard.ProjectTemplateNewWizardProjectImportTestGenerated.GradleGroovy.testMultiplatformApplication,,,
+org.jetbrains.kotlin.tools.projectWizard.wizard.ProjectTemplateNewWizardProjectImportTestGenerated.GradleKts.testMultiplatformApplication,,,
+org.jetbrains.kotlin.gradle.NewMultiplatformIT.testJavaSupportInJvmTargets,,,
+org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.testJvmOverloadsFunctions,,, FLAKY
+org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.testReturnInnerClasses,,, FLAKY
+org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.testThrowsOnGenericMethod,,, FLAKY
+org.jetbrains.kotlin.idea.debugger.test.ContinuationStackTraceTestGenerated.testSuspendFunWithInner,,, FLAKY
+org.jetbrains.kotlin.idea.debugger.test.XCoroutinesStackTraceTestGenerated.testSuspendMain,,, FLAKY
+org.jetbrains.kotlin.gradle.SubpluginsIT.testKotlinVersionDowngradeInSupbrojectKt39809,,, FLAKY
+org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibrarySecondaryConstructorUsages,,, FLAKY
+org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryNestedClassSecondaryConstructorUsages,,, FLAKY
+org.jetbrains.kotlin.findUsages.FindUsagesTestGenerated.Java.FindJavaMethodUsages.testJavaInvokeWithStaticImport,,, FLAKY
+org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.testEnumStaticImportInJava,,, FLAKY
+org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryNestedClassUsages,,, FLAKY
+org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryMemberFunctionUsages,,, FLAKY
+org.jetbrains.kotlin.daemon.CompilerDaemonTest.testParallelDaemonStart,,,
+org.jetbrains.kotlin.idea.repl.IdeReplExecutionTest.testOnePlusOne,,, FLAKY

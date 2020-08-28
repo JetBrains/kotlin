@@ -74,7 +74,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAssignmentOperatorStatement
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessWithoutCallee
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
 import org.jetbrains.kotlin.fir.expressions.FirElvisExpression
@@ -128,7 +127,9 @@ import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirComposedSuperTypeRef
+import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
+import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 
@@ -276,8 +277,6 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitWhenBranch(whenBranch: FirWhenBranch, data: D): R  = visitElement(whenBranch, data)
 
-    open fun visitQualifiedAccessWithoutCallee(qualifiedAccessWithoutCallee: FirQualifiedAccessWithoutCallee, data: D): R  = visitElement(qualifiedAccessWithoutCallee, data)
-
     open fun visitQualifiedAccess(qualifiedAccess: FirQualifiedAccess, data: D): R  = visitElement(qualifiedAccess, data)
 
     open fun visitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, data: D): R  = visitElement(checkNotNullCall, data)
@@ -384,7 +383,11 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitComposedSuperTypeRef(composedSuperTypeRef: FirComposedSuperTypeRef, data: D): R  = visitElement(composedSuperTypeRef, data)
 
+    open fun visitEffectDeclaration(effectDeclaration: FirEffectDeclaration, data: D): R  = visitElement(effectDeclaration, data)
+
     open fun visitContractDescription(contractDescription: FirContractDescription, data: D): R  = visitElement(contractDescription, data)
+
+    open fun visitLegacyRawContractDescription(legacyRawContractDescription: FirLegacyRawContractDescription, data: D): R  = visitElement(legacyRawContractDescription, data)
 
     open fun visitRawContractDescription(rawContractDescription: FirRawContractDescription, data: D): R  = visitElement(rawContractDescription, data)
 

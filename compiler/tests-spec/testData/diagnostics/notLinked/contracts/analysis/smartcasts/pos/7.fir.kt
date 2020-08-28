@@ -290,7 +290,7 @@ fun case_6(value_1: Number?, value_2: Number?) {
     }
     when {
         case_6_5(value_2) != null -> {
-            value_2.<!INAPPLICABLE_CANDIDATE!>toByte<!>()
+            value_2.toByte()
             when { case_6_6(value_2) != null -> value_2.inv() }
         }
     }
@@ -313,8 +313,8 @@ fun case_7(value_1: Any?, value_2: Any?) {
         if (!case_7_4(value_2)) value_2.length
     }
     if (case_7_5(value_2) != null) {
-        value_2.<!UNRESOLVED_REFERENCE!>length<!>
-        if (case_7_6(value_2) != null) value_2.<!UNRESOLVED_REFERENCE!>length<!>
+        value_2.length
+        if (case_7_6(value_2) != null) value_2.length
     }
     if (case_7_7(value_2) == null) {
         value_2.length
@@ -339,10 +339,10 @@ fun case_8(value_1: Any?, value_2: Any?) {
         }
     }
     if (case_8_7(value_2) != null) {
-        value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>()
-        if (<!INAPPLICABLE_CANDIDATE!>case_8_8<!>(value_2) != null) {
-            value_2.<!UNRESOLVED_REFERENCE!>toByte<!>()
-            if (<!INAPPLICABLE_CANDIDATE!>case_8_9<!>(value_2) != null) value_2.inv()
+        value_2?.toByte()
+        if (case_8_8(value_2) != null) {
+            value_2.toByte()
+            if (case_8_9(value_2) != null) value_2.inv()
         }
     }
     if (case_8_10(value_2) == null) {

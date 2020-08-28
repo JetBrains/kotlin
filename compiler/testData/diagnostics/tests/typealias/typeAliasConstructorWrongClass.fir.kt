@@ -17,8 +17,8 @@ val test3a = <!HIDDEN!>EnumClass<!>()
 
 sealed class SealedClass
 typealias Test4 = SealedClass
-val test4 = Test4()
-val test4a = SealedClass()
+val test4 = <!SEALED_CLASS_CONSTRUCTOR_CALL!>Test4<!>()
+val test4a = <!SEALED_CLASS_CONSTRUCTOR_CALL!>SealedClass<!>()
 
 class Outer {
     inner class Inner

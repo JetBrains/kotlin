@@ -44,7 +44,7 @@ class EnumUsageLowering(val context: JsIrBackendContext) : BodyLoweringPass {
             override fun visitGetEnumValue(expression: IrGetEnumValue): IrExpression {
                 val enumEntry = expression.symbol.owner
                 val klass = enumEntry.parent as IrClass
-                return if (klass.isExternal) lowerExternalEnumEntry(enumEntry, klass) else lowerEnumEntry(enumEntry, klass)
+                return if (klass.isExternal) lowerExternalEnumEntry(enumEntry, klass) else lowerEnumEntry(enumEntry)
             }
         })
     }
@@ -78,7 +78,7 @@ class EnumUsageLowering(val context: JsIrBackendContext) : BodyLoweringPass {
             }
         }
 
-    private fun lowerEnumEntry(enumEntry: IrEnumEntry, klass: IrClass) =
+    private fun lowerEnumEntry(enumEntry: IrEnumEntry) =
         enumEntry.getInstanceFun!!.run { JsIrBuilder.buildCall(symbol) }
 }
 
@@ -350,7 +350,7 @@ class EnumEntryInstancesBodyLowering(val context: JsIrBackendContext) : BodyLowe
                 val index = (irBody as IrBlockBody).statements
                     .indexOfFirst { it is IrTypeOperatorCall && it.argument is IrDelegatingConstructorCall } + 1
 
-                (irBody as IrBlockBody).statements.add(index, context.createIrBuilder(container.symbol).run {
+                irBody.statements.add(index, context.createIrBuilder(container.symbol).run {
                     irSetField(null, entry.correspondingField!!, irGet(entryClass.thisReceiver!!))
                 })
             }

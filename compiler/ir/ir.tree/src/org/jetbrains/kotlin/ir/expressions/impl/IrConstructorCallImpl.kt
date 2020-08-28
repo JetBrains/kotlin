@@ -15,18 +15,15 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrConstructorCallImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val type: IrType,
     override val symbol: IrConstructorSymbol,
     typeArgumentsCount: Int,
     override val constructorTypeArgumentsCount: Int,
     valueArgumentsCount: Int,
-    origin: IrStatementOrigin? = null
-) :
-    IrCallWithIndexedArgumentsBase(startOffset, endOffset, type, typeArgumentsCount, valueArgumentsCount, origin),
-    IrConstructorCall {
-
+    override val origin: IrStatementOrigin? = null,
+) : IrConstructorCall(typeArgumentsCount, valueArgumentsCount) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitConstructorCall(this, data)
 
@@ -92,7 +89,9 @@ class IrConstructorCallImpl(
         }
 
         fun fromSymbolOwner(type: IrType, constructorSymbol: IrConstructorSymbol, origin: IrStatementOrigin? = null) =
-            fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, constructorSymbol, constructorSymbol.owner.parentAsClass.typeParameters.size, origin)
+            fromSymbolOwner(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, constructorSymbol, constructorSymbol.owner.parentAsClass.typeParameters.size,
+                origin
+            )
     }
 }
-

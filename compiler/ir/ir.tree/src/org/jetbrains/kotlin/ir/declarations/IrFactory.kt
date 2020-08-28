@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.Variance
 
 interface IrFactory {
@@ -55,6 +56,7 @@ interface IrFactory {
         isExternal: Boolean,
         isPrimary: Boolean,
         isExpect: Boolean,
+        containerSource: DeserializedContainerSource? = null
     ): IrConstructor
 
     fun createEnumEntry(
@@ -101,6 +103,7 @@ interface IrFactory {
         isInfix: Boolean,
         isExpect: Boolean,
         isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+        containerSource: DeserializedContainerSource? = null,
     ): IrSimpleFunction
 
     fun createFakeOverrideFunction(
@@ -145,6 +148,7 @@ interface IrFactory {
         isExternal: Boolean,
         isExpect: Boolean = false,
         isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+        containerSource: DeserializedContainerSource? = null
     ): IrProperty
 
     fun createFakeOverrideProperty(

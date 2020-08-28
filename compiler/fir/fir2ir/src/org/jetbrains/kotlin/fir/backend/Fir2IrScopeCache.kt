@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.Visibilities
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
@@ -33,7 +33,7 @@ class Fir2IrScopeCache {
     fun getLocalFunction(localFunction: FirFunction<*>): IrSimpleFunction? = localFunctionCache[localFunction]
 
     fun putLocalFunction(localFunction: FirFunction<*>, irFunction: IrSimpleFunction) {
-        require(localFunction !is FirSimpleFunction || localFunction.visibility == Visibilities.LOCAL)
+        require(localFunction !is FirSimpleFunction || localFunction.visibility == Visibilities.Local)
         localFunctionCache[localFunction] = irFunction
     }
 

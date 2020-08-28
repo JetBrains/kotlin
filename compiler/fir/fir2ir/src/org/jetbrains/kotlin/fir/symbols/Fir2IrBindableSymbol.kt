@@ -39,13 +39,13 @@ abstract class Fir2IrBindableSymbol<out D : DeclarationDescriptor, B : IrSymbolO
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: D by lazy {
-        when (val owner = owner) {
+        val result = when (val owner = owner) {
             is IrEnumEntry -> WrappedEnumEntryDescriptor().apply { bind(owner) }
             is IrClass -> WrappedClassDescriptor().apply { bind(owner) }
             is IrConstructor -> WrappedClassConstructorDescriptor().apply { bind(owner) }
             is IrSimpleFunction -> when {
                 containerSource != null ->
-                    WrappedFunctionDescriptorWithContainerSource(containerSource)
+                    WrappedFunctionDescriptorWithContainerSource()
                 owner.name.isSpecial && owner.name.asString().startsWith(GETTER_PREFIX) ->
                     WrappedPropertyGetterDescriptor(Annotations.EMPTY, SourceElement.NO_SOURCE)
                 owner.name.isSpecial && owner.name.asString().startsWith(SETTER_PREFIX) ->
@@ -57,14 +57,17 @@ abstract class Fir2IrBindableSymbol<out D : DeclarationDescriptor, B : IrSymbolO
             is IrValueParameter -> WrappedValueParameterDescriptor().apply { bind(owner) }
             is IrTypeParameter -> WrappedTypeParameterDescriptor().apply { bind(owner) }
             is IrProperty -> if (containerSource != null) {
-                WrappedPropertyDescriptorWithContainerSource(containerSource)
+                WrappedPropertyDescriptorWithContainerSource()
             } else {
                 WrappedPropertyDescriptor()
             }.apply { bind(owner) }
             is IrField -> WrappedFieldDescriptor().apply { bind(owner) }
             is IrTypeAlias -> WrappedTypeAliasDescriptor().apply { bind(owner) }
             else -> throw IllegalStateException("Unsupported owner in Fir2IrBindableSymbol: $owner")
-        } as D
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        result as D
     }
 
     companion object {

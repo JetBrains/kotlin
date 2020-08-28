@@ -21,7 +21,7 @@ import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.StandardNames;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.container.ComponentProvider;
 import org.jetbrains.kotlin.container.DslKt;
@@ -68,7 +68,7 @@ public class TypeUnifierTest extends KotlinTestWithEnvironment {
         module = DslKt.getService(container, ModuleDescriptor.class);
 
         builtinsImportingScope = ScopeUtilsKt.chainImportingScopes(
-                CollectionsKt.map(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAMES,
+                CollectionsKt.map(StandardNames.BUILT_INS_PACKAGE_FQ_NAMES,
                                   fqName -> ScopeUtilsKt.memberScopeAsImportingScope(module.getPackage(fqName).getMemberScope())), null);
         typeResolver = DslKt.getService(container, TypeResolver.class);
         x = createTypeVariable("X");

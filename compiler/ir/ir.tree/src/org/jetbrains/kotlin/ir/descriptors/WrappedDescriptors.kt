@@ -383,13 +383,6 @@ open class WrappedSimpleFunctionDescriptor(
     sourceElement: SourceElement = SourceElement.NO_SOURCE
 ) : SimpleFunctionDescriptor, WrappedCallableDescriptor<IrSimpleFunction>(annotations, sourceElement) {
 
-    // TODO: Remove as soon as all IR declarations have their originalDescriptor.
-    constructor(originalDescriptor: FunctionDescriptor) : this(originalDescriptor.annotations, originalDescriptor.source) {
-        this.originalDescriptor = originalDescriptor
-    }
-
-    var originalDescriptor: FunctionDescriptor? = null
-
     override fun getOverriddenDescriptors() = owner.overriddenSymbols.map { it.descriptor }
 
     override fun getContainingDeclaration(): DeclarationDescriptor = getContainingDeclaration(owner)
@@ -463,9 +456,10 @@ open class WrappedSimpleFunctionDescriptor(
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-class WrappedFunctionDescriptorWithContainerSource(
-    override val containerSource: DeserializedContainerSource?
-) : WrappedSimpleFunctionDescriptor(), DescriptorWithContainerSource
+class WrappedFunctionDescriptorWithContainerSource : WrappedSimpleFunctionDescriptor(), DescriptorWithContainerSource {
+    override val containerSource
+        get() = owner.containerSource
+}
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WrappedClassConstructorDescriptor(
@@ -631,11 +625,22 @@ open class WrappedClassDescriptor(
     private val _typeConstructor: TypeConstructor by lazy {
         LazyTypeConstructor(
             this,
-            { declaredTypeParameters },
+            ::collectTypeParameters,
             { owner.superTypes.map { it.toKotlinType() } },
             LockBasedStorageManager.NO_LOCKS
         )
     }
+
+    private fun collectTypeParameters(): List<TypeParameterDescriptor> =
+        generateSequence(owner as IrTypeParametersContainer,
+                         { current ->
+                             val parent = current.parent as? IrTypeParametersContainer
+                             if (parent is IrClass && current is IrClass && !current.isInner) null
+                             else parent
+                         })
+            .flatMap { it.typeParameters }
+            .map { it.descriptor }
+            .toList()
 
     override fun getTypeConstructor(): TypeConstructor = _typeConstructor
 
@@ -883,9 +888,10 @@ open class WrappedPropertyDescriptor(
     override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
 }
 
-class WrappedPropertyDescriptorWithContainerSource(
-    override var containerSource: DeserializedContainerSource?
-) : WrappedPropertyDescriptor(), DescriptorWithContainerSource
+class WrappedPropertyDescriptorWithContainerSource : WrappedPropertyDescriptor(), DescriptorWithContainerSource {
+    override val containerSource: DeserializedContainerSource?
+        get() = owner.containerSource
+}
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class WrappedPropertyAccessorDescriptor(annotations: Annotations, sourceElement: SourceElement) :

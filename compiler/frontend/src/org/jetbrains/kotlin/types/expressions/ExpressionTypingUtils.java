@@ -99,6 +99,7 @@ public class ExpressionTypingUtils {
         return fakeExpression;
     }
 
+    @SuppressWarnings("deprecation")
     public static void checkVariableShadowing(
             @NotNull LexicalScope scope,
             @NotNull BindingTrace trace,

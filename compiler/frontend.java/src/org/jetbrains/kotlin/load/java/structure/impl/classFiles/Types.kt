@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 // They are only used for java class files, but potentially may be used in other cases
@@ -47,7 +47,7 @@ internal class PlainJavaClassifierType(
 
     internal fun addAnnotation(annotation: JavaAnnotation) {
         if (_annotations.isEmpty()) {
-            _annotations = ContainerUtil.newSmartList()
+            _annotations = SmartList()
         }
 
         (_annotations as MutableList).add(annotation)

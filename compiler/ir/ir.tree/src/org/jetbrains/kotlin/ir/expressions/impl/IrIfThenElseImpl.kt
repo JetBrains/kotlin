@@ -18,16 +18,15 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.expressions.IrBranch
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.utils.SmartList
 
 class IrIfThenElseImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val type: IrType,
     override val origin: IrStatementOrigin? = null
-) :
-    IrWhenBase(startOffset, endOffset, type) {
-
+) : IrWhen() {
     override val branches: MutableList<IrBranch> = SmartList()
 }

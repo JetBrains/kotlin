@@ -170,8 +170,9 @@ FILE fqName:<root> fileName:/caoWithAdaptationForSam.kt
   FUN name:test5 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
-      TYPE_OP type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=CAST typeOperand=kotlin.Function1<kotlin.Int, kotlin.Unit>
-        GET_VAR 'a: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        TYPE_OP type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=CAST typeOperand=kotlin.Function1<kotlin.Int, kotlin.Unit>
+          GET_VAR 'a: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
       BLOCK type=kotlin.Unit origin=null
         VAR IR_TEMPORARY_VARIABLE name:tmp_8 type:<root>.A [val]
           GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
@@ -191,11 +192,13 @@ FILE fqName:<root> fileName:/caoWithAdaptationForSam.kt
   FUN name:test6 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
-      TYPE_OP type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=CAST typeOperand=kotlin.Function1<kotlin.Int, kotlin.Unit>
-        GET_VAR 'a: kotlin.Any declared in <root>.test6' type=kotlin.Any origin=null
-      TYPE_OP type=<root>.IFoo origin=CAST typeOperand=<root>.IFoo
-        TYPE_OP type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function1<kotlin.Int, kotlin.Unit>
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        TYPE_OP type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=CAST typeOperand=kotlin.Function1<kotlin.Int, kotlin.Unit>
           GET_VAR 'a: kotlin.Any declared in <root>.test6' type=kotlin.Any origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        TYPE_OP type=<root>.IFoo origin=CAST typeOperand=<root>.IFoo
+          TYPE_OP type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function1<kotlin.Int, kotlin.Unit>
+            GET_VAR 'a: kotlin.Any declared in <root>.test6' type=kotlin.Any origin=null
       BLOCK type=kotlin.Unit origin=null
         VAR IR_TEMPORARY_VARIABLE name:tmp_10 type:<root>.A [val]
           GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A

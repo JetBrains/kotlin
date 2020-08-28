@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -34,10 +33,7 @@ class IrFileImpl(
     override val fileEntry: SourceManager.FileEntry,
     override val symbol: IrFileSymbol,
     override val fqName: FqName
-) :
-    IrElementBase(0, fileEntry.maxOffset),
-    IrFile {
-
+) : IrFile() {
     constructor(
         fileEntry: SourceManager.FileEntry,
         packageFragmentDescriptor: PackageFragmentDescriptor
@@ -46,6 +42,12 @@ class IrFileImpl(
     init {
         symbol.bind(this)
     }
+
+    override val startOffset: Int
+        get() = 0
+
+    override val endOffset: Int
+        get() = fileEntry.maxOffset
 
     @ObsoleteDescriptorBasedAPI
     override val packageFragmentDescriptor: PackageFragmentDescriptor get() = symbol.descriptor

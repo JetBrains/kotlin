@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -46,7 +45,7 @@ internal class FirRegularClassImpl(
     override val superTypeRefs: MutableList<FirTypeRef>,
 ) : FirRegularClass() {
     override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference
+    override var controlFlowGraphReference: FirControlFlowGraphReference? = null
     override val hasLazyNestedClassifiers: Boolean get() = false
 
     init {
@@ -57,7 +56,7 @@ internal class FirRegularClassImpl(
         annotations.forEach { it.accept(visitor, data) }
         typeParameters.forEach { it.accept(visitor, data) }
         status.accept(visitor, data)
-        controlFlowGraphReference.accept(visitor, data)
+        controlFlowGraphReference?.accept(visitor, data)
         declarations.forEach { it.accept(visitor, data) }
         superTypeRefs.forEach { it.accept(visitor, data) }
     }
@@ -66,7 +65,7 @@ internal class FirRegularClassImpl(
         transformAnnotations(transformer, data)
         transformTypeParameters(transformer, data)
         transformStatus(transformer, data)
-        transformControlFlowGraphReference(transformer, data)
+        controlFlowGraphReference = controlFlowGraphReference?.transformSingle(transformer, data)
         transformDeclarations(transformer, data)
         companionObject = declarations.asSequence().filterIsInstance<FirRegularClass>().firstOrNull { it.status.isCompanion }
         transformSuperTypeRefs(transformer, data)
@@ -88,11 +87,6 @@ internal class FirRegularClassImpl(
         return this
     }
 
-    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
-        controlFlowGraphReference = controlFlowGraphReference.transformSingle(transformer, data)
-        return this
-    }
-
     override fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
         declarations.transformInplace(transformer, data)
         return this
@@ -110,6 +104,10 @@ internal class FirRegularClassImpl(
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
+    }
+
+    override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
+        controlFlowGraphReference = newControlFlowGraphReference
     }
 
     override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>) {

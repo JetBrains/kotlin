@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea
 
-import org.jetbrains.kotlin.idea.fir.low.level.api.DuplicatedFirSourceElementsException
+import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.DuplicatedFirSourceElementsException
 
 fun Throwable.shouldBeRethrown(): Boolean = when (this) {
     is DuplicatedFirSourceElementsException -> true

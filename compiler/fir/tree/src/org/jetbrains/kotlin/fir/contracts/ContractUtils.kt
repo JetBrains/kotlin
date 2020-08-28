@@ -5,7 +5,20 @@
 
 package org.jetbrains.kotlin.fir.contracts
 
+import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.contracts.builder.buildEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.description.ConeEffectDeclaration
 
-val FirContractDescription.effects: List<ConeEffectDeclaration>?
+val FirContractDescription.effects: List<FirEffectDeclaration>?
     get() = (this as? FirResolvedContractDescription)?.effects
+
+val FirContractDescription.coneEffects: List<ConeEffectDeclaration>?
+    get() = effects?.map { it.effect }
+
+fun ConeEffectDeclaration.toFirEffectDeclaration(source: FirSourceElement? = null): FirEffectDeclaration =
+    buildEffectDeclaration {
+        if (source != null) {
+            this.source = source
+        }
+        effect = this@toFirEffectDeclaration
+    }

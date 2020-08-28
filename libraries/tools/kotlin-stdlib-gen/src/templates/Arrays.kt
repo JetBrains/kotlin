@@ -1509,10 +1509,12 @@ object ArrayOps : TemplateGroupBase() {
                                 return this@asList[index]
                             }
                             override fun indexOf(element: T): Int {
+                                @Suppress("USELESS_CAST")
                                 if ((element as Any?) !is T) return -1
                                 return this@asList.indexOf(element)
                             }
                             override fun lastIndexOf(element: T): Int {
+                                @Suppress("USELESS_CAST")
                                 if ((element as Any?) !is T) return -1
                                 return this@asList.lastIndexOf(element)
                             }

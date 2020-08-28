@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -68,6 +69,8 @@ abstract class KotlinIrLinker(
     protected val deserializersForModules = mutableMapOf<ModuleDescriptor, IrModuleDeserializer>()
 
     abstract val fakeOverrideBuilder: FakeOverrideBuilder
+
+    abstract val translationPluginContext: TranslationPluginContext?
 
     private val haveSeen = mutableSetOf<IrSymbol>()
     private val fakeOverrideClassQueue = mutableListOf<IrClass>()
@@ -540,8 +543,12 @@ abstract class KotlinIrLinker(
             }
         }
 
-        return linkerExtensions.firstNotNullResult { it.resolveSymbol(symbol) }?.also {
-            require(symbol.owner == it)
+        return translationPluginContext?.let { ctx ->
+            linkerExtensions.firstNotNullResult {
+                it.resolveSymbol(symbol, ctx)
+            }?.also {
+                require(symbol.owner == it)
+            }
         }
     }
 

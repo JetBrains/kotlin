@@ -60,8 +60,8 @@ class Case4() : I {
         I.invoke("")
         <!DEBUG_INFO_CALL("fqName: Case4.Companion.invoke; typeCall: operator function")!>invoke("")<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>invoke("")<!>
-        <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!><!UNRESOLVED_REFERENCE!>I<!>("")<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved name: I")!><!UNRESOLVED_REFERENCE!>I<!>("")<!>
+        <!DEBUG_INFO_CALL("fqName: I.Companion.invoke; typeCall: variable&invoke")!>I("")<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>I("")<!>
         <!DEBUG_INFO_CALL("fqName: Case4.Companion.invoke; typeCall: variable&invoke")!>Case4("")<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>Case4("")<!>
     }

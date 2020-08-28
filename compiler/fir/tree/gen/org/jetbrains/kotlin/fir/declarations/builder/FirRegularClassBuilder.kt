@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterRefsOwnerBu
 import org.jetbrains.kotlin.fir.declarations.impl.FirRegularClassImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef

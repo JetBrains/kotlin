@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.CodegenUtil
+import org.jetbrains.kotlin.backend.common.ir.allOverridden
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
-import org.jetbrains.kotlin.backend.common.lower.allOverridden
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
@@ -71,11 +71,8 @@ internal fun MethodNode.acceptWithStateMachine(
     accept(visitor)
 }
 
-private fun IrFunction.anyOfOverriddenFunctionsReturnsNonUnit(): Boolean {
-    return (this as? IrSimpleFunction)?.allOverridden()?.toList()?.let { functions ->
-        functions.isNotEmpty() && functions.any { !it.returnType.isUnit() }
-    } == true
-}
+private fun IrFunction.anyOfOverriddenFunctionsReturnsNonUnit(): Boolean =
+    this is IrSimpleFunction && allOverridden().any { !it.returnType.isUnit() }
 
 internal fun IrFunction.suspendForInlineToOriginal(): IrSimpleFunction? {
     if (origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE &&

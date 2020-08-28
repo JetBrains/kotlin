@@ -39,7 +39,7 @@ abstract class FirValueParameter : FirVariable<FirValueParameter>(), FirControlF
     abstract override val getter: FirPropertyAccessor?
     abstract override val setter: FirPropertyAccessor?
     abstract override val annotations: List<FirAnnotationCall>
-    abstract override val controlFlowGraphReference: FirControlFlowGraphReference
+    abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract val defaultValue: FirExpression?
     abstract val isCrossinline: Boolean
     abstract val isNoinline: Boolean
@@ -52,6 +52,8 @@ abstract class FirValueParameter : FirVariable<FirValueParameter>(), FirControlF
     abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
 
     abstract override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
+
+    abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirValueParameter
 
@@ -66,8 +68,6 @@ abstract class FirValueParameter : FirVariable<FirValueParameter>(), FirControlF
     abstract override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirValueParameter
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirValueParameter
-
-    abstract override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirValueParameter
 
     abstract override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirValueParameter
 }

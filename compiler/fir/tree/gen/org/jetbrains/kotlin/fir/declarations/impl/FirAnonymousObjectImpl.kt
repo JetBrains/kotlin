@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -42,7 +41,7 @@ internal class FirAnonymousObjectImpl(
     override val symbol: FirAnonymousObjectSymbol,
 ) : FirAnonymousObject() {
     override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference
+    override var controlFlowGraphReference: FirControlFlowGraphReference? = null
 
     init {
         symbol.bind(this)
@@ -53,7 +52,7 @@ internal class FirAnonymousObjectImpl(
         superTypeRefs.forEach { it.accept(visitor, data) }
         declarations.forEach { it.accept(visitor, data) }
         annotations.forEach { it.accept(visitor, data) }
-        controlFlowGraphReference.accept(visitor, data)
+        controlFlowGraphReference?.accept(visitor, data)
         typeRef.accept(visitor, data)
     }
 
@@ -62,7 +61,7 @@ internal class FirAnonymousObjectImpl(
         transformSuperTypeRefs(transformer, data)
         transformDeclarations(transformer, data)
         transformAnnotations(transformer, data)
-        transformControlFlowGraphReference(transformer, data)
+        controlFlowGraphReference = controlFlowGraphReference?.transformSingle(transformer, data)
         typeRef = typeRef.transformSingle(transformer, data)
         return this
     }
@@ -87,11 +86,6 @@ internal class FirAnonymousObjectImpl(
         return this
     }
 
-    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirAnonymousObjectImpl {
-        controlFlowGraphReference = controlFlowGraphReference.transformSingle(transformer, data)
-        return this
-    }
-
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
     }
@@ -99,6 +93,10 @@ internal class FirAnonymousObjectImpl(
     override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>) {
         superTypeRefs.clear()
         superTypeRefs.addAll(newSuperTypeRefs)
+    }
+
+    override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
+        controlFlowGraphReference = newControlFlowGraphReference
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {

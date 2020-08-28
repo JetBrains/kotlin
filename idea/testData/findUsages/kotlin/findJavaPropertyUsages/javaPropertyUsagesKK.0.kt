@@ -26,3 +26,5 @@ fun test() {
     val t = B().p
     B().p = 1
 }
+
+// DISABLE-ERRORS

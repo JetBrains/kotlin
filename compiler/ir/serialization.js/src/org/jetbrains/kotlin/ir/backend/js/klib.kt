@@ -147,18 +147,21 @@ fun generateKLib(
 
     val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
     val deserializeFakeOverrides = configuration.getBoolean(CommonConfigurationKeys.DESERIALIZE_FAKE_OVERRIDES)
-
+    val feContext = psi2IrContext.run {
+        JsIrLinker.JsFePluginContext(moduleDescriptor, bindingContext, symbolTable, typeTranslator, irBuiltIns)
+    }
     val irLinker = JsIrLinker(
         psi2IrContext.moduleDescriptor,
         emptyLoggingContext,
         psi2IrContext.irBuiltIns,
         psi2IrContext.symbolTable,
         functionFactory,
+        feContext,
         serializedIrFiles,
         deserializeFakeOverrides
     )
 
-    val deserializedModuleFragments = sortDependencies(allDependencies.getFullList(), depsDescriptors.descriptors).map {
+    sortDependencies(allDependencies.getFullList(), depsDescriptors.descriptors).map {
         irLinker.deserializeOnlyHeaderModule(depsDescriptors.getModuleDescriptor(it), it)
     }
 
@@ -227,7 +230,10 @@ fun loadIr(
             val symbolTable = psi2IrContext.symbolTable
             val functionFactory = IrFunctionFactory(irBuiltIns, symbolTable)
             irBuiltIns.functionFactory = functionFactory
-            val irLinker = JsIrLinker(psi2IrContext.moduleDescriptor, emptyLoggingContext, irBuiltIns, symbolTable, functionFactory, null, deserializeFakeOverrides)
+            val feContext = psi2IrContext.run {
+                JsIrLinker.JsFePluginContext(moduleDescriptor, bindingContext, symbolTable, typeTranslator, irBuiltIns)
+            }
+            val irLinker = JsIrLinker(psi2IrContext.moduleDescriptor, emptyLoggingContext, irBuiltIns, symbolTable, functionFactory, feContext, null, deserializeFakeOverrides)
             val deserializedModuleFragments = sortDependencies(allDependencies.getFullList(), depsDescriptors.descriptors).map {
                 irLinker.deserializeIrModuleHeader(depsDescriptors.getModuleDescriptor(it), it)
             }
@@ -263,7 +269,8 @@ fun loadIr(
             constantValueGenerator.typeTranslator = typeTranslator
             val irBuiltIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
             val functionFactory = IrFunctionFactory(irBuiltIns, symbolTable)
-            val irLinker = JsIrLinker(null, emptyLoggingContext, irBuiltIns, symbolTable, functionFactory, null, deserializeFakeOverrides)
+            val irLinker =
+                JsIrLinker(null, emptyLoggingContext, irBuiltIns, symbolTable, functionFactory, null, null, deserializeFakeOverrides)
 
             val deserializedModuleFragments = sortDependencies(allDependencies.getFullList(), depsDescriptors.descriptors).map {
                 val strategy =

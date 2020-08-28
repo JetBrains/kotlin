@@ -221,7 +221,7 @@ class FirResolveBench(val withProgress: Boolean) {
     ) {
         fileCount += firFiles.size
         try {
-            for ((stage, processor) in processors.withIndex()) {
+            for ((_, processor) in processors.withIndex()) {
                 //println("Starting stage #$stage. $transformer")
                 val firFileSequence = if (withProgress) firFiles.progress("   ~ ") else firFiles.asSequence()
                 runStage(processor, firFileSequence)

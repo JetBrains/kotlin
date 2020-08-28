@@ -279,8 +279,13 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Bar") }
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun multilevelTATypesInUserPackageWithSameNameAndRightHandSideClass1() = doTestFailure(
+    @Test
+    // why success: short-circuiting & lifting up
+    fun multilevelTATypesInUserPackageWithSameNameAndRightHandSideClass1() = doTestSuccess(
+        expected = mockTAType("org.sample.FooAlias") {
+            mockClassType("org.sample.Foo")
+        },
+
         mockTAType("org.sample.FooAlias") {
             mockClassType("org.sample.Foo")
         },
@@ -289,13 +294,16 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
             mockTAType("org.sample.FooAliasL2") {
                 mockClassType("org.sample.Foo")
             }
-        },
-
-        shouldFailOnFirstVariant = true
+        }
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun multilevelTATypesInUserPackageWithSameNameAndRightHandSideClass2() = doTestFailure(
+    @Test
+    // why success: short-circuiting & lifting up
+    fun multilevelTATypesInUserPackageWithSameNameAndRightHandSideClass2() = doTestSuccess(
+        expected = mockTAType("org.sample.FooAlias") {
+            mockClassType("org.sample.Foo")
+        },
+
         mockTAType("org.sample.FooAlias") {
             mockTAType("org.sample.FooAliasL2") {
                 mockClassType("org.sample.Foo")
@@ -304,9 +312,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
 
         mockTAType("org.sample.FooAlias") {
             mockClassType("org.sample.Foo")
-        },
-
-        shouldFailOnFirstVariant = true
+        }
     )
 
     @Test

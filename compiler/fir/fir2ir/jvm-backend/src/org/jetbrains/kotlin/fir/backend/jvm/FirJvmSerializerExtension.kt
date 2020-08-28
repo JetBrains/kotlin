@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.Visibilities
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
@@ -60,19 +60,19 @@ class FirJvmSerializerExtension @JvmOverloads constructor(
     override fun shouldUseTypeTable(): Boolean = useTypeTable
     override fun shouldSerializeFunction(function: FirFunction<*>): Boolean {
         return classBuilderMode != ClassBuilderMode.ABI ||
-                function !is FirSimpleFunction || function.visibility != Visibilities.PRIVATE
+                function !is FirSimpleFunction || function.visibility != Visibilities.Private
     }
 
     override fun shouldSerializeProperty(property: FirProperty): Boolean {
-        return classBuilderMode != ClassBuilderMode.ABI || property.visibility != Visibilities.PRIVATE
+        return classBuilderMode != ClassBuilderMode.ABI || property.visibility != Visibilities.Private
     }
 
     override fun shouldSerializeTypeAlias(typeAlias: FirTypeAlias): Boolean {
-        return classBuilderMode != ClassBuilderMode.ABI || typeAlias.visibility != Visibilities.PRIVATE
+        return classBuilderMode != ClassBuilderMode.ABI || typeAlias.visibility != Visibilities.Private
     }
 
     override fun shouldSerializeNestedClass(nestedClass: FirRegularClass): Boolean {
-        return classBuilderMode != ClassBuilderMode.ABI || nestedClass.visibility != Visibilities.PRIVATE
+        return classBuilderMode != ClassBuilderMode.ABI || nestedClass.visibility != Visibilities.Private
     }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -152,6 +152,7 @@ class FirJvmSerializerExtension @JvmOverloads constructor(
         writeLocalProperties(proto, partAsmType, JvmProtoBuf.packageLocalVariable)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun <MessageType : GeneratedMessageLite.ExtendableMessage<MessageType>, BuilderType : GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>> writeLocalProperties(
         proto: BuilderType,
         classAsmType: Type,

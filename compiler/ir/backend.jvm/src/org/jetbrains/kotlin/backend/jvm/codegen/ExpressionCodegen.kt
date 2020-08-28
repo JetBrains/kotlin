@@ -28,11 +28,12 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -51,6 +52,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.org.objectweb.asm.Label
+import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import java.util.*
@@ -183,7 +185,7 @@ class ExpressionCodegen(
         } else {
             expression.accept(this, data).materializeAt(type, irType)
         }
-        return StackValue.onStack(type, irType.toKotlinType())
+        return StackValue.onStack(type, irType.toIrBasedKotlinType())
     }
 
     internal fun genOrGetLocal(expression: IrExpression, data: BlockInfo): StackValue {
@@ -198,7 +200,7 @@ class ExpressionCodegen(
         }
 
         return if (expression is IrGetValue)
-            StackValue.local(findLocalIndex(expression.symbol), frameMap.typeOf(expression.symbol), expression.type.toKotlinType())
+            StackValue.local(findLocalIndex(expression.symbol), frameMap.typeOf(expression.symbol), expression.type.toIrBasedKotlinType())
         else
             gen(expression, typeMapper.mapType(expression.type), expression.type, data)
     }
@@ -317,7 +319,7 @@ class ExpressionCodegen(
         // then generate name accordingly.
         val name = if (param.origin == BOUND_RECEIVER_PARAMETER || isReceiver) {
             getNameForReceiverParameter(
-                irFunction.descriptor,
+                irFunction.toIrBasedDescriptor(),
                 state.bindingContext,
                 context.configuration.languageVersionSettings
             )
@@ -385,7 +387,7 @@ class ExpressionCodegen(
     override fun visitContainerExpression(expression: IrContainerExpression, data: BlockInfo) =
         visitStatementContainer(expression, data)
 
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: BlockInfo): PromisedValue {
+    override fun visitCall(expression: IrCall, data: BlockInfo): PromisedValue {
         classCodegen.context.irIntrinsics.getIntrinsic(expression.symbol)
             ?.invoke(expression, this, data)?.let { return it }
 
@@ -393,47 +395,14 @@ class ExpressionCodegen(
         require(callee.parent is IrClass) { "Unhandled intrinsic in ExpressionCodegen: ${callee.render()}" }
         val callable = methodSignatureMapper.mapToCallableMethod(irFunction, expression)
         val callGenerator = getOrCreateCallGenerator(expression, data, callable.signature)
-        val asmType = if (expression is IrConstructorCall) typeMapper.mapTypeAsDeclaration(expression.type) else expression.asmType
         val isSuspensionPoint = expression.isSuspensionPoint()
 
         if (isSuspensionPoint != SuspensionPointKind.NEVER) {
             addInlineMarker(mv, isStartNotEnd = true)
         }
 
-        when {
-            expression is IrConstructorCall -> {
-                closureReifiedMarkers[expression.symbol.owner.parentAsClass]?.let {
-                    if (it.wereUsedReifiedParameters()) {
-                        putNeedClassReificationMarker(v)
-                        propagateChildReifiedTypeParametersUsages(it)
-                    }
-                }
-
-                // IR constructors have no receiver and return the new instance, but on JVM they are void-returning
-                // instance methods named <init>.
-                markLineNumber(expression)
-                mv.anew(asmType)
-                mv.dup()
-            }
-            expression is IrDelegatingConstructorCall -> {
-                expression.markLineNumber(startOffset = true)
-
-                // In this case the receiver is `this` (not specified in IR) and the return value is discarded anyway.
-                mv.load(0, OBJECT_TYPE)
-
-                for (argumentIndex in 0 until expression.typeArgumentsCount) {
-                    val classifier = expression.getTypeArgument(argumentIndex)?.classifierOrNull
-                    if (classifier is IrTypeParameterSymbol && classifier.owner.isReified) {
-                        consumeReifiedOperationMarker(classifier)
-                    }
-                }
-            }
-            expression.symbol.descriptor is ConstructorDescriptor ->
-                throw AssertionError("IrCall with ConstructorDescriptor: ${expression.javaClass.simpleName}")
-        }
-
         expression.dispatchReceiver?.let { receiver ->
-            val type = if ((expression as? IrCall)?.superQualifierSymbol != null) receiver.asmType else callable.owner
+            val type = if (expression.superQualifierSymbol != null) receiver.asmType else callable.owner
             callGenerator.genValueAndPut(callee.dispatchReceiverParameter!!, receiver, type, this, data)
         }
 
@@ -457,14 +426,10 @@ class ExpressionCodegen(
             addSuspendMarker(mv, isStartNotEnd = true, isSuspensionPoint == SuspensionPointKind.NOT_INLINE)
         }
 
-        if (irFunction.isInvokeSuspendOfContinuation()) {
+        val generatorForActualCall =
             // Do not inline callee to continuation, instead, call it
-            with(callable) {
-                mv.visitMethodInsn(invokeOpcode, owner.internalName, asmMethod.name, asmMethod.descriptor, isInterfaceMethod)
-            }
-        } else {
-            callGenerator.genCall(callable, this, expression)
-        }
+            if (irFunction.isInvokeSuspendOfContinuation()) IrCallGenerator.DefaultCallGenerator else callGenerator
+        generatorForActualCall.genCall(callable, this, expression)
 
         if (isSuspensionPoint != SuspensionPointKind.NEVER) {
             addSuspendMarker(mv, isStartNotEnd = false, isSuspensionPoint == SuspensionPointKind.NOT_INLINE)
@@ -472,8 +437,6 @@ class ExpressionCodegen(
         }
 
         return when {
-            expression is IrConstructorCall ->
-                MaterialValue(this, asmType, expression.type)
             (expression.type.isNothing() || expression.type.isUnit()) && irFunction.shouldContainSuspendMarkers() -> {
                 // NewInference allows casting `() -> T` to `() -> Unit`. A CHECKCAST here will fail.
                 // Also, if the callee is a suspend function with a suspending tail call, the next `resumeWith`
@@ -510,6 +473,68 @@ class ExpressionCodegen(
         else -> SuspensionPointKind.ALWAYS
     }
 
+    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: BlockInfo): PromisedValue {
+        val callee = expression.symbol.owner
+        val owner = typeMapper.mapClass(callee.constructedClass)
+        val signature = methodSignatureMapper.mapSignatureSkipGeneric(callee)
+
+        markLineNumber(expression)
+
+        // In this case the receiver is `this` (not specified in IR) and the return value is discarded anyway.
+        mv.load(0, OBJECT_TYPE)
+
+        for (argumentIndex in 0 until expression.typeArgumentsCount) {
+            val classifier = expression.getTypeArgument(argumentIndex)?.classifierOrNull
+            if (classifier is IrTypeParameterSymbol && classifier.owner.isReified) {
+                consumeReifiedOperationMarker(classifier)
+            }
+        }
+
+        generateConstructorArguments(expression, signature, data)
+        markLineNumber(expression)
+
+        mv.visitMethodInsn(Opcodes.INVOKESPECIAL, owner.internalName, signature.asmMethod.name, signature.asmMethod.descriptor, false)
+
+        return unitValue
+    }
+
+    override fun visitConstructorCall(expression: IrConstructorCall, data: BlockInfo): PromisedValue {
+        classCodegen.context.irIntrinsics.getIntrinsic(expression.symbol)
+            ?.invoke(expression, this, data)?.let { return it }
+
+        val callee = expression.symbol.owner
+        val owner = typeMapper.mapClass(callee.constructedClass)
+        val signature = methodSignatureMapper.mapSignatureSkipGeneric(callee)
+
+        closureReifiedMarkers[expression.symbol.owner.parentAsClass]?.let {
+            if (it.wereUsedReifiedParameters()) {
+                putNeedClassReificationMarker(v)
+                propagateChildReifiedTypeParametersUsages(it)
+            }
+        }
+
+        // IR constructors have no receiver and return the new instance, but on JVM they are void-returning
+        // instance methods named <init>.
+        markLineNumber(expression)
+        mv.anew(owner)
+        mv.dup()
+
+        generateConstructorArguments(expression, signature, data)
+        markLineNumber(expression)
+
+        mv.visitMethodInsn(Opcodes.INVOKESPECIAL, owner.internalName, signature.asmMethod.name, signature.asmMethod.descriptor, false)
+
+        return MaterialValue(this, owner, expression.type)
+    }
+
+    private fun generateConstructorArguments(expression: IrFunctionAccessExpression, signature: JvmMethodSignature, data: BlockInfo) {
+        expression.symbol.owner.valueParameters.forEachIndexed { i, irParameter ->
+            val arg = expression.getValueArgument(i)
+                ?: error("Null argument in ExpressionCodegen for parameter ${irParameter.render()}")
+            gen(arg, signature.valueParameters[i].asmType, irParameter.type, data)
+        }
+    }
+
     override fun visitVariable(declaration: IrVariable, data: BlockInfo): PromisedValue {
         val varType = typeMapper.mapType(declaration)
         val index = frameMap.enter(declaration.symbol, varType)
@@ -531,10 +556,7 @@ class ExpressionCodegen(
     }
 
     override fun visitGetValue(expression: IrGetValue, data: BlockInfo): PromisedValue {
-        // Do not generate line number information for loads from compiler-generated
-        // temporary variables. They do not correspond to variable loads in user code.
-        if (expression.symbol.owner.origin != IrDeclarationOrigin.IR_TEMPORARY_VARIABLE)
-            expression.markLineNumber(startOffset = true)
+        expression.markLineNumber(startOffset = true)
         val type = frameMap.typeOf(expression.symbol)
         mv.load(findLocalIndex(expression.symbol), type)
         return MaterialValue(this, type, expression.type)
@@ -630,6 +652,7 @@ class ExpressionCodegen(
 
     private fun handlePlusMinus(expression: IrSetVariable, value: IrExpression?, isMinus: Boolean): Boolean {
         if (value is IrConst<*> && value.kind == IrConstKind.Int) {
+            @Suppress("UNCHECKED_CAST")
             val delta = (value as IrConst<Int>).value
             val upperBound = Byte.MAX_VALUE.toInt() + (if (isMinus) 1 else 0)
             val lowerBound = Byte.MIN_VALUE.toInt() + (if (isMinus) 1 else 0)
@@ -717,7 +740,7 @@ class ExpressionCodegen(
             is Float -> mv.fconst(value)
             is Double -> mv.dconst(value)
             is Number -> mv.iconst(value.toInt())
-            else -> mv.aconst(value)
+            else -> if (expression.kind == IrConstKind.Null) return nullConstant else mv.aconst(value)
         }
         return expression.onStack
     }
@@ -831,7 +854,7 @@ class ExpressionCodegen(
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: BlockInfo): PromisedValue {
         val typeOperand = expression.typeOperand
-        val kotlinType = typeOperand.toKotlinType()
+        val kotlinType = typeOperand.toIrBasedKotlinType()
         return when (expression.operator) {
             IrTypeOperator.IMPLICIT_CAST ->
                 expression.argument.accept(this, data)

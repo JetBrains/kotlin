@@ -431,7 +431,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
                     sourceSetToCompilationData[sourceSet.name]?.let { compilationDataRecords ->
                         it.targetCompatibility = compilationDataRecords
                             .mapNotNull { compilationData -> compilationData.targetCompatibility }
-                            .minWith(VersionComparatorUtil.COMPARATOR)
+                            .minWithOrNull(VersionComparatorUtil.COMPARATOR)
 
                         if (sourceSet.actualPlatforms.getSinglePlatform() == KotlinPlatform.NATIVE) {
                             it.konanTargets = compilationDataRecords

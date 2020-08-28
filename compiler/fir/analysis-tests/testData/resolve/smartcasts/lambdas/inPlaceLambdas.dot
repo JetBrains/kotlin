@@ -89,6 +89,7 @@ digraph inPlaceLambdas_kt {
     17 -> {18};
     18 -> {27};
     18 -> {20} [color=red];
+    18 -> {27} [style=dashed];
     19 -> {21} [color=red];
     20 -> {21} [color=green];
     21 -> {22};
@@ -136,6 +137,7 @@ digraph inPlaceLambdas_kt {
     34 -> {35};
     35 -> {43};
     35 -> {37} [color=red];
+    35 -> {43} [style=dashed];
     36 -> {38} [color=red];
     37 -> {38} [color=green];
     38 -> {39};
@@ -212,6 +214,7 @@ digraph inPlaceLambdas_kt {
     58 -> {59};
     59 -> {70};
     59 -> {61} [color=red];
+    59 -> {70} [style=dashed];
     60 -> {62} [color=red];
     61 -> {62} [color=green];
     62 -> {63};

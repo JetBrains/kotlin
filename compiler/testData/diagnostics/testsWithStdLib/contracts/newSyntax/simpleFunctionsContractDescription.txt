@@ -1,0 +1,5 @@
+package
+
+public fun calculateNumber(/*0*/ block: () -> kotlin.Int): kotlin.Int
+public fun callExactlyOnce(/*0*/ block: () -> kotlin.Int): kotlin.Unit
+public fun printStr(/*0*/ str: kotlin.String?): kotlin.Unit

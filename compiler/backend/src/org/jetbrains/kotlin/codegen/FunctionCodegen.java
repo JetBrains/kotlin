@@ -73,7 +73,7 @@ import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBinding
 import static org.jetbrains.kotlin.codegen.state.KotlinTypeMapper.isAccessor;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION;
-import static org.jetbrains.kotlin.descriptors.ModalityKt.isOverridable;
+import static org.jetbrains.kotlin.descriptors.ModalityUtilsKt.isOverridable;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.getSourceFromDescriptor;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.inline.InlineOnlyKt.isInlineOnlyPrivateInBytecode;

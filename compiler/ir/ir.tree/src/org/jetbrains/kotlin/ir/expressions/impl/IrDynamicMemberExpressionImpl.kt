@@ -12,15 +12,12 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrDynamicMemberExpressionImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val type: IrType,
     override val memberName: String,
     override var receiver: IrExpression
-) :
-    IrExpressionBase(startOffset, endOffset, type),
-    IrDynamicMemberExpression {
-
+) : IrDynamicMemberExpression() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitDynamicMemberExpression(this, data)
 

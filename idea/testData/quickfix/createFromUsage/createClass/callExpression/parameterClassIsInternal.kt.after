@@ -1,0 +1,9 @@
+// "Create class 'Bar'" "true"
+// DISABLE-ERRORS
+internal class Foo
+
+val bar = Bar(Foo())
+
+class Bar internal constructor(foo: Foo) {
+
+}

@@ -37,3 +37,7 @@ FILE: exposedTypeAlias.kt
     }
     public final typealias AInner0 = R|A.Inner|
     public final typealias BInner0 = R|B.Inner|
+    private final typealias MyString = R|kotlin/String|
+    public final fun foo(): R|MyString| {
+        ^foo String()
+    }

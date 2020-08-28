@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -83,7 +84,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
                     }
 
                     (irConstructor.body as IrBlockBody).statements.forEach { statement ->
-                        +statement.transform(object : IrElementTransformerVoid() {
+                        +statement.transformStatement(object : IrElementTransformerVoid() {
                             override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
                                 expression.transformChildrenVoid()
                                 return irBlock(expression) {
@@ -124,7 +125,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
                                 return expression
                             }
 
-                        }, null)
+                        })
                     }
                     +irReturn(irGet(thisVar))
                 }.statements
@@ -219,12 +220,11 @@ class InlineClassLowering(val context: CommonBackendContext) {
 
                 override fun visitCall(expression: IrCall): IrExpression {
                     expression.transformChildrenVoid(this)
-                    val function = expression.symbol.owner
+                    val function: IrSimpleFunction = expression.symbol.owner
                     if (function.parent !is IrClass ||
                         function.isStaticMethodOfClass ||
                         !function.parentAsClass.isInline ||
-                        (function is IrSimpleFunction && !function.isReal) ||
-                        (function is IrConstructor && function.isPrimary)
+                        !function.isReal
                     ) {
                         return expression
                     }
@@ -232,7 +232,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
                     return irCall(
                         expression,
                         getOrCreateStaticMethod(function),
-                        receiversAsArguments = (function is IrSimpleFunction)
+                        receiversAsArguments = true
                     )
                 }
 

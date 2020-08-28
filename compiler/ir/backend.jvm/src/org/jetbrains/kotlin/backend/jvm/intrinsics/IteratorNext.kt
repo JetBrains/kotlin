@@ -17,12 +17,10 @@
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns.COLLECTIONS_PACKAGE_FQ_NAME
+import org.jetbrains.kotlin.builtins.StandardNames.COLLECTIONS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.fileClasses.internalNameWithoutInnerClasses
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
-import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType

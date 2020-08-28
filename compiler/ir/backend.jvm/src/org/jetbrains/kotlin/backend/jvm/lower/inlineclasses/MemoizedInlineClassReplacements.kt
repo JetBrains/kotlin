@@ -184,7 +184,7 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, pr
         replacementOrigin: IrDeclarationOrigin,
         noFakeOverride: Boolean = false,
         body: IrFunction.() -> Unit
-    ): IrSimpleFunction = irFactory.buildFun(function.descriptor) {
+    ): IrSimpleFunction = irFactory.buildFun {
         updateFrom(function)
         if (function is IrConstructor) {
             // The [updateFrom] call will set the modality to FINAL for constructors, while the JVM backend would use OPEN here.
@@ -211,16 +211,18 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, pr
             metadata = function.metadata
             function.metadata = null
         }
+        copyAttributes(function as? IrAttributeContainer)
 
         if (function is IrSimpleFunction) {
             val propertySymbol = function.correspondingPropertySymbol
             if (propertySymbol != null) {
                 val property = propertyMap.getOrPut(propertySymbol) {
-                    irFactory.buildProperty(propertySymbol.descriptor) {
+                    irFactory.buildProperty() {
                         name = propertySymbol.owner.name
                         updateFrom(propertySymbol.owner)
                     }.apply {
                         parent = propertySymbol.owner.parent
+                        copyAttributes(propertySymbol.owner)
                     }
                 }
                 correspondingPropertySymbol = property.symbol

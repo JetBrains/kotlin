@@ -85,6 +85,7 @@ private val ProjectTemplate.icon: Icon
         FullStackWebApplicationProjectTemplate -> KotlinIcons.Wizard.WEB
         NativeApplicationProjectTemplate -> KotlinIcons.Wizard.NATIVE
         FrontendApplicationProjectTemplate -> KotlinIcons.Wizard.JS
+        ReactApplicationProjectTemplate -> KotlinIcons.Wizard.REACT_JS
         MultiplatformMobileApplicationProjectTemplate -> KotlinIcons.Wizard.MULTIPLATFORM_MOBILE
         MultiplatformMobileLibraryProjectTemplate -> KotlinIcons.Wizard.MULTIPLATFORM_MOBILE_LIBRARY
         NodeJsApplicationProjectTemplate -> KotlinIcons.Wizard.NODE_JS

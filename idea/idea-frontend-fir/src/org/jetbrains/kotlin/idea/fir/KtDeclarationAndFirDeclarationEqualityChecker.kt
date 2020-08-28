@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.fir
 
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirClass
@@ -69,9 +69,9 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
             }
             is FirFunctionTypeRef -> {
                 val classId = if (isSuspend) {
-                    KotlinBuiltIns.getSuspendFunctionClassId(parametersCount)
+                    StandardNames.getSuspendFunctionClassId(parametersCount)
                 } else {
-                    KotlinBuiltIns.getFunctionClassId(parametersCount)
+                    StandardNames.getFunctionClassId(parametersCount)
                 }
                 buildString {
                     append(classId.asSingleFqName().toString())

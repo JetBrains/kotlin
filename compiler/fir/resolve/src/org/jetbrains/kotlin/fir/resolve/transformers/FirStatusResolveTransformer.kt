@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.Visibilities
+import org.jetbrains.kotlin.fir.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -183,19 +183,33 @@ fun FirDeclaration.resolveStatus(
     containingClass: FirClass<*>?,
     isLocal: Boolean
 ): FirDeclarationStatus {
-    if (status.visibility == Visibilities.UNKNOWN || status.modality == null) {
+    if (status.visibility == Visibilities.Unknown || status.modality == null || status.modality == Modality.OPEN) {
         val visibility = when (status.visibility) {
-            Visibilities.UNKNOWN -> when {
-                isLocal -> Visibilities.LOCAL
-                this is FirConstructor && containingClass is FirAnonymousObject -> Visibilities.PRIVATE
+            Visibilities.Unknown -> when {
+                isLocal -> Visibilities.Local
+                this is FirConstructor && containingClass is FirAnonymousObject -> Visibilities.Private
                 else -> resolveVisibility(containingClass)
             }
             else -> status.visibility
         }
-        val modality = status.modality ?: resolveModality(containingClass)
+        val modality = status.modality?.let {
+            if (it == Modality.OPEN && containingClass?.classKind == ClassKind.INTERFACE && !hasOwnBodyOrAccessorBody()) {
+                Modality.ABSTRACT
+            } else {
+                it
+            }
+        } ?: resolveModality(containingClass)
         return (status as FirDeclarationStatusImpl).resolved(visibility, modality)
     }
     return status
+}
+
+private fun FirDeclaration.hasOwnBodyOrAccessorBody(): Boolean {
+    return when (this) {
+        is FirSimpleFunction -> this.body != null
+        is FirProperty -> this.initializer != null || this.getter?.body != null || this.setter?.body != null
+        else -> true
+    }
 }
 
 private fun FirDeclaration.resolveVisibility(containingClass: FirClass<*>?): Visibility {
@@ -205,10 +219,10 @@ private fun FirDeclaration.resolveVisibility(containingClass: FirClass<*>?): Vis
             (containingClass.classKind == ClassKind.ENUM_CLASS || containingClass.classKind == ClassKind.ENUM_ENTRY ||
                     containingClass.modality == Modality.SEALED)
         ) {
-            return Visibilities.PRIVATE
+            return Visibilities.Private
         }
     }
-    return Visibilities.PUBLIC // TODO (overrides)
+    return Visibilities.Public // TODO (overrides)
 }
 
 private fun FirDeclaration.resolveModality(containingClass: FirClass<*>?): Modality {
@@ -219,11 +233,9 @@ private fun FirDeclaration.resolveModality(containingClass: FirClass<*>?): Modal
                 containingClass == null -> Modality.FINAL
                 containingClass.classKind == ClassKind.INTERFACE -> {
                     when {
-                        visibility == Visibilities.PRIVATE ->
+                        visibility == Visibilities.Private ->
                             Modality.FINAL
-                        this is FirSimpleFunction && body == null ->
-                            Modality.ABSTRACT
-                        this is FirProperty && initializer == null && getter?.body == null && setter?.body == null ->
+                        !this.hasOwnBodyOrAccessorBody() ->
                             Modality.ABSTRACT
                         else ->
                             Modality.OPEN

@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
-import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializerCodegen
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.getSerialTypeInfo
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
@@ -362,7 +361,6 @@ open class SerializerJsTranslator(
 
     companion object {
         fun translate(
-            declaration: KtPureClassOrObject,
             descriptor: ClassDescriptor,
             translator: DeclarationBodyVisitor,
             context: TranslationContext

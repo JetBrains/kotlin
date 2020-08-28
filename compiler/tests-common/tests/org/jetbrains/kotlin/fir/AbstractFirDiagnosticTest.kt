@@ -76,11 +76,14 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
             get() = File(absolutePath.replace(".kt", ".dot"))
     }
 
+    protected open val pluginPhasesEnabled: Boolean
+        get() = false
+
     override fun runAnalysis(testDataFile: File, testFiles: List<TestFile>, firFilesPerSession: Map<FirSession, List<FirFile>>) {
         for ((session, firFiles) in firFilesPerSession) {
             doFirResolveTestBench(
                 firFiles,
-                createAllCompilerResolveProcessors(session),
+                createAllCompilerResolveProcessors(session, pluginPhasesEnabled = pluginPhasesEnabled),
                 gc = false
             )
         }
@@ -337,9 +340,6 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
                 for (previousNode in node.previousNodes) {
                     if (previousNode.owner != graph) continue
                     if (!node.incomingEdges.getValue(previousNode).isBack) {
-                        if (previousNode !in visited) {
-                            val x = 1
-                        }
                         assertTrue(previousNode in visited)
                     }
                 }

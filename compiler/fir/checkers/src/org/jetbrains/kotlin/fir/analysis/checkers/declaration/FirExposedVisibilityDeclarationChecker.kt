@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticFactory3
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -184,7 +185,7 @@ object FirExposedVisibilityDeclarationChecker : FirMemberDeclarationChecker() {
         base: FirEffectiveVisibility
     ): FirMemberDeclaration? {
         val type = this as? ConeClassLikeType ?: return null
-        val fir = type.lookupTag.toSymbol(context.session)?.fir ?: return null
+        val fir = type.fullyExpandedType(context.session).lookupTag.toSymbol(context.session)?.fir ?: return null
 
         if (fir is FirMemberDeclaration) {
             when (fir.getEffectiveVisibility(context).relation(base)) {

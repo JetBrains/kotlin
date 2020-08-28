@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.*
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetVariableImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
+import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isNullable
@@ -39,7 +41,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val jvmInlineClassPhase = makeIrFilePhase(
@@ -121,7 +122,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
     private fun transformSimpleFunctionFlat(function: IrSimpleFunction, replacement: IrSimpleFunction): List<IrDeclaration> {
         replacement.valueParameters.forEach { it.transformChildrenVoid() }
         replacement.body = function.body?.transform(this, null)?.patchDeclarationParents(replacement)
-        (replacement as? IrAttributeContainer)?.copyAttributes(function)
+        replacement.copyAttributes(function)
 
         // Don't create a wrapper for functions which are only used in an unboxed context
         if (function.overriddenSymbols.isEmpty() || replacement.dispatchReceiverParameter != null)
@@ -202,7 +203,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
 
             constructor.body?.statements?.forEach { statement ->
                 +statement
-                    .transform(object : IrElementTransformerVoid() {
+                    .transformStatement(object : IrElementTransformerVoid() {
                         // Don't recurse under nested class declarations
                         override fun visitClass(declaration: IrClass): IrStatement {
                             return declaration
@@ -239,8 +240,8 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
                                 +irGet(thisVar)
                             })
                         }
-                    }, null)
-                    .transform(this@JvmInlineClassLowering, null)
+                    })
+                    .transformStatement(this@JvmInlineClassLowering)
                     .patchDeclarationParents(replacement)
             }
 
@@ -397,7 +398,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
                 ?: return false
 
             // Before version 1.4, we cannot rely on the Result.equals-impl0 method
-            return (leftClass.fqNameWhenAvailable != DescriptorUtils.RESULT_FQ_NAME) ||
+            return (leftClass.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME) ||
                     context.state.languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4
         }
 
@@ -427,7 +428,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
             if (statement is IrFunction)
                 transformFunctionFlat(statement)
             else
-                listOf(statement.transform(this, null))
+                listOf(statement.transformStatement(this))
         }
     }
 

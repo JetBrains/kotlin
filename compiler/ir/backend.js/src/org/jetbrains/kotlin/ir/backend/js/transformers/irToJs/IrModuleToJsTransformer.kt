@@ -149,7 +149,8 @@ class IrModuleToJsTransformer(
         val moduleBody = generateModuleBody(modules, rootContext)
 
         val internalModuleName = JsName("_")
-        val exportStatements = ExportModelToJsStatements(internalModuleName, namer).generateModuleExport(exportedModule)
+        val globalNames = NameTable<String>(namer.globalNames)
+        val exportStatements = ExportModelToJsStatements(internalModuleName, nameGenerator, { globalNames.declareFreshName(it, it)}).generateModuleExport(exportedModule)
 
         val callToMain = generateCallToMain(modules, rootContext)
 

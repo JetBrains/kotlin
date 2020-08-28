@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.idea.codeInsight.codevision
 
+import com.intellij.codeInsight.hints.settings.InlayHintsConfigurable
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction
 import com.intellij.internal.statistic.eventLog.FeatureUsageData
+import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.highlighter.markers.OVERRIDDEN_FUNCTION
@@ -126,6 +129,12 @@ class SettingsHint : KotlinCodeVisionHint(SETTINGS_FORMAT) {
     override fun onClick(editor: Editor, element: PsiElement, event: MouseEvent?) {
         val project = element.project
         logUsageStatistics(project, FUS_GROUP_ID, SETTING_CLICKED_EVENT_ID)
-        CodeVisionInlayHintsConfigurable.showSettingsDialogForLanguage(project, element.language)
+        InlayHintsConfigurable.showSettingsDialogForLanguage(project, element.language)
     }
 }
+
+fun logUsageStatistics(project: Project?, groupId: String, eventId: String) =
+    FUCounterUsageLogger.getInstance().logEvent(project, groupId, eventId)
+
+fun logUsageStatistics(project: Project?, groupId: String, eventId: String, data: FeatureUsageData) =
+    FUCounterUsageLogger.getInstance().logEvent(project, groupId, eventId, data)

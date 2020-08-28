@@ -1,3 +1,4 @@
+// IGNORE_FIR
 annotation class A
 
 class B

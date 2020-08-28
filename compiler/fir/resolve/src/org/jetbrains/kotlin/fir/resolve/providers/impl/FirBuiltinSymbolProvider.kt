@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.fir.resolve.providers.impl
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
@@ -24,9 +23,8 @@ import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
 import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
 import org.jetbrains.kotlin.fir.resolve.getOrPut
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
-import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -48,9 +46,9 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.io.InputStream
 
-class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider: KotlinScopeProvider) : FirSymbolProvider() {
+class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: KotlinScopeProvider) : FirSymbolProvider(session) {
 
-    private data class SyntheticFunctionalInterfaceSymbolKey(val kind: FunctionClassDescriptor.Kind, val arity: Int)
+    private data class SyntheticFunctionalInterfaceSymbolKey(val kind: FunctionClassKind, val arity: Int)
 
     private val allPackageFragments = loadBuiltIns().groupBy { it.fqName }
     private val syntheticFunctionalInterfaceSymbols = mutableMapOf<SyntheticFunctionalInterfaceSymbolKey, FirRegularClassSymbol>()
@@ -58,7 +56,7 @@ class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider:
     private fun loadBuiltIns(): List<BuiltInsPackageFragment> {
         val classLoader = this::class.java.classLoader
         val streamProvider = { path: String -> classLoader?.getResourceAsStream(path) ?: ClassLoader.getSystemResourceAsStream(path) }
-        val packageFqNames = KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAMES
+        val packageFqNames = StandardNames.BUILT_INS_PACKAGE_FQ_NAMES
 
         return packageFqNames.map { fqName ->
             val resourcePath = BuiltInSerializerProtocol.getBuiltInsFilePath(fqName)
@@ -81,7 +79,7 @@ class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider:
     private fun trySyntheticFunctionalInterface(classId: ClassId): FirRegularClassSymbol? {
         return with(classId) {
             val className = relativeClassName.asString()
-            val kind = FunctionClassDescriptor.Kind.byClassNamePrefix(packageFqName, className) ?: return@with null
+            val kind = FunctionClassKind.byClassNamePrefix(packageFqName, className) ?: return@with null
             val prefix = kind.classNamePrefix
             val arity = className.substring(prefix.length).toIntOrNull() ?: return null
             syntheticFunctionalInterfaceSymbols.getOrPut(SyntheticFunctionalInterfaceSymbolKey(kind, arity)) {
@@ -91,7 +89,7 @@ class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider:
                         origin = FirDeclarationOrigin.Synthetic
                         name = relativeClassName.shortName()
                         status = FirResolvedDeclarationStatusImpl(
-                            Visibilities.PUBLIC,
+                            Visibilities.Public,
                             Modality.ABSTRACT
                         ).apply {
                             isExpect = false
@@ -131,7 +129,7 @@ class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider:
                         )
                         val name = OperatorNameConventions.INVOKE
                         val functionStatus = FirResolvedDeclarationStatusImpl(
-                            Visibilities.PUBLIC,
+                            Visibilities.Public,
                             Modality.ABSTRACT
                         ).apply {
                             isExpect = false
@@ -143,22 +141,22 @@ class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider:
                             isTailRec = false
                             isExternal = false
                             isSuspend =
-                                kind == FunctionClassDescriptor.Kind.SuspendFunction ||
-                                        kind == FunctionClassDescriptor.Kind.KSuspendFunction
+                                kind == FunctionClassKind.SuspendFunction ||
+                                        kind == FunctionClassKind.KSuspendFunction
                         }
                         val typeArguments = typeParameters.map {
                             buildResolvedTypeRef {
                                 type = ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
                             }
                         }
-                        val superKind: FunctionClassDescriptor.Kind? = when (kind) {
-                            FunctionClassDescriptor.Kind.KFunction -> FunctionClassDescriptor.Kind.Function
-                            FunctionClassDescriptor.Kind.KSuspendFunction -> FunctionClassDescriptor.Kind.SuspendFunction
+                        val superKind: FunctionClassKind? = when (kind) {
+                            FunctionClassKind.KFunction -> FunctionClassKind.Function
+                            FunctionClassKind.KSuspendFunction -> FunctionClassKind.SuspendFunction
                             else -> null
                         }
 
                         fun createSuperType(
-                            kind: FunctionClassDescriptor.Kind,
+                            kind: FunctionClassKind,
                         ): FirResolvedTypeRef {
                             return buildResolvedTypeRef {
                                 type = ConeClassLikeLookupTagImpl(kind.classId(arity))
@@ -167,34 +165,34 @@ class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider:
                         }
 
                         superTypeRefs += when (kind) {
-                            FunctionClassDescriptor.Kind.Function -> listOf(
+                            FunctionClassKind.Function -> listOf(
                                 buildResolvedTypeRef {
                                     type = ConeClassLikeLookupTagImpl(StandardClassIds.Function)
                                         .constructClassType(arrayOf(typeArguments.last().type), isNullable = false)
                                 }
                             )
 
-                            FunctionClassDescriptor.Kind.SuspendFunction -> listOf(
+                            FunctionClassKind.SuspendFunction -> listOf(
                                 buildResolvedTypeRef {
                                     type = ConeClassLikeLookupTagImpl(StandardClassIds.Function)
                                         .constructClassType(arrayOf(typeArguments.last().type), isNullable = false)
                                 }
                             )
 
-                            FunctionClassDescriptor.Kind.KFunction -> listOf(
+                            FunctionClassKind.KFunction -> listOf(
                                 buildResolvedTypeRef {
                                     type = ConeClassLikeLookupTagImpl(StandardClassIds.KFunction)
                                         .constructClassType(arrayOf(typeArguments.last().type), isNullable = false)
                                 },
-                                createSuperType(FunctionClassDescriptor.Kind.Function)
+                                createSuperType(FunctionClassKind.Function)
                             )
 
-                            FunctionClassDescriptor.Kind.KSuspendFunction -> listOf(
+                            FunctionClassKind.KSuspendFunction -> listOf(
                                 buildResolvedTypeRef {
                                     type = ConeClassLikeLookupTagImpl(StandardClassIds.KFunction)
                                         .constructClassType(arrayOf(typeArguments.last().type), isNullable = false)
                                 },
-                                createSuperType(FunctionClassDescriptor.Kind.SuspendFunction)
+                                createSuperType(FunctionClassKind.SuspendFunction)
                             )
                         }
                         addDeclaration(
@@ -234,59 +232,21 @@ class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider:
     }
 
     // Find the symbol for "invoke" in the function class
-    private fun FunctionClassDescriptor.Kind.getInvoke(arity: Int): FirNamedFunctionSymbol? {
+    private fun FunctionClassKind.getInvoke(arity: Int): FirNamedFunctionSymbol? {
         val functionClass = getClassLikeSymbolByFqName(classId(arity)) ?: return null
         val invoke =
             functionClass.fir.declarations.find { it is FirSimpleFunction && it.name == OperatorNameConventions.INVOKE } ?: return null
         return (invoke as FirSimpleFunction).symbol as? FirNamedFunctionSymbol
     }
 
-    private fun FunctionClassDescriptor.Kind.classId(arity: Int) = ClassId(packageFqName, numberedClassName(arity))
+    private fun FunctionClassKind.classId(arity: Int) = ClassId(packageFqName, numberedClassName(arity))
 
-    override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
-        return allPackageFragments[packageFqName]?.flatMap {
+    @FirSymbolProviderInternals
+    override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
+        allPackageFragments[packageFqName]?.flatMapTo(destination) {
             it.getTopLevelCallableSymbols(name)
-        } ?: emptyList()
-    }
-
-    override fun getNestedClassifierScope(classId: ClassId): FirScope? {
-        return findRegularClass(classId)?.let {
-            nestedClassifierScope(it)
         }
     }
-
-    override fun getAllCallableNamesInPackage(fqName: FqName): Set<Name> {
-        return allPackageFragments[fqName]?.flatMapTo(mutableSetOf()) {
-            it.getAllCallableNames()
-        } ?: emptySet()
-    }
-
-    override fun getClassNamesInPackage(fqName: FqName): Set<Name> {
-        return allPackageFragments[fqName]?.flatMapTo(mutableSetOf()) {
-            it.getAllClassNames()
-        } ?: emptySet()
-    }
-
-    override fun getAllCallableNamesInClass(classId: ClassId): Set<Name> {
-        return getClassDeclarations(classId).mapNotNullTo(mutableSetOf()) {
-            when (it) {
-                is FirSimpleFunction -> it.name
-                is FirVariable<*> -> it.name
-                else -> null
-            }
-        }
-    }
-
-    override fun getNestedClassesNamesInClass(classId: ClassId): Set<Name> {
-        return getClassDeclarations(classId).filterIsInstance<FirRegularClass>().mapTo(mutableSetOf()) { it.name }
-    }
-
-    private fun getClassDeclarations(classId: ClassId): List<FirDeclaration> {
-        return findRegularClass(classId)?.declarations ?: emptyList()
-    }
-
-    private fun findRegularClass(classId: ClassId): FirRegularClass? =
-        getClassLikeSymbolByFqName(classId)?.fir
 
     private class BuiltInsPackageFragment(
         stream: InputStream, val fqName: FqName, val session: FirSession,

@@ -13,7 +13,6 @@ repositories {
 // PILL: used in pill importer
 val projectsToShadow by extra(listOf(
         ":plugins:annotation-based-compiler-plugins-ide-support",
-        ":core:type-system",
         ":compiler:backend",
         ":compiler:backend-common",
         ":compiler:backend.jvm",
@@ -27,6 +26,7 @@ val projectsToShadow by extra(listOf(
         ":daemon-common-new",
         ":core:metadata",
         ":core:metadata.jvm",
+        ":core:compiler.common",
         ":core:descriptors",
         ":core:descriptors.jvm",
         ":core:deserialization",
@@ -49,7 +49,7 @@ val projectsToShadow by extra(listOf(
         ":compiler:fir:java",
         ":compiler:fir:jvm",
         ":compiler:fir:raw-fir:psi2fir",
-        ":compiler:fir:raw-fir:fir-common",
+        ":compiler:fir:raw-fir:raw-fir.common",
         ":compiler:fir:fir2ir",
         ":compiler:fir:fir2ir:jvm-backend",
         ":compiler:frontend",

@@ -99,6 +99,12 @@ dependencies {
     }
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
+    kotlinOptions {
+        freeCompilerArgs += "-Xinline-classes"
+    }
+}
+
 sourceSets {
     "main" { }
     "test" { projectDefault() }

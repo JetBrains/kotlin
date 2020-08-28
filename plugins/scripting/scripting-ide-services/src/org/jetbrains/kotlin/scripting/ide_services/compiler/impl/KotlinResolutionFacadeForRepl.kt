@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.getService
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
@@ -38,7 +39,9 @@ class KotlinResolutionFacadeForRepl(
 
     override val moduleDescriptor: ModuleDescriptor = provider.getService(ModuleDescriptor::class.java)
 
+    @FrontendInternals
     override fun <T : Any> getFrontendService(serviceClass: Class<T>): T {
+        @Suppress("UNCHECKED_CAST")
         return provider.resolve(serviceClass)!!.getValue() as T
     }
 
@@ -46,6 +49,7 @@ class KotlinResolutionFacadeForRepl(
         throw UnsupportedOperationException()
     }
 
+    @FrontendInternals
     override fun <T : Any> tryGetFrontendService(element: PsiElement, serviceClass: Class<T>): T? {
         throw UnsupportedOperationException()
     }
@@ -54,10 +58,12 @@ class KotlinResolutionFacadeForRepl(
         throw UnsupportedOperationException()
     }
 
+    @FrontendInternals
     override fun <T : Any> getFrontendService(element: PsiElement, serviceClass: Class<T>): T {
         throw UnsupportedOperationException()
     }
 
+    @FrontendInternals
     override fun <T : Any> getFrontendService(moduleDescriptor: ModuleDescriptor, serviceClass: Class<T>): T {
         throw UnsupportedOperationException()
     }

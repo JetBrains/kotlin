@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.fir.java.scopes
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.getContainingCallableNamesIfPresent
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
@@ -21,7 +23,7 @@ class JavaClassStaticUseSiteScope internal constructor(
     private val superClassScope: FirScope,
     private val superTypesScopes: List<FirScope>,
     javaTypeParameterStack: JavaTypeParameterStack,
-) : FirScope() {
+) : FirScope(), FirContainingNamesAwareScope {
     private val functions = hashMapOf<Name, Collection<FirFunctionSymbol<*>>>()
     private val properties = hashMapOf<Name, Collection<FirVariableSymbol<*>>>()
     private val overrideChecker = JavaOverrideChecker(session, javaTypeParameterStack)
@@ -78,5 +80,29 @@ class JavaClassStaticUseSiteScope internal constructor(
         }
 
         return result
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    override fun getCallableNames(): Set<Name> {
+        return buildSet {
+            addAll(declaredMemberScope.getContainingCallableNamesIfPresent())
+            for (superTypesScope in superTypesScopes) {
+                addAll(superTypesScope.getContainingCallableNamesIfPresent())
+            }
+        }
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    override fun getClassifierNames(): Set<Name> {
+        return buildSet {
+            addAll(declaredMemberScope.getContainingCallableNamesIfPresent())
+            for (superTypesScope in superTypesScopes) {
+                addAll(superTypesScope.getContainingCallableNamesIfPresent())
+            }
+        }
+    }
+
+    override fun mayContainName(name: Name): Boolean {
+        return declaredMemberScope.mayContainName(name) || superTypesScopes.any { it.mayContainName(name) }
     }
 }

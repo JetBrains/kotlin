@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -25,14 +25,14 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object DeprecatedSinceKotlinAnnotationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        val deprecatedSinceAnnotation = descriptor.annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.deprecatedSinceKotlin) ?: return
+        val deprecatedSinceAnnotation = descriptor.annotations.findAnnotation(StandardNames.FqNames.deprecatedSinceKotlin) ?: return
         val deprecatedSinceAnnotationPsi = deprecatedSinceAnnotation.source.getPsi() as? KtAnnotationEntry ?: return
 
-        val deprecatedAnnotation = descriptor.annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.deprecated)
+        val deprecatedAnnotation = descriptor.annotations.findAnnotation(StandardNames.FqNames.deprecated)
 
         val deprecatedSinceAnnotationName = deprecatedSinceAnnotationPsi.typeReference ?: return
 
-        if (descriptor.fqNameOrNull()?.isSubpackageOf(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) == false) {
+        if (descriptor.fqNameOrNull()?.isSubpackageOf(StandardNames.BUILT_INS_PACKAGE_FQ_NAME) == false) {
             context.trace.report(
                 Errors.DEPRECATED_SINCE_KOTLIN_OUTSIDE_KOTLIN_SUBPACKAGE.on(
                     deprecatedSinceAnnotationName

@@ -10,19 +10,9 @@ repositories {
     maven {
         url 'https://dl.bintray.com/kotlin/kotlin-dev'
     }
-    maven {
-        url 'https://dl.bintray.com/kotlin/kotlinx'
-    }
-    maven {
-        url 'https://dl.bintray.com/kotlin/kotlin-js-wrappers'
-    }
 }
 dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test-js'
-    implementation 'org.jetbrains.kotlinx:kotlinx-html-js:0.7.1-KOTLIN_VERSION'
-    implementation 'org.jetbrains:kotlin-react:16.13.1-pre.110-kotlin-KOTLIN_VERSION'
-    implementation 'org.jetbrains:kotlin-react-dom:16.13.1-pre.110-kotlin-KOTLIN_VERSION'
-    implementation 'org.jetbrains:kotlin-styled:1.0.0-pre.110-kotlin-KOTLIN_VERSION'
 }
 kotlin {
     js {

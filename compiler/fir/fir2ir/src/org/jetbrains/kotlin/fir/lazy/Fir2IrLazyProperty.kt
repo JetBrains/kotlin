@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.lazy
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.toIrConst
 import org.jetbrains.kotlin.fir.declarations.*
@@ -23,6 +22,8 @@ import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.descriptors.Visibility as OldVisibility
 
 class Fir2IrLazyProperty(
     components: Fir2IrComponents,
@@ -30,6 +31,7 @@ class Fir2IrLazyProperty(
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val fir: FirProperty,
+    internal val containingClass: FirRegularClass,
     override val symbol: Fir2IrPropertySymbol,
     override val isFakeOverride: Boolean
 ) : IrProperty(), AbstractFir2IrLazyDeclaration<FirProperty, IrProperty>, Fir2IrComponents by components {
@@ -67,8 +69,8 @@ class Fir2IrLazyProperty(
     override val name: Name
         get() = fir.name
 
-    override var visibility: Visibility
-        get() = fir.visibility
+    @Suppress("SetterBackingFieldAssignment")
+    override var visibility: OldVisibility = components.visibilityConverter.convertToOldVisibility(fir.visibility)
         set(_) {
             error("Mutating Fir2Ir lazy elements is not possible")
         }
@@ -92,7 +94,7 @@ class Fir2IrLazyProperty(
                 with(declarationStorage) {
                     createBackingField(
                         fir, IrDeclarationOrigin.PROPERTY_BACKING_FIELD, descriptor,
-                        fir.fieldVisibility, fir.name, fir.isVal, fir.initializer,
+                        components.visibilityConverter.convertToOldVisibility(fir.visibility), fir.name, fir.isVal, fir.initializer,
                         type
                     ).also { field ->
                         val initializer = fir.initializer
@@ -108,7 +110,7 @@ class Fir2IrLazyProperty(
                 with(declarationStorage) {
                     createBackingField(
                         fir, IrDeclarationOrigin.PROPERTY_DELEGATE, descriptor,
-                        fir.fieldVisibility, Name.identifier("${fir.name}\$delegate"), true, fir.delegate
+                        components.visibilityConverter.convertToOldVisibility(fir.visibility), Name.identifier("${fir.name}\$delegate"), true, fir.delegate
                     )
                 }
             }
@@ -149,4 +151,9 @@ class Fir2IrLazyProperty(
     override var metadata: MetadataSource?
         get() = null
         set(_) = error("We should never need to store metadata of external declarations.")
+
+    override val containerSource: DeserializedContainerSource?
+        get() = fir.containerSource
+
+    override var attributeOwnerId: IrAttributeContainer = this
 }

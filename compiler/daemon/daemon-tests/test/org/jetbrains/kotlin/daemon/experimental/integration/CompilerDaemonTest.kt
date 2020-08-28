@@ -244,7 +244,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                 configureDaemonJVMOptions(inheritMemoryLimits = false, inheritAdditionalProperties = false, inheritOtherJvmOptions = false)
             assertEquals("300m", opts2.maxMemory)
             assertEquals(-1, DaemonJVMOptionsMemoryComparator().compare(opts, opts2))
-            assertEquals("300m", listOf(opts, opts2).maxWith(DaemonJVMOptionsMemoryComparator())?.maxMemory)
+            assertEquals("300m", listOf(opts, opts2).maxWithOrNull(DaemonJVMOptionsMemoryComparator())?.maxMemory)
 
             val myXmxParam = ManagementFactory.getRuntimeMXBean().inputArguments.first { it.startsWith("-Xmx") }
             TestCase.assertNotNull(myXmxParam)

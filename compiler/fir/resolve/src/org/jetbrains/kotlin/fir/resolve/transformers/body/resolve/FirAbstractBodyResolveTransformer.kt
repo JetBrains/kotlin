@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.name.Name
@@ -104,7 +105,8 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
     class BodyResolveContext(
         val returnTypeCalculator: ReturnTypeCalculator,
         val dataFlowAnalyzerContext: DataFlowAnalyzerContext<PersistentFlow>,
-        val targetedLocalClasses: Set<FirClass<*>> = emptySet()
+        val targetedLocalClasses: Set<FirClass<*>> = emptySet(),
+        val outerLocalClassForNested: MutableMap<FirClassLikeSymbol<*>, FirClassLikeSymbol<*>> = mutableMapOf()
     ) {
         val fileImportsScope: MutableList<FirScope> = mutableListOf()
 
@@ -241,7 +243,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         fun createSnapshotForLocalClasses(
             returnTypeCalculator: ReturnTypeCalculator,
             targetedLocalClasses: Set<FirClass<*>>
-        ) = BodyResolveContext(returnTypeCalculator, dataFlowAnalyzerContext, targetedLocalClasses).apply {
+        ) = BodyResolveContext(returnTypeCalculator, dataFlowAnalyzerContext, targetedLocalClasses, outerLocalClassForNested).apply {
             file = this@BodyResolveContext.file
             towerDataContextForAnonymousFunctions.putAll(this@BodyResolveContext.towerDataContextForAnonymousFunctions)
             containers = this@BodyResolveContext.containers
@@ -291,5 +293,6 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val doubleColonExpressionResolver: FirDoubleColonExpressionResolver =
             FirDoubleColonExpressionResolver(session, integerLiteralTypeApproximator)
         override val integerOperatorsTypeUpdater: IntegerOperatorsTypeUpdater = IntegerOperatorsTypeUpdater(integerLiteralTypeApproximator)
+        override val outerClassManager: FirOuterClassManager = FirOuterClassManager(session, context.outerLocalClassForNested)
     }
 }

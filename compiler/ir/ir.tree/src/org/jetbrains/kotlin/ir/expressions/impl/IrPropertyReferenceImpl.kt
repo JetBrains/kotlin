@@ -27,18 +27,18 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 
 class IrPropertyReferenceImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val type: IrType,
     override val symbol: IrPropertySymbol,
     typeArgumentsCount: Int,
     override val field: IrFieldSymbol?,
     override val getter: IrSimpleFunctionSymbol?,
     override val setter: IrSimpleFunctionSymbol?,
-    origin: IrStatementOrigin? = null
-) :
-    IrMemberAccessExpressionBase<IrPropertySymbol>(startOffset, endOffset, type, typeArgumentsCount, 0, origin),
-    IrPropertyReference {
+    override val origin: IrStatementOrigin? = null,
+) : IrPropertyReference(typeArgumentsCount) {
+    override val valueArgumentsCount: Int
+        get() = 0
 
     override val referencedName: Name
         get() = symbol.owner.name

@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.withScope
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class IrLazyConstructor(
@@ -65,6 +67,9 @@ class IrLazyConstructor(
             }
         }
     }
+
+    override val containerSource: DeserializedContainerSource?
+        get() = (descriptor as? DescriptorWithContainerSource)?.containerSource
 
     init {
         symbol.bind(this)

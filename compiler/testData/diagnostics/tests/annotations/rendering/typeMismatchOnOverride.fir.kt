@@ -15,12 +15,12 @@ interface A {
 
 @An
 interface B : A {
-    override val p1: Int
+    override val p1: <!PROPERTY_TYPE_MISMATCH_ON_OVERRIDE!>Int<!>
     @An
     override val p2: @An String
-    override fun test(arg: String): Int
+    override fun test(arg: String): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>Int<!>
 }
 
 interface C : A {
-    override var p2: Int
+    override var p2: <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>Int<!>
 }

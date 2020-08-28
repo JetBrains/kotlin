@@ -1,1 +1,1 @@
-expect fun foo<!NO_ACTUAL_FOR_EXPECT("function 'foo'", "bottom for JVM", " The following declaration is incompatible because number of value parameters is different:     public actual fun foo(): Int ")!>(x: Int)<!>: Int
+expect fun foo<!NO_ACTUAL_FOR_EXPECT!>(x: Int)<!>: Int

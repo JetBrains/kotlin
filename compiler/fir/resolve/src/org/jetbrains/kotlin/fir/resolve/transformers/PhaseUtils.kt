@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -33,7 +34,11 @@ fun <D> AbstractFirBasedSymbol<D>.phasedFir(
             else -> null
         }
             ?: throw AssertionError("Cannot get container file by symbol: $this (${result.render()})")
-        containingFile.runResolve(toPhase = requiredPhase, fromPhase = availablePhase)
+
+        val resolver = fir.session.phasedFirFileResolver
+            ?: error("phasedFirFileResolver should be defined when working with FIR in phased mode")
+        resolver.resolveFile(containingFile, fromPhase = availablePhase, toPhase = requiredPhase)
     }
     return result
 }
+

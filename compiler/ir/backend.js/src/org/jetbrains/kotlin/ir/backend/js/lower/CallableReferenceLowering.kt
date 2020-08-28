@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.explicitParameters
-import org.jetbrains.kotlin.ir.util.isSuspend
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -220,10 +217,30 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         private fun IrSimpleFunction.buildInvoke(): IrFunctionAccessExpression {
             val callee = function
             val irCall =  reference.run {
-                if (callee is IrConstructor) {
-                    IrConstructorCallImpl(startOffset, endOffset, callee.parentAsClass.defaultType, callee.symbol, callee.typeParameters.size, 0 /* TODO */, callee.valueParameters.size, CALLABLE_REFERENCE_INVOKE)
-                } else {
-                    IrCallImpl(startOffset, endOffset, callee.returnType, callee.symbol, callee.typeParameters.size, callee.valueParameters.size, CALLABLE_REFERENCE_INVOKE)
+                when (callee) {
+                    is IrConstructor ->
+                        IrConstructorCallImpl(
+                            startOffset,
+                            endOffset,
+                            callee.parentAsClass.defaultType,
+                            callee.symbol,
+                            callee.typeParameters.size,
+                            0 /* TODO */,
+                            callee.valueParameters.size,
+                            CALLABLE_REFERENCE_INVOKE
+                        )
+                    is IrSimpleFunction ->
+                        IrCallImpl(
+                            startOffset,
+                            endOffset,
+                            callee.returnType,
+                            callee.symbol,
+                            callee.typeParameters.size,
+                            callee.valueParameters.size,
+                            CALLABLE_REFERENCE_INVOKE
+                        )
+                    else ->
+                        error("unknown function kind: ${callee.render()}")
                 }
             }
 
@@ -309,7 +326,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
             val superProperty = superFunctionInterface.declarations.filterIsInstance<IrProperty>().single()
             val supperGetter = superProperty.getter ?: error("Expected getter for KFunction.name property")
 
-            val nameProperty = clazz.addProperty {
+            val nameProperty = clazz.addProperty() {
                 visibility = superProperty.visibility
                 name = superProperty.name
                 origin = GENERATED_MEMBER_IN_CALLABLE_REFERENCE
@@ -340,7 +357,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         fun build(): Pair<IrClass, IrConstructor> {
             val clazz = buildReferenceClass()
             val ctor = createConstructor(clazz)
-            val invoke = createInvokeMethod(clazz)
+            createInvokeMethod(clazz)
             createNameProperty(clazz)
             // TODO: create name property for KFunction*
 

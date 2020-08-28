@@ -76,7 +76,7 @@ internal class InlineChecker(private val descriptor: FunctionDescriptor) : CallC
 
         if (inlinableParameters.contains(targetDescriptor)) {
             when {
-                !checkNotInDefaultParameter(context, targetDescriptor, expression) -> { /*error*/
+                !checkNotInDefaultParameter(context, expression) -> { /*error*/
                 }
                 !isInsideCall(expression) -> context.trace.report(USAGE_IS_NOT_INLINABLE.on(expression, expression, descriptor))
             }
@@ -94,7 +94,7 @@ internal class InlineChecker(private val descriptor: FunctionDescriptor) : CallC
         checkRecursion(context, targetDescriptor, expression)
     }
 
-    private fun checkNotInDefaultParameter(context: CallCheckerContext, targetDescriptor: CallableDescriptor, expression: KtExpression) =
+    private fun checkNotInDefaultParameter(context: CallCheckerContext, expression: KtExpression) =
         !supportDefaultValueInline || expression.getParentOfType<KtParameter>(true)?.let {
             val allow = it !in inlinableKtParameters
             if (!allow) {
@@ -145,7 +145,7 @@ internal class InlineChecker(private val descriptor: FunctionDescriptor) : CallC
 
         if (argumentCallee != null && inlinableParameters.contains(argumentCallee)) {
             when {
-                !checkNotInDefaultParameter(context, argumentCallee, argumentExpression) -> { /*error*/
+                !checkNotInDefaultParameter(context, argumentExpression) -> { /*error*/
                 }
 
                 InlineUtil.isInline(targetDescriptor) && InlineUtil.isInlineParameter(targetParameterDescriptor) ->

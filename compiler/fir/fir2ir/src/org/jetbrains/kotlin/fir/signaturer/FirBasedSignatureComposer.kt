@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.fir.signaturer
 
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.Visibilities
 import org.jetbrains.kotlin.fir.backend.Fir2IrSignatureComposer
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.ir.util.IdSignature
@@ -76,14 +77,14 @@ class FirBasedSignatureComposer(private val mangler: FirMangler) : Fir2IrSignatu
                 )
             }
             is FirTypeAlias -> {
-                if (declaration.visibility == Visibilities.PRIVATE) return null
+                if (declaration.visibility == Visibilities.Private) return null
                 val classId = declaration.symbol.classId
                 IdSignature.PublicSignature(
                     classId.packageFqName.asString(), classId.relativeClassName.asString(), builder.hashId, builder.mask
                 )
             }
             is FirCallableMemberDeclaration<*> -> {
-                if (declaration.visibility == Visibilities.PRIVATE) return null
+                if (declaration.visibility == Visibilities.Private) return null
                 val callableId = declaration.symbol.callableId
                 IdSignature.PublicSignature(
                     callableId.packageName.asString(), callableId.relativeCallableName.asString(), builder.hashId, builder.mask

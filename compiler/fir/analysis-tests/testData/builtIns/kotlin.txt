@@ -22,9 +22,9 @@ public final fun intArrayOf(vararg elements: R|kotlin/IntArray|): R|kotlin/IntAr
 
 public final fun longArrayOf(vararg elements: R|kotlin/LongArray|): R|kotlin/LongArray|
 
-public final fun shortArrayOf(vararg elements: R|kotlin/ShortArray|): R|kotlin/ShortArray|
-
 public final operator fun R|kotlin/String?|.plus(other: R|kotlin/Any?|): R|kotlin/String|
+
+public final fun shortArrayOf(vararg elements: R|kotlin/ShortArray|): R|kotlin/ShortArray|
 
 public final fun R|kotlin/Any?|.toString(): R|kotlin/String|
 
@@ -331,11 +331,6 @@ public abstract interface CharSequence : R|kotlin/Any| {
 
     public abstract val length: R|kotlin/Int|
         public get(): R|kotlin/Int|
-
-}
-
-public abstract interface Cloneable : R|kotlin/Any| {
-    protected open fun clone(): R|kotlin/Any|
 
 }
 

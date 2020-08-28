@@ -24,7 +24,7 @@ internal class KtLightParameterImpl(
     private val clsDelegateProvider: () -> PsiParameter?,
     private val index: Int,
     method: KtLightMethod
-) : LightParameter(dummyDelegate.name ?: "p$index", dummyDelegate.type, method, KotlinLanguage.INSTANCE),
+) : LightParameter(dummyDelegate.name, dummyDelegate.type, method, KotlinLanguage.INSTANCE),
     KtLightDeclaration<KtParameter, PsiParameter>, KtLightParameter {
 
     private val lazyDelegate by lazyPub { clsDelegateProvider() ?: dummyDelegate }
@@ -33,7 +33,7 @@ internal class KtLightParameterImpl(
 
     override fun getType(): PsiType = lazyDelegate.type
 
-    override fun getName(): String = dummyDelegate.name ?: lazyDelegate.name ?: super.getName()
+    override fun getName(): String = dummyDelegate.name
 
     private val lightModifierList by lazyPub { KtLightSimpleModifierList(this, emptySet()) }
 

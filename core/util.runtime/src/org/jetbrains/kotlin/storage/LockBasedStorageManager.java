@@ -95,7 +95,7 @@ public class LockBasedStorageManager implements StorageManager {
     }
 
     public LockBasedStorageManager(String debugText) {
-        this(debugText, (Runnable)null, (Function1)null);
+        this(debugText, (Runnable) null, null);
     }
 
     public LockBasedStorageManager(

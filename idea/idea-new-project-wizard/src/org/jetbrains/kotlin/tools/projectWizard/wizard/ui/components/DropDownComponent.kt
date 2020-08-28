@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingValidator
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settingValidator
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.awt.event.ItemEvent
@@ -101,6 +102,11 @@ class DropDownComponent<T : DisplayableSettingItem>(
 
     override fun updateUiValue(newValue: T) = safeUpdateUi {
         uiComponent.selectedItem = newValue
+    }
+
+    override fun onValueUpdated(reference: SettingReference<*, *>?) {
+        super.onValueUpdated(reference)
+        filterValues()
     }
 
     @Suppress("UNCHECKED_CAST")

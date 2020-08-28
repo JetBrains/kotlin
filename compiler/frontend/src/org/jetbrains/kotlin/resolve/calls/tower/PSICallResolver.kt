@@ -721,12 +721,15 @@ class PSICallResolver(
     ): PSIKotlinCallArgument {
         val builtIns = outerCallContext.scope.ownerDescriptor.builtIns
 
-        fun createParseErrorElement() = ParseErrorKotlinCallArgument(valueArgument, startDataFlowInfo, builtIns)
+        fun createParseErrorElement() = ParseErrorKotlinCallArgument(valueArgument, startDataFlowInfo)
 
         val argumentExpression = valueArgument.getArgumentExpression() ?: return createParseErrorElement()
         val ktExpression = KtPsiUtil.deparenthesize(argumentExpression) ?: createParseErrorElement()
 
         val argumentName = valueArgument.getArgumentName()?.asName
+
+        @Suppress("NAME_SHADOWING")
+        val outerCallContext = outerCallContext.expandContextForCatchClause(ktExpression)
 
         processFunctionalExpression(
             outerCallContext, argumentExpression, startDataFlowInfo,
@@ -743,7 +746,7 @@ class PSICallResolver(
 
         val context = outerCallContext.replaceContextDependency(ContextDependency.DEPENDENT)
             .replaceDataFlowInfo(startDataFlowInfo)
-            .expandContextForCatchClause(ktExpression).let {
+            .let {
                 if (isSpecialFunction &&
                     argumentExpression is KtBlockExpression &&
                     ArgumentTypeResolver.getCallableReferenceExpressionIfAny(argumentExpression, it) != null

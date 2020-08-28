@@ -36,11 +36,12 @@ kotlin {
         }
         androidMain {
             dependencies {
-                implementation 'androidx.core:core-ktx:1.2.0'
+                implementation 'com.google.android.material:material:1.2.0'
             }
         }
         androidTest {
             dependencies {
+                implementation kotlin('test-junit')
                 implementation 'junit:junit:4.12'
             }
         }

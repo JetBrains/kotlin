@@ -10,9 +10,9 @@ object Delegate {
 
 
 fun test() {
-    lateinit val test0: Any
-    lateinit var test1: Int
-    lateinit var test2: Any?
-    lateinit var test3: String = ""
-    lateinit var test4 by Delegate
+    <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit val test0: Any<!>
+    <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit var test1: Int<!>
+    <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit var test2: Any?<!>
+    <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit var test3: String = ""<!>
+    <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit var test4 by Delegate<!>
 }

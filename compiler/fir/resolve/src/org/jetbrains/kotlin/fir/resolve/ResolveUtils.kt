@@ -5,27 +5,22 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
-import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
-import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
-import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.getSymbolByTypeRef
+import org.jetbrains.kotlin.fir.resolve.providers.*
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.scopes.impl.FirDeclaredMemberScopeProvider
@@ -60,14 +55,6 @@ val FirSession.declaredMemberScopeProvider: FirDeclaredMemberScopeProvider by Fi
 val FirSession.qualifierResolver: FirQualifierResolver by FirSession.sessionComponentAccessor()
 val FirSession.typeResolver: FirTypeResolver by FirSession.sessionComponentAccessor()
 val FirSession.effectiveVisibilityResolver: FirEffectiveVisibilityResolver by FirSession.sessionComponentAccessor()
-
-fun ConeClassLikeLookupTag.toSymbol(useSiteSession: FirSession): FirClassLikeSymbol<*>? {
-    if (this is ConeClassLookupTagWithFixedSymbol) {
-        return this.symbol
-    }
-    val firSymbolProvider = useSiteSession.firSymbolProvider
-    return firSymbolProvider.getSymbolByLookupTag(this)
-}
 
 fun ConeClassLikeType.fullyExpandedType(
     useSiteSession: FirSession,
@@ -154,15 +141,6 @@ private fun mapTypeAliasArguments(
     return substitutor.substituteOrSelf(resultingType)
 }
 
-fun ConeClassifierLookupTag.toSymbol(useSiteSession: FirSession): FirClassifierSymbol<*>? =
-    when (this) {
-        is ConeClassLikeLookupTag -> toSymbol(useSiteSession)
-        is ConeTypeParameterLookupTag -> this.symbol
-        else -> error("sealed ${this::class}")
-    }
-
-fun ConeTypeParameterLookupTag.toSymbol(): FirTypeParameterSymbol = this.symbol as FirTypeParameterSymbol
-
 fun FirClassifierSymbol<*>.constructType(
     typeArguments: Array<ConeTypeProjection>,
     isNullable: Boolean,
@@ -232,9 +210,9 @@ fun createFunctionalType(
     val receiverAndParameterTypes = listOfNotNull(receiverType) + parameters + listOf(rawReturnType)
 
     val kind = if (isSuspend) {
-        if (isKFunctionType) FunctionClassDescriptor.Kind.KSuspendFunction else FunctionClassDescriptor.Kind.SuspendFunction
+        if (isKFunctionType) FunctionClassKind.KSuspendFunction else FunctionClassKind.SuspendFunction
     } else {
-        if (isKFunctionType) FunctionClassDescriptor.Kind.KFunction else FunctionClassDescriptor.Kind.Function
+        if (isKFunctionType) FunctionClassKind.KFunction else FunctionClassKind.Function
     }
 
     val functionalTypeId = ClassId(kind.packageFqName, kind.numberedClassName(receiverAndParameterTypes.size - 1))
@@ -373,9 +351,14 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: AbstractFirBasedSymbol<
             if (makeNullable) {
                 returnTypeRef.withReplacedConeType(
                     returnTypeRef.type.withNullability(ConeNullability.NULLABLE, session.typeContext),
+                    FirFakeSourceElementKind.ImplicitTypeRef
                 )
             } else {
-                returnTypeRef
+                buildResolvedTypeRef {
+                    source = returnTypeRef.source?.fakeElement(FirFakeSourceElementKind.ImplicitTypeRef)
+                    type = returnTypeRef.type
+                    annotations += returnTypeRef.annotations
+                }
             }
         }
         is FirClassifierSymbol<*> -> {
@@ -412,7 +395,7 @@ fun CallableId.isInvoke() =
     isKFunctionInvoke()
             || callableName.asString() == "invoke"
             && className?.asString()?.startsWith("Function") == true
-            && packageName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
+            && packageName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
 
 fun CallableId.isKFunctionInvoke() =
     callableName.asString() == "invoke"

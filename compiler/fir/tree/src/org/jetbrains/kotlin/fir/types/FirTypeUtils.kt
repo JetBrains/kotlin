@@ -35,14 +35,20 @@ val FirTypeRef.isArrayType: Boolean
         isBuiltinType(StandardClassIds.Array, false) ||
                 StandardClassIds.primitiveArrayTypeByElementType.values.any { isBuiltinType(it, false) }
 
-private fun FirTypeRef.isBuiltinType(classId: ClassId, isNullable: Boolean): Boolean {
-    val type = when (this) {
+private val FirTypeRef.classLikeTypeOrNull: ConeClassLikeType?
+    get() = when (this) {
         is FirImplicitBuiltinTypeRef -> type
-        is FirResolvedTypeRef -> type as? ConeClassLikeType ?: return false
-        else -> return false
+        is FirResolvedTypeRef -> type as? ConeClassLikeType
+        else -> null
     }
+
+private fun FirTypeRef.isBuiltinType(classId: ClassId, isNullable: Boolean): Boolean {
+    val type = this.classLikeTypeOrNull ?: return false
     return type.lookupTag.classId == classId && type.isNullable == isNullable
 }
+
+val FirTypeRef.isMarkedNullable: Boolean?
+    get() = classLikeTypeOrNull?.isMarkedNullable
 
 val FirFunctionTypeRef.parametersCount: Int
     get() = if (receiverTypeRef != null)

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.FirQualifiedAccessBuilder
-import org.jetbrains.kotlin.fir.expressions.impl.FirModifiableQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirThisReceiverExpressionImpl
 import org.jetbrains.kotlin.fir.references.FirReference

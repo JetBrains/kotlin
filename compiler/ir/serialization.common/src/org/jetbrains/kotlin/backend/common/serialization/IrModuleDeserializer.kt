@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -119,16 +120,16 @@ class IrModuleDeserializerWithBuiltIns(
         val topLevelSignature = IdSignature.PublicSignature(publicSig.packageFqName, className, null, publicSig.mask)
 
         val functionClass = when (functionDescriptor.functionKind) {
-            FunctionClassDescriptor.Kind.KSuspendFunction -> functionFactory.kSuspendFunctionN(functionDescriptor.arity) { callback ->
+            FunctionClassKind.KSuspendFunction -> functionFactory.kSuspendFunctionN(functionDescriptor.arity) { callback ->
                 declareClassFromLinker(functionDescriptor, topLevelSignature) { callback(it) }
             }
-            FunctionClassDescriptor.Kind.KFunction -> functionFactory.kFunctionN(functionDescriptor.arity) { callback ->
+            FunctionClassKind.KFunction -> functionFactory.kFunctionN(functionDescriptor.arity) { callback ->
                 declareClassFromLinker(functionDescriptor, topLevelSignature) { callback(it) }
             }
-            FunctionClassDescriptor.Kind.SuspendFunction -> functionFactory.suspendFunctionN(functionDescriptor.arity) { callback ->
+            FunctionClassKind.SuspendFunction -> functionFactory.suspendFunctionN(functionDescriptor.arity) { callback ->
                 declareClassFromLinker(functionDescriptor, topLevelSignature) { callback(it) }
             }
-            FunctionClassDescriptor.Kind.Function -> functionFactory.functionN(functionDescriptor.arity) { callback ->
+            FunctionClassKind.Function -> functionFactory.functionN(functionDescriptor.arity) { callback ->
                 declareClassFromLinker(functionDescriptor, topLevelSignature) { callback(it) }
             }
         }

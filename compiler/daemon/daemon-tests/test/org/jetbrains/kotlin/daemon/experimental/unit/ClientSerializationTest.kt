@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.daemon.experimental.unit
 
 import io.ktor.network.sockets.aSocket
+import io.ktor.util.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
@@ -24,6 +25,7 @@ import java.io.ObjectOutputStream
 import java.net.InetSocketAddress
 import java.util.logging.Logger
 
+@OptIn(KtorExperimentalAPI::class)
 class TestServer(val serverPort: Int = 6999) {
     private val serverSocket = aSocket(selectorMgr).tcp().bind(InetSocketAddress(serverPort))
     private val log = Logger.getLogger("TestServer")

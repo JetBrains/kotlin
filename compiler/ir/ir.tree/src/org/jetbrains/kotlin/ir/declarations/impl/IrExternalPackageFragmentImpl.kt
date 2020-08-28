@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
-import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -35,8 +34,12 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 class IrExternalPackageFragmentImpl(
     override val symbol: IrExternalPackageFragmentSymbol,
     override val fqName: FqName
-) : IrElementBase(UNDEFINED_OFFSET, UNDEFINED_OFFSET),
-    IrExternalPackageFragment {
+) : IrExternalPackageFragment() {
+    override val startOffset: Int
+        get() = UNDEFINED_OFFSET
+
+    override val endOffset: Int
+        get() = UNDEFINED_OFFSET
 
     init {
         symbol.bind(this)

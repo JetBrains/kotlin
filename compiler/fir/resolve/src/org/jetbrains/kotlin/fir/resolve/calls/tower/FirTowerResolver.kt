@@ -5,9 +5,16 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.typeContext
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 class FirTowerResolver(
     private val components: BodyResolveComponents,
@@ -23,23 +30,82 @@ class FirTowerResolver(
     ): CandidateCollector {
         val candidateFactoriesAndCollectors = buildCandidateFactoriesAndCollectors(info, collector)
 
-        val towerResolverSession = FirTowerResolverSession(components, manager, candidateFactoriesAndCollectors, info)
-        towerResolverSession.runResolution(info)
+        enqueueResolutionTasks(components, manager, candidateFactoriesAndCollectors, info)
 
         manager.runTasks()
         return collector
     }
 
+    private fun enqueueResolutionTasks(
+        components: BodyResolveComponents,
+        manager: TowerResolveManager,
+        candidateFactoriesAndCollectors: CandidateFactoriesAndCollectors,
+        info: CallInfo
+    ) {
+        val invokeResolveTowerExtension = FirInvokeResolveTowerExtension(components, manager, candidateFactoriesAndCollectors)
+
+        val mainTask = FirTowerResolveTask(
+            components,
+            manager,
+            TowerDataElementsForName(info.name, components.towerDataContext),
+            candidateFactoriesAndCollectors.resultCollector,
+            candidateFactoriesAndCollectors.candidateFactory,
+            candidateFactoriesAndCollectors.stubReceiverCandidateFactory
+        )
+        when (val receiver = info.explicitReceiver) {
+            is FirResolvedQualifier -> {
+                manager.enqueueResolverTask { mainTask.runResolverForQualifierReceiver(info, receiver) }
+                invokeResolveTowerExtension.enqueueResolveTasksForQualifier(info, receiver)
+            }
+            null -> {
+                manager.enqueueResolverTask { mainTask.runResolverForNoReceiver(info) }
+                invokeResolveTowerExtension.enqueueResolveTasksForNoReceiver(info)
+            }
+            else -> {
+                if (receiver is FirQualifiedAccessExpression) {
+                    val calleeReference = receiver.calleeReference
+                    if (calleeReference is FirSuperReference) {
+                        return manager.enqueueResolverTask { mainTask.runResolverForSuperReceiver(info, receiver.typeRef) }
+                    }
+                }
+
+                manager.enqueueResolverTask { mainTask.runResolverForExpressionReceiver(info, receiver) }
+                invokeResolveTowerExtension.enqueueResolveTasksForExpressionReceiver(info, receiver)
+            }
+        }
+    }
+
     fun runResolverForDelegatingConstructor(
         info: CallInfo,
-        constructorClassSymbol: FirClassSymbol<*>,
+        constructedType: ConeClassLikeType
     ): CandidateCollector {
-        val candidateFactoriesAndCollectors = buildCandidateFactoriesAndCollectors(info, collector)
+        val outerType = components.outerClassManager.outerType(constructedType)
+        val scope = constructedType.scope(components.session, components.scopeSession) ?: return collector
 
-        val towerResolverSession = FirTowerResolverSession(components, manager, candidateFactoriesAndCollectors, info)
-        towerResolverSession.runResolutionForDelegatingConstructor(info, constructorClassSymbol)
+        val dispatchReceiver =
+            if (outerType != null)
+                components.implicitReceiverStack.receiversAsReversed().drop(1).firstOrNull {
+                    AbstractTypeChecker.isSubtypeOf(components.session.typeContext, it.type, outerType)
+                } ?: return collector // TODO: report diagnostic about not-found receiver
+            else
+                null
 
-        manager.runTasks()
+        val candidateFactory = CandidateFactory(components, info)
+        val resultCollector = collector
+
+        scope.processDeclaredConstructors {
+            resultCollector.consumeCandidate(
+                TowerGroup.Member,
+                candidateFactory.createCandidate(
+                    it,
+                    ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+                    dispatchReceiver,
+                    implicitExtensionReceiverValue = null,
+                    builtInExtensionFunctionReceiverValue = null
+                )
+            )
+        }
+
         return collector
     }
 
@@ -54,26 +120,10 @@ class FirTowerResolver(
             else
                 null
 
-        var invokeReceiverCollector: CandidateCollector? = null
-        var invokeReceiverCandidateFactory: CandidateFactory? = null
-        var invokeBuiltinExtensionReceiverCandidateFactory: CandidateFactory? = null
-        if (info.callKind == CallKind.Function) {
-            invokeReceiverCollector = CandidateCollector(components, components.resolutionStageRunner)
-            invokeReceiverCandidateFactory = CandidateFactory(components, info.replaceWithVariableAccess())
-            if (info.explicitReceiver != null) {
-                with(invokeReceiverCandidateFactory) {
-                    invokeBuiltinExtensionReceiverCandidateFactory = replaceCallInfo(callInfo.replaceExplicitReceiver(null))
-                }
-            }
-        }
-
         return CandidateFactoriesAndCollectors(
             candidateFactory,
             collector,
-            stubReceiverCandidateFactory,
-            invokeReceiverCandidateFactory,
-            invokeReceiverCollector,
-            invokeBuiltinExtensionReceiverCandidateFactory
+            stubReceiverCandidateFactory
         )
     }
 

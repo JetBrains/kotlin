@@ -24,15 +24,15 @@ class WasmSymbols(
     private val symbolTable: SymbolTable
 ) : Symbols<WasmBackendContext>(context, context.irBuiltIns, symbolTable) {
 
-    override val ThrowNullPointerException
+    override val throwNullPointerException
         get() = TODO()
-    override val ThrowNoWhenBranchMatchedException
+    override val throwNoWhenBranchMatchedException
         get() = TODO()
-    override val ThrowTypeCastException
+    override val throwTypeCastException
         get() = TODO()
-    override val ThrowUninitializedPropertyAccessException
+    override val throwUninitializedPropertyAccessException
         get() = TODO()
-    override val ThrowKotlinNothingValueException: IrSimpleFunctionSymbol
+    override val throwKotlinNothingValueException: IrSimpleFunctionSymbol
         get() = TODO()
     override val defaultConstructorMarker
         get() = TODO()

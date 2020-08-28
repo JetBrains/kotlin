@@ -16,8 +16,8 @@ class KtFirInvokeFunctionReference(expression: KtCallExpression) : KtInvokeFunct
         TODO("Not yet implemented")
     }
 
-    override fun resolveToSymbols(analysisSession: KtAnalysisSession): Collection<KtSymbol> {
-        val call = analysisSession.resolveCall(expression) ?: return emptyList()
+    override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
+        val call = expression.resolveCall() ?: return emptyList()
         if (call is VariableAsFunctionLikeCallInfo) {
             return listOf(call.invokeFunction)
         }

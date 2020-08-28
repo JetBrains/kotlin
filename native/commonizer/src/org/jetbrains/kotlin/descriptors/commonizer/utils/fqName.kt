@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.utils
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.konan.impl.ForwardDeclarationsFqNames
@@ -13,27 +15,36 @@ import org.jetbrains.kotlin.serialization.konan.impl.ForwardDeclarationsFqNames
 internal val DEPRECATED_ANNOTATION_FQN: FqName = FqName(Deprecated::class.java.name).intern()
 internal val DEPRECATED_ANNOTATION_CID: ClassId = internedClassId(DEPRECATED_ANNOTATION_FQN)
 
-private val STANDARD_KOTLIN_PACKAGE_PREFIXES = listOf(
-    KotlinBuiltIns.BUILT_INS_PACKAGE_NAME.asString(),
-    "kotlinx"
+internal val STANDARD_KOTLIN_PACKAGE_FQNS: List<FqName> = listOf(
+    StandardNames.BUILT_INS_PACKAGE_FQ_NAME.intern(),
+    FqName("kotlinx").intern()
 )
 
-private val KOTLIN_NATIVE_SYNTHETIC_PACKAGES_PREFIXES = ForwardDeclarationsFqNames.syntheticPackages
+private val STANDARD_KOTLIN_PACKAGES = STANDARD_KOTLIN_PACKAGE_FQNS.map { it.asString() }
+
+private val KOTLIN_NATIVE_SYNTHETIC_PACKAGES = ForwardDeclarationsFqNames.syntheticPackages
     .map { fqName ->
         check(!fqName.isRoot)
         fqName.asString()
     }
 
-private const val DARWIN_PACKAGE_PREFIX = "platform.darwin"
+private const val CINTEROP_PACKAGE = "kotlinx.cinterop"
+private const val DARWIN_PACKAGE = "platform.darwin"
+
+private val OBJC_INTEROP_CALLABLE_ANNOTATIONS = listOf(
+    "ObjCMethod",
+    "ObjCConstructor",
+    "ObjCFactory"
+)
 
 internal val FqName.isUnderStandardKotlinPackages: Boolean
-    get() = hasAnyPrefix(STANDARD_KOTLIN_PACKAGE_PREFIXES)
+    get() = hasAnyPrefix(STANDARD_KOTLIN_PACKAGES)
 
 internal val FqName.isUnderKotlinNativeSyntheticPackages: Boolean
-    get() = hasAnyPrefix(KOTLIN_NATIVE_SYNTHETIC_PACKAGES_PREFIXES)
+    get() = hasAnyPrefix(KOTLIN_NATIVE_SYNTHETIC_PACKAGES)
 
 internal val FqName.isUnderDarwinPackage: Boolean
-    get() = asString().hasPrefix(DARWIN_PACKAGE_PREFIX)
+    get() = asString().hasPrefix(DARWIN_PACKAGE)
 
 private fun FqName.hasAnyPrefix(prefixes: List<String>): Boolean =
     asString().let { fqName -> prefixes.any(fqName::hasPrefix) }
@@ -46,3 +57,13 @@ private fun String.hasPrefix(prefix: String): Boolean {
         else -> false
     }
 }
+
+internal val ClassId.isObjCInteropCallableAnnotation: Boolean
+    get() = packageFqName.asString() == CINTEROP_PACKAGE && relativeClassName.asString() in OBJC_INTEROP_CALLABLE_ANNOTATIONS
+
+internal val AnnotationDescriptor.isObjCInteropCallableAnnotation: Boolean
+    get() {
+        val classifier = type.declarationDescriptor
+        return classifier.name.asString() in OBJC_INTEROP_CALLABLE_ANNOTATIONS
+                && (classifier.containingDeclaration as? PackageFragmentDescriptor)?.fqName?.asString() == CINTEROP_PACKAGE
+    }

@@ -51,14 +51,12 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
     moduleName: String,
     languageVersionSettings: LanguageVersionSettings,
     shouldGenerate: (JvmDeclarationOrigin) -> Boolean,
-    mapAsmMethod: ((FunctionDescriptor) -> Method)?
 ) : SignatureCollectingClassBuilderFactory(builderFactory, shouldGenerate) {
 
-    private val mapAsmMethod = mapAsmMethod
-        ?: KotlinTypeMapper(
-            // Avoid errors when some classes are not loaded for some reason
-            bindingContext, ClassBuilderMode.LIGHT_CLASSES, moduleName, languageVersionSettings, isIrBackend = false
-        )::mapAsmMethod
+    private val mapAsmMethod: (FunctionDescriptor) -> Method = KotlinTypeMapper(
+        // Avoid errors when some classes are not loaded for some reason
+        bindingContext, ClassBuilderMode.LIGHT_CLASSES, moduleName, languageVersionSettings, isIrBackend = false
+    )::mapAsmMethod
 
     private val reportDiagnosticsTasks = ArrayList<() -> Unit>()
 

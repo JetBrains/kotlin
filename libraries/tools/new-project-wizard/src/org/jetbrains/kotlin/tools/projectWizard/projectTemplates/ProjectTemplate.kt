@@ -77,6 +77,7 @@ sealed class ProjectTemplate : DisplayableSettingItem {
             MultiplatformLibraryProjectTemplate,
             NativeApplicationProjectTemplate,
             FrontendApplicationProjectTemplate,
+            ReactApplicationProjectTemplate,
             FullStackWebApplicationProjectTemplate,
             NodeJsApplicationProjectTemplate
         )
@@ -238,7 +239,7 @@ object FullStackWebApplicationProjectTemplate : ProjectTemplate() {
                         }
                     },
                     ModuleType.js.createDefaultTarget().apply {
-                        withTemplate(SimpleJsClientTemplate())
+                        withTemplate(ReactJsClientTemplate())
                     }
                 )
             )
@@ -274,8 +275,8 @@ object NativeApplicationProjectTemplate : ProjectTemplate() {
 }
 
 object FrontendApplicationProjectTemplate : ProjectTemplate() {
-    override val title = KotlinNewProjectWizardBundle.message("project.template.frontend.title")
-    override val description = KotlinNewProjectWizardBundle.message("project.template.frontend.description")
+    override val title = KotlinNewProjectWizardBundle.message("project.template.browser.title")
+    override val description = KotlinNewProjectWizardBundle.message("project.template.browser.description")
     override val id = "frontendApplication"
 
     @NonNls
@@ -286,9 +287,34 @@ object FrontendApplicationProjectTemplate : ProjectTemplate() {
         get() = listOf(
             KotlinPlugin.modules.reference withValue listOf(
                 Module(
-                    "frontend",
+                    "browser",
                     BrowserJsSinglePlatformModuleConfigurator,
                     template = SimpleJsClientTemplate(),
+                    sourcesets = SourcesetType.ALL.map { type ->
+                        Sourceset(type, dependencies = emptyList())
+                    },
+                    subModules = emptyList()
+                )
+            )
+        )
+}
+
+object ReactApplicationProjectTemplate : ProjectTemplate() {
+    override val title = KotlinNewProjectWizardBundle.message("project.template.react.title")
+    override val description = KotlinNewProjectWizardBundle.message("project.template.react.description")
+    override val id = "reactApplication"
+
+    @NonNls
+    override val suggestedProjectName = "myKotlinJsApplication"
+    override val projectKind = ProjectKind.Js
+
+    override val setsPluginSettings: List<SettingWithValue<*, *>>
+        get() = listOf(
+            KotlinPlugin.modules.reference withValue listOf(
+                Module(
+                    "react",
+                    BrowserJsSinglePlatformModuleConfigurator,
+                    template = ReactJsClientTemplate(),
                     sourcesets = SourcesetType.ALL.map { type ->
                         Sourceset(type, dependencies = emptyList())
                     },
@@ -405,7 +431,7 @@ object NodeJsApplicationProjectTemplate : ProjectTemplate() {
         get() = listOf(
             KotlinPlugin.modules.reference withValue listOf(
                 Module(
-                    "nodejsApp",
+                    "nodejs",
                     NodeJsSinglePlatformModuleConfigurator,
                     template = SimpleNodeJsTemplate(),
                     sourcesets = SourcesetType.ALL.map { type ->

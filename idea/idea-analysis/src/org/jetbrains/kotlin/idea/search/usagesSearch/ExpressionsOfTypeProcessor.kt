@@ -71,7 +71,7 @@ class ExpressionsOfTypeProcessor(
         var mode = if (ApplicationManager.getApplication().isUnitTestMode) Mode.ALWAYS_SMART else Mode.PLAIN_WHEN_NEEDED
 
         @get:TestOnly
-        var testLog: MutableList<String>? = null
+        var testLog: MutableCollection<String>? = null
 
         inline fun testLog(s: () -> String) {
             testLog?.add(s())

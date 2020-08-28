@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.script.util
 
 import org.jetbrains.kotlin.script.util.resolvers.DirectResolver

@@ -165,7 +165,7 @@ private class MakeCallsStatic(
             // Imported functions do not have their receiver parameter nulled by SingletonObjectJvmStaticLowering,
             // so we have to do it here.
             // TODO: would be better handled by lowering imported declarations.
-            val callee = expression.symbol.owner as IrSimpleFunction
+            val callee = expression.symbol.owner
             val newCallee = if (!callee.isInCurrentModule()) {
                 callee.copyRemovingDispatchReceiver()       // TODO: cache these
             } else callee
@@ -192,7 +192,7 @@ private class MakeCallsStatic(
     }
 
     private fun IrSimpleFunction.copyRemovingDispatchReceiver(): IrSimpleFunction =
-        factory.buildFun(descriptor) {
+        factory.buildFun {
             updateFrom(this@copyRemovingDispatchReceiver)
             name = this@copyRemovingDispatchReceiver.name
             returnType = this@copyRemovingDispatchReceiver.returnType
@@ -202,6 +202,7 @@ private class MakeCallsStatic(
             it.annotations += annotations
             it.copyParameterDeclarationsFrom(this)
             it.dispatchReceiverParameter = null
+            it.copyAttributes(this)
         }
 }
 

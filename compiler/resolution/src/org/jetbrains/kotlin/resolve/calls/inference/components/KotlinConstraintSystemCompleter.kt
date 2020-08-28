@@ -73,10 +73,11 @@ class KotlinConstraintSystemCompleter(
         c: Context,
         topLevelType: UnwrappedType,
         topLevelAtoms: List<ResolvedAtom>,
+        completionMode: ConstraintSystemCompletionMode,
         diagnosticsHolder: KotlinDiagnosticsHolder
     ) {
         c.runCompletion(
-            ConstraintSystemCompletionMode.FULL,
+            completionMode,
             topLevelAtoms,
             topLevelType,
             diagnosticsHolder,

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.builder
 
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirVariable
@@ -112,7 +111,7 @@ internal fun generateDestructuringBlock(
                 }
                 this.isVar = isVar
                 isLocal = true
-                status = FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
+                status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                 symbol = FirPropertySymbol(name)
                 entry.extractAnnotationsTo(this)
             }

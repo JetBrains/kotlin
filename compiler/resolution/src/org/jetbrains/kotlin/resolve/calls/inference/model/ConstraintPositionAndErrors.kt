@@ -94,7 +94,7 @@ class CoroutinePosition() : ConstraintPosition() {
     override fun toString(): String = "for coroutine call"
 }
 
-@Deprecated("Should be used only in SimpleConstraintSystemImpl")
+// TODO: should be used only in SimpleConstraintSystemImpl
 object SimpleConstraintSystemConstraintPosition : ConstraintPosition()
 
 abstract class ConstraintSystemCallDiagnostic(applicability: ResolutionCandidateApplicability) : KotlinCallDiagnostic(applicability) {

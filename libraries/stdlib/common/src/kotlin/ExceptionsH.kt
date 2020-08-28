@@ -138,6 +138,7 @@ public expect fun Throwable.stackTraceToString(): String
  * Prints the [detailed description][Throwable.stackTraceToString] of this throwable to the standard output or standard error output.
  */
 @SinceKotlin("1.4")
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public expect fun Throwable.printStackTrace(): Unit
 
 /**

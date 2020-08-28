@@ -5,30 +5,26 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.utils
 
-import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
-import org.jetbrains.kotlin.idea.frontend.api.ValidityOwnerByValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.assertIsValid
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-// all access are considered to be from a single thread
-// which should be checked in invalidatable.assertIsValid()
+/**
+ * Lazy value that guaranties safe publication and checks validity on every access
+ */
 class ValidityAwareCachedValue<T>(
-    private val validityOwner: ValidityOwner,
-    private val init: () -> T
+    private val token: ValidityToken,
+    init: () -> T
 ) : ReadOnlyProperty<Any, T> {
-    var value: Any? = UNITITIALIZED
+    private val lazyValue = lazy(LazyThreadSafetyMode.PUBLICATION, init)
 
     @Suppress("UNCHECKED_CAST")
     override fun getValue(thisRef: Any, property: KProperty<*>): T {
-        validityOwner.assertIsValid()
-        if (value === UNITITIALIZED) {
-            value = init()
-        }
-        return value as T
+        token.assertIsValid()
+        return lazyValue.value
     }
 }
 
-internal fun <T> ValidityOwnerByValidityToken.cached(init: () -> T) = ValidityAwareCachedValue(token, init)
-
-internal object UNITITIALIZED
+internal fun <T> ValidityTokenOwner.cached(init: () -> T) = ValidityAwareCachedValue(token, init)

@@ -508,7 +508,7 @@ fun IrFactory.createStaticFunctionWithReceivers(
     typeParametersFromContext: List<IrTypeParameter> = listOf()
 ): IrSimpleFunction {
     val descriptor = (oldFunction.descriptor as? DescriptorWithContainerSource)?.let {
-        WrappedFunctionDescriptorWithContainerSource(it.containerSource)
+        WrappedFunctionDescriptorWithContainerSource()
     } ?: WrappedSimpleFunctionDescriptor(Annotations.EMPTY, oldFunction.descriptor.source)
     return createFunction(
         oldFunction.startOffset, oldFunction.endOffset,
@@ -525,7 +525,8 @@ fun IrFactory.createStaticFunctionWithReceivers(
         isExpect = oldFunction.isExpect,
         isFakeOverride = isFakeOverride,
         isOperator = oldFunction is IrSimpleFunction && oldFunction.isOperator,
-        isInfix = oldFunction is IrSimpleFunction && oldFunction.isInfix
+        isInfix = oldFunction is IrSimpleFunction && oldFunction.isInfix,
+        containerSource = oldFunction.containerSource,
     ).apply {
         descriptor.bind(this)
         parent = irParent
@@ -571,6 +572,8 @@ fun IrFactory.createStaticFunctionWithReceivers(
                                        }
 
         if (copyMetadata) metadata = oldFunction.metadata
+
+        copyAttributes(oldFunction as? IrAttributeContainer)
     }
 }
 
@@ -617,3 +620,23 @@ private fun IrSimpleFunction.copyAndRenameConflictingTypeParametersFrom(
 
 val IrSymbol.isSuspend: Boolean
     get() = this is IrSimpleFunctionSymbol && owner.isSuspend
+
+fun IrSimpleFunction.allOverridden(includeSelf: Boolean = false): Set<IrSimpleFunction> {
+    val result = mutableSetOf<IrSimpleFunction>()
+    if (includeSelf) {
+        computeAllOverridden(this, result)
+    } else {
+        for (override in overriddenSymbols) {
+            computeAllOverridden(override.owner, result)
+        }
+    }
+    return result
+}
+
+private fun computeAllOverridden(function: IrSimpleFunction, result: MutableSet<IrSimpleFunction>) {
+    if (result.add(function)) {
+        for (override in function.overriddenSymbols) {
+            computeAllOverridden(override.owner, result)
+        }
+    }
+}

@@ -16,15 +16,23 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraphVisitorVoid
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.QualifiedAccessNode
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 
 object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChecker() {
-    override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter) {
-        val localProperties = LocalPropertyCollector.collect(graph)
-        // we want to analyze only properties without initializers
-        localProperties.retainAll { it.fir.initializer == null && it.fir.delegate == null }
-        if (localProperties.isEmpty()) return
-        val data = DataCollector(localProperties).getData(graph)
-        val reporterVisitor = UninitializedPropertyReporter(data, localProperties, reporter)
+    override fun analyze(
+        graph: ControlFlowGraph,
+        reporter: DiagnosticReporter,
+        data: Map<CFGNode<*>, PropertyInitializationInfo>,
+        properties: Set<FirPropertySymbol>
+    ) {
+        val localData = data.filter {
+            val symbolFir = (it.key.fir as? FirVariableSymbol<*>)?.fir
+            symbolFir == null || symbolFir.initializer == null && symbolFir.delegate == null
+        }
+
+        val localProperties = properties.filter { it.fir.initializer == null && it.fir.delegate == null }.toSet()
+
+        val reporterVisitor = UninitializedPropertyReporter(localData, localProperties, reporter)
         graph.traverse(TraverseDirection.Forward, reporterVisitor)
     }
 

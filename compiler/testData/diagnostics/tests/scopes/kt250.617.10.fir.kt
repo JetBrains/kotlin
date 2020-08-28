@@ -31,7 +31,7 @@ open class BodyTag(name : String) : TagWithText(name) {
 
 class Body() : BodyTag(<!UNRESOLVED_REFERENCE!>name<!>) { // Must be an error!
 }
-class Body1() : BodyTag(this.<!UNRESOLVED_REFERENCE!>name<!>) { // Must be an error!
+class Body1() : BodyTag(<!NO_THIS!>this<!>.<!UNRESOLVED_REFERENCE!>name<!>) { // Must be an error!
 }
 
 //more tests

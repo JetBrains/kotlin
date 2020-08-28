@@ -641,6 +641,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/addExclExclCall/array4.kt");
         }
 
+        @TestMetadata("functionReference.kt")
+        public void testFunctionReference() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/functionReference.kt");
+        }
+
+        @TestMetadata("functionReference2.kt")
+        public void testFunctionReference2() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/functionReference2.kt");
+        }
+
+        @TestMetadata("functionReference3.kt")
+        public void testFunctionReference3() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/functionReference3.kt");
+        }
+
         @TestMetadata("implicit.kt")
         public void testImplicit() throws Exception {
             runTest("idea/testData/quickfix/addExclExclCall/implicit.kt");
@@ -3292,6 +3307,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("notApplicableInReturn.kt")
                 public void testNotApplicableInReturn() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createClass/callExpression/notApplicableInReturn.kt");
+                }
+
+                @TestMetadata("parameterClassIsInternal.kt")
+                public void testParameterClassIsInternal() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createClass/callExpression/parameterClassIsInternal.kt");
+                }
+
+                @TestMetadata("parameterClassIsPrivate.kt")
+                public void testParameterClassIsPrivate() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createClass/callExpression/parameterClassIsPrivate.kt");
+                }
+
+                @TestMetadata("parameterClassIsPublic.kt")
+                public void testParameterClassIsPublic() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createClass/callExpression/parameterClassIsPublic.kt");
                 }
 
                 @TestMetadata("quotedName.kt")
@@ -13131,6 +13161,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/surroundWithNullCheck/expressionUnsafeCall.kt");
         }
 
+        @TestMetadata("in.kt")
+        public void testIn() throws Exception {
+            runTest("idea/testData/quickfix/surroundWithNullCheck/in.kt");
+        }
+
         @TestMetadata("infixUnsafeCall.kt")
         public void testInfixUnsafeCall() throws Exception {
             runTest("idea/testData/quickfix/surroundWithNullCheck/infixUnsafeCall.kt");
@@ -15472,6 +15507,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("invokeFuncUnsafe.kt")
         public void testInvokeFuncUnsafe() throws Exception {
             runTest("idea/testData/quickfix/wrapWithSafeLetCall/invokeFuncUnsafe.kt");
+        }
+
+        @TestMetadata("invokeFunctionType.kt")
+        public void testInvokeFunctionType() throws Exception {
+            runTest("idea/testData/quickfix/wrapWithSafeLetCall/invokeFunctionType.kt");
+        }
+
+        @TestMetadata("invokeFunctionType2.kt")
+        public void testInvokeFunctionType2() throws Exception {
+            runTest("idea/testData/quickfix/wrapWithSafeLetCall/invokeFunctionType2.kt");
         }
 
         @TestMetadata("invokeUnsafe.kt")

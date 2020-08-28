@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.tools.projectWizard.plugins.templates
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.PluginSettingsOwner
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.PipelineTask
-import org.jetbrains.kotlin.tools.projectWizard.templates.KtorServerTemplate
+import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.templates.SimpleNodeJsTemplate
 
 class SimpleNodeJsTemplatesPlugin(context: Context) : TemplatePlugin(context) {
@@ -16,14 +16,16 @@ class SimpleNodeJsTemplatesPlugin(context: Context) : TemplatePlugin(context) {
 
     override val pipelineTasks: List<PipelineTask> = super.pipelineTasks +
             listOf(
-                KtorTemplatesPlugin.addTemplate,
+                addTemplate,
             )
-
-    val addTemplate by addTemplateTask(SimpleNodeJsTemplate())
 
     companion object : PluginSettingsOwner() {
         override val pluginPath = "template.simpleNodeJs"
 
-        val addTemplate by addTemplateTask(KtorServerTemplate())
+        val addTemplate by pipelineTask(GenerationPhase.PREPARE) {
+            withAction {
+                TemplatesPlugin.addTemplate.execute(SimpleNodeJsTemplate())
+            }
+        }
     }
 }

@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.analyzer
 
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleCapability
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.platform.TargetPlatform
-
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 
 interface ModuleInfo {
     val name: Name
@@ -19,7 +18,7 @@ interface ModuleInfo {
     val platform: TargetPlatform
     val analyzerServices: PlatformDependentAnalyzerServices
     fun modulesWhoseInternalsAreVisible(): Collection<ModuleInfo> = listOf()
-    val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
+    val capabilities: Map<ModuleCapability<*>, Any?>
         get() = mapOf(Capability to this)
     val stableName: Name?
         get() = null
@@ -30,15 +29,12 @@ interface ModuleInfo {
     // but if they are present, they should come after JVM built-ins in the dependencies list, because JVM built-ins contain
     // additional members dependent on the JDK
     fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns =
-        analyzerServices?.dependencyOnBuiltIns() ?: ModuleInfo.DependencyOnBuiltIns.LAST
+        analyzerServices.dependencyOnBuiltIns()
 
     //TODO: (module refactoring) provide dependency on builtins after runtime in IDEA
     enum class DependencyOnBuiltIns { NONE, AFTER_SDK, LAST }
 
     companion object {
-        val Capability = ModuleDescriptor.Capability<ModuleInfo>("ModuleInfo")
+        val Capability = ModuleCapability<ModuleInfo>("ModuleInfo")
     }
 }
-
-val ModuleDescriptor.moduleInfo: ModuleInfo?
-    get() = getCapability(ModuleInfo.Capability)

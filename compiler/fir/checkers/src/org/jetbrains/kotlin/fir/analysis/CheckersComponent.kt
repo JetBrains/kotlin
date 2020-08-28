@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
@@ -52,28 +53,43 @@ fun FirSession.registerCheckersComponent() {
     register(CheckersComponent::class, CheckersComponent.componentWithDefaultCheckers())
 }
 
+fun FirSession.registerExtendedCheckersComponent() {
+    this.checkersComponent.register(ExtendedExpressionCheckers)
+    this.checkersComponent.register(ExtendedDeclarationCheckers)
+}
+
 private class ComposedDeclarationCheckers : DeclarationCheckers() {
+    override val fileCheckers: List<FirFileChecker>
+        get() = _fileCheckers
     override val declarationCheckers: List<FirBasicDeclarationChecker>
         get() = _declarationCheckers
-
     override val memberDeclarationCheckers: List<FirMemberDeclarationChecker>
         get() = _memberDeclarationCheckers
-
+    override val regularClassCheckers: List<FirRegularClassChecker>
+        get() = _regularClassCheckers
     override val constructorCheckers: List<FirConstructorChecker>
         get() = _constructorCheckers
     override val controlFlowAnalyserCheckers: List<FirControlFlowChecker>
         get() = _controlFlowAnalyserCheckers
+    override val variableAssignmentCfaBasedCheckers: List<AbstractFirPropertyInitializationChecker>
+        get() = _variableAssignmentCfaBasedCheckers
 
+    private val _fileCheckers: MutableList<FirFileChecker> = mutableListOf()
     private val _declarationCheckers: MutableList<FirBasicDeclarationChecker> = mutableListOf()
     private val _memberDeclarationCheckers: MutableList<FirMemberDeclarationChecker> = mutableListOf()
+    private val _regularClassCheckers: MutableList<FirRegularClassChecker> = mutableListOf()
     private val _constructorCheckers: MutableList<FirConstructorChecker> = mutableListOf()
     private val _controlFlowAnalyserCheckers: MutableList<FirControlFlowChecker> = mutableListOf()
+    private val _variableAssignmentCfaBasedCheckers: MutableList<AbstractFirPropertyInitializationChecker> = mutableListOf()
 
     fun register(checkers: DeclarationCheckers) {
+        _fileCheckers += checkers.allFileCheckers
         _declarationCheckers += checkers.declarationCheckers
         _memberDeclarationCheckers += checkers.allMemberDeclarationCheckers
+        _regularClassCheckers += checkers.allRegularClassCheckers
         _constructorCheckers += checkers.allConstructorCheckers
         _controlFlowAnalyserCheckers += checkers.controlFlowAnalyserCheckers
+        _variableAssignmentCfaBasedCheckers += checkers.variableAssignmentCfaBasedCheckers
     }
 }
 

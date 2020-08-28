@@ -104,6 +104,12 @@ public class IrSteppingTestGenerated extends AbstractIrSteppingTest {
     }
 
     @Test
+    @TestMetadata("constructors.kt")
+    public void testConstructors() throws Exception {
+        runTest("compiler/testData/debug/stepping/constructors.kt");
+    }
+
+    @Test
     @TestMetadata("defaultParameter.kt")
     public void testDefaultParameter() throws Exception {
         runTest("compiler/testData/debug/stepping/defaultParameter.kt");
@@ -428,6 +434,12 @@ public class IrSteppingTestGenerated extends AbstractIrSteppingTest {
     }
 
     @Test
+    @TestMetadata("whenIsChecks.kt")
+    public void testWhenIsChecks() throws Exception {
+        runTest("compiler/testData/debug/stepping/whenIsChecks.kt");
+    }
+
+    @Test
     @TestMetadata("whenMultiLine.kt")
     public void testWhenMultiLine() throws Exception {
         runTest("compiler/testData/debug/stepping/whenMultiLine.kt");
@@ -437,6 +449,12 @@ public class IrSteppingTestGenerated extends AbstractIrSteppingTest {
     @TestMetadata("whenMultiLineSubject.kt")
     public void testWhenMultiLineSubject() throws Exception {
         runTest("compiler/testData/debug/stepping/whenMultiLineSubject.kt");
+    }
+
+    @Test
+    @TestMetadata("whenNullalbeSubject.kt")
+    public void testWhenNullalbeSubject() throws Exception {
+        runTest("compiler/testData/debug/stepping/whenNullalbeSubject.kt");
     }
 
     @Test

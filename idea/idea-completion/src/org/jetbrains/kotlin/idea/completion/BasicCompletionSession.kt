@@ -652,6 +652,8 @@ class BasicCompletionSession(
                         }
                     }
 
+                    "contract" -> { }
+
                     else -> collector.addElement(lookupElement)
                 }
             }

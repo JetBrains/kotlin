@@ -76,6 +76,10 @@ class ConeWrongNumberOfTypeArgumentsError(val desiredCount: Int, val type: FirRe
     override val reason: String get() = "Wrong number of type arguments"
 }
 
+class ConeInstanceAccessBeforeSuperCall(val target: String) : ConeDiagnostic() {
+    override val reason: String get() = "Cannot access ''${target}'' before superclass constructor has been called"
+}
+
 private fun describeSymbol(symbol: AbstractFirBasedSymbol<*>): String {
     return when (symbol) {
         is FirClassLikeSymbol<*> -> symbol.classId.asString()

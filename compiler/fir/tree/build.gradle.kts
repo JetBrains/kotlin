@@ -6,10 +6,8 @@ plugins {
 }
 
 dependencies {
-    compile(project(":compiler:frontend.common"))
-    compile(project(":core:descriptors"))
-    compile(project(":compiler:fir:cones"))
-    compile(project(":compiler:resolution"))
+    api(project(":compiler:frontend.common"))
+    api(project(":compiler:fir:cones"))
 
     // Necessary only to store bound PsiElement inside FirElement
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }

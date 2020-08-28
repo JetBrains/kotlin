@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain.result
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -138,7 +138,7 @@ class AddToCollectionTransformation(
             when (collectionKind) {
                 CollectionKind.LIST -> {
                     when {
-                        canChangeInitializerType(collectionInitialization, KotlinBuiltIns.FQ_NAMES.list, state.outerLoop) -> {
+                        canChangeInitializerType(collectionInitialization, StandardNames.FqNames.list, state.outerLoop) -> {
                             return if (argumentIsInputVariable) {
                                 val assignToList = AssignToListTransformation(state.outerLoop, collectionInitialization, state.lazySequence)
                                 TransformationMatch.Result(assignToList)
@@ -156,7 +156,7 @@ class AddToCollectionTransformation(
                             }
                         }
 
-                        canChangeInitializerType(collectionInitialization, KotlinBuiltIns.FQ_NAMES.mutableList, state.outerLoop) -> {
+                        canChangeInitializerType(collectionInitialization, StandardNames.FqNames.mutableList, state.outerLoop) -> {
                             if (argumentIsInputVariable) {
                                 val transformation = AssignToMutableListTransformation(state.outerLoop, collectionInitialization)
                                 return TransformationMatch.Result(transformation)
@@ -167,11 +167,11 @@ class AddToCollectionTransformation(
 
                 CollectionKind.SET -> {
                     val assignToSetTransformation = when {
-                        canChangeInitializerType(collectionInitialization, KotlinBuiltIns.FQ_NAMES.set, state.outerLoop) -> {
+                        canChangeInitializerType(collectionInitialization, StandardNames.FqNames.set, state.outerLoop) -> {
                             AssignToSetTransformation(state.outerLoop, collectionInitialization)
                         }
 
-                        canChangeInitializerType(collectionInitialization, KotlinBuiltIns.FQ_NAMES.mutableSet, state.outerLoop) -> {
+                        canChangeInitializerType(collectionInitialization, StandardNames.FqNames.mutableSet, state.outerLoop) -> {
                             AssignToMutableSetTransformation(state.outerLoop, collectionInitialization)
                         }
 
@@ -214,13 +214,13 @@ class AddToCollectionTransformation(
 private fun KtExpression?.isRangeLiteral() = this is KtBinaryExpression && operationToken == KtTokens.RANGE
 
 private fun DeclarationDescriptor.isCollectionAdd(): Boolean {
-    if ((containingDeclaration as? ClassDescriptor)?.fqNameSafe == KotlinBuiltIns.FQ_NAMES.mutableCollection) {
+    if ((containingDeclaration as? ClassDescriptor)?.fqNameSafe == StandardNames.FqNames.mutableCollection) {
         return true
     }
 
     val overrides = (this as? CallableDescriptor)?.overriddenTreeUniqueAsSequence(true) ?: return false
     return overrides.any {
-        (it.containingDeclaration as? ClassDescriptor)?.fqNameSafe == KotlinBuiltIns.FQ_NAMES.mutableCollection
+        (it.containingDeclaration as? ClassDescriptor)?.fqNameSafe == StandardNames.FqNames.mutableCollection
     }
 }
 

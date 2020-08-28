@@ -3267,6 +3267,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 public void testWhenWithoutSubject() throws Exception {
                     runTest("idea/testData/intentions/branched/when/eliminateSubject/whenWithoutSubject.kt");
                 }
+
+                @TestMetadata("withoutElse.kt")
+                public void testWithoutElse() throws Exception {
+                    runTest("idea/testData/intentions/branched/when/eliminateSubject/withoutElse.kt");
+                }
+
+                @TestMetadata("withoutElseUsedAsExpression.kt")
+                public void testWithoutElseUsedAsExpression() throws Exception {
+                    runTest("idea/testData/intentions/branched/when/eliminateSubject/withoutElseUsedAsExpression.kt");
+                }
             }
 
             @TestMetadata("idea/testData/intentions/branched/when/flatten")
@@ -6480,6 +6490,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertReferenceToLambda/extensionFunctionalType.kt");
         }
 
+        @TestMetadata("extensionFunctionalType2.kt")
+        public void testExtensionFunctionalType2() throws Exception {
+            runTest("idea/testData/intentions/convertReferenceToLambda/extensionFunctionalType2.kt");
+        }
+
+        @TestMetadata("extensionFunctionalType3.kt")
+        public void testExtensionFunctionalType3() throws Exception {
+            runTest("idea/testData/intentions/convertReferenceToLambda/extensionFunctionalType3.kt");
+        }
+
+        @TestMetadata("extensionFunctionalType4.kt")
+        public void testExtensionFunctionalType4() throws Exception {
+            runTest("idea/testData/intentions/convertReferenceToLambda/extensionFunctionalType4.kt");
+        }
+
         @TestMetadata("extensionProperty.kt")
         public void testExtensionProperty() throws Exception {
             runTest("idea/testData/intentions/convertReferenceToLambda/extensionProperty.kt");
@@ -6885,6 +6910,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("annotatedExpr.kt")
         public void testAnnotatedExpr() throws Exception {
             runTest("idea/testData/intentions/convertToBlockBody/annotatedExpr.kt");
+        }
+
+        @TestMetadata("annotatedExpr2.kt")
+        public void testAnnotatedExpr2() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/annotatedExpr2.kt");
         }
 
         @TestMetadata("explicitlyNonUnitFun.kt")
@@ -10422,6 +10452,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/intentions/joinArgumentList"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
         }
 
+        @TestMetadata("hasEndOfLineComment.kt")
+        public void testHasEndOfLineComment() throws Exception {
+            runTest("idea/testData/intentions/joinArgumentList/hasEndOfLineComment.kt");
+        }
+
         @TestMetadata("hasLineBreakBeforeFirstArg.kt")
         public void testHasLineBreakBeforeFirstArg() throws Exception {
             runTest("idea/testData/intentions/joinArgumentList/hasLineBreakBeforeFirstArg.kt");
@@ -10646,6 +10681,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
         public void testAllFilesPresentInJoinParameterList() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/intentions/joinParameterList"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+        }
+
+        @TestMetadata("hasEndOfLineComment.kt")
+        public void testHasEndOfLineComment() throws Exception {
+            runTest("idea/testData/intentions/joinParameterList/hasEndOfLineComment.kt");
         }
 
         @TestMetadata("hasLineBreakBeforeFirstParam.kt")
@@ -12275,6 +12315,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/mergeIfs/comments.kt");
         }
 
+        @TestMetadata("comments2.kt")
+        public void testComments2() throws Exception {
+            runTest("idea/testData/intentions/mergeIfs/comments2.kt");
+        }
+
+        @TestMetadata("comments3.kt")
+        public void testComments3() throws Exception {
+            runTest("idea/testData/intentions/mergeIfs/comments3.kt");
+        }
+
         @TestMetadata("else1.kt")
         public void testElse1() throws Exception {
             runTest("idea/testData/intentions/mergeIfs/else1.kt");
@@ -12560,9 +12610,19 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/intentions/movePropertyToClassBody"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
         }
 
+        @TestMetadata("annotationClass.kt")
+        public void testAnnotationClass() throws Exception {
+            runTest("idea/testData/intentions/movePropertyToClassBody/annotationClass.kt");
+        }
+
         @TestMetadata("annotationWithUseSite.kt")
         public void testAnnotationWithUseSite() throws Exception {
             runTest("idea/testData/intentions/movePropertyToClassBody/annotationWithUseSite.kt");
+        }
+
+        @TestMetadata("dataClass.kt")
+        public void testDataClass() throws Exception {
+            runTest("idea/testData/intentions/movePropertyToClassBody/dataClass.kt");
         }
 
         @TestMetadata("location1.kt")

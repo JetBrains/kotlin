@@ -63,7 +63,7 @@ class JvmInnerClassesSupport(private val irFactory: IrFactory) : InnerClassesSup
     }
 
     private fun createInnerClassConstructorWithOuterThisParameter(oldConstructor: IrConstructor): IrConstructor =
-        irFactory.buildConstructor(oldConstructor.descriptor) {
+        irFactory.buildConstructor {
             updateFrom(oldConstructor)
             returnType = oldConstructor.returnType
         }.apply {

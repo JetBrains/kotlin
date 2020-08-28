@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 LineBreakpoint created at stepIntoMultiFileFacade.kt:6
 Run Java
 Connected to the target VM

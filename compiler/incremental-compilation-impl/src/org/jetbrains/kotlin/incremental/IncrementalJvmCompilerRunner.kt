@@ -303,6 +303,8 @@ class IncrementalJvmCompilerRunner(
                 KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
                     result.addAll(partsByFacadeName(outputClass.classHeader.multifileClassName!!))
                 }
+                KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.SYNTHETIC_CLASS, KotlinClassHeader.Kind.UNKNOWN -> {
+                }
             }
         }
 

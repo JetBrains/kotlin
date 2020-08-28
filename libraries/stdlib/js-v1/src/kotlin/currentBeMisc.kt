@@ -9,6 +9,8 @@ package kotlin.js
 // Used for js.translator/testData/box/number/mulInt32.kt
 @library
 @JsName("imulEmulated")
+@Suppress("UNUSED_PARAMETER")
 internal fun imul(x: Int, y: Int): Int = definedExternally
 
+@Suppress("NOTHING_TO_INLINE")
 internal inline fun isArrayish(o: dynamic) = js("Kotlin").isArrayish(o)

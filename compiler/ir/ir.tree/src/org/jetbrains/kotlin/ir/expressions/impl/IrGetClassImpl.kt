@@ -23,14 +23,11 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrGetClassImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val type: IrType,
     override var argument: IrExpression,
-) :
-    IrExpressionBase(startOffset, endOffset, type),
-    IrGetClass {
-
+) : IrGetClass() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitGetClass(this, data)
     }

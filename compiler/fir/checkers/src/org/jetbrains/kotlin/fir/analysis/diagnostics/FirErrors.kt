@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiTypeElement
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.fir.FirEffectiveVisibility
 import org.jetbrains.kotlin.fir.FirSourceElement
@@ -34,6 +35,7 @@ object FirErrors {
     val NOT_A_LOOP_LABEL by error0<FirSourceElement, PsiElement>()
     val VARIABLE_EXPECTED by error0<FirSourceElement, PsiElement>()
     val RETURN_NOT_ALLOWED by error0<FirSourceElement, PsiElement>()
+    val DELEGATION_IN_INTERFACE by error0<FirSourceElement, PsiElement>()
 
     // Unresolved
     val HIDDEN by error1<FirSourceElement, PsiElement, AbstractFirBasedSymbol<*>>()
@@ -43,11 +45,13 @@ object FirErrors {
     val ERROR_FROM_JAVA_RESOLUTION by error0<FirSourceElement, PsiElement>()
     val UNKNOWN_CALLABLE_KIND by error0<FirSourceElement, PsiElement>()
     val MISSING_STDLIB_CLASS by error0<FirSourceElement, PsiElement>()
+    val NO_THIS by error0<FirSourceElement, PsiElement>()
 
     // Super
     val SUPER_IS_NOT_AN_EXPRESSION by error0<FirSourceElement, PsiElement>()
     val SUPER_NOT_AVAILABLE by error0<FirSourceElement, PsiElement>()
     val ABSTRACT_SUPER_CALL by error0<FirSourceElement, PsiElement>()
+    val INSTANCE_ACCESS_BEFORE_SUPER_CALL by error1<FirSourceElement, PsiElement, String>()
 
     // Supertypes
     val TYPE_PARAMETER_AS_SUPERTYPE by error0<FirSourceElement, PsiElement>()
@@ -56,6 +60,11 @@ object FirErrors {
     val NOT_A_SUPERTYPE by error0<FirSourceElement, PsiElement>()
     val SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE by error0<FirSourceElement, PsiElement>()
     val QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE by error1<FirSourceElement, PsiElement, FirClass<*>>()
+    val SUPERTYPE_INITIALIZED_IN_INTERFACE by error0<FirSourceElement, PsiElement>()
+    val INTERFACE_WITH_SUPERCLASS by error0<FirSourceElement, PsiElement>()
+    val CLASS_IN_SUPERTYPE_FOR_ENUM by error0<FirSourceElement, PsiElement>()
+    val SEALED_SUPERTYPE by error0<FirSourceElement, PsiElement>()
+    val SEALED_SUPERTYPE_IN_LOCAL_CLASS by error0<FirSourceElement, PsiElement>()
 
     // Constructor problems
     val CONSTRUCTOR_IN_OBJECT by existing<FirSourceElement, KtDeclaration>(Errors.CONSTRUCTOR_IN_OBJECT)
@@ -68,6 +77,7 @@ object FirErrors {
     val DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR by warning0<FirSourceElement, PsiElement>()
     val PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS by warning0<FirSourceElement, PsiElement>()
     val EXPLICIT_DELEGATION_CALL_REQUIRED by warning0<FirSourceElement, PsiElement>()
+    val SEALED_CLASS_CONSTRUCTOR_CALL by error0<FirSourceElement, PsiElement>()
 
     // Annotations
     val ANNOTATION_CLASS_MEMBER by existing<FirSourceElement, PsiElement>(Errors.ANNOTATION_CLASS_MEMBER)
@@ -99,6 +109,7 @@ object FirErrors {
     // Applicability
     val NONE_APPLICABLE by error1<FirSourceElement, PsiElement, Collection<AbstractFirBasedSymbol<*>>>()
     val INAPPLICABLE_CANDIDATE by error1<FirSourceElement, PsiElement, AbstractFirBasedSymbol<*>>()
+    val INAPPLICABLE_LATEINIT_MODIFIER by error1<FirSourceElement, PsiElement, String>()
 
     // Ambiguity
     val AMBIGUITY by error1<FirSourceElement, PsiElement, Collection<AbstractFirBasedSymbol<*>>>()
@@ -115,9 +126,18 @@ object FirErrors {
     val NO_TYPE_FOR_TYPE_PARAMETER by error0<FirSourceElement, PsiElement>()
     val TYPE_PARAMETERS_IN_OBJECT by error0<FirSourceElement, PsiElement>()
     val ILLEGAL_PROJECTION_USAGE by error0<FirSourceElement, PsiElement>()
+    val TYPE_PARAMETERS_IN_ENUM by error0<FirSourceElement, PsiElement>()
+    val CONFLICTING_PROJECTION by error1<FirSourceElement, PsiElement, String>()
+    val VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED by error0<FirSourceElement, PsiElement>()
+    val RETURN_TYPE_MISMATCH_ON_OVERRIDE by error2<FirSourceElement, PsiElement, String, FirMemberDeclaration>()
+    val PROPERTY_TYPE_MISMATCH_ON_OVERRIDE by error2<FirSourceElement, PsiElement, String, FirMemberDeclaration>()
+    val VAR_TYPE_MISMATCH_ON_OVERRIDE by error2<FirSourceElement, PsiElement, String, FirMemberDeclaration>()
 
     // Redeclarations
     val MANY_COMPANION_OBJECTS by error0<FirSourceElement, PsiElement>()
+    val CONFLICTING_OVERLOADS by error1<FirSourceElement, PsiElement, String>()
+    val REDECLARATION by error1<FirSourceElement, PsiElement, String>()
+    val ANY_METHOD_IMPLEMENTED_IN_INTERFACE by error0<FirSourceElement, PsiElement>()
 
     // Invalid local declarations
     val LOCAL_OBJECT_NOT_ALLOWED by error1<FirSourceElement, PsiElement, Name>()
@@ -125,6 +145,9 @@ object FirErrors {
 
     // Control flow diagnostics
     val UNINITIALIZED_VARIABLE by error1<FirSourceElement, PsiElement, FirPropertySymbol>()
+    val WRONG_INVOCATION_KIND by warning3<FirSourceElement, PsiElement, AbstractFirBasedSymbol<*>, EventOccurrencesRange, EventOccurrencesRange>()
+    val LEAKED_IN_PLACE_LAMBDA by error1<FirSourceElement, PsiElement, AbstractFirBasedSymbol<*>>()
+    val WRONG_IMPLIES_CONDITION by error0<FirSourceElement, PsiElement>()
 
     // Extended checkers group
     val REDUNDANT_VISIBILITY_MODIFIER by warning0<FirSourceElement, PsiElement>()
@@ -138,4 +161,8 @@ object FirErrors {
     val ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_EQUALS by warning0<FirSourceElement, PsiElement>()
     val EMPTY_RANGE by warning0<FirSourceElement, PsiElement>()
     val REDUNDANT_SETTER_PARAMETER_TYPE by warning0<FirSourceElement, PsiElement>()
+    val UNUSED_VARIABLE by warning0<FirSourceElement, PsiElement>()
+    val ASSIGNED_VALUE_IS_NEVER_READ by warning0<FirSourceElement, PsiElement>()
+    val VARIABLE_INITIALIZER_IS_REDUNDANT by warning0<FirSourceElement, PsiElement>()
+    val VARIABLE_NEVER_READ by warning0<FirSourceElement, PsiElement>()
 }

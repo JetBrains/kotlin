@@ -1,0 +1,30 @@
+callable: kotlin/collections/List.listIterator
+
+// SYMBOLS:
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: kotlin.collections.List.listIterator
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: listIterator
+  origin: LIBRARY
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/collections/ListIterator<E>
+  typeParameters: []
+  valueParameters: []
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: kotlin.collections.List.listIterator
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: listIterator
+  origin: LIBRARY
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/collections/ListIterator<E>
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(index)]

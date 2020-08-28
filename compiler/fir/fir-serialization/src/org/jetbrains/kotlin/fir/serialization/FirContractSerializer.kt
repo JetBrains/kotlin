@@ -33,7 +33,7 @@ class FirContractSerializer {
     private class ContractSerializerWorker(private val parentSerializer: FirElementSerializer) {
         fun contractProto(contractDescription: FirContractDescription): ProtoBuf.Contract.Builder {
             return ProtoBuf.Contract.newBuilder().apply {
-                contractDescription.effects?.forEach { addEffect(effectProto(it, contractDescription)) }
+                contractDescription.effects?.forEach { addEffect(effectProto(it.effect, contractDescription)) }
             }
         }
 

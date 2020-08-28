@@ -12,34 +12,32 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCach
 class FunctionCommonizer(cache: CirClassifiersCache) : AbstractFunctionOrPropertyCommonizer<CirFunction>(cache) {
     private val annotations = AnnotationsCommonizer()
     private val modifiers = FunctionModifiersCommonizer()
-    private val valueParameters = ValueParameterListCommonizer(cache)
-    private var hasStableParameterNames = true
+    private val valueParameters = CallableValueParametersCommonizer(cache)
 
-    override fun commonizationResult() = CirFunctionFactory.create(
-        annotations = annotations.result,
-        name = name,
-        typeParameters = typeParameters.result,
-        visibility = visibility.result,
-        modality = modality.result,
-        containingClassDetails = null,
-        valueParameters = valueParameters.result,
-        hasStableParameterNames = hasStableParameterNames,
-        extensionReceiver = extensionReceiver.result,
-        returnType = returnType.result,
-        kind = kind,
-        modifiers = modifiers.result
-    )
+    override fun commonizationResult(): CirFunction {
+        val valueParameters = valueParameters.result
+        valueParameters.patchCallables()
+
+        return CirFunctionFactory.create(
+            annotations = annotations.result,
+            name = name,
+            typeParameters = typeParameters.result,
+            visibility = visibility.result,
+            modality = modality.result,
+            containingClassDetails = null,
+            valueParameters = valueParameters.valueParameters,
+            hasStableParameterNames = valueParameters.hasStableParameterNames,
+            extensionReceiver = extensionReceiver.result,
+            returnType = returnType.result,
+            kind = kind,
+            modifiers = modifiers.result
+        )
+    }
 
     override fun doCommonizeWith(next: CirFunction): Boolean {
-        val result = super.doCommonizeWith(next)
+        return super.doCommonizeWith(next)
                 && annotations.commonizeWith(next.annotations)
                 && modifiers.commonizeWith(next.modifiers)
-                && valueParameters.commonizeWith(next.valueParameters)
-
-        if (result) {
-            hasStableParameterNames = hasStableParameterNames && next.hasStableParameterNames
-        }
-
-        return result
+                && valueParameters.commonizeWith(next)
     }
 }

@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure
 
 import io.ktor.network.sockets.ServerSocket
@@ -188,7 +193,7 @@ suspend fun <T> runWithTimeout(
 ): T? = withTimeoutOrNull(unit.toMillis(timeout)) { block() }
 
 //@Throws(ConnectionResetException::class)
-suspend fun tryAcquireHandshakeMessage(input: ByteReadChannelWrapper, log: Logger): Boolean {
+suspend fun tryAcquireHandshakeMessage(input: ByteReadChannelWrapper): Boolean {
     val bytes = runWithTimeout {
         input.nextBytes()
     } ?: return false
@@ -200,7 +205,7 @@ suspend fun tryAcquireHandshakeMessage(input: ByteReadChannelWrapper, log: Logge
 
 
 //@Throws(ConnectionResetException::class)
-suspend fun trySendHandshakeMessage(output: ByteWriteChannelWrapper, log: Logger): Boolean {
+suspend fun trySendHandshakeMessage(output: ByteWriteChannelWrapper): Boolean {
     runWithTimeout {
         output.writeBytesAndLength(FIRST_HANDSHAKE_BYTE_TOKEN.size, FIRST_HANDSHAKE_BYTE_TOKEN)
     } ?: return false

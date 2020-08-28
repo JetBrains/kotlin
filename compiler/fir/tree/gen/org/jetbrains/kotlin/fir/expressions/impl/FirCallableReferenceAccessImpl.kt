@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirModifiableQualifiedAccess
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -31,7 +30,7 @@ internal class FirCallableReferenceAccessImpl(
     override var extensionReceiver: FirExpression,
     override var calleeReference: FirNamedReference,
     override var hasQuestionMarkAtLHS: Boolean,
-) : FirCallableReferenceAccess(), FirModifiableQualifiedAccess {
+) : FirCallableReferenceAccess() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
@@ -98,6 +97,10 @@ internal class FirCallableReferenceAccessImpl(
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
         typeArguments.clear()
         typeArguments.addAll(newTypeArguments)
+    }
+
+    override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?) {
+        explicitReceiver = newExplicitReceiver
     }
 
     override fun replaceCalleeReference(newCalleeReference: FirNamedReference) {

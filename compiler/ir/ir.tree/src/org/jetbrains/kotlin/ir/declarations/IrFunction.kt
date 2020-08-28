@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 abstract class IrFunction :
     IrDeclarationBase(),
@@ -47,6 +48,8 @@ abstract class IrFunction :
     abstract var valueParameters: List<IrValueParameter>
 
     abstract var body: IrBody?
+
+    abstract val containerSource: DeserializedContainerSource?
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         typeParameters.forEach { it.accept(visitor, data) }

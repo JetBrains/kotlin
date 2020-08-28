@@ -31,6 +31,8 @@ class VariableStorage(private val session: FirSession) {
     private val realVariables: MutableMap<Identifier, RealVariable> = HashMap()
     private val syntheticVariables: MutableMap<FirElement, SyntheticVariable> = HashMap()
 
+    fun clear(): VariableStorage = VariableStorage(session)
+
     fun getOrCreateRealVariableWithoutUnwrappingAlias(flow: Flow, symbol: AbstractFirBasedSymbol<*>, fir: FirElement): RealVariable {
         val realFir = fir.unwrapElement()
         val identifier = getIdentifierBySymbol(flow, symbol, realFir)
@@ -137,12 +139,6 @@ class VariableStorage(private val session: FirSession) {
     fun removeSyntheticVariable(variable: DataFlowVariable) {
         if (variable !is SyntheticVariable) return
         syntheticVariables.remove(variable.fir)
-    }
-
-    fun reset() {
-        counter = 0
-        realVariables.clear()
-        syntheticVariables.clear()
     }
 
     @OptIn(ExperimentalContracts::class)

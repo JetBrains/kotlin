@@ -15,15 +15,15 @@ inline operator fun <T, U, V> @ExtensionFunctionType Function2<T, U, V>.plus(p: 
     this - p
 }
 
-inline fun <T, U, V> inlineFunWithInvoke(s: (p: T) -> U, ext: T.(p: U) -> V) {
+<!CONFLICTING_OVERLOADS!>inline fun <T, U, V> inlineFunWithInvoke(s: (p: T) -> U, ext: T.(p: U) -> V) {
     s + s
     ext + ext
-}
+}<!>
 
-inline fun <T, U, V> inlineFunWithInvoke(s: (p: T) -> U, ext: T.(p: U) -> V) {
+<!CONFLICTING_OVERLOADS!>inline fun <T, U, V> inlineFunWithInvoke(s: (p: T) -> U, ext: T.(p: U) -> V) {
     s + s
     ext + ext
-}
+}<!>
 
 inline fun <T, U> Function1<T, U>.submit() {
     this + this

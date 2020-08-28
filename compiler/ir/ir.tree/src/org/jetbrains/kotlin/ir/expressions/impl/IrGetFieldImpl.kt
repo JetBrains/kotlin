@@ -26,16 +26,13 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrGetFieldImpl(
-    startOffset: Int,
-    endOffset: Int,
-    symbol: IrFieldSymbol,
-    type: IrType,
-    origin: IrStatementOrigin? = null,
-    superQualifierSymbol: IrClassSymbol? = null
-) :
-    IrFieldExpressionBase(startOffset, endOffset, symbol, type, origin, superQualifierSymbol),
-    IrGetField {
-
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val symbol: IrFieldSymbol,
+    override val type: IrType,
+    override val origin: IrStatementOrigin? = null,
+    override val superQualifierSymbol: IrClassSymbol? = null,
+) : IrGetField() {
     constructor(
         startOffset: Int, endOffset: Int,
         symbol: IrFieldSymbol,

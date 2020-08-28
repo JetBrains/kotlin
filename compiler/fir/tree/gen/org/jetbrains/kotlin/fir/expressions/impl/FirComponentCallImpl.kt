@@ -121,4 +121,9 @@ internal class FirComponentCallImpl(
         require(newCalleeReference is FirNamedReference)
         replaceCalleeReference(newCalleeReference)
     }
+
+    override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?) {
+        require(newExplicitReceiver != null)
+        explicitReceiver = newExplicitReceiver
+    }
 }

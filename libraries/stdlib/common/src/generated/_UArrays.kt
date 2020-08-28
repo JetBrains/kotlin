@@ -412,6 +412,8 @@ public inline fun UShortArray.elementAtOrNull(index: Int): UShort? {
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -422,6 +424,8 @@ public inline fun UIntArray.find(predicate: (UInt) -> Boolean): UInt? {
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -432,6 +436,8 @@ public inline fun ULongArray.find(predicate: (ULong) -> Boolean): ULong? {
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -442,6 +448,8 @@ public inline fun UByteArray.find(predicate: (UByte) -> Boolean): UByte? {
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -452,6 +460,8 @@ public inline fun UShortArray.find(predicate: (UShort) -> Boolean): UShort? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -462,6 +472,8 @@ public inline fun UIntArray.findLast(predicate: (UInt) -> Boolean): UInt? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -472,6 +484,8 @@ public inline fun ULongArray.findLast(predicate: (ULong) -> Boolean): ULong? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -482,6 +496,8 @@ public inline fun UByteArray.findLast(predicate: (UByte) -> Boolean): UByte? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -704,6 +720,8 @@ public inline fun UShortArray.getOrElse(index: Int, defaultValue: (Int) -> UShor
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.getOrNull
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -713,6 +731,8 @@ public fun UIntArray.getOrNull(index: Int): UInt? {
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.getOrNull
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -722,6 +742,8 @@ public fun ULongArray.getOrNull(index: Int): ULong? {
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.getOrNull
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -731,6 +753,8 @@ public fun UByteArray.getOrNull(index: Int): UByte? {
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.getOrNull
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes

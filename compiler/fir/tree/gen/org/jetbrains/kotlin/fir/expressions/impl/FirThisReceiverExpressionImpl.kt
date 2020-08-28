@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirModifiableQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
@@ -28,7 +27,7 @@ internal class FirThisReceiverExpressionImpl(
     override val annotations: MutableList<FirAnnotationCall>,
     override val typeArguments: MutableList<FirTypeProjection>,
     override var calleeReference: FirThisReference,
-) : FirThisReceiverExpression(), FirModifiableQualifiedAccess {
+) : FirThisReceiverExpression() {
     override var explicitReceiver: FirExpression? = null
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression
     override var extensionReceiver: FirExpression = FirNoReceiverExpression
@@ -99,6 +98,10 @@ internal class FirThisReceiverExpressionImpl(
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
         typeArguments.clear()
         typeArguments.addAll(newTypeArguments)
+    }
+
+    override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?) {
+        explicitReceiver = newExplicitReceiver
     }
 
     override fun replaceCalleeReference(newCalleeReference: FirThisReference) {

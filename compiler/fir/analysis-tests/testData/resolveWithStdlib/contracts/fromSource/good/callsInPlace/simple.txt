@@ -1,0 +1,28 @@
+FILE: simple.kt
+    @R|kotlin/contracts/ExperimentalContracts|() public final fun bar(x: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(x, EXACTLY_ONCE)
+        >
+     {
+        [StubStatement]
+        R|<local>/x|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+    }
+    @R|kotlin/contracts/ExperimentalContracts|() public final fun foo(x: R|() -> kotlin/Unit|, y: R|() -> kotlin/Unit|, z: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(x, EXACTLY_ONCE)
+            CallsInPlace(y, AT_MOST_ONCE)
+            CallsInPlace(z, EXACTLY_ONCE)
+        >
+     {
+        [StubStatement]
+        R|<local>/x|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        when () {
+            Boolean(true) ->  {
+                R|<local>/y|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+            }
+        }
+
+        R|/bar|(R|<local>/z|)
+    }

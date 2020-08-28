@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
 
-class FirCompositeScope(private val scopes: Iterable<FirScope>) : FirScope() {
+class FirCompositeScope(val scopes: Iterable<FirScope>) : FirScope(), FirContainingNamesAwareScope {
 
     override fun processClassifiersByNameWithSubstitution(
         name: Name,
@@ -43,5 +43,13 @@ class FirCompositeScope(private val scopes: Iterable<FirScope>) : FirScope() {
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         return processComposite(FirScope::processPropertiesByName, name, processor)
+    }
+
+    override fun getCallableNames(): Set<Name> {
+        return scopes.flatMapTo(hashSetOf()) { it.getContainingCallableNamesIfPresent() }
+    }
+
+    override fun getClassifierNames(): Set<Name> {
+        return scopes.flatMapTo(hashSetOf()) { it.getContainingClassifierNamesIfPresent() }
     }
 }

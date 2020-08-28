@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class IrConstructorImpl(
     override val startOffset: Int,
@@ -38,6 +40,7 @@ class IrConstructorImpl(
     override val isExternal: Boolean,
     override val isPrimary: Boolean,
     override val isExpect: Boolean,
+    override val containerSource: DeserializedContainerSource? = null,
 ) : IrConstructor() {
     init {
         symbol.bind(this)
@@ -49,9 +52,8 @@ class IrConstructorImpl(
     override lateinit var parent: IrDeclarationParent
     override var annotations: List<IrConstructorCall> = emptyList()
 
-    @Suppress("DEPRECATION")
     override var returnType: IrType = returnType
-        get() = if (field === org.jetbrains.kotlin.ir.types.impl.IrUninitializedType) {
+        get() = if (field === IrUninitializedType) {
             error("Return type is not initialized")
         } else {
             field

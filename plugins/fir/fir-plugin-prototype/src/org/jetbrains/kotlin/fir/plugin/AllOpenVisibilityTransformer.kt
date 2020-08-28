@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.plugin
 
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.Visibilities
+import org.jetbrains.kotlin.fir.Visibility
 import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
@@ -63,10 +63,10 @@ class AllOpenVisibilityTransformer(session: FirSession) : FirStatusTransformerEx
         val symbol = (argument.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirVariableSymbol<*> ?: return null
         val name = symbol.callableId.takeIf { it.classId == VisibilityClassId }?.callableName ?: return null
         return when (name) {
-            PublicName -> Visibilities.PUBLIC
-            InternalName -> Visibilities.INTERNAL
-            PrivateName -> Visibilities.PRIVATE
-            ProtectedName -> Visibilities.PROTECTED
+            PublicName -> Visibilities.Public
+            InternalName -> Visibilities.Internal
+            PrivateName -> Visibilities.Private
+            ProtectedName -> Visibilities.Protected
             else -> null
         }
     }

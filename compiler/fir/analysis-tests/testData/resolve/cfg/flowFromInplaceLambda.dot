@@ -139,6 +139,7 @@ digraph flowFromInplaceLambda_kt {
     36 -> {37};
     37 -> {45};
     37 -> {39} [color=red];
+    37 -> {45} [style=dashed];
     38 -> {40} [color=red];
     39 -> {40} [color=green];
     40 -> {41};
@@ -215,6 +216,7 @@ digraph flowFromInplaceLambda_kt {
     52 -> {53};
     53 -> {74};
     53 -> {54} [color=red];
+    53 -> {74} [style=dashed];
     54 -> {55};
     55 -> {56};
     56 -> {57};
@@ -223,6 +225,7 @@ digraph flowFromInplaceLambda_kt {
     59 -> {60};
     60 -> {82};
     60 -> {61} [color=red];
+    60 -> {82} [style=dashed];
     61 -> {62};
     62 -> {63};
     63 -> {64};
@@ -317,11 +320,13 @@ digraph flowFromInplaceLambda_kt {
     92 -> {93};
     93 -> {111};
     93 -> {94} [color=red];
+    93 -> {111} [style=dashed];
     94 -> {95};
     95 -> {96};
     96 -> {97};
     97 -> {120};
     97 -> {98} [color=red];
+    97 -> {120} [style=dashed];
     98 -> {99};
     99 -> {100};
     100 -> {101};
@@ -416,12 +421,14 @@ digraph flowFromInplaceLambda_kt {
     131 -> {132};
     132 -> {133};
     133 -> {134 152};
+    133 -> {152} [style=dashed];
     134 -> {135};
     135 -> {136};
     136 -> {137};
     137 -> {138};
     138 -> {139};
     139 -> {140 160};
+    139 -> {160} [style=dashed];
     140 -> {141};
     141 -> {142};
     142 -> {143};
@@ -496,10 +503,12 @@ digraph flowFromInplaceLambda_kt {
     170 -> {171};
     171 -> {184};
     171 -> {172} [color=red];
+    171 -> {184} [style=dashed];
     172 -> {173};
     173 -> {174};
     174 -> {189};
     174 -> {175} [color=red];
+    174 -> {189} [style=dashed];
     175 -> {176};
     176 -> {177};
     177 -> {178};
@@ -563,6 +572,7 @@ digraph flowFromInplaceLambda_kt {
     194 -> {195};
     195 -> {196};
     196 -> {197 203};
+    196 -> {203} [style=dashed];
     197 -> {198};
     198 -> {199};
     199 -> {200};
@@ -572,6 +582,7 @@ digraph flowFromInplaceLambda_kt {
     204 -> {205};
     205 -> {210};
     205 -> {206} [color=red];
+    205 -> {210} [style=dashed];
     206 -> {207};
     207 -> {208};
     208 -> {209};

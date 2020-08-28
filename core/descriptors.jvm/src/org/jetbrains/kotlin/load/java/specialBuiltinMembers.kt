@@ -19,6 +19,7 @@
 package org.jetbrains.kotlin.load.java
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.sameAsBuiltinMethodWithErasedValueParameters
@@ -37,7 +38,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES as BUILTIN_NAMES
 
 private fun FqName.child(name: String): FqName = child(Name.identifier(name))
 private fun FqNameUnsafe.childSafe(name: String): FqName = child(Name.identifier(name)).toSafe()
@@ -52,14 +52,14 @@ private fun String.method(name: String, parameters: String, returnType: String) 
 
 object BuiltinSpecialProperties {
     val PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP = mapOf(
-        BUILTIN_NAMES._enum.childSafe("name") to Name.identifier("name"),
-        BUILTIN_NAMES._enum.childSafe("ordinal") to Name.identifier("ordinal"),
-        BUILTIN_NAMES.collection.child("size") to Name.identifier("size"),
-        BUILTIN_NAMES.map.child("size") to Name.identifier("size"),
-        BUILTIN_NAMES.charSequence.childSafe("length") to Name.identifier("length"),
-        BUILTIN_NAMES.map.child("keys") to Name.identifier("keySet"),
-        BUILTIN_NAMES.map.child("values") to Name.identifier("values"),
-        BUILTIN_NAMES.map.child("entries") to Name.identifier("entrySet")
+        FqNames._enum.childSafe("name") to Name.identifier("name"),
+        FqNames._enum.childSafe("ordinal") to Name.identifier("ordinal"),
+        FqNames.collection.child("size") to Name.identifier("size"),
+        FqNames.map.child("size") to Name.identifier("size"),
+        FqNames.charSequence.childSafe("length") to Name.identifier("length"),
+        FqNames.map.child("keys") to Name.identifier("keySet"),
+        FqNames.map.child("values") to Name.identifier("values"),
+        FqNames.map.child("entries") to Name.identifier("entrySet")
     )
 
     private val GETTER_JVM_NAME_TO_PROPERTIES_SHORT_NAME_MAP: Map<Name, List<Name>> =

@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.checkers.diagnostics
 
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.PsiElement
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory1
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters1
 import org.jetbrains.kotlin.diagnostics.rendering.AbstractDiagnosticWithParametersRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticRenderer
@@ -143,7 +141,10 @@ class TextDiagnostic(
         private fun asTextDiagnostic(actualDiagnostic: ActualDiagnostic): TextDiagnostic {
             val diagnostic = actualDiagnostic.diagnostic
             val renderer = when (diagnostic.factory) {
-                is DebugInfoDiagnosticFactory1 -> DiagnosticWithParameters1Renderer("{0}", TO_STRING) as DiagnosticRenderer<Diagnostic>
+                is DebugInfoDiagnosticFactory1 -> {
+                    @Suppress("UNCHECKED_CAST")
+                    DiagnosticWithParameters1Renderer("{0}", TO_STRING) as DiagnosticRenderer<Diagnostic>
+                }
                 else -> DefaultErrorMessages.getRendererForDiagnostic(diagnostic)
             }
             val diagnosticName = actualDiagnostic.name

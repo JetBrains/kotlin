@@ -13,7 +13,7 @@ UFile (package = )
                 UThrowExpression
                     UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))
                         UIdentifier (Identifier (UnsupportedOperationException))
-                        USimpleNameReferenceExpression (identifier = <init>, resolvesTo = UnsupportedOperationException)
+                        USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: UnsupportedOperationException)
         UMethod (name = Model)
             UBlockExpression
                 UBlockExpression
@@ -35,6 +35,6 @@ UFile (package = )
                                                     UThrowExpression
                                                         UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1))
                                                             UIdentifier (Identifier (UnsupportedOperationException))
-                                                            USimpleNameReferenceExpression (identifier = <init>, resolvesTo = UnsupportedOperationException)
+                                                            USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: UnsupportedOperationException)
                                                             ULiteralExpression (value = "")
                                             UMethod (name = Model$1$1)

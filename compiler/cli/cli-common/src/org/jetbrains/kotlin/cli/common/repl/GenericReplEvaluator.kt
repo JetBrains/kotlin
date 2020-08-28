@@ -89,6 +89,9 @@ open class GenericReplEvaluator(
 
             historyActor.addPlaceholder(compileResult.lineId, EvalClassWithInstanceAndLoader(scriptClass.kotlin, null, classLoader, invokeWrapper))
 
+            val savedClassLoader = Thread.currentThread().contextClassLoader
+            Thread.currentThread().contextClassLoader = classLoader
+
             val scriptInstance =
                     try {
                         if (invokeWrapper != null) invokeWrapper.invoke { scriptInstanceConstructor.newInstance(*constructorArgs) }
@@ -104,6 +107,7 @@ open class GenericReplEvaluator(
                     }
                     finally {
                         historyActor.removePlaceholder(compileResult.lineId)
+                        Thread.currentThread().contextClassLoader = savedClassLoader
                     }
 
             historyActor.addFinal(compileResult.lineId, EvalClassWithInstanceAndLoader(scriptClass.kotlin, scriptInstance, classLoader, invokeWrapper))

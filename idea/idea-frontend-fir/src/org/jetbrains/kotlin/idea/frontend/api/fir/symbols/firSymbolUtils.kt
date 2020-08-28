@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCommonSymbolModality
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolModality
+import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtCommonSymbolModality
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolModality
+import org.jetbrains.kotlin.psi.KtDeclaration
 
 internal inline fun <reified M : KtSymbolModality> Modality?.getSymbolModality(): M = when (this) {
     Modality.FINAL -> KtCommonSymbolModality.FINAL

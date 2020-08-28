@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.FirQualifiedAccessBuilder
-import org.jetbrains.kotlin.fir.expressions.impl.FirModifiableQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirQualifiedAccessExpressionImpl
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -33,22 +32,22 @@ class FirQualifiedAccessExpressionBuilder : FirQualifiedAccessBuilder, FirAnnota
     override var source: FirSourceElement? = null
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    lateinit var calleeReference: FirReference
     override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
     override var explicitReceiver: FirExpression? = null
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression
     override var extensionReceiver: FirExpression = FirNoReceiverExpression
-    lateinit var calleeReference: FirReference
 
     override fun build(): FirQualifiedAccessExpression {
         return FirQualifiedAccessExpressionImpl(
             source,
             typeRef,
             annotations,
+            calleeReference,
             typeArguments,
             explicitReceiver,
             dispatchReceiver,
             extensionReceiver,
-            calleeReference,
         )
     }
 

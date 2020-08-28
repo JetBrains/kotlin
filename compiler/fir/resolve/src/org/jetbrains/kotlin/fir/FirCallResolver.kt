@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.isInner
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
@@ -22,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.tower.FirTowerResolver
 import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerResolveManager
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedCallableReferenceAtom
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreNameReference
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
@@ -32,10 +32,13 @@ import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
+import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.types.Variance
 
 class FirCallResolver(
     private val components: BodyResolveComponents,
@@ -227,12 +230,11 @@ class FirCallResolver(
             }
         }
 
-        @Suppress("UNCHECKED_CAST")
-        var resultExpression = qualifiedAccess.transformCalleeReference(StoreNameReference, nameReference) as T
+        var resultExpression = qualifiedAccess.transformCalleeReference(StoreNameReference, nameReference)
         if (reducedCandidates.size == 1) {
             val candidate = reducedCandidates.single()
-            resultExpression = resultExpression.transformDispatchReceiver(StoreReceiver, candidate.dispatchReceiverExpression()) as T
-            resultExpression = resultExpression.transformExtensionReceiver(StoreReceiver, candidate.extensionReceiverExpression()) as T
+            resultExpression = resultExpression.transformDispatchReceiver(StoreReceiver, candidate.dispatchReceiverExpression())
+            resultExpression = resultExpression.transformExtensionReceiver(StoreReceiver, candidate.extensionReceiverExpression())
         }
         if (resultExpression is FirExpression) transformer.storeTypeFromCallee(resultExpression)
         return resultExpression
@@ -291,10 +293,16 @@ class FirCallResolver(
 
     fun resolveDelegatingConstructorCall(
         delegatedConstructorCall: FirDelegatedConstructorCall,
-        constructorClassSymbol: FirClassSymbol<*>,
-        typeArguments: List<FirTypeProjection>,
+        constructedType: ConeClassLikeType
     ): FirDelegatedConstructorCall? {
         val name = Name.special("<init>")
+        val symbol = constructedType.lookupTag.toSymbol(components.session)
+        val typeArguments =
+            constructedType.typeArguments.take((symbol?.fir as? FirRegularClass)?.typeParameters?.count { it is FirTypeParameter } ?: 0)
+                .map {
+                    it.toFirTypeProjection()
+                }
+
         val callInfo = CallInfo(
             CallKind.DelegatingConstructorCall,
             name,
@@ -307,12 +315,34 @@ class FirCallResolver(
             containingDeclarations,
         )
         towerResolver.reset()
+
         val result = towerResolver.runResolverForDelegatingConstructor(
             callInfo,
-            constructorClassSymbol,
+            constructedType
         )
 
         return callResolver.selectDelegatingConstructorCall(delegatedConstructorCall, name, result, callInfo)
+    }
+
+    private fun ConeTypeProjection.toFirTypeProjection(): FirTypeProjection = when (this) {
+        is ConeStarProjection -> buildStarProjection()
+        else -> {
+            val type = when (this) {
+                is ConeKotlinTypeProjectionIn -> type
+                is ConeKotlinTypeProjectionOut -> type
+                is ConeStarProjection -> throw IllegalStateException()
+                else -> this as ConeKotlinType
+            }
+            buildTypeProjectionWithVariance {
+                typeRef = buildResolvedTypeRef { this.type = type }
+                variance = when (kind) {
+                    ProjectionKind.IN -> Variance.IN_VARIANCE
+                    ProjectionKind.OUT -> Variance.OUT_VARIANCE
+                    ProjectionKind.INVARIANT -> Variance.INVARIANT
+                    ProjectionKind.STAR -> throw IllegalStateException()
+                }
+            }
+        }
     }
 
     fun resolveAnnotationCall(annotationCall: FirAnnotationCall): FirAnnotationCall? {
@@ -482,6 +512,7 @@ class FirCallResolver(
                 val candidate = candidates.single()
                 val coneSymbol = candidate.symbol
                 if (coneSymbol is FirBackingFieldSymbol) {
+                    coneSymbol.fir.isReferredViaField = true
                     return buildBackingFieldReference {
                         this.source = source
                         resolvedSymbol = coneSymbol

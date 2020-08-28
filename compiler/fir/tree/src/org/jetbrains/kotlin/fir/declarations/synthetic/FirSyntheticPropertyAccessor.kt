@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirPropertyAccessorImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -67,13 +66,13 @@ class FirSyntheticPropertyAccessor(
         bind(this@FirSyntheticPropertyAccessor)
     }
 
-    override val controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference
+    override val controlFlowGraphReference: FirControlFlowGraphReference? = null
 
     override val contractDescription: FirContractDescription = FirEmptyContractDescription
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         delegate.accept(visitor, data)
-        controlFlowGraphReference.accept(visitor, data)
+        controlFlowGraphReference?.accept(visitor, data)
         contractDescription.accept(visitor, data)
     }
 
@@ -86,10 +85,6 @@ class FirSyntheticPropertyAccessor(
     }
 
     override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
-        throw AssertionError("Transformation of synthetic property accessor isn't supported")
-    }
-
-    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
         throw AssertionError("Transformation of synthetic property accessor isn't supported")
     }
 
@@ -134,6 +129,10 @@ class FirSyntheticPropertyAccessor(
     }
 
     override fun replaceContractDescription(newContractDescription: FirContractDescription) {
+        throw AssertionError("Mutation of synthetic property accessor isn't supported")
+    }
+
+    override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
         throw AssertionError("Mutation of synthetic property accessor isn't supported")
     }
 }

@@ -15,30 +15,32 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirQualifiedAccess : FirQualifiedAccessWithoutCallee, FirResolvable {
+interface FirQualifiedAccess : FirResolvable, FirStatement {
     override val source: FirSourceElement?
-    override val annotations: List<FirAnnotationCall>
-    override val typeArguments: List<FirTypeProjection>
-    override val explicitReceiver: FirExpression?
-    override val dispatchReceiver: FirExpression
-    override val extensionReceiver: FirExpression
     override val calleeReference: FirReference
+    override val annotations: List<FirAnnotationCall>
+    val typeArguments: List<FirTypeProjection>
+    val explicitReceiver: FirExpression?
+    val dispatchReceiver: FirExpression
+    val extensionReceiver: FirExpression
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitQualifiedAccess(this, data)
 
-    override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
-
     override fun replaceCalleeReference(newCalleeReference: FirReference)
+
+    fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
+
+    fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
+
+    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
 
-    override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
+    fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
 
-    override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
+    fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
 
-    override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
+    fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
 
-    override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
-
-    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
+    fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
 }

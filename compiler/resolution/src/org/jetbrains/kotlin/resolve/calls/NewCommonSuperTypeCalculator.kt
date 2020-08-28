@@ -29,7 +29,7 @@ object NewCommonSuperTypeCalculator {
     }
 
     fun TypeSystemCommonSuperTypesContext.commonSuperType(types: List<KotlinTypeMarker>): KotlinTypeMarker {
-        val maxDepth = types.maxBy { it.typeDepth() }?.typeDepth() ?: 0
+        val maxDepth = types.maxOfOrNull { it.typeDepth() } ?: 0
         return commonSuperType(types, -maxDepth, true)
     }
 

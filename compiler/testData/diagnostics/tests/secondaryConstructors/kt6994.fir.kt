@@ -1,4 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 class X<T> {
-    constructor(t: T, i: Int): <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this<!>(i, 1)
+    constructor(t: T, i: Int): <!INAPPLICABLE_CANDIDATE!>this<!>(i, 1)
 }

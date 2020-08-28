@@ -341,7 +341,7 @@ open class DefaultParameterInjector(
         return visitFunctionAccessExpression(expression) {
             with(expression) {
                 IrCallImpl(
-                    startOffset, endOffset, type, it,
+                    startOffset, endOffset, type, it as IrSimpleFunctionSymbol,
                     typeArgumentsCount = typeArgumentsCount,
                     valueArgumentsCount = it.owner.valueParameters.size,
                     origin = DEFAULT_DISPATCH_CALL,
@@ -537,7 +537,7 @@ private fun IrFunction.generateDefaultsFunctionImpl(
                 visibility = newVisibility
             }
         is IrSimpleFunction ->
-            factory.buildFun(descriptor) {
+            factory.buildFun {
                 updateFrom(this@generateDefaultsFunctionImpl)
                 name = Name.identifier("${this@generateDefaultsFunctionImpl.name}\$default")
                 origin = newOrigin
@@ -549,6 +549,7 @@ private fun IrFunction.generateDefaultsFunctionImpl(
             }
         else -> throw IllegalStateException("Unknown function type")
     }
+    (newFunction as? IrAttributeContainer)?.copyAttributes(this@generateDefaultsFunctionImpl as? IrAttributeContainer)
     newFunction.copyTypeParametersFrom(this)
     newFunction.parent = parent
     newFunction.returnType = returnType.remapTypeParameters(classIfConstructor, newFunction.classIfConstructor)

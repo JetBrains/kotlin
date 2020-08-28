@@ -27,17 +27,17 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 
 class IrLocalDelegatedPropertyReferenceImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val type: IrType,
     override val symbol: IrLocalDelegatedPropertySymbol,
     override val delegate: IrVariableSymbol,
     override val getter: IrSimpleFunctionSymbol,
     override val setter: IrSimpleFunctionSymbol?,
-    origin: IrStatementOrigin? = null
-) :
-    IrMemberAccessExpressionBase<IrLocalDelegatedPropertySymbol>(startOffset, endOffset, type, 0, 0, origin),
-    IrLocalDelegatedPropertyReference {
+    override val origin: IrStatementOrigin? = null,
+) : IrLocalDelegatedPropertyReference() {
+    override val valueArgumentsCount: Int
+        get() = 0
 
     override val referencedName: Name
         get() = symbol.owner.name

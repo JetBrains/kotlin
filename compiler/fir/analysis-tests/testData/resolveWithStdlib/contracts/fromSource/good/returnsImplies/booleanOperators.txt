@@ -16,7 +16,7 @@ FILE: booleanOperators.kt
     public final fun myRequireAnd(b1: R|kotlin/Boolean|, b2: R|kotlin/Boolean|): R|kotlin/Unit|
         [R|Contract description]
          <
-            Returns(WILDCARD) -> (b1) && (b2)
+            Returns(WILDCARD) -> b1 && b2
         >
      {
         [StubStatement]
@@ -30,7 +30,7 @@ FILE: booleanOperators.kt
     public final fun myRequireOr(b1: R|kotlin/Boolean|, b2: R|kotlin/Boolean|): R|kotlin/Unit|
         [R|Contract description]
          <
-            Returns(WILDCARD) -> (b1) || (b2)
+            Returns(WILDCARD) -> b1 || b2
         >
      {
         [StubStatement]
@@ -44,7 +44,7 @@ FILE: booleanOperators.kt
     public final fun myRequireNot(b: R|kotlin/Boolean|): R|kotlin/Unit|
         [R|Contract description]
          <
-            Returns(WILDCARD) -> (!)b
+            Returns(WILDCARD) -> !b
         >
      {
         [StubStatement]

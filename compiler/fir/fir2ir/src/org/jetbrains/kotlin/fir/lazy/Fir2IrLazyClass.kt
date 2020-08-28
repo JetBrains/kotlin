@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.fir.lazy
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
 import org.jetbrains.kotlin.fir.backend.toIrType
@@ -23,6 +26,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.descriptors.Visibility as OldVisibility
 
 class Fir2IrLazyClass(
     components: Fir2IrComponents,
@@ -51,8 +55,8 @@ class Fir2IrLazyClass(
     override val name: Name
         get() = fir.name
 
-    override var visibility: Visibility
-        get() = fir.visibility
+    @Suppress("SetterBackingFieldAssignment")
+    override var visibility: OldVisibility = components.visibilityConverter.convertToOldVisibility(fir.visibility)
         set(_) {
             error("Mutating Fir2Ir lazy elements is not possible")
         }
@@ -164,7 +168,9 @@ class Fir2IrLazyClass(
             }
         }
         with(fakeOverrideGenerator) {
-            result += getFakeOverrides(fir, processedNames)
+            val fakeOverrides = getFakeOverrides(fir, processedNames)
+            bindOverriddenSymbols(fakeOverrides)
+            result += fakeOverrides
         }
         // TODO: remove this check to save time
         for (declaration in result) {

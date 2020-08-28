@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -172,7 +171,7 @@ private fun ConeKotlinType.enhanceInflexibleType(
         typeArguments
     } else {
         var globalArgIndex = index + 1
-        typeArguments.mapIndexed { localArgIndex, arg ->
+        typeArguments.map { arg ->
             if (arg.kind != ProjectionKind.INVARIANT) {
                 globalArgIndex++
                 arg
@@ -277,7 +276,7 @@ internal fun ConeKotlinType.lexicalCastFrom(session: FirSession, value: String):
                 buildQualifiedAccessExpression {
                     calleeReference = buildResolvedNamedReference {
                         this.name = name
-                        resolvedSymbol = firStaticProperty.symbol as FirCallableSymbol<*>
+                        resolvedSymbol = firStaticProperty.symbol
                     }
                 }
             } else null

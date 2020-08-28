@@ -41,7 +41,7 @@ public final class flow/InnerObjectRetransformationKt$check$$inlined$flow$1 {
 @kotlin.Metadata
 public final class flow/InnerObjectRetransformationKt$check$$inlined$flowWith$1 {
     // source: 'innerObjectRetransformation.kt'
-    synthetic final field $this$inlined: flow.Flow
+    synthetic final field $this_flowWith$inlined: flow.Flow
     inner (anonymous) class flow/InnerObjectRetransformationKt$check$$inlined$flowWith$1
     public method <init>(p0: flow.Flow): void
     public @org.jetbrains.annotations.Nullable method collect(@org.jetbrains.annotations.NotNull p0: flow.FlowCollector, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
@@ -119,7 +119,7 @@ public final class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$1$1
 public final class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$1 {
     // source: 'innerObjectRetransformation.kt'
     synthetic final field $builderBlock$inlined: kotlin.jvm.functions.Function2
-    synthetic final field $this$inlined: flow.Flow
+    synthetic final field $this_flowWith$inlined: flow.Flow
     inner (anonymous) class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$1
     inner (anonymous) class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$1$1
     public method <init>(p0: kotlin.jvm.functions.Function2, p1: flow.Flow): void

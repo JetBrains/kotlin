@@ -10,8 +10,6 @@ import kotlinx.html.stream.appendHTML
 import org.apache.commons.lang.StringEscapeUtils
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.left
 import org.jetbrains.kotlin.fir.backend.right
@@ -523,7 +521,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     }
 
     private fun FlowContent.visibility(visibility: Visibility) {
-        if (visibility == Visibilities.UNKNOWN)
+        if (visibility == Visibilities.Unknown)
             return unresolved { keyword("public?") }
         return keyword(visibility.toString())
     }

@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui
 
 
+import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 import org.jetbrains.kotlin.tools.projectWizard.core.SettingsWriter
@@ -46,7 +47,9 @@ abstract class DynamicComponent(private val context: Context) : Component() {
     init {
         write {
             eventManager.addSettingUpdaterEventListener { reference ->
-                if (isInitialized) onValueUpdated(reference)
+                if (isInitialized) ApplicationManager.getApplication().invokeLater {
+                    onValueUpdated(reference)
+                }
             }
         }
     }

@@ -74,7 +74,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAssignmentOperatorStatement
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessWithoutCallee
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
 import org.jetbrains.kotlin.fir.expressions.FirElvisExpression
@@ -128,7 +127,9 @@ import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirComposedSuperTypeRef
+import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
+import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
@@ -414,10 +415,6 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformElement(whenBranch, data)
     }
 
-    open fun transformQualifiedAccessWithoutCallee(qualifiedAccessWithoutCallee: FirQualifiedAccessWithoutCallee, data: D): CompositeTransformResult<FirStatement> {
-        return transformElement(qualifiedAccessWithoutCallee, data)
-    }
-
     open fun transformQualifiedAccess(qualifiedAccess: FirQualifiedAccess, data: D): CompositeTransformResult<FirStatement> {
         return transformElement(qualifiedAccess, data)
     }
@@ -630,8 +627,16 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformElement(composedSuperTypeRef, data)
     }
 
+    open fun transformEffectDeclaration(effectDeclaration: FirEffectDeclaration, data: D): CompositeTransformResult<FirEffectDeclaration> {
+        return transformElement(effectDeclaration, data)
+    }
+
     open fun transformContractDescription(contractDescription: FirContractDescription, data: D): CompositeTransformResult<FirContractDescription> {
         return transformElement(contractDescription, data)
+    }
+
+    open fun transformLegacyRawContractDescription(legacyRawContractDescription: FirLegacyRawContractDescription, data: D): CompositeTransformResult<FirContractDescription> {
+        return transformElement(legacyRawContractDescription, data)
     }
 
     open fun transformRawContractDescription(rawContractDescription: FirRawContractDescription, data: D): CompositeTransformResult<FirContractDescription> {
@@ -918,10 +923,6 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformWhenBranch(whenBranch, data)
     }
 
-    final override fun visitQualifiedAccessWithoutCallee(qualifiedAccessWithoutCallee: FirQualifiedAccessWithoutCallee, data: D): CompositeTransformResult<FirStatement> {
-        return transformQualifiedAccessWithoutCallee(qualifiedAccessWithoutCallee, data)
-    }
-
     final override fun visitQualifiedAccess(qualifiedAccess: FirQualifiedAccess, data: D): CompositeTransformResult<FirStatement> {
         return transformQualifiedAccess(qualifiedAccess, data)
     }
@@ -1134,8 +1135,16 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformComposedSuperTypeRef(composedSuperTypeRef, data)
     }
 
+    final override fun visitEffectDeclaration(effectDeclaration: FirEffectDeclaration, data: D): CompositeTransformResult<FirEffectDeclaration> {
+        return transformEffectDeclaration(effectDeclaration, data)
+    }
+
     final override fun visitContractDescription(contractDescription: FirContractDescription, data: D): CompositeTransformResult<FirContractDescription> {
         return transformContractDescription(contractDescription, data)
+    }
+
+    final override fun visitLegacyRawContractDescription(legacyRawContractDescription: FirLegacyRawContractDescription, data: D): CompositeTransformResult<FirContractDescription> {
+        return transformLegacyRawContractDescription(legacyRawContractDescription, data)
     }
 
     final override fun visitRawContractDescription(rawContractDescription: FirRawContractDescription, data: D): CompositeTransformResult<FirContractDescription> {

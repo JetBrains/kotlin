@@ -88,7 +88,7 @@ object KDocRenderer {
         fun String.leadingIndent() = indexOfFirst { !it.isWhitespace() }
 
         val lines = text.split('\n')
-        val minIndent = lines.filter { it.trim().isNotEmpty() }.map(String::leadingIndent).min() ?: 0
+        val minIndent = lines.filter { it.trim().isNotEmpty() }.minOfOrNull(String::leadingIndent) ?: 0
         return lines.joinToString("\n") { it.drop(minIndent) }
     }
 

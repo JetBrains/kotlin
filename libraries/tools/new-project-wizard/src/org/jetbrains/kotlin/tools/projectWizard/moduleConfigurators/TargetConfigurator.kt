@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleStri
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.irsList
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.DefaultTargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetAccessIR
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JSConfigurator.Companion.cssSupport
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsBrowserBasedConfigurator.Companion.browserSubTarget
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsBrowserBasedConfigurator.Companion.cssSupport
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsNodeBasedConfigurator.Companion.nodejsSubTarget
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsNodeTargetConfigurator.createTargetIrs
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.buildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
@@ -63,18 +66,38 @@ interface SimpleTargetConfigurator : TargetConfigurator {
     }
 }
 
-internal fun Module.createTargetAccessIr(moduleSubType: ModuleSubType) =
+internal fun Module.createTargetAccessIr(
+    moduleSubType: ModuleSubType,
+    additionalParams: List<Any?> = listOf()
+) =
     TargetAccessIR(
         moduleSubType,
-        name.takeIf { it != moduleSubType.name }
+        name.takeIf { it != moduleSubType.name },
+        additionalParams.filterNotNull()
     )
 
 
 interface JsTargetConfigurator : JSConfigurator, TargetConfigurator, SingleCoexistenceTargetConfigurator, ModuleConfiguratorWithSettings
 
+internal fun JsTargetConfigurator.jsCompilerParam(
+    reader: Reader,
+    module: Module
+) =
+    reader.settingValue(module, JSConfigurator.compiler)?.let {
+        if (it != JsCompiler.IR) {
+            listOf(it.text)
+        } else emptyList()
+    } ?: emptyList()
+
 enum class JsTargetKind(override val text: String) : DisplayableSettingItem {
     LIBRARY(KotlinNewProjectWizardBundle.message("module.configurator.js.target.settings.kind.library")),
     APPLICATION(KotlinNewProjectWizardBundle.message("module.configurator.js.target.settings.kind.application"))
+}
+
+enum class JsCompiler(override val text: String) : DisplayableSettingItem {
+    IR("IR"),
+    LEGACY("LEGACY"),
+    BOTH("BOTH")
 }
 
 object JsBrowserTargetConfigurator : JsTargetConfigurator, ModuleConfiguratorWithTests {
@@ -86,9 +109,6 @@ object JsBrowserTargetConfigurator : JsTargetConfigurator, ModuleConfiguratorWit
     @NonNls
     override val id = "jsBrowser"
 
-    @NonNls
-    override val suggestedModuleName = "browser"
-
     override val text = KotlinNewProjectWizardBundle.message("module.configurator.js.browser")
 
     override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JS
@@ -97,7 +117,10 @@ object JsBrowserTargetConfigurator : JsTargetConfigurator, ModuleConfiguratorWit
         module: Module
     ): List<BuildSystemIR> = irsList {
         +DefaultTargetConfigurationIR(
-            module.createTargetAccessIr(ModuleSubType.js)
+            module.createTargetAccessIr(
+                ModuleSubType.js,
+                jsCompilerParam(this@createTargetIrs, module)
+            )
         ) {
             browserSubTarget(module, this@createTargetIrs)
         }
@@ -108,17 +131,16 @@ object JsNodeTargetConfigurator : JsTargetConfigurator {
     @NonNls
     override val id = "jsNode"
 
-    @NonNls
-    override val suggestedModuleName = "nodeJs"
-
     override val text = KotlinNewProjectWizardBundle.message("module.configurator.js.node")
-
 
     override fun Reader.createTargetIrs(
         module: Module
     ): List<BuildSystemIR> = irsList {
         +DefaultTargetConfigurationIR(
-            module.createTargetAccessIr(ModuleSubType.js)
+            module.createTargetAccessIr(
+                ModuleSubType.js,
+                jsCompilerParam(this@createTargetIrs, module)
+            )
         ) {
             nodejsSubTarget(module, this@createTargetIrs)
         }

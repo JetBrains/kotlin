@@ -5,6 +5,11 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.symbols
 
-abstract class KtTypeParameterSymbol : KtSymbol, KtNamedSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
+
+abstract class KtTypeParameterSymbol : KtSymbol, KtNamedSymbol {
+    abstract override fun createPointer(): KtSymbolPointer<KtTypeParameterSymbol>
+}
 
 

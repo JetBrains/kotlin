@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -50,7 +49,7 @@ internal class FirDefaultSetterValueParameter(
 ) : FirValueParameter() {
     override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override val name: Name = Name.identifier("value")
-    override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference
+    override var controlFlowGraphReference: FirControlFlowGraphReference? = null
 
     init {
         symbol.bind(this)
@@ -65,7 +64,7 @@ internal class FirDefaultSetterValueParameter(
         getter?.accept(visitor, data)
         setter?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
-        controlFlowGraphReference.accept(visitor, data)
+        controlFlowGraphReference?.accept(visitor, data)
         defaultValue?.accept(visitor, data)
     }
 
@@ -76,7 +75,6 @@ internal class FirDefaultSetterValueParameter(
         transformDelegate(transformer, data)
         transformGetter(transformer, data)
         transformSetter(transformer, data)
-        transformControlFlowGraphReference(transformer, data)
         transformOtherChildren(transformer, data)
         return this
     }
@@ -116,13 +114,9 @@ internal class FirDefaultSetterValueParameter(
         return this
     }
 
-    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
-        controlFlowGraphReference = controlFlowGraphReference.transformSingle(transformer, data)
-        return this
-    }
-
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
         transformAnnotations(transformer, data)
+        controlFlowGraphReference = controlFlowGraphReference?.transformSingle(transformer, data)
         defaultValue = defaultValue?.transformSingle(transformer, data)
         return this
     }
@@ -137,5 +131,9 @@ internal class FirDefaultSetterValueParameter(
 
     override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {
         receiverTypeRef = newReceiverTypeRef
+    }
+
+    override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
+        controlFlowGraphReference = newControlFlowGraphReference
     }
 }

@@ -113,6 +113,16 @@ open class BaseConverter(
         return kidsRef.get()
     }
 
+    fun LighterASTNode?.getFirstChild(): LighterASTNode? {
+        val firstChild: LighterASTNode?
+        try {
+            firstChild = getChildrenAsArray()[0]
+        } catch (e: ArrayIndexOutOfBoundsException) {
+            return null
+        }
+        return firstChild
+    }
+
     @OptIn(ExperimentalContracts::class)
     protected inline fun LighterASTNode.forEachChildren(vararg skipTokens: KtToken, f: (LighterASTNode) -> Unit) {
         val kidsArray = this.getChildrenAsArray()

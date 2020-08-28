@@ -34,12 +34,12 @@ fun String.replUnescapeLineBreaks() = StringUtil.replace(this, XML_REPLACEMENTS,
 fun String.replEscapeLineBreaks() = StringUtil.replace(this, SOURCE_CHARS, XML_REPLACEMENTS)
 
 fun String.replOutputAsXml(escapeType: ReplEscapeType): String {
-    val escapedXml = StringUtil.escapeXml(replEscapeLineBreaks())
+    val escapedXml = StringUtil.escapeXmlEntities(replEscapeLineBreaks())
     return "$XML_PREAMBLE<output type=\"$escapeType\">$escapedXml</output>"
 }
 
 fun String.replInputAsXml(): String {
-    val escapedXml = StringUtil.escapeXml(replEscapeLineBreaks())
+    val escapedXml = StringUtil.escapeXmlEntities(replEscapeLineBreaks())
     return "$XML_PREAMBLE<input>$escapedXml</input>"
 }
 

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypePa
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructor
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -21,8 +22,8 @@ import org.jetbrains.kotlin.fir.scopes.scope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.name.Name
 
 private operator fun <T> Pair<T, *>?.component1() = this?.first
@@ -32,7 +33,6 @@ internal fun FirScope.processConstructorsByName(
     name: Name,
     session: FirSession,
     bodyResolveComponents: BodyResolveComponents,
-    includeSyntheticConstructors: Boolean,
     includeInnerConstructors: Boolean,
     processor: (FirCallableSymbol<*>) -> Unit
 ) {
@@ -51,13 +51,11 @@ internal fun FirScope.processConstructorsByName(
             includeInnerConstructors
         )
 
-        if (includeSyntheticConstructors) {
-            processSyntheticConstructors(
-                matchedClassSymbol,
-                processor,
-                bodyResolveComponents
-            )
-        }
+        processSyntheticConstructors(
+            matchedClassSymbol,
+            processor,
+            bodyResolveComponents
+        )
     }
 }
 
@@ -70,12 +68,15 @@ internal fun FirScope.processFunctionsAndConstructorsByName(
 ) {
     processConstructorsByName(
         name, session, bodyResolveComponents,
-        includeSyntheticConstructors = true,
         includeInnerConstructors = includeInnerConstructors,
-        processor = processor
+        processor = {
+            with(bodyResolveComponents) { it.phasedFir }
+            processor(it)
+        }
     )
 
     processFunctionsByName(name) {
+        with(bodyResolveComponents) { it.phasedFir }
         processor(it)
     }
 }
@@ -255,6 +256,7 @@ private fun prepareSubstitutingScopeForTypeAliasConstructors(
                         buildValueParameter {
                             source = valueParameter.source
                             this.session = session
+                            resolvePhase = valueParameter.resolvePhase
                             origin = FirDeclarationOrigin.FakeOverride
                             returnTypeRef = valueParameter.returnTypeRef.withReplacedConeType(newParameterType)
                             name = valueParameter.name

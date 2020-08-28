@@ -45,6 +45,8 @@ operator fun @receiver:NonNls String.div(@NonNls other: String): Path =
 
 fun @receiver:NonNls String.asPath(): Path = Paths.get(this)
 
+fun Path.asStringWithUnixSlashes() = toString().replace('\\', '/')
+
 fun <T : Any> safe(operation: () -> T): TaskResult<T> =
     try {
         Success(operation())

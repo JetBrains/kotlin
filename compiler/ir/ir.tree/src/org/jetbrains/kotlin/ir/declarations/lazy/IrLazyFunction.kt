@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.withScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class IrLazyFunction(
@@ -84,9 +86,15 @@ class IrLazyFunction(
             stubGenerator.generateFunctionStub(it.original).symbol
         }
     }
-    override var attributeOwnerId: IrAttributeContainer = this
+
+    override var attributeOwnerId: IrAttributeContainer
+        get() = this
+        set(_) = error("We should never need to change attributeOwnerId of external declarations.")
 
     override var correspondingPropertySymbol: IrPropertySymbol? = null
+
+    override val containerSource: DeserializedContainerSource?
+        get() = (descriptor as? DescriptorWithContainerSource)?.containerSource
 
     init {
         symbol.bind(this)

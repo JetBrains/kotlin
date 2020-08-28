@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import com.android.build.gradle.*
-import com.android.build.gradle.api.*
+import com.android.build.gradle.api.AndroidSourceSet
+import com.android.build.gradle.api.BaseVariant
+import com.android.build.gradle.api.SourceKind
 import org.gradle.api.*
 import org.gradle.api.artifacts.maven.Conf2ScopeMappingContainer
 import org.gradle.api.artifacts.maven.MavenResolver
@@ -29,7 +31,7 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.jvm.tasks.Jar
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.internal.*
+import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.checkAndroidAnnotationProcessorDependencyUsage
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
@@ -103,7 +105,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
 
     private fun prepareKotlinCompileTask(): TaskProvider<out T> =
         registerKotlinCompileTask(register = ::doRegisterTask).also { task ->
-            kotlinCompilation.output.addClassesDir { project.files(task.map { it.destinationDir }) }
+            kotlinCompilation.output.addClassesDir { project.files(task.map { it.destinationDir }).builtBy(task) }
         }
 
     protected fun registerKotlinCompileTask(
@@ -655,6 +657,7 @@ internal open class Kotlin2JsPlugin(
 
     companion object {
         private const val targetName = "2Js"
+        internal const val NOWARN_2JS_FLAG = "kotlin.2js.nowarn"
     }
 
     override fun buildSourceSetProcessor(
@@ -667,7 +670,9 @@ internal open class Kotlin2JsPlugin(
         )
 
     override fun apply(project: Project) {
-        project.logger.warn(jsPluginDeprecationMessage("kotlin2js"))
+        if (!PropertiesProvider(project).noWarn2JsPlugin) {
+            project.logger.warn(jsPluginDeprecationMessage("kotlin2js"))
+        }
         val target = KotlinWithJavaTarget<KotlinJsOptions>(project, KotlinPlatformType.js, targetName, { KotlinJsOptionsImpl() })
 
         (project.kotlinExtension as Kotlin2JsProjectExtension).target = target

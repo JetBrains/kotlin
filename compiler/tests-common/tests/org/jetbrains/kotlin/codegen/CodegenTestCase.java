@@ -594,13 +594,14 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
             boolean parseDirectivesPerFiles,
             @NotNull TargetBackend backend
     ) {
-        List testFiles = TestFiles.createTestFiles(file.getName(), expectedText, new TestFiles.TestFileFactoryNoModules<TestFile>() {
-            @NotNull
-            @Override
-            public TestFile create(@NotNull String fileName, @NotNull String text, @NotNull Directives directives) {
-                return new TestFile(fileName, text, directives);
-            }
-        }, false, coroutinesPackage, parseDirectivesPerFiles);
+        List<TestFile> testFiles =
+                TestFiles.createTestFiles(file.getName(), expectedText, new TestFiles.TestFileFactoryNoModules<TestFile>() {
+                    @NotNull
+                    @Override
+                    public TestFile create(@NotNull String fileName, @NotNull String text, @NotNull Directives directives) {
+                        return new TestFile(fileName, text, directives);
+                    }
+                }, false, coroutinesPackage, parseDirectivesPerFiles);
         if (InTextDirectivesUtils.isDirectiveDefined(expectedText, "WITH_HELPERS")) {
             testFiles.add(new TestFile("CodegenTestHelpers.kt", TestHelperGeneratorKt.createTextForCodegenTestHelpers(backend)));
         }

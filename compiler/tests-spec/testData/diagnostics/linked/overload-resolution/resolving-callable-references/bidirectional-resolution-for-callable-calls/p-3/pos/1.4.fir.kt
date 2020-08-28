@@ -66,13 +66,13 @@ class Case3() : I {
         I.invoke(::y)
         I.invoke(::y)
 
-        <!UNRESOLVED_REFERENCE!>I<!>(<!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown"), UNRESOLVED_REFERENCE!>::x<!>)
-        <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved name: I")!><!UNRESOLVED_REFERENCE!>I<!>(<!UNRESOLVED_REFERENCE!>::x<!>)<!>
-        <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!><!UNRESOLVED_REFERENCE!>I<!>(<!UNRESOLVED_REFERENCE!>::x<!>)<!>
+        I(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KProperty0<kotlin.String>")!>::x<!>)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>I(::x)<!>
+        <!DEBUG_INFO_CALL("fqName: I.Companion.invoke; typeCall: variable&invoke")!>I(::x)<!>
 
-        <!UNRESOLVED_REFERENCE!>I<!>(<!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown"), UNRESOLVED_REFERENCE!>::y<!>)
-        <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved name: I")!><!UNRESOLVED_REFERENCE!>I<!>(<!UNRESOLVED_REFERENCE!>::y<!>)<!>
-        <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!><!UNRESOLVED_REFERENCE!>I<!>(<!UNRESOLVED_REFERENCE!>::y<!>)<!>
+        I(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction0<kotlin.String>")!>::y<!>)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>I(::y)<!>
+        <!DEBUG_INFO_CALL("fqName: I.Companion.invoke; typeCall: variable&invoke")!>I(::y)<!>
 
         Case3(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KProperty0<kotlin.String>")!>::x<!>)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>Case3(::x)<!>

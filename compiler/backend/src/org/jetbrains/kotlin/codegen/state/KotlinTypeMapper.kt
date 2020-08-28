@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.codegen.state
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames.RESULT_FQ_NAME
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.isStaticMethod
@@ -52,10 +54,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.DEFAULT_CONSTRUCTOR_MARKER
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -330,8 +329,8 @@ class KotlinTypeMapper @JvmOverloads constructor(
 
         if (classDescriptor is FunctionClassDescriptor) {
             if (classDescriptor.hasBigArity ||
-                classDescriptor.functionKind == FunctionClassDescriptor.Kind.KFunction ||
-                classDescriptor.functionKind == FunctionClassDescriptor.Kind.KSuspendFunction
+                classDescriptor.functionKind == FunctionClassKind.KFunction ||
+                classDescriptor.functionKind == FunctionClassKind.KSuspendFunction
             ) {
                 // kotlin.reflect.KFunction{n}<P1, ..., Pn, R> is mapped to kotlin.reflect.KFunction<R> (for all n), and
                 // kotlin.Function{n}<P1, ..., Pn, R> is mapped to kotlin.jvm.functions.FunctionN<R> (for n > 22).
@@ -382,6 +381,11 @@ class KotlinTypeMapper @JvmOverloads constructor(
 
         // Force boxing for nullable inline class types with nullable underlying type
         if (originalReturnType.isMarkedNullable && originalReturnType.isNullableUnderlyingType()) {
+            return functionDescriptor.builtIns.nullableAnyType
+        }
+
+        // Force boxing for Result type, otherwise, the coroutines machinery will break
+        if (originalReturnType.constructor.declarationDescriptor?.fqNameSafe == RESULT_FQ_NAME) {
             return functionDescriptor.builtIns.nullableAnyType
         }
 

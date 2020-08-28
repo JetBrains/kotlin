@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.asJava.elements.KotlinLightTypeParameterListBuilder
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.psiType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
@@ -35,8 +36,8 @@ import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
@@ -316,7 +317,7 @@ internal fun KtModifierListOwner.isHiddenByDeprecation(support: KtUltraLightSupp
         annotation.looksLikeDeprecated()
     }
     if (annotations.isNotEmpty()) { // some candidates found
-        val deprecated = support.findAnnotation(this, KotlinBuiltIns.FQ_NAMES.deprecated)?.second
+        val deprecated = support.findAnnotation(this, StandardNames.FqNames.deprecated)?.second
         return (deprecated?.argumentValue("level") as? EnumValue)?.enumEntryName?.asString() == "HIDDEN"
     } else {
         return false
@@ -361,7 +362,7 @@ internal fun KtModifierListOwner.isDeprecated(support: KtUltraLightSupport? = nu
     val modifierList = this.modifierList ?: return false
     if (modifierList.annotationEntries.isEmpty()) return false
 
-    val deprecatedFqName = KotlinBuiltIns.FQ_NAMES.deprecated
+    val deprecatedFqName = StandardNames.FqNames.deprecated
     val deprecatedName = deprecatedFqName.shortName().asString()
 
     for (annotationEntry in modifierList.annotationEntries) {
@@ -374,7 +375,7 @@ internal fun KtModifierListOwner.isDeprecated(support: KtUltraLightSupport? = nu
         if (fqName.asString() == deprecatedName) return true
     }
 
-    return support?.findAnnotation(this, KotlinBuiltIns.FQ_NAMES.deprecated) !== null
+    return support?.findAnnotation(this, StandardNames.FqNames.deprecated) !== null
 }
 
 private fun toQualifiedName(userType: KtUserType): FqName? {
@@ -470,8 +471,11 @@ inline fun <T> runReadAction(crossinline runnable: () -> T): T {
     return ApplicationManager.getApplication().runReadAction(Computable { runnable() })
 }
 
+@Suppress("NOTHING_TO_INLINE")
 inline fun KtClassOrObject.safeIsLocal(): Boolean = runReadAction { this.isLocal }
 
+@Suppress("NOTHING_TO_INLINE")
 inline fun KtFile.safeIsScript() = runReadAction { this.isScript() }
 
+@Suppress("NOTHING_TO_INLINE")
 inline fun KtFile.safeScript() = runReadAction { this.script }

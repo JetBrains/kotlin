@@ -1,25 +1,23 @@
 buildscript {
     repositories {
         mavenCentral()
-        maven {
-url 'https://dl.bintray.com/kotlin/kotlin-dev'
-        }
     }
 
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.11")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.72")
     }
+}
+
+repositories {
+    mavenCentral()
 }
 
 apply plugin: 'kotlin'
 
 repositories {
     mavenCentral()
-    maven {
-        url 'https://dl.bintray.com/kotlin/kotlin-dev'
-    }
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:1.3.11"
+    compile "org.jetbrains.kotlin:kotlin-stdlib"
 } 

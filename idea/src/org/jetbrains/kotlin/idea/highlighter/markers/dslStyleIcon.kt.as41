@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.idea.highlighter.markers
 import com.intellij.icons.AllIcons
 import javax.swing.Icon
 
-// FIX ME WHEN BUNCH as36 REMOVED
+// FIX ME WHEN BUNCH as40 REMOVED
+// FIX ME WHEN BUNCH as41 REMOVED
 internal fun createDslStyleIcon(styleId: Int): Icon {
     return AllIcons.Gutter.Colors
 }

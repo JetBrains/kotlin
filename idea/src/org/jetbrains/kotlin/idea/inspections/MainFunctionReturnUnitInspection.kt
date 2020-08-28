@@ -12,6 +12,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.MainFunctionDetector
@@ -76,7 +77,7 @@ private class ChangeMainFunctionReturnTypeToUnitFix(private val hasExplicitRetur
         if (function.hasBlockBody()) {
             function.typeReference = null
         } else {
-            function.setType(KotlinBuiltIns.FQ_NAMES.unit.asString())
+            function.setType(StandardNames.FqNames.unit.asString())
         }
     }
 }

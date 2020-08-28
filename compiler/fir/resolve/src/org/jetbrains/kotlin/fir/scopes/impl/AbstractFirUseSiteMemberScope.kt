@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
-import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.FirTypeScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
@@ -104,22 +101,22 @@ abstract class AbstractFirUseSiteMemberScope(
         return newSymbol
     }
 
-    override fun processOverriddenFunctionsWithDepth(
+    override fun processDirectOverriddenFunctionsWithBaseScope(
         functionSymbol: FirFunctionSymbol<*>,
-        processor: (FirFunctionSymbol<*>, Int) -> ProcessorAction
+        processor: (FirFunctionSymbol<*>, FirTypeScope) -> ProcessorAction
     ): ProcessorAction =
-        doProcessOverriddenCallables(
+        doProcessDirectOverriddenCallables(
             functionSymbol, processor, directOverriddenFunctions, superTypesScope,
-            FirTypeScope::processOverriddenFunctionsWithDepth
+            FirTypeScope::processDirectOverriddenFunctionsWithBaseScope
         )
 
-    override fun processOverriddenPropertiesWithDepth(
+    override fun processDirectOverriddenPropertiesWithBaseScope(
         propertySymbol: FirPropertySymbol,
-        processor: (FirPropertySymbol, Int) -> ProcessorAction
+        processor: (FirPropertySymbol, FirTypeScope) -> ProcessorAction
     ): ProcessorAction =
-        doProcessOverriddenCallables(
+        doProcessDirectOverriddenCallables(
             propertySymbol, processor, directOverriddenProperties, superTypesScope,
-            FirTypeScope::processOverriddenPropertiesWithDepth
+            FirTypeScope::processDirectOverriddenPropertiesWithBaseScope
         )
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
@@ -129,5 +126,13 @@ abstract class AbstractFirUseSiteMemberScope(
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
         declaredMemberScope.processDeclaredConstructors(processor)
+    }
+
+    override fun getCallableNames(): Set<Name> {
+        return declaredMemberScope.getContainingCallableNamesIfPresent() + superTypesScope.getCallableNames()
+    }
+
+    override fun getClassifierNames(): Set<Name> {
+        return declaredMemberScope.getContainingClassifierNamesIfPresent() + superTypesScope.getClassifierNames()
     }
 }

@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
@@ -197,18 +198,13 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
 
         val irType = resolvedDescriptor.returnType!!.toIrType()
 
-        val irCall =
-            if (resolvedDescriptor is ConstructorDescriptor)
-                IrConstructorCallImpl.fromSymbolDescriptor(
-                    startOffset, endOffset, irType,
-                    adapteeSymbol as IrConstructorSymbol
-                )
-            else
-                IrCallImpl(
-                    startOffset, endOffset, irType,
-                    adapteeSymbol,
-                    origin = null, superQualifierSymbol = null
-                )
+        val irCall = when (adapteeSymbol) {
+            is IrConstructorSymbol ->
+                IrConstructorCallImpl.fromSymbolDescriptor(startOffset, endOffset, irType, adapteeSymbol)
+            is IrSimpleFunctionSymbol ->
+                IrCallImpl(startOffset, endOffset, irType, adapteeSymbol, origin = null, superQualifierSymbol = null)
+            else -> error("Unknown symbol kind $adapteeSymbol")
+        }
 
         val hasBoundDispatchReceiver = resolvedCall.dispatchReceiver != null && resolvedCall.dispatchReceiver !is TransientReceiver
         val hasBoundExtensionReceiver = resolvedCall.extensionReceiver != null && resolvedCall.extensionReceiver !is TransientReceiver

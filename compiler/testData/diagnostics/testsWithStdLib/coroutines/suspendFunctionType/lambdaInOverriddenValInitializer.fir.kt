@@ -7,7 +7,7 @@ interface Bar<T> {
 }
 
 class Test1 : Foo {
-    override val foo = {}
+    override val foo = <!PROPERTY_TYPE_MISMATCH_ON_OVERRIDE!>{}<!>
 }
 
 class Test2 : Foo {
@@ -15,7 +15,7 @@ class Test2 : Foo {
 }
 
 class Test3 : Bar<suspend () -> Unit> {
-    override val bar = {}
+    override val bar = <!PROPERTY_TYPE_MISMATCH_ON_OVERRIDE!>{}<!>
 }
 
 class Test4 : Bar<suspend () -> Unit> {

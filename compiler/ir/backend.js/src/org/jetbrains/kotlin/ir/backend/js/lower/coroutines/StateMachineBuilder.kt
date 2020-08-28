@@ -24,7 +24,10 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrDynamicType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isNothing
+import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.getInlinedClass
 import org.jetbrains.kotlin.ir.visitors.*
@@ -39,7 +42,12 @@ data class LoopBounds(val headState: SuspendState, val exitState: SuspendState)
 
 data class TryState(val tryState: SuspendState, val catchState: SuspendState)
 
-class IrDispatchPoint(val target: SuspendState) : IrExpressionBase(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target.entryBlock.type) {
+class IrDispatchPoint(val target: SuspendState) : IrExpression() {
+    override val startOffset: Int get() = UNDEFINED_OFFSET
+    override val endOffset: Int get() = UNDEFINED_OFFSET
+
+    override val type: IrType get() = target.entryBlock.type
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D) = visitor.visitExpression(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {}

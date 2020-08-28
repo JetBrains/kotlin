@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.providers.impl
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeWrongNumberOfTypeArgumentsError
-import org.jetbrains.kotlin.fir.resolve.providers.bindSymbolToLookupTag
+import org.jetbrains.kotlin.fir.resolve.bindSymbolToLookupTag
+import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
@@ -136,7 +137,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
             .also {
                 val lookupTag = it.lookupTag
                 if (lookupTag is ConeClassLikeLookupTagImpl && symbol is FirClassLikeSymbol<*>) {
-                    lookupTag.bindSymbolToLookupTag(session.firSymbolProvider, symbol)
+                    lookupTag.bindSymbolToLookupTag(session, symbol)
                 }
             }
     }
@@ -147,9 +148,9 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
                     typeRef.valueParameters.map { it.returnTypeRef.coneType } +
                     listOf(typeRef.returnTypeRef.coneType)
         val classId = if (typeRef.isSuspend) {
-            KotlinBuiltIns.getSuspendFunctionClassId(typeRef.parametersCount)
+            StandardNames.getSuspendFunctionClassId(typeRef.parametersCount)
         } else {
-            KotlinBuiltIns.getFunctionClassId(typeRef.parametersCount)
+            StandardNames.getFunctionClassId(typeRef.parametersCount)
         }
         val attributes = typeRef.annotations.computeTypeAttributes()
         return ConeClassLikeTypeImpl(

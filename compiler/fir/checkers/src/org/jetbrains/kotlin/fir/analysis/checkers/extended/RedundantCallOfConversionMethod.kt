@@ -21,23 +21,36 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtSafeQualifiedExpression
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 object RedundantCallOfConversionMethod : FirQualifiedAccessChecker() {
-    override fun check(functionCall: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (functionCall !is FirFunctionCall) return
-        if (functionCall.source?.kind == FirFakeSourceElementKind.GeneratedToStringCallOnTemplateEntry) return
-        val functionName = functionCall.calleeReference.name.asString()
+    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (expression !is FirFunctionCall) return
+        if (expression.source?.kind == FirFakeSourceElementKind.GeneratedToStringCallOnTemplateEntry) return
+        val functionName = expression.calleeReference.name.asString()
         val qualifiedType = targetClassMap[functionName] ?: return
 
-        if (functionCall.explicitReceiver?.isRedundant(qualifiedType) == true) {
-            reporter.report(functionCall.source, FirErrors.REDUNDANT_CALL_OF_CONVERSION_METHOD)
+        if (expression.explicitReceiver?.isRedundant(qualifiedType) == true) {
+            reporter.report(expression.source, FirErrors.REDUNDANT_CALL_OF_CONVERSION_METHOD)
         }
     }
 
-    private val targetClassMap = mapOf(
+    private fun FirExpression.isRedundant(qualifiedClassId: ClassId): Boolean {
+        val thisType = if (this is FirConstExpression<*>) {
+            this.typeRef.coneType.classId
+        } else {
+            when {
+                typeRef.coneType is ConeFlexibleType -> null
+                psi?.parent !is KtSafeQualifiedExpression
+                        && (psi is KtSafeQualifiedExpression || typeRef.coneType.isMarkedNullable) -> null
+                this.typeRef.coneType.isMarkedNullable -> null
+                else -> this.typeRef.coneType.classId
+            }
+        }
+        return thisType == qualifiedClassId
+    }
+
+    private val targetClassMap = hashMapOf(
         "toString" to StandardClassIds.String,
         "toDouble" to StandardClassIds.Double,
         "toFloat" to StandardClassIds.Float,
@@ -51,26 +64,4 @@ object RedundantCallOfConversionMethod : FirQualifiedAccessChecker() {
         "toUShort" to StandardClassIds.UShort,
         "toUByte" to StandardClassIds.UByte
     )
-
-    private fun FirExpression.isRedundant(qualifiedClassId: ClassId): Boolean {
-        val thisType = if (this is FirConstExpression<*>) {
-            this.typeRef.coneType.classId
-        } else {
-            val binaryExpression = psi as? KtBinaryExpression
-            val operator = binaryExpression?.operationToken
-            if (operator in OperatorConventions.COMPARISON_OPERATIONS) {
-                // Special case here because compareTo returns Int
-                StandardClassIds.Boolean
-            } else {
-                when {
-                    typeRef.coneType is ConeFlexibleType -> null
-                    psi?.parent !is KtSafeQualifiedExpression
-                            && (psi is KtSafeQualifiedExpression || typeRef.coneType.isMarkedNullable) -> null
-                    this.typeRef.coneType.isMarkedNullable -> null
-                    else -> this.typeRef.coneType.classId
-                }
-            }
-        }
-        return thisType == qualifiedClassId
-    }
 }

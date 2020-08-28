@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
@@ -122,7 +121,7 @@ fun ConeTypeContext.hasNullableSuperType(type: ConeKotlinType): Boolean {
     if (type is ConeClassLikeType) return false
 
     if (type !is ConeLookupTagBasedType) return false // TODO?
-    val symbol = type.lookupTag.toSymbol(session) ?: return false // TODO?!
+    val symbol = type.lookupTag
     for (superType in symbol.supertypes()) {
         if (superType.isNullableType()) return true
     }

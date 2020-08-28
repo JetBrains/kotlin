@@ -1,0 +1,28 @@
+FILE: manyLocalVariables.kt
+    public final fun foo(): R|kotlin/Unit| {
+        lvar a: R|kotlin/Int| = Int(1)
+        lvar b: R|kotlin/Int| = Int(2)
+        lvar c: R|kotlin/Int| = Int(3)
+        lval <iterator>: R|kotlin/collections/IntIterator| = Int(0).R|kotlin/Int.rangeTo|(Int(5)).R|kotlin/ranges/IntProgression.iterator|()
+        while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
+            lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()
+            when () {
+                ==(R|<local>/a|, Int(2)) ->  {
+                    R|<local>/b| = R|<local>/c|
+                    R|<local>/c| = R|<local>/a|
+                }
+                else ->  {
+                    R|<local>/b| = R|<local>/a|
+                    R|<local>/c| = R|<local>/b|
+                }
+            }
+
+        }
+
+        when () {
+            ==(R|<local>/c|, R|<local>/a|) ->  {
+                R|/foo|()
+            }
+        }
+
+    }

@@ -10,7 +10,6 @@ import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirModifiableQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
@@ -475,12 +473,12 @@ class ExpressionsConverter(
             }
         }
 
-        (firSelector as? FirModifiableQualifiedAccess)?.let {
+        (firSelector as? FirQualifiedAccess)?.let {
             if (isSafe) {
                 return it.wrapWithSafeCall(firReceiver!!)
             }
 
-            it.explicitReceiver = firReceiver
+            it.replaceExplicitReceiver(firReceiver)
         }
         return firSelector
     }
@@ -617,7 +615,7 @@ class ExpressionsConverter(
                         isVar = false
                         symbol = FirPropertySymbol(variable.name)
                         isLocal = true
-                        status = FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
+                        status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                     }
                 }
                 DESTRUCTURING_DECLARATION -> subjectExpression =

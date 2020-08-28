@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.fir.backend.generators
 import org.jetbrains.kotlin.backend.common.ir.isFinalClass
 import org.jetbrains.kotlin.backend.common.ir.isOverridable
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibilities as OldVisibilities
+import org.jetbrains.kotlin.fir.Visibilities
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
@@ -35,13 +36,11 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.util.classId
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.isFakeOverride
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.DFS
 
 /**
  * A generator for delegated members from implementation by delegation.
@@ -56,21 +55,55 @@ internal class DelegatedMemberGenerator(
 
     // Generate delegated members for [subClass]. The synthetic field [irField] has the super interface type.
     fun generate(irField: IrField, subClass: IrClass) {
-        val superClass = (irField.type as IrSimpleTypeImpl).classOrNull?.owner ?: return
-        val superClassId = superClass.classId ?: return
-        superClass.declarations.filter {
-            it.isDelegatable() && !subClass.declarations.any { decl -> isOverriding(irBuiltIns, decl, it) }
-        }.forEach {
-            if (it is IrSimpleFunction) {
-                val firFunction = declarationStorage.findOverriddenFirFunction(it, superClassId) ?: return
-                val function = generateDelegatedFunction(subClass, irField, it, firFunction)
-                subClass.addMember(function)
-            } else if (it is IrProperty) {
-                val firProperty = declarationStorage.findOverriddenFirProperty(it, superClassId) ?: return
-                generateDelegatedProperty(subClass, irField, it, firProperty)
+        val delegateClass = (irField.type as IrSimpleTypeImpl).classOrNull?.owner ?: return
+        val subClasses = mutableMapOf(delegateClass to mutableListOf(subClass))
+        DFS.dfs(
+            listOf(delegateClass), { node -> node.superTypes.mapNotNull { it.classOrNull?.owner } },
+            object : DFS.NodeHandler<IrClass, Unit> {
+                override fun beforeChildren(current: IrClass): Boolean {
+                    for (superType in current.superTypes) {
+                        superType.classOrNull?.owner?.let { subClasses.getOrPut(it) { mutableListOf() }.add(current) }
+                    }
+                    return true
+                }
+
+                override fun afterChildren(current: IrClass) = Unit
+                override fun result() = Unit
+            }
+        )
+
+        for ((superClass, mayOverride) in subClasses) {
+            val classId = superClass.classId ?: continue
+            if (classId == irBuiltIns.anyClass.owner.classId) continue
+            for (member in superClass.declarations) {
+                val delegatable = member.isDelegatable() && !DFS.ifAny(mayOverride, { subClasses[it] ?: emptyList() }) {
+                    // Delegate to the most specific version of each member.
+                    it.declarations.any { !it.isFakeOverride && it.overrides(member) }
+                }
+                if (!delegatable) continue
+                if (member is IrSimpleFunction) {
+                    val firFunction = declarationStorage.findOverriddenFirFunction(member, classId) ?: return
+                    val function = generateDelegatedFunction(subClass, irField, member, firFunction)
+                    subClass.addMember(function)
+                } else if (member is IrProperty) {
+                    val firProperty = declarationStorage.findOverriddenFirProperty(member, classId) ?: return
+                    generateDelegatedProperty(subClass, irField, member, firProperty)
+                }
             }
         }
     }
+
+    private fun IrDeclaration.overrides(other: IrDeclaration) = when {
+        // Imported declarations have overridden symbols, so check that first.
+        this is IrProperty && other is IrProperty ->
+            getter?.let { getter -> other.getter?.symbol in getter.overriddenSymbols }
+                ?: setter?.let { setter -> other.setter?.symbol in setter.overriddenSymbols }
+                ?: false
+        this is IrSimpleFunction && other is IrSimpleFunction ->
+            other.symbol in overriddenSymbols
+        else ->
+            false
+    } || isOverriding(irBuiltIns, this, other) // TODO check if this behaves correctly with generic arguments
 
     private fun IrDeclaration.isDelegatable(): Boolean {
         return isOverridable()
@@ -81,7 +114,7 @@ internal class DelegatedMemberGenerator(
     private fun IrDeclaration.isOverridable(): Boolean {
         return when (this) {
             is IrSimpleFunction -> this.isOverridable
-            is IrProperty -> visibility != Visibilities.PRIVATE && modality != Modality.FINAL && (parent as? IrClass)?.isFinalClass != true
+            is IrProperty -> visibility != OldVisibilities.PRIVATE && modality != Modality.FINAL && (parent as? IrClass)?.isFinalClass != true
             else -> false
         }
     }
@@ -189,7 +222,7 @@ internal class DelegatedMemberGenerator(
                 val visibility = when (firSuperFunction) {
                     is FirSimpleFunction -> firSuperFunction.status.visibility
                     is FirPropertyAccessor -> firSuperFunction.status.visibility
-                    else -> Visibilities.PUBLIC
+                    else -> Visibilities.Public
                 }
                 metadata = FirMetadataSource.Function(
                     buildSimpleFunction {

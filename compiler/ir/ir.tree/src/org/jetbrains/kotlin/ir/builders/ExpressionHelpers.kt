@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.ir.builders
 
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.isImmutable
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.types.KotlinType
@@ -23,14 +23,23 @@ inline fun IrBuilderWithScope.irLetS(
     value: IrExpression,
     origin: IrStatementOrigin? = null,
     nameHint: String? = null,
+    irType: IrType? = null,
     body: (IrValueSymbol) -> IrExpression
 ): IrExpression {
-    val irTemporary = scope.createTemporaryVariable(value, nameHint)
-    val irResult = body(irTemporary.symbol)
-    val irBlock = IrBlockImpl(startOffset, endOffset, irResult.type, origin)
-    irBlock.statements.add(irTemporary)
-    irBlock.statements.add(irResult)
-    return irBlock
+    val (valueSymbol, irTemporary) = if (value is IrGetValue && value.symbol.owner.isImmutable) {
+        value.symbol to null
+    } else {
+        scope.createTemporaryVariable(value, nameHint, irType = irType).let { it.symbol to it }
+    }
+    val irResult = body(valueSymbol)
+    return if (irTemporary == null) {
+        irResult
+    } else {
+        val irBlock = IrBlockImpl(startOffset, endOffset, irResult.type, origin)
+        irBlock.statements.add(irTemporary)
+        irBlock.statements.add(irResult)
+        irBlock
+    }
 }
 
 
@@ -268,14 +277,6 @@ fun IrBuilderWithScope.irCall(callee: IrConstructorSymbol): IrConstructorCall =
 fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol): IrFunctionAccessExpression =
     irCall(callee, callee.owner.returnType)
 
-fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, descriptor: FunctionDescriptor, type: IrType): IrCall =
-    IrCallImpl(
-        startOffset, endOffset, type,
-        callee as IrSimpleFunctionSymbol,
-        valueArgumentsCount = callee.owner.valueParameters.size,
-        typeArgumentsCount = callee.owner.typeParameters.size
-    )
-
 fun IrBuilderWithScope.irCall(callee: IrFunction): IrFunctionAccessExpression =
     irCall(callee.symbol)
 
@@ -328,11 +329,11 @@ fun IrBuilderWithScope.irImplicitCast(argument: IrExpression, type: IrType) =
 fun IrBuilderWithScope.irReinterpretCast(argument: IrExpression, type: IrType) =
     IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.REINTERPRET_CAST, type, argument)
 
-fun IrBuilderWithScope.irInt(value: Int) =
-    IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, value)
+fun IrBuilderWithScope.irInt(value: Int, type: IrType = context.irBuiltIns.intType) =
+    IrConstImpl.int(startOffset, endOffset, type, value)
 
-fun IrBuilderWithScope.irLong(value: Long) =
-    IrConstImpl.long(startOffset, endOffset, context.irBuiltIns.longType, value)
+fun IrBuilderWithScope.irLong(value: Long, type: IrType = context.irBuiltIns.longType) =
+    IrConstImpl.long(startOffset, endOffset, type, value)
 
 fun IrBuilderWithScope.irChar(value: Char) =
     IrConstImpl.char(startOffset, endOffset, context.irBuiltIns.charType, value)

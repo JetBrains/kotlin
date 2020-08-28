@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.lazy
 
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
 import org.jetbrains.kotlin.fir.backend.toIrType
@@ -21,6 +20,8 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.descriptors.Visibility as OldVisibility
 
 class Fir2IrLazyConstructor(
     components: Fir2IrComponents,
@@ -60,8 +61,8 @@ class Fir2IrLazyConstructor(
     override val name: Name
         get() = Name.special("<init>")
 
-    override var visibility: Visibility
-        get() = fir.visibility
+    @Suppress("SetterBackingFieldAssignment")
+    override var visibility: OldVisibility = components.visibilityConverter.convertToOldVisibility(fir.visibility)
         set(_) {
             error("Mutating Fir2Ir lazy elements is not possible")
         }
@@ -108,6 +109,9 @@ class Fir2IrLazyConstructor(
     override var metadata: MetadataSource?
         get() = null
         set(_) = error("We should never need to store metadata of external declarations.")
+
+    override val containerSource: DeserializedContainerSource?
+        get() = fir.containerSource
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitConstructor(this, data)

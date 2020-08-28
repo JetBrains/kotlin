@@ -14,9 +14,14 @@ import java.io.IOException
 /**
  * Creates an empty directory in the specified [directory], using the given [prefix] and [suffix] to generate its name.
  *
- * If [prefix] is not specified then some unspecified name will be used.
+ * If [prefix] is not specified then some unspecified string will be used.
  * If [suffix] is not specified then ".tmp" will be used.
  * If [directory] is not specified then the default temporary-file directory will be used.
+ *
+ * The [prefix] argument, if specified, must be at least three characters long.
+ * It is recommended that the prefix be a short, meaningful string such as "job" or "mail".
+ *
+ * To create the new file, the [prefix] and the [suffix] may first be adjusted to fit the limitations of the underlying platform.
  *
  * @return a file object corresponding to a newly-created directory.
  *
@@ -36,9 +41,14 @@ public fun createTempDir(prefix: String = "tmp", suffix: String? = null, directo
 /**
  * Creates a new empty file in the specified [directory], using the given [prefix] and [suffix] to generate its name.
  *
- * If [prefix] is not specified then some unspecified name will be used.
+ * If [prefix] is not specified then some unspecified string will be used.
  * If [suffix] is not specified then ".tmp" will be used.
  * If [directory] is not specified then the default temporary-file directory will be used.
+ *
+ * The [prefix] argument, if specified, must be at least three characters long.
+ * It is recommended that the prefix be a short, meaningful string such as "job" or "mail".
+ *
+ * To create the new file, the [prefix] and the [suffix] may first be adjusted to fit the limitations of the underlying platform.
  *
  * @return a file object corresponding to a newly-created file.
  *

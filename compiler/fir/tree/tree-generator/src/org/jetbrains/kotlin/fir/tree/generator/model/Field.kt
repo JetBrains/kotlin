@@ -26,6 +26,7 @@ sealed class Field : Importable {
     open val fromDelegate: Boolean get() = false
 
     open val overridenTypes: MutableSet<Importable> = mutableSetOf()
+    open var useNullableForReplace: Boolean = false
 
     fun copy(): Field = internalCopy().also {
         updateFieldsInCopy(it)
@@ -39,6 +40,7 @@ sealed class Field : Importable {
             copy.needTransformInOtherChildren = needTransformInOtherChildren
             copy.isMutable = isMutable
             copy.overridenTypes += overridenTypes
+            copy.useNullableForReplace = useNullableForReplace
         }
         copy.fromParent = fromParent
     }
@@ -97,6 +99,10 @@ class FieldWithDefault(val origin: Field) : Field() {
     var needAcceptAndTransform: Boolean = true
     override val overridenTypes: MutableSet<Importable>
         get() = origin.overridenTypes
+
+    override var useNullableForReplace: Boolean
+        get() = origin.useNullableForReplace
+        set(_) {}
 
     override fun internalCopy(): Field {
         return FieldWithDefault(origin).also {

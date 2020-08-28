@@ -1585,6 +1585,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
             parseTypeRef();
         }
 
+        parseFunctionContract();
+
         parseFunctionBody();
 
         closeDeclarationWithCommentBinders(getterOrSetter, PROPERTY_ACCESSOR, true);
@@ -1671,7 +1673,13 @@ public class KotlinParsing extends AbstractKotlinParsing {
             parseTypeRef();
         }
 
+        boolean functionContractOccurred = parseFunctionContract();
+
         parseTypeConstraintsGuarded(typeParameterListOccurred);
+
+        if (!functionContractOccurred) {
+            parseFunctionContract();
+        }
 
         if (at(SEMICOLON)) {
             advance(); // SEMICOLON
@@ -1991,6 +1999,14 @@ public class KotlinParsing extends AbstractKotlinParsing {
         parseTypeRef();
 
         constraint.done(TYPE_CONSTRAINT);
+    }
+
+    private boolean parseFunctionContract() {
+        if (at(CONTRACT_KEYWORD)) {
+            myExpressionParsing.parseContractDescriptionBlock();
+            return true;
+        }
+        return false;
     }
 
     /*

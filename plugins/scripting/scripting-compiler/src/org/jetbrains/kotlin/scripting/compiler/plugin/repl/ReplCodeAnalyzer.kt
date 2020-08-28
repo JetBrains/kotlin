@@ -203,7 +203,9 @@ open class ReplCodeAnalyzerBase(
     // TODO: merge with org.jetbrains.kotlin.resolve.repl.ReplState when switching to new REPL infrastructure everywhere
     // TODO: review its place in the extracted state infrastructure (now the analyzer itself is a part of the state)
     class ResettableAnalyzerState {
+        @Suppress("DEPRECATION")
         private val successfulLines = ResettableSnippetsHistory<LineInfo.SuccessfulLine>()
+
         private val submittedLines = hashMapOf<KtFile, LineInfo>()
 
         fun resetToLine(lineId: ILineId): List<SourceCodeByReplLine> {

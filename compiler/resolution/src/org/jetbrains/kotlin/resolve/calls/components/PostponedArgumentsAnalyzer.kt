@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubsystemFromArgument
+import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
+import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutorByConstructorMap
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.CoroutinePosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.LambdaArgumentConstraintPosition
@@ -46,15 +48,20 @@ class PostponedArgumentsAnalyzer(
         c: Context,
         resolutionCallbacks: KotlinResolutionCallbacks,
         argument: ResolvedAtom,
+        completionMode: KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode,
         diagnosticsHolder: KotlinDiagnosticsHolder
     ) {
         when (argument) {
             is ResolvedLambdaAtom ->
-                analyzeLambda(c, resolutionCallbacks, argument, diagnosticsHolder)
+                analyzeLambda(c, resolutionCallbacks, argument, completionMode, diagnosticsHolder)
 
             is LambdaWithTypeVariableAsExpectedTypeAtom ->
                 analyzeLambda(
-                    c, resolutionCallbacks, argument.transformToResolvedLambda(c.getBuilder(), diagnosticsHolder), diagnosticsHolder
+                    c,
+                    resolutionCallbacks,
+                    argument.transformToResolvedLambda(c.getBuilder(), diagnosticsHolder),
+                    completionMode,
+                    diagnosticsHolder
                 )
 
             is ResolvedCallableReferenceAtom ->
@@ -83,6 +90,7 @@ class PostponedArgumentsAnalyzer(
         c: Context,
         resolutionCallbacks: KotlinResolutionCallbacks,
         lambda: ResolvedLambdaAtom,
+        completionMode: KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode,
         diagnosticHolder: KotlinDiagnosticsHolder,
     ): ReturnArgumentsAnalysisResult {
         val substitutorAndStubsForLambdaAnalysis = c.createSubstituteFunctorForLambdaAnalysis()
@@ -122,14 +130,14 @@ class PostponedArgumentsAnalyzer(
             c.canBeProper(rawReturnType) -> substitute(rawReturnType)
 
             // For Unit-coercion
-            c.hasUpperOrEqualUnitConstraint(rawReturnType) -> builtIns.unitType
+            !rawReturnType.isMarkedNullable && c.hasUpperOrEqualUnitConstraint(rawReturnType) -> builtIns.unitType
 
             else -> null
         }
 
         val convertedAnnotations = lambda.expectedType?.annotations?.let { annotations ->
             if (receiver != null || expectedReceiver == null) annotations
-            else FilteredAnnotations(annotations, true) { it != KotlinBuiltIns.FQ_NAMES.extensionFunctionType }
+            else FilteredAnnotations(annotations, true) { it != StandardNames.FqNames.extensionFunctionType }
         }
 
         val returnArgumentsAnalysisResult = resolutionCallbacks.analyzeAndGetLambdaReturnArguments(
@@ -141,7 +149,7 @@ class PostponedArgumentsAnalyzer(
             convertedAnnotations ?: Annotations.EMPTY,
             substitutorAndStubsForLambdaAnalysis.stubsForPostponedVariables.cast(),
         )
-        applyResultsOfAnalyzedLambdaToCandidateSystem(c, lambda, returnArgumentsAnalysisResult, diagnosticHolder, substitute)
+        applyResultsOfAnalyzedLambdaToCandidateSystem(c, lambda, returnArgumentsAnalysisResult, completionMode, diagnosticHolder, substitute)
         return returnArgumentsAnalysisResult
     }
 
@@ -149,6 +157,7 @@ class PostponedArgumentsAnalyzer(
         c: Context,
         lambda: ResolvedLambdaAtom,
         returnArgumentsAnalysisResult: ReturnArgumentsAnalysisResult,
+        completionMode: KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode,
         diagnosticHolder: KotlinDiagnosticsHolder,
         substitute: (KotlinType) -> UnwrappedType = c.createSubstituteFunctorForLambdaAnalysis().substitute
     ) {
@@ -190,7 +199,12 @@ class PostponedArgumentsAnalyzer(
         if (inferenceSession != null && lambda.atom.hasBuilderInferenceAnnotation) {
             val storageSnapshot = c.getBuilder().currentStorage()
 
-            val postponedVariables = inferenceSession.inferPostponedVariables(lambda, storageSnapshot, diagnosticHolder)
+            val postponedVariables = inferenceSession.inferPostponedVariables(
+                lambda,
+                storageSnapshot,
+                completionMode,
+                diagnosticHolder
+            )
             if (postponedVariables == null) {
                 c.getBuilder().removePostponedVariables()
                 return

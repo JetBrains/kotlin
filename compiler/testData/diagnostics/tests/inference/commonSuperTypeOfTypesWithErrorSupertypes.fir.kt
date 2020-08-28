@@ -8,7 +8,7 @@ interface Foo<F> {
 fun <S> select(vararg args: S): S = TODO()
 
 class Bar<B : B> : Foo<B> {
-    val v = <!DEBUG_INFO_EXPRESSION_TYPE("B?")!>select(
+    val v = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select(
         getSum(),
         42
     )<!>

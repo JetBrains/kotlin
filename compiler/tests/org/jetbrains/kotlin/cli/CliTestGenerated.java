@@ -140,6 +140,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/conflictingOverloads.args");
         }
 
+        @TestMetadata("conflictingProjection.args")
+        public void testConflictingProjection() throws Exception {
+            runTest("compiler/testData/cli/jvm/conflictingProjection.args");
+        }
+
         @TestMetadata("coroutinesEnable.args")
         public void testCoroutinesEnable() throws Exception {
             runTest("compiler/testData/cli/jvm/coroutinesEnable.args");
@@ -250,6 +255,16 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/expression1.args");
         }
 
+        @TestMetadata("extendedCheckers.args")
+        public void testExtendedCheckers() throws Exception {
+            runTest("compiler/testData/cli/jvm/extendedCheckers.args");
+        }
+
+        @TestMetadata("extendedCheckersNoWarning.args")
+        public void testExtendedCheckersNoWarning() throws Exception {
+            runTest("compiler/testData/cli/jvm/extendedCheckersNoWarning.args");
+        }
+
         @TestMetadata("extraArgumentPassedInObsoleteForm.args")
         public void testExtraArgumentPassedInObsoleteForm() throws Exception {
             runTest("compiler/testData/cli/jvm/extraArgumentPassedInObsoleteForm.args");
@@ -305,6 +320,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/help.args");
         }
 
+        @TestMetadata("inapplicableLateinitModifier.args")
+        public void testInapplicableLateinitModifier() throws Exception {
+            runTest("compiler/testData/cli/jvm/inapplicableLateinitModifier.args");
+        }
+
         @TestMetadata("inlineCycle.args")
         public void testInlineCycle() throws Exception {
             runTest("compiler/testData/cli/jvm/inlineCycle.args");
@@ -313,6 +333,11 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("inlineCycle_ir.args")
         public void testInlineCycle_ir() throws Exception {
             runTest("compiler/testData/cli/jvm/inlineCycle_ir.args");
+        }
+
+        @TestMetadata("instanceAccessBeforeSuperCall.args")
+        public void testInstanceAccessBeforeSuperCall() throws Exception {
+            runTest("compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.args");
         }
 
         @TestMetadata("internalArgDisableLanguageFeature.args")

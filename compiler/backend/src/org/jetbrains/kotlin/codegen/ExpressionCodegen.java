@@ -173,7 +173,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return null;
     }
 
-    static class BlockStackElement {
+    public static class BlockStackElement {
     }
 
     static class LoopBlockStackElement extends BlockStackElement {
@@ -2224,8 +2224,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
             if (!skipPropertyAccessors) {
                 if (isBackingFieldMovedFromCompanion && context.getContextDescriptor() instanceof AccessorForPropertyBackingField) {
-                    propertyDescriptor = (PropertyDescriptor) backingFieldContext.getParentContext()
-                            .getAccessor(propertyDescriptor, AccessorKind.IN_CLASS_COMPANION, delegateType, superCallTarget);
+                    CodegenContext<?> parentContext = backingFieldContext.getParentContext();
+                    propertyDescriptor =
+                            parentContext.getAccessor(propertyDescriptor, AccessorKind.IN_CLASS_COMPANION, delegateType, superCallTarget);
                 }
                 else {
                     propertyDescriptor =
@@ -4103,15 +4104,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         TypeAndNullability right754Type = calcTypeForIeee754ArithmeticIfNeeded(right, getRightOperandType(primitiveNumericComparisonInfo));
         boolean isSame754ArithmeticTypes = left754Type != null && right754Type != null && left754Type.type.equals(right754Type.type);
         boolean properIeee754Comparisons = shouldUseProperIeee754Comparisons();
+        boolean isStandardCompareTo = primitiveNumericComparisonInfo != null;
 
-        if (properIeee754Comparisons && left754Type != null && right754Type != null) {
+        if (properIeee754Comparisons && isStandardCompareTo && left754Type != null && right754Type != null) {
             type = comparisonOperandType(left754Type.type, right754Type.type);
-            //type = comparisonOperandType(leftType, rightType);
             leftValue = gen(left);
             rightValue = gen(right);
         }
-        else if (!properIeee754Comparisons &&
-                 state.getIntrinsics().getIntrinsic((FunctionDescriptor) resolvedCall.getResultingDescriptor()) instanceof CompareTo &&
+        else if (!properIeee754Comparisons && isStandardCompareTo &&
                  ((isPrimitive(leftType) && isPrimitive(rightType)) || isSame754ArithmeticTypes)) {
             type = isSame754ArithmeticTypes ? left754Type.type : comparisonOperandType(leftType, rightType);
             leftValue = gen(left);

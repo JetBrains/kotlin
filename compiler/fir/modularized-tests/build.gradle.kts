@@ -35,6 +35,11 @@ dependencies {
     testCompile(projectTests(":compiler:fir:analysis-tests"))
     testCompile(project(":compiler:fir:resolve"))
     testCompile(project(":compiler:fir:dump"))
+
+    val asyncProfilerClasspath = project.findProperty("fir.bench.async.profiler.classpath") as? String
+    if (asyncProfilerClasspath != null) {
+        testRuntimeOnly(files(*asyncProfilerClasspath.split(File.pathSeparatorChar).toTypedArray()))
+    }
 }
 
 sourceSets {

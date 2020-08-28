@@ -7,10 +7,14 @@ package org.jetbrains.kotlin.fir.scopes
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.ScopeSessionKey
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
 import org.jetbrains.kotlin.fir.scopes.impl.*
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLookupTagWithFixedSymbol
 import org.jetbrains.kotlin.name.FqName
 
 private object FirDefaultStarImportingScopeKey : ScopeSessionKey<DefaultImportPriority, FirScope>()
@@ -61,3 +65,11 @@ private fun doCreateImportingScopes(
 }
 
 private val PACKAGE_MEMBER = scopeSessionKey<FqName, FirPackageMemberScope>()
+
+fun ConeClassLikeLookupTag.getNestedClassifierScope(session: FirSession, scopeSession: ScopeSession): FirScope? {
+    val klass = when (this) {
+        is ConeClassLookupTagWithFixedSymbol -> symbol.fir
+        else -> session.firSymbolProvider.getClassLikeSymbolByFqName(classId)?.fir as? FirRegularClass ?: return null
+    }
+    return klass.scopeProvider.getNestedClassifierScope(klass, session, scopeSession)
+}

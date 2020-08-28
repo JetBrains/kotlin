@@ -22,29 +22,21 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrCallImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    override val symbol: IrFunctionSymbol,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val type: IrType,
+    override val symbol: IrSimpleFunctionSymbol,
     typeArgumentsCount: Int,
     valueArgumentsCount: Int,
-    origin: IrStatementOrigin? = null,
+    override val origin: IrStatementOrigin? = null,
     override val superQualifierSymbol: IrClassSymbol? = null
-) :
-    IrCallWithIndexedArgumentsBase(
-        startOffset, endOffset, type,
-        typeArgumentsCount,
-        valueArgumentsCount,
-        origin
-    ),
-    IrCall {
-
+) : IrCall(typeArgumentsCount, valueArgumentsCount) {
     init {
         if (symbol is IrConstructorSymbol) {
             throw AssertionError("Should be IrConstructorCall: ${this.render()}")
@@ -56,7 +48,7 @@ class IrCallImpl(
         startOffset: Int,
         endOffset: Int,
         type: IrType,
-        symbol: IrFunctionSymbol,
+        symbol: IrSimpleFunctionSymbol,
         origin: IrStatementOrigin? = null,
         superQualifierSymbol: IrClassSymbol? = null
     ) : this(
@@ -69,7 +61,7 @@ class IrCallImpl(
         startOffset: Int,
         endOffset: Int,
         type: IrType,
-        symbol: IrFunctionSymbol,
+        symbol: IrSimpleFunctionSymbol,
         typeArgumentsCount: Int,
         origin: IrStatementOrigin? = null,
         superQualifierSymbol: IrClassSymbol? = null

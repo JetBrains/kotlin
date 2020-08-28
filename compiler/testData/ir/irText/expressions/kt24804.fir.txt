@@ -10,7 +10,7 @@ FILE fqName:<root> fileName:/kt24804.kt
       VAR name:z type:kotlin.Int [var]
         CONST Int type=kotlin.Int value=10
       DO_WHILE label=l2 origin=DO_WHILE_LOOP
-        body: BLOCK type=kotlin.Unit origin=null
+        body: COMPOSITE type=kotlin.Unit origin=DO_WHILE_LOOP
           SET_VAR 'var z: kotlin.Int [var] declared in <root>.run' type=kotlin.Unit origin=EQ
             CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
               $this: GET_VAR 'var z: kotlin.Int [var] declared in <root>.run' type=kotlin.Int origin=null

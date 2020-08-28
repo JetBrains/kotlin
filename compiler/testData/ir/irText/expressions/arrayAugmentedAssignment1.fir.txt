@@ -88,4 +88,5 @@ FILE fqName:<root> fileName:/arrayAugmentedAssignment1.kt
         index: CONST Int type=kotlin.Int value=0
         value: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
           $this: GET_VAR 'val tmp_4: kotlin.Int [val] declared in <root>.testMember' type=kotlin.Int origin=null
-      GET_VAR 'val tmp_4: kotlin.Int [val] declared in <root>.testMember' type=kotlin.Int origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_VAR 'val tmp_4: kotlin.Int [val] declared in <root>.testMember' type=kotlin.Int origin=null

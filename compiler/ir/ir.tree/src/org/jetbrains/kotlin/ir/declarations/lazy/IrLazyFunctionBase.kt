@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.types.IrType
-import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 
 interface IrLazyFunctionBase : IrLazyDeclarationBase, IrTypeParametersContainer {
@@ -21,8 +20,8 @@ interface IrLazyFunctionBase : IrLazyDeclarationBase, IrTypeParametersContainer 
 
     val initialSignatureFunction: IrFunction?
 
-    fun createInitialSignatureFunction(): ReadOnlyProperty<Any?, IrFunction?> =
-        lazyVar {
+    fun createInitialSignatureFunction(): Lazy<IrFunction?> =
+        lazy(LazyThreadSafetyMode.PUBLICATION) {
             descriptor.initialSignatureDescriptor?.takeIf { it != descriptor }?.original?.let(stubGenerator::generateFunctionStub)
         }
 

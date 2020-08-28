@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.IrMemoryArrayWriter
 import org.jetbrains.kotlin.library.impl.IrMemoryDeclarationWriter
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.backend.common.serialization.proto.Actual as ProtoActual
@@ -1209,8 +1208,7 @@ open class IrFileSerializer(
         .addAllLineStartOffsets(entry.lineStartOffsets.asIterable())
         .build()
 
-    open fun backendSpecificExplicitRoot(declaration: IrFunction) = false
-    open fun backendSpecificExplicitRoot(declaration: IrClass) = false
+    open fun backendSpecificExplicitRoot(node: IrAnnotationContainer): Boolean = false
     open fun keepOrderOfProperties(property: IrProperty): Boolean = !property.isConst
     open fun backendSpecificSerializeAllMembers(irClass: IrClass) = false
 
@@ -1221,6 +1219,46 @@ open class IrFileSerializer(
         // TODO: we can, probably, maintain a privacy bit while traversing the tree
         // instead of running the parent hierarchy for isExported every time.
         return !(member.isFakeOverride && declarationTable.isExportedDeclaration(member))
+    }
+
+    private fun fillPlatformExplicitlyExported(file: IrFile, proto: ProtoFile.Builder) {
+
+        if (backendSpecificExplicitRoot(file)) {
+            for (declaration in file.declarations) {
+                if (declaration is IrSymbolOwner) {
+                    proto.addExplicitlyExportedToCompiler(serializeIrSymbol(declaration.symbol))
+                }
+            }
+        } else {
+            file.acceptVoid(
+                object : IrElementVisitorVoid {
+                    override fun visitElement(element: IrElement) {
+                        element.acceptChildrenVoid(this)
+                    }
+
+                    override fun visitFunction(declaration: IrFunction) {
+                        if (backendSpecificExplicitRoot(declaration)) {
+                            proto.addExplicitlyExportedToCompiler(serializeIrSymbol(declaration.symbol))
+                        }
+                        super.visitDeclaration(declaration)
+                    }
+
+                    override fun visitClass(declaration: IrClass) {
+                        if (backendSpecificExplicitRoot(declaration)) {
+                            proto.addExplicitlyExportedToCompiler(serializeIrSymbol(declaration.symbol))
+                        }
+                        super.visitDeclaration(declaration)
+                    }
+
+                    override fun visitProperty(declaration: IrProperty) {
+                        if (backendSpecificExplicitRoot(declaration)) {
+                            proto.addExplicitlyExportedToCompiler(serializeIrSymbol(declaration.symbol))
+                        }
+                        super.visitDeclaration(declaration)
+                    }
+                }
+            )
+        }
     }
 
     fun serializeIrFile(file: IrFile): SerializedIrFile {
@@ -1259,30 +1297,7 @@ open class IrFileSerializer(
                 proto.addExplicitlyExportedToCompiler(serializeIrSymbol(fieldSymbol))
             }
 
-        // TODO: Konan specific
-
-        file.acceptVoid(
-            object : IrElementVisitorVoid {
-                override fun visitElement(element: IrElement) {
-                    element.acceptChildrenVoid(this)
-                }
-
-                override fun visitFunction(declaration: IrFunction) {
-                    if (backendSpecificExplicitRoot(declaration)) {
-                        proto.addExplicitlyExportedToCompiler(serializeIrSymbol(declaration.symbol))
-                    }
-                    super.visitDeclaration(declaration)
-                }
-
-                override fun visitClass(declaration: IrClass) {
-                    if (backendSpecificExplicitRoot(declaration)) {
-                        proto.addExplicitlyExportedToCompiler(serializeIrSymbol(declaration.symbol))
-                    }
-                    super.visitDeclaration(declaration)
-                }
-            }
-        )
-
+        fillPlatformExplicitlyExported(file, proto)
         serializeExpectActualSubstitutionTable(proto)
 
         return SerializedIrFile(

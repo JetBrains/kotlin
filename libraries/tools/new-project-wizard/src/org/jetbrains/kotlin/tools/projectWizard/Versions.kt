@@ -15,8 +15,8 @@ object Versions {
     val JUNIT = version("4.12")
 
     object ANDROID {
-        val ANDROIDX_CORE_KTX = version("1.2.0")
-        val ANDROIDX_APPCOMPAT = version("1.1.0")
+        val ANDROID_MATERIAL = version("1.2.0")
+        val ANDROIDX_APPCOMPAT = version("1.2.0")
         val ANDROIDX_CONSTRAINTLAYOUT = version("1.1.3")
     }
 
@@ -26,13 +26,19 @@ object Versions {
     }
 
     object JS_WRAPPERS {
-        val KOTLIN_REACT: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("16.13.1-pre.110-kotlin-$kotlinVersion") }
+        val KOTLIN_REACT: (kotlinVersion: Version) -> Version = wrapperVersion("16.13.1")
         val KOTLIN_REACT_DOM = KOTLIN_REACT
-        val KOTLIN_STYLED: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("1.0.0-pre.110-kotlin-$kotlinVersion") }
+        val KOTLIN_STYLED: (kotlinVersion: Version) -> Version = wrapperVersion("1.0.0")
+        val KOTLIN_REACT_ROUTER_DOM: (kotlinVersion: Version) -> Version = wrapperVersion("5.1.2")
+        val KOTLIN_REDUX: (kotlinVersion: Version) -> Version = wrapperVersion("4.0.0")
+        val KOTLIN_REACT_REDUX: (kotlinVersion: Version) -> Version = wrapperVersion("5.0.7")
+
+        private fun wrapperVersion(version: String): (Version) -> Version =
+            { kotlinVersion -> version("$version-pre.110-kotlin-$kotlinVersion") }
     }
 
     object GRADLE_PLUGINS {
-        val ANDROID = version("3.5.2")
+        val ANDROID = version("4.0.1")
     }
 }
 

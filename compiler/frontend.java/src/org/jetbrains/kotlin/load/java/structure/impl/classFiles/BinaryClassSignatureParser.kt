@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
-import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.StringInterner
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaType
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import org.jetbrains.kotlin.utils.compact
 import org.jetbrains.org.objectweb.asm.Type
@@ -44,7 +44,7 @@ class BinaryClassSignatureParser {
             return emptyList()
         }
 
-        val typeParameters = ContainerUtil.newArrayList<JavaTypeParameter>()
+        val typeParameters = arrayListOf<JavaTypeParameter>()
         signature.next()
         while (signature.current() != '>') {
             typeParameters.add(parseTypeParameter(signature, context))
@@ -65,7 +65,7 @@ class BinaryClassSignatureParser {
         val parameterName = name.toString()
 
         // postpone list allocation till a second bound is seen; ignore sole Object bound
-        val bounds: MutableList<JavaClassifierType> = ContainerUtil.newSmartList()
+        val bounds: MutableList<JavaClassifierType> = SmartList()
         while (signature.current() == ':') {
             signature.next()
             val bound = parseClassifierRefSignature(signature, context) ?: continue
@@ -110,7 +110,7 @@ class BinaryClassSignatureParser {
     ): JavaClassifierType {
         val canonicalName = StringBuilder()
 
-        val argumentGroups = ContainerUtil.newSmartList<List<JavaType>>()
+        val argumentGroups = SmartList<List<JavaType>>()
 
         signature.next()
         while (signature.current() != ';' && signature.current() != CharacterIterator.DONE) {

@@ -6,10 +6,14 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAMES
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAMES
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.Visibilities
+import org.jetbrains.kotlin.fir.Visibility
 import org.jetbrains.kotlin.fir.backend.generators.AnnotationGenerator
 import org.jetbrains.kotlin.fir.backend.generators.DelegatedMemberGenerator
 import org.jetbrains.kotlin.fir.declarations.*
@@ -52,6 +56,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.descriptors.Visibility as OldVisibility
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class Fir2IrDeclarationStorage(
@@ -196,16 +201,21 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    internal fun findIrParent(packageFqName: FqName, parentClassId: ClassId?, firBasedSymbol: FirBasedSymbol<*>): IrDeclarationParent? {
-        return if (parentClassId != null) {
-            // TODO: this will never work for local classes
-            val parentFirSymbol = firSymbolProvider.getClassLikeSymbolByFqName(parentClassId)
-            if (parentFirSymbol is FirClassSymbol) {
-                val parentIrSymbol = classifierStorage.getIrClassSymbol(parentFirSymbol)
-                parentIrSymbol.owner
+    private fun findIrClass(classId: ClassId): IrClass? =
+        if (classId.isLocal) {
+            classifierStorage.getCachedLocalClass(classId)
+        } else {
+            val firSymbol = firSymbolProvider.getClassLikeSymbolByFqName(classId)
+            if (firSymbol is FirClassSymbol) {
+                classifierStorage.getIrClassSymbol(firSymbol).owner
             } else {
                 null
             }
+        }
+
+    internal fun findIrParent(packageFqName: FqName, parentClassId: ClassId?, firBasedSymbol: FirBasedSymbol<*>): IrDeclarationParent? {
+        return if (parentClassId != null) {
+            findIrClass(parentClassId)
         } else {
             val containerFile = when (firBasedSymbol) {
                 is FirCallableSymbol -> firProvider.getFirCallableContainerFile(firBasedSymbol)
@@ -353,7 +363,7 @@ class Fir2IrDeclarationStorage(
     }
 
     fun getCachedIrFunction(function: FirFunction<*>): IrSimpleFunction? {
-        return if (function !is FirSimpleFunction || function.visibility == Visibilities.LOCAL) {
+        return if (function !is FirSimpleFunction || function.visibility == Visibilities.Local) {
             localStorage.getLocalFunction(function)
         } else {
             functionCache[function]
@@ -367,7 +377,7 @@ class Fir2IrDeclarationStorage(
     ): IrSimpleFunction {
         if (signature == null) {
             val descriptor =
-                if (containerSource != null) WrappedFunctionDescriptorWithContainerSource(containerSource)
+                if (containerSource != null) WrappedFunctionDescriptorWithContainerSource()
                 else WrappedSimpleFunctionDescriptor()
             return symbolTable.declareSimpleFunction(descriptor, factory).apply { descriptor.bind(this) }
         }
@@ -392,7 +402,7 @@ class Fir2IrDeclarationStorage(
         classifierStorage.preCacheTypeParameters(function)
         val name = simpleFunction?.name
             ?: if (isLambda) Name.special("<anonymous>") else Name.special("<no name provided>")
-        val visibility = simpleFunction?.visibility ?: Visibilities.LOCAL
+        val visibility = simpleFunction?.visibility ?: Visibilities.Local
         val isSuspend =
             if (isLambda) ((function as FirAnonymousFunction).typeRef as? FirResolvedTypeRef)?.isSuspend == true
             else simpleFunction?.isSuspend == true
@@ -401,7 +411,7 @@ class Fir2IrDeclarationStorage(
             val result = declareIrSimpleFunction(signature, simpleFunction?.containerSource) { symbol ->
                 irFactory.createFunction(
                     startOffset, endOffset, updatedOrigin, symbol,
-                    name, visibility,
+                    name, components.visibilityConverter.convertToOldVisibility(visibility),
                     simpleFunction?.modality ?: Modality.FINAL,
                     function.returnTypeRef.toIrType(),
                     isInline = simpleFunction?.isInline == true,
@@ -411,7 +421,8 @@ class Fir2IrDeclarationStorage(
                     isExpect = simpleFunction?.isExpect == true,
                     isFakeOverride = updatedOrigin == IrDeclarationOrigin.FAKE_OVERRIDE,
                     isOperator = simpleFunction?.isOperator == true,
-                    isInfix = simpleFunction?.isInfix == true
+                    isInfix = simpleFunction?.isInfix == true,
+                    containerSource = simpleFunction?.containerSource,
                 ).apply {
                     metadata = FirMetadataSource.Function(function)
                     convertAnnotationsFromLibrary(function)
@@ -426,7 +437,7 @@ class Fir2IrDeclarationStorage(
             result
         }
 
-        if (visibility == Visibilities.LOCAL) {
+        if (visibility == Visibilities.Local) {
             localStorage.putLocalFunction(function, created)
             return created
         }
@@ -477,7 +488,7 @@ class Fir2IrDeclarationStorage(
             declareIrConstructor(signature) { symbol ->
                 irFactory.createConstructor(
                     startOffset, endOffset, origin, symbol,
-                    Name.special("<init>"), constructor.visibility,
+                    Name.special("<init>"), components.visibilityConverter.convertToOldVisibility(constructor.visibility),
                     constructor.returnTypeRef.toIrType(),
                     isInline = false, isExternal = false, isPrimary = isPrimary, isExpect = constructor.isExpect
                 ).apply {
@@ -522,22 +533,27 @@ class Fir2IrDeclarationStorage(
     ): IrSimpleFunction {
         val prefix = if (isSetter) "set" else "get"
         val signature = if (isLocal) null else signatureComposer.composeAccessorSignature(property, isSetter)
+        val containerSource = correspondingProperty.containerSource
         return declareIrAccessor(
             signature,
-            (correspondingProperty.descriptor as? WrappedPropertyDescriptorWithContainerSource)?.containerSource,
+            containerSource,
             isGetter = !isSetter
         ) { symbol ->
             val accessorReturnType = if (isSetter) irBuiltIns.unitType else propertyType
+            val visibility = propertyAccessor?.visibility?.let {
+                components.visibilityConverter.convertToOldVisibility(it)
+            }
             irFactory.createFunction(
                 startOffset, endOffset, origin, symbol,
                 Name.special("<$prefix-${correspondingProperty.name}>"),
-                propertyAccessor?.visibility ?: correspondingProperty.visibility,
+                visibility ?: correspondingProperty.visibility,
                 correspondingProperty.modality, accessorReturnType,
                 isInline = propertyAccessor?.isInline == true,
                 isExternal = propertyAccessor?.isExternal == true,
-                isTailrec = false, isSuspend = false, isExpect = false,
-                isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
-                isOperator = false, isInfix = false
+                isTailrec = false, isSuspend = false, isOperator = false,
+                isInfix = false,
+                isExpect = false, isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+                containerSource = containerSource,
             ).apply {
                 correspondingPropertySymbol = correspondingProperty.symbol
                 if (propertyAccessor != null) {
@@ -568,7 +584,9 @@ class Fir2IrDeclarationStorage(
                     parent = irParent
                 }
                 if (correspondingProperty is Fir2IrLazyProperty && !isFakeOverride && thisReceiverOwner != null) {
-                    populateOverriddenSymbols(thisReceiverOwner)
+                    this.overriddenSymbols = correspondingProperty.fir.generateOverriddenAccessorSymbols(
+                        correspondingProperty.containingClass, !isSetter, session, scopeSession, declarationStorage
+                    )
                 }
             }
         }
@@ -578,7 +596,7 @@ class Fir2IrDeclarationStorage(
         property: FirProperty,
         origin: IrDeclarationOrigin,
         descriptor: PropertyDescriptor,
-        visibility: Visibility,
+        visibility: OldVisibility,
         name: Name,
         isFinal: Boolean,
         firInitializerExpression: FirExpression?,
@@ -608,7 +626,7 @@ class Fir2IrDeclarationStorage(
             isLateInit -> setter?.visibility ?: status.visibility
             isConst -> status.visibility
             hasJvmFieldAnnotation -> status.visibility
-            else -> Visibilities.PRIVATE
+            else -> Visibilities.Private
         }
 
     private fun declareIrProperty(
@@ -618,7 +636,7 @@ class Fir2IrDeclarationStorage(
     ): IrProperty {
         if (signature == null) {
             val descriptor =
-                if (containerSource != null) WrappedPropertyDescriptorWithContainerSource(containerSource)
+                if (containerSource != null) WrappedPropertyDescriptorWithContainerSource()
                 else WrappedPropertyDescriptor()
             return symbolTable.declareProperty(0, 0, IrDeclarationOrigin.DEFINED, descriptor, isDelegated = false, factory).apply {
                 descriptor.bind(this)
@@ -640,14 +658,15 @@ class Fir2IrDeclarationStorage(
             val result = declareIrProperty(signature, property.containerSource) { symbol ->
                 irFactory.createProperty(
                     startOffset, endOffset, origin, symbol,
-                    property.name, property.visibility, property.modality!!,
+                    property.name, components.visibilityConverter.convertToOldVisibility(property.visibility), property.modality!!,
                     isVar = property.isVar,
                     isConst = property.isConst,
                     isLateinit = property.isLateInit,
                     isDelegated = property.delegate != null,
                     isExternal = property.isExternal,
                     isExpect = property.isExpect,
-                    isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
+                    isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+                    containerSource = property.containerSource,
                 ).apply {
                     metadata = FirMetadataSource.Variable(property)
                     convertAnnotationsFromLibrary(property)
@@ -660,27 +679,27 @@ class Fir2IrDeclarationStorage(
                     val delegate = property.delegate
                     val getter = property.getter
                     val setter = property.setter
-                    // TODO: this checks are very preliminary, FIR resolve should determine backing field presence itself
                     if (property.isConst || (property.modality != Modality.ABSTRACT && (irParent !is IrClass || !irParent.isInterface))) {
-                        if (initializer != null || getter is FirDefaultPropertyGetter ||
-                            property.isVar && setter is FirDefaultPropertySetter
-                        ) {
-                            backingField = createBackingField(
-                                property, IrDeclarationOrigin.PROPERTY_BACKING_FIELD, descriptor,
-                                property.fieldVisibility, property.name, property.isVal, initializer,
-                                type
-                            ).also { field ->
-                                if (initializer is FirConstExpression<*>) {
-                                    // TODO: Normally we shouldn't have error type here
-                                    val constType = initializer.typeRef.toIrType().takeIf { it !is IrErrorType } ?: type
-                                    field.initializer = factory.createExpressionBody(initializer.toIrConst(constType))
+                        if (property.hasBackingField) {
+                            backingField = if (delegate != null) {
+                                createBackingField(
+                                    property, IrDeclarationOrigin.PROPERTY_DELEGATE, descriptor,
+                                    components.visibilityConverter.convertToOldVisibility(property.fieldVisibility),
+                                    Name.identifier("${property.name}\$delegate"), true, delegate
+                                )
+                            } else {
+                                createBackingField(
+                                    property, IrDeclarationOrigin.PROPERTY_BACKING_FIELD, descriptor,
+                                    components.visibilityConverter.convertToOldVisibility(property.fieldVisibility),
+                                    property.name, property.isVal, initializer, type
+                                ).also { field ->
+                                    if (initializer is FirConstExpression<*>) {
+                                        // TODO: Normally we shouldn't have error type here
+                                        val constType = initializer.typeRef.toIrType().takeIf { it !is IrErrorType } ?: type
+                                        field.initializer = factory.createExpressionBody(initializer.toIrConst(constType))
+                                    }
                                 }
                             }
-                        } else if (delegate != null) {
-                            backingField = createBackingField(
-                                property, IrDeclarationOrigin.PROPERTY_DELEGATE, descriptor,
-                                property.fieldVisibility, Name.identifier("${property.name}\$delegate"), true, delegate
-                            )
                         }
                         if (irParent != null) {
                             backingField?.parent = irParent
@@ -742,7 +761,7 @@ class Fir2IrDeclarationStorage(
     }
 
     private fun getFirClassByFqName(classId: ClassId): FirClass<*>? {
-        val declaration = firProvider.getClassLikeSymbolByFqName(classId) ?: firSymbolProvider.getClassLikeSymbolByFqName(classId)
+        val declaration = firSymbolProvider.getClassLikeSymbolByFqName(classId)
         return declaration?.fir as? FirClass<*>
     }
 
@@ -759,7 +778,7 @@ class Fir2IrDeclarationStorage(
             ) { symbol ->
                 irFactory.createField(
                     startOffset, endOffset, origin, symbol,
-                    field.name, type, field.visibility,
+                    field.name, type, components.visibilityConverter.convertToOldVisibility(field.visibility),
                     isFinal = field.modality == Modality.FINAL,
                     isExternal = false,
                     isStatic = field.isStatic
@@ -975,7 +994,7 @@ class Fir2IrDeclarationStorage(
                                     firVariableSymbol is FirPropertySymbol && firVariableSymbol.isFakeOverride &&
                                             firVariableSymbol.callableId != firVariableSymbol.overriddenSymbol?.callableId
                                 Fir2IrLazyProperty(
-                                    components, startOffset, endOffset, parentOrigin, fir, symbol, isFakeOverride
+                                    components, startOffset, endOffset, parentOrigin, fir, irParent.fir, symbol, isFakeOverride
                                 ).apply {
                                     parent = irParent
                                 }
@@ -1025,13 +1044,12 @@ class Fir2IrDeclarationStorage(
             is FirEnumEntry -> {
                 classifierStorage.getCachedIrEnumEntry(firDeclaration)?.let { return it.symbol }
                 val containingFile = firProvider.getFirCallableContainerFile(firVariableSymbol)
-                val parentClassSymbol = firVariableSymbol.callableId.classId?.let { firSymbolProvider.getClassLikeSymbolByFqName(it) }
-                val irParentClass = (parentClassSymbol?.fir as? FirClass<*>)?.let { classifierStorage.getCachedIrClass(it) }
+                val irParentClass = firVariableSymbol.callableId.classId?.let { findIrClass(it) }
                 classifierStorage.createIrEnumEntry(
                     firDeclaration,
                     irParent = irParentClass,
                     origin = if (containingFile != null) IrDeclarationOrigin.DEFINED else
-                        (parentClassSymbol?.fir as? FirClass<*>)?.irOrigin(firProvider) ?: IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
+                        irParentClass?.origin ?: IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
                 ).symbol
             }
             is FirValueParameter -> {
@@ -1043,15 +1061,6 @@ class Fir2IrDeclarationStorage(
                 getIrVariableSymbol(firDeclaration)
             }
         }
-    }
-
-    private fun IrSimpleFunction.populateOverriddenSymbols(thisReceiverOwner: IrClass) {
-        thisReceiverOwner.findMatchingOverriddenSymbolsFromSupertypes(components.irBuiltIns, this)
-            .filterIsInstance<IrSimpleFunctionSymbol>().let {
-                if (it.isNotEmpty()) {
-                    overriddenSymbols = it
-                }
-            }
     }
 
     private fun IrMutableAnnotationContainer.convertAnnotationsFromLibrary(firAnnotationContainer: FirAnnotationContainer) {

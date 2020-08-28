@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object CLASS_STATIC_INITIALIZER : IrDeclarationOriginImpl("CLASS_STATIC_INITIALIZER")
     object DEFAULT_IMPLS : IrDeclarationOriginImpl("DEFAULT_IMPLS")
+    object DEFAULT_IMPLS_WITH_MOVED_RECEIVERS : IrDeclarationOriginImpl("STATIC_WITH_MOVED_RECEIVERS")
+    object DEFAULT_IMPLS_WITH_MOVED_RECEIVERS_SYNTHETIC :
+        IrDeclarationOriginImpl("STATIC_WITH_MOVED_RECEIVERS_SYNTHETIC", isSynthetic = true)
     object DEFAULT_IMPLS_BRIDGE : IrDeclarationOriginImpl("DEFAULT_IMPLS_BRIDGE")
     object DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY : IrDeclarationOriginImpl("DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY")
     object DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC : IrDeclarationOriginImpl("DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC", isSynthetic = true)

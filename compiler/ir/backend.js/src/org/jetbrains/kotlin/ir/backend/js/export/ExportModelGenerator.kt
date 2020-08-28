@@ -140,7 +140,7 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
         klass: IrClass
     ): ExportedDeclaration? {
         when (val exportability = classExportability(klass)) {
-            is Exportability.Prohibited -> return error(exportability.reason)
+            is Exportability.Prohibited -> error(exportability.reason)
             is Exportability.NotNeeded -> return null
         }
 

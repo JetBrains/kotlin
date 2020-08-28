@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
-import org.jetbrains.kotlin.ir.util.transform
+import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
@@ -65,8 +65,8 @@ class IrScriptImpl(
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        declarations.transform { it.transform(transformer, data) }
-        statements.transform { it.transform(transformer, data) }
+        declarations.transformInPlace(transformer, data)
+        statements.transformInPlace(transformer, data)
         thisReceiver = thisReceiver.transform(transformer, data)
     }
 }

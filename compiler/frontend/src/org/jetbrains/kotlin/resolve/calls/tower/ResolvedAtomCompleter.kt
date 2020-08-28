@@ -202,6 +202,7 @@ class ResolvedAtomCompleter(
         }
 
     private fun completeLambda(lambda: ResolvedLambdaAtom) {
+        @Suppress("NAME_SHADOWING")
         val lambda = lambda.unwrap()
         val resultArgumentsInfo = lambda.resultArgumentsInfo!!
         val returnType = if (lambda.isCoercedToUnit) {
@@ -331,7 +332,7 @@ class ResolvedAtomCompleter(
         resolvedAtom: ResolvedCallableReferenceAtom
     ) {
         val callableCandidate = resolvedAtom.candidate
-        if (callableCandidate == null) {
+        if (callableCandidate == null || resolvedAtom.completed) {
             // todo report meanfull diagnostic here
             return
         }
@@ -419,6 +420,7 @@ class ResolvedAtomCompleter(
         )
 
         kotlinToResolvedCallTransformer.runCallCheckers(resolvedCall, topLevelCallCheckerContext)
+        resolvedAtom.completed = true
     }
 
     private fun ReceiverValue.updateReceiverValue(substitutor: TypeSubstitutor): ReceiverValue {

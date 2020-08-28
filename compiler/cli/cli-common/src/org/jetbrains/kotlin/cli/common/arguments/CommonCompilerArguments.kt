@@ -318,6 +318,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     var useFir: Boolean by FreezableVar(false)
 
     @Argument(
+        value = "-Xuse-fir-extended-checkers",
+        description = "Use extended analysis mode based on Front-end IR. Warning: this feature is far from being production-ready"
+    )
+    var useFirExtendedCheckers: Boolean by FreezableVar(false)
+
+    @Argument(
         value = "-Xuse-mixed-named-arguments",
         description = "Enable Support named arguments in their own position even if the result appears as mixed"
     )

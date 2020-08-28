@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.java.scopes
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
@@ -15,8 +16,8 @@ import org.jetbrains.kotlin.name.Name
 class JavaClassStaticEnhancementScope(
     session: FirSession,
     owner: FirRegularClassSymbol,
-    private val useSiteStaticScope: FirScope,
-) : FirScope() {
+    private val useSiteStaticScope: JavaClassStaticUseSiteScope,
+) : FirScope(), FirContainingNamesAwareScope {
     private val signatureEnhancement = FirSignatureEnhancement(owner.fir, session) {
         emptyList()
     }
@@ -47,5 +48,18 @@ class JavaClassStaticEnhancementScope(
             val function = signatureEnhancement.enhancedFunction(original, name = null)
             processor(function as FirConstructorSymbol)
         }
+    }
+
+    override fun getCallableNames(): Set<Name> {
+        return useSiteStaticScope.getCallableNames()
+    }
+
+    override fun getClassifierNames(): Set<Name> {
+        return useSiteStaticScope.getClassifierNames()
+    }
+
+
+    override fun mayContainName(name: Name): Boolean {
+        return useSiteStaticScope.mayContainName(name)
     }
 }

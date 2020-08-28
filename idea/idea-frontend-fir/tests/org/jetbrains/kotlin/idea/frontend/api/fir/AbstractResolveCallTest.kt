@@ -8,14 +8,15 @@ package org.jetbrains.kotlin.idea.frontend.api.fir
 import com.intellij.openapi.editor.CaretState
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import com.intellij.testFramework.LightCodeInsightTestCase
 import org.jetbrains.kotlin.idea.addExternalTestFiles
 import org.jetbrains.kotlin.idea.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.idea.frontend.api.CallInfo
-import org.jetbrains.kotlin.idea.frontend.api.types.KtType
+import org.jetbrains.kotlin.idea.frontend.api.analyze
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtParameterSymbol
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase
+import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
@@ -28,7 +29,7 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.javaGetter
 
 
-abstract class AbstractResolveCallTest : @Suppress("DEPRECATION") KotlinLightCodeInsightTestCase() {
+abstract class AbstractResolveCallTest : @Suppress("DEPRECATION") LightCodeInsightTestCase() {
     override fun getTestDataPath(): String = KotlinTestUtils.getHomeDirectory() + "/"
 
     protected fun doTest(path: String) {
@@ -39,12 +40,13 @@ abstract class AbstractResolveCallTest : @Suppress("DEPRECATION") KotlinLightCod
         }
 
         val actualText = executeOnPooledThreadInReadAction {
-            val analysisSession = KtFirAnalysisSession(file as KtFile)
-            val callInfos = elements.map { element ->
-                when (element) {
-                    is KtCallExpression -> analysisSession.resolveCall(element)
-                    is KtBinaryExpression -> analysisSession.resolveCall(element)
-                    else -> error("Selected should be either KtCallExpression or KtBinaryExpression but was $element")
+            val callInfos = analyze(file as KtFile) {
+                elements.map { element ->
+                    when (element) {
+                        is KtCallExpression -> element.resolveCall()
+                        is KtBinaryExpression -> element.resolveCall()
+                        else -> error("Selected should be either KtCallExpression or KtBinaryExpression but was $element")
+                    }
                 }
             }
 
@@ -88,7 +90,7 @@ private fun CallInfo.stringRepresentation(): String {
     fun KtType.render() = asStringForDebugging().replace('/', '.')
     fun Any.stringValue(): String? = when (this) {
         is KtFunctionLikeSymbol -> buildString {
-            append(if (this@stringValue is KtFunctionSymbol) fqName else "<constructor>")
+            append(if (this@stringValue is KtFunctionSymbol) callableIdIfNonLocal ?: name else "<constructor>")
             append("(")
             (this@stringValue as? KtFunctionSymbol)?.receiverType?.let { receiver ->
                 append("<receiver>: ${receiver.render()}")

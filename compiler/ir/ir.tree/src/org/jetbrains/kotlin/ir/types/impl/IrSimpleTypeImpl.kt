@@ -17,9 +17,11 @@ class IrSimpleTypeImpl(
     override val classifier: IrClassifierSymbol,
     override val hasQuestionMark: Boolean,
     override val arguments: List<IrTypeArgument>,
-    annotations: List<IrConstructorCall>,
+    override val annotations: List<IrConstructorCall>,
     override val abbreviation: IrTypeAbbreviation? = null
-) : IrTypeBase(kotlinType, annotations, Variance.INVARIANT), IrSimpleType, IrTypeProjection {
+) : IrTypeBase(kotlinType), IrSimpleType {
+    override val variance: Variance
+        get() = Variance.INVARIANT
 
     constructor(
         classifier: IrClassifierSymbol,

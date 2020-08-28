@@ -85,19 +85,32 @@ class JavaClassMembersEnhancementScope(
         }
     }
 
-    override fun processOverriddenFunctionsWithDepth(
+    override fun processDirectOverriddenFunctionsWithBaseScope(
         functionSymbol: FirFunctionSymbol<*>,
-        processor: (FirFunctionSymbol<*>, Int) -> ProcessorAction
-    ): ProcessorAction = doProcessOverriddenCallables(
-        functionSymbol, processor, overriddenFunctions, useSiteMemberScope,
-        FirTypeScope::processOverriddenFunctionsWithDepth
+        processor: (FirFunctionSymbol<*>, FirTypeScope) -> ProcessorAction
+    ): ProcessorAction =
+        doProcessDirectOverriddenCallables(
+            functionSymbol, processor, overriddenFunctions, useSiteMemberScope,
+            FirTypeScope::processDirectOverriddenFunctionsWithBaseScope
+        )
+
+    override fun processDirectOverriddenPropertiesWithBaseScope(
+        propertySymbol: FirPropertySymbol,
+        processor: (FirPropertySymbol, FirTypeScope) -> ProcessorAction
+    ): ProcessorAction = doProcessDirectOverriddenCallables(
+        propertySymbol, processor, overriddenProperties, useSiteMemberScope,
+        FirTypeScope::processDirectOverriddenPropertiesWithBaseScope
     )
 
-    override fun processOverriddenPropertiesWithDepth(
-        propertySymbol: FirPropertySymbol,
-        processor: (FirPropertySymbol, Int) -> ProcessorAction
-    ): ProcessorAction = doProcessOverriddenCallables(
-        propertySymbol, processor, overriddenProperties, useSiteMemberScope,
-        FirTypeScope::processOverriddenPropertiesWithDepth
-    )
+    override fun getCallableNames(): Set<Name> {
+        return useSiteMemberScope.getCallableNames()
+    }
+
+    override fun getClassifierNames(): Set<Name> {
+        return useSiteMemberScope.getClassifierNames()
+    }
+
+    override fun mayContainName(name: Name): Boolean {
+        return useSiteMemberScope.mayContainName(name)
+    }
 }

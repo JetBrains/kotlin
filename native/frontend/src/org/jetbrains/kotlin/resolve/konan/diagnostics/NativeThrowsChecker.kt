@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.resolve.konan.diagnostics
 
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -37,7 +37,7 @@ object NativeThrowsChecker : DeclarationChecker {
 
     // Note: can't use subtyping, because CancellationException can be missing (e.g. for common code).
     private val cancellationExceptionAndSupersClassIds = sequenceOf(
-        KotlinBuiltIns.FQ_NAMES.throwable,
+        StandardNames.FqNames.throwable,
         FqName("kotlin.Exception"),
         FqName("kotlin.RuntimeException"),
         FqName("kotlin.IllegalStateException"),

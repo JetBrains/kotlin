@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irTemporary
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrDynamicOperatorExpressionImpl
-import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -317,8 +316,8 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         val getterDescriptor = unwrappedPropertyDescriptor.unwrappedGetMethod
         val setterDescriptor = unwrappedPropertyDescriptor.unwrappedSetMethod
 
-        val getterSymbol = getterDescriptor?.let { context.symbolTable.referenceFunction(it.original) }
-        val setterSymbol = setterDescriptor?.let { context.symbolTable.referenceFunction(it.original) }
+        val getterSymbol = getterDescriptor?.let { context.symbolTable.referenceSimpleFunction(it.original) }
+        val setterSymbol = setterDescriptor?.let { context.symbolTable.referenceSimpleFunction(it.original) }
 
         val propertyIrType = descriptor.type.toIrType()
         return if (getterSymbol != null || setterSymbol != null) {
