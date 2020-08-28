@@ -2,6 +2,7 @@ package org.jetbrains.dokka.base.transformers.documentables
 
 import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
 import org.jetbrains.dokka.model.DModule
+import org.jetbrains.dokka.model.SourceSetDependent
 import org.jetbrains.dokka.model.doc.DocumentationNode
 import org.jetbrains.dokka.transformers.documentation.PreMergeDocumentableTransformer
 
@@ -22,8 +23,8 @@ internal class ModuleAndPackageDocumentationTransformer(
         }
     }
 
-    private operator fun Map<DokkaSourceSet, DocumentationNode>.plus(
-        other: Map<DokkaSourceSet, DocumentationNode>
+    private operator fun SourceSetDependent<DocumentationNode>.plus(
+        other: SourceSetDependent<DocumentationNode>
     ): Map<DokkaSourceSet, DocumentationNode> =
         (asSequence() + other.asSequence())
             .distinct()
