@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider.Companion.CLONE
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider.Companion.CLONEABLE_CLASS_ID
 import org.jetbrains.kotlin.fir.resolve.transformers.sealedInheritors
+import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
@@ -48,7 +49,7 @@ fun deserializeClassToSymbol(
     nameResolver: NameResolver,
     session: FirSession,
     defaultAnnotationDeserializer: AbstractAnnotationDeserializer?,
-    scopeProvider: KotlinScopeProvider,
+    scopeProvider: FirScopeProvider,
     parentContext: FirDeserializationContext? = null,
     containerSource: DeserializedContainerSource? = null,
     deserializeNestedClass: (ClassId, FirDeserializationContext) -> FirRegularClassSymbol?
