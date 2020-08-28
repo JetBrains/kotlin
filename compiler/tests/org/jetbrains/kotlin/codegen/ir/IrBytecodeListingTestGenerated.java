@@ -230,6 +230,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         public void testOnReceiver() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/annotations/onReceiver.kt");
         }
+
+        @TestMetadata("unsignedTypes.kt")
+        public void testUnsignedTypes() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/annotations/unsignedTypes.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeListing/collectionStubs")

@@ -81,7 +81,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         }
 
         val property = (function as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
-        if (property != null && function.name.isSpecial) {
+        if (property != null) {
             val propertyName = property.name.asString()
             val propertyParent = property.parentAsClass
             if (propertyParent.isAnnotationClass)
@@ -93,8 +93,10 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
             if ((propertyParent.isEnumClass || propertyParent.isEnumEntry) && (propertyName == "name" || propertyName == "ordinal"))
                 return propertyName
 
-            val accessorName = if (function.isGetter) JvmAbi.getterName(propertyName) else JvmAbi.setterName(propertyName)
-            return mangleMemberNameIfRequired(accessorName, function)
+            if (function.name.isSpecial) {
+                val accessorName = if (function.isGetter) JvmAbi.getterName(propertyName) else JvmAbi.setterName(propertyName)
+                return mangleMemberNameIfRequired(accessorName, function)
+            }
         }
 
         return mangleMemberNameIfRequired(function.name.asString(), function)
