@@ -126,6 +126,8 @@ constructor(
                 project.layout.file(binary.linkTask.map { it.destinationDir })
             )
 
+            task.from(project.tasks.named(compilation.processResourcesTaskName))
+
             task.into(
                 npmProject.dist
             )

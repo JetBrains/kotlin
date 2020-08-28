@@ -215,9 +215,8 @@ abstract class KotlinJsIrSubTarget(
                         PREPARE_JS_LIBRARY_TASK_NAME
                     )
                 ) {
-                    it.from(processResourcesTask)
                     it.from(project.tasks.named(npmProject.publicPackageJsonTaskName))
-                    it.from(binary.linkTask)
+                    it.from(binary.linkSyncTask)
 
                     it.into(binary.distribution.directory)
                 }
