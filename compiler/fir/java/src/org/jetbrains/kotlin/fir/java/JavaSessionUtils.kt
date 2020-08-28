@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.fir.java
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.registerJvmEffectiveVisibilityResolver
 import org.jetbrains.kotlin.fir.resolve.calls.jvm.registerJvmCallConflictResolverFactory
+import org.jetbrains.kotlin.fir.resolve.registerJavaClassMapper
 
 fun FirSession.registerJavaSpecificComponents() {
     registerJavaVisibilityChecker()
     registerJvmCallConflictResolverFactory()
     registerJvmEffectiveVisibilityResolver()
+    registerJavaClassMapper()
 }
