@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.types.model
 
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
+import org.jetbrains.kotlin.types.Variance
 
 interface KotlinTypeMarker
 interface TypeArgumentMarker
@@ -41,6 +42,13 @@ enum class TypeVariance(val presentation: String) {
     override fun toString(): String = presentation
 }
 
+fun Variance.convertVariance(): TypeVariance {
+    return when (this) {
+        Variance.INVARIANT -> TypeVariance.INV
+        Variance.IN_VARIANCE -> TypeVariance.IN
+        Variance.OUT_VARIANCE -> TypeVariance.OUT
+    }
+}
 
 interface TypeSystemOptimizationContext {
     /**

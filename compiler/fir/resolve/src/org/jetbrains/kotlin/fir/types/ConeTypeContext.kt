@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
-import org.jetbrains.kotlin.types.checker.convertVariance
 import org.jetbrains.kotlin.types.model.*
 
 class ErrorTypeConstructor(val reason: String) : TypeConstructorMarker {

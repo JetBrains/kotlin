@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.checker.convertVariance
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.ir.types.isPrimitiveType as irTypePredicates_isPrimitiveType
 

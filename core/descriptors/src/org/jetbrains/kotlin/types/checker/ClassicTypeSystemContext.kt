@@ -712,15 +712,6 @@ private fun errorSupportedOnlyInTypeInference(): Nothing {
     error("supported only in type inference context")
 }
 
-fun Variance.convertVariance(): TypeVariance {
-    return when (this) {
-        Variance.INVARIANT -> TypeVariance.INV
-        Variance.IN_VARIANCE -> TypeVariance.IN
-        Variance.OUT_VARIANCE -> TypeVariance.OUT
-    }
-}
-
-
 @OptIn(ExperimentalContracts::class)
 fun requireOrDescribe(condition: Boolean, value: Any?) {
     contract {

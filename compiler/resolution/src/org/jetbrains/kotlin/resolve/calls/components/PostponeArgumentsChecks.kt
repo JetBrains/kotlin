@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.checker.convertVariance
 import org.jetbrains.kotlin.types.model.TypeVariance
+import org.jetbrains.kotlin.types.model.convertVariance
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
