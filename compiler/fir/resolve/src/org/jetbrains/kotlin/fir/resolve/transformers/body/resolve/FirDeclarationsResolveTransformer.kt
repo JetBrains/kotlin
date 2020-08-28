@@ -895,8 +895,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                             buildResolvedTypeRef {
                                 type = resultType.coneType
                                 annotations.addAll(resultType.annotations)
-                                resultType.source.psi?.let {
-                                    source = FirFakeSourceElement(it, FirFakeSourceElementKind.PropertyFromParameter)
+                                resultType.source?.fakeElement(FirFakeSourceElementKind.PropertyFromParameter)?.let {
+                                    source = it
                                 }
                             }
                         }
@@ -916,8 +916,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                                 buildResolvedTypeRef {
                                     type = resultType.coneType
                                     annotations.addAll(resultType.annotations)
-                                    resultType.source.psi?.let {
-                                        source = FirFakeSourceElement(it, FirFakeSourceElementKind.PropertyFromParameter)
+                                    resultType.source?.fakeElement(FirFakeSourceElementKind.PropertyFromParameter)?.let {
+                                        source = it
                                     }
                                 }
                             }
