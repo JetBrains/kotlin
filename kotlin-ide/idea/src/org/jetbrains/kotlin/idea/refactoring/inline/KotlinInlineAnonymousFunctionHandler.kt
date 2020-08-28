@@ -10,15 +10,20 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.util.isAnonymousFunction
 import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
-class KotlinInlineAnonymousFunctionHandler : AbstractKotlinInlineFunctionHandler<KtNamedFunction>() {
-    override fun canInlineKotlinFunction(function: KtFunction): Boolean = function.isAnonymousFunction
+class KotlinInlineAnonymousFunctionHandler : AbstractKotlinInlineFunctionHandler<KtFunction>() {
+    override fun canInlineKotlinFunction(function: KtFunction): Boolean = function.isAnonymousFunction || function is KtFunctionLiteral
 
-    override fun inlineKotlinFunction(project: Project, editor: Editor?, function: KtNamedFunction) {
+    override fun inlineKotlinFunction(project: Project, editor: Editor?, function: KtFunction) {
         val call = KotlinInlineAnonymousFunctionProcessor.findCallExpression(function)
         if (call == null) {
-            val message = KotlinBundle.message("refactoring.cannot.be.applied.to.anonymous.function.without.invocation", refactoringName)
+            val message = if (function is KtFunctionLiteral)
+                KotlinBundle.message("refactoring.cannot.be.applied.to.lambda.expression.without.invocation", refactoringName)
+            else
+                KotlinBundle.message("refactoring.cannot.be.applied.to.anonymous.function.without.invocation", refactoringName)
+
             return showErrorHint(project, editor, message)
         }
 

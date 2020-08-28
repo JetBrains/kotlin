@@ -1,0 +1,1 @@
+val xx = <caret>{ x: Int, y: Int -> x + y }.invoke(1, 2)

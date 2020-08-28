@@ -851,6 +851,59 @@ public class InlineTestGenerated extends AbstractInlineTest {
     }
 
     @RunWith(JUnit3RunnerWithInners.class)
+    @TestMetadata("testData/refactoring/inline/lambdaExpression")
+    public static class LambdaExpression extends AbstractInlineTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        @TestMetadata("inWith.kt")
+        public void testInWith() throws Exception {
+            runTest("testData/refactoring/inline/lambdaExpression/inWith.kt");
+        }
+
+        @TestMetadata("lambdaWithReceiverAsParameter.kt")
+        public void testLambdaWithReceiverAsParameter() throws Exception {
+            runTest("testData/refactoring/inline/lambdaExpression/lambdaWithReceiverAsParameter.kt");
+        }
+
+        @TestMetadata("lambdaWithReceiverAsParameter2.kt")
+        public void testLambdaWithReceiverAsParameter2() throws Exception {
+            runTest("testData/refactoring/inline/lambdaExpression/lambdaWithReceiverAsParameter2.kt");
+        }
+
+        @TestMetadata("lambdaWithReceiverAsParameter3.kt")
+        public void testLambdaWithReceiverAsParameter3() throws Exception {
+            runTest("testData/refactoring/inline/lambdaExpression/lambdaWithReceiverAsParameter3.kt");
+        }
+
+        @TestMetadata("withConstantParameter.kt")
+        public void testWithConstantParameter() throws Exception {
+            runTest("testData/refactoring/inline/lambdaExpression/withConstantParameter.kt");
+        }
+
+        @TestMetadata("withInvoke.kt")
+        public void testWithInvoke() throws Exception {
+            runTest("testData/refactoring/inline/lambdaExpression/withInvoke.kt");
+        }
+
+        @TestMetadata("withNotInvoke.kt")
+        public void testWithNotInvoke() throws Exception {
+            runTest("testData/refactoring/inline/lambdaExpression/withNotInvoke.kt");
+        }
+
+        @TestMetadata("withoutInvocation.kt")
+        public void testWithoutInvocation() throws Exception {
+            runTest("testData/refactoring/inline/lambdaExpression/withoutInvocation.kt");
+        }
+
+        @TestMetadata("withoutInvocation2.kt")
+        public void testWithoutInvocation2() throws Exception {
+            runTest("testData/refactoring/inline/lambdaExpression/withoutInvocation2.kt");
+        }
+    }
+
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/inline/namedFunction")
     public static class NamedFunction extends AbstractInlineTest {
         private void runTest(String testDataFilePath) throws Exception {
