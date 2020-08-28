@@ -15,9 +15,10 @@ dependencies {
     compile(project(":compiler:fir:tree"))
     compile(project(":compiler:resolution.common"))
     compile("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:${property("versions.kotlinx-collections-immutable")}")
+    implementation(project(":core:util.runtime"))
 
     compileOnly(project(":kotlin-reflect-api"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
+    compileOnly(intellijCoreDep()) { includeJars("guava", rootProject = rootProject) }
 }
 
 sourceSets {

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -275,8 +274,6 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     callCompleter.completeCall(resultExplicitReceiver, noExpectedType)
                 }
                 callCompleter.completeCall(resultExpression, expectedTypeRef)
-            } catch (e: ProcessCanceledException) {
-                throw e
             } catch (e: Throwable) {
                 throw RuntimeException("While resolving call ${functionCall.render()}", e)
             }

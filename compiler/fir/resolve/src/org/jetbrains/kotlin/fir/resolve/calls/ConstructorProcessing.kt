@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
@@ -175,8 +174,6 @@ private fun processConstructors(
                 }
             }
         }
-    } catch (e: ProcessCanceledException) {
-        throw e
     } catch (e: Throwable) {
         throw RuntimeException("While processing constructors", e)
     }
