@@ -14,8 +14,8 @@ data class CompositeSourceSetID(
     }
 
     val merged = DokkaSourceSetID(
-        scopeId = children.map { it.scopeId }.reduce { acc, s -> "$acc+$s" },
-        sourceSetName = children.map { it.sourceSetName }.reduce { acc, s -> "$acc+$s" }
+        scopeId = children.joinToString(separator = "+") { it.scopeId },
+        sourceSetName = children.joinToString(separator = "+") { it.sourceSetName }
     )
 
     val all: Set<DokkaSourceSetID> = setOf(merged, *children.toTypedArray())
