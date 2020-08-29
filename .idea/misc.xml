@@ -56,6 +56,7 @@
     <directory url="file://$PROJECT_DIR$/intellij/dbe/database/impl/resources/extensions" includeSubdirectories="true" />
     <file url="file://$PROJECT_DIR$/intellij/plugins/groovy/resources/IdeaPrintProjectSettings.groovy" />
   </component>
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FrameworkDetectionExcludesConfiguration" detection-enabled="false" />
   <component name="IdProvider" IDEtalkID="4C0175343CDB9AD0E0E8A560C818D963" />
   <component name="JavaScriptSettings">
@@ -82,10 +83,6 @@
   </component>
   <component name="ProjectKey">
     <option name="state" value="git@git.labs.intellij.net:idea/ultimate" />
-  </component>
-  <component name="ProjectPlainTextFileTypeManager">
-    <file url="file://$PROJECT_DIR$/intellij/python/jupyter/frontend/resources/static/generated/js/ipywidgets.js" />
-    <file url="file://$PROJECT_DIR$/intellij/python/jupyter/frontend/resources/static/generated/js/main.js" />
   </component>
   <component name="ProjectResources">
     <resource url="http://jetbrains.org/intellij/schema/application-info" location="$PROJECT_DIR$/intellij/community/platform/platform-resources/src/idea/ApplicationInfo.xsd" />
