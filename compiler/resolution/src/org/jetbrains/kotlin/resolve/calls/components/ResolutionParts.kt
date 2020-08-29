@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
-import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.components.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.inference.substitute
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -115,14 +115,22 @@ internal object NoArguments : ResolutionPart() {
 
 internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
     override fun KotlinResolutionCandidate.process(workIndex: Int) {
-        resolvedCall.knownParametersSubstitutor = knownTypeParametersResultingSubstitutor ?: TypeSubstitutor.EMPTY
+        val toFreshVariables =
+            if (candidateDescriptor.typeParameters.isEmpty())
+                FreshVariableNewTypeSubstitutor.Empty
+            else
+                createToFreshVariableSubstitutorAndAddInitialConstraints(candidateDescriptor, csBuilder)
+
+        val knownTypeParametersSubstitutor = knownTypeParametersResultingSubstitutor?.let {
+            createKnownParametersFromFreshVariablesSubstitutor(toFreshVariables, knownTypeParametersResultingSubstitutor)
+        } ?: EmptySubstitutor
+
+        resolvedCall.freshVariablesSubstitutor = toFreshVariables
+        resolvedCall.knownParametersSubstitutor = knownTypeParametersSubstitutor
 
         if (candidateDescriptor.typeParameters.isEmpty()) {
-            resolvedCall.freshVariablesSubstitutor = FreshVariableNewTypeSubstitutor.Empty
             return
         }
-        val toFreshVariables = createToFreshVariableSubstitutorAndAddInitialConstraints(candidateDescriptor, csBuilder)
-        resolvedCall.freshVariablesSubstitutor = toFreshVariables
 
         // bad function -- error on declaration side
         if (csBuilder.hasContradiction) return
@@ -175,6 +183,27 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
     ) = if (typeVariable.originalTypeParameter.shouldBeFlexible()) {
         KotlinTypeFactory.flexibleType(type.makeNotNullable().lowerIfFlexible(), type.makeNullable().upperIfFlexible())
     } else type
+
+    private fun createKnownParametersFromFreshVariablesSubstitutor(
+        freshVariableSubstitutor: FreshVariableNewTypeSubstitutor,
+        knownTypeParametersSubstitutor: TypeSubstitutor,
+    ): NewTypeSubstitutor {
+        if (knownTypeParametersSubstitutor.isEmpty)
+            return EmptySubstitutor
+
+        val knownTypeParameterByTypeVariable = mutableMapOf<TypeConstructor, UnwrappedType>().let { map ->
+            for (typeVariable in freshVariableSubstitutor.freshVariables) {
+                val typeParameterType = typeVariable.originalTypeParameter.defaultType
+                val substitutedKnownTypeParameter = knownTypeParametersSubstitutor.substitute(typeParameterType)
+
+                if (substitutedKnownTypeParameter !== typeParameterType)
+                    map[typeVariable.defaultType.constructor] = substitutedKnownTypeParameter
+            }
+            map
+        }
+
+        return knownTypeParametersSubstitutor.composeWith(NewTypeSubstitutorByConstructorMap(knownTypeParameterByTypeVariable))
+    }
 
     fun createToFreshVariableSubstitutorAndAddInitialConstraints(
         candidateDescriptor: CallableDescriptor,
@@ -595,8 +624,8 @@ private fun KotlinResolutionCandidate.checkUnsafeImplicitInvokeAfterSafeCall(arg
 }
 
 private fun KotlinResolutionCandidate.prepareExpectedType(expectedType: UnwrappedType): UnwrappedType {
-    val resultType = knownTypeParametersResultingSubstitutor?.substitute(expectedType) ?: expectedType
-    return resolvedCall.freshVariablesSubstitutor.safeSubstitute(resultType)
+    val resultType = resolvedCall.freshVariablesSubstitutor.safeSubstitute(expectedType)
+    return resolvedCall.knownParametersSubstitutor.safeSubstitute(resultType)
 }
 
 internal object CheckReceivers : ResolutionPart() {
@@ -714,7 +743,7 @@ internal object ErrorDescriptorResolutionPart : ResolutionPart() {
         resolvedCall.typeArgumentMappingByOriginal = TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
         resolvedCall.argumentMappingByOriginal = emptyMap()
         resolvedCall.freshVariablesSubstitutor = FreshVariableNewTypeSubstitutor.Empty
-        resolvedCall.knownParametersSubstitutor = TypeSubstitutor.EMPTY
+        resolvedCall.knownParametersSubstitutor = EmptySubstitutor
         resolvedCall.argumentToCandidateParameter = emptyMap()
 
         kotlinCall.explicitReceiver?.safeAs<SimpleKotlinCallArgument>()?.let {
