@@ -10,7 +10,6 @@ plugins {
 }
 
 dependencies {
-  implementation(kotlin("stdlib-jdk8"))
   compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable")
 
   kapt("com.google.auto.service:auto-service:1.0-rc6")

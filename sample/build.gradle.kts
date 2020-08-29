@@ -1,18 +1,11 @@
-buildscript {
-  dependencies {
-    classpath("gradle.plugin.com.bnorm.power:kotlin-power-assert-gradle:0.4.0")
-  }
-}
-
 plugins {
   kotlin("multiplatform") version "1.4.0"
+  id("com.bnorm.power.kotlin-power-assert") version "0.4.0"
 }
-apply(plugin = "com.bnorm.power.kotlin-power-assert")
 
 repositories {
   mavenCentral()
 }
-
 
 kotlin {
   jvm {
