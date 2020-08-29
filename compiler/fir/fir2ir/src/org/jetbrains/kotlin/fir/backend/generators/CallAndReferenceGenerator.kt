@@ -90,9 +90,14 @@ class CallAndReferenceGenerator(
                     )
                 }
                 is IrFunctionSymbol -> {
+                    assert(type.isFunctionTypeOrSubtype()) {
+                        "Callable reference whose symbol refers to a function should be of functional type."
+                    }
+                    type as IrSimpleType
                     val function = symbol.owner
                     // TODO: should refer to LanguageVersionSettings.SuspendConversion
-                    if (requiresCoercionToUnit(type, function) ||
+                    if (requiresVarargSpread(callableReferenceAccess, type, function) ||
+                        requiresCoercionToUnit(type, function) ||
                         requiresSuspendConversion(type, function)
                     ) {
                         val adaptedType = callableReferenceAccess.typeRef.coneType.kFunctionTypeToFunctionType()
@@ -115,15 +120,58 @@ class CallAndReferenceGenerator(
         }.applyTypeArguments(callableReferenceAccess).applyReceivers(callableReferenceAccess, explicitReceiverExpression)
     }
 
-    private fun requiresCoercionToUnit(type: IrType, function: IrFunction): Boolean {
-        if (!type.isFunctionTypeOrSubtype()) {
+    /*
+     * For example,
+     * fun referenceConsumer(f: (Char, Char) -> String): String = ... // e.g., f(char1, char2)
+     * fun referenced(vararg xs: Char) = ...
+     * fun useSite(...) = { ... referenceConsumer(::referenced) ... }
+     *
+     * At the use site, instead of referenced, we can put the adapter: { a, b -> referenced(a, b) }
+     */
+    private fun requiresVarargSpread(
+        callableReferenceAccess: FirCallableReferenceAccess,
+        type: IrSimpleType,
+        function: IrFunction
+    ): Boolean {
+        // Unbound callable reference 'A::foo'
+        val shift = if (callableReferenceAccess.explicitReceiver is FirResolvedQualifier) 1 else 0
+        val typeArguments = type.arguments
+        // Drop the return type from type arguments
+        val expectedParameterSize = typeArguments.size - 1 - shift
+        if (expectedParameterSize < function.valueParameters.size) {
             return false
         }
-        val expectedReturnType = (type as? IrSimpleType)?.arguments?.last()?.typeOrNull
+        var hasSpreadCase = false
+        function.valueParameters.forEachIndexed { index, irValueParameter ->
+            if (irValueParameter.isVararg && typeArguments[shift + index] == irValueParameter.varargElementType) {
+                hasSpreadCase = true
+            }
+        }
+        return hasSpreadCase
+    }
+
+    /*
+     * For example,
+     * fun referenceConsumer(f: () -> Unit) = f()
+     * fun referenced(...): Any { ... }
+     * fun useSite(...) = { ... referenceConsumer(::referenced) ... }
+     *
+     * At the use site, instead of referenced, we can put the adapter: { ... -> referenced(...) }
+     */
+    private fun requiresCoercionToUnit(type: IrSimpleType, function: IrFunction): Boolean {
+        val expectedReturnType = type.arguments.last().typeOrNull
         return expectedReturnType?.isUnit() == true && !function.returnType.isUnit()
     }
 
-    private fun requiresSuspendConversion(type: IrType, function: IrFunction): Boolean =
+    /*
+     * For example,
+     * fun referenceConsumer(f: suspend () -> Unit) = ...
+     * fun nonSuspendFunction(...) = ...
+     * fun useSite(...) = { ... referenceConsumer(::nonSuspendFunction) ... }
+     *
+     * At the use site, instead of referenced, we can put the suspend lambda as an adapter.
+     */
+    private fun requiresSuspendConversion(type: IrSimpleType, function: IrFunction): Boolean =
         type.isKSuspendFunction() && !function.isSuspend
 
     private fun ConeKotlinType.kFunctionTypeToFunctionType(): IrSimpleType {
@@ -301,7 +349,7 @@ class CallAndReferenceGenerator(
                 error("unknown callee kind: ${adapteeFunction.render()}")
         }
 
-        var shift = 0
+        var adapterParameterIndex = 0
         if (boundDispatchReceiver != null || boundExtensionReceiver != null) {
             val receiverValue = IrGetValueImpl(
                 startOffset, endOffset, adapterFunction.extensionReceiverParameter!!.symbol, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
@@ -318,7 +366,7 @@ class CallAndReferenceGenerator(
             )
             if (adapteeFunction.extensionReceiverParameter != null) {
                 irCall.extensionReceiver = adaptedReceiverValue
-                shift = 1
+                adapterParameterIndex++
             } else {
                 irCall.dispatchReceiver = adaptedReceiverValue
             }
@@ -329,26 +377,39 @@ class CallAndReferenceGenerator(
 
         adapteeFunction.valueParameters.mapIndexed { index, valueParameter ->
             when {
-                valueParameter.hasDefaultValue() -> {
-                    irCall.putValueArgument(shift + index, null)
-                }
                 valueParameter.isVararg -> {
                     if (adapterFunction.valueParameters.size <= index) {
-                        irCall.putValueArgument(shift + index, null)
+                        irCall.putValueArgument(index, null)
                     } else {
                         val adaptedValueArgument =
                             IrVarargImpl(startOffset, endOffset, valueParameter.type, valueParameter.varargElementType!!)
-                        val irValueArgument = adapterFunction.valueParameters[index].toGetValue()
-                        if (irValueArgument.type == valueParameter.type) {
-                            adaptedValueArgument.addElement(IrSpreadElementImpl(startOffset, endOffset, irValueArgument))
-                        } else {
-                            adaptedValueArgument.addElement(irValueArgument)
+                        var neitherArrayNorSpread = false
+                        while (adapterParameterIndex < adapterFunction.valueParameters.size) {
+                            val irValueArgument = adapterFunction.valueParameters[adapterParameterIndex].toGetValue()
+                            if (irValueArgument.type == valueParameter.type) {
+                                adaptedValueArgument.addElement(IrSpreadElementImpl(startOffset, endOffset, irValueArgument))
+                                adapterParameterIndex++
+                                break
+                            } else if (irValueArgument.type == valueParameter.varargElementType) {
+                                adaptedValueArgument.addElement(irValueArgument)
+                                adapterParameterIndex++
+                            } else {
+                                neitherArrayNorSpread = true
+                                break
+                            }
                         }
-                        irCall.putValueArgument(shift + index, adaptedValueArgument)
+                        if (neitherArrayNorSpread) {
+                            irCall.putValueArgument(index, null)
+                        } else {
+                            irCall.putValueArgument(index, adaptedValueArgument)
+                        }
                     }
                 }
+                valueParameter.hasDefaultValue() -> {
+                    irCall.putValueArgument(index, null)
+                }
                 else -> {
-                    irCall.putValueArgument(shift + index, adapterFunction.valueParameters[index].toGetValue())
+                    irCall.putValueArgument(index, adapterFunction.valueParameters[adapterParameterIndex++].toGetValue())
                 }
             }
         }
