@@ -905,10 +905,6 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/backend/nio.fs/fleet.backend.nio.fs.iml" filepath="$PROJECT_DIR$/intellij/fleet/backend/nio.fs/fleet.backend.nio.fs.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/backend/plugins/fleet.backend.plugins.iml" filepath="$PROJECT_DIR$/intellij/fleet/backend/plugins/fleet.backend.plugins.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/backend/plugins/go/fleet.backend.plugins.go.iml" filepath="$PROJECT_DIR$/intellij/fleet/backend/plugins/go/fleet.backend.plugins.go.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/.idea/modules/fleet.build.iml" filepath="$PROJECT_DIR$/intellij/.idea/modules/fleet.build.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/.idea/modules/fleet.build.buildSrc.iml" filepath="$PROJECT_DIR$/intellij/.idea/modules/fleet.build.buildSrc.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/.idea/modules/fleet.build.buildSrc.main.iml" filepath="$PROJECT_DIR$/intellij/.idea/modules/fleet.build.buildSrc.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/.idea/modules/fleet.build.buildSrc.test.iml" filepath="$PROJECT_DIR$/intellij/.idea/modules/fleet.build.buildSrc.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/controller/fleet.controller.iml" filepath="$PROJECT_DIR$/intellij/fleet/controller/fleet.controller.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/frontend/fleet.frontend.iml" filepath="$PROJECT_DIR$/intellij/fleet/frontend/fleet.frontend.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/frontend.ui/fleet.frontend.ui.iml" filepath="$PROJECT_DIR$/intellij/fleet/frontend.ui/fleet.frontend.ui.iml" />
@@ -2072,6 +2068,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/tide/intellij.tide.main.iml" filepath="$PROJECT_DIR$/intellij/tide/intellij.tide.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/tide/intellij.tide.resources.iml" filepath="$PROJECT_DIR$/intellij/tide/intellij.tide.resources.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/intellij.tools.content.iml" filepath="$PROJECT_DIR$/intellij/intellij.tools.content.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/build/dependencies/intellij.tools.dependencies.iml" filepath="$PROJECT_DIR$/intellij/community/build/dependencies/intellij.tools.dependencies.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/build/dependencies/androidSdkUpload/intellij.tools.dependencies.androidSdkUpload.iml" filepath="$PROJECT_DIR$/intellij/community/build/dependencies/androidSdkUpload/intellij.tools.dependencies.androidSdkUpload.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/build/dependencies/gradle-api-deps/intellij.tools.dependencies.gradle.iml" filepath="$PROJECT_DIR$/intellij/community/build/dependencies/gradle-api-deps/intellij.tools.dependencies.gradle.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/build/dependencies/kotlin-deps/intellij.tools.dependencies.kotlin.iml" filepath="$PROJECT_DIR$/intellij/community/build/dependencies/kotlin-deps/intellij.tools.dependencies.kotlin.iml" />
