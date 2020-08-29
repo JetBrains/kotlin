@@ -332,7 +332,11 @@ private fun FirSession.createAdaptedKFunctionType(
 
     // If a function with vararg is passed to a place where a spread of elements is expected, we can adapt the function reference to
     // literally spread such vararg argument. E.g., foo(vararg xs: Char): String => bar(::foo) where bar(f: (Char, Char) -> String)
-    if (expectedParameterNumber != null && expectedParameterTypes != null && parameterTypes.size < expectedParameterNumber && lastVarargParameter != null) {
+    if (expectedParameterNumber != null &&
+        expectedParameterTypes != null &&
+        parameterTypes.size < expectedParameterNumber &&
+        lastVarargParameter != null
+    ) {
         val varargArrayType = lastVarargParameter.returnTypeRef.coneType
         val varargElementType = varargArrayType.varargElementType(session)
         val expectedParameterType = (expectedParameterTypes[parameterTypes.size + shift] as? ConeKotlinTypeProjection)?.type
