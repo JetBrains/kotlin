@@ -1018,9 +1018,10 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && matchTextOrVariable(property.nameIdentifier, other.nameIdentifier)
                 && property.isVar == other.isVar
                 && myMatchingVisitor.match(property.docComment, other.docComment)
-                && (property.delegateExpressionOrInitializer == null || myMatchingVisitor.matchOptionally(
-            property.delegateExpressionOrInitializer, other.delegateExpressionOrInitializer
-        ))
+                && myMatchingVisitor.match(
+            property.delegateExpressionOrInitializer,
+            other.delegateExpressionOrInitializer
+        )
                 && myMatchingVisitor.match(property.getter, other.getter)
                 && myMatchingVisitor.match(property.setter, other.setter)
                 && myMatchingVisitor.match(property.receiverTypeReference, other.receiverTypeReference)
