@@ -123,7 +123,6 @@ object UnusedChecker : FirControlFlowChecker() {
         private val localProperties: Set<FirPropertySymbol>
     ) : ControlFlowGraphVisitor<VariableStatusInfo, Collection<VariableStatusInfo>>() {
         fun getData(graph: ControlFlowGraph): Map<CFGNode<*>, VariableStatusInfo> {
-            println("getting data for local properties set ${localProperties.joinToString()}")
             return graph.collectDataForNode(TraverseDirection.Backward, VariableStatusInfo.EMPTY, this)
         }
 
