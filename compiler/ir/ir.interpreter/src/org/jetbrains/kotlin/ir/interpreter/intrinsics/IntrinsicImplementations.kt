@@ -105,28 +105,6 @@ internal object EnumValueOf : IntrinsicBase() {
     }
 }
 
-internal object RegexReplace : IntrinsicBase() {
-    override fun equalTo(irFunction: IrFunction): Boolean {
-        val fqName = irFunction.fqNameWhenAvailable.toString()
-        return fqName == "kotlin.text.Regex.replace" && irFunction.valueParameters.size == 2
-    }
-
-    override fun evaluate(irFunction: IrFunction, stack: Stack, interpret: IrElement.() -> ExecutionResult): ExecutionResult {
-        val states = stack.getAll().map { it.state }
-        val regex = states.filterIsInstance<Wrapper>().single().value as Regex
-        val input = states.filterIsInstance<Primitive<*>>().single().asString()
-        val transform = states.filterIsInstance<Lambda>().single().irFunction
-        val matchResultParameter = transform.valueParameters.single()
-        val result = regex.replace(input) {
-            val itAsState = Variable(matchResultParameter.symbol, Wrapper(it, matchResultParameter.type.classOrNull!!.owner))
-            stack.newFrame(initPool = listOf(itAsState)) { transform.interpret() }//.check { return it }
-            stack.popReturnValue().asString()
-        }
-        stack.pushReturnValue(result.toState(irFunction.returnType))
-        return Next
-    }
-}
-
 internal object EnumHashCode : IntrinsicBase() {
     override fun equalTo(irFunction: IrFunction): Boolean {
         val fqName = irFunction.fqNameWhenAvailable.toString()

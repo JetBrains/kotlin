@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.interpreter.isFunction
+import org.jetbrains.kotlin.ir.interpreter.isKFunction
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.nameForIrSerialization
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -18,11 +21,17 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 internal class Lambda(val irFunction: IrFunction, override val irClass: IrClass) : State {
     override val fields: MutableList<Variable> = mutableListOf()
     override val typeArguments: MutableList<Variable> = mutableListOf()
+    val isKFunction = irClass.defaultType.isKFunction()
+    val isFunction = irClass.defaultType.isFunction()
 
     private val invokeSymbol = irClass.declarations
         .single { it.nameForIrSerialization.asString() == "invoke" }
         .cast<IrSimpleFunction>()
         .getLastOverridden().symbol
+
+    fun getArity(): Int? {
+        return irClass.name.asString().removePrefix("Function").removePrefix("KFunction").toIntOrNull()
+    }
 
     override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? {
         return if (invokeSymbol == expression.symbol) irFunction else null

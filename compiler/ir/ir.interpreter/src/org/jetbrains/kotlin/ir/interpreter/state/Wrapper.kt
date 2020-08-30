@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.interpreter.state
 
+import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -124,19 +125,28 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex 
             //TODO check if primitive array is possible here
             return when {
                 notNullType.isPrimitiveType() || notNullType.isString() -> getPrimitiveClass(notNullType, asObject)!!
-                notNullType.isArray() -> if (asObject) Array<Any?>::class.javaObjectType else Array<Any?>::class.java
+                notNullType.isArray() -> {
+                    val argumentFqName = (this as IrSimpleType).arguments.single().typeOrNull?.classOrNull?.owner?.fqNameWhenAvailable
+                    argumentFqName?.let { Class.forName("[L$it;") } ?: Array<Any?>::class.java
+                }
                 notNullType.isNothing() -> Nothing::class.java
                 notNullType.isAny() -> Any::class.java
+                notNullType.isUnit() -> if (asObject) Void::class.javaObjectType else Void::class.javaPrimitiveType!!
                 notNullType.isNumber() -> Number::class.java
                 notNullType.isCharSequence() -> CharSequence::class.java
                 notNullType.isComparable() -> Comparable::class.java
                 notNullType.isThrowable() -> Throwable::class.java
                 notNullType.isIterable() -> Iterable::class.java
 
-                // TODO implement function mapping; all complexity is to map big arity to FunctionN
-                //notNullType.isKFunction() -> Class.forName("kotlin.reflect.KFunction")
-                //notNullType.isFunction() -> Class.forName("kotlin.jvm.functions.Function_TODO")
-                //notNullType.isSuspendFunction() || notNullType.isKSuspendFunction() -> throw AssertionError()
+                notNullType.isKFunction() -> Class.forName("kotlin.reflect.KFunction")
+                notNullType.isFunction() -> {
+                    val arity = fqName?.removePrefix("kotlin.Function")?.toIntOrNull()
+                    return when {
+                        arity == null || arity >= BuiltInFunctionArity.BIG_ARITY -> Class.forName("kotlin.jvm.functions.FunctionN")
+                        else -> Class.forName("kotlin.jvm.functions.${fqName.removePrefix("kotlin.")}")
+                    }
+                }
+                //notNullType.isSuspendFunction() || notNullType.isKSuspendFunction() -> throw AssertionError() //TODO
 
                 fqName == "kotlin.Enum" -> Enum::class.java
                 fqName == "kotlin.collections.Collection" || fqName == "kotlin.collections.MutableCollection" -> Collection::class.java
@@ -147,6 +157,7 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex 
                 fqName == "kotlin.collections.Iterator" || fqName == "kotlin.collections.MutableIterator" -> Iterator::class.java
                 fqName == "kotlin.collections.Map.Entry" || fqName == "kotlin.collections.MutableMap.MutableEntry" -> Map.Entry::class.java
                 fqName == "kotlin.collections.ListIterator" || fqName == "kotlin.collections.MutableListIterator" -> ListIterator::class.java
+                fqName == "kotlin.collections.HashMap" -> HashMap::class.java
 
                 owner.hasAnnotation(evaluateIntrinsicAnnotation) -> Class.forName(owner!!.getEvaluateIntrinsicValue())
                 fqName == null -> Any::class.java // null if this.isTypeParameter()

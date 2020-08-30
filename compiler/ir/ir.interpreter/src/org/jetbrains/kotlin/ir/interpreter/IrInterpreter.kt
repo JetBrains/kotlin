@@ -16,6 +16,10 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.interpreter.builtins.*
 import org.jetbrains.kotlin.ir.interpreter.exceptions.*
 import org.jetbrains.kotlin.ir.interpreter.intrinsics.IntrinsicEvaluator
+import org.jetbrains.kotlin.ir.interpreter.proxy.CommonProxy
+import org.jetbrains.kotlin.ir.interpreter.proxy.LambdaProxy.Companion.asProxy
+import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
+import org.jetbrains.kotlin.ir.interpreter.proxy.unwrap
 import org.jetbrains.kotlin.ir.interpreter.stack.StackImpl
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.*
@@ -89,62 +93,14 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
         }
     }
 
-    /**
-     * calledFromBuiltIns - used to avoid cyclic calls. For example:
-     *     override fun toString(): String {
-     *         return super.toString()
-     *     }
-     */
-    internal class Proxy(val state: Common, val interpreter: IrInterpreter, private val calledFromBuiltIns: Boolean = false) {
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-
-            other as Proxy
-
-            val valueArguments = mutableListOf<Variable>()
-            val equalsFun = state.getEqualsFunction()
-            if (equalsFun.isFakeOverriddenFromAny() || calledFromBuiltIns) return this.state === other.state
-
-            equalsFun.getDispatchReceiver()!!.let { valueArguments.add(Variable(it, state)) }
-            valueArguments.add(Variable(equalsFun.valueParameters.single().symbol, other.state))
-
-            return with(interpreter) {
-                stack.newFrame(initPool = valueArguments) {
-                    equalsFun.interpret()
-                }
-                (stack.popReturnValue() as Primitive<*>).value as Boolean
-            } // TODO check
+    internal fun IrFunction.interpret(valueArguments: List<Variable>): Any? {
+        val returnLabel = stack.newFrame(initPool = valueArguments) {
+            this@interpret.interpret()
         }
-
-        override fun hashCode(): Int {
-            val valueArguments = mutableListOf<Variable>()
-            val hashCodeFun = state.getHashCodeFunction()
-            if (hashCodeFun.isFakeOverriddenFromAny() || calledFromBuiltIns) return System.identityHashCode(state)
-
-            hashCodeFun.getDispatchReceiver()!!.let { valueArguments.add(Variable(it, state)) }
-            return with(interpreter) {
-                stack.newFrame(initPool = valueArguments) {
-                    hashCodeFun.interpret()
-                }
-                (stack.popReturnValue() as Primitive<*>).value as Int
-            }// TODO check
-        }
-
-        override fun toString(): String {
-            val valueArguments = mutableListOf<Variable>()
-            val toStringFun = state.getToStringFunction()
-            if (toStringFun.isFakeOverriddenFromAny() || calledFromBuiltIns) {
-                return "${state.irClass.internalName()}@" + hashCode().toString(16).padStart(8, '0')
-            }
-
-            toStringFun.getDispatchReceiver()!!.let { valueArguments.add(Variable(it, state)) }
-            return with(interpreter) {
-                stack.newFrame(initPool = valueArguments) {
-                    toStringFun.interpret()
-                }
-                (stack.popReturnValue() as Primitive<*>).value as String
-            }// TODO check
+        return when (returnLabel.returnLabel) {
+            ReturnLabel.REGULAR -> stack.popReturnValue().unwrap(this@IrInterpreter)
+            ReturnLabel.EXCEPTION -> throw stack.popReturnValue() as ExceptionState
+            else -> TODO("$returnLabel not supported as result of interpretation")
         }
     }
 
@@ -153,8 +109,8 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
             is ExceptionState -> this
             is Wrapper -> this.value
             is Primitive<*> -> this.value
-            is Common -> Proxy(this, this@IrInterpreter, calledFromBuiltIns)
-            is Lambda -> this // TODO as Proxy
+            is Common -> CommonProxy(this, this@IrInterpreter, calledFromBuiltIns)
+            is Lambda -> this.asProxy(this@IrInterpreter)
             else -> throw AssertionError("${this::class} is unsupported as argument for wrap function")
         }
     }
@@ -350,7 +306,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
         // dispatch receiver processing
         val rawDispatchReceiver = expression.dispatchReceiver
         rawDispatchReceiver?.interpret()?.check { return it }
-        val dispatchReceiver = rawDispatchReceiver?.let { stack.popReturnValue() }?.checkNullability(expression.dispatchReceiver?.type)
+        var dispatchReceiver = rawDispatchReceiver?.let { stack.popReturnValue() }?.checkNullability(expression.dispatchReceiver?.type)
 
         // extension receiver processing
         val rawExtensionReceiver = expression.extensionReceiver
@@ -358,6 +314,10 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
         val extensionReceiver = rawExtensionReceiver?.let { stack.popReturnValue() }?.checkNullability(expression.extensionReceiver?.type)
 
         val irFunction = dispatchReceiver?.getIrFunctionByIrCall(expression) ?: expression.symbol.owner
+        dispatchReceiver = when (irFunction.parent) {
+            (dispatchReceiver as? Complex)?.superWrapperClass?.irClass -> dispatchReceiver.superWrapperClass
+            else -> dispatchReceiver
+        }
 
         // it is important firstly to add receiver, then arguments; this order is used in builtin method call
         irFunction.getDispatchReceiver()?.let { dispatchReceiver?.let { receiver -> valueArguments.add(Variable(it, receiver)) } }
@@ -774,7 +734,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
                 is Primitive<*> -> arrayToList(result.value)
                 is Common -> when {
                     result.irClass.defaultType.isUnsignedArray() -> arrayToList((result.fields.single().state as Primitive<*>).value)
-                    else -> listOf(Proxy(result, this))
+                    else -> listOf(CommonProxy(result, this))
                 }
                 else -> listOf(result)
             }

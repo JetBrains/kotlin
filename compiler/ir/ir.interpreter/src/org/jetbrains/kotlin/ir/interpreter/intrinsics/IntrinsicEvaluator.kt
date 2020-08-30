@@ -19,7 +19,6 @@ internal class IntrinsicEvaluator {
             ArrayOfNulls.equalTo(irFunction) -> ArrayOfNulls.evaluate(irFunction, stack, interpret)
             EnumValues.equalTo(irFunction) -> EnumValues.evaluate(irFunction, stack, interpret)
             EnumValueOf.equalTo(irFunction) -> EnumValueOf.evaluate(irFunction, stack, interpret)
-            RegexReplace.equalTo(irFunction) -> RegexReplace.evaluate(irFunction, stack, interpret)
             EnumHashCode.equalTo(irFunction) -> EnumHashCode.evaluate(irFunction, stack, interpret)
             JsPrimitives.equalTo(irFunction) -> JsPrimitives.evaluate(irFunction, stack, interpret)
             ArrayConstructor.equalTo(irFunction) -> ArrayConstructor.evaluate(irFunction, stack, interpret)
