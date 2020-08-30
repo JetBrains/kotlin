@@ -35,13 +35,13 @@ class PowerAssertGradlePlugin : KotlinCompilerPluginSupportPlugin {
   override fun getPluginArtifact(): SubpluginArtifact = SubpluginArtifact(
     groupId = "com.bnorm.power",
     artifactId = "kotlin-power-assert-plugin",
-    version = "0.5.0-SNAPSHOT"
+    version = "0.5.0"
   )
 
   override fun getPluginArtifactForNative(): SubpluginArtifact = SubpluginArtifact(
     groupId = "com.bnorm.power",
     artifactId = "kotlin-power-assert-plugin-native",
-    version = "0.5.0-SNAPSHOT"
+    version = "0.5.0"
   )
 
   override fun applyToCompilation(

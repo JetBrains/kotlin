@@ -4,7 +4,8 @@
 
 Kotlin Compiler Plugin which high-jacks Kotlin assert function calls and
 transforms them similar to [Groovy's Power Assert feature][groovy-power-assert].
-This plugin uses the new IR backend for the Kotlin compiler.
+This plugin uses the IR backend for the Kotlin compiler and supports all
+platforms: JVM, JS, and Native!
 
 ## Example
 
@@ -75,7 +76,7 @@ Builds of the Gradle plugin are available through the
 ```kotlin
 plugins {
   kotlin("jvm") version "1.4.0"
-  id("com.bnorm.power.kotlin-power-assert") version "0.4.0"
+  id("com.bnorm.power.kotlin-power-assert") version "0.5.0"
 }
 ```
 
@@ -93,16 +94,28 @@ configure<com.bnorm.power.PowerAssertGradleExtension> {
 ## Kotlin IR
 
 Using this compiler plugin only works if the code is compiled using Kotlin
-1.4.0 and IR is enabled. IR can be enabled only when compiling the test
-SourceSet if desired. As Kotlin IR is still experimental, mileage may vary.
+1.4.0 and IR is enabled. This includes all IR based compiler backends: JVM, JS,
+and Native! As Kotlin IR is still experimental, mileage may vary.
 
+##### Kotlin/JVM
 ```kotlin
-compileTestKotlin {
-    kotlinOptions {
-        useIR = true
-    }
+tasks.withType<KotlinCompile>().configureEach {
+  kotlinOptions {
+    useIR = true
+  }
 }
 ```
+
+##### Kotlin/JS
+```kotlin
+target {
+  js(IR) {
+  }
+}
+```
+
+##### Kotlin/Native
+IR already enabled by default!
 
 [groovy-power-assert]: https://groovy-lang.org/testing.html#_power_assertions
 [kotlin-power-assert-gradle]: https://plugins.gradle.org/plugin/com.bnorm.power.kotlin-power-assert

@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+## Version 0.5.0
+
+_2020-08-29_
+
+ * Support for Kotlin/Native.
+
 ## Version 0.4.0
 
 _2020-08-21_
