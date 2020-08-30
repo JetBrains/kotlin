@@ -701,6 +701,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
             }
         }
 
+        val elementIrClass = expression.varargElementType.classOrNull
         val args = expression.elements.flatMap {
             it.interpret().check { executionResult -> return executionResult }
             return@flatMap when (val result = stack.popReturnValue()) {
@@ -708,7 +709,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
                 is Primitive<*> -> arrayToList(result.value)
                 is Common -> when {
                     result.irClass.defaultType.isUnsignedArray() -> arrayToList((result.fields.single().state as Primitive<*>).value)
-                    else -> listOf(result.asProxy(this))
+                    else -> listOf(result.asProxy(this, elementIrClass?.owner))
                 }
                 else -> listOf(result)
             }
@@ -729,7 +730,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
             }
             else -> args.toPrimitiveStateArray(expression.type).apply {
                 if (expression.type.isArray()) {
-                    val arrayTypeArgument = expression.varargElementType.classOrNull?.let { Common(it.owner) }
+                    val arrayTypeArgument = elementIrClass?.let { Common(it.owner) }
                         ?: stack.getVariable(expression.varargElementType.classifierOrFail).state
                     this.addTypeArguments(listOf(Variable(irBuiltIns.arrayClass.owner.typeParameters.single().symbol, arrayTypeArgument)))
                 }
