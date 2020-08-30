@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.interpreter.proxy
 
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
+import org.jetbrains.kotlin.ir.interpreter.proxy.CommonProxy.Companion.asProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.LambdaProxy.Companion.asProxy
 import org.jetbrains.kotlin.ir.interpreter.state.*
 
@@ -18,14 +19,17 @@ internal interface Proxy {
     override fun toString(): String
 }
 
-internal fun State.unwrap(interpreter: IrInterpreter): Any? {
+/**
+ * Prepare state object to be passed in outer world
+ */
+internal fun State.wrap(interpreter: IrInterpreter, extendFrom: Class<*>? = null, calledFromBuiltIns: Boolean = false): Any? {
     return when (this) {
-        is Proxy -> this.state
-        is Primitive<*> -> this.value
-        is Common -> CommonProxy(this, interpreter)
-        is Lambda -> this.asProxy(interpreter)
+        is ExceptionState -> this
         is Wrapper -> this.value
-        else -> throw AssertionError("Unsupported state for proxy unwrap: ${this::class.java}")
+        is Primitive<*> -> this.value
+        is Common -> this.asProxy(interpreter, extendFrom, calledFromBuiltIns)
+        is Lambda -> this.asProxy(interpreter)
+        else -> throw AssertionError("${this::class} is unsupported as argument for wrap function")
     }
 }
 

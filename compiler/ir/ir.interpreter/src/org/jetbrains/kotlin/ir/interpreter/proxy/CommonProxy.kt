@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.interpreter.getDispatchReceiver
 import org.jetbrains.kotlin.ir.interpreter.internalName
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.Common
+import org.jetbrains.kotlin.ir.interpreter.toState
 import org.jetbrains.kotlin.ir.util.isFakeOverriddenFromAny
 
 /**
@@ -18,12 +19,12 @@ import org.jetbrains.kotlin.ir.util.isFakeOverriddenFromAny
  *         return super.toString()
  *     }
  */
-internal class CommonProxy(override val state: Common, override val interpreter: IrInterpreter, private val calledFromBuiltIns: Boolean = false): Proxy {
+internal class CommonProxy private constructor(
+    override val state: Common, override val interpreter: IrInterpreter, private val calledFromBuiltIns: Boolean = false
+) : Proxy {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as CommonProxy
+        if (other !is Proxy) return false
 
         val valueArguments = mutableListOf<Variable>()
         val equalsFun = state.getEqualsFunction()
@@ -53,5 +54,35 @@ internal class CommonProxy(override val state: Common, override val interpreter:
 
         toStringFun.getDispatchReceiver()!!.let { valueArguments.add(Variable(it, state)) }
         return with(interpreter) { toStringFun.interpret(valueArguments) } as String
+    }
+
+    companion object {
+        internal fun Common.asProxy(interpreter: IrInterpreter, extendFrom: Class<*>? = null, calledFromBuiltIns: Boolean = false): Any {
+            val commonProxy = CommonProxy(this, interpreter, calledFromBuiltIns)
+
+            val interfaces = when (extendFrom) {
+                null, Object::class.java -> arrayOf(Proxy::class.java)
+                else -> arrayOf(extendFrom, Proxy::class.java)
+            }
+            return java.lang.reflect.Proxy.newProxyInstance(ClassLoader.getSystemClassLoader(), interfaces)
+            { /*proxy*/_, method, args ->
+                when {
+                    method.declaringClass == Proxy::class.java && method.name == "getState" -> commonProxy.state
+                    method.declaringClass == Proxy::class.java && method.name == "getInterpreter" -> commonProxy.interpreter
+                    method.name == "equals" && method.parameterTypes.single().isObject() -> commonProxy.equals(args.single())
+                    method.name == "hashCode" && method.parameterTypes.isEmpty() -> commonProxy.hashCode()
+                    method.name == "toString" && method.parameterTypes.isEmpty() -> commonProxy.toString()
+                    else -> {
+                        val irFunction = commonProxy.state.getIrFunction(method)
+                            ?: throw AssertionError("Cannot find method $method in ${commonProxy.state}")
+                        val valueArguments = mutableListOf<Variable>()
+                        valueArguments += Variable(irFunction.getDispatchReceiver()!!, commonProxy.state)
+                        valueArguments += irFunction.valueParameters
+                            .mapIndexed { index, parameter -> Variable(parameter.symbol, args[index].toState(parameter.type)) }
+                        with(interpreter) { irFunction.interpret(valueArguments, method.returnType) }
+                    }
+                }
+            }
+        }
     }
 }

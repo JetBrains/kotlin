@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.Lambda
 import org.jetbrains.kotlin.ir.interpreter.toState
 
-internal class LambdaProxy(override val state: Lambda, override val interpreter: IrInterpreter): Proxy {
+internal class LambdaProxy private constructor(
+    override val state: Lambda, override val interpreter: IrInterpreter
+) : Proxy {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as LambdaProxy
+        if (other !is Proxy) return false
 
         return state == other.state
     }
@@ -41,17 +41,19 @@ internal class LambdaProxy(override val state: Lambda, override val interpreter:
                 this.isKFunction -> Class.forName("kotlin.reflect.KFunction")
                 else -> throw InternalError("Cannot handle lambda $this as proxy")
             }
-            return java.lang.reflect.Proxy.newProxyInstance(ClassLoader.getSystemClassLoader(), arrayOf(functionClass))
+            return java.lang.reflect.Proxy.newProxyInstance(ClassLoader.getSystemClassLoader(), arrayOf(functionClass, Proxy::class.java))
             { proxy, method, args ->
                 when {
-                    method.name == "invoke" && method.parameterTypes.single().isObject() -> {
-                        val valueArguments = this.irFunction.valueParameters
-                            .mapIndexed { index, parameter -> Variable(parameter.symbol, args[index].toState(parameter.type)) }
-                        with(interpreter) { lambdaProxy.state.irFunction.interpret(valueArguments) }
-                    }
+                    method.declaringClass == Proxy::class.java && method.name == "getState" -> lambdaProxy.state
+                    method.declaringClass == Proxy::class.java && method.name == "getInterpreter" -> lambdaProxy.interpreter
                     method.name == "equals" && method.parameterTypes.single().isObject() -> lambdaProxy.equals(args.single())
                     method.name == "hashCode" && method.parameterTypes.isEmpty() -> lambdaProxy.hashCode()
                     method.name == "toString" && method.parameterTypes.isEmpty() -> lambdaProxy.toString()
+                    method.name == "invoke" && method.parameterTypes.single().isObject() -> {
+                        val valueArguments = this.irFunction.valueParameters
+                            .mapIndexed { index, parameter -> Variable(parameter.symbol, args[index].toState(parameter.type)) }
+                        with(interpreter) { lambdaProxy.state.irFunction.interpret(valueArguments, method.returnType) }
+                    }
                     else -> throw InternalError("Cannot invoke method ${method.name} from lambda $this")
                 }
             }

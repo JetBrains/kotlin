@@ -16,10 +16,9 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.interpreter.builtins.*
 import org.jetbrains.kotlin.ir.interpreter.exceptions.*
 import org.jetbrains.kotlin.ir.interpreter.intrinsics.IntrinsicEvaluator
-import org.jetbrains.kotlin.ir.interpreter.proxy.CommonProxy
-import org.jetbrains.kotlin.ir.interpreter.proxy.LambdaProxy.Companion.asProxy
+import org.jetbrains.kotlin.ir.interpreter.proxy.CommonProxy.Companion.asProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
-import org.jetbrains.kotlin.ir.interpreter.proxy.unwrap
+import org.jetbrains.kotlin.ir.interpreter.proxy.wrap
 import org.jetbrains.kotlin.ir.interpreter.stack.StackImpl
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.*
@@ -93,40 +92,15 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
         }
     }
 
-    internal fun IrFunction.interpret(valueArguments: List<Variable>): Any? {
+    internal fun IrFunction.interpret(valueArguments: List<Variable>, expectedResultClass: Class<*> = Any::class.java): Any? {
         val returnLabel = stack.newFrame(initPool = valueArguments) {
             this@interpret.interpret()
         }
         return when (returnLabel.returnLabel) {
-            ReturnLabel.REGULAR -> stack.popReturnValue().unwrap(this@IrInterpreter)
+            ReturnLabel.REGULAR -> stack.popReturnValue().wrap(this@IrInterpreter, expectedResultClass)
             ReturnLabel.EXCEPTION -> throw stack.popReturnValue() as ExceptionState
             else -> TODO("$returnLabel not supported as result of interpretation")
         }
-    }
-
-    internal fun State.wrapAsProxyIfNeeded(calledFromBuiltIns: Boolean = false): Any? {
-        return when (this) {
-            is ExceptionState -> this
-            is Wrapper -> this.value
-            is Primitive<*> -> this.value
-            is Common -> CommonProxy(this, this@IrInterpreter, calledFromBuiltIns)
-            is Lambda -> this.asProxy(this@IrInterpreter)
-            else -> throw AssertionError("${this::class} is unsupported as argument for wrap function")
-        }
-    }
-
-    internal fun IrFunction.getArgsForMethodInvocation(args: List<Variable>): List<Any?> {
-        val argsValues = args.map { it.state.wrapAsProxyIfNeeded() }.toMutableList()
-
-        // TODO if vararg isn't last parameter
-        // must convert vararg array into separated elements for correct invoke
-        if (this.valueParameters.lastOrNull()?.varargElementType != null) {
-            val varargValue = argsValues.last()
-            argsValues.removeAt(argsValues.size - 1)
-            argsValues.addAll(varargValue as Array<out Any?>)
-        }
-
-        return argsValues
     }
 
     private fun IrElement.interpret(): ExecutionResult {
@@ -192,7 +166,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
 
     private fun MethodHandle?.invokeMethod(irFunction: IrFunction): ExecutionResult {
         this ?: return handleIntrinsicMethods(irFunction)
-        val argsForMethodInvocation = irFunction.getArgsForMethodInvocation(stack.getAll())
+        val argsForMethodInvocation = irFunction.getArgsForMethodInvocation(this@IrInterpreter, this.type(), stack.getAll())
         val result = withExceptionHandler { this.invokeWithArguments(argsForMethodInvocation) }
         stack.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
 
@@ -212,7 +186,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
 
         val receiverType = irFunction.dispatchReceiverParameter?.type
         val argsType = listOfNotNull(receiverType) + irFunction.valueParameters.map { it.type }
-        val argsValues = args.map { it.wrapAsProxyIfNeeded(methodName !in setOf("plus", IrBuiltIns.OperatorNames.EQEQ)) }
+        val argsValues = args.map { it.wrap(this, calledFromBuiltIns = methodName !in setOf("plus", IrBuiltIns.OperatorNames.EQEQ)) }
 
         fun IrType.getOnlyName(): String {
             return when {
@@ -734,7 +708,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
                 is Primitive<*> -> arrayToList(result.value)
                 is Common -> when {
                     result.irClass.defaultType.isUnsignedArray() -> arrayToList((result.fields.single().state as Primitive<*>).value)
-                    else -> listOf(CommonProxy(result, this))
+                    else -> listOf(result.asProxy(this))
                 }
                 else -> listOf(result)
             }

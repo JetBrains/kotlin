@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.interpreter.exceptions.throwAsUserException
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
+import org.jetbrains.kotlin.ir.interpreter.proxy.wrap
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import java.lang.invoke.MethodType
 
 internal fun IrFunction.getDispatchReceiver(): IrValueParameterSymbol? = this.dispatchReceiverParameter?.symbol
 
@@ -56,6 +58,9 @@ internal fun State.toIrExpression(expression: IrExpression): IrExpression {
     }
 }
 
+/**
+ * Convert object from outer world to state
+ */
 internal fun Any?.toState(irType: IrType): State {
     return when (this) {
         is Proxy -> this.state
@@ -225,4 +230,20 @@ inline fun withExceptionHandler(block: () -> Any?): Any? {
     } catch (e: Throwable) {
         e.throwAsUserException()
     }
+}
+
+internal fun IrFunction.getArgsForMethodInvocation(interpreter: IrInterpreter, methodType: MethodType, args: List<Variable>): List<Any?> {
+    val argsValues = args
+        .mapIndexed { index, variable -> variable.state.wrap(interpreter, methodType.parameterType(index)) }
+        .toMutableList()
+
+    // TODO if vararg isn't last parameter
+    // must convert vararg array into separated elements for correct invoke
+    if (this.valueParameters.lastOrNull()?.varargElementType != null) {
+        val varargValue = argsValues.last()
+        argsValues.removeAt(argsValues.size - 1)
+        argsValues.addAll(varargValue as Array<out Any?>)
+    }
+
+    return argsValues
 }

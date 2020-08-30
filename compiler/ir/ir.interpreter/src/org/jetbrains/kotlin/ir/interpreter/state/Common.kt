@@ -6,8 +6,13 @@
 package org.jetbrains.kotlin.ir.interpreter.state
 
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.interpreter.getLastOverridden
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.nameForIrSerialization
 
 internal class Common private constructor(override val irClass: IrClass, override val fields: MutableList<Variable>) : Complex {
     override var superWrapperClass: Wrapper? = null
@@ -16,12 +21,32 @@ internal class Common private constructor(override val irClass: IrClass, overrid
 
     constructor(irClass: IrClass) : this(irClass, mutableListOf())
 
-    override fun toString(): String {
-        return "Common(obj='${irClass.fqNameForIrSerialization}', values=$fields)"
-    }
-
     fun copyFieldsFrom(state: Complex) {
         this.fields.addAll(state.fields)
         superWrapperClass = state.superWrapperClass ?: state as? Wrapper
+    }
+
+    // This method is used to get correct java method name
+    private fun getKotlinName(declaringClassName: String, methodName: String): String {
+        return when {
+            // TODO see specialBuiltinMembers.kt
+            //"kotlin.collections.Map.<get-entries>" -> "entrySet"
+            //"kotlin.collections.Map.<get-keys>" -> "keySet"
+            declaringClassName == "java.lang.CharSequence" && methodName == "charAt" -> "get"
+            //"kotlin.collections.MutableList.removeAt" -> "remove"
+            else -> methodName
+        }
+    }
+
+    fun getIrFunction(method: java.lang.reflect.Method): IrFunction? {
+        val methodName = getKotlinName(method.declaringClass.name, method.name)
+        return when (val declaration = irClass.declarations.singleOrNull { it.nameForIrSerialization.asString() == methodName }) {
+            is IrProperty -> declaration.getter
+            else -> declaration as? IrFunction
+        }
+    }
+
+    override fun toString(): String {
+        return "Common(obj='${irClass.fqNameForIrSerialization}', values=$fields)"
     }
 }
