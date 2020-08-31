@@ -216,7 +216,10 @@ fun CirRootNode.createGlobalBuilderComponents(
         }
 
         val lazyModulesLookupTable = storageManager.createLazyValue {
-            val source = if (isCommon) emptyMap() else parameters.targetProviders[index].modulesProvider.loadModules()
+            val source = if (isCommon)
+                parameters.commonModulesProvider?.loadModules() ?: emptyMap()
+            else
+                parameters.targetProviders[index].modulesProvider.loadModules()
             THashMap(source)
         }
 
