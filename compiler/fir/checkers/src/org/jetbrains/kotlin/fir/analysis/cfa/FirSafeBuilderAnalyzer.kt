@@ -14,10 +14,10 @@ import org.jetbrains.kotlin.fir.analysis.cfa.coeffect.CoeffectAnalyzer
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.contract.contextual.CoeffectContextActions
-import org.jetbrains.kotlin.fir.contract.contextual.CoeffectFamily
-import org.jetbrains.kotlin.fir.contract.contextual.diagnostics.CoeffectContextVerificationError
-import org.jetbrains.kotlin.fir.contract.contextual.family.safeBuilder.*
+import org.jetbrains.kotlin.fir.contracts.contextual.CoeffectFamily
+import org.jetbrains.kotlin.fir.contracts.contextual.coeffectActions
+import org.jetbrains.kotlin.fir.contracts.contextual.diagnostics.CoeffectContextVerificationError
+import org.jetbrains.kotlin.fir.contract.contextual.safeBuilder.*
 import org.jetbrains.kotlin.fir.contracts.description.ConeActionDeclaration
 import org.jetbrains.kotlin.fir.contracts.description.ConeFunctionInvocationAction
 import org.jetbrains.kotlin.fir.contracts.description.ConePropertyInitializationAction
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.fir.expressions.toReceiverSymbol
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
-import org.jetbrains.kotlin.fir.resolve.transformers.contracts.ConeAbstractCoeffectEffectDeclaration
+import org.jetbrains.kotlin.fir.contracts.contextual.declaration.ConeAbstractCoeffectEffectDeclaration
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -53,7 +53,7 @@ object FirSafeBuilderAnalyzer : CoeffectAnalyzer() {
 
         for (effect in effects) {
             if (effect !is ConeAbstractCoeffectEffectDeclaration) continue
-            val action = (effect.original as? ConeSafeBuilderEffectDeclaration)?.action ?: continue
+            val action = (effect as? ConeSafeBuilderEffectDeclaration)?.action ?: continue
             val member = action.memberSymbol ?: continue
 
             if (!isSafeBuilderMember(action.targetClass, member)) {
@@ -90,17 +90,17 @@ object FirSafeBuilderAnalyzer : CoeffectAnalyzer() {
 
             if (isSafeBuilderConstructionMember(functionSymbol)) {
                 val safeBuilderAction = SafeBuilderAction(receiverSymbol, functionSymbol, SafeBuilderActionType.INVOCATION)
-                data[node] = CoeffectContextActions(
-                    provider = SafeBuilderCoeffectContextProvider(safeBuilderAction, EventOccurrencesRange.EXACTLY_ONCE)
-                )
+                data[node] = coeffectActions {
+                    providers += SafeBuilderCoeffectContextProvider(safeBuilderAction, EventOccurrencesRange.EXACTLY_ONCE)
+                }
                 return
             }
 
             if (functionSymbol.fir.annotations.any { it.toResolvedCallableSymbol()?.callableId == buildAnnotation }) {
                 safeBuilderClass.forEachSafeBuilderMember { member, actionType ->
-                    data[node] = CoeffectContextActions(
-                        cleaner = SafeBuilderCoeffectContextCleaner(SafeBuilderAction(receiverSymbol, member.symbol, actionType))
-                    )
+                    data[node] = coeffectActions {
+                        cleaners += SafeBuilderCoeffectContextCleaner(SafeBuilderAction(receiverSymbol, member.symbol, actionType))
+                    }
                 }
             }
         }
@@ -111,9 +111,9 @@ object FirSafeBuilderAnalyzer : CoeffectAnalyzer() {
             if (!isSafeBuilderMember(receiverSymbol, propertySymbol)) return
 
             val safeBuilderAction = SafeBuilderAction(receiverSymbol, propertySymbol, SafeBuilderActionType.INITIALIZATION)
-            data[node] = CoeffectContextActions(
-                provider = SafeBuilderCoeffectContextProvider(safeBuilderAction, EventOccurrencesRange.EXACTLY_ONCE)
-            )
+            data[node] = coeffectActions {
+                providers += SafeBuilderCoeffectContextProvider(safeBuilderAction, EventOccurrencesRange.EXACTLY_ONCE)
+            }
         }
 
         override fun visitVariableDeclarationNode(node: VariableDeclarationNode, data: CoeffectActionsOnNodes) {
@@ -128,15 +128,17 @@ object FirSafeBuilderAnalyzer : CoeffectAnalyzer() {
 
             classSymbol.fir.forEachSafeBuilderMember { member, actionType ->
                 val safeBuilderAction = SafeBuilderAction(node.fir.symbol, member.symbol, actionType)
-                data[node] = CoeffectContextActions(
-                    provider = SafeBuilderCoeffectContextProvider(safeBuilderAction, EventOccurrencesRange.ZERO)
-                )
+                data[node] = coeffectActions {
+                    providers += SafeBuilderCoeffectContextProvider(safeBuilderAction, EventOccurrencesRange.ZERO)
+                }
             }
         }
 
         override fun visitFunctionExitNode(node: FunctionExitNode, data: CoeffectActionsOnNodes) {
             super.visitFunctionExitNode(node, data)
-            data[node] = CoeffectContextActions(verifier = SafeBuilderActionProvidingVerifier)
+            data[node] = coeffectActions {
+                verifiers += SafeBuilderActionProvidingVerifier
+            }
         }
 
         inline fun FirRegularClass.forEachSafeBuilderMember(

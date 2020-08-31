@@ -7,13 +7,13 @@ import org.jetbrains.kotlin.fir.analysis.cfa.coeffect.CoeffectAnalyzer
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.contract.contextual.CoeffectContextActions
-import org.jetbrains.kotlin.fir.contract.contextual.CoeffectFamily
-import org.jetbrains.kotlin.fir.contract.contextual.diagnostics.CoeffectContextVerificationError
-import org.jetbrains.kotlin.fir.contract.contextual.family.checkedexception.CatchesExceptionCoeffectContextProvider
-import org.jetbrains.kotlin.fir.contract.contextual.family.checkedexception.CheckedExceptionCoeffectContextCleaner
-import org.jetbrains.kotlin.fir.contract.contextual.family.checkedexception.CheckedExceptionCoeffectFamily
-import org.jetbrains.kotlin.fir.contract.contextual.family.checkedexception.CheckedExceptionContextError
+import org.jetbrains.kotlin.fir.contracts.contextual.CoeffectFamily
+import org.jetbrains.kotlin.fir.contracts.contextual.coeffectActions
+import org.jetbrains.kotlin.fir.contracts.contextual.diagnostics.CoeffectContextVerificationError
+import org.jetbrains.kotlin.fir.contract.contextual.checkedexception.CatchesExceptionCoeffectContextProvider
+import org.jetbrains.kotlin.fir.contract.contextual.checkedexception.CheckedExceptionCoeffectContextCleaner
+import org.jetbrains.kotlin.fir.contract.contextual.checkedexception.CheckedExceptionCoeffectFamily
+import org.jetbrains.kotlin.fir.contract.contextual.checkedexception.CheckedExceptionContextError
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
@@ -50,14 +50,17 @@ object CheckedExceptionsAnalyzer : CoeffectAnalyzer() {
         override fun visitTryMainBlockEnterNode(node: TryMainBlockEnterNode, data: CoeffectActionsOnNodes) {
             for (catch in node.fir.catches) {
                 val exceptionType = catch.parameter.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: continue
-                data[node] = CoeffectContextActions(provider = CatchesExceptionCoeffectContextProvider(exceptionType, catch))
+                data[node] = coeffectActions {
+                    providers += CatchesExceptionCoeffectContextProvider(exceptionType, catch)
+                }
             }
         }
 
         override fun visitTryMainBlockExitNode(node: TryMainBlockExitNode, data: CoeffectActionsOnNodes) {
             for (catch in node.fir.catches) {
-                val exceptionType = catch.parameter.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: continue
-                data[node] = CoeffectContextActions(cleaner = CheckedExceptionCoeffectContextCleaner(exceptionType, catch))
+                data[node] = coeffectActions {
+                    cleaners += CheckedExceptionCoeffectContextCleaner(catch)
+                }
             }
         }
     }

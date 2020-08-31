@@ -3,13 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.contract.contextual.family.safeBuilder
+package org.jetbrains.kotlin.fir.contract.contextual.safeBuilder
 
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.contract.contextual.CoeffectContext
-import org.jetbrains.kotlin.fir.contract.contextual.CoeffectContextVerifier
-import org.jetbrains.kotlin.fir.contract.contextual.diagnostics.CoeffectContextVerificationError
+import org.jetbrains.kotlin.fir.contracts.contextual.CoeffectContext
+import org.jetbrains.kotlin.fir.contracts.contextual.CoeffectContextVerifier
+import org.jetbrains.kotlin.fir.contracts.contextual.diagnostics.CoeffectContextVerificationError
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
 class SafeBuilderInitializationRequiredError(
@@ -30,7 +30,7 @@ class SafeBuilderUnprovidedInvocationError(
 
 object SafeBuilderActionProvidingVerifier : CoeffectContextVerifier {
     override val family = SafeBuilderCoeffectFamily
-    override fun verifyOnCurrentNode(): Boolean = true
+    override val needVerifyOnCurrentNode: Boolean = true
 
     override fun verifyContext(context: CoeffectContext, session: FirSession): List<CoeffectContextVerificationError> {
         if (context !is SafeBuilderCoeffectContext) throw AssertionError()

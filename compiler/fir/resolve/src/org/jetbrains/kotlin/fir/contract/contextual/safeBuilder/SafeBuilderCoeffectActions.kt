@@ -3,12 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.contract.contextual.family.safeBuilder
+package org.jetbrains.kotlin.fir.contract.contextual.safeBuilder
 
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
-import org.jetbrains.kotlin.fir.contract.contextual.CoeffectContext
-import org.jetbrains.kotlin.fir.contract.contextual.CoeffectContextCleaner
-import org.jetbrains.kotlin.fir.contract.contextual.CoeffectContextProvider
+import org.jetbrains.kotlin.fir.contracts.contextual.CoeffectContext
+import org.jetbrains.kotlin.fir.contracts.contextual.CoeffectContextCleaner
+import org.jetbrains.kotlin.fir.contracts.contextual.CoeffectContextProvider
 
 class SafeBuilderCoeffectContextProvider(val action: SafeBuilderAction, val kind: EventOccurrencesRange) : CoeffectContextProvider {
     override val family = SafeBuilderCoeffectFamily

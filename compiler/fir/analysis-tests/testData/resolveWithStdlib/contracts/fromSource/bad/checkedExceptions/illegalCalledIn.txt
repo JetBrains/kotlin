@@ -3,12 +3,6 @@ FILE: illegalCalledIn.kt
     }
     public final fun <T : R|kotlin/Throwable|> calledInTryCatch(lambda: R|kotlin/Any|): R|kotlin/Unit| {
     }
-    public final fun test(): R|kotlin/Unit| {
-        R|/catchRENotInPlace|(<L> = catchRENotInPlace@fun <anonymous>(): R|kotlin/Unit| {
-            R|/throwsRE|()
-        }
-        )
-    }
     public final fun throwsRE(): R|kotlin/Unit|
         [R|Contract description]
          <
@@ -17,30 +11,6 @@ FILE: illegalCalledIn.kt
      {
         [StubStatement]
         R|/throwsRE|()
-    }
-    public final fun catchRENotInPlace(block: R|() -> kotlin/Unit|): R|kotlin/Unit|
-        [R|Contract description]
-         <
-            calledInTryCatch<java/lang/RuntimeException>(block)
-        >
-     {
-        [StubStatement]
-        R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
-        R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
-        try {
-            R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
-            R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
-        }
-        catch (e: R|java/lang/IllegalArgumentException|) {
-        }
-
-        try {
-            R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
-            R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
-        }
-        catch (e: R|java/lang/RuntimeException|) {
-        }
-
     }
     public final fun catchRE(block: R|() -> kotlin/Unit|): R|kotlin/Unit|
         [R|Contract description]

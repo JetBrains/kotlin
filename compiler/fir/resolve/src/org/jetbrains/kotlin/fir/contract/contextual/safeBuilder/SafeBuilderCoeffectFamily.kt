@@ -3,15 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.contract.contextual.family.safeBuilder
+package org.jetbrains.kotlin.fir.contract.contextual.safeBuilder
 
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentHashMapOf
 import kotlinx.collections.immutable.toPersistentHashMap
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.contract.contextual.*
-import org.jetbrains.kotlin.fir.contract.contextual.diagnostics.CoeffectContextVerificationError
+import org.jetbrains.kotlin.fir.contracts.contextual.*
+import org.jetbrains.kotlin.fir.contracts.contextual.declaration.coeffectActionExtractors
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -19,12 +18,10 @@ import org.jetbrains.kotlin.fir.expressions.argumentMapping
 import org.jetbrains.kotlin.fir.expressions.extensionSymbol
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.contracts.createArgumentsMapping
-import org.jetbrains.kotlin.fir.resolve.transformers.contracts.toCoeffect
-import org.jetbrains.kotlin.fir.resolve.transformers.contracts.toLambdaCoeffect
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
 object SafeBuilderCoeffectFamily : CoeffectFamily {
-
+    override val id = "Safe Builders"
     override val emptyContext = SafeBuilderCoeffectContext(persistentHashMapOf())
     override val combiner = SafeBuilderCoeffectContextCombiner
 }
@@ -74,53 +71,58 @@ internal fun FirFunctionCall.getTargetSymbol(target: ConeTargetReference): FirCa
     } else extensionSymbol as? FirCallableSymbol<*>
 }
 
-fun asCoeffect(effect: ConeMustDoEffectDeclaration) = effect.toLambdaCoeffect(effect.lambda) {
+fun mustDoEffectCoeffectExtractors(action: ConeActionDeclaration) = coeffectActionExtractors {
     family = SafeBuilderCoeffectFamily
 
     onOwnerCall {
-        val target = effect.action.target as? ConeLambdaArgumentReference ?: return@onOwnerCall noActions()
+        val target = action.target as? ConeLambdaArgumentReference ?: return@onOwnerCall noActions()
         val mapping = createArgumentsMapping(it) ?: return@onOwnerCall noActions()
         val targetSymbol = mapping[target.parameter.parameterIndex + 1]?.toResolvedCallableSymbol() ?: return@onOwnerCall noActions()
-        val safeBuilderAction = effect.action.toSafeBuilderAction(targetSymbol) ?: return@onOwnerCall noActions()
-        CoeffectContextActions(provider = SafeBuilderCoeffectContextProvider(safeBuilderAction, effect.action.kind))
+        val safeBuilderAction = action.toSafeBuilderAction(targetSymbol) ?: return@onOwnerCall noActions()
+        actions {
+            providers += SafeBuilderCoeffectContextProvider(safeBuilderAction, action.kind)
+        }
     }
 
     onOwnerExit {
-        val target = effect.action.target as? ConeLambdaArgumentReference ?: return@onOwnerExit noActions()
-        val safeBuilderAction = effect.action.toSafeBuilderAction(it, target.parameter.parameterIndex) ?: return@onOwnerExit noActions()
-        CoeffectContextActions(
-            verifier = SafeBuilderCoeffectContextVerifier(safeBuilderAction, effect.action.kind),
-            cleaner = SafeBuilderCoeffectContextCleaner(safeBuilderAction)
-        )
+        val target = action.target as? ConeLambdaArgumentReference ?: return@onOwnerExit noActions()
+        val safeBuilderAction = action.toSafeBuilderAction(it, target.parameter.parameterIndex) ?: return@onOwnerExit noActions()
+        actions {
+            verifiers += SafeBuilderCoeffectContextVerifier(safeBuilderAction, action.kind)
+            cleaners += SafeBuilderCoeffectContextCleaner(safeBuilderAction)
+        }
     }
 }
 
-
-fun asCoeffect(effect: ConeProvidesActionEffectDeclaration) = effect.toCoeffect {
+fun providesEffectCoeffectExtractors(action: ConeActionDeclaration) = coeffectActionExtractors {
     family = SafeBuilderCoeffectFamily
 
     onOwnerCall { functionCall ->
-        val targetSymbol = functionCall.getTargetSymbol(effect.action.target)
-        val safeBuilderAction = effect.action.toSafeBuilderAction(targetSymbol) ?: return@onOwnerCall noActions()
-        CoeffectContextActions(provider = SafeBuilderCoeffectContextProvider(safeBuilderAction, effect.action.kind))
+        val targetSymbol = functionCall.getTargetSymbol(action.target)
+        val safeBuilderAction = action.toSafeBuilderAction(targetSymbol) ?: return@onOwnerCall noActions()
+        actions {
+            providers += SafeBuilderCoeffectContextProvider(safeBuilderAction, action.kind)
+        }
     }
 
     onOwnerExit {
-        val targetSymbol = effect.action.target as? ConeValueParameterReference ?: return@onOwnerExit noActions()
-        val safeBuilderAction = effect.action.toSafeBuilderAction(it, targetSymbol.parameterIndex) ?: return@onOwnerExit noActions()
-        CoeffectContextActions(
-            verifier = SafeBuilderCoeffectContextVerifier(safeBuilderAction, effect.action.kind),
-            cleaner = SafeBuilderCoeffectContextCleaner(safeBuilderAction)
-        )
+        val targetSymbol = action.target as? ConeValueParameterReference ?: return@onOwnerExit noActions()
+        val safeBuilderAction = action.toSafeBuilderAction(it, targetSymbol.parameterIndex) ?: return@onOwnerExit noActions()
+        actions {
+            verifiers += SafeBuilderCoeffectContextVerifier(safeBuilderAction, action.kind)
+            cleaners += SafeBuilderCoeffectContextCleaner(safeBuilderAction)
+        }
     }
 }
 
-fun asCoeffect(effect: ConeRequiresActionEffectDeclaration) = effect.toCoeffect {
+fun requiresEffectCoeffectExtractors(action: ConeActionDeclaration) = coeffectActionExtractors {
     family = SafeBuilderCoeffectFamily
 
     onOwnerCall { functionCall ->
-        val targetSymbol = functionCall.getTargetSymbol(effect.action.target)
-        val safeBuilderAction = effect.action.toSafeBuilderAction(targetSymbol) ?: return@onOwnerCall noActions()
-        CoeffectContextActions(verifier = SafeBuilderCoeffectContextVerifier(safeBuilderAction, effect.action.kind))
+        val targetSymbol = functionCall.getTargetSymbol(action.target)
+        val safeBuilderAction = action.toSafeBuilderAction(targetSymbol) ?: return@onOwnerCall noActions()
+        actions {
+            verifiers += SafeBuilderCoeffectContextVerifier(safeBuilderAction, action.kind)
+        }
     }
 }

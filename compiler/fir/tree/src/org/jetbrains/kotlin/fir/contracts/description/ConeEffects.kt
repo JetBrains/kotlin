@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.fir.contracts.description
 
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import org.jetbrains.kotlin.fir.contracts.contextual.declaration.CoeffectActionExtractors
+import org.jetbrains.kotlin.fir.contracts.contextual.declaration.ConeCoeffectEffectDeclaration
+import org.jetbrains.kotlin.fir.contracts.contextual.declaration.ConeLambdaCoeffectEffectDeclaration
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 /**
@@ -42,7 +45,8 @@ class ConeReturnsEffectDeclaration(val value: ConeConstantReference) : ConeEffec
  * Effect which specifies, that during execution of subroutine, callable [valueParameterReference] will be invoked
  * [kind] amount of times, and will never be invoked after subroutine call is finished.
  */
-class ConeCallsEffectDeclaration(val valueParameterReference: ConeValueParameterReference, val kind: EventOccurrencesRange) : ConeEffectDeclaration() {
+class ConeCallsEffectDeclaration(val valueParameterReference: ConeValueParameterReference, val kind: EventOccurrencesRange) :
+    ConeEffectDeclaration() {
     override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitCallsEffectDeclaration(this, data)
 }
@@ -51,7 +55,8 @@ class ConeCallsEffectDeclaration(val valueParameterReference: ConeValueParameter
 /**
  * Effect which specifies that owner function can be called only in context where [exceptionType] is checked
  */
-class ConeThrowsEffectDeclaration(val exceptionType: ConeKotlinType) : ConeEffectDeclaration() {
+class ConeThrowsEffectDeclaration(val exceptionType: ConeKotlinType, actionExtractors: CoeffectActionExtractors) :
+    ConeCoeffectEffectDeclaration(actionExtractors) {
     override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitThrowsEffectDeclaration(this, data)
 }
@@ -60,17 +65,29 @@ class ConeThrowsEffectDeclaration(val exceptionType: ConeKotlinType) : ConeEffec
 /**
  * Effect which specifies that [lambda] called only in context where [exceptionType] is checked
  */
-class ConeCalledInTryCatchEffectDeclaration(val lambda: ConeValueParameterReference, val exceptionType: ConeKotlinType) : ConeEffectDeclaration() {
+class ConeCalledInTryCatchEffectDeclaration(
+    lambda: ConeValueParameterReference,
+    val exceptionType: ConeKotlinType,
+    actionExtractors: CoeffectActionExtractors
+) : ConeLambdaCoeffectEffectDeclaration(lambda, actionExtractors) {
+
     override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitCalledInTryCatchEffectDeclaration(this, data)
 }
 
-abstract class ConeSafeBuilderEffectDeclaration(val action: ConeActionDeclaration) : ConeEffectDeclaration()
+interface ConeSafeBuilderEffectDeclaration {
+    val action: ConeActionDeclaration
+}
 
 /**
  * Effect which specifies that [lambda] must do some [action] inside
  */
-class ConeMustDoEffectDeclaration(val lambda: ConeValueParameterReference, action: ConeActionDeclaration) : ConeSafeBuilderEffectDeclaration(action) {
+class ConeMustDoEffectDeclaration(
+    lambda: ConeValueParameterReference,
+    override val action: ConeActionDeclaration,
+    actionExtractors: CoeffectActionExtractors
+) : ConeLambdaCoeffectEffectDeclaration(lambda, actionExtractors), ConeSafeBuilderEffectDeclaration {
+
     override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitMustDoEffectDeclaration(this, data)
 }
@@ -78,7 +95,11 @@ class ConeMustDoEffectDeclaration(val lambda: ConeValueParameterReference, actio
 /**
  * Effect which specifies that function is doing [action]
  */
-class ConeProvidesActionEffectDeclaration(action: ConeActionDeclaration) : ConeSafeBuilderEffectDeclaration(action) {
+class ConeProvidesActionEffectDeclaration(
+    override val action: ConeActionDeclaration,
+    actionExtractors: CoeffectActionExtractors
+) : ConeCoeffectEffectDeclaration(actionExtractors), ConeSafeBuilderEffectDeclaration {
+
     override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitProvidesActionEffectDeclaration(this, data)
 }
@@ -86,7 +107,11 @@ class ConeProvidesActionEffectDeclaration(action: ConeActionDeclaration) : ConeS
 /**
  * Effect which specifies that function requires made [action]
  */
-class ConeRequiresActionEffectDeclaration(action: ConeActionDeclaration) : ConeSafeBuilderEffectDeclaration(action) {
+class ConeRequiresActionEffectDeclaration(
+    override val action: ConeActionDeclaration,
+    actionExtractors: CoeffectActionExtractors
+) : ConeCoeffectEffectDeclaration(actionExtractors), ConeSafeBuilderEffectDeclaration {
+
     override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitRequiresActionEffectDeclaration(this, data)
 }

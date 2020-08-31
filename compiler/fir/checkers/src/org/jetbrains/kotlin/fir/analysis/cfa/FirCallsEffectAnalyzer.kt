@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.ConeCallsEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.effects
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.isInPlaceLambda
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
@@ -294,10 +294,6 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
 
     private fun FirContractDescription?.getParameterCallsEffect(index: Int): EventOccurrencesRange? {
         return getParameterCallsEffectDeclaration(index)?.kind
-    }
-
-    private fun FirFunction<*>.isInPlaceLambda(): Boolean {
-        return this is FirAnonymousFunction && this.isLambda && this.invocationKind != null
     }
 
     private fun FirExpression?.toQualifiedReference(): FirReference? = (this as? FirQualifiedAccess)?.calleeReference

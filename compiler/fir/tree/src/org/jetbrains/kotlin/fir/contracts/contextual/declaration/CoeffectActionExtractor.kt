@@ -3,11 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.contract.contextual.declaration
+package org.jetbrains.kotlin.fir.contracts.contextual.declaration
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.contract.contextual.CoeffectContextActions
-import org.jetbrains.kotlin.fir.contract.contextual.CoeffectFamily
+import org.jetbrains.kotlin.fir.contracts.contextual.*
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 
@@ -36,6 +35,12 @@ class CoeffectActionExtractorsBuilder {
 
     fun noActions(): CoeffectContextActions = CoeffectContextActions.EMPTY
 
+    inline fun actions(block: CoeffectContextActionsBuilder.() -> Unit): CoeffectContextActions {
+        val builder = CoeffectContextActionsBuilder()
+        block(builder)
+        return builder.build()
+    }
+
     fun onOwnerCall(extractor: OwnerCallCoeffectActionExtractor) {
         onOwnerCall = extractor
     }
@@ -52,7 +57,10 @@ class CoeffectActionExtractorsBuilder {
         val family = family ?: throw AssertionError("Undefined coeffect family for extractors")
         return CoeffectActionExtractors(family, onOwnerCall, onOwnerEnter, onOwnerExit)
     }
-
 }
 
-
+fun coeffectActionExtractors(block: CoeffectActionExtractorsBuilder.() -> Unit): CoeffectActionExtractors {
+    val builder = CoeffectActionExtractorsBuilder()
+    builder.block()
+    return builder.build()
+}

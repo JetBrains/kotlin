@@ -6,21 +6,21 @@
 package org.jetbrains.kotlin.fir.analysis.cfa.coeffect
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.contract.contextual.CoeffectContextActions
-import org.jetbrains.kotlin.fir.contract.contextual.CoeffectFamily
-import org.jetbrains.kotlin.fir.contract.contextual.declaration.CoeffectActionExtractors
+import org.jetbrains.kotlin.fir.contracts.contextual.CoeffectContextActions
+import org.jetbrains.kotlin.fir.contracts.contextual.CoeffectFamily
+import org.jetbrains.kotlin.fir.contracts.contextual.declaration.CoeffectActionExtractors
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.effects
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.isInPlaceLambda
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.isLambda
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.isInvoke
-import org.jetbrains.kotlin.fir.resolve.transformers.contracts.ConeCoeffectEffectDeclaration
-import org.jetbrains.kotlin.fir.resolve.transformers.contracts.ConeLambdaCoeffectEffectDeclaration
+import org.jetbrains.kotlin.fir.contracts.contextual.declaration.ConeCoeffectEffectDeclaration
+import org.jetbrains.kotlin.fir.contracts.contextual.declaration.ConeLambdaCoeffectEffectDeclaration
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 
 abstract class CoeffectActionsCollector(
@@ -56,7 +56,7 @@ abstract class CoeffectActionsCollector(
         extractor: CoeffectActionExtractors.() -> CoeffectContextActions?
     ) {
         val function = node.fir
-        if (function.isInPlaceLambda()) {
+        if (function.isLambda()) {
             val (calledFunction, lambdaSymbol) = lambdaToOwnerFunction[function] ?: return
             collectLambdaCoeffectActions(node, calledFunction, lambdaSymbol, data, extractor)
         } else collectCoeffectActions(node, data, extractor)
@@ -115,5 +115,5 @@ class CoeffectActionsOnNodes(private val data: MutableMap<CFGNode<*>, MutableLis
 
     operator fun iterator() = data.iterator()
 
-    fun hasVerifiers() = data.any { entry -> entry.value.any { it.verifier != null } }
+    fun hasVerifiers() = data.any { entry -> entry.value.any { it.verifiers.isNotEmpty() } }
 }

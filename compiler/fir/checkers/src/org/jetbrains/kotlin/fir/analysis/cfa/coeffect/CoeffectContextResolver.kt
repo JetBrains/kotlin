@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.cfa.coeffect
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.fir.analysis.cfa.ControlFlowInfo
-import org.jetbrains.kotlin.fir.contract.contextual.*
+import org.jetbrains.kotlin.fir.contracts.contextual.*
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraphVisitor
 
@@ -18,11 +18,11 @@ class CoeffectContextResolver(
 
     override fun visitNode(node: CFGNode<*>, data: Collection<CoeffectContextOnNodes>): CoeffectContextOnNodes {
         var dataForNode = if (data.isEmpty()) CoeffectContextOnNodes.EMPTY else data.reduce(CoeffectContextOnNodes::merge)
-        val actions = actionsOnNodes[node] ?: return dataForNode
+        val nodeActions = actionsOnNodes[node] ?: return dataForNode
 
-        actions.forEach {
-            dataForNode += it.provider
-            dataForNode += it.cleaner
+        nodeActions.forEach { actions ->
+            actions.providers.forEach { dataForNode += it }
+            actions.cleaners.forEach { dataForNode += it }
         }
 
         return dataForNode

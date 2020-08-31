@@ -8,8 +8,11 @@ package org.jetbrains.kotlin.fir.resolve.transformers.contracts
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.contract.contextual.family.safeBuilder.asCoeffect
-import org.jetbrains.kotlin.fir.contract.contextual.family.checkedexception.asCoeffect
+import org.jetbrains.kotlin.fir.contract.contextual.checkedexception.calledInTryCatchEffectCoeffectExtractors
+import org.jetbrains.kotlin.fir.contract.contextual.checkedexception.throwsEffectCoeffectExtractors
+import org.jetbrains.kotlin.fir.contract.contextual.safeBuilder.mustDoEffectCoeffectExtractors
+import org.jetbrains.kotlin.fir.contract.contextual.safeBuilder.providesEffectCoeffectExtractors
+import org.jetbrains.kotlin.fir.contract.contextual.safeBuilder.requiresEffectCoeffectExtractors
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -18,7 +21,9 @@ import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 
 class ConeEffectExtractor(
@@ -75,13 +80,19 @@ class ConeEffectExtractor(
 
             FirContractsDslNames.THROWS -> {
                 val exceptionType = (functionCall.typeArguments.first() as? FirTypeProjectionWithVariance)?.typeRef?.coneType ?: return null
-                return asCoeffect(ConeThrowsEffectDeclaration(exceptionType))
+                return ConeThrowsEffectDeclaration(
+                    exceptionType,
+                    throwsEffectCoeffectExtractors(exceptionType)
+                )
             }
 
             FirContractsDslNames.CALLED_IN_TRY_CATCH -> {
                 val exceptionType = (functionCall.typeArguments.first() as? FirTypeProjectionWithVariance)?.typeRef?.coneType ?: return null
                 val lambda = functionCall.argument.accept(this, null) as? ConeValueParameterReference ?: return null
-                return asCoeffect(ConeCalledInTryCatchEffectDeclaration(lambda, exceptionType))
+                return ConeCalledInTryCatchEffectDeclaration(
+                    lambda, exceptionType,
+                    calledInTryCatchEffectCoeffectExtractors(exceptionType)
+                )
             }
 
             FirContractsDslNames.RECEIVER_OF -> {
@@ -106,9 +117,8 @@ class ConeEffectExtractor(
                 val property = reference.toResolvedCallableSymbol() as? FirPropertySymbol ?: return null
                 val kind = functionCall.arguments.getOrNull(1)?.parseInvocationKind() ?: EventOccurrencesRange.UNKNOWN
 
-                return asCoeffect(
-                    ConeProvidesActionEffectDeclaration(ConePropertyInitializationAction(target, targetClass, property, kind))
-                )
+                val action = ConePropertyInitializationAction(target, targetClass, property, kind)
+                return ConeProvidesActionEffectDeclaration(action, providesEffectCoeffectExtractors(action))
             }
 
             FirContractsDslNames.INVOCATION_OF -> {
@@ -128,20 +138,21 @@ class ConeEffectExtractor(
                 val function = reference.toResolvedCallableSymbol() as? FirFunctionSymbol<*> ?: return null
                 val kind = functionCall.arguments.getOrNull(1)?.parseInvocationKind() ?: EventOccurrencesRange.UNKNOWN
 
-                return asCoeffect(ConeProvidesActionEffectDeclaration(ConeFunctionInvocationAction(target, targetClass, function, kind)))
+                val action = ConeFunctionInvocationAction(target, targetClass, function, kind)
+                return ConeProvidesActionEffectDeclaration(action, providesEffectCoeffectExtractors(action))
             }
 
             FirContractsDslNames.MUST_DO -> {
                 val lambda = functionCall.explicitReceiver?.accept(this, null) as? ConeValueParameterReference ?: return null
                 val action = functionCall.arguments[0].accept(this, null) as? ConeActionDeclaration ?: return null
                 if (action.target !is ConeLambdaArgumentReference) return null
-                return asCoeffect(ConeMustDoEffectDeclaration(lambda, action))
+                return ConeMustDoEffectDeclaration(lambda, action, mustDoEffectCoeffectExtractors(action))
             }
 
             FirContractsDslNames.REQUIRES -> {
                 val action = functionCall.argument.accept(this, null) as? ConeActionDeclaration ?: return null
                 if (action.target !is ConeValueParameterReference) return null
-                return asCoeffect(ConeRequiresActionEffectDeclaration(action))
+                return ConeRequiresActionEffectDeclaration(action, requiresEffectCoeffectExtractors(action))
             }
 
             BOOLEAN_AND, BOOLEAN_OR -> {

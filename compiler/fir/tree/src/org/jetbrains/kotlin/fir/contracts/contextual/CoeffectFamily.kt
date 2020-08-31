@@ -3,11 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.contract.contextual
+package org.jetbrains.kotlin.fir.contracts.contextual
 
 interface CoeffectFamily {
-
+    val id: String
     val emptyContext: CoeffectContext
     val combiner: CoeffectContextCombiner
-
 }
