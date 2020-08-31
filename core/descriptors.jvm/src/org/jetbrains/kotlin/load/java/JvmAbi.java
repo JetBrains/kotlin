@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.load.java;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping;
+import org.jetbrains.kotlin.builtins.CompanionObjectMappingUtilsKt;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
@@ -108,7 +109,7 @@ public final class JvmAbi {
     }
 
     public static boolean isMappedIntrinsicCompanionObject(@NotNull ClassDescriptor companionObject) {
-        return CompanionObjectMapping.INSTANCE.isMappedIntrinsicCompanionObject(companionObject);
+        return CompanionObjectMappingUtilsKt.isMappedIntrinsicCompanionObject(CompanionObjectMapping.INSTANCE, companionObject);
     }
 
     public static boolean hasJvmFieldAnnotation(@NotNull CallableMemberDescriptor memberDescriptor) {
