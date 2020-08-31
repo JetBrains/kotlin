@@ -31,6 +31,10 @@ internal class FirDesignatedBodyResolveTransformerForIDE(
     returnTypeCalculator = createReturnTypeCalculatorForIDE(session, scopeSession)
 ) {
 
+    override fun onBeforeDeclarationContentResolve(declaration: FirDeclaration) {
+        towerDataContextCollector?.addDeclarationContext(declaration, context.towerDataContext)
+    }
+
     override fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
         if (designation.hasNext()) {
             designation.next().visitNoTransform(this, data)
