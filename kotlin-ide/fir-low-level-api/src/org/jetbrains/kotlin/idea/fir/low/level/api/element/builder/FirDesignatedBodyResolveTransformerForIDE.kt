@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
@@ -23,7 +22,7 @@ internal class FirDesignatedBodyResolveTransformerForIDE(
     session: FirSession,
     scopeSession: ScopeSession,
     implicitTypeOnly: Boolean,
-    private val towerDataContextForStatement: MutableMap<FirStatement, FirTowerDataContext>? = null
+    private val towerDataContextCollector: FirTowerDataContextCollector? = null
 ) : FirBodyResolveTransformer(
     session,
     phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
@@ -42,7 +41,6 @@ internal class FirDesignatedBodyResolveTransformerForIDE(
     }
 
     override fun onBeforeStatementResolution(statement: FirStatement) {
-        if (towerDataContextForStatement == null) return
-        towerDataContextForStatement[statement] = context.towerDataContext
+        towerDataContextCollector?.addStatementContext(statement, context.towerDataContext)
     }
 }
