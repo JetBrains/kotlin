@@ -536,6 +536,7 @@ fun postProcessMoveUsages(
 
     val progressStep = 1.0 / sortedUsages.size
     val progressIndicator = ProgressManager.getInstance().progressIndicator
+    progressIndicator?.isIndeterminate = false
     progressIndicator?.text = KotlinBundle.message("text.updating.usages.progress")
     usageLoop@ for ((i, usage) in sortedUsages.withIndex()) {
         progressIndicator?.fraction = (i + 1) * progressStep
