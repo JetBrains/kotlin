@@ -48,7 +48,10 @@ class CreateScriptFunctionsPhase(val context: CommonBackendContext) : FileLoweri
             it.body = it.factory.createBlockBody(
                 startOffset,
                 endOffset,
-                initializeStatements.map { (field, expression) -> createIrSetField(field, expression) }
+                initializeStatements.let {
+                    if (irScript.resultProperty == null || initializeStatements.lastOrNull()?.first?.correspondingPropertySymbol != irScript.resultProperty) it
+                    else it.dropLast(1)
+                }.map { (field, expression) -> createIrSetField(field, expression) }
             )
         }
 
@@ -56,7 +59,16 @@ class CreateScriptFunctionsPhase(val context: CommonBackendContext) : FileLoweri
             it.body = it.factory.createBlockBody(
                 startOffset,
                 endOffset,
-                irScript.statements.filter { it !is IrDeclaration }.prepareForEvaluateScriptFunction(it)
+                irScript.statements.filter { it !is IrDeclaration }
+                    .let {
+                        val lastInitializer = initializeStatements.lastOrNull()
+                        if (lastInitializer == null || irScript.resultProperty == null
+                            || lastInitializer.first.correspondingPropertySymbol != irScript.resultProperty) {
+                            it
+                        } else {
+                            it + lastInitializer.second
+                        }
+                    }.prepareForEvaluateScriptFunction(it)
             )
         }
 

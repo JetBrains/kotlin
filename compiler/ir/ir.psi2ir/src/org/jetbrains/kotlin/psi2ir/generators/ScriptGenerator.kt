@@ -5,24 +5,17 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ParameterDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.assertCast
-import org.jetbrains.kotlin.ir.builders.declarations.IrFunctionBuilder
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunction
-import org.jetbrains.kotlin.ir.descriptors.WrappedFunctionDescriptorWithContainerSource
-import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.varargElementType
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.psi.KtScriptInitializer
@@ -46,7 +39,11 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
 
             // TODO: since script could reference instances of previous one their receivers have to be enlisted in its scope
             // Remove this code once script is no longer represented by Class
-            existedScripts.forEach { context.symbolTable.introduceValueParameter(it.owner.thisReceiver) }
+            existedScripts.forEach {
+                if (it.owner != irScript) {
+                    context.symbolTable.introduceValueParameter(it.owner.thisReceiver)
+                }
+            }
 
             val startOffset = ktScript.pureStartOffset
             val endOffset = ktScript.pureEndOffset
@@ -63,13 +60,33 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
 
             irScript.thisReceiver = makeReceiver(descriptor)
 
+            irScript.baseClass = descriptor.typeConstructor.supertypes.single().toIrType()
+            irScript.implicitReceivers = descriptor.implicitReceivers.map(::makeReceiver)
+
+
             for (d in ktScript.declarations) {
                 when (d) {
                     is KtScriptInitializer -> {
-                        irScript.statements += BodyGenerator(
+                        val irExpressionBody = BodyGenerator(
                             irScript.symbol,
                             context
-                        ).generateExpressionBody(d.body!!).expression
+                        ).generateExpressionBody(d.body!!)
+                        if (d == ktScript.declarations.last() && descriptor.resultValue != null) {
+                            descriptor.resultValue!!.let { resultDescriptor ->
+                                PropertyGenerator(declarationGenerator)
+                                    .generateSyntheticPropertyWithInitializer(ktScript, resultDescriptor, generateSyntheticAccessors = true) {
+                                        // TODO: check if this is a correct place to do it
+                                        it.visibility = DescriptorVisibilities.PUBLIC
+                                        irExpressionBody
+                                    }.also {
+                                        it.origin = IrDeclarationOrigin.SCRIPT_RESULT_PROPERTY
+                                        irScript.statements += it
+                                        irScript.resultProperty = it.symbol
+                                    }
+                            }
+                        } else {
+                            irScript.statements += irExpressionBody.expression
+                        }
                     }
                     is KtDestructuringDeclaration -> {
                         // copied with modifications from StatementGenerator.visitDestructuringDeclaration
@@ -130,14 +147,17 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
                 }
             }
 
-            descriptor.resultValue?.let { resultDescriptor ->
+            irScript.explicitCallParameters = descriptor.unsubstitutedPrimaryConstructor.valueParameters.map { valueParameterDescriptor ->
+                valueParameterDescriptor.toIrValueParameter(startOffset, endOffset, IrDeclarationOrigin.SCRIPT_CALL_PARAMETER)
+            }
+
+            irScript.providedProperties = descriptor.scriptProvidedProperties.map { providedProperty ->
                 // TODO: initializer
-                // TODO: do not keet direct link
-                val resultProperty =
-                    PropertyGenerator(declarationGenerator)
-                        .generateSyntheticProperty(ktScript, resultDescriptor, null, generateSyntheticAccessors = true)
-                resultProperty.origin = IrDeclarationOrigin.SCRIPT_RESULT_PROPERTY
-                irScript.statements += resultProperty
+                // TODO: do not keep direct links
+                val irProperty = PropertyGenerator(declarationGenerator).generateSyntheticProperty(ktScript, providedProperty, null)
+                irProperty.origin = IrDeclarationOrigin.SCRIPT_PROVIDED_PROPERTY
+                irScript.statements += irProperty
+                irProperty.symbol
             }
         }
     }

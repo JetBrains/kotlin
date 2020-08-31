@@ -150,8 +150,8 @@ internal fun makeCompiledScript(
     val module = makeCompiledModule(generationState)
 
     val resultField = with(generationState.scriptSpecific) {
-        if (resultType == null || resultFieldName == null) null
-        else resultFieldName!! to KotlinType(DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(resultType!!))
+        if (resultFieldName == null) null
+        else resultFieldName!! to KotlinType(resultTypeString ?: DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(resultType!!))
     }
 
     return KJvmCompiledScript(

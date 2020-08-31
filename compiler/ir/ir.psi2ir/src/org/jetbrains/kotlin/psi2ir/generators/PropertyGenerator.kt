@@ -69,26 +69,32 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         irValueParameter: IrValueParameter?, generateSyntheticAccessors: Boolean = false
     ): IrProperty {
         val irPropertyType = propertyDescriptor.type.toIrType()
+        return generateSyntheticPropertyWithInitializer(ktDeclarationContainer, propertyDescriptor, generateSyntheticAccessors) {
+            if (irValueParameter == null) null
+            else {
+                context.irFactory.createExpressionBody(
+                    IrGetValueImpl(
+                        ktDeclarationContainer.startOffsetSkippingComments, ktDeclarationContainer.endOffset,
+                        irPropertyType,
+                        irValueParameter.symbol,
+                        IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
+                    )
+                )
+            }
+        }
+    }
+
+    fun generateSyntheticPropertyWithInitializer(
+        ktDeclarationContainer: KtElement, propertyDescriptor: PropertyDescriptor,
+        generateSyntheticAccessors: Boolean, generateInitializer: (IrField) -> IrExpressionBody?
+    ): IrProperty {
         return context.symbolTable.declareProperty(
             ktDeclarationContainer.startOffsetSkippingComments, ktDeclarationContainer.endOffset,
             IrDeclarationOrigin.DEFINED,
             propertyDescriptor,
             isDelegated = false
         ).also { irProperty ->
-            irProperty.backingField =
-                generatePropertyBackingField(ktDeclarationContainer, propertyDescriptor) {
-                    if (irValueParameter == null) null
-                    else {
-                        context.irFactory.createExpressionBody(
-                            IrGetValueImpl(
-                                ktDeclarationContainer.startOffsetSkippingComments, ktDeclarationContainer.endOffset,
-                                irPropertyType,
-                                irValueParameter.symbol,
-                                IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
-                            )
-                        )
-                    }
-                }
+            irProperty.backingField = generatePropertyBackingField(ktDeclarationContainer, propertyDescriptor, generateInitializer)
 
             val getter = propertyDescriptor.getter
                 ?: if (generateSyntheticAccessors)
