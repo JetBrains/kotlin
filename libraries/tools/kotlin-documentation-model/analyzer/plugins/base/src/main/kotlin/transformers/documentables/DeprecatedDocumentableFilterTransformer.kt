@@ -35,12 +35,8 @@ class DeprecatedDocumentableFilterTransformer(val context: DokkaContext) : PreMe
             filterPackages(original.packages).let { (modified, packages) ->
                 if (!modified) original
                 else
-                    DModule(
-                        original.name,
-                        packages = packages,
-                        documentation = original.documentation,
-                        sourceSets = original.sourceSets,
-                        extra = original.extra
+                    original.copy(
+                        packages = packages
                     )
             }
 
@@ -65,16 +61,10 @@ class DeprecatedDocumentableFilterTransformer(val context: DokkaContext) : PreMe
                     !modified -> pckg
                     else -> {
                         packagesListChanged = true
-                        DPackage(
-                            pckg.dri,
-                            functions,
-                            properties,
-                            classlikes,
-                            pckg.typealiases,
-                            pckg.documentation,
-                            pckg.expectPresentInSet,
-                            pckg.sourceSets,
-                            pckg.extra
+                        pckg.copy(
+                            functions = functions,
+                            properties = properties,
+                            classlikes = classlikes
                         )
                     }
                 }
@@ -98,16 +88,10 @@ class DeprecatedDocumentableFilterTransformer(val context: DokkaContext) : PreMe
 
         private fun filterEnumEntries(entries: List<DEnumEntry>) =
             entries.filter { it.isAllowedInPackage() }.map { entry ->
-                DEnumEntry(
-                    entry.dri,
-                    entry.name,
-                    entry.documentation,
-                    entry.expectPresentInSet,
-                    filterFunctions(entry.functions).second,
-                    filterProperties(entry.properties).second,
-                    filterClasslikes(entry.classlikes).second,
-                    entry.sourceSets,
-                    entry.extra
+                entry.copy(
+                    functions = filterFunctions(entry.functions).second,
+                    properties = filterProperties(entry.properties).second,
+                    classlikes = filterClasslikes(entry.classlikes).second,
                 )
             }
 
@@ -125,122 +109,70 @@ class DeprecatedDocumentableFilterTransformer(val context: DokkaContext) : PreMe
                 }
             }.map { classlike ->
                 fun helper(): DClasslike = when (classlike) {
-                    is DClass -> DClass(
-                        classlike.dri,
-                        classlike.name,
-                        filterFunctions(classlike.constructors).let {
+                    is DClass -> classlike.copy(
+                        constructors = filterFunctions(classlike.constructors).let {
                             modified = modified || it.first; it.second
                         },
-                        filterFunctions(classlike.functions).let {
+                        functions = filterFunctions(classlike.functions).let {
                             modified = modified || it.first; it.second
                         },
-                        filterProperties(classlike.properties).let {
+                        properties = filterProperties(classlike.properties).let {
                             modified = modified || it.first; it.second
                         },
-                        filterClasslikes(classlike.classlikes).let {
+                        classlikes = filterClasslikes(classlike.classlikes).let {
                             modified = modified || it.first; it.second
-                        },
-                        classlike.sources,
-                        classlike.visibility,
-                        classlike.companion,
-                        classlike.generics,
-                        classlike.supertypes,
-                        classlike.documentation,
-                        classlike.expectPresentInSet,
-                        classlike.modifier,
-                        classlike.sourceSets,
-                        classlike.extra
+                        }
                     )
-                    is DAnnotation -> DAnnotation(
-                        classlike.name,
-                        classlike.dri,
-                        classlike.documentation,
-                        classlike.expectPresentInSet,
-                        classlike.sources,
-                        filterFunctions(classlike.functions).let {
+                    is DAnnotation -> classlike.copy(
+                        functions = filterFunctions(classlike.functions).let {
                             modified = modified || it.first; it.second
                         },
-                        filterProperties(classlike.properties).let {
+                        properties = filterProperties(classlike.properties).let {
                             modified = modified || it.first; it.second
                         },
-                        filterClasslikes(classlike.classlikes).let {
+                        classlikes = filterClasslikes(classlike.classlikes).let {
                             modified = modified || it.first; it.second
                         },
-                        classlike.visibility,
-                        classlike.companion,
-                        filterFunctions(classlike.constructors).let {
+                        constructors = filterFunctions(classlike.constructors).let {
                             modified = modified || it.first; it.second
-                        },
-                        classlike.generics,
-                        classlike.sourceSets,
-                        classlike.extra
+                        }
                     )
-                    is DEnum -> DEnum(
-                        classlike.dri,
-                        classlike.name,
-                        filterEnumEntries(classlike.entries),
-                        classlike.documentation,
-                        classlike.expectPresentInSet,
-                        classlike.sources,
-                        filterFunctions(classlike.functions).let {
+                    is DEnum -> classlike.copy(
+                        entries = filterEnumEntries(classlike.entries),
+                        functions = filterFunctions(classlike.functions).let {
                             modified = modified || it.first; it.second
                         },
-                        filterProperties(classlike.properties).let {
+                        properties = filterProperties(classlike.properties).let {
                             modified = modified || it.first; it.second
                         },
-                        filterClasslikes(classlike.classlikes).let {
+                        classlikes = filterClasslikes(classlike.classlikes).let {
                             modified = modified || it.first; it.second
                         },
-                        classlike.visibility,
-                        classlike.companion,
-                        filterFunctions(classlike.constructors).let {
+                        constructors = filterFunctions(classlike.constructors).let {
                             modified = modified || it.first; it.second
                         },
-                        classlike.supertypes,
-                        classlike.sourceSets,
-                        classlike.extra
                     )
-                    is DInterface -> DInterface(
-                        classlike.dri,
-                        classlike.name,
-                        classlike.documentation,
-                        classlike.expectPresentInSet,
-                        classlike.sources,
-                        filterFunctions(classlike.functions).let {
+                    is DInterface -> classlike.copy(
+                        functions = filterFunctions(classlike.functions).let {
                             modified = modified || it.first; it.second
                         },
-                        filterProperties(classlike.properties).let {
+                        properties = filterProperties(classlike.properties).let {
                             modified = modified || it.first; it.second
                         },
-                        filterClasslikes(classlike.classlikes).let {
+                        classlikes = filterClasslikes(classlike.classlikes).let {
                             modified = modified || it.first; it.second
-                        },
-                        classlike.visibility,
-                        classlike.companion,
-                        classlike.generics,
-                        classlike.supertypes,
-                        classlike.sourceSets,
-                        classlike.extra
+                        }
                     )
-                    is DObject -> DObject(
-                        classlike.name,
-                        classlike.dri,
-                        classlike.documentation,
-                        classlike.expectPresentInSet,
-                        classlike.sources,
-                        filterFunctions(classlike.functions).let {
+                    is DObject -> classlike.copy(
+                        functions = filterFunctions(classlike.functions).let {
                             modified = modified || it.first; it.second
                         },
-                        filterProperties(classlike.properties).let {
+                        properties = filterProperties(classlike.properties).let {
                             modified = modified || it.first; it.second
                         },
-                        filterClasslikes(classlike.classlikes).let {
+                        classlikes = filterClasslikes(classlike.classlikes).let {
                             modified = modified || it.first; it.second
-                        },
-                        classlike.visibility,
-                        classlike.supertypes,
-                        classlike.sourceSets,
-                        classlike.extra
+                        }
                     )
                 }
                 helper()
