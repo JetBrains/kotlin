@@ -31,6 +31,8 @@ class RedundantLambdaOrAnonymousFunctionInspection : AbstractKotlinInspection() 
     }
 
     private class RedundantLambdaOrAnonymousFunctionFix : LocalQuickFix {
+        override fun startInWriteAction(): Boolean = false
+
         override fun getFamilyName(): String = KotlinBundle.message("inspection.redundant.lambda.or.anonymous.function.fix")
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
