@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getTargetFunctionDescriptor
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
@@ -90,10 +91,11 @@ class LambdaToAnonymousFunctionIntention : SelfTargetingIntention<KtLambdaExpres
                     for (parameter in functionDescriptor.valueParameters) {
                         val type = parameter.type.let { if (it.isFlexible()) it.makeNotNullable() else it }
                         val renderType = typeSourceCode.renderType(type)
+                        val name = parameter.name.asString().quoteIfNeeded()
                         if (type.isTypeParameter()) {
-                            param(parameter.name.asString(), typeParameters[renderType]?.text ?: renderType)
+                            param(name, typeParameters[renderType]?.text ?: renderType)
                         } else {
-                            param(parameter.name.asString(), renderType)
+                            param(name, renderType)
                         }
                     }
 

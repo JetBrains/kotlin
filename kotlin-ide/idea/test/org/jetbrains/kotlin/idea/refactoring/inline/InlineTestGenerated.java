@@ -877,6 +877,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/lambdaExpression/lambdaWithReceiverAsParameter3.kt");
         }
 
+        @TestMetadata("unnamedParameter.kt")
+        public void testUnnamedParameter() throws Exception {
+            runTest("testData/refactoring/inline/lambdaExpression/unnamedParameter.kt");
+        }
+
         @TestMetadata("withConstantParameter.kt")
         public void testWithConstantParameter() throws Exception {
             runTest("testData/refactoring/inline/lambdaExpression/withConstantParameter.kt");

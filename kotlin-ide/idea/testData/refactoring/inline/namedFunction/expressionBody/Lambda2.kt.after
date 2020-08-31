@@ -2,5 +2,5 @@ class Declaration {
 }
 
 fun call(declaration: Declaration) {
-    ({ _: Int -> 11 })(10)
+    val a = 11
 }
