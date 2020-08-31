@@ -95,6 +95,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/classes/delegatedImplementation.kt");
         }
 
+        @TestMetadata("delegatedImplementationOfJavaInterface.kt")
+        public void testDelegatedImplementationOfJavaInterface() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/delegatedImplementationOfJavaInterface.kt");
+        }
+
         @TestMetadata("delegatedImplementationWithExplicitOverride.kt")
         public void testDelegatedImplementationWithExplicitOverride() throws Exception {
             runTest("compiler/testData/ir/irText/classes/delegatedImplementationWithExplicitOverride.kt");

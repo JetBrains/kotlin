@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
@@ -87,9 +86,9 @@ class TypeTranslator(
 
         when {
             flexibleApproximatedType.isError ->
-                return IrErrorTypeImpl(flexibleApproximatedType, translateTypeAnnotations(flexibleApproximatedType.annotations), variance)
+                return IrErrorTypeImpl(flexibleApproximatedType, translateTypeAnnotations(flexibleApproximatedType), variance)
             flexibleApproximatedType.isDynamic() ->
-                return IrDynamicTypeImpl(flexibleApproximatedType, translateTypeAnnotations(flexibleApproximatedType.annotations), variance)
+                return IrDynamicTypeImpl(flexibleApproximatedType, translateTypeAnnotations(flexibleApproximatedType), variance)
         }
 
         val approximatedType = flexibleApproximatedType.upperIfFlexible()
@@ -111,19 +110,19 @@ class TypeTranslator(
 
         return IrSimpleTypeBuilder().apply {
             this.kotlinType = flexibleApproximatedType
-            this.hasQuestionMark = approximatedType.isMarkedNullable || extensions.enhancedNullability.hasEnhancedNullability(approximatedType)
+            this.hasQuestionMark = approximatedType.isMarkedNullable
             this.variance = variance
             this.abbreviation = approximatedType.getAbbreviation()?.toIrTypeAbbreviation()
             when (ktTypeDescriptor) {
                 is TypeParameterDescriptor -> {
                     classifier = resolveTypeParameter(ktTypeDescriptor)
-                    annotations = translateTypeAnnotations(approximatedType.annotations)
+                    annotations = translateTypeAnnotations(approximatedType)
                 }
 
                 is ClassDescriptor -> {
                     classifier = symbolTable.referenceClass(ktTypeDescriptor)
                     arguments = translateTypeArguments(approximatedType.arguments)
-                    annotations = translateTypeAnnotations(approximatedType.annotations)
+                    annotations = translateTypeAnnotations(approximatedType)
                 }
 
                 else ->
@@ -155,7 +154,7 @@ class TypeTranslator(
             symbolTable.referenceTypeAlias(typeAliasDescriptor),
             isMarkedNullable,
             translateTypeArguments(this.arguments),
-            translateTypeAnnotations(this.annotations)
+            translateTypeAnnotations(this)
         )
     }
 
@@ -195,8 +194,26 @@ class TypeTranslator(
                 approximateCapturedTypes(ktType).upper
         }
 
-    private fun translateTypeAnnotations(annotations: Annotations): List<IrConstructorCall> =
-        annotations.mapNotNull(constantValueGenerator::generateAnnotationConstructorCall)
+    private fun translateTypeAnnotations(kotlinType: KotlinType): List<IrConstructorCall> {
+        val annotations = kotlinType.annotations
+        val irAnnotations = ArrayList<IrConstructorCall>()
+        annotations.mapNotNullTo(irAnnotations) {
+            constantValueGenerator.generateAnnotationConstructorCall(it)
+        }
+        // EnhancedNullability annotation is not present in 'annotations', see 'EnhancedTypeAnnotations::iterator()'.
+        if (extensions.enhancedNullability.hasEnhancedNullability(kotlinType)) {
+            extensions.enhancedNullabilityAnnotationConstructor?.let { irConstructor ->
+                irAnnotations.add(
+                    IrConstructorCallImpl.fromSymbolOwner(
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                        irConstructor.constructedClassType,
+                        irConstructor.symbol
+                    )
+                )
+            }
+        }
+        return irAnnotations
+    }
 
     private fun translateTypeArguments(arguments: List<TypeProjection>) =
         arguments.map {

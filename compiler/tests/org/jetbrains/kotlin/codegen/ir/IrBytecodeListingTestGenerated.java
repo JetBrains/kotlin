@@ -94,11 +94,6 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         runTest("compiler/testData/codegen/bytecodeListing/jvmStaticWithDefaultParameters.kt");
     }
 
-    @TestMetadata("lateInitNotNull.kt")
-    public void testLateInitNotNull() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/lateInitNotNull.kt");
-    }
-
     @TestMetadata("localFunctionInInitBlock.kt")
     public void testLocalFunctionInInitBlock() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/localFunctionInInitBlock.kt");
@@ -137,11 +132,6 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
     @TestMetadata("noToArrayInJava.kt")
     public void testNoToArrayInJava() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/noToArrayInJava.kt");
-    }
-
-    @TestMetadata("platformTypes.kt")
-    public void testPlatformTypes() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/platformTypes.kt");
     }
 
     @TestMetadata("privateDefaultImpls.kt")
@@ -636,6 +626,39 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         @TestMetadata("optionalExpectation.kt")
         public void testOptionalExpectation() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/multiplatform/optionalExpectation.kt");
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/bytecodeListing/nullabilityAnnotations")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class NullabilityAnnotations extends AbstractIrBytecodeListingTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInNullabilityAnnotations() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/nullabilityAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("lateInitNotNull.kt")
+        public void testLateInitNotNull() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/nullabilityAnnotations/lateInitNotNull.kt");
+        }
+
+        @TestMetadata("nullabilityAnnotationsForReturnType.kt")
+        public void testNullabilityAnnotationsForReturnType() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/nullabilityAnnotations/nullabilityAnnotationsForReturnType.kt");
+        }
+
+        @TestMetadata("nullabilityAnnotationsOnDelegatedMembers.kt")
+        public void testNullabilityAnnotationsOnDelegatedMembers() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/nullabilityAnnotations/nullabilityAnnotationsOnDelegatedMembers.kt");
+        }
+
+        @TestMetadata("platformTypes.kt")
+        public void testPlatformTypes() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/nullabilityAnnotations/platformTypes.kt");
         }
     }
 

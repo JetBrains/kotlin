@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.SamType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
@@ -19,6 +18,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.load.java.descriptors.getParentJavaStaticClassScope
 import org.jetbrains.kotlin.load.java.sam.JavaSingleAbstractMethodUtils
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -105,24 +106,45 @@ class JvmGeneratorExtensions(private val generateFacades: Boolean = true) : Gene
     override fun getParentClassStaticScope(descriptor: ClassDescriptor): MemberScope? =
         descriptor.getParentJavaStaticClassScope()
 
-    private val annotationPackage =
-        IrExternalPackageFragmentImpl(DescriptorlessExternalPackageFragmentSymbol(), StandardNames.ANNOTATION_PACKAGE_FQ_NAME)
+    private val kotlinIrInternalPackage =
+        IrExternalPackageFragmentImpl(DescriptorlessExternalPackageFragmentSymbol(), IrBuiltIns.KOTLIN_INTERNAL_IR_FQN)
+
+    private val kotlinJvmInternalPackage =
+        IrExternalPackageFragmentImpl(DescriptorlessExternalPackageFragmentSymbol(), JvmAnnotationNames.KOTLIN_JVM_INTERNAL)
 
     private val flexibleNullabilityAnnotationClass = IrFactoryImpl.buildClass {
         kind = ClassKind.ANNOTATION_CLASS
         name = FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME.shortName()
     }.apply {
         createImplicitParameterDeclarationWithWrappedDescriptor()
-        parent = annotationPackage
+        parent = kotlinIrInternalPackage
         addConstructor {
             isPrimary = true
         }
     }
 
-    override val flexibleNullabilityAnnotationConstructor: IrConstructor? = flexibleNullabilityAnnotationClass.constructors.single()
+    private val enhancedNullabilityAnnotationClass = IrFactoryImpl.buildClass {
+        kind = ClassKind.ANNOTATION_CLASS
+        name = ENHANCED_NULLABILITY_ANNOTATION_FQ_NAME.shortName()
+    }.apply {
+        createImplicitParameterDeclarationWithWrappedDescriptor()
+        parent = kotlinJvmInternalPackage
+        addConstructor {
+            isPrimary = true
+        }
+    }
+
+    override val flexibleNullabilityAnnotationConstructor: IrConstructor? =
+        flexibleNullabilityAnnotationClass.constructors.single()
+
+    override val enhancedNullabilityAnnotationConstructor: IrConstructor? =
+        enhancedNullabilityAnnotationClass.constructors.single()
 
     companion object {
         val FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME =
-            StandardNames.ANNOTATION_PACKAGE_FQ_NAME.child(Name.identifier("FlexibleNullability"))
+            IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier("FlexibleNullability"))
+
+        val ENHANCED_NULLABILITY_ANNOTATION_FQ_NAME: FqName =
+            JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION
     }
 }

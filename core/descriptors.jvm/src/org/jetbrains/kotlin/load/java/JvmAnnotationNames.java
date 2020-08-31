@@ -54,6 +54,8 @@ public final class JvmAnnotationNames {
 
     public static final FqName PURELY_IMPLEMENTS_ANNOTATION = new FqName("kotlin.jvm.PurelyImplements");
 
+    public static final FqName KOTLIN_JVM_INTERNAL = new FqName("kotlin.jvm.internal");
+
     // Just for internal use: there is no such real classes in bytecode
     public static final FqName ENHANCED_NULLABILITY_ANNOTATION = new FqName("kotlin.jvm.internal.EnhancedNullability");
     public static final FqName ENHANCED_MUTABILITY_ANNOTATION = new FqName("kotlin.jvm.internal.EnhancedMutability");
