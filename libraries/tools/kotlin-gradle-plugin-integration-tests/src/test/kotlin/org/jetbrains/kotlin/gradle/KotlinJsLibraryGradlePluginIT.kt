@@ -18,7 +18,22 @@ class KotlinJsIrLibraryGradlePluginIT : BaseGradleIT() {
 
     @Test
     fun testSimpleJsBinaryLibrary() {
-        val project = Project("js-library")
+        val project = Project("simple-js-library")
+
+        project.setupWorkingDir()
+        project.gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+        project.build("build") {
+            assertSuccessful()
+
+            assertFileExists("build/productionLibrary/js-library.js")
+            assertFileExists("build/productionLibrary/package.json")
+            assertFileExists("build/productionLibrary/main.js")
+        }
+    }
+
+    @Test
+    fun testJsBinaryLibraryAndExecutable() {
+        val project = Project("js-library-with-executable")
 
         project.setupWorkingDir()
         project.gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
