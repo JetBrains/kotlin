@@ -55,6 +55,7 @@ interface GeneratedCode {
         operator fun GeneratedCode.unaryPlus()
 
         operator fun String.unaryPlus() = inlineCode(this)
+        operator fun File.unaryPlus() = +asGeneratedCode()
     }
 
     /**
