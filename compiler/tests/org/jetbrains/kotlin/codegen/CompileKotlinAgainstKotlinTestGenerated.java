@@ -363,6 +363,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         runTest("compiler/testData/compileKotlinAgainstKotlin/starImportEnum.kt");
     }
 
+    @TestMetadata("suspendFunWithDefaultMangling.kt")
+    public void testSuspendFunWithDefaultMangling() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/suspendFunWithDefaultMangling.kt");
+    }
+
     @TestMetadata("targetedJvmName.kt")
     public void testTargetedJvmName() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/targetedJvmName.kt");
