@@ -66,15 +66,15 @@ FILE fqName:<root> fileName:/genericDelegatedProperty.kt
             thisRef: GET_VAR '<this>: <root>.C<T of <root>.<get-genericDelegatedProperty>> declared in <root>.<get-genericDelegatedProperty>' type=<root>.C<T of <root>.<get-genericDelegatedProperty>> origin=null
             kProp: PROPERTY_REFERENCE 'public final genericDelegatedProperty: kotlin.Int [delegated,var]' field=null getter='public final fun <get-genericDelegatedProperty> <T> (): kotlin.Int declared in <root>' setter='public final fun <set-genericDelegatedProperty> <T> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty1<<root>.C<T of <root>.<get-genericDelegatedProperty>>, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
               <1>: <none>
-    FUN DELEGATED_PROPERTY_ACCESSOR name:<set-genericDelegatedProperty> visibility:public modality:FINAL <T> ($receiver:<root>.C<T of <root>.<get-genericDelegatedProperty>>, <set-?>:kotlin.Int) returnType:kotlin.Unit
+    FUN DELEGATED_PROPERTY_ACCESSOR name:<set-genericDelegatedProperty> visibility:public modality:FINAL <T> ($receiver:<root>.C<T of <root>.<set-genericDelegatedProperty>>, <set-?>:kotlin.Int) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:genericDelegatedProperty visibility:public modality:FINAL [delegated,var]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-      $receiver: VALUE_PARAMETER name:<this> type:<root>.C<T of <root>.<get-genericDelegatedProperty>>
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.C<T of <root>.<set-genericDelegatedProperty>>
       VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
       BLOCK_BODY
         CALL 'public final fun setValue (thisRef: kotlin.Any?, kProp: kotlin.Any?, newValue: kotlin.Int): kotlin.Unit [operator] declared in <root>.Delegate' type=kotlin.Unit origin=null
           $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:genericDelegatedProperty$delegate type:<root>.Delegate visibility:private [final,static]' type=<root>.Delegate origin=null
-          thisRef: GET_VAR '<this>: <root>.C<T of <root>.<get-genericDelegatedProperty>> declared in <root>.<set-genericDelegatedProperty>' type=<root>.C<T of <root>.<get-genericDelegatedProperty>> origin=null
+          thisRef: GET_VAR '<this>: <root>.C<T of <root>.<set-genericDelegatedProperty>> declared in <root>.<set-genericDelegatedProperty>' type=<root>.C<T of <root>.<set-genericDelegatedProperty>> origin=null
           kProp: PROPERTY_REFERENCE 'public final genericDelegatedProperty: kotlin.Int [delegated,var]' field=null getter='public final fun <get-genericDelegatedProperty> <T> (): kotlin.Int declared in <root>' setter='public final fun <set-genericDelegatedProperty> <T> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty1<<root>.C<T of <root>.<get-genericDelegatedProperty>>, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
             <1>: <none>
           newValue: GET_VAR '<set-?>: kotlin.Int declared in <root>.<set-genericDelegatedProperty>' type=kotlin.Int origin=null

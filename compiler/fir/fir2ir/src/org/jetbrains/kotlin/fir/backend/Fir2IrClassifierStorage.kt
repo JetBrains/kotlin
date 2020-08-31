@@ -471,7 +471,10 @@ class Fir2IrClassifierStorage(
         firTypeParameterSymbol: FirTypeParameterSymbol,
         typeContext: ConversionTypeContext
     ): IrTypeParameterSymbol {
-        return getCachedIrTypeParameter(firTypeParameterSymbol.fir, typeContext = typeContext)?.symbol
+        val firTypeParameter = firTypeParameterSymbol.fir
+        return getCachedIrTypeParameter(firTypeParameter, typeContext = typeContext)?.symbol
+        // We can try to use default cache because setter can use parent type parameters
+            ?: typeParameterCache[firTypeParameter]?.symbol
             ?: error("Cannot find cached type parameter by FIR symbol: ${firTypeParameterSymbol.name}")
     }
 }
