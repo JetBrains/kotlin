@@ -569,9 +569,12 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
     }
 
     private fun interpretGetValue(expression: IrGetValue): ExecutionResult {
-        val owner = expression.type.classOrNull?.owner
+        val expectedClass = expression.type.classOrNull?.owner
         // used to evaluate constants inside object
-        if (owner != null && owner.isObject) return getOrCreateObjectValue(owner) // TODO is this correct behaviour?
+        if (expectedClass != null && expectedClass.isObject && expression.symbol.owner.origin == IrDeclarationOrigin.INSTANCE_RECEIVER) {
+            // TODO is this correct behaviour?
+            return getOrCreateObjectValue(expectedClass)
+        }
         stack.pushReturnValue(stack.getVariable(expression.symbol).state)
         return Next
     }
