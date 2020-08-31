@@ -935,6 +935,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/server/build/fleet.server.build.iml" filepath="$PROJECT_DIR$/intellij/fleet/server/build/fleet.server.build.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/space/fleet.space.iml" filepath="$PROJECT_DIR$/intellij/fleet/space/fleet.space.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/util/fleet.util.iml" filepath="$PROJECT_DIR$/intellij/fleet/util/fleet.util.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/fleet/workspace/fleet.workspace.iml" filepath="$PROJECT_DIR$/intellij/fleet/workspace/fleet.workspace.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/android/android-adb/intellij.android.adb.iml" filepath="$PROJECT_DIR$/intellij/community/android/android-adb/intellij.android.adb.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/android/android-adb/intellij.android.adb.tests.iml" filepath="$PROJECT_DIR$/intellij/community/android/android-adb/intellij.android.adb.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/android/adt-branding/intellij.android.adt.branding.iml" filepath="$PROJECT_DIR$/intellij/community/android/adt-branding/intellij.android.adt.branding.iml" />
