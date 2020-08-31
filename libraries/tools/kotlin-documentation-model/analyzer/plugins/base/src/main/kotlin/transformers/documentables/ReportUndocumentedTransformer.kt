@@ -129,7 +129,7 @@ internal class ReportUndocumentedTransformer : DocumentableTransformer {
     private fun callableMemberDescriptorOrNull(
         documentable: Documentable, sourceSet: DokkaSourceSet
     ): CallableMemberDescriptor? {
-        if (documentable is WithExpectActual) {
+        if (documentable is WithSources) {
             return documentable.sources[sourceSet]
                 .safeAs<DescriptorDocumentableSource>()?.descriptor
                 .safeAs()

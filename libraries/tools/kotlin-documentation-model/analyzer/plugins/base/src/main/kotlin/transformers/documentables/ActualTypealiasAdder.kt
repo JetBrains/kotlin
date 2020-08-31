@@ -62,7 +62,7 @@ class ActualTypealiasAdder : DocumentableTransformer {
     private fun <T> addActualTypeAlias(
         elements: Iterable<T>,
         typealiases: Map<DRI, DTypeAlias>
-    ): List<T> where T : DClasslike, T : WithExtraProperties<T>, T : WithExpectActual =
+    ): List<T> where T : DClasslike, T : WithExtraProperties<T>, T : WithSources =
         elements.map { element ->
             if (element.expectPresentInSet != null) {
                 typealiases[element.dri]?.let { ta ->
