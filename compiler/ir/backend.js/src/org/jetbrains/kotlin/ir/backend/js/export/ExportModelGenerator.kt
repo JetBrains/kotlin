@@ -331,8 +331,18 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
 
         if (function.isFakeOverriddenFromAny())
             return Exportability.NotNeeded
-        if (function.name.asString().endsWith("-impl"))
+
+
+        val nameString = function.name.asString()
+        if (nameString.endsWith("-impl"))
             return Exportability.NotNeeded
+
+
+        // Workaround in case IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER is rewritten.
+        // TODO: Properly fix KT-41613
+        if (nameString.endsWith("\$") && function.valueParameters.any { "\$mask" in it.name.asString() }) {
+            return Exportability.NotNeeded
+        }
 
         val name = function.getExportedIdentifier()
         // TODO: Use [] syntax instead of prohibiting
@@ -379,7 +389,10 @@ private fun getExportCandidate(declaration: IrDeclaration): IrDeclarationWithNam
 }
 
 private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, context: JsIrBackendContext): Boolean {
-    if (declaration.fqNameWhenAvailable in context.additionalExportedDeclarations)
+    if (declaration.fqNameWhenAvailable in context.additionalExportedDeclarationNames)
+        return true
+
+    if (declaration in context.additionalExportedDeclarations)
         return true
 
     if (declaration.isJsExport())

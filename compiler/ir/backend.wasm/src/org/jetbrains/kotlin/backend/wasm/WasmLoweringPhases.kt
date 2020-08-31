@@ -316,11 +316,11 @@ private val blockDecomposerLoweringPhase = makeCustomWasmModulePhase(
 //    description = "Generate invocations to kotlin.test suite and test functions"
 //)
 //
-private val staticMembersLoweringPhase = makeWasmModulePhase(
-    ::StaticMembersLowering,
-    name = "StaticMembersLowering",
-    description = "Move static member declarations to top-level"
-)
+//private val staticMembersLoweringPhase = makeWasmModulePhase(
+//    ::StaticMembersLowering,
+//    name = "StaticMembersLowering",
+//    description = "Move static member declarations to top-level"
+//)
 
 private val builtInsLoweringPhase = makeWasmModulePhase(
     ::BuiltInsLowering,
@@ -434,7 +434,7 @@ val wasmPhases = NamedCompilerPhase(
 
             objectDeclarationLoweringPhase then
             objectUsageLoweringPhase then
-            staticMembersLoweringPhase then
+//            staticMembersLoweringPhase then
 
             validateIrAfterLowering
 )

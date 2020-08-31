@@ -312,7 +312,8 @@ class NameTables(
             parent = parent.parent
         }
 
-        return mappedNames[mapToKey(declaration)] ?: error("Can't find name for declaration ${declaration.render()}")
+        return mappedNames[mapToKey(declaration)]
+            ?: error("Can't find name for declaration ${declaration.render()}")
     }
 
     fun getNameForMemberField(field: IrField): String {

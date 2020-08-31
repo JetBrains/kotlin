@@ -8,6 +8,8 @@
 // TODO fix statics export in DCE-driven mode
 // SKIP_DCE_DRIVEN
 
+// FILE: f1.kt
+
 @file:JsExport
 
 class ClassWithDefaultCtor {
@@ -55,3 +57,8 @@ class DerivedClassWithSecondaryCtor : OpenClassWithMixedConstructors {
     @JsName("delegateToCreateFromInts")
     constructor(y: Int, z: Int) : super(y, z)
 }
+
+// FILE: f2.kt
+
+@JsExport
+class KotlinGreeter(val greeting: String = "helau")
