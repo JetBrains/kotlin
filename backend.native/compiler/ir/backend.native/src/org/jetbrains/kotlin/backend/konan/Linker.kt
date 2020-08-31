@@ -142,7 +142,7 @@ internal class Linker(val context: Context) {
         try {
             File(executable).delete()
             linker.linkCommands(objectFiles = objectFiles, executable = executable,
-                    libraries = linker.linkStaticLibraries(includedBinaries) + context.config.defaultSystemLibraries +
+                    libraries = linker.linkStaticLibraries(includedBinaries) +
                             caches.static.takeIf { context.config.produce != CompilerOutputKind.STATIC_CACHE }.orEmpty(),
                     linkerArgs = asLinkerArgs(config.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
                             BitcodeEmbedding.getLinkerOptions(context.config) +

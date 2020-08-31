@@ -61,8 +61,7 @@ private fun staticGnuArCommands(ar: String, executable: ExecutableFile,
 
 // Use "clang -v -save-temps" to write linkCommand() method 
 // for another implementation of this class.
-abstract class LinkerFlags(val configurables: Configurables)
-/* : Configurables by configurables */ {
+abstract class LinkerFlags(val configurables: Configurables) {
 
     protected val llvmBin = "${configurables.absoluteLlvmHome}/bin"
     protected val llvmLib = "${configurables.absoluteLlvmHome}/lib"
@@ -95,7 +94,7 @@ abstract class LinkerFlags(val configurables: Configurables)
     }
 }
 
-open class AndroidLinker(targetProperties: AndroidConfigurables)
+class AndroidLinker(targetProperties: AndroidConfigurables)
     : LinkerFlags(targetProperties), AndroidConfigurables by targetProperties {
 
     private val clangQuad = when (targetProperties.targetArg) {
@@ -148,7 +147,7 @@ open class AndroidLinker(targetProperties: AndroidConfigurables)
     }
 }
 
-open class MacOSBasedLinker(targetProperties: AppleConfigurables)
+class MacOSBasedLinker(targetProperties: AppleConfigurables)
     : LinkerFlags(targetProperties), AppleConfigurables by targetProperties {
 
     private val libtool = "$absoluteTargetToolchain/usr/bin/libtool"
@@ -282,14 +281,14 @@ open class MacOSBasedLinker(targetProperties: AppleConfigurables)
         return exitCode
     }
 
-    open fun dsymutilCommand(executable: ExecutableFile, outputDsymBundle: String): List<String> =
+    fun dsymutilCommand(executable: ExecutableFile, outputDsymBundle: String): List<String> =
             listOf(dsymutil, executable, "-o", outputDsymBundle)
 
-    open fun dsymutilDryRunVerboseCommand(executable: ExecutableFile): List<String> =
+    fun dsymutilDryRunVerboseCommand(executable: ExecutableFile): List<String> =
             listOf(dsymutil, "-dump-debug-map", executable)
 }
 
-open class GccBasedLinker(targetProperties: GccConfigurables)
+class GccBasedLinker(targetProperties: GccConfigurables)
     : LinkerFlags(targetProperties), GccConfigurables by targetProperties {
 
     private val ar = if (HostManager.hostIsMac) "$absoluteTargetToolchain/bin/llvm-ar"
@@ -358,7 +357,7 @@ open class GccBasedLinker(targetProperties: GccConfigurables)
     }
 }
 
-open class MingwLinker(targetProperties: MingwConfigurables)
+class MingwLinker(targetProperties: MingwConfigurables)
     : LinkerFlags(targetProperties), MingwConfigurables by targetProperties {
 
     private val ar = "$absoluteTargetToolchain/bin/ar"
@@ -406,7 +405,7 @@ open class MingwLinker(targetProperties: MingwConfigurables)
     }
 }
 
-open class WasmLinker(targetProperties: WasmConfigurables)
+class WasmLinker(targetProperties: WasmConfigurables)
     : LinkerFlags(targetProperties), WasmConfigurables by targetProperties {
 
     override val useCompilerDriverAsLinker: Boolean get() = false
@@ -482,30 +481,13 @@ open class ZephyrLinker(targetProperties: ZephyrConfigurables)
 }
 
 fun linker(configurables: Configurables): LinkerFlags =
-        when (configurables.target) {
-            KonanTarget.LINUX_X64,
-            KonanTarget.LINUX_ARM32_HFP,  KonanTarget.LINUX_ARM64,
-            KonanTarget.LINUX_MIPS32, KonanTarget.LINUX_MIPSEL32 ->
-                GccBasedLinker(configurables as GccConfigurables)
-
-            KonanTarget.MACOS_X64,
-            KonanTarget.TVOS_X64, KonanTarget.TVOS_ARM64,
-            KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64, KonanTarget.IOS_X64,
-            KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_ARM32,
-            KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_X86 ->
-                MacOSBasedLinker(configurables as AppleConfigurables)
-
-            KonanTarget.ANDROID_ARM32, KonanTarget.ANDROID_ARM64,
-            KonanTarget.ANDROID_X86, KonanTarget.ANDROID_X64 ->
-                AndroidLinker(configurables as AndroidConfigurables)
-
-            KonanTarget.MINGW_X64, KonanTarget.MINGW_X86 ->
-                MingwLinker(configurables as MingwConfigurables)
-
-            KonanTarget.WASM32 ->
-                WasmLinker(configurables as WasmConfigurables)
-
-            is KonanTarget.ZEPHYR ->
-                ZephyrLinker(configurables as ZephyrConfigurables)
+        when (configurables) {
+            is GccConfigurables -> GccBasedLinker(configurables)
+            is AppleConfigurables -> MacOSBasedLinker(configurables)
+            is AndroidConfigurables-> AndroidLinker(configurables)
+            is MingwConfigurables -> MingwLinker(configurables)
+            is WasmConfigurables -> WasmLinker(configurables)
+            is ZephyrConfigurables -> ZephyrLinker(configurables)
+            else -> error("Unexpected target: ${configurables.target}")
         }
 
