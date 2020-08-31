@@ -17,6 +17,7 @@ object ExtendedExpressionCheckers : ExpressionCheckers() {
         CanBeReplacedWithOperatorAssignmentChecker
     )
     override val qualifiedAccessCheckers: List<FirQualifiedAccessChecker> = listOf(
-        RedundantCallOfConversionMethod
+        RedundantCallOfConversionMethod,
+        UselessCallOnNotNullChecker
     )
 }
