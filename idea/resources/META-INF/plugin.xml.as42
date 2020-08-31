@@ -1,0 +1,157 @@
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude" version="2" url="http://kotlinlang.org" allow-bundled-update="true">
+  <id>org.jetbrains.kotlin</id>
+
+  <name>Kotlin</name>
+  <description><![CDATA[
+The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
+<br>
+<a href="http://kotlinlang.org/docs/tutorials/getting-started.html">Getting Started in IntelliJ IDEA</a><br>
+<a href="http://kotlinlang.org/docs/tutorials/kotlin-android.html">Getting Started in Android Studio</a><br>
+<a href="http://slack.kotlinlang.org/">Public Slack</a><br>
+<a href="https://youtrack.jetbrains.com/issues/KT">Issue tracker</a><br>
+]]></description>
+  <version>@snapshot@</version>
+  <vendor url="http://www.jetbrains.com">JetBrains</vendor>
+
+  <idea-version since-build="202.6397.94" until-build="202.*"/>
+
+  <change-notes><![CDATA[
+    <h3>1.4.0</h3>
+    Released: <b>August 17, 2020</b>
+    <ul>
+      <li>New compiler with better type inference.</li>
+      <li>IR backends for JVM and JS in Alpha mode (<a href="https://kotlinlang.org/docs/reference/whatsnew14.html#unified-backends-and-extensibility">requires opt-in</a>).</li>
+      <li>A new flexible Kotlin Project Wizard for easy creation and configuration of different types of projects.</li>
+      <li>New IDE functionality to debug coroutines.</li>
+      <li>IDE performance improvements: many actions, such as project opening and autocomplete suggestions now complete up to 4 times faster.</li>
+      <li>New language features such as SAM conversions, trailing comma, and other.</li>
+      <li>Type annotations in the JVM bytecode and new modes for generating default interfaces in Kotlin/JVM.</li>
+      <li>New Gradle DSL for Kotlin/JS.</li>
+      <li>Improved performance and interop with Swift and Objective-C in Kotlin/Native.</li>
+      <li>Support for sharing code in several targets thanks to the hierarchical structure in multiplatform projects.</li>
+      <li>New collection operators, delegated properties improvements, the double-ended queue implementation ArrayDeque, and much more new things in the standard library.</li>
+    </ul>
+    For more details, see <a href="https://kotlinlang.org/docs/reference/whatsnew14.html?utm_source=product&utm_medium=link">What’s New in Kotlin 1.4.0</a> and <a href="http://blog.jetbrains.com/kotlin/2020/08/kotlin-1-4-released-with-a-focus-on-quality-and-performance/?utm_source=product&utm_medium=link">this blog post</a>.
+    <br><br>
+    To get the most out of the changes and improvements introduced in Kotlin 1.4, join our <a href="https://kotlinlang.org/lp/event-14/">Online Event</a> where you will be able to enjoy four days of Kotlin talks, Q&As with the Kotlin team, and more.
+    ]]>
+  </change-notes>
+
+  <depends>com.intellij.modules.platform</depends>
+  <depends>com.intellij.modules.androidstudio</depends>
+
+  <depends optional="true" config-file="junit.xml">JUnit</depends>
+  <depends optional="true" config-file="gradle.xml">com.intellij.gradle</depends>
+  <depends optional="true" config-file="gradle-java.xml">org.jetbrains.plugins.gradle</depends>
+  <depends optional="true" config-file="kotlin-gradle-testing.xml">org.jetbrains.plugins.gradle</depends>
+  <depends optional="true" config-file="gradle-groovy.xml">org.intellij.groovy</depends>
+  <depends optional="true" config-file="maven-common.xml">org.jetbrains.idea.maven</depends>
+  <depends optional="true" config-file="maven.xml">org.jetbrains.idea.maven</depends>
+  <depends optional="true" config-file="testng-j.xml">TestNG-J</depends>
+  <depends optional="true" config-file="coverage.xml">Coverage</depends>
+  <depends optional="true" config-file="i18n.xml">com.intellij.java-i18n</depends>
+  <depends optional="true" config-file="decompiler.xml">org.jetbrains.java.decompiler</depends>
+  <depends optional="true" config-file="git4idea.xml">Git4Idea</depends>
+  <depends optional="true" config-file="stream-debugger.xml">org.jetbrains.debugger.streams</depends>
+
+  <!-- ULTIMATE-PLUGIN-PLACEHOLDER -->
+
+  <!-- CIDR-PLUGIN-PLACEHOLDER-START -->
+  <depends>com.intellij.modules.java</depends>
+  <depends optional="true" config-file="javaScriptDebug.xml">JavaScriptDebugger</depends>
+  <depends optional="true" config-file="kotlin-copyright.xml">com.intellij.copyright</depends>
+  <depends optional="true" config-file="injection.xml">org.intellij.intelliLang</depends>
+  <!-- CIDR-PLUGIN-PLACEHOLDER-END -->
+
+  <xi:include href="plugin-common.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <!-- CIDR-PLUGIN-EXCLUDE-START -->
+  <xi:include href="jvm-common.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="jvm.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <!-- CIDR-PLUGIN-EXCLUDE-END -->
+
+  <xi:include href="native-common.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="native.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <xi:include href="tipsAndTricks.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <xi:include href="extensions/ide.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <xi:include href="kotlinx-serialization.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <xi:include href="scripting-support.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <extensionPoints>
+    <xi:include href="extensions/compiler.xml" xpointer="xpointer(/idea-plugin/extensionPoints/*)"/>
+
+    <extensionPoint qualifiedName="org.jetbrains.kotlin.pluginUpdateVerifier"
+                    interface="org.jetbrains.kotlin.idea.update.PluginUpdateVerifier"/>
+  </extensionPoints>
+
+  <xi:include href="plugin-kotlin-extensions.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <extensions defaultExtensionNs="com.intellij.jvm">
+    <declarationSearcher language="kotlin" implementationClass="org.jetbrains.kotlin.idea.jvm.KotlinDeclarationSearcher"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <applicationInitializedListener implementation="org.jetbrains.kotlin.idea.PluginStartupListener" />
+    <applicationService serviceImplementation="org.jetbrains.kotlin.idea.PluginStartupService" />
+
+    <postStartupActivity implementation="org.jetbrains.kotlin.idea.PluginStartupActivity"/>
+    <postStartupActivity implementation="org.jetbrains.kotlin.idea.versions.KotlinUpdatePluginStartupActivity" />
+
+    <postStartupActivity implementation="org.jetbrains.kotlin.idea.completion.LookupCancelWatcher"/>
+    <postStartupActivity implementation="org.jetbrains.kotlin.idea.caches.KotlinPackageContentModificationListener"/>
+    <postStartupActivity implementation="org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectComponent"/>
+
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.completion.LookupCancelService"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectService"/>
+
+    <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.highlighter.KotlinBeforeResolveHighlightingPass$Registrar"/>
+    <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.highlighter.ScriptExternalHighlightingPass$Registrar"/>
+    <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.parameterInfo.custom.KotlinCodeHintsPass$Registrar"/>
+    <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.refactoring.cutPaste.MoveDeclarationsPassFactory$Registrar"/>
+
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener"/>
+
+    <fileTypeUsageSchemaDescriptor schema="Gradle Script" implementationClass="org.jetbrains.kotlin.idea.core.script.KotlinGradleScriptFileTypeSchemaDetector"/>
+
+    <completion.ml.model implementation="org.jetbrains.kotlin.idea.completion.ml.KotlinMLRankingProvider"/>
+    <suggestedRefactoringSupport language="kotlin" implementationClass="org.jetbrains.kotlin.idea.refactoring.suggested.KotlinSuggestedRefactoringSupport"/>
+
+    <refactoring.moveInnerHandler language="kotlin"
+                                  implementationClass="org.jetbrains.kotlin.idea.refactoring.move.MoveKotlinInnerHandler"/>
+
+    <defaultLiveTemplates file="liveTemplates/Kotlin.xml"/>
+
+    <fileType name="Kotlin"
+              implementationClass="org.jetbrains.kotlin.idea.KotlinFileType"
+              fieldName="INSTANCE"
+              language="kotlin"
+              extensions="kt;kts"/>
+    <fileType name="ARCHIVE" extensions="klib"/>
+    <fileType name="KNM"
+              implementationClass="org.jetbrains.kotlin.idea.klib.KlibMetaFileType"
+              fieldName="INSTANCE"
+              extensions="knm"/>
+    <fileType name="KJSM"
+              implementationClass="org.jetbrains.kotlin.idea.decompiler.js.KotlinJavaScriptMetaFileType"
+              fieldName="INSTANCE"
+              extensions="kjsm"/>
+
+    <fileType name="kotlin_builtins"
+              implementationClass="org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInFileType"
+              fieldName="INSTANCE"
+              extensions="kotlin_builtins;kotlin_metadata"/>
+
+    <fileType name="kotlin_module"
+              implementationClass="org.jetbrains.kotlin.idea.KotlinModuleFileType"
+              fieldName="INSTANCE"
+              extensions="kotlin_module"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="org.jetbrains.kotlin">
+    <pluginUpdateVerifier implementation="org.jetbrains.kotlin.idea.update.GooglePluginUpdateVerifier"/>
+  </extensions>
+</idea-plugin>
