@@ -5,8 +5,24 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
-sealed class TowerGroupKind(private val index: Int) : Comparable<TowerGroupKind> {
-    abstract class WithDepth(index: Int, val depth: Int) : TowerGroupKind(index)
+sealed class TowerGroupKind(protected val index: Int) : Comparable<TowerGroupKind> {
+    abstract class WithDepth(index: Int, val depth: Int) : TowerGroupKind(index) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as WithDepth
+
+            if (index != other.index) return false
+            if (depth != other.depth) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            return 31 * depth + index
+        }
+    }
 
     object Start : TowerGroupKind(Integer.MIN_VALUE)
 
