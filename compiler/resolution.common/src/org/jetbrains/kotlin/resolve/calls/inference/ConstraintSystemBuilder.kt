@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.resolve.calls.inference
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.TypeConstructorMarker
-import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
-import org.jetbrains.kotlin.types.model.TypeVariableMarker
+import org.jetbrains.kotlin.types.model.*
 
 interface ConstraintSystemOperation {
     val hasContradiction: Boolean
@@ -19,6 +16,12 @@ interface ConstraintSystemOperation {
     fun markPostponedVariable(variable: TypeVariableMarker)
     fun unmarkPostponedVariable(variable: TypeVariableMarker)
     fun removePostponedVariables()
+
+    fun getRevisedVariableForParameter(expectedType: TypeVariableMarker, index: Int): TypeVariableMarker?
+    fun getRevisedVariableForReturnType(expectedType: TypeVariableMarker): TypeVariableMarker?
+
+    fun putRevisedVariableForParameter(expectedType: TypeVariableMarker, index: Int, newVariable: TypeVariableMarker)
+    fun putRevisedVariableForReturnType(expectedType: TypeVariableMarker, newVariable: TypeVariableMarker)
 
     fun addSubtypeConstraint(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker, position: ConstraintPosition)
     fun addEqualityConstraint(a: KotlinTypeMarker, b: KotlinTypeMarker, position: ConstraintPosition)

@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.inference.model
 
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
-import org.jetbrains.kotlin.types.model.TypeConstructorMarker
-import org.jetbrains.kotlin.types.model.TypeVariableMarker
+import org.jetbrains.kotlin.types.model.*
 
 /**
  * Every type variable can be in the following states:
@@ -42,6 +39,8 @@ interface ConstraintStorage {
     val hasContradiction: Boolean
     val fixedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
     val postponedTypeVariables: List<TypeVariableMarker>
+    val revisedVariablesForParameters: Map<Pair<TypeVariableMarker, Int>, TypeVariableMarker>
+    val revisedReturnTypes: Map<TypeVariableMarker, TypeVariableMarker>
 
     object Empty : ConstraintStorage {
         override val allTypeVariables: Map<TypeConstructorMarker, TypeVariableMarker> get() = emptyMap()
@@ -52,6 +51,8 @@ interface ConstraintStorage {
         override val hasContradiction: Boolean get() = false
         override val fixedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker> get() = emptyMap()
         override val postponedTypeVariables: List<TypeVariableMarker> get() = emptyList()
+        override val revisedVariablesForParameters: Map<Pair<TypeVariableMarker, Int>, TypeVariableMarker> = emptyMap()
+        override val revisedReturnTypes: Map<TypeVariableMarker, TypeVariableMarker> = emptyMap()
     }
 }
 

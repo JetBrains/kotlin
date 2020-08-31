@@ -155,6 +155,12 @@ class PostponedArgumentInputTypesResolver(
         val expectedType = argument.expectedType
             ?: throw IllegalStateException("Postponed argument's expected type must not be null")
 
+        val variable = getBuilder().currentStorage().allTypeVariables[expectedType.constructor]
+        if (variable != null) {
+            val revisedVariableForReturnType = getBuilder().getRevisedVariableForReturnType(variable)
+            if (revisedVariableForReturnType != null) return revisedVariableForReturnType as NewTypeVariable
+        }
+
         return when (argument) {
             is LambdaWithTypeVariableAsExpectedTypeAtom -> TypeVariableForLambdaReturnType(
                 expectedType.builtIns,
@@ -165,7 +171,11 @@ class PostponedArgumentInputTypesResolver(
                 TYPE_VARIABLE_NAME_FOR_CR_RETURN_TYPE
             )
             else -> throw IllegalStateException("Unsupported postponed argument type of $argument")
-        }.also { getBuilder().registerVariable(it) }
+        }.also {
+            if (variable != null) getBuilder().putRevisedVariableForReturnType(variable, it)
+
+            getBuilder().registerVariable(it)
+        }
     }
 
     private fun Context.createTypeVariableForParameterType(
@@ -174,6 +184,12 @@ class PostponedArgumentInputTypesResolver(
     ): NewTypeVariable {
         val expectedType = argument.expectedType
             ?: throw IllegalStateException("Postponed argument's expected type must not be null")
+
+        val variable = getBuilder().currentStorage().allTypeVariables[expectedType.constructor]
+        if (variable != null) {
+            val revisedVariableForParameter = getBuilder().getRevisedVariableForParameter(variable, index)
+            if (revisedVariableForParameter != null) return revisedVariableForParameter as NewTypeVariable
+        }
 
         return when (argument) {
             is LambdaWithTypeVariableAsExpectedTypeAtom -> TypeVariableForLambdaParameterType(
@@ -187,7 +203,11 @@ class PostponedArgumentInputTypesResolver(
                 TYPE_VARIABLE_NAME_PREFIX_FOR_CR_PARAMETER_TYPE + (index + 1)
             )
             else -> throw IllegalStateException("Unsupported postponed argument type of $argument")
-        }.also { getBuilder().registerVariable(it) }
+        }.also {
+            if (variable != null) getBuilder().putRevisedVariableForParameter(variable, index, it)
+
+            getBuilder().registerVariable(it)
+        }
     }
 
     private fun Context.createTypeVariablesForParameters(

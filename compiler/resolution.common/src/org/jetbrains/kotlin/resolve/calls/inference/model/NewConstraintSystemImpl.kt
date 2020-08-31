@@ -107,6 +107,22 @@ class NewConstraintSystemImpl(
         storage.postponedTypeVariables.clear()
     }
 
+    override fun getRevisedVariableForParameter(expectedType: TypeVariableMarker, index: Int): TypeVariableMarker? {
+        return storage.revisedVariablesForParameters[expectedType to index]
+    }
+
+    override fun getRevisedVariableForReturnType(expectedType: TypeVariableMarker): TypeVariableMarker? {
+        return storage.revisedReturnTypes[expectedType]
+    }
+
+    override fun putRevisedVariableForParameter(expectedType: TypeVariableMarker, index: Int, newVariable: TypeVariableMarker) {
+        storage.revisedVariablesForParameters[expectedType to index] = newVariable
+    }
+
+    override fun putRevisedVariableForReturnType(expectedType: TypeVariableMarker, newVariable: TypeVariableMarker) {
+        storage.revisedReturnTypes[expectedType] = newVariable
+    }
+
     override fun addSubtypeConstraint(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker, position: ConstraintPosition) =
         constraintInjector.addInitialSubtypeConstraint(
             apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) },
