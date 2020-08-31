@@ -349,4 +349,72 @@ public class ExtendedFirDiagnosticsTestGenerated extends AbstractExtendedFirDiag
             runTest("compiler/fir/analysis-tests/testData/extendedCheckers/unused/valueIsNeverRead.kt");
         }
     }
+
+    @TestMetadata("compiler/fir/analysis-tests/testData/extendedCheckers/UselessCallOnNotNullChecker")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class UselessCallOnNotNullChecker extends AbstractExtendedFirDiagnosticsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInUselessCallOnNotNullChecker() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/extendedCheckers/UselessCallOnNotNullChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("Basic.kt")
+        public void testBasic() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/UselessCallOnNotNullChecker/Basic.kt");
+        }
+
+        @TestMetadata("NotNullType.kt")
+        public void testNotNullType() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/UselessCallOnNotNullChecker/NotNullType.kt");
+        }
+
+        @TestMetadata("NotNullTypeChain.kt")
+        public void testNotNullTypeChain() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/UselessCallOnNotNullChecker/NotNullTypeChain.kt");
+        }
+
+        @TestMetadata("NullOrBlankSafe.kt")
+        public void testNullOrBlankSafe() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/UselessCallOnNotNullChecker/NullOrBlankSafe.kt");
+        }
+
+        @TestMetadata("NullOrEmpty.kt")
+        public void testNullOrEmpty() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/UselessCallOnNotNullChecker/NullOrEmpty.kt");
+        }
+
+        @TestMetadata("NullOrEmptyFake.kt")
+        public void testNullOrEmptyFake() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/UselessCallOnNotNullChecker/NullOrEmptyFake.kt");
+        }
+
+        @TestMetadata("NullOrEmptySafe.kt")
+        public void testNullOrEmptySafe() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/UselessCallOnNotNullChecker/NullOrEmptySafe.kt");
+        }
+
+        @TestMetadata("OrEmptyFake.kt")
+        public void testOrEmptyFake() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/UselessCallOnNotNullChecker/OrEmptyFake.kt");
+        }
+
+        @TestMetadata("SafeCall.kt")
+        public void testSafeCall() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/UselessCallOnNotNullChecker/SafeCall.kt");
+        }
+
+        @TestMetadata("Sequence.kt")
+        public void testSequence() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/UselessCallOnNotNullChecker/Sequence.kt");
+        }
+
+        @TestMetadata("String.kt")
+        public void testString() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/UselessCallOnNotNullChecker/String.kt");
+        }
+    }
 }
