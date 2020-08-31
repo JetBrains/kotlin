@@ -28930,6 +28930,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/secondaryConstructors/generics.kt");
         }
 
+        @TestMetadata("inlineIntoTwoConstructors.kt")
+        public void testInlineIntoTwoConstructors() throws Exception {
+            runTest("compiler/testData/codegen/box/secondaryConstructors/inlineIntoTwoConstructors.kt");
+        }
+
         @TestMetadata("innerClasses.kt")
         public void testInnerClasses() throws Exception {
             runTest("compiler/testData/codegen/box/secondaryConstructors/innerClasses.kt");
