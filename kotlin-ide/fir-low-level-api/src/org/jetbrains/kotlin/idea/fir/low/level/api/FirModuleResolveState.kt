@@ -100,6 +100,7 @@ internal open class FirModuleResolveStateImpl(
     ) {
         firLazyDeclarationResolver.runLazyResolveWithoutLock(
             firFunction,
+            fileCache,
             containerFirFile,
             firIdeProvider,
             toPhase,

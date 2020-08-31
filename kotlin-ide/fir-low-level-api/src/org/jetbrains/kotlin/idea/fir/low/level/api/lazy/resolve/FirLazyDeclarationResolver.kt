@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.util.checkCanceled
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.executeWithoutPCE
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.getContainingFile
 import org.jetbrains.kotlin.idea.util.classIdIfNonLocal
+import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
@@ -40,12 +41,28 @@ internal class FirLazyDeclarationResolver(
         val provider = firFile.session.firIdeProvider
         if (checkPCE) {
             firFileBuilder.runCustomResolveWithPCECheck(firFile, moduleFileCache) {
-                runLazyResolveWithoutLock(declaration, firFile, provider, toPhase, towerDataContextCollector, checkPCE = true)
+                runLazyResolveWithoutLock(
+                    declaration,
+                    moduleFileCache,
+                    firFile,
+                    provider,
+                    toPhase,
+                    towerDataContextCollector,
+                    checkPCE = true
+                )
             }
         } else {
             firFileBuilder.runCustomResolveUnderLock(firFile, moduleFileCache) {
                 executeWithoutPCE {
-                    runLazyResolveWithoutLock(declaration, firFile, provider, toPhase, towerDataContextCollector, checkPCE = false)
+                    runLazyResolveWithoutLock(
+                        declaration,
+                        moduleFileCache,
+                        firFile,
+                        provider,
+                        toPhase,
+                        towerDataContextCollector,
+                        checkPCE = false
+                    )
                 }
             }
         }
@@ -53,6 +70,7 @@ internal class FirLazyDeclarationResolver(
 
     fun runLazyResolveWithoutLock(
         firDeclarationToResolve: FirDeclaration,
+        moduleFileCache: ModuleFileCache,
         containerFirFile: FirFile,
         provider: FirProvider,
         toPhase: FirResolvePhase,
@@ -70,17 +88,18 @@ internal class FirLazyDeclarationResolver(
         }
         if (toPhase <= nonLazyPhase) return
         if (checkPCE) checkCanceled()
-        runLazyResolvePhase(firDeclarationToResolve, containerFirFile, provider, toPhase, towerDataContextCollector)
+        runLazyResolvePhase(firDeclarationToResolve, containerFirFile, moduleFileCache, provider, toPhase, towerDataContextCollector)
     }
 
     private fun runLazyResolvePhase(
         firDeclarationToResolve: FirDeclaration,
         containerFirFile: FirFile,
+        moduleFileCache: ModuleFileCache,
         provider: FirProvider,
         toPhase: FirResolvePhase,
         towerDataContextCollector: FirTowerDataContextCollector?,
     ) {
-        val nonLocalDeclarationToResolve = firDeclarationToResolve.getNonLocalDeclarationToResolve(provider)
+        val nonLocalDeclarationToResolve = firDeclarationToResolve.getNonLocalDeclarationToResolve(provider, moduleFileCache)
 
         val designation = mutableListOf<FirDeclaration>(containerFirFile)
         if (nonLocalDeclarationToResolve !is FirFile) {
@@ -113,27 +132,37 @@ internal class FirLazyDeclarationResolver(
         )
         containerFirFile.transform<FirFile, ResolutionMode>(transformer, ResolutionMode.ContextDependent)
     }
-}
 
-
-private fun FirDeclaration.getNonLocalDeclarationToResolve(provider: FirProvider): FirDeclaration {
-    if (this is FirFile) return this
-    val ktDeclaration = psi as? KtDeclaration ?: error("FirDeclaration should have a PSI of type KtDeclaration")
-    if (!KtPsiUtil.isLocal(ktDeclaration)) return this
-    return when (val nonLocalPsi = ktDeclaration.getNonLocalContainingDeclarationWithFqName()) {
-        is KtClassOrObject -> provider.getFirClassifierByFqName(
-            nonLocalPsi.classIdIfNonLocal()
-                ?: error("Container classId should not be null for non-local declaration")
-        ) ?: error("Could not find class ${nonLocalPsi.classIdIfNonLocal()}")
-        is KtProperty, is KtNamedFunction -> {
-            val containerClass = nonLocalPsi.containingClassOrObject
-                ?: error("Container class should not be null for non-local declaration")
-            val containerClassId = containerClass.classIdIfNonLocal()
-                ?: error("Container classId should not be null for non-local declaration")
-            val containingFir = provider.getFirClassifierByFqName(containerClassId) as? FirRegularClass
-                ?: error("Could not find class $containerClassId")
-            containingFir.declarations.first { it.psi === nonLocalPsi }
+    private fun FirDeclaration.getNonLocalDeclarationToResolve(provider: FirProvider, moduleFileCache: ModuleFileCache): FirDeclaration {
+        if (this is FirFile) return this
+        val ktDeclaration = psi as? KtDeclaration ?: error("FirDeclaration should have a PSI of type KtDeclaration")
+        if (!KtPsiUtil.isLocal(ktDeclaration)) return this
+        return when (val nonLocalPsi = ktDeclaration.getNonLocalContainingDeclarationWithFqName()) {
+            is KtClassOrObject -> provider.getFirClassifierByFqName(
+                nonLocalPsi.classIdIfNonLocal()
+                    ?: error("Container classId should not be null for non-local declaration")
+            ) ?: error("Could not find class ${nonLocalPsi.classIdIfNonLocal()}")
+            is KtProperty, is KtNamedFunction -> {
+                val containerClass = nonLocalPsi.containingClassOrObject
+                if (containerClass != null) {
+                    val containerClassId = containerClass.classIdIfNonLocal()
+                        ?: error("Container classId should not be null for non-local declaration")
+                    val containingFir = provider.getFirClassifierByFqName(containerClassId) as? FirRegularClass
+                        ?: error("Could not find class $containerClassId")
+                    containingFir.declarations.first { it.psi === nonLocalPsi }
+                } else {
+                    val packageFqName = ktDeclaration.containingKtFile.packageFqName
+                    provider.symbolProvider.getTopLevelCallableSymbols(packageFqName, nonLocalPsi.nameAsSafeName)
+                        .firstOrNull { it.fir.psi === nonLocalPsi }
+                    val ktFile = ktDeclaration.containingKtFile
+                    val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile, moduleFileCache)
+                    firFile.declarations.firstOrNull { it.psi === nonLocalPsi }
+                        ?: error("Cannot find FIR for\n${nonLocalPsi.getElementTextInContext()}")
+                }
+            }
+            else -> error("Invalid container ${nonLocalPsi?.let { it::class } ?: "null"}")
         }
-        else -> error("Invalid container ${nonLocalPsi?.let { it::class } ?: "null"}")
     }
 }
+
+
