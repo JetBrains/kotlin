@@ -68,7 +68,9 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
     }
 
     private fun KtModifierListOwner.fixModifierListFormatting(match: KtModifierListOwner): KtModifierListOwner {
-        modifierList?.children?.last()?.let { if(it is PsiWhiteSpace) it.delete() }
+        modifierList?.children?.let { children ->
+            if(children.isNotEmpty() && children.last() is PsiWhiteSpace) children.last().delete()
+        }
         modifierList?.let { rModL -> match.modifierList?.let { mModL ->
             addSurroundingWhiteSpace(rModL, mModL)
         } }
