@@ -12,13 +12,13 @@ import com.intellij.execution.configurations.RunConfigurationBase
 import com.intellij.execution.ui.RunnerLayoutUi
 import com.intellij.execution.ui.layout.PlaceInGrid
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JdkUtil
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.ArchiveFileSystem
 import com.intellij.ui.content.Content
-import com.intellij.util.IncorrectOperationException
 import com.intellij.util.messages.MessageBusConnection
 import com.intellij.xdebugger.XDebugProcess
 import com.intellij.xdebugger.XDebugSession
@@ -101,7 +101,9 @@ class DebuggerConnection(
     }
 
     override fun processStopped(debugProcess: XDebugProcess) {
-        Disposer.dispose(this)
+        ApplicationManager.getApplication().invokeLater {
+            Disposer.dispose(this)
+        }
     }
 
     private fun registerXCoroutinesPanel(session: XDebugSession): Disposable? {
