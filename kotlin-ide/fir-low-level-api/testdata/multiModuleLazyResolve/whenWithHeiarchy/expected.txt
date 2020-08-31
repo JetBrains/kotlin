@@ -1,0 +1,26 @@
+FILE: main.kt
+    public abstract interface A : R|kotlin/Any| {
+    }
+    public abstract interface X : R|A| {
+    }
+    public abstract interface Y : R|A| {
+    }
+    public abstract interface F : R|Y|, R|X| {
+    }
+    public abstract interface G : R|Y|, R|X| {
+    }
+    public final fun R|Y|.test(): R|kotlin/String?| {
+        lval a: R|kotlin/Int| = when (this@R|/test|) {
+            ($subj$ is R|F|) ->  {
+                Int(1)
+            }
+            ($subj$ is R|G|) ->  {
+                Int(2)
+            }
+            else ->  {
+                ^test Null(null)
+            }
+        }
+
+        ^test Null(null)
+    }

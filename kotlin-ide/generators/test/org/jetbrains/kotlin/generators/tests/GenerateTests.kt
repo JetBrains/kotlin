@@ -926,6 +926,12 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         }
     }
 
+    testGroup("idea/idea-frontend-fir/idea-fir-low-level-api/tests", "idea/idea-frontend-fir/idea-fir-low-level-api/testdata") {
+        testClass<AbstractFirMultiModuleLazyResolveTest> {
+            model("multiModuleLazyResolve", recursive = false, extension = null)
+        }
+    }
+
     testGroup("idea/idea-fir/tests", "idea") {
         testClass<AbstractFirHighlightingTest> {
             model("testData/highlighter")
