@@ -117,4 +117,8 @@
   <extensions defaultExtensionNs="cidr.cocoa">
     <xcodeProjectFileProvider implementation="com.jetbrains.cidr.apple.gradle.AppleXcodeProjectFileProvider"/>
   </extensions>
+
+  <extensions defaultExtensionNs="xcode.documentation.search">
+    <candidates.helper implementation="com.jetbrains.mobile.documentation.MobileAppleDocumentationSearchHelper"/>
+  </extensions>
 </idea-plugin>
