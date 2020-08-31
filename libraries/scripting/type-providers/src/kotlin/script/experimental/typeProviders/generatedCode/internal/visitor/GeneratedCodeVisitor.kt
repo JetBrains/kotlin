@@ -26,4 +26,25 @@ internal interface GeneratedCodeVisitor {
         indent: Int = 0
     ) = appendJoined(items, separator) { visit(it, indent) }
 
+    companion object {
+        operator fun invoke(vararg visitors: GeneratedCodeVisitor): GeneratedCodeVisitor = CompositeGeneratedCodeVisitor(visitors.asList())
+    }
+}
+
+private class CompositeGeneratedCodeVisitor(val visitors: List<GeneratedCodeVisitor>) : GeneratedCodeVisitor {
+    override fun writeScript(build: StringBuilder.() -> Unit) {
+        visitors.forEach { it.writeScript(build) }
+    }
+
+    override fun withSerialized(value: Any, block: (String) -> Unit) {
+        visitors.forEach { it.withSerialized(value, block) }
+    }
+
+    override fun useImport(import: String) {
+        visitors.forEach { it.useImport(import) }
+    }
+
+    override fun includeScript(code: SourceCode) {
+        visitors.forEach { it.includeScript(code) }
+    }
 }
