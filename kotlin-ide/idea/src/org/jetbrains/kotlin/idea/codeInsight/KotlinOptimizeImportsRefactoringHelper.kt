@@ -36,6 +36,8 @@ class KotlinOptimizeImportsRefactoringHelper : RefactoringHelper<Set<KtFile>> {
     ) : Task.Backgroundable(project, COLLECT_UNUSED_IMPORTS_TITLE, false) {
 
         override fun run(indicator: ProgressIndicator) {
+            indicator.isIndeterminate = false
+
             val myTotalCount = operationData.size
             for ((counter, file) in operationData.withIndex()) {
                 if (!file.isValid) return
@@ -59,6 +61,8 @@ class KotlinOptimizeImportsRefactoringHelper : RefactoringHelper<Set<KtFile>> {
     ) : Task.Modal(project, REMOVING_REDUNDANT_IMPORTS_TITLE, false) {
 
         override fun run(indicator: ProgressIndicator) {
+            indicator.isIndeterminate = false
+
             val myTotal: Int = pointers.size
             for ((counter, pointer) in pointers.withIndex()) {
                 indicator.fraction = counter.toDouble() / myTotal
@@ -85,8 +89,8 @@ class KotlinOptimizeImportsRefactoringHelper : RefactoringHelper<Set<KtFile>> {
     }
 
     companion object {
-        private val COLLECT_UNUSED_IMPORTS_TITLE = KotlinBundle.message("optimize.imports.collect.unused.imports")
-        private val REMOVING_REDUNDANT_IMPORTS_TITLE = KotlinBundle.message("optimize.imports.task.removing.redundant.imports")
+        private val COLLECT_UNUSED_IMPORTS_TITLE get() = KotlinBundle.message("optimize.imports.collect.unused.imports")
+        private val REMOVING_REDUNDANT_IMPORTS_TITLE get() = KotlinBundle.message("optimize.imports.task.removing.redundant.imports")
     }
 
     override fun prepareOperation(usages: Array<UsageInfo>): Set<KtFile> = usages.mapNotNullTo(LinkedHashSet()) {
