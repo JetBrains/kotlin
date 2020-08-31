@@ -1,0 +1,49 @@
+{
+  "2": {
+    "neg": {
+      "3": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 3,
+          "description": "cannot have any other base classes exept kotlin.Annotation",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/annotation-class-declaration/p-2/neg/3.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ],
+      "4": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 1,
+          "description": "annotation class cannot implement interfaces",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/annotation-class-declaration/p-2/neg/4.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ],
+      "1": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 2,
+          "description": "annotation class cannot have any secondary constructors",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/annotation-class-declaration/p-2/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ]
+    },
+    "pos": {
+      "3": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 1,
+          "description": " implicitly inherit kotlin.Annotation",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/annotation-class-declaration/p-2/pos/3.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "checkType"
+        }
+      ]
+    }
+  }
+}
