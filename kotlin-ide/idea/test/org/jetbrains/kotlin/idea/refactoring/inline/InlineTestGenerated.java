@@ -1045,6 +1045,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/namedFunction/Kt39818.kt");
         }
 
+        @TestMetadata("lambdaArgumentInDiffirentPosition.kt")
+        public void testLambdaArgumentInDiffirentPosition() throws Exception {
+            runTest("testData/refactoring/inline/namedFunction/lambdaArgumentInDiffirentPosition.kt");
+        }
+
         @TestMetadata("lambdaInsideParentheses.kt")
         public void testLambdaInsideParentheses() throws Exception {
             runTest("testData/refactoring/inline/namedFunction/lambdaInsideParentheses.kt");

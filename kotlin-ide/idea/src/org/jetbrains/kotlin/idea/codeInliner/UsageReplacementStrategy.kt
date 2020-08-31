@@ -151,21 +151,20 @@ fun unwrapSpecialUsageOrNull(
         }
 
         is KtCallElement -> {
-            val lambdaArguments = usageParent.lambdaArguments
-            if (lambdaArguments.isNotEmpty()) {
-                val (name, descriptor) = usage.nameAndDescriptor
-                val grandParent = usageParent.parent
-                for (lambdaArgument in lambdaArguments) {
-                    val lambdaExpression = lambdaArgument.getLambdaExpression() ?: continue
-                    val functionDescriptor = lambdaExpression.functionLiteral.resolveToDescriptorIfAny() as? FunctionDescriptor ?: continue
-                    if (functionDescriptor.valueParameters.isNotEmpty()) {
-                        SpecifyExplicitLambdaSignatureIntention.applyTo(lambdaExpression)
-                    }
-                }
+            val lambdaExpressions = usageParent.valueArguments.mapNotNull { it.getArgumentExpression() as? KtLambdaExpression }
+            if (lambdaExpressions.isEmpty()) return null
 
-                return grandParent.safeAs<KtElement>()?.let {
-                    findNewUsage(it, name, descriptor)
+            val (name, descriptor) = usage.nameAndDescriptor
+            val grandParent = usageParent.parent
+            for (lambdaExpression in lambdaExpressions) {
+                val functionDescriptor = lambdaExpression.functionLiteral.resolveToDescriptorIfAny() as? FunctionDescriptor ?: continue
+                if (functionDescriptor.valueParameters.isNotEmpty()) {
+                    SpecifyExplicitLambdaSignatureIntention.applyTo(lambdaExpression)
                 }
+            }
+
+            return grandParent.safeAs<KtElement>()?.let {
+                findNewUsage(it, name, descriptor)
             }
         }
 
