@@ -5,6 +5,7 @@
 
 package kotlin.script.experimental.typeProviders.generatedCode.impl
 
+import java.io.Serializable
 import kotlin.script.experimental.typeProviders.generatedCode.*
 import kotlin.script.experimental.typeProviders.generatedCode.internal.InternalGeneratedCode
 import kotlin.script.experimental.typeProviders.generatedCode.internal.visit
@@ -29,6 +30,20 @@ interface DataClassBuilder<Overridden : DataClassBuilder<Overridden>> : ClassLik
     fun property(name: String, type: IdentifiableMember, mutable: Boolean = false, default: GeneratedCode? = null)
 }
 
+/**
+ * Add a property
+ */
+@PublishedApi
+internal fun <T : Serializable> DataClassBuilder<*>.property(name: String, type: IdentifiableMember, mutable: Boolean, default: T?) {
+    property(name, type, mutable, default?.let { makeValue(it, type) })
+}
+
+/**
+ * Add a property
+ */
+inline fun <reified T : Serializable> DataClassBuilder<*>.property(name: String, mutable: Boolean = false, default: T? = null) {
+    property(name, IdentifiableMember<T>(), mutable, default)
+}
 
 private class DataClass(
     override val name: String,
