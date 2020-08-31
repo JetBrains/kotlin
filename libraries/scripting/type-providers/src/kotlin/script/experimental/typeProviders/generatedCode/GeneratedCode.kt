@@ -64,5 +64,44 @@ interface GeneratedCode {
         }
     }
 
+    companion object {
+        /**
+         * Create a composition of multiple instances of Generated Code
+         */
+        operator fun invoke(init: Builder.() -> Unit) = StandardBuilder().apply(init).build()
+
+        /**
+         * Create a composition of multiple instances of Generated Code
+         */
+        operator fun invoke(iterable: Collection<GeneratedCode>): GeneratedCode = this {
+            iterable.forEach { code ->
+                +code
+            }
+        }
+
+        /**
+         * Create a composition of multiple instances of Generated Code
+         */
+        operator fun invoke(vararg code: GeneratedCode) = this(code.toList())
+    }
 }
 
+/**
+ * A builder for a composite of multiple types
+ */
+internal class StandardBuilder internal constructor() : GeneratedCode.Builder {
+    private val mutableCodeList = mutableListOf<InternalGeneratedCode>()
+
+    override operator fun GeneratedCode.unaryPlus() {
+        when (this) {
+            is InternalGeneratedCode -> mutableCodeList.add(this)
+            else -> body()
+        }
+    }
+
+    internal fun build(): GeneratedCode = when (mutableCodeList.count()) {
+        0 -> GeneratedCode.Empty
+        1 -> mutableCodeList.first()
+        else -> CompoundGeneratedCode(mutableCodeList)
+    }
+}
