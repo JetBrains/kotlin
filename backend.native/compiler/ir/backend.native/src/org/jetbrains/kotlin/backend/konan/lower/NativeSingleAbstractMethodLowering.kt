@@ -22,4 +22,7 @@ internal class NativeSingleAbstractMethodLowering(context: Context) : SingleAbst
     override fun getSuperTypeForWrapper(typeOperand: IrType): IrType {
         return typeOperand.classOrNull?.defaultType ?: error("Unsupported SAM conversion: ${typeOperand.render()}")
     }
+
+    override val IrType.needEqualsHashCodeMethods: Boolean
+        get() = false
 }
