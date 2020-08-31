@@ -79,10 +79,7 @@ internal class DefaultDocumentableMerger(val context: DokkaContext) : Documentab
     private fun <T> mergeExpectActual(
         elements: List<T>,
         reducer: (T, T) -> T
-    ): List<T> where T : Documentable, T : WithExpectActual {
-
-        fun T.isExpectActual(): Boolean =
-            this.safeAs<WithExtraProperties<T>>().let { it != null && it.extra[IsExpectActual] != null }
+    ): List<T> where T : Documentable, T : WithSources {
 
         fun mergeClashingElements(elements: List<Pair<T, Set<DokkaConfiguration.DokkaSourceSet>>>): List<T> =
             elements.groupBy { it.first.name }.values.flatMap { listOfDocumentableToSSIds ->
@@ -147,7 +144,7 @@ internal class DefaultDocumentableMerger(val context: DokkaContext) : Documentab
 
 
         return elements.partition {
-            it.isExpectActual()
+            (it as? WithIsExpectActual)?.isExpectActual ?: false
         }.let { (expectActuals, notExpectActuals) ->
             notExpectActuals.map { it to it.sourceSets }
                 .groupBy { it.first.dri }.values.flatMap(::mergeClashingElements) +

@@ -122,21 +122,13 @@ class DocumentableVisibilityFilterTransformer(val context: DokkaContext) : PreMe
         ) =
             functions.transform(additionalCondition) { original, filteredPlatforms ->
                 with(original) {
-                    DFunction(
-                        dri,
-                        name,
-                        isConstructor,
-                        parameters,
-                        documentation.filtered(filteredPlatforms),
-                        expectPresentInSet.filtered(filteredPlatforms),
-                        sources.filtered(filteredPlatforms),
-                        visibility.filtered(filteredPlatforms),
-                        type,
-                        generics.mapNotNull { it.filter(filteredPlatforms) },
-                        receiver,
-                        modifier,
-                        filteredPlatforms,
-                        extra
+                    copy(
+                        documentation = documentation.filtered(filteredPlatforms),
+                        expectPresentInSet = expectPresentInSet.filtered(filteredPlatforms),
+                        sources = sources.filtered(filteredPlatforms),
+                        visibility = visibility.filtered(filteredPlatforms),
+                        generics = generics.mapNotNull { it.filter(filteredPlatforms) },
+                        sourceSets = filteredPlatforms,
                     )
                 }
             }
@@ -151,21 +143,13 @@ class DocumentableVisibilityFilterTransformer(val context: DokkaContext) : PreMe
         ): Pair<Boolean, List<DProperty>> =
             properties.transform(additionalCondition, ::hasVisibleAccessorsForPlatform) { original, filteredPlatforms ->
                 with(original) {
-                    DProperty(
-                        dri,
-                        name,
-                        documentation.filtered(filteredPlatforms),
-                        expectPresentInSet.filtered(filteredPlatforms),
-                        sources.filtered(filteredPlatforms),
-                        visibility.filtered(filteredPlatforms),
-                        type,
-                        receiver,
-                        setter,
-                        getter,
-                        modifier,
-                        filteredPlatforms,
-                        generics.mapNotNull { it.filter(filteredPlatforms) },
-                        extra
+                    copy(
+                        documentation = documentation.filtered(filteredPlatforms),
+                        expectPresentInSet = expectPresentInSet.filtered(filteredPlatforms),
+                        sources = sources.filtered(filteredPlatforms),
+                        visibility = visibility.filtered(filteredPlatforms),
+                        sourceSets = filteredPlatforms,
+                        generics = generics.mapNotNull { it.filter(filteredPlatforms) },
                     )
                 }
             }
@@ -235,86 +219,69 @@ class DocumentableVisibilityFilterTransformer(val context: DokkaContext) : PreMe
                         classlikesListChanged = classlikesListChanged || modified
                         when {
                             !modified -> this
-                            this is DClass -> DClass(
-                                dri,
-                                name,
-                                constructors,
-                                functions,
-                                properties,
-                                classlikes,
-                                sources.filtered(filteredPlatforms),
-                                visibility.filtered(filteredPlatforms),
-                                companion,
-                                generics,
-                                supertypes.filtered(filteredPlatforms),
-                                documentation.filtered(filteredPlatforms),
-                                expectPresentInSet.filtered(filteredPlatforms),
-                                modifier,
-                                filteredPlatforms,
-                                extra
+                            this is DClass -> copy(
+                                constructors = constructors,
+                                functions = functions,
+                                properties = properties,
+                                classlikes = classlikes,
+                                sources = sources.filtered(filteredPlatforms),
+                                visibility = visibility.filtered(filteredPlatforms),
+                                companion = companion,
+                                generics = generics,
+                                supertypes = supertypes.filtered(filteredPlatforms),
+                                documentation = documentation.filtered(filteredPlatforms),
+                                expectPresentInSet = expectPresentInSet.filtered(filteredPlatforms),
+                                sourceSets = filteredPlatforms
                             )
-                            this is DAnnotation -> DAnnotation(
-                                name,
-                                dri,
-                                documentation.filtered(filteredPlatforms),
-                                expectPresentInSet.filtered(filteredPlatforms),
-                                sources.filtered(filteredPlatforms),
-                                functions,
-                                properties,
-                                classlikes,
-                                visibility.filtered(filteredPlatforms),
-                                companion,
-                                constructors,
-                                generics,
-                                filteredPlatforms,
-                                extra
+                            this is DAnnotation -> copy(
+                                documentation = documentation.filtered(filteredPlatforms),
+                                expectPresentInSet = expectPresentInSet.filtered(filteredPlatforms),
+                                sources = sources.filtered(filteredPlatforms),
+                                functions = functions,
+                                properties = properties,
+                                classlikes = classlikes,
+                                visibility = visibility.filtered(filteredPlatforms),
+                                companion = companion,
+                                constructors = constructors,
+                                generics = generics,
+                                sourceSets = filteredPlatforms
                             )
-                            this is DEnum -> DEnum(
-                                dri,
-                                name,
-                                enumEntries,
-                                documentation.filtered(filteredPlatforms),
-                                expectPresentInSet.filtered(filteredPlatforms),
-                                sources.filtered(filteredPlatforms),
-                                functions,
-                                properties,
-                                classlikes,
-                                visibility.filtered(filteredPlatforms),
-                                companion,
-                                constructors,
-                                supertypes.filtered(filteredPlatforms),
-                                filteredPlatforms,
-                                extra
+                            this is DEnum -> copy(
+                                entries = enumEntries,
+                                documentation = documentation.filtered(filteredPlatforms),
+                                expectPresentInSet = expectPresentInSet.filtered(filteredPlatforms),
+                                sources = sources.filtered(filteredPlatforms),
+                                functions = functions,
+                                properties = properties,
+                                classlikes = classlikes,
+                                visibility = visibility.filtered(filteredPlatforms),
+                                companion = companion,
+                                constructors = constructors,
+                                supertypes = supertypes.filtered(filteredPlatforms),
+                                sourceSets = filteredPlatforms
                             )
-                            this is DInterface -> DInterface(
-                                dri,
-                                name,
-                                documentation.filtered(filteredPlatforms),
-                                expectPresentInSet.filtered(filteredPlatforms),
-                                sources.filtered(filteredPlatforms),
-                                functions,
-                                properties,
-                                classlikes,
-                                visibility.filtered(filteredPlatforms),
-                                companion,
-                                generics,
-                                supertypes.filtered(filteredPlatforms),
-                                filteredPlatforms,
-                                extra
+                            this is DInterface -> copy(
+                                documentation = documentation.filtered(filteredPlatforms),
+                                expectPresentInSet = expectPresentInSet.filtered(filteredPlatforms),
+                                sources = sources.filtered(filteredPlatforms),
+                                functions = functions,
+                                properties = properties,
+                                classlikes = classlikes,
+                                visibility = visibility.filtered(filteredPlatforms),
+                                companion = companion,
+                                generics = generics,
+                                supertypes = supertypes.filtered(filteredPlatforms),
+                                sourceSets = filteredPlatforms
                             )
-                            this is DObject -> DObject(
-                                name,
-                                dri,
-                                documentation.filtered(filteredPlatforms),
-                                expectPresentInSet.filtered(filteredPlatforms),
-                                sources.filtered(filteredPlatforms),
-                                functions,
-                                properties,
-                                classlikes,
-                                visibility,
-                                supertypes.filtered(filteredPlatforms),
-                                filteredPlatforms,
-                                extra
+                            this is DObject -> copy(
+                                documentation = documentation.filtered(filteredPlatforms),
+                                expectPresentInSet = expectPresentInSet.filtered(filteredPlatforms),
+                                sources = sources.filtered(filteredPlatforms),
+                                functions = functions,
+                                properties = properties,
+                                classlikes = classlikes,
+                                supertypes = supertypes.filtered(filteredPlatforms),
+                                sourceSets = filteredPlatforms
                             )
                             else -> null
                         }
