@@ -9,6 +9,8 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.jvm.jvmErasure
 import kotlin.reflect.typeOf
+import kotlin.script.experimental.typeProviders.generatedCode.impl.appendJoined
+import kotlin.script.experimental.typeProviders.generatedCode.impl.GeneratedInterface
 
 /**
  * References a member that can be used as a type
@@ -27,8 +29,48 @@ interface IdentifiableMember {
     }
 }
 
+fun IdentifiableMember.withParameters(vararg parameters: IdentifiableMember): IdentifiableMember {
+    return GenericIdentifiableMember(this, parameters.toList())
+}
+
+fun IdentifiableMember.withParameters(vararg parameters: KClass<*>): IdentifiableMember {
+    return GenericIdentifiableMember(this, parameters.map { IdentifiableMember(it) })
+}
+
+fun KClass<*>.withParameters(vararg parameters: IdentifiableMember): IdentifiableMember {
+    return IdentifiableMember(this).withParameters(*parameters)
+}
+
+fun KClass<*>.withParameters(vararg parameters: KClass<*>): IdentifiableMember {
+    return IdentifiableMember(this).withParameters(*parameters)
+}
+
+fun IdentifiableMember.optional(): IdentifiableMember {
+    return OptionalIdentifiableMember(this)
+}
+
+fun KClass<*>.optional(): IdentifiableMember {
+    return IdentifiableMember(this).optional()
+}
 
 fun IdentifiableMember.asInterface(): GeneratedInterface = CastedInterfaceMember(this)
+
+private class GenericIdentifiableMember(
+    private val member: IdentifiableMember,
+    private val parameters: List<IdentifiableMember>
+) : IdentifiableMember {
+    override val name: String = buildString {
+        append(member.name)
+        append("<")
+        appendJoined(parameters, ", ") {
+            append(it.name)
+        }
+        append(">")
+    }
+
+    override fun imports(): Set<String> = (parameters + member).map { it.imports() }.flatten().toSet()
+}
+
 private class KTypeIdentifiable(kType: KType) : IdentifiableMember {
     override val name: String = kType.toString()
 
@@ -46,5 +88,10 @@ private class KClassIdentifiable(kClass: KClass<*>) : IdentifiableMember {
 }
 
 private class NamedIdentifiable(override val name: String) : IdentifiableMember
+
+private class OptionalIdentifiableMember(private val member: IdentifiableMember) : IdentifiableMember {
+    override val name: String = "${member.name}?"
+    override fun imports() = member.imports()
+}
 
 private class CastedInterfaceMember(private val member: IdentifiableMember) : GeneratedInterface, IdentifiableMember by member
