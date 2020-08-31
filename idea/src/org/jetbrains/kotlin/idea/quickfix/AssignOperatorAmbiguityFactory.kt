@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -54,7 +54,7 @@ object AssignOperatorAmbiguityFactory : KotlinIntentionActionsFactory() {
 
 private fun KotlinType?.isMutableCollection(): Boolean {
     if (this == null) return false
-    return JavaToKotlinClassMap.isMutable(this) || constructor.supertypes.reversed().any { JavaToKotlinClassMap.isMutable(it) }
+    return JavaToKotlinClassMapper.isMutable(this) || constructor.supertypes.reversed().any { JavaToKotlinClassMapper.isMutable(it) }
 }
 
 private class ReplaceWithAssignFunctionCallFix(

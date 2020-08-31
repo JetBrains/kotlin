@@ -21,7 +21,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.*
 import com.intellij.psi.search.PsiShortNamesCache
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.idea.KotlinBundle
@@ -164,7 +164,7 @@ class PlainTextPasteImportResolver(private val dataForConversion: DataForConvers
                 }
 
                 classes.find { (_, descriptor) ->
-                    JavaToKotlinClassMap.mapPlatformClass(descriptor!!).isNotEmpty()
+                    JavaToKotlinClassMapper.mapPlatformClass(descriptor!!).isNotEmpty()
                 }?.let { (psiClass, _) ->
                     performWriteAction { addImport(psiElementFactory.createImportStatement(psiClass)) }
                 }

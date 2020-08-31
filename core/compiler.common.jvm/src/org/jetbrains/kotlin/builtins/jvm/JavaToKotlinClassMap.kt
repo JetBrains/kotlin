@@ -1,42 +1,34 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.builtins.jvm
 
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
-import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
 import java.util.*
 
-object JavaToKotlinClassMap : PlatformToKotlinClassMap {
-    private val NUMBERED_FUNCTION_PREFIX =
+object JavaToKotlinClassMap {
+    private val NUMBERED_FUNCTION_PREFIX: String =
         FunctionClassKind.Function.packageFqName.toString() + "." + FunctionClassKind.Function.classNamePrefix
-    private val NUMBERED_K_FUNCTION_PREFIX =
+    private val NUMBERED_K_FUNCTION_PREFIX: String =
         FunctionClassKind.KFunction.packageFqName.toString() + "." + FunctionClassKind.KFunction.classNamePrefix
-    private val NUMBERED_SUSPEND_FUNCTION_PREFIX =
+    private val NUMBERED_SUSPEND_FUNCTION_PREFIX: String =
         FunctionClassKind.SuspendFunction.packageFqName.toString() + "." + FunctionClassKind.SuspendFunction.classNamePrefix
-    private val NUMBERED_K_SUSPEND_FUNCTION_PREFIX =
+    private val NUMBERED_K_SUSPEND_FUNCTION_PREFIX: String =
         FunctionClassKind.KSuspendFunction.packageFqName.toString() + "." + FunctionClassKind.KSuspendFunction.classNamePrefix
 
-    private val FUNCTION_N_CLASS_ID = ClassId.topLevel(FqName("kotlin.jvm.functions.FunctionN"))
-    val FUNCTION_N_FQ_NAME = FUNCTION_N_CLASS_ID.asSingleFqName()
-    private val K_FUNCTION_CLASS_ID = ClassId.topLevel(FqName("kotlin.reflect.KFunction"))
-    private val K_CLASS_CLASS_ID = ClassId.topLevel(FqName("kotlin.reflect.KClass"))
-    private val CLASS_CLASS_ID = classId(java.lang.Class::class.java)
+    private val FUNCTION_N_CLASS_ID: ClassId = ClassId.topLevel(FqName("kotlin.jvm.functions.FunctionN"))
+    val FUNCTION_N_FQ_NAME: FqName = FUNCTION_N_CLASS_ID.asSingleFqName()
+    private val K_FUNCTION_CLASS_ID: ClassId = ClassId.topLevel(FqName("kotlin.reflect.KFunction"))
+    private val K_CLASS_CLASS_ID: ClassId = ClassId.topLevel(FqName("kotlin.reflect.KClass"))
+    private val CLASS_CLASS_ID: ClassId = classId(Class::class.java)
 
     private val javaToKotlin = HashMap<FqNameUnsafe, ClassId>()
     private val kotlinToJava = HashMap<FqNameUnsafe, ClassId>()
@@ -131,13 +123,6 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
         return mapJavaToKotlin(fqName)
     }
 
-    fun mapJavaToKotlin(fqName: FqName, builtIns: KotlinBuiltIns, functionTypeArity: Int? = null): ClassDescriptor? {
-        val kotlinClassId =
-            if (functionTypeArity != null && fqName == FUNCTION_N_FQ_NAME) StandardNames.getFunctionClassId(functionTypeArity)
-            else mapJavaToKotlin(fqName)
-        return if (kotlinClassId != null) builtIns.getBuiltInClassByFqName(kotlinClassId.asSingleFqName()) else null
-    }
-
     /**
      * E.g.
      * kotlin.Throwable -> java.lang.Throwable
@@ -205,51 +190,13 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
 
     fun isJavaPlatformClass(fqName: FqName): Boolean = mapJavaToKotlin(fqName) != null
 
-    fun mapPlatformClass(fqName: FqName, builtIns: KotlinBuiltIns): Collection<ClassDescriptor> {
-        val kotlinAnalog = mapJavaToKotlin(fqName, builtIns) ?: return emptySet()
-
-        val kotlinMutableAnalogFqName = readOnlyToMutable[kotlinAnalog.fqNameUnsafe] ?: return setOf(kotlinAnalog)
-
-        return listOf(kotlinAnalog, builtIns.getBuiltInClassByFqName(kotlinMutableAnalogFqName))
-    }
-
-    override fun mapPlatformClass(classDescriptor: ClassDescriptor): Collection<ClassDescriptor> {
-        val className = DescriptorUtils.getFqName(classDescriptor)
-        return if (className.isSafe)
-            mapPlatformClass(className.toSafe(), classDescriptor.builtIns)
-        else
-            emptySet()
-    }
-
     fun mutableToReadOnly(fqNameUnsafe: FqNameUnsafe?): FqName? = mutableToReadOnly[fqNameUnsafe]
 
     fun readOnlyToMutable(fqNameUnsafe: FqNameUnsafe?): FqName? = readOnlyToMutable[fqNameUnsafe]
 
     fun isMutable(fqNameUnsafe: FqNameUnsafe?): Boolean = mutableToReadOnly.containsKey(fqNameUnsafe)
 
-    fun isMutable(mutable: ClassDescriptor): Boolean = isMutable(DescriptorUtils.getFqName(mutable))
-
-    fun isMutable(type: KotlinType): Boolean {
-        val classDescriptor = TypeUtils.getClassDescriptor(type)
-        return classDescriptor != null && isMutable(classDescriptor)
-    }
-
     fun isReadOnly(fqNameUnsafe: FqNameUnsafe?): Boolean = readOnlyToMutable.containsKey(fqNameUnsafe)
-
-    fun isReadOnly(readOnly: ClassDescriptor): Boolean = isReadOnly(DescriptorUtils.getFqName(readOnly))
-
-    fun isReadOnly(type: KotlinType): Boolean {
-        val classDescriptor = TypeUtils.getClassDescriptor(type)
-        return classDescriptor != null && isReadOnly(classDescriptor)
-    }
-
-    fun convertMutableToReadOnly(mutable: ClassDescriptor): ClassDescriptor {
-        return convertToOppositeMutability(mutable, mutableToReadOnly, "mutable")
-    }
-
-    fun convertReadOnlyToMutable(readOnly: ClassDescriptor): ClassDescriptor {
-        return convertToOppositeMutability(readOnly, readOnlyToMutable, "read-only")
-    }
 
     private fun classId(clazz: Class<*>): ClassId {
         assert(!clazz.isPrimitive && !clazz.isArray) { "Invalid class: $clazz" }
@@ -258,15 +205,5 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
             ClassId.topLevel(FqName(clazz.canonicalName))
         else
             classId(outer).createNestedClassId(Name.identifier(clazz.simpleName))
-    }
-
-    private fun convertToOppositeMutability(
-        descriptor: ClassDescriptor,
-        map: Map<FqNameUnsafe, FqName>,
-        mutabilityKindName: String
-    ): ClassDescriptor {
-        val oppositeClassFqName = map[DescriptorUtils.getFqName(descriptor)]
-            ?: throw IllegalArgumentException("Given class $descriptor is not a $mutabilityKindName collection")
-        return descriptor.builtIns.getBuiltInClassByFqName(oppositeClassFqName)
     }
 }

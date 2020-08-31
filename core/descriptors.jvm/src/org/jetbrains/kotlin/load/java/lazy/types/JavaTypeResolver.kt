@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy.types
 
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.load.java.components.TypeUsage
@@ -156,7 +156,7 @@ class JavaTypeResolver(
             return c.components.reflectionTypes.kClass
         }
 
-        val javaToKotlin = JavaToKotlinClassMap
+        val javaToKotlin = JavaToKotlinClassMapper
 
         val kotlinDescriptor = javaToKotlin.mapJavaToKotlin(fqName, c.module.builtIns) ?: return null
 
@@ -182,7 +182,7 @@ class JavaTypeResolver(
         fun JavaType?.isSuperWildcard(): Boolean = (this as? JavaWildcardType)?.let { it.bound != null && !it.isExtends } ?: false
 
         if (!typeArguments.lastOrNull().isSuperWildcard()) return false
-        val mutableLastParameterVariance = JavaToKotlinClassMap.convertReadOnlyToMutable(readOnlyContainer)
+        val mutableLastParameterVariance = JavaToKotlinClassMapper.convertReadOnlyToMutable(readOnlyContainer)
             .typeConstructor.parameters.lastOrNull()?.variance ?: return false
 
         return mutableLastParameterVariance != OUT_VARIANCE

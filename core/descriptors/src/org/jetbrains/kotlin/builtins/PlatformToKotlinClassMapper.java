@@ -12,12 +12,12 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import java.util.Collection;
 import java.util.Collections;
 
-@DefaultImplementation(impl = PlatformToKotlinClassMap.Default.class)
-public interface PlatformToKotlinClassMap {
+@DefaultImplementation(impl = PlatformToKotlinClassMapper.Default.class)
+public interface PlatformToKotlinClassMapper {
     @NotNull
     Collection<ClassDescriptor> mapPlatformClass(@NotNull ClassDescriptor classDescriptor);
 
-    class Default implements PlatformToKotlinClassMap {
+    class Default implements PlatformToKotlinClassMapper {
         @NotNull
         @Override
         public Collection<ClassDescriptor> mapPlatformClass(@NotNull ClassDescriptor classDescriptor) {

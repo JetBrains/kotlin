@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.typeEnhancement
 
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
@@ -180,17 +180,17 @@ private fun ClassifierDescriptor.enhanceMutability(
     if (!position.shouldEnhance()) return this.noChange()
     if (this !is ClassDescriptor) return this.noChange() // mutability is not applicable for type parameters
 
-    val mapping = JavaToKotlinClassMap
+    val mapper = JavaToKotlinClassMapper
 
     when (qualifiers.mutability) {
         READ_ONLY -> {
-            if (position == TypeComponentPosition.FLEXIBLE_LOWER && mapping.isMutable(this)) {
-                return mapping.convertMutableToReadOnly(this).enhancedMutability()
+            if (position == TypeComponentPosition.FLEXIBLE_LOWER && mapper.isMutable(this)) {
+                return mapper.convertMutableToReadOnly(this).enhancedMutability()
             }
         }
         MUTABLE -> {
-            if (position == TypeComponentPosition.FLEXIBLE_UPPER && mapping.isReadOnly(this)) {
-                return mapping.convertReadOnlyToMutable(this).enhancedMutability()
+            if (position == TypeComponentPosition.FLEXIBLE_UPPER && mapper.isReadOnly(this)) {
+                return mapper.convertReadOnlyToMutable(this).enhancedMutability()
             }
         }
     }

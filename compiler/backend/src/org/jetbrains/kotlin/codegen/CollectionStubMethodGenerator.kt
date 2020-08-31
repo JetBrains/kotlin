@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION
@@ -360,7 +360,7 @@ private val READ_ONLY_ARE_EQUAL_TO_MUTABLE_TYPE_CHECKER = KotlinTypeCheckerImpl.
     val firstClass = x.declarationDescriptor as? ClassDescriptor ?: return@withAxioms x == y
     val secondClass = y.declarationDescriptor as? ClassDescriptor ?: return@withAxioms x == y
 
-    val j2k = JavaToKotlinClassMap
+    val j2k = JavaToKotlinClassMapper
     val firstReadOnly = if (j2k.isMutable(firstClass)) j2k.convertMutableToReadOnly(firstClass) else firstClass
     val secondReadOnly = if (j2k.isMutable(secondClass)) j2k.convertMutableToReadOnly(secondClass) else secondClass
     firstReadOnly.typeConstructor == secondReadOnly.typeConstructor

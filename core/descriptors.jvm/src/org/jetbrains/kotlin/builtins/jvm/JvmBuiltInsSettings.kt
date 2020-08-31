@@ -47,7 +47,7 @@ open class JvmBuiltInsSettings(
     deferredOwnerModuleDescriptor: () -> ModuleDescriptor,
     isAdditionalBuiltInsFeatureSupported: () -> Boolean
 ) : AdditionalClassPartsProvider, PlatformDependentDeclarationFilter {
-    private val j2kClassMap = JavaToKotlinClassMap
+    private val j2kClassMapper = JavaToKotlinClassMapper
 
     private val ownerModuleDescriptor: ModuleDescriptor by lazy(deferredOwnerModuleDescriptor)
     private val isAdditionalBuiltInsFeatureSupported: Boolean by lazy(isAdditionalBuiltInsFeatureSupported)
@@ -164,11 +164,11 @@ open class JvmBuiltInsSettings(
     ): Collection<SimpleFunctionDescriptor> {
         val javaAnalogueDescriptor = classDescriptor.getJavaAnalogue() ?: return emptyList()
 
-        val kotlinClassDescriptors = j2kClassMap.mapPlatformClass(javaAnalogueDescriptor.fqNameSafe, FallbackBuiltIns.Instance)
+        val kotlinClassDescriptors = j2kClassMapper.mapPlatformClass(javaAnalogueDescriptor.fqNameSafe, FallbackBuiltIns.Instance)
         val kotlinMutableClassIfContainer = kotlinClassDescriptors.lastOrNull() ?: return emptyList()
         val kotlinVersions = SmartSet.create(kotlinClassDescriptors.map { it.fqNameSafe })
 
-        val isMutable = j2kClassMap.isMutable(classDescriptor)
+        val isMutable = j2kClassMapper.isMutable(classDescriptor)
 
         val fakeJavaClassDescriptor = javaAnalogueClassesWithCustomSupertypeCache.computeIfAbsent(javaAnalogueDescriptor.fqNameSafe) {
             javaAnalogueDescriptor.copy(
@@ -214,7 +214,7 @@ open class JvmBuiltInsSettings(
             { it.original.overriddenDescriptors }
         ) { overridden ->
             overridden.kind == CallableMemberDescriptor.Kind.DECLARATION &&
-                    j2kClassMap.isMutable(overridden.containingDeclaration as ClassDescriptor)
+                    j2kClassMapper.isMutable(overridden.containingDeclaration as ClassDescriptor)
         }
     }
 
@@ -262,7 +262,7 @@ open class JvmBuiltInsSettings(
 
         val fqName = fqNameUnsafe
         if (!fqName.isSafe) return null
-        val javaAnalogueFqName = j2kClassMap.mapKotlinToJava(fqName)?.asSingleFqName() ?: return null
+        val javaAnalogueFqName = JavaToKotlinClassMap.mapKotlinToJava(fqName)?.asSingleFqName() ?: return null
 
         return ownerModuleDescriptor.resolveClassByFqName(javaAnalogueFqName, NoLookupLocation.FROM_BUILTINS) as? LazyJavaClassDescriptor
     }
@@ -273,7 +273,7 @@ open class JvmBuiltInsSettings(
         val javaAnalogueDescriptor = classDescriptor.getJavaAnalogue() ?: return emptyList()
 
         val defaultKotlinVersion =
-            j2kClassMap.mapJavaToKotlin(javaAnalogueDescriptor.fqNameSafe, FallbackBuiltIns.Instance) ?: return emptyList()
+            j2kClassMapper.mapJavaToKotlin(javaAnalogueDescriptor.fqNameSafe, FallbackBuiltIns.Instance) ?: return emptyList()
 
         val substitutor = createMappedTypeParametersSubstitution(defaultKotlinVersion, javaAnalogueDescriptor).buildSubstitutor()
 

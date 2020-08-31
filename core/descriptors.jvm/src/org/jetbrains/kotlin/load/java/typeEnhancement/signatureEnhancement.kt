@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.load.java.typeEnhancement
 
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -257,7 +258,7 @@ class SignatureEnhancement(
                     asFlexibleType().let { Pair(it.lowerBound, it.upperBound) }
                 else Pair(this, this)
 
-            val mapping = JavaToKotlinClassMap
+            val mapper = JavaToKotlinClassMapper
             return JavaTypeQualifiers(
                 when {
                     lower.isMarkedNullable -> NullabilityQualifier.NULLABLE
@@ -265,8 +266,8 @@ class SignatureEnhancement(
                     else -> null
                 },
                 when {
-                    mapping.isReadOnly(lower) -> MutabilityQualifier.READ_ONLY
-                    mapping.isMutable(upper) -> MutabilityQualifier.MUTABLE
+                    mapper.isReadOnly(lower) -> MutabilityQualifier.READ_ONLY
+                    mapper.isMutable(upper) -> MutabilityQualifier.MUTABLE
                     else -> null
                 },
                 isNotNullTypeParameter = unwrap() is NotNullTypeParameter
