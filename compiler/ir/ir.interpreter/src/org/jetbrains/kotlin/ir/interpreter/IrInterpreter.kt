@@ -455,7 +455,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
     }
 
     private fun interpretStatements(statements: List<IrStatement>): ExecutionResult {
-        if (statements.isEmpty()) return Next.apply { stack.pushReturnValue(Common(irBuiltIns.unitClass.owner)) }
+        if (statements.isEmpty()) return getOrCreateObjectValue(irBuiltIns.unitClass.owner)
         var executionResult: ExecutionResult = Next
         for (statement in statements) {
             when (statement) {
