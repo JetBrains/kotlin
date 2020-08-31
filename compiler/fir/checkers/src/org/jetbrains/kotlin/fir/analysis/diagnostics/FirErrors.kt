@@ -165,4 +165,5 @@ object FirErrors {
     val ASSIGNED_VALUE_IS_NEVER_READ by warning0<FirSourceElement, PsiElement>()
     val VARIABLE_INITIALIZER_IS_REDUNDANT by warning0<FirSourceElement, PsiElement>()
     val VARIABLE_NEVER_READ by warning0<FirSourceElement, PsiElement>()
+    val USELESS_CALL_ON_NOT_NULL by warning0<FirSourceElement, PsiElement>()
 }
