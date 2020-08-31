@@ -63,14 +63,14 @@ class FirAnalyzerFacade(val session: FirSession, val languageVersionSettings: La
         return collectedDiagnostics!!
     }
 
-    fun convertToIr(): Fir2IrResult {
+    fun convertToIr(generateFacades: Boolean = true): Fir2IrResult {
         if (scopeSession == null) runResolution()
         val signaturer = IdSignatureDescriptor(JvmManglerDesc())
 
         return Fir2IrConverter.createModuleFragment(
             session, scopeSession!!, firFiles!!,
             languageVersionSettings, signaturer,
-            JvmGeneratorExtensions(), FirJvmKotlinMangler(session), IrFactoryImpl,
+            JvmGeneratorExtensions(generateFacades), FirJvmKotlinMangler(session), IrFactoryImpl,
             FirJvmVisibilityConverter
         )
     }
