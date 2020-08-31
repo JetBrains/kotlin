@@ -45,4 +45,21 @@ class KotlinJsIrLibraryGradlePluginIT : BaseGradleIT() {
             assertFileExists("build/productionLibrary/main.js")
         }
     }
+
+    @Test
+    fun testJsBinaryLibraryAndExecutableForBrowserAndNodejs() {
+        val project = Project("js-library-with-executable-browser-nodejs")
+
+        project.setupWorkingDir()
+        project.gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+        project.build("build") {
+            assertSuccessful()
+
+            assertFileExists("build/productionLibrary/js-library.js")
+            assertFileExists("build/productionLibrary/package.json")
+            assertFileExists("build/productionLibrary/main.js")
+
+            assertFileExists("build/distributions/js-library.js")
+        }
+    }
 }
