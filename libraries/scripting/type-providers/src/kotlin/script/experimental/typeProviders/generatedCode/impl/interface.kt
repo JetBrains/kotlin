@@ -53,6 +53,48 @@ interface InterfaceBuilder<Overridden : ClassLikeBuilder<Overridden>> : ClassLik
     )
 }
 
+inline fun <reified T> InterfaceBuilder<*>.property(name: String, mutable: Boolean = false) {
+    property(name, IdentifiableMember<T>(), mutable)
+}
+
+inline fun <reified O> InterfaceBuilder<*>.method(
+    name: String
+) {
+    method(name, IdentifiableMember<O>())
+}
+
+inline fun <reified A, reified O> InterfaceBuilder<*>.method(
+    name: String,
+    arg0Name: String = "arg0"
+) {
+    method(name, arg0Name, IdentifiableMember<A>(), IdentifiableMember<O>())
+}
+
+inline fun <reified A, reified B, reified O> InterfaceBuilder<*>.method(
+    name: String,
+    arg0Name: String = "arg0",
+    arg1Name: String = "arg1"
+) {
+    method(name, arg0Name, IdentifiableMember<A>(), arg1Name, IdentifiableMember<B>(), IdentifiableMember<O>())
+}
+
+inline fun <reified A, reified B, reified C, reified O> InterfaceBuilder<*>.method(
+    name: String,
+    arg0Name: String = "arg0",
+    arg1Name: String = "arg1",
+    arg2Name: String = "arg2"
+) {
+    method(
+        name,
+        arg0Name,
+        IdentifiableMember<A>(),
+        arg1Name,
+        IdentifiableMember<B>(),
+        arg2Name,
+        IdentifiableMember<C>(),
+        IdentifiableMember<O>()
+    )
+}
 
 private class Interface(
     override val name: String,
