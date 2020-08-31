@@ -5,11 +5,16 @@
 
 package kotlin.script.experimental.util
 
+import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 
-inline fun <reified A : Annotation> Iterable<ScriptSourceAnnotation<*>>.filterByAnnotationType(
-): List<ScriptSourceAnnotation<A>> = filter { it.annotation is A }
+fun <A : Annotation> Iterable<ScriptSourceAnnotation<*>>.filterByAnnotationType(
+    annotationType: KClass<out A>
+): List<ScriptSourceAnnotation<A>> = filter { annotationType.isInstance(it.annotation) }
     .map {
         @Suppress("UNCHECKED_CAST")
         it as ScriptSourceAnnotation<A>
     }
+
+inline fun <reified A : Annotation> Iterable<ScriptSourceAnnotation<*>>.filterByAnnotationType(
+): List<ScriptSourceAnnotation<A>> = filterByAnnotationType(A::class)
