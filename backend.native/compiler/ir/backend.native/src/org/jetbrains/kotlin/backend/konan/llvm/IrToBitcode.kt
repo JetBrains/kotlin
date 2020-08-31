@@ -732,7 +732,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                             }
                             when (body) {
                                 is IrBlockBody -> body.statements.forEach { generateStatement(it) }
-                                is IrExpressionBody -> generateStatement(body.expression)
+                                is IrExpressionBody -> error("IrExpressionBody should've been lowered")
                                 is IrSyntheticBody -> throw AssertionError("Synthetic body ${body.kind} has not been lowered")
                                 else -> TODO(ir2string(body))
                             }

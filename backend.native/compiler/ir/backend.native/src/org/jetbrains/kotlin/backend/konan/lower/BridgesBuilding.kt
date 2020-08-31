@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
@@ -149,8 +148,8 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
             override fun visitFunction(declaration: IrFunction): IrStatement {
                 declaration.transformChildrenVoid(this)
 
-                val body = declaration.body as? IrBlockBody
-                        ?: return declaration
+                val body = declaration.body ?: return declaration
+
                 val descriptor = declaration.descriptor
                 val typeSafeBarrierDescription = BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(descriptor)
                 if (typeSafeBarrierDescription == null || builtBridges.contains(declaration))
@@ -159,7 +158,7 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
                 val irBuilder = context.createIrBuilder(declaration.symbol, declaration.startOffset, declaration.endOffset)
                 declaration.body = irBuilder.irBlockBody(declaration) {
                     buildTypeSafeBarrier(declaration, declaration, typeSafeBarrierDescription)
-                    body.statements.forEach { +it }
+                    (body as IrBlockBody).statements.forEach { +it }
                 }
                 return declaration
             }
