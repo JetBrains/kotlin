@@ -18,7 +18,7 @@ interface Canvas {
     fun circle(circle: Circle, stroke: Stroke, fill: Fill?)
 }
 
-fun test() {
+fun test1() {
     val rect = Rectangle(100, 100)
     val circle = Circle(100)
 
@@ -34,9 +34,34 @@ fun test() {
     }
 }
 
+fun test2() {
+    val rect = Rectangle(100, 100)
+    val circle = Circle(100)
+
+    val l: List<Canvas.(Stroke, Fill) -> Unit> = listOf(
+        { _, fill -> rect(rect, fill) },
+        { _, fill -> rect(rect, 10.0, fill) },
+        { stroke, fill -> rect(rect, stroke, fill) },
+        { stroke, fill -> rect(rect, 10.0, stroke, fill) },
+        { _, fill -> circle(circle, fill) },
+        { stroke, fill -> circle(circle, stroke, fill) },
+        { stroke, fill -> circle(circle, stroke, fill) },
+        { stroke, fill -> circle(circle, stroke, fill) },
+        { stroke, fill -> circle(circle, stroke, fill) },
+        { stroke, fill -> circle(circle, stroke, fill) },
+        { stroke, fill -> circle(circle, stroke, fill) },
+        { stroke, fill -> circle(circle, stroke, fill) },
+        { stroke, fill -> circle(circle, stroke, fill) },
+        { stroke, fill -> circle(circle, stroke, fill) },
+        { stroke, fill -> circle(circle, stroke, fill) },
+    )
+}
+
 fun check(block: Canvas.(Stroke, Fill) -> Unit) {}
 
 fun box(): String {
-    test()
+    test1()
+    test2()
+
     return "OK"
 }
