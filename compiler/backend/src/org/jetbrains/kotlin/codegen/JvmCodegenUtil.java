@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.builtins.StandardNames;
+import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity;
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
@@ -353,7 +354,7 @@ public class JvmCodegenUtil {
 
     public static boolean isDeclarationOfBigArityCreateCoroutineMethod(@Nullable DeclarationDescriptor descriptor) {
         return descriptor instanceof SimpleFunctionDescriptor && descriptor.getName().asString().equals(SUSPEND_FUNCTION_CREATE_METHOD_NAME) &&
-               ((SimpleFunctionDescriptor) descriptor).getValueParameters().size() >= FunctionInvokeDescriptor.BIG_ARITY - 1 &&
+               ((SimpleFunctionDescriptor) descriptor).getValueParameters().size() >= BuiltInFunctionArity.BIG_ARITY - 1 &&
                descriptor.getContainingDeclaration() instanceof AnonymousFunctionDescriptor && ((AnonymousFunctionDescriptor) descriptor.getContainingDeclaration()).isSuspend();
     }
 

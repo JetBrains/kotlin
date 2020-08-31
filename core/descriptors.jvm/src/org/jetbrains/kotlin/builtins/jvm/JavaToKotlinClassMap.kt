@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMap
+import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
-import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -98,11 +98,11 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
             )
         }
 
-        for (i in 0 until FunctionInvokeDescriptor.BIG_ARITY) {
+        for (i in 0 until BuiltInFunctionArity.BIG_ARITY) {
             add(ClassId.topLevel(FqName("kotlin.jvm.functions.Function$i")), StandardNames.getFunctionClassId(i))
             addKotlinToJava(FqName(NUMBERED_K_FUNCTION_PREFIX + i), K_FUNCTION_CLASS_ID)
         }
-        for (i in 0 until FunctionInvokeDescriptor.BIG_ARITY - 1) {
+        for (i in 0 until BuiltInFunctionArity.BIG_ARITY - 1) {
             val kSuspendFunction = FunctionClassKind.KSuspendFunction
             val kSuspendFun = kSuspendFunction.packageFqName.toString() + "." + kSuspendFunction.classNamePrefix
             addKotlinToJava(FqName(kSuspendFun + i), K_FUNCTION_CLASS_ID)
@@ -166,7 +166,7 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
         val arityString = kotlinFqName.asString().substringAfter(prefix, "")
         if (arityString.isNotEmpty() && !arityString.startsWith('0')) {
             val arity = arityString.toIntOrNull()
-            return arity != null && arity >= FunctionInvokeDescriptor.BIG_ARITY
+            return arity != null && arity >= BuiltInFunctionArity.BIG_ARITY
         }
         return false
     }

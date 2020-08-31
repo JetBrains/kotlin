@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.types.expressions
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
-import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
+import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.DefaultImplementation
@@ -633,7 +633,7 @@ class DoubleColonExpressionResolver(
 
         context.trace.record(BindingContext.FUNCTION, expression, functionDescriptor)
 
-        if (functionDescriptor.valueParameters.size >= FunctionInvokeDescriptor.BIG_ARITY &&
+        if (functionDescriptor.valueParameters.size >= BuiltInFunctionArity.BIG_ARITY &&
             bigAritySupport.shouldCheckLanguageVersionSettings &&
             !languageVersionSettings.supportsFeature(LanguageFeature.FunctionTypesWithBigArity)
         ) {

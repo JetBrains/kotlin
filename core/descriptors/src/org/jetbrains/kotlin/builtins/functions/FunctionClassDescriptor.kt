@@ -60,7 +60,7 @@ class FunctionClassDescriptor(
 
     @get:JvmName("hasBigArity")
     val hasBigArity: Boolean
-        get() = arity >= FunctionInvokeDescriptor.BIG_ARITY
+        get() = arity >= BuiltInFunctionArity.BIG_ARITY
 
     override fun getContainingDeclaration() = containingDeclaration
 

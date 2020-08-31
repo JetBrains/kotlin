@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.irArray
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
+import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
@@ -47,7 +47,7 @@ private class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
 
     // Change calls to big arity invoke functions to vararg calls.
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
-        if (expression.valueArgumentsCount < FunctionInvokeDescriptor.BIG_ARITY ||
+        if (expression.valueArgumentsCount < BuiltInFunctionArity.BIG_ARITY ||
             !(expression.symbol.owner.parentAsClass.defaultType.isFunctionOrKFunction() ||
                     expression.symbol.owner.parentAsClass.defaultType.isSuspendFunctionOrKFunction()) ||
             expression.symbol.owner.name.asString() != "invoke"
@@ -69,7 +69,7 @@ private class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
 
     override fun visitClassNew(declaration: IrClass): IrStatement {
         val bigArityFunctionSuperTypes = declaration.superTypes.filterIsInstance<IrSimpleType>().filter {
-            it.isFunctionType && it.arguments.size > FunctionInvokeDescriptor.BIG_ARITY
+            it.isFunctionType && it.arguments.size > BuiltInFunctionArity.BIG_ARITY
         }
 
         if (bigArityFunctionSuperTypes.isEmpty())

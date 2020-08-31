@@ -56,7 +56,7 @@ class FunctionInvokeDescriptor private constructor(
      */
     @get:JvmName("hasBigArity")
     val hasBigArity: Boolean
-        get() = valueParameters.size >= BIG_ARITY
+        get() = valueParameters.size >= BuiltInFunctionArity.BIG_ARITY
 
     override fun doSubstitute(configuration: CopyConfiguration): FunctionDescriptor? {
         val substituted = super.doSubstitute(configuration) as FunctionInvokeDescriptor? ?: return null
@@ -108,9 +108,6 @@ class FunctionInvokeDescriptor private constructor(
     }
 
     companion object Factory {
-        /** @see hasBigArity */
-        const val BIG_ARITY = 23
-
         fun create(functionClass: FunctionClassDescriptor, isSuspend: Boolean): FunctionInvokeDescriptor {
             val typeParameters = functionClass.declaredTypeParameters
 

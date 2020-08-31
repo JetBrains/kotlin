@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
+import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.signature.AsmTypeFactory
@@ -240,7 +240,7 @@ class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBas
         val parameters = classifier.typeParameters.map(IrTypeParameter::symbol)
         val arguments = type.arguments
 
-        if ((classifier.symbol.isFunction() && arguments.size > FunctionInvokeDescriptor.BIG_ARITY)
+        if ((classifier.symbol.isFunction() && arguments.size > BuiltInFunctionArity.BIG_ARITY)
             || classifier.symbol.isKFunction() || classifier.symbol.isKSuspendFunction()
         ) {
             writeGenericArguments(sw, listOf(arguments.last()), listOf(parameters.last()), mode)
