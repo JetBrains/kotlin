@@ -100,8 +100,17 @@ object InlineClassAbi {
     fun returnHashSuffix(irFunction: IrFunction) =
         md5base64(":${irFunction.returnType.eraseToString()}")
 
-    private fun hashSuffix(irFunction: IrFunction) =
-        md5base64(irFunction.fullValueParameterList.joinToString { it.type.eraseToString() })
+    private fun hashSuffix(irFunction: IrFunction): String {
+        val signatureElementsForMangling =
+            irFunction.fullValueParameterList.mapTo(mutableListOf()) { it.type.eraseToString() }
+        if (irFunction.isSuspend) {
+            // The JVM backend computes mangled names after creating suspend function views, but before default argument
+            // stub insertion. It would be nice if this part of the continuation lowering happened earlier in the pipeline.
+            // TODO: Move suspend function view creation before JvmInlineClassLowering.
+            signatureElementsForMangling += "Lkotlin.coroutines.Continuation;"
+        }
+        return md5base64(signatureElementsForMangling.joinToString())
+    }
 
     private fun IrType.eraseToString() = buildString {
         append('L')

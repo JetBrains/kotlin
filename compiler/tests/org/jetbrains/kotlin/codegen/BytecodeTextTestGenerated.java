@@ -3157,6 +3157,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/skipCallToUnderlyingValueOfInlineClass.kt");
         }
 
+        @TestMetadata("suspendFunctionMangling.kt")
+        public void testSuspendFunctionMangling() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/suspendFunctionMangling.kt");
+        }
+
         @TestMetadata("toStringIsCalledByInlineClass.kt")
         public void testToStringIsCalledByInlineClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/toStringIsCalledByInlineClass.kt");
