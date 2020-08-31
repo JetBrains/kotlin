@@ -10,6 +10,9 @@ import kotlin.script.experimental.typeProviders.generatedCode.impl.CompoundGener
 import kotlin.script.experimental.typeProviders.generatedCode.internal.visitor.GeneratedCodeVisitor
 
 internal abstract class InternalGeneratedCode : GeneratedCode {
+    open val isOverridable: Boolean
+        get() = false
+
     override fun GeneratedCode.Builder.body() {
         throw IllegalArgumentException(
             "Unexpected call to `body` to decompose a Leaf in the Generated Code Tree. Do not call `GeneratedCode.body()` directly."
