@@ -287,6 +287,7 @@ task detectJarCollision(type: CollisionDetector) {
     resolvingRules["META-INF/type-system.kotlin_module"] = "kotlin-compiler"
     resolvingRules["META-INF/util.runtime.kotlin_module"] = "kotlin-compiler"
     resolvingRules["META-INF/kotlin-native-utils.kotlin_module"] = "kotlin-compiler"
+    resolvingRules["META-INF/compiler.common.kotlin_module"] = "kotlin-compiler"
 
     // These collisions are introduced by kotlinx-metadata-klib.
     resolvingRules["META-INF/serialization.kotlin_module"] = "kotlin-compiler"
