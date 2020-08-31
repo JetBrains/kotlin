@@ -2,11 +2,8 @@ package usage
 
 import javapackage.one.JavaClassOne
 import kotlinpackage.one.extensionSelf
+import kotlinpackage.two.extensionSelf
 
-/*
-    missing import "kotlinpackage.two.extensionSelf"
-    KT-40856
- */
 fun a() {
     JavaClassOne()
     JavaClassOne().extensionSelf().toJavaClassTwo().extensionSelf().returnSelf().toJavaOne().otherMethod()
