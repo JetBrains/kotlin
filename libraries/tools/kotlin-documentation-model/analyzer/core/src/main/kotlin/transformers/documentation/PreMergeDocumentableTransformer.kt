@@ -4,7 +4,7 @@ import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
 import org.jetbrains.dokka.DokkaConfiguration.PackageOptions
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.Documentable
-import org.jetbrains.dokka.model.WithExpectActual
+import org.jetbrains.dokka.model.WithSources
 
 interface PreMergeDocumentableTransformer {
     operator fun invoke(modules: List<DModule>): List<DModule>
@@ -32,5 +32,5 @@ fun PreMergeDocumentableTransformer.perPackageOptions(documentable: Documentable
         .firstOrNull { packageOptions -> packageName.startsWith(packageOptions.prefix) }
 }
 
-fun <T> PreMergeDocumentableTransformer.source(documentable: T) where T : Documentable, T : WithExpectActual =
+fun <T> PreMergeDocumentableTransformer.source(documentable: T) where T : Documentable, T : WithSources =
     checkNotNull(documentable.sources[sourceSet(documentable)])

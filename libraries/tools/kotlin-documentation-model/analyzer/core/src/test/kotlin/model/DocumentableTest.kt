@@ -26,6 +26,7 @@ class DocumentableTest {
             sources = emptyMap(),
             sourceSets = emptySet(),
             supertypes = emptyMap(),
+            isExpectActual = false,
             functions = listOf(
                 DFunction(
                     dri = DRI(),
@@ -41,6 +42,7 @@ class DocumentableTest {
                     type = Void,
                     receiver = null,
                     isConstructor = false,
+                    isExpectActual = false,
                     parameters = listOf(
                         DParameter(
                             dri = DRI(),
@@ -76,6 +78,7 @@ class DocumentableTest {
                     type = Void,
                     receiver = null,
                     isConstructor = false,
+                    isExpectActual = false,
                     parameters = listOf(
                         DParameter(
                             dri = DRI(),

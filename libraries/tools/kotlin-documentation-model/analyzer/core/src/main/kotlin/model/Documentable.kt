@@ -26,7 +26,7 @@ abstract class Documentable : WithChildren<Documentable> {
 
 typealias SourceSetDependent<T> = Map<DokkaSourceSet, T>
 
-interface WithExpectActual {
+interface WithSources {
     val sources: SourceSetDependent<DocumentableSource>
 }
 
@@ -79,11 +79,15 @@ interface WithSupertypes {
     val supertypes: SourceSetDependent<List<TypeConstructorWithKind>>
 }
 
-interface Callable : WithVisibility, WithType, WithAbstraction, WithExpectActual {
+interface WithIsExpectActual {
+    val isExpectActual: Boolean
+}
+
+interface Callable : WithVisibility, WithType, WithAbstraction, WithSources {
     val receiver: DParameter?
 }
 
-sealed class DClasslike : Documentable(), WithScope, WithVisibility, WithExpectActual
+sealed class DClasslike : Documentable(), WithScope, WithVisibility, WithSources, WithIsExpectActual
 
 data class DModule(
     override val name: String,
@@ -143,9 +147,10 @@ data class DClass(
     override val expectPresentInSet: DokkaSourceSet?,
     override val modifier: SourceSetDependent<Modifier>,
     override val sourceSets: Set<DokkaSourceSet>,
+    override val isExpectActual: Boolean,
     override val extra: PropertyContainer<DClass> = PropertyContainer.empty()
 ) : DClasslike(), WithAbstraction, WithCompanion, WithConstructors, WithGenerics, WithSupertypes,
-    WithExtraProperties<DClass> {
+    WithExtraProperties<DClass>, WithIsExpectActual {
 
     override val children: List<Documentable>
         get() = (functions + properties + classlikes + constructors)
@@ -168,8 +173,9 @@ data class DEnum(
     override val constructors: List<DFunction>,
     override val supertypes: SourceSetDependent<List<TypeConstructorWithKind>>,
     override val sourceSets: Set<DokkaSourceSet>,
+    override val isExpectActual: Boolean,
     override val extra: PropertyContainer<DEnum> = PropertyContainer.empty()
-) : DClasslike(), WithCompanion, WithConstructors, WithSupertypes, WithExtraProperties<DEnum> {
+) : DClasslike(), WithCompanion, WithConstructors, WithSupertypes, WithExtraProperties<DEnum>, WithIsExpectActual {
     override val children: List<Documentable>
         get() = (entries + functions + properties + classlikes + constructors)
 
@@ -207,8 +213,9 @@ data class DFunction(
     override val receiver: DParameter?,
     override val modifier: SourceSetDependent<Modifier>,
     override val sourceSets: Set<DokkaSourceSet>,
+    override val isExpectActual: Boolean,
     override val extra: PropertyContainer<DFunction> = PropertyContainer.empty()
-) : Documentable(), Callable, WithGenerics, WithExtraProperties<DFunction> {
+) : Documentable(), Callable, WithGenerics, WithExtraProperties<DFunction>, WithIsExpectActual {
     override val children: List<Documentable>
         get() = parameters
 
@@ -229,8 +236,9 @@ data class DInterface(
     override val generics: List<DTypeParameter>,
     override val supertypes: SourceSetDependent<List<TypeConstructorWithKind>>,
     override val sourceSets: Set<DokkaSourceSet>,
+    override val isExpectActual: Boolean,
     override val extra: PropertyContainer<DInterface> = PropertyContainer.empty()
-) : DClasslike(), WithCompanion, WithGenerics, WithSupertypes, WithExtraProperties<DInterface> {
+) : DClasslike(), WithCompanion, WithGenerics, WithSupertypes, WithExtraProperties<DInterface>, WithIsExpectActual {
     override val children: List<Documentable>
         get() = (functions + properties + classlikes)
 
@@ -249,8 +257,9 @@ data class DObject(
     override val visibility: SourceSetDependent<Visibility>,
     override val supertypes: SourceSetDependent<List<TypeConstructorWithKind>>,
     override val sourceSets: Set<DokkaSourceSet>,
+    override val isExpectActual: Boolean,
     override val extra: PropertyContainer<DObject> = PropertyContainer.empty()
-) : DClasslike(), WithSupertypes, WithExtraProperties<DObject> {
+) : DClasslike(), WithSupertypes, WithExtraProperties<DObject>, WithIsExpectActual {
     override val children: List<Documentable>
         get() = (functions + properties + classlikes)
 
@@ -271,8 +280,9 @@ data class DAnnotation(
     override val constructors: List<DFunction>,
     override val generics: List<DTypeParameter>,
     override val sourceSets: Set<DokkaSourceSet>,
+    override val isExpectActual: Boolean,
     override val extra: PropertyContainer<DAnnotation> = PropertyContainer.empty()
-) : DClasslike(), WithCompanion, WithConstructors, WithExtraProperties<DAnnotation>, WithGenerics {
+) : DClasslike(), WithCompanion, WithConstructors, WithExtraProperties<DAnnotation>, WithGenerics, WithIsExpectActual {
     override val children: List<Documentable>
         get() = (functions + properties + classlikes + constructors)
 
@@ -293,8 +303,9 @@ data class DProperty(
     override val modifier: SourceSetDependent<Modifier>,
     override val sourceSets: Set<DokkaSourceSet>,
     override val generics: List<DTypeParameter>,
+    override val isExpectActual: Boolean,
     override val extra: PropertyContainer<DProperty> = PropertyContainer.empty()
-) : Documentable(), Callable, WithExtraProperties<DProperty>, WithGenerics {
+) : Documentable(), Callable, WithExtraProperties<DProperty>, WithGenerics, WithIsExpectActual {
     override val children: List<Nothing>
         get() = emptyList()
 
