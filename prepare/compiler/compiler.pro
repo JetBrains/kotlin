@@ -262,3 +262,5 @@
 -keepclassmembers class * implements java.io.Serializable {
     static final long serialVersionUID;
 }
+
+-dontwarn org.jetbrains.kotlin.fir.**
