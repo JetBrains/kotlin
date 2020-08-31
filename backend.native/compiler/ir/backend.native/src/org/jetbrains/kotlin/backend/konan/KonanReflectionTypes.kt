@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.builtins.KOTLIN_REFLECT_FQ_NAME
+
+import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation

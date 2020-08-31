@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.ir
 
 import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.declarations.*
@@ -37,15 +38,15 @@ val IrFunction.allParameters: List<IrValueParameter>
         explicitParameters
     }
 
-fun IrClass.isUnit() = this.fqNameForIrSerialization == KotlinBuiltIns.FQ_NAMES.unit.toSafe()
+fun IrClass.isUnit() = this.fqNameForIrSerialization == StandardNames.FqNames.unit.toSafe()
 
-fun IrClass.isKotlinArray() = this.fqNameForIrSerialization == KotlinBuiltIns.FQ_NAMES.array.toSafe()
+fun IrClass.isKotlinArray() = this.fqNameForIrSerialization == StandardNames.FqNames.array.toSafe()
 
 val IrClass.superClasses get() = this.superTypes.map { it.classifierOrFail as IrClassSymbol }
 fun IrClass.getSuperClassNotAny() = this.superClasses.map { it.owner }.atMostOne { !it.isInterface && !it.isAny() }
 
-fun IrClass.isAny() = this.fqNameForIrSerialization == KotlinBuiltIns.FQ_NAMES.any.toSafe()
-fun IrClass.isNothing() = this.fqNameForIrSerialization == KotlinBuiltIns.FQ_NAMES.nothing.toSafe()
+fun IrClass.isAny() = this.fqNameForIrSerialization == StandardNames.FqNames.any.toSafe()
+fun IrClass.isNothing() = this.fqNameForIrSerialization == StandardNames.FqNames.nothing.toSafe()
 
 fun IrClass.getSuperInterfaces() = this.superClasses.map { it.owner }.filter { it.isInterface }
 

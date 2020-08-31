@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.klib
 
 import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
 import org.jetbrains.kotlin.renderer.*
@@ -143,7 +144,7 @@ class KlibPrinter(out: Appendable) {
             modifiers = DescriptorRendererModifier.ALL
             overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OVERRIDE
             annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY
-            excludedAnnotationClasses += setOf(KotlinBuiltIns.FQ_NAMES.suppress)
+            excludedAnnotationClasses += setOf(StandardNames.FqNames.suppress)
 
             classWithPrimaryConstructor = true
             renderConstructorKeyword = true

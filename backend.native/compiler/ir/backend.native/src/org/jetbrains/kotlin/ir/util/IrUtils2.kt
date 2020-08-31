@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.konan.KonanBackendContext
 import org.jetbrains.kotlin.backend.konan.KonanCompilationException
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
-import org.jetbrains.kotlin.builtins.KOTLIN_REFLECT_FQ_NAME
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -390,7 +390,7 @@ fun IrFunction.isRestrictedSuspendFunction(languageVersionSettings: LanguageVers
 fun IrFunction.isTypeOfIntrinsic(): Boolean =
         this.name.asString() == "typeOf" &&
                 this.valueParameters.isEmpty() &&
-                (this.parent as? IrPackageFragment)?.fqName == KOTLIN_REFLECT_FQ_NAME
+                (this.parent as? IrPackageFragment)?.fqName == StandardNames.KOTLIN_REFLECT_FQ_NAME
 
 fun IrBuilderWithScope.irByte(value: Byte) =
         IrConstImpl.byte(startOffset, endOffset, context.irBuiltIns.byteType, value)

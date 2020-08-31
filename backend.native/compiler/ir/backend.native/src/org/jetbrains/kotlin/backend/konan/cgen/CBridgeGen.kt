@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.backend.konan.getObjCMethodInfo
 import org.jetbrains.kotlin.backend.konan.lower.CallableReferenceLowering
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.descriptors.*
 
 internal interface KotlinStubs {
@@ -762,7 +763,7 @@ private fun KotlinStubs.mapType(type: IrType, retained: Boolean, variadic: Boole
         mapType(type, retained, variadic, location, { reportUnsupportedType(it, type, location) })
 
 private fun IrType.isTypeOfNullLiteral(): Boolean = this is IrSimpleType && hasQuestionMark
-        && classifier.isClassWithFqName(KotlinBuiltIns.FQ_NAMES.nothing)
+        && classifier.isClassWithFqName(StandardNames.FqNames.nothing)
 
 internal fun IrType.isVector(): Boolean {
     if (this is IrSimpleType && !this.hasQuestionMark) {
