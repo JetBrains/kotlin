@@ -77,6 +77,7 @@ object LowLevelFirApiFacade {
             body = builtFunction.body
             symbol = builtFunction.symbol as FirNamedFunctionSymbol
             resolvePhase = minOf(originalFunction.resolvePhase, FirResolvePhase.DECLARATIONS)
+            source = builtFunction.source
             this.session = state.firIdeSourcesSession
         }
 
