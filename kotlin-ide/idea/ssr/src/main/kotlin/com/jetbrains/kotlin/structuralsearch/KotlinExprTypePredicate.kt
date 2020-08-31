@@ -101,7 +101,7 @@ class KotlinExprTypePredicate(
                     project,
                     scope
                 )
-                else -> throw Error("Malformed type: $typeElement")
+                else -> return false
             }
         }
 
