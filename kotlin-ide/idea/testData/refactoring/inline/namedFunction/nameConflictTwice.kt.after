@@ -1,0 +1,8 @@
+fun callShadow() {
+    val w1 = 2 + 1
+    var w = w1
+    w = run {
+        val w2 = 3 + 1
+        w2
+    }
+} 

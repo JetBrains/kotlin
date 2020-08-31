@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.codeInliner
 
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
-import com.intellij.refactoring.rename.RenameProcessor
+import com.intellij.psi.search.LocalSearchScope
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.*
@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.*
+import org.jetbrains.kotlin.idea.findUsages.ReferencesSearchScopeHelper
 import org.jetbrains.kotlin.idea.inspections.RedundantLambdaOrAnonymousFunctionInspection
 import org.jetbrains.kotlin.idea.inspections.RedundantUnitExpressionInspection
 import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArgumentsIntention
@@ -169,14 +170,16 @@ class CodeInliner<TCallElement : KtElement>(
         declarations: List<KtNamedDeclaration>,
         lexicalScope: LexicalScope
     ) {
-
         val validator = CollectingNameValidator { !it.nameHasConflictsInScope(lexicalScope) }
         for (declaration in declarations) {
             val oldName = declaration.name
             if (oldName != null && oldName.nameHasConflictsInScope(lexicalScope)) {
                 val newName = KotlinNameSuggester.suggestNameByName(oldName, validator)
-                val renameProcessor = RenameProcessor(project, declaration, newName, false, false)
-                renameProcessor.run()
+                for (reference in ReferencesSearchScopeHelper.search(declaration, LocalSearchScope(declaration.parent))) {
+                    reference.handleElementRename(newName)
+                }
+
+                declaration.nameIdentifier?.replace(psiFactory.createNameIdentifier(newName))
             }
         }
     }

@@ -1120,6 +1120,21 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/namedFunction/MultipleReturns.kt");
         }
 
+        @TestMetadata("nameConflict.kt")
+        public void testNameConflict() throws Exception {
+            runTest("testData/refactoring/inline/namedFunction/nameConflict.kt");
+        }
+
+        @TestMetadata("nameConflictTwice.kt")
+        public void testNameConflictTwice() throws Exception {
+            runTest("testData/refactoring/inline/namedFunction/nameConflictTwice.kt");
+        }
+
+        @TestMetadata("nameConflictTwice2.kt")
+        public void testNameConflictTwice2() throws Exception {
+            runTest("testData/refactoring/inline/namedFunction/nameConflictTwice2.kt");
+        }
+
         @TestMetadata("nestedOperatorExpression.kt")
         public void testNestedOperatorExpression() throws Exception {
             runTest("testData/refactoring/inline/namedFunction/nestedOperatorExpression.kt");
