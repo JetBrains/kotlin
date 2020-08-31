@@ -1965,6 +1965,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/ruby/ruby-puppet/intellij.ruby.puppet.iml" filepath="$PROJECT_DIR$/intellij/ruby/ruby-puppet/intellij.ruby.puppet.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/ruby/remote-interpreter/intellij.ruby.remoteInterpreter.iml" filepath="$PROJECT_DIR$/intellij/ruby/remote-interpreter/intellij.ruby.remoteInterpreter.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/ruby/ruby-slim/intellij.ruby.slim.iml" filepath="$PROJECT_DIR$/intellij/ruby/ruby-slim/intellij.ruby.slim.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/ruby/ruby-terminal/intellij.ruby.terminal.iml" filepath="$PROJECT_DIR$/intellij/ruby/ruby-terminal/intellij.ruby.terminal.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/ruby/testFramework/intellij.ruby.testFramework.iml" filepath="$PROJECT_DIR$/intellij/ruby/testFramework/intellij.ruby.testFramework.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/ruby-testing/intellij.ruby.testing.iml" filepath="$PROJECT_DIR$/intellij/contrib/ruby-testing/intellij.ruby.testing.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/ruby/intellij.ruby.tests.iml" filepath="$PROJECT_DIR$/intellij/ruby/intellij.ruby.tests.iml" />
