@@ -16,3 +16,7 @@ actual typealias T = String
 // Nullability:
 actual typealias V = A // different nullability of the RHS class
 typealias X = U // different nullability of the RHS TA
+
+// Supertypes:
+actual typealias FILE = __sFILE
+final class __sFILE : kotlinx.cinterop.CStructVar {}
