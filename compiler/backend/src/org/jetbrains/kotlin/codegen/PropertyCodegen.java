@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -410,7 +411,7 @@ public class PropertyCodegen {
         if (AsmUtil.isInstancePropertyWithStaticBackingField(propertyDescriptor) ) {
             modifiers |= ACC_STATIC;
 
-            if (JvmAbi.isPropertyWithBackingFieldInOuterClass(propertyDescriptor)) {
+            if (DescriptorsJvmAbiUtil.isPropertyWithBackingFieldInOuterClass(propertyDescriptor)) {
                 ImplementationBodyCodegen codegen = (ImplementationBodyCodegen) memberCodegen.getParentCodegen();
                 builder = codegen.v;
                 backingFieldContext = codegen.context;

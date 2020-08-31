@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithDifferentJvmName.isRemoveAtByIndex
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithDifferentJvmName.sameAsRenamedInJvmBuiltin
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.sameAsBuiltinMethodWithErasedValueParameters
-import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties.getBuiltinSpecialPropertyGetterName
+import org.jetbrains.kotlin.load.java.ClassicBuiltinSpecialProperties.getBuiltinSpecialPropertyGetterName
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils.resolveOverridesForNonStaticMembers
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.descriptors.*

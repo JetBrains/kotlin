@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.serialization.nonSourceAnnotations
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
@@ -291,7 +291,7 @@ class FirJvmSerializerExtension @JvmOverloads constructor(
     }
 
     private fun PropertyDescriptor.isJvmFieldPropertyInInterfaceCompanion(): Boolean {
-        if (!JvmAbi.hasJvmFieldAnnotation(this)) return false
+        if (!DescriptorsJvmAbiUtil.hasJvmFieldAnnotation(this)) return false
 
         val container = containingDeclaration
         if (!DescriptorUtils.isCompanionObject(container)) return false

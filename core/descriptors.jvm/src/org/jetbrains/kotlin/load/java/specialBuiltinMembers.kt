@@ -19,28 +19,20 @@
 package org.jetbrains.kotlin.load.java
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.sameAsBuiltinMethodWithErasedValueParameters
-import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties.getBuiltinSpecialPropertyGetterName
+import org.jetbrains.kotlin.load.java.ClassicBuiltinSpecialProperties.getBuiltinSpecialPropertyGetterName
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.load.kotlin.computeJvmSignature
 import org.jetbrains.kotlin.load.kotlin.signatures
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.firstOverridden
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
-
-private fun FqName.child(name: String): FqName = child(Name.identifier(name))
-private fun FqNameUnsafe.childSafe(name: String): FqName = child(Name.identifier(name)).toSafe()
 
 private data class NameAndSignature(val name: Name, val signature: String)
 
@@ -49,50 +41,6 @@ private fun String.method(name: String, parameters: String, returnType: String) 
         Name.identifier(name),
         SignatureBuildingComponents.signature(this@method, "$name($parameters)$returnType")
     )
-
-object BuiltinSpecialProperties {
-    val PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP = mapOf(
-        FqNames._enum.childSafe("name") to Name.identifier("name"),
-        FqNames._enum.childSafe("ordinal") to Name.identifier("ordinal"),
-        FqNames.collection.child("size") to Name.identifier("size"),
-        FqNames.map.child("size") to Name.identifier("size"),
-        FqNames.charSequence.childSafe("length") to Name.identifier("length"),
-        FqNames.map.child("keys") to Name.identifier("keySet"),
-        FqNames.map.child("values") to Name.identifier("values"),
-        FqNames.map.child("entries") to Name.identifier("entrySet")
-    )
-
-    private val GETTER_JVM_NAME_TO_PROPERTIES_SHORT_NAME_MAP: Map<Name, List<Name>> =
-        PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.entries
-            .map { Pair(it.key.shortName(), it.value) }
-            .groupBy({ it.second }, { it.first })
-
-    val SPECIAL_FQ_NAMES = PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.keys
-    val SPECIAL_SHORT_NAMES = SPECIAL_FQ_NAMES.map(FqName::shortName).toSet()
-
-    fun hasBuiltinSpecialPropertyFqName(callableMemberDescriptor: CallableMemberDescriptor): Boolean {
-        if (callableMemberDescriptor.name !in SPECIAL_SHORT_NAMES) return false
-
-        return callableMemberDescriptor.hasBuiltinSpecialPropertyFqNameImpl()
-    }
-
-    private fun CallableMemberDescriptor.hasBuiltinSpecialPropertyFqNameImpl(): Boolean {
-        if (fqNameOrNull() in SPECIAL_FQ_NAMES && valueParameters.isEmpty()) return true
-        if (!KotlinBuiltIns.isBuiltIn(this)) return false
-
-        return overriddenDescriptors.any { hasBuiltinSpecialPropertyFqName(it) }
-    }
-
-    fun getPropertyNameCandidatesBySpecialGetterName(name1: Name): List<Name> =
-        GETTER_JVM_NAME_TO_PROPERTIES_SHORT_NAME_MAP[name1] ?: emptyList()
-
-    fun CallableMemberDescriptor.getBuiltinSpecialPropertyGetterName(): String? {
-        assert(KotlinBuiltIns.isBuiltIn(this)) { "This method is defined only for builtin members, but $this found" }
-
-        val descriptor = propertyIfAccessor.firstOverridden { hasBuiltinSpecialPropertyFqName(it) } ?: return null
-        return PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP[descriptor.fqNameSafe]?.asString()
-    }
-}
 
 object BuiltinMethodsWithSpecialGenericSignature {
     private val ERASED_COLLECTION_PARAMETER_NAME_AND_SIGNATURES = setOf(
@@ -270,7 +218,7 @@ fun <T : CallableMemberDescriptor> T.getOverriddenBuiltinWithDifferentJvmName():
 
     return when (this) {
         is PropertyDescriptor, is PropertyAccessorDescriptor ->
-            firstOverridden { BuiltinSpecialProperties.hasBuiltinSpecialPropertyFqName(it.propertyIfAccessor) } as T?
+            firstOverridden { ClassicBuiltinSpecialProperties.hasBuiltinSpecialPropertyFqName(it.propertyIfAccessor) } as T?
         is SimpleFunctionDescriptor ->
             firstOverridden {
                 BuiltinMethodsWithDifferentJvmName.isBuiltinFunctionWithDifferentNameInJvm(it as SimpleFunctionDescriptor)

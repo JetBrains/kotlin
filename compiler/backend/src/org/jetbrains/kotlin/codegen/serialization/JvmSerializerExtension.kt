@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil
 import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -283,7 +283,7 @@ class JvmSerializerExtension @JvmOverloads constructor(
     }
 
     private fun PropertyDescriptor.isJvmFieldPropertyInInterfaceCompanion(): Boolean {
-        if (!JvmAbi.hasJvmFieldAnnotation(this)) return false
+        if (!DescriptorsJvmAbiUtil.hasJvmFieldAnnotation(this)) return false
 
         val container = containingDeclaration
         if (!DescriptorUtils.isCompanionObject(container)) return false

@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil;
 import org.jetbrains.kotlin.load.kotlin.MethodSignatureMappingKt;
 import org.jetbrains.kotlin.load.kotlin.TypeSignatureMappingKt;
 import org.jetbrains.kotlin.name.Name;
@@ -2174,7 +2174,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
 
-        boolean isBackingFieldMovedFromCompanion = JvmAbi.isPropertyWithBackingFieldInOuterClass(propertyDescriptor);
+        boolean isBackingFieldMovedFromCompanion = DescriptorsJvmAbiUtil.isPropertyWithBackingFieldInOuterClass(propertyDescriptor);
         AccessorKind fieldAccessorKind;
         if (skipLateinitAssertion) {
             fieldAccessorKind = AccessorKind.LATEINIT_INTRINSIC;

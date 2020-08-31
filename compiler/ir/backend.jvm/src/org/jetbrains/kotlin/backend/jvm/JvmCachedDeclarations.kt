@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.ir.builders.setSourceRange
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil.isMappedIntrinsicCompanionObject
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.load.java.JvmAbi.isMappedIntrinsicCompanionObject
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 

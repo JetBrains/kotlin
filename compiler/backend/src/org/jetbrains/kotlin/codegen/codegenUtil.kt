@@ -19,14 +19,13 @@ import org.jetbrains.kotlin.codegen.inline.ReificationArgument
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.SpecialSignatureInfo
-import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -153,7 +152,7 @@ fun populateCompanionBackingFieldNamesToOuterContextIfNeeded(
         return
     }
 
-    if (!JvmAbi.isClassCompanionObjectWithBackingFieldsInOuter(descriptor)) {
+    if (!DescriptorsJvmAbiUtil.isClassCompanionObjectWithBackingFieldsInOuter(descriptor)) {
         return
     }
     val properties = companion.declarations.filterIsInstance<KtProperty>()

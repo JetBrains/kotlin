@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.ASSERTIONS_DISABLED_FIELD_NAME
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
-import org.jetbrains.kotlin.codegen.MemberCodegen
 import org.jetbrains.kotlin.codegen.SamWrapperCodegen.SAM_WRAPPER_SUFFIX
 import org.jetbrains.kotlin.codegen.`when`.WhenByEnumsMapping
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding

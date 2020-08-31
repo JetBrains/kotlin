@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
-import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor;
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityUtilsKt;
@@ -108,7 +108,7 @@ public class JvmCodegenUtil {
         boolean isDelegate = descriptor.getKind() == CallableMemberDescriptor.Kind.DELEGATION;
 
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration().getOriginal();
-        if (JvmAbi.isPropertyWithBackingFieldInOuterClass(descriptor)) {
+        if (DescriptorsJvmAbiUtil.isPropertyWithBackingFieldInOuterClass(descriptor)) {
             // For property with backed field, check if the access is done in the same class containing the backed field and
             // not the class that declared the field.
             containingDeclaration = containingDeclaration.getContainingDeclaration();
@@ -340,7 +340,7 @@ public class JvmCodegenUtil {
     public static boolean isCompanionObjectInInterfaceNotIntrinsic(@NotNull DeclarationDescriptor companionObject) {
         return isCompanionObject(companionObject) &&
                isJvmInterface(companionObject.getContainingDeclaration()) &&
-               !JvmAbi.isMappedIntrinsicCompanionObject((ClassDescriptor) companionObject);
+               !DescriptorsJvmAbiUtil.isMappedIntrinsicCompanionObject((ClassDescriptor) companionObject);
     }
 
     public static boolean isNonIntrinsicPrivateCompanionObjectInInterface(@NotNull DeclarationDescriptorWithVisibility companionObject) {

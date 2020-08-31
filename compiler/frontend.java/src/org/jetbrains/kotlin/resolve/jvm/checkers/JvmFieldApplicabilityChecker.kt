@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.isInsideJvmMultifileClassFile
+import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
@@ -93,7 +94,7 @@ class JvmFieldApplicabilityChecker : DeclarationChecker {
 
             if (next.visibility != Visibilities.PUBLIC || next.isVar || next.modality != Modality.FINAL) return false
 
-            if (!JvmAbi.hasJvmFieldAnnotation(next)) return false
+            if (!DescriptorsJvmAbiUtil.hasJvmFieldAnnotation(next)) return false
         }
         return true
     }

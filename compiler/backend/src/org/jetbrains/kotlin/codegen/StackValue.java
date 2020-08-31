@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
+import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtExpression;
@@ -1761,7 +1762,7 @@ public abstract class StackValue {
                 // is from a different context), the assertion will be generated on each access, see KT-28331.
                 if (descriptor instanceof AccessorForPropertyBackingField) {
                     PropertyDescriptor property = ((AccessorForPropertyBackingField) descriptor).getCalleeDescriptor();
-                    if (!skipLateinitAssertion && property.isLateInit() && JvmAbi.isPropertyWithBackingFieldInOuterClass(property) &&
+                    if (!skipLateinitAssertion && property.isLateInit() && DescriptorsJvmAbiUtil.isPropertyWithBackingFieldInOuterClass(property) &&
                         !JvmCodegenUtil.couldUseDirectAccessToProperty(property, true, false, codegen.context, false)) {
                         genNonNullAssertForLateinit(v, property.getName().asString());
                     }
