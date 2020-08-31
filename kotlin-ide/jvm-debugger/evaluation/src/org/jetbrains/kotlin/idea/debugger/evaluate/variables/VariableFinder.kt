@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.idea.debugger.evaluate.variables
 
-import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
 import com.intellij.debugger.jdi.LocalVariableProxyImpl
 import com.intellij.debugger.jdi.StackFrameProxyImpl
-import com.intellij.openapi.diagnostic.Attachment
 import com.sun.jdi.*
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.AsmUtil.getCapturedFieldName
@@ -17,16 +15,12 @@ import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_VARIABLE_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
 import org.jetbrains.kotlin.codegen.inline.INLINE_FUN_VAR_SUFFIX
 import org.jetbrains.kotlin.codegen.inline.INLINE_TRANSFORMATION_SUFFIX
-import org.jetbrains.kotlin.idea.core.util.mergeAttachments
 import org.jetbrains.kotlin.idea.debugger.*
 import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
-import org.jetbrains.kotlin.idea.debugger.evaluate.LOG
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilation.CodeFragmentParameter
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilation.CodeFragmentParameter.*
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilation.DebugLabelPropertyDescriptorProvider
-import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import kotlin.coroutines.Continuation
 import org.jetbrains.org.objectweb.asm.Type as AsmType
 import com.sun.jdi.Type as JdiType
