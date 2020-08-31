@@ -49,3 +49,22 @@ internal fun MutableList<InternalGeneratedCode>.addAllLeaves(code: GeneratedCode
     }
 }
 
+// - Visitor Helpers
+
+internal fun GeneratedCodeVisitor.visit(code: GeneratedCode, indent: Int) {
+    if (code is InternalGeneratedCode) {
+        with(code) {
+            visit(indent = indent)
+        }
+    } else {
+        val body = code.body()
+        require(body != code) {
+            "Generated code returns itself in the body. This is not allowed"
+        }
+        visit(body, indent)
+    }
+}
+
+private fun GeneratedCode.body(): GeneratedCode {
+    return GeneratedCode { body() }
+}
