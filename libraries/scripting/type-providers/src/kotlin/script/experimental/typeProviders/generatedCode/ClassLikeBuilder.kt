@@ -17,6 +17,27 @@ interface ClassLikeBuilder<Overridden : ClassLikeBuilder<Overridden>> : Generate
     fun implement(generated: GeneratedInterface)
 }
 
+/**
+ * Implement the interface.
+ */
+@OptIn(ExperimentalStdlibApi::class)
+inline fun <reified T> ClassLikeBuilder<*>.implement() {
+    implement(typeOf<T>())
+}
+
+@PublishedApi
+internal fun ClassLikeBuilder<*>.implement(kType: KType) {
+    require(kType.jvmErasure.java.isInterface) { "Provided type is not an interface" }
+    implement(IdentifiableMember(kType).asInterface())
+}
+
+/**
+ * Implement the interface.
+ */
+fun ClassLikeBuilder<*>.implement(name: String) {
+    implement(IdentifiableMember(name).asInterface())
+}
+
 
 internal class ClassLike(
     private val interfaces: Set<GeneratedInterface>,

@@ -27,6 +27,8 @@ interface IdentifiableMember {
     }
 }
 
+
+fun IdentifiableMember.asInterface(): GeneratedInterface = CastedInterfaceMember(this)
 private class KTypeIdentifiable(kType: KType) : IdentifiableMember {
     override val name: String = kType.toString()
 
@@ -44,3 +46,5 @@ private class KClassIdentifiable(kClass: KClass<*>) : IdentifiableMember {
 }
 
 private class NamedIdentifiable(override val name: String) : IdentifiableMember
+
+private class CastedInterfaceMember(private val member: IdentifiableMember) : GeneratedInterface, IdentifiableMember by member
