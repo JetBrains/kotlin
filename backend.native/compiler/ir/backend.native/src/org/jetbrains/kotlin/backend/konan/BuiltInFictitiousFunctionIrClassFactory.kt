@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
 import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
 import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.*
@@ -113,7 +114,7 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
 
     val builtFunctionNClasses get() = builtClassesMap.values.mapNotNull {
         with(it.descriptor as FunctionClassDescriptor) {
-            if (functionKind == FunctionClassDescriptor.Kind.Function)
+            if (functionKind == FunctionClassKind.Function)
                 FunctionalInterface(it, arity)
             else null
         }
