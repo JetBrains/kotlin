@@ -53,6 +53,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     private fun transformDeclarationContent(
         declaration: FirDeclaration, data: ResolutionMode
     ): CompositeTransformResult<FirDeclaration> {
+        transformer.onBeforeDeclarationContentResolve(declaration)
         return context.withContainer(declaration) {
             declaration.replaceResolvePhase(transformerPhase)
             transformer.transformDeclarationContent(declaration, data)
