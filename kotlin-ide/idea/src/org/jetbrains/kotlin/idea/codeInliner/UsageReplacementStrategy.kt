@@ -11,8 +11,8 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.NlsContexts
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.search.GlobalSearchScope
@@ -46,9 +46,8 @@ private val LOG = Logger.getInstance(UsageReplacementStrategy::class.java)
 
 fun UsageReplacementStrategy.replaceUsagesInWholeProject(
     targetPsiElement: PsiElement,
-    progressTitle: String,
-    commandName: String,
-    postAction: () -> Unit = {}
+    @NlsContexts.DialogTitle progressTitle: String,
+    commandName: String
 ) {
     val project = targetPsiElement.project
     ProgressManager.getInstance().run(
@@ -60,46 +59,40 @@ fun UsageReplacementStrategy.replaceUsagesInWholeProject(
                         .filterIsInstance<KtSimpleReference<KtReferenceExpression>>()
                         .map { ref -> ref.expression }
                 }
-                this@replaceUsagesInWholeProject.replaceUsages(usages, project, commandName, postAction)
+
+                GuiUtils.invokeLaterIfNeeded(
+                    {
+                        project.executeWriteCommand(commandName) {
+                            this@replaceUsagesInWholeProject.replaceUsages(usages)
+                        }
+                    },
+                    ModalityState.NON_MODAL
+                )
             }
         })
 }
 
-fun UsageReplacementStrategy.replaceUsages(
-    usages: Collection<KtReferenceExpression>,
-    project: Project,
-    commandName: String,
-    postAction: () -> Unit = {}
-) {
-    GuiUtils.invokeLaterIfNeeded(
-        {
-            project.executeWriteCommand(commandName) {
-                val usagesByFile = usages.groupBy { it.containingFile }
+fun UsageReplacementStrategy.replaceUsages(usages: Collection<KtReferenceExpression>) {
+    val usagesByFile = usages.groupBy { it.containingFile }
 
-                for ((file, usagesInFile) in usagesByFile) {
-                    usagesInFile.forEach { it.putCopyableUserData(UsageReplacementStrategy.KEY, Unit) }
+    for ((file, usagesInFile) in usagesByFile) {
+        usagesInFile.forEach { it.putCopyableUserData(UsageReplacementStrategy.KEY, Unit) }
 
-                    // we should delete imports later to not affect other usages
-                    val importsToDelete = mutableListOf<KtImportDirective>()
+        // we should delete imports later to not affect other usages
+        val importsToDelete = mutableListOf<KtImportDirective>()
 
-                    var usagesToProcess = usagesInFile.sortedBy { it.startOffset }
-                    while (usagesToProcess.isNotEmpty()) {
-                        if (processUsages(usagesToProcess, importsToDelete)) break
+        var usagesToProcess = usagesInFile.sortedBy { it.startOffset }
+        while (usagesToProcess.isNotEmpty()) {
+            if (processUsages(usagesToProcess, importsToDelete)) break
 
-                        // some usages may get invalidated we need to find them in the tree
-                        usagesToProcess = file.collectDescendantsOfType { it.getCopyableUserData(UsageReplacementStrategy.KEY) != null }
-                    }
+            // some usages may get invalidated we need to find them in the tree
+            usagesToProcess = file.collectDescendantsOfType { it.getCopyableUserData(UsageReplacementStrategy.KEY) != null }
+        }
 
-                    file.forEachDescendantOfType<KtSimpleNameExpression> { it.putCopyableUserData(UsageReplacementStrategy.KEY, null) }
+        file.forEachDescendantOfType<KtSimpleNameExpression> { it.putCopyableUserData(UsageReplacementStrategy.KEY, null) }
 
-                    importsToDelete.forEach { it.delete() }
-                }
-
-                postAction()
-            }
-        },
-        ModalityState.NON_MODAL
-    )
+        importsToDelete.forEach { it.delete() }
+    }
 }
 
 /**

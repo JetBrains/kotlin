@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.idea.refactoring.pullUp.deleteWithCompanion
 import org.jetbrains.kotlin.idea.search.declarationsSearch.findSuperMethodsNoWrapping
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingElement
 import org.jetbrains.kotlin.psi.*
-import java.util.*
 
 abstract class AbstractKotlinInlineNamedDeclarationProcessor<TDeclaration : KtNamedDeclaration>(
     declaration: TDeclaration,
@@ -152,12 +151,10 @@ abstract class AbstractKotlinInlineNamedDeclarationProcessor<TDeclaration : KtNa
         }
 
         replacementStrategy.replaceUsages(
-            kotlinReferenceUsages.mapNotNull { it.element as? KtReferenceExpression },
-            myProject,
-            commandName
-        ) {
-            postActions()
-        }
+            usages = kotlinReferenceUsages.mapNotNull { it.element as? KtReferenceExpression }
+        )
+
+        postActions()
     }
 
     private val isWritable: Boolean
