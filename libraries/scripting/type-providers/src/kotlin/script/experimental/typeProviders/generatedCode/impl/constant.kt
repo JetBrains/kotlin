@@ -5,6 +5,7 @@
 
 package kotlin.script.experimental.typeProviders.generatedCode.impl
 
+import java.io.Serializable
 import kotlin.script.experimental.typeProviders.generatedCode.GeneratedCode
 import kotlin.script.experimental.typeProviders.generatedCode.IdentifiableMember
 import kotlin.script.experimental.typeProviders.generatedCode.internal.InternalGeneratedCode
@@ -25,6 +26,27 @@ fun GeneratedCode.Builder.constant(
     type: IdentifiableMember? = null
 ) = +Constant(name, value, type)
 
+@PublishedApi
+internal fun <T : Serializable> GeneratedCode.Builder.constant(
+    name: String,
+    value: T,
+    type: IdentifiableMember
+) = constant(
+    name,
+    makeValue(value, type),
+    type
+)
+
+/**
+ * Create a constant with a value
+ *
+ * @param name Name of your constant
+ * @param value Generated Code representing the value of the constant
+ */
+inline fun <reified T : Serializable> GeneratedCode.Builder.constant(
+    name: String,
+    value: T
+) = constant(name, value, IdentifiableMember<T>())
 
 internal class Constant(
     private val name: String,
