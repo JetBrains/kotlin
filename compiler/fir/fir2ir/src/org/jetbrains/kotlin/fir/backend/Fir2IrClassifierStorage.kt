@@ -79,7 +79,7 @@ class Fir2IrClassifierStorage(
     private fun IrClass.setThisReceiver(typeParameters: List<FirTypeParameterRef>) {
         symbolTable.enterScope(this)
         val typeArguments = typeParameters.map {
-            IrSimpleTypeImpl(getCachedIrTypeParameter(it.symbol.fir)!!.symbol, false, emptyList(), emptyList())
+            IrSimpleTypeImpl(getIrTypeParameterSymbol(it.symbol, ConversionTypeContext.DEFAULT), false, emptyList(), emptyList())
         }
         thisReceiver = declareThisReceiverParameter(
             symbolTable,
