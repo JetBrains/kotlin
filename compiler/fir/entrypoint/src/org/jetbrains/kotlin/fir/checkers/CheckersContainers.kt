@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.fir.checkers
 
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.ExtendedDeclarationCheckers
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExtendedExpressionCheckers
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
 
 fun FirSessionFactory.FirSessionConfigurator.registerCommonCheckers() {

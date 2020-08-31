@@ -3,8 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.analysis.checkers.expression
+package org.jetbrains.kotlin.fir.checkers
 
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBasicExpresionChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirVariableAssignmentChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.*
 
 object ExtendedExpressionCheckers : ExpressionCheckers() {
@@ -13,9 +17,11 @@ object ExtendedExpressionCheckers : ExpressionCheckers() {
         RedundantSingleExpressionStringTemplateChecker,
         EmptyRangeChecker
     )
+
     override val variableAssignmentCheckers: List<FirVariableAssignmentChecker> = listOf(
         CanBeReplacedWithOperatorAssignmentChecker
     )
+
     override val qualifiedAccessCheckers: List<FirQualifiedAccessChecker> = listOf(
         RedundantCallOfConversionMethod
     )
