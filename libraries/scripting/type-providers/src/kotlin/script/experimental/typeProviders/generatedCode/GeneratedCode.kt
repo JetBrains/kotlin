@@ -53,6 +53,8 @@ interface GeneratedCode {
     @GeneratedCodeDSL
     interface Builder {
         operator fun GeneratedCode.unaryPlus()
+
+        operator fun String.unaryPlus() = inlineCode(this)
     }
 
     /**
