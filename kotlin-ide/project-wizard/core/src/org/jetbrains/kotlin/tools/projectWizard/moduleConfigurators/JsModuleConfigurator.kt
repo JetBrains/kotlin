@@ -73,7 +73,6 @@ interface JSConfigurator : ModuleConfiguratorWithModuleType, ModuleConfiguratorW
             GenerationPhase.PROJECT_GENERATION
         ) {
             defaultValue = value(JsCompiler.IR)
-            description = KotlinNewProjectWizardBundle.message("module.configurator.js.target.settings.compiler.description")
             filter = filter@{ reference, compilerCandidate ->
                 when {
                     reference !is ModuleConfiguratorSettingReference<*, *> -> false
