@@ -10,5 +10,5 @@ private class A {
 }
 
 private fun test(a: A) {
-    a.<caret>foooo()
+    val c = a.<caret>foooo()
 }

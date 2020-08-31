@@ -3,7 +3,5 @@
 class Chain
 
 fun complicate(chain: Chain) {
-    val vra = (fun Chain.(): Chain {
-        return also { println(it) }
-    })(chain)
+    val vra = chain.also { println(it) }
 }
