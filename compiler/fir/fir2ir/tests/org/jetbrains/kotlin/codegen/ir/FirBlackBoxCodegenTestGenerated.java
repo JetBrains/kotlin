@@ -28056,6 +28056,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             runTest("compiler/testData/codegen/box/regressions/kt39088.kt");
         }
 
+        @TestMetadata("kt41357.kt")
+        public void testKt41357() throws Exception {
+            runTest("compiler/testData/codegen/box/regressions/kt41357.kt");
+        }
+
         @TestMetadata("kt4142.kt")
         public void testKt4142() throws Exception {
             runTest("compiler/testData/codegen/box/regressions/kt4142.kt");
