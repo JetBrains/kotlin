@@ -42,14 +42,11 @@ import org.jetbrains.kotlin.idea.core.util.range
 import org.jetbrains.kotlin.idea.core.util.start
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.*
-import org.jetbrains.kotlin.idea.util.ImportInsertHelper
-import org.jetbrains.kotlin.idea.util.ProgressIndicatorUtils
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.invokeLater
 import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.idea.util.getFileResolutionScope
-import org.jetbrains.kotlin.idea.util.getSourceRoot
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.kdoc.psi.api.KDocElement
 import org.jetbrains.kotlin.name.FqName
@@ -488,6 +485,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
             .withDocumentsCommitted(project)
             .cancelWith(indicator)
             .expireWith(project)
+            .inSmartMode(project)
             .submit(AppExecutorUtil.getAppExecutorService())
 
     private fun buildDummySourceScope(
@@ -515,8 +513,9 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
 
         fun joinLines(items: Collection<String>) = items.joinToString("\n")
 
+        val project = file.project
         val dummyImportsFile = runReadAction {
-            KtPsiFactory(file.project)
+            KtPsiFactory(project)
                 .createAnalyzableFile(
                     "dummy-imports.kt",
                     "package $fakePkgName\n" +
@@ -526,7 +525,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
                 )
         }
 
-        val dummyFileImports = runReadAction {
+        val dummyFileImports = project.runReadActionInSmartMode {
             dummyImportsFile.collectDescendantsOfType<KtImportDirective>().mapNotNull { directive ->
                 val importedReference =
                     directive.importedReference?.getQualifiedElementSelector()?.mainReference?.resolve() as? KtNamedDeclaration
