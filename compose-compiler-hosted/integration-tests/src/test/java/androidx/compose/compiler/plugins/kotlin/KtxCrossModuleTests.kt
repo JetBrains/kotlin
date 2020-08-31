@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
@@ -36,6 +37,72 @@ import java.net.URLClassLoader
     maxSdk = 23
 )
 class KtxCrossModuleTests : AbstractCodegenTest() {
+
+    @Test
+    @Ignore("b/165674304")
+    fun testInlineFunctionDefaultArgument(): Unit = ensureSetup {
+        compile(
+            mapOf("library module" to mapOf (
+                "x/library.kt" to """
+                    package x
+
+                    import androidx.compose.runtime.Composable
+
+                    @Composable
+                    inline fun f(x: () -> Unit = { println("default") }) {
+                      x()
+                    }
+                """.trimIndent()
+            ),
+            "Main" to mapOf(
+                "y/User.kt" to """
+                    package y
+
+                    import x.f
+                    import androidx.compose.runtime.Composable
+
+                    @Composable
+                    fun g() {
+                      f {
+                        println("non-default")
+                      }
+                    }
+                """.trimIndent()
+            ))
+        )
+    }
+
+    @Test
+    @Ignore("b/165674304")
+    fun testInlineFunctionDefaultArgument2(): Unit = ensureSetup {
+        compile(
+            mapOf("library module" to mapOf (
+                "x/library.kt" to """
+                    package x
+
+                    import androidx.compose.runtime.Composable
+
+                    @Composable
+                    inline fun f(x: () -> Unit = { println("default") }) {
+                      x()
+                    }
+                """.trimIndent()
+            ),
+            "Main" to mapOf(
+                "y/User.kt" to """
+                    package y
+
+                    import x.f
+                    import androidx.compose.runtime.Composable
+
+                    @Composable
+                    fun g() {
+                      f()
+                    }
+                """.trimIndent()
+            ))
+        )
+    }
 
     @Test
     fun testAccessibilityBridgeGeneration(): Unit = ensureSetup {
