@@ -1,8 +1,8 @@
 fun callShadow() {
     val w1 = 2 + 1
     var w = w1
-    val w = 3 + 1
-    println(w)
-    val w = 4 + 1
+    val w2 = 3 + 1
+    println(w2)
+    val w3 = 4 + 1
     println("original $w")
 }

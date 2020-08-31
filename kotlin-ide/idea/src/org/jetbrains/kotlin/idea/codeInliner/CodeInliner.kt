@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.KotlinType
@@ -112,7 +113,11 @@ class CodeInliner<TCallElement : KtElement>(
 
         processTypeParameterUsages()
 
-        val lexicalScope = callElement.parent.getResolutionScope(bindingContext)
+        val lexicalScopeElement = callElement.parentsWithSelf
+            .takeWhile { it !is KtBlockExpression }
+            .last() as KtElement
+
+        val lexicalScope = lexicalScopeElement.getResolutionScope(lexicalScopeElement.analyze(BodyResolveMode.PARTIAL_FOR_COMPLETION))
 
         if (elementToBeReplaced is KtSafeQualifiedExpression && receiverType?.isMarkedNullable != false) {
             wrapCodeForSafeCall(receiver!!, receiverType, elementToBeReplaced)
@@ -146,6 +151,7 @@ class CodeInliner<TCallElement : KtElement>(
 
         codeToInline.extraComments?.restoreComments(elementToBeReplaced)
 
+        findAndMarkNewDeclarations()
         val replacementPerformer = when (elementToBeReplaced) {
             is KtExpression -> ExpressionReplacementPerformer(codeToInline, elementToBeReplaced)
             is KtAnnotationEntry -> AnnotationEntryReplacementPerformer(codeToInline, elementToBeReplaced)
@@ -166,9 +172,18 @@ class CodeInliner<TCallElement : KtElement>(
         })
     }
 
+    private fun findAndMarkNewDeclarations() {
+        for (it in codeToInline.statementsBefore) {
+            if (it is KtNamedDeclaration) {
+                it.mark(NEW_DECLARATION_KEY)
+            }
+        }
+    }
+
     private fun renameDuplicates(
         declarations: List<KtNamedDeclaration>,
-        lexicalScope: LexicalScope
+        lexicalScope: LexicalScope,
+        endOfScope: Int,
     ) {
         val validator = CollectingNameValidator { !it.nameHasConflictsInScope(lexicalScope) }
         for (declaration in declarations) {
@@ -176,7 +191,9 @@ class CodeInliner<TCallElement : KtElement>(
             if (oldName != null && oldName.nameHasConflictsInScope(lexicalScope)) {
                 val newName = KotlinNameSuggester.suggestNameByName(oldName, validator)
                 for (reference in ReferencesSearchScopeHelper.search(declaration, LocalSearchScope(declaration.parent))) {
-                    reference.handleElementRename(newName)
+                    if (reference.element.startOffset < endOfScope) {
+                        reference.handleElementRename(newName)
+                    }
                 }
 
                 declaration.nameIdentifier?.replace(psiFactory.createNameIdentifier(newName))
@@ -458,8 +475,12 @@ class CodeInliner<TCallElement : KtElement>(
         val pointers = range.filterIsInstance<KtElement>().map { it.createSmartPointer() }.toList()
         if (pointers.isEmpty()) return PsiChildRange.EMPTY
 
-        lexicalScope?.let {
-            renameDuplicates(pointers.dropLast(1).mapNotNull { pointer -> pointer.element as? KtNamedDeclaration }, it)
+        lexicalScope?.let { scope ->
+            val declarations = pointers.mapNotNull { pointer -> pointer.element?.takeIf { it[NEW_DECLARATION_KEY] } as? KtNamedDeclaration }
+            if (declarations.isNotEmpty()) {
+                val endOfScope = pointers.last().element?.endOffset ?: error("Can't find the end of the scope")
+                renameDuplicates(declarations, scope, endOfScope)
+            }
         }
 
         for (pointer in pointers) {
@@ -509,6 +530,7 @@ class CodeInliner<TCallElement : KtElement>(
                 it.clear(PARAMETER_VALUE_KEY)
                 it.clear(RECEIVER_VALUE_KEY)
                 it.clear(WAS_FUNCTION_LITERAL_ARGUMENT_KEY)
+                it.clear(NEW_DECLARATION_KEY)
             }
 
             element.forEachDescendantOfType<KtValueArgument> {
@@ -701,6 +723,7 @@ class CodeInliner<TCallElement : KtElement>(
         private val PARAMETER_VALUE_KEY = Key<ValueParameterDescriptor>("PARAMETER_VALUE")
         private val RECEIVER_VALUE_KEY = Key<Unit>("RECEIVER_VALUE")
         private val WAS_FUNCTION_LITERAL_ARGUMENT_KEY = Key<Unit>("WAS_FUNCTION_LITERAL_ARGUMENT")
+        private val NEW_DECLARATION_KEY = Key<Unit>("NEW_DECLARATION")
 
         // these keys are used on KtValueArgument
         private val MAKE_ARGUMENT_NAMED_KEY = Key<Unit>("MAKE_ARGUMENT_NAMED")
