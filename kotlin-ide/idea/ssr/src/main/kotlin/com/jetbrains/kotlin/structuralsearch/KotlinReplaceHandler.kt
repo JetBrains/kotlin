@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.js.translate.declaration.hasCustomSetter
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 
@@ -56,14 +57,31 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
         match: KtModifierListOwner,
         modifier: KtModifierKeywordToken
     ): KtModifierListOwner {
-        if(!hasModifier(modifier) && match.hasModifier(modifier) && !searchTemplate.hasModifier(modifier)) addModifier(modifier)
+        if(!hasModifier(modifier) && match.hasModifier(modifier) && !searchTemplate.hasModifier(modifier)) {
+            addModifier(modifier)
+            modifierList?.addSurroundingWhiteSpace(
+                modifierList?.getModifier(modifier)!!,
+                match.modifierList?.getModifier(modifier)!!
+            )
+        }
+        return this
+    }
+
+    private fun KtModifierListOwner.fixModifierListFormatting(match: KtModifierListOwner): KtModifierListOwner {
+        modifierList?.children?.last()?.let { if(it is PsiWhiteSpace) it.delete() }
+        modifierList?.let { rModL -> match.modifierList?.let { mModL ->
+            addSurroundingWhiteSpace(rModL, mModL)
+        } }
         return this
     }
 
     private fun KtDeclaration.replaceDeclaration(searchTemplate: KtDeclaration, match: KtDeclaration): KtDeclaration {
         fun KtDeclaration.replaceVisibilityModifiers(searchTemplate: KtDeclaration, match: KtDeclaration): PsiElement {
             if(visibilityModifierType() == null && searchTemplate.visibilityModifierType() == null) {
-                match.visibilityModifierType()?.let(this::addModifier)
+                match.visibilityModifierType()?.let {
+                    addModifier(it)
+                    modifierList?.addSurroundingWhiteSpace(visibilityModifier()!!, match.visibilityModifier()!!)
+                }
             }
             return this
         }
@@ -93,6 +111,7 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
 
     private fun KtClassOrObject.replaceClassOrObject(searchTemplate: KtClassOrObject, match: KtClassOrObject) : KtClassOrObject {
         CLASS_MODIFIERS.forEach { replaceModifier(searchTemplate, match, it) }
+        fixModifierListFormatting(match)
         if(primaryConstructor == null && searchTemplate.primaryConstructor == null) match.primaryConstructor?.let {
             addFormatted(it)
         }
@@ -105,6 +124,7 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
 
     private fun KtNamedFunction.replaceNamedFunction(searchTemplate: KtNamedFunction, match: KtNamedFunction): KtNamedFunction {
         FUN_MODIFIERS.forEach { replaceModifier(searchTemplate, match, it) }
+        fixModifierListFormatting(match)
         val searchParam = searchTemplate.valueParameterList
         val matchParam = match.valueParameterList
         if(searchParam != null && matchParam != null) valueParameterList?.replaceParameterList(searchParam, matchParam)
@@ -117,6 +137,7 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
 
     private fun KtProperty.replaceProperty(searchTemplate: KtProperty, match: KtProperty): KtProperty {
         PROPERTY_MODIFIERS.forEach { replaceModifier(searchTemplate, match, it) }
+        fixModifierListFormatting(match)
         if(!hasDelegate() && !hasInitializer()) {
             if(!searchTemplate.hasInitializer()) {
                 match.equalsToken?.let { addFormatted(it) }
@@ -146,12 +167,6 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
         return this
     }
 
-    private fun PsiElement.addBAfterFormatted(match: PsiElement, anchor: PsiElement) =
-        addSurroundingWhiteSpace(addAfter(match, anchor), match)
-
-    private fun PsiElement.addBeforeFormatted(match: PsiElement, anchor: PsiElement) =
-        addSurroundingWhiteSpace(addBefore(match, anchor), match)
-
     private fun PsiElement.addFormatted(match: PsiElement) = addSurroundingWhiteSpace(add(match), match)
 
     private fun PsiElement.addSurroundingWhiteSpace(anchor: PsiElement, match: PsiElement) {
@@ -160,12 +175,13 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
         val nextElement = match.nextSibling
         val prevElement = match.prevSibling
         if(prevElement is PsiWhiteSpace) {
-            if(prevAnchor is PsiWhiteSpace) prevAnchor.delete()
-            addBefore(prevElement, anchor)
+            if(prevAnchor is PsiWhiteSpace) prevAnchor.replace(prevElement)
+            else addBefore(prevElement, anchor)
+
         }
         if(nextElement is PsiWhiteSpace) {
-            if(nextAnchor is PsiWhiteSpace) nextAnchor.delete()
-            addAfter(nextElement, anchor)
+            if(nextAnchor is PsiWhiteSpace) nextAnchor.replace(nextElement)
+            else addAfter(nextElement, anchor)
         }
     }
 
