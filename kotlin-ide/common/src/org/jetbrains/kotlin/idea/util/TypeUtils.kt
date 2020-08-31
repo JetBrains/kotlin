@@ -10,7 +10,7 @@ package org.jetbrains.kotlin.idea.util
 import com.intellij.psi.*
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
 import org.jetbrains.kotlin.builtins.replaceReturnType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
@@ -58,7 +58,7 @@ private fun KotlinType.approximateNonDynamicFlexibleTypes(
     if (isFlexible()) {
         val flexible = asFlexibleType()
         val lowerClass = flexible.lowerBound.constructor.declarationDescriptor as? ClassDescriptor?
-        val isCollection = lowerClass != null && JavaToKotlinClassMap.isMutable(lowerClass)
+        val isCollection = lowerClass != null && JavaToKotlinClassMapper.isMutable(lowerClass)
         // (Mutable)Collection<T>! -> MutableCollection<T>?
         // Foo<(Mutable)Collection<T>!>! -> Foo<Collection<T>>?
         // Foo! -> Foo?
