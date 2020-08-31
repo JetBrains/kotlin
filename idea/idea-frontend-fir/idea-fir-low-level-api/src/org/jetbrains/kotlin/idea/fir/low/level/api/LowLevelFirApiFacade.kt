@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
 
 object LowLevelFirApiFacade {
@@ -40,7 +40,7 @@ object LowLevelFirApiFacade {
 
     class FirCompletionContext internal constructor(
         val session: FirSession,
-        private val towerDataContextForStatement: Map<FirStatement, FirTowerDataContext>,
+        private val towerDataContextCollector: FirTowerDataContextCollector,
         private val state: FirModuleResolveState,
     ) {
         fun getTowerDataContext(element: KtElement): FirTowerDataContext {
@@ -49,13 +49,7 @@ object LowLevelFirApiFacade {
                 val mappedFir = state.getCachedMappingForCompletion(current)
 
                 if (mappedFir is FirStatement) {
-                    towerDataContextForStatement[mappedFir]?.let { return it }
-                    for ((key, value) in towerDataContextForStatement) {
-                        // TODO Rework that
-                        if (key.psi == mappedFir.psi) {
-                            return value
-                        }
-                    }
+                    towerDataContextCollector.getContext(mappedFir)?.let { return it }
                 }
                 current = current.parent
             }
@@ -74,7 +68,7 @@ object LowLevelFirApiFacade {
         val firIdeProvider = firFile.session.firIdeProvider
         val originalFunction = state.getOrBuildFirFor(originalElement, phase) as FirSimpleFunction
         val builtFunction = firIdeProvider.buildFunctionWithBody(element)
-        val towerDataContextForStatement = mutableMapOf<FirStatement, FirTowerDataContext>()
+        val contextCollector = FirTowerDataContextCollector()
 
         // right now we can't resolve builtFunction header properly, as it built right in air,
         // without file, which is now required for running stages other then body resolve, so we
@@ -87,13 +81,13 @@ object LowLevelFirApiFacade {
         }
 
         val function = frankensteinFunction.apply {
-            state.lazyResolveFunctionForCompletion(this, firFile, firIdeProvider, phase, towerDataContextForStatement)
+            state.lazyResolveFunctionForCompletion(this, firFile, firIdeProvider, phase, contextCollector)
             state.recordPsiToFirMappingsForCompletionFrom(this, firFile, element.containingKtFile)
         }
 
         return FirCompletionContext(
             function.session,
-            towerDataContextForStatement,
+            contextCollector,
             state
         )
     }

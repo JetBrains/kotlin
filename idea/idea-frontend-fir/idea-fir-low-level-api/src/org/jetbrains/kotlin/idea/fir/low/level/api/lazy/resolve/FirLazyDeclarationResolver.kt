@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve
 
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
+import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirDesignatedBodyResolveTransformerForIDE
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getNonLocalContainingDeclarationWithFqName
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
@@ -32,7 +31,7 @@ internal class FirLazyDeclarationResolver(
         declaration: FirDeclaration,
         moduleFileCache: ModuleFileCache,
         toPhase: FirResolvePhase,
-        towerDataContextForStatement: MutableMap<FirStatement, FirTowerDataContext>? = null,
+        towerDataContextCollector: FirTowerDataContextCollector? = null,
         checkPCE: Boolean = false
     ) {
         if (declaration.resolvePhase >= toPhase) return
@@ -41,12 +40,12 @@ internal class FirLazyDeclarationResolver(
         val provider = firFile.session.firIdeProvider
         if (checkPCE) {
             firFileBuilder.runCustomResolveWithPCECheck(firFile, moduleFileCache) {
-                runLazyResolveWithoutLock(declaration, firFile, provider, toPhase, towerDataContextForStatement, checkPCE = true)
+                runLazyResolveWithoutLock(declaration, firFile, provider, toPhase, towerDataContextCollector, checkPCE = true)
             }
         } else {
             firFileBuilder.runCustomResolveUnderLock(firFile, moduleFileCache) {
                 executeWithoutPCE {
-                    runLazyResolveWithoutLock(declaration, firFile, provider, toPhase, towerDataContextForStatement, checkPCE = false)
+                    runLazyResolveWithoutLock(declaration, firFile, provider, toPhase, towerDataContextCollector, checkPCE = false)
                 }
             }
         }
@@ -57,7 +56,7 @@ internal class FirLazyDeclarationResolver(
         containerFirFile: FirFile,
         provider: FirProvider,
         toPhase: FirResolvePhase,
-        towerDataContextForStatement: MutableMap<FirStatement, FirTowerDataContext>? = null,
+        towerDataContextCollector: FirTowerDataContextCollector? = null,
         checkPCE: Boolean
     ) {
         val nonLazyPhase = minOf(toPhase, FirResolvePhase.DECLARATIONS)
@@ -71,7 +70,7 @@ internal class FirLazyDeclarationResolver(
         }
         if (toPhase <= nonLazyPhase) return
         if (checkPCE) checkCanceled()
-        runLazyResolvePhase(firDeclarationToResolve, containerFirFile, provider, toPhase, towerDataContextForStatement)
+        runLazyResolvePhase(firDeclarationToResolve, containerFirFile, provider, toPhase, towerDataContextCollector)
     }
 
     private fun runLazyResolvePhase(
@@ -79,7 +78,7 @@ internal class FirLazyDeclarationResolver(
         containerFirFile: FirFile,
         provider: FirProvider,
         toPhase: FirResolvePhase,
-        towerDataContextForStatement: MutableMap<FirStatement, FirTowerDataContext>?,
+        towerDataContextCollector: FirTowerDataContextCollector?,
     ) {
         val nonLocalDeclarationToResolve = firDeclarationToResolve.getNonLocalDeclarationToResolve(provider)
 
@@ -110,7 +109,7 @@ internal class FirLazyDeclarationResolver(
             designation.iterator(), containerFirFile.session,
             scopeSession,
             implicitTypeOnly = toPhase == FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
-            towerDataContextForStatement
+            towerDataContextCollector
         )
         containerFirFile.transform<FirFile, ResolutionMode>(transformer, ResolutionMode.ContextDependent)
     }

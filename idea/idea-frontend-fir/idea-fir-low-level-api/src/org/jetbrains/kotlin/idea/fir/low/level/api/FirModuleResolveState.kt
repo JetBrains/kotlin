@@ -7,17 +7,16 @@ package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.DiagnosticsCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirElementBuilder
+import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.PsiToFirCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
@@ -52,7 +51,7 @@ abstract class FirModuleResolveState {
         containerFirFile: FirFile,
         firIdeProvider: FirIdeProvider,
         toPhase: FirResolvePhase,
-        towerDataContextForStatement: MutableMap<FirStatement, FirTowerDataContext>
+        towerDataContextCollector: FirTowerDataContextCollector
     )
 
 }
@@ -97,14 +96,14 @@ internal open class FirModuleResolveStateImpl(
         containerFirFile: FirFile,
         firIdeProvider: FirIdeProvider,
         toPhase: FirResolvePhase,
-        towerDataContextForStatement: MutableMap<FirStatement, FirTowerDataContext>
+        towerDataContextCollector: FirTowerDataContextCollector
     ) {
         firLazyDeclarationResolver.runLazyResolveWithoutLock(
             firFunction,
             containerFirFile,
             firIdeProvider,
             toPhase,
-            towerDataContextForStatement,
+            towerDataContextCollector,
             checkPCE = false
         )
     }
