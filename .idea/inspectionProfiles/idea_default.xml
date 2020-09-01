@@ -371,8 +371,7 @@
         <option name="nonNlsCommentPattern" value="NON-NLS" />
         <option name="ignoreForEnumConstant" value="true" />
         <option name="reportUnannotatedReferences" value="true" />
-        <option name="ignoreAllButNls" value="true" />
-        <option name="nonNlsLiteralPattern" value="((?i)https?://.+)|\w*(\.\w+)+|\w*[$]\w*|((?i)&lt;/?(html|b|i|body|br|li|ol|ul)&gt;)*|&amp;\w+;|[A-Z]?[a-z0-9]+([A-Z]+[a-z0-9]*)+|[A-Z]{5,}|[A-Z]+(_[A-Z]+)+|[a-z]+(_[a-z]+)+|\S*[\\/-][a-z]\S*[\\/-]\S*|\S*[%*+#@|]\S*|-\S*|\S*[)}&gt;\],:?!;=]\S+|\S*[0-9]{3,}\S*" />
+        <option name="nonNlsLiteralPattern" value="" />
       </scope>
       <scope name="Angular" level="ERROR" enabled="true">
         <option name="ignoreForAssertStatements" value="true" />
