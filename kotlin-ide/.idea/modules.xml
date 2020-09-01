@@ -730,6 +730,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/util/text-matching/intellij.platform.util.text.matching.iml" filepath="$PROJECT_DIR$/intellij/platform/util/text-matching/intellij.platform.util.text.matching.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/util/intellij.platform.util.ui.iml" filepath="$PROJECT_DIR$/intellij/platform/util/intellij.platform.util.ui.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/vcs-api/intellij.platform.vcs.iml" filepath="$PROJECT_DIR$/intellij/platform/vcs-api/intellij.platform.vcs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/platform/vcs-code-review/intellij.platform.vcs.codeReview.iml" filepath="$PROJECT_DIR$/intellij/platform/vcs-code-review/intellij.platform.vcs.codeReview.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/vcs-api/vcs-api-core/intellij.platform.vcs.core.iml" filepath="$PROJECT_DIR$/intellij/platform/vcs-api/vcs-api-core/intellij.platform.vcs.core.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/dvcs-api/intellij.platform.vcs.dvcs.iml" filepath="$PROJECT_DIR$/intellij/platform/dvcs-api/intellij.platform.vcs.dvcs.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/dvcs-impl/intellij.platform.vcs.dvcs.impl.iml" filepath="$PROJECT_DIR$/intellij/platform/dvcs-impl/intellij.platform.vcs.dvcs.impl.iml" />
