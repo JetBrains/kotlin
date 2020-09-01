@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -37,18 +35,21 @@ fun AbstractFirBasedSymbol<*>.ensureResolvedForCalls(
     useSiteSession: FirSession,
 ) {
     val fir = fir as FirDeclaration
-    if (fir.resolvePhase >= FirResolvePhase.CONTRACTS) return
-    val requiredPhase = when (fir) {
-        is FirFunction<*>, is FirProperty -> FirResolvePhase.CONTRACTS
-        else -> FirResolvePhase.STATUS
-    }
+    if (fir.resolvePhase >= FirResolvePhase.DECLARATIONS) return
 
-    if (requiredPhase == FirResolvePhase.CONTRACTS) {
-        // Workaround for recursive contracts in CLI
-        // Otherwise the assertion about presence of fir.session.phaseManager would fail
-        // See org.jetbrains.kotlin.fir.FirOldFrontendDiagnosticsTestWithStdlibGenerated.Contracts.Dsl.Errors.testRecursiveContract
-        if (fir.session.phaseManager == null) return
-    }
+//    val requiredPhase = when (fir) {
+//        is FirFunction<*>, is FirProperty -> FirResolvePhase.CONTRACTS
+//        else -> FirResolvePhase.STATUS
+//    }
+//
+//    if (requiredPhase == FirResolvePhase.CONTRACTS) {
+//        // Workaround for recursive contracts in CLI
+//        // Otherwise the assertion about presence of fir.session.phaseManager would fail
+//        // See org.jetbrains.kotlin.fir.FirOldFrontendDiagnosticsTestWithStdlibGenerated.Contracts.Dsl.Errors.testRecursiveContract
+//        if (fir.session.phaseManager == null) return
+//    }
+
+    val requiredPhase = FirResolvePhase.DECLARATIONS
 
     ensureResolved(requiredPhase, useSiteSession)
 }
