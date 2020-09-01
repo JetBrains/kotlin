@@ -3,9 +3,6 @@
     <version>1.2</version>
 
     <extensionPoints>
-        <extensionPoint qualifiedName="com.intellij.psi.classFileDecompiler"
-                        interface="com.intellij.psi.compiled.ClassFileDecompilers$Decompiler"
-                        dynamic="true"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.analyzeCompleteHandlerExtension"
                         interface="org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension"
                         area="IDEA_PROJECT"/>
