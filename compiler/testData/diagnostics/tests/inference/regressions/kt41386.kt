@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +NewInference
 
 open class Test<T1, T2>(val map1 : Map<T1, T2>, val map2 : Map<T2, T1>) {
