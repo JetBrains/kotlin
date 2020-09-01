@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.codegen.inline
 
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.codegen.ASSERTIONS_DISABLED_FIELD_NAME
-import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.SamWrapperCodegen.SAM_WRAPPER_SUFFIX
 import org.jetbrains.kotlin.codegen.`when`.WhenByEnumsMapping
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
@@ -17,16 +15,14 @@ import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.context.CodegenContextUtil
 import org.jetbrains.kotlin.codegen.context.InlineLambdaContext
 import org.jetbrains.kotlin.codegen.context.MethodContext
+import org.jetbrains.kotlin.codegen.coroutines.originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass
 import org.jetbrains.kotlin.codegen.coroutines.unwrapInitialDescriptorForSuspendFunction
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
@@ -80,6 +76,8 @@ private const val INLINE_MARKER_BEFORE_FAKE_CONTINUATION_CONSTRUCTOR_CALL = 4
 private const val INLINE_MARKER_AFTER_FAKE_CONTINUATION_CONSTRUCTOR_CALL = 5
 private const val INLINE_MARKER_BEFORE_INLINE_SUSPEND_ID = 6
 private const val INLINE_MARKER_AFTER_INLINE_SUSPEND_ID = 7
+private const val INLINE_MARKER_BEFORE_UNBOX_INLINE_CLASS = 8
+private const val INLINE_MARKER_AFTER_UNBOX_INLINE_CLASS = 9
 
 internal fun getMethodNode(
     classData: ByteArray,
@@ -413,6 +411,23 @@ fun addInlineMarker(v: InstructionAdapter, isStartNotEnd: Boolean) {
     )
 }
 
+internal fun addUnboxInlineClassMarkersIfNeeded(v: InstructionAdapter, descriptor: CallableDescriptor, typeMapper: KotlinTypeMapper) {
+    val inlineClass = (descriptor as? FunctionDescriptor)?.originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass(typeMapper)
+    if (inlineClass != null) {
+        addBeforeUnboxInlineClassMarker(v)
+        StackValue.unboxInlineClass(AsmTypes.OBJECT_TYPE, inlineClass, v)
+        addAfterUnboxInlineClassMarker(v)
+    }
+}
+
+private fun addBeforeUnboxInlineClassMarker(v: InstructionAdapter) {
+    v.emitInlineMarker(INLINE_MARKER_BEFORE_UNBOX_INLINE_CLASS)
+}
+
+private fun addAfterUnboxInlineClassMarker(v: InstructionAdapter) {
+    v.emitInlineMarker(INLINE_MARKER_AFTER_UNBOX_INLINE_CLASS)
+}
+
 internal fun addReturnsUnitMarkerIfNecessary(v: InstructionAdapter, resolvedCall: ResolvedCall<*>) {
     val wrapperDescriptor = resolvedCall.candidateDescriptor.safeAs<FunctionDescriptor>() ?: return
     val unsubstitutedDescriptor = wrapperDescriptor.unwrapInitialDescriptorForSuspendFunction()
@@ -477,6 +492,8 @@ internal fun isAfterInlineSuspendMarker(insn: AbstractInsnNode) = isSuspendMarke
 internal fun isReturnsUnitMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_RETURNS_UNIT)
 internal fun isFakeContinuationMarker(insn: AbstractInsnNode) =
     insn.previous != null && isSuspendMarker(insn.previous, INLINE_MARKER_FAKE_CONTINUATION) && insn.opcode == Opcodes.ACONST_NULL
+internal fun isBeforeUnboxInlineClassMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_BEFORE_UNBOX_INLINE_CLASS)
+internal fun isAfterUnboxInlineClassMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_AFTER_UNBOX_INLINE_CLASS)
 
 internal fun isBeforeFakeContinuationConstructorCallMarker(insn: AbstractInsnNode) =
     isSuspendMarker(insn, INLINE_MARKER_BEFORE_FAKE_CONTINUATION_CONSTRUCTOR_CALL)

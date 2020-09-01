@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.config.ApiVersion;
 import org.jetbrains.kotlin.config.JVMAssertionsMode;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
@@ -2735,8 +2734,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         callGenerator.genCall(callableMethod, resolvedCall, defaultMaskWasGenerated, this);
 
         if (maybeSuspensionPoint) {
+            // The order is important! Do not reorder!
+            // CoroutineTransformerMethodVisitor expects the marker exactly in this order.
             addReturnsUnitMarkerIfNecessary(v, resolvedCall);
             addSuspendMarker(v, false, suspensionPointKind == SuspensionPointKind.NOT_INLINE);
+            addUnboxInlineClassMarkersIfNeeded(v, resolvedCall.getResultingDescriptor(), typeMapper);
             addInlineMarker(v, false);
         }
 

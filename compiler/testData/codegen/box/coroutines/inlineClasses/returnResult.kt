@@ -21,7 +21,8 @@ suspend fun signInFlowStepFirst(): Result<Unit> = try {
 
 fun box(): String {
     builder {
-        signInFlowStepFirst()
+        val res: Result<Unit> = signInFlowStepFirst()
+        if (res.exceptionOrNull()!!.message != "BOOYA") error("FAIL")
     }
     continuation!!.resumeWithException(Exception("BOOYA"))
     return "OK"

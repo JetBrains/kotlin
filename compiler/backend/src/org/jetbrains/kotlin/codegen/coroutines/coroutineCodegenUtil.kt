@@ -33,12 +33,14 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.KotlinTypeFactory
+import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -111,8 +113,8 @@ fun computeLabelOwner(languageVersionSettings: LanguageVersionSettings, thisName
     else
         languageVersionSettings.coroutinesJvmInternalPackageFqName().child(Name.identifier("CoroutineImpl")).topLevelClassAsmType()
 
-private val NORMALIZE_CONTINUATION_METHOD_NAME = "normalizeContinuation"
-private val GET_CONTEXT_METHOD_NAME = "getContext"
+private const val NORMALIZE_CONTINUATION_METHOD_NAME = "normalizeContinuation"
+private const val GET_CONTEXT_METHOD_NAME = "getContext"
 
 data class ResolvedCallWithRealDescriptor(val resolvedCall: ResolvedCall<*>, val fakeContinuationExpression: KtExpression)
 
@@ -140,11 +142,11 @@ fun ResolvedCall<*>.replaceSuspensionFunctionWithRealDescriptor(
     if (this is VariableAsFunctionResolvedCall) {
         val replacedFunctionCall =
             functionCall.replaceSuspensionFunctionWithRealDescriptor(project, bindingContext, isReleaseCoroutines)
-                    ?: return null
+                ?: return null
 
         @Suppress("UNCHECKED_CAST")
         return replacedFunctionCall.copy(
-            VariableAsFunctionResolvedCallImpl(
+            resolvedCall = VariableAsFunctionResolvedCallImpl(
                 replacedFunctionCall.resolvedCall as MutableResolvedCall<FunctionDescriptor>,
                 variableCall.asMutableResolvedCall(bindingContext)
             )
@@ -413,7 +415,8 @@ fun createMethodNodeForSuspendCoroutineUninterceptedOrReturn(languageVersionSett
             load(1, OBJECT_TYPE) // continuation
             checkcast(languageVersionSettings.continuationAsmType())
             invokestatic(
-                languageVersionSettings.coroutinesJvmInternalPackageFqName().child(Name.identifier("DebugProbesKt")).topLevelClassAsmType().internalName,
+                languageVersionSettings.coroutinesJvmInternalPackageFqName().child(Name.identifier("DebugProbesKt"))
+                    .topLevelClassAsmType().internalName,
                 "probeCoroutineSuspended",
                 "(${languageVersionSettings.continuationAsmType()})V",
                 false
@@ -466,7 +469,7 @@ fun FunctionDescriptor.originalReturnTypeOfSuspendFunctionReturningUnboxedInline
     val originalReturnType = originalDescriptor.returnType ?: return null
     if (!originalReturnType.isInlineClassType()) return null
     // Force boxing for primitives
-    if (AsmUtil.isPrimitive(typeMapper.mapType(originalReturnType))) return null
+    if (AsmUtil.isPrimitive(typeMapper.mapType(originalReturnType.makeNotNullable()))) return null
     // Force boxing for nullable inline class types with nullable underlying type
     if (originalReturnType.isMarkedNullable && originalReturnType.isNullableUnderlyingType()) return null
     // Force boxing if the function overrides function with return type Any
@@ -474,8 +477,6 @@ fun FunctionDescriptor.originalReturnTypeOfSuspendFunctionReturningUnboxedInline
             (it.original.returnType?.isMarkedNullable == true && it.original.returnType?.isNullableUnderlyingType() == true) ||
                     it.original.returnType?.makeNotNullable() != originalReturnType.makeNotNullable()
         }) return null
-    // TODO: Do not box `Result`
-    if (originalReturnType.constructor.declarationDescriptor?.fqNameSafe == StandardNames.RESULT_FQ_NAME) return null
     // Don't box other inline classes
     return originalReturnType
 }

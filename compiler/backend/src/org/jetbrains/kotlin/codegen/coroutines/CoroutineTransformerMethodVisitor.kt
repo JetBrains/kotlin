@@ -114,6 +114,7 @@ class CoroutineTransformerMethodVisitor(
             if (examiner.allSuspensionPointsAreTailCalls(suspensionPoints)) {
                 examiner.replacePopsBeforeSafeUnitInstancesWithCoroutineSuspendedChecks()
                 dropSuspensionMarkers(methodNode)
+                dropUnboxInlineClassMarkers(methodNode, suspensionPoints)
                 return
             }
 
@@ -190,6 +191,7 @@ class CoroutineTransformerMethodVisitor(
         initializeFakeInlinerVariables(methodNode, stateLabels)
 
         dropSuspensionMarkers(methodNode)
+        dropUnboxInlineClassMarkers(methodNode, suspensionPoints)
         methodNode.removeEmptyCatchBlocks()
 
         if (languageVersionSettings.isReleaseCoroutines()) {
@@ -599,6 +601,17 @@ class CoroutineTransformerMethodVisitor(
         }
     }
 
+    private fun dropUnboxInlineClassMarkers(methodNode: MethodNode, suspensionPoints: List<SuspensionPoint>) {
+        for (marker in methodNode.instructions.asSequence()
+            .filter { isBeforeUnboxInlineClassMarker(it) || isAfterUnboxInlineClassMarker(it) }.toList()
+        ) {
+            methodNode.instructions.removeAll(listOf(marker.previous, marker))
+        }
+        for (suspension in suspensionPoints) {
+            methodNode.instructions.removeAll(suspension.unboxInlineClassInstructions)
+        }
+    }
+
     private fun spillVariables(suspensionPoints: List<SuspensionPoint>, methodNode: MethodNode): List<List<SpilledVariableAndField>> {
         val instructions = methodNode.instructions
         val frames =
@@ -918,6 +931,11 @@ class CoroutineTransformerMethodVisitor(
 
                 // Load continuation argument just like suspending function returns it
                 load(dataIndex, AsmTypes.OBJECT_TYPE)
+                // Unbox inline class, since this is the resume path and unlike the direct path
+                // the class is boxed.
+                for (insn in suspension.unboxInlineClassInstructions) {
+                    insn.accept(this)
+                }
 
                 visitLabel(continuationLabelAfterLoadedResult.label)
 
@@ -1116,6 +1134,16 @@ internal class SuspensionPoint(
     val suspensionCallEnd: AbstractInsnNode
 ) {
     lateinit var tryCatchBlocksContinuationLabel: LabelNode
+
+    val unboxInlineClassInstructions: List<AbstractInsnNode> = findUnboxInlineClassInstructions()
+
+    private fun findUnboxInlineClassInstructions(): List<AbstractInsnNode> {
+        val beforeMarker = suspensionCallEnd.next?.next ?: return emptyList()
+        if (!isBeforeUnboxInlineClassMarker(beforeMarker)) return emptyList()
+        val afterMarker = beforeMarker.findNextOrNull { isAfterUnboxInlineClassMarker(it) }
+            ?: error("Before unbox inline class marker without after unbox inline class marker")
+        return InsnSequence(beforeMarker.next, afterMarker.previous).toList()
+    }
 
     operator fun contains(insn: AbstractInsnNode): Boolean {
         for (i in InsnSequence(suspensionCallBegin, suspensionCallEnd.next)) {

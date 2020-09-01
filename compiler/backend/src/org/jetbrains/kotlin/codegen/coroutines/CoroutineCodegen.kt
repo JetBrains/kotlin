@@ -636,6 +636,9 @@ class CoroutineCodegenForNamedFunction private constructor(
 
     override val passArityToSuperClass get() = false
 
+    private val inlineClassToBoxInInvokeSuspend: KotlinType? =
+        originalSuspendFunctionDescriptor.originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass(state.typeMapper)
+
     override fun generateBridges() {
         // Do not generate any closure bridges
     }
@@ -717,6 +720,22 @@ class CoroutineCodegenForNamedFunction private constructor(
                         codegen.v.invokestatic(owner, impl.name, impl.descriptor, false)
                     } else {
                         callableMethod.genInvokeInstruction(codegen.v)
+                    }
+
+                    if (inlineClassToBoxInInvokeSuspend != null) {
+                        with(codegen.v) {
+                            // We need to box the returned inline class in resume path.
+                            // But first, check for COROUTINE_SUSPENDED, since the function can return it
+                            dup()
+                            loadCoroutineSuspendedMarker(languageVersionSettings)
+                            val elseLabel = Label()
+                            ifacmpne(elseLabel)
+                            areturn(AsmTypes.OBJECT_TYPE)
+                            mark(elseLabel)
+                            // Now we box the inline class
+                            StackValue.coerce(AsmTypes.OBJECT_TYPE, typeMapper.mapType(inlineClassToBoxInInvokeSuspend), this)
+                            StackValue.boxInlineClass(inlineClassToBoxInInvokeSuspend, this)
+                        }
                     }
 
                     codegen.v.visitInsn(Opcodes.ARETURN)
