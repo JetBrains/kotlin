@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import javax.swing.Icon
 
-internal object KotlinSymbolIconProvider {
+internal object KotlinFirIconProvider {
     fun getIconFor(symbol: KtNamedSymbol): Icon? {
         if (symbol is KtFunctionSymbol) {
             val isAbstract = symbol.modality == KtCommonSymbolModality.ABSTRACT

@@ -30,15 +30,15 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 
 class KotlinFirCompletionContributor : CompletionContributor() {
     init {
-        extend(CompletionType.BASIC, PlatformPatterns.psiElement(), KotlinHighLevelApiContributor)
+        extend(CompletionType.BASIC, PlatformPatterns.psiElement(), KotlinFirCompletionProvider)
     }
 }
 
-private object KotlinHighLevelApiContributor : CompletionProvider<CompletionParameters>() {
+private object KotlinFirCompletionProvider : CompletionProvider<CompletionParameters>() {
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
         if (shouldSuppressCompletion(parameters, result.prefixMatcher)) return
 
-        KotlinAvailableScopesCompletionContributor.collectCompletions(parameters, result)
+        KotlinAvailableScopesCompletionProvider.addCompletions(parameters, result)
     }
 
     private val AFTER_NUMBER_LITERAL = PsiJavaPatterns.psiElement().afterLeafSkipping(
@@ -64,8 +64,8 @@ private object KotlinHighLevelApiContributor : CompletionProvider<CompletionPara
     }
 }
 
-private object KotlinAvailableScopesCompletionContributor {
-    private val lookupElementFactory = HighLevelApiLookupElementFactory()
+private object KotlinAvailableScopesCompletionProvider {
+    private val lookupElementFactory = KotlinFirLookupElementFactory()
 
     fun getOriginalPosition(parameters: CompletionParameters, originalFile: KtFile): PsiElement {
         fun PsiElement.getPositionForExpressionFunctionBody(): PsiElement? {
@@ -97,7 +97,7 @@ private object KotlinAvailableScopesCompletionContributor {
     }
 
     @OptIn(InvalidWayOfUsingAnalysisSession::class)
-    fun collectCompletions(parameters: CompletionParameters, result: CompletionResultSet) {
+    fun addCompletions(parameters: CompletionParameters, result: CompletionResultSet) {
         val originalFile = parameters.originalFile as? KtFile ?: return
 
         val reference = (parameters.position.parent as? KtSimpleNameExpression)?.mainReference ?: return
