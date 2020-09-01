@@ -317,6 +317,9 @@ internal fun firstLabelInChain(node: LabelNode): LabelNode {
     return curNode
 }
 
+internal fun areLabelsBeforeSameInsn(first: LabelNode, second: LabelNode): Boolean =
+    firstLabelInChain(first) == firstLabelInChain(second)
+
 internal val MethodNode?.nodeText: String
     get() {
         if (this == null) {
