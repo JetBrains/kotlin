@@ -33,4 +33,6 @@ where possible options include:
   -verbose                   Enable verbose logging output
   -version                   Display compiler version
   @<argfile>                 Read compiler arguments and file paths from the given file
+
+For details, see https://kotl.in/cli
 OK
