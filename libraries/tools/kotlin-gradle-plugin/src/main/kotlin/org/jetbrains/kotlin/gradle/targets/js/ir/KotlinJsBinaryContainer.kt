@@ -113,7 +113,12 @@ constructor(
             )
         }
 
-        throw GradleException("Library can be produced only for IR compiler")
+        throw GradleException(
+            """
+            Library can be produced only for IR compiler.
+            Use `kotlin.js.compiler=ir` Gradle property or `js(IR)` target declaration.
+            """
+        )
     }
 
     internal fun getIrBinaries(
