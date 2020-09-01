@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtTypeArgumentList
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.renderer.render
 
-internal class HighLevelApiLookupElementFactory {
+internal class KotlinFirLookupElementFactory {
     private val classLookupElementFactory = ClassLookupElementFactory()
     private val variableLookupElementFactory = VariableLookupElementFactory()
     private val functionLookupElementFactory = FunctionLookupElementFactory()
@@ -41,7 +41,7 @@ internal class HighLevelApiLookupElementFactory {
 
         return elementBuilder
             .withPsiElement(symbol.psi) // TODO check if it is a heavy operation and should be postponed
-            .withIcon(KotlinSymbolIconProvider.getIconFor(symbol))
+            .withIcon(KotlinFirIconProvider.getIconFor(symbol))
     }
 }
 
