@@ -16,8 +16,8 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
-import org.jetbrains.kotlin.idea.frontend.api.types.KtDenotableType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
+import org.jetbrains.kotlin.idea.frontend.api.types.render
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtTypeArgumentList
@@ -197,7 +197,7 @@ private object ShortNamesRenderer {
     fun renderFunctionParameters(function: KtFunctionSymbol): String =
         function.valueParameters.joinToString(", ", "(", ")") { renderFunctionParameter(it) }
 
-    fun renderType(ktType: KtType): String = (ktType as? KtDenotableType)?.asString() ?: ""
+    fun renderType(ktType: KtType): String = ktType.render()
 
     private fun renderFunctionParameter(param: KtFunctionParameterSymbol): String =
         "${if (param.isVararg) "vararg " else ""}${param.name.asString()}: ${renderType(param.type)}"
