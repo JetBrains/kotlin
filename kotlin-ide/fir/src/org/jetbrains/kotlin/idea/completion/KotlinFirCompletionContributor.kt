@@ -136,7 +136,7 @@ private object KotlinAvailableScopesCompletionContributor {
 
                 extensionNonMembers.forEach(::addToCompletion)
 
-                val availableClasses = implicitScopes.getClassClassLikeSymbols()
+                val availableClasses = implicitScopes.getClassifierSymbols()
                 availableClasses.forEach(::addToCompletion)
             }
         }

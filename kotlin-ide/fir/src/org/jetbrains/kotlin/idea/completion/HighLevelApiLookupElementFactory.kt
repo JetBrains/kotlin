@@ -28,12 +28,14 @@ internal class HighLevelApiLookupElementFactory {
     private val classLookupElementFactory = ClassLookupElementFactory()
     private val variableLookupElementFactory = VariableLookupElementFactory()
     private val functionLookupElementFactory = FunctionLookupElementFactory()
+    private val typeParameterLookupElementFactory = TypeParameterLookupElementFactory()
 
     fun createLookupElement(symbol: KtNamedSymbol): LookupElement {
         val elementBuilder = when (symbol) {
             is KtFunctionSymbol -> functionLookupElementFactory.createLookup(symbol)
             is KtVariableLikeSymbol -> variableLookupElementFactory.createLookup(symbol)
             is KtClassLikeSymbol -> classLookupElementFactory.createLookup(symbol)
+            is KtTypeParameterSymbol -> typeParameterLookupElementFactory.createLookup(symbol)
             else -> throw IllegalArgumentException("Cannot create a lookup element for $symbol")
         }
 
@@ -50,6 +52,12 @@ private class UniqueLookupObject
 
 private class ClassLookupElementFactory {
     fun createLookup(symbol: KtClassLikeSymbol): LookupElementBuilder {
+        return LookupElementBuilder.create(UniqueLookupObject(), symbol.name.asString())
+    }
+}
+
+private class TypeParameterLookupElementFactory {
+    fun createLookup(symbol: KtTypeParameterSymbol): LookupElementBuilder {
         return LookupElementBuilder.create(UniqueLookupObject(), symbol.name.asString())
     }
 }
