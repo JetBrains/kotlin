@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.idea.debugger.test.mock.SmartMockReferenceTypeContex
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCaseKt;
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor;
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
