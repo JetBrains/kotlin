@@ -14,7 +14,7 @@ dependencies {
     }
 
     testCompileOnly(intellijDep()) {
-        includeJars("extensions", "idea_rt", "util", "asm-all", rootProject = rootProject)
+        includeJars("extensions", "idea_rt", "util", "asm-all", "platform-util-ex", rootProject = rootProject)
     }
 
     Platform[192].orHigher {
