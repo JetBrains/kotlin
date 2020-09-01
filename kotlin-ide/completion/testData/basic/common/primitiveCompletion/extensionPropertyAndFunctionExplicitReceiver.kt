@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 fun Any.anyFun() {}
 val Any.anyVal: Int get() = 10
 
