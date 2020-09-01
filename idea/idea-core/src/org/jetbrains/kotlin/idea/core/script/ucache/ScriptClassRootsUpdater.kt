@@ -237,7 +237,7 @@ abstract class ScriptClassRootsUpdater(
         if (!project.isOpen) return
 
         val openFiles = FileEditorManager.getInstance(project).allEditors.mapNotNull { it.file }
-        val openedScripts = openFiles.filter { filter(it) }
+        val openedScripts = openFiles.filter(filter)
 
         if (openedScripts.isEmpty()) return
 
@@ -245,6 +245,8 @@ abstract class ScriptClassRootsUpdater(
             if (project.isDisposed) return@launch
 
             openedScripts.forEach {
+                if (!it.isValid) return@forEach
+
                 PsiManager.getInstance(project).findFile(it)?.let { psiFile ->
                     if (psiFile is KtFile) {
                         DaemonCodeAnalyzer.getInstance(project).restart(psiFile)
