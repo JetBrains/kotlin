@@ -1,5 +1,5 @@
 FILE: objectInnerClass.kt
-    public final val case1: R|<anonymous>| = object : R|A| {
+    public final val case1: R|A| = object : R|A| {
         private constructor(): R|<anonymous>| {
             super<R|kotlin/Any|>()
         }
@@ -61,13 +61,13 @@ FILE: objectInnerClass.kt
 
     }
 
-        public get(): R|<anonymous>|
+        public get(): R|A|
     public final class Case2 : R|kotlin/Any| {
         public constructor(): R|Case2| {
             super<R|kotlin/Any|>()
         }
 
-        public final val x: R|<anonymous>| = object : R|Case2.Base| {
+        public final val x: R|Case2.Base| = object : R|Case2.Base| {
             private constructor(): R|<anonymous>| {
                 this@R|/Case2|.super<R|Case2.Base|>(R|/B.B|())
             }
@@ -85,7 +85,7 @@ FILE: objectInnerClass.kt
 
         }
 
-            public get(): R|<anonymous>|
+            public get(): R|Case2.Base|
 
         public final fun R|Case2.Base|.hoo(): R|kotlin/Unit| {
             lval x: R|B| = this@R|/Case2.hoo|.R|/Case2.Base.property|
@@ -112,7 +112,7 @@ FILE: objectInnerClass.kt
         }
 
         public final fun caseForChild(): R|kotlin/Unit| {
-            lval child: R|<anonymous>| = this@R|/Case2|.R|/Case2.x|
+            lval child: R|Case2.Base| = this@R|/Case2|.R|/Case2.x|
             R|<local>/child|.R|/Case2.Base.baseFun|()
             R|<local>/child|.R|/Case2.Base.property|
             (this@R|/Case2|, R|<local>/child|).R|/Case2.hoo|()
@@ -124,7 +124,7 @@ FILE: objectInnerClass.kt
             super<R|kotlin/Any|>()
         }
 
-        public final val x: R|<anonymous>| = object : R|A| {
+        public final val x: R|A| = object : R|A| {
             private constructor(): R|<anonymous>| {
                 super<R|kotlin/Any|>()
             }
@@ -186,7 +186,7 @@ FILE: objectInnerClass.kt
 
         }
 
-            public get(): R|<anonymous>|
+            public get(): R|A|
 
     }
     public abstract interface A : R|kotlin/Any| {

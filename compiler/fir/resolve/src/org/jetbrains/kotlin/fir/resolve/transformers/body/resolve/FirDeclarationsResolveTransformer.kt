@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
 import org.jetbrains.kotlin.fir.symbols.constructStarProjectedType
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLookupTagWithFixedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -497,8 +498,14 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
 
         val body = result.body
         if (result.returnTypeRef is FirImplicitTypeRef) {
+            val simpleFunction = function as? FirSimpleFunction
             if (body != null) {
-                result.transformReturnTypeRef(transformer, withExpectedType(body.resultType))
+                result.transformReturnTypeRef(
+                    transformer,
+                    withExpectedType(
+                        body.resultType.hideLocalTypeIfNeeded(simpleFunction?.visibility, simpleFunction?.isInline == true)
+                    )
+                )
             } else {
                 result.transformReturnTypeRef(
                     transformer,
@@ -904,7 +911,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                     }
                     variable.transformReturnTypeRef(
                         transformer,
-                        withExpectedType(expectedType)
+                        withExpectedType(expectedType.hideLocalTypeIfNeeded((variable as? FirProperty)?.visibility))
                     )
                 }
                 variable.getter != null && variable.getter !is FirDefaultPropertyAccessor -> {
@@ -926,7 +933,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                     }
                     variable.transformReturnTypeRef(
                         transformer,
-                        withExpectedType(expectedType)
+                        withExpectedType(expectedType?.hideLocalTypeIfNeeded((variable as? FirProperty)?.visibility))
                     )
                 }
                 else -> {
@@ -947,6 +954,52 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 variable.getter?.transformReturnTypeRef(transformer, withExpectedType(variable.returnTypeRef))
             }
         }
+    }
+
+    /*
+     * Suppose a function without an explicit return type just returns an anonymous object:
+     *
+     *   fun foo(...) = object : ObjectSuperType {
+     *     override fun ...
+     *   }
+     *
+     * Without unwrapping, the return type ended up with that anonymous object (<no name provided>), while the resolved super type, which
+     * acts like an implementing interface, is a better fit. In fact, exposing an anonymous object types is prohibited for certain cases,
+     * e.g., KT-33917. We can also apply this to any local types.
+     */
+    private fun FirTypeRef.hideLocalTypeIfNeeded(
+        containingCallableVisibility: Visibility?,
+        isInlineFunction: Boolean = false
+    ): FirTypeRef {
+        if (containingCallableVisibility == null) {
+            return this
+        }
+        // Approximate types for non-private (all but package private or private) members.
+        // Also private inline functions, as per KT-33917.
+        if (containingCallableVisibility == Visibilities.Public ||
+            containingCallableVisibility == Visibilities.Protected ||
+            containingCallableVisibility == Visibilities.Internal ||
+            (containingCallableVisibility == Visibilities.Private && isInlineFunction)
+        ) {
+            val firClass =
+                (((this as? FirResolvedTypeRef)
+                    ?.type as? ConeClassLikeType)
+                    ?.lookupTag as? ConeClassLookupTagWithFixedSymbol)
+                    ?.symbol?.fir
+            if (firClass?.classId?.isLocal != true) {
+                return this
+            }
+            if (firClass.superTypeRefs.size > 1) {
+                return buildErrorTypeRef {
+                    diagnostic = ConeSimpleDiagnostic("Cannot hide local type ${firClass.render()}")
+                }
+            }
+            val superType = firClass.superTypeRefs.single()
+            if (superType is FirResolvedTypeRef && !superType.isAny) {
+                return superType
+            }
+        }
+        return this
     }
 
     private object ImplicitToErrorTypeTransformer : FirTransformer<Nothing?>() {
