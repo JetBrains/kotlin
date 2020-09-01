@@ -71,6 +71,7 @@ class DebuggerConnection(
     private fun initializeCoroutineAgent(params: JavaParameters, it: String?) {
         params.vmParametersList?.add("-javaagent:$it")
         // Fix for NoClassDefFoundError: kotlin/collections/AbstractMutableMap via CommandLineWrapper.
+        // If classpathFile used in run configuration - kotlin-stdlib should be included in the -classpath
         if (params.isClasspathFile) {
             params.classPath.rootDirs.filter { it.isKotlinStdlib() }.forEach {
                 val fs = it.fileSystem
