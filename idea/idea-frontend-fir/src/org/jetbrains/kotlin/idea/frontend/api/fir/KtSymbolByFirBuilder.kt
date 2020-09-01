@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -104,6 +105,13 @@ internal class KtSymbolByFirBuilder private constructor(
     fun buildClassLikeSymbol(fir: FirClassLikeDeclaration<*>): KtClassLikeSymbol = when (fir) {
         is FirRegularClass -> buildClassSymbol(fir)
         is FirTypeAlias -> buildTypeAliasSymbol(fir)
+        else ->
+            TODO(fir::class.toString())
+    }
+
+    fun buildClassifierSymbol(firSymbol: FirClassifierSymbol<*>): KtClassifierSymbol = when (val fir = firSymbol.fir) {
+        is FirClassLikeDeclaration -> buildClassLikeSymbol(fir)
+        is FirTypeParameter -> buildTypeParameterSymbol(fir)
         else ->
             TODO(fir::class.toString())
     }
