@@ -71,6 +71,9 @@ private fun mapTypeAliasArguments(
     abbreviatedType: ConeClassLikeType,
     resultingType: ConeClassLikeType,
 ): ConeKotlinType {
+    if (typeAlias.typeParameters.isNotEmpty() && abbreviatedType.typeArguments.isEmpty()) {
+        return resultingType.lookupTag.constructClassType(emptyArray(), resultingType.isNullable)
+    }
     val typeAliasMap = typeAlias.typeParameters.map { it.symbol }.zip(abbreviatedType.typeArguments).toMap()
 
     val substitutor = object : AbstractConeSubstitutor() {
