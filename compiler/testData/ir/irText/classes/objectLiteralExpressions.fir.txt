@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
         RETURN type=kotlin.Nothing from='public final fun <get-test1> (): <root>.test1.<no name provided> declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:<root>.test1.<no name provided> visibility:private [final,static]' type=<root>.test1.<no name provided> origin=null
   PROPERTY name:test2 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test2 type:<root>.test2.<no name provided> visibility:private [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:<root>.IFoo visibility:private [final,static]
       EXPRESSION_BODY
         BLOCK type=<root>.test2.<no name provided> origin=OBJECT_LITERAL
           CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.IFoo]
@@ -76,11 +76,11 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
                 public open fun toString (): kotlin.String declared in kotlin.Any
               $this: VALUE_PARAMETER name:<this> type:kotlin.Any
           CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.test2.<no name provided>' type=<root>.test2.<no name provided> origin=OBJECT_LITERAL
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:<root>.test2.<no name provided>
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:<root>.IFoo
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test2> (): <root>.test2.<no name provided> declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:<root>.test2.<no name provided> visibility:private [final,static]' type=<root>.test2.<no name provided> origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-test2> (): <root>.IFoo declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:<root>.IFoo visibility:private [final,static]' type=<root>.IFoo origin=null
   CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer
     CONSTRUCTOR visibility:public <> () returnType:<root>.Outer [primary]
@@ -111,10 +111,10 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
         overridden:
           public open fun toString (): kotlin.String declared in kotlin.Any
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN name:test3 visibility:public modality:FINAL <> ($this:<root>.Outer) returnType:<root>.Outer.test3.<no name provided>
+    FUN name:test3 visibility:public modality:FINAL <> ($this:<root>.Outer) returnType:<root>.Outer.Inner
       $this: VALUE_PARAMETER name:<this> type:<root>.Outer
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun test3 (): <root>.Outer.test3.<no name provided> declared in <root>.Outer'
+        RETURN type=kotlin.Nothing from='public final fun test3 (): <root>.Outer.Inner declared in <root>.Outer'
           BLOCK type=<root>.Outer.test3.<no name provided> origin=OBJECT_LITERAL
             CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner]
               $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.test3.<no name provided>
@@ -157,10 +157,10 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:test4 visibility:public modality:FINAL <> ($receiver:<root>.Outer) returnType:<root>.test4.<no name provided>
+  FUN name:test4 visibility:public modality:FINAL <> ($receiver:<root>.Outer) returnType:<root>.Outer.Inner
     $receiver: VALUE_PARAMETER name:<this> type:<root>.Outer
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test4 (): <root>.test4.<no name provided> declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun test4 (): <root>.Outer.Inner declared in <root>'
         BLOCK type=<root>.test4.<no name provided> origin=OBJECT_LITERAL
           CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner]
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.test4.<no name provided>

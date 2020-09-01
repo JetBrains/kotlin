@@ -70,14 +70,14 @@ FILE: sealedSupertype.kt
 
             public get(): R|P|
 
-        public final val r: R|<anonymous>| = object : R|P| {
+        public final val r: R|P| = object : R|P| {
             private constructor(): R|<anonymous>| {
                 super<R|P|>()
             }
 
         }
 
-            public get(): R|<anonymous>|
+            public get(): R|P|
 
     }
     public final class K : R|P| {

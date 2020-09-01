@@ -68,11 +68,11 @@ FILE fqName:<root> fileName:/multipleThisReferences.kt
           RETURN type=kotlin.Nothing from='public final fun <get-y> (): kotlin.Int declared in <root>.Host'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.Host declared in <root>.Host.<get-y>' type=<root>.Host origin=null
-    FUN name:test visibility:public modality:FINAL <> ($this:<root>.Host, $receiver:<root>.Outer) returnType:<root>.Host.test.<no name provided>
+    FUN name:test visibility:public modality:FINAL <> ($this:<root>.Host, $receiver:<root>.Outer) returnType:<root>.Outer.Inner
       $this: VALUE_PARAMETER name:<this> type:<root>.Host
       $receiver: VALUE_PARAMETER name:<this> type:<root>.Outer
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun test (): <root>.Host.test.<no name provided> declared in <root>.Host'
+        RETURN type=kotlin.Nothing from='public final fun test (): <root>.Outer.Inner declared in <root>.Host'
           BLOCK type=<root>.Host.test.<no name provided> origin=OBJECT_LITERAL
             CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner]
               $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host.test.<no name provided>
