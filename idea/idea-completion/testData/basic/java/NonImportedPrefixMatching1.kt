@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 class Host
 
 fun foo(): Ho<caret>
