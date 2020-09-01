@@ -31,12 +31,9 @@ import org.jetbrains.kotlin.idea.core.util.getKotlinJvmRuntimeMarkerClass
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.framework.effectiveKind
 import org.jetbrains.kotlin.idea.quickfix.KotlinAddRequiredModuleFix
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.idea.util.findFirstPsiJavaModule
-import org.jetbrains.kotlin.idea.util.isDev
-import org.jetbrains.kotlin.idea.util.isEap
-import org.jetbrains.kotlin.idea.util.isSnapshot
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
 import org.jetbrains.kotlin.idea.util.projectStructure.version
@@ -267,7 +264,7 @@ fun findApplicableConfigurator(module: Module): KotlinProjectConfigurator {
 }
 
 fun hasAnyKotlinRuntimeInScope(module: Module): Boolean {
-    return runReadAction {
+    return module.project.runReadActionInSmartMode {
         val scope = module.getModuleWithDependenciesAndLibrariesScope(hasKotlinFilesOnlyInTests(module))
         getKotlinJvmRuntimeMarkerClass(module.project, scope) != null ||
                 hasKotlinJsKjsmFile(module.project, LibraryKindSearchScope(module, scope, JSLibraryKind)) ||
@@ -283,7 +280,7 @@ fun hasKotlinJvmRuntimeInScope(module: Module): Boolean {
 }
 
 fun hasKotlinJsRuntimeInScope(module: Module): Boolean {
-    return runReadAction {
+    return module.project.runReadActionInSmartMode {
         val scope = module.getModuleWithDependenciesAndLibrariesScope(hasKotlinFilesOnlyInTests(module))
         hasKotlinJsKjsmFile(module.project, LibraryKindSearchScope(module, scope, JSLibraryKind))
     }

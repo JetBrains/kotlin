@@ -167,9 +167,11 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
             elements.flatMap { it.collectDescendantsOfType<KtElement>() }
         }
 
+        val project = file.project
+
         // TODO: allowResolveInDispatchThread could be dropped as soon as
         //  ConvertJavaCopyPasteProcessor will perform it on non UI thread
-        val bindingContext = runReadAction {
+        val bindingContext = project.runReadActionInSmartMode {
             allowResolveInDispatchThread {
                 file.getResolutionFacade().analyze(allElementsToResolve, BodyResolveMode.PARTIAL)
             }
@@ -177,7 +179,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
 
         val result = mutableListOf<KotlinReferenceData>()
         for (ktElement in allElementsToResolve) {
-            runReadAction {
+            project.runReadActionInSmartMode {
                 indicator?.checkCanceled()
                 result.addReferenceDataInsideElement(
                     ktElement, file, ranges, bindingContext, fakePackageName = fakePackageName,
@@ -211,7 +213,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
         sourcePackageName: String? = null,
         targetPackageName: String? = null
     ) {
-        val reference = runReadAction { ktElement.mainReference } ?: return
+        val reference = file.project.runReadActionInSmartMode { ktElement.mainReference } ?: return
 
         val descriptors = resolveReference(reference, bindingContext)
         //check whether this reference is unambiguous
