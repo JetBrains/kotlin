@@ -63,9 +63,9 @@ public class JavaVisibilities {
             return Visibilities.PROTECTED;
         }
 
-        @NotNull
+        @Nullable
         @Override
-        public EffectiveVisibility effectiveVisibility(@NotNull DeclarationDescriptor classDescriptor, boolean checkPublishedApi) {
+        public EffectiveVisibility customEffectiveVisibility() {
             return EffectiveVisibility.PackagePrivate.INSTANCE;
         }
     };

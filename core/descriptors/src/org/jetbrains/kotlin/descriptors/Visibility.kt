@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.descriptors
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
 abstract class Visibility protected constructor(
-        val name: String,
-        val isPublicAPI: Boolean
+    val name: String,
+    val isPublicAPI: Boolean
 ) {
     /**
      * @param receiver can be used to determine callee accessibility for some special receiver value
@@ -64,10 +64,10 @@ abstract class Visibility protected constructor(
     open val externalDisplayName: String
         get() = internalDisplayName
 
-    override final fun toString() = internalDisplayName
+    final override fun toString() = internalDisplayName
 
     open fun normalize(): Visibility = this
 
     // Should be overloaded in Java visibilities
-    open fun effectiveVisibility(descriptor: DeclarationDescriptor, checkPublishedApi: Boolean) = effectiveVisibility(normalize(), descriptor, checkPublishedApi)
+    open fun customEffectiveVisibility(): EffectiveVisibility? = null
 }

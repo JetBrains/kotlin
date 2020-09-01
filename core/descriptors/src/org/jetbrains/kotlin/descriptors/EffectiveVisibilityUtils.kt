@@ -9,8 +9,12 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.ClassicTypeCheckerContext
 
-fun effectiveVisibility(visibility: Visibility, descriptor: DeclarationDescriptor, checkPublishedApi: Boolean = false) =
-    visibility.forVisibility(descriptor, checkPublishedApi)
+fun Visibility.effectiveVisibility(
+    descriptor: DeclarationDescriptor,
+    checkPublishedApi: Boolean = false
+): EffectiveVisibility {
+    return customEffectiveVisibility() ?: normalize().forVisibility(descriptor, checkPublishedApi)
+}
 
 private fun Visibility.forVisibility(descriptor: DeclarationDescriptor, checkPublishedApi: Boolean = false): EffectiveVisibility =
     when (this) {
