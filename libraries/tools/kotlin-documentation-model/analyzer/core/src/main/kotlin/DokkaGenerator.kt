@@ -73,6 +73,7 @@ class DokkaGenerator(
         context: DokkaContext
     ) = context.configuration.sourceSets
         .flatMap { sourceSet -> translateSources(sourceSet, context) }
+        .also { modules -> if (modules.isEmpty()) exitGenerationGracefully("Nothing to document") }
 
     fun transformDocumentationModelBeforeMerge(
         modulesFromPlatforms: List<DModule>,
@@ -160,7 +161,15 @@ private fun timed(logger: DokkaLogger? = null, block: Timer.() -> Unit): Timer =
     Timer(System.currentTimeMillis(), logger).apply {
         try {
             block()
+        } catch (exit: GracefulGenerationExit) {
+            report("Exiting Generation: ${exit.reason}")
         } finally {
             report("")
         }
     }
+
+private fun exitGenerationGracefully(reason: String): Nothing {
+    throw GracefulGenerationExit(reason)
+}
+
+private class GracefulGenerationExit(val reason: String) : Throwable()
