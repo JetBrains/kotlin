@@ -24,13 +24,11 @@ import org.jetbrains.kotlin.fir.contracts.description.ConePropertyInitialization
 import org.jetbrains.kotlin.fir.contracts.description.ConeSafeBuilderEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.effects
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.resolvedCallableReference
-import org.jetbrains.kotlin.fir.expressions.toReceiverSymbol
-import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
-import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.contracts.contextual.declaration.ConeAbstractCoeffectEffectDeclaration
+import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -85,7 +83,7 @@ object FirSafeBuilderAnalyzer : CoeffectAnalyzer() {
             super.visitFunctionCallNode(node, data)
 
             val functionSymbol = node.fir.toResolvedCallableSymbol() ?: return
-            val receiverSymbol = node.fir.dispatchReceiver.toReceiverSymbol() as? FirCallableSymbol<*> ?: return
+            val receiverSymbol = node.fir.dispatchReceiver.toSymbol() as? FirCallableSymbol<*> ?: return
             val safeBuilderClass = node.fir.dispatchReceiver.typeRef.toSafeBuilderClass(functionSymbol.fir.session) ?: return
 
             if (isSafeBuilderConstructionMember(functionSymbol)) {
@@ -106,7 +104,7 @@ object FirSafeBuilderAnalyzer : CoeffectAnalyzer() {
         }
 
         override fun visitVariableAssignmentNode(node: VariableAssignmentNode, data: CoeffectActionsOnNodes) {
-            val receiverSymbol = node.fir.dispatchReceiver.toReceiverSymbol() as? FirCallableSymbol<*> ?: return
+            val receiverSymbol = node.fir.dispatchReceiver.toSymbol() as? FirCallableSymbol<*> ?: return
             val propertySymbol = node.fir.resolvedCallableReference?.resolvedSymbol as? FirCallableSymbol<*> ?: return
             if (!isSafeBuilderMember(receiverSymbol, propertySymbol)) return
 
@@ -123,10 +121,10 @@ object FirSafeBuilderAnalyzer : CoeffectAnalyzer() {
             val constructorSymbol = functionCall.toResolvedCallableSymbol() as? FirConstructorSymbol ?: return
 
             val constructor = constructorSymbol.fir
-            val classSymbol = constructor.returnTypeRef.toClassLikeSymbol(constructor.session) as? FirRegularClassSymbol ?: return
-            if (!isSafeBuilder(classSymbol.fir)) return
+            val constructedClass = constructor.returnTypeRef.firClassLike(constructor.session) as? FirRegularClass ?: return
+            if (!isSafeBuilderClass(constructedClass)) return
 
-            classSymbol.fir.forEachSafeBuilderMember { member, actionType ->
+            constructedClass.forEachSafeBuilderMember { member, actionType ->
                 val safeBuilderAction = SafeBuilderAction(node.fir.symbol, member.symbol, actionType)
                 data[node] = coeffectActions {
                     providers += SafeBuilderCoeffectContextProvider(safeBuilderAction, EventOccurrencesRange.ZERO)
@@ -156,6 +154,15 @@ object FirSafeBuilderAnalyzer : CoeffectAnalyzer() {
         }
     }
 
+    private fun FirExpression?.toSymbol(): AbstractFirBasedSymbol<*>? = when (this) {
+        is FirThisReceiverExpression -> calleeReference.boundSymbol
+        is FirResolvable -> (calleeReference as? FirResolvedNamedReference)?.resolvedSymbol
+        else -> null
+    }
+
+    private val FirResolvable.resolvedCallableReference: FirResolvedNamedReference?
+        get() = calleeReference as? FirResolvedNamedReference
+
     private val ConeActionDeclaration.memberSymbol: FirCallableSymbol<*>?
         get() = when (this) {
             is ConePropertyInitializationAction -> property
@@ -163,23 +170,23 @@ object FirSafeBuilderAnalyzer : CoeffectAnalyzer() {
             else -> null
         }
 
-    fun isSafeBuilder(classDeclaration: FirRegularClass): Boolean {
-        // TODO: Check for annotations in super classes?
+    fun isSafeBuilderClass(classDeclaration: FirRegularClass): Boolean {
         return classDeclaration.annotations.any { it.toResolvedCallableSymbol()?.callableId == safeBuilderAnnotation }
     }
 
     fun FirTypeRef.toSafeBuilderClass(session: FirSession): FirRegularClass? {
-        val classSymbol = toClassLikeSymbol(session) as? FirRegularClassSymbol ?: return null
-        return if (isSafeBuilder(classSymbol.fir)) classSymbol.fir else null
+        val typeClass = firClassLike(session) as? FirRegularClass ?: return null
+        return typeClass.takeIf(::isSafeBuilderClass)
     }
 
-    fun isSafeBuilder(owner: FirCallableSymbol<*>): Boolean = owner.fir.receiverTypeRef?.toClassLikeSymbol(owner.fir.session) != null
+    fun isSafeBuilder(owner: FirCallableSymbol<*>): Boolean =
+        owner.fir.receiverTypeRef?.toSafeBuilderClass(owner.fir.session) != null
 
     fun isSafeBuilderMember(owner: FirCallableSymbol<*>, member: FirCallableSymbol<*>): Boolean =
         isSafeBuilder(owner) && isSafeBuilderConstructionMember(member)
 
     fun isSafeBuilderMember(owner: FirRegularClassSymbol, member: FirCallableSymbol<*>): Boolean =
-        isSafeBuilder(owner.fir) && isSafeBuilderConstructionMember(member)
+        isSafeBuilderClass(owner.fir) && isSafeBuilderConstructionMember(member)
 
     fun isSafeBuilderConstructionMember(member: FirCallableSymbol<*>): Boolean =
         member.fir.annotations.none {

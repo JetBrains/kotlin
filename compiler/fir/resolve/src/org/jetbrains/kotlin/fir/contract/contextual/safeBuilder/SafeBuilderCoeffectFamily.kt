@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.fir.contracts.contextual.*
 import org.jetbrains.kotlin.fir.contracts.contextual.declaration.coeffectActionExtractors
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.argumentMapping
-import org.jetbrains.kotlin.fir.expressions.extensionSymbol
-import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.dfa.contracts.createArgumentsMapping
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
@@ -68,7 +65,11 @@ internal fun FirFunctionCall.getTargetSymbol(target: ConeTargetReference): FirCa
         val function = toResolvedCallableSymbol()?.fir as? FirFunction<*>
         val targetParameter = function?.valueParameters?.getOrNull(valueParameter.parameterIndex) ?: return null
         argumentMapping?.entries?.find { it.value == targetParameter }?.value?.symbol
-    } else extensionSymbol as? FirCallableSymbol<*>
+    } else when (val receiver = extensionReceiver) {
+        is FirThisReceiverExpression -> receiver.calleeReference.boundSymbol as? FirCallableSymbol<*>
+        is FirResolvable -> receiver.toResolvedCallableSymbol()
+        else -> null
+    }
 }
 
 fun mustDoEffectCoeffectExtractors(action: ConeActionDeclaration) = coeffectActionExtractors {

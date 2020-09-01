@@ -479,6 +479,3 @@ fun FirAnnotationCall.getCorrespondingClassSymbolOrNull(session: FirSession): Fi
         }
     }
 }
-
-fun FirTypeRef.toClassLikeSymbol(session: FirSession): FirClassLikeSymbol<*>? =
-    coneTypeSafe<ConeClassLikeType>()?.lookupTag?.toSymbol(session)

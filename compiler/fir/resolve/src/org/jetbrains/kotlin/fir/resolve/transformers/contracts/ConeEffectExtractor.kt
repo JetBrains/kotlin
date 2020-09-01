@@ -15,9 +15,10 @@ import org.jetbrains.kotlin.fir.contract.contextual.safeBuilder.providesEffectCo
 import org.jetbrains.kotlin.fir.contract.contextual.safeBuilder.requiresEffectCoeffectExtractors
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
+import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -113,11 +114,11 @@ class ConeEffectExtractor(
             FirContractsDslNames.INITIALIZES -> {
                 val reference = functionCall.argument as? FirCallableReferenceAccess ?: return null
                 val target = reference.explicitReceiver?.accept(this, null) as? ConeValueParameterReference ?: return null
-                val targetClass = reference.explicitReceiver?.typeRef?.toClassLikeSymbol(session) as? FirRegularClassSymbol ?: return null
+                val targetClass = reference.explicitReceiver?.typeRef?.firClassLike(session) as? FirRegularClass ?: return null
                 val property = reference.toResolvedCallableSymbol() as? FirPropertySymbol ?: return null
                 val kind = functionCall.arguments.getOrNull(1)?.parseInvocationKind() ?: EventOccurrencesRange.UNKNOWN
 
-                val action = ConePropertyInitializationAction(target, targetClass, property, kind)
+                val action = ConePropertyInitializationAction(target, targetClass.symbol, property, kind)
                 return ConeProvidesActionEffectDeclaration(action, providesEffectCoeffectExtractors(action))
             }
 
@@ -134,11 +135,11 @@ class ConeEffectExtractor(
             FirContractsDslNames.INVOKES -> {
                 val reference = functionCall.argument as? FirCallableReferenceAccess ?: return null
                 val target = reference.explicitReceiver?.accept(this, null) as? ConeValueParameterReference ?: return null
-                val targetClass = reference.explicitReceiver?.typeRef?.toClassLikeSymbol(session) as? FirRegularClassSymbol ?: return null
+                val targetClass = reference.explicitReceiver?.typeRef?.firClassLike(session) as? FirRegularClass ?: return null
                 val function = reference.toResolvedCallableSymbol() as? FirFunctionSymbol<*> ?: return null
                 val kind = functionCall.arguments.getOrNull(1)?.parseInvocationKind() ?: EventOccurrencesRange.UNKNOWN
 
-                val action = ConeFunctionInvocationAction(target, targetClass, function, kind)
+                val action = ConeFunctionInvocationAction(target, targetClass.symbol, function, kind)
                 return ConeProvidesActionEffectDeclaration(action, providesEffectCoeffectExtractors(action))
             }
 
