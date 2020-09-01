@@ -193,8 +193,6 @@ class FullPipelineModularizedTest : AbstractModularizedTest() {
         }
     }
 
-    private fun Throwable.deepestCause(): Throwable = cause?.deepestCause() ?: this
-
     override fun processModule(moduleData: ModuleData): ProcessorAction {
         val compiler = K2JVMCompiler()
         val args = compiler.createArguments()
@@ -242,10 +240,10 @@ class FullPipelineModularizedTest : AbstractModularizedTest() {
             }
             ExitCode.INTERNAL_ERROR -> {
                 crashedModules += moduleData
-                moduleData.exceptionMessage = collector.messages.firstOrNull() {
+                moduleData.exceptionMessage = collector.messages.firstOrNull {
                     it.severity == CompilerMessageSeverity.EXCEPTION
-                }?.message?.split("\n")?.let {
-                    it.lastOrNull { it.startsWith("Caused by: ") } ?: it.firstOrNull()
+                }?.message?.split("\n")?.let { exceptionLines ->
+                    exceptionLines.lastOrNull { it.startsWith("Caused by: ") } ?: exceptionLines.firstOrNull()
                 } ?: "NO MESSAGE"
                 ProcessorAction.NEXT
             }
