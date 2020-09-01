@@ -271,8 +271,6 @@ internal class DefaultDocumentableMerger(val context: DokkaContext) : Documentab
     ).mergeExtras(this, other)
 }
 
-private typealias ModuleOfDifferentTranslators = List<DModule>
-
 data class ClashingDriIdentifier(val value: Set<DokkaConfiguration.DokkaSourceSet>) : ExtraProperty<Documentable> {
     companion object : ExtraProperty.Key<Documentable, ClashingDriIdentifier> {
         override fun mergeStrategyFor(
