@@ -44,7 +44,7 @@ private constructor(
     override val scopeProvider by threadLocal { KtFirScopeProvider(this, firSymbolBuilder, project, firResolveState, token) }
     override val symbolProvider: KtSymbolProvider =
         KtFirSymbolProvider(this, firResolveState.firIdeLibrariesSession.firSymbolProvider, firResolveState, firSymbolBuilder, token)
-    override val completionCandidateChecker: KtCompletionCandidateChecker = KtFirCompletionCandidateChecker(this, token)
+    override val completionCandidateChecker: KtCompletionCandidateChecker by threadLocal { KtFirCompletionCandidateChecker(this, token) }
 
 
     override fun createContextDependentCopy(): KtAnalysisSession {

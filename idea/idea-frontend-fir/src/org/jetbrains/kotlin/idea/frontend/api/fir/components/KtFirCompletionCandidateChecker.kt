@@ -27,13 +27,12 @@ import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import java.util.concurrent.ConcurrentHashMap
 
 internal class KtFirCompletionCandidateChecker(
     override val analysisSession: KtFirAnalysisSession,
     override val token: ValidityToken,
 ) : KtCompletionCandidateChecker(), KtFirAnalysisSessionComponent {
-    private val completionContextCache = ConcurrentHashMap<Pair<FirFile, KtNamedFunction>, LowLevelFirApiFacade.FirCompletionContext>()
+    private val completionContextCache = HashMap<Pair<FirFile, KtNamedFunction>, LowLevelFirApiFacade.FirCompletionContext>()
 
     override fun checkExtensionFitsCandidate(
         firSymbolForCandidate: KtCallableSymbol,
