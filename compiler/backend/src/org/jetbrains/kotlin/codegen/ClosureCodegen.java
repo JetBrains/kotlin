@@ -589,4 +589,8 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         MemberScope scope = functionClass.getDefaultType().getMemberScope();
         return scope.getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND).iterator().next();
     }
+
+    public boolean isCallableReference() {
+        return functionReferenceTarget != null;
+    }
 }

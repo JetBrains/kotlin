@@ -23,4 +23,5 @@ suspend fun test() {
 
 // -- 1 in 'useICAny(suspendGeneric(ICAny("")))
 // -- 1 in 'equals-impl' for ICAny
-// 2 INVOKEVIRTUAL ICAny\.unbox-impl
+// -- 2 on resume path of suspendICAny
+// 4 INVOKEVIRTUAL ICAny\.unbox-impl

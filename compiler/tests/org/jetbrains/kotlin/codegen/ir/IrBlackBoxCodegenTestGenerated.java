@@ -7441,6 +7441,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 runTest("compiler/testData/codegen/box/coroutines/inlineClasses/boxReturnValueOfSuspendFunctionReference.kt");
             }
 
+            @TestMetadata("boxReturnValueOfSuspendFunctionReferenceResume.kt")
+            public void testBoxReturnValueOfSuspendFunctionReferenceResume() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/inlineClasses/boxReturnValueOfSuspendFunctionReferenceResume.kt");
+            }
+
             @TestMetadata("boxReturnValueOfSuspendLambda.kt")
             public void testBoxReturnValueOfSuspendLambda() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/inlineClasses/boxReturnValueOfSuspendLambda.kt");

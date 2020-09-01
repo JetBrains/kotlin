@@ -726,12 +726,7 @@ class CoroutineCodegenForNamedFunction private constructor(
                         with(codegen.v) {
                             // We need to box the returned inline class in resume path.
                             // But first, check for COROUTINE_SUSPENDED, since the function can return it
-                            dup()
-                            loadCoroutineSuspendedMarker(languageVersionSettings)
-                            val elseLabel = Label()
-                            ifacmpne(elseLabel)
-                            areturn(AsmTypes.OBJECT_TYPE)
-                            mark(elseLabel)
+                            generateCoroutineSuspendedCheck(languageVersionSettings)
                             // Now we box the inline class
                             StackValue.coerce(AsmTypes.OBJECT_TYPE, typeMapper.mapType(inlineClassToBoxInInvokeSuspend), this)
                             StackValue.boxInlineClass(inlineClassToBoxInInvokeSuspend, this)

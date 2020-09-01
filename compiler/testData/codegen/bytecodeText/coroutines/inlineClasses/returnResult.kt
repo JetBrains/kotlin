@@ -7,5 +7,5 @@ inline class OurAny(val a: Any)
 
 suspend fun returnsUnboxed(): OurAny = OurAny("OK")
 
-// 1 INVOKESTATIC kotlin/Result.box-impl
+// 0 INVOKESTATIC kotlin/Result.box-impl
 // 0 INVOKESTATIC OurAny.box-impl

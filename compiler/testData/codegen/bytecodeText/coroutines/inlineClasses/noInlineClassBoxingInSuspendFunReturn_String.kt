@@ -23,4 +23,5 @@ suspend fun test() {
 
 // -- 1 in 'useICString(suspendGeneric(ICString("")))
 // -- 1 in 'equals-impl' for ICString
-// 2 INVOKEVIRTUAL ICString\.unbox-impl
+// -- 2 in resume path of suspendICString
+// 4 INVOKEVIRTUAL ICString\.unbox-impl

@@ -490,6 +490,15 @@ fun InstructionAdapter.loadCoroutineSuspendedMarker(languageVersionSettings: Lan
     )
 }
 
+internal fun InstructionAdapter.generateCoroutineSuspendedCheck(languageVersionSettings: LanguageVersionSettings) {
+    dup()
+    loadCoroutineSuspendedMarker(languageVersionSettings)
+    val elseLabel = Label()
+    ifacmpne(elseLabel)
+    areturn(OBJECT_TYPE)
+    mark(elseLabel)
+}
+
 fun InstructionAdapter.invokeDoResumeWithUnit(thisName: String) {
     // .doResume(Unit, null)
     StackValue.putUnitInstance(this)
