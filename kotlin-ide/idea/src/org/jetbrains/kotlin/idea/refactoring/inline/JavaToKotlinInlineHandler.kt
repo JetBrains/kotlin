@@ -10,7 +10,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.Key
 import com.intellij.psi.*
-import com.intellij.psi.util.findDescendantOfType
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.idea.KotlinBundle
@@ -104,9 +103,9 @@ private fun NewJavaToKotlinConverter.convertToKotlinNamedDeclaration(
         j2kContext
     ) { _, _ -> }
 
-    return fakeFile.findDescendantOfType {
-        it.name == referenced.name
-    } ?: error("Can't find ${referenced.name} declaration in ${fakeFile.text}")
+
+    val fakeClass = fakeFile.declarations.singleOrNull() as? KtClass ?: error("Can't find dummy class in ${fakeFile.text}")
+    return fakeClass.declarations.singleOrNull() as? KtNamedDeclaration ?: error("Can't find fake declaration in ${fakeFile.text}")
 }
 
 private fun unwrapUsage(usage: UsageInfo): KtReferenceExpression? {

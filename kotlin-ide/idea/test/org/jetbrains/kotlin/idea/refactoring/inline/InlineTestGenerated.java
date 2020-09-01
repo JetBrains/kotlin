@@ -1678,6 +1678,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 runTest("testData/refactoring/inline/namedFunction/fromJavaToKotlin/returnNullAsInteger.kt");
             }
 
+            @TestMetadata("staticGetter.kt")
+            public void testStaticGetter() throws Exception {
+                runTest("testData/refactoring/inline/namedFunction/fromJavaToKotlin/staticGetter.kt");
+            }
+
             @TestMetadata("syntheticAccessor.kt")
             public void testSyntheticAccessor() throws Exception {
                 runTest("testData/refactoring/inline/namedFunction/fromJavaToKotlin/syntheticAccessor.kt");
