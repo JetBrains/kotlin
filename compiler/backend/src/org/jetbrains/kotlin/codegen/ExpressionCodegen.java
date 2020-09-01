@@ -2690,7 +2690,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         SuspensionPointKind suspensionPointKind =
                 CoroutineCodegenUtilKt.isSuspensionPoint(resolvedCall, this, state.getLanguageVersionSettings());
-        boolean maybeSuspensionPoint = suspensionPointKind != SuspensionPointKind.NEVER;
+        boolean maybeSuspensionPoint = suspensionPointKind != SuspensionPointKind.NEVER && !insideCallableReference();
         boolean isConstructor = resolvedCall.getResultingDescriptor() instanceof ConstructorDescriptor;
         if (!(callableMethod instanceof IntrinsicWithSpecialReceiver)) {
             putReceiverAndInlineMarkerIfNeeded(callableMethod, resolvedCall, receiver, maybeSuspensionPoint, isConstructor);
@@ -2753,6 +2753,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             }
             v.athrow();
         }
+    }
+
+    private boolean insideCallableReference() {
+        return (parentCodegen instanceof ClosureCodegen) &&
+               ((ClosureCodegen) parentCodegen).superClassAsmType.equals(FUNCTION_REFERENCE_IMPL);
     }
 
     private void putReceiverAndInlineMarkerIfNeeded(
