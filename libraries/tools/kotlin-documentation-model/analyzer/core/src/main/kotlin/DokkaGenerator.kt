@@ -1,3 +1,5 @@
+@file:Suppress("SameParameterValue")
+
 package org.jetbrains.dokka
 
 import org.jetbrains.dokka.model.DModule
