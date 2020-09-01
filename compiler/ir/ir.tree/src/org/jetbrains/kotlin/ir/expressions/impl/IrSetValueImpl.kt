@@ -17,23 +17,23 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrSetVariable
+import org.jetbrains.kotlin.ir.expressions.IrSetValue
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-class IrSetVariableImpl(
+class IrSetValueImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override val type: IrType,
-    override val symbol: IrVariableSymbol,
+    override val symbol: IrValueSymbol,
     override var value: IrExpression,
     override val origin: IrStatementOrigin?
-) : IrSetVariable() {
+) : IrSetValue() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitSetVariable(this, data)
+        return visitor.visitSetValue(this, data)
     }
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {

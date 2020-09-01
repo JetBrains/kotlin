@@ -165,7 +165,7 @@ class IrCompileTimeChecker(
         return visitedStack.contains(parent) || isObject
     }
 
-    override fun visitSetVariable(expression: IrSetVariable, data: Nothing?): Boolean {
+    override fun visitSetValue(expression: IrSetValue, data: Nothing?): Boolean {
         return expression.value.accept(this, data)
     }
 

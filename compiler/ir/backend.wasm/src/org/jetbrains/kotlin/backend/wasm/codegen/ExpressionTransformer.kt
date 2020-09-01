@@ -76,7 +76,7 @@ class ExpressionTransformer : BaseTransformer<WasmInstruction, WasmCodegenContex
         return WasmSetGlobal(fieldName, value)
     }
 
-    override fun visitSetVariable(expression: IrSetVariable, data: WasmCodegenContext): WasmInstruction {
+    override fun visitSetValue(expression: IrSetValue, data: WasmCodegenContext): WasmInstruction {
         val fieldName = data.getLocalName(expression.symbol.owner)
         val value = expression.value.accept(this, data)
         return WasmSetLocal(fieldName, value)

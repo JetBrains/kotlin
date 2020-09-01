@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -650,7 +650,7 @@ class ExpressionCodegen(
         throw AssertionError("Non-mapped local declaration: $irSymbol\n in ${irFunction.dump()}")
     }
 
-    private fun handlePlusMinus(expression: IrSetVariable, value: IrExpression?, isMinus: Boolean): Boolean {
+    private fun handlePlusMinus(expression: IrSetValue, value: IrExpression?, isMinus: Boolean): Boolean {
         if (value is IrConst<*> && value.kind == IrConstKind.Int) {
             @Suppress("UNCHECKED_CAST")
             val delta = (value as IrConst<Int>).value
@@ -672,7 +672,7 @@ class ExpressionCodegen(
     // Be careful to make sure that debugging behavior does not change and
     // only perform the optimization if that can be done without losing
     // line number information.
-    private fun handleIntVariableSpecialCases(expression: IrSetVariable): Boolean {
+    private fun handleIntVariableSpecialCases(expression: IrSetValue): Boolean {
         if (expression.symbol.owner.type.isInt()) {
             when (expression.origin) {
                 IrStatementOrigin.PREFIX_INCR, IrStatementOrigin.PREFIX_DECR -> {
@@ -711,20 +711,20 @@ class ExpressionCodegen(
         return false
     }
 
-    override fun visitSetVariable(expression: IrSetVariable, data: BlockInfo): PromisedValue {
+    override fun visitSetValue(expression: IrSetValue, data: BlockInfo): PromisedValue {
         if (!handleIntVariableSpecialCases(expression)) {
             expression.value.markLineNumber(startOffset = true)
             expression.value.accept(this, data).materializeAt(expression.symbol.owner.type)
-            expression.markLineNumber(startOffset = true)
+            // We set the value of parameters only for default values. The inliner accepts only
+            // a very specific bytecode pattern for default arguments and does not tolerate a
+            // line number on the store. Therefore, if we are storing to a parameter, we do not
+            // output a line number for the store.
+            if (expression.symbol !is IrValueParameterSymbol) {
+                expression.markLineNumber(startOffset = true)
+            }
             mv.store(findLocalIndex(expression.symbol), expression.symbol.owner.asmType)
         }
         return unitValue
-    }
-
-    fun setVariable(symbol: IrValueSymbol, value: IrExpression, data: BlockInfo) {
-        value.markLineNumber(startOffset = true)
-        value.accept(this, data).materializeAt(symbol.owner.type)
-        mv.store(findLocalIndex(symbol), symbol.owner.asmType)
     }
 
     override fun <T> visitConst(expression: IrConst<T>, data: BlockInfo): PromisedValue {

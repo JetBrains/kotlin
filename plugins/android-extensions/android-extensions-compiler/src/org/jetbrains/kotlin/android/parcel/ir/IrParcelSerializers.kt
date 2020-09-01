@@ -298,7 +298,7 @@ class IrSparseArrayParcelSerializer(
                     }
 
                     val dec = context.irBuiltIns.intClass.getSimpleFunction("dec")!!
-                    +irSetVar(remainingSizeTemporary.symbol, irCall(dec).apply {
+                    +irSet(remainingSizeTemporary.symbol, irCall(dec).apply {
                         dispatchReceiver = irGet(remainingSizeTemporary)
                     })
                 }

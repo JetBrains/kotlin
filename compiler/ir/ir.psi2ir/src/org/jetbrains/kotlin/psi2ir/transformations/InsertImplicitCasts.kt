@@ -207,7 +207,7 @@ internal class InsertImplicitCasts(
             }
         }
 
-    override fun visitSetVariable(expression: IrSetVariable): IrExpression =
+    override fun visitSetValue(expression: IrSetValue): IrExpression =
         expression.transformPostfix {
             value = value.cast(expression.symbol.owner.type)
         }

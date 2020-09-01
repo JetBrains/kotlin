@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.expressions.IrSetVariable
+import org.jetbrains.kotlin.ir.expressions.IrSetValue
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
@@ -115,7 +115,7 @@ class JvmSharedVariablesManager(
             return sharedVariableDeclaration
         }
         val initializationStatement = with (originalDeclaration) {
-            IrSetVariableImpl(startOffset, endOffset, irBuiltIns.unitType, symbol, initializer, null)
+            IrSetValueImpl(startOffset, endOffset, irBuiltIns.unitType, symbol, initializer, null)
         }
         val sharedVariableInitialization = setSharedValue(sharedVariableDeclaration.symbol, initializationStatement)
         return with(originalDeclaration) {
@@ -142,7 +142,7 @@ class JvmSharedVariablesManager(
             unboxedType?.let { unsafeCoerce(unboxedRead, it, symbol.owner.type) } ?: unboxedRead
         }
 
-    override fun setSharedValue(sharedVariableSymbol: IrVariableSymbol, originalSet: IrSetVariable): IrExpression =
+    override fun setSharedValue(sharedVariableSymbol: IrVariableSymbol, originalSet: IrSetValue): IrExpression =
         with(originalSet) {
             val unboxedType = InlineClassAbi.unboxType(symbol.owner.type)
             val unboxedValue = unboxedType?.let { unsafeCoerce(value, symbol.owner.type, it) } ?: value

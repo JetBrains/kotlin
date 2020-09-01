@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.ir.isFinalClass
 import org.jetbrains.kotlin.backend.common.lower.DefaultArgumentStubGenerator
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.lower.irNot
-import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.getJvmVisibilityOfDefaultArgumentStub
@@ -39,11 +38,7 @@ class JvmDefaultArgumentStubGenerator(override val context: JvmBackendContext) :
         //
         // This control flow limits us to an if-then (without an else), and this together with the
         // restriction on loading the parameter in the default case means we cannot create any temporaries.
-        +irIfThen(defaultFlag, irCall(this@JvmDefaultArgumentStubGenerator.context.ir.symbols.reassignParameterIntrinsic).apply {
-            putTypeArgument(0, parameter.type)
-            putValueArgument(0, irGet(parameter))
-            putValueArgument(1, default)
-        })
+        +irIfThen(defaultFlag, irSet(parameter.symbol, default))
         return parameter
     }
 

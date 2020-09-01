@@ -29,9 +29,8 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrSetVariableImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -215,7 +214,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
                         // This is safe, since the delegating constructor call precedes all references to "this".
                         override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
                             expression.transformChildrenVoid()
-                            return irSetVar(thisVar.symbol, expression)
+                            return irSet(thisVar.symbol, expression)
                         }
 
                         // A constructor body has type unit and may contain explicit return statements.
@@ -452,16 +451,16 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         return super.visitGetValue(expression)
     }
 
-    override fun visitSetVariable(expression: IrSetVariable): IrExpression {
+    override fun visitSetValue(expression: IrSetValue): IrExpression {
         valueMap[expression.symbol]?.let {
-            return IrSetVariableImpl(
+            return IrSetValueImpl(
                 expression.startOffset, expression.endOffset,
-                it.type, it.symbol as IrVariableSymbol,
+                it.type, it.symbol,
                 expression.value.transform(this@JvmInlineClassLowering, null),
                 expression.origin
             )
         }
-        return super.visitSetVariable(expression)
+        return super.visitSetValue(expression)
     }
 
     private fun buildPrimaryInlineClassConstructor(irClass: IrClass, irConstructor: IrConstructor) {

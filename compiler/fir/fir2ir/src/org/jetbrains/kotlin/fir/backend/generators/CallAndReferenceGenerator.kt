@@ -608,7 +608,7 @@ class CallAndReferenceGenerator(
                         putValueArgument(0, assignedValue)
                     }
                 }
-                is IrVariableSymbol -> IrSetVariableImpl(startOffset, endOffset, type, symbol, assignedValue, origin)
+                is IrVariableSymbol -> IrSetValueImpl(startOffset, endOffset, type, symbol, assignedValue, origin)
                 else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
             }
         }.applyTypeArguments(variableAssignment).applyReceivers(variableAssignment, explicitReceiverExpression)

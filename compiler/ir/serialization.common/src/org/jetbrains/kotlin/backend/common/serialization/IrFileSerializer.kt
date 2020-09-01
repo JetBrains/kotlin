@@ -673,7 +673,7 @@ open class IrFileSerializer(
             }
             .build()
 
-    private fun serializeSetVariable(expression: IrSetVariable): ProtoSetVariable =
+    private fun serializeSetVariable(expression: IrSetValue): ProtoSetVariable =
         ProtoSetVariable.newBuilder()
             .setSymbol(serializeIrSymbol(expression.symbol))
             .setValue(serializeExpression(expression.value)).apply {
@@ -933,7 +933,7 @@ open class IrFileSerializer(
             is IrPropertyReference -> operationProto.propertyReference = serializePropertyReference(expression)
             is IrReturn -> operationProto.`return` = serializeReturn(expression)
             is IrSetField -> operationProto.setField = serializeSetField(expression)
-            is IrSetVariable -> operationProto.setVariable = serializeSetVariable(expression)
+            is IrSetValue -> operationProto.setVariable = serializeSetVariable(expression)
             is IrStringConcatenation -> operationProto.stringConcat = serializeStringConcat(expression)
             is IrThrow -> operationProto.`throw` = serializeThrow(expression)
             is IrTry -> operationProto.`try` = serializeTry(expression)

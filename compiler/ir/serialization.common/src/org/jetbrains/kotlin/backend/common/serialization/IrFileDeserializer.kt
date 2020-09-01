@@ -607,11 +607,11 @@ abstract class IrFileDeserializer(
         return IrSetFieldImpl(start, end, symbol, receiver, value, builtIns.unitType, origin, superQualifier)
     }
 
-    private fun deserializeSetVariable(proto: ProtoSetVariable, start: Int, end: Int): IrSetVariable {
+    private fun deserializeSetVariable(proto: ProtoSetVariable, start: Int, end: Int): IrSetValue {
         val symbol = deserializeIrSymbolAndRemap(proto.symbol) as IrVariableSymbol
         val value = deserializeExpression(proto.value)
         val origin = if (proto.hasOriginName()) deserializeIrStatementOrigin(proto.originName) else null
-        return IrSetVariableImpl(start, end, builtIns.unitType, symbol, value, origin)
+        return IrSetValueImpl(start, end, builtIns.unitType, symbol, value, origin)
     }
 
     private fun deserializeSpreadElement(proto: ProtoSpreadElement): IrSpreadElement {
