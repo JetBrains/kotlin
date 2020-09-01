@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelClassByPackageIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionByPackageIndex
-import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyFqnNameIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyByPackageIndex
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -32,7 +32,7 @@ internal class KtFirPackageScope(
 
     override fun getCallableNames() = withValidityAssertion {
         hashSetOf<Name>().apply {
-            KotlinTopLevelPropertyFqnNameIndex.getInstance()[fqName.asString(), project, firScope.session.searchScope]
+            KotlinTopLevelPropertyByPackageIndex.getInstance()[fqName.asString(), project, firScope.session.searchScope]
                 .mapNotNullTo(this) { it.nameAsName }
             KotlinTopLevelFunctionByPackageIndex.getInstance()[fqName.asString(), project, firScope.session.searchScope]
                 .mapNotNullTo(this) { it.nameAsName }
