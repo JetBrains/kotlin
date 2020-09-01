@@ -115,6 +115,7 @@ internal object FirIdeSessionFactory {
         val kotlinClassFinder = VirtualFileFinderFactory.getInstance(project).create(searchScope)
         return FirIdeLibrariesSession(moduleInfo, sessionProvider, searchScope).apply {
             registerCommonComponents()
+            registerJavaSpecificComponents()
 
             val javaSymbolProvider = JavaSymbolProvider(this, sessionProvider.project, searchScope)
 
