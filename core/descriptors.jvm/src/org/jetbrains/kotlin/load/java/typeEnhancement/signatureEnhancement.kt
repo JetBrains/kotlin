@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.load.java.lazy.copyWithNewDefaultTypeQualifiers
 import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
+import org.jetbrains.kotlin.load.kotlin.signature
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.deprecation.DEPRECATED_FUNCTION_KEY

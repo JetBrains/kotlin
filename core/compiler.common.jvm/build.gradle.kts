@@ -8,6 +8,7 @@ javaHome = rootProject.extra["JDK_16"] as String
 
 dependencies {
     api(project(":core:compiler.common"))
+    api(project(":core:metadata.jvm"))
 }
 
 sourceSets {

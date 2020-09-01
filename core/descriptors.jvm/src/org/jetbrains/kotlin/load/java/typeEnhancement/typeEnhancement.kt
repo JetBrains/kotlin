@@ -46,12 +46,6 @@ fun KotlinType.hasEnhancedNullability(): Boolean =
 fun TypeSystemCommonBackendContext.hasEnhancedNullability(type: KotlinTypeMarker): Boolean =
     type.hasAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION)
 
-enum class TypeComponentPosition {
-    FLEXIBLE_LOWER,
-    FLEXIBLE_UPPER,
-    INFLEXIBLE
-}
-
 class JavaTypeEnhancement(private val javaResolverSettings: JavaResolverSettings) {
 
     private open class Result(open val type: KotlinType, val subtreeSize: Int, val wereChanges: Boolean) {

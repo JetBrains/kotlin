@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.builtins
 
-import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSettings
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.resolveClassByFqName
@@ -39,11 +39,11 @@ class AdditionalBuiltInsMembersSignatureListsTest : KotlinTestWithEnvironment() 
         val module = JvmResolveUtil.analyze(environment).moduleDescriptor as ModuleDescriptorImpl
 
         val blackList =
-                JvmBuiltInsSettings.BLACK_LIST_METHOD_SIGNATURES +
-                JvmBuiltInsSettings.MUTABLE_METHOD_SIGNATURES +
-                JvmBuiltInsSettings.BLACK_LIST_CONSTRUCTOR_SIGNATURES +
-                JvmBuiltInsSettings.WHITE_LIST_METHOD_SIGNATURES +
-                JvmBuiltInsSettings.WHITE_LIST_CONSTRUCTOR_SIGNATURES
+                JvmBuiltInsSignatures.BLACK_LIST_METHOD_SIGNATURES +
+                JvmBuiltInsSignatures.MUTABLE_METHOD_SIGNATURES +
+                JvmBuiltInsSignatures.BLACK_LIST_CONSTRUCTOR_SIGNATURES +
+                JvmBuiltInsSignatures.WHITE_LIST_METHOD_SIGNATURES +
+                JvmBuiltInsSignatures.WHITE_LIST_CONSTRUCTOR_SIGNATURES
 
         val groupedByInternalName = blackList.groupBy({ it.split(".")[0] }) { it.split(".")[1] }
 

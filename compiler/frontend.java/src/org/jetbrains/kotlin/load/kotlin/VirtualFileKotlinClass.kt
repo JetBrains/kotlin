@@ -28,11 +28,11 @@ import java.io.FileNotFoundException
 import java.io.IOException
 
 class VirtualFileKotlinClass private constructor(
-        val file: VirtualFile,
-        className: ClassId,
-        classVersion: Int,
-        classHeader: KotlinClassHeader,
-        innerClasses: InnerClassesInfo
+    val file: VirtualFile,
+    className: ClassId,
+    classVersion: Int,
+    classHeader: KotlinClassHeader,
+    innerClasses: InnerClassesInfo
 ) : FileBasedKotlinClass(className, classVersion, classHeader, innerClasses) {
 
     override val location: String

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.deserialization
 
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSettings
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -211,7 +211,7 @@ private val ARRAY_CLASSES: Set<Name> = setOf(
 private val JAVA_IO_SERIALIZABLE = ClassId.topLevel(FqName("java.io.Serializable"))
 
 private fun FirRegularClassBuilder.addSerializableIfNeeded(classId: ClassId) {
-    if (!JvmBuiltInsSettings.isSerializableInJava(classId.asSingleFqName().toUnsafe())) return
+    if (!JvmBuiltInsSignatures.isSerializableInJava(classId.asSingleFqName().toUnsafe())) return
     superTypeRefs += buildResolvedTypeRef {
         type = ConeClassLikeTypeImpl(
             ConeClassLikeLookupTagImpl(JAVA_IO_SERIALIZABLE),

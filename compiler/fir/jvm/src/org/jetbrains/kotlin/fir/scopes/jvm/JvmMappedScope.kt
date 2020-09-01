@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes.jvm
 
-import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSettings
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
@@ -114,7 +114,7 @@ class JvmMappedScope(
 
             val signaturePrefix = klass.symbol.classId.toString()
             val whiteListSignaturesByName = mutableMapOf<Name, MutableSet<String>>()
-            JvmBuiltInsSettings.WHITE_LIST_METHOD_SIGNATURES.filter { signature ->
+            JvmBuiltInsSignatures.WHITE_LIST_METHOD_SIGNATURES.filter { signature ->
                 signature.startsWith(signaturePrefix)
             }.map { signature ->
                 // +1 to delete dot before function name
@@ -124,7 +124,7 @@ class JvmMappedScope(
             }
 
             val constructorBlackList =
-                (JvmBuiltInsSettings.BLACK_LIST_CONSTRUCTOR_SIGNATURES + additionalConstructorBlackList)
+                (JvmBuiltInsSignatures.BLACK_LIST_CONSTRUCTOR_SIGNATURES + additionalConstructorBlackList)
                     .filter { it.startsWith(signaturePrefix) }
                     .mapTo(mutableSetOf()) { it.substring(signaturePrefix.length + 1) }
 
