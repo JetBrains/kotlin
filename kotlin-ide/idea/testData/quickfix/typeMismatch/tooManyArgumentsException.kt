@@ -2,7 +2,7 @@
 // ERROR: Type mismatch: inferred type is Array<out Int> but Array<out String> was expected
 // ACTION: Change parameter 't' type of function 'join' to 'Array<out Int>'
 // ACTION: Create function 'join'
-// ACTION: Flip ','
+// ACTION: Flip ',' (changes semantics)
 // ACTION: Introduce local variable
 // ACTION: Convert to also
 // ACTION: Convert to apply
