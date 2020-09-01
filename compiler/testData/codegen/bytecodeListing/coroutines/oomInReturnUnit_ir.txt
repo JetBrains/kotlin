@@ -2,6 +2,7 @@
 @kotlin.Metadata
 final class OomInReturnUnitKt$test$1 {
     // source: 'oomInReturnUnit.kt'
+    enclosing method OomInReturnUnitKt.test(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field L$0: java.lang.Object
     field label: int
     synthetic field result: java.lang.Object

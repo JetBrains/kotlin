@@ -2,6 +2,7 @@
 @kotlin.coroutines.jvm.internal.DebugMetadata
 final class Controller$multipleSuspensions$1 {
     // source: 'coroutineFields.kt'
+    enclosing method Controller.multipleSuspensions(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field L$0: java.lang.Object
     field label: int
     synthetic field result: java.lang.Object
@@ -15,6 +16,7 @@ final class Controller$multipleSuspensions$1 {
 @kotlin.coroutines.jvm.internal.DebugMetadata
 final class Controller$nonTailCall$1 {
     // source: 'coroutineFields.kt'
+    enclosing method Controller.nonTailCall(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: Controller
@@ -39,6 +41,7 @@ public final class Controller {
 @kotlin.Metadata
 final class CoroutineFieldsKt$box$1 {
     // source: 'coroutineFields.kt'
+    enclosing method CoroutineFieldsKt.box()Ljava/lang/String;
     synthetic final field $result: kotlin.jvm.internal.Ref$ObjectRef
     field J$0: long
     private synthetic field L$0: java.lang.Object

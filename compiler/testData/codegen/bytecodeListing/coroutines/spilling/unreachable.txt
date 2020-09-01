@@ -2,6 +2,7 @@
 @kotlin.Metadata
 final class UnreachableKt$test$1 {
     // source: 'unreachable.kt'
+    enclosing method UnreachableKt.test()V
     private synthetic field L$0: java.lang.Object
     field label: int
     inner (anonymous) class UnreachableKt$test$1

@@ -8,6 +8,7 @@ public final class Hello/Foo {
 @kotlin.Metadata
 synthetic final class Hello/Foo__MultifileSuspendKt$main$2 {
     // source: 'multifileSuspend.kt'
+    enclosing method Hello/Foo__MultifileSuspendKt.main([Ljava/lang/String;)V
     private synthetic field args: java.lang.String[]
     inner (anonymous) class Hello/Foo__MultifileSuspendKt$main$2
     method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String[]): void

@@ -2,6 +2,7 @@
 @kotlin.Metadata
 final class LambdaKt$test$1 {
     // source: 'lambda.kt'
+    enclosing method LambdaKt.test()V
     private synthetic field D$0: double
     private synthetic field L$0: java.lang.Object
     field label: int
@@ -16,6 +17,7 @@ final class LambdaKt$test$1 {
 @kotlin.Metadata
 final class LambdaKt$test$10 {
     // source: 'lambda.kt'
+    enclosing method LambdaKt.test()V
     private synthetic field J$0: long
     private synthetic field L$0: java.lang.Object
     field label: int
@@ -30,6 +32,7 @@ final class LambdaKt$test$10 {
 @kotlin.Metadata
 final class LambdaKt$test$11 {
     // source: 'lambda.kt'
+    enclosing method LambdaKt.test()V
     private synthetic field J$0: long
     field label: int
     inner (anonymous) class LambdaKt$test$11
@@ -43,6 +46,7 @@ final class LambdaKt$test$11 {
 @kotlin.Metadata
 final class LambdaKt$test$12 {
     // source: 'lambda.kt'
+    enclosing method LambdaKt.test()V
     field label: int
     inner (anonymous) class LambdaKt$test$12
     method <init>(p0: kotlin.coroutines.Continuation): void
@@ -55,6 +59,7 @@ final class LambdaKt$test$12 {
 @kotlin.Metadata
 final class LambdaKt$test$13 {
     // source: 'lambda.kt'
+    enclosing method LambdaKt.test()V
     private synthetic field J$0: long
     private synthetic field L$0: java.lang.Object
     field label: int
@@ -69,6 +74,7 @@ final class LambdaKt$test$13 {
 @kotlin.Metadata
 final class LambdaKt$test$14 {
     // source: 'lambda.kt'
+    enclosing method LambdaKt.test()V
     private synthetic field J$0: long
     field label: int
     inner (anonymous) class LambdaKt$test$14
@@ -82,6 +88,7 @@ final class LambdaKt$test$14 {
 @kotlin.Metadata
 final class LambdaKt$test$15 {
     // source: 'lambda.kt'
+    enclosing method LambdaKt.test()V
     private synthetic field L$0: java.lang.Object
     field label: int
     inner (anonymous) class LambdaKt$test$15
@@ -95,6 +102,7 @@ final class LambdaKt$test$15 {
 @kotlin.Metadata
 final class LambdaKt$test$16 {
     // source: 'lambda.kt'
+    enclosing method LambdaKt.test()V
     field label: int
     inner (anonymous) class LambdaKt$test$16
     method <init>(p0: kotlin.coroutines.Continuation): void
@@ -107,6 +115,7 @@ final class LambdaKt$test$16 {
 @kotlin.Metadata
 final class LambdaKt$test$17 {
     // source: 'lambda.kt'
+    enclosing method LambdaKt.test()V
     private synthetic field J$0: long
     field label: int
     inner (anonymous) class LambdaKt$test$17
@@ -120,6 +129,7 @@ final class LambdaKt$test$17 {
 @kotlin.Metadata
 final class LambdaKt$test$2 {
     // source: 'lambda.kt'
+    enclosing method LambdaKt.test()V
     private synthetic field D$0: double
     field label: int
     inner (anonymous) class LambdaKt$test$2
@@ -133,6 +143,7 @@ final class LambdaKt$test$2 {
 @kotlin.Metadata
 final class LambdaKt$test$3 {
     // source: 'lambda.kt'
+    enclosing method LambdaKt.test()V
     private synthetic field L$0: java.lang.Object
     field label: int
     inner (anonymous) class LambdaKt$test$3
@@ -146,6 +157,7 @@ final class LambdaKt$test$3 {
 @kotlin.Metadata
 final class LambdaKt$test$4 {
     // source: 'lambda.kt'
+    enclosing method LambdaKt.test()V
     private synthetic field D$0: double
     field label: int
     inner (anonymous) class LambdaKt$test$4
@@ -159,6 +171,7 @@ final class LambdaKt$test$4 {
 @kotlin.Metadata
 final class LambdaKt$test$5 {
     // source: 'lambda.kt'
+    enclosing method LambdaKt.test()V
     private synthetic field L$0: java.lang.Object
     field label: int
     inner (anonymous) class LambdaKt$test$5
@@ -172,6 +185,7 @@ final class LambdaKt$test$5 {
 @kotlin.Metadata
 final class LambdaKt$test$6 {
     // source: 'lambda.kt'
+    enclosing method LambdaKt.test()V
     private synthetic field D$0: double
     private synthetic field J$0: long
     private synthetic field L$0: java.lang.Object
@@ -187,6 +201,7 @@ final class LambdaKt$test$6 {
 @kotlin.Metadata
 final class LambdaKt$test$7 {
     // source: 'lambda.kt'
+    enclosing method LambdaKt.test()V
     private synthetic field D$0: double
     private synthetic field J$0: long
     field label: int
@@ -201,6 +216,7 @@ final class LambdaKt$test$7 {
 @kotlin.Metadata
 final class LambdaKt$test$8 {
     // source: 'lambda.kt'
+    enclosing method LambdaKt.test()V
     private synthetic field J$0: long
     private synthetic field L$0: java.lang.Object
     field label: int
@@ -215,6 +231,7 @@ final class LambdaKt$test$8 {
 @kotlin.Metadata
 final class LambdaKt$test$9 {
     // source: 'lambda.kt'
+    enclosing method LambdaKt.test()V
     private synthetic field D$0: double
     private synthetic field J$0: long
     field label: int
