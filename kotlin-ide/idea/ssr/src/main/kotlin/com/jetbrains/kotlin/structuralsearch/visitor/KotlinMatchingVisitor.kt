@@ -295,10 +295,6 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         )
         val handler = getHandler(expression.getReferencedNameElement())
         if (myMatchingVisitor.result && handler is SubstitutionHandler) {
-            if (handler.maxOccurs == 0) {
-                myMatchingVisitor.result = false
-                return
-            }
             handler.handle(
                 if (other is KtSimpleNameExpression) other.getReferencedNameElement() else other,
                 myMatchingVisitor.matchContext
@@ -427,12 +423,9 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
         val other = getTreeElementDepar<KtExpression>() ?: return
         val handler = getHandler(expression.receiverExpression)
-        if (other is KtDotQualifiedExpression && handler is SubstitutionHandler && handler.maxOccurs == 0) {
-            // Don't match '_{0,0}.'_
-            myMatchingVisitor.result = false
-        } else if (other is KtDotQualifiedExpression) {
+        if (other is KtDotQualifiedExpression) {
             // Regular matching
-            myMatchingVisitor.result = myMatchingVisitor.match(expression.receiverExpression, other.receiverExpression)
+            myMatchingVisitor.result = myMatchingVisitor.matchOptionally(expression.receiverExpression, other.receiverExpression)
                     && myMatchingVisitor.match(expression.selectorExpression, other.selectorExpression)
         } else {
             // Match '_?.'_
@@ -608,7 +601,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     override fun visitCallableReferenceExpression(expression: KtCallableReferenceExpression) {
         val other = getTreeElementDepar<KtCallableReferenceExpression>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(expression.callableReference, other.callableReference)
-                && myMatchingVisitor.match(expression.receiverExpression, other.receiverExpression)
+                && myMatchingVisitor.matchOptionally(expression.receiverExpression, other.receiverExpression)
     }
 
     override fun visitTypeParameter(parameter: KtTypeParameter) {
@@ -1018,7 +1011,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && matchTextOrVariable(property.nameIdentifier, other.nameIdentifier)
                 && property.isVar == other.isVar
                 && myMatchingVisitor.match(property.docComment, other.docComment)
-                && myMatchingVisitor.match(
+                && myMatchingVisitor.matchOptionally(
             property.delegateExpressionOrInitializer,
             other.delegateExpressionOrInitializer
         )

@@ -5,7 +5,7 @@ class A {
 }
 
 fun main() {
-    val a = <warning descr="SSR">A.FOO</warning>
-    <warning descr="SSR">print(<warning descr="SSR">Int.hashCode()</warning>)</warning>
+    val a = A.FOO
+    <warning descr="SSR">print(Int.hashCode())</warning>
     <warning descr="SSR">print(<warning descr="SSR">a</warning>)</warning>
 }

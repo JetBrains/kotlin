@@ -302,18 +302,6 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         constructor.setAbsenceOfMatchHandlerIfApplicable()
     }
 
-    override fun visitSuperTypeList(list: KtSuperTypeList) {
-        super.visitSuperTypeList(list)
-        list.setAbsenceOfMatchHandlerIfApplicable()
-    }
-
-    override fun visitConstructorCalleeExpression(constructorCalleeExpression: KtConstructorCalleeExpression) {
-        super.visitConstructorCalleeExpression(constructorCalleeExpression)
-        if (constructorCalleeExpression.allowsAbsenceOfMatch) {
-            setHandler(constructorCalleeExpression.parent, absenceOfMatchHandler(constructorCalleeExpression))
-        }
-    }
-
     override fun visitWhenEntry(jetWhenEntry: KtWhenEntry) {
         super.visitWhenEntry(jetWhenEntry)
         val condition = jetWhenEntry.firstChild.firstChild
@@ -328,6 +316,23 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         }
     }
 
+    override fun visitConstructorCalleeExpression(expression: KtConstructorCalleeExpression) {
+        super.visitConstructorCalleeExpression(expression)
+        val handler = getHandler(expression)
+        if (handler is SubstitutionHandler && handler.minOccurs == 0) {
+            setHandler(expression.parent, SubstitutionHandler("${expression.parent.hashCode()}_optional", false, 0, handler.maxOccurs, false))
+            expression.parent.parent.setAbsenceOfMatchHandlerIfApplicable()
+        }
+    }
+
+//    override fun visitSuperTypeEntry(specifier: KtSuperTypeEntry) {
+//        super.visitSuperTypeEntry(specifier)
+//        if (specifier.allowsAbsenceOfMatch) {
+//            specifier.parent.setAbsenceOfMatchHandler()
+//            specifier.parent.parent.setAbsenceOfMatchHandlerIfApplicable()
+//        }
+//    }
+
     override fun visitKDoc(kDoc: KDoc) {
         getHandler(kDoc).setFilter { it is KDoc }
     }
@@ -340,12 +345,16 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         getHandler(tag).setFilter { it is KDocTag }
     }
 
+    private fun PsiElement.setAbsenceOfMatchHandler() {
+        setHandler(this, absenceOfMatchHandler(this))
+    }
+
     private fun PsiElement.setAbsenceOfMatchHandlerIfApplicable(considerAllChildren: Boolean = false) {
         val childrenAllowAbsenceOfMatch =
             if (considerAllChildren) this.allChildren.all { it.allowsAbsenceOfMatch }
             else this.children.all { it.allowsAbsenceOfMatch }
         if (childrenAllowAbsenceOfMatch)
-            setHandler(this, absenceOfMatchHandler(this))
+            setAbsenceOfMatchHandler()
     }
 
     private fun absenceOfMatchHandler(element: PsiElement): SubstitutionHandler =

@@ -7,19 +7,19 @@ class KotlinSSCountFilterTest : KotlinSSResourceInspectionTest() {
 
     // isApplicableMinCount
 
-    fun testMinProperty() { doTest("var '_ = '_?") }
+    fun testMinProperty() { doTest("var '_ = '_{0,0}") }
 
-    fun testMinDotQualifierExpression() { doTest("'_?.'_") }
+    fun testMinDotQualifierExpression() { doTest("'_{0,0}.'_") }
 
     fun testMinFunctionTypeReference() { doTest("fun '_{0,0}.'_()") }
 
     fun testMinCallableReferenceExpression() { doTest("'_{0,0}::'_") }
 
-    fun testMinWhenExpression() { doTest("when ('_?) {}") }
+    fun testMinWhenExpression() { doTest("when ('_{0,0}) {}") }
 
-    fun testMinConstructorCallee() { doTest("class '_ : '_?('_*)") }
+    fun testMinConstructorCallee() { doTest("class '_ : '_{0,0}('_*)") }
 
-    fun testMinSuperType() { doTest("class '_ : '_?()") }
+    fun testMinSuperType() { doTest("class '_ : '_{0,0}()") }
 
     // isApplicableMaxCount
 
