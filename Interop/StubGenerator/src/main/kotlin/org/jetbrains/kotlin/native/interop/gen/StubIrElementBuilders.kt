@@ -475,9 +475,11 @@ internal class FunctionStubBuilder(
         val platform = context.platform
         val parameters = mutableListOf<FunctionParameterStub>()
 
+        var hasStableParameterNames = true
         func.parameters.forEachIndexed { index, parameter ->
             val parameterName = parameter.name.let {
                 if (it == null || it.isEmpty()) {
+                    hasStableParameterNames = false
                     "arg$index"
                 } else {
                     it
@@ -547,7 +549,8 @@ internal class FunctionStubBuilder(
                 annotations,
                 mustBeExternal,
                 null,
-                MemberStubModality.FINAL
+                MemberStubModality.FINAL,
+                hasStableParameterNames = hasStableParameterNames
         )
         return listOf(functionStub)
     }

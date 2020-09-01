@@ -490,7 +490,8 @@ data class FunctionStub(
         val receiver: ReceiverParameterStub?,
         val modality: MemberStubModality,
         val typeParameters: List<TypeParameterStub> = emptyList(),
-        val isOverride: Boolean = false
+        val isOverride: Boolean = false,
+        val hasStableParameterNames: Boolean = true
 ) : StubElementWithOrigin, FunctionalStub {
 
     override fun <T, R> accept(visitor: StubIrVisitor<T, R>, data: T) =

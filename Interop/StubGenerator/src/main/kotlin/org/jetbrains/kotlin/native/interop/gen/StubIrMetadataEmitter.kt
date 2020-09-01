@@ -257,7 +257,8 @@ private class MappingExtensions(
         get() = flagsOfNotNull(
                 Flag.IS_PUBLIC,
                 Flag.Function.IS_EXTERNAL.takeIf { this.external },
-                Flag.HAS_ANNOTATIONS.takeIf { annotations.isNotEmpty() }
+                Flag.HAS_ANNOTATIONS.takeIf { annotations.isNotEmpty() },
+                Flag.Function.HAS_NON_STABLE_PARAMETER_NAMES.takeIf { !this.hasStableParameterNames }
         ) or modality.flags
 
     val Classifier.fqNameSerialized: String
