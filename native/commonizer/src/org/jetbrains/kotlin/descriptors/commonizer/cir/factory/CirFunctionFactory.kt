@@ -29,18 +29,18 @@ object CirFunctionFactory {
 
     @Suppress("NOTHING_TO_INLINE")
     inline fun create(
-        annotations: List<CirAnnotation>,
-        name: Name,
-        typeParameters: List<CirTypeParameter>,
-        visibility: Visibility,
-        modality: Modality,
-        containingClassDetails: CirContainingClassDetails?,
-        valueParameters: List<CirValueParameter>,
-        hasStableParameterNames: Boolean,
-        extensionReceiver: CirExtensionReceiver?,
-        returnType: CirType,
-        kind: CallableMemberDescriptor.Kind,
-        modifiers: CirFunctionModifiers
+            annotations: List<CirAnnotation>,
+            name: Name,
+            typeParameters: List<CirTypeParameter>,
+            visibility: DescriptorVisibility,
+            modality: Modality,
+            containingClassDetails: CirContainingClassDetails?,
+            valueParameters: List<CirValueParameter>,
+            hasStableParameterNames: Boolean,
+            extensionReceiver: CirExtensionReceiver?,
+            returnType: CirType,
+            kind: CallableMemberDescriptor.Kind,
+            modifiers: CirFunctionModifiers
     ): CirFunction {
         return CirFunctionImpl(
             annotations = annotations,

@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -28,16 +28,16 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
 class IrFieldImpl(
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var origin: IrDeclarationOrigin,
-    override val symbol: IrFieldSymbol,
-    override val name: Name,
-    override val type: IrType,
-    override var visibility: Visibility,
-    override val isFinal: Boolean,
-    override val isExternal: Boolean,
-    override val isStatic: Boolean,
+        override val startOffset: Int,
+        override val endOffset: Int,
+        override var origin: IrDeclarationOrigin,
+        override val symbol: IrFieldSymbol,
+        override val name: Name,
+        override val type: IrType,
+        override var visibility: DescriptorVisibility,
+        override val isFinal: Boolean,
+        override val isExternal: Boolean,
+        override val isStatic: Boolean,
 ) : IrField() {
     init {
         symbol.bind(this)

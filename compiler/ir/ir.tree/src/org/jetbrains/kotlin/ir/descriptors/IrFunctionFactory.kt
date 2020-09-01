@@ -303,7 +303,7 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
                 }
 
                 irFactory.createFunction(
-                    offset, offset, memberOrigin, it, Name.identifier("invoke"), Visibilities.PUBLIC, Modality.ABSTRACT,
+                    offset, offset, memberOrigin, it, Name.identifier("invoke"), DescriptorVisibilities.PUBLIC, Modality.ABSTRACT,
                     returnType,
                     isInline = false,
                     isExternal = false,
@@ -441,7 +441,7 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
         val name = functionClassName(isK, isSuspend, n)
         if (symbol.isBound) return symbol.owner
         val klass = irFactory.createClass(
-            offset, offset, classOrigin, symbol, Name.identifier(name), ClassKind.INTERFACE, Visibilities.PUBLIC, Modality.ABSTRACT
+            offset, offset, classOrigin, symbol, Name.identifier(name), ClassKind.INTERFACE, DescriptorVisibilities.PUBLIC, Modality.ABSTRACT
         )
 
         val r = klass.createTypeParameters(n, descriptorFactory)

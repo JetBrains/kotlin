@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 
 import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPropertySetter
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirPropertySetterImpl
@@ -26,12 +26,12 @@ object CirPropertySetterFactory {
     )
 
     fun create(
-        annotations: List<CirAnnotation>,
-        parameterAnnotations: List<CirAnnotation>,
-        visibility: Visibility,
-        isDefault: Boolean,
-        isExternal: Boolean,
-        isInline: Boolean
+            annotations: List<CirAnnotation>,
+            parameterAnnotations: List<CirAnnotation>,
+            visibility: DescriptorVisibility,
+            isDefault: Boolean,
+            isExternal: Boolean,
+            isInline: Boolean
     ): CirPropertySetter {
         return interner.intern(
             CirPropertySetterImpl(
@@ -46,11 +46,11 @@ object CirPropertySetterFactory {
     }
 
     @Suppress("NOTHING_TO_INLINE")
-    inline fun createDefaultNoAnnotations(visibility: Visibility): CirPropertySetter = create(
+    inline fun createDefaultNoAnnotations(visibility: DescriptorVisibility): CirPropertySetter = create(
         annotations = emptyList(),
         parameterAnnotations = emptyList(),
         visibility = visibility,
-        isDefault = visibility == Visibilities.PUBLIC,
+        isDefault = visibility == DescriptorVisibilities.PUBLIC,
         isExternal = false,
         isInline = false
     )

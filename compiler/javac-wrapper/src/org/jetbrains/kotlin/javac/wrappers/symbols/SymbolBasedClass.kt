@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.javac.wrappers.symbols
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.CommonClassNames
 import com.intellij.psi.search.SearchScope
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.javac.JavaClassWithClassId
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.*
@@ -54,7 +54,7 @@ class SymbolBasedClass(
     override val isFinal: Boolean
         get() = element.isFinal
 
-    override val visibility: Visibility
+    override val visibility: DescriptorVisibility
         get() = element.getVisibility()
 
     override val typeParameters: List<JavaTypeParameter>

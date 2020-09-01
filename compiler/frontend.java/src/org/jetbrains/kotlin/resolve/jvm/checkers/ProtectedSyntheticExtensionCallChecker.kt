@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
@@ -43,7 +43,7 @@ object ProtectedSyntheticExtensionCallChecker : CallChecker {
         val from = context.scope.ownerDescriptor
 
         // Already reported
-        if (!Visibilities.isVisibleIgnoringReceiver(descriptor, from)) return
+        if (!DescriptorVisibilities.isVisibleIgnoringReceiver(descriptor, from)) return
 
         if (resolvedCall.dispatchReceiver != null && resolvedCall.extensionReceiver !is ReceiverValue) return
 
@@ -53,7 +53,7 @@ object ProtectedSyntheticExtensionCallChecker : CallChecker {
                 context.languageVersionSettings
         )
 
-        if (receiverTypes.none { Visibilities.isVisible(getReceiverValueWithSmartCast(null, it), sourceFunction, from) }) {
+        if (receiverTypes.none { DescriptorVisibilities.isVisible(getReceiverValueWithSmartCast(null, it), sourceFunction, from) }) {
             context.trace.report(Errors.INVISIBLE_MEMBER.on(reportOn, descriptor, descriptor.visibility, from))
         }
     }

@@ -52,7 +52,7 @@ class JvmGeneratorExtensions(private val generateFacades: Boolean = true) : Gene
         companion object Instance : JvmSamConversion()
     }
 
-    override fun computeFieldVisibility(descriptor: PropertyDescriptor): Visibility? =
+    override fun computeFieldVisibility(descriptor: PropertyDescriptor): DescriptorVisibility? =
         if (descriptor.hasJvmFieldAnnotation() || descriptor is JavaCallableMemberDescriptor)
             descriptor.visibility
         else

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
@@ -66,7 +66,7 @@ class StaticLambdaLowering(val backendContext: JvmBackendContext) : FileLowering
                 origin = JvmLoweredDeclarationOrigin.FIELD_FOR_STATIC_LAMBDA_INSTANCE
                 isFinal = true
                 isStatic = true
-                visibility = Visibilities.PUBLIC
+                visibility = DescriptorVisibilities.PUBLIC
             }.apply {
                 parent = lambdaClass
             }

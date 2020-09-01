@@ -91,7 +91,7 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @Nullable KotlinType unsubstitutedReturnType,
             @Nullable Modality modality,
-            @NotNull Visibility visibility,
+            @NotNull DescriptorVisibility visibility,
             @Nullable Map<? extends UserDataKey<?>, ?> userData
     ) {
         SimpleFunctionDescriptorImpl descriptor = super.initialize(

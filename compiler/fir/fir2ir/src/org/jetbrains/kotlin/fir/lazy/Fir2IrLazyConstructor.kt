@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.descriptors.Visibility as OldVisibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility as OldVisibility
 
 class Fir2IrLazyConstructor(
     components: Fir2IrComponents,

@@ -22,12 +22,12 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 
-public class JavaVisibilities {
-    private JavaVisibilities() {
+public class JavaDescriptorVisibilities {
+    private JavaDescriptorVisibilities() {
     }
 
     @NotNull
-    public static final Visibility PACKAGE_VISIBILITY = new Visibility("package", false) {
+    public static final DescriptorVisibility PACKAGE_VISIBILITY = new DescriptorVisibility("package", false) {
         @Override
         public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             return areInSamePackage(what, from);
@@ -39,9 +39,9 @@ public class JavaVisibilities {
         }
 
         @Override
-        protected Integer compareTo(@NotNull Visibility visibility) {
+        protected Integer compareTo(@NotNull DescriptorVisibility visibility) {
             if (this == visibility) return 0;
-            if (Visibilities.isPrivate(visibility)) return 1;
+            if (DescriptorVisibilities.isPrivate(visibility)) return 1;
             return -1;
         }
 
@@ -59,8 +59,8 @@ public class JavaVisibilities {
 
         @NotNull
         @Override
-        public Visibility normalize() {
-            return Visibilities.PROTECTED;
+        public DescriptorVisibility normalize() {
+            return DescriptorVisibilities.PROTECTED;
         }
 
         @Nullable
@@ -71,7 +71,7 @@ public class JavaVisibilities {
     };
 
     @NotNull
-    public static final Visibility PROTECTED_STATIC_VISIBILITY = new Visibility("protected_static", true) {
+    public static final DescriptorVisibility PROTECTED_STATIC_VISIBILITY = new DescriptorVisibility("protected_static", true) {
         @Override
         public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             return isVisibleForProtectedAndPackage(receiver, what, from);
@@ -96,13 +96,13 @@ public class JavaVisibilities {
 
         @NotNull
         @Override
-        public Visibility normalize() {
-            return Visibilities.PROTECTED;
+        public DescriptorVisibility normalize() {
+            return DescriptorVisibilities.PROTECTED;
         }
     };
 
     @NotNull
-    public static final Visibility PROTECTED_AND_PACKAGE = new Visibility("protected_and_package", true) {
+    public static final DescriptorVisibility PROTECTED_AND_PACKAGE = new DescriptorVisibility("protected_and_package", true) {
         @Override
         public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             return isVisibleForProtectedAndPackage(receiver, what, from);
@@ -114,10 +114,10 @@ public class JavaVisibilities {
         }
 
         @Override
-        protected Integer compareTo(@NotNull Visibility visibility) {
+        protected Integer compareTo(@NotNull DescriptorVisibility visibility) {
             if (this == visibility) return 0;
-            if (visibility == Visibilities.INTERNAL) return null;
-            if (Visibilities.isPrivate(visibility)) return 1;
+            if (visibility == DescriptorVisibilities.INTERNAL) return null;
+            if (DescriptorVisibilities.isPrivate(visibility)) return 1;
             return -1;
         }
 
@@ -135,8 +135,8 @@ public class JavaVisibilities {
 
         @NotNull
         @Override
-        public Visibility normalize() {
-            return Visibilities.PROTECTED;
+        public DescriptorVisibility normalize() {
+            return DescriptorVisibilities.PROTECTED;
         }
     };
 
@@ -149,7 +149,7 @@ public class JavaVisibilities {
             return true;
         }
 
-        return Visibilities.PROTECTED.isVisible(receiver, what, from);
+        return DescriptorVisibilities.PROTECTED.isVisible(receiver, what, from);
     }
 
     private static boolean areInSamePackage(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {

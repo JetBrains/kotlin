@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.overrides
 
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
 import org.jetbrains.kotlin.ir.declarations.IrOverridableMember
 
@@ -16,7 +16,7 @@ fun isVisibleForOverride(
     @Suppress("UNUSED_PARAMETER") overriding: IrOverridableMember,
     fromSuper: IrOverridableMember
 ): Boolean {
-    return !Visibilities.isPrivate((fromSuper as IrDeclarationWithVisibility).visibility)
+    return !DescriptorVisibilities.isPrivate((fromSuper as IrDeclarationWithVisibility).visibility)
 }
 
 fun findMemberWithMaxVisibility(members: Collection<IrOverridableMember>): IrOverridableMember {
@@ -29,7 +29,7 @@ fun findMemberWithMaxVisibility(members: Collection<IrOverridableMember>): IrOve
             continue
         }
 
-        val result = Visibilities.compare(member.visibility, candidate.visibility)
+        val result = DescriptorVisibilities.compare(member.visibility, candidate.visibility)
         if (result != null && result < 0) {
             member = candidate
         }

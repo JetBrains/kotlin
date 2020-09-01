@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -203,7 +203,7 @@ class ParcelableIrTransformer(private val context: IrPluginContext, private val 
                 val irField = this
                 val creatorClass = irFactory.buildClass {
                     name = Name.identifier("Creator")
-                    visibility = Visibilities.LOCAL
+                    visibility = DescriptorVisibilities.LOCAL
                 }.apply {
                     parent = irField
                     superTypes = listOf(creatorType)

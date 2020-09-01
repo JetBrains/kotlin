@@ -151,7 +151,7 @@ abstract class IrBasedCallableDescriptor<T : IrDeclaration>(owner: T) : Callable
 
     override fun hasSynthesizedParameterNames() = false
 
-    override fun getVisibility(): Visibility {
+    override fun getVisibility(): DescriptorVisibility {
         TODO("not implemented")
     }
 
@@ -414,11 +414,11 @@ open class IrBasedSimpleFunctionDescriptor(owner: IrSimpleFunction) : SimpleFunc
         else CallableMemberDescriptor.Kind.SYNTHESIZED
 
     override fun copy(
-        newOwner: DeclarationDescriptor?,
-        modality: Modality?,
-        visibility: Visibility?,
-        kind: CallableMemberDescriptor.Kind?,
-        copyOverrides: Boolean
+            newOwner: DeclarationDescriptor?,
+            modality: Modality?,
+            visibility: DescriptorVisibility?,
+            kind: CallableMemberDescriptor.Kind?,
+            copyOverrides: Boolean
     ): Nothing {
         TODO("not implemented")
     }
@@ -482,11 +482,11 @@ open class IrBasedClassConstructorDescriptor(owner: IrConstructor) : ClassConstr
     }
 
     override fun copy(
-        newOwner: DeclarationDescriptor,
-        modality: Modality,
-        visibility: Visibility,
-        kind: CallableMemberDescriptor.Kind,
-        copyOverrides: Boolean
+            newOwner: DeclarationDescriptor,
+            modality: Modality,
+            visibility: DescriptorVisibility,
+            kind: CallableMemberDescriptor.Kind,
+            copyOverrides: Boolean
     ): ClassConstructorDescriptor {
         throw UnsupportedOperationException()
     }
@@ -696,7 +696,7 @@ open class IrBasedEnumEntryDescriptor(owner: IrEnumEntry) : ClassDescriptor, IrB
 
     override fun getCompanionObjectDescriptor() = null
 
-    override fun getVisibility() = Visibilities.DEFAULT_VISIBILITY
+    override fun getVisibility() = DescriptorVisibilities.DEFAULT_VISIBILITY
 
     override fun isCompanionObject() = false
 
@@ -776,11 +776,11 @@ open class IrBasedPropertyDescriptor(owner: IrProperty) : PropertyDescriptor, Ir
     override fun getOverriddenDescriptors(): MutableCollection<out PropertyDescriptor> = mutableListOf()
 
     override fun copy(
-        newOwner: DeclarationDescriptor?,
-        modality: Modality?,
-        visibility: Visibility?,
-        kind: CallableMemberDescriptor.Kind?,
-        copyOverrides: Boolean
+            newOwner: DeclarationDescriptor?,
+            modality: Modality?,
+            visibility: DescriptorVisibility?,
+            kind: CallableMemberDescriptor.Kind?,
+            copyOverrides: Boolean
     ): CallableMemberDescriptor {
         TODO("not implemented")
     }
@@ -937,7 +937,7 @@ open class IrBasedTypeAliasDescriptor(owner: IrTypeAlias) : IrBasedDeclarationDe
 
     override fun getSource(): SourceElement = SourceElement.NO_SOURCE
 
-    override fun getVisibility(): Visibility = owner.visibility
+    override fun getVisibility(): DescriptorVisibility = owner.visibility
 
     override fun isExpect(): Boolean = false
 
@@ -971,11 +971,11 @@ open class IrBasedFieldDescriptor(owner: IrField) : PropertyDescriptor, IrBasedD
     override fun getOverriddenDescriptors(): MutableCollection<out PropertyDescriptor> = mutableListOf()
 
     override fun copy(
-        newOwner: DeclarationDescriptor?,
-        modality: Modality?,
-        visibility: Visibility?,
-        kind: CallableMemberDescriptor.Kind?,
-        copyOverrides: Boolean
+            newOwner: DeclarationDescriptor?,
+            modality: Modality?,
+            visibility: DescriptorVisibility?,
+            kind: CallableMemberDescriptor.Kind?,
+            copyOverrides: Boolean
     ): CallableMemberDescriptor {
         TODO("not implemented")
     }

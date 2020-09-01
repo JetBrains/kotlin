@@ -48,7 +48,7 @@ private fun DeclarationDescriptorWithVisibility.isVisible(
     bindingContext: BindingContext? = null,
     resolutionScope: LexicalScope? = null
 ): Boolean {
-    if (Visibilities.isVisibleWithAnyReceiver(this, from)) return true
+    if (DescriptorVisibilities.isVisibleWithAnyReceiver(this, from)) return true
 
     if (bindingContext == null || resolutionScope == null) return false
 
@@ -56,10 +56,10 @@ private fun DeclarationDescriptorWithVisibility.isVisible(
     if (receiverExpression != null && !isExtension) {
         val receiverType = bindingContext.getType(receiverExpression) ?: return false
         val explicitReceiver = ExpressionReceiver.create(receiverExpression, receiverType, bindingContext)
-        return Visibilities.isVisible(explicitReceiver, this, from)
+        return DescriptorVisibilities.isVisible(explicitReceiver, this, from)
     } else {
         return resolutionScope.getImplicitReceiversHierarchy().any {
-            Visibilities.isVisible(it.value, this, from)
+            DescriptorVisibilities.isVisible(it.value, this, from)
         }
     }
 }
@@ -104,12 +104,12 @@ fun compareDescriptors(project: Project, currentDescriptor: DeclarationDescripto
     return false
 }
 
-fun Visibility.toKeywordToken(): KtModifierKeywordToken = when (val normalized = normalize()) {
-    Visibilities.PUBLIC -> KtTokens.PUBLIC_KEYWORD
-    Visibilities.PROTECTED -> KtTokens.PROTECTED_KEYWORD
-    Visibilities.INTERNAL -> KtTokens.INTERNAL_KEYWORD
+fun DescriptorVisibility.toKeywordToken(): KtModifierKeywordToken = when (val normalized = normalize()) {
+    DescriptorVisibilities.PUBLIC -> KtTokens.PUBLIC_KEYWORD
+    DescriptorVisibilities.PROTECTED -> KtTokens.PROTECTED_KEYWORD
+    DescriptorVisibilities.INTERNAL -> KtTokens.INTERNAL_KEYWORD
     else -> {
-        if (Visibilities.isPrivate(normalized)) {
+        if (DescriptorVisibilities.isPrivate(normalized)) {
             KtTokens.PRIVATE_KEYWORD
         } else {
             error("Unexpected visibility '$normalized'")

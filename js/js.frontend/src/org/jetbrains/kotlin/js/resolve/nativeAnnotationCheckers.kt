@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.js.resolve
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.js.PredefinedAnnotation
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs
@@ -44,7 +44,7 @@ internal abstract class AbstractNativeAnnotationsChecker(private val requiredAnn
             return
         }
 
-        val isMember = !DescriptorUtils.isTopLevelDeclaration(descriptor) && descriptor.visibility != Visibilities.LOCAL
+        val isMember = !DescriptorUtils.isTopLevelDeclaration(descriptor) && descriptor.visibility != DescriptorVisibilities.LOCAL
         val isExtension = DescriptorUtils.isExtension(descriptor)
 
         if (isMember && (isExtension || !AnnotationsUtils.isNativeObject(descriptor)) ||

@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.Visibilities.*
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.*
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPropertySetter
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirPropertySetterFactory
 import org.junit.Test
@@ -87,13 +87,13 @@ class PropertySetterCommonizerTest : AbstractCommonizerTest<CirPropertySetter?, 
         PUBLIC, LOCAL
     )
 
-    private fun doTestSuccess(expected: Visibility?, vararg variants: Visibility?) =
+    private fun doTestSuccess(expected: DescriptorVisibility?, vararg variants: DescriptorVisibility?) =
         super.doTestSuccess(
             expected = expected?.let { CirPropertySetterFactory.createDefaultNoAnnotations(expected) },
             *variants.map { it?.let(CirPropertySetterFactory::createDefaultNoAnnotations) }.toTypedArray()
         )
 
-    private fun doTestFailure(vararg variants: Visibility?) =
+    private fun doTestFailure(vararg variants: DescriptorVisibility?) =
         super.doTestFailure(
             *variants.map { it?.let(CirPropertySetterFactory::createDefaultNoAnnotations) }.toTypedArray(),
             shouldFailOnFirstVariant = false

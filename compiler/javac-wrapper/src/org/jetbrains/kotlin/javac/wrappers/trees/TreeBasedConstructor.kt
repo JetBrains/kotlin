@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.javac.wrappers.trees
 
 import com.sun.source.tree.CompilationUnitTree
 import com.sun.tools.javac.tree.JCTree
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaConstructor
@@ -45,7 +45,7 @@ class TreeBasedConstructor(
     override val isFinal: Boolean
         get() = true
 
-    override val visibility: Visibility
+    override val visibility: DescriptorVisibility
         get() = tree.modifiers.visibility
 
     override val typeParameters: List<JavaTypeParameter>

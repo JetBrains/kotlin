@@ -87,7 +87,7 @@ object KSerializerDescriptorResolver {
 
         val props = interfaceDecl.primaryConstructorParameters
         // if there is some properties, there will be a public synthetic constructor at the codegen phase
-        val primaryCtorVisibility = if (props.isEmpty()) Visibilities.PUBLIC else Visibilities.PRIVATE
+        val primaryCtorVisibility = if (props.isEmpty()) DescriptorVisibilities.PUBLIC else DescriptorVisibilities.PRIVATE
 
         val descriptor = SyntheticClassOrObjectDescriptor(
             ctx,
@@ -97,7 +97,7 @@ object KSerializerDescriptorResolver {
             interfaceDesc.source,
             scope,
             Modality.FINAL,
-            Visibilities.PUBLIC,
+            DescriptorVisibilities.PUBLIC,
             Annotations.create(listOf(createDeprecatedHiddenAnnotation(interfaceDesc.module))),
             primaryCtorVisibility,
             ClassKind.CLASS,
@@ -121,9 +121,9 @@ object KSerializerDescriptorResolver {
             thisDeclaration,
             thisDescriptor, SERIALIZER_CLASS_NAME, thisDescriptor.source,
             scope,
-            Modality.FINAL, Visibilities.PUBLIC,
+            Modality.FINAL, DescriptorVisibilities.PUBLIC,
             Annotations.create(listOf(createDeprecatedHiddenAnnotation(thisDescriptor.module))),
-            Visibilities.PRIVATE,
+            DescriptorVisibilities.PRIVATE,
             serializerKind, false
         )
         val typeParameters: List<TypeParameterDescriptor> =
@@ -234,7 +234,7 @@ object KSerializerDescriptorResolver {
             .getContributedVariables(name, NoLookupLocation.FROM_BUILTINS).single()
 
         val propertyDescriptor = PropertyDescriptorImpl.create(
-            companionDescriptor, Annotations.EMPTY, Modality.OPEN, Visibilities.PUBLIC, false, name,
+            companionDescriptor, Annotations.EMPTY, Modality.OPEN, DescriptorVisibilities.PUBLIC, false, name,
             CallableMemberDescriptor.Kind.SYNTHESIZED, companionDescriptor.source, false, false, false, false, false, false
         )
 
@@ -247,7 +247,7 @@ object KSerializerDescriptorResolver {
         )
 
         val propertyGetter = PropertyGetterDescriptorImpl(
-            propertyDescriptor, Annotations.EMPTY, Modality.OPEN, Visibilities.PUBLIC, false, false, false,
+            propertyDescriptor, Annotations.EMPTY, Modality.OPEN, DescriptorVisibilities.PUBLIC, false, false, false,
             CallableMemberDescriptor.Kind.SYNTHESIZED, null, companionDescriptor.source
         )
 
@@ -280,7 +280,7 @@ object KSerializerDescriptorResolver {
             functionFromSerializer.valueParameters.map { it.copy(functionDescriptor, it.name, it.index) },
             functionFromSerializer.returnType,
             Modality.OPEN,
-            Visibilities.PUBLIC
+            DescriptorVisibilities.PUBLIC
         )
 
         return functionDescriptor
@@ -332,7 +332,7 @@ object KSerializerDescriptorResolver {
 
         functionDescriptor.initialize(
             consParams,
-            Visibilities.PUBLIC
+            DescriptorVisibilities.PUBLIC
         )
 
         functionDescriptor.returnType = classDescriptor.defaultType
@@ -365,7 +365,7 @@ object KSerializerDescriptorResolver {
             )
         }
 
-        constrDesc.initialize(args, Visibilities.PUBLIC, typeParameters)
+        constrDesc.initialize(args, DescriptorVisibilities.PUBLIC, typeParameters)
         constrDesc.returnType = classDescriptor.defaultType
         return constrDesc
     }
@@ -456,7 +456,7 @@ object KSerializerDescriptorResolver {
             listOf(vararg),
             kSerializerStarType,
             Modality.FINAL,
-            Visibilities.PUBLIC
+            DescriptorVisibilities.PUBLIC
         )
         return f
     }
@@ -481,7 +481,7 @@ object KSerializerDescriptorResolver {
         val serialReturnType =
             KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, serializerClass, listOf(TypeProjectionImpl(newSerializableType)))
 
-        f.initialize(null, thisClass.thisAsReceiverParameter, typeArgs, args, serialReturnType, Modality.FINAL, Visibilities.PUBLIC)
+        f.initialize(null, thisClass.thisAsReceiverParameter, typeArgs, args, serialReturnType, Modality.FINAL, DescriptorVisibilities.PUBLIC)
         return f
     }
 
@@ -575,7 +575,7 @@ object KSerializerDescriptorResolver {
             args,
             returnType,
             Modality.FINAL,
-            Visibilities.PUBLIC
+            DescriptorVisibilities.PUBLIC
         )
 
         return f
@@ -591,7 +591,7 @@ object KSerializerDescriptorResolver {
                 fromSupertypes[0].copy(
                     thisDescriptor,
                     Modality.FINAL,
-                    Visibilities.PUBLIC,
+                    DescriptorVisibilities.PUBLIC,
                     CallableMemberDescriptor.Kind.SYNTHESIZED,
                     true
                 ) as PropertyDescriptor

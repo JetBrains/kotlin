@@ -93,7 +93,7 @@ private class AndroidIrTransformer(val extension: AndroidIrExtension, val plugin
 
     private fun createField(fqName: FqName, type: IrType) =
         cachedFields.getOrPut(fqName) {
-            createClass(fqName.parent()).addField(fqName.shortName(), type, Visibilities.PUBLIC)
+            createClass(fqName.parent()).addField(fqName.shortName(), type, DescriptorVisibilities.PUBLIC)
         }
 
     override fun visitClassNew(declaration: IrClass): IrStatement {

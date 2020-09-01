@@ -37,13 +37,13 @@ internal object CheckVisibility : ResolutionPart() {
         val containingDescriptor = scopeTower.lexicalScope.ownerDescriptor
         val dispatchReceiverArgument = resolvedCall.dispatchReceiverArgument
 
-        val receiverValue = dispatchReceiverArgument?.receiver?.receiverValue ?: Visibilities.ALWAYS_SUITABLE_RECEIVER
+        val receiverValue = dispatchReceiverArgument?.receiver?.receiverValue ?: DescriptorVisibilities.ALWAYS_SUITABLE_RECEIVER
         val invisibleMember =
-            Visibilities.findInvisibleMember(receiverValue, resolvedCall.candidateDescriptor, containingDescriptor) ?: return
+            DescriptorVisibilities.findInvisibleMember(receiverValue, resolvedCall.candidateDescriptor, containingDescriptor) ?: return
 
         if (dispatchReceiverArgument is ExpressionKotlinCallArgument) {
             val smartCastReceiver = getReceiverValueWithSmartCast(receiverValue, dispatchReceiverArgument.receiver.stableType)
-            if (Visibilities.findInvisibleMember(smartCastReceiver, candidateDescriptor, containingDescriptor) == null) {
+            if (DescriptorVisibilities.findInvisibleMember(smartCastReceiver, candidateDescriptor, containingDescriptor) == null) {
                 addDiagnostic(
                     SmartCastDiagnostic(
                         dispatchReceiverArgument,

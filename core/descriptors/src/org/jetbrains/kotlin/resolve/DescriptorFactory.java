@@ -78,7 +78,7 @@ public class DescriptorFactory {
             boolean isDefault,
             boolean isExternal,
             boolean isInline,
-            @NotNull Visibility visibility,
+            @NotNull DescriptorVisibility visibility,
             @NotNull SourceElement sourceElement
     ) {
         PropertySetterDescriptorImpl setterDescriptor = new PropertySetterDescriptorImpl(
@@ -141,7 +141,7 @@ public class DescriptorFactory {
         return values.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
                                  Collections.<ValueParameterDescriptor>emptyList(),
                                  getBuiltIns(enumClass).getArrayType(Variance.INVARIANT, enumClass.getDefaultType()),
-                                 Modality.FINAL, Visibilities.PUBLIC);
+                                 Modality.FINAL, DescriptorVisibilities.PUBLIC);
     }
 
     @NotNull
@@ -159,7 +159,7 @@ public class DescriptorFactory {
         );
         return valueOf.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
                                   Collections.singletonList(parameterDescriptor), enumClass.getDefaultType(),
-                                  Modality.FINAL, Visibilities.PUBLIC);
+                                  Modality.FINAL, DescriptorVisibilities.PUBLIC);
     }
 
     public static boolean isEnumValuesMethod(@NotNull FunctionDescriptor descriptor) {

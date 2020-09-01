@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -141,7 +141,7 @@ fun IrClass.buildAssertionsDisabledField(backendContext: JvmBackendContext, topL
     factory.buildField {
         name = Name.identifier(ASSERTIONS_DISABLED_FIELD_NAME)
         origin = JvmLoweredDeclarationOrigin.GENERATED_ASSERTION_ENABLED_FIELD
-        visibility = JavaVisibilities.PACKAGE_VISIBILITY
+        visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
         type = backendContext.irBuiltIns.booleanType
         isFinal = true
         isStatic = true

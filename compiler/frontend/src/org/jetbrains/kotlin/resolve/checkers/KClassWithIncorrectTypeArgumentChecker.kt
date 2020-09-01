@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 object KClassWithIncorrectTypeArgumentChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        if (descriptor !is CallableMemberDescriptor || descriptor.visibility == Visibilities.LOCAL) return
+        if (descriptor !is CallableMemberDescriptor || descriptor.visibility == DescriptorVisibilities.LOCAL) return
 
         if (declaration !is KtCallableDeclaration || declaration.typeReference != null) return
 

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.descriptors.Visibility as OldVisibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility as OldVisibility
 
 class Fir2IrLazyClass(
     components: Fir2IrComponents,

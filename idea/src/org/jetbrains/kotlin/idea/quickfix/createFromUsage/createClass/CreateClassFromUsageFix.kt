@@ -16,7 +16,7 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.psi.*
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.core.getFqNameWithImplicitPrefix
@@ -69,7 +69,7 @@ data class ClassInfo(
     val open: Boolean = false,
     val typeArguments: List<TypeInfo> = Collections.emptyList(),
     val parameterInfos: List<ParameterInfo> = Collections.emptyList(),
-    val primaryConstructorVisibility: Visibility? = null
+    val primaryConstructorVisibility: DescriptorVisibility? = null
 ) {
     val applicableParents by lazy {
         targetParents.filter {

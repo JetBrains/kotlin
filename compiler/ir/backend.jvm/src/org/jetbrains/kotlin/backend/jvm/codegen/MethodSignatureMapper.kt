@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.codegen.state.JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_N
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.codegen.state.extractTypeMappingModeFromAnnotation
 import org.jetbrains.kotlin.codegen.state.isMethodWithDeclarationSiteWildcardsFqName
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
@@ -106,7 +106,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         val newName = JvmCodegenUtil.sanitizeNameIfNeeded(name, context.state.languageVersionSettings)
 
         if (function.isTopLevel) {
-            if (Visibilities.isPrivate(function.suspendFunctionOriginal().visibility) &&
+            if (DescriptorVisibilities.isPrivate(function.suspendFunctionOriginal().visibility) &&
                 newName != "<clinit>" && (function.parent as? IrClass)?.attributeOwnerId in context.multifileFacadeForPart
             ) {
                 return "$newName$${function.parentAsClass.name.asString()}"
@@ -123,7 +123,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
     private fun IrFunction.shouldMangleAsInternal() =
         this !is IrConstructor &&
                 origin != JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR &&
-                visibility == Visibilities.INTERNAL &&
+                visibility == DescriptorVisibilities.INTERNAL &&
                 !isPublishedApi()
 
     private fun getModuleName(function: IrFunction): String =
@@ -313,8 +313,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         val invokeOpcode = when {
             callee.dispatchReceiverParameter == null -> Opcodes.INVOKESTATIC
             isSuperCall -> Opcodes.INVOKESPECIAL
-            isInterface && !Visibilities.isPrivate(callee.visibility) -> Opcodes.INVOKEINTERFACE
-            Visibilities.isPrivate(callee.visibility) && !callee.isSuspend -> Opcodes.INVOKESPECIAL
+            isInterface && !DescriptorVisibilities.isPrivate(callee.visibility) -> Opcodes.INVOKEINTERFACE
+            DescriptorVisibilities.isPrivate(callee.visibility) && !callee.isSuspend -> Opcodes.INVOKESPECIAL
             else -> Opcodes.INVOKEVIRTUAL
         }
 

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil;
-import org.jetbrains.kotlin.load.java.JavaVisibilities;
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
@@ -469,7 +469,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                 Name.special("<clinit>"), SYNTHESIZED, KotlinSourceElementKt.toSourceElement(element));
         clInit.initialize(null, null, Collections.emptyList(), Collections.emptyList(),
                           DescriptorUtilsKt.getModule(descriptor).getBuiltIns().getUnitType(),
-                          Modality.FINAL, Visibilities.PRIVATE);
+                          Modality.FINAL, DescriptorVisibilities.PRIVATE);
         return clInit;
     }
 
@@ -882,7 +882,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                                                              !isCompanionObject(accessor.getContainingDeclaration());
                     boolean forceField = forceFieldForCompanionProperty ||
                                          syntheticBackingField ||
-                                         original.getVisibility() == JavaVisibilities.PROTECTED_STATIC_VISIBILITY;
+                                         original.getVisibility() == JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY;
                     StackValue property = codegen.intermediateValueForProperty(
                             original, forceField, syntheticBackingField, accessor.getSuperCallTarget(),
                             forceFieldForCompanionProperty, StackValue.none(), null,

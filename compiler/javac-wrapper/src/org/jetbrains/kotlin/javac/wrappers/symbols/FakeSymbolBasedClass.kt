@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.javac.wrappers.symbols
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.SearchScope
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.javac.JavaClassWithClassId
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.*
@@ -37,7 +37,7 @@ class FakeSymbolBasedClass(
 
     override val isFinal: Boolean get() = false
 
-    override val visibility: Visibility get() = Visibilities.PUBLIC
+    override val visibility: DescriptorVisibility get() = DescriptorVisibilities.PUBLIC
 
     override val typeParameters: List<JavaTypeParameter> get() = emptyList()
 

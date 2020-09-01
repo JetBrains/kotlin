@@ -47,7 +47,7 @@ object InlineClassDeclarationChecker : DeclarationChecker {
         }
 
         val primaryConstructorVisibility = descriptor.unsubstitutedPrimaryConstructor?.visibility
-        if (primaryConstructorVisibility != null && primaryConstructorVisibility != Visibilities.PUBLIC) {
+        if (primaryConstructorVisibility != null && primaryConstructorVisibility != DescriptorVisibilities.PUBLIC) {
             trace.report(Errors.NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS.on(primaryConstructor.visibilityModifier() ?: inlineKeyword))
             return
         }

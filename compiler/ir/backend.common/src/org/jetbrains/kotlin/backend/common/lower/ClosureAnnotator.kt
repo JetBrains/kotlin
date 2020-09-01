@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.ir.ir2string
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -264,7 +264,7 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
 
         private fun processMemberAccess(declaration: IrDeclaration, parentClosure: ClosureBuilder?) {
             if (declaration.isLocal) {
-                if (declaration is IrSimpleFunction && declaration.visibility != Visibilities.LOCAL) {
+                if (declaration is IrSimpleFunction && declaration.visibility != DescriptorVisibilities.LOCAL) {
                     return
                 }
 

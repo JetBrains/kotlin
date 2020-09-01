@@ -63,15 +63,15 @@ class JvmSerializerExtension @JvmOverloads constructor(
 
     override fun shouldUseTypeTable(): Boolean = useTypeTable
     override fun shouldSerializeFunction(descriptor: FunctionDescriptor): Boolean {
-        return classBuilderMode != ClassBuilderMode.ABI || descriptor.visibility != Visibilities.PRIVATE
+        return classBuilderMode != ClassBuilderMode.ABI || descriptor.visibility != DescriptorVisibilities.PRIVATE
     }
 
     override fun shouldSerializeProperty(descriptor: PropertyDescriptor): Boolean {
-        return classBuilderMode != ClassBuilderMode.ABI || descriptor.visibility != Visibilities.PRIVATE
+        return classBuilderMode != ClassBuilderMode.ABI || descriptor.visibility != DescriptorVisibilities.PRIVATE
     }
 
     override fun shouldSerializeTypeAlias(descriptor: TypeAliasDescriptor): Boolean {
-        return classBuilderMode != ClassBuilderMode.ABI || descriptor.visibility != Visibilities.PRIVATE
+        return classBuilderMode != ClassBuilderMode.ABI || descriptor.visibility != DescriptorVisibilities.PRIVATE
     }
 
     override fun shouldSerializeNestedClass(descriptor: ClassDescriptor): Boolean {
@@ -233,7 +233,7 @@ class JvmSerializerExtension @JvmOverloads constructor(
 
     private fun FunctionDescriptor.needsInlineParameterNullCheckRequirement(): Boolean =
         isInline && !isSuspend && !isParamAssertionsDisabled &&
-                !Visibilities.isPrivate(visibility) &&
+                !DescriptorVisibilities.isPrivate(visibility) &&
                 (valueParameters.any { it.type.isFunctionType } || extensionReceiverParameter?.type?.isFunctionType == true)
 
     override fun serializeProperty(

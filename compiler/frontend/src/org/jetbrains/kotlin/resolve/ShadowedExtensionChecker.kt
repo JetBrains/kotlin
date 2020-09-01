@@ -88,7 +88,7 @@ class ShadowedExtensionChecker(val typeSpecificityComparator: TypeSpecificityCom
     }
 
     private fun DeclarationDescriptorWithVisibility.isPublic() =
-        visibility.normalize() == Visibilities.PUBLIC
+        visibility.normalize() == DescriptorVisibilities.PUBLIC
 
     private fun isExtensionFunctionShadowedByMemberFunction(extension: FunctionDescriptor, member: FunctionDescriptor): Boolean {
         // Permissive check:

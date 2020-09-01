@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.backend.generators
 import org.jetbrains.kotlin.backend.common.ir.isFinalClass
 import org.jetbrains.kotlin.backend.common.ir.isOverridable
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities as OldVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities as OldVisibilities
 import org.jetbrains.kotlin.fir.Visibilities
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
@@ -142,7 +142,7 @@ internal class DelegatedMemberGenerator(
     private fun IrDeclaration.isOverridable(): Boolean {
         return when (this) {
             is IrSimpleFunction -> this.isOverridable
-            is IrProperty -> visibility != OldVisibilities.PRIVATE && modality != Modality.FINAL && (parent as? IrClass)?.isFinalClass != true
+            is IrProperty -> visibility != org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE && modality != Modality.FINAL && (parent as? IrClass)?.isFinalClass != true
             else -> false
         }
     }

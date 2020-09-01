@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 
 interface CirFunctionOrProperty :
     CirDeclaration,
@@ -27,7 +27,7 @@ interface CirFunctionOrProperty :
         modality != Modality.ABSTRACT && containingClassDetails?.kind == ClassKind.INTERFACE
 
     fun isVirtual(): Boolean =
-        visibility != Visibilities.PRIVATE
+        visibility != DescriptorVisibilities.PRIVATE
                 && modality != Modality.FINAL
                 && !(containingClassDetails?.modality == Modality.FINAL && containingClassDetails?.kind != ClassKind.ENUM_CLASS)
 }

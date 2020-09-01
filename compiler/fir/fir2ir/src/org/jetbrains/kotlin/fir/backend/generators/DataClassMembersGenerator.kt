@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.DataClassMembersGenerator
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.descriptors.Visibilities as OldVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities as OldVisibilities
 
 /**
  * A generator that generates synthetic members of data class as well as part of inline class.

@@ -230,7 +230,7 @@ public class ControlStructureTypingUtils {
                 valueParameters,
                 returnType,
                 Modality.FINAL,
-                Visibilities.PUBLIC
+                DescriptorVisibilities.PUBLIC
         );
         return function;
     }

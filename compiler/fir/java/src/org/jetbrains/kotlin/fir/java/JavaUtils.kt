@@ -40,9 +40,7 @@ import org.jetbrains.kotlin.load.java.typeEnhancement.TypeComponentPosition
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance.*
-import org.jetbrains.kotlin.descriptors.Visibilities as OldVisibilities
-import org.jetbrains.kotlin.descriptors.Visibility as OldVisibility
-import org.jetbrains.kotlin.load.java.JavaVisibilities as OldJavaVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility as OldVisibility
 
 internal val JavaModifierListOwner.modality: Modality
     get() = when {
@@ -527,16 +525,16 @@ private fun JavaType.toFirResolvedTypeRef(
 }
 
 fun OldVisibility.toFirVisibility(): Visibility = when (this) {
-    OldVisibilities.PRIVATE -> Visibilities.Private
-    OldVisibilities.PRIVATE_TO_THIS -> Visibilities.PrivateToThis
-    OldVisibilities.PROTECTED -> Visibilities.Protected
-    OldVisibilities.INTERNAL -> Visibilities.Internal
-    OldVisibilities.PUBLIC -> Visibilities.Public
-    OldVisibilities.LOCAL -> Visibilities.Local
-    OldVisibilities.INVISIBLE_FAKE -> Visibilities.InvisibleFake
-    OldVisibilities.UNKNOWN -> Visibilities.Unknown
-    OldJavaVisibilities.PACKAGE_VISIBILITY -> JavaVisibilities.PackageVisibility
-    OldJavaVisibilities.PROTECTED_AND_PACKAGE -> JavaVisibilities.ProtectedAndPackage
-    OldJavaVisibilities.PROTECTED_STATIC_VISIBILITY -> JavaVisibilities.ProtectedStaticVisibility
+    org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE -> Visibilities.Private
+    org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE_TO_THIS -> Visibilities.PrivateToThis
+    org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PROTECTED -> Visibilities.Protected
+    org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL -> Visibilities.Internal
+    org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PUBLIC -> Visibilities.Public
+    org.jetbrains.kotlin.descriptors.DescriptorVisibilities.LOCAL -> Visibilities.Local
+    org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INVISIBLE_FAKE -> Visibilities.InvisibleFake
+    org.jetbrains.kotlin.descriptors.DescriptorVisibilities.UNKNOWN -> Visibilities.Unknown
+    org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities.PACKAGE_VISIBILITY -> JavaVisibilities.PackageVisibility
+    org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities.PROTECTED_AND_PACKAGE -> JavaVisibilities.ProtectedAndPackage
+    org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY -> JavaVisibilities.ProtectedStaticVisibility
     else -> error("Unknown visiblity: $this")
 }

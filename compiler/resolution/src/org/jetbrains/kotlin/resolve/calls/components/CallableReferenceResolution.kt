@@ -153,7 +153,7 @@ fun ConstraintSystemOperation.checkCallableReference(
         addSubtypeConstraint(toFreshSubstitutor.safeSubstitute(reflectionCandidateType), expectedType, position)
     }
 
-    val invisibleMember = Visibilities.findInvisibleMember(
+    val invisibleMember = DescriptorVisibilities.findInvisibleMember(
         dispatchReceiver?.asReceiverValueForVisibilityChecks,
         candidateDescriptor, ownerDescriptor
     )
@@ -495,7 +495,7 @@ class CallableReferencesCandidateFactory(
             is PropertyDescriptor -> {
                 val mutable = descriptor.isVar && run {
                     val setter = descriptor.setter
-                    setter == null || Visibilities.isVisible(
+                    setter == null || DescriptorVisibilities.isVisible(
                         dispatchReceiver?.asReceiverValueForVisibilityChecks, setter,
                         scopeTower.lexicalScope.ownerDescriptor
                     )

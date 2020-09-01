@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.ir.isExpect
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6AddInternalParametersToConstructorPhase.*
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
@@ -356,7 +356,7 @@ private fun getExportCandidate(declaration: IrDeclaration): IrDeclarationWithNam
     // Only actual public declarations with name can be exported
     if (declaration !is IrDeclarationWithVisibility ||
         declaration !is IrDeclarationWithName ||
-        declaration.visibility != Visibilities.PUBLIC ||
+        declaration.visibility != DescriptorVisibilities.PUBLIC ||
         declaration.isExpect
     ) {
         return null

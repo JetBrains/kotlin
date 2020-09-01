@@ -105,8 +105,8 @@ class ExplicitApiDeclarationChecker : DeclarationChecker {
             val callableMemberDescriptor = descriptor as? CallableMemberDescriptor
 
             val visibility = callableMemberDescriptor?.effectiveVisibility()?.toVisibility()
-            return (checkForPublicApi && visibility?.isPublicAPI == true) || (checkForInternal && visibility == Visibilities.INTERNAL) ||
-                    (checkForPrivate && visibility == Visibilities.PRIVATE)
+            return (checkForPublicApi && visibility?.isPublicAPI == true) || (checkForInternal && visibility == DescriptorVisibilities.INTERNAL) ||
+                    (checkForPrivate && visibility == DescriptorVisibilities.PRIVATE)
         }
 
         fun returnTypeCheckIsApplicable(element: KtCallableDeclaration): Boolean {

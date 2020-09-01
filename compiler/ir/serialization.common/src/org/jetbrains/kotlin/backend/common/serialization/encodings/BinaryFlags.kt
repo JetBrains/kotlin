@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.IrFlags
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.types.Variance
 inline class ClassFlags(val flags: Long) {
 
     val modality: Modality get() = ProtoEnumFlags.modality(IrFlags.MODALITY.get(flags.toInt()))
-    val visibility: Visibility get() = ProtoEnumFlags.visibility(IrFlags.VISIBILITY.get(flags.toInt()))
+    val visibility: DescriptorVisibility get() = ProtoEnumFlags.visibility(IrFlags.VISIBILITY.get(flags.toInt()))
     val kind: ClassKind get() = ProtoEnumFlags.classKind(IrFlags.CLASS_KIND.get(flags.toInt()))
 
     val isCompanion: Boolean get() = IrFlags.CLASS_KIND.get(flags.toInt()) == ProtoBuf.Class.Kind.COMPANION_OBJECT
@@ -51,7 +51,7 @@ inline class ClassFlags(val flags: Long) {
 inline class FunctionFlags(val flags: Long) {
 
     val modality: Modality get() = ProtoEnumFlags.modality(IrFlags.MODALITY.get(flags.toInt()))
-    val visibility: Visibility get() = ProtoEnumFlags.visibility(IrFlags.VISIBILITY.get(flags.toInt()))
+    val visibility: DescriptorVisibility get() = ProtoEnumFlags.visibility(IrFlags.VISIBILITY.get(flags.toInt()))
 
     val isOperator: Boolean get() = IrFlags.IS_OPERATOR.get(flags.toInt())
     val isInfix: Boolean get() = IrFlags.IS_INFIX.get(flags.toInt())
@@ -101,7 +101,7 @@ inline class FunctionFlags(val flags: Long) {
 inline class PropertyFlags(val flags: Long) {
 
     val modality: Modality get() = ProtoEnumFlags.modality(IrFlags.MODALITY.get(flags.toInt()))
-    val visibility: Visibility get() = ProtoEnumFlags.visibility(IrFlags.VISIBILITY.get(flags.toInt()))
+    val visibility: DescriptorVisibility get() = ProtoEnumFlags.visibility(IrFlags.VISIBILITY.get(flags.toInt()))
 
     val isVar: Boolean get() = IrFlags.IS_VAR.get(flags.toInt())
     val isConst: Boolean get() = IrFlags.IS_CONST.get(flags.toInt())
@@ -154,7 +154,7 @@ inline class ValueParameterFlags(val flags: Long) {
 
 inline class TypeAliasFlags(val flags: Long) {
 
-    val visibility: Visibility get() = ProtoEnumFlags.visibility(IrFlags.VISIBILITY.get(flags.toInt()))
+    val visibility: DescriptorVisibility get() = ProtoEnumFlags.visibility(IrFlags.VISIBILITY.get(flags.toInt()))
     val isActual: Boolean get() = IrFlags.IS_ACTUAL.get(flags.toInt())
 
     companion object {
@@ -188,7 +188,7 @@ inline class TypeParameterFlags(val flags: Long) {
 
 inline class FieldFlags(val flags: Long) {
 
-    val visibility: Visibility get() = ProtoEnumFlags.visibility(IrFlags.VISIBILITY.get(flags.toInt()))
+    val visibility: DescriptorVisibility get() = ProtoEnumFlags.visibility(IrFlags.VISIBILITY.get(flags.toInt()))
     val isFinal: Boolean get() = IrFlags.IS_FINAL.get(flags.toInt())
     val isExternal: Boolean get() = IrFlags.IS_EXTERNAL_FIELD.get(flags.toInt())
     val isStatic: Boolean get() = IrFlags.IS_STATIC.get(flags.toInt())

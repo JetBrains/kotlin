@@ -50,7 +50,7 @@ class LocalFunInlineChecker : DeclarationChecker {
         if (InlineUtil.isInline(descriptor) &&
             declaration is KtNamedFunction &&
             descriptor is FunctionDescriptor &&
-            descriptor.visibility == Visibilities.LOCAL) {
+            descriptor.visibility == DescriptorVisibilities.LOCAL) {
             context.trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(declaration, "Local inline functions"))
         }
     }
@@ -117,7 +117,7 @@ class JvmStaticChecker(jvmTarget: JvmTarget, languageVersionSettings: LanguageVe
         diagnosticHolder: DiagnosticSink,
         declaration: KtDeclaration
     ) {
-        if (descriptor.visibility != Visibilities.PUBLIC) {
+        if (descriptor.visibility != DescriptorVisibilities.PUBLIC) {
             diagnosticHolder.report(ErrorsJvm.JVM_STATIC_ON_NON_PUBLIC_MEMBER.on(declaration))
         } else if (descriptor is PropertyDescriptor) {
             descriptor.setter?.let { checkVisibility(it, diagnosticHolder, declaration) }
@@ -234,7 +234,7 @@ class OverloadsAnnotationChecker: DeclarationChecker {
                     ErrorsJvm.OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR_WARNING
 
             diagnosticHolder.report(diagnostic.on(annotationEntry))
-        } else if (!descriptor.visibility.isPublicAPI && descriptor.visibility != Visibilities.INTERNAL) {
+        } else if (!descriptor.visibility.isPublicAPI && descriptor.visibility != DescriptorVisibilities.INTERNAL) {
             diagnosticHolder.report(ErrorsJvm.OVERLOADS_PRIVATE.on(annotationEntry))
         } else if (descriptor.valueParameters.none { it.declaresDefaultValue() || it.isActualParameterWithCorrespondingExpectedDefault }) {
             diagnosticHolder.report(ErrorsJvm.OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS.on(annotationEntry))

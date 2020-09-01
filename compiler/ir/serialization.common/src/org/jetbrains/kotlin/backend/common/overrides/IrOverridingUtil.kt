@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.backend.common.overrides
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -193,7 +193,7 @@ class IrOverridingUtil(
 
     private fun filterVisibleFakeOverrides(toFilter: Collection<IrOverridableMember>): Collection<IrOverridableMember> {
         return toFilter.filter { member: IrOverridableMember ->
-            !Visibilities.isPrivate(member.visibility)
+            !DescriptorVisibilities.isPrivate(member.visibility)
         }
     }
 
@@ -278,12 +278,12 @@ class IrOverridingUtil(
         return result
     }
 
-    private fun IrSimpleFunction.updateAccessorModalityAndVisibility(newModality: Modality, newVisibility: Visibility): IrSimpleFunction? {
+    private fun IrSimpleFunction.updateAccessorModalityAndVisibility(newModality: Modality, newVisibility: DescriptorVisibility): IrSimpleFunction? {
         require(this is IrFakeOverrideFunction) {
             "Unexpected fake override accessor kind: $this"
         }
         // For descriptors it gets INVISIBLE_FAKE.
-        if (this.visibility == Visibilities.PRIVATE) return null
+        if (this.visibility == DescriptorVisibilities.PRIVATE) return null
 
         this.visibility = newVisibility
         this.modality = newModality
@@ -335,7 +335,7 @@ class IrOverridingUtil(
         b: IrOverridableMember
     ): Boolean {
         val result =
-            Visibilities.compare(a.visibility, b.visibility)
+            DescriptorVisibilities.compare(a.visibility, b.visibility)
         return result == null || result >= 0
     }
 

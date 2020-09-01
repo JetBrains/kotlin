@@ -21,12 +21,12 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.visitAnnotableParameterCount
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.annotations.JVM_THROWS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
@@ -155,8 +155,8 @@ class FunctionCodegen(
 
     private fun IrFunction.getVisibilityForDefaultArgumentStub(): Int =
         when (visibility) {
-            Visibilities.PUBLIC -> Opcodes.ACC_PUBLIC
-            JavaVisibilities.PACKAGE_VISIBILITY -> AsmUtil.NO_FLAG_PACKAGE_PRIVATE
+            DescriptorVisibilities.PUBLIC -> Opcodes.ACC_PUBLIC
+            JavaDescriptorVisibilities.PACKAGE_VISIBILITY -> AsmUtil.NO_FLAG_PACKAGE_PRIVATE
             else -> throw IllegalStateException("Default argument stub should be either public or package private: ${ir2string(this)}")
         }
 
@@ -182,7 +182,7 @@ class FunctionCodegen(
             else -> if (parentAsClass.isJvmInterface && body == null) Opcodes.ACC_ABSTRACT else 0
         }
         val isSynthetic = origin.isSynthetic || hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) ||
-                (isSuspend && Visibilities.isPrivate(visibility) && !isInline) || isReifiable()
+                (isSuspend && DescriptorVisibilities.isPrivate(visibility) && !isInline) || isReifiable()
         val isStrict = hasAnnotation(STRICTFP_ANNOTATION_FQ_NAME)
         val isSynchronized = hasAnnotation(SYNCHRONIZED_ANNOTATION_FQ_NAME)
 

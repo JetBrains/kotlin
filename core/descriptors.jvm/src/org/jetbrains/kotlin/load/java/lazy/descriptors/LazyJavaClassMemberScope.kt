@@ -637,10 +637,10 @@ class LazyJavaClassMemberScope(
         return constructorDescriptor
     }
 
-    private fun getConstructorVisibility(classDescriptor: ClassDescriptor): Visibility {
+    private fun getConstructorVisibility(classDescriptor: ClassDescriptor): DescriptorVisibility {
         val visibility = classDescriptor.visibility
-        if (visibility == JavaVisibilities.PROTECTED_STATIC_VISIBILITY) {
-            return JavaVisibilities.PROTECTED_AND_PACKAGE
+        if (visibility == JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY) {
+            return JavaDescriptorVisibilities.PROTECTED_AND_PACKAGE
         }
         return visibility
     }

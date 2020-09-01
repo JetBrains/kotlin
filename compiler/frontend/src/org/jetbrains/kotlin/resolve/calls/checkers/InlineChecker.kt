@@ -259,7 +259,7 @@ internal class InlineChecker(private val descriptor: FunctionDescriptor) : CallC
         val isInlineFunPublicOrPublishedApi = inlineFunEffectiveVisibility.publicApi
         if (isInlineFunPublicOrPublishedApi &&
             !isCalledFunPublicOrPublishedApi &&
-            calledDescriptor.visibility !== Visibilities.LOCAL) {
+            calledDescriptor.visibility !== DescriptorVisibilities.LOCAL) {
             context.trace.report(NON_PUBLIC_CALL_FROM_PUBLIC_INLINE.on(expression, calledDescriptor, descriptor))
         } else {
             checkPrivateClassMemberAccess(calledDescriptor, expression, context)
@@ -267,8 +267,8 @@ internal class InlineChecker(private val descriptor: FunctionDescriptor) : CallC
 
         if (calledDescriptor !is ConstructorDescriptor &&
             isInlineFunPublicOrPublishedApi &&
-            inlineFunEffectiveVisibility.toVisibility() !== Visibilities.PROTECTED &&
-            calledFunEffectiveVisibility.toVisibility() === Visibilities.PROTECTED) {
+            inlineFunEffectiveVisibility.toVisibility() !== DescriptorVisibilities.PROTECTED &&
+            calledFunEffectiveVisibility.toVisibility() === DescriptorVisibilities.PROTECTED) {
             if (prohibitProtectedCallFromInline) {
                 context.trace.report(PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR.on(expression, calledDescriptor))
             } else {

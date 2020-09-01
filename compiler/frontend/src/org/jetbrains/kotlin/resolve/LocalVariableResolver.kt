@@ -167,7 +167,7 @@ class LocalVariableResolver(
                 containingDeclaration,
                 annotationResolver.resolveAnnotationsWithArguments(scope, variable.modifierList, trace),
                 Modality.FINAL,
-                Visibilities.INTERNAL,
+                DescriptorVisibilities.INTERNAL,
                 variable.isVar,
                 KtPsiUtil.safeName(variable.name),
                 CallableMemberDescriptor.Kind.DECLARATION,
@@ -207,7 +207,7 @@ class LocalVariableResolver(
 
     private fun initializeWithDefaultGetterSetter(propertyDescriptor: PropertyDescriptorImpl) {
         var getter = propertyDescriptor.getter
-        if (getter == null && !Visibilities.isPrivate(propertyDescriptor.visibility)) {
+        if (getter == null && !DescriptorVisibilities.isPrivate(propertyDescriptor.visibility)) {
             getter = DescriptorFactory.createDefaultGetter(propertyDescriptor, Annotations.EMPTY)
             getter.initialize(propertyDescriptor.type)
         }

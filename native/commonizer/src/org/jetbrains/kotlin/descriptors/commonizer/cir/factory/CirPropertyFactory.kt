@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirPropertyImpl
 import org.jetbrains.kotlin.descriptors.commonizer.utils.checkConstantSupportedInCommonization
@@ -52,25 +52,25 @@ object CirPropertyFactory {
 
     @Suppress("NOTHING_TO_INLINE")
     inline fun create(
-        annotations: List<CirAnnotation>,
-        name: Name,
-        typeParameters: List<CirTypeParameter>,
-        visibility: Visibility,
-        modality: Modality,
-        containingClassDetails: CirContainingClassDetails?,
-        isExternal: Boolean,
-        extensionReceiver: CirExtensionReceiver?,
-        returnType: CirType,
-        kind: CallableMemberDescriptor.Kind,
-        isVar: Boolean,
-        isLateInit: Boolean,
-        isConst: Boolean,
-        isDelegate: Boolean,
-        getter: CirPropertyGetter?,
-        setter: CirPropertySetter?,
-        backingFieldAnnotations: List<CirAnnotation>?,
-        delegateFieldAnnotations: List<CirAnnotation>?,
-        compileTimeInitializer: ConstantValue<*>?
+            annotations: List<CirAnnotation>,
+            name: Name,
+            typeParameters: List<CirTypeParameter>,
+            visibility: DescriptorVisibility,
+            modality: Modality,
+            containingClassDetails: CirContainingClassDetails?,
+            isExternal: Boolean,
+            extensionReceiver: CirExtensionReceiver?,
+            returnType: CirType,
+            kind: CallableMemberDescriptor.Kind,
+            isVar: Boolean,
+            isLateInit: Boolean,
+            isConst: Boolean,
+            isDelegate: Boolean,
+            getter: CirPropertyGetter?,
+            setter: CirPropertySetter?,
+            backingFieldAnnotations: List<CirAnnotation>?,
+            delegateFieldAnnotations: List<CirAnnotation>?,
+            compileTimeInitializer: ConstantValue<*>?
     ): CirProperty {
         return CirPropertyImpl(
             annotations = annotations,

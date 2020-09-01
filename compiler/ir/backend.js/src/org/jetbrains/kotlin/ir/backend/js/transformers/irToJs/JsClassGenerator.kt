@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -100,7 +100,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 if (property.getter?.extensionReceiverParameter != null || property.setter?.extensionReceiverParameter != null)
                     continue
 
-                if (property.visibility != Visibilities.PUBLIC)
+                if (property.visibility != DescriptorVisibilities.PUBLIC)
                     continue
 
                 if (property.isFakeOverride)
@@ -108,7 +108,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
                 fun IrSimpleFunction.accessorRef(): JsNameRef? =
                     when (visibility) {
-                        Visibilities.PRIVATE -> null
+                        DescriptorVisibilities.PRIVATE -> null
                         else -> JsNameRef(
                             context.getNameForMemberFunction(this),
                             classPrototypeRef

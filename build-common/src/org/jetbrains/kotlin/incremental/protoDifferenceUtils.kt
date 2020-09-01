@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.incremental
 
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.incremental.ProtoCompareGenerated.ProtoBufClassKind
 import org.jetbrains.kotlin.incremental.ProtoCompareGenerated.ProtoBufPackageKind
 import org.jetbrains.kotlin.incremental.storage.ProtoMapValue
@@ -49,7 +49,7 @@ fun ProtoMapValue.toProtoData(packageFqName: FqName): ProtoData =
     }
 
 internal val MessageLite.isPrivate: Boolean
-    get() = Visibilities.isPrivate(
+    get() = DescriptorVisibilities.isPrivate(
         ProtoEnumFlags.visibility(
             when (this) {
                 is ProtoBuf.Constructor -> Flags.VISIBILITY.get(flags)

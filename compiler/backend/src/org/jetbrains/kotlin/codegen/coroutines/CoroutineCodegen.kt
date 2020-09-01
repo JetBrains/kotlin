@@ -94,7 +94,7 @@ abstract class AbstractCoroutineCodegen(
                 },
                 builtIns.nullableAnyType,
                 Modality.FINAL,
-                Visibilities.PUBLIC,
+                DescriptorVisibilities.PUBLIC,
                 userDataForDoResume
             )
         }
@@ -220,7 +220,7 @@ class CoroutineCodegenForLambda private constructor(
                 state.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
             ),
             funDescriptor.modality,
-            Visibilities.PUBLIC
+            DescriptorVisibilities.PUBLIC
         )
     }
 

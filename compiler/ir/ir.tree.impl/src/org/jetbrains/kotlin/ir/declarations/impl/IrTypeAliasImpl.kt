@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -15,14 +15,14 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
 class IrTypeAliasImpl(
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override val symbol: IrTypeAliasSymbol,
-    override val name: Name,
-    override var visibility: Visibility,
-    override val expandedType: IrType,
-    override val isActual: Boolean,
-    override var origin: IrDeclarationOrigin
+        override val startOffset: Int,
+        override val endOffset: Int,
+        override val symbol: IrTypeAliasSymbol,
+        override val name: Name,
+        override var visibility: DescriptorVisibility,
+        override val expandedType: IrType,
+        override val isActual: Boolean,
+        override var origin: IrDeclarationOrigin
 ) : IrTypeAlias() {
     init {
         symbol.bind(this)

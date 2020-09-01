@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.javac.resolve
 
 import com.sun.source.tree.CompilationUnitTree
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.javac.JavaClassWithClassId
 import org.jetbrains.kotlin.javac.JavacWrapper
-import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -81,8 +81,8 @@ internal class ResolveHelper(private val javac: JavacWrapper,
 
     private fun JavaClass.findVisibleInnerOrNestedClass(name: Name) = findInnerClass(name)?.let { innerOrNestedClass ->
         when (innerOrNestedClass.visibility) {
-            Visibilities.PRIVATE -> null
-            JavaVisibilities.PACKAGE_VISIBILITY -> {
+            DescriptorVisibilities.PRIVATE -> null
+            JavaDescriptorVisibilities.PACKAGE_VISIBILITY -> {
                 val classId = (innerOrNestedClass as? JavaClassWithClassId)?.classId
                 if (classId?.packageFqName?.asString() == (compilationUnit.packageName?.toString() ?: "")) innerOrNestedClass else null
             }

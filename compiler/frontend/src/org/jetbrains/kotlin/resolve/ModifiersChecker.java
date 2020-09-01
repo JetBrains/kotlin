@@ -134,19 +134,19 @@ public class ModifiersChecker {
     }
 
     @NotNull
-    public static Visibility resolveVisibilityFromModifiers(
+    public static DescriptorVisibility resolveVisibilityFromModifiers(
             @NotNull KtModifierListOwner modifierListOwner,
-            @NotNull Visibility defaultVisibility
+            @NotNull DescriptorVisibility defaultVisibility
     ) {
         return resolveVisibilityFromModifiers(modifierListOwner.getModifierList(), defaultVisibility);
     }
 
-    public static Visibility resolveVisibilityFromModifiers(@Nullable KtModifierList modifierList, @NotNull Visibility defaultVisibility) {
+    public static DescriptorVisibility resolveVisibilityFromModifiers(@Nullable KtModifierList modifierList, @NotNull DescriptorVisibility defaultVisibility) {
         if (modifierList == null) return defaultVisibility;
-        if (modifierList.hasModifier(PRIVATE_KEYWORD)) return Visibilities.PRIVATE;
-        if (modifierList.hasModifier(PUBLIC_KEYWORD)) return Visibilities.PUBLIC;
-        if (modifierList.hasModifier(PROTECTED_KEYWORD)) return Visibilities.PROTECTED;
-        if (modifierList.hasModifier(INTERNAL_KEYWORD)) return Visibilities.INTERNAL;
+        if (modifierList.hasModifier(PRIVATE_KEYWORD)) return DescriptorVisibilities.PRIVATE;
+        if (modifierList.hasModifier(PUBLIC_KEYWORD)) return DescriptorVisibilities.PUBLIC;
+        if (modifierList.hasModifier(PROTECTED_KEYWORD)) return DescriptorVisibilities.PROTECTED;
+        if (modifierList.hasModifier(INTERNAL_KEYWORD)) return DescriptorVisibilities.INTERNAL;
         return defaultVisibility;
     }
 

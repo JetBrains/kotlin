@@ -19,7 +19,7 @@ class OverrideMembersHandler(private val preferConstructorParameters: Boolean = 
         for (member in descriptor.unsubstitutedMemberScope.getContributedDescriptors()) {
             if (member is CallableMemberDescriptor && (member.kind != CallableMemberDescriptor.Kind.DECLARATION)) {
                 val overridden = member.overriddenDescriptors
-                if (overridden.any { it.modality == Modality.FINAL || Visibilities.isPrivate(it.visibility.normalize()) }) continue
+                if (overridden.any { it.modality == Modality.FINAL || DescriptorVisibilities.isPrivate(it.visibility.normalize()) }) continue
 
                 if (DescriptorUtils.isInterface(descriptor) && overridden.any { descriptor.builtIns.isMemberOfAny(it) }) continue
 

@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.backend.jvm.lower.FunctionReferenceLowering.Companio
 import org.jetbrains.kotlin.backend.jvm.lower.FunctionReferenceLowering.Companion.kClassToJavaClass
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.isInlineClassFieldGetter
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -121,7 +121,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                     val needsDummySignature =
                         getter.owner.correspondingPropertySymbol?.owner?.needsAccessor(getter.owner) == false ||
                                 // Internal underlying vals of inline classes have no getter method
-                                getter.owner.isInlineClassFieldGetter && getter.owner.visibility == Visibilities.INTERNAL
+                                getter.owner.isInlineClassFieldGetter && getter.owner.visibility == DescriptorVisibilities.INTERNAL
 
                     putValueArgument(
                         0,
@@ -199,7 +199,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
             origin = JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
             isFinal = true
             isStatic = true
-            visibility = JavaVisibilities.PACKAGE_VISIBILITY
+            visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
         }
         var localPropertiesInClass = 0
 
@@ -283,7 +283,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                     setSourceRange(expression)
                     name = SpecialNames.NO_NAME_PROVIDED
                     origin = JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
-                    visibility = Visibilities.LOCAL
+                    visibility = DescriptorVisibilities.LOCAL
                 }.apply {
                     parent = irClass
                     superTypes = listOf(superClass.defaultType)

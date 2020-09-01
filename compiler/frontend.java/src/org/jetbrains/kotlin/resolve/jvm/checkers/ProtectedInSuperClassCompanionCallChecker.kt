@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
@@ -32,7 +32,7 @@ class ProtectedInSuperClassCompanionCallChecker : CallChecker {
         val targetDescriptor = resolvedCall.resultingDescriptor.original
 
         // Protected non-JVM static
-        if (targetDescriptor.visibility != Visibilities.PROTECTED) return
+        if (targetDescriptor.visibility != DescriptorVisibilities.PROTECTED) return
         if (targetDescriptor.hasJvmStaticAnnotation()) return
         val containerDescriptor = targetDescriptor.containingDeclaration
         // Declared in companion object

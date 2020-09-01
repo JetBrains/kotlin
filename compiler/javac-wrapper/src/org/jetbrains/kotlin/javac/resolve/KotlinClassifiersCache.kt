@@ -20,13 +20,13 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiLiteralExpression
 import com.intellij.psi.search.SearchScope
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.javac.JavaClassWithClassId
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -98,15 +98,15 @@ class MockKotlinClassifier(override val classId: ClassId,
     override val fqName: FqName
         get() = classId.asSingleFqName()
 
-    override val visibility: Visibility
+    override val visibility: DescriptorVisibility
         get() = if (classOrObject == null) {
-            Visibilities.PUBLIC
+            DescriptorVisibilities.PUBLIC
         }
         else when (classOrObject.visibilityModifierType()) {
-            null, KtTokens.PUBLIC_KEYWORD -> Visibilities.PUBLIC
-            KtTokens.PRIVATE_KEYWORD -> Visibilities.PRIVATE
-            KtTokens.PROTECTED_KEYWORD -> Visibilities.PROTECTED
-            else -> JavaVisibilities.PACKAGE_VISIBILITY
+            null, KtTokens.PUBLIC_KEYWORD -> DescriptorVisibilities.PUBLIC
+            KtTokens.PRIVATE_KEYWORD -> DescriptorVisibilities.PRIVATE
+            KtTokens.PROTECTED_KEYWORD -> DescriptorVisibilities.PROTECTED
+            else -> JavaDescriptorVisibilities.PACKAGE_VISIBILITY
         }
 
     override val supertypes: Collection<JavaClassifierType>

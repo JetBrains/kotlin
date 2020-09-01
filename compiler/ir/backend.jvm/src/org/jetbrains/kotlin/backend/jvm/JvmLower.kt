@@ -13,11 +13,10 @@ import org.jetbrains.kotlin.backend.common.lower.optimizations.foldConstantLower
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.jvm.codegen.shouldContainSuspendMarkers
 import org.jetbrains.kotlin.backend.jvm.lower.*
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.PatchDeclarationParentsVisitor
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
@@ -25,7 +24,7 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.NameUtils
 
 private fun makePatchParentsPhase(number: Int): NamedCompilerPhase<CommonBackendContext, IrFile> = makeIrFilePhase(
@@ -112,7 +111,7 @@ internal val localDeclarationsPhase = makeIrFilePhase(
                     NameUtils.sanitizeAsJavaIdentifier(super.localName(declaration))
             },
             object : VisibilityPolicy {
-                override fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): Visibility =
+                override fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): DescriptorVisibility =
                     if (declaration.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL ||
                         declaration.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL ||
                         declaration.origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
@@ -122,17 +121,17 @@ internal val localDeclarationsPhase = makeIrFilePhase(
                         declaration.visibility
                     }
 
-                override fun forConstructor(declaration: IrConstructor, inInlineFunctionScope: Boolean): Visibility =
+                override fun forConstructor(declaration: IrConstructor, inInlineFunctionScope: Boolean): DescriptorVisibility =
                     if (declaration.parentAsClass.isAnonymousObject)
                         scopedVisibility(inInlineFunctionScope)
                     else
                         declaration.visibility
 
-                override fun forCapturedField(value: IrValueSymbol): Visibility =
-                    JavaVisibilities.PACKAGE_VISIBILITY // avoid requiring a synthetic accessor for it
+                override fun forCapturedField(value: IrValueSymbol): DescriptorVisibility =
+                    JavaDescriptorVisibilities.PACKAGE_VISIBILITY // avoid requiring a synthetic accessor for it
 
-                private fun scopedVisibility(inInlineFunctionScope: Boolean): Visibility =
-                    if (inInlineFunctionScope) Visibilities.PUBLIC else JavaVisibilities.PACKAGE_VISIBILITY
+                private fun scopedVisibility(inInlineFunctionScope: Boolean): DescriptorVisibility =
+                    if (inInlineFunctionScope) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
             }
         )
     },

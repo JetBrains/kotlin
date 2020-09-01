@@ -31,9 +31,9 @@ import org.jetbrains.kotlin.utils.CollectionsKt;
 
 import java.util.*;
 
-public class Visibilities {
+public class DescriptorVisibilities {
     @NotNull
-    public static final Visibility PRIVATE = new Visibility("private", false) {
+    public static final DescriptorVisibility PRIVATE = new DescriptorVisibility("private", false) {
         @Override
         public boolean mustCheckInImports() {
             return true;
@@ -102,7 +102,7 @@ public class Visibilities {
      *  }
      */
     @NotNull
-    public static final Visibility PRIVATE_TO_THIS = new Visibility("private_to_this", false) {
+    public static final DescriptorVisibility PRIVATE_TO_THIS = new DescriptorVisibility("private_to_this", false) {
         @Override
         public boolean isVisible(@Nullable ReceiverValue thisObject, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             if (PRIVATE.isVisible(thisObject, what, from)) {
@@ -132,7 +132,7 @@ public class Visibilities {
     };
 
     @NotNull
-    public static final Visibility PROTECTED = new Visibility("protected", true) {
+    public static final DescriptorVisibility PROTECTED = new DescriptorVisibility("protected", true) {
         @Override
         public boolean mustCheckInImports() {
             return false;
@@ -198,7 +198,7 @@ public class Visibilities {
     };
 
     @NotNull
-    public static final Visibility INTERNAL = new Visibility("internal", false) {
+    public static final DescriptorVisibility INTERNAL = new DescriptorVisibility("internal", false) {
         @Override
         public boolean mustCheckInImports() {
             return true;
@@ -220,7 +220,7 @@ public class Visibilities {
     };
 
     @NotNull
-    public static final Visibility PUBLIC = new Visibility("public", true) {
+    public static final DescriptorVisibility PUBLIC = new DescriptorVisibility("public", true) {
         @Override
         public boolean mustCheckInImports() {
             return false;
@@ -233,7 +233,7 @@ public class Visibilities {
     };
 
     @NotNull
-    public static final Visibility LOCAL = new Visibility("local", false) {
+    public static final DescriptorVisibility LOCAL = new DescriptorVisibility("local", false) {
         @Override
         public boolean mustCheckInImports() {
             return true;
@@ -246,7 +246,7 @@ public class Visibilities {
     };
 
     @NotNull
-    public static final Visibility INHERITED = new Visibility("inherited", false) {
+    public static final DescriptorVisibility INHERITED = new DescriptorVisibility("inherited", false) {
         @Override
         public boolean mustCheckInImports() {
             throw new IllegalStateException("This method shouldn't be invoked for INHERITED visibility");
@@ -260,7 +260,7 @@ public class Visibilities {
 
     /* Visibility for fake override invisible members (they are created for better error reporting) */
     @NotNull
-    public static final Visibility INVISIBLE_FAKE = new Visibility("invisible_fake", false) {
+    public static final DescriptorVisibility INVISIBLE_FAKE = new DescriptorVisibility("invisible_fake", false) {
         @Override
         public boolean mustCheckInImports() {
             return true;
@@ -281,7 +281,7 @@ public class Visibilities {
     // Currently used as default visibility of FunctionDescriptor
     // It's needed to prevent NPE when requesting non-nullable visibility of descriptor before `initialize` has been called
     @NotNull
-    public static final Visibility UNKNOWN = new Visibility("unknown", false) {
+    public static final DescriptorVisibility UNKNOWN = new DescriptorVisibility("unknown", false) {
         @Override
         public boolean mustCheckInImports() {
             throw new IllegalStateException("This method shouldn't be invoked for UNKNOWN visibility");
@@ -295,10 +295,10 @@ public class Visibilities {
         }
     };
 
-    public static final Set<Visibility> INVISIBLE_FROM_OTHER_MODULES =
+    public static final Set<DescriptorVisibility> INVISIBLE_FROM_OTHER_MODULES =
             Collections.unmodifiableSet(SetsKt.setOf(PRIVATE, PRIVATE_TO_THIS, INTERNAL, LOCAL));
 
-    private Visibilities() {
+    private DescriptorVisibilities() {
     }
 
     public static boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
@@ -306,15 +306,15 @@ public class Visibilities {
     }
 
     /**
-     * @see Visibility.isVisible contract
+     * @see DescriptorVisibility.isVisible contract
      */
     public static boolean isVisibleIgnoringReceiver(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
         return findInvisibleMember(ALWAYS_SUITABLE_RECEIVER, what, from) == null;
     }
 
     /**
-     * @see Visibility.isVisible contract
-     * @see Visibilities.RECEIVER_DOES_NOT_EXIST
+     * @see DescriptorVisibility.isVisible contract
+     * @see DescriptorVisibilities.RECEIVER_DOES_NOT_EXIST
      */
     public static boolean isVisibleWithAnyReceiver(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
         return findInvisibleMember(IRRELEVANT_RECEIVER, what, from) == null;
@@ -353,10 +353,10 @@ public class Visibilities {
         return null;
     }
 
-    private static final Map<Visibility, Integer> ORDERED_VISIBILITIES;
+    private static final Map<DescriptorVisibility, Integer> ORDERED_VISIBILITIES;
 
     static {
-        Map<Visibility, Integer> visibilities = CollectionsKt.newHashMapWithExpectedSize(4);
+        Map<DescriptorVisibility, Integer> visibilities = CollectionsKt.newHashMapWithExpectedSize(4);
         visibilities.put(PRIVATE_TO_THIS, 0);
         visibilities.put(PRIVATE, 0);
         visibilities.put(INTERNAL, 1);
@@ -367,7 +367,7 @@ public class Visibilities {
 
     /*package*/
     @Nullable
-    static Integer compareLocal(@NotNull Visibility first, @NotNull Visibility second) {
+    static Integer compareLocal(@NotNull DescriptorVisibility first, @NotNull DescriptorVisibility second) {
         if (first == second) return 0;
         Integer firstIndex = ORDERED_VISIBILITIES.get(first);
         Integer secondIndex = ORDERED_VISIBILITIES.get(second);
@@ -378,7 +378,7 @@ public class Visibilities {
     }
 
     @Nullable
-    public static Integer compare(@NotNull Visibility first, @NotNull Visibility second) {
+    public static Integer compare(@NotNull DescriptorVisibility first, @NotNull DescriptorVisibility second) {
         Integer result = first.compareTo(second);
         if (result != null) {
             return result;
@@ -390,7 +390,7 @@ public class Visibilities {
         return null;
     }
 
-    public static final Visibility DEFAULT_VISIBILITY = PUBLIC;
+    public static final DescriptorVisibility DEFAULT_VISIBILITY = PUBLIC;
 
     /**
      * This value should be used for receiverValue parameter of Visibility.isVisible
@@ -462,7 +462,7 @@ public class Visibilities {
         }
     };
 
-    public static boolean isPrivate(@NotNull Visibility visibility) {
+    public static boolean isPrivate(@NotNull DescriptorVisibility visibility) {
         return visibility == PRIVATE || visibility == PRIVATE_TO_THIS;
     }
 

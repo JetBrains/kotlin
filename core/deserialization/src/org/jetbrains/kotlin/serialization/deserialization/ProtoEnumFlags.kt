@@ -53,22 +53,22 @@ object ProtoEnumFlags {
     }
 
     fun visibility(visibility: ProtoBuf.Visibility?) = when (visibility) {
-        ProtoBuf.Visibility.INTERNAL -> Visibilities.INTERNAL
-        ProtoBuf.Visibility.PRIVATE -> Visibilities.PRIVATE
-        ProtoBuf.Visibility.PRIVATE_TO_THIS -> Visibilities.PRIVATE_TO_THIS
-        ProtoBuf.Visibility.PROTECTED -> Visibilities.PROTECTED
-        ProtoBuf.Visibility.PUBLIC -> Visibilities.PUBLIC
-        ProtoBuf.Visibility.LOCAL -> Visibilities.LOCAL
-        else -> Visibilities.PRIVATE
+        ProtoBuf.Visibility.INTERNAL -> DescriptorVisibilities.INTERNAL
+        ProtoBuf.Visibility.PRIVATE -> DescriptorVisibilities.PRIVATE
+        ProtoBuf.Visibility.PRIVATE_TO_THIS -> DescriptorVisibilities.PRIVATE_TO_THIS
+        ProtoBuf.Visibility.PROTECTED -> DescriptorVisibilities.PROTECTED
+        ProtoBuf.Visibility.PUBLIC -> DescriptorVisibilities.PUBLIC
+        ProtoBuf.Visibility.LOCAL -> DescriptorVisibilities.LOCAL
+        else -> DescriptorVisibilities.PRIVATE
     }
 
-    fun visibility(visibility: Visibility): ProtoBuf.Visibility = when (visibility) {
-        Visibilities.INTERNAL -> ProtoBuf.Visibility.INTERNAL
-        Visibilities.PUBLIC -> ProtoBuf.Visibility.PUBLIC
-        Visibilities.PRIVATE -> ProtoBuf.Visibility.PRIVATE
-        Visibilities.PRIVATE_TO_THIS -> ProtoBuf.Visibility.PRIVATE_TO_THIS
-        Visibilities.PROTECTED -> ProtoBuf.Visibility.PROTECTED
-        Visibilities.LOCAL -> ProtoBuf.Visibility.LOCAL
+    fun visibility(visibility: DescriptorVisibility): ProtoBuf.Visibility = when (visibility) {
+        DescriptorVisibilities.INTERNAL -> ProtoBuf.Visibility.INTERNAL
+        DescriptorVisibilities.PUBLIC -> ProtoBuf.Visibility.PUBLIC
+        DescriptorVisibilities.PRIVATE -> ProtoBuf.Visibility.PRIVATE
+        DescriptorVisibilities.PRIVATE_TO_THIS -> ProtoBuf.Visibility.PRIVATE_TO_THIS
+        DescriptorVisibilities.PROTECTED -> ProtoBuf.Visibility.PROTECTED
+        DescriptorVisibilities.LOCAL -> ProtoBuf.Visibility.LOCAL
         else -> throw IllegalArgumentException("Unknown visibility: $visibility")
     }
 

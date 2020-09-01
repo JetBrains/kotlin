@@ -190,14 +190,14 @@ class DebuggerFieldSyntheticScope(val javaSyntheticPropertiesScope: JavaSyntheti
 
         val getter = PropertyGetterDescriptorImpl(
             propertyDescriptor, Annotations.EMPTY, Modality.FINAL,
-            Visibilities.PUBLIC, false, false, false,
+            DescriptorVisibilities.PUBLIC, false, false, false,
             CallableMemberDescriptor.Kind.SYNTHESIZED,
             null, sourceElement
         ).apply { initialize(type) }
 
         val setter = if (isVar) PropertySetterDescriptorImpl(
             propertyDescriptor, Annotations.EMPTY, Modality.FINAL,
-            Visibilities.PUBLIC, false, false, false,
+            DescriptorVisibilities.PUBLIC, false, false, false,
             CallableMemberDescriptor.Kind.SYNTHESIZED,
             null, sourceElement
         ).apply {
@@ -226,7 +226,7 @@ internal class DebuggerFieldPropertyDescriptor(
     null,
     Annotations.EMPTY,
     Modality.FINAL,
-    Visibilities.PUBLIC,
+    DescriptorVisibilities.PUBLIC,
     /*isVar = */isVar,
     Name.identifier(fieldName + "_field"),
     CallableMemberDescriptor.Kind.SYNTHESIZED,

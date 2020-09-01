@@ -324,7 +324,7 @@ class TypeResolver(
                     type: KotlinType,
                     source: SourceElement
                 ) : VariableDescriptorImpl(containingDeclaration, annotations, name, type, source) {
-                    override fun getVisibility() = Visibilities.LOCAL
+                    override fun getVisibility() = DescriptorVisibilities.LOCAL
 
                     override fun substitute(substitutor: TypeSubstitutor): VariableDescriptor? {
                         throw UnsupportedOperationException("Should not be called for descriptor of type ${this::class.java}")

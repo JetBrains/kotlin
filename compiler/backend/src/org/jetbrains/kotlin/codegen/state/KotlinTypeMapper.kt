@@ -449,7 +449,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
             else
                 mapClass(ownerForDefault)
 
-            if (isInterface && (superCall || descriptor.visibility == Visibilities.PRIVATE || isAccessor(descriptor))) {
+            if (isInterface && (superCall || descriptor.visibility == DescriptorVisibilities.PRIVATE || isAccessor(descriptor))) {
                 thisClass = mapClass(functionParent)
                 dispatchReceiverKotlinType = functionParent.defaultType
                 if (declarationOwner is JavaClassDescriptor ||
@@ -495,7 +495,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
                         isInterfaceMember = true
                     }
                     else -> {
-                        val isPrivateFunInvocation = Visibilities.isPrivate(functionDescriptor.visibility) && !functionDescriptor.isSuspend
+                        val isPrivateFunInvocation = DescriptorVisibilities.isPrivate(functionDescriptor.visibility) && !functionDescriptor.isSuspend
                         invokeOpcode = if (superCall || isPrivateFunInvocation) INVOKESPECIAL else INVOKEVIRTUAL
                         isInterfaceMember = false
                     }
@@ -677,7 +677,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
         newName = sanitizeNameIfNeeded(newName, languageVersionSettings)
 
         if (isTopLevelDeclaration(descriptor)) {
-            if (Visibilities.isPrivate(descriptor.visibility) && descriptor !is ConstructorDescriptor && "<clinit>" != newName) {
+            if (DescriptorVisibilities.isPrivate(descriptor.visibility) && descriptor !is ConstructorDescriptor && "<clinit>" != newName) {
                 val partName = getPartSimpleNameForMangling(descriptor)
                 if (partName != null) return "$newName$$partName"
             }
@@ -685,7 +685,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
         }
 
         return if (descriptor !is ConstructorDescriptor &&
-            descriptor.visibility === Visibilities.INTERNAL &&
+            descriptor.visibility === DescriptorVisibilities.INTERNAL &&
             !descriptor.isPublishedApi()
         ) {
             InternalNameMapper.mangleInternalName(newName, getModuleName(descriptor))
@@ -1297,7 +1297,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
                 val visibility = descriptor.visibility
                 return if (!publicFacade ||
                     isNonConstProperty(descriptor) ||
-                    Visibilities.isPrivate(visibility) ||
+                    DescriptorVisibilities.isPrivate(visibility) ||
                     isAccessor/*Cause of KT-9603*/) {
                     JvmFileClassUtil.getFileClassInternalName(file)
                 } else {

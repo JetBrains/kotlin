@@ -54,7 +54,7 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
 
     @NotNull
     @Override
-    FunctionDescriptor copy(DeclarationDescriptor newOwner, Modality modality, Visibility visibility, Kind kind, boolean copyOverrides);
+    FunctionDescriptor copy(DeclarationDescriptor newOwner, Modality modality, DescriptorVisibility visibility, Kind kind, boolean copyOverrides);
 
     boolean isOperator();
 
@@ -83,7 +83,7 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
 
         @NotNull
         @Override
-        CopyBuilder<D> setVisibility(@NotNull Visibility visibility);
+        CopyBuilder<D> setVisibility(@NotNull DescriptorVisibility visibility);
 
         @NotNull
         @Override

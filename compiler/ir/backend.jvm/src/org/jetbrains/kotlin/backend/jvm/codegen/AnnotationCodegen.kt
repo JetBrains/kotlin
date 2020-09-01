@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.codegen.TypePathInfo
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget.JVM_1_6
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.ir.declarations.*
@@ -81,7 +81,7 @@ abstract class AnnotationCodegen(
                 KotlinTarget.CLASS !in applicableTargets &&
                 KotlinTarget.ANNOTATION_CLASS !in applicableTargets
             ) {
-                if (annotated.visibility == Visibilities.LOCAL) {
+                if (annotated.visibility == DescriptorVisibilities.LOCAL) {
                     assert(KotlinTarget.EXPRESSION in applicableTargets) {
                         "Inconsistent target list for object literal annotation: $applicableTargets on $annotated"
                     }

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -126,7 +126,7 @@ val IrDeclaration.isLocal: Boolean
             require(current is IrDeclaration)
 
             if (current is IrDeclarationWithVisibility) {
-                if (current.visibility == Visibilities.LOCAL) return true
+                if (current.visibility == DescriptorVisibilities.LOCAL) return true
             }
 
             if (current.isAnonymousObject) return true

@@ -141,7 +141,7 @@ abstract class WrappedCallableDescriptor<T : IrDeclaration> : CallableDescriptor
 
     override fun hasSynthesizedParameterNames() = false
 
-    override fun getVisibility(): Visibility {
+    override fun getVisibility(): DescriptorVisibility {
         TODO("not implemented")
     }
 
@@ -409,11 +409,11 @@ open class WrappedSimpleFunctionDescriptor : SimpleFunctionDescriptor, WrappedCa
         else CallableMemberDescriptor.Kind.SYNTHESIZED
 
     override fun copy(
-        newOwner: DeclarationDescriptor?,
-        modality: Modality?,
-        visibility: Visibility?,
-        kind: CallableMemberDescriptor.Kind?,
-        copyOverrides: Boolean
+            newOwner: DeclarationDescriptor?,
+            modality: Modality?,
+            visibility: DescriptorVisibility?,
+            kind: CallableMemberDescriptor.Kind?,
+            copyOverrides: Boolean
     ): Nothing {
         TODO("not implemented")
     }
@@ -465,11 +465,11 @@ open class WrappedClassConstructorDescriptor : ClassConstructorDescriptor, Wrapp
     }
 
     override fun copy(
-        newOwner: DeclarationDescriptor,
-        modality: Modality,
-        visibility: Visibility,
-        kind: CallableMemberDescriptor.Kind,
-        copyOverrides: Boolean
+            newOwner: DeclarationDescriptor,
+            modality: Modality,
+            visibility: DescriptorVisibility,
+            kind: CallableMemberDescriptor.Kind,
+            copyOverrides: Boolean
     ): ClassConstructorDescriptor {
         throw UnsupportedOperationException()
     }
@@ -695,7 +695,7 @@ open class WrappedEnumEntryDescriptor : ClassDescriptor, WrappedDeclarationDescr
 
     override fun getCompanionObjectDescriptor() = null
 
-    override fun getVisibility() = Visibilities.DEFAULT_VISIBILITY
+    override fun getVisibility() = DescriptorVisibilities.DEFAULT_VISIBILITY
 
     override fun isCompanionObject() = false
 
@@ -774,11 +774,11 @@ open class WrappedPropertyDescriptor : PropertyDescriptor, WrappedDeclarationDes
     override fun getOverriddenDescriptors(): MutableCollection<out PropertyDescriptor> = mutableListOf()
 
     override fun copy(
-        newOwner: DeclarationDescriptor?,
-        modality: Modality?,
-        visibility: Visibility?,
-        kind: CallableMemberDescriptor.Kind?,
-        copyOverrides: Boolean
+            newOwner: DeclarationDescriptor?,
+            modality: Modality?,
+            visibility: DescriptorVisibility?,
+            kind: CallableMemberDescriptor.Kind?,
+            copyOverrides: Boolean
     ): CallableMemberDescriptor {
         TODO("not implemented")
     }
@@ -926,7 +926,7 @@ open class WrappedTypeAliasDescriptor : WrappedDeclarationDescriptor<IrTypeAlias
 
     override fun getSource(): SourceElement = SourceElement.NO_SOURCE
 
-    override fun getVisibility(): Visibility = owner.visibility
+    override fun getVisibility(): DescriptorVisibility = owner.visibility
 
     override fun isExpect(): Boolean = false
 
@@ -961,11 +961,11 @@ open class WrappedFieldDescriptor : PropertyDescriptor, WrappedDeclarationDescri
     override fun getOverriddenDescriptors(): MutableCollection<out PropertyDescriptor> = mutableListOf()
 
     override fun copy(
-        newOwner: DeclarationDescriptor?,
-        modality: Modality?,
-        visibility: Visibility?,
-        kind: CallableMemberDescriptor.Kind?,
-        copyOverrides: Boolean
+            newOwner: DeclarationDescriptor?,
+            modality: Modality?,
+            visibility: DescriptorVisibility?,
+            kind: CallableMemberDescriptor.Kind?,
+            copyOverrides: Boolean
     ): CallableMemberDescriptor {
         TODO("not implemented")
     }

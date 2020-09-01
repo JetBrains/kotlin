@@ -335,7 +335,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
                 IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE,
                 irAdapterSymbol,
                 adapteeDescriptor.name,
-                Visibilities.LOCAL,
+                DescriptorVisibilities.LOCAL,
                 Modality.FINAL,
                 ktExpectedReturnType.toIrType(),
                 isInline = adapteeDescriptor.isInline, // TODO ?

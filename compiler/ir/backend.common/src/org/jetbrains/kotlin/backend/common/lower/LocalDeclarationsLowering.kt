@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
@@ -49,14 +49,14 @@ interface LocalNameProvider {
 }
 
 interface VisibilityPolicy {
-    fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): Visibility =
+    fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): DescriptorVisibility =
         declaration.visibility
 
-    fun forConstructor(declaration: IrConstructor, inInlineFunctionScope: Boolean): Visibility =
-        Visibilities.PRIVATE
+    fun forConstructor(declaration: IrConstructor, inInlineFunctionScope: Boolean): DescriptorVisibility =
+        DescriptorVisibilities.PRIVATE
 
-    fun forCapturedField(value: IrValueSymbol): Visibility =
-        Visibilities.PRIVATE
+    fun forCapturedField(value: IrValueSymbol): DescriptorVisibility =
+        DescriptorVisibilities.PRIVATE
 
     companion object {
         val DEFAULT = object : VisibilityPolicy {}
@@ -597,7 +597,7 @@ class LocalDeclarationsLowering(
             val newDeclaration = context.irFactory.buildFun {
                 updateFrom(oldDeclaration)
                 name = newName
-                visibility = Visibilities.PRIVATE
+                visibility = DescriptorVisibilities.PRIVATE
                 modality = Modality.FINAL
             }
 
@@ -721,13 +721,13 @@ class LocalDeclarationsLowering(
         }
 
         private fun createFieldForCapturedValue(
-            startOffset: Int,
-            endOffset: Int,
-            name: Name,
-            visibility: Visibility,
-            parent: IrClass,
-            fieldType: IrType,
-            isCrossinline: Boolean
+                startOffset: Int,
+                endOffset: Int,
+                name: Name,
+                visibility: DescriptorVisibility,
+                parent: IrClass,
+                fieldType: IrType,
+                isCrossinline: Boolean
         ): IrField =
             context.irFactory.buildField {
                 this.startOffset = startOffset
@@ -883,7 +883,7 @@ class LocalDeclarationsLowering(
                 override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Data) {
                     super.visitSimpleFunction(declaration, data.withInline(declaration.isInline))
 
-                    if (declaration.visibility == Visibilities.LOCAL) {
+                    if (declaration.visibility == DescriptorVisibilities.LOCAL) {
                         val enclosingScope = data.currentClass
                             ?: enclosingClass?.scopeWithCounter
                             // File is required for K/N because file declarations are not split by classes.
@@ -924,4 +924,4 @@ class LocalDeclarationsLowering(
 }
 
 // Local inner classes capture anything through outer
-internal fun IrClass.isLocalNotInner(): Boolean = visibility == Visibilities.LOCAL && !isInner
+internal fun IrClass.isLocalNotInner(): Boolean = visibility == DescriptorVisibilities.LOCAL && !isInner

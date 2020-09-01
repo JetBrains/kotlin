@@ -135,7 +135,7 @@ val DeclarationDescriptorWithVisibility.isEffectivelyPrivateApi: Boolean
 val DeclarationDescriptor.isInsidePrivateClass: Boolean
     get() {
         val parent = containingDeclaration as? ClassDescriptor
-        return parent != null && Visibilities.isPrivate(parent.visibility)
+        return parent != null && DescriptorVisibilities.isPrivate(parent.visibility)
     }
 
 

@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.javac.wrappers.symbols
 
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -36,7 +36,7 @@ abstract class SymbolBasedMember<out T : Element>(
 
     override fun findAnnotation(fqName: FqName) = element.findAnnotation(fqName, javac)
 
-    override val visibility: Visibility
+    override val visibility: DescriptorVisibility
         get() = element.getVisibility()
 
     override val name: Name

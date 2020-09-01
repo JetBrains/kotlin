@@ -23,23 +23,23 @@ import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 
 class CommonizedClassDescriptor(
-    targetComponents: TargetDeclarationsBuilderComponents,
-    containingDeclaration: DeclarationDescriptor,
-    override val annotations: Annotations,
-    name: Name,
-    private val kind: ClassKind,
-    private val modality: Modality,
-    private val visibility: Visibility,
-    private val isCompanion: Boolean,
-    private val isData: Boolean,
-    private val isInline: Boolean,
-    private val isInner: Boolean,
-    isExternal: Boolean,
-    private val isExpect: Boolean,
-    private val isActual: Boolean,
-    cirDeclaredTypeParameters: List<CirTypeParameter>,
-    companionObjectName: Name?,
-    cirSupertypes: Collection<CirType>
+        targetComponents: TargetDeclarationsBuilderComponents,
+        containingDeclaration: DeclarationDescriptor,
+        override val annotations: Annotations,
+        name: Name,
+        private val kind: ClassKind,
+        private val modality: Modality,
+        private val visibility: DescriptorVisibility,
+        private val isCompanion: Boolean,
+        private val isData: Boolean,
+        private val isInline: Boolean,
+        private val isInner: Boolean,
+        isExternal: Boolean,
+        private val isExpect: Boolean,
+        private val isActual: Boolean,
+        cirDeclaredTypeParameters: List<CirTypeParameter>,
+        companionObjectName: Name?,
+        cirSupertypes: Collection<CirType>
 ) : ClassDescriptorBase(targetComponents.storageManager, containingDeclaration, name, SourceElement.NO_SOURCE, isExternal) {
     private lateinit var _unsubstitutedMemberScope: CommonizedMemberScope
     private lateinit var constructors: Collection<ClassConstructorDescriptor>

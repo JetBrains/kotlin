@@ -67,7 +67,7 @@ public class ClassConstructorDescriptorImpl extends FunctionDescriptorImpl imple
 
     public ClassConstructorDescriptorImpl initialize(
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
-            @NotNull Visibility visibility,
+            @NotNull DescriptorVisibility visibility,
             @NotNull List<TypeParameterDescriptor> typeParameterDescriptors
     ) {
         super.initialize(
@@ -80,7 +80,7 @@ public class ClassConstructorDescriptorImpl extends FunctionDescriptorImpl imple
 
     public ClassConstructorDescriptorImpl initialize(
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
-            @NotNull Visibility visibility
+            @NotNull DescriptorVisibility visibility
     ) {
         initialize(unsubstitutedValueParameters, visibility, getContainingDeclaration().getDeclaredTypeParameters());
         return this;
@@ -175,7 +175,7 @@ public class ClassConstructorDescriptorImpl extends FunctionDescriptorImpl imple
     public ClassConstructorDescriptor copy(
             DeclarationDescriptor newOwner,
             Modality modality,
-            Visibility visibility,
+            DescriptorVisibility visibility,
             Kind kind,
             boolean copyOverrides
     ) {

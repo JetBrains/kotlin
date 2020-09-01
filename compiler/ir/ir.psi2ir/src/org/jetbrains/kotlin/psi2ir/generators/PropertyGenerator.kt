@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -138,7 +138,7 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         }
 
     fun generateFakeOverrideProperty(propertyDescriptor: PropertyDescriptor, ktElement: KtPureElement): IrProperty? {
-        if (propertyDescriptor.visibility == Visibilities.INVISIBLE_FAKE) return null
+        if (propertyDescriptor.visibility == DescriptorVisibilities.INVISIBLE_FAKE) return null
 
         val startOffset = ktElement.pureStartOffsetOrUndefined
         val endOffset = ktElement.pureEndOffsetOrUndefined
@@ -170,15 +170,15 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         return variableDescriptor as? PropertyDescriptor ?: TODO("not a property: $variableDescriptor")
     }
 
-    private val Visibility.admitsFakeOverride: Boolean
-        get() = !Visibilities.isPrivate(this) && this != Visibilities.INVISIBLE_FAKE
+    private val DescriptorVisibility.admitsFakeOverride: Boolean
+        get() = !DescriptorVisibilities.isPrivate(this) && this != DescriptorVisibilities.INVISIBLE_FAKE
 
-    private val PropertyDescriptor.fieldVisibility: Visibility
+    private val PropertyDescriptor.fieldVisibility: DescriptorVisibility
         get() = declarationGenerator.context.extensions.computeFieldVisibility(this)
             ?: when {
                 isLateInit -> setter?.visibility ?: visibility
                 isConst -> visibility
-                else -> Visibilities.PRIVATE
+                else -> DescriptorVisibilities.PRIVATE
             }
 }
 

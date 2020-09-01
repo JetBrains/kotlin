@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.javac.wrappers.trees
 
 import com.sun.source.tree.CompilationUnitTree
 import com.sun.tools.javac.tree.JCTree
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.Name
@@ -43,8 +43,8 @@ class TreeBasedMethod(
     override val isFinal: Boolean
         get() = tree.modifiers.isFinal
 
-    override val visibility: Visibility
-        get() = if (containingClass.isInterface) Visibilities.PUBLIC else tree.modifiers.visibility
+    override val visibility: DescriptorVisibility
+        get() = if (containingClass.isInterface) DescriptorVisibilities.PUBLIC else tree.modifiers.visibility
 
     override val typeParameters: List<JavaTypeParameter>
         get() = tree.typeParameters.map { TreeBasedTypeParameter(it, compilationUnit, javac, this) }

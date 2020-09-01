@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_CREATE_METHOD_NA
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -277,7 +277,7 @@ class JvmSymbols(
                 continuationClass.typeWith(irBuiltIns.anyNType).makeNullable()
             )
         }
-        klass.addFunction(INVOKE_SUSPEND_METHOD_NAME, irBuiltIns.anyNType, Modality.ABSTRACT, Visibilities.PROTECTED).apply {
+        klass.addFunction(INVOKE_SUSPEND_METHOD_NAME, irBuiltIns.anyNType, Modality.ABSTRACT, DescriptorVisibilities.PROTECTED).apply {
             addValueParameter(SUSPEND_CALL_RESULT_NAME, resultClassStub.typeWith(irBuiltIns.anyNType))
         }
         klass.addFunction(SUSPEND_FUNCTION_CREATE_METHOD_NAME, continuationClass.typeWith(irBuiltIns.unitType), Modality.OPEN).apply {
@@ -306,7 +306,7 @@ class JvmSymbols(
                 addValueParameter("receiver", irBuiltIns.anyNType)
             }
 
-            klass.addField("receiver", irBuiltIns.anyNType, Visibilities.PROTECTED)
+            klass.addField("receiver", irBuiltIns.anyNType, DescriptorVisibilities.PROTECTED)
 
             generateCallableReferenceMethods(klass)
         }
@@ -440,7 +440,7 @@ class JvmSymbols(
                     backingField = irFactory.buildField {
                         name = receiverFieldName
                         type = irBuiltIns.anyNType
-                        visibility = Visibilities.PROTECTED
+                        visibility = DescriptorVisibilities.PROTECTED
                     }.also { field ->
                         field.parent = klass
                     }

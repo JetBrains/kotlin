@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.structure.JavaModifierListOwner
 import org.jetbrains.kotlin.load.java.structure.MapBasedJavaAnnotationOwner
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -33,13 +33,13 @@ internal interface BinaryJavaModifierListOwner : JavaModifierListOwner, MapBased
     override val isAbstract get() = isSet(Opcodes.ACC_ABSTRACT)
     override val isStatic get() = isSet(Opcodes.ACC_STATIC)
     override val isFinal get() = isSet(Opcodes.ACC_FINAL)
-    override val visibility: Visibility
+    override val visibility: DescriptorVisibility
         get() = when {
-            isSet(Opcodes.ACC_PRIVATE) -> Visibilities.PRIVATE
+            isSet(Opcodes.ACC_PRIVATE) -> DescriptorVisibilities.PRIVATE
             isSet(Opcodes.ACC_PROTECTED) ->
-                if (isStatic) JavaVisibilities.PROTECTED_STATIC_VISIBILITY else JavaVisibilities.PROTECTED_AND_PACKAGE
-            isSet(Opcodes.ACC_PUBLIC) -> Visibilities.PUBLIC
-            else -> JavaVisibilities.PACKAGE_VISIBILITY
+                if (isStatic) JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY else JavaDescriptorVisibilities.PROTECTED_AND_PACKAGE
+            isSet(Opcodes.ACC_PUBLIC) -> DescriptorVisibilities.PUBLIC
+            else -> JavaDescriptorVisibilities.PACKAGE_VISIBILITY
         }
 
     override val isDeprecatedInJavaDoc get() = isSet(Opcodes.ACC_DEPRECATED)

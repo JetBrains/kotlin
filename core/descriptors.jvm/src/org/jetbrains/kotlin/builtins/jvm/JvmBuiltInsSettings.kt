@@ -198,7 +198,7 @@ open class JvmBuiltInsSettings(
         cloneFromCloneable: SimpleFunctionDescriptor
     ): SimpleFunctionDescriptor = cloneFromCloneable.newCopyBuilder().apply {
         setOwner(arrayClassDescriptor)
-        setVisibility(Visibilities.PUBLIC)
+        setVisibility(DescriptorVisibilities.PUBLIC)
         setReturnType(arrayClassDescriptor.defaultType)
         setDispatchReceiverParameter(arrayClassDescriptor.thisAsReceiverParameter)
     }.build()!!

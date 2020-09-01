@@ -811,10 +811,10 @@ internal fun isVisible(
 
     val visibility = descriptor.visibility
     if (position == QualifierPosition.IMPORT) {
-        if (Visibilities.isPrivate(visibility)) return Visibilities.inSameFile(descriptor, shouldBeVisibleFrom)
+        if (DescriptorVisibilities.isPrivate(visibility)) return DescriptorVisibilities.inSameFile(descriptor, shouldBeVisibleFrom)
         if (!visibility.mustCheckInImports()) return true
     }
-    return Visibilities.isVisibleIgnoringReceiver(descriptor, shouldBeVisibleFrom)
+    return DescriptorVisibilities.isVisibleIgnoringReceiver(descriptor, shouldBeVisibleFrom)
 }
 
 internal enum class QualifierPosition {

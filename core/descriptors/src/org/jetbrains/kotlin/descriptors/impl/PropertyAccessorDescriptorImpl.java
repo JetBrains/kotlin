@@ -35,13 +35,13 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
     private final PropertyDescriptor correspondingProperty;
     private final boolean isInline;
     private final Kind kind;
-    private Visibility visibility;
+    private DescriptorVisibility visibility;
     @Nullable
     private FunctionDescriptor initialSignatureDescriptor = null;
 
     public PropertyAccessorDescriptorImpl(
             @NotNull Modality modality,
-            @NotNull Visibility visibility,
+            @NotNull DescriptorVisibility visibility,
             @NotNull PropertyDescriptor correspondingProperty,
             @NotNull Annotations annotations,
             @NotNull Name name,
@@ -146,11 +146,11 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
 
     @NotNull
     @Override
-    public Visibility getVisibility() {
+    public DescriptorVisibility getVisibility() {
         return visibility;
     }
 
-    public void setVisibility(Visibility visibility) {
+    public void setVisibility(DescriptorVisibility visibility) {
         this.visibility = visibility;
     }
 
@@ -189,7 +189,7 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
     public PropertyAccessorDescriptor copy(
             DeclarationDescriptor newOwner,
             Modality modality,
-            Visibility visibility,
+            DescriptorVisibility visibility,
             Kind kind,
             boolean copyOverrides
     ) {

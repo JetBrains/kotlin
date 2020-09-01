@@ -240,7 +240,7 @@ class LazyImportScope(
         val visibility = (descriptor as DeclarationDescriptorWithVisibility).visibility
         val includeVisible = filteringKind == FilteringKind.VISIBLE_CLASSES
         if (!visibility.mustCheckInImports()) return includeVisible
-        return Visibilities.isVisibleIgnoringReceiver(descriptor, components.moduleDescriptor) == includeVisible
+        return DescriptorVisibilities.isVisibleIgnoringReceiver(descriptor, components.moduleDescriptor) == includeVisible
     }
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {

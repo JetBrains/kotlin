@@ -42,7 +42,7 @@ abstract class IrBuiltinOperatorDescriptorBase(containingDeclaration: Declaratio
         throw UnsupportedOperationException()
 
     override fun getTypeParameters(): List<TypeParameterDescriptor> = emptyList()
-    override fun getVisibility(): Visibility = Visibilities.PUBLIC
+    override fun getVisibility(): DescriptorVisibility = DescriptorVisibilities.PUBLIC
     override fun getModality(): Modality = Modality.FINAL
     override fun getKind(): CallableMemberDescriptor.Kind = CallableMemberDescriptor.Kind.SYNTHESIZED
     override fun getInitialSignatureDescriptor(): FunctionDescriptor? = null
@@ -61,8 +61,8 @@ abstract class IrBuiltinOperatorDescriptorBase(containingDeclaration: Declaratio
     override fun hasSynthesizedParameterNames(): Boolean = false
 
     override fun copy(
-        newOwner: DeclarationDescriptor?, modality: Modality?, visibility: Visibility?,
-        kind: CallableMemberDescriptor.Kind?, copyOverrides: Boolean
+            newOwner: DeclarationDescriptor?, modality: Modality?, visibility: DescriptorVisibility?,
+            kind: CallableMemberDescriptor.Kind?, copyOverrides: Boolean
     ) =
         throw UnsupportedOperationException()
 
@@ -119,7 +119,7 @@ class IrBuiltinValueParameterDescriptorImpl(
     override val varargElementType: KotlinType? get() = null
     override fun getCompileTimeInitializer(): ConstantValue<*>? = null
     override fun isVar(): Boolean = false
-    override fun getVisibility(): Visibility = Visibilities.LOCAL
+    override fun getVisibility(): DescriptorVisibility = DescriptorVisibilities.LOCAL
 
     override fun copy(newOwner: CallableDescriptor, newName: Name, newIndex: Int): ValueParameterDescriptor =
         throw UnsupportedOperationException()

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.irArray
 import org.jetbrains.kotlin.codegen.AsmUtil.BOUND_REFERENCE_RECEIVER
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -80,7 +80,7 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
                 setSourceRange(expression)
                 origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
                 name = Name.identifier("stub_for_inline")
-                visibility = Visibilities.LOCAL
+                visibility = DescriptorVisibilities.LOCAL
                 returnType = field.type
                 isSuspend = false
             }.apply {
@@ -140,7 +140,7 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
                 setSourceRange(expression)
                 origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
                 name = Name.identifier("stub_for_inlining")
-                visibility = Visibilities.LOCAL
+                visibility = DescriptorVisibilities.LOCAL
                 returnType = referencedFunction.returnType
                 isSuspend = referencedFunction.isSuspend
             }.apply {

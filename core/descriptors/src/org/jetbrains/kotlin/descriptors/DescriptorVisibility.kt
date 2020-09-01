@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.descriptors
 
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
-abstract class Visibility protected constructor(
+abstract class DescriptorVisibility protected constructor(
     val name: String,
     val isPublicAPI: Boolean
 ) {
@@ -52,8 +52,8 @@ abstract class Visibility protected constructor(
     /**
      * @return null if the answer is unknown
      */
-    protected open fun compareTo(visibility: Visibility): Int? {
-        return Visibilities.compareLocal(this, visibility)
+    protected open fun compareTo(visibility: DescriptorVisibility): Int? {
+        return DescriptorVisibilities.compareLocal(this, visibility)
     }
 
     // internal representation for descriptors
@@ -66,7 +66,7 @@ abstract class Visibility protected constructor(
 
     final override fun toString() = internalDisplayName
 
-    open fun normalize(): Visibility = this
+    open fun normalize(): DescriptorVisibility = this
 
     // Should be overloaded in Java visibilities
     open fun customEffectiveVisibility(): EffectiveVisibility? = null

@@ -285,9 +285,9 @@ internal class UltraLightMembersCreator(
 
                 if (outerDeclaration.hasModifier(OVERRIDE_KEYWORD)) {
                     when ((outerDeclaration.resolve() as? CallableDescriptor)?.visibility) {
-                        Visibilities.PUBLIC -> return name == PsiModifier.PUBLIC
-                        Visibilities.PRIVATE -> return name == PsiModifier.PRIVATE
-                        Visibilities.PROTECTED -> return name == PsiModifier.PROTECTED
+                        DescriptorVisibilities.PUBLIC -> return name == PsiModifier.PUBLIC
+                        DescriptorVisibilities.PRIVATE -> return name == PsiModifier.PRIVATE
+                        DescriptorVisibilities.PROTECTED -> return name == PsiModifier.PROTECTED
                     }
                 }
 

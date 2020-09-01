@@ -9,25 +9,25 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.ClassicTypeCheckerContext
 
-fun Visibility.effectiveVisibility(
+fun DescriptorVisibility.effectiveVisibility(
     descriptor: DeclarationDescriptor,
     checkPublishedApi: Boolean = false
 ): EffectiveVisibility {
     return customEffectiveVisibility() ?: normalize().forVisibility(descriptor, checkPublishedApi)
 }
 
-private fun Visibility.forVisibility(descriptor: DeclarationDescriptor, checkPublishedApi: Boolean = false): EffectiveVisibility =
+private fun DescriptorVisibility.forVisibility(descriptor: DeclarationDescriptor, checkPublishedApi: Boolean = false): EffectiveVisibility =
     when (this) {
-        Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS, Visibilities.INVISIBLE_FAKE -> EffectiveVisibility.Private
-        Visibilities.PROTECTED -> EffectiveVisibility.Protected(
+        DescriptorVisibilities.PRIVATE, DescriptorVisibilities.PRIVATE_TO_THIS, DescriptorVisibilities.INVISIBLE_FAKE -> EffectiveVisibility.Private
+        DescriptorVisibilities.PROTECTED -> EffectiveVisibility.Protected(
             (descriptor.containingDeclaration as? ClassDescriptor)?.defaultType?.constructor,
             ClassicTypeCheckerContext(errorTypeEqualsToAnything = false)
         )
-        Visibilities.INTERNAL -> if (!checkPublishedApi ||
+        DescriptorVisibilities.INTERNAL -> if (!checkPublishedApi ||
             !descriptor.isPublishedApi()
         ) EffectiveVisibility.Internal else EffectiveVisibility.Public
-        Visibilities.PUBLIC -> EffectiveVisibility.Public
-        Visibilities.LOCAL -> EffectiveVisibility.Local
+        DescriptorVisibilities.PUBLIC -> EffectiveVisibility.Public
+        DescriptorVisibilities.LOCAL -> EffectiveVisibility.Local
         // NB: visibility must be already normalized here, so e.g. no JavaVisibilities are possible at this point
         else -> throw AssertionError("Visibility $name is not allowed in forVisibility")
     }
@@ -81,7 +81,7 @@ private fun Set<DescriptorWithRelation>.leastPermissive(base: EffectiveVisibilit
 fun KotlinType.leastPermissiveDescriptor(base: EffectiveVisibility) = dependentDescriptors().leastPermissive(base)
 
 fun DeclarationDescriptorWithVisibility.effectiveVisibility(
-    visibility: Visibility = this.visibility, checkPublishedApi: Boolean = false
+        visibility: DescriptorVisibility = this.visibility, checkPublishedApi: Boolean = false
 ): EffectiveVisibility =
     lowerBound(
         visibility.effectiveVisibility(this, checkPublishedApi),

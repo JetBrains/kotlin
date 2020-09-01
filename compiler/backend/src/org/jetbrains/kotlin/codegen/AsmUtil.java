@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.load.java.JavaVisibilities;
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil;
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable;
@@ -82,16 +82,16 @@ public class AsmUtil {
     public static final int NO_FLAG_PACKAGE_PRIVATE = 0;
 
     @NotNull
-    private static final Map<Visibility, Integer> visibilityToAccessFlag = ImmutableMap.<Visibility, Integer>builder()
-            .put(Visibilities.PRIVATE, ACC_PRIVATE)
-            .put(Visibilities.PRIVATE_TO_THIS, ACC_PRIVATE)
-            .put(Visibilities.PROTECTED, ACC_PROTECTED)
-            .put(JavaVisibilities.PROTECTED_STATIC_VISIBILITY, ACC_PROTECTED)
-            .put(JavaVisibilities.PROTECTED_AND_PACKAGE, ACC_PROTECTED)
-            .put(Visibilities.PUBLIC, ACC_PUBLIC)
-            .put(Visibilities.INTERNAL, ACC_PUBLIC)
-            .put(Visibilities.LOCAL, NO_FLAG_LOCAL)
-            .put(JavaVisibilities.PACKAGE_VISIBILITY, NO_FLAG_PACKAGE_PRIVATE)
+    private static final Map<DescriptorVisibility, Integer> visibilityToAccessFlag = ImmutableMap.<DescriptorVisibility, Integer>builder()
+            .put(DescriptorVisibilities.PRIVATE, ACC_PRIVATE)
+            .put(DescriptorVisibilities.PRIVATE_TO_THIS, ACC_PRIVATE)
+            .put(DescriptorVisibilities.PROTECTED, ACC_PROTECTED)
+            .put(JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY, ACC_PROTECTED)
+            .put(JavaDescriptorVisibilities.PROTECTED_AND_PACKAGE, ACC_PROTECTED)
+            .put(DescriptorVisibilities.PUBLIC, ACC_PUBLIC)
+            .put(DescriptorVisibilities.INTERNAL, ACC_PUBLIC)
+            .put(DescriptorVisibilities.LOCAL, NO_FLAG_LOCAL)
+            .put(JavaDescriptorVisibilities.PACKAGE_VISIBILITY, NO_FLAG_PACKAGE_PRIVATE)
             .build();
 
     public static final String CAPTURED_PREFIX = "$";
@@ -395,7 +395,7 @@ public class AsmUtil {
         flags |= getDeprecatedAccessFlag(functionDescriptor);
         if (deprecationResolver.isDeprecatedHidden(functionDescriptor) ||
             isInlineWithReified(functionDescriptor) ||
-            functionDescriptor.isSuspend() && functionDescriptor.getVisibility().equals(Visibilities.PRIVATE)) {
+            functionDescriptor.isSuspend() && functionDescriptor.getVisibility().equals(DescriptorVisibilities.PRIVATE)) {
             flags |= ACC_SYNTHETIC;
         }
         return flags;
@@ -410,7 +410,7 @@ public class AsmUtil {
         if (specialCase != null) {
             return specialCase;
         }
-        Visibility visibility = descriptor.getVisibility();
+        DescriptorVisibility visibility = descriptor.getVisibility();
         Integer defaultMapping = getVisibilityAccessFlag(visibility);
         if (defaultMapping == null) {
             throw new IllegalStateException(visibility + " is not a valid visibility in backend for " + DescriptorRenderer.DEBUG_TEXT.render(descriptor));
@@ -419,7 +419,7 @@ public class AsmUtil {
     }
 
     @Nullable
-    public static Integer getVisibilityAccessFlag(Visibility visibility) {
+    public static Integer getVisibilityAccessFlag(DescriptorVisibility visibility) {
         return visibilityToAccessFlag.get(visibility);
     }
 
@@ -435,11 +435,11 @@ public class AsmUtil {
         if (descriptor.getKind() == ClassKind.ENUM_ENTRY) {
             return NO_FLAG_PACKAGE_PRIVATE;
         }
-        if (descriptor.getVisibility() == Visibilities.PUBLIC ||
-            descriptor.getVisibility() == Visibilities.PROTECTED ||
+        if (descriptor.getVisibility() == DescriptorVisibilities.PUBLIC ||
+            descriptor.getVisibility() == DescriptorVisibilities.PROTECTED ||
             // TODO: should be package private, but for now Kotlin's reflection can't access members of such classes
-            descriptor.getVisibility() == Visibilities.LOCAL ||
-            descriptor.getVisibility() == Visibilities.INTERNAL) {
+            descriptor.getVisibility() == DescriptorVisibilities.LOCAL ||
+            descriptor.getVisibility() == DescriptorVisibilities.INTERNAL) {
             return ACC_PUBLIC;
         }
         return NO_FLAG_PACKAGE_PRIVATE;
@@ -458,7 +458,7 @@ public class AsmUtil {
         int visibility =
                 innerClass instanceof SyntheticClassDescriptorForLambda
                 ? getVisibilityAccessFlagForAnonymous(innerClass)
-                : innerClass.getVisibility() == Visibilities.LOCAL
+                : innerClass.getVisibility() == DescriptorVisibilities.LOCAL
                   ? ACC_PUBLIC
                   : getVisibilityAccessFlag(innerClass);
         return visibility |
@@ -511,7 +511,7 @@ public class AsmUtil {
     @Nullable
     private static Integer specialCaseVisibility(@NotNull MemberDescriptor memberDescriptor, @Nullable OwnerKind kind) {
         DeclarationDescriptor containingDeclaration = memberDescriptor.getContainingDeclaration();
-        Visibility memberVisibility = memberDescriptor.getVisibility();
+        DescriptorVisibility memberVisibility = memberDescriptor.getVisibility();
 
         if (JvmCodegenUtil.isNonIntrinsicPrivateCompanionObjectInInterface(memberDescriptor)) {
             return ACC_PUBLIC;
@@ -534,7 +534,7 @@ public class AsmUtil {
             return ACC_PRIVATE;
         }
 
-        if (memberVisibility == Visibilities.LOCAL && memberDescriptor instanceof CallableMemberDescriptor) {
+        if (memberVisibility == DescriptorVisibilities.LOCAL && memberDescriptor instanceof CallableMemberDescriptor) {
             return ACC_PUBLIC;
         }
 
@@ -564,7 +564,7 @@ public class AsmUtil {
             }
         }
 
-        if (memberDescriptor instanceof CallableDescriptor && memberVisibility == Visibilities.PROTECTED) {
+        if (memberDescriptor instanceof CallableDescriptor && memberVisibility == DescriptorVisibilities.PROTECTED) {
             for (CallableDescriptor overridden : DescriptorUtils.getAllOverriddenDescriptors((CallableDescriptor) memberDescriptor)) {
                 if (isJvmInterface(overridden.getContainingDeclaration())) {
                     return ACC_PUBLIC;
@@ -572,7 +572,7 @@ public class AsmUtil {
             }
         }
 
-        if (!Visibilities.isPrivate(memberVisibility)) {
+        if (!DescriptorVisibilities.isPrivate(memberVisibility)) {
             return null;
         }
 

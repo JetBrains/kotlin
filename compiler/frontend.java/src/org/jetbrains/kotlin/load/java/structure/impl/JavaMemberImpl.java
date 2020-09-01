@@ -22,7 +22,7 @@ import com.intellij.psi.PsiDocCommentOwner;
 import com.intellij.psi.PsiMember;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.Visibility;
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.load.java.structure.JavaMember;
@@ -76,7 +76,7 @@ public abstract class JavaMemberImpl<Psi extends PsiMember> extends JavaElementI
 
     @NotNull
     @Override
-    public Visibility getVisibility() {
+    public DescriptorVisibility getVisibility() {
         return JavaElementUtil.getVisibility(this);
     }
 

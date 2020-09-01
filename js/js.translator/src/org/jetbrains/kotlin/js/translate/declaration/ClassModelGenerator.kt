@@ -108,7 +108,7 @@ class ClassModelGenerator(val context: TranslationContext) {
 
     private fun copySimpleMember(descriptor: ClassDescriptor, member: CallableMemberDescriptor, model: JsClassModel) {
         // Special case: fake descriptor denotes (possible multiple) private members from different super interfaces
-        if (member.visibility == Visibilities.INVISIBLE_FAKE) return copyInvisibleFakeMember(descriptor, member, model)
+        if (member.visibility == DescriptorVisibilities.INVISIBLE_FAKE) return copyInvisibleFakeMember(descriptor, member, model)
 
         val memberToCopy = findMemberToCopy(member) ?: return
         val classToCopyFrom = memberToCopy.containingDeclaration as ClassDescriptor
@@ -260,7 +260,7 @@ class ClassModelGenerator(val context: TranslationContext) {
         val fromDescriptor = bridge.from
         val toDescriptor = bridge.to
 
-        if (toDescriptor.visibility == Visibilities.INVISIBLE_FAKE) return
+        if (toDescriptor.visibility == DescriptorVisibilities.INVISIBLE_FAKE) return
 
         val sourceName = context.getNameForDescriptor(fromDescriptor).ident
         val targetName = context.getNameForDescriptor(toDescriptor).ident

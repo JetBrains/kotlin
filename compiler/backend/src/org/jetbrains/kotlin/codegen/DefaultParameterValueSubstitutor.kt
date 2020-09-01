@@ -268,7 +268,7 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
 
         if (CodegenBinding.canHaveOuter(state.bindingContext, classDescriptor)) return false
 
-        if (Visibilities.isPrivate(constructorDescriptor.visibility)) return false
+        if (DescriptorVisibilities.isPrivate(constructorDescriptor.visibility)) return false
 
         if (constructorDescriptor.valueParameters.isEmpty()) return false
         if (classOrObject is KtClass && hasSecondaryConstructorsWithNoParameters(classOrObject)) return false

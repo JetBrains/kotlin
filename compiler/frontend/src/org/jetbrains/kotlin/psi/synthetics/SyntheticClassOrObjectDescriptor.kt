@@ -37,18 +37,18 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
  * This class has its own synthetic declaration inside.
  */
 class SyntheticClassOrObjectDescriptor(
-    c: LazyClassContext,
-    parentClassOrObject: KtPureClassOrObject,
-    containingDeclaration: DeclarationDescriptor,
-    name: Name,
-    source: SourceElement,
-    outerScope: LexicalScope,
-    private val modality: Modality,
-    private val visibility: Visibility,
-    override val annotations: Annotations,
-    constructorVisibility: Visibility,
-    private val kind: ClassKind,
-    private val isCompanionObject: Boolean
+        c: LazyClassContext,
+        parentClassOrObject: KtPureClassOrObject,
+        containingDeclaration: DeclarationDescriptor,
+        name: Name,
+        source: SourceElement,
+        outerScope: LexicalScope,
+        private val modality: Modality,
+        private val visibility: DescriptorVisibility,
+        override val annotations: Annotations,
+        constructorVisibility: DescriptorVisibility,
+        private val kind: ClassKind,
+        private val isCompanionObject: Boolean
 ) : ClassDescriptorBase(c.storageManager, containingDeclaration, name, source, false), ClassDescriptorWithResolutionScopes {
     val syntheticDeclaration: KtPureClassOrObject = SyntheticDeclaration(parentClassOrObject, name.asString())
 
@@ -116,7 +116,7 @@ class SyntheticClassOrObjectDescriptor(
 
     override fun toString(): String = "synthetic class " + name.toString() + " in " + containingDeclaration
 
-    private fun createUnsubstitutedPrimaryConstructor(constructorVisibility: Visibility): ClassConstructorDescriptor {
+    private fun createUnsubstitutedPrimaryConstructor(constructorVisibility: DescriptorVisibility): ClassConstructorDescriptor {
         val constructor = DescriptorFactory.createPrimaryConstructorForObject(thisDescriptor, source)
         constructor.visibility = constructorVisibility
         constructor.returnType = getDefaultType()

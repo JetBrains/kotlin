@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
 import org.jetbrains.kotlin.backend.jvm.propertiesPhase
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.declarations.addProperty
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
@@ -92,7 +92,7 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendCon
     }
 
     private val IrProperty.hasPublicVisibility: Boolean
-        get() = !Visibilities.isPrivate(visibility) && visibility != Visibilities.PROTECTED
+        get() = !DescriptorVisibilities.isPrivate(visibility) && visibility != DescriptorVisibilities.PROTECTED
 
     private fun makeAnonymousInitializerStatic(oldInitializer: IrAnonymousInitializer, newParent: IrClass) =
         with(oldInitializer) {

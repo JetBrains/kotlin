@@ -23,8 +23,8 @@ import com.sun.source.tree.Tree
 import com.sun.tools.javac.code.Flags
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.TreeInfo
-import org.jetbrains.kotlin.descriptors.Visibilities.PUBLIC
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PUBLIC
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.javac.JavaClassWithClassId
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.*
@@ -62,7 +62,7 @@ class TreeBasedClass(
     override val isFinal: Boolean
         get() = isEnum || tree.modifiers.isFinal
 
-    override val visibility: Visibility
+    override val visibility: DescriptorVisibility
         get() = if (outerClass?.isInterface == true) PUBLIC else tree.modifiers.visibility
 
     override val typeParameters: List<JavaTypeParameter>

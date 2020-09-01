@@ -79,7 +79,7 @@ class ClassGenerator(
         }
     }
 
-    fun generateClass(ktClassOrObject: KtPureClassOrObject, visibility_: Visibility? = null): IrClass {
+    fun generateClass(ktClassOrObject: KtPureClassOrObject, visibility_: DescriptorVisibility? = null): IrClass {
         val classDescriptor = ktClassOrObject.findClassDescriptor(this.context.bindingContext)
         val startOffset = ktClassOrObject.getStartOffsetOfClassDeclarationOrNull() ?: ktClassOrObject.pureStartOffset
         val endOffset = ktClassOrObject.pureEndOffset
@@ -169,7 +169,7 @@ class ClassGenerator(
             getContributedDescriptors()
                 .filterIsInstance<FunctionDescriptor>()
                 .filter {
-                    Visibilities.isVisibleIgnoringReceiver(it, classDescriptor)
+                    DescriptorVisibilities.isVisibleIgnoringReceiver(it, classDescriptor)
                 }
                 .sortedByRenderer()
                 .forEach { parentStaticMember ->
@@ -505,7 +505,7 @@ class ClassGenerator(
             }
 
             if (ktEnumEntry.hasMemberDeclarations()) {
-                irEnumEntry.correspondingClass = generateClass(ktEnumEntry, Visibilities.PRIVATE)
+                irEnumEntry.correspondingClass = generateClass(ktEnumEntry, DescriptorVisibilities.PRIVATE)
             }
         }
 

@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.backend.jvm.ir.copyCorrespondingPropertyFrom
 import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil.isMappedIntrinsicCompanionObject
-import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
@@ -74,8 +74,8 @@ class JvmCachedDeclarations(
                 isFinal = true
                 isStatic = true
                 visibility = when {
-                    !useProperVisibilityForCompanion -> Visibilities.PUBLIC
-                    originalVisibility == Visibilities.PROTECTED -> JavaVisibilities.PROTECTED_STATIC_VISIBILITY
+                    !useProperVisibilityForCompanion -> DescriptorVisibilities.PUBLIC
+                    originalVisibility == DescriptorVisibilities.PROTECTED -> JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY
                     else -> originalVisibility
                 }
 
@@ -93,7 +93,7 @@ class JvmCachedDeclarations(
                     origin = JvmLoweredDeclarationOrigin.INTERFACE_COMPANION_PRIVATE_INSTANCE
                     isFinal = true
                     isStatic = true
-                    visibility = JavaVisibilities.PACKAGE_VISIBILITY
+                    visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
                 }.apply {
                     parent = singleton
                 }
@@ -170,7 +170,7 @@ class JvmCachedDeclarations(
                 // Interface functions are public or private, with one exception: clone in Cloneable, which is protected.
                 // However, Cloneable has no DefaultImpls, so this merely replicates the incorrect behavior of the old backend.
                 // We should rather not generate a bridge to clone when interface inherits from Cloneable at all.
-                visibility = if (interfaceFun.visibility == Visibilities.PRIVATE) Visibilities.PRIVATE else Visibilities.PUBLIC,
+                visibility = if (interfaceFun.visibility == DescriptorVisibilities.PRIVATE) DescriptorVisibilities.PRIVATE else DescriptorVisibilities.PUBLIC,
 
                 isFakeOverride = false,
                 typeParametersFromContext = parent.typeParameters

@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -229,7 +229,7 @@ open class DefaultArgumentStubGenerator(
         error("This method should be overridden")
     }
 
-    protected open fun defaultArgumentStubVisibility(function: IrFunction) = Visibilities.PUBLIC
+    protected open fun defaultArgumentStubVisibility(function: IrFunction) = DescriptorVisibilities.PUBLIC
 
     protected open fun useConstructorMarker(function: IrFunction) = function is IrConstructor
 
@@ -415,7 +415,7 @@ open class DefaultParameterInjector(
     protected open fun nullConst(startOffset: Int, endOffset: Int, type: IrType): IrExpression =
         IrConstImpl.defaultValueForType(startOffset, endOffset, type)
 
-    protected open fun defaultArgumentStubVisibility(function: IrFunction) = Visibilities.PUBLIC
+    protected open fun defaultArgumentStubVisibility(function: IrFunction) = DescriptorVisibilities.PUBLIC
 
     protected open fun useConstructorMarker(function: IrFunction) = function is IrConstructor
 
@@ -465,12 +465,12 @@ class DefaultParameterPatchOverridenSymbolsLowering(
 }
 
 private fun IrFunction.generateDefaultsFunction(
-    context: CommonBackendContext,
-    skipInlineMethods: Boolean,
-    skipExternalMethods: Boolean,
-    forceSetOverrideSymbols: Boolean,
-    visibility: Visibility,
-    useConstructorMarker: Boolean
+        context: CommonBackendContext,
+        skipInlineMethods: Boolean,
+        skipExternalMethods: Boolean,
+        forceSetOverrideSymbols: Boolean,
+        visibility: DescriptorVisibility,
+        useConstructorMarker: Boolean
 ): IrFunction? {
     if (skipInlineMethods && isInline) return null
     if (skipExternalMethods && isExternalOrInheritedFromExternal()) return null
@@ -520,11 +520,11 @@ private fun IrFunction.generateDefaultsFunction(
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 private fun IrFunction.generateDefaultsFunctionImpl(
-    context: CommonBackendContext,
-    newOrigin: IrDeclarationOrigin,
-    newVisibility: Visibility,
-    isFakeOverride: Boolean,
-    useConstructorMarker: Boolean
+        context: CommonBackendContext,
+        newOrigin: IrDeclarationOrigin,
+        newVisibility: DescriptorVisibility,
+        isFakeOverride: Boolean,
+        useConstructorMarker: Boolean
 ): IrFunction {
     val newFunction = when (this) {
         is IrConstructor ->

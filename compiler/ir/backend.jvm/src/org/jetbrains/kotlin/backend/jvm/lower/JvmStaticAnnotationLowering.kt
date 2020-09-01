@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.copyCorrespondingPropertyFrom
 import org.jetbrains.kotlin.backend.jvm.ir.isInCurrentModule
 import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -102,7 +102,7 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
             modality = if (isInterface) Modality.OPEN else target.modality
             // Since we already mangle the name above we need to reset internal visibilities to public in order
             // to avoid mangling the same name twice.
-            visibility = if (target.visibility == Visibilities.INTERNAL) Visibilities.PUBLIC else target.visibility
+            visibility = if (target.visibility == DescriptorVisibilities.INTERNAL) DescriptorVisibilities.PUBLIC else target.visibility
             isSuspend = target.isSuspend
         }.apply {
             copyTypeParametersFrom(target)

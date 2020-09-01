@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.JvmSimpleFileClassInfo
@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -100,7 +100,7 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
             symbol = IrClassSymbolImpl(descriptor),
             name = fileClassInfo.fileClassFqName.shortName(),
             kind = ClassKind.CLASS,
-            visibility = if (!fileClassInfo.withJvmMultifileClass) Visibilities.PUBLIC else JavaVisibilities.PACKAGE_VISIBILITY,
+            visibility = if (!fileClassInfo.withJvmMultifileClass) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY,
             modality = Modality.FINAL
         ).apply {
             descriptor.bind(this)

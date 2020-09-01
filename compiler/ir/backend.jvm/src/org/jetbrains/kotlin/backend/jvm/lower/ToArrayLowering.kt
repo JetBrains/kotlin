@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.declarations.addDispatchReceiver
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.addTypeParameter
@@ -101,7 +101,7 @@ private class ToArrayLowering(private val context: JvmBackendContext) : ClassLow
             // This is an explicit override of a method defined in `kotlin.collections.AbstractCollection`
             // or `java.util.Collection`. From here on, the frontend will check the existence of implementations;
             // we just need to match visibility in the former case to the latter.
-            existing.visibility = Visibilities.PUBLIC
+            existing.visibility = DescriptorVisibilities.PUBLIC
             return
         }
         if (indirectSubclass) {

@@ -65,7 +65,7 @@ class InterfaceImplBodyCodegen(
             if (memberDescriptor !is CallableMemberDescriptor) continue
 
             if (memberDescriptor.kind.isReal) continue
-            if (memberDescriptor.visibility == Visibilities.INVISIBLE_FAKE) continue
+            if (memberDescriptor.visibility == DescriptorVisibilities.INVISIBLE_FAKE) continue
             if (memberDescriptor.modality == Modality.ABSTRACT) continue
 
             val implementation = findImplementationFromInterface(memberDescriptor) ?: continue

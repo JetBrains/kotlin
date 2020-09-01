@@ -119,8 +119,8 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
 
     @NotNull
     @Override
-    public Visibility getVisibility() {
-        return Visibilities.PUBLIC;
+    public DescriptorVisibility getVisibility() {
+        return DescriptorVisibilities.PUBLIC;
     }
 
     @Override

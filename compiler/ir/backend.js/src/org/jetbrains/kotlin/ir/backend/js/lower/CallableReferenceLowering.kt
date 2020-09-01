@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclaration
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
@@ -116,7 +116,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         private fun buildReferenceClass(): IrClass {
             return context.irFactory.buildClass {
                 setSourceRange(reference)
-                visibility = Visibilities.LOCAL
+                visibility = DescriptorVisibilities.LOCAL
                 // A callable reference results in a synthetic class, while a lambda is not synthetic.
                 // We don't produce GENERATED_SAM_IMPLEMENTATION, which is always synthetic.
                 origin = if (isKReference || !isLambda) FUNCTION_REFERENCE_IMPL else LAMBDA_IMPL

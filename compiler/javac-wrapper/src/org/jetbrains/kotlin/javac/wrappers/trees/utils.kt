@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.javac.wrappers.trees
 
 import com.sun.tools.javac.tree.JCTree
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedArrayAnnotationArgument
 import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedReferenceAnnotationArgument
 import org.jetbrains.kotlin.javac.wrappers.symbols.getVisibility
@@ -39,7 +39,7 @@ internal val JCTree.JCModifiers.isStatic: Boolean
 internal val JCTree.JCModifiers.hasDefaultModifier: Boolean
     get() = Modifier.DEFAULT in getFlags()
 
-internal val JCTree.JCModifiers.visibility: Visibility
+internal val JCTree.JCModifiers.visibility: DescriptorVisibility
     get() = getFlags().getVisibility()
 
 internal fun JCTree.annotations(): Collection<JCTree.JCAnnotation> = when (this) {

@@ -1152,7 +1152,7 @@ public class FunctionCodegen {
         // $default methods are never private to be accessible from other class files (e.g. inner) without the need of synthetic accessors
         // $default methods are never protected to be accessible from subclass nested classes
         int visibilityFlag =
-                Visibilities.isPrivate(functionDescriptor.getVisibility()) || isInlineOnlyPrivateInBytecode(functionDescriptor)
+                DescriptorVisibilities.isPrivate(functionDescriptor.getVisibility()) || isInlineOnlyPrivateInBytecode(functionDescriptor)
                 ? AsmUtil.NO_FLAG_PACKAGE_PRIVATE : Opcodes.ACC_PUBLIC;
         int flags = visibilityFlag | getDeprecatedAccessFlag(functionDescriptor) | ACC_SYNTHETIC;
         if (!(functionDescriptor instanceof ConstructorDescriptor &&
@@ -1685,7 +1685,7 @@ public class FunctionCodegen {
         } else {
             switch (kind) {
                 case DEFAULT_IMPLS: return true;
-                case IMPLEMENTATION: return !Visibilities.isPrivate(memberDescriptor.getVisibility()) && !isDefault && !isSynthetic;
+                case IMPLEMENTATION: return !DescriptorVisibilities.isPrivate(memberDescriptor.getVisibility()) && !isDefault && !isSynthetic;
                 default: return false;
             }
         }

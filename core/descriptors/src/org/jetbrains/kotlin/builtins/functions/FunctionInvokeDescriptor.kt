@@ -121,7 +121,7 @@ class FunctionInvokeDescriptor private constructor(
                             .map { createValueParameter(result, it.index, it.value) },
                     typeParameters.last().defaultType,
                     Modality.ABSTRACT,
-                    Visibilities.PUBLIC
+                    DescriptorVisibilities.PUBLIC
             )
             result.setHasSynthesizedParameterNames(true)
             return result

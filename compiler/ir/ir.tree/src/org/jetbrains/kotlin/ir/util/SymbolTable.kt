@@ -577,13 +577,13 @@ class SymbolTable(
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun declareField(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: PropertyDescriptor,
-        type: IrType,
-        visibility: Visibility? = null,
-        fieldFactory: (IrFieldSymbol) -> IrField = {
+            startOffset: Int,
+            endOffset: Int,
+            origin: IrDeclarationOrigin,
+            descriptor: PropertyDescriptor,
+            type: IrType,
+            visibility: DescriptorVisibility? = null,
+            fieldFactory: (IrFieldSymbol) -> IrField = {
             irFactory.createField(
                 startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor), type,
                 visibility ?: it.descriptor.visibility, !it.descriptor.isVar, it.descriptor.isEffectivelyExternal(),

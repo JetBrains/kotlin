@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
 
 class FakeOverrideGenerator(
@@ -46,7 +46,7 @@ class FakeOverrideGenerator(
 
     private fun FirCallableMemberDeclaration<*>.allowsToHaveFakeOverrideIn(klass: FirClass<*>): Boolean {
         if (!allowsToHaveFakeOverride) return false
-        if (this.visibility != JavaVisibilities.PACKAGE_VISIBILITY) return true
+        if (this.visibility != JavaDescriptorVisibilities.PACKAGE_VISIBILITY) return true
         return this.symbol.callableId.packageName == klass.symbol.classId.packageFqName
     }
 

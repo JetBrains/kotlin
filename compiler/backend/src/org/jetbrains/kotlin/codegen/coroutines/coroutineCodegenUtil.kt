@@ -494,7 +494,7 @@ fun Method.getImplForOpenMethod(ownerInternalName: String) =
 
 fun FunctionDescriptor.isSuspendLambdaOrLocalFunction() = this.isSuspend && when (this) {
     is AnonymousFunctionDescriptor -> this.isSuspendLambda
-    is SimpleFunctionDescriptor -> this.visibility == Visibilities.LOCAL
+    is SimpleFunctionDescriptor -> this.visibility == DescriptorVisibilities.LOCAL
     else -> false
 }
 

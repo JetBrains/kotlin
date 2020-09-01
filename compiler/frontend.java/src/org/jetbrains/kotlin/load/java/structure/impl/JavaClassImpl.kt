@@ -23,7 +23,7 @@ import com.intellij.psi.PsiTypeParameter
 import com.intellij.psi.search.SearchScope
 import org.jetbrains.kotlin.asJava.KtLightClassMarker
 import org.jetbrains.kotlin.asJava.isSyntheticValuesOrValueOfMethod
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -111,7 +111,7 @@ class JavaClassImpl(psiClass: PsiClass) : JavaClassifierImpl<PsiClass>(psiClass)
     override val isFinal: Boolean
         get() = JavaElementUtil.isFinal(this)
 
-    override val visibility: Visibility
+    override val visibility: DescriptorVisibility
         get() = JavaElementUtil.getVisibility(this)
 
     override val lightClassOriginKind: LightClassOriginKind?

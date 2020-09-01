@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -62,7 +62,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
     protected val inlineCachedImplementations = mutableMapOf<IrType, IrClass>()
     protected var enclosingContainer: IrDeclarationContainer? = null
 
-    abstract fun getWrapperVisibility(expression: IrTypeOperatorCall, scopes: List<ScopeWithIr>): Visibility
+    abstract fun getWrapperVisibility(expression: IrTypeOperatorCall, scopes: List<ScopeWithIr>): DescriptorVisibility
 
     abstract fun getSuperTypeForWrapper(typeOperand: IrType): IrType
 
@@ -143,14 +143,14 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
 
     // Construct a class that wraps an invokable object into an implementation of an interface:
     //     class sam$n(private val invokable: F) : Interface { override fun method(...) = invokable(...) }
-    private fun createObjectProxy(superType: IrType, wrapperVisibility: Visibility, createFor: IrElement): IrClass {
+    private fun createObjectProxy(superType: IrType, wrapperVisibility: DescriptorVisibility, createFor: IrElement): IrClass {
         val superClass = superType.classifierOrFail.owner as IrClass
         // The language documentation prohibits casting lambdas to classes, but if it was allowed,
         // the `irDelegatingConstructorCall` in the constructor below would need to be modified.
         assert(superClass.kind == ClassKind.INTERFACE) { "SAM conversion to an abstract class not allowed" }
 
         val superFqName = superClass.fqNameWhenAvailable!!.asString().replace('.', '_')
-        val inlinePrefix = if (wrapperVisibility == Visibilities.PUBLIC) "\$i" else ""
+        val inlinePrefix = if (wrapperVisibility == DescriptorVisibilities.PUBLIC) "\$i" else ""
         val wrapperName = Name.identifier("sam$inlinePrefix\$$superFqName$SAM_WRAPPER_SUFFIX")
         val superMethod = superClass.functions.single { it.modality == Modality.ABSTRACT }
         val extensionReceiversCount = if (superMethod.extensionReceiverParameter == null) 0 else 1
@@ -178,7 +178,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             name = Name.identifier(FUNCTION_FIELD_NAME)
             type = wrappedFunctionType
             origin = subclass.origin
-            visibility = Visibilities.PRIVATE
+            visibility = DescriptorVisibilities.PRIVATE
             setSourceRange(createFor)
         }
 

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations
 
-import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.module.impl.scopes.JdkScope
@@ -51,7 +50,7 @@ import org.jetbrains.kotlin.idea.search.not
 import org.jetbrains.kotlin.idea.util.projectStructure.getModule
 import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.isJvm
@@ -136,15 +135,15 @@ class MoveConflictChecker(
     private fun DeclarationDescriptor.isVisibleIn(where: DeclarationDescriptor): Boolean {
         return when {
             this !is DeclarationDescriptorWithVisibility -> true
-            !Visibilities.isVisibleIgnoringReceiver(this, where) -> false
-            this is ConstructorDescriptor -> Visibilities.isVisibleIgnoringReceiver(containingDeclaration, where)
+            !DescriptorVisibilities.isVisibleIgnoringReceiver(this, where) -> false
+            this is ConstructorDescriptor -> DescriptorVisibilities.isVisibleIgnoringReceiver(containingDeclaration, where)
             else -> true
         }
     }
 
     private fun DeclarationDescriptor.wrap(
         newContainer: DeclarationDescriptor? = null,
-        newVisibility: Visibility? = null
+        newVisibility: DescriptorVisibility? = null
     ): DeclarationDescriptor? {
         if (newContainer == null && newVisibility == null) return this
 
@@ -153,14 +152,14 @@ class MoveConflictChecker(
             is CallableMemberDescriptor -> object : CallableMemberDescriptor by wrappedDescriptor {
                 override fun getOriginal() = this
                 override fun getContainingDeclaration() = newContainer ?: wrappedDescriptor.containingDeclaration
-                override fun getVisibility(): Visibility = newVisibility ?: wrappedDescriptor.visibility
+                override fun getVisibility(): DescriptorVisibility = newVisibility ?: wrappedDescriptor.visibility
                 override fun getSource() =
                     newContainer?.let { SourceElement { DescriptorUtils.getContainingSourceFile(it) } } ?: wrappedDescriptor.source
             }
             is ClassDescriptor -> object : ClassDescriptor by wrappedDescriptor {
                 override fun getOriginal() = this
                 override fun getContainingDeclaration() = newContainer ?: wrappedDescriptor.containingDeclaration
-                override fun getVisibility(): Visibility = newVisibility ?: wrappedDescriptor.visibility
+                override fun getVisibility(): DescriptorVisibility = newVisibility ?: wrappedDescriptor.visibility
                 override fun getSource() =
                     newContainer?.let { SourceElement { DescriptorUtils.getContainingSourceFile(it) } } ?: wrappedDescriptor.source
             }
@@ -170,24 +169,24 @@ class MoveConflictChecker(
 
     private fun DeclarationDescriptor.asPredicted(
         newContainer: DeclarationDescriptor,
-        actualVisibility: Visibility?
+        actualVisibility: DescriptorVisibility?
     ): DeclarationDescriptor? {
         val visibility = actualVisibility ?: (this as? DeclarationDescriptorWithVisibility)?.visibility ?: return null
-        val adjustedVisibility = if (visibility == Visibilities.PROTECTED && newContainer is PackageFragmentDescriptor) {
-            Visibilities.PUBLIC
+        val adjustedVisibility = if (visibility == DescriptorVisibilities.PROTECTED && newContainer is PackageFragmentDescriptor) {
+            DescriptorVisibilities.PUBLIC
         } else {
             visibility
         }
         return wrap(newContainer, adjustedVisibility)
     }
 
-    private fun DeclarationDescriptor.visibilityAsViewedFromJava(): Visibility? {
+    private fun DeclarationDescriptor.visibilityAsViewedFromJava(): DescriptorVisibility? {
         if (this !is DeclarationDescriptorWithVisibility) return null
         return when (visibility) {
-            Visibilities.PRIVATE -> {
-                if (this is ClassDescriptor && DescriptorUtils.isTopLevelDeclaration(this)) JavaVisibilities.PACKAGE_VISIBILITY else null
+            DescriptorVisibilities.PRIVATE -> {
+                if (this is ClassDescriptor && DescriptorUtils.isTopLevelDeclaration(this)) JavaDescriptorVisibilities.PACKAGE_VISIBILITY else null
             }
-            Visibilities.PROTECTED -> JavaVisibilities.PROTECTED_AND_PACKAGE
+            DescriptorVisibilities.PROTECTED -> JavaDescriptorVisibilities.PROTECTED_AND_PACKAGE
             else -> null
         }
     }
@@ -380,7 +379,7 @@ class MoveConflictChecker(
             val referencedDescriptor = resolutionFacade.resolveToDescriptor(referencedElement)
 
             if (referencedDescriptor is DeclarationDescriptorWithVisibility
-                && referencedDescriptor.visibility == Visibilities.PUBLIC
+                && referencedDescriptor.visibility == DescriptorVisibilities.PUBLIC
                 && moveTarget is KotlinMoveTargetForExistingElement
                 && moveTarget.targetElement.parentsWithSelf.filterIsInstance<KtClassOrObject>().all { it.isPublic }
             ) continue
@@ -442,7 +441,7 @@ class MoveConflictChecker(
 
         fun DeclarationDescriptorWithVisibility.isVisibleFrom(ref: PsiReference): Boolean {
             val targetVisibility = visibility.normalize()
-            if (targetVisibility == Visibilities.PUBLIC) return true
+            if (targetVisibility == DescriptorVisibilities.PUBLIC) return true
 
             val refElement = ref.element
             val referrer = refElement.getStrictParentOfType<KtNamedDeclaration>()
@@ -454,7 +453,7 @@ class MoveConflictChecker(
             if (!isVisibleIn(referrerDescriptor)) return true
 
             return when (targetVisibility) {
-                Visibilities.PROTECTED -> isProtectedVisible(referrerDescriptor)
+                DescriptorVisibilities.PROTECTED -> isProtectedVisible(referrerDescriptor)
                 else -> isVisibleIn(targetContainer)
             }
         }

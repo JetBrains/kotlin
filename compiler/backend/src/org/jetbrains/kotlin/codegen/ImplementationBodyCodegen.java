@@ -817,7 +817,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
         if (properVisibilityForCompanionObjectInstanceField &&
             JvmCodegenUtil.isCompanionObjectInInterfaceNotIntrinsic(companionObjectDescriptor) &&
-            Visibilities.isPrivate(companionObjectDescriptor.getVisibility())) {
+            DescriptorVisibilities.isPrivate(companionObjectDescriptor.getVisibility())) {
             fieldAccessFlags |= ACC_SYNTHETIC;
         }
         StackValue.Field field = StackValue.singleton(companionObjectDescriptor, typeMapper);

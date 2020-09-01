@@ -21,8 +21,8 @@ import com.intellij.psi.PsiParameter;
 import com.intellij.psi.impl.compiled.ClsParameterImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.Visibilities;
-import org.jetbrains.kotlin.descriptors.Visibility;
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities;
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
@@ -60,8 +60,8 @@ public class JavaValueParameterImpl extends JavaElementImpl<PsiParameter>
 
     @NotNull
     @Override
-    public Visibility getVisibility() {
-        return Visibilities.LOCAL;
+    public DescriptorVisibility getVisibility() {
+        return DescriptorVisibilities.LOCAL;
     }
 
     @NotNull

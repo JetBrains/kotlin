@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -86,7 +86,7 @@ val IrCall.isSuspend get() = (symbol.owner as? IrSimpleFunction)?.isSuspend == t
 val IrFunctionReference.isSuspend get() = (symbol.owner as? IrSimpleFunction)?.isSuspend == true
 
 val IrSimpleFunction.isOverridable: Boolean
-    get() = visibility != Visibilities.PRIVATE && modality != Modality.FINAL && (parent as? IrClass)?.isFinalClass != true
+    get() = visibility != DescriptorVisibilities.PRIVATE && modality != Modality.FINAL && (parent as? IrClass)?.isFinalClass != true
 
 val IrSimpleFunction.isOverridableOrOverrides: Boolean get() = isOverridable || overriddenSymbols.isNotEmpty()
 
@@ -456,7 +456,7 @@ fun IrClass.addFakeOverridesViaIncorrectHeuristic(implementedMembers: List<IrSim
             irClass.declarations
                 .flatMap { it.toList() }
                 .filter { it !in overriddenFunctions }
-                .filter { it.visibility != Visibilities.PRIVATE }
+                .filter { it.visibility != DescriptorVisibilities.PRIVATE }
         }
         .toMutableSet()
 
@@ -468,7 +468,7 @@ fun IrClass.addFakeOverridesViaIncorrectHeuristic(implementedMembers: List<IrSim
             irFunction.factory.buildFun {
                 origin = IrDeclarationOrigin.FAKE_OVERRIDE
                 name = irFunction.name
-                visibility = Visibilities.PUBLIC
+                visibility = DescriptorVisibilities.PUBLIC
                 modality = irFunction.modality
                 returnType = irFunction.returnType
                 isInline = irFunction.isInline
@@ -499,16 +499,16 @@ fun IrClass.addFakeOverridesViaIncorrectHeuristic(implementedMembers: List<IrSim
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrFactory.createStaticFunctionWithReceivers(
-    irParent: IrDeclarationParent,
-    name: Name,
-    oldFunction: IrFunction,
-    dispatchReceiverType: IrType? = oldFunction.dispatchReceiverParameter?.type,
-    origin: IrDeclarationOrigin = oldFunction.origin,
-    modality: Modality = Modality.FINAL,
-    visibility: Visibility = oldFunction.visibility,
-    isFakeOverride: Boolean = oldFunction.isFakeOverride,
-    copyMetadata: Boolean = true,
-    typeParametersFromContext: List<IrTypeParameter> = listOf()
+        irParent: IrDeclarationParent,
+        name: Name,
+        oldFunction: IrFunction,
+        dispatchReceiverType: IrType? = oldFunction.dispatchReceiverParameter?.type,
+        origin: IrDeclarationOrigin = oldFunction.origin,
+        modality: Modality = Modality.FINAL,
+        visibility: DescriptorVisibility = oldFunction.visibility,
+        isFakeOverride: Boolean = oldFunction.isFakeOverride,
+        copyMetadata: Boolean = true,
+        typeParametersFromContext: List<IrTypeParameter> = listOf()
 ): IrSimpleFunction {
     val descriptor = (oldFunction.descriptor as? DescriptorWithContainerSource)?.let {
         WrappedFunctionDescriptorWithContainerSource()

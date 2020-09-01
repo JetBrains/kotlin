@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirSimpleTypeImpl
 import org.jetbrains.kotlin.descriptors.commonizer.utils.Interner
@@ -32,7 +32,7 @@ object CirTypeFactory {
 
         return create(
             classifierId = CirClassifierIdFactory.create(classifierDescriptor),
-            visibility = (classifierDescriptor as? ClassifierDescriptorWithTypeParameters)?.visibility ?: Visibilities.UNKNOWN,
+            visibility = (classifierDescriptor as? ClassifierDescriptorWithTypeParameters)?.visibility ?: DescriptorVisibilities.UNKNOWN,
             arguments = source.arguments.map { projection ->
                 CirTypeProjection(
                     projectionKind = projection.projectionKind,
@@ -45,10 +45,10 @@ object CirTypeFactory {
     }
 
     fun create(
-        classifierId: CirClassifierId,
-        visibility: Visibility,
-        arguments: List<CirTypeProjection>,
-        isMarkedNullable: Boolean
+            classifierId: CirClassifierId,
+            visibility: DescriptorVisibility,
+            arguments: List<CirTypeProjection>,
+            isMarkedNullable: Boolean
     ): CirSimpleType {
         return interner.intern(
             CirSimpleTypeImpl(

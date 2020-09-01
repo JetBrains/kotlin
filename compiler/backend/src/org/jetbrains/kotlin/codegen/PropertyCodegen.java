@@ -160,7 +160,7 @@ public class PropertyCodegen {
 
     private void genBackingFieldAndAnnotations(@NotNull PropertyDescriptor descriptor) {
         // Fields and '$annotations' methods for non-private const properties are generated in the multi-file facade
-        boolean isBackingFieldOwner = descriptor.isConst() && !Visibilities.isPrivate(descriptor.getVisibility())
+        boolean isBackingFieldOwner = descriptor.isConst() && !DescriptorVisibilities.isPrivate(descriptor.getVisibility())
                                       ? !(context instanceof MultifileClassPartContext)
                                       : CodegenContextUtil.isImplementationOwner(context, descriptor);
 
@@ -218,7 +218,7 @@ public class PropertyCodegen {
         // and setter, in this case, the property can always be accessed through the accessor 'access<property name>$cp' and avoid some
         // useless indirection by using others accessors.
         if (isCompanionObject(descriptor.getContainingDeclaration())) {
-            if (Visibilities.isPrivate(descriptor.getVisibility()) && isDefaultGetterAndSetter) {
+            if (DescriptorVisibilities.isPrivate(descriptor.getVisibility()) && isDefaultGetterAndSetter) {
                 return false;
             }
             return true;
@@ -228,14 +228,14 @@ public class PropertyCodegen {
         if (isTopLevelInJvmMultifileClass(descriptor)) return true;
 
         // Private class properties have accessors only in cases when those accessors are non-trivial
-        if (Visibilities.isPrivate(descriptor.getVisibility())) {
+        if (DescriptorVisibilities.isPrivate(descriptor.getVisibility())) {
             return !isDefaultAccessor;
         }
 
         // Non-private properties with private setter should not be generated for trivial properties
         // as the class will use direct field access instead
         //noinspection ConstantConditions
-        if (accessor != null && accessor.isSetter() && Visibilities.isPrivate(descriptor.getSetter().getVisibility())) {
+        if (accessor != null && accessor.isSetter() && DescriptorVisibilities.isPrivate(descriptor.getSetter().getVisibility())) {
             return !isDefaultAccessor;
         }
 
@@ -254,12 +254,12 @@ public class PropertyCodegen {
         if (hasJvmFieldAnnotation(descriptor)) return false;
         if (kind == OwnerKind.ERASED_INLINE_CLASS) return false;
 
-        Visibility visibility = descriptor.getVisibility();
+        DescriptorVisibility visibility = descriptor.getVisibility();
         if (InlineClassesUtilsKt.isInlineClass(descriptor.getContainingDeclaration())) {
             return visibility.isPublicAPI();
         }
         else {
-            return !Visibilities.isPrivate(visibility);
+            return !DescriptorVisibilities.isPrivate(visibility);
         }
     }
 
@@ -512,7 +512,7 @@ public class PropertyCodegen {
 
     private void generateAccessor(@Nullable KtPropertyAccessor accessor, @NotNull PropertyAccessorDescriptor descriptor) {
         if (context instanceof MultifileClassFacadeContext &&
-            (Visibilities.isPrivate(descriptor.getVisibility()) ||
+            (DescriptorVisibilities.isPrivate(descriptor.getVisibility()) ||
              AsmUtil.getVisibilityAccessFlag(descriptor) == Opcodes.ACC_PRIVATE)) {
             return;
         }

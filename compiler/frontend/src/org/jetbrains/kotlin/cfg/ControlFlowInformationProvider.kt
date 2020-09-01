@@ -487,9 +487,9 @@ class ControlFlowInformationProvider private constructor(
 
             val receiverValue = expression.getResolvedCall(trace.bindingContext)?.getDispatchReceiverWithSmartCast()
 
-            if (Visibilities.isVisible(receiverValue, variableDescriptor, descriptor)
+            if (DescriptorVisibilities.isVisible(receiverValue, variableDescriptor, descriptor)
                 && setterDescriptor != null
-                && !Visibilities.isVisible(receiverValue, setterDescriptor, descriptor)
+                && !DescriptorVisibilities.isVisible(receiverValue, setterDescriptor, descriptor)
             ) {
                 report(
                     Errors.INVISIBLE_SETTER.on(

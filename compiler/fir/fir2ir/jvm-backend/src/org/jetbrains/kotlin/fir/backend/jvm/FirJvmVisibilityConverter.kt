@@ -8,16 +8,15 @@ package org.jetbrains.kotlin.fir.backend.jvm
 import org.jetbrains.kotlin.fir.JavaVisibilities
 import org.jetbrains.kotlin.fir.Visibility
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
-import org.jetbrains.kotlin.descriptors.Visibility as OldVisibility
-import org.jetbrains.kotlin.load.java.JavaVisibilities as OldJavaVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility as OldVisibility
 
 
 object FirJvmVisibilityConverter : Fir2IrVisibilityConverter() {
     override fun convertPlatformVisibility(visibility: Visibility): OldVisibility {
         return when (visibility) {
-            JavaVisibilities.PackageVisibility -> OldJavaVisibilities.PACKAGE_VISIBILITY
-            JavaVisibilities.ProtectedStaticVisibility -> OldJavaVisibilities.PROTECTED_STATIC_VISIBILITY
-            JavaVisibilities.ProtectedAndPackage -> OldJavaVisibilities.PROTECTED_AND_PACKAGE
+            JavaVisibilities.PackageVisibility -> org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+            JavaVisibilities.ProtectedStaticVisibility -> org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY
+            JavaVisibilities.ProtectedAndPackage -> org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities.PROTECTED_AND_PACKAGE
             else -> error("Unknown visibility: $this")
         }
     }

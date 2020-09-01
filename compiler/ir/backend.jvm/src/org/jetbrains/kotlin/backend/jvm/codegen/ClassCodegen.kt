@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
@@ -426,7 +426,7 @@ private val Modality.flags: Int
         else -> throw AssertionError("Unsupported modality $this")
     }
 
-private val Visibility.flags: Int
+private val DescriptorVisibility.flags: Int
     get() = AsmUtil.getVisibilityAccessFlag(this) ?: throw AssertionError("Unsupported visibility $this")
 
 internal val IrDeclaration.OtherOrigin: JvmDeclarationOrigin

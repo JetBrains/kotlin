@@ -172,15 +172,15 @@ class MemberDeserializer(private val c: DeserializationContext) {
     }
 
     private fun DeserializedSimpleFunctionDescriptor.initializeWithCoroutinesExperimentalityStatus(
-        extensionReceiverParameter: ReceiverParameterDescriptor?,
-        dispatchReceiverParameter: ReceiverParameterDescriptor?,
-        typeParameters: List<TypeParameterDescriptor>,
-        unsubstitutedValueParameters: List<ValueParameterDescriptor>,
-        unsubstitutedReturnType: KotlinType?,
-        modality: Modality?,
-        visibility: Visibility,
-        userDataMap: Map<out CallableDescriptor.UserDataKey<*>, *>,
-        isSuspend: Boolean
+            extensionReceiverParameter: ReceiverParameterDescriptor?,
+            dispatchReceiverParameter: ReceiverParameterDescriptor?,
+            typeParameters: List<TypeParameterDescriptor>,
+            unsubstitutedValueParameters: List<ValueParameterDescriptor>,
+            unsubstitutedReturnType: KotlinType?,
+            modality: Modality?,
+            visibility: DescriptorVisibility,
+            userDataMap: Map<out CallableDescriptor.UserDataKey<*>, *>,
+            isSuspend: Boolean
     ) {
         initialize(
             extensionReceiverParameter,

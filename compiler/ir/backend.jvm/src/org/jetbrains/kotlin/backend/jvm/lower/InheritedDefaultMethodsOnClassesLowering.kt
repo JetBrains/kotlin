@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.irBlockBody
@@ -250,7 +250,7 @@ internal fun IrSimpleFunction.findInterfaceImplementation(jvmDefaultMode: JvmDef
     }
 
     if (!implementation.hasInterfaceParent()
-        || Visibilities.isPrivate(implementation.visibility)
+        || DescriptorVisibilities.isPrivate(implementation.visibility)
         || implementation.isDefinitelyNotDefaultImplsMethod(jvmDefaultMode)
         || implementation.isMethodOfAny()
     ) {

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassConstructorImpl
 
@@ -28,14 +28,14 @@ object CirClassConstructorFactory {
 
     @Suppress("NOTHING_TO_INLINE")
     inline fun create(
-        annotations: List<CirAnnotation>,
-        typeParameters: List<CirTypeParameter>,
-        visibility: Visibility,
-        containingClassDetails: CirContainingClassDetails,
-        valueParameters: List<CirValueParameter>,
-        hasStableParameterNames: Boolean,
-        isPrimary: Boolean,
-        kind: CallableMemberDescriptor.Kind
+            annotations: List<CirAnnotation>,
+            typeParameters: List<CirTypeParameter>,
+            visibility: DescriptorVisibility,
+            containingClassDetails: CirContainingClassDetails,
+            valueParameters: List<CirValueParameter>,
+            hasStableParameterNames: Boolean,
+            isPrimary: Boolean,
+            kind: CallableMemberDescriptor.Kind
     ): CirClassConstructor {
         return CirClassConstructorImpl(
             annotations = annotations,

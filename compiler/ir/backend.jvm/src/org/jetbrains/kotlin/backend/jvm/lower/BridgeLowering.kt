@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.isJvmAbstract
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
@@ -178,7 +178,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
             // Only overrides may need bridges and so in particular, private and static functions do not.
             // Note that this includes the static replacements for inline class functions (which are static, but have
             // overriddenSymbols in order to produce correct signatures in the type mapper).
-            if (Visibilities.isPrivate(irFunction.visibility) || irFunction.isStatic || irFunction.overriddenSymbols.isEmpty())
+            if (DescriptorVisibilities.isPrivate(irFunction.visibility) || irFunction.isStatic || irFunction.overriddenSymbols.isEmpty())
                 return false
 
             // None of the methods of Any have type parameters and so we will not need bridges for them.
@@ -384,7 +384,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
             // Internal functions can be overridden by non-internal functions, which changes their names since the names of internal
             // functions are mangled. In order to avoid mangling the name twice we reset the visibility for bridges to internal
             // functions to public and use the mangled name directly.
-            visibility = bridge.overridden.visibility.takeUnless { it == Visibilities.INTERNAL } ?: Visibilities.PUBLIC
+            visibility = bridge.overridden.visibility.takeUnless { it == DescriptorVisibilities.INTERNAL } ?: DescriptorVisibilities.PUBLIC
             name = Name.identifier(bridge.signature.name)
             returnType = bridge.overridden.returnType.eraseTypeParameters()
             isSuspend = bridge.overridden.isSuspend

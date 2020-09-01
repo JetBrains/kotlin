@@ -57,7 +57,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         }
 
     fun generateFakeOverrideFunction(functionDescriptor: FunctionDescriptor, ktElement: KtPureElement): IrSimpleFunction? =
-        functionDescriptor.takeIf { it.visibility != Visibilities.INVISIBLE_FAKE }
+        functionDescriptor.takeIf { it.visibility != DescriptorVisibilities.INVISIBLE_FAKE }
             ?.let {
                 declareSimpleFunctionInner(it, ktElement, IrDeclarationOrigin.FAKE_OVERRIDE).buildWithScope { irFunction ->
                     generateFunctionParameterDeclarationsAndReturnType(irFunction, ktElement, null)

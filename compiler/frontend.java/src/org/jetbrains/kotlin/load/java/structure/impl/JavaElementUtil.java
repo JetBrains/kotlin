@@ -20,9 +20,9 @@ import com.intellij.codeInsight.ExternalAnnotationsManager;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.Visibilities;
-import org.jetbrains.kotlin.descriptors.Visibility;
-import org.jetbrains.kotlin.load.java.JavaVisibilities;
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities;
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility;
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.name.FqName;
 
@@ -50,18 +50,18 @@ import static org.jetbrains.kotlin.load.java.structure.impl.JavaElementCollectio
     }
 
     @NotNull
-    public static Visibility getVisibility(@NotNull JavaModifierListOwnerImpl owner) {
+    public static DescriptorVisibility getVisibility(@NotNull JavaModifierListOwnerImpl owner) {
         PsiModifierListOwner psiOwner = owner.getPsi();
         if (psiOwner.hasModifierProperty(PsiModifier.PUBLIC)) {
-            return Visibilities.PUBLIC;
+            return DescriptorVisibilities.PUBLIC;
         }
         if (psiOwner.hasModifierProperty(PsiModifier.PRIVATE)) {
-            return Visibilities.PRIVATE;
+            return DescriptorVisibilities.PRIVATE;
         }
         if (psiOwner.hasModifierProperty(PsiModifier.PROTECTED)) {
-            return owner.isStatic() ? JavaVisibilities.PROTECTED_STATIC_VISIBILITY : JavaVisibilities.PROTECTED_AND_PACKAGE;
+            return owner.isStatic() ? JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY : JavaDescriptorVisibilities.PROTECTED_AND_PACKAGE;
         }
-        return JavaVisibilities.PACKAGE_VISIBILITY;
+        return JavaDescriptorVisibilities.PACKAGE_VISIBILITY;
     }
 
     @NotNull

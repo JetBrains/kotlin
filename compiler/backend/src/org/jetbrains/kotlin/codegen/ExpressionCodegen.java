@@ -2181,7 +2181,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
         else if (isBackingFieldMovedFromCompanion &&
                  (forceField ||
-                  (Visibilities.isPrivate(propertyDescriptor.getVisibility()) &&
+                  (DescriptorVisibilities.isPrivate(propertyDescriptor.getVisibility()) &&
                    isDefaultAccessor(propertyDescriptor.getGetter()) && isDefaultAccessor(propertyDescriptor.getSetter())))) {
             fieldAccessorKind = JvmCodegenUtil.isDebuggerContext(context) ? AccessorKind.NORMAL : AccessorKind.IN_CLASS_COMPANION;
         }
@@ -2254,7 +2254,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             skipPropertyAccessors = forceField;
 
             if (JvmCodegenUtil.isDebuggerContext(context)
-                && Visibilities.isPrivate(propertyDescriptor.getVisibility())
+                && DescriptorVisibilities.isPrivate(propertyDescriptor.getVisibility())
                 && bindingContext.get(BACKING_FIELD_REQUIRED, propertyDescriptor) == Boolean.TRUE
             ) {
                 skipPropertyAccessors = true;

@@ -142,7 +142,7 @@ public abstract class AnnotationCodegen {
                 && !applicableTargets.contains(KotlinTarget.CLASS)
                 && !applicableTargets.contains(KotlinTarget.ANNOTATION_CLASS)) {
                 ClassDescriptor classDescriptor = (ClassDescriptor) annotated;
-                if (classDescriptor.getVisibility() == Visibilities.LOCAL) {
+                if (classDescriptor.getVisibility() == DescriptorVisibilities.LOCAL) {
                     assert applicableTargets.contains(KotlinTarget.EXPRESSION) :
                             "Inconsistent target list for object literal annotation: " + applicableTargets + " on " + annotated;
                     continue;

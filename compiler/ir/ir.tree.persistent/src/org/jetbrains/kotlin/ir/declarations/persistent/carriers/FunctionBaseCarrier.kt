@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.declarations.persistent.carriers
 
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
@@ -18,7 +18,7 @@ internal interface FunctionBaseCarrier : DeclarationCarrier {
     var extensionReceiverParameterField: IrValueParameter?
     var bodyField: IrBody?
     var metadataField: MetadataSource?
-    var visibilityField: Visibility
+    var visibilityField: DescriptorVisibility
     var typeParametersField: List<IrTypeParameter>
     var valueParametersField: List<IrValueParameter>
 }

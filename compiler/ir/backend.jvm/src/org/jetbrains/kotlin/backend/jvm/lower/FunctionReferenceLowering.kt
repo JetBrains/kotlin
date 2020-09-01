@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
@@ -168,7 +168,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
         private val functionReferenceClass = context.irFactory.buildClass {
             setSourceRange(irFunctionReference)
-            visibility = Visibilities.LOCAL
+            visibility = DescriptorVisibilities.LOCAL
             // A callable reference results in a synthetic class, while a lambda is not synthetic.
             // We don't produce GENERATED_SAM_IMPLEMENTATION, which is always synthetic.
             origin = if (isLambda) JvmLoweredDeclarationOrigin.LAMBDA_IMPL else JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL

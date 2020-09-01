@@ -221,7 +221,7 @@ public class JvmCodegenUtil {
         if (DescriptorPsiUtilsKt.hasBody(accessor)) return false;
 
         // If the accessor is private or final, it can't be overridden in the subclass and thus we can use direct access
-        return Visibilities.isPrivate(accessor.getVisibility()) || accessor.getModality() == FINAL;
+        return DescriptorVisibilities.isPrivate(accessor.getVisibility()) || accessor.getModality() == FINAL;
     }
 
     public static boolean isDebuggerContext(@NotNull CodegenContext context) {
@@ -345,7 +345,7 @@ public class JvmCodegenUtil {
 
     public static boolean isNonIntrinsicPrivateCompanionObjectInInterface(@NotNull DeclarationDescriptorWithVisibility companionObject) {
         return isCompanionObjectInInterfaceNotIntrinsic(companionObject) &&
-               Visibilities.isPrivate(companionObject.getVisibility());
+               DescriptorVisibilities.isPrivate(companionObject.getVisibility());
     }
 
     public static boolean isDeclarationOfBigArityFunctionInvoke(@Nullable DeclarationDescriptor descriptor) {

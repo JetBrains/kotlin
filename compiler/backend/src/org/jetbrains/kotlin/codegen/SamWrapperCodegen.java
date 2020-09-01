@@ -106,7 +106,7 @@ public class SamWrapperCodegen {
         SimpleFunctionDescriptor erasedInterfaceFunction = samType.getOriginalAbstractMethod().copy(
                 classDescriptor,
                 Modality.FINAL,
-                Visibilities.PUBLIC,
+                DescriptorVisibilities.PUBLIC,
                 CallableMemberDescriptor.Kind.SYNTHESIZED,
                 /*copyOverrides=*/ false
         );
@@ -268,12 +268,12 @@ public class SamWrapperCodegen {
             if (!(descriptor instanceof CallableMemberDescriptor)) continue;
             CallableMemberDescriptor member = (CallableMemberDescriptor) descriptor;
             if (member.getModality() == Modality.ABSTRACT ||
-                Visibilities.isPrivate(member.getVisibility()) ||
-                member.getVisibility() == Visibilities.INVISIBLE_FAKE ||
+                DescriptorVisibilities.isPrivate(member.getVisibility()) ||
+                member.getVisibility() == DescriptorVisibilities.INVISIBLE_FAKE ||
                 DescriptorUtils.isMethodOfAny(member)) continue;
 
             for (Map.Entry<FunctionDescriptor, FunctionDescriptor> entry : CodegenUtil.INSTANCE.copyFunctions(
-                    member, member, classDescriptor, Modality.OPEN, Visibilities.PUBLIC, CallableMemberDescriptor.Kind.DECLARATION, false
+                    member, member, classDescriptor, Modality.OPEN, DescriptorVisibilities.PUBLIC, CallableMemberDescriptor.Kind.DECLARATION, false
             ).entrySet()) {
                 ClassBodyCodegen.generateDelegationToDefaultImpl(entry.getKey(), entry.getValue(), receiverType, functionCodegen, state, false);
             }

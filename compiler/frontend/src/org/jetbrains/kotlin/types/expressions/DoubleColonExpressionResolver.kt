@@ -628,7 +628,7 @@ class DoubleColonExpressionResolver(
             createValueParametersForInvokeInFunctionType(functionDescriptor, type.arguments.dropLast(1)),
             type.arguments.last().type,
             Modality.FINAL,
-            Visibilities.PUBLIC
+            DescriptorVisibilities.PUBLIC
         )
 
         context.trace.record(BindingContext.FUNCTION, expression, functionDescriptor)
@@ -826,7 +826,7 @@ class DoubleColonExpressionResolver(
         ): Boolean {
             val receiver = receiverTypeFor(descriptor, lhs)?.let(::TransientReceiver)
             val setter = descriptor.setter
-            return descriptor.isVar && (setter == null || Visibilities.isVisible(receiver, setter, scopeOwnerDescriptor))
+            return descriptor.isVar && (setter == null || DescriptorVisibilities.isVisible(receiver, setter, scopeOwnerDescriptor))
         }
 
         fun createKCallableTypeForReference(
