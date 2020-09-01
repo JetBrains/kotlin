@@ -466,6 +466,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
   private final AutoScrollToSourceHandler myAutoScrollToSourceHandler;
   private final MyAutoScrollFromSourceHandler myAutoScrollFromSourceHandler;
   private volatile ThreeState myCurrentSelectionObsolete = ThreeState.NO;
+  private final AtomicBoolean myAutoScrollOnFocusEditor = new AtomicBoolean(true);
 
   private final IdeView myIdeView = new IdeViewForProjectViewPane(this::getCurrentProjectViewPane);
   private final MyDeletePSIElementProvider myDeletePSIElementProvider = new MyDeletePSIElementProvider();
@@ -911,6 +912,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
         }
 
         private boolean isAutoscrollFromSourceAllowedHere() {
+          if (!myAutoScrollOnFocusEditor.getAndSet(true)) return false;
           if (!Registry.is("ide.autoscroll.from.source.on.focus.gained")) return false;
           if (!isAutoscrollFromSource(getCurrentViewId())) return false;
           AbstractProjectViewPane pane = getCurrentProjectViewPane();
@@ -1083,6 +1085,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     if (isCurrentSelectionObsolete(requestFocus)) return;
     final AbstractProjectViewPane viewPane = getCurrentProjectViewPane();
     if (viewPane != null) {
+      myAutoScrollOnFocusEditor.set(false);
       viewPane.select(element, file, requestFocus);
     }
   }
@@ -1093,6 +1096,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     if (isCurrentSelectionObsolete(requestFocus)) return ActionCallback.REJECTED;
     final AbstractProjectViewPane viewPane = getCurrentProjectViewPane();
     if (viewPane instanceof AbstractProjectViewPSIPane) {
+      myAutoScrollOnFocusEditor.set(false);
       return ((AbstractProjectViewPSIPane)viewPane).selectCB(element, file, requestFocus);
     }
     select(element, file, requestFocus);
