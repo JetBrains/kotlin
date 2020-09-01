@@ -513,7 +513,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
         return when {
             descriptor is ConstructorDescriptor -> {
                 val classDescriptor = descriptor.constructedClass
-                !classDescriptor.isInline && classDescriptor.visibility != Visibilities.LOCAL
+                !classDescriptor.isInline && classDescriptor.visibility != DescriptorVisibilities.LOCAL
             }
             hasModifier(KtTokens.INTERNAL_KEYWORD) -> false
             descriptor !is FunctionDescriptor -> true

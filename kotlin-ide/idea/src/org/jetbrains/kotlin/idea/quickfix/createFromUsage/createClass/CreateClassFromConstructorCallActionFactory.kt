@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass
 
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
@@ -95,8 +95,8 @@ object CreateClassFromConstructorCallActionFactory : CreateClassFromUsageFactory
             (it.getArgumentExpression()?.getCallableDescriptor() as? ClassConstructorDescriptor)?.containingDeclaration?.visibility
         }
         val primaryConstructorVisibility = when {
-            Visibilities.PRIVATE in argumentClassVisibilities -> Visibilities.PRIVATE
-            Visibilities.INTERNAL in argumentClassVisibilities -> Visibilities.INTERNAL
+            DescriptorVisibilities.PRIVATE in argumentClassVisibilities -> DescriptorVisibilities.PRIVATE
+            DescriptorVisibilities.INTERNAL in argumentClassVisibilities -> DescriptorVisibilities.INTERNAL
             else -> null
         }
 

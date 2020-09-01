@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.builtins.isNonExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaOrKotlinMemberDescriptor
 import org.jetbrains.kotlin.idea.j2k.j2k
@@ -58,7 +58,7 @@ open class KotlinChangeInfo(
     val methodDescriptor: KotlinMethodDescriptor,
     private var name: String = methodDescriptor.name,
     var newReturnTypeInfo: KotlinTypeInfo = KotlinTypeInfo(true, methodDescriptor.baseDescriptor.returnType),
-    var newVisibility: Visibility = methodDescriptor.visibility,
+    var newVisibility: DescriptorVisibility = methodDescriptor.visibility,
     parameterInfos: List<KotlinParameterInfo> = methodDescriptor.parameters,
     receiver: KotlinParameterInfo? = methodDescriptor.receiver,
     val context: PsiElement,
@@ -239,7 +239,7 @@ open class KotlinChangeInfo(
 
     fun getNewSignature(inheritedCallable: KotlinCallableDefinitionUsage<PsiElement>): String {
         val buffer = StringBuilder()
-        val isCustomizedVisibility = newVisibility != Visibilities.DEFAULT_VISIBILITY
+        val isCustomizedVisibility = newVisibility != DescriptorVisibilities.DEFAULT_VISIBILITY
 
         if (kind == Kind.PRIMARY_CONSTRUCTOR) {
             buffer.append(name)

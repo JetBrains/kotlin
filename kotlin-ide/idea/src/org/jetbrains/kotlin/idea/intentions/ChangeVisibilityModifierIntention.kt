@@ -10,7 +10,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.util.runCommandOnAllExpectAndActualDeclaration
@@ -40,7 +40,7 @@ open class ChangeVisibilityModifierIntention protected constructor(val modifier:
             val callableDescriptor = descriptor as? CallableDescriptor ?: return null
             // cannot make visibility less than (or non-comparable with) any of the supers
             if (callableDescriptor.overriddenDescriptors
-                    .map { Visibilities.compare(it.visibility, targetVisibility) }
+                    .map { DescriptorVisibilities.compare(it.visibility, targetVisibility) }
                     .any { it == null || it > 0 }
             ) return null
         }
@@ -49,13 +49,13 @@ open class ChangeVisibilityModifierIntention protected constructor(val modifier:
 
         if (element is KtPropertyAccessor) {
             if (element.isGetter) return null
-            if (targetVisibility == Visibilities.PUBLIC) {
+            if (targetVisibility == DescriptorVisibilities.PUBLIC) {
                 val explicitVisibility = element.modifierList?.visibilityModifierType()?.value ?: return null
                 setTextGetter(KotlinBundle.lazyMessage("remove.0.modifier", explicitVisibility))
             } else {
                 val propVisibility = (element.property.toDescriptor() as? DeclarationDescriptorWithVisibility)?.visibility ?: return null
                 if (propVisibility == targetVisibility) return null
-                val compare = Visibilities.compare(targetVisibility, propVisibility)
+                val compare = DescriptorVisibilities.compare(targetVisibility, propVisibility)
                 if (compare == null || compare > 0) return null
             }
         }

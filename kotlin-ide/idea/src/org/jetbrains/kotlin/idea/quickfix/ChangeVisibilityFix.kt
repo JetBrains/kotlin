@@ -11,8 +11,8 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 import org.jetbrains.kotlin.idea.KotlinBundle
@@ -104,17 +104,17 @@ open class ChangeVisibilityFix(
         fun create(
             declaration: KtModifierListOwner,
             descriptor: DeclarationDescriptorWithVisibility,
-            targetVisibility: Visibility
+            targetVisibility: DescriptorVisibility
         ): IntentionAction? {
             if (!ExposedVisibilityChecker().checkDeclarationWithVisibility(declaration, descriptor, targetVisibility)) return null
 
             val name = descriptor.name.asString()
 
             return when (targetVisibility) {
-                Visibilities.PRIVATE -> ChangeToPrivateFix(declaration, name)
-                Visibilities.INTERNAL -> ChangeToInternalFix(declaration, name)
-                Visibilities.PROTECTED -> ChangeToProtectedFix(declaration, name)
-                Visibilities.PUBLIC -> ChangeToPublicFix(declaration, name)
+                DescriptorVisibilities.PRIVATE -> ChangeToPrivateFix(declaration, name)
+                DescriptorVisibilities.INTERNAL -> ChangeToInternalFix(declaration, name)
+                DescriptorVisibilities.PROTECTED -> ChangeToProtectedFix(declaration, name)
+                DescriptorVisibilities.PUBLIC -> ChangeToPublicFix(declaration, name)
                 else -> null
             }
         }

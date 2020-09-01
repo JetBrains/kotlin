@@ -14,8 +14,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.JavaDirectoryService
 import com.intellij.refactoring.rename.PsiElementRenameHandler
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.ShortenReferences
@@ -103,7 +103,7 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(
     private fun createExternalSubclass(baseClass: KtClass, baseName: String, editor: Editor) {
         var container: KtClassOrObject = baseClass
         var name = baseName
-        var visibility = ModifiersChecker.resolveVisibilityFromModifiers(baseClass, Visibilities.PUBLIC)
+        var visibility = ModifiersChecker.resolveVisibilityFromModifiers(baseClass, org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PUBLIC)
         while (!container.isPrivate() && !container.isProtected() && !(container is KtClass && container.isInner())) {
             val parent = container.containingClassOrObject
             if (parent != null) {
@@ -112,7 +112,7 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(
                     container = parent
                     name = "$parentName.$name"
                     val parentVisibility = ModifiersChecker.resolveVisibilityFromModifiers(parent, visibility)
-                    if (Visibilities.compare(parentVisibility, visibility) ?: 0 < 0) {
+                    if (org.jetbrains.kotlin.descriptors.DescriptorVisibilities.compare(parentVisibility, visibility) ?: 0 < 0) {
                         visibility = parentVisibility
                     }
                 }
@@ -176,11 +176,11 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(
         targetName: String,
         baseClass: KtClass,
         baseName: String,
-        defaultVisibility: Visibility = ModifiersChecker.resolveVisibilityFromModifiers(baseClass, Visibilities.PUBLIC)
+        defaultVisibility: DescriptorVisibility = ModifiersChecker.resolveVisibilityFromModifiers(baseClass, org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PUBLIC)
     ): ClassHeaderBuilder {
         return ClassHeaderBuilder().apply {
             if (!baseClass.isInterface()) {
-                if (defaultVisibility != Visibilities.PUBLIC) {
+                if (defaultVisibility != org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PUBLIC) {
                     modifier(defaultVisibility.name)
                 }
                 if (baseClass.isInner()) {

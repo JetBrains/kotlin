@@ -18,7 +18,7 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.core.setVisibility
@@ -132,7 +132,7 @@ class MoveKotlinMethodProcessor(
             if (where == null || targetVariableIsMethodParameter()) return
             val targetDescriptor = targetVariable.resolveToDescriptorIfAny() as? DeclarationDescriptorWithVisibility
                 ?: return
-            if (!Visibilities.isVisibleIgnoringReceiver(targetDescriptor, where) && method.manager.isInProject(targetVariable)) {
+            if (!DescriptorVisibilities.isVisibleIgnoringReceiver(targetDescriptor, where) && method.manager.isInProject(targetVariable)) {
                 targetVariable.setVisibility(KtTokens.PUBLIC_KEYWORD)
             }
         }

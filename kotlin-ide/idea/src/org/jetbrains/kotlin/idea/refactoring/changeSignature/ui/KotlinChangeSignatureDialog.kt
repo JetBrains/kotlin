@@ -44,8 +44,8 @@ import com.intellij.util.Consumer
 import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.table.JBTableRow
 import com.intellij.util.ui.table.JBTableRowEditor
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -73,7 +73,7 @@ class KotlinChangeSignatureDialog(
 ) : ChangeSignatureDialogBase<
         KotlinParameterInfo,
         PsiElement,
-        Visibility,
+        DescriptorVisibility,
         KotlinMethodDescriptor,
         ParameterTableModelItemBase<KotlinParameterInfo>,
         KotlinCallableParameterTableModel>(project, methodDescriptor, false, context) {
@@ -314,7 +314,7 @@ class KotlinChangeSignatureDialog(
     }
 
     override fun createVisibilityControl() = ComboBoxVisibilityPanel(
-        arrayOf(Visibilities.INTERNAL, Visibilities.PRIVATE, Visibilities.PROTECTED, Visibilities.PUBLIC)
+        arrayOf(DescriptorVisibilities.INTERNAL, DescriptorVisibilities.PRIVATE, DescriptorVisibilities.PROTECTED, DescriptorVisibilities.PUBLIC)
     )
 
     override fun updateSignatureAlarmFired() {
@@ -492,13 +492,13 @@ class KotlinChangeSignatureDialog(
         }
 
         private fun evaluateChangeInfo(
-            parametersModel: KotlinCallableParameterTableModel,
-            returnTypeCodeFragment: PsiCodeFragment?,
-            methodDescriptor: KotlinMethodDescriptor,
-            visibility: Visibility?,
-            methodName: String,
-            defaultValueContext: PsiElement,
-            forPreview: Boolean
+                parametersModel: KotlinCallableParameterTableModel,
+                returnTypeCodeFragment: PsiCodeFragment?,
+                methodDescriptor: KotlinMethodDescriptor,
+                visibility: DescriptorVisibility?,
+                methodName: String,
+                defaultValueContext: PsiElement,
+                forPreview: Boolean
         ): KotlinChangeInfo {
             val parameters = parametersModel.items.map { parameter ->
                 val parameterInfo = parameter.parameter
@@ -518,7 +518,7 @@ class KotlinChangeSignatureDialog(
                 methodDescriptor.original,
                 methodName,
                 returnTypeCodeFragment.getTypeInfo(true, forPreview),
-                visibility ?: Visibilities.DEFAULT_VISIBILITY,
+                visibility ?: DescriptorVisibilities.DEFAULT_VISIBILITY,
                 parameters,
                 parametersModel.receiver,
                 defaultValueContext

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -70,7 +70,7 @@ class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLoc
 
             if (function.hasDerivedProperty(functionDescriptor, context)) return
             val overriddenDescriptors = functionDescriptor?.original?.overriddenDescriptors
-            if (overriddenDescriptors?.any { it is JavaMethodDescriptor && it.visibility == JavaVisibilities.PACKAGE_VISIBILITY } == true) return
+            if (overriddenDescriptors?.any { it is JavaMethodDescriptor && it.visibility == JavaDescriptorVisibilities.PACKAGE_VISIBILITY } == true) return
             if (function.isAmbiguouslyDerived(overriddenDescriptors, context)) return
 
             val descriptor = holder.manager.createProblemDescriptor(
