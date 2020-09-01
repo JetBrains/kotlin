@@ -53,7 +53,10 @@ constructor(
 
     override fun exec() {
         if (inputFileProperty.isPresent) {
-            args(inputFileProperty.asFile.get())
+            val newArgs = mutableListOf<String>()
+            newArgs.add(inputFileProperty.asFile.get().canonicalPath)
+            args?.let { newArgs.addAll(it) }
+            args = newArgs
         }
 
         if (sourceMapStackTraces) {
