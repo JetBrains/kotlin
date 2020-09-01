@@ -18,10 +18,15 @@ package org.jetbrains.kotlin.descriptors
 
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
-abstract class DescriptorVisibility protected constructor(
-    val name: String,
+abstract class DescriptorVisibility protected constructor() {
+    abstract val delegate: Visibility
+
+    val name: String
+        get() = delegate.name
+
     val isPublicAPI: Boolean
-) {
+        get() = delegate.isPublicAPI
+
     /**
      * @param receiver can be used to determine callee accessibility for some special receiver value
      *
@@ -52,22 +57,36 @@ abstract class DescriptorVisibility protected constructor(
     /**
      * @return null if the answer is unknown
      */
-    protected open fun compareTo(visibility: DescriptorVisibility): Int? {
-        return DescriptorVisibilities.compareLocal(this, visibility)
+    fun compareTo(visibility: DescriptorVisibility): Int? {
+        return delegate.compareTo(visibility.delegate)
     }
 
     // internal representation for descriptors
-    open val internalDisplayName: String
-        get() = name
+    abstract val internalDisplayName: String
 
     // external representation for diagnostics
-    open val externalDisplayName: String
-        get() = internalDisplayName
+    abstract val externalDisplayName: String
 
-    final override fun toString() = internalDisplayName
+    final override fun toString(): String = delegate.toString()
 
-    open fun normalize(): DescriptorVisibility = this
+    abstract fun normalize(): DescriptorVisibility
 
     // Should be overloaded in Java visibilities
-    open fun customEffectiveVisibility(): EffectiveVisibility? = null
+    fun customEffectiveVisibility(): EffectiveVisibility? = delegate.customEffectiveVisibility()
+}
+
+abstract class DelegatedDescriptorVisibility(override val delegate: Visibility) : DescriptorVisibility() {
+    override fun mustCheckInImports(): Boolean {
+        return delegate.mustCheckInImports()
+    }
+
+    // internal representation for descriptors
+    override val internalDisplayName: String
+        get() = delegate.internalDisplayName
+
+    // external representation for diagnostics
+    override val externalDisplayName: String
+        get() = delegate.externalDisplayName
+
+    override fun normalize(): DescriptorVisibility = DescriptorVisibilities.toDescriptorVisibility(delegate.normalize())
 }

@@ -19,124 +19,38 @@ package org.jetbrains.kotlin.load.java;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class JavaDescriptorVisibilities {
     private JavaDescriptorVisibilities() {
     }
 
     @NotNull
-    public static final DescriptorVisibility PACKAGE_VISIBILITY = new DescriptorVisibility("package", false) {
+    public static final DescriptorVisibility PACKAGE_VISIBILITY = new DelegatedDescriptorVisibility(JavaVisibilities.PackageVisibility.INSTANCE) {
         @Override
         public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             return areInSamePackage(what, from);
         }
-
-        @Override
-        public boolean mustCheckInImports() {
-            return true;
-        }
-
-        @Override
-        protected Integer compareTo(@NotNull DescriptorVisibility visibility) {
-            if (this == visibility) return 0;
-            if (DescriptorVisibilities.isPrivate(visibility)) return 1;
-            return -1;
-        }
-
-        @NotNull
-        @Override
-        public String getInternalDisplayName() {
-            return "public/*package*/";
-        }
-
-        @NotNull
-        @Override
-        public String getExternalDisplayName() {
-            return "package-private";
-        }
-
-        @NotNull
-        @Override
-        public DescriptorVisibility normalize() {
-            return DescriptorVisibilities.PROTECTED;
-        }
-
-        @Nullable
-        @Override
-        public EffectiveVisibility customEffectiveVisibility() {
-            return EffectiveVisibility.PackagePrivate.INSTANCE;
-        }
     };
 
     @NotNull
-    public static final DescriptorVisibility PROTECTED_STATIC_VISIBILITY = new DescriptorVisibility("protected_static", true) {
+    public static final DescriptorVisibility PROTECTED_STATIC_VISIBILITY = new DelegatedDescriptorVisibility(JavaVisibilities.ProtectedStaticVisibility.INSTANCE) {
         @Override
         public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             return isVisibleForProtectedAndPackage(receiver, what, from);
         }
-
-        @Override
-        public boolean mustCheckInImports() {
-            return false;
-        }
-
-        @NotNull
-        @Override
-        public String getInternalDisplayName() {
-            return "protected/*protected static*/";
-        }
-
-        @NotNull
-        @Override
-        public String getExternalDisplayName() {
-            return "protected";
-        }
-
-        @NotNull
-        @Override
-        public DescriptorVisibility normalize() {
-            return DescriptorVisibilities.PROTECTED;
-        }
     };
 
     @NotNull
-    public static final DescriptorVisibility PROTECTED_AND_PACKAGE = new DescriptorVisibility("protected_and_package", true) {
+    public static final DescriptorVisibility PROTECTED_AND_PACKAGE = new DelegatedDescriptorVisibility(JavaVisibilities.ProtectedAndPackage.INSTANCE) {
         @Override
         public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             return isVisibleForProtectedAndPackage(receiver, what, from);
-        }
-
-        @Override
-        public boolean mustCheckInImports() {
-            return false;
-        }
-
-        @Override
-        protected Integer compareTo(@NotNull DescriptorVisibility visibility) {
-            if (this == visibility) return 0;
-            if (visibility == DescriptorVisibilities.INTERNAL) return null;
-            if (DescriptorVisibilities.isPrivate(visibility)) return 1;
-            return -1;
-        }
-
-        @NotNull
-        @Override
-        public String getInternalDisplayName() {
-            return "protected/*protected and package*/";
-        }
-
-        @NotNull
-        @Override
-        public String getExternalDisplayName() {
-            return "protected";
-        }
-
-        @NotNull
-        @Override
-        public DescriptorVisibility normalize() {
-            return DescriptorVisibilities.PROTECTED;
         }
     };
 
@@ -156,5 +70,27 @@ public class JavaDescriptorVisibilities {
         PackageFragmentDescriptor whatPackage = DescriptorUtils.getParentOfType(first, PackageFragmentDescriptor.class, false);
         PackageFragmentDescriptor fromPackage = DescriptorUtils.getParentOfType(second, PackageFragmentDescriptor.class, false);
         return fromPackage != null && whatPackage != null && whatPackage.getFqName().equals(fromPackage.getFqName());
+    }
+
+    @NotNull
+    private static final Map<Visibility, DescriptorVisibility> visibilitiesMapping = new HashMap<Visibility, DescriptorVisibility>();
+
+    private static void recordVisibilityMapping(DescriptorVisibility visibility) {
+        visibilitiesMapping.put(visibility.getDelegate(), visibility);
+    }
+
+    static {
+        recordVisibilityMapping(PACKAGE_VISIBILITY);
+        recordVisibilityMapping(PROTECTED_STATIC_VISIBILITY);
+        recordVisibilityMapping(PROTECTED_AND_PACKAGE);
+    }
+
+    @NotNull
+    public static DescriptorVisibility toDescriptorVisibility(@NotNull Visibility visibility) {
+        DescriptorVisibility correspondingVisibility = visibilitiesMapping.get(visibility);
+        if (correspondingVisibility == null) {
+            return DescriptorVisibilities.toDescriptorVisibility(visibility);
+        }
+        return correspondingVisibility;
     }
 }

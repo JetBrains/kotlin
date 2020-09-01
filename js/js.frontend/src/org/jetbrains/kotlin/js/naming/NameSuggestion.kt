@@ -348,8 +348,8 @@ class NameSuggestion {
             return if (absHashCode != 0) absHashCode.toString(Character.MAX_RADIX) else ""
         }
 
-        private val DeclarationDescriptorWithVisibility.ownEffectiveVisibility
-            get() = visibility.effectiveVisibility(this, checkPublishedApi = true).toVisibility()
+        private val DeclarationDescriptorWithVisibility.ownEffectiveVisibility: DescriptorVisibility
+            get() = visibility.effectiveVisibility(this, checkPublishedApi = true).toDescriptorVisibility()
 
         @JvmStatic fun sanitizeName(name: String): String {
             if (name.isEmpty()) return "_"

@@ -33,12 +33,7 @@ import java.util.*;
 
 public class DescriptorVisibilities {
     @NotNull
-    public static final DescriptorVisibility PRIVATE = new DescriptorVisibility("private", false) {
-        @Override
-        public boolean mustCheckInImports() {
-            return true;
-        }
-
+    public static final DescriptorVisibility PRIVATE = new DelegatedDescriptorVisibility(Visibilities.Private.INSTANCE) {
         private boolean hasContainingSourceFile(@NotNull DeclarationDescriptor descriptor) {
             return DescriptorUtils.getContainingSourceFile(descriptor) != SourceFile.NO_SOURCE_FILE;
         }
@@ -102,7 +97,7 @@ public class DescriptorVisibilities {
      *  }
      */
     @NotNull
-    public static final DescriptorVisibility PRIVATE_TO_THIS = new DescriptorVisibility("private_to_this", false) {
+    public static final DescriptorVisibility PRIVATE_TO_THIS = new DelegatedDescriptorVisibility(Visibilities.PrivateToThis.INSTANCE) {
         @Override
         public boolean isVisible(@Nullable ReceiverValue thisObject, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             if (PRIVATE.isVisible(thisObject, what, from)) {
@@ -118,26 +113,10 @@ public class DescriptorVisibilities {
             }
             return false;
         }
-
-        @Override
-        public boolean mustCheckInImports() {
-            return true;
-        }
-
-        @NotNull
-        @Override
-        public String getInternalDisplayName() {
-            return "private/*private to this*/";
-        }
     };
 
     @NotNull
-    public static final DescriptorVisibility PROTECTED = new DescriptorVisibility("protected", true) {
-        @Override
-        public boolean mustCheckInImports() {
-            return false;
-        }
-
+    public static final DescriptorVisibility PROTECTED = new DelegatedDescriptorVisibility(Visibilities.Protected.INSTANCE) {
         @Override
         public boolean isVisible(
                 @Nullable ReceiverValue receiver,
@@ -198,12 +177,7 @@ public class DescriptorVisibilities {
     };
 
     @NotNull
-    public static final DescriptorVisibility INTERNAL = new DescriptorVisibility("internal", false) {
-        @Override
-        public boolean mustCheckInImports() {
-            return true;
-        }
-
+    public static final DescriptorVisibility INTERNAL = new DelegatedDescriptorVisibility(Visibilities.Internal.INSTANCE) {
         @Override
         public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             ModuleDescriptor whatModule = DescriptorUtils.getContainingModule(what);
@@ -220,12 +194,7 @@ public class DescriptorVisibilities {
     };
 
     @NotNull
-    public static final DescriptorVisibility PUBLIC = new DescriptorVisibility("public", true) {
-        @Override
-        public boolean mustCheckInImports() {
-            return false;
-        }
-
+    public static final DescriptorVisibility PUBLIC = new DelegatedDescriptorVisibility(Visibilities.Public.INSTANCE) {
         @Override
         public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             return true;
@@ -233,12 +202,7 @@ public class DescriptorVisibilities {
     };
 
     @NotNull
-    public static final DescriptorVisibility LOCAL = new DescriptorVisibility("local", false) {
-        @Override
-        public boolean mustCheckInImports() {
-            return true;
-        }
-
+    public static final DescriptorVisibility LOCAL = new DelegatedDescriptorVisibility(Visibilities.Local.INSTANCE) {
         @Override
         public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             throw new IllegalStateException("This method shouldn't be invoked for LOCAL visibility");
@@ -246,12 +210,7 @@ public class DescriptorVisibilities {
     };
 
     @NotNull
-    public static final DescriptorVisibility INHERITED = new DescriptorVisibility("inherited", false) {
-        @Override
-        public boolean mustCheckInImports() {
-            throw new IllegalStateException("This method shouldn't be invoked for INHERITED visibility");
-        }
-
+    public static final DescriptorVisibility INHERITED = new DelegatedDescriptorVisibility(Visibilities.Inherited.INSTANCE) {
         @Override
         public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             throw new IllegalStateException("Visibility is unknown yet"); //This method shouldn't be invoked for INHERITED visibility
@@ -260,33 +219,17 @@ public class DescriptorVisibilities {
 
     /* Visibility for fake override invisible members (they are created for better error reporting) */
     @NotNull
-    public static final DescriptorVisibility INVISIBLE_FAKE = new DescriptorVisibility("invisible_fake", false) {
-        @Override
-        public boolean mustCheckInImports() {
-            return true;
-        }
-
+    public static final DescriptorVisibility INVISIBLE_FAKE = new DelegatedDescriptorVisibility(Visibilities.InvisibleFake.INSTANCE) {
         @Override
         public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             return false;
-        }
-
-        @Override
-        @NotNull
-        public String getExternalDisplayName() {
-            return "invisible (private in a supertype)";
         }
     };
 
     // Currently used as default visibility of FunctionDescriptor
     // It's needed to prevent NPE when requesting non-nullable visibility of descriptor before `initialize` has been called
     @NotNull
-    public static final DescriptorVisibility UNKNOWN = new DescriptorVisibility("unknown", false) {
-        @Override
-        public boolean mustCheckInImports() {
-            throw new IllegalStateException("This method shouldn't be invoked for UNKNOWN visibility");
-        }
-
+    public static final DescriptorVisibility UNKNOWN = new DelegatedDescriptorVisibility(Visibilities.Unknown.INSTANCE) {
         @Override
         public boolean isVisible(
                 @Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from
@@ -472,5 +415,33 @@ public class DescriptorVisibilities {
     static {
         Iterator<ModuleVisibilityHelper> iterator = ServiceLoader.load(ModuleVisibilityHelper.class, ModuleVisibilityHelper.class.getClassLoader()).iterator();
         MODULE_VISIBILITY_HELPER = iterator.hasNext() ? iterator.next() : ModuleVisibilityHelper.EMPTY.INSTANCE;
+    }
+
+    @NotNull
+    private static final Map<Visibility, DescriptorVisibility> visibilitiesMapping = new HashMap<Visibility, DescriptorVisibility>();
+
+    private static void recordVisibilityMapping(DescriptorVisibility visibility) {
+        visibilitiesMapping.put(visibility.getDelegate(), visibility);
+    }
+
+    static {
+        recordVisibilityMapping(PRIVATE);
+        recordVisibilityMapping(PRIVATE_TO_THIS);
+        recordVisibilityMapping(PROTECTED);
+        recordVisibilityMapping(INTERNAL);
+        recordVisibilityMapping(PUBLIC);
+        recordVisibilityMapping(LOCAL);
+        recordVisibilityMapping(INHERITED);
+        recordVisibilityMapping(INVISIBLE_FAKE);
+        recordVisibilityMapping(UNKNOWN);
+    }
+
+    @NotNull
+    public static DescriptorVisibility toDescriptorVisibility(@NotNull Visibility visibility) {
+        DescriptorVisibility correspondingVisibility = visibilitiesMapping.get(visibility);
+        if (correspondingVisibility == null) {
+            throw new IllegalArgumentException("Inapplicable visibility: " + visibility);
+        }
+        return correspondingVisibility;
     }
 }

@@ -12,11 +12,19 @@ abstract class Visibility protected constructor(
     open val internalDisplayName: String
         get() = name
 
-    final override fun toString() = internalDisplayName
+    open val externalDisplayName: String
+        get() = internalDisplayName
+
+    abstract fun mustCheckInImports(): Boolean
 
     open fun compareTo(visibility: Visibility): Int? {
         return Visibilities.compareLocal(this, visibility)
     }
 
+    final override fun toString() = internalDisplayName
+
     open fun normalize(): Visibility = this
+
+    // Should be overloaded in Java visibilities
+    open fun customEffectiveVisibility(): EffectiveVisibility? = null
 }
