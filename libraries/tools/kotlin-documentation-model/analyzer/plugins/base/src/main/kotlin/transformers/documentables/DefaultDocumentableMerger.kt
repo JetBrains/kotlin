@@ -1,24 +1,20 @@
 package org.jetbrains.dokka.base.transformers.documentables
 
 import org.jetbrains.dokka.DokkaConfiguration
-import org.jetbrains.dokka.DokkaSourceSetID
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.properties.ExtraProperty
 import org.jetbrains.dokka.model.properties.MergeStrategy
-import org.jetbrains.dokka.model.properties.WithExtraProperties
 import org.jetbrains.dokka.model.properties.mergeExtras
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.transformers.documentation.DocumentableMerger
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal class DefaultDocumentableMerger(val context: DokkaContext) : DocumentableMerger {
     private val dependencyInfo = context.getDependencyInfo()
 
-
     override fun invoke(modules: Collection<DModule>): DModule {
 
-        return topologicalSort(modules).reduce { left, right ->
+        return modules.reduce { left, right ->
             val list = listOf(left, right)
             DModule(
                 name = modules.map { it.name }.distinct().joinToString("|"),
@@ -30,34 +26,6 @@ internal class DefaultDocumentableMerger(val context: DokkaContext) : Documentab
                 sourceSets = list.flatMap { it.sourceSets }.toSet()
             ).mergeExtras(left, right)
         }
-    }
-
-    private fun topologicalSort(allModules: Collection<DModule>): List<DModule> {
-
-        val modulesMap: Map<DokkaSourceSetID, ModuleOfDifferentTranslators> =
-            allModules.groupBy { it.sourceSets.single().sourceSetID }
-
-        //this returns representation of graph where directed edges are leading from module to modules that depend on it
-        val graph: Map<ModuleOfDifferentTranslators, List<ModuleOfDifferentTranslators>> =
-            modulesMap.flatMap { (_, module) ->
-                module.first().sourceSets.single().dependentSourceSets.map { sourceSet ->
-                    modulesMap[sourceSet]!! to module
-                }
-            }.groupingBy { it.first }.fold({ _, value -> listOf(value.second) }) { _, accumulator, value ->
-                accumulator + listOf(value.second)
-            }
-
-        val visited = modulesMap.map { it.value to false }.toMap().toMutableMap()
-        val topologicalSortedList: MutableList<ModuleOfDifferentTranslators> = mutableListOf()
-
-        fun dfs(module: ModuleOfDifferentTranslators) {
-            visited[module] = true
-            graph[module]?.forEach { if (!visited[it]!!) dfs(it) }
-            topologicalSortedList.add(0, module)
-        }
-        modulesMap.values.forEach { if (!visited[it]!!) dfs(it) }
-
-        return topologicalSortedList.flatten()
     }
 
     private fun DokkaContext.getDependencyInfo()
