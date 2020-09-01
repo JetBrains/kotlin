@@ -3,6 +3,7 @@ where advanced options include:
   -Xdisable-fake-override-validator
                              Disable IR fake override validator
   -Xenable-js-scripting      Enable experimental support of .kts files using K/JS (with -Xir only)
+  -Xerror-tolerance-policy   Set up error tolerance policy (NONE, SEMANTIC, SYNTAX, ALL)
   -Xfriend-modules=<path>    Paths to friend modules
   -Xfriend-modules-disabled  Disable internal declaration export
   -Xgenerate-dts             Generate TypeScript declarations .d.ts file alongside JS file. Available in IR backend only.
