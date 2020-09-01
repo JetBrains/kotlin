@@ -17,12 +17,15 @@
 package org.jetbrains.kotlin.load.java.structure.impl;
 
 import com.intellij.codeInsight.ExternalAnnotationsManager;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiAnnotationOwner;
+import com.intellij.psi.PsiModifier;
+import com.intellij.psi.PsiModifierListOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities;
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility;
-import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities;
+import org.jetbrains.kotlin.descriptors.Visibilities;
+import org.jetbrains.kotlin.descriptors.Visibility;
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.name.FqName;
 
@@ -50,18 +53,18 @@ import static org.jetbrains.kotlin.load.java.structure.impl.JavaElementCollectio
     }
 
     @NotNull
-    public static DescriptorVisibility getVisibility(@NotNull JavaModifierListOwnerImpl owner) {
+    public static Visibility getVisibility(@NotNull JavaModifierListOwnerImpl owner) {
         PsiModifierListOwner psiOwner = owner.getPsi();
         if (psiOwner.hasModifierProperty(PsiModifier.PUBLIC)) {
-            return DescriptorVisibilities.PUBLIC;
+            return Visibilities.Public.INSTANCE;
         }
         if (psiOwner.hasModifierProperty(PsiModifier.PRIVATE)) {
-            return DescriptorVisibilities.PRIVATE;
+            return Visibilities.Private.INSTANCE;
         }
         if (psiOwner.hasModifierProperty(PsiModifier.PROTECTED)) {
-            return owner.isStatic() ? JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY : JavaDescriptorVisibilities.PROTECTED_AND_PACKAGE;
+            return owner.isStatic() ? JavaVisibilities.ProtectedStaticVisibility.INSTANCE : JavaVisibilities.ProtectedAndPackage.INSTANCE;
         }
-        return JavaDescriptorVisibilities.PACKAGE_VISIBILITY;
+        return JavaVisibilities.PackageVisibility.INSTANCE;
     }
 
     @NotNull

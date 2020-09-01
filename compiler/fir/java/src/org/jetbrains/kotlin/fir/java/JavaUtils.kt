@@ -8,9 +8,6 @@ package org.jetbrains.kotlin.fir.java
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
@@ -43,7 +40,6 @@ import org.jetbrains.kotlin.load.java.typeEnhancement.TypeComponentPosition
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance.*
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 
 internal val JavaModifierListOwner.modality: Modality
     get() = when {
@@ -525,19 +521,4 @@ private fun JavaType.toFirResolvedTypeRef(
     return buildResolvedTypeRef {
         type = ConeClassErrorType(ConeSimpleDiagnostic("Unexpected JavaType: $this", DiagnosticKind.Java))
     }
-}
-
-fun DescriptorVisibility.toFirVisibility(): Visibility = when (this) {
-    org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE -> Visibilities.Private
-    org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE_TO_THIS -> Visibilities.PrivateToThis
-    org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PROTECTED -> Visibilities.Protected
-    org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL -> Visibilities.Internal
-    org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PUBLIC -> Visibilities.Public
-    org.jetbrains.kotlin.descriptors.DescriptorVisibilities.LOCAL -> Visibilities.Local
-    org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INVISIBLE_FAKE -> Visibilities.InvisibleFake
-    org.jetbrains.kotlin.descriptors.DescriptorVisibilities.UNKNOWN -> Visibilities.Unknown
-    org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities.PACKAGE_VISIBILITY -> JavaVisibilities.PackageVisibility
-    org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities.PROTECTED_AND_PACKAGE -> JavaVisibilities.ProtectedAndPackage
-    org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY -> JavaVisibilities.ProtectedStaticVisibility
-    else -> error("Unknown visiblity: $this")
 }

@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.javac.wrappers.symbols
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.javac.JavacWrapper
-import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -36,20 +36,20 @@ internal val Element.isStatic: Boolean
 internal val Element.isFinal: Boolean
     get() = modifiers.contains(Modifier.FINAL)
 
-internal fun Element.getVisibility(): DescriptorVisibility = modifiers.getVisibility()
+internal fun Element.getVisibility(): Visibility = modifiers.getVisibility()
 
-internal fun Set<Modifier>.getVisibility(): DescriptorVisibility =
+internal fun Set<Modifier>.getVisibility(): Visibility =
     when {
-        Modifier.PUBLIC in this -> DescriptorVisibilities.PUBLIC
-        Modifier.PRIVATE in this -> DescriptorVisibilities.PRIVATE
+        Modifier.PUBLIC in this -> Visibilities.Public
+        Modifier.PRIVATE in this -> Visibilities.Private
         Modifier.PROTECTED in this -> {
             if (Modifier.STATIC in this) {
-                JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY
+                JavaVisibilities.ProtectedStaticVisibility
             } else {
-                JavaDescriptorVisibilities.PROTECTED_AND_PACKAGE
+                JavaVisibilities.ProtectedAndPackage
             }
         }
-        else -> JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+        else -> JavaVisibilities.PackageVisibility
     }
 
 

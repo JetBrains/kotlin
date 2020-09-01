@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.javac.wrappers.trees
 import com.sun.source.tree.CompilationUnitTree
 import com.sun.tools.javac.code.Flags
 import com.sun.tools.javac.tree.JCTree
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.javac.resolve.ConstantEvaluator
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -47,8 +47,8 @@ class TreeBasedField(
     override val isFinal: Boolean
         get() = containingClass.isInterface || tree.modifiers.isFinal
 
-    override val visibility: DescriptorVisibility
-        get() = if (containingClass.isInterface) DescriptorVisibilities.PUBLIC else tree.modifiers.visibility
+    override val visibility: Visibility
+        get() = if (containingClass.isInterface) Visibilities.Public else tree.modifiers.visibility
 
     override val isEnumEntry: Boolean
         get() = tree.modifiers.flags and Flags.ENUM.toLong() != 0L

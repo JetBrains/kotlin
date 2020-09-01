@@ -496,7 +496,7 @@ class LazyJavaClassMemberScope(
         val annotations = c.resolveAnnotations(method)
 
         val propertyDescriptor = JavaPropertyDescriptor.create(
-            ownerDescriptor, annotations, modality, method.visibility,
+            ownerDescriptor, annotations, modality, method.visibility.toDescriptorVisibility(),
             /* isVar = */ false, method.name, c.components.sourceElementFactory.source(method),
             /* isStaticFinal = */ false
         )
@@ -606,7 +606,7 @@ class LazyJavaClassMemberScope(
             classDescriptor.declaredTypeParameters +
                     constructor.typeParameters.map { p -> c.typeParameterResolver.resolveTypeParameter(p)!! }
 
-        constructorDescriptor.initialize(valueParameters.descriptors, constructor.visibility, constructorTypeParameters)
+        constructorDescriptor.initialize(valueParameters.descriptors, constructor.visibility.toDescriptorVisibility(), constructorTypeParameters)
         constructorDescriptor.setHasStableParameterNames(false)
         constructorDescriptor.setHasSynthesizedParameterNames(valueParameters.hasSynthesizedNames)
 

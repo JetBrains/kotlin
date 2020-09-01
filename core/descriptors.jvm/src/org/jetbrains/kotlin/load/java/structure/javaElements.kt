@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.structure
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -38,7 +38,7 @@ interface JavaModifierListOwner : JavaElement {
     val isAbstract: Boolean
     val isStatic: Boolean
     val isFinal: Boolean
-    val visibility: DescriptorVisibility
+    val visibility: Visibility
 }
 
 interface JavaTypeParameterListOwner : JavaElement {
