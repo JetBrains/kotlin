@@ -419,14 +419,14 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
                         args.add(localProps[index].get())
                     }
                     // local$i = localInput.decode...(...)
-                    +irSetVar(
+                    +irSet(
                         localProps[index].symbol,
                         irInvoke(localInput.get(), decodeFuncToCall, typeArgs, args, returnTypeHint = property.type.toIrType())
                     )
                     // bitMask[i] |= 1 << x
                     val bitPos = 1 shl (index % 32)
                     val or = irBinOp(OperatorNameConventions.OR, bitMasks[index / 32].get(), irInt(bitPos))
-                    +irSetVar(bitMasks[index / 32].symbol, or)
+                    +irSet(bitMasks[index / 32].symbol, or)
                 }
                 index to body
             }
@@ -442,10 +442,10 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
             loop.condition = flagVar.get()
             loop.body = irBlock {
                 val readElementF = inputClass.referenceMethod(CallingConventions.decodeElementIndex)
-                +irSetVar(indexVar.symbol, irInvoke(localInput.get(), readElementF, localSerialDesc.get()))
+                +irSet(indexVar.symbol, irInvoke(localInput.get(), readElementF, localSerialDesc.get()))
                 +irWhen {
                     // if index == -1 (READ_DONE) break loop
-                    +IrBranchImpl(irEquals(indexVar.get(), irInt(-1)), irSetVar(flagVar.symbol, irBoolean(false)))
+                    +IrBranchImpl(irEquals(indexVar.get(), irInt(-1)), irSet(flagVar.symbol, irBoolean(false)))
 
                     decoderCalls.forEach { (i, e) -> +IrBranchImpl(irEquals(indexVar.get(), irInt(i)), e) }
 

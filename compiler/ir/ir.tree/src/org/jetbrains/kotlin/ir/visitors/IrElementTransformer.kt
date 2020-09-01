@@ -98,7 +98,7 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
     override fun visitGetEnumValue(expression: IrGetEnumValue, data: D) = visitSingletonReference(expression, data)
     override fun visitValueAccess(expression: IrValueAccessExpression, data: D) = visitDeclarationReference(expression, data)
     override fun visitGetValue(expression: IrGetValue, data: D) = visitValueAccess(expression, data)
-    override fun visitSetVariable(expression: IrSetVariable, data: D) = visitValueAccess(expression, data)
+    override fun visitSetValue(expression: IrSetValue, data: D) = visitValueAccess(expression, data)
     override fun visitFieldAccess(expression: IrFieldAccessExpression, data: D) = visitDeclarationReference(expression, data)
     override fun visitGetField(expression: IrGetField, data: D) = visitFieldAccess(expression, data)
     override fun visitSetField(expression: IrSetField, data: D) = visitFieldAccess(expression, data)

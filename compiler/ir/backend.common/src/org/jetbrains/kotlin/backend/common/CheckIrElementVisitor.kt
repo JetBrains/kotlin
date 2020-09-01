@@ -135,8 +135,8 @@ class CheckIrElementVisitor(
         expression.ensureTypeIs(expression.symbol.owner.type)
     }
 
-    override fun visitSetVariable(expression: IrSetVariable) {
-        super.visitSetVariable(expression)
+    override fun visitSetValue(expression: IrSetValue) {
+        super.visitSetValue(expression)
 
         expression.ensureTypeIs(irBuiltIns.unitType)
     }

@@ -107,7 +107,7 @@ class ReturnableBlockTransformer(val context: CommonBackendContext, val containe
         returnMap[expression.symbol] = { returnExpression ->
             hasReturned = true
             builder.irComposite(returnExpression) {
-                +irSetVar(variable.symbol, returnExpression.value)
+                +irSet(variable.symbol, returnExpression.value)
                 +irBreak(loop)
             }
         }
@@ -116,7 +116,7 @@ class ReturnableBlockTransformer(val context: CommonBackendContext, val containe
             if (i == expression.statements.lastIndex && s is IrReturn && s.returnTargetSymbol == expression.symbol) {
                 s.transformChildrenVoid()
                 if (!hasReturned) s.value else {
-                    builder.irSetVar(variable.symbol, s.value)
+                    builder.irSet(variable.symbol, s.value)
                 }
             } else {
                 s.transformStatement(this)
