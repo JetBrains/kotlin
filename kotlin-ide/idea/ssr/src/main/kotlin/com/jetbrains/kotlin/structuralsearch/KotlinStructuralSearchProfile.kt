@@ -184,11 +184,14 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
                 UIUtil.MINIMUM_ZERO -> isApplicableMinCount(variableNode) || isApplicableMinMaxCount(variableNode)
                 UIUtil.MAXIMUM_UNLIMITED -> isApplicableMaxCount(variableNode) || isApplicableMinMaxCount(variableNode)
                 UIUtil.TEXT_HIERARCHY -> isApplicableTextHierarchy(variableNode)
+                UIUtil.REFERENCE -> isApplicableReference(variableNode)
                 else -> super.isApplicableConstraint(constraintName, variableNode, completePattern, target)
             }
 
         return super.isApplicableConstraint(constraintName, null as PsiElement?, completePattern, target)
     }
+
+    private fun isApplicableReference(variableNode: PsiElement): Boolean = variableNode.parent is KtNameReferenceExpression
 
     private fun isApplicableTextHierarchy(variableNode: PsiElement): Boolean {
         val family = ancestors(variableNode)
