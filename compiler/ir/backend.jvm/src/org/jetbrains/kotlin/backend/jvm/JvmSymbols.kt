@@ -525,18 +525,6 @@ class JvmSymbols(
             returnType = dst.defaultType
         }.symbol
 
-    val reassignParameterIntrinsic: IrSimpleFunctionSymbol =
-        irFactory.buildFun {
-            name = Name.special("<set-parameter>")
-            origin = IrDeclarationOrigin.IR_BUILTINS_STUB
-        }.apply {
-            parent = kotlinJvmInternalPackage
-            val type = addTypeParameter("T", irBuiltIns.anyNType)
-            addValueParameter("parameter", type.defaultType) // must be IrGetValue of an IrValueParameter
-            addValueParameter("value", type.defaultType)
-            returnType = irBuiltIns.unitType
-        }.symbol
-
     private val collectionToArrayClass: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.CollectionToArray")) { klass ->
         klass.origin = JvmLoweredDeclarationOrigin.TO_ARRAY
 

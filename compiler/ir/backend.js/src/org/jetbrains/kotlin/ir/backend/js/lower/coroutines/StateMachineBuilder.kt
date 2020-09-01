@@ -459,7 +459,7 @@ class StateMachineBuilder(
         }
     }
 
-    override fun visitSetVariable(expression: IrSetVariable) {
+    override fun visitSetValue(expression: IrSetValue) {
         if (expression !in suspendableNodes) return addStatement(expression)
         expression.acceptChildrenVoid(this)
         transformLastExpression { expression.apply { value = it } }

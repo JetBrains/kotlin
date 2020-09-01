@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrSetVariableImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetValueImpl
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.makeNullable
@@ -154,11 +154,11 @@ class LateinitUsageLowering(val backendContext: CommonBackendContext) : BodyLowe
                 }
             }
 
-            override fun visitSetVariable(expression: IrSetVariable): IrExpression {
+            override fun visitSetValue(expression: IrSetValue): IrExpression {
                 expression.transformChildrenVoid(this)
                 val newVar = nullableVariables[expression.symbol.owner] ?: return expression
                 return with(expression) {
-                    IrSetVariableImpl(startOffset, endOffset, type, newVar.symbol, value, origin)
+                    IrSetValueImpl(startOffset, endOffset, type, newVar.symbol, value, origin)
                 }
             }
 

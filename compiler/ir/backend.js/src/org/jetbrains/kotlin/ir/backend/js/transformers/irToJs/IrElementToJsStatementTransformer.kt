@@ -65,7 +65,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         return expression.value.maybeOptimizeIntoSwitch(context) { jsAssignment(dest, it).makeStmt() }
     }
 
-    override fun visitSetVariable(expression: IrSetVariable, context: JsGenerationContext): JsStatement {
+    override fun visitSetValue(expression: IrSetValue, context: JsGenerationContext): JsStatement {
         val ref = JsNameRef(context.getNameForValueDeclaration(expression.symbol.owner))
         return expression.value.maybeOptimizeIntoSwitch(context) { JsBinaryOperation(JsBinaryOperator.ASG, ref, it).makeStmt() }
     }
