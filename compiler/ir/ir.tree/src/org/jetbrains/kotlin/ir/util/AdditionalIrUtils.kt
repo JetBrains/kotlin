@@ -37,7 +37,7 @@ val IrDeclarationParent.kotlinFqName: FqName
     get() = when (this) {
         is IrPackageFragment -> this.fqName
         is IrClass -> {
-            if (origin == IrDeclarationOrigin.FILE_CLASS) {
+            if (isFileClass) {
                 parent.kotlinFqName
             } else {
                 parent.kotlinFqName.child(nameForIrSerialization)
