@@ -416,6 +416,39 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         public void testSimpleNamed() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inline/simpleNamed.kt");
         }
+
+        @TestMetadata("compiler/testData/codegen/bytecodeListing/inline/enclosingInfo")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class EnclosingInfo extends AbstractIrBytecodeListingTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInEnclosingInfo() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inline/enclosingInfo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @TestMetadata("crossinlineLambdaChain.kt")
+            public void testCrossinlineLambdaChain() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inline/enclosingInfo/crossinlineLambdaChain.kt");
+            }
+
+            @TestMetadata("kt10259.kt")
+            public void testKt10259() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inline/enclosingInfo/kt10259.kt");
+            }
+
+            @TestMetadata("transformedConstructor.kt")
+            public void testTransformedConstructor() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inline/enclosingInfo/transformedConstructor.kt");
+            }
+
+            @TestMetadata("transformedConstructorWithNestedInline.kt")
+            public void testTransformedConstructorWithNestedInline() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inline/enclosingInfo/transformedConstructorWithNestedInline.kt");
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeListing/inlineClasses")

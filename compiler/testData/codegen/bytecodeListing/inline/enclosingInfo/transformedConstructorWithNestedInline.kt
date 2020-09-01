@@ -1,5 +1,3 @@
-// TARGET_BACKEND: JVM
-// WITH_RUNTIME
 // FILE: 1.kt
 
 package test
@@ -21,7 +19,7 @@ inline fun <T> call(crossinline z: () -> T) = z()
 
 import test.*
 
-fun box(): String {
+fun box() {
     // This captured parameter would be added to object constructor
     val captured = "OK"
     var z: Any = "fail"
@@ -33,11 +31,4 @@ fun box(): String {
         }
         (z as Function0<String>)()
     }
-
-    // Check that Java reflection doesn't crash. Actual values are tested in bytecodeListing/inline/enclosingInfo/.
-    z.javaClass.enclosingConstructor
-    z.javaClass.enclosingMethod
-    z.javaClass.enclosingClass
-
-    return res.a()
 }

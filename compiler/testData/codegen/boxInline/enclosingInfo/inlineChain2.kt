@@ -1,8 +1,7 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND_MULTI_MODULE: JVM_IR
+// WITH_RUNTIME
 // FILE: 1.kt
-// WITH_REFLECT
+
 package test
 
 inline fun <R> call(crossinline s: () -> R) = { s() }()
@@ -18,11 +17,9 @@ fun box(): String {
         test { "OK" }
     }
 
-    var enclosingMethod = res.javaClass.enclosingMethod
-    if (enclosingMethod?.name != "invoke") return "fail 1: ${enclosingMethod?.name}"
-
-    var enclosingClass = res.javaClass.enclosingClass
-    if (enclosingClass?.name != "_2Kt\$box$\$inlined\$call$1") return "fail 2: ${enclosingClass?.name}"
+    // Check that Java reflection doesn't crash. Actual values are tested in bytecodeListing/inline/enclosingInfo/.
+    res.javaClass.enclosingMethod
+    res.javaClass.enclosingClass
 
     val res2 = call {
         call {
@@ -30,11 +27,8 @@ fun box(): String {
         }
     }
 
-    enclosingMethod = res2.javaClass.enclosingMethod
-    if (enclosingMethod?.name != "invoke") return "fail 1: ${enclosingMethod?.name}"
-
-    enclosingClass = res2.javaClass.enclosingClass
-    if (enclosingClass?.name != "_2Kt\$box$\$inlined\$call$2\$lambda$1") return "fail 2: ${enclosingClass?.name}"
+    res2.javaClass.enclosingMethod
+    res2.javaClass.enclosingClass
 
     return res2()
 }

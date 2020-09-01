@@ -1,9 +1,8 @@
-// IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND_MULTI_MODULE: JVM_IR
 // TARGET_BACKEND: JVM
 // NO_CHECK_LAMBDA_INLINING
 // WITH_RUNTIME
 // FILE: 1.kt
+
 package test
 
 inline fun test(s: () -> Unit) {
@@ -15,22 +14,19 @@ inline fun test(s: () -> Unit) {
 import test.*
 
 fun box(): String {
-    var encl1 = "fail";
-    var encl2 = "fail";
+    var s1 = ""
+    var s2 = ""
     test {
         {
             val p = object {}
-            encl1 = p.javaClass.enclosingMethod.declaringClass.name
+            // Check that Java reflection doesn't crash. Actual values are tested in bytecodeListing/inline/enclosingInfo/.
+            s1 = p.javaClass.enclosingMethod.declaringClass.toString();
             {
-
-                val p = object {}
-                encl2 = p.javaClass.enclosingMethod.declaringClass.name
+                val q = object {}
+                s2 = q.javaClass.enclosingMethod.declaringClass.toString()
             }()
         }()
     }
-
-    if (encl1 != "_2Kt\$box\$\$inlined\$test\$lambda$1") return "fail 1: $encl1"
-    if (encl2 != "_2Kt\$box\$\$inlined\$test\$lambda$1$2") return "fail 2: $encl2"
 
     return "OK"
 }
