@@ -15,84 +15,75 @@ class ExpectActualsTest : AbstractCoreTest() {
     fun `three same named expect actual classes`() {
 
         val configuration = dokkaConfiguration {
+            moduleName = "example"
             sourceSets {
                 val common = sourceSet {
-                    moduleName = "example"
                     name = "common"
                     displayName = "common"
                     analysisPlatform = "common"
                     sourceRoots = listOf("src/commonMain/kotlin/pageMerger/Test.kt")
                 }
                 val commonJ = sourceSet {
-                    moduleName = "example"
                     name = "commonJ"
                     displayName = "commonJ"
                     analysisPlatform = "common"
                     sourceRoots = listOf("src/commonJMain/kotlin/pageMerger/Test.kt")
-                    dependentSourceSets = setOf(common.sourceSetID)
+                    dependentSourceSets = setOf(common.value.sourceSetID)
                 }
                 val commonN1 = sourceSet {
-                    moduleName = "example"
                     name = "commonN1"
                     displayName = "commonN1"
                     analysisPlatform = "common"
                     sourceRoots = listOf("src/commonN1Main/kotlin/pageMerger/Test.kt")
-                    dependentSourceSets = setOf(common.sourceSetID)
+                    dependentSourceSets = setOf(common.value.sourceSetID)
                 }
                 val commonN2 = sourceSet {
-                    moduleName = "example"
                     name = "commonN2"
                     displayName = "commonN2"
                     analysisPlatform = "common"
                     sourceRoots = listOf("src/commonN2Main/kotlin/pageMerger/Test.kt")
-                    dependentSourceSets = setOf(common.sourceSetID)
+                    dependentSourceSets = setOf(common.value.sourceSetID)
                 }
                 val js = sourceSet {
-                    moduleName = "example"
                     name = "js"
                     displayName = "js"
                     analysisPlatform = "js"
-                    dependentSourceSets = setOf(commonJ.sourceSetID)
+                    dependentSourceSets = setOf(commonJ.value.sourceSetID)
                     sourceRoots = listOf("src/jsMain/kotlin/pageMerger/Test.kt")
                 }
                 val jvm = sourceSet {
-                    moduleName = "example"
                     name = "jvm"
                     displayName = "jvm"
                     analysisPlatform = "jvm"
-                    dependentSourceSets = setOf(commonJ.sourceSetID)
+                    dependentSourceSets = setOf(commonJ.value.sourceSetID)
                     sourceRoots = listOf("src/jvmMain/kotlin/pageMerger/Test.kt")
                 }
                 val linuxX64 = sourceSet {
-                    moduleName = "example"
                     name = "linuxX64"
                     displayName = "linuxX64"
                     analysisPlatform = "native"
-                    dependentSourceSets = setOf(commonN1.sourceSetID)
+                    dependentSourceSets = setOf(commonN1.value.sourceSetID)
                     sourceRoots = listOf("src/linuxX64Main/kotlin/pageMerger/Test.kt")
                 }
                 val mingwX64 = sourceSet {
-                    moduleName = "example"
                     name = "mingwX64"
                     displayName = "mingwX64"
                     analysisPlatform = "native"
-                    dependentSourceSets = setOf(commonN1.sourceSetID)
+                    dependentSourceSets = setOf(commonN1.value.sourceSetID)
                     sourceRoots = listOf("src/mingwX64Main/kotlin/pageMerger/Test.kt")
                 }
                 val iosArm64 = sourceSet {
-                    moduleName = "example"
                     name = "iosArm64"
                     displayName = "iosArm64"
                     analysisPlatform = "native"
-                    dependentSourceSets = setOf(commonN2.sourceSetID)
+                    dependentSourceSets = setOf(commonN2.value.sourceSetID)
                     sourceRoots = listOf("src/iosArm64Main/kotlin/pageMerger/Test.kt")
                 }
                 val iosX64 = sourceSet {
-                    moduleName = "example"
                     name = "iosX64"
                     displayName = "iosX64"
                     analysisPlatform = "native"
-                    dependentSourceSets = setOf(commonN2.sourceSetID)
+                    dependentSourceSets = setOf(commonN2.value.sourceSetID)
                     sourceRoots = listOf("src/iosX64Main/kotlin/pageMerger/Test.kt")
                 }
             }
@@ -153,27 +144,27 @@ class ExpectActualsTest : AbstractCoreTest() {
         ) {
             pagesTransformationStage = {
                 val allChildren = it.childrenRec().filterIsInstance<ClasslikePageNode>()
-                val commonJ = allChildren.filter { it.name == "A(js, jvm)" }
-                val commonN1 = allChildren.filter { it.name == "A(linuxX64, mingwX64)" }
-                val commonN2 = allChildren.filter { it.name == "A(iosArm64, iosX64)" }
+                val commonJ = allChildren.filter { it.name == "A(jvm, js)" }
+                val commonN1 = allChildren.filter { it.name == "A(mingwX64, linuxX64)" }
+                val commonN2 = allChildren.filter { it.name == "A(iosX64, iosArm64)" }
                 val noClass = allChildren.filter { it.name == "A" }
-                assertTrue(commonJ.size == 1) { "There can be only one A(js, jvm) page" }
+                assertTrue(commonJ.size == 1) { "There can be only one A(jvm, js) page" }
                 assertTrue(
                     commonJ.first().documentable?.sourceSets?.map { it.displayName }
                         ?.containsAll(listOf("commonJ", "js", "jvm")) ?: false
-                ) { "A(js, jvm)should have commonJ, js, jvm sources" }
+                ) { "A(jvm, js)should have commonJ, js, jvm sources" }
 
-                assertTrue(commonN1.size == 1) { "There can be only one A(linuxX64, mingwX64) page" }
+                assertTrue(commonN1.size == 1) { "There can be only one A(mingwX64, linuxX64) page" }
                 assertTrue(
                     commonN1.first().documentable?.sourceSets?.map { it.displayName }
                         ?.containsAll(listOf("commonN1", "linuxX64", "mingwX64")) ?: false
-                ) { "A(linuxX64, mingwX64) should have commonN1, linuxX64, mingwX64 sources" }
+                ) { "A(mingwX64, linuxX64) should have commonN1, linuxX64, mingwX64 sources" }
 
-                assertTrue(commonN2.size == 1) { "There can be only one A(iosArm64, iosX64) page" }
+                assertTrue(commonN2.size == 1) { "There can be only one A(iosX64, iosArm64) page" }
                 assertTrue(
                     commonN2.first().documentable?.sourceSets?.map { it.displayName }
                         ?.containsAll(listOf("commonN2", "iosArm64", "iosX64")) ?: false
-                ) { "A(iosArm64, iosX64) should have commonN2, iosArm64, iosX64 sources" }
+                ) { "A(iosX64, iosArm64) should have commonN2, iosArm64, iosX64 sources" }
 
                 assertTrue(noClass.isEmpty()) { "There can't be any A page" }
             }
