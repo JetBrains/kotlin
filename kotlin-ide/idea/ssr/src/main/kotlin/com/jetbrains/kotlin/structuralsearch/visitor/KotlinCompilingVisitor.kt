@@ -256,12 +256,6 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         }
     }
 
-    override fun visitSuperTypeEntry(specifier: KtSuperTypeEntry) {
-        super.visitSuperTypeEntry(specifier)
-        specifier.typeReference?.resetCountFilter()
-        specifier.typeReference?.typeElement?.resetCountFilter()
-    }
-
     override fun visitTypeProjection(typeProjection: KtTypeProjection) {
         super.visitTypeProjection(typeProjection)
         val handler = getHandler(typeProjection)

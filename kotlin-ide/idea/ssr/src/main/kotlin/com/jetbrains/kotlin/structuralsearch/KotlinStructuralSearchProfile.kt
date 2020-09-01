@@ -236,13 +236,13 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
     private fun isApplicableMinCount(variableNode: PsiElement): Boolean {
         val family = ancestors(variableNode)
         return when {
-            family[0] is KtNameReferenceExpression && family[1] is KtProperty -> true
-            family[0] is KtNameReferenceExpression && family[1] is KtDotQualifiedExpression -> true
-            family[0] is KtNameReferenceExpression && family[1] is KtCallableReferenceExpression
-                    && family[0]?.nextSibling.elementType == KtTokens.COLONCOLON -> true
-            family[0] is KtNameReferenceExpression && family[1] is KtWhenExpression -> true
-            family[0] is KtNameReferenceExpression && family[2] is KtTypeReference
-                    && family[3] is KtNamedFunction -> true
+            family[0] !is KtNameReferenceExpression -> false
+            family[1] is KtProperty -> true
+            family[1] is KtDotQualifiedExpression -> true
+            family[1] is KtCallableReferenceExpression && family[0]?.nextSibling.elementType == KtTokens.COLONCOLON -> true
+            family[1] is KtWhenExpression -> true
+            family[2] is KtTypeReference && family[3] is KtNamedFunction -> true
+            family[3] is KtConstructorCalleeExpression -> true
             else -> false
         }
     }
@@ -272,12 +272,11 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
             family[0] is KtTypeParameter && family[1] is KtTypeParameterList -> true
             family[2] is KtTypeParameter && family[3] is KtTypeParameterList -> true
             family[1] is KtUserType && family[4] is KtParameterList && family[5] !is KtNamedFunction -> true
-            family[1] is KtUserType && family[4] is KtSuperTypeList -> true
+            family[1] is KtUserType && family[3] is KtSuperTypeEntry -> true
             family[1] is KtValueArgument && family[2] is KtValueArgumentList -> true
             family[1] is KtBlockExpression && family[3] is KtDoWhileExpression -> true
             family[0] is KtNameReferenceExpression && family[1] is KtBlockExpression -> true
             family[1] is KtUserType && family[3] is KtTypeProjection && family[5] !is KtNamedFunction -> true
-            family[1] is KtUserType && family[3] is KtConstructorCalleeExpression && family[5] is KtSuperTypeList -> true
             // Annotations
             family[1] is KtUserType && family[4] is KtAnnotationEntry -> true
             // Strings

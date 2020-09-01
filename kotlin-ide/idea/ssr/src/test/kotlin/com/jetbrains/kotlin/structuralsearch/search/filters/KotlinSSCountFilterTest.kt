@@ -19,6 +19,8 @@ class KotlinSSCountFilterTest : KotlinSSResourceInspectionTest() {
 
     fun testMinConstructorCallee() { doTest("class '_ : '_?('_*)") }
 
+    fun testMinSuperType() { doTest("class '_ : '_?()") }
+
     // isApplicableMaxCount
 
     fun testMaxDestructuringDeclarationEntry() { doTest("for (('_{3,3}) in '_) { '_* }") }
@@ -45,7 +47,7 @@ class KotlinSSCountFilterTest : KotlinSSResourceInspectionTest() {
 
     fun testMmTypeReference() { doTest("val '_ : ('_{0,2}) -> '_") }
 
-    fun testMmSuperType() { doTest("class '_ : '_{0,2}") }
+    fun testMmSuperTypeEntry() { doTest("class '_ : '_{0,2}") }
 
     fun testMmValueArgument() { doTest("listOf('_{0,2})") }
 
