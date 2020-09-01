@@ -216,7 +216,9 @@ class FirClassSubstitutionScope(
 
     private fun createSubstitutedData(member: FirCallableMemberDeclaration<*>): SubstitutedData {
         val (newTypeParameters, substitutor) = createNewTypeParametersAndSubstitutor(
-            member as FirTypeParameterRefsOwner, substitutor
+            member as FirTypeParameterRefsOwner,
+            substitutor,
+            forceTypeParametersRecreation = derivedClassId != null && derivedClassId != member.symbol.callableId.classId
         )
 
         val receiverType = member.receiverTypeRef?.coneType
@@ -539,7 +541,9 @@ class FirClassSubstitutionScope(
 
         // Returns a list of type parameters, and a substitutor that should be used for all other types
         private fun createNewTypeParametersAndSubstitutor(
-            member: FirTypeParameterRefsOwner, substitutor: ConeSubstitutor
+            member: FirTypeParameterRefsOwner,
+            substitutor: ConeSubstitutor,
+            forceTypeParametersRecreation: Boolean = true
         ): Pair<List<FirTypeParameterRef>, ConeSubstitutor> {
             if (member.typeParameters.isEmpty()) return Pair(member.typeParameters, substitutor)
             val newTypeParameters = member.typeParameters.map { typeParameter ->
@@ -564,12 +568,16 @@ class FirClassSubstitutionScope(
 
             val additionalSubstitutor = substitutorByMap(substitutionMapForNewParameters)
 
+            var wereChangesInTypeParameters = forceTypeParametersRecreation
             for ((newTypeParameter, oldTypeParameter) in newTypeParameters.zip(member.typeParameters)) {
                 if (newTypeParameter == null) continue
                 val original = oldTypeParameter as FirTypeParameter
                 for (boundTypeRef in original.bounds) {
                     val typeForBound = boundTypeRef.coneType
                     val substitutedBound = substitutor.substituteOrNull(typeForBound)
+                    if (substitutedBound != null) {
+                        wereChangesInTypeParameters = true
+                    }
                     newTypeParameter.bounds +=
                         buildResolvedTypeRef {
                             source = boundTypeRef.source
@@ -578,11 +586,7 @@ class FirClassSubstitutionScope(
                 }
             }
 
-            // TODO: Uncomment when problem from org.jetbrains.kotlin.fir.Fir2IrTextTestGenerated.Declarations.Parameters.testDelegatedMembers is gone
-            // The problem is that Fir2Ir thinks that type parameters in fake override are the same as for original
-            // While common Ir contracts expect them to be different
-            // if (!wereChangesInTypeParameters) return Pair(member.typeParameters, substitutor)
-
+            if (!wereChangesInTypeParameters) return Pair(member.typeParameters, substitutor)
             return Pair(
                 newTypeParameters.mapIndexed { index, builder -> builder?.build() ?: member.typeParameters[index] },
                 ChainedSubstitutor(substitutor, additionalSubstitutor)
