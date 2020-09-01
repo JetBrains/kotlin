@@ -86,6 +86,9 @@ class CacheSupport(
         }
     }
 
+    internal val preLinkCaches: Boolean =
+            configuration.get(KonanConfigKeys.PRE_LINK_CACHES, false)
+
     init {
         // Ensure dependencies of every cached library are cached too:
         resolvedLibraries.getFullList { libraries ->

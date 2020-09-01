@@ -68,12 +68,22 @@ abstract class LinkerFlags(val configurables: Configurables) {
 
     open val useCompilerDriverAsLinker: Boolean get() = false // TODO: refactor.
 
+    /**
+     * Returns list of commands that produces final linker output.
+     */
     // TODO: Number of arguments is quite big. Better to pass args via object.
-    abstract fun linkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
-                              libraries: List<String>, linkerArgs: List<String>,
-                              optimize: Boolean, debug: Boolean,
-                              kind: LinkerOutputKind, outputDsymBundle: String,
-                              needsProfileLibrary: Boolean): List<Command>
+    abstract fun finalLinkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
+                                   libraries: List<String>, linkerArgs: List<String>,
+                                   optimize: Boolean, debug: Boolean,
+                                   kind: LinkerOutputKind, outputDsymBundle: String,
+                                   needsProfileLibrary: Boolean): List<Command>
+
+    /**
+     * Returns list of commands that link object files into a single one.
+     * Pre-linkage is useful for hiding dependency symbols.
+     */
+    open fun preLinkCommands(objectFiles: List<ObjectFile>, output: ObjectFile): List<Command> =
+            error("Pre-link is unsupported for ${configurables.target}.")
 
     abstract fun filterStaticLibraries(binaries: List<String>): List<String>
 
@@ -109,11 +119,11 @@ class AndroidLinker(targetProperties: AndroidConfigurables)
 
     override fun filterStaticLibraries(binaries: List<String>) = binaries.filter { it.isUnixStaticLib }
 
-    override fun linkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
-                              libraries: List<String>, linkerArgs: List<String>,
-                              optimize: Boolean, debug: Boolean,
-                              kind: LinkerOutputKind, outputDsymBundle: String,
-                              needsProfileLibrary: Boolean): List<Command> {
+    override fun finalLinkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
+                                   libraries: List<String>, linkerArgs: List<String>,
+                                   optimize: Boolean, debug: Boolean,
+                                   kind: LinkerOutputKind, outputDsymBundle: String,
+                                   needsProfileLibrary: Boolean): List<Command> {
         if (kind == LinkerOutputKind.STATIC_LIBRARY)
             return staticGnuArCommands(ar, executable, objectFiles, libraries)
 
@@ -185,11 +195,21 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
 
     override fun filterStaticLibraries(binaries: List<String>) = binaries.filter { it.isUnixStaticLib }
 
-    override fun linkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
-                              libraries: List<String>, linkerArgs: List<String>,
-                              optimize: Boolean, debug: Boolean, kind: LinkerOutputKind,
-                              outputDsymBundle: String,
-                              needsProfileLibrary: Boolean): List<Command> {
+    // Note that may break in case of 32-bit Mach-O. See KT-37368.
+    override fun preLinkCommands(objectFiles: List<ObjectFile>, output: ObjectFile): List<Command> =
+        Command(linker).apply {
+            +"-r"
+            +listOf("-arch", arch)
+            +listOf("-syslibroot", absoluteTargetSysRoot)
+            +objectFiles
+            +listOf("-o", output)
+        }.let(::listOf)
+
+    override fun finalLinkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
+                                   libraries: List<String>, linkerArgs: List<String>,
+                                   optimize: Boolean, debug: Boolean, kind: LinkerOutputKind,
+                                   outputDsymBundle: String,
+                                   needsProfileLibrary: Boolean): List<Command> {
         if (kind == LinkerOutputKind.STATIC_LIBRARY)
             return listOf(Command(libtool).apply {
                 +"-static"
@@ -308,11 +328,11 @@ class GccBasedLinker(targetProperties: GccConfigurables)
 
     override fun filterStaticLibraries(binaries: List<String>) = binaries.filter { it.isUnixStaticLib }
 
-    override fun linkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
-                              libraries: List<String>, linkerArgs: List<String>,
-                              optimize: Boolean, debug: Boolean,
-                              kind: LinkerOutputKind, outputDsymBundle: String,
-                              needsProfileLibrary: Boolean): List<Command> {
+    override fun finalLinkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
+                                   libraries: List<String>, linkerArgs: List<String>,
+                                   optimize: Boolean, debug: Boolean,
+                                   kind: LinkerOutputKind, outputDsymBundle: String,
+                                   needsProfileLibrary: Boolean): List<Command> {
         if (kind == LinkerOutputKind.STATIC_LIBRARY)
             return staticGnuArCommands(ar, executable, objectFiles, libraries)
 
@@ -376,11 +396,11 @@ class MingwLinker(targetProperties: MingwConfigurables)
         return if (dir != null) "$dir/lib/windows/libclang_rt.$libraryName-$targetSuffix.a" else null
     }
 
-    override fun linkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
-                              libraries: List<String>, linkerArgs: List<String>,
-                              optimize: Boolean, debug: Boolean,
-                              kind: LinkerOutputKind, outputDsymBundle: String,
-                              needsProfileLibrary: Boolean): List<Command> {
+    override fun finalLinkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
+                                   libraries: List<String>, linkerArgs: List<String>,
+                                   optimize: Boolean, debug: Boolean,
+                                   kind: LinkerOutputKind, outputDsymBundle: String,
+                                   needsProfileLibrary: Boolean): List<Command> {
         if (kind == LinkerOutputKind.STATIC_LIBRARY)
             return staticGnuArCommands(ar, executable, objectFiles, libraries)
 
@@ -412,11 +432,11 @@ class WasmLinker(targetProperties: WasmConfigurables)
 
     override fun filterStaticLibraries(binaries: List<String>) = binaries.filter { it.isJavaScript }
 
-    override fun linkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
-                              libraries: List<String>, linkerArgs: List<String>,
-                              optimize: Boolean, debug: Boolean,
-                              kind: LinkerOutputKind, outputDsymBundle: String,
-                              needsProfileLibrary: Boolean): List<Command> {
+    override fun finalLinkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
+                                   libraries: List<String>, linkerArgs: List<String>,
+                                   optimize: Boolean, debug: Boolean,
+                                   kind: LinkerOutputKind, outputDsymBundle: String,
+                                   needsProfileLibrary: Boolean): List<Command> {
         if (kind != LinkerOutputKind.EXECUTABLE) throw Error("Unsupported linker output kind")
 
         val linkage = Command("$llvmBin/wasm-ld").apply {
@@ -464,11 +484,11 @@ open class ZephyrLinker(targetProperties: ZephyrConfigurables)
 
     override fun filterStaticLibraries(binaries: List<String>) = emptyList<String>()
 
-    override fun linkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
-                              libraries: List<String>, linkerArgs: List<String>,
-                              optimize: Boolean, debug: Boolean,
-                              kind: LinkerOutputKind, outputDsymBundle: String,
-                              needsProfileLibrary: Boolean): List<Command> {
+    override fun finalLinkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
+                                   libraries: List<String>, linkerArgs: List<String>,
+                                   optimize: Boolean, debug: Boolean,
+                                   kind: LinkerOutputKind, outputDsymBundle: String,
+                                   needsProfileLibrary: Boolean): List<Command> {
         if (kind != LinkerOutputKind.EXECUTABLE) throw Error("Unsupported linker output kind: $kind")
         return listOf(Command(linker).apply {
             +listOf("-r", "--gc-sections", "--entry", "main")

@@ -271,6 +271,13 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xdebug-prefix-map", valueDescription = "<old1=new1,old2=new2,...>", description = "Remap file source directory paths in debug info")
     var debugPrefixMap: Array<String>? = null
 
+    @Argument(
+            value = "-Xpre-link-caches",
+            valueDescription = "{disable|enable}",
+            description = "Perform caches pre-link"
+    )
+    var preLinkCaches: String? = null
+
     override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> =
             super.configureAnalysisFlags(collector).also {
                 val useExperimental = it[AnalysisFlags.useExperimental] as List<*>
