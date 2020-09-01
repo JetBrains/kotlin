@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -481,7 +481,7 @@ internal class NativeSuspendFunctionsLowering(ctx: Context): AbstractSuspendFunc
                 IrDeclarationOrigin.DEFINED,
                 IrSimpleFunctionSymbolImpl(it),
                 "saveState".synthesizedName,
-                Visibilities.PRIVATE,
+                DescriptorVisibilities.PRIVATE,
                 Modality.ABSTRACT,
                 context.irBuiltIns.unitType,
                 isInline = false,
@@ -503,7 +503,7 @@ internal class NativeSuspendFunctionsLowering(ctx: Context): AbstractSuspendFunc
                 IrDeclarationOrigin.DEFINED,
                 IrSimpleFunctionSymbolImpl(it),
                 "restoreState".synthesizedName,
-                Visibilities.PRIVATE,
+                DescriptorVisibilities.PRIVATE,
                 Modality.ABSTRACT,
                 context.irBuiltIns.unitType,
                 isInline = false,

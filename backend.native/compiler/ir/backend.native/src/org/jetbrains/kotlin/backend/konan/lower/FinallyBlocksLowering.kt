@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -180,7 +180,7 @@ internal class FinallyBlocksLowering(val context: Context): FileLoweringPass, Ir
                 IrDeclarationOrigin.DEFINED,
                 IrSimpleFunctionSymbolImpl(descriptor),
                 Name.identifier(name),
-                Visibilities.PUBLIC,
+                DescriptorVisibilities.PUBLIC,
                 Modality.FINAL,
                 context.irBuiltIns.unitType,
                 false,

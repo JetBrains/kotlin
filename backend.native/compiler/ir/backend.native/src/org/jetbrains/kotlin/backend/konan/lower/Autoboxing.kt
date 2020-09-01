@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -397,7 +397,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
                 IrFieldSymbolImpl(descriptor),
                 Name.identifier("value"),
                 declaration.defaultType,
-                Visibilities.PRIVATE,
+                DescriptorVisibilities.PRIVATE,
                 isFinal = true,
                 isExternal = false,
                 isStatic = false,

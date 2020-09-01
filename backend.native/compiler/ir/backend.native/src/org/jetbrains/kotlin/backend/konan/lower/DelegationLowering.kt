@@ -93,7 +93,7 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
                     IrFieldSymbolImpl(it),
                     "KPROPERTIES".synthesizedName,
                     kPropertiesFieldType,
-                    Visibilities.PRIVATE,
+                    DescriptorVisibilities.PRIVATE,
                     isFinal = true,
                     isExternal = false,
                     isStatic = true,

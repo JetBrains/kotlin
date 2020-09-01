@@ -262,7 +262,7 @@ internal class ObjCExportLazyImpl(
                         parent.ownerDescriptor,
                         Annotations.EMPTY,
                         Modality.FINAL,
-                        Visibilities.PUBLIC,
+                        DescriptorVisibilities.PUBLIC,
                         declaration.isVar,
                         fakeName,
                         CallableMemberDescriptor.Kind.DECLARATION,

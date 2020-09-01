@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
@@ -76,7 +76,7 @@ internal fun IrFile.addTopLevelInitializer(expression: IrExpression, context: Ko
             IrFieldSymbolImpl(descriptor),
             "topLevelInitializer${topLevelInitializersCounter++}".synthesizedName,
             expression.type,
-            Visibilities.PRIVATE,
+            DescriptorVisibilities.PRIVATE,
             isFinal = true,
             isExternal = false,
             isStatic = true,
@@ -352,7 +352,7 @@ fun createField(
             IrFieldSymbolImpl(it),
             name,
             type,
-            Visibilities.PRIVATE,
+            DescriptorVisibilities.PRIVATE,
             !isMutable,
             false,
             false,

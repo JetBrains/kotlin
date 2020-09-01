@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.lower.SingleAbstractMethodLowering
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.util.render
 
 internal class NativeSingleAbstractMethodLowering(context: Context) : SingleAbstractMethodLowering(context) {
     override fun getWrapperVisibility(expression: IrTypeOperatorCall, scopes: List<ScopeWithIr>) =
-            Visibilities.PRIVATE
+            DescriptorVisibilities.PRIVATE
 
     override fun getSuperTypeForWrapper(typeOperand: IrType): IrType {
         return typeOperand.classOrNull?.defaultType ?: error("Unsupported SAM conversion: ${typeOperand.render()}")

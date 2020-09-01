@@ -83,7 +83,7 @@ internal class SpecialDeclarationsFactory(val context: Context) {
             )
             val descriptor = PropertyDescriptorImpl.create(
                     innerClass.descriptor, Annotations.EMPTY, Modality.FINAL,
-                    Visibilities.PRIVATE, false, "this$0".synthesizedName, CallableMemberDescriptor.Kind.SYNTHESIZED,
+                    DescriptorVisibilities.PRIVATE, false, "this$0".synthesizedName, CallableMemberDescriptor.Kind.SYNTHESIZED,
                     SourceElement.NO_SOURCE, false, false, false, false, false, false
             ).apply {
                 this.setType(outerClass.descriptor.defaultType, emptyList(), receiver, null)

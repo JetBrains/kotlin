@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_ENUM
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
@@ -115,7 +115,7 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
                         constructor.origin,
                         IrConstructorSymbolImpl(it),
                         constructor.name,
-                        Visibilities.PROTECTED,
+                        DescriptorVisibilities.PROTECTED,
                         constructor.returnType,
                         isInline = false,
                         isExternal = false,

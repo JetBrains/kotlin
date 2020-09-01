@@ -18,7 +18,7 @@ class KlibPrinter(out: Appendable) {
     val printer = Printer(out, 1, "    ")
 
     val DeclarationDescriptorWithVisibility.isPublicOrProtected: Boolean
-        get() = visibility == Visibilities.PUBLIC || visibility == Visibilities.PROTECTED
+        get() = visibility == DescriptorVisibilities.PUBLIC || visibility == DescriptorVisibilities.PROTECTED
 
     val CallableMemberDescriptor.isFakeOverride: Boolean
         get() = kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE
@@ -62,7 +62,7 @@ class KlibPrinter(out: Appendable) {
         annotations.forEach {
             append(Renderers.DEFAULT.renderAnnotation(it)).append(" ")
         }
-        if (visibility != Visibilities.DEFAULT_VISIBILITY) {
+        if (visibility != DescriptorVisibilities.DEFAULT_VISIBILITY) {
             append(visibility.internalDisplayName).append(" ")
         }
         when (this@render) {

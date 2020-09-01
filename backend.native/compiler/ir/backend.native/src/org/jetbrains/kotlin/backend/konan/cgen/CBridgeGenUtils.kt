@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -114,7 +114,7 @@ private fun createKotlinBridge(
             IrDeclarationOrigin.DEFINED,
             IrSimpleFunctionSymbolImpl(bridgeDescriptor),
             Name.identifier(cBridgeName),
-            Visibilities.PRIVATE,
+            DescriptorVisibilities.PRIVATE,
             Modality.FINAL,
             IrUninitializedType,
             isInline = false,

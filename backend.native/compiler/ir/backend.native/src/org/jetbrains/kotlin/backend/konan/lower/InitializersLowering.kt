@@ -112,7 +112,7 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
                         DECLARATION_ORIGIN_ANONYMOUS_INITIALIZER,
                         IrSimpleFunctionSymbolImpl(it),
                         "INITIALIZER".synthesizedName,
-                        Visibilities.PRIVATE,
+                        DescriptorVisibilities.PRIVATE,
                         Modality.FINAL,
                         context.irBuiltIns.unitType,
                         isInline = false,

@@ -9,7 +9,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
@@ -65,7 +65,7 @@ internal val Context.getBoxFunction: (IrClass) -> IrSimpleFunction by Context.la
             DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION,
             IrSimpleFunctionSymbolImpl(descriptor),
             Name.special("<${inlinedClass.name}-box>"),
-            Visibilities.PUBLIC,
+            DescriptorVisibilities.PUBLIC,
             Modality.FINAL,
             returnType,
             isInline = false,
@@ -120,7 +120,7 @@ internal val Context.getUnboxFunction: (IrClass) -> IrSimpleFunction by Context.
             DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION,
             IrSimpleFunctionSymbolImpl(descriptor),
             Name.special("<${inlinedClass.name}-unbox>"),
-            Visibilities.PUBLIC,
+            DescriptorVisibilities.PUBLIC,
             Modality.FINAL,
             returnType,
             isInline = false,

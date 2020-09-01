@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -166,7 +166,7 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
                     IrClassSymbolImpl(it),
                     "${referencedFunction.name}\$FUNCTION_REFERENCE\$${context.functionReferenceCount++}".synthesizedName,
                     ClassKind.CLASS,
-                    Visibilities.PRIVATE,
+                    DescriptorVisibilities.PRIVATE,
                     Modality.FINAL,
                     isCompanion = false,
                     isInner = false,
@@ -260,7 +260,7 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
                     DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
                     IrConstructorSymbolImpl(it),
                     Name.special("<init>"),
-                    Visibilities.PUBLIC,
+                    DescriptorVisibilities.PUBLIC,
                     functionReferenceClass.defaultType,
                     isInline = false,
                     isExternal = false,
@@ -312,7 +312,7 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
                     DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
                     IrSimpleFunctionSymbolImpl(it),
                     superFunction.name,
-                    Visibilities.PRIVATE,
+                    DescriptorVisibilities.PRIVATE,
                     Modality.FINAL,
                     referencedFunction.returnType,
                     isInline = false,

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.konan.ir.interop.irInstanceInitializer
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -95,7 +95,7 @@ internal class CEnumClassGenerator(
         symbolTable.withScope(propertyDescriptor) {
             irProperty.backingField = symbolTable.declareField(
                     SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
-                    propertyDescriptor, propertyDescriptor.type.toIrType(), Visibilities.PRIVATE
+                    propertyDescriptor, propertyDescriptor.type.toIrType(), DescriptorVisibilities.PRIVATE
             ).also {
                 it.initializer = irBuilder(irBuiltIns, it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).run {
                     irExprBody(irGet(irClass.primaryConstructor!!.valueParameters[0]))

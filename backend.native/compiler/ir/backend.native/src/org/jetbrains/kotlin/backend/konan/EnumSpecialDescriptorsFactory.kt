@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
@@ -50,7 +50,7 @@ internal class EnumSpecialDeclarationsFactory(val context: Context) {
                     IrClassSymbolImpl(it),
                     "OBJECT".synthesizedName,
                     ClassKind.OBJECT,
-                    Visibilities.PUBLIC,
+                    DescriptorVisibilities.PUBLIC,
                     Modality.FINAL,
                     isCompanion = false,
                     isInner = false,
@@ -74,7 +74,7 @@ internal class EnumSpecialDeclarationsFactory(val context: Context) {
                     IrFieldSymbolImpl(it),
                     "VALUES".synthesizedName,
                     valuesType,
-                    Visibilities.PRIVATE,
+                    DescriptorVisibilities.PRIVATE,
                     isFinal = true,
                     isExternal = false,
                     isStatic = false,
@@ -90,7 +90,7 @@ internal class EnumSpecialDeclarationsFactory(val context: Context) {
                     DECLARATION_ORIGIN_ENUM,
                     IrSimpleFunctionSymbolImpl(it),
                     "get-VALUES".synthesizedName,
-                    Visibilities.PUBLIC,
+                    DescriptorVisibilities.PUBLIC,
                     Modality.FINAL,
                     valuesType,
                     isInline = false,
