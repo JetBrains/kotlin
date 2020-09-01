@@ -14,7 +14,6 @@ import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.FileContextProvider;
 import com.intellij.psi.augment.PsiAugmentProvider;
-import com.intellij.psi.compiled.ClassFileDecompilers;
 import com.intellij.psi.meta.MetaDataContributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +39,6 @@ public class KotlinCoreApplicationEnvironment extends JavaCoreApplicationEnviron
         registerApplicationExtensionPoint(JavaMainMethodProvider.EP_NAME, JavaMainMethodProvider.class);
 
         registerApplicationExtensionPoint(ContainerProvider.EP_NAME, ContainerProvider.class);
-        registerApplicationExtensionPoint(ClassFileDecompilers.getInstance().EP_NAME, ClassFileDecompilers.Decompiler.class);
 
         registerApplicationExtensionPoint(MetaLanguage.EP_NAME, MetaLanguage.class);
 
