@@ -5,19 +5,18 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.fir.Visibilities
-import org.jetbrains.kotlin.fir.Visibility
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility as OldVisibility
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities as OldVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 
 abstract class Fir2IrVisibilityConverter {
     object Default : Fir2IrVisibilityConverter() {
-        override fun convertPlatformVisibility(visibility: Visibility): OldVisibility {
+        override fun convertPlatformVisibility(visibility: Visibility): DescriptorVisibility {
             error("Unknown visibility: $this")
         }
     }
 
-    fun convertToOldVisibility(visibility: Visibility): OldVisibility {
+    fun convertToDescriptorVisibility(visibility: Visibility): DescriptorVisibility {
         return when (visibility) {
             Visibilities.Private -> org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE
             Visibilities.PrivateToThis -> org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE_TO_THIS
@@ -31,5 +30,5 @@ abstract class Fir2IrVisibilityConverter {
         }
     }
 
-    protected abstract fun convertPlatformVisibility(visibility: Visibility): OldVisibility
+    protected abstract fun convertPlatformVisibility(visibility: Visibility): DescriptorVisibility
 }

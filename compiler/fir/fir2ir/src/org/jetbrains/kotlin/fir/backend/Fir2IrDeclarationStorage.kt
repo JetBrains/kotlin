@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.Visibilities
-import org.jetbrains.kotlin.fir.Visibility
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.backend.generators.AnnotationGenerator
 import org.jetbrains.kotlin.fir.backend.generators.DelegatedMemberGenerator
 import org.jetbrains.kotlin.fir.declarations.*
@@ -56,7 +56,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility as OldVisibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class Fir2IrDeclarationStorage(
@@ -415,7 +415,7 @@ class Fir2IrDeclarationStorage(
             val result = declareIrSimpleFunction(signature, simpleFunction?.containerSource) { symbol ->
                 irFactory.createFunction(
                     startOffset, endOffset, updatedOrigin, symbol,
-                    name, components.visibilityConverter.convertToOldVisibility(visibility),
+                    name, components.visibilityConverter.convertToDescriptorVisibility(visibility),
                     simpleFunction?.modality ?: Modality.FINAL,
                     function.returnTypeRef.toIrType(),
                     isInline = simpleFunction?.isInline == true,
@@ -492,7 +492,7 @@ class Fir2IrDeclarationStorage(
             declareIrConstructor(signature) { symbol ->
                 irFactory.createConstructor(
                     startOffset, endOffset, origin, symbol,
-                    Name.special("<init>"), components.visibilityConverter.convertToOldVisibility(constructor.visibility),
+                    Name.special("<init>"), components.visibilityConverter.convertToDescriptorVisibility(constructor.visibility),
                     constructor.returnTypeRef.toIrType(),
                     isInline = false, isExternal = false, isPrimary = isPrimary, isExpect = constructor.isExpect
                 ).apply {
@@ -545,7 +545,7 @@ class Fir2IrDeclarationStorage(
         ) { symbol ->
             val accessorReturnType = if (isSetter) irBuiltIns.unitType else propertyType
             val visibility = propertyAccessor?.visibility?.let {
-                components.visibilityConverter.convertToOldVisibility(it)
+                components.visibilityConverter.convertToDescriptorVisibility(it)
             }
             irFactory.createFunction(
                 startOffset, endOffset, origin, symbol,
@@ -600,7 +600,7 @@ class Fir2IrDeclarationStorage(
         property: FirProperty,
         origin: IrDeclarationOrigin,
         descriptor: PropertyDescriptor,
-        visibility: OldVisibility,
+        visibility: DescriptorVisibility,
         name: Name,
         isFinal: Boolean,
         firInitializerExpression: FirExpression?,
@@ -662,7 +662,7 @@ class Fir2IrDeclarationStorage(
             val result = declareIrProperty(signature, property.containerSource) { symbol ->
                 irFactory.createProperty(
                     startOffset, endOffset, origin, symbol,
-                    property.name, components.visibilityConverter.convertToOldVisibility(property.visibility), property.modality!!,
+                    property.name, components.visibilityConverter.convertToDescriptorVisibility(property.visibility), property.modality!!,
                     isVar = property.isVar,
                     isConst = property.isConst,
                     isLateinit = property.isLateInit,
@@ -688,13 +688,13 @@ class Fir2IrDeclarationStorage(
                             backingField = if (delegate != null) {
                                 createBackingField(
                                     property, IrDeclarationOrigin.PROPERTY_DELEGATE, descriptor,
-                                    components.visibilityConverter.convertToOldVisibility(property.fieldVisibility),
+                                    components.visibilityConverter.convertToDescriptorVisibility(property.fieldVisibility),
                                     Name.identifier("${property.name}\$delegate"), true, delegate
                                 )
                             } else {
                                 createBackingField(
                                     property, IrDeclarationOrigin.PROPERTY_BACKING_FIELD, descriptor,
-                                    components.visibilityConverter.convertToOldVisibility(property.fieldVisibility),
+                                    components.visibilityConverter.convertToDescriptorVisibility(property.fieldVisibility),
                                     property.name, property.isVal, initializer, type
                                 ).also { field ->
                                     if (initializer is FirConstExpression<*>) {
@@ -786,7 +786,7 @@ class Fir2IrDeclarationStorage(
             ) { symbol ->
                 irFactory.createField(
                     startOffset, endOffset, origin, symbol,
-                    field.name, type, components.visibilityConverter.convertToOldVisibility(field.visibility),
+                    field.name, type, components.visibilityConverter.convertToDescriptorVisibility(field.visibility),
                     isFinal = field.modality == Modality.FINAL,
                     isExternal = false,
                     isStatic = field.isStatic

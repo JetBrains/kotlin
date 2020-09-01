@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.fir.java
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
@@ -40,7 +43,7 @@ import org.jetbrains.kotlin.load.java.typeEnhancement.TypeComponentPosition
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance.*
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility as OldVisibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 
 internal val JavaModifierListOwner.modality: Modality
     get() = when {
@@ -524,7 +527,7 @@ private fun JavaType.toFirResolvedTypeRef(
     }
 }
 
-fun OldVisibility.toFirVisibility(): Visibility = when (this) {
+fun DescriptorVisibility.toFirVisibility(): Visibility = when (this) {
     org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE -> Visibilities.Private
     org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE_TO_THIS -> Visibilities.PrivateToThis
     org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PROTECTED -> Visibilities.Protected

@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.plugin
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.Visibilities
-import org.jetbrains.kotlin.fir.Visibility
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus

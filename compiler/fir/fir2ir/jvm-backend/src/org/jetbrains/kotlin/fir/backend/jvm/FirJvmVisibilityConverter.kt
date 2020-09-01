@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.fir.backend.jvm
 
-import org.jetbrains.kotlin.fir.JavaVisibilities
-import org.jetbrains.kotlin.fir.Visibility
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility as OldVisibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 
 
 object FirJvmVisibilityConverter : Fir2IrVisibilityConverter() {
-    override fun convertPlatformVisibility(visibility: Visibility): OldVisibility {
+    override fun convertPlatformVisibility(visibility: Visibility): DescriptorVisibility {
         return when (visibility) {
             JavaVisibilities.PackageVisibility -> org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities.PACKAGE_VISIBILITY
             JavaVisibilities.ProtectedStaticVisibility -> org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY

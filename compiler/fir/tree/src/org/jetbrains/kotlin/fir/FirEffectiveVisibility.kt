@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.descriptors.Visibility
+
 interface FirEffectiveVisibility {
 
     val name: String

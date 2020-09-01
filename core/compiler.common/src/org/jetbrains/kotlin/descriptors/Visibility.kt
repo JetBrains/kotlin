@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir
+package org.jetbrains.kotlin.descriptors
 
 abstract class Visibility protected constructor(
     val name: String,
@@ -20,4 +20,3 @@ abstract class Visibility protected constructor(
 
     open fun normalize(): Visibility = this
 }
-

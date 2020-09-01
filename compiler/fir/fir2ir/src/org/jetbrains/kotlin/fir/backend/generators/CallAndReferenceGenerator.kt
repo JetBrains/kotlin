@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.psi2ir.generators.hasNoSideEffects
 import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities as OldVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 
 class CallAndReferenceGenerator(
     private val components: Fir2IrComponents,
@@ -254,7 +254,7 @@ class CallAndReferenceGenerator(
                 IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE,
                 irAdapterSymbol,
                 adaptee.name,
-                org.jetbrains.kotlin.descriptors.DescriptorVisibilities.LOCAL,
+                DescriptorVisibilities.LOCAL,
                 Modality.FINAL,
                 returnType,
                 isInline = firAdaptee.isInline,

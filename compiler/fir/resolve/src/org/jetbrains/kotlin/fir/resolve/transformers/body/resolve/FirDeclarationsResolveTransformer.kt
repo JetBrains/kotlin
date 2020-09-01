@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Visibilities.Internal
+import org.jetbrains.kotlin.descriptors.Visibilities.Private
+import org.jetbrains.kotlin.descriptors.Visibilities.Protected
+import org.jetbrains.kotlin.descriptors.Visibilities.Public
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.Visibilities.Internal
-import org.jetbrains.kotlin.fir.Visibilities.Private
-import org.jetbrains.kotlin.fir.Visibilities.Protected
-import org.jetbrains.kotlin.fir.Visibilities.Public
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor

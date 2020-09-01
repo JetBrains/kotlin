@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.deserialization
 
-import org.jetbrains.kotlin.fir.Visibilities
-import org.jetbrains.kotlin.fir.Visibility
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.metadata.ProtoBuf
 
 object FirProtoEnumFlags {

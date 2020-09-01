@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 
 class FirJvmEffectiveVisibilityResolver(session: FirSession) : FirEffectiveVisibilityResolverImpl(session) {

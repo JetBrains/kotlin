@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility as OldVisibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 
 class Fir2IrLazyConstructor(
     components: Fir2IrComponents,
@@ -62,7 +62,7 @@ class Fir2IrLazyConstructor(
         get() = Name.special("<init>")
 
     @Suppress("SetterBackingFieldAssignment")
-    override var visibility: OldVisibility = components.visibilityConverter.convertToOldVisibility(fir.visibility)
+    override var visibility: DescriptorVisibility = components.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
         set(_) {
             error("Mutating Fir2Ir lazy elements is not possible")
         }

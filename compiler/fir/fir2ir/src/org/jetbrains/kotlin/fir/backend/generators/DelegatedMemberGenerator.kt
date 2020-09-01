@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.fir.backend.generators
 import org.jetbrains.kotlin.backend.common.ir.isFinalClass
 import org.jetbrains.kotlin.backend.common.ir.isOverridable
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities as OldVisibilities
-import org.jetbrains.kotlin.fir.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.*

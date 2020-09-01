@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility as OldVisibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 
 class Fir2IrLazyProperty(
     components: Fir2IrComponents,
@@ -70,7 +70,7 @@ class Fir2IrLazyProperty(
         get() = fir.name
 
     @Suppress("SetterBackingFieldAssignment")
-    override var visibility: OldVisibility = components.visibilityConverter.convertToOldVisibility(fir.visibility)
+    override var visibility: DescriptorVisibility = components.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
         set(_) {
             error("Mutating Fir2Ir lazy elements is not possible")
         }
@@ -94,7 +94,7 @@ class Fir2IrLazyProperty(
                 with(declarationStorage) {
                     createBackingField(
                         fir, IrDeclarationOrigin.PROPERTY_BACKING_FIELD, descriptor,
-                        components.visibilityConverter.convertToOldVisibility(fir.visibility), fir.name, fir.isVal, fir.initializer,
+                        components.visibilityConverter.convertToDescriptorVisibility(fir.visibility), fir.name, fir.isVal, fir.initializer,
                         type
                     ).also { field ->
                         val initializer = fir.initializer
@@ -110,7 +110,7 @@ class Fir2IrLazyProperty(
                 with(declarationStorage) {
                     createBackingField(
                         fir, IrDeclarationOrigin.PROPERTY_DELEGATE, descriptor,
-                        components.visibilityConverter.convertToOldVisibility(fir.visibility), Name.identifier("${fir.name}\$delegate"), true, fir.delegate
+                        components.visibilityConverter.convertToDescriptorVisibility(fir.visibility), Name.identifier("${fir.name}\$delegate"), true, fir.delegate
                     )
                 }
             }
