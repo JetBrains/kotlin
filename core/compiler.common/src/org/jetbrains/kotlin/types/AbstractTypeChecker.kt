@@ -160,6 +160,22 @@ object AbstractTypeChecker {
         return AbstractTypeChecker.isSubtypeOf(context.newBaseTypeCheckerContext(true, stubTypesEqualToAnything), subType, superType)
     }
 
+    fun isSubtypeOfClass(
+        context: AbstractTypeCheckerContext,
+        typeConstructor: TypeConstructorMarker,
+        superConstructor: TypeConstructorMarker
+    ): Boolean {
+        if (typeConstructor == superConstructor) return true
+        with(context) {
+            for (superType in typeConstructor.supertypes()) {
+                if (isSubtypeOfClass(context, superType.typeConstructor(), superConstructor)) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
     fun equalTypes(
         context: TypeCheckerProviderContext,
         a: KotlinTypeMarker,
