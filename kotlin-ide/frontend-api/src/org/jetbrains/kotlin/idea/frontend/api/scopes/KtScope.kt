@@ -14,24 +14,24 @@ import org.jetbrains.kotlin.name.Name
 interface KtScope : ValidityTokenOwner {
     // TODO check that names are accessible
     // maybe return some kind of lazy set
-    fun getAllNames(): Set<Name> = withValidityAssertion { getCallableNames() + getClassLikeSymbolNames() }
+    fun getAllNames(): Set<Name> = withValidityAssertion { getCallableNames() + getClassifierNames() }
 
     fun getCallableNames(): Set<Name>
-    fun getClassLikeSymbolNames(): Set<Name>
+    fun getClassifierNames(): Set<Name>
 
 
     fun getAllSymbols(): Sequence<KtSymbol> = withValidityAssertion {
         sequence {
             yieldAll(getCallableSymbols())
-            yieldAll(getClassClassLikeSymbols())
+            yieldAll(getClassifierSymbols())
         }
     }
 
     fun getCallableSymbols(): Sequence<KtCallableSymbol>
-    fun getClassClassLikeSymbols(): Sequence<KtClassLikeSymbol>
+    fun getClassifierSymbols(): Sequence<KtClassifierSymbol>
 
     fun containsName(name: Name): Boolean = withValidityAssertion {
-        name in getCallableNames() || name in getClassLikeSymbolNames()
+        name in getCallableNames() || name in getClassifierNames()
     }
 }
 

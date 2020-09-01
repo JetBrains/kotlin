@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.idea.frontend.api.scopes.KtStarImportingScope
 import org.jetbrains.kotlin.idea.frontend.api.scopes.StarImport
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelClassByPackageIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionByPackageIndex
@@ -55,8 +55,8 @@ internal class KtFirStarImportingScope(
         firScope.getCallableSymbols(getCallableNames(), builder)
     }
 
-    override fun getClassClassLikeSymbols(): Sequence<KtClassLikeSymbol> = withValidityAssertion {
-        firScope.getClassLikeSymbols(getClassLikeSymbolNames(), builder)
+    override fun getClassifierSymbols(): Sequence<KtClassifierSymbol> = withValidityAssertion {
+        firScope.getClassifierSymbols(getClassifierNames(), builder)
     }
 
     // todo cache?
@@ -72,7 +72,7 @@ internal class KtFirStarImportingScope(
         }
     }
 
-    override fun getClassLikeSymbolNames(): Set<Name> = withValidityAssertion {
+    override fun getClassifierNames(): Set<Name> = withValidityAssertion {
         imports.flatMapTo(hashSetOf()) { import ->
             if (import.relativeClassName == null) {
                 packageHelper.getPackageTopLevelClassifiers(import.packageFqName)
