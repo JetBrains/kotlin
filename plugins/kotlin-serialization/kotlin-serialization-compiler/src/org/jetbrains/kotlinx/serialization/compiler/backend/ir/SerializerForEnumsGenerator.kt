@@ -77,18 +77,18 @@ class SerializerForEnumsGenerator(
         +irReturn(getValueByOrdinal)
     }
 
+    override val serialDescImplClass: ClassDescriptor = serializerDescriptor
+        .getClassFromInternalSerializationPackage(SerialEntityNames.SERIAL_DESCRIPTOR_FOR_ENUM)
+
     override fun IrBlockBodyBuilder.instantiateNewDescriptor(
         serialDescImplClass: ClassDescriptor,
         correctThis: IrExpression
     ): IrExpression {
-        val serialDescForEnums = serializerDescriptor
-            .getClassFromInternalSerializationPackage(SerialEntityNames.SERIAL_DESCRIPTOR_FOR_ENUM)
-        val ctor = compilerContext.referenceConstructors(serialDescForEnums.fqNameSafe).single { it.owner.isPrimary }
+        val ctor = compilerContext.referenceConstructors(serialDescImplClass.fqNameSafe).single { it.owner.isPrimary }
         return irInvoke(
             null, ctor,
             irString(serialName),
-            irInt(serializableDescriptor.enumEntries().size),
-            typeHint = ctor.descriptor.returnType.toIrType()
+            irInt(serializableDescriptor.enumEntries().size)
         )
     }
 
