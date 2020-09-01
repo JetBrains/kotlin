@@ -29,9 +29,7 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
             prefixes.firstNotNullResult { File(wholeFile.parentFile, wholeFile.nameWithoutExtension + "$it.txt").takeIf(File::exists) }
                 .sure { "No testData file exists: ${wholeFile.nameWithoutExtension}.txt" }
 
-        KotlinTestUtils.assertEqualsToFile(txtFile, actualTxt) {
-            it.replace("COROUTINES_PACKAGE", coroutinesPackage)
-        }
+        KotlinTestUtils.assertEqualsToFile(txtFile, actualTxt)
     }
 
     private fun isWithSignatures(wholeFile: File): Boolean =
