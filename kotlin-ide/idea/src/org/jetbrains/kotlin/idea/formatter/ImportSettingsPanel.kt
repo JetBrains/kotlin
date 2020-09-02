@@ -173,7 +173,7 @@ class ImportSettingsPanel : JPanel() {
         private val rbUseSingleImports = JRadioButton(KotlinBundle.message("formatter.button.text.use.single.name.import"))
         private val rbUseStarImports = JRadioButton(KotlinBundle.message("formatter.button.text.use.import.with"))
         private val rbUseStarImportsIfAtLeast = JRadioButton(KotlinBundle.message("formatter.button.text.use.import.with.when.at.least"))
-        private val starImportLimitModel = SpinnerNumberModel(default, 2, 100, 1)
+        private val starImportLimitModel = SpinnerNumberModel(default, MIN_VALUE, MAX_VALUE, 1)
         private val starImportLimitField = JSpinner(starImportLimitModel)
 
         init {
