@@ -10777,6 +10777,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/inference/coerctionToUnitForLastExpressionWithStarProjection.kt");
         }
 
+        @TestMetadata("dataFlowThrowTryCatchWithNullableExpectedType.kt")
+        public void testDataFlowThrowTryCatchWithNullableExpectedType() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/dataFlowThrowTryCatchWithNullableExpectedType.kt");
+        }
+
         @TestMetadata("earlyReturnInsideCrossinlineLambda.kt")
         public void testEarlyReturnInsideCrossinlineLambda() throws Exception {
             runTest("compiler/testData/codegen/box/inference/earlyReturnInsideCrossinlineLambda.kt");
