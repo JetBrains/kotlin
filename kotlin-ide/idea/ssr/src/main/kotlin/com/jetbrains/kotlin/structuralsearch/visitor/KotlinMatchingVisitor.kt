@@ -90,7 +90,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     private fun getHandler(element: PsiElement) = myMatchingVisitor.matchContext.pattern.getHandler(element)
 
     private fun matchTextOrVariable(el1: PsiElement?, el2: PsiElement?): Boolean {
-        if (el1 == null || el2 == null) return el1 == el2
+        if (el1 == null) return true
+        if (el2 == null) return el1 == el2
         return when (val handler = getHandler(el1)) {
             is SubstitutionHandler -> handler.validate(el2, myMatchingVisitor.matchContext)
             else -> myMatchingVisitor.matchText(el1, el2)
@@ -791,7 +792,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitObjectDeclaration(declaration: KtObjectDeclaration) {
         val other = getTreeElementDepar<KtObjectDeclaration>() ?: return
-        val otherIdentifier = if (other.isCompanion()) (other.parent.parent as KtClass).nameIdentifier else other.nameIdentifier
+        val otherIdentifier =
+            other.nameIdentifier ?: if (other.isCompanion()) (other.parent.parent as KtClass).nameIdentifier else null
         myMatchingVisitor.result = myMatchingVisitor.match(declaration.modifierList, other.modifierList)
                 && matchTextOrVariable(declaration.nameIdentifier, otherIdentifier)
                 && myMatchingVisitor.match(declaration.getSuperTypeList(), other.getSuperTypeList())

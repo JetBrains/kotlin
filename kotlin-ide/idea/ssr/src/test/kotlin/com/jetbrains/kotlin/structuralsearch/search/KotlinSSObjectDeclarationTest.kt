@@ -10,4 +10,20 @@ class KotlinSSObjectDeclarationTest : KotlinSSResourceInspectionTest() {
     fun testCompanionObject() { doTest("object A") }
 
     fun testNestedObject() { doTest("object B") }
+
+    fun testNamedCompanionObject() {
+        doTest(
+            """class '_ {
+                    companion object Foo { }
+                }""".trimMargin()
+        )
+    }
+
+    fun testNestedNamedCompanionObject() {
+        doTest(
+            """class '_ {
+                    companion object Foo { }
+                }""".trimMargin()
+        )
+    }
 }
