@@ -1,9 +1,8 @@
-import javax.swing.SwingUtilities.invokeLater
+import java.io.File.listRoots
 
 fun foo() {
-    invoke<caret>
+    listR<caret>
 }
 
 // INVOCATION_COUNT: 1
-// ELEMENT_TEXT: "SwingUtilities.invokeAndWait"
-// TAIL_TEXT: " {...} (doRun: (() -> Unit)!) (javax.swing)"
+// ELEMENT_TEXT: "File.listRoots"

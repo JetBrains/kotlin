@@ -1,7 +1,6 @@
 fun foo() {
-    invoke<caret>
+    listR<caret>
 }
 
 // INVOCATION_COUNT: 2
-// ELEMENT_TEXT: "SwingUtilities.invokeLater"
-// TAIL_TEXT: "(doRun: Runnable!) (javax.swing)"
+// ELEMENT_TEXT: "File.listRoots"

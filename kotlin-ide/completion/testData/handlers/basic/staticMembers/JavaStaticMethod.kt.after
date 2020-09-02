@@ -1,9 +1,8 @@
-import javax.swing.SwingUtilities
+import java.io.File
 
 fun foo() {
-    SwingUtilities.invokeLater(<caret>)
+    File.listRoots()<caret>
 }
 
 // INVOCATION_COUNT: 2
-// ELEMENT_TEXT: "SwingUtilities.invokeLater"
-// TAIL_TEXT: "(doRun: Runnable!) (javax.swing)"
+// ELEMENT_TEXT: "File.listRoots"
