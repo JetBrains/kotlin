@@ -24,6 +24,8 @@ class Fir2IrConversionScope {
         return parent
     }
 
+    fun containingFileIfAny(): IrFile? = parentStack.getOrNull(0) as? IrFile
+
     fun withContainingFirClass(containingFirClass: FirClass<*>, f: () -> Unit) {
         containingFirClassStack += containingFirClass
         f()

@@ -460,69 +460,74 @@ class CallAndReferenceGenerator(
         explicitReceiverExpression: IrExpression?,
         annotationMode: Boolean = false
     ): IrExpression {
-        val type = typeRef.toIrType()
-        val samConstructorCall = qualifiedAccess.tryConvertToSamConstructorCall(type)
-        if (samConstructorCall != null) return samConstructorCall
+        try {
+            val type = typeRef.toIrType()
+            val samConstructorCall = qualifiedAccess.tryConvertToSamConstructorCall(type)
+            if (samConstructorCall != null) return samConstructorCall
 
-        val symbol = qualifiedAccess.calleeReference.toSymbol(
-            session,
-            classifierStorage,
-            declarationStorage,
-            conversionScope
-        )
-        return qualifiedAccess.convertWithOffsets { startOffset, endOffset ->
-            val dispatchReceiver = qualifiedAccess.dispatchReceiver
-            if (qualifiedAccess.calleeReference is FirSuperReference) {
-                if (dispatchReceiver !is FirNoReceiverExpression) {
-                    return@convertWithOffsets visitor.convertToIrExpression(dispatchReceiver)
-                }
-            }
-            when (symbol) {
-                is IrConstructorSymbol -> IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, type, symbol)
-                is IrSimpleFunctionSymbol -> {
-                    IrCallImpl(
-                        startOffset, endOffset, type, symbol,
-                        typeArgumentsCount = symbol.owner.typeParameters.size,
-                        valueArgumentsCount = symbol.owner.valueParameters.size,
-                        origin = qualifiedAccess.calleeReference.statementOrigin(),
-                        superQualifierSymbol = dispatchReceiver.superQualifierSymbol(symbol)
-                    )
-                }
-                is IrPropertySymbol -> {
-                    val getter = symbol.owner.getter
-                    val backingField = symbol.owner.backingField
-                    when {
-                        getter != null -> IrCallImpl(
-                            startOffset, endOffset, type, getter.symbol,
-                            typeArgumentsCount = getter.typeParameters.size,
-                            valueArgumentsCount = 0,
-                            origin = IrStatementOrigin.GET_PROPERTY,
-                            superQualifierSymbol = dispatchReceiver.superQualifierSymbol(symbol)
-                        )
-                        backingField != null -> IrGetFieldImpl(
-                            startOffset, endOffset, backingField.symbol, type,
-                            superQualifierSymbol = dispatchReceiver.superQualifierSymbol(symbol)
-                        )
-                        else -> IrErrorCallExpressionImpl(
-                            startOffset, endOffset, type,
-                            description = "No getter or backing field found for ${qualifiedAccess.calleeReference.render()}"
-                        )
+            val symbol = qualifiedAccess.calleeReference.toSymbol(
+                session,
+                classifierStorage,
+                declarationStorage,
+                conversionScope
+            )
+            return qualifiedAccess.convertWithOffsets { startOffset, endOffset ->
+                val dispatchReceiver = qualifiedAccess.dispatchReceiver
+                if (qualifiedAccess.calleeReference is FirSuperReference) {
+                    if (dispatchReceiver !is FirNoReceiverExpression) {
+                        return@convertWithOffsets visitor.convertToIrExpression(dispatchReceiver)
                     }
                 }
-                is IrFieldSymbol -> IrGetFieldImpl(
-                    startOffset, endOffset, symbol, type,
-                    origin = IrStatementOrigin.GET_PROPERTY.takeIf { qualifiedAccess.calleeReference !is FirDelegateFieldReference },
-                    superQualifierSymbol = dispatchReceiver.superQualifierSymbol(symbol)
-                )
-                is IrValueSymbol -> IrGetValueImpl(
-                    startOffset, endOffset, type, symbol,
-                    origin = qualifiedAccess.calleeReference.statementOrigin()
-                )
-                is IrEnumEntrySymbol -> IrGetEnumValueImpl(startOffset, endOffset, type, symbol)
-                else -> generateErrorCallExpression(startOffset, endOffset, qualifiedAccess.calleeReference, type)
-            }
-        }.applyCallArguments(qualifiedAccess as? FirCall, annotationMode)
-            .applyTypeArguments(qualifiedAccess).applyReceivers(qualifiedAccess, explicitReceiverExpression)
+                when (symbol) {
+                    is IrConstructorSymbol -> IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, type, symbol)
+                    is IrSimpleFunctionSymbol -> {
+                        IrCallImpl(
+                            startOffset, endOffset, type, symbol,
+                            typeArgumentsCount = symbol.owner.typeParameters.size,
+                            valueArgumentsCount = symbol.owner.valueParameters.size,
+                            origin = qualifiedAccess.calleeReference.statementOrigin(),
+                            superQualifierSymbol = dispatchReceiver.superQualifierSymbol(symbol)
+                        )
+                    }
+                    is IrPropertySymbol -> {
+                        val getter = symbol.owner.getter
+                        val backingField = symbol.owner.backingField
+                        when {
+                            getter != null -> IrCallImpl(
+                                startOffset, endOffset, type, getter.symbol,
+                                typeArgumentsCount = getter.typeParameters.size,
+                                valueArgumentsCount = 0,
+                                origin = IrStatementOrigin.GET_PROPERTY,
+                                superQualifierSymbol = dispatchReceiver.superQualifierSymbol(symbol)
+                            )
+                            backingField != null -> IrGetFieldImpl(
+                                startOffset, endOffset, backingField.symbol, type,
+                                superQualifierSymbol = dispatchReceiver.superQualifierSymbol(symbol)
+                            )
+                            else -> IrErrorCallExpressionImpl(
+                                startOffset, endOffset, type,
+                                description = "No getter or backing field found for ${qualifiedAccess.calleeReference.render()}"
+                            )
+                        }
+                    }
+                    is IrFieldSymbol -> IrGetFieldImpl(
+                        startOffset, endOffset, symbol, type,
+                        origin = IrStatementOrigin.GET_PROPERTY.takeIf { qualifiedAccess.calleeReference !is FirDelegateFieldReference },
+                        superQualifierSymbol = dispatchReceiver.superQualifierSymbol(symbol)
+                    )
+                    is IrValueSymbol -> IrGetValueImpl(
+                        startOffset, endOffset, type, symbol,
+                        origin = qualifiedAccess.calleeReference.statementOrigin()
+                    )
+                    is IrEnumEntrySymbol -> IrGetEnumValueImpl(startOffset, endOffset, type, symbol)
+                    else -> generateErrorCallExpression(startOffset, endOffset, qualifiedAccess.calleeReference, type)
+                }
+            }.applyCallArguments(qualifiedAccess as? FirCall, annotationMode)
+                .applyTypeArguments(qualifiedAccess).applyReceivers(qualifiedAccess, explicitReceiverExpression)
+        } catch (e: Throwable) {
+            throw IllegalStateException("Error while translating ${qualifiedAccess.render()} " +
+                                                "from file ${conversionScope.containingFileIfAny()?.name ?: "???"} to BE IR", e)
+        }
     }
 
     fun convertToIrSetCall(variableAssignment: FirVariableAssignment, explicitReceiverExpression: IrExpression?): IrExpression {
