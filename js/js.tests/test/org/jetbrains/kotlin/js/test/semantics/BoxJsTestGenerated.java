@@ -5252,6 +5252,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/jsModule/interfaces.kt");
         }
 
+        @TestMetadata("kt39378.kt")
+        public void testKt39378() throws Exception {
+            runTest("js/js.translator/testData/box/jsModule/kt39378.kt");
+        }
+
         @TestMetadata("topLevelVarargFun.kt")
         public void testTopLevelVarargFun() throws Exception {
             runTest("js/js.translator/testData/box/jsModule/topLevelVarargFun.kt");
