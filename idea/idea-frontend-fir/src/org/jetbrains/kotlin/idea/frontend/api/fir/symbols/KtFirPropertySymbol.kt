@@ -53,7 +53,7 @@ internal class KtFirPropertySymbol(
                 else -> KtSymbolKind.MEMBER
             }
         }
-    override val modality: KtCommonSymbolModality get() = firRef.withFir { it.modality.getSymbolModality() }
+    override val modality: KtCommonSymbolModality get() = getModality()
 
     override val callableIdIfNonLocal: FqName?
         get() = firRef.withFir { fir ->

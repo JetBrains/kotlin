@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.modality
 import org.jetbrains.kotlin.idea.fir.findPsi
@@ -35,7 +36,7 @@ internal class KtFirPropertySetterSymbol(
     override val psi: PsiElement? by firRef.withFirAndCache { it.findPsi(fir.session) }
 
     override val isDefault: Boolean get() = firRef.withFir { it is FirDefaultPropertyAccessor }
-    override val modality: KtCommonSymbolModality get() = firRef.withFir { it.modality.getSymbolModality() }
+    override val modality: KtCommonSymbolModality get() = firRef.withFir(FirResolvePhase.STATUS) { it.modality.getSymbolModality() }
     override val parameter: KtSetterParameterSymbol by firRef.withFirAndCache { fir ->
         builder.buildFirSetterParameter(fir.valueParameters.single())
     }

@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.modality
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtCommonSymbolModality
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolModality
@@ -18,3 +21,6 @@ internal inline fun <reified M : KtSymbolModality> Modality?.getSymbolModality()
     Modality.SEALED -> KtSymbolModality.SEALED
     null -> error("Symbol modality should not be null, looks like the fir symbol was not properly resolved")
 } as? M ?: error("Sealed modality can only be applied to class")
+
+internal inline fun <F : FirMemberDeclaration, reified M : KtSymbolModality> KtFirSymbol<F>.getModality() =
+    firRef.withFir(FirResolvePhase.STATUS) { it.modality.getSymbolModality<M>() }
