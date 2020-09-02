@@ -10,18 +10,26 @@ fun kotlinBenchmarks() =
         defaultTasks(Tasks.DIST, Tasks.COMPILER_TEST_CLASSES, Tasks.IDEA_TEST_CLASSES, Tasks.KOTLIN_GRADLE_PLUGIN_COMPILE_JAVA)
         defaultJdk = System.getenv("JDK_8")
 
-        val defaultArguments = listOf(
+        val defaultArguments = arrayOf(
             "--info",
             "--no-build-cache",
             "--watch-fs",
         )
 
-        defaultArguments(*defaultArguments.toTypedArray())
+        val parallelBuild = arrayOf(
+            *defaultArguments,
+            "--parallel",
+        )
+
+        val nonParallelBuild = arrayOf(
+            *defaultArguments,
+            "--no-parallel",
+        )
+
+        defaultArguments(*defaultArguments)
 
         scenario("clean build") {
-            arguments(
-                *defaultArguments.toTypedArray(),
-            )
+            arguments(*nonParallelBuild)
             expectSlowBuild("clean build")
             step {
                 doNotMeasure()
@@ -31,10 +39,7 @@ fun kotlinBenchmarks() =
         }
 
         scenario("clean build parallel") {
-            arguments(
-                *defaultArguments.toTypedArray(),
-                "--parallel"
-            )
+            arguments(*parallelBuild)
             expectSlowBuild("clean build")
             step {
                 doNotMeasure()
@@ -44,30 +49,35 @@ fun kotlinBenchmarks() =
         }
 
         scenario("(non-leaf, core) add private function") {
+            arguments(*nonParallelBuild)
             step {
                 changeFile(coreUtilStrings, TypeOfChange.ADD_PRIVATE_FUNCTION)
             }
         }
 
         scenario("(non-leaf, core) add public function") {
+            arguments(*nonParallelBuild)
             step {
                 changeFile(coreUtilStrings, TypeOfChange.ADD_PUBLIC_FUNCTION)
             }
         }
 
         scenario("(non-leaf, core) add private class") {
+            arguments(*nonParallelBuild)
             step {
                 changeFile(coreUtilStrings, TypeOfChange.ADD_PRIVATE_CLASS)
             }
         }
 
         scenario("(non-leaf, core) add public class") {
+            arguments(*nonParallelBuild)
             step {
                 changeFile(coreUtilStrings, TypeOfChange.ADD_PUBLIC_CLASS)
             }
         }
 
         scenario("(non-leaf, core) build after error") {
+            arguments(*nonParallelBuild)
             step {
                 doNotMeasure()
                 expectBuildToFail()
@@ -79,24 +89,28 @@ fun kotlinBenchmarks() =
         }
 
         scenario("(non-leaf, core) change popular inline function") {
+            arguments(*nonParallelBuild)
             step {
                 changeFile(coreUtilCoreLib, TypeOfChange.CHANGE_INLINE_FUNCTION)
             }
         }
 
         scenario("(non-leaf, compiler) add public function") {
+            arguments(*nonParallelBuild)
             step {
                 changeFile(compilerCommonBackendContext, TypeOfChange.ADD_PUBLIC_FUNCTION)
             }
         }
 
         scenario("(non-leaf, compiler) add private function") {
+            arguments(*nonParallelBuild)
             step {
                 changeFile(compilerCommonBackendContext, TypeOfChange.ADD_PRIVATE_FUNCTION)
             }
         }
 
         scenario("(leaf, kotlin gradle plugin) add private function") {
+            arguments(*nonParallelBuild)
             step {
                 changeFile(kotlinGradlePluginConfigurationPhaseAware, TypeOfChange.ADD_PRIVATE_FUNCTION)
                 runTasks(Tasks.KOTLIN_GRADLE_PLUGIN_COMPILE_JAVA)
@@ -104,6 +118,7 @@ fun kotlinBenchmarks() =
         }
 
         scenario("(leaf, kotlin gradle plugin) add public function") {
+            arguments(*nonParallelBuild)
             step {
                 changeFile(kotlinGradlePluginConfigurationPhaseAware, TypeOfChange.ADD_PUBLIC_FUNCTION)
                 runTasks(Tasks.KOTLIN_GRADLE_PLUGIN_COMPILE_JAVA)
