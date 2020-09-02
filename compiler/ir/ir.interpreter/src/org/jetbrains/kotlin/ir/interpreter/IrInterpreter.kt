@@ -398,6 +398,10 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
         if (irClass.isInner) {
             constructorCall.dispatchReceiver!!.interpret().check { return it }
             state.outerClass = Variable(irClass.parentAsClass.thisReceiver!!.symbol, stack.popReturnValue())
+            // used in case when inner class has inner super class
+            valueArguments.add(Variable(owner.dispatchReceiverParameter!!.symbol, state.outerClass!!.state))
+            // used to get information from outer class
+            valueArguments.add(state.outerClass!!)
         }
         valueArguments.add(Variable(irClass.thisReceiver!!.symbol, state)) //used to set up fields in body
         return stack.newFrame(initPool = valueArguments + state.typeArguments) {
