@@ -9,6 +9,19 @@ class Builders {
         fun buildListSample() {
             val x = listOf('b', 'c')
 
+            val y = buildList() {
+                add('a')
+                addAll(x)
+                add('d')
+            }
+
+            assertPrints(y, "[a, b, c, d]")
+        }
+
+        @Sample
+        fun buildListSampleWithCapacity() {
+            val x = listOf('b', 'c')
+
             val y = buildList(x.size + 2) {
                 add('a')
                 addAll(x)
