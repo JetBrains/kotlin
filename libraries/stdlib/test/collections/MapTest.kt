@@ -333,6 +333,10 @@ class MapTest {
 
         val filteredByValue2 = map.filterValues { it % 2 == 0 }
         assertEquals(mapOf("a" to 2, "c" to 2), filteredByValue2)
+
+        val mapWithNulls = mapOf(1 to "one", 2 to null, 3 to "three")
+        val filteredNotNull: Map<Int, String> = mapWithNulls.filterValuesNotNull()
+        assertEquals(mapOf(1 to "one", 3 to "three"), filteredNotNull)
     }
 
     @Test fun filterOutProjectedTo() {
