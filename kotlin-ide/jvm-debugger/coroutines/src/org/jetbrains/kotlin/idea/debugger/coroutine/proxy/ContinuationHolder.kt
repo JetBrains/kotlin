@@ -37,14 +37,14 @@ class ContinuationHolder private constructor(val context: DefaultExecutionContex
     }
 
     private fun findCoroutineInformation(
-        input: ObjectReference?,
-        stackFrameItems: List<CoroutineStackFrameItem>
+            coroutineOwner: ObjectReference?,
+            stackFrameItems: List<CoroutineStackFrameItem>
     ): CoroutineInfoData? {
         val creationStackTrace = mutableListOf<CreationCoroutineStackFrameItem>()
-        val realState = if (input?.type()?.isAbstractCoroutine() == true) {
-            state(input) ?: return null
+        val realState = if (coroutineOwner?.type()?.isAbstractCoroutine() == true) {
+            state(coroutineOwner) ?: return null
         } else {
-            val ci = debugProbesImpl?.getCoroutineInfo(input, context)
+            val ci = debugProbesImpl?.getCoroutineInfo(coroutineOwner, context)
             if (ci != null) {
                 if (ci.creationStackTrace != null)
                     for (index in ci.creationStackTrace.indices) {
