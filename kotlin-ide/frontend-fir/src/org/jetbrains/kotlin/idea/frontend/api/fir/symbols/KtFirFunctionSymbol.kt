@@ -64,7 +64,7 @@ internal class KtFirFunctionSymbol(
                 else -> KtSymbolKind.MEMBER
             }
         }
-    override val modality: KtCommonSymbolModality get() = firRef.withFir { it.modality.getSymbolModality() }
+    override val modality: KtCommonSymbolModality get() = getModality()
 
     override fun createPointer(): KtSymbolPointer<KtFunctionSymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }

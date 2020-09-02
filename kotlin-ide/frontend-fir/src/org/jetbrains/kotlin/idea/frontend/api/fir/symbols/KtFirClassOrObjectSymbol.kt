@@ -38,7 +38,7 @@ internal class KtFirClassOrObjectSymbol(
             fir.symbol.classId.takeUnless { it.isLocal }
         }
 
-    override val modality: KtSymbolModality get() = firRef.withFir { it.modality.getSymbolModality() }
+    override val modality: KtSymbolModality get() = getModality()
 
     override val typeParameters by firRef.withFirAndCache {
         fir.typeParameters.map { typeParameter ->

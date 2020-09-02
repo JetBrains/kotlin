@@ -44,7 +44,7 @@ internal class KtFirJavaFieldSymbol(
             fir.symbol.callableId.asFqNameForDebugInfo() // todo check if local
         }
 
-    override val modality: KtCommonSymbolModality get() = firRef.withFir { it.modality.getSymbolModality() }
+    override val modality: KtCommonSymbolModality get() = getModality()
 
     override fun createPointer(): KtSymbolPointer<KtJavaFieldSymbol> {
         TODO("Creating pointers for java fields is not supported yet")
