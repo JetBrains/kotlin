@@ -82,6 +82,7 @@ constructor(
             val target = compilation.target
             val project = target.project
             val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
+            val npmProject = compilation.npmProject
 
             return project.registerTask(
                 name,
@@ -89,6 +90,7 @@ constructor(
             ) {
                 it.nodeJs = nodeJs
                 it.executable = nodeJs.requireConfigured().nodeExecutable
+                it.workingDir = npmProject.dir
                 it.dependsOn(nodeJs.npmInstallTaskProvider)
 
                 it.dependsOn(nodeJs.npmInstallTaskProvider, compilation.compileKotlinTaskProvider)
