@@ -1,0 +1,5 @@
+FILE: main.kt
+    public final val R|a/KtElement|.fqNameWithoutCompanions: R|a/KtFile|
+        public get(): R|a/KtFile| {
+            ^ this@R|/fqNameWithoutCompanions|.R|a/KtPureElement.containingKtFile|
+        }

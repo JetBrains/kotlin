@@ -46,12 +46,12 @@ abstract class AbstractFirMultiModuleLazyResolveTest : AbstractMultiModuleTest()
         try {
             val fir = LowLevelFirApiFacade.getOrBuildFirFor(ktFileToAnalyse, resolveState, FirResolvePhase.BODY_RESOLVE)
             KotlinTestUtils.assertEqualsToFile(File("$path/expected.txt"), fir.render())
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             if (!fails) throw e
             return
         }
         if (fails) {
-            throw AssertionError("Looks like test is passing, please remove // FAILS form the file")
+            throw AssertionError("Looks like test is passing, please remove `\"fails\": true` from structure.json")
         }
     }
 }
