@@ -4,9 +4,9 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":core:descriptors"))
+    implementation(project(":core:compiler.common"))
+    implementation(project(":core:compiler.common.jvm"))
     implementation(project(":compiler:fir:fir-deserialization"))
-    implementation(project(":core:deserialization"))
 
     api(project(":compiler:fir:cones"))
     api(project(":compiler:fir:tree"))
