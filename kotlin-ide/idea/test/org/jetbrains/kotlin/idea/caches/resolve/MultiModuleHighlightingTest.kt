@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.idea.util.projectStructure.sdk
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor.Companion.ANNOTATION_OPTION
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor.Companion.PLUGIN_ID
 import org.jetbrains.kotlin.test.KotlinCompilerStandalone
-import org.jetbrains.kotlin.test.TestJdkKind.FULL_JDK
 import org.junit.Assert.assertNotEquals
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
@@ -203,10 +202,10 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
     }
 
     fun testLanguageVersionsViaFacets() {
-        val m1 = module("m1", FULL_JDK).setupKotlinFacet {
+        val m1 = module("m1").setupKotlinFacet {
             settings.languageLevel = LanguageVersion.KOTLIN_1_1
         }
-        val m2 = module("m2", FULL_JDK).setupKotlinFacet {
+        val m2 = module("m2").setupKotlinFacet {
             settings.languageLevel = LanguageVersion.KOTLIN_1_0
         }
 

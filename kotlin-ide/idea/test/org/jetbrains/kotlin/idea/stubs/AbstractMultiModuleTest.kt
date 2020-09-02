@@ -13,6 +13,7 @@ import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsPr
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleType
 import com.intellij.openapi.module.StdModuleTypes
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.OrderRootType
@@ -21,6 +22,7 @@ import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.psi.PsiFile
+import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.PsiTestUtil
 import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.config.CompilerSettings
@@ -32,7 +34,6 @@ import org.jetbrains.kotlin.idea.facet.initializeIfNeeded
 import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.KotlinTestUtils.*
-import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.util.slashedPath
 import org.junit.Assert
 import java.io.File
@@ -53,7 +54,7 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
         vfsDisposable = allowProjectRootAccess(this)
     }
 
-    fun module(name: String, jdk: TestJdkKind = TestJdkKind.MOCK_JDK, hasTestRoot: Boolean = false): Module {
+    fun module(name: String, hasTestRoot: Boolean = false, sdkFactory: () -> Sdk = { IdeaTestUtil.getMockJdk18() }): Module {
         val srcDir = testDataPath + "${getTestName(true)}/$name"
         val moduleWithSrcRootSet = createModuleFromTestData(srcDir, name, StdModuleTypes.JAVA, true)
         if (hasTestRoot) {
@@ -64,7 +65,7 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
             )
         }
 
-        ConfigLibraryUtil.configureSdk(moduleWithSrcRootSet, PluginTestCaseBase.addJdk(testRootDisposable) { PluginTestCaseBase.jdk(jdk) })
+        ConfigLibraryUtil.configureSdk(moduleWithSrcRootSet, PluginTestCaseBase.addJdk(testRootDisposable, sdkFactory))
 
         return moduleWithSrcRootSet
     }

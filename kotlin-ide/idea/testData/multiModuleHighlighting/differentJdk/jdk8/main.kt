@@ -8,6 +8,4 @@ fun mainJdk8(x: List<String>, j6List: Jdk6List<String>) {
     j6List.stream()
 
     buildList().stream()
-
-    myFile().toPath()
 }
