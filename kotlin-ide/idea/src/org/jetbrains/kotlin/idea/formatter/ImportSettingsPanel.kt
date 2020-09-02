@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.formatter
 import com.intellij.application.options.CodeStyleAbstractPanel
 import com.intellij.openapi.application.ApplicationBundle
 import com.intellij.openapi.editor.colors.EditorColorsScheme
+import com.intellij.openapi.util.NlsContexts
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.ui.OptionGroup
 import com.intellij.ui.components.JBScrollPane
@@ -15,15 +16,12 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.core.formatter.KotlinPackageEntryTable
-import java.awt.BorderLayout
-import java.awt.GridBagConstraints
-import java.awt.GridBagLayout
-import java.awt.Insets
+import java.awt.*
 import javax.swing.*
 import javax.swing.table.AbstractTableModel
 
 class ImportSettingsPanelWrapper(settings: CodeStyleSettings) : CodeStyleAbstractPanel(KotlinLanguage.INSTANCE, null, settings) {
-    private val importsPanel = ImportSettingsPanel(settings)
+    private val importsPanel = ImportSettingsPanel()
 
     override fun getRightMargin() = throw UnsupportedOperationException()
 
@@ -46,7 +44,7 @@ class ImportSettingsPanelWrapper(settings: CodeStyleSettings) : CodeStyleAbstrac
     override fun getTabTitle() = ApplicationBundle.message("title.imports")
 }
 
-class ImportSettingsPanel(commonSettings: CodeStyleSettings) : JPanel() {
+class ImportSettingsPanel : JPanel() {
     private val cbImportNestedClasses = JCheckBox(KotlinBundle.message("formatter.checkbox.text.insert.imports.for.nested.classes"))
 
     private val starImportLayoutPanel = KotlinStarImportLayoutPanel()
@@ -54,12 +52,12 @@ class ImportSettingsPanel(commonSettings: CodeStyleSettings) : JPanel() {
 
     private val nameCountToUseStarImportSelector = NameCountToUseStarImportSelector(
         KotlinBundle.message("formatter.title.top.level.symbols"),
-        commonSettings.kotlinCustomSettings.NAME_COUNT_TO_USE_STAR_IMPORT,
+        KotlinCodeStyleSettings.DEFAULT_NAME_COUNT_TO_USE_STAR_IMPORT,
     )
 
     private val nameCountToUseStarImportForMembersSelector = NameCountToUseStarImportSelector(
         KotlinBundle.message("formatter.title.java.statics.and.enum.members"),
-        commonSettings.kotlinCustomSettings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS,
+        KotlinCodeStyleSettings.DEFAULT_NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS,
     )
 
     init {
@@ -126,12 +124,13 @@ class ImportSettingsPanel(commonSettings: CodeStyleSettings) : JPanel() {
 
     fun isModified(settings: KotlinCodeStyleSettings): Boolean {
         return with(settings) {
-            var isModified: Boolean = false
+            var isModified = false
             isModified = isModified || nameCountToUseStarImportSelector.value != NAME_COUNT_TO_USE_STAR_IMPORT
             isModified = isModified || nameCountToUseStarImportForMembersSelector.value != NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS
             isModified = isModified || isModified(cbImportNestedClasses, IMPORT_NESTED_CLASSES)
-            isModified =
-                isModified || isModified(getCopyWithoutEmptyPackages(starImportLayoutPanel.packageTable), PACKAGES_TO_USE_STAR_IMPORTS)
+            isModified = isModified ||
+                    isModified(getCopyWithoutEmptyPackages(starImportLayoutPanel.packageTable), PACKAGES_TO_USE_STAR_IMPORTS)
+
             isModified = isModified || isModified(importOrderLayoutPanel.packageTable, PACKAGES_IMPORT_LAYOUT)
 
             isModified
@@ -170,7 +169,7 @@ class ImportSettingsPanel(commonSettings: CodeStyleSettings) : JPanel() {
         }
     }
 
-    private class NameCountToUseStarImportSelector(title: String, default: Int) : OptionGroup(title) {
+    private class NameCountToUseStarImportSelector(@NlsContexts.BorderTitle title: String, default: Int) : OptionGroup(title) {
         private val rbUseSingleImports = JRadioButton(KotlinBundle.message("formatter.button.text.use.single.name.import"))
         private val rbUseStarImports = JRadioButton(KotlinBundle.message("formatter.button.text.use.import.with"))
         private val rbUseStarImportsIfAtLeast = JRadioButton(KotlinBundle.message("formatter.button.text.use.import.with.when.at.least"))
@@ -212,10 +211,10 @@ class ImportSettingsPanel(commonSettings: CodeStyleSettings) : JPanel() {
                 }
             }
             set(value) {
-                when (value) {
-                    Int.MAX_VALUE -> rbUseSingleImports.isSelected = true
+                when {
+                    value > MAX_VALUE -> rbUseSingleImports.isSelected = true
 
-                    1 -> rbUseStarImports.isSelected = true
+                    value < MIN_VALUE -> rbUseStarImports.isSelected = true
 
                     else -> {
                         rbUseStarImportsIfAtLeast.isSelected = true
@@ -223,5 +222,10 @@ class ImportSettingsPanel(commonSettings: CodeStyleSettings) : JPanel() {
                     }
                 }
             }
+
+        companion object {
+            private const val MIN_VALUE = 2
+            private const val MAX_VALUE = 100
+        }
     }
 }

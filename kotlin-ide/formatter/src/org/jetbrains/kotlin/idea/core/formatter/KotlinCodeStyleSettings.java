@@ -28,6 +28,9 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
     @Property(externalName = "imports_layout")
     public KotlinPackageEntryTable PACKAGES_IMPORT_LAYOUT = new KotlinPackageEntryTable();
 
+    public static final int DEFAULT_NAME_COUNT_TO_USE_STAR_IMPORT = ApplicationManager.getApplication().isUnitTestMode() ? Integer.MAX_VALUE : 5;
+    public static final int DEFAULT_NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS = ApplicationManager.getApplication().isUnitTestMode() ? Integer.MAX_VALUE : 3;
+
     public boolean SPACE_AROUND_RANGE = false;
     public boolean SPACE_BEFORE_TYPE_COLON = false;
     public boolean SPACE_AFTER_TYPE_COLON = true;
@@ -40,8 +43,8 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
     public boolean SPACE_BEFORE_LAMBDA_ARROW = true;
     public boolean SPACE_BEFORE_WHEN_PARENTHESES = true;
     public boolean LBRACE_ON_NEXT_LINE = false;
-    public int NAME_COUNT_TO_USE_STAR_IMPORT = ApplicationManager.getApplication().isUnitTestMode() ? Integer.MAX_VALUE : 5;
-    public int NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS = ApplicationManager.getApplication().isUnitTestMode() ? Integer.MAX_VALUE : 3;
+    public int NAME_COUNT_TO_USE_STAR_IMPORT = DEFAULT_NAME_COUNT_TO_USE_STAR_IMPORT;
+    public int NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS = DEFAULT_NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS;
     public boolean IMPORT_NESTED_CLASSES = false;
     public boolean CONTINUATION_INDENT_IN_PARAMETER_LISTS = true;
     public boolean CONTINUATION_INDENT_IN_ARGUMENT_LISTS = true;
