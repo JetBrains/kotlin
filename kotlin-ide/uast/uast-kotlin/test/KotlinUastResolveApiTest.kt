@@ -10,13 +10,13 @@ import com.intellij.testFramework.LightProjectDescriptor
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.junit.internal.runners.JUnit38ClassRunner
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.KotlinUFunctionCallExpression
 import org.jetbrains.uast.test.env.kotlin.findElementByText
 import org.jetbrains.uast.test.env.kotlin.findElementByTextFromPsi
 import org.jetbrains.uast.test.env.kotlin.findUElementByTextFromPsi
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 
 @RunWith(JUnit38ClassRunner::class)
@@ -155,6 +155,39 @@ class KotlinUastResolveApiTest : KotlinLightCodeInsightFixtureTestCase() {
         val firstArgument = main.findElementByText<UElement>("1")
         val firstParameter = functionCall.getArgumentForParameter(0)
         TestCase.assertEquals(firstArgument, firstParameter)
+    }
+
+
+    fun testResolveFromBaseJava() {
+        myFixture.addClass(
+            """public class X {
+        |native String getFoo();
+        |native void setFoo(@org.jetbrains.annotations.Nls String s);
+        |}""".trimMargin()
+        )
+        myFixture.configureByText(
+            "Foo.kt", """
+               class Foo : X() {
+               
+                  fun foo(x : X) {
+                    foo = "java superclass setter"
+                    this.foo = "java superclass qualified setter"
+                  }
+                }
+            """.trimIndent()
+        )
+        val main = file.toUElement()!!.findElementByTextFromPsi<UElement>("foo").getContainingUMethod()!!
+        main.findElementByText<UElement>("foo = \"java superclass setter\"")
+            .cast<UBinaryExpression>().leftOperand.cast<UReferenceExpression>().let { assigment1 ->
+                val resolvedDeclaration = assigment1.resolve()
+                assertEquals("native void setFoo(@org.jetbrains.annotations.Nls String s);", resolvedDeclaration?.text)
+            }
+        main.findElementByText<UElement>("this.foo = \"java superclass qualified setter\"")
+            .cast<UBinaryExpression>().leftOperand.cast<UReferenceExpression>().let { assigment1 ->
+                val resolvedDeclaration = assigment1.resolve()
+                assertEquals("native void setFoo(@org.jetbrains.annotations.Nls String s);", resolvedDeclaration?.text)
+            }
+
     }
 
     fun testMultiResolveInClass() {
