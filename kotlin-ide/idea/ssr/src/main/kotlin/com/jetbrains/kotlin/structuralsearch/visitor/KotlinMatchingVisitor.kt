@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.resolveType
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.calleeName
+import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.nj2k.postProcessing.resolve
 import org.jetbrains.kotlin.nj2k.postProcessing.type
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
@@ -290,6 +292,23 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
         val other = getTreeElementDepar<PsiElement>() ?: return
+
+        val exprHandler = getHandler(expression)
+        if (other is KtReferenceExpression && exprHandler is SubstitutionHandler) {
+            try {
+                val referenced = other.resolve()
+                if (referenced is KtClass
+                    && exprHandler.findRegExpPredicate()
+                        ?.doMatch(referenced.getKotlinFqName()?.asString(), myMatchingVisitor.matchContext, other) == true
+                ) {
+                    myMatchingVisitor.result = true
+                    exprHandler.addResult(other, myMatchingVisitor.matchContext)
+                    return
+                }
+            } catch (e: Error) {
+            }
+        }
+
         myMatchingVisitor.result = matchTextOrVariable(
             expression.getReferencedNameElement(),
             if (other is KtSimpleNameExpression) other.getReferencedNameElement() else other

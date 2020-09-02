@@ -10,4 +10,6 @@ class KotlinSSTextFilterTest : KotlinSSResourceInspectionTest() {
     fun testHierarchyClassDeclaration() { doTest("class Foo { val '_:*[regex(.*)] }") }
 
     fun testHierarchyClassSuperType() { doTest("class '_ : '_:*[regex(Foo)]()") }
+
+    fun testFqSuperType() { doTest("class '_ : '_:[regex(test\\.Foo)]()") }
 }
