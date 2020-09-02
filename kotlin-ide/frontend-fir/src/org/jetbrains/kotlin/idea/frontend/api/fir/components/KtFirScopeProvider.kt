@@ -39,8 +39,6 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirClassOrObjectSymb
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirType
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.scopes.*
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
@@ -111,14 +109,13 @@ internal class KtFirScopeProvider(
 
     override fun getScopeContextForPosition(
         originalFile: KtFile,
-        originalPosition: PsiElement,
         positionInFakeFile: KtElement
     ): KtScopeContext = withValidityAssertion {
         val originalFirFile = originalFile.getOrBuildFirOfType<FirFile>(firResolveState)
         val fakeEnclosingFunction = positionInFakeFile.getNonStrictParentOfType<KtNamedFunction>()
             ?: error("Cannot find enclosing function for ${positionInFakeFile.getElementTextInContext()}")
-        val originalEnclosingFunction = originalPosition.getNonStrictParentOfType<KtNamedFunction>()
-            ?: error("Cannot find original enclosing function for $originalPosition")
+        val originalEnclosingFunction = originalFile.findFunctionDeclarationAt(fakeEnclosingFunction.textOffset)
+            ?: error("Cannot find original function matching to ${fakeEnclosingFunction.getElementTextInContext()} in $originalFile")
 
         val completionContext = LowLevelFirApiFacade.buildCompletionContextForFunction(
             originalFirFile,
@@ -145,6 +142,11 @@ internal class KtFirScopeProvider(
 
         KtScopeContext(getCompositeScope(allKtScopes), implicitReceiversTypes)
     }
+
+    private fun KtFile.findFunctionDeclarationAt(offset: Int): KtNamedFunction? =
+        findElementAt(offset)
+            ?.getNonStrictParentOfType<KtNamedFunction>()
+            ?.takeIf { it.textOffset == offset }
 
     private fun convertToKtScope(firScope: FirScope): KtScope {
         firScopeStorage.register(firScope)
