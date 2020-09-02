@@ -7,19 +7,21 @@ import java.lang.IllegalArgumentException
 sealed class MethodEvaluator<T>(val method: Method?) {
     fun value(value: ObjectReference?, context: DefaultExecutionContext, vararg values: Value): T? {
         return method?.let {
-            return if (method.isStatic) {
-                // pass extension methods like the usual ones.
-                val args = if (value != null) {
-                    listOf(value) + values.toList()
-                } else
-                    values.toList()
-                @Suppress("UNCHECKED_CAST")
-                context.invokeMethod(method.declaringType() as ClassType, method, args) as T?
-            } else if (value != null)
-                @Suppress("UNCHECKED_CAST")
-                context.invokeMethod(value, method, values.toList()) as T?
-            else
-                throw IllegalArgumentException("Exception while calling method " + method.signature() + " with an empty value.")
+            return when {
+              method.isStatic -> {
+                  // pass extension methods like the usual ones.
+                  val args = if (value != null) {
+                      listOf(value) + values.toList()
+                  } else
+                      values.toList()
+                  @Suppress("UNCHECKED_CAST")
+                  context.invokeMethod(method.declaringType() as ClassType, method, args) as T?
+              }
+              value != null ->
+                  @Suppress("UNCHECKED_CAST")
+                  context.invokeMethod(value, method, values.toList()) as T?
+              else -> throw IllegalArgumentException("Exception while calling method " + method.signature() + " with an empty value.")
+            }
         }
     }
 

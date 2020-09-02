@@ -69,13 +69,12 @@ class Job(context: DefaultExecutionContext) : ContextKey<ObjectReference>("kotli
     override fun key() = key.staticValue()
 }
 
-
 class CoroutineDispatcher(context: DefaultExecutionContext) : ContextKey<String>("kotlinx.coroutines.CoroutineDispatcher", context) {
     private val key by FieldDelegate<ObjectReference>("Key")
-    private val jlm = JavaLangMirror(context)
+    private val jlm = JavaLangObjectToString(context)
 
     override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): String? {
-        return jlm.string(value, context)
+        return jlm.mirror(value, context)
     }
 
     override fun key() = key.staticValue()

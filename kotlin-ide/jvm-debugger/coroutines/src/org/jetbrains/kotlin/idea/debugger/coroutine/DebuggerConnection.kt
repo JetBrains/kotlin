@@ -46,7 +46,6 @@ class DebuggerConnection(
 
             if (kotlinxCoroutinesCore != null) {
                 val mode = determineCoreVersionMode(kotlinxCoroutinesCore)
-
                 when (mode) {
                     CoroutineDebuggerMode.VERSION_1_3_8_AND_UP -> initializeCoroutineAgent(params, kotlinxCoroutinesCore)
                     else -> log.debug("CoroutineDebugger disabled.")

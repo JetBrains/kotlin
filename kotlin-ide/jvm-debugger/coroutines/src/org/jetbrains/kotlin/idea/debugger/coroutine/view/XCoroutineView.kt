@@ -47,7 +47,7 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
     val log by logger
     private val versionedImplementationProvider = VersionedImplementationProvider()
 
-    val mainPanel = JPanel(BorderLayout())
+    private val mainPanel = JPanel(BorderLayout())
     val someCombobox = ComboBox<String>()
     val panel = XDebuggerTreePanel(project, session.debugProcess.editorsProvider, this, null, XCOROUTINE_POPUP_ACTION_GROUP, null)
     val alarm = SingleAlarm({ resetRoot() }, VIEW_CLEAR_DELAY, this)
@@ -63,11 +63,6 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
 
     init {
         someCombobox.renderer = versionedImplementationProvider.comboboxListCellRenderer()
-        object : ComboboxSpeedSearch(someCombobox) {
-            override fun getElementText(element: Any?): String? {
-                return element.toString()
-            }
-        }
         someCombobox.addItem(null)
         val myToolbar = createToolbar()
         val myThreadsPanel = Wrapper()

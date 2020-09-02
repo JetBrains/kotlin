@@ -8,13 +8,12 @@ package org.jetbrains.kotlin.idea.debugger.coroutine.proxy.mirror
 import com.sun.jdi.*
 import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 
-class JavaLangMirror(context: DefaultExecutionContext) {
-    // java.lang.Object
-    private val classClsRef = context.findClass("java.lang.Object") as ClassType
-    val toString: Method = classClsRef.concreteMethodByName("toString", "()Ljava/lang/String;")
+class JavaLangObjectToString(context: DefaultExecutionContext) : BaseMirror<ObjectReference, String>("java.lang.Object", context) {
+    private val toString by MethodDelegate<StringReference>("toString", "()Ljava/lang/String;")
 
-    fun string(state: ObjectReference, context: DefaultExecutionContext): String =
-            (context.invokeMethod(state, toString, emptyList()) as StringReference).value()
+    override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): String {
+        return toString.value(value, context)?.value() ?: ""
+    }
 }
 
 class JavaUtilAbstractCollection(context: DefaultExecutionContext) :
@@ -52,7 +51,6 @@ class WeakReference constructor(context: DefaultExecutionContext) :
         return MirrorOfWeakReference(value, get.value(value, context))
     }
 }
-
 
 class StackTraceElement(context: DefaultExecutionContext) :
         BaseMirror<ObjectReference, MirrorOfStackTraceElement>("java.lang.StackTraceElement", context) {
