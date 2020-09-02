@@ -38,7 +38,6 @@ import com.intellij.testFramework.LoggedErrorProcessor
 import com.intellij.testFramework.RunAll
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.util.ThrowableRunnable
-import com.intellij.util.lang.JavaVersion
 import org.apache.log4j.Logger
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.*
@@ -79,10 +78,11 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
 
     protected open fun fileName(): String = KotlinTestUtils.getTestDataFileName(this::class.java, this.name) ?: (getTestName(false) + ".kt")
 
-    final override fun getTestDataPath(): String = getTestDataDirectory().slashedPath
+    @Deprecated("Migrate to 'testDataDirectory'.", ReplaceWith("testDataDirectory"))
+    final override fun getTestDataPath(): String = testDataDirectory.slashedPath
 
-    open fun getTestDataDirectory(): File {
-        return File(TestMetadataUtil.getTestDataPath(javaClass))
+    open val testDataDirectory: File by lazy {
+        File(TestMetadataUtil.getTestDataPath(javaClass))
     }
 
     override fun setUp() {
@@ -270,12 +270,12 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
     }
 
     fun JavaCodeInsightTestFixture.configureByFile(file: File) {
-        val relativePath = file.toRelativeString(getTestDataDirectory())
+        val relativePath = file.toRelativeString(testDataDirectory)
         configureByFile(relativePath)
     }
 
     fun JavaCodeInsightTestFixture.checkResultByFile(file: File) {
-        val relativePath = file.toRelativeString(getTestDataDirectory())
+        val relativePath = file.toRelativeString(testDataDirectory)
         checkResultByFile(relativePath)
     }
 }

@@ -56,7 +56,8 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
         private val EXTENSIONS = arrayOf(".kt", ".java")
     }
 
-    override fun getTestDataDirectory() = IDEA_TEST_DATA_DIR.resolve("refactoring/changeSignature")
+    override val testDataDirectory: File
+        get() = IDEA_TEST_DATA_DIR.resolve("refactoring/changeSignature")
 
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 

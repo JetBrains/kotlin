@@ -25,7 +25,8 @@ class KotlinUastMappingsAccountantTest :
 
     private val ktFileMatcher = ExtensionFileNameMatcher(KotlinFileType.INSTANCE.defaultExtension)
 
-    override fun getTestDataDirectory(): File = TEST_KOTLIN_MODEL_DIR
+    override val testDataDirectory: File
+        get() = TEST_KOTLIN_MODEL_DIR
 
     override fun getProjectDescriptor(): LightProjectDescriptor =
         KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_FULL_JDK

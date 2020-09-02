@@ -214,9 +214,10 @@ abstract class AbstractHierarchyTest : KotlinHierarchyViewTestBase() {
         return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
     }
 
-    override fun getTestDataDirectory(): File {
-        val testRoot = super.getTestDataDirectory()
-        val testDir = KotlinTestUtils.getTestDataFileName(this.javaClass, name) ?: error("Test data file name is missing")
-        return File(testRoot, testDir)
-    }
+    override val testDataDirectory: File
+        get() {
+            val testRoot = super.testDataDirectory
+            val testDir = KotlinTestUtils.getTestDataFileName(this.javaClass, name) ?: error("Test data file name is missing")
+            return File(testRoot, testDir)
+        }
 }

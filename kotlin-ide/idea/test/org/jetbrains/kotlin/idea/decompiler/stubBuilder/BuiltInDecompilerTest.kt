@@ -52,7 +52,8 @@ class BuiltInDecompilerTest : AbstractBuiltInDecompilerTest() {
 
 @RunWith(JUnit38ClassRunner::class)
 class BuiltInDecompilerForWrongAbiVersionTest : AbstractBuiltInDecompilerTest() {
-    override fun getTestDataDirectory() = IDEA_TEST_DATA_DIR.resolve("decompiler/builtins")
+    override val testDataDirectory: File
+        get() = IDEA_TEST_DATA_DIR.resolve("decompiler/builtins")
 
     override fun configureAndBuildFileStub(packageFqName: String): PsiFileStub<*> {
         myFixture.configureByFile(BuiltInSerializerProtocol.getBuiltInsFilePath(FqName(packageFqName)))

@@ -20,7 +20,8 @@ import kotlin.test.assertEquals
 abstract class AbstractJavaToKotlinCopyPasteConversionTest : AbstractJ2kCopyPasteTest() {
     private var oldEditorOptions: KotlinEditorOptions? = null
 
-    override fun getTestDataDirectory() = IDEA_TEST_DATA_DIR.resolve("copyPaste/conversion")
+    override val testDataDirectory: File
+        get() = IDEA_TEST_DATA_DIR.resolve("copyPaste/conversion")
 
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 

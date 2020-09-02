@@ -70,7 +70,8 @@ class SmartCompletionMultifileHandlerTest : KotlinFixtureCompletionBaseTestCase(
         myFixture.checkResultByFile("$fileName.kt.after")
     }
 
-    override fun getTestDataDirectory() = COMPLETION_TEST_DATA_BASE.resolve("handlers/multifile/smart")
+    override val testDataDirectory: File
+        get() = COMPLETION_TEST_DATA_BASE.resolve("handlers/multifile/smart")
 
     override fun defaultCompletionType(): CompletionType = CompletionType.BASIC
     override fun getPlatform(): TargetPlatform = JvmPlatforms.unspecifiedJvmPlatform

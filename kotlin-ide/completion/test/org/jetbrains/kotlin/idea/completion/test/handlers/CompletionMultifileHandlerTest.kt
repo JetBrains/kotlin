@@ -54,7 +54,7 @@ class CompletionMultiFileHandlerTest : KotlinFixtureCompletionBaseTestCase() {
     fun doTest(completionChar: Char = '\n', vararg extraFileNames: String, tailText: String? = null) {
         val fileNameBase = getTestName(false)
         val defaultFiles = listOf("$fileNameBase-1.kt", "$fileNameBase-2.kt")
-        val filteredFiles = defaultFiles.filter { File(getTestDataDirectory(), it).exists() }
+        val filteredFiles = defaultFiles.filter { File(testDataDirectory, it).exists() }
 
         require(filteredFiles.isNotEmpty()) { "At least one of $defaultFiles should exist!" }
 
@@ -78,7 +78,8 @@ class CompletionMultiFileHandlerTest : KotlinFixtureCompletionBaseTestCase() {
         myFixture.checkResultByFile("$fileNameBase.kt.after")
     }
 
-    override fun getTestDataDirectory() = COMPLETION_TEST_DATA_BASE.resolve("handlers/multifile")
+    override val testDataDirectory: File
+        get() = COMPLETION_TEST_DATA_BASE.resolve("handlers/multifile")
 
     override fun defaultCompletionType(): CompletionType = CompletionType.BASIC
     override fun getPlatform(): TargetPlatform = JvmPlatforms.unspecifiedJvmPlatform

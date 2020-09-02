@@ -57,12 +57,13 @@ abstract class AbstractMultifileRefactoringTest : KotlinLightCodeInsightFixtureT
         }
     }
 
-    override fun getTestDataDirectory(): File {
-        val name = getTestName(true).substringBeforeLast('_').replace('_', '/')
-        return super.getTestDataDirectory().resolve(name)
-    }
+    override val testDataDirectory: File
+        get() {
+            val name = getTestName(true).substringBeforeLast('_').replace('_', '/')
+            return super.testDataDirectory.resolve(name)
+        }
 
-    override fun fileName() = getTestDataDirectory().name + ".test"
+    override fun fileName() = testDataDirectory.name + ".test"
 
     private fun doTestCommittingDocuments(testFile: File, action: (VirtualFile) -> Unit) {
         val beforeVFile = myFixture.copyDirectoryToProject("before", "")

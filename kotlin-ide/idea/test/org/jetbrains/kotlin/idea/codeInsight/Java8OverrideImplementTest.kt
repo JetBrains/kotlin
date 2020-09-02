@@ -9,10 +9,13 @@ import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
+import java.io.File
 
 @RunWith(JUnit38ClassRunner::class)
 class Java8OverrideImplementTest : AbstractOverrideImplementTest() {
-    override fun getTestDataDirectory() = IDEA_TEST_DATA_DIR.resolve("codeInsight/overrideImplement/jdk8")
+    override val testDataDirectory: File
+        get() = IDEA_TEST_DATA_DIR.resolve("codeInsight/overrideImplement/jdk8")
+
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_FULL_JDK
 
     fun testOverrideCollectionStream() = doOverrideFileTest("stream")
