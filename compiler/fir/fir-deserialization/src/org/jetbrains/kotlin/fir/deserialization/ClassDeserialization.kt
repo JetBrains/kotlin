@@ -58,7 +58,7 @@ fun deserializeClassToSymbol(
     val kind = Flags.CLASS_KIND.get(flags)
     val modality = ProtoEnumFlags.modality(Flags.MODALITY.get(flags))
     val status = FirResolvedDeclarationStatusImpl(
-        FirProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
+        ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
         modality
     ).apply {
         isExpect = Flags.IS_EXPECT_CLASS.get(flags)

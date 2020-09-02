@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.deserialization.CONTINUATION_INTERFACE_CLASS_ID
-import org.jetbrains.kotlin.fir.deserialization.FirProtoEnumFlags
+import org.jetbrains.kotlin.fir.deserialization.projection
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.IntValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
-import org.jetbrains.kotlin.types.Variance
 
 class FirElementSerializer private constructor(
     private val session: FirSession,
@@ -92,7 +91,7 @@ class FirElementSerializer private constructor(
         val modality = regularClass?.modality ?: Modality.FINAL
         val flags = Flags.getClassFlags(
             klass.nonSourceAnnotations(session).isNotEmpty(),
-            FirProtoEnumFlags.visibility(regularClass?.let { normalizeVisibility(it) } ?: Visibilities.Local),
+            ProtoEnumFlags.visibility(regularClass?.let { normalizeVisibility(it) } ?: Visibilities.Local),
             ProtoEnumFlags.modality(modality),
             ProtoEnumFlags.classKind(klass.classKind, regularClass?.isCompanion == true),
             regularClass?.isInner == true,
@@ -210,7 +209,7 @@ class FirElementSerializer private constructor(
         val modality = property.modality!!
         val defaultAccessorFlags = Flags.getAccessorFlags(
             hasAnnotations,
-            FirProtoEnumFlags.visibility(normalizeVisibility(property)),
+            ProtoEnumFlags.visibility(normalizeVisibility(property)),
             ProtoEnumFlags.modality(modality),
             false, false, false
         )
@@ -245,7 +244,7 @@ class FirElementSerializer private constructor(
 
         val flags = Flags.getPropertyFlags(
             hasAnnotations,
-            FirProtoEnumFlags.visibility(normalizeVisibility(property)),
+            ProtoEnumFlags.visibility(normalizeVisibility(property)),
             ProtoEnumFlags.modality(modality),
             ProtoBuf.MemberKind.DECLARATION,
             property.isVar, hasGetter, hasSetter, hasConstant, property.isConst, property.isLateInit,
@@ -303,7 +302,7 @@ class FirElementSerializer private constructor(
 
         val flags = Flags.getFunctionFlags(
             function.nonSourceAnnotations(session).isNotEmpty(),
-            FirProtoEnumFlags.visibility(simpleFunction?.let { normalizeVisibility(it) } ?: Visibilities.Local),
+            ProtoEnumFlags.visibility(simpleFunction?.let { normalizeVisibility(it) } ?: Visibilities.Local),
             ProtoEnumFlags.modality(simpleFunction?.modality ?: Modality.FINAL),
             ProtoBuf.MemberKind.DECLARATION,
             simpleFunction?.isOperator == true,
@@ -388,7 +387,7 @@ class FirElementSerializer private constructor(
 
         val flags = Flags.getTypeAliasFlags(
             typeAlias.nonSourceAnnotations(session).isNotEmpty(),
-            FirProtoEnumFlags.visibility(normalizeVisibility(typeAlias))
+            ProtoEnumFlags.visibility(normalizeVisibility(typeAlias))
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -441,7 +440,7 @@ class FirElementSerializer private constructor(
 
         val flags = Flags.getConstructorFlags(
             constructor.nonSourceAnnotations(session).isNotEmpty(),
-            FirProtoEnumFlags.visibility(normalizeVisibility(constructor)),
+            ProtoEnumFlags.visibility(normalizeVisibility(constructor)),
             !constructor.isPrimary,
             true // TODO: supply 'hasStableParameterNames' flag for metadata
         )
@@ -516,7 +515,7 @@ class FirElementSerializer private constructor(
             builder.reified = typeParameter.isReified
         }
 
-        val variance = variance(typeParameter.variance)
+        val variance = ProtoEnumFlags.variance(typeParameter.variance)
         if (variance != builder.variance) {
             builder.variance = variance
         }
@@ -654,7 +653,7 @@ class FirElementSerializer private constructor(
         if (typeProjection is ConeStarProjection) {
             builder.projection = ProtoBuf.Type.Argument.Projection.STAR
         } else if (typeProjection is ConeKotlinTypeProjection) {
-            val projection = projection(typeProjection.kind)
+            val projection = ProtoEnumFlags.projection(typeProjection.kind)
 
             if (projection != builder.projection) {
                 builder.projection = projection
@@ -678,7 +677,7 @@ class FirElementSerializer private constructor(
                 !accessor.isExternal && !accessor.isInline
         return Flags.getAccessorFlags(
             accessor.nonSourceAnnotations(session).isNotEmpty(),
-            FirProtoEnumFlags.visibility(normalizeVisibility(accessor)),
+            ProtoEnumFlags.visibility(normalizeVisibility(accessor)),
             ProtoEnumFlags.modality(accessor.modality!!),
             !isDefault,
             accessor.isExternal,
@@ -900,19 +899,6 @@ class FirElementSerializer private constructor(
                 }
             }
             return versionRequirementTable[requirement]
-        }
-
-        private fun variance(variance: Variance): ProtoBuf.TypeParameter.Variance = when (variance) {
-            Variance.INVARIANT -> ProtoBuf.TypeParameter.Variance.INV
-            Variance.IN_VARIANCE -> ProtoBuf.TypeParameter.Variance.IN
-            Variance.OUT_VARIANCE -> ProtoBuf.TypeParameter.Variance.OUT
-        }
-
-        private fun projection(projectionKind: ProjectionKind): ProtoBuf.Type.Argument.Projection = when (projectionKind) {
-            ProjectionKind.INVARIANT -> ProtoBuf.Type.Argument.Projection.INV
-            ProjectionKind.IN -> ProtoBuf.Type.Argument.Projection.IN
-            ProjectionKind.OUT -> ProtoBuf.Type.Argument.Projection.OUT
-            ProjectionKind.STAR -> throw AssertionError("Should not be here")
         }
     }
 }

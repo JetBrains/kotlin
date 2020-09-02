@@ -166,7 +166,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             origin = FirDeclarationOrigin.Library
             this.name = name
             status = FirResolvedDeclarationStatusImpl(
-                FirProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
+                ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
                 Modality.FINAL
             ).apply {
                 isExpect = Flags.IS_EXPECT_CLASS.get(flags)
@@ -213,7 +213,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
 
         val getter = if (hasGetter) {
             val getterFlags = if (proto.hasGetterFlags()) proto.getterFlags else defaultAccessorFlags
-            val visibility = FirProtoEnumFlags.visibility(Flags.VISIBILITY.get(getterFlags))
+            val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(getterFlags))
             val modality = ProtoEnumFlags.modality(Flags.MODALITY.get(getterFlags))
             if (Flags.IS_NOT_DEFAULT.get(getterFlags)) {
                 buildPropertyAccessor {
@@ -238,7 +238,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
 
         val setter = if (Flags.HAS_SETTER.get(flags)) {
             val setterFlags = if (proto.hasSetterFlags()) proto.setterFlags else defaultAccessorFlags
-            val visibility = FirProtoEnumFlags.visibility(Flags.VISIBILITY.get(setterFlags))
+            val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(setterFlags))
             val modality = ProtoEnumFlags.modality(Flags.MODALITY.get(setterFlags))
             if (Flags.IS_NOT_DEFAULT.get(setterFlags)) {
                 buildPropertyAccessor {
@@ -280,7 +280,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             this.symbol = symbol
             isLocal = false
             status = FirResolvedDeclarationStatusImpl(
-                FirProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
+                ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
                 ProtoEnumFlags.modality(Flags.MODALITY.get(flags))
             ).apply {
                 isExpect = Flags.IS_EXPECT_PROPERTY.get(flags)
@@ -342,7 +342,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             }
             name = callableName
             status = FirResolvedDeclarationStatusImpl(
-                FirProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
+                ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
                 ProtoEnumFlags.modality(Flags.MODALITY.get(flags))
             ).apply {
                 isExpect = Flags.IS_EXPECT_FUNCTION.get(flags)
@@ -407,7 +407,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             session = c.session
             origin = FirDeclarationOrigin.Library
             returnTypeRef = delegatedSelfType
-            val visibility = FirProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags))
+            val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags))
             status = FirResolvedDeclarationStatusImpl(
                 visibility,
                 Modality.FINAL

@@ -46,7 +46,7 @@ class DeserializedClassDescriptor(
     private val classId = nameResolver.getClassId(classProto.fqName)
 
     private val modality = ProtoEnumFlags.modality(Flags.MODALITY.get(classProto.flags))
-    private val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(classProto.flags))
+    private val visibility = ProtoEnumFlags.descriptorVisibility(Flags.VISIBILITY.get(classProto.flags))
     private val kind = ProtoEnumFlags.classKind(Flags.CLASS_KIND.get(classProto.flags))
 
     val c = outerContext.childContext(

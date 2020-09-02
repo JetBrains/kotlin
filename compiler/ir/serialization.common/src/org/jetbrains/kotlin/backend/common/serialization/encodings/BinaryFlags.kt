@@ -13,12 +13,14 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
+import org.jetbrains.kotlin.serialization.deserialization.descriptorVisibility
+import org.jetbrains.kotlin.serialization.deserialization.memberKind
 import org.jetbrains.kotlin.types.Variance
 
 inline class ClassFlags(val flags: Long) {
 
     val modality: Modality get() = ProtoEnumFlags.modality(IrFlags.MODALITY.get(flags.toInt()))
-    val visibility: DescriptorVisibility get() = ProtoEnumFlags.visibility(IrFlags.VISIBILITY.get(flags.toInt()))
+    val visibility: DescriptorVisibility get() = ProtoEnumFlags.descriptorVisibility(IrFlags.VISIBILITY.get(flags.toInt()))
     val kind: ClassKind get() = ProtoEnumFlags.classKind(IrFlags.CLASS_KIND.get(flags.toInt()))
 
     val isCompanion: Boolean get() = IrFlags.CLASS_KIND.get(flags.toInt()) == ProtoBuf.Class.Kind.COMPANION_OBJECT
@@ -33,7 +35,7 @@ inline class ClassFlags(val flags: Long) {
         fun encode(clazz: IrClass): Long {
             return clazz.run {
                 val hasAnnotation = annotations.isNotEmpty()
-                val visibility = ProtoEnumFlags.visibility(visibility)
+                val visibility = ProtoEnumFlags.descriptorVisibility(visibility)
                 val modality = ProtoEnumFlags.modality(modality)
                 val kind = ProtoEnumFlags.classKind(kind, isCompanion)
 
@@ -51,7 +53,7 @@ inline class ClassFlags(val flags: Long) {
 inline class FunctionFlags(val flags: Long) {
 
     val modality: Modality get() = ProtoEnumFlags.modality(IrFlags.MODALITY.get(flags.toInt()))
-    val visibility: DescriptorVisibility get() = ProtoEnumFlags.visibility(IrFlags.VISIBILITY.get(flags.toInt()))
+    val visibility: DescriptorVisibility get() = ProtoEnumFlags.descriptorVisibility(IrFlags.VISIBILITY.get(flags.toInt()))
 
     val isOperator: Boolean get() = IrFlags.IS_OPERATOR.get(flags.toInt())
     val isInfix: Boolean get() = IrFlags.IS_INFIX.get(flags.toInt())
@@ -70,7 +72,7 @@ inline class FunctionFlags(val flags: Long) {
         fun encode(function: IrSimpleFunction): Long {
             function.run {
                 val hasAnnotation = annotations.isNotEmpty()
-                val visibility = ProtoEnumFlags.visibility(visibility)
+                val visibility = ProtoEnumFlags.descriptorVisibility(visibility)
                 val modality = ProtoEnumFlags.modality(modality)
                 val kind = if (isFakeOverride) ProtoBuf.MemberKind.FAKE_OVERRIDE else ProtoBuf.MemberKind.DECLARATION
 
@@ -87,7 +89,7 @@ inline class FunctionFlags(val flags: Long) {
         fun encode(constructor: IrConstructor): Long {
             constructor.run {
                 val hasAnnotation = annotations.isNotEmpty()
-                val visibility = ProtoEnumFlags.visibility(visibility)
+                val visibility = ProtoEnumFlags.descriptorVisibility(visibility)
                 val flags = IrFlags.getConstructorFlags(hasAnnotation, visibility, isInline, isExternal, isExpect, isPrimary)
 
                 return flags.toLong()
@@ -101,7 +103,7 @@ inline class FunctionFlags(val flags: Long) {
 inline class PropertyFlags(val flags: Long) {
 
     val modality: Modality get() = ProtoEnumFlags.modality(IrFlags.MODALITY.get(flags.toInt()))
-    val visibility: DescriptorVisibility get() = ProtoEnumFlags.visibility(IrFlags.VISIBILITY.get(flags.toInt()))
+    val visibility: DescriptorVisibility get() = ProtoEnumFlags.descriptorVisibility(IrFlags.VISIBILITY.get(flags.toInt()))
 
     val isVar: Boolean get() = IrFlags.IS_VAR.get(flags.toInt())
     val isConst: Boolean get() = IrFlags.IS_CONST.get(flags.toInt())
@@ -117,7 +119,7 @@ inline class PropertyFlags(val flags: Long) {
         fun encode(property: IrProperty): Long {
             return property.run {
                 val hasAnnotation = annotations.isNotEmpty()
-                val visibility = ProtoEnumFlags.visibility(visibility)
+                val visibility = ProtoEnumFlags.descriptorVisibility(visibility)
                 val modality = ProtoEnumFlags.modality(modality)
                 val kind = if (isFakeOverride) ProtoBuf.MemberKind.FAKE_OVERRIDE else ProtoBuf.MemberKind.DECLARATION
                 val hasGetter = getter != null
@@ -154,13 +156,13 @@ inline class ValueParameterFlags(val flags: Long) {
 
 inline class TypeAliasFlags(val flags: Long) {
 
-    val visibility: DescriptorVisibility get() = ProtoEnumFlags.visibility(IrFlags.VISIBILITY.get(flags.toInt()))
+    val visibility: DescriptorVisibility get() = ProtoEnumFlags.descriptorVisibility(IrFlags.VISIBILITY.get(flags.toInt()))
     val isActual: Boolean get() = IrFlags.IS_ACTUAL.get(flags.toInt())
 
     companion object {
         fun encode(typeAlias: IrTypeAlias): Long {
             return typeAlias.run {
-                val visibility = ProtoEnumFlags.visibility(visibility)
+                val visibility = ProtoEnumFlags.descriptorVisibility(visibility)
                 IrFlags.getTypeAliasFlags(annotations.isNotEmpty(), visibility, isActual).toLong()
             }
         }
@@ -188,7 +190,7 @@ inline class TypeParameterFlags(val flags: Long) {
 
 inline class FieldFlags(val flags: Long) {
 
-    val visibility: DescriptorVisibility get() = ProtoEnumFlags.visibility(IrFlags.VISIBILITY.get(flags.toInt()))
+    val visibility: DescriptorVisibility get() = ProtoEnumFlags.descriptorVisibility(IrFlags.VISIBILITY.get(flags.toInt()))
     val isFinal: Boolean get() = IrFlags.IS_FINAL.get(flags.toInt())
     val isExternal: Boolean get() = IrFlags.IS_EXTERNAL_FIELD.get(flags.toInt())
     val isStatic: Boolean get() = IrFlags.IS_STATIC.get(flags.toInt())
@@ -196,7 +198,7 @@ inline class FieldFlags(val flags: Long) {
     companion object {
         fun encode(field: IrField): Long {
             return field.run {
-                val visibility = ProtoEnumFlags.visibility(visibility)
+                val visibility = ProtoEnumFlags.descriptorVisibility(visibility)
                 IrFlags.getFieldFlags(annotations.isNotEmpty(), visibility, isFinal, isExternal, isStatic).toLong()
             }
         }

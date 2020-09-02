@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -11,6 +9,7 @@ javaHome = rootProject.extra["JDK_16"] as String
 dependencies {
     compile(protobufLite())
     compile(kotlinStdlib())
+    api(project(":core:compiler.common"))
 }
 
 sourceSets {

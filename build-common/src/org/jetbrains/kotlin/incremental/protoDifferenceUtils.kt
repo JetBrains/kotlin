@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
+import org.jetbrains.kotlin.serialization.deserialization.descriptorVisibility
 import java.util.*
 
 data class Difference(
@@ -50,7 +51,7 @@ fun ProtoMapValue.toProtoData(packageFqName: FqName): ProtoData =
 
 internal val MessageLite.isPrivate: Boolean
     get() = DescriptorVisibilities.isPrivate(
-        ProtoEnumFlags.visibility(
+        ProtoEnumFlags.descriptorVisibility(
             when (this) {
                 is ProtoBuf.Constructor -> Flags.VISIBILITY.get(flags)
                 is ProtoBuf.Function -> Flags.VISIBILITY.get(flags)
