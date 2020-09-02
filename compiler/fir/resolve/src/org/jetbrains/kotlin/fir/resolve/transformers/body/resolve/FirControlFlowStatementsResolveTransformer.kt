@@ -33,23 +33,25 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
     // ------------------------------- Loops -------------------------------
 
     override fun transformWhileLoop(whileLoop: FirWhileLoop, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+        val context = ResolutionMode.ContextIndependent
         return whileLoop.also(dataFlowAnalyzer::enterWhileLoop)
-            .transformCondition(transformer, data).also(dataFlowAnalyzer::exitWhileLoopCondition)
-            .transformBlock(transformer, data).also(dataFlowAnalyzer::exitWhileLoop)
-            .transformOtherChildren(transformer, data).compose()
+            .transformCondition(transformer, context).also(dataFlowAnalyzer::exitWhileLoopCondition)
+            .transformBlock(transformer, context).also(dataFlowAnalyzer::exitWhileLoop)
+            .transformOtherChildren(transformer, context).compose()
     }
 
     override fun transformDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+        val context = ResolutionMode.ContextIndependent
         // Do-while has a specific scope structure (its block and condition effectively share the scope)
         return withNewLocalScope {
             doWhileLoop.also(dataFlowAnalyzer::enterDoWhileLoop)
                 .apply {
-                    transformer.expressionsTransformer.transformBlockInCurrentScope(block, data)
+                    transformer.expressionsTransformer.transformBlockInCurrentScope(block, context)
                     dataFlowAnalyzer
                 }
-                .also(dataFlowAnalyzer::enterDoWhileLoopCondition).transformCondition(transformer, data)
+                .also(dataFlowAnalyzer::enterDoWhileLoopCondition).transformCondition(transformer, context)
                 .also(dataFlowAnalyzer::exitDoWhileLoop)
-                .transformOtherChildren(transformer, data).compose()
+                .transformOtherChildren(transformer, context).compose()
         }
     }
 
