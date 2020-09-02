@@ -5,4 +5,21 @@
 
 package org.jetbrains.kotlin.idea.refactoring.inline
 
-class KotlinToJavaInlineHandler : AbstractCrossLanguageInlineHandler()
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiReference
+import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.psi.KtElement
+
+class KotlinToJavaInlineHandler : AbstractCrossLanguageInlineHandler() {
+    override fun prepareReference(reference: PsiReference, referenced: PsiElement): MultiMap<PsiElement, String> {
+        if (referenced is KtElement) {
+            KotlinInlineRefactoringFUSCollector.log(
+                elementFrom = referenced,
+                languageTo = reference.element.language,
+                isCrossLanguage = true
+            )
+        }
+
+        return super.prepareReference(reference, referenced)
+    }
+}
