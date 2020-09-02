@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.getAnalysisSessionFor
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtCompositeScope
+import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScope
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
@@ -21,10 +22,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.isExtension
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtLabelReferenceExpression
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 
 class KotlinFirCompletionContributor : CompletionContributor() {
@@ -83,12 +81,17 @@ private object KotlinAvailableScopesCompletionProvider {
         with(getAnalysisSessionFor(originalFile).createContextDependentCopy()) {
             val (implicitScopes, implicitReceivers) = originalFile.getScopeContextForPosition(nameExpression)
 
-            if (explicitReceiver != null) {
-                collectDotCompletion(result, implicitScopes, explicitReceiver)
-            } else {
-                collectDefaultCompletion(result, implicitScopes, implicitReceivers)
+            when {
+                nameExpression.parent is KtUserType -> collectTypesCompletion(result, implicitScopes)
+                explicitReceiver != null -> collectDotCompletion(result, implicitScopes, explicitReceiver)
+                else -> collectDefaultCompletion(result, implicitScopes, implicitReceivers)
             }
         }
+    }
+
+    private fun collectTypesCompletion(result: CompletionResultSet, implicitScopes: KtScope) {
+        val availableClasses = implicitScopes.getClassifierSymbols()
+        availableClasses.forEach { result.addSymbolToCompletion(it) }
     }
 
     private fun KtAnalysisSession.collectDotCompletion(
@@ -127,8 +130,7 @@ private object KotlinAvailableScopesCompletionProvider {
         availableNonExtensions.forEach { result.addSymbolToCompletion(it) }
         extensionsWhichCanBeCalled.forEach { result.addSymbolToCompletion(it) }
 
-        val availableClasses = implicitScopes.getClassifierSymbols()
-        availableClasses.forEach { result.addSymbolToCompletion(it) }
+        collectTypesCompletion(result, implicitScopes)
     }
 }
 
