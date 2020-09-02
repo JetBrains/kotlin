@@ -62,7 +62,6 @@
 
   <extensions defaultExtensionNs="cidr.debugger">
     <languageSupport language="kotlin" implementationClass="com.jetbrains.kmm.ios.execution.KonanDebuggerLanguageSupport"/>
-    <valueRendererFactory implementation="com.jetbrains.kmm.ios.execution.KmmKonanValueRendererFactory"/>
   </extensions>
 
   <extensions defaultExtensionNs="com.android">
