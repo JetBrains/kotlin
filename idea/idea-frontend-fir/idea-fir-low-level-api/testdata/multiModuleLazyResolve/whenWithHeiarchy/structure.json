@@ -3,6 +3,5 @@
     { "name": "main", "dependsOn": ["dependency"] },
     { "name": "dependency" }
   ],
-  "fileToResolve": { "module": "main", "file": "main.kt" },
-  "fails": true
+  "fileToResolve": { "module": "main", "file": "main.kt" }
 }
