@@ -6,6 +6,9 @@
         <dependency maven-id="javax.activation:javax.activation-api" />
       </exclude>
     </properties>
+    <ANNOTATIONS>
+      <root url="file://$PROJECT_DIR$/intellij/lib/annotations/jaxb" />
+    </ANNOTATIONS>
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/javax/xml/bind/jaxb-api/2.3.1/jaxb-api-2.3.1.jar!/" />
     </CLASSES>
