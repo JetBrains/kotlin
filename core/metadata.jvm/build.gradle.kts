@@ -7,7 +7,7 @@ jvmTarget = "1.6"
 javaHome = rootProject.extra["JDK_16"] as String
 
 dependencies {
-    compile(project(":core:metadata"))
+    api(project(":core:metadata"))
     api(project(":core:compiler.common.jvm"))
 }
 
