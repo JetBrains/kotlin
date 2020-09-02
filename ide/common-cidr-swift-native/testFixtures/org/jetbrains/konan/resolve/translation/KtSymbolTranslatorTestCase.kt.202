@@ -137,10 +137,7 @@ abstract class KtSymbolTranslatorTestCase : KotlinLightCodeInsightFixtureTestCas
         }.results
 
     protected val KtSwiftTypeSymbol<*, *>.members: Collection<SwiftMemberSymbol>
-        get() = CollectingSymbolProcessor<SwiftMemberSymbol>(
-            null, SwiftPlace.of(project),
-            EnumSet.allOf(SwiftDeclarationKind::class.java)
-        ).also {
+        get() = CollectingSymbolProcessor<SwiftMemberSymbol>(null, null, EnumSet.allOf(SwiftDeclarationKind::class.java)).also {
             processMembers(it, ResolveState())
         }.collectedSymbols
 }
