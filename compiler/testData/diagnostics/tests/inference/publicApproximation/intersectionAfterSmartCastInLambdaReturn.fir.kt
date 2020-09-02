@@ -33,6 +33,6 @@ fun intersectArgWithSmartCastFromLambda(arg: One, arg2: Base) = argOrFn(arg) {
 }
 
 fun test() {
-    intersectAfterSmartCast(O1, O2).base()
-    intersectArgWithSmartCastFromLambda(O1, O2).base()
+    intersectAfterSmartCast(O1, O2).<!UNRESOLVED_REFERENCE!>base<!>()
+    intersectArgWithSmartCastFromLambda(O1, O2).<!UNRESOLVED_REFERENCE!>base<!>()
 }

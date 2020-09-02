@@ -7,6 +7,10 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.Visibilities.Internal
+import org.jetbrains.kotlin.fir.Visibilities.Private
+import org.jetbrains.kotlin.fir.Visibilities.Protected
+import org.jetbrains.kotlin.fir.Visibilities.Public
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
@@ -28,6 +32,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
+import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.constructStarProjectedType
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLookupTagWithFixedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
@@ -37,6 +42,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
@@ -503,7 +509,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 result.transformReturnTypeRef(
                     transformer,
                     withExpectedType(
-                        body.resultType.hideLocalTypeIfNeeded(simpleFunction?.visibility, simpleFunction?.isInline == true)
+                        body.resultType.approximateTypeIfNeeded(simpleFunction?.visibility, simpleFunction?.isInline == true)
                     )
                 )
             } else {
@@ -911,7 +917,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                     }
                     variable.transformReturnTypeRef(
                         transformer,
-                        withExpectedType(expectedType.hideLocalTypeIfNeeded((variable as? FirProperty)?.visibility))
+                        withExpectedType(expectedType.approximateTypeIfNeeded((variable as? FirProperty)?.visibility))
                     )
                 }
                 variable.getter != null && variable.getter !is FirDefaultPropertyAccessor -> {
@@ -933,7 +939,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                     }
                     variable.transformReturnTypeRef(
                         transformer,
-                        withExpectedType(expectedType?.hideLocalTypeIfNeeded((variable as? FirProperty)?.visibility))
+                        withExpectedType(expectedType?.approximateTypeIfNeeded((variable as? FirProperty)?.visibility))
                     )
                 }
                 else -> {
@@ -956,6 +962,34 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
     }
 
+    private fun FirTypeRef.approximateTypeIfNeeded(
+        containingCallableVisibility: Visibility?,
+        isInlineFunction: Boolean = false
+    ): FirTypeRef {
+        val approximatedType = if (this is FirResolvedTypeRef &&
+            (containingCallableVisibility == Public || containingCallableVisibility == Protected)
+        ) {
+            when (this.type) {
+                is ConeIntegerLiteralType,
+                is ConeCapturedType,
+                is ConeDefinitelyNotNullType,
+                is ConeIntersectionType -> {
+                    this.withReplacedConeType(
+                        inferenceComponents.approximator.approximateToSuperType(
+                            this.type, TypeApproximatorConfiguration.PublicDeclaration
+                        ) as ConeKotlinType
+                    )
+                }
+                else -> {
+                    this
+                }
+            }
+        } else {
+            this
+        }
+        return approximatedType.hideLocalTypeIfNeeded(containingCallableVisibility, isInlineFunction)
+    }
+
     /*
      * Suppose a function without an explicit return type just returns an anonymous object:
      *
@@ -976,10 +1010,10 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
         // Approximate types for non-private (all but package private or private) members.
         // Also private inline functions, as per KT-33917.
-        if (containingCallableVisibility == Visibilities.Public ||
-            containingCallableVisibility == Visibilities.Protected ||
-            containingCallableVisibility == Visibilities.Internal ||
-            (containingCallableVisibility == Visibilities.Private && isInlineFunction)
+        if (containingCallableVisibility == Public ||
+            containingCallableVisibility == Protected ||
+            containingCallableVisibility == Internal ||
+            (containingCallableVisibility == Private && isInlineFunction)
         ) {
             val firClass =
                 (((this as? FirResolvedTypeRef)

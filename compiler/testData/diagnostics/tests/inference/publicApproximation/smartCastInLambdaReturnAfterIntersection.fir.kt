@@ -18,5 +18,5 @@ fun smartCastAfterIntersection(a: One, b: Two) = run {
 }
 
 fun test(one: One, two: Two) {
-    smartCastAfterIntersection(one, two)?.base()
+    smartCastAfterIntersection(one, two)?.<!UNRESOLVED_REFERENCE!>base<!>()
 }
