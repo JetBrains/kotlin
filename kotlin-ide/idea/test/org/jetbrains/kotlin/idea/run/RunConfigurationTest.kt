@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.idea.run
 import com.intellij.execution.Location
 import com.intellij.execution.PsiLocation
 import com.intellij.execution.actions.ConfigurationContext
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiComment
@@ -18,7 +16,6 @@ import com.intellij.psi.PsiManager
 import com.intellij.refactoring.RefactoringFactory
 import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.MapDataContext
-import com.intellij.testFramework.PlatformTestUtil
 import org.jetbrains.kotlin.checkers.languageVersionSettingsFromText
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -28,11 +25,8 @@ import org.jetbrains.kotlin.idea.project.withLanguageVersionSettings
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.addJdk
 import org.jetbrains.kotlin.idea.test.withCustomLanguageAndApiVersion
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -45,72 +39,60 @@ private const val RUN_PREFIX = "// RUN:"
 
 @RunWith(JUnit38ClassRunner::class)
 class RunConfigurationTest : AbstractRunConfigurationTest() {
-    fun testMainInTest() = withTestFiles {
-        val baseDir = PlatformTestUtil.getOrCreateProjectBaseDir(project)
-        val createModuleResult = configureModule(moduleDirPath("module"), baseDir)
-        withCustomLanguageAndApiVersion(
-            createModuleResult.module.project, createModuleResult.module,
-            LanguageVersionSettingsImpl.DEFAULT.languageVersion.versionString, apiVersion = null
-        ) {
-            ConfigLibraryUtil.configureKotlinRuntimeAndSdk(createModuleResult.module, addJdk(testRootDisposable, IdeaTestUtil::getMockJdk18))
+    fun testMainInTest() {
+        configureProject()
+        val configuredModule = defaultConfiguredModule
 
-            val runConfiguration = createConfigurationFromMain(getTestProject(), "some.main")
+        val languageVersion = LanguageVersionSettingsImpl.DEFAULT.languageVersion
+        withCustomLanguageAndApiVersion(project, module, languageVersion.versionString, apiVersion = null) {
+            val runConfiguration = createConfigurationFromMain(project, "some.main")
             val javaParameters = getJavaRunParameters(runConfiguration)
 
-            assertTrue(javaParameters.classPath.rootDirs.contains(createModuleResult.srcOutputDir))
-            assertTrue(javaParameters.classPath.rootDirs.contains(createModuleResult.testOutputDir))
+            assertTrue(javaParameters.classPath.rootDirs.contains(configuredModule.srcOutputDir))
+            assertTrue(javaParameters.classPath.rootDirs.contains(configuredModule.testOutputDir))
 
-            createModuleResult.srcDir?.children?.filter { it.extension == "kt" }?.forEach {
-                val psiFile = PsiManager.getInstance(createModuleResult.module.project).findFile(it)
-                if (psiFile is KtFile) {
-                    val languageVersionSettings = languageVersionSettingsFromText(listOf(psiFile.text))
-                    module.withLanguageVersionSettings(languageVersionSettings) {
-                        psiFile.acceptChildren(
-                            object : KtVisitorVoid() {
-                                override fun visitNamedFunction(function: KtNamedFunction) {
-                                    functionVisitor(languageVersionSettings, function)
-                                }
-                            },
-                        )
-                    }
+            val ktFiles = configuredModule.srcDir?.children?.filter { it.extension == "kt" }.orEmpty()
+            val psiManager = PsiManager.getInstance(project)
+
+            for (ktFile in ktFiles) {
+                val psiFile = psiManager.findFile(ktFile) as? KtFile ?: continue
+                val languageVersionSettings = languageVersionSettingsFromText(listOf(psiFile.text))
+
+                module.withLanguageVersionSettings(languageVersionSettings) {
+                    psiFile.acceptChildren(
+                        object : KtVisitorVoid() {
+                            override fun visitNamedFunction(function: KtNamedFunction) {
+                                functionVisitor(languageVersionSettings, function)
+                            }
+                        }
+                    )
                 }
             }
         }
     }
 
-    fun testDependencyModuleClasspath() = withTestFiles {
-        val baseDir = PlatformTestUtil.getOrCreateProjectBaseDir(project)
-        val dependencyModuleSrcDir = configureModule(moduleDirPath("module"), baseDir).srcOutputDir
+    fun testDependencyModuleClasspath() {
+        configureProject()
+        val configuredModule = defaultConfiguredModule
+        val configuredModuleWithDependency = getConfiguredModule("moduleWithDependency")
 
-        val moduleWithDependencyDir = runWriteAction { getTestProject().baseDir!!.createChildDirectory(this, "moduleWithDependency") }
+        ModuleRootModificationUtil.addDependency(configuredModuleWithDependency.module, configuredModule.module)
 
-        val moduleWithDependency = createModule("moduleWithDependency")
-        ModuleRootModificationUtil.setModuleSdk(moduleWithDependency, testProjectJdk)
-
-        val moduleWithDependencySrcDir = configureModule(
-            moduleDirPath("moduleWithDependency"), moduleWithDependencyDir, configModule = moduleWithDependency,
-        ).srcOutputDir
-
-        ModuleRootModificationUtil.addDependency(moduleWithDependency, module)
-
-        val kotlinRunConfiguration = createConfigurationFromMain(getTestProject(), "some.test.main")
-        kotlinRunConfiguration.setModule(moduleWithDependency)
+        val kotlinRunConfiguration = createConfigurationFromMain(project, "some.test.main")
+        kotlinRunConfiguration.setModule(configuredModuleWithDependency.module)
 
         val javaParameters = getJavaRunParameters(kotlinRunConfiguration)
 
-        assertTrue(javaParameters.classPath.rootDirs.contains(dependencyModuleSrcDir))
-        assertTrue(javaParameters.classPath.rootDirs.contains(moduleWithDependencySrcDir))
+        assertTrue(javaParameters.classPath.rootDirs.contains(configuredModule.srcOutputDir))
+        assertTrue(javaParameters.classPath.rootDirs.contains(configuredModuleWithDependency.srcOutputDir))
     }
 
-    fun testLongCommandLine() = withTestFiles {
-        val baseDir = PlatformTestUtil.getOrCreateProjectBaseDir(project)
-        val myModule = configureModule(moduleDirPath("module"), baseDir).module
-        ConfigLibraryUtil.configureKotlinRuntimeAndSdk(module, addJdk(testRootDisposable, IdeaTestUtil::getMockJdk18))
+    fun testLongCommandLine() {
+        configureProject()
+        ModuleRootModificationUtil.addDependency(module, createLibraryWithLongPaths(project))
 
-        ModuleRootModificationUtil.addDependency(myModule, createLibraryWithLongPaths(project))
-
-        val kotlinRunConfiguration = createConfigurationFromMain(getTestProject(),"some.test.main")
-        kotlinRunConfiguration.setModule(myModule)
+        val kotlinRunConfiguration = createConfigurationFromMain(project, "some.test.main")
+        kotlinRunConfiguration.setModule(module)
 
         val javaParameters = getJavaRunParameters(kotlinRunConfiguration)
         val commandLine = javaParameters.toCommandLine().commandLineString
@@ -119,109 +101,91 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
         }
     }
 
-    fun testClassesAndObjects() {
-        doTest(ConfigLibraryUtil::configureKotlinRuntimeAndSdk)
-    }
+    fun testClassesAndObjects() = checkClasses()
 
-    fun testInJsModule() {
-        doTest { module, sdk ->
-            ConfigLibraryUtil.configureSdk(module, sdk)
-            ConfigLibraryUtil.configureKotlinStdlibJs(module)
-        }
-    }
+    fun testInJsModule() = checkClasses(Platform.JavaScript)
 
-    fun testUpdateOnClassRename() = withTestFiles {
-        val baseDir = PlatformTestUtil.getOrCreateProjectBaseDir(project)
-        val createModuleResult = configureModule(moduleDirPath("module"), baseDir)
-        ConfigLibraryUtil.configureKotlinRuntimeAndSdk(createModuleResult.module, addJdk(testRootDisposable, IdeaTestUtil::getMockJdk18))
+    fun testUpdateOnClassRename() {
+        configureProject()
 
-        val runConfiguration = createConfigurationFromObject("renameTest.Foo", save = true)
+        val runConfiguration = createConfigurationFromObject("renameTest.Foo")
 
-        val obj = KotlinFullClassNameIndex.getInstance().get("renameTest.Foo", getTestProject(), getTestProject().allScope()).single()
-        val rename = RefactoringFactory.getInstance(getTestProject()).createRename(obj, "Bar")
+        val obj = KotlinFullClassNameIndex.getInstance().get("renameTest.Foo", project, project.allScope()).single()
+        val rename = RefactoringFactory.getInstance(project).createRename(obj, "Bar")
         rename.run()
 
         assertEquals("renameTest.Bar", runConfiguration.MAIN_CLASS_NAME)
     }
 
-    fun testUpdateOnPackageRename() = withTestFiles {
-        val baseDir = PlatformTestUtil.getOrCreateProjectBaseDir(project)
-        val createModuleResult = configureModule(moduleDirPath("module"), baseDir)
-        ConfigLibraryUtil.configureKotlinRuntimeAndSdk(createModuleResult.module, addJdk(testRootDisposable, IdeaTestUtil::getMockJdk18))
+    fun testUpdateOnPackageRename() {
+        configureProject()
 
-        val runConfiguration = createConfigurationFromObject("renameTest.Foo", save = true)
+        val runConfiguration = createConfigurationFromObject("renameTest.Foo")
 
-        val pkg = JavaPsiFacade.getInstance(getTestProject()).findPackage("renameTest")!!
-        val rename = RefactoringFactory.getInstance(getTestProject()).createRename(pkg, "afterRenameTest")
+        val pkg = JavaPsiFacade.getInstance(project).findPackage("renameTest") ?: error("Package 'renameTest' not found")
+        val rename = RefactoringFactory.getInstance(project).createRename(pkg, "afterRenameTest")
         rename.run()
 
         assertEquals("afterRenameTest.Foo", runConfiguration.MAIN_CLASS_NAME)
     }
 
-    fun testWithModuleForJdk6() = withTestFiles {
-        checkModuleInfoName(null, addJdk(testRootDisposable, IdeaTestUtil::getMockJdk18))
+    fun testWithModuleForJdk6() {
+        checkModuleInfoName(null, Platform.Jvm(IdeaTestUtil.getMockJdk16()))
     }
 
-    fun testWithModuleForJdk9() = withTestFiles {
-        checkModuleInfoName("MAIN", addJdk(testRootDisposable, IdeaTestUtil::getMockJdk9))
+    fun testWithModuleForJdk9() {
+        checkModuleInfoName("MAIN", Platform.Jvm(IdeaTestUtil.getMockJdk9()))
     }
 
-    fun testWithModuleForJdk9WithoutModuleInfo() = withTestFiles {
-        checkModuleInfoName(null, addJdk(testRootDisposable, IdeaTestUtil::getMockJdk9))
+    fun testWithModuleForJdk9WithoutModuleInfo() {
+        checkModuleInfoName(null, Platform.Jvm(IdeaTestUtil.getMockJdk9()))
     }
 
-    private fun TestFileContext.checkModuleInfoName(moduleName: String?, sdk: Sdk) {
-        val baseDir = PlatformTestUtil.getOrCreateProjectBaseDir(project)
-        val module = configureModule(moduleDirPath("module"), baseDir).module
-        ConfigLibraryUtil.configureKotlinRuntimeAndSdk(module, sdk)
+    private fun checkModuleInfoName(moduleName: String?, platform: Platform) {
+        configureProject(platform)
 
-        val javaParameters = getJavaRunParameters(createConfigurationFromMain(getTestProject(),"some.main"))
-
+        val javaParameters = getJavaRunParameters(createConfigurationFromMain(project, "some.main"))
         assertEquals(moduleName, javaParameters.moduleName)
     }
 
-    private fun doTest(configureRuntime: (Module, Sdk) -> Unit) = withTestFiles {
-        val baseDir = PlatformTestUtil.getOrCreateProjectBaseDir(project)
-        val createModuleResult = configureModule(moduleDirPath("module"), baseDir)
-        val srcDir = createModuleResult.srcDir!!
+    private fun checkClasses(platform: Platform = Platform.Jvm()) {
+        configureProject(platform)
+        val srcDir = defaultConfiguredModule.srcDir ?: error("Module doesn't have a production source set")
 
-        configureRuntime(createModuleResult.module, addJdk(testRootDisposable, IdeaTestUtil::getMockJdk18))
+        val expectedClasses = ArrayList<String>()
+        val actualClasses = ArrayList<String>()
 
-        try {
-            val expectedClasses = ArrayList<String>()
-            val actualClasses = ArrayList<String>()
+        val fileName = "test.kt"
+        val testKtVirtualFile = srcDir.findFileByRelativePath(fileName) ?: error("Can't find VirtualFile for $fileName")
+        val testFile = PsiManager.getInstance(project).findFile(testKtVirtualFile) ?: error("Can't find PSI for $fileName")
 
-            val testFile = PsiManager.getInstance(getTestProject()).findFile(srcDir.findFileByRelativePath("test.kt")!!)!!
-            testFile.accept(
-                object : KtTreeVisitorVoid() {
-                    override fun visitComment(comment: PsiComment) {
-                        val declaration = comment.getStrictParentOfType<KtNamedDeclaration>()!!
-                        val text = comment.text ?: return
-                        if (!text.startsWith(RUN_PREFIX)) return
+        val visitor = object : KtTreeVisitorVoid() {
+            override fun visitComment(comment: PsiComment) {
+                val declaration = comment.getStrictParentOfType<KtNamedDeclaration>()!!
+                val text = comment.text ?: return
+                if (!text.startsWith(RUN_PREFIX)) return
 
-                        val expectedClass = text.substring(RUN_PREFIX.length).trim()
-                        if (expectedClass.isNotEmpty()) expectedClasses.add(expectedClass)
+                val expectedClass = text.substring(RUN_PREFIX.length).trim()
+                if (expectedClass.isNotEmpty()) expectedClasses.add(expectedClass)
 
-                        val dataContext = MapDataContext()
-                        dataContext.put(Location.DATA_KEY, PsiLocation(getTestProject(), declaration))
-                        val context = ConfigurationContext.getFromContext(dataContext)
-                        val actualClass = (context.configuration?.configuration as? KotlinRunConfiguration)?.runClass
-                        if (actualClass != null) {
-                            actualClasses.add(actualClass)
-                        }
-                    }
-                },
-            )
-            assertEquals(expectedClasses, actualClasses)
-        } finally {
-            ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(createModuleResult.module, IdeaTestUtil.getMockJdk18())
+                val dataContext = MapDataContext()
+                dataContext.put(Location.DATA_KEY, PsiLocation(project, declaration))
+                val context = ConfigurationContext.getFromContext(dataContext)
+                val actualClass = (context.configuration?.configuration as? KotlinRunConfiguration)?.runClass
+                if (actualClass != null) {
+                    actualClasses.add(actualClass)
+                }
+            }
         }
+
+        testFile.accept(visitor)
+        assertEquals(expectedClasses, actualClasses)
     }
 
-    private fun createConfigurationFromObject(objectFqn: String, save: Boolean = false): KotlinRunConfiguration {
-        val obj = KotlinFullClassNameIndex.getInstance().get(objectFqn, getTestProject(), getTestProject().allScope()).single()
+    private fun createConfigurationFromObject(@Suppress("SameParameterValue") objectFqn: String): KotlinRunConfiguration {
+        val obj = KotlinFullClassNameIndex.getInstance().get(objectFqn, project, project.allScope()).single()
         val mainFunction = obj.declarations.single { it is KtFunction && it.getName() == "main" }
-        return createConfigurationFromElement(mainFunction, save) as KotlinRunConfiguration
+        return createConfigurationFromElement(mainFunction, true) as KotlinRunConfiguration
     }
 
     companion object {

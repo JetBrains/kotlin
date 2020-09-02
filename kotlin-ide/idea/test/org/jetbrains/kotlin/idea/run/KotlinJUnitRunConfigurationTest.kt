@@ -9,77 +9,57 @@ import com.intellij.execution.PsiLocation
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.ConfigurationFromContext
 import com.intellij.execution.junit.TestInClassConfigurationProducer
-import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.OrderRootType
-import com.intellij.openapi.vfs.JarFileSystem
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
-import com.intellij.testFramework.IdeaTestUtil
-import com.intellij.testFramework.PlatformTestUtil
-import com.intellij.util.PlatformUtils
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.addJdk
+import org.jetbrains.kotlin.idea.test.MockLibraryFacility
+import org.jetbrains.kotlin.idea.test.runAll
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
-import java.io.File
 
 @RunWith(JUnit38ClassRunner::class)
 class KotlinJUnitRunConfigurationTest : AbstractRunConfigurationTest() {
-    fun testSimple() = withTestFiles {
-        if (!PlatformUtils.isIntelliJ()) {
-            return
-        }
+    private lateinit var mockLibraryFacility: MockLibraryFacility
 
-        val projectBaseDir = PlatformTestUtil.getOrCreateProjectBaseDir(project)
-        val createResult = configureModule(moduleDirPath("module"), projectBaseDir)
-        val testDir = createResult.testDir!!
-
-        ConfigLibraryUtil.configureKotlinRuntimeAndSdk(module, addJdk(testRootDisposable, IdeaTestUtil::getMockJdk18))
-
-        try {
-            attachJUnitLibrary()
-
-            val javaFile = testDir.findChild("MyJavaTest.java")!!
-            val kotlinFile = testDir.findChild("MyKotlinTest.kt")!!
-
-            val javaClassConfiguration = getConfiguration(javaFile, project, "MyTest")
-            assert(javaClassConfiguration.isProducedBy(TestInClassConfigurationProducer::class.java))
-            assert(javaClassConfiguration.configuration.name == "MyJavaTest")
-
-            val javaMethodConfiguration = getConfiguration(javaFile, project, "testA")
-            assert(javaMethodConfiguration.isProducedBy(TestInClassConfigurationProducer::class.java))
-            assert(javaMethodConfiguration.configuration.name == "MyJavaTest.testA")
-
-            val kotlinClassConfiguration = getConfiguration(kotlinFile, project, "MyKotlinTest")
-            assert(kotlinClassConfiguration.isProducedBy(KotlinJUnitRunConfigurationProducer::class.java))
-            assert(kotlinClassConfiguration.configuration.name == "MyKotlinTest")
-
-            val kotlinFunctionConfiguration = getConfiguration(kotlinFile, project, "testA")
-            assert(kotlinFunctionConfiguration.isProducedBy(KotlinJUnitRunConfigurationProducer::class.java))
-            assert(kotlinFunctionConfiguration.configuration.name == "MyKotlinTest.testA")
-        } finally {
-            detachJUnitLibrary()
-        }
+    override fun setUp() {
+        super.setUp()
+        mockLibraryFacility = MockLibraryFacility(testDataDirectory.resolve("mock"))
+        mockLibraryFacility.setUp(module)
     }
 
-    private fun attachJUnitLibrary() {
-        val platformPath = PathManager.getHomePath().replace(File.separatorChar, '/')
-        val junitLibraryFile = File("$platformPath/lib/junit-4.12.jar")
-        val junitLibraryVirtualFile = LocalFileSystem.getInstance().refreshAndFindFileByPath(junitLibraryFile.canonicalPath)!!
-
-        ConfigLibraryUtil.addLibrary(module, "JUnit") {
-            val jar = JarFileSystem.getInstance().getJarRootForLocalFile(junitLibraryVirtualFile)
-                ?: error("Jar not found for $junitLibraryVirtualFile")
-
-            addRoot(jar, OrderRootType.CLASSES)
-        }
+    override fun tearDown() {
+        runAll(
+            ThrowableRunnable { mockLibraryFacility.tearDown(module) },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
-    private fun detachJUnitLibrary() {
-        ConfigLibraryUtil.removeLibrary(module, "JUnit")
+    fun testSimple() {
+        configureProject()
+        val configuredModule = configuredModules.single()
+
+        val testDir = configuredModule.testDir!!
+
+        val javaFile = testDir.findChild("MyJavaTest.java")!!
+        val kotlinFile = testDir.findChild("MyKotlinTest.kt")!!
+
+        val javaClassConfiguration = getConfiguration(javaFile, project, "MyTest")
+        assert(javaClassConfiguration.isProducedBy(TestInClassConfigurationProducer::class.java))
+        assert(javaClassConfiguration.configuration.name == "MyJavaTest")
+
+        val javaMethodConfiguration = getConfiguration(javaFile, project, "testA")
+        assert(javaMethodConfiguration.isProducedBy(TestInClassConfigurationProducer::class.java))
+        assert(javaMethodConfiguration.configuration.name == "MyJavaTest.testA")
+
+        val kotlinClassConfiguration = getConfiguration(kotlinFile, project, "MyKotlinTest")
+        assert(kotlinClassConfiguration.isProducedBy(KotlinJUnitRunConfigurationProducer::class.java))
+        assert(kotlinClassConfiguration.configuration.name == "MyKotlinTest")
+
+        val kotlinFunctionConfiguration = getConfiguration(kotlinFile, project, "testA")
+        assert(kotlinFunctionConfiguration.isProducedBy(KotlinJUnitRunConfigurationProducer::class.java))
+        assert(kotlinFunctionConfiguration.configuration.name == "MyKotlinTest.testA")
     }
 
     override fun getTestDataDirectory() = IDEA_TEST_DATA_DIR.resolve("runConfigurations/junit")
