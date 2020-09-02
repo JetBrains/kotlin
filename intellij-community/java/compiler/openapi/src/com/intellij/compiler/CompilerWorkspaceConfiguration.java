@@ -1,15 +1,17 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 /*
  * @author Eugene Zhuravlev
  */
 package com.intellij.compiler;
 
+import com.intellij.build.BuildWorkspaceConfiguration;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.util.xmlb.XmlSerializerUtil;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 @State(name = "CompilerWorkspaceConfiguration", storages = @Storage(StoragePathMacros.WORKSPACE_FILE))
@@ -51,5 +53,19 @@ public class CompilerWorkspaceConfiguration implements PersistentStateComponent<
 
   public boolean allowAutoMakeWhileRunningApplication() {
     return Registry.is("compiler.automake.allow.when.app.running", false);/*ALLOW_AUTOMAKE_WHILE_RUNNING_APPLICATION*/
+  }
+
+  @ApiStatus.Internal
+  static class JavaBuildWorkspaceConfiguration implements BuildWorkspaceConfiguration {
+    private final @NotNull Project myProject;
+
+    JavaBuildWorkspaceConfiguration(@NotNull Project project) {
+      myProject = project;
+    }
+
+    @Override
+    public boolean isShowFirstErrorInEditor() {
+      return getInstance(myProject).AUTO_SHOW_ERRORS_IN_EDITOR;
+    }
   }
 }

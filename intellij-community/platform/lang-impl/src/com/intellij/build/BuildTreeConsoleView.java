@@ -111,7 +111,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
   private final AtomicBoolean myDisposed = new AtomicBoolean();
   private final AtomicBoolean myShownFirstError = new AtomicBoolean();
   private final AtomicBoolean myExpandedFirstMessage = new AtomicBoolean();
-  private final boolean myFocusFirstError;
+  private final boolean myNavigateToTheFirstErrorLocation;
   private final StructureTreeModel<AbstractTreeStructure> myTreeModel;
   private final Tree myTree;
   private final ExecutionNode myRootNode;
@@ -130,8 +130,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
                         : new DefaultBuildDescriptor(buildDescriptor);
     myNodeFilters = ContainerUtil.newConcurrentSet();
     myWorkingDir = FileUtil.toSystemIndependentName(buildDescriptor.getWorkingDir());
-    myFocusFirstError = !(buildDescriptor instanceof DefaultBuildDescriptor) ||
-                        ((DefaultBuildDescriptor)buildDescriptor).isActivateToolWindowWhenFailed();
+    myNavigateToTheFirstErrorLocation = project.getService(BuildWorkspaceConfiguration.class).isShowFirstErrorInEditor();
 
     myRootNode = new ExecutionNode(myProject, null, true, this::isCorrectThread);
     myBuildProgressRootNode = new ExecutionNode(myProject, myRootNode, true, this::isCorrectThread);
@@ -495,7 +494,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     if (myShownFirstError.compareAndSet(false, true)) {
       return () -> {
         TreeUtil.promiseSelect(myTree, visitor(node));
-        if (myFocusFirstError && navigatable != null && navigatable != NonNavigatable.INSTANCE) {
+        if (myNavigateToTheFirstErrorLocation && navigatable != null && navigatable != NonNavigatable.INSTANCE) {
           ApplicationManager.getApplication()
             .invokeLater(() -> navigatable.navigate(true), ModalityState.defaultModalityState(), myProject.getDisposed());
         }
