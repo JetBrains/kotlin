@@ -61,6 +61,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.containsError
+import org.jetbrains.kotlin.utils.checkWithAttachment
 import java.awt.Color
 import java.util.*
 import kotlin.reflect.KClass
@@ -517,9 +518,13 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
 
         val arguments = info.arguments
 
-        assert(arguments.size >= currentArgumentIndex) {
-            "currentArgumentIndex: $currentArgumentIndex has to be not more than number of arguments ${arguments.size}"
-        }
+        checkWithAttachment(
+            arguments.size >= currentArgumentIndex,
+            lazyMessage = { "currentArgumentIndex: $currentArgumentIndex has to be not more than number of arguments ${arguments.size}" },
+            attachments = {
+                it.withAttachment("info.txt", info)
+            }
+        )
 
         val callToUse: ResolvedCall<FunctionDescriptor>
         val currentArgument = if (arguments.size > currentArgumentIndex) {
