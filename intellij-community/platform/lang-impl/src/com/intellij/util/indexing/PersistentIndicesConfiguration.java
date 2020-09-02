@@ -11,7 +11,7 @@ final class PersistentIndicesConfiguration {
 
   static void saveConfiguration() {
     try (DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(indicesConfigurationFile())))) {
-      DataInputOutputUtil.writeINT(out, getIndexesConfigurationVersion());
+      DataInputOutputUtil.writeINT(out, BASE_INDICES_CONFIGURATION_VERSION);
       IndexingStamp.savePersistentIndexStamp(out);
     }
     catch (IOException ignored) {
@@ -20,20 +20,12 @@ final class PersistentIndicesConfiguration {
 
   static void loadConfiguration() {
     try (DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(indicesConfigurationFile())))) {
-      if (DataInputOutputUtil.readINT(in) == getIndexesConfigurationVersion()) {
+      if (DataInputOutputUtil.readINT(in) == BASE_INDICES_CONFIGURATION_VERSION) {
         IndexingStamp.initPersistentIndexStamp(in);
       }
     }
     catch (IOException ignored) {
     }
-  }
-
-  private static int getIndexesConfigurationVersion() {
-    int version = BASE_INDICES_CONFIGURATION_VERSION;
-    for (FileBasedIndexInfrastructureExtension ex : FileBasedIndexInfrastructureExtension.EP_NAME.getExtensions()) {
-      version = 31 * version + ex.getVersion();
-    }
-    return version;
   }
 
   private static File indicesConfigurationFile() {

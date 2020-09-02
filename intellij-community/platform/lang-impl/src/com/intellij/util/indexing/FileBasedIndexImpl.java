@@ -520,6 +520,9 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       catch (Throwable e) {
         LOG.error("Problems during index shutdown", e);
       }
+      finally {
+        IndexingStamp.clearCachedIndexVersions();
+      }
       LOG.info("END INDEX SHUTDOWN");
     }
   }
