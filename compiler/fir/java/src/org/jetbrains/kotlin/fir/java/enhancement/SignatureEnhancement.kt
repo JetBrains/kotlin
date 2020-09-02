@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
-import org.jetbrains.kotlin.load.java.AnnotationTypeQualifierResolver
+import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType
 import org.jetbrains.kotlin.load.java.descriptors.NullDefaultValue
 import org.jetbrains.kotlin.load.java.descriptors.StringDefaultValue
 import org.jetbrains.kotlin.load.java.typeEnhancement.*
@@ -317,8 +317,8 @@ class FirSignatureEnhancement(
             typeContainer = owner, isCovariant = true,
             containerContext = memberContext,
             containerApplicabilityType =
-            if (owner is FirJavaField) AnnotationTypeQualifierResolver.QualifierApplicabilityType.FIELD
-            else AnnotationTypeQualifierResolver.QualifierApplicabilityType.METHOD_RETURN_TYPE,
+            if (owner is FirJavaField) AnnotationQualifierApplicabilityType.FIELD
+            else AnnotationQualifierApplicabilityType.METHOD_RETURN_TYPE,
             typeInSignature = TypeInSignature.Return
         ).enhance(session, jsr305State, predefinedEnhancementInfo?.returnTypeInfo)
         return signatureParts.type
@@ -364,7 +364,7 @@ class FirSignatureEnhancement(
         parameterContainer?.let {
             methodContext.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, jsr305State, it.annotations)
         } ?: methodContext,
-        AnnotationTypeQualifierResolver.QualifierApplicabilityType.VALUE_PARAMETER,
+        AnnotationQualifierApplicabilityType.VALUE_PARAMETER,
         typeInSignature
     )
 
@@ -374,7 +374,7 @@ class FirSignatureEnhancement(
         typeContainer: FirAnnotationContainer?,
         isCovariant: Boolean,
         containerContext: FirJavaEnhancementContext,
-        containerApplicabilityType: AnnotationTypeQualifierResolver.QualifierApplicabilityType,
+        containerApplicabilityType: AnnotationQualifierApplicabilityType,
         typeInSignature: TypeInSignature
     ): EnhancementSignatureParts {
         val typeRef = typeInSignature.getTypeRef(this)

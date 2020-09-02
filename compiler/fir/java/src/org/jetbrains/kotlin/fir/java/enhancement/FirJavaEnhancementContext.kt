@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.fir.java.enhancement
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.load.java.AnnotationTypeQualifierResolver
-import org.jetbrains.kotlin.load.java.lazy.JavaTypeQualifiersByElementType
-import org.jetbrains.kotlin.load.java.lazy.NullabilityQualifierWithApplicability
-import org.jetbrains.kotlin.load.java.lazy.QualifierByApplicabilityType
+import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.utils.Jsr305State
 
 class FirJavaEnhancementContext private constructor(
@@ -71,7 +68,7 @@ fun FirJavaEnhancementContext.computeNewDefaultTypeQualifiers(
 
     val nullabilityQualifiersByType =
         defaultTypeQualifiers?.nullabilityQualifiers?.let(::QualifierByApplicabilityType)
-            ?: QualifierByApplicabilityType(AnnotationTypeQualifierResolver.QualifierApplicabilityType::class.java)
+            ?: QualifierByApplicabilityType(AnnotationQualifierApplicabilityType::class.java)
 
     var wasUpdate = false
     for ((nullability, applicableTo) in nullabilityQualifiersWithApplicability) {

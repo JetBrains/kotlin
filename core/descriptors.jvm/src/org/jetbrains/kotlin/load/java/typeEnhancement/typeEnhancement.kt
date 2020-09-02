@@ -159,8 +159,6 @@ private fun List<Annotations>.compositeAnnotationsOrSingle() = when (size) {
     else -> CompositeAnnotations(this.toList())
 }
 
-fun TypeComponentPosition.shouldEnhance() = this != TypeComponentPosition.INFLEXIBLE
-
 private data class EnhancementResult<out T>(val result: T, val enhancementAnnotations: Annotations?)
 
 private fun <T> T.noChange() = EnhancementResult(this, null)

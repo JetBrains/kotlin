@@ -43,11 +43,6 @@ import org.jetbrains.kotlin.utils.Jsr305State
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-data class NullabilityQualifierWithMigrationStatus(
-    val qualifier: NullabilityQualifier,
-    val isForWarningOnly: Boolean = false
-)
-
 class SignatureEnhancement(
     private val annotationTypeQualifierResolver: AnnotationTypeQualifierResolver,
     private val jsr305State: Jsr305State,
@@ -180,9 +175,9 @@ class SignatureEnhancement(
                 containerContext = memberContext,
                 containerApplicabilityType =
                 if (this.safeAs<PropertyDescriptor>()?.isJavaField == true)
-                    AnnotationTypeQualifierResolver.QualifierApplicabilityType.FIELD
+                    AnnotationQualifierApplicabilityType.FIELD
                 else
-                    AnnotationTypeQualifierResolver.QualifierApplicabilityType.METHOD_RETURN_TYPE
+                    AnnotationQualifierApplicabilityType.METHOD_RETURN_TYPE
             ) { it.returnType!! }.enhance(predefinedEnhancementInfo?.returnTypeInfo)
 
         val containsFunctionN = receiverTypeEnhancement?.containsFunctionN == true || returnTypeEnhancement.containsFunctionN ||
@@ -225,7 +220,7 @@ class SignatureEnhancement(
         private val fromOverridden: Collection<KotlinType>,
         private val isCovariant: Boolean,
         private val containerContext: LazyJavaResolverContext,
-        private val containerApplicabilityType: AnnotationTypeQualifierResolver.QualifierApplicabilityType
+        private val containerApplicabilityType: AnnotationQualifierApplicabilityType
     ) {
 
         private val isForVarargParameter get() = typeContainer.safeAs<ValueParameterDescriptor>()?.varargElementType != null
@@ -300,7 +295,7 @@ class SignatureEnhancement(
                 composedAnnotation.extractNullability()
                     ?: defaultTypeQualifier?.nullability?.let {
                         NullabilityQualifierWithMigrationStatus(
-                            defaultTypeQualifier.nullability,
+                            defaultTypeQualifier.nullability!!,
                             defaultTypeQualifier.isNullabilityQualifierForWarning
                         )
                     }
@@ -361,7 +356,7 @@ class SignatureEnhancement(
                     TypeAndDefaultQualifiers(
                         type,
                         c.defaultTypeQualifiers
-                            ?.get(AnnotationTypeQualifierResolver.QualifierApplicabilityType.TYPE_USE)
+                            ?.get(AnnotationQualifierApplicabilityType.TYPE_USE)
                     )
                 )
 
@@ -448,7 +443,7 @@ class SignatureEnhancement(
     ) = parts(
         parameterDescriptor, false,
         parameterDescriptor?.let { methodContext.copyWithNewDefaultTypeQualifiers(it.annotations) } ?: methodContext,
-        AnnotationTypeQualifierResolver.QualifierApplicabilityType.VALUE_PARAMETER,
+        AnnotationQualifierApplicabilityType.VALUE_PARAMETER,
         collector
     )
 
@@ -456,7 +451,7 @@ class SignatureEnhancement(
         typeContainer: Annotated?,
         isCovariant: Boolean,
         containerContext: LazyJavaResolverContext,
-        containerApplicabilityType: AnnotationTypeQualifierResolver.QualifierApplicabilityType,
+        containerApplicabilityType: AnnotationQualifierApplicabilityType,
         collector: (CallableMemberDescriptor) -> KotlinType
     ): SignatureParts {
         return SignatureParts(
@@ -472,38 +467,6 @@ class SignatureEnhancement(
         )
     }
 }
-
-fun createJavaTypeQualifiers(
-    nullability: NullabilityQualifier?,
-    mutability: MutabilityQualifier?,
-    forWarning: Boolean,
-    isAnyNonNullTypeParameter: Boolean
-): JavaTypeQualifiers {
-    if (!isAnyNonNullTypeParameter || nullability != NullabilityQualifier.NOT_NULL) {
-        return JavaTypeQualifiers(nullability, mutability, false, forWarning)
-    }
-    return JavaTypeQualifiers(nullability, mutability, true, forWarning)
-}
-
-fun <T : Any> Set<T>.select(low: T, high: T, own: T?, isCovariant: Boolean): T? {
-    if (isCovariant) {
-        val supertypeQualifier = if (low in this) low else if (high in this) high else null
-        return if (supertypeQualifier == low && own == high) null else own ?: supertypeQualifier
-    }
-
-    // isInvariant
-    val effectiveSet = own?.let { (this + own).toSet() } ?: this
-    // if this set contains exactly one element, it is the qualifier everybody agrees upon,
-    // otherwise (no qualifiers, or multiple qualifiers), there's no single such qualifier
-    // and all qualifiers are discarded
-    return effectiveSet.singleOrNull()
-}
-
-fun Set<NullabilityQualifier>.select(own: NullabilityQualifier?, isCovariant: Boolean) =
-    if (own == NullabilityQualifier.FORCE_FLEXIBILITY)
-        NullabilityQualifier.FORCE_FLEXIBILITY
-    else
-        select(NullabilityQualifier.NOT_NULL, NullabilityQualifier.NULLABLE, own, isCovariant)
 
 private data class TypeAndDefaultQualifiers(
     val type: KotlinType,

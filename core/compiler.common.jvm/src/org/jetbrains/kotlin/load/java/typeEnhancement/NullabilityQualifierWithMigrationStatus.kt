@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.load.java.typeEnhancement
 
-enum class TypeComponentPosition {
-    FLEXIBLE_LOWER,
-    FLEXIBLE_UPPER,
-    INFLEXIBLE
-}
-
-fun TypeComponentPosition.shouldEnhance(): Boolean = this != TypeComponentPosition.INFLEXIBLE
+data class NullabilityQualifierWithMigrationStatus(
+    val qualifier: NullabilityQualifier,
+    val isForWarningOnly: Boolean = false
+)

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.java.toFirJavaTypeRef
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
-import org.jetbrains.kotlin.load.java.AnnotationTypeQualifierResolver
+import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType
 import org.jetbrains.kotlin.load.java.MUTABLE_ANNOTATIONS
 import org.jetbrains.kotlin.load.java.READ_ONLY_ANNOTATIONS
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
@@ -37,7 +37,7 @@ internal class EnhancementSignatureParts(
     private val fromOverridden: Collection<FirTypeRef>,
     private val isCovariant: Boolean,
     private val context: FirJavaEnhancementContext,
-    private val containerApplicabilityType: AnnotationTypeQualifierResolver.QualifierApplicabilityType
+    private val containerApplicabilityType: AnnotationQualifierApplicabilityType
 ) {
     private val isForVarargParameter get() = typeContainer.safeAs<FirValueParameter>()?.isVararg == true
 
@@ -103,7 +103,7 @@ internal class EnhancementSignatureParts(
                 TypeAndDefaultQualifiers(
                     type,
                     c.defaultTypeQualifiers
-                        ?.get(AnnotationTypeQualifierResolver.QualifierApplicabilityType.TYPE_USE)
+                        ?.get(AnnotationQualifierApplicabilityType.TYPE_USE)
                 )
             )
 

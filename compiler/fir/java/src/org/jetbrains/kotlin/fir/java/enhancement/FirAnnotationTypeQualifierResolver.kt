@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME
-import org.jetbrains.kotlin.load.java.lazy.NullabilityQualifierWithApplicability
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.Jsr305State
 import org.jetbrains.kotlin.utils.ReportLevel
@@ -26,14 +25,14 @@ class FirAnnotationTypeQualifierResolver(private val session: FirSession, privat
         private val applicability: Int
     ) {
         operator fun component1() = typeQualifier
-        operator fun component2() = AnnotationTypeQualifierResolver.QualifierApplicabilityType.values().filter(this::isApplicableTo)
+        operator fun component2() = AnnotationQualifierApplicabilityType.values().filter(this::isApplicableTo)
 
-        private fun isApplicableTo(elementType: AnnotationTypeQualifierResolver.QualifierApplicabilityType) =
-            isApplicableConsideringMask(AnnotationTypeQualifierResolver.QualifierApplicabilityType.TYPE_USE) || isApplicableConsideringMask(
+        private fun isApplicableTo(elementType: AnnotationQualifierApplicabilityType) =
+            isApplicableConsideringMask(AnnotationQualifierApplicabilityType.TYPE_USE) || isApplicableConsideringMask(
                 elementType
             )
 
-        private fun isApplicableConsideringMask(elementType: AnnotationTypeQualifierResolver.QualifierApplicabilityType) =
+        private fun isApplicableConsideringMask(elementType: AnnotationQualifierApplicabilityType) =
             (applicability and (1 shl elementType.ordinal)) != 0
     }
 
@@ -132,15 +131,15 @@ class FirAnnotationTypeQualifierResolver(private val session: FirSession, privat
         }
     }
 
-    private fun FirExpression.mapConstantToQualifierApplicabilityTypes(): List<AnnotationTypeQualifierResolver.QualifierApplicabilityType> =
+    private fun FirExpression.mapConstantToQualifierApplicabilityTypes(): List<AnnotationQualifierApplicabilityType> =
         when (this) {
             is FirArrayOfCall -> arguments.flatMap { it.mapConstantToQualifierApplicabilityTypes() }
             else -> listOfNotNull(
                 when (toResolvedCallableSymbol()?.callableId?.callableName?.asString()) {
-                    "METHOD" -> AnnotationTypeQualifierResolver.QualifierApplicabilityType.METHOD_RETURN_TYPE
-                    "FIELD" -> AnnotationTypeQualifierResolver.QualifierApplicabilityType.FIELD
-                    "PARAMETER" -> AnnotationTypeQualifierResolver.QualifierApplicabilityType.VALUE_PARAMETER
-                    "TYPE_USE" -> AnnotationTypeQualifierResolver.QualifierApplicabilityType.TYPE_USE
+                    "METHOD" -> AnnotationQualifierApplicabilityType.METHOD_RETURN_TYPE
+                    "FIELD" -> AnnotationQualifierApplicabilityType.FIELD
+                    "PARAMETER" -> AnnotationQualifierApplicabilityType.VALUE_PARAMETER
+                    "TYPE_USE" -> AnnotationQualifierApplicabilityType.TYPE_USE
                     else -> null
                 }
             )

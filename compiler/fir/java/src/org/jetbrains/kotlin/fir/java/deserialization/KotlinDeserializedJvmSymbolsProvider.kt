@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.java.deserialization
 
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.SpecialJvmAnnotations
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
@@ -295,7 +296,7 @@ class KotlinDeserializedJvmSymbolsProvider(
     internal fun loadAnnotationIfNotSpecial(
         annotationClassId: ClassId, result: MutableList<FirAnnotationCall>,
     ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
-        if (annotationClassId in AbstractBinaryClassAnnotationAndConstantLoader.SPECIAL_ANNOTATIONS) return null
+        if (annotationClassId in SpecialJvmAnnotations.SPECIAL_ANNOTATIONS) return null
         return loadAnnotation(annotationClassId, result)
     }
 
