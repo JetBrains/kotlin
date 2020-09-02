@@ -49,3 +49,9 @@ fun ConeKotlinType.toTypeProjection(variance: Variance): ConeTypeProjection =
         Variance.IN_VARIANCE -> ConeKotlinTypeProjectionIn(this)
         Variance.OUT_VARIANCE -> ConeKotlinTypeProjectionOut(this)
     }
+
+fun ConeClassLikeType.replaceArgumentsWithStarProjections(): ConeClassLikeType {
+    if (typeArguments.isEmpty()) return this
+    val newArguments = Array(typeArguments.size) { ConeStarProjection }
+    return withArguments(newArguments)
+}

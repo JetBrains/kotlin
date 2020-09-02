@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.fir.serialization
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
+import org.jetbrains.kotlin.fir.serialization.constant.*
+import org.jetbrains.kotlin.fir.types.arrayElementType
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
-import org.jetbrains.kotlin.resolve.constants.*
 
-object FirAnnotationArgumentVisitor : AnnotationArgumentVisitor<Unit, FirAnnotationArgumentVisitorData> {
+object FirAnnotationArgumentVisitor : AnnotationArgumentVisitor<Unit, FirAnnotationArgumentVisitorData>() {
     override fun visitAnnotationValue(value: AnnotationValue, data: FirAnnotationArgumentVisitorData) {
         data.builder.type = ProtoBuf.Annotation.Argument.Value.Type.ANNOTATION
         // TODO: annotation = serializeAnnotation(value.value)
@@ -78,9 +77,9 @@ object FirAnnotationArgumentVisitor : AnnotationArgumentVisitor<Unit, FirAnnotat
             is KClassValue.Value.LocalClass -> {
                 var arrayDimensions = 0
                 var type = classValue.type
-                while (KotlinBuiltIns.isArray(type)) {
+                while (true) {
+                    type = type.arrayElementType() ?: break
                     arrayDimensions++
-                    type = type.arguments.single().type
                 }
 
                 //val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor
@@ -136,5 +135,4 @@ object FirAnnotationArgumentVisitor : AnnotationArgumentVisitor<Unit, FirAnnotat
         data.builder.intValue = value.value
         data.builder.flags = Flags.IS_UNSIGNED.toFlags(true)
     }
-
 }
