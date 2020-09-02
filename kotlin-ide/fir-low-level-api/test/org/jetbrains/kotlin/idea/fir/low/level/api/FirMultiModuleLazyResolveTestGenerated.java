@@ -28,6 +28,11 @@ public class FirMultiModuleLazyResolveTestGenerated extends AbstractFirMultiModu
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/multiModuleLazyResolve"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
+    @TestMetadata("javaExtendsKotlinExtendsJava")
+    public void testJavaExtendsKotlinExtendsJava() throws Exception {
+        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/multiModuleLazyResolve/javaExtendsKotlinExtendsJava/");
+    }
+
     @TestMetadata("whenWithHeiarchy")
     public void testWhenWithHeiarchy() throws Exception {
         runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/multiModuleLazyResolve/whenWithHeiarchy/");
