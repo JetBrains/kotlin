@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -88,6 +89,10 @@ class IDELightClassGenerationSupport(project: Project) : LightClassGenerationSup
     }
 
     override fun getUltraLightClassSupport(element: KtElement): KtUltraLightSupport = KtUltraLightSupportImpl(element)
+
+    override val useUltraLightClasses: Boolean
+        get() =
+            !KtUltraLightSupport.forceUsingOldLightClasses && Registry.`is`("kotlin.use.ultra.light.classes", true)
 
     private val scopeFileComparator = JavaElementFinder.byClasspathComparator(GlobalSearchScope.allScope(project))
 
