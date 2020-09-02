@@ -324,6 +324,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     var useFirExtendedCheckers: Boolean by FreezableVar(false)
 
     @Argument(
+        value = "-Xdisable-ultra-light-classes",
+        description = "Do not use the ultra light classes implementation"
+    )
+    var disableUltraLightClasses: Boolean by FreezableVar(false)
+
+    @Argument(
         value = "-Xuse-mixed-named-arguments",
         description = "Enable Support named arguments in their own position even if the result appears as mixed"
     )

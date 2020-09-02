@@ -356,9 +356,13 @@ abstract class KtLightClassForSourceDeclaration(
                 return null
             }
 
-            if (!forceUsingOldLightClasses && Registry.`is`("kotlin.use.ultra.light.classes", true)) {
-                return LightClassGenerationSupport.getInstance(classOrObject.project).createUltraLightClass(classOrObject)
-                    ?: error { "Unable to create UL class for ${classOrObject::javaClass.name}" }
+            if (!forceUsingOldLightClasses) {
+                LightClassGenerationSupport.getInstance(classOrObject.project).run {
+                    if (useUltraLightClasses) {
+                        return createUltraLightClass(classOrObject)
+                            ?: error { "Unable to create UL class for ${classOrObject::javaClass.name}" }
+                    }
+                }
             }
 
             return when {

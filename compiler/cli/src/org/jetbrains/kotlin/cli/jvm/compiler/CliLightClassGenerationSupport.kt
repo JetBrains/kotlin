@@ -103,6 +103,9 @@ class CliLightClassGenerationSupport(
         return ultraLightSupport
     }
 
+    override val useUltraLightClasses: Boolean
+        get() = !KtUltraLightSupport.forceUsingOldLightClasses && !traceHolder.languageVersionSettings.getFlag(JvmAnalysisFlags.disableUltraLightClasses)
+
     override fun createDataHolderForClass(classOrObject: KtClassOrObject, builder: LightClassBuilder): LightClassDataHolder.ForClass {
         //force resolve companion for light class generation
         traceHolder.bindingContext.get(BindingContext.CLASS, classOrObject)?.companionObjectDescriptor
