@@ -8,9 +8,6 @@ package org.jetbrains.kotlin.idea.completion
 import com.intellij.codeInsight.completion.*
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PsiJavaPatterns
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiWhiteSpace
-import com.intellij.psi.util.elementType
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.getAnalysisSessionFor
@@ -24,7 +21,6 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtLabelReferenceExpression
-import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 
@@ -67,6 +63,11 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
 private object KotlinAvailableScopesCompletionProvider {
     private val lookupElementFactory = KotlinFirLookupElementFactory()
 
+    private fun CompletionResultSet.addSymbol(symbol: KtSymbol) {
+        if (symbol !is KtNamedSymbol) return
+        addElement(lookupElementFactory.createLookupElement(symbol))
+    }
+
     @OptIn(InvalidWayOfUsingAnalysisSession::class)
     fun addCompletions(parameters: CompletionParameters, result: CompletionResultSet) {
         val originalFile = parameters.originalFile as? KtFile ?: return
@@ -79,34 +80,31 @@ private object KotlinAvailableScopesCompletionProvider {
         with(getAnalysisSessionFor(originalFile).createContextDependentCopy()) {
             val (implicitScopes, implicitReceivers) = originalFile.getScopeContextForPosition(nameExpression)
 
-            val typeOfPossibleReceiver = possibleReceiver?.getKtType()
-            val possibleReceiverScope = typeOfPossibleReceiver?.getTypeScope()
+            if (possibleReceiver != null) {
+                val typeOfPossibleReceiver = possibleReceiver.getKtType()
+                val possibleReceiverScope = typeOfPossibleReceiver.getTypeScope()
 
-            fun addToCompletion(symbol: KtSymbol) {
-                if (symbol !is KtNamedSymbol) return
-                result.addElement(lookupElementFactory.createLookupElement(symbol))
-            }
+                if (possibleReceiverScope != null) {
+                    val nonExtensionMembers = possibleReceiverScope
+                        .getCallableSymbols()
+                        .filterNot { it.isExtension }
 
-            if (possibleReceiverScope != null) {
-                val nonExtensionMembers = possibleReceiverScope
-                    .getCallableSymbols()
-                    .filterNot { it.isExtension }
+                    val extensionNonMembers = implicitScopes
+                        .getCallableSymbols()
+                        .filter { it.isExtension && it.canBeCalledWith(listOf(typeOfPossibleReceiver)) }
 
-                val extensionNonMembers = implicitScopes
-                    .getCallableSymbols()
-                    .filter { it.isExtension && it.canBeCalledWith(listOf(typeOfPossibleReceiver)) }
-
-                nonExtensionMembers.forEach(::addToCompletion)
-                extensionNonMembers.forEach(::addToCompletion)
-            } else if (possibleReceiver == null) {
+                    nonExtensionMembers.forEach { result.addSymbol(it) }
+                    extensionNonMembers.forEach { result.addSymbol(it) }
+                }
+            } else {
                 val extensionNonMembers = implicitScopes
                     .getCallableSymbols()
                     .filter { !it.isExtension || it.canBeCalledWith(implicitReceivers) }
 
-                extensionNonMembers.forEach(::addToCompletion)
+                extensionNonMembers.forEach { result.addSymbol(it) }
 
                 val availableClasses = implicitScopes.getClassifierSymbols()
-                availableClasses.forEach(::addToCompletion)
+                availableClasses.forEach { result.addSymbol(it) }
             }
         }
     }
