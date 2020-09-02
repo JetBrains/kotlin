@@ -1,7 +1,9 @@
 package org.jetbrains.dokka.base.parsers
 
 import com.intellij.psi.PsiElement
+import org.intellij.markdown.MarkdownElementType
 import org.intellij.markdown.MarkdownElementTypes
+import org.intellij.markdown.MarkdownElementTypes.LINK_DESTINATION
 import org.intellij.markdown.MarkdownTokenTypes
 import org.intellij.markdown.ast.ASTNode
 import org.intellij.markdown.ast.CompositeASTNode
@@ -213,17 +215,24 @@ class MarkdownParser(
             false
         }
 
-        private fun imagesHandler(node: ASTNode): DocTag {
-            val linkNode =
-                node.children.last().children.find { it.type == MarkdownElementTypes.LINK_LABEL }!!.children[1]
-            val link = text.substring(linkNode.startOffset, linkNode.endOffset)
-            val src = mapOf("src" to link)
-            return DocTagsFromIElementFactory.getInstance(
-                node.type,
-                params = src,
-                children = listOf(visitNode(node.children.last().children.find { it.type == MarkdownElementTypes.LINK_TEXT }!!))
-            )
-        }
+        private fun imagesHandler(node: ASTNode): DocTag =
+            with(node.children.last().children) {
+                val destination = find { it.type == MarkdownElementTypes.LINK_DESTINATION }
+                val description = find { it.type == MarkdownElementTypes.LINK_TEXT }
+
+                val src = destination?.let {
+                    mapOf("href" to text.substring(it.startOffset, it.endOffset))
+                } ?: emptyMap()
+
+                val alt = description?.let {
+                    mapOf("alt" to text.substring(it.startOffset + 1, it.endOffset - 1))
+                } ?: emptyMap()
+
+                return DocTagsFromIElementFactory.getInstance(
+                    node.type,
+                    params = src + alt
+                )
+            }
 
         private fun codeSpansHandler(node: ASTNode): DocTag =
             DocTagsFromIElementFactory.getInstance(
@@ -380,7 +389,9 @@ class MarkdownParser(
         private fun mergedLeafNode(nodes: List<ASTNode>, index: Int, startOffset: Int, sIndex: Int): LeafASTNode? {
             val endOffset = nodes[index].endOffset
             if (text.substring(startOffset, endOffset).transform().trim().isNotEmpty()) {
-                val type = if (nodes.subList(sIndex, index).any { it.type == MarkdownTokenTypes.CODE_LINE }) MarkdownTokenTypes.CODE_LINE else MarkdownTokenTypes.TEXT
+                val type = if (nodes.subList(sIndex, index)
+                        .any { it.type == MarkdownTokenTypes.CODE_LINE }
+                ) MarkdownTokenTypes.CODE_LINE else MarkdownTokenTypes.TEXT
                 return LeafASTNode(type, startOffset, endOffset)
             }
             return null

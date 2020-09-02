@@ -1167,5 +1167,28 @@ class ParserTest : KDocTest() {
         )
         executeTest(kdoc, expectedDocumentationNode)
     }
+
+    @Test
+    fun image(){
+        val kdoc = "![Sample image](https://www.google.pl/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png)"
+        val expectedDocumentationNode = DocumentationNode(
+            listOf(
+                Description(
+                    P(
+                        listOf(
+                            Img(
+                                emptyList(),
+                                mapOf(
+                                    "href" to "https://www.google.pl/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
+                                    "alt" to "Sample image"
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+        executeTest(kdoc, expectedDocumentationNode)
+    }
 }
 
