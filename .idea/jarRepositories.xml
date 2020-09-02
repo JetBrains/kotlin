@@ -7,11 +7,6 @@
       <option name="url" value="https://cache-redirector.jetbrains.com/maven-central" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="exasol-mirror" />
-      <option name="name" value="Exasol repository mirror" />
-      <option name="url" value="https://cache-redirector.jetbrains.com/maven.exasol.com/artifactory/exasol-releases" />
-    </remote-repository>
-    <remote-repository>
       <option name="id" value="intellij-third-party-dependencie-mirror" />
       <option name="name" value="IntelliJ Dependencies on Bintray mirror" />
       <option name="url" value="https://cache-redirector.jetbrains.com/jetbrains.bintray.com/intellij-third-party-dependencies" />
