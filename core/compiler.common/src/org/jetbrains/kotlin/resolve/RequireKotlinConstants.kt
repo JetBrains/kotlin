@@ -9,13 +9,13 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 object RequireKotlinConstants {
-    val FQ_NAME = FqName("kotlin.internal.RequireKotlin")
+    val FQ_NAME: FqName = FqName("kotlin.internal.RequireKotlin")
 
-    val VERSION = Name.identifier("version")
-    val MESSAGE = Name.identifier("message")
-    val LEVEL = Name.identifier("level")
-    val VERSION_KIND = Name.identifier("versionKind")
-    val ERROR_CODE = Name.identifier("errorCode")
+    val VERSION: Name = Name.identifier("version")
+    val MESSAGE: Name = Name.identifier("message")
+    val LEVEL: Name = Name.identifier("level")
+    val VERSION_KIND: Name = Name.identifier("versionKind")
+    val ERROR_CODE: Name = Name.identifier("errorCode")
 
     val VERSION_REGEX: Regex = "(0|[1-9][0-9]*)".let { number -> Regex("$number\\.$number(\\.$number)?") }
 }
