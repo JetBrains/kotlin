@@ -10,6 +10,8 @@ import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.extra
+import org.jetbrains.kotlin.pill.artifact.ArtifactDependencyMapper
+import org.jetbrains.kotlin.pill.artifact.ArtifactGenerator
 import shadow.org.jdom2.input.SAXBuilder
 import shadow.org.jdom2.*
 import shadow.org.jdom2.output.Format
@@ -122,7 +124,7 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
                 }
             }
 
-            generateKotlinPluginArtifactFile(rootProject, artifactDependencyMapper).write()
+            ArtifactGenerator(artifactDependencyMapper).generateKotlinPluginArtifact(rootProject).write()
         }
 
         copyRunConfigurations()
