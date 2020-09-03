@@ -12,22 +12,22 @@ import org.gradle.api.Project
 open class PillExtension {
     enum class Variant {
         // Default variant (./gradlew pill)
-        BASE() {
+        BASE {
             override val includes = setOf(BASE)
         },
 
         // Full variant (./gradlew pill -Dpill.variant=full)
-        FULL() {
+        FULL {
             override val includes = setOf(BASE, FULL)
         },
 
         // Do not import the project to JPS model, but set some options for it
-        NONE() {
+        NONE {
             override val includes = emptySet<Variant>()
         },
 
         // 'BASE' if the "jps-compatible" plugin is applied, 'NONE' otherwise
-        DEFAULT() {
+        DEFAULT {
             override val includes = emptySet<Variant>()
         };
 
