@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.changeSignature
 
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 
 class KotlinMutableMethodDescriptor(override val original: KotlinMethodDescriptor) : KotlinMethodDescriptor by original {
     private val parameters: MutableList<KotlinParameterInfo> = original.parameters
@@ -43,5 +43,5 @@ class KotlinMutableMethodDescriptor(override val original: KotlinMethodDescripto
         receiver?.let { parameters.add(it) }
     }
 
-    override fun getVisibility(): Visibility = original.visibility
+    override fun getVisibility(): DescriptorVisibility = original.visibility
 }
