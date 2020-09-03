@@ -86,7 +86,8 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
 
         rootProject.logger.lifecycle("Pill: Setting up project for the '${variant.name.toLowerCase()}' variant...")
 
-        val parserContext = ParserContext(variant)
+        val modulePrefix = System.getProperty("pill.module.prefix", "")
+        val parserContext = ParserContext(variant, modulePrefix)
 
         val dependencyPatcher = DependencyPatcher(rootProject)
         val dependencyMappers = listOf(dependencyPatcher, ::attachPlatformSources, ::attachAsmSources)

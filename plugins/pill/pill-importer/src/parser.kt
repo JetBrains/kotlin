@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.pill.PSourceRoot.*
 import org.jetbrains.kotlin.pill.PillExtensionMirror.*
 import java.io.File
 
-class ParserContext(val variant: Variant)
+class ParserContext(val variant: Variant, val modulePrefix: String)
 
 typealias OutputDir = String
 typealias GradleProjectPath = String
@@ -107,7 +107,7 @@ data class PLibrary(
     }
 }
 
-fun parse(project: Project, context: ParserContext): PProject {
+fun parse(project: Project, context: ParserContext): PProject = with(context) {
     if (project != project.rootProject) {
         error("$project is not a root project")
     }
@@ -186,11 +186,11 @@ private fun makePath(project: Project, sourceSetName: String): GradleProjectPath
     return project.path + "/" + sourceSetName
 }
 
-private fun parseModules(project: Project, excludedProjects: List<Project>): List<PModule> {
+private fun ParserContext.parseModules(project: Project, excludedProjects: List<Project>): List<PModule> {
     val modules = mutableListOf<PModule>()
 
     fun getModuleFile(name: String): File {
-        val relativePath = File(project.projectDir, "$name.iml").toRelativeString(project.rootProject.projectDir)
+        val relativePath = File(project.projectDir, "$modulePrefix$name.iml").toRelativeString(project.rootProject.projectDir)
         return File(project.rootProject.projectDir, ".idea/modules/$relativePath")
     }
 
@@ -226,7 +226,7 @@ private fun parseModules(project: Project, excludedProjects: List<Project>): Lis
         val name = project.pillModuleName + "." + sourceSet.name
 
         modules += PModule(
-            name = name,
+            name = modulePrefix + name,
             path = makePath(project, sourceSet.name),
             forTests = sourceSet.forTests,
             rootDirectory = sourceRoots.first().directory,
@@ -240,12 +240,12 @@ private fun parseModules(project: Project, excludedProjects: List<Project>): Lis
     }
 
     val mainModuleFileRelativePath = when (project) {
-        project.rootProject -> File(project.rootProject.projectDir, project.rootProject.name + ".iml")
+        project.rootProject -> File(project.rootProject.projectDir, modulePrefix + project.rootProject.name + ".iml")
         else -> getModuleFile(project.pillModuleName)
     }
 
     modules += PModule(
-        name = project.pillModuleName,
+        name = modulePrefix + project.pillModuleName,
         path = project.path,
         forTests = false,
         rootDirectory = project.projectDir,
