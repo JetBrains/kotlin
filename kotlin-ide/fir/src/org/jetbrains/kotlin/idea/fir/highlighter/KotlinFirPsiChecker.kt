@@ -30,7 +30,7 @@ class KotlinFirPsiChecker : AbstractKotlinPsiChecker() {
             throw ProcessCanceledException()
         }
         analyze(element) {
-            highlightDiagnostics(element, this, holder)
+            this.highlightDiagnostics(element, holder)
 
             FirAfterResolveHighlightingVisitor
                 .createListOfVisitors(this, holder)
@@ -38,7 +38,7 @@ class KotlinFirPsiChecker : AbstractKotlinPsiChecker() {
         }
     }
 
-    private fun highlightDiagnostics(element: KtElement, analysisSession: KtAnalysisSession, holder: AnnotationHolder) = with(analysisSession) {
+    private fun KtAnalysisSession.highlightDiagnostics(element: KtElement, holder: AnnotationHolder) {
         val diagnostics = element.getDiagnostics()
         if (diagnostics.isEmpty()) return
 
