@@ -11,17 +11,17 @@ fun testReturnsRawGenericIn(j: JRaw) = j.returnsRawGenericIn()
 
 fun testReturnsRawGenericOut(j: JRaw) = j.returnsRawGenericOut()
 
+fun testBothRawAndGeneric(j: JRaw, list: List<Any?>) = j.returnsRawList()
+
 class KRaw(j: JRaw) : JRaw by j
-// JVM:     public <(Ljava/util/List<Ljava/lang/Object;>;)V> method takesRawList(p0: java.util.List): void
-// JVM_IR:  public <(Ljava/util/List<+Ljava/lang/Object;>;)V> method takesRawList(p0: java.util.List): void
 
 // FILE: JRaw.java
-
 import java.util.*;
 
 public interface JRaw {
     void takesRawList(List list);
     List returnsRawList();
+    List bothRawAndGeneric(List<Object> list1, List list2);
     void takesRawGenericInv(GenericInv g);
     GenericInv returnsRawGenericInv();
     void takesRawGenericIn(GenericIn g);
