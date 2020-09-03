@@ -3568,6 +3568,29 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/boxInline/suspend/inlineClass")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class InlineClass extends AbstractIrJsCodegenInlineTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInInlineClass() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/inlineClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            }
+
+            @TestMetadata("returnUnboxedDirect.kt")
+            public void testReturnUnboxedDirect() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/suspend/inlineClass/returnUnboxedDirect.kt");
+            }
+
+            @TestMetadata("returnUnboxedResume.kt")
+            public void testReturnUnboxedResume() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/suspend/inlineClass/returnUnboxedResume.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/boxInline/suspend/inlineUsedAsNoinline")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
