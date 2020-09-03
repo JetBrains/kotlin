@@ -297,6 +297,8 @@ fun IrFunction.externalSymbolOrThrow(): String? {
 
     if (annotations.hasAnnotation(RuntimeNames.cCall)) return null
 
+    if (origin == InternalAbi.INTERNAL_ABI_ORIGIN) return null
+
     throw Error("external function ${this.longName} must have @TypedIntrinsic, @SymbolName or @ObjCMethod annotation")
 }
 

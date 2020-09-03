@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
-internal class EnumSyntheticFunctionsBuilder(val context: Context) {
+private class EnumSyntheticFunctionsBuilder(val context: Context) {
     fun buildValuesExpression(startOffset: Int, endOffset: Int,
                               enumClass: IrClass): IrExpression {
 
@@ -39,16 +39,7 @@ internal class EnumSyntheticFunctionsBuilder(val context: Context) {
 
         return irCall(startOffset, endOffset, genericValuesSymbol.owner, listOf(enumClass.defaultType))
                 .apply {
-                    val receiver = IrGetObjectValueImpl(startOffset, endOffset,
-                            loweredEnum.implObject.defaultType,
-                            loweredEnum.implObject.symbol)
-                    putValueArgument(0, IrGetFieldImpl(
-                            startOffset,
-                            endOffset,
-                            loweredEnum.valuesField.symbol,
-                            loweredEnum.valuesField.type,
-                            receiver
-                    ))
+                    putValueArgument(0, loweredEnum.getValuesField(startOffset, endOffset))
                 }
     }
 
@@ -60,15 +51,7 @@ internal class EnumSyntheticFunctionsBuilder(val context: Context) {
         return irCall(startOffset, endOffset, genericValueOfSymbol.owner, listOf(enumClass.defaultType))
                 .apply {
                     putValueArgument(0, value)
-                    val receiver = IrGetObjectValueImpl(startOffset, endOffset,
-                            loweredEnum.implObject.defaultType, loweredEnum.implObject.symbol)
-                    putValueArgument(1, IrGetFieldImpl(
-                            startOffset,
-                            endOffset,
-                            loweredEnum.valuesField.symbol,
-                            loweredEnum.valuesField.type,
-                            receiver
-                    ))
+                    putValueArgument(1, loweredEnum.getValuesField(startOffset, endOffset))
                 }
     }
 
@@ -126,7 +109,7 @@ internal class EnumUsageLowering(val context: Context)
 
     private fun loadEnumEntry(startOffset: Int, endOffset: Int, enumClass: IrClass, name: Name): IrExpression {
         val loweredEnum = context.specialDeclarationsFactory.getLoweredEnum(enumClass)
-        val ordinal = loweredEnum.entriesMap[name]!!
+        val ordinal = loweredEnum.entriesMap.getValue(name)
         return IrCallImpl(
                 startOffset, endOffset, enumClass.defaultType,
                 loweredEnum.itemGetterSymbol.owner.symbol,
@@ -154,7 +137,7 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
     }
 
     private inner class EnumClassTransformer(val irClass: IrClass) {
-        private val loweredEnum = context.specialDeclarationsFactory.getLoweredEnum(irClass)
+        private val loweredEnum = context.specialDeclarationsFactory.getInternalLoweredEnum(irClass)
         private val enumSyntheticFunctionsBuilder = EnumSyntheticFunctionsBuilder(context)
 
         fun run() {

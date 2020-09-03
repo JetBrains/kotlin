@@ -173,7 +173,8 @@ internal interface ContextUtils : RuntimeAware {
      * It may be declared as external function prototype.
      */
     val IrFunction.llvmFunction: LLVMValueRef
-        get() = llvmFunctionOrNull ?: error("$name in $file/${parent.fqNameForIrSerialization}")
+        get() = llvmFunctionOrNull
+                ?: error("$name in $file/${parent.fqNameForIrSerialization}")
 
     val IrFunction.llvmFunctionOrNull: LLVMValueRef?
         get() {
