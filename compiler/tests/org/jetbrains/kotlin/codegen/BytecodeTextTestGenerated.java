@@ -1582,6 +1582,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
                 runTest("compiler/testData/codegen/bytecodeText/coroutines/inlineClasses/noInlineClassBoxingInSuspendFunReturn_InlineAny.kt");
             }
 
+            @TestMetadata("noInlineClassBoxingInSuspendFunReturn_SameJvmType.kt")
+            public void testNoInlineClassBoxingInSuspendFunReturn_SameJvmType() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/inlineClasses/noInlineClassBoxingInSuspendFunReturn_SameJvmType.kt");
+            }
+
             @TestMetadata("noInlineClassBoxingInSuspendFunReturn_String.kt")
             public void testNoInlineClassBoxingInSuspendFunReturn_String() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeText/coroutines/inlineClasses/noInlineClassBoxingInSuspendFunReturn_String.kt");

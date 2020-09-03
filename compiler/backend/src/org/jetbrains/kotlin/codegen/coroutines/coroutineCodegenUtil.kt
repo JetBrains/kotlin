@@ -472,7 +472,7 @@ fun FunctionDescriptor.originalReturnTypeOfSuspendFunctionReturningUnboxedInline
     if (AsmUtil.isPrimitive(typeMapper.mapType(originalReturnType.makeNotNullable()))) return null
     // Force boxing for nullable inline class types with nullable underlying type
     if (originalReturnType.isMarkedNullable && originalReturnType.isNullableUnderlyingType()) return null
-    // Force boxing if the function overrides function with return type Any
+    // Force boxing if the function overrides function with different type modulo nullability
     if (originalDescriptor.overriddenDescriptors.any {
             (it.original.returnType?.isMarkedNullable == true && it.original.returnType?.isNullableUnderlyingType() == true) ||
                     it.original.returnType?.makeNotNullable() != originalReturnType.makeNotNullable()
