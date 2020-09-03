@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.pill
 
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePluginConvention
+import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.extra
 import shadow.org.jdom2.input.SAXBuilder
 import shadow.org.jdom2.*
@@ -296,7 +298,15 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
                 val archiveName = project.convention.findPlugin(BasePluginConvention::class.java)!!.archivesBaseName
                 val classesJars = listOf(File(distLibDir, "$archiveName.jar")).filterExisting()
                 val sourcesJars = listOf(File(distLibDir, "$archiveName-sources.jar")).filterExisting()
-                result["$path/main"] = Optional.of(PLibrary(archiveName, classesJars, sourcesJars, originalName = path))
+                val sourceSets = project.convention.findPlugin(JavaPluginConvention::class.java)!!.sourceSets
+
+                val applicableSourceSets = listOfNotNull(
+                    sourceSets.findByName(SourceSet.MAIN_SOURCE_SET_NAME),
+                    sourceSets.findByName("java9")
+                )
+
+                val optLibrary = Optional.of(PLibrary(archiveName, classesJars, sourcesJars, originalName = path))
+                applicableSourceSets.forEach { ss -> result["$path/${ss.name}"] = optLibrary }
             }
 
             for (path in IGNORED_LIBRARIES) {
