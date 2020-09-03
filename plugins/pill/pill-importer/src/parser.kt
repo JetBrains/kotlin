@@ -114,7 +114,7 @@ fun parse(project: Project, context: ParserContext): PProject = with(context) {
 
     fun Project.matchesSelectedVariant(): Boolean {
         val extension = this.findPillExtensionMirror() ?: return true
-        val projectVariant = extension.variant.takeUnless { it == Variant.DEFAULT } ?: Variant.BASE
+        val projectVariant = extension.variant ?: Variant.BASE
         return projectVariant in context.variant.includes
     }
 

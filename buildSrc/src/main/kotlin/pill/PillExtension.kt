@@ -10,26 +10,16 @@ import java.io.File
 import org.gradle.api.Project
 
 open class PillExtension {
+    /*
+     * Here's how you can specify a custom variant:
+     * `./gradlew pill -Dpill.variant=<NAME>`
+     */
     enum class Variant {
-        // Default variant (./gradlew pill)
-        BASE {
-            override val includes = setOf(BASE)
-        },
-
-        // Full variant (./gradlew pill -Dpill.variant=full)
-        FULL {
-            override val includes = setOf(BASE, FULL)
-        },
-
-        // 'BASE' if the "jps-compatible" plugin is applied, 'NONE' otherwise
-        DEFAULT {
-            override val includes = emptySet<Variant>()
-        };
-
-        abstract val includes: Set<Variant>
+        BASE, // Includes compiler and IDE (default)
+        FULL, // Includes compiler, IDE and Gradle plugin
     }
 
-    open var variant: Variant = Variant.DEFAULT
+    open var variant: Variant? = null
 
     open var excludedDirs: List<File> = emptyList()
 
@@ -40,7 +30,7 @@ open class PillExtension {
 
     @Suppress("unused")
     fun serialize() = mapOf<String, Any?>(
-        "variant" to variant.name,
+        "variant" to variant?.name,
         "excludedDirs" to excludedDirs
     )
 }

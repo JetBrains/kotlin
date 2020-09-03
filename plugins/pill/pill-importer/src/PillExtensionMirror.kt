@@ -8,26 +8,14 @@ package org.jetbrains.kotlin.pill
 import java.io.File
 import org.gradle.api.Project
 
-open class PillExtensionMirror(variant: String, val excludedDirs: List<File>) {
-    val variant = Variant.valueOf(variant)
+open class PillExtensionMirror(variant: String?, val excludedDirs: List<File>) {
+    val variant = if (variant == null) null else Variant.valueOf(variant)
 
-    enum class Variant {
-        // Default variant (./gradlew pill)
-        BASE {
-            override val includes = setOf(BASE)
-        },
+    enum class Variant(includesFactory: () -> Set<Variant>) {
+        BASE({ setOf(BASE) }), // Includes compiler and IDE (default)
+        FULL({ setOf(BASE, FULL) }); // Includes compiler, IDE and Gradle plugin
 
-        // Full variant (./gradlew pill -Dpill.variant=full)
-        FULL {
-            override val includes = setOf(BASE, FULL)
-        },
-
-        // 'BASE' if the "jps-compatible" plugin is applied, 'NONE' otherwise
-        DEFAULT {
-            override val includes = emptySet<Variant>()
-        };
-
-        abstract val includes: Set<Variant>
+        val includes by lazy { includesFactory() }
     }
 }
 
@@ -37,11 +25,10 @@ fun Project.findPillExtensionMirror(): PillExtensionMirror? {
     @Suppress("UNCHECKED_CAST")
     val serialized = ext::class.java.getMethod("serialize").invoke(ext) as Map<String, Any>
 
-    val variant = serialized["variant"] as String
+    val variant = serialized["variant"] as String?
 
     @Suppress("UNCHECKED_CAST")
     val excludedDirs = serialized["excludedDirs"] as List<File>
 
-    val constructor = PillExtensionMirror::class.java.declaredConstructors.single()
-    return constructor.newInstance(variant, excludedDirs) as PillExtensionMirror
+    return PillExtensionMirror(variant, excludedDirs)
 }
