@@ -5,5 +5,8 @@ class Test {
             field = value.toUpperCase()
         }
     var name: String = ""
+    val age by lazy { 15 + 10 }
+    val color: String
+        get() = "Purple"
     <caret>
 }
