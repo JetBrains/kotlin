@@ -132,8 +132,7 @@ internal class CommonizationVisitor(
             if (expandedClassId.packageFqName.isUnderStandardKotlinPackages)
                 return null // this case is not supported
 
-            val expandedClassNode = root.cache.classes[expandedClassId]
-                ?: error("Can't find expanded class node with class ID $expandedClassId for type alias $classId")
+            val expandedClassNode = root.cache.classes[expandedClassId] ?: return null
             val expandedClass = expandedClassNode.targetDeclarations[index]
                 ?: error("Can't find expanded class with class ID $expandedClassId and index $index for type alias $classId")
 
