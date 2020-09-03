@@ -52,6 +52,7 @@ abstract class AbstractDiagnosticCollector(
 
     @Suppress("LeakingThis")
     private var context = PersistentCheckerContext(this, returnTypeCalculator)
+    private var currentAction = DiagnosticCollectorDeclarationAction.CHECK_CURRENT_DECLARATION_AND_CHECK_NESTED
 
     fun initializeComponents(vararg components: AbstractDiagnosticCollectorComponent) {
         if (componentsInitialized) {
@@ -75,7 +76,6 @@ abstract class AbstractDiagnosticCollector(
 
         private fun visitJump(loopJump: FirLoopJump) {
             loopJump.runComponents()
-            loopJump.acceptChildren(this, null)
             loopJump.target.labeledElement.takeIf { it is FirErrorLoop }?.accept(this, null)
         }
 
@@ -157,16 +157,26 @@ abstract class AbstractDiagnosticCollector(
             }
         }
 
-        private fun visitWithDeclaration(declaration: FirDeclaration) {
-            declaration.runComponents()
-            withDeclaration(declaration) {
-                declaration.acceptChildren(this, null)
+        private inline fun visitWithDeclaration(
+            declaration: FirDeclaration,
+            block: () -> Unit = { declaration.acceptChildren(this, null) }
+        ) {
+            if (!currentAction.checkNested) return
+
+            val action = onDeclarationEnter(declaration)
+            if (action.checkCurrentDeclaration) {
+                declaration.runComponents()
             }
+            withDiagnosticsAction(action) {
+                withDeclaration(declaration) {
+                    block()
+                }
+            }
+            onDeclarationExit(declaration)
         }
 
         private fun visitWithDeclarationAndReceiver(declaration: FirDeclaration, labelName: Name?, receiverTypeRef: FirTypeRef?) {
-            declaration.runComponents()
-            withDeclaration(declaration) {
+            visitWithDeclaration(declaration) {
                 withLabelAndReceiverType(
                     labelName,
                     declaration,
@@ -177,6 +187,11 @@ abstract class AbstractDiagnosticCollector(
             }
         }
     }
+
+    protected open fun onDeclarationEnter(declaration: FirDeclaration): DiagnosticCollectorDeclarationAction =
+        DiagnosticCollectorDeclarationAction.CHECK_CURRENT_DECLARATION_AND_CHECK_NESTED
+
+    protected open fun onDeclarationExit(declaration: FirDeclaration) {}
 
     private inline fun <R> withDeclaration(declaration: FirDeclaration, block: () -> R): R {
         val existingContext = context
@@ -208,6 +223,23 @@ abstract class AbstractDiagnosticCollector(
             context = existingContext
         }
     }
+
+    private inline fun <R> withDiagnosticsAction(action: DiagnosticCollectorDeclarationAction, block: () -> R): R {
+        val oldAction = currentAction
+        currentAction = action
+        return try {
+            block()
+        } finally {
+            currentAction = oldAction
+        }
+    }
+}
+
+enum class DiagnosticCollectorDeclarationAction(val checkCurrentDeclaration: Boolean, val checkNested: Boolean) {
+    CHECK_CURRENT_DECLARATION_AND_CHECK_NESTED(checkCurrentDeclaration = true, checkNested = true),
+    CHECK_CURRENT_DECLARATION_AND_SKIP_NESTED(checkCurrentDeclaration = true, checkNested = false),
+    SKIP_CURRENT_DECLARATION_AND_CHECK_NESTED(checkCurrentDeclaration = false, checkNested = true),
+    SKIP(checkCurrentDeclaration = false, checkNested = false),
 }
 
 fun AbstractDiagnosticCollector.registerAllComponents() {

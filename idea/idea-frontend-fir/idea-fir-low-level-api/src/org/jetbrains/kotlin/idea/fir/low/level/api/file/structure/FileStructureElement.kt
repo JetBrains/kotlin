@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.file.structure
 
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorDeclarationAction
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
@@ -43,19 +44,28 @@ internal class WithInBlockModificationFileStructureElement(
     override val mappings: Map<KtElement, FirElement> =
         FirElementsRecorder.recordElementsFrom(firSymbol.fir, recorder)
 
-
     fun isUpToDate(): Boolean = psi.getModificationStamp() == timestamp
 
     override val diagnostics: FileStructureElementDiagnostics by lazy {
-        val innerDeclarations = psi
-            .collectDescendantsOfTypeTo<KtDeclaration, HashSet<KtDeclaration>>(
-                hashSetOf(psi),
-                canGoInside = { true }
-            )
+        var inCurrentDeclaration = false
+
         FirIdeStructureElementDiagnosticsCollector.collectForStructureElement(
-            innerDeclarations,
             firFile,
-            substitution = null
+            onDeclarationEnter = { firDeclaration ->
+                when {
+                    firDeclaration == firSymbol.fir -> {
+                        inCurrentDeclaration = true
+                        DiagnosticCollectorDeclarationAction.CHECK_CURRENT_DECLARATION_AND_CHECK_NESTED
+                    }
+                    inCurrentDeclaration -> DiagnosticCollectorDeclarationAction.CHECK_CURRENT_DECLARATION_AND_CHECK_NESTED
+                    else -> DiagnosticCollectorDeclarationAction.SKIP_CURRENT_DECLARATION_AND_CHECK_NESTED
+                }
+            },
+            onDeclarationExit = { declaration ->
+                if (declaration == firSymbol.fir) {
+                    inCurrentDeclaration = false
+                }
+            }
         )
     }
 
@@ -73,14 +83,30 @@ internal class NonLocalDeclarationFileStructureElement(
         FirElementsRecorder.recordElementsFrom(fir, recorder)
 
     override val diagnostics: FileStructureElementDiagnostics by lazy {
-        @Suppress("RemoveExplicitTypeArguments")
-        val innerDeclarations = psi
-            .collectDescendantsOfTypeTo<KtDeclaration, HashSet<KtDeclaration>>(
-                hashSetOf(psi),
-                canGoInside = { it.safeAs<KtNamedFunction>()?.hasExplicitTypeOrUnit != true }
-            )
-
-        FirIdeStructureElementDiagnosticsCollector.collectForStructureElement(innerDeclarations, firFile)
+        var inCurrentDeclaration = false
+        FirIdeStructureElementDiagnosticsCollector.collectForStructureElement(
+            firFile,
+            onDeclarationEnter = { firDeclaration ->
+                when {
+                    firDeclaration == fir -> {
+                        inCurrentDeclaration = true
+                        DiagnosticCollectorDeclarationAction.CHECK_CURRENT_DECLARATION_AND_CHECK_NESTED
+                    }
+                    (firDeclaration.psi as? KtNamedFunction)?.hasExplicitTypeOrUnit == true -> {
+                        DiagnosticCollectorDeclarationAction.SKIP
+                    }
+                    inCurrentDeclaration -> {
+                        DiagnosticCollectorDeclarationAction.CHECK_CURRENT_DECLARATION_AND_CHECK_NESTED
+                    }
+                    else -> DiagnosticCollectorDeclarationAction.SKIP_CURRENT_DECLARATION_AND_CHECK_NESTED
+                }
+            },
+            onDeclarationExit = { firDeclaration ->
+                if (firDeclaration == fir) {
+                    inCurrentDeclaration = false
+                }
+            },
+        )
     }
 
     companion object {
@@ -104,7 +130,10 @@ internal data class FileWithoutDeclarationsFileStructureElement(
         FirElementsRecorder.recordElementsFrom(firFile, recorder)
 
     override val diagnostics: FileStructureElementDiagnostics by lazy {
-        FirIdeStructureElementDiagnosticsCollector.collectForStructureElement(hashSetOf(psi), firFile)
+        FirIdeStructureElementDiagnosticsCollector.collectForStructureElement(firFile) { firDeclaration ->
+            if (firDeclaration is FirFile) DiagnosticCollectorDeclarationAction.CHECK_CURRENT_DECLARATION_AND_SKIP_NESTED
+            else DiagnosticCollectorDeclarationAction.SKIP
+        }
     }
 
     companion object {

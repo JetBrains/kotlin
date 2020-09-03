@@ -6,20 +6,13 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.idea.fir.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
-import org.jetbrains.kotlin.idea.frontend.api.ImplicitReceiverSmartCast
-import org.jetbrains.kotlin.idea.frontend.api.ImplicitReceiverSmartcastKind
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.components.KtDiagnosticProvider
-import org.jetbrains.kotlin.idea.frontend.api.components.KtSmartCastProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtFile
 
 internal class KtFirDiagnosticProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -28,4 +21,7 @@ internal class KtFirDiagnosticProvider(
     override fun getDiagnosticsForElement(element: KtElement): Collection<Diagnostic> = withValidityAssertion {
         LowLevelFirApiFacade.getDiagnosticsFor(element, firResolveState)
     }
+
+    override fun collectDiagnosticsForFile(ktFile: KtFile): Collection<Diagnostic> =
+        firResolveState.collectDiagnosticsForFile(ktFile)
 }

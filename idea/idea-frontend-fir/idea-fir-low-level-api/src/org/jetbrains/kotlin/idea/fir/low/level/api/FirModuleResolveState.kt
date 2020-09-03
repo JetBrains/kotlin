@@ -39,6 +39,8 @@ abstract class FirModuleResolveState {
 
     abstract fun getDiagnostics(element: KtElement): List<Diagnostic>
 
+    abstract fun collectDiagnosticsForFile(ktFile: KtFile): Collection<Diagnostic>
+
     // todo temporary, used only in completion
     abstract fun recordPsiToFirMappingsForCompletionFrom(fir: FirDeclaration, firFile: FirFile, ktFile: KtFile)
 
@@ -79,6 +81,9 @@ internal class FirModuleResolveStateImpl(
 
     override fun getDiagnostics(element: KtElement): List<Diagnostic> =
         diagnosticsCollector.getDiagnosticsFor(element)
+
+    override fun collectDiagnosticsForFile(ktFile: KtFile): Collection<Diagnostic> =
+        diagnosticsCollector.collectDiagnosticsForFile(ktFile)
 
     override fun recordPsiToFirMappingsForCompletionFrom(fir: FirDeclaration, firFile: FirFile, ktFile: KtFile) {
         error("Should be called only from FirModuleResolveStateForCompletion")

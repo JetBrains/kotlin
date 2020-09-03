@@ -30,52 +30,9 @@ class KotlinFirPsiChecker : AbstractKotlinPsiChecker() {
             throw ProcessCanceledException()
         }
         analyze(element) {
-            this.highlightDiagnostics(element, holder)
-
             FirAfterResolveHighlightingVisitor
                 .createListOfVisitors(this, holder)
                 .forEach(element::accept)
         }
-    }
-
-    private fun KtAnalysisSession.highlightDiagnostics(element: KtElement, holder: AnnotationHolder) {
-        val diagnostics = element.getDiagnostics()
-        if (diagnostics.isEmpty()) return
-
-        if (diagnostics.none(Diagnostic::isValid)) return
-
-        if (shouldHighlightErrors(element)) {
-            highlightDiagnostics(diagnostics, holder)
-        }
-    }
-
-    private fun highlightDiagnostics(diagnostics: Collection<Diagnostic>, holder: AnnotationHolder) {
-        diagnostics.groupBy { it.factory }.forEach { group -> registerDiagnosticAnnotations(group.value, holder) }
-    }
-
-    private fun registerDiagnosticAnnotations(diagnostics: List<Diagnostic>, holder: AnnotationHolder) {
-        assert(diagnostics.isNotEmpty())
-        val diagnostic = diagnostics.first()
-
-        val ranges = diagnostic.textRanges
-
-        ranges.forEach { range ->
-            diagnostics.forEach { diagnostic ->
-                Diagnostic2Annotation.createAnnotation(
-                    diagnostic,
-                    range,
-                    holder,
-                    nonDefaultMessage = null,
-                    textAttributes = null,
-                    highlightType = null,
-                    renderMessage = IdeErrorMessages::render
-                )
-            }
-        }
-
-    }
-
-    private fun shouldHighlightErrors(element: KtElement): Boolean {
-        return true // todo
     }
 }

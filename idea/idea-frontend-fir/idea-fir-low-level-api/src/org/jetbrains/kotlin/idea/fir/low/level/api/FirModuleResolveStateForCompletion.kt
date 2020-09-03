@@ -64,4 +64,8 @@ internal class FirModuleResolveStateForCompletion(
     override fun getDiagnostics(element: KtElement): List<Diagnostic> {
         error("Diagnostics should not be retrieved in completion")
     }
+
+    override fun collectDiagnosticsForFile(ktFile: KtFile): Collection<Diagnostic> {
+        error("Diagnostics should not be retrieved in completion")
+    }
 }
