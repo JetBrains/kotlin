@@ -57,7 +57,7 @@ class JvmLocalClassPopupLowering(context: JvmBackendContext) : LocalClassPopupLo
 
         // In case there's no primary constructor, it's unclear which constructor should be the enclosing one, so we select the first.
         (context as JvmBackendContext).customEnclosingFunction[klass.attributeOwnerId] =
-            container.primaryConstructor ?: container.declarations.firstIsInstanceOrNull()
+            container.primaryConstructor ?: container.declarations.firstIsInstanceOrNull<IrConstructor>()
                     ?: error("Class in a non-static initializer found, but container has no constructors: ${container.render()}")
 
         return true
