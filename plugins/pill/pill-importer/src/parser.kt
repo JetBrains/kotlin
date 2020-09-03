@@ -107,7 +107,7 @@ data class PLibrary(
     }
 }
 
-fun parse(project: Project, context: ParserContext): PProject = with(context) {
+fun parse(project: Project, context: ParserContext): PProject {
     if (project != project.rootProject) {
         error("$project is not a root project")
     }

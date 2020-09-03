@@ -69,7 +69,7 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
         platformVersion = project.extensions.extraProperties.get("versions.intellijSdk").toString()
         platformBaseNumber = platformVersion.substringBefore(".", "").takeIf { it.isNotEmpty() }
             ?: platformVersion.substringBefore("-", "").takeIf { it.isNotEmpty() }
-                ?: error("Invalid platform version: $platformVersion")
+                    ?: error("Invalid platform version: $platformVersion")
         intellijCoreDir = File(platformDir.parentFile.parentFile.parentFile, "intellij-core")
         isAndroidStudioPlatform = project.extensions.extraProperties.has("versions.androidStudioRelease")
     }
