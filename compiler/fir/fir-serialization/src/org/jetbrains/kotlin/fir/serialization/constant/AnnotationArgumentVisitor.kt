@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.serialization.constant
 
-abstract class AnnotationArgumentVisitor<R, D> {
+internal abstract class AnnotationArgumentVisitor<R, D> {
     abstract fun visitLongValue(value: LongValue, data: D): R
     abstract fun visitIntValue(value: IntValue, data: D): R
     abstract fun visitErrorValue(value: ErrorValue, data: D): R

@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 
-fun FirExpression.toConstantValue(): ConstantValue<*>? = accept(FirToConstantValueTransformer, null)
+internal fun FirExpression.toConstantValue(): ConstantValue<*>? = accept(FirToConstantValueTransformer, null)
 
-object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<*>?, Nothing?>() {
+internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<*>?, Nothing?>() {
     override fun visitElement(
         element: FirElement,
         data: Nothing?

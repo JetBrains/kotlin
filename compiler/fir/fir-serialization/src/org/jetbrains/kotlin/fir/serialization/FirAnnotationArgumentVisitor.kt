@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.types.arrayElementType
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 
-object FirAnnotationArgumentVisitor : AnnotationArgumentVisitor<Unit, FirAnnotationArgumentVisitorData>() {
+internal object FirAnnotationArgumentVisitor : AnnotationArgumentVisitor<Unit, FirAnnotationArgumentVisitorData>() {
     override fun visitAnnotationValue(value: AnnotationValue, data: FirAnnotationArgumentVisitorData) {
         data.builder.type = ProtoBuf.Annotation.Argument.Value.Type.ANNOTATION
         // TODO: annotation = serializeAnnotation(value.value)

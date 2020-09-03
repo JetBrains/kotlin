@@ -29,7 +29,7 @@ class FirAnnotationSerializer(private val session: FirSession, internal val stri
         }
     }.build()
 
-    fun valueProto(constant: ConstantValue<*>): ProtoBuf.Annotation.Argument.Value.Builder =
+    internal fun valueProto(constant: ConstantValue<*>): ProtoBuf.Annotation.Argument.Value.Builder =
         ProtoBuf.Annotation.Argument.Value.newBuilder().apply {
             constant.accept(
                 FirAnnotationArgumentVisitor,
