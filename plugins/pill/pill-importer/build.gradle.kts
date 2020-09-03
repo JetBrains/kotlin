@@ -29,7 +29,7 @@ fun runPillTask(taskName: String) {
 
     val platformDir = IntellijRootUtils.getIntellijRootDir(project)
     val resourcesDir = File(project.projectDir, "resources")
-    runMethod.invoke(null, project.rootProject, taskName, platformDir, resourcesDir, EmbeddedComponents.CONFIGURATION_NAME)
+    runMethod.invoke(null, project.rootProject, taskName, platformDir, resourcesDir)
 }
 
 val jar: Jar by tasks
