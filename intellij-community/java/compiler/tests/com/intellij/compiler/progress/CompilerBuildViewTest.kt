@@ -115,50 +115,76 @@ class CompilerBuildViewTest : BaseCompilerTestCase() {
   }
 
   fun `test build with compile error`() {
+    val file = createFile("src/A.java", "public class A a{}foo")
+    val srcRoot = file.parent
+    val module = addModule("a", srcRoot)
+
+    build(module, true)
+    buildViewTestFixture.assertBuildViewTreeEquals(
+      "-\n" +
+      " -build failed\n" +
+      "  -A.java\n" +
+      "   '{' expected\n" +
+      "   reached end of file while parsing"
+    )
+    rebuildProject(true)
+    buildViewTestFixture.assertBuildViewTreeEquals(
+      "-\n" +
+      " -rebuild failed\n" +
+      "  -A.java\n" +
+      "   '{' expected\n" +
+      "   reached end of file while parsing"
+    )
+
+    rebuild(module, true)
+    buildViewTestFixture.assertBuildViewTreeEquals(
+      "-\n" +
+      " -recompile failed\n" +
+      "  -A.java\n" +
+      "   '{' expected\n" +
+      "   reached end of file while parsing"
+    )
+  }
+
+  fun `test build workspace settings sync`() {
     val workspaceConfiguration = myProject.service<CompilerWorkspaceConfiguration>()
     val oldAutoShowErrorsInEditor = workspaceConfiguration.AUTO_SHOW_ERRORS_IN_EDITOR
 
     assertEquals(oldAutoShowErrorsInEditor, myProject.service<BuildWorkspaceConfiguration>().isShowFirstErrorInEditor)
+    try {
+      workspaceConfiguration.AUTO_SHOW_ERRORS_IN_EDITOR = false
+      assertFalse(myProject.service<BuildWorkspaceConfiguration>().isShowFirstErrorInEditor)
+
+      workspaceConfiguration.AUTO_SHOW_ERRORS_IN_EDITOR = true
+      assertTrue(myProject.service<BuildWorkspaceConfiguration>().isShowFirstErrorInEditor)
+    } finally {
+      workspaceConfiguration.AUTO_SHOW_ERRORS_IN_EDITOR = oldAutoShowErrorsInEditor
+    }
+  }
+
+  fun `test build autoShowFirstError`() {
+    val workspaceConfiguration = myProject.service<CompilerWorkspaceConfiguration>()
+    val oldAutoShowErrorsInEditor = workspaceConfiguration.AUTO_SHOW_ERRORS_IN_EDITOR
+
     try {
       val file = createFile("src/A.java", "public class A a{}foo")
       val srcRoot = file.parent
       val module = addModule("a", srcRoot)
 
       workspaceConfiguration.AUTO_SHOW_ERRORS_IN_EDITOR = false
-      assertFalse(myProject.service<BuildWorkspaceConfiguration>().isShowFirstErrorInEditor)
       build(module, true)
-      buildViewTestFixture.assertBuildViewTreeEquals(
-        "-\n" +
-        " -build failed\n" +
-        "  -A.java\n" +
-        "   '{' expected\n" +
-        "   reached end of file while parsing"
-      )
 
-      assertNull(FileEditorManager.getInstance(myProject).selectedEditor)
+      val fileEditorManager = FileEditorManager.getInstance(myProject)
+      assertThat(fileEditorManager.selectedFiles).isEmpty()
+      assertNull(fileEditorManager.selectedEditor)
 
       workspaceConfiguration.AUTO_SHOW_ERRORS_IN_EDITOR = true
-      assertTrue(myProject.service<BuildWorkspaceConfiguration>().isShowFirstErrorInEditor)
       rebuildProject(true)
-      buildViewTestFixture.assertBuildViewTreeEquals(
-        "-\n" +
-        " -rebuild failed\n" +
-        "  -A.java\n" +
-        "   '{' expected\n" +
-        "   reached end of file while parsing"
-      )
-      val logicalPosition = (FileEditorManager.getInstance(myProject).selectedEditor as TextEditor).editor.caretModel.logicalPosition
+
+      assertThat(fileEditorManager.selectedFiles).containsExactly(file)
+      val logicalPosition = (fileEditorManager.selectedEditor as TextEditor).editor.caretModel.logicalPosition
       assertEquals(0, logicalPosition.line)
       assertEquals(14, logicalPosition.column)
-
-      rebuild(module, true)
-      buildViewTestFixture.assertBuildViewTreeEquals(
-        "-\n" +
-        " -recompile failed\n" +
-        "  -A.java\n" +
-        "   '{' expected\n" +
-        "   reached end of file while parsing"
-      )
     } finally {
       workspaceConfiguration.AUTO_SHOW_ERRORS_IN_EDITOR = oldAutoShowErrorsInEditor
     }
