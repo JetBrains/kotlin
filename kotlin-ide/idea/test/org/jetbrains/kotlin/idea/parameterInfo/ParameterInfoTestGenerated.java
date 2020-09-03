@@ -205,6 +205,11 @@ public abstract class ParameterInfoTestGenerated extends AbstractParameterInfoTe
             runTest("idea/testData/parameterInfo/functionCall/NamedParameter3.kt");
         }
 
+        @TestMetadata("NamedParameter4.kt")
+        public void testNamedParameter4() throws Exception {
+            runTest("idea/testData/parameterInfo/functionCall/NamedParameter4.kt");
+        }
+
         @TestMetadata("NoAnnotations.kt")
         public void testNoAnnotations() throws Exception {
             runTest("testData/parameterInfo/functionCall/NoAnnotations.kt");

@@ -232,6 +232,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
 
         var boldStartOffset = -1
         var boldEndOffset = -1
+        var disabledBeforeHighlight = false
         val text = buildString {
             val usedParameterIndices = HashSet<Int>()
             var namedMode = false
@@ -244,11 +245,21 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
 
             val includeParameterNames = !substitutedDescriptor.hasSynthesizedParameterNames()
 
-            fun appendParameter(parameter: ValueParameterDescriptor, named: Boolean = false) {
+            fun appendParameter(
+                parameter: ValueParameterDescriptor,
+                named: Boolean = false,
+                markUsedUnusedParameterBorder: Boolean = false
+            ) {
                 argumentIndex++
 
                 if (length > 0) {
                     append(", ")
+                    if (markUsedUnusedParameterBorder) {
+                        // mark the space after the comma as bold; bold text needs to be at least one character long
+                        boldStartOffset = length - 1
+                        boldEndOffset = length
+                        disabledBeforeHighlight = true
+                    }
                 }
 
                 val highlightParameter = parameter.index == highlightParameterIndex
@@ -282,7 +293,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
                     if (argumentIndex != parameter.index) {
                         namedMode = true
                     }
-                    appendParameter(parameter)
+                    appendParameter(parameter, markUsedUnusedParameterBorder = highlightParameterIndex == null && boldStartOffset == -1)
                 }
             }
 
@@ -294,7 +305,15 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
 
         val color = if (itemToShow.isResolvedToDescriptor) GREEN_BACKGROUND else context.defaultParameterColor
 
-        context.setupUIComponentPresentation(text, boldStartOffset, boldEndOffset, isGrey, itemToShow.isDeprecatedAtCallSite, false, color)
+        context.setupUIComponentPresentation(
+            text,
+            boldStartOffset,
+            boldEndOffset,
+            isGrey,
+            itemToShow.isDeprecatedAtCallSite,
+            disabledBeforeHighlight,
+            color
+        )
 
         return true
     }
