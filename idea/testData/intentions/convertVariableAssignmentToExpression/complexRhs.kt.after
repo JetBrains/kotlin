@@ -1,0 +1,9 @@
+// WITH_RUNTIME
+object X {
+    var string = "foo"
+}
+
+var target = "baz"
+fun main() {
+    X.string.also { target = it }
+}
