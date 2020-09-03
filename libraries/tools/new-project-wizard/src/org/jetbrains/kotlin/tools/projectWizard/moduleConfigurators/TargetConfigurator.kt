@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleStri
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.irsList
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.DefaultTargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetAccessIR
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JSConfigurator.Companion.jsCompilerParam
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsBrowserBasedConfigurator.Companion.browserSubTarget
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsBrowserBasedConfigurator.Companion.cssSupport
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsNodeBasedConfigurator.Companion.nodejsSubTarget
@@ -79,16 +80,6 @@ internal fun Module.createTargetAccessIr(
 
 interface JsTargetConfigurator : JSConfigurator, TargetConfigurator, SingleCoexistenceTargetConfigurator, ModuleConfiguratorWithSettings
 
-internal fun JsTargetConfigurator.jsCompilerParam(
-    reader: Reader,
-    module: Module
-) =
-    reader.settingValue(module, JSConfigurator.compiler)?.let {
-        if (it != JsCompiler.IR) {
-            listOf(it.text)
-        } else emptyList()
-    } ?: emptyList()
-
 enum class JsTargetKind(override val text: String) : DisplayableSettingItem {
     LIBRARY(KotlinNewProjectWizardBundle.message("module.configurator.js.target.settings.kind.library")),
     APPLICATION(KotlinNewProjectWizardBundle.message("module.configurator.js.target.settings.kind.application"))
@@ -119,7 +110,7 @@ object JsBrowserTargetConfigurator : JsTargetConfigurator, ModuleConfiguratorWit
         +DefaultTargetConfigurationIR(
             module.createTargetAccessIr(
                 ModuleSubType.js,
-                jsCompilerParam(this@createTargetIrs, module)
+                paramsWithJsCompiler(module)
             )
         ) {
             browserSubTarget(module, this@createTargetIrs)
@@ -139,13 +130,17 @@ object JsNodeTargetConfigurator : JsTargetConfigurator {
         +DefaultTargetConfigurationIR(
             module.createTargetAccessIr(
                 ModuleSubType.js,
-                jsCompilerParam(this@createTargetIrs, module)
+                paramsWithJsCompiler(module)
             )
         ) {
             nodejsSubTarget(module, this@createTargetIrs)
         }
     }
 }
+
+internal fun Reader.paramsWithJsCompiler(module: Module): List<String> = jsCompilerParam(module)?.let {
+    listOf(it)
+} ?: emptyList()
 
 object CommonTargetConfigurator : TargetConfiguratorWithTests(), SimpleTargetConfigurator, SingleCoexistenceTargetConfigurator {
     override val moduleSubType = ModuleSubType.common
