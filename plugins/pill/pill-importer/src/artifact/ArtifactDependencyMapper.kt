@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.pill.artifact
 
-import org.jetbrains.kotlin.pill.PDependency
+import org.jetbrains.kotlin.pill.model.PDependency
 
 interface ArtifactDependencyMapper {
     fun map(dependency: PDependency): List<PDependency>

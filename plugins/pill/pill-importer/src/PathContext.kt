@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.pill
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.pill.model.PModule
+import org.jetbrains.kotlin.pill.model.PProject
 import java.io.File
 
 private val USER_HOME_DIR_PATH = System.getProperty("user.home").withSlash()

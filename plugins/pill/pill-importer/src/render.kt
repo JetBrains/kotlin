@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.pill
 
+import org.jetbrains.kotlin.pill.model.*
 import java.io.File
 
 class PFile(val path: File, private val text: String) {

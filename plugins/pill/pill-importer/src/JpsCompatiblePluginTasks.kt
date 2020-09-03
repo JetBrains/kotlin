@@ -12,6 +12,10 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.extra
 import org.jetbrains.kotlin.pill.artifact.ArtifactDependencyMapper
 import org.jetbrains.kotlin.pill.artifact.ArtifactGenerator
+import org.jetbrains.kotlin.pill.model.PDependency
+import org.jetbrains.kotlin.pill.model.PLibrary
+import org.jetbrains.kotlin.pill.model.POrderRoot
+import org.jetbrains.kotlin.pill.model.PProject
 import shadow.org.jdom2.input.SAXBuilder
 import shadow.org.jdom2.*
 import shadow.org.jdom2.output.Format
@@ -89,12 +93,12 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
         rootProject.logger.lifecycle("Pill: Setting up project for the '${variant.name.toLowerCase()}' variant...")
 
         val modulePrefix = System.getProperty("pill.module.prefix", "")
-        val parserContext = ParserContext(variant, modulePrefix)
+        val modelParser = ModelParser(variant, modulePrefix)
 
         val dependencyPatcher = DependencyPatcher(rootProject)
         val dependencyMappers = listOf(dependencyPatcher, ::attachPlatformSources, ::attachAsmSources)
 
-        val jpsProject = parse(rootProject, parserContext)
+        val jpsProject = modelParser.parse(rootProject)
             .mapDependencies(dependencyMappers)
             .copy(libraries = dependencyPatcher.libraries)
 
