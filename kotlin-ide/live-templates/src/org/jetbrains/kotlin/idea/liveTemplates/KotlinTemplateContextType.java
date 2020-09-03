@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.liveTemplates;
 import com.intellij.codeInsight.template.EverywhereContextType;
 import com.intellij.codeInsight.template.TemplateContextType;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -39,13 +40,14 @@ import org.jetbrains.kotlin.psi.*;
 public abstract class KotlinTemplateContextType extends TemplateContextType {
     private KotlinTemplateContextType(
             @NotNull @NonNls String id,
-            @NotNull String presentableName,
+            @NotNull @NlsContexts.Label String presentableName,
             @Nullable java.lang.Class<? extends TemplateContextType> baseContextType
     ) {
         super(id, presentableName, baseContextType);
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public boolean isInContext(@NotNull PsiFile file, int offset) {
         if (!PsiUtilCore.getLanguageAtOffset(file, offset).isKindOf(KotlinLanguage.INSTANCE)) {
             return false;
@@ -58,15 +60,12 @@ public abstract class KotlinTemplateContextType extends TemplateContextType {
 
         if (element instanceof PsiWhiteSpace) {
             return false;
-        }
-        else if (PsiTreeUtil.getParentOfType(element, PsiComment.class, false) != null) {
+        } else if (PsiTreeUtil.getParentOfType(element, PsiComment.class, false) != null) {
             return isCommentInContext();
-        }
-        else if (PsiTreeUtil.getParentOfType(element, KtPackageDirective.class) != null
-                || PsiTreeUtil.getParentOfType(element, KtImportDirective.class) != null) {
+        } else if (PsiTreeUtil.getParentOfType(element, KtPackageDirective.class) != null
+                   || PsiTreeUtil.getParentOfType(element, KtImportDirective.class) != null) {
             return false;
-        }
-        else if (element instanceof LeafPsiElement) {
+        } else if (element instanceof LeafPsiElement) {
             IElementType elementType = ((LeafPsiElement) element).getElementType();
             if (elementType == KtTokens.IDENTIFIER) {
                 PsiElement parent = element.getParent();
@@ -209,7 +208,10 @@ public abstract class KotlinTemplateContextType extends TemplateContextType {
         }
     }
 
-    private static <T extends PsiElement> T getParentClassOrObject(@NotNull PsiElement element, @NotNull java.lang.Class<? extends T> klass) {
+    private static <T extends PsiElement> T getParentClassOrObject(
+            @NotNull PsiElement element,
+            @NotNull java.lang.Class<? extends T> klass
+    ) {
         PsiElement e = element;
         while (e != null && !klass.isInstance(e)) {
             if (e instanceof KtModifierList) {
