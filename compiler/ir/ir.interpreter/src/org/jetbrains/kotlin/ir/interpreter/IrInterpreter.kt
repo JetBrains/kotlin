@@ -253,7 +253,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
         val valueParametersSymbols = receiverAsFirstArgument + irFunction.valueParameters.map { it.symbol }
 
         val valueArguments = (0 until expression.valueArgumentsCount).map { expression.getValueArgument(it) }
-        val defaultValues = expression.symbol.owner.valueParameters.map { it.defaultValue?.expression }
+        val defaultValues = irFunction.valueParameters.map { it.defaultValue?.expression }
 
         return stack.newFrame(asSubFrame = true, initPool = pool) {
             for (i in valueArguments.indices) {

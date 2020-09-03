@@ -181,6 +181,16 @@ internal fun getTypeArguments(
             ?.let { typeArguments.add(Variable(it.symbol, expression.type.getState())) }
     }
 
+    fun IrSimpleType.getArgumentsRecursive() {
+        val typeParameters = this.classOrNull?.owner?.typeParameters ?: return
+        typeParameters.zip(this.arguments).forEach {
+            it.second.typeOrNull?.classOrNull?.owner?.let { owner -> typeArguments.add(Variable(it.first.symbol, Common(owner))) }
+        }
+        this.classOrNull!!.superTypes().forEach { (it as? IrSimpleType)?.getArgumentsRecursive() }
+    }
+
+    (container as? IrClass)?.superTypes?.forEach { (it as? IrSimpleType)?.getArgumentsRecursive() }
+
     return typeArguments
 }
 
