@@ -56,6 +56,7 @@ class KtUltraLightClassForFacade(
         files.flatMap { file ->
             file.annotationEntries.map { entry ->
                 KtLightAnnotationForSourceEntry(
+                    name = entry.shortName?.identifier,
                     lazyQualifiedName = { entry.analyzeAnnotation()?.fqName?.asString() },
                     kotlinOrigin = entry,
                     parent = _modifierList,

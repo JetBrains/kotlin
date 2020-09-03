@@ -75,6 +75,7 @@ abstract class KtLightAbstractAnnotation(parent: PsiElement, computeDelegate: La
 }
 
 class KtLightAnnotationForSourceEntry(
+    private val name: String?,
     private val lazyQualifiedName: () -> String?,
     override val kotlinOrigin: KtCallElement,
     parent: PsiElement,
@@ -87,7 +88,7 @@ class KtLightAnnotationForSourceEntry(
 
     override fun getQualifiedName(): String? = _qualifiedName
 
-    override fun getName(): String? = null
+    override fun getName(): String? = name
 
     override fun findAttributeValue(name: String?) = getAttributeValue(name, true)
 
@@ -397,9 +398,10 @@ fun convertToLightAnnotationMemberValue(lightParent: PsiElement, argument: KtExp
             val annotationName = argument.calleeExpression?.let { getAnnotationName(it) }
             if (annotationName != null) {
                 return KtLightAnnotationForSourceEntry(
-                    { annotationName },
-                    argument,
-                    lightParent,
+                    name = annotationName,
+                    lazyQualifiedName = { annotationName },
+                    kotlinOrigin = argument,
+                    parent = lightParent,
                     lazyClsDelegate = null
                 )
             }

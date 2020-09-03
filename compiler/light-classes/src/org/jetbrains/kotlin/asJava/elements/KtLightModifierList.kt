@@ -178,7 +178,13 @@ private fun lightAnnotationsForEntries(lightModifierList: KtLightModifierList<*>
                     }
                 } else null
 
-                KtLightAnnotationForSourceEntry({ fqName }, entry, lightModifierList, lazyClsDelegate)
+                KtLightAnnotationForSourceEntry(
+                    name = entry.shortName?.identifier,
+                    lazyQualifiedName = { fqName },
+                    kotlinOrigin = entry,
+                    parent = lightModifierList,
+                    lazyClsDelegate = lazyClsDelegate
+                )
             }
         }
 }

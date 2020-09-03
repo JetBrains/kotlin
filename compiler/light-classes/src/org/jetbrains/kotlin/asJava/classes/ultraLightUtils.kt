@@ -522,12 +522,13 @@ internal fun KtUltraLightSupport.findAnnotation(owner: KtAnnotated, fqName: FqNa
 
 internal fun List<KtAnnotationEntry>.toLightAnnotations(
     parent: PsiElement,
-    site: AnnotationUseSiteTarget
+    site: AnnotationUseSiteTarget?
 ): List<KtLightAnnotationForSourceEntry> =
     filter {
         it.useSiteTarget?.getAnnotationUseSiteTarget() == site
     }.map { entry ->
         KtLightAnnotationForSourceEntry(
+            name = entry.shortName?.identifier,
             lazyQualifiedName = { entry.analyzeAnnotation()?.fqName?.asString() },
             kotlinOrigin = entry,
             parent = parent,
