@@ -33,9 +33,10 @@ object HashCode : IntrinsicMethod() {
         val result = receiver.accept(this, data).materialized()
         val target = context.state.target
         when {
-            irFunction.origin == JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD || irFunction.origin == IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER ->
+            irFunction.origin == JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD ||
+                    irFunction.origin == IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER ->
                 AsmUtil.genHashCode(mv, mv, result.type, target)
-            target == JvmTarget.JVM_1_6 -> {
+            target == JvmTarget.JVM_1_6 || !AsmUtil.isPrimitive(result.type) -> {
                 result.materializeAtBoxed(receiver.type)
                 mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Object", "hashCode", "()I", false)
             }

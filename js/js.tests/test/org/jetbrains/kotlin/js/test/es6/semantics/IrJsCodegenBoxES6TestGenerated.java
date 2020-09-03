@@ -12893,6 +12893,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             runTest("compiler/testData/codegen/box/ir/genericCompanion.kt");
         }
 
+        @TestMetadata("hashCodeOnGenericSubstitutedWithPrimitive.kt")
+        public void testHashCodeOnGenericSubstitutedWithPrimitive() throws Exception {
+            runTest("compiler/testData/codegen/box/ir/hashCodeOnGenericSubstitutedWithPrimitive.kt");
+        }
+
         @TestMetadata("kt25405.kt")
         public void testKt25405() throws Exception {
             runTest("compiler/testData/codegen/box/ir/kt25405.kt");
