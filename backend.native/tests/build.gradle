@@ -4395,6 +4395,18 @@ standaloneTest("fake_override_0") {
     goldValue = "Moved\nMoved\nChild\nSuper\n"
 }
 
+linkTest("private_fake_overrides_0") {
+    source = "link/private_fake_overrides/inherit_main.kt"
+    lib = "link/private_fake_overrides/inherit_lib.kt"
+    goldValue = "PASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\n"
+}
+
+linkTest("private_fake_overrides_1") {
+    source = "link/private_fake_overrides/override_main.kt"
+    lib = "link/private_fake_overrides/override_lib.kt"
+    goldValue = "PASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\n"
+}
+
 Task frameworkTest(String name, Closure<FrameworkTest> configurator) {
     return KotlinNativeTestKt.createTest(project, name, FrameworkTest) { task ->
         configurator.delegate = task

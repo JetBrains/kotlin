@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
-import org.jetbrains.kotlin.backend.common.overrides.PlatformFakeOverrideClassFilter
+import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideClassFilter
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
-object KonanFakeOverrideClassFilter : PlatformFakeOverrideClassFilter {
+object KonanFakeOverrideClassFilter : FakeOverrideClassFilter {
     private fun IdSignature.isInteropSignature(): Boolean = with(this) {
         IdSignature.Flags.IS_NATIVE_INTEROP_LIBRARY.test()
     }
@@ -60,7 +60,7 @@ object KonanFakeOverrideClassFilter : PlatformFakeOverrideClassFilter {
         .filter { it is IrPublicSymbolBase<*> }
         .any { it.signature.isInteropSignature() }
 
-    override fun constructFakeOverrides(clazz: IrClass): Boolean {
+    override fun needToConstructFakeOverrides(clazz: IrClass): Boolean {
         return !clazz.hasInteropSuperClass()
     }
 }
@@ -91,9 +91,8 @@ internal class KonanIrLinker(
 
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean = moduleDescriptor.isNativeStdlib()
 
-    override val fakeOverrideBuilder = FakeOverrideBuilder(symbolTable, IdSignatureSerializer(KonanManglerIr), builtIns, KonanFakeOverrideClassFilter)
-
     private val forwardDeclarationDeserializer = forwardModuleDescriptor?.let { KonanForwardDeclarationModuleDeserializer(it) }
+    override val fakeOverrideBuilder = FakeOverrideBuilder(this, symbolTable, IdSignatureSerializer(KonanManglerIr), builtIns, KonanFakeOverrideClassFilter)
 
     override fun createModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: IrLibrary?, strategy: DeserializationStrategy): IrModuleDeserializer {
         if (moduleDescriptor === forwardModuleDescriptor) {
