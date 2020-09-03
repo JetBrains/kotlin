@@ -391,6 +391,9 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             val constValue = const.value as Boolean
             val shouldInvert = isEq xor constValue
 
+            flow.addImplication((expressionVariable eq true) implies (operandVariable eq !shouldInvert))
+            flow.addImplication((expressionVariable eq false) implies (operandVariable eq shouldInvert))
+
             logicSystem.translateVariableFromConditionInStatements(
                 flow,
                 operandVariable,
@@ -968,6 +971,14 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val rightVariable = variableStorage.getOrCreateVariable(flow, binaryLogicExpression.rightOperand)
         val operatorVariable = variableStorage.getOrCreateVariable(flow, binaryLogicExpression)
 
+        if (isAnd) {
+            flow.addImplication((operatorVariable eq true) implies (leftVariable eq true))
+            flow.addImplication((operatorVariable eq true) implies (rightVariable eq true))
+        } else {
+            flow.addImplication((operatorVariable eq false) implies (leftVariable eq false))
+            flow.addImplication((operatorVariable eq false) implies (rightVariable eq false))
+        }
+
         if (!node.leftOperandNode.isDead && node.rightOperandNode.isDead) {
             /*
              * If there was a jump from right argument then we know that we well exit from
@@ -1026,8 +1037,13 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val previousFlow = node.previousFlow
         val booleanExpressionVariable = variableStorage.getOrCreateVariable(previousFlow, node.firstPreviousNode.fir)
         val variable = variableStorage.getOrCreateVariable(previousFlow, functionCall)
+        val flow = node.flow
+
+        flow.addImplication((variable eq true) implies (booleanExpressionVariable eq false))
+        flow.addImplication((variable eq false) implies (booleanExpressionVariable eq true))
+
         logicSystem.replaceVariableFromConditionInStatements(
-            node.flow,
+            flow,
             booleanExpressionVariable,
             variable,
             transform = { it.invertCondition() }
