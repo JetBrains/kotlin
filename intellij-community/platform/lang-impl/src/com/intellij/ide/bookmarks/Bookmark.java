@@ -545,11 +545,6 @@ public final class Bookmark implements Navigatable, Comparable<Bookmark> {
           myBookmark.updateHighlighter();
           return true;
         }
-
-        @Override
-        public Cursor getCursor(int line, int actionId) {
-          return DragSource.DefaultMoveDrop;
-        }
       };
     }
 
