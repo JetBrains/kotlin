@@ -24,7 +24,7 @@ abstract class IrTypeAlias :
     abstract override val descriptor: TypeAliasDescriptor
 
     abstract val isActual: Boolean
-    abstract val expandedType: IrType
+    abstract var expandedType: IrType
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitTypeAlias(this, data)

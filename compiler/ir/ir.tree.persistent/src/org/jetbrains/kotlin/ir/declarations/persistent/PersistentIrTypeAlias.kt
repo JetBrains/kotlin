@@ -22,7 +22,7 @@ internal class PersistentIrTypeAlias(
         override val symbol: IrTypeAliasSymbol,
         override val name: Name,
         override var visibility: DescriptorVisibility,
-        override val expandedType: IrType,
+        expandedType: IrType,
         override val isActual: Boolean,
         origin: IrDeclarationOrigin
 ) : IrTypeAlias(),
@@ -54,6 +54,16 @@ internal class PersistentIrTypeAlias(
         set(v) {
             if (typeParameters !== v) {
                 setCarrier().typeParametersField = v
+            }
+        }
+
+    override var expandedTypeField: IrType = expandedType
+
+    override var expandedType: IrType
+        get() = getCarrier().expandedTypeField
+        set(v) {
+            if (expandedType !== v) {
+                setCarrier().expandedTypeField = v
             }
         }
 }

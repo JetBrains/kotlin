@@ -43,7 +43,7 @@ class IrLazyTypeAlias(
         }
     }
 
-    override val expandedType: IrType by lazy {
+    override var expandedType: IrType by lazyVar {
         withInitialIr {
             typeTranslator.buildWithScope(this) {
                 descriptor.expandedType.toIrType()
