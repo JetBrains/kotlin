@@ -25,13 +25,16 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.ui.Gray
 import com.intellij.ui.JBColor
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.completion.canBeUsedWithoutNameInCall
 import org.jetbrains.kotlin.idea.core.OptionalParametersHelper
 import org.jetbrains.kotlin.idea.core.resolveCandidates
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
@@ -212,6 +215,9 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         if (!argumentListClass.java.isInstance(context.parameterOwner)) return false
         val call = itemToShow.call ?: return false
 
+        val supportsMixedNamedArgumentsInTheirOwnPosition =
+            call.callElement.languageVersionSettings.supportsFeature(LanguageFeature.MixedNamedArgumentsInTheirOwnPosition)
+
         @Suppress("UNCHECKED_CAST")
         val argumentList = context.parameterOwner as TArgumentList
 
@@ -229,6 +235,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         val text = buildString {
             val usedParameterIndices = HashSet<Int>()
             var namedMode = false
+            var argumentIndex = 0
 
             if (call.callType == Call.CallType.ARRAY_SET_METHOD) {
                 // for set-operator the last parameter is used for the value assigned
@@ -237,7 +244,9 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
 
             val includeParameterNames = !substitutedDescriptor.hasSynthesizedParameterNames()
 
-            fun appendParameter(parameter: ValueParameterDescriptor) {
+            fun appendParameter(parameter: ValueParameterDescriptor, named: Boolean = false) {
+                argumentIndex++
+
                 if (length > 0) {
                     append(", ")
                 }
@@ -247,7 +256,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
                     boldStartOffset = length
                 }
 
-                append(renderParameter(parameter, includeParameterNames, namedMode, project))
+                append(renderParameter(parameter, includeParameterNames, named || namedMode, project))
 
                 if (highlightParameter) {
                     boldEndOffset = length
@@ -259,15 +268,20 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
                 val parameter = argumentToParameter(argument) ?: continue
                 if (!usedParameterIndices.add(parameter.index)) continue
 
-                if (argument.isNamed()) {
+                if (argument.isNamed() &&
+                    !(supportsMixedNamedArgumentsInTheirOwnPosition && argument.canBeUsedWithoutNameInCall(itemToShow))
+                ) {
                     namedMode = true
                 }
 
-                appendParameter(parameter)
+                appendParameter(parameter, argument.isNamed())
             }
 
             for (parameter in substitutedDescriptor.valueParameters) {
                 if (parameter.index !in usedParameterIndices) {
+                    if (argumentIndex != parameter.index) {
+                        namedMode = true
+                    }
                     appendParameter(parameter)
                 }
             }
@@ -518,6 +532,9 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
 
     private fun ValueArgument.hasError(bindingContext: BindingContext) =
         getArgumentExpression()?.let { bindingContext.getType(it) }?.isError ?: true
+
+    private fun ValueArgument.canBeUsedWithoutNameInCall(callInfo: CallInfo) =
+        this is KtValueArgument && this.canBeUsedWithoutNameInCall(callInfo.resolvedCall as ResolvedCall<out CallableDescriptor>)
 
     // we should not compare descriptors directly because partial resolve is involved
     private fun descriptorsEqual(descriptor1: FunctionDescriptor, descriptor2: FunctionDescriptor): Boolean {
