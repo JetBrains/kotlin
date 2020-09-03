@@ -6,6 +6,7 @@ import java.net.URL
 
 data class DokkaConfigurationImpl(
     override val moduleName: String = DokkaDefaults.moduleName,
+    override val moduleVersion: String? = DokkaDefaults.moduleVersion,
     override val outputDir: File = DokkaDefaults.outputDir,
     override val cacheRoot: File? = DokkaDefaults.cacheRoot,
     override val offlineMode: Boolean = DokkaDefaults.offlineMode,

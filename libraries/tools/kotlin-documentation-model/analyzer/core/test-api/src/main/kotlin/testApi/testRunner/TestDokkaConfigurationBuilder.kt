@@ -23,7 +23,7 @@ class TestDokkaConfigurationBuilder {
             check(lazySourceSets.isEmpty()) { "Cannot set moduleName after adding source sets" }
             field = value
         }
-
+    var moduleVersion: String = "1.0-SNAPSHOT"
     var outputDir: String = "out"
     var format: String = "html"
     var offlineMode: Boolean = false
@@ -32,8 +32,10 @@ class TestDokkaConfigurationBuilder {
     var pluginsConfigurations: Map<String, String> = emptyMap()
     var failOnWarning: Boolean = false
     private val lazySourceSets = mutableListOf<Lazy<DokkaSourceSetImpl>>()
+
     fun build() = DokkaConfigurationImpl(
         moduleName = moduleName,
+        moduleVersion = moduleVersion,
         outputDir = File(outputDir),
         cacheRoot = cacheRoot?.let(::File),
         offlineMode = offlineMode,
