@@ -7,10 +7,6 @@ plugins {
     id("jps-compatible")
 }
 
-pill {
-    variant = PillExtension.Variant.FULL
-}
-
 dependencies {
     compileOnly(kotlin("stdlib", embeddedKotlinVersion))
     compileOnly(gradleApi())
