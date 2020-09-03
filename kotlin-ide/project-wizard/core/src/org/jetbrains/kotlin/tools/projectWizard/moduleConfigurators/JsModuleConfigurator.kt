@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleIRLi
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.irsList
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.BrowserJsSinglePlatformModuleConfigurator.settingsValue
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JSConfigurator.Companion.isApplication
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JSConfigurator.Companion.jsCompilerParam
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsBrowserBasedConfigurator.Companion.browserSubTarget
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsBrowserBasedConfigurator.Companion.cssSupport
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsNodeBasedConfigurator.Companion.nodejsSubTarget
@@ -44,7 +45,6 @@ interface JSConfigurator : ModuleConfiguratorWithModuleType, ModuleConfiguratorW
         GradlePlugin.gradleProperties
             .addValues(
                 "kotlin.js.generate.executable.default" to "false",
-                "kotlin.js.compiler" to JsCompiler.IR.text.toLowerCase()
             )
 
     override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> =
@@ -72,7 +72,7 @@ interface JSConfigurator : ModuleConfiguratorWithModuleType, ModuleConfiguratorW
             KotlinNewProjectWizardBundle.message("module.configurator.js.target.settings.compiler"),
             GenerationPhase.PROJECT_GENERATION
         ) {
-            defaultValue = value(JsCompiler.IR)
+            defaultValue = value(JsCompiler.LEGACY)
             filter = filter@{ reference, compilerCandidate ->
                 when {
                     reference !is ModuleConfiguratorSettingReference<*, *> -> false
@@ -83,6 +83,11 @@ interface JSConfigurator : ModuleConfiguratorWithModuleType, ModuleConfiguratorW
                 }
             }
         }
+
+        internal fun Reader.jsCompilerParam(
+            module: Module
+        ): String? =
+            settingValue(module, compiler)?.text
 
         fun Reader.isApplication(module: Module): Boolean =
             settingsValue(module, kind) == JsTargetKind.APPLICATION
@@ -156,10 +161,9 @@ abstract class JsSinglePlatformModuleConfigurator :
         module: Module
     ): List<BuildSystemIR> = irsList {
         "kotlin" {
-            val compiler = reader.settingsValue(module, JSConfigurator.compiler)
-            val param = if (compiler != JsCompiler.IR) {
-                "(${compiler.text})"
-            } else ""
+            val param = reader.jsCompilerParam(module)
+                ?.let { "($it)" } ?: ""
+
             "js${param}" {
                 subTarget(module, reader)
             }

@@ -14,7 +14,7 @@ dependencies {
     testImplementation(kotlin("test-js"))
 }
 kotlin {
-    js {
+    js(LEGACY) {
         nodejs {
             binaries.executable()
         }

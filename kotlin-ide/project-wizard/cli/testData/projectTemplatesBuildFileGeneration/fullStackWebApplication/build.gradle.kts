@@ -30,7 +30,7 @@ kotlin {
         }
         withJava()
     }
-    js {
+    js(LEGACY) {
         browser {
             binaries.executable()
             webpackTask {

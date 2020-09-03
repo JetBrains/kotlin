@@ -15,7 +15,7 @@ dependencies {
     testImplementation(kotlin("test-js"))
 }
 kotlin {
-    js {
+    js(LEGACY) {
         browser {
             binaries.executable()
             webpackTask {

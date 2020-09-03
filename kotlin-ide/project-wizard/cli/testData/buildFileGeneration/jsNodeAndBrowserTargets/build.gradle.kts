@@ -11,12 +11,12 @@ repositories {
     }
 }
 kotlin {
-    js("nodeJs") {
+    js("nodeJs", LEGACY) {
         nodejs {
             binaries.executable()
         }
     }
-    js("browser") {
+    js("browser", LEGACY) {
         browser {
             binaries.executable()
             webpackTask {

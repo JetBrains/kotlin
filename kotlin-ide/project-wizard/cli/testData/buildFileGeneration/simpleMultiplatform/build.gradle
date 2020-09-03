@@ -16,7 +16,7 @@ kotlin {
             kotlinOptions.jvmTarget = '9'
         }
     }
-    js('a') {
+    js('a', LEGACY) {
         browser {
             binaries.executable()
             webpackTask {
