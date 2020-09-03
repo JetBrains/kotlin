@@ -33,6 +33,14 @@ object Diagnostic2Annotation {
         return message
     }
 
+    fun getMessage(diagnostic: Diagnostic, renderMessage: (Diagnostic) -> String): String {
+        val message = renderMessage(diagnostic)
+        if (ApplicationManager.getApplication().isInternal || ApplicationManager.getApplication().isUnitTestMode) {
+            return "[${diagnostic.factory.name}] $message"
+        }
+        return message
+    }
+
     fun getDefaultMessage(diagnostic: Diagnostic): String {
         val message = DefaultErrorMessages.render(diagnostic)
         if (ApplicationManager.getApplication().isInternal || ApplicationManager.getApplication().isUnitTestMode) {
@@ -40,6 +48,8 @@ object Diagnostic2Annotation {
         }
         return message
     }
+
+
 
     fun createAnnotation(
         diagnostic: Diagnostic,

@@ -60,6 +60,8 @@ abstract class KtAnalysisSession(override val token: ValidityToken) : ValidityTo
 
     fun KtElement.getDiagnostics(): Collection<Diagnostic> = diagnosticProvider.getDiagnosticsForElement(this)
 
+    fun KtFile.collectDiagnosticsForFile(): Collection<Diagnostic> = diagnosticProvider.collectDiagnosticsForFile(this)
+
     fun KtSymbolWithKind.getContainingSymbol(): KtSymbolWithKind? = containingDeclarationProvider.getContainingDeclaration(this)
 
     fun KtClassOrObjectSymbol.getMemberScope(): KtMemberScope = scopeProvider.getMemberScope(this)
