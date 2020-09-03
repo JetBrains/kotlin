@@ -1,4 +1,4 @@
-// ERROR: Type mismatch: inferred type is Enumeration<(raw) Any!>! but Enumeration<DefaultMutableTreeNode> was expected
+// ERROR: Type mismatch: inferred type is Enumeration<TreeNode!>! but Enumeration<DefaultMutableTreeNode> was expected
 import java.util.Enumeration
 import javax.swing.tree.DefaultMutableTreeNode
 

@@ -1,3 +1,5 @@
+// RUNTIME_WITH_FULL_JDK
+
 import javax.swing.*;
 
 public class A {

@@ -1,10 +1,10 @@
-// ERROR: Unresolved reference: LinkedList
+// ERROR: Unresolved reference: ELinkedList
 import java.util.ArrayList
 
 class ForEach {
     fun test() {
         val xs = ArrayList<Any>()
-        val ys: MutableList<Any> = LinkedList<Any>()
+        val ys: MutableList<Any> = ELinkedList<Any>()
         for (x in xs) {
             ys.add(x)
         }

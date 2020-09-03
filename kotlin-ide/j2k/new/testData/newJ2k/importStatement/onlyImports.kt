@@ -1,2 +1,2 @@
-// ERROR: Unresolved reference: ArrayBlockingQueue
-import java.util.concurrent.ArrayBlockingQueue
+// ERROR: Unresolved reference: ArrayBlockingQueues
+import java.util.concurrent.ArrayBlockingQueues
