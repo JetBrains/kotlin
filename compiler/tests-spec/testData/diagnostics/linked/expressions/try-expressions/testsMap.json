@@ -1,0 +1,64 @@
+{
+  "2": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 6,
+          "description": "smartcast absence from operator assignment",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-types/p-9/pos/10.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 8,
+          "description": "nullable variable smartcast from direct assignment of try-catch expression with enums",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-types/p-9/pos/10.1.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "primary",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 1,
+          "description": "notNull smartcast \u0026 direct assignment smartcast",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-types/p-9/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        }
+      ],
+      "2": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 6,
+          "description": "smartcast absence from operator assignment",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-types/p-9/pos/10.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 8,
+          "description": "nullable variable smartcast from direct assignment of try-catch expression with enums",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-types/p-9/pos/10.1.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "primary",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 1,
+          "description": "notNull smartcast \u0026 direct assignment smartcast",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-types/p-9/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        }
+      ]
+    }
+  }
+}

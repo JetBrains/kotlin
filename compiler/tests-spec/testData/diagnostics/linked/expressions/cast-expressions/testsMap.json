@@ -1,0 +1,28 @@
+{
+  "3": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 1,
+          "description": "as + is",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/data-flow-framework/smart-cast-transfer-functions/p-2/neg/1.1.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "primary"
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 1,
+          "description": "as + is",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/data-flow-framework/smart-cast-transfer-functions/p-2/pos/1.1.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "primary"
+        }
+      ]
+    }
+  }
+}

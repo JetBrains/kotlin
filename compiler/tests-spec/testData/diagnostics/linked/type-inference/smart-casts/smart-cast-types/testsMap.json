@@ -1,7 +1,45 @@
 {
   "9": {
     "pos": {
+      "10": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 6,
+          "description": "smartcast absence from operator assignment",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-types/p-9/pos/10.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 8,
+          "description": "nullable variable smartcast from direct assignment of try-catch expression with enums",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-types/p-9/pos/10.1.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "main",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 1,
+          "description": "notNull smartcast \u0026 direct assignment smartcast",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-types/p-9/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        }
+      ],
       "1": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 1,
+          "description": "notNull smartcast \u0026 direct assignment smartcast",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-types/p-9/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "checkType"
+        },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
@@ -59,7 +97,83 @@
           "linkType": "primary"
         }
       ],
+      "7": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 3,
+          "description": "If the type of e is non-nullable, not-null assertion expression e!! has no effect.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-2/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 3,
+          "description": "If the type of e is non-nullable, not-null assertion expression e!! has no effect.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-2/pos/1.3.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "primary",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 3,
+          "description": "The type of non-null assertion expression is the non-nullable variant of the type of e",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expressions/p-3/pos/1.2.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "primary",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 3,
+          "description": "The type of non-null assertion expression is the non-nullable variant of the type of e",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expressions/p-3/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        }
+      ],
+      "9": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 3,
+          "description": "If the type of e is non-nullable, not-null assertion expression e!! has no effect.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-2/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 3,
+          "description": "The type of non-null assertion expression is the non-nullable variant of the type of e",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expressions/p-3/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        }
+      ],
       "8": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 3,
+          "description": "If the type of e is non-nullable, not-null assertion expression e!! has no effect.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-2/pos/1.3.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "secondary",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 3,
+          "description": "The type of non-null assertion expression is the non-nullable variant of the type of e",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expressions/p-3/pos/1.2.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "primary",
+          "helpers": "checkType"
+        },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,

@@ -1,0 +1,70 @@
+{
+  "3": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 3,
+          "description": "The type of non-null assertion expression is the non-nullable variant of the type of e",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expressions/p-3/pos/1.2.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "main",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 3,
+          "description": "The type of non-null assertion expression is the non-nullable variant of the type of e",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expressions/p-3/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "checkType"
+        }
+      ]
+    }
+  },
+  "1": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 3,
+          "description": "The type of non-null assertion expression is the non-nullable variant of the type of e",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expressions/p-3/pos/1.2.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "primary",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 3,
+          "description": "The type of non-null assertion expression is the non-nullable variant of the type of e",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expressions/p-3/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        }
+      ],
+      "3": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 3,
+          "description": "The type of non-null assertion expression is the non-nullable variant of the type of e",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expressions/p-3/pos/1.2.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "primary",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 3,
+          "description": "The type of non-null assertion expression is the non-nullable variant of the type of e",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expressions/p-3/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        }
+      ]
+    }
+  }
+}

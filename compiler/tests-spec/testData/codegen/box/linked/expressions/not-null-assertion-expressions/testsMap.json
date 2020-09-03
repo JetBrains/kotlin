@@ -1,0 +1,64 @@
+{
+  "1": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 0,
+          "description": "Type-checking is + not-null assertion expressions",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/type-inference/smart-casts/smart-cast-types/p-9/neg/7.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 0,
+          "description": "Type-checking is + not-null assertion expressions",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/type-inference/smart-casts/smart-cast-types/p-9/neg/7.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "2": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 0,
+          "description": "Type-checking is + not-null assertion expressions",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/type-inference/smart-casts/smart-cast-types/p-9/neg/7.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 0,
+          "description": "Type-checking is + not-null assertion expressions",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/type-inference/smart-casts/smart-cast-types/p-9/neg/7.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 0,
+          "description": "Type-checking is + not-null assertion expressions",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/type-inference/smart-casts/smart-cast-types/p-9/pos/7.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "3": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 0,
+          "description": "Type-checking is + not-null assertion expressions",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/type-inference/smart-casts/smart-cast-types/p-9/pos/7.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    }
+  }
+}
