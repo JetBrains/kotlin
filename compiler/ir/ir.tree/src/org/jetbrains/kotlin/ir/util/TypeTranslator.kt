@@ -208,6 +208,10 @@ class TypeTranslator(
             irAnnotations.addSpecialAnnotation(extensions.flexibleNullabilityAnnotationConstructor)
         }
 
+        if (flexibleType is RawType) {
+            irAnnotations.addSpecialAnnotation(extensions.rawTypeAnnotationConstructor)
+        }
+
         return irAnnotations
     }
 

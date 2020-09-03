@@ -298,7 +298,8 @@ abstract class AnnotationCodegen(
 
         internal val internalAnnotations = setOf(
             JvmGeneratorExtensions.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME,
-            JvmGeneratorExtensions.ENHANCED_NULLABILITY_ANNOTATION_FQ_NAME
+            JvmGeneratorExtensions.ENHANCED_NULLABILITY_ANNOTATION_FQ_NAME,
+            JvmGeneratorExtensions.RAW_TYPE_ANNOTATION_FQ_NAME
         )
 
         private fun getRetentionPolicy(irClass: IrClass): RetentionPolicy {

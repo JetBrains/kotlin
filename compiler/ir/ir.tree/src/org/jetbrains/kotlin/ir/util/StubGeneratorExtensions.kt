@@ -38,6 +38,9 @@ open class StubGeneratorExtensions {
     open val enhancedNullabilityAnnotationConstructor: IrConstructor?
         get() = null
 
+    open val rawTypeAnnotationConstructor: IrConstructor?
+        get() = null
+
     companion object {
         @JvmField
         val EMPTY = StubGeneratorExtensions()
