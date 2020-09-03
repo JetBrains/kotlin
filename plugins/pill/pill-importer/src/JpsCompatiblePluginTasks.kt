@@ -31,7 +31,8 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
             ":kotlin-test:kotlin-test-jvm",
             ":kotlin-test:kotlin-test-junit",
             ":kotlin-script-runtime",
-            ":kotlin-serialization"
+            ":kotlin-serialization",
+            ":kotlin-coroutines-experimental-compat"
         )
 
         private val IGNORED_LIBRARIES = listOf(
