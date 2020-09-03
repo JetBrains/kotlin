@@ -5,15 +5,33 @@
 
 package org.jetbrains.kotlin.idea.resolve
 
+import com.intellij.testFramework.LightProjectDescriptor
+import com.intellij.util.ThrowableRunnable
 import junit.framework.AssertionFailedError
 import org.jetbrains.kotlin.idea.navigation.NavigationTestUtils
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.Assert
 
 abstract class AbstractReferenceResolveInLibrarySourcesTest : KotlinLightCodeInsightFixtureTestCase() {
     companion object {
-        private val REF_CARET_MARKER = "<ref-caret>"
+        private const val REF_CARET_MARKER = "<ref-caret>"
+    }
+
+    private val mockLibraryFacility = MockLibraryFacility(
+        source = IDEA_TEST_DATA_DIR.resolve("resolve/referenceInLib/inLibrarySource"),
+    )
+
+    override fun setUp() {
+        super.setUp()
+        mockLibraryFacility.setUp(module)
+    }
+
+    override fun tearDown() {
+        runAll(
+            ThrowableRunnable { mockLibraryFacility.tearDown(module) },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     fun doTest(unused: String) {
@@ -46,4 +64,5 @@ abstract class AbstractReferenceResolveInLibrarySourcesTest : KotlinLightCodeIns
         AbstractReferenceResolveTest.checkReferenceResolve(expectedResolveData, offset, reference)
     }
 
+    override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 }
