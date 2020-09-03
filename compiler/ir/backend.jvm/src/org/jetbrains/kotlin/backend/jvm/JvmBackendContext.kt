@@ -91,7 +91,7 @@ class JvmBackendContext(
         localClassType[container.attributeOwnerId] = value
     }
 
-    internal val customEnclosingFunction = mutableMapOf<IrAttributeContainer, IrFunction>()
+    internal val isEnclosedInConstructor = mutableSetOf<IrAttributeContainer>()
 
     internal val classCodegens = mutableMapOf<IrClass, ClassCodegen>()
 

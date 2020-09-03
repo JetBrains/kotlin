@@ -444,6 +444,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
                 runTest("compiler/testData/codegen/bytecodeListing/inline/enclosingInfo/lambdaInInitBlockNoPrimaryConstructor.kt");
             }
 
+            @TestMetadata("lambdaInInnerClassConstructor.kt")
+            public void testLambdaInInnerClassConstructor() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inline/enclosingInfo/lambdaInInnerClassConstructor.kt");
+            }
+
             @TestMetadata("transformedConstructor.kt")
             public void testTransformedConstructor() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeListing/inline/enclosingInfo/transformedConstructor.kt");

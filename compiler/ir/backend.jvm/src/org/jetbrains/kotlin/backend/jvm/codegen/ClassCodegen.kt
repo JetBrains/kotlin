@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.jvm.annotations.VOLATILE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.checkers.JvmSimpleNameBacktickChecker
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.*
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -360,7 +361,13 @@ abstract class ClassCodegen protected constructor(
         // the current class. If the current class is immediately enclosed by a method
         // or constructor, the name and type of the function is recorded as well.
         if (parentClassCodegen != null) {
-            val enclosingFunction = context.customEnclosingFunction[irClass.attributeOwnerId] ?: parentFunction
+            // In case there's no primary constructor, it's unclear which constructor should be the enclosing one, so we select the first.
+            val enclosingFunction = if (irClass.attributeOwnerId in context.isEnclosedInConstructor) {
+                val containerClass = parentClassCodegen.irClass
+                containerClass.primaryConstructor
+                    ?: containerClass.declarations.firstIsInstanceOrNull<IrConstructor>()
+                    ?: error("Class in a non-static initializer found, but container has no constructors: ${containerClass.render()}")
+            } else parentFunction
             if (enclosingFunction != null || irClass.isAnonymousObject) {
                 val method = enclosingFunction?.let(context.methodSignatureMapper::mapAsmMethod)
                 visitor.visitOuterClass(parentClassCodegen.type.internalName, method?.name, method?.descriptor)

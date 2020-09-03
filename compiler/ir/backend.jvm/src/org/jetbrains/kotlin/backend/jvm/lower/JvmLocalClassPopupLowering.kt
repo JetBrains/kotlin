@@ -12,10 +12,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.primaryConstructor
-import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class JvmLocalClassPopupLowering(context: JvmBackendContext) : LocalClassPopupLowering(context) {
     private val inlineLambdaToScope = mutableMapOf<IrFunction, IrDeclaration>()
@@ -49,17 +45,13 @@ class JvmLocalClassPopupLowering(context: JvmBackendContext) : LocalClassPopupLo
         while (parent is IrFunction) {
             parent = inlineLambdaToScope[parent] ?: break
         }
-        val container = when (parent) {
-            is IrAnonymousInitializer -> parent.parentAsClass.takeUnless { parent.isStatic }
-            is IrField -> parent.parentAsClass.takeUnless { parent.isStatic }
-            else -> null
-        } ?: return false
 
-        // In case there's no primary constructor, it's unclear which constructor should be the enclosing one, so we select the first.
-        (context as JvmBackendContext).customEnclosingFunction[klass.attributeOwnerId] =
-            container.primaryConstructor ?: container.declarations.firstIsInstanceOrNull<IrConstructor>()
-                    ?: error("Class in a non-static initializer found, but container has no constructors: ${container.render()}")
-
-        return true
+        if (parent is IrAnonymousInitializer && !parent.isStatic ||
+            parent is IrField && !parent.isStatic
+        ) {
+            (context as JvmBackendContext).isEnclosedInConstructor.add(klass.attributeOwnerId)
+            return true
+        }
+        return false
     }
 }
