@@ -335,6 +335,12 @@ private val returnableBlockLoweringPhase = makeBodyLoweringPhase(
     prerequisite = setOf(functionInliningPhase)
 )
 
+private val rangeContainsLoweringPhase = makeBodyLoweringPhase(
+    ::RangeContainsLowering,
+    name = "RangeContainsLowering",
+    description = "[Optimization] Optimizes calls to contains() for ClosedRanges"
+)
+
 private val forLoopsLoweringPhase = makeBodyLoweringPhase(
     ::ForLoopsLowering,
     name = "ForLoopsLowering",
@@ -703,6 +709,7 @@ val loweringList = listOf<Lowering>(
     propertyReferenceLoweringPhase,
     interopCallableReferenceLoweringPhase,
     returnableBlockLoweringPhase,
+    rangeContainsLoweringPhase,
     forLoopsLoweringPhase,
     primitiveCompanionLoweringPhase,
     propertyAccessorInlinerLoweringPhase,
