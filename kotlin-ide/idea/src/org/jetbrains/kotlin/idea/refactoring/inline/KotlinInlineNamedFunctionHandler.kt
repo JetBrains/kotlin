@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.refactoring.inline
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.refactoring.RefactoringBundle
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
@@ -44,7 +45,8 @@ class KotlinInlineNamedFunctionHandler : AbstractKotlinInlineFunctionHandler<KtN
         if (!ApplicationManager.getApplication().isUnitTestMode) {
             dialog.show()
         } else {
-            dialog.performOKAction()
+            dialog.doAction()
+            dialog.close(DialogWrapper.OK_EXIT_CODE, true)
         }
     }
 

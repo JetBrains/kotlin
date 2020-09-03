@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.refactoring.inline
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.DialogWrapper.OK_EXIT_CODE
 import com.intellij.refactoring.HelpID
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlinePropertyProcessor.Companion.extractInitialization
@@ -80,7 +81,8 @@ class KotlinInlinePropertyHandler(private val withPrompt: Boolean = true) : Kotl
         if (withPrompt && !ApplicationManager.getApplication().isUnitTestMode && dialog.shouldBeShown()) {
             dialog.show()
         } else {
-            dialog.performOKAction()
+            dialog.doAction()
+            dialog.close(OK_EXIT_CODE, true)
         }
     }
 }
