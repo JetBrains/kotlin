@@ -365,7 +365,7 @@ internal fun resolveToDeclaration(sourcePsi: KtExpression, declarationDescriptor
         }
     }
 
-    if (declarationDescriptor is JavaMethodDescriptor) {
+    if (declarationDescriptor is CallableMemberDescriptor && declarationDescriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
         declarationDescriptor.overriddenDescriptors.asSequence()
             .mapNotNull { resolveToDeclaration(sourcePsi, it) }
             .firstOrNull()
