@@ -9,4 +9,4 @@ fun f(pair: Pair<out Any, out Any>) {
     pair.first.<caret>
 }
 
-// EXIST: { lookupString: "absolutePath", itemText: "absolutePath", tailText: " (from getAbsolutePath())", typeText: "String!", attributes: "grayed" }
+// EXIST: {"lookupString":"absolutePath","tailText":" (from getAbsolutePath())","typeText":"String","attributes":"grayed","allLookupStrings":"absolutePath, getAbsolutePath","itemText":"absolutePath"}
