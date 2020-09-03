@@ -517,12 +517,39 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
             return (callToUse.getArgumentMapping(argument) as? ArgumentMatch)?.valueParameter
         }
 
-        val highlightParameterIndex = argumentToParameter(currentArgument)?.index
+        val currentParameter = argumentToParameter(currentArgument)
+        val highlightParameterIndex = currentParameter?.index
 
         val argumentsBeforeCurrent = arguments.subList(0, currentArgumentIndex)
-        if ((argumentsBeforeCurrent + currentArgument).any { argumentToParameter(it) == null }) {
-            // some of arguments before the current one (or the current one) are not mapped to any of the parameters
+        if (argumentsBeforeCurrent.any { argumentToParameter(it) == null }) {
+            // some of arguments before the current one are not mapped to any of the parameters
             return SignatureInfo(resultingDescriptor, ::argumentToParameter, highlightParameterIndex, isGrey = true)
+        }
+
+        if (currentParameter == null) {
+            if (currentArgumentIndex < arguments.lastIndex) {
+                // the current argument is not the last one and it is not mapped to any of the parameters
+                return SignatureInfo(resultingDescriptor, ::argumentToParameter, highlightParameterIndex, isGrey = true)
+            }
+
+            val usedParameters = argumentsBeforeCurrent.mapNotNull { argumentToParameter(it) }
+            val availableParameters = if (call.callType == Call.CallType.ARRAY_SET_METHOD) {
+                resultingDescriptor.valueParameters.dropLast(1)
+            } else {
+                resultingDescriptor.valueParameters
+            } 
+            val noUnusedParametersLeft = (availableParameters - usedParameters).isEmpty()
+
+            if (currentArgument == info.dummyArgument) {
+                val supportsTrailingCommas = call.callElement.languageVersionSettings.supportsFeature(LanguageFeature.TrailingCommas)
+                if (!supportsTrailingCommas && noUnusedParametersLeft) {
+                    // current argument is empty but there are no unused parameters left and trailing commas are not supported
+                    return SignatureInfo(resultingDescriptor, ::argumentToParameter, highlightParameterIndex, isGrey = true)
+                }
+            } else if (noUnusedParametersLeft) {
+                // there are no unused parameters left to which this argument could be matched
+                return SignatureInfo(resultingDescriptor, ::argumentToParameter, highlightParameterIndex, isGrey = true)
+            }
         }
 
         // grey out if not all arguments before the current are matched
