@@ -1,7 +1,7 @@
 package a;
 
 public class X {
-    private A outer;
+    private final A outer;
 
     public X(A outer, String s) {
         this.outer = outer;
