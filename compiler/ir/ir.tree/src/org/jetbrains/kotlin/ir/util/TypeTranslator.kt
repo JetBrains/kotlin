@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
@@ -116,27 +117,22 @@ class TypeTranslator(
             when (ktTypeDescriptor) {
                 is TypeParameterDescriptor -> {
                     classifier = resolveTypeParameter(ktTypeDescriptor)
-                    annotations = translateTypeAnnotations(approximatedType)
+                    annotations = translateTypeAnnotations(approximatedType, flexibleApproximatedType)
                 }
 
                 is ClassDescriptor -> {
                     classifier = symbolTable.referenceClass(ktTypeDescriptor)
-                    arguments = translateTypeArguments(approximatedType.arguments)
-                    annotations = translateTypeAnnotations(approximatedType)
+                    arguments =
+                        if (flexibleApproximatedType is RawType)
+                            translateTypeArguments(flexibleApproximatedType.arguments)
+                        else
+                            translateTypeArguments(approximatedType.arguments)
+                    annotations = translateTypeAnnotations(approximatedType, flexibleApproximatedType)
                 }
 
                 else ->
                     throw AssertionError("Unexpected type descriptor $ktTypeDescriptor :: ${ktTypeDescriptor::class}")
             }
-            if (flexibleApproximatedType.isNullabilityFlexible())
-                extensions.flexibleNullabilityAnnotationConstructor?.let { flexibleTypeAnnotationConstructor ->
-                    annotations += IrConstructorCallImpl(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        flexibleTypeAnnotationConstructor.constructedClassType,
-                        flexibleTypeAnnotationConstructor.symbol,
-                        0, 0, 0
-                    )
-                }
         }.buildTypeProjection()
     }
 
@@ -194,25 +190,38 @@ class TypeTranslator(
                 approximateCapturedTypes(ktType).upper
         }
 
-    private fun translateTypeAnnotations(kotlinType: KotlinType): List<IrConstructorCall> {
+    private fun translateTypeAnnotations(kotlinType: KotlinType, flexibleType: KotlinType = kotlinType): List<IrConstructorCall> {
         val annotations = kotlinType.annotations
         val irAnnotations = ArrayList<IrConstructorCall>()
+
         annotations.mapNotNullTo(irAnnotations) {
             constantValueGenerator.generateAnnotationConstructorCall(it)
         }
+
         // EnhancedNullability annotation is not present in 'annotations', see 'EnhancedTypeAnnotations::iterator()'.
+        // Also, EnhancedTypeAnnotationDescriptor is not a "real" annotation descriptor, there's no corresponding ClassDescriptor, etc.
         if (extensions.enhancedNullability.hasEnhancedNullability(kotlinType)) {
-            extensions.enhancedNullabilityAnnotationConstructor?.let { irConstructor ->
-                irAnnotations.add(
-                    IrConstructorCallImpl.fromSymbolOwner(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        irConstructor.constructedClassType,
-                        irConstructor.symbol
-                    )
-                )
-            }
+            irAnnotations.addSpecialAnnotation(extensions.enhancedNullabilityAnnotationConstructor)
         }
+
+        if (flexibleType.isNullabilityFlexible()) {
+            irAnnotations.addSpecialAnnotation(extensions.flexibleNullabilityAnnotationConstructor)
+        }
+
         return irAnnotations
+    }
+
+    private fun MutableList<IrConstructorCall>.addSpecialAnnotation(irConstructor: IrConstructor?) {
+        if (irConstructor != null) {
+            add(
+                IrConstructorCallImpl.fromSymbolOwner(
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    irConstructor.constructedClassType,
+                    irConstructor.symbol
+                )
+            )
+        }
     }
 
     private fun translateTypeArguments(arguments: List<TypeProjection>) =

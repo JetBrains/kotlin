@@ -149,6 +149,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         runTest("compiler/testData/codegen/bytecodeListing/privateNestedClassInInterface.kt");
     }
 
+    @TestMetadata("rawTypeInSignature.kt")
+    public void testRawTypeInSignature() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/rawTypeInSignature.kt");
+    }
+
     @TestMetadata("samAdapterAndInlinedOne.kt")
     public void testSamAdapterAndInlinedOne() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/samAdapterAndInlinedOne.kt");
