@@ -86,7 +86,7 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
 
         rootProject.logger.lifecycle("Pill: Setting up project for the '${variant.name.toLowerCase()}' variant...")
 
-        if (variant == PillExtensionMirror.Variant.NONE || variant == PillExtensionMirror.Variant.DEFAULT) {
+        if (variant == PillExtensionMirror.Variant.DEFAULT) {
             rootProject.logger.error("'none' and 'default' should not be passed as a Pill variant property value")
             return
         }

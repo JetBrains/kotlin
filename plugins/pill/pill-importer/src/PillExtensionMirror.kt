@@ -22,11 +22,6 @@ open class PillExtensionMirror(variant: String, val excludedDirs: List<File>) {
             override val includes = setOf(BASE, FULL)
         },
 
-        // Do not import the project to JPS model, but set some options for it
-        NONE {
-            override val includes = emptySet<Variant>()
-        },
-
         // 'BASE' if the "jps-compatible" plugin is applied, 'NONE' otherwise
         DEFAULT {
             override val includes = emptySet<Variant>()
