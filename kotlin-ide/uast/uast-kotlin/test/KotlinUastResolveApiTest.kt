@@ -96,17 +96,18 @@ class KotlinUastResolveApiTest : KotlinLightCodeInsightFixtureTestCase() {
         val functionCall = main.findElementByText<UElement>("print").uastParent as KotlinUFunctionCallExpression
 
         val resolvedDeclaration = functionCall.multiResolve()
-        val resolvedDeclarationsStrings = resolvedDeclaration.map { it.element.text ?: "<null>" }
+        val resolvedDeclarationsStrings = resolvedDeclaration.map { r -> methodSignature(r.element) }
         assertContainsElements(
             resolvedDeclarationsStrings,
-            "public void print(char c) { /* compiled code */ }",
-            "public void print(int i) { /* compiled code */ }",
-            "public void print(long l) { /* compiled code */ }",
-            "public void print(float f) { /* compiled code */ }",
-            "public void print(double d) { /* compiled code */ }",
-            "public void print(char[] s) { /* compiled code */ }",
-            "public void print(java.lang.String s) { /* compiled code */ }",
-            "public void print(java.lang.Object obj) { /* compiled code */ }"
+            "PsiType:void print(PsiType:boolean)",
+            "PsiType:void print(PsiType:char)",
+            "PsiType:void print(PsiType:int)",
+            "PsiType:void print(PsiType:long)",
+            "PsiType:void print(PsiType:float)",
+            "PsiType:void print(PsiType:double)",
+            "PsiType:void print(PsiType:char[])",
+            "PsiType:void print(PsiType:String)",
+            "PsiType:void print(PsiType:Object)"
         )
 
         TestCase.assertEquals(PsiType.VOID, functionCall.getExpressionType())
@@ -381,5 +382,9 @@ class KotlinUastResolveApiTest : KotlinLightCodeInsightFixtureTestCase() {
             uFile.findElementByTextFromPsi<UExpression>("lst[0]").getExpressionType().toString()
         )
     }
+}
+
+private fun methodSignature(psiMethod: PsiMethod): String {
+    return "${psiMethod.returnType} ${psiMethod.name}(${psiMethod.parameterList.parameters.joinToString(", ") { it.type.toString() }})"
 }
 
