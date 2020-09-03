@@ -13,22 +13,22 @@ open class PillExtensionMirror(variant: String, val excludedDirs: List<File>) {
 
     enum class Variant {
         // Default variant (./gradlew pill)
-        BASE() {
+        BASE {
             override val includes = setOf(BASE)
         },
 
         // Full variant (./gradlew pill -Dpill.variant=full)
-        FULL() {
+        FULL {
             override val includes = setOf(BASE, FULL)
         },
 
         // Do not import the project to JPS model, but set some options for it
-        NONE() {
+        NONE {
             override val includes = emptySet<Variant>()
         },
 
         // 'BASE' if the "jps-compatible" plugin is applied, 'NONE' otherwise
-        DEFAULT() {
+        DEFAULT {
             override val includes = emptySet<Variant>()
         };
 
@@ -38,6 +38,7 @@ open class PillExtensionMirror(variant: String, val excludedDirs: List<File>) {
 
 fun Project.findPillExtensionMirror(): PillExtensionMirror? {
     val ext = extensions.findByName("pill") ?: return null
+
     @Suppress("UNCHECKED_CAST")
     val serialized = ext::class.java.getMethod("serialize").invoke(ext) as Map<String, Any>
 
