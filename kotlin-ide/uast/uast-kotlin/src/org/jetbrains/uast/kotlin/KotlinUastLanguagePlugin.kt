@@ -52,6 +52,8 @@ import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
 import org.jetbrains.uast.kotlin.declarations.KotlinUMethodWithFakeLightDelegate
 import org.jetbrains.uast.kotlin.expressions.*
 import org.jetbrains.uast.kotlin.psi.*
+import org.jetbrains.uast.util.ClassSet
+import org.jetbrains.uast.util.ClassSetsWrapper
 
 interface KotlinUastResolveProviderService {
     fun getBindingContext(element: KtElement): BindingContext
@@ -80,16 +82,18 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
         }
 
     override fun convertElement(element: PsiElement, parent: UElement?, requiredType: Class<out UElement>?): UElement? {
-        if (!element.isJvmElement) return null
-        return convertDeclarationOrElement(element, parent, elementTypes(requiredType))
+        val requiredTypes = elementTypes(requiredType)
+        return if (!canConvert(element, requiredTypes) || !element.isJvmElement) null
+        else convertDeclarationOrElement(element, parent, requiredTypes)
     }
 
     override fun convertElementWithParent(element: PsiElement, requiredType: Class<out UElement>?): UElement? {
-        if (!element.isJvmElement) return null
-        if (element is PsiFile) return convertDeclaration(element, null, elementTypes(requiredType))
-        if (element is KtLightClassForFacade) return convertDeclaration(element, null, elementTypes(requiredType))
-
-        return convertDeclarationOrElement(element, null, elementTypes(requiredType))
+        val requiredTypes = elementTypes(requiredType)
+        return when {
+            !canConvert(element, requiredTypes) || !element.isJvmElement -> null
+            element is PsiFile || element is KtLightClassForFacade -> convertDeclaration(element, null, requiredTypes)
+            else -> convertDeclarationOrElement(element, null, requiredTypes)
+        }
     }
 
     override fun getMethodCallExpression(
@@ -145,10 +149,9 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
 
     @Suppress("UNCHECKED_CAST")
     fun <T : UElement> convertElement(element: PsiElement, parent: UElement?, expectedTypes: Array<out Class<out T>>): T? {
-        if (!element.isJvmElement) return null
         val nonEmptyExpectedTypes = expectedTypes.nonEmptyOr(DEFAULT_TYPES_LIST)
-        return (convertDeclaration(element, parent, nonEmptyExpectedTypes)
-            ?: KotlinConverter.convertPsiElement(element, parent, nonEmptyExpectedTypes)) as? T
+        return if (!canConvert(element, nonEmptyExpectedTypes) || !element.isJvmElement) null
+        else convertDeclarationOrElement(element, parent, nonEmptyExpectedTypes) as? T
     }
 
     override fun <T : UElement> convertElementWithParent(element: PsiElement, requiredTypes: Array<out Class<out T>>): T? {
@@ -166,6 +169,13 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
             element is UastFakeLightPrimaryConstructor ->
                 KotlinConverter.convertFakeLightConstructorAlternatices(element, null, requiredTypes) as Sequence<T>
             else -> sequenceOf(convertElementWithParent(element, requiredTypes.nonEmptyOr(DEFAULT_TYPES_LIST)) as? T).filterNotNull()
+        }
+
+    override fun getPossiblePsiSourceTypes(vararg uastTypes: Class<out UElement>): ClassSet<PsiElement> =
+        when (uastTypes.size) {
+            0 -> getPossibleSourceTypes(UElement::class.java)
+            1 -> getPossibleSourceTypes(uastTypes.single())
+            else -> ClassSetsWrapper<PsiElement>(Array(uastTypes.size) { getPossibleSourceTypes(uastTypes[it]) })
         }
 }
 
@@ -234,9 +244,8 @@ internal object KotlinConverter {
                     convertNonLocalProperty(element, givenParent, this).firstOrNull()
                 }
                 else {
-                    el<UVariable> {
-                        convertVariablesDeclaration(element, givenParent).declarations.singleOrNull()
-                    }
+                    el<UVariable> { convertVariablesDeclaration(element, givenParent).declarations.singleOrNull() }
+                        ?: expr<UDeclarationsExpression> { KotlinConverter.convertExpression(element, givenParent, expectedTypes) }
                 }
 
             is KtExpression -> KotlinConverter.convertExpression(element, givenParent, expectedTypes)
@@ -616,11 +625,12 @@ internal object KotlinConverter {
     ): UElement? {
         if (element is UElement) return element
 
-        if (element.isValid) {
-            element.getUserData(KOTLIN_CACHED_UELEMENT_KEY)?.get()?.let { cachedUElement ->
-                return if (expectedTypes.isAssignableFrom(cachedUElement.javaClass)) cachedUElement else null
-            }
-        }
+
+        //if (element.isValid) {
+        //    element.getUserData(KOTLIN_CACHED_UELEMENT_KEY)?.get()?.let { cachedUElement ->
+        //        return if (expectedTypes.isAssignableFrom(cachedUElement.javaClass)) cachedUElement else null
+        //    }
+        //}
 
         val uElement = convertDeclaration(element, givenParent, expectedTypes)
             ?: KotlinConverter.convertPsiElement(element, givenParent, expectedTypes)
