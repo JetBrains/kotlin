@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.types.getAbbreviation
 
+internal const val KNI_BRIDGE_FUNCTION_PREFIX = "kniBridge"
+
 internal fun SimpleFunctionDescriptor.isKniBridgeFunction() =
-    name.asString().startsWith("kniBridge")
+    name.asString().startsWith(KNI_BRIDGE_FUNCTION_PREFIX)
 
 internal fun SimpleFunctionDescriptor.isDeprecatedTopLevelFunction() =
     containingDeclaration is PackageFragmentDescriptor && annotations.hasAnnotation(DEPRECATED_ANNOTATION_FQN)
