@@ -18,9 +18,7 @@ import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScope
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtPossibleExtensionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.isExtension
-import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -82,17 +80,14 @@ private object KotlinAvailableScopesCompletionProvider {
         with(getAnalysisSessionFor(originalFile).createContextDependentCopy()) {
             val (implicitScopes, _) = originalFile.getScopeContextForPosition(nameExpression)
 
+            fun KtCallableSymbol.hasSuitableExtensionReceiver(): Boolean =
+                checkExtensionIsSuitable(originalFile, parameters.originalPosition, nameExpression, explicitReceiver)
+
             when {
                 nameExpression.parent is KtUserType -> collectTypesCompletion(result, implicitScopes)
-                explicitReceiver != null -> collectDotCompletion(
-                    result,
-                    implicitScopes,
-                    explicitReceiver,
-                    nameExpression,
-                    originalFile,
-                    parameters.originalPosition
-                )
-                else -> collectDefaultCompletion(result, implicitScopes, nameExpression, originalFile, parameters.originalPosition)
+                explicitReceiver != null ->
+                    collectDotCompletion(result, implicitScopes, explicitReceiver, KtCallableSymbol::hasSuitableExtensionReceiver)
+                else -> collectDefaultCompletion(result, implicitScopes, KtCallableSymbol::hasSuitableExtensionReceiver)
             }
         }
     }
@@ -106,9 +101,7 @@ private object KotlinAvailableScopesCompletionProvider {
         result: CompletionResultSet,
         implicitScopes: KtCompositeScope,
         explicitReceiver: KtExpression,
-        nameExpression: KtSimpleNameExpression,
-        originalFile: KtFile,
-        originalPosition: PsiElement?,
+        hasSuitableExtensionReceiver: KtCallableSymbol.() -> Boolean
     ) {
         val typeOfPossibleReceiver = explicitReceiver.getKtType()
         val possibleReceiverScope = typeOfPossibleReceiver.getTypeScope() ?: return
@@ -119,25 +112,16 @@ private object KotlinAvailableScopesCompletionProvider {
 
         val extensionNonMembers = implicitScopes
             .getCallableSymbols()
-            .filter {
-                it.isExtension && it.checkExtensionIsSuitable(
-                    originalFile,
-                    originalPosition,
-                    nameExpression,
-                    explicitReceiver
-                )
-            }
+            .filter { it.isExtension && it.hasSuitableExtensionReceiver() }
 
         nonExtensionMembers.forEach { result.addSymbolToCompletion(it) }
         extensionNonMembers.forEach { result.addSymbolToCompletion(it) }
     }
 
-    private fun KtAnalysisSession.collectDefaultCompletion(
+    private fun collectDefaultCompletion(
         result: CompletionResultSet,
         implicitScopes: KtCompositeScope,
-        nameExpression: KtSimpleNameExpression,
-        originalFile: KtFile,
-        originalPosition: PsiElement?,
+        hasSuitableExtensionReceiver: KtCallableSymbol.() -> Boolean,
     ) {
         val availableNonExtensions = implicitScopes
             .getCallableSymbols()
@@ -146,12 +130,7 @@ private object KotlinAvailableScopesCompletionProvider {
         val extensionsWhichCanBeCalled = implicitScopes
             .getCallableSymbols()
             .filter {
-                it.isExtension && it.checkExtensionIsSuitable(
-                    originalFile,
-                    originalPosition,
-                    nameExpression,
-                    null
-                )
+                it.isExtension && it.hasSuitableExtensionReceiver()
             }
 
         availableNonExtensions.forEach { result.addSymbolToCompletion(it) }
