@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 class A<T1, T2> {
     fun foo1() {}
 

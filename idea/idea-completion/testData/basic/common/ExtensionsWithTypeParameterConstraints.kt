@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 fun <T : Int> T.ext1() {}
 fun <T : String> T.ext2() {}
 

@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 class MyClass<T>
 
 fun <T> MyClass<T>.ext() = ""
