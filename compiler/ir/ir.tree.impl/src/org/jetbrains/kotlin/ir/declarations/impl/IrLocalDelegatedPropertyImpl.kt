@@ -30,7 +30,7 @@ class IrLocalDelegatedPropertyImpl(
     override var origin: IrDeclarationOrigin,
     override val symbol: IrLocalDelegatedPropertySymbol,
     override val name: Name,
-    override val type: IrType,
+    override var type: IrType,
     override val isVar: Boolean
 ) : IrLocalDelegatedProperty() {
     init {
