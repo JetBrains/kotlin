@@ -10,6 +10,7 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.psi.*
@@ -26,7 +27,7 @@ class ConvertInitializedValToNonNullTypeInspection : AbstractKotlinInspection() 
             if (shouldConvertToNonNullType(property)) {
                 holder.registerProblem(
                     typeReference,
-                    "Initialized 'val' should be converted to non-null type",
+                    KotlinBundle.message("initialized.val.should.be.converted.to.non.null.type"),
                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                     RemoveRedundantNullableTypeQuickfix()
                 )
@@ -58,7 +59,7 @@ class ConvertInitializedValToNonNullTypeInspection : AbstractKotlinInspection() 
 }
 
 class RemoveRedundantNullableTypeQuickfix : LocalQuickFix {
-    override fun getName() = "Convert initialized 'val' to non-null type"
+    override fun getName() = KotlinBundle.message("convert.initialized.val.to.non.null.type.quick.fix.text")
 
     override fun getFamilyName() = name
 
