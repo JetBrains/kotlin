@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 class A
 open class B
 

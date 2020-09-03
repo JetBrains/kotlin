@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 fun <T : Any> T.anyFun() {}
 val <T : Any> T.anyVal: Int get() = 10
 

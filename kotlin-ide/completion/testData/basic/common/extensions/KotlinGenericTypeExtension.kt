@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 fun <T> Some<T>.close() {
 }
 
