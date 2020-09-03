@@ -11,6 +11,7 @@ import org.gradle.kotlin.dsl.extra
 import org.jetbrains.kotlin.pill.*
 import org.jetbrains.kotlin.pill.model.PDependency
 import org.jetbrains.kotlin.pill.model.PLibrary
+import org.jetbrains.kotlin.pill.util.ProjectContext
 import java.io.File
 
 class ArtifactGenerator(private val dependencyMapper: ArtifactDependencyMapper) {

@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.pill.artifact
 
-import org.jetbrains.kotlin.pill.PathContext
-import org.jetbrains.kotlin.pill.XmlNode
-import org.jetbrains.kotlin.pill.xml
+import org.jetbrains.kotlin.pill.util.PathContext
+import org.jetbrains.kotlin.pill.util.XmlNode
+import org.jetbrains.kotlin.pill.util.xml
 import java.io.File
 
 sealed class ArtifactElement {

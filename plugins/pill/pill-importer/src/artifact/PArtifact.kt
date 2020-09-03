@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.pill.artifact
 
-import org.jetbrains.kotlin.pill.*
 import org.jetbrains.kotlin.pill.artifact.ArtifactElement.*
+import org.jetbrains.kotlin.pill.util.PathContext
+import org.jetbrains.kotlin.pill.util.xml
 import java.io.File
 
 class PArtifact(val artifactName: String, private val outputDir: File, private val contents: Root) {
