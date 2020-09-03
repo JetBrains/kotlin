@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.testFramework.IdeaTestUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator.FileState
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -118,8 +118,5 @@ abstract class AbstractConfigureKotlinTest : AbstractConfigureKotlinTestBase() {
     private val pathToNonexistentJsJar: String
         get() = KotlinTestUtils.tmpDirForReusableFolder("stdlib").resolve(PathUtil.KOTLIN_JAVA_STDLIB_JAR).path
 
-    override fun getTestProjectJdk(): Sdk {
-        val projectRootManager = ProjectRootManager.getInstance(project)
-        return projectRootManager.projectSdk ?: throw IllegalStateException("SDK ${projectRootManager.projectSdkName} was not found")
-    }
+    override fun getTestProjectJdk(): Sdk = IdeaTestUtil.createMockJdk("1.8", IdeaTestUtil.getMockJdk18Path().path)
 }
