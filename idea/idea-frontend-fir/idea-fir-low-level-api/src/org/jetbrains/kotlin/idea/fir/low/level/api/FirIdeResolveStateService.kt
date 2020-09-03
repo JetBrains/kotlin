@@ -7,24 +7,38 @@ package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
+import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeLibrariesSession
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSessionFactory
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSessionProvider
+import org.jetbrains.kotlin.idea.util.cachedValue
 import org.jetbrains.kotlin.idea.util.psiModificationTrackerBasedCachedValue
 import java.util.concurrent.ConcurrentHashMap
+import org.jetbrains.kotlin.idea.util.getValue
 
 internal class FirIdeResolveStateService(private val project: Project) {
     private val stateCache by psiModificationTrackerBasedCachedValue(project) {
         ConcurrentHashMap<IdeaModuleInfo, FirModuleResolveStateImpl>()
     }
 
+    private val librarySessionCache by cachedValue(project, LibraryModificationTracker.getInstance(project)) {
+        ConcurrentHashMap<IdeaModuleInfo, FirIdeLibrariesSession>()
+    }
+
     private fun createResolveStateFor(moduleInfo: IdeaModuleInfo): FirModuleResolveStateImpl {
+        require(moduleInfo is ModuleSourceInfo)
         val firPhaseRunner = FirPhaseRunner()
         val sessionProvider = FirIdeSessionProvider(project)
 
-        val librariesSession = FirIdeSessionFactory.createLibrarySession(moduleInfo as ModuleSourceInfo, sessionProvider, project)
+        val librariesSession = librarySessionCache.computeIfAbsent(moduleInfo) {
+            FirIdeSessionFactory.createLibrarySession(moduleInfo, sessionProvider, project)
+        }
         val sourcesSession = FirIdeSessionFactory.createSourcesSession(
             project,
             moduleInfo,
