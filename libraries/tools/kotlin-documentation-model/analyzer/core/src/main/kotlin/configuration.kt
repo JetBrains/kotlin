@@ -28,6 +28,7 @@ object DokkaDefaults {
 
     const val sourceSetDisplayName = "JVM"
     const val sourceSetName = "main"
+    val moduleVersion: String? = null
 }
 
 enum class Platform(val key: String) {
@@ -83,6 +84,7 @@ fun DokkaConfiguration.toJsonString(): String = toJsonString(this)
 
 interface DokkaConfiguration : Serializable {
     val moduleName: String
+    val moduleVersion: String?
     val outputDir: File
     val cacheRoot: File?
     val offlineMode: Boolean
