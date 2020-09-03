@@ -102,26 +102,28 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
         removeJpsAndPillRunConfigurations()
         removeAllArtifactConfigurations()
 
-        val artifactDependencyMapper = object : ArtifactDependencyMapper {
-            override fun map(dependency: PDependency): List<PDependency> {
-                val result = mutableListOf<PDependency>()
+        if (variant.includes.contains(PillExtensionMirror.Variant.BASE)) {
+            val artifactDependencyMapper = object : ArtifactDependencyMapper {
+                override fun map(dependency: PDependency): List<PDependency> {
+                    val result = mutableListOf<PDependency>()
 
-                for (mappedDependency in jpsProject.mapDependency(dependency, dependencyMappers)) {
-                    result += mappedDependency
+                    for (mappedDependency in jpsProject.mapDependency(dependency, dependencyMappers)) {
+                        result += mappedDependency
 
-                    if (mappedDependency is PDependency.Module) {
-                        val module = jpsProject.modules.find { it.name == mappedDependency.name }
-                        if (module != null) {
-                            result += module.embeddedDependencies
+                        if (mappedDependency is PDependency.Module) {
+                            val module = jpsProject.modules.find { it.name == mappedDependency.name }
+                            if (module != null) {
+                                result += module.embeddedDependencies
+                            }
                         }
                     }
+
+                    return result
                 }
-
-                return result
             }
-        }
 
-        generateKotlinPluginArtifactFile(rootProject, artifactDependencyMapper).write()
+            generateKotlinPluginArtifactFile(rootProject, artifactDependencyMapper).write()
+        }
 
         copyRunConfigurations()
         setOptionsForDefaultJunitRunConfiguration(rootProject)
