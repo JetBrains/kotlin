@@ -7,12 +7,11 @@ plugins {
 
 val ultimateTools: Map<String, Any> by rootProject.extensions
 val addIdeaNativeModuleDeps: (Project) -> Unit by ultimateTools
+val addKotlinNativeDeps: (Project, String) -> Unit by ultimateTools
 
 val isStandaloneBuild: Boolean by rootProject.extra
 
 val cidrVersion: String by rootProject.extra
-val kotlinNativeBackendVersion: String by rootProject.extra
-val kotlinNativeBackendRepo: String by rootProject.extra
 
 repositories {
     ivy {
@@ -43,21 +42,8 @@ dependencies {
         exclude("com.jetbrains.intellij.platform", "ide")
     }
 
-    compileOnly("org:$kotlinNativeBackendRepo:${kotlinNativeBackendVersion}") {
-        artifact {
-            name = "backend.native"
-            type = "jar"
-            extension = "jar"
-        }
-    }
-
-    testFixturesApi("org:$kotlinNativeBackendRepo:${kotlinNativeBackendVersion}") {
-        artifact {
-            name = "backend.native"
-            type = "jar"
-            extension = "jar"
-        }
-    }
+    addKotlinNativeDeps(project, "compileOnly")
+    addKotlinNativeDeps(project, "testFixturesApi")
 
     testFixturesApi(files("${System.getProperty("java.home")}/../lib/tools.jar"))
 }

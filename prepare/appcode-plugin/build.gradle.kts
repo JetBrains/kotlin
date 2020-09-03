@@ -19,6 +19,7 @@ repositories {
 val ultimateTools: Map<String, Any> by rootProject.extensions
 val ijProductBranch: (String) -> Int by ultimateTools
 val disableBuildTasks: Project.(String) -> Unit by ultimateTools
+val addKotlinNativeDeps: (Project, String) -> Unit by ultimateTools
 
 val cidrPluginTools: Map<String, Any> by rootProject.extensions
 val preparePluginXml: (Project, String, String, Boolean, String) -> Copy by cidrPluginTools
@@ -35,8 +36,6 @@ val appcodePluginVersionFull: String by rootProject.extra
 val appcodePluginZipPath: File by rootProject.extra
 val appcodeCustomPluginRepoUrl: URL by rootProject.extra
 val appcodeJavaPluginDownloadUrl: URL by rootProject.extra
-val kotlinNativeBackendVersion: String by rootProject.extra
-val kotlinNativeBackendRepo: String by rootProject.extra
 
 val cidrPlugin: Configuration by configurations.creating
 val cidrGradleTooling: Configuration by configurations.creating
@@ -47,13 +46,7 @@ dependencies {
     embedded(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
     embedded(project(":kotlin-ultimate:ide:common-cidr-swift-native")) { isTransitive = false }
     embedded(project(":kotlin-ultimate:ide:appcode-native")) { isTransitive = false }
-    runtime("org:$kotlinNativeBackendRepo:${kotlinNativeBackendVersion}") {
-        artifact {
-            name = "backend.native"
-            type = "jar"
-            extension = "jar"
-        }
-    }
+    addKotlinNativeDeps(project, "runtime")
 }
 
 val copyRuntimeDeps: Task by tasks.creating(Copy::class) {

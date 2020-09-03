@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.accessors.runtime.addDependencyTo
 import kotlin.reflect.KFunction
 
 // --------------------------------------------------
@@ -10,6 +11,7 @@ val ultimateTools: Map<String, KFunction<Any>> = listOf<KFunction<Any>>(
     ::disableBuildTasks,
     ::addIdeaNativeModuleDeps,
     ::addKotlinGradleToolingDeps,
+    ::addKotlinNativeDeps,
     ::handleSymlink,
     ::proprietaryRepositories
 ).map { it.name to it }.toMap()
@@ -232,6 +234,22 @@ fun addKotlinGradleToolingDeps(project: Project) {
         dependencies {
             val version = rootProject.extra[if (isStandaloneBuild) "cidrVersion" else "versions.intellijSdk"] as String
             add("compileOnly", "com.jetbrains.intellij.gradle:gradle-common:$version")
+        }
+    }
+}
+
+fun addKotlinNativeDeps(project: Project, configuration: String) {
+    val kotlinNativeBackendVersion: String by rootProject.extra
+    val kotlinNativeBackendRepo: String by rootProject.extra
+    with(project) {
+        dependencies {
+            addDependencyTo<ExternalModuleDependency>(this, configuration, "org:$kotlinNativeBackendRepo:$kotlinNativeBackendVersion") {
+                artifact {
+                    name = "backend.native"
+                    type = "jar"
+                    extension = "jar"
+                }
+            }
         }
     }
 }

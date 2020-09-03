@@ -6,13 +6,12 @@ plugins {
 
 val ultimateTools: Map<String, Any> by rootProject.extensions
 val proprietaryRepositories: Project.() -> Unit by ultimateTools
+val addKotlinNativeDeps: (Project, String) -> Unit by ultimateTools
 
 val mobilePluginDir: File by rootProject.extra
 val mobilePluginZipPath: File by rootProject.extra
 val cidrVersion: String by rootProject.extra
 val ideaPluginForCidrVersion: String by rootProject.extra(rootProject.extra["versions.ideaPluginForCidr"] as String)
-val kotlinNativeBackendVersion: String by rootProject.extra
-val kotlinNativeBackendRepo: String by rootProject.extra
 val isStandaloneBuild: Boolean by rootProject.extra
 
 repositories {
@@ -48,13 +47,7 @@ dependencies {
         exclude("com.google.guava", "guava")
     }
     runtime(project(":kotlin-ultimate:libraries:tools:apple-gradle-plugin-api")) { isTransitive = false }
-    runtime("org:$kotlinNativeBackendRepo:${kotlinNativeBackendVersion}") {
-        artifact {
-            name = "backend.native"
-            type = "jar"
-            extension = "jar"
-        }
-    }
+    addKotlinNativeDeps(project, "runtime")
 }
 
 val pluginJarTask: Task by tasks.named<Jar>("jar") {
