@@ -3502,9 +3502,9 @@ public abstract class JavaToKotlinConverterSingleFileTestGenerated extends Abstr
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
-        @TestMetadata("AnonymousObject.java")
-        public void testAnonymousObject() throws Exception {
-            runTest("testData/fileOrElement/postProcessing/AnonymousObject.java");
+        @TestMetadata("AnonymousObjectWithFullJdk.java")
+        public void testAnonymousObjectWithFullJdk() throws Exception {
+            runTest("testData/fileOrElement/postProcessing/AnonymousObjectWithFullJdk.java");
         }
 
         @TestMetadata("GetOperator.java")
