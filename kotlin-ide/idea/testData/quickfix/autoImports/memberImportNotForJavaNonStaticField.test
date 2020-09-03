@@ -4,6 +4,7 @@
 // ACTION: Create local variable 'foobar'
 // ACTION: Create property 'foobar'
 // ACTION: Rename reference
+// ACTION: Convert assignment to assignment expression
 
 
 //KT-9009
