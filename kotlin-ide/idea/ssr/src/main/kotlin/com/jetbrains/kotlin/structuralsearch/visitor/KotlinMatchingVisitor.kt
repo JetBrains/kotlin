@@ -297,7 +297,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         if (other is KtReferenceExpression && exprHandler is SubstitutionHandler) {
             try {
                 val referenced = other.resolve()
-                if (referenced is KtClass
+                if ((referenced is KtClass || referenced is KtTypeAlias)
                     && exprHandler.findRegExpPredicate()
                         ?.doMatch(referenced.getKotlinFqName()?.asString(), myMatchingVisitor.matchContext, other) == true
                 ) {
