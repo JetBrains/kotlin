@@ -35,7 +35,7 @@ internal class PersistentIrField(
         origin: IrDeclarationOrigin,
         override val symbol: IrFieldSymbol,
         override val name: Name,
-        override val type: IrType,
+        type: IrType,
         override var visibility: DescriptorVisibility,
         override val isFinal: Boolean,
         override val isExternal: Boolean,
@@ -92,6 +92,16 @@ internal class PersistentIrField(
         set(v) {
             if (metadata !== v) {
                 setCarrier().metadataField = v
+            }
+        }
+
+    override var typeField: IrType = type
+
+    override var type: IrType
+        get() = getCarrier().typeField
+        set(v) {
+            if (type !== v) {
+                setCarrier().typeField = v
             }
         }
 }
