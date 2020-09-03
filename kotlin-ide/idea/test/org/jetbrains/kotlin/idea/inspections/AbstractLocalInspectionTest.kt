@@ -20,6 +20,7 @@ import org.jdom.Element
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.withCustomCompilerOptions
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.KtFile
@@ -144,6 +145,7 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
         val inspectionProfileManager = ProjectInspectionProfileManager.getInstance(project)
         val inspectionProfile = inspectionProfileManager.currentProfile
         val state = inspectionProfile.getToolDefaultState(inspection.shortName, project)
+        val originalLevel = state.level
         state.level = HighlightDisplayLevel.WARNING
 
         if (inspectionSettings != null) {
@@ -171,15 +173,17 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
             problemExpected == highlightInfos.isNotEmpty()
         )
         if (!problemExpected || highlightInfos.isEmpty()) return false
-        highlightInfos
-            .filter { it.type != HighlightInfoType.INFORMATION }
-            .forEach {
-                val description = it.description
-                Assert.assertTrue(
-                    "Problem description should not contain 'can': $description",
-                    " can " !in description
-                )
-            }
+        if (originalLevel != HighlightDisplayLevel.DO_NOT_SHOW) {
+            highlightInfos
+                .filter { it.type != HighlightInfoType.INFORMATION }
+                .forEach {
+                    val description = it.description
+                    Assert.assertTrue(
+                        "Problem description should not contain 'can': $description",
+                        " can " !in description
+                    )
+                }
+        }
 
         if (expectedProblemString != null) {
             Assert.assertTrue(

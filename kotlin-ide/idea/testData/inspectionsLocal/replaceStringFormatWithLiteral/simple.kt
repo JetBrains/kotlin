@@ -1,5 +1,4 @@
 // WITH_RUNTIME
-// HIGHLIGHT: INFORMATION
 
 fun test() {
     val foo = 1
