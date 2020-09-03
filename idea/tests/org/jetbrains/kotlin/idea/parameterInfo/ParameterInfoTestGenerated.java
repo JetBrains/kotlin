@@ -221,6 +221,11 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
             runTest("idea/testData/parameterInfo/functionCall/NamedParameter2.kt");
         }
 
+        @TestMetadata("NamedParameter3.kt")
+        public void testNamedParameter3() throws Exception {
+            runTest("idea/testData/parameterInfo/functionCall/NamedParameter3.kt");
+        }
+
         @TestMetadata("NoAnnotations.kt")
         public void testNoAnnotations() throws Exception {
             runTest("idea/testData/parameterInfo/functionCall/NoAnnotations.kt");
@@ -344,6 +349,16 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
         @TestMetadata("TooManyArgs.kt")
         public void testTooManyArgs() throws Exception {
             runTest("idea/testData/parameterInfo/functionCall/TooManyArgs.kt");
+        }
+
+        @TestMetadata("TooManyArgs2.kt")
+        public void testTooManyArgs2() throws Exception {
+            runTest("idea/testData/parameterInfo/functionCall/TooManyArgs2.kt");
+        }
+
+        @TestMetadata("TrailingComma.kt")
+        public void testTrailingComma() throws Exception {
+            runTest("idea/testData/parameterInfo/functionCall/TrailingComma.kt");
         }
 
         @TestMetadata("TwoFunctions.kt")
