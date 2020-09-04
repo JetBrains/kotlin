@@ -13,9 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 
 object CommonDeclarationCheckers : DeclarationCheckers() {
-    override val fileCheckers: List<FirFileChecker> = listOf()
-
-    override val declarationCheckers: List<FirBasicDeclarationChecker> = listOf(
+    override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker> = setOf(
         FirAnnotationClassDeclarationChecker,
         FirModifierChecker,
         FirManyCompanionObjectsChecker,
@@ -26,7 +24,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirConflictingProjectionChecker,
     )
 
-    override val memberDeclarationCheckers: List<FirMemberDeclarationChecker> = listOf(
+    override val memberDeclarationCheckers: Set<FirMemberDeclarationChecker> = setOf(
         FirInfixFunctionDeclarationChecker,
         FirExposedVisibilityDeclarationChecker,
         FirCommonConstructorDelegationIssuesChecker,
@@ -42,20 +40,20 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirInapplicableLateinitChecker,
     )
 
-    override val regularClassCheckers: List<FirRegularClassChecker> = listOf(
+    override val regularClassCheckers: Set<FirRegularClassChecker> = setOf(
         FirTypeMismatchOnOverrideChecker,
     )
 
-    override val constructorCheckers: List<FirConstructorChecker> = listOf(
+    override val constructorCheckers: Set<FirConstructorChecker> = setOf(
         FirConstructorAllowedChecker,
     )
 
-    override val controlFlowAnalyserCheckers: List<FirControlFlowChecker> = listOf(
+    override val controlFlowAnalyserCheckers: Set<FirControlFlowChecker> = setOf(
         FirCallsEffectAnalyzer,
-        FirReturnsImpliesAnalyzer
+        FirReturnsImpliesAnalyzer,
     )
 
-    override val variableAssignmentCfaBasedCheckers: List<AbstractFirPropertyInitializationChecker> = listOf(
-        FirPropertyInitializationAnalyzer
+    override val variableAssignmentCfaBasedCheckers: Set<AbstractFirPropertyInitializationChecker> = setOf(
+        FirPropertyInitializationAnalyzer,
     )
 }

@@ -7,16 +7,8 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 
 abstract class FirExpressionChecker<in E : FirStatement> {
     abstract fun check(expression: E, context: CheckerContext, reporter: DiagnosticReporter)
 }
-
-typealias FirBasicExpressionChecker = FirExpressionChecker<FirStatement>
-typealias FirQualifiedAccessChecker = FirExpressionChecker<FirQualifiedAccessExpression>
-typealias FirFunctionCallChecker = FirExpressionChecker<FirFunctionCall>
-typealias FirVariableAssignmentChecker = FirExpressionChecker<FirVariableAssignment>

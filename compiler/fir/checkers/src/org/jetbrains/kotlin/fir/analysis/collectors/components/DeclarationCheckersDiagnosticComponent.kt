@@ -42,34 +42,34 @@ class DeclarationCheckersDiagnosticComponent(
     }
 
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: CheckerContext) {
-        checkers.declarationCheckers.check(anonymousFunction, data, reporter)
+        checkers.basicDeclarationCheckers.check(anonymousFunction, data, reporter)
     }
 
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: CheckerContext) {
-        checkers.declarationCheckers.check(propertyAccessor, data, reporter)
+        checkers.basicDeclarationCheckers.check(propertyAccessor, data, reporter)
     }
 
     override fun visitValueParameter(valueParameter: FirValueParameter, data: CheckerContext) {
-        checkers.declarationCheckers.check(valueParameter, data, reporter)
+        checkers.basicDeclarationCheckers.check(valueParameter, data, reporter)
     }
 
     override fun visitTypeParameter(typeParameter: FirTypeParameter, data: CheckerContext) {
-        checkers.declarationCheckers.check(typeParameter, data, reporter)
+        checkers.basicDeclarationCheckers.check(typeParameter, data, reporter)
     }
 
     override fun visitEnumEntry(enumEntry: FirEnumEntry, data: CheckerContext) {
-        checkers.declarationCheckers.check(enumEntry, data, reporter)
+        checkers.basicDeclarationCheckers.check(enumEntry, data, reporter)
     }
 
     override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: CheckerContext) {
-        checkers.declarationCheckers.check(anonymousObject, data, reporter)
+        checkers.basicDeclarationCheckers.check(anonymousObject, data, reporter)
     }
 
     override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: CheckerContext) {
-        checkers.declarationCheckers.check(anonymousInitializer, data, reporter)
+        checkers.basicDeclarationCheckers.check(anonymousInitializer, data, reporter)
     }
 
-    private fun <D : FirDeclaration> List<FirDeclarationChecker<D>>.check(
+    private fun <D : FirDeclaration> Collection<FirDeclarationChecker<D>>.check(
         declaration: D,
         context: CheckerContext,
         reporter: DiagnosticReporter

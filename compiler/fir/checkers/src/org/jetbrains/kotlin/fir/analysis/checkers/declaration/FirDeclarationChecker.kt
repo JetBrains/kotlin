@@ -12,9 +12,3 @@ import org.jetbrains.kotlin.fir.declarations.*
 abstract class FirDeclarationChecker<in D : FirDeclaration> {
     abstract fun check(declaration: D, context: CheckerContext, reporter: DiagnosticReporter)
 }
-
-typealias FirFileChecker = FirDeclarationChecker<FirFile>
-typealias FirBasicDeclarationChecker = FirDeclarationChecker<FirDeclaration>
-typealias FirMemberDeclarationChecker = FirDeclarationChecker<FirMemberDeclaration>
-typealias FirRegularClassChecker = FirDeclarationChecker<FirRegularClass>
-typealias FirConstructorChecker = FirDeclarationChecker<FirConstructor>
