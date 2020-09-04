@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
-import org.jetbrains.kotlin.idea.resolve.getDataFlowValueFactory
+import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.textRangeIn
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
@@ -71,7 +71,7 @@ class RedundantNullableReturnTypeInspection : AbstractKotlinInspection() {
 
     private fun KtExpression.actualReturnTypes(): List<KotlinType> {
         val context = analyze()
-        val dataFlowValueFactory = getResolutionFacade().getDataFlowValueFactory()
+        val dataFlowValueFactory = getResolutionFacade().frontendService<DataFlowValueFactory>()
         val moduleDescriptor = findModuleDescriptor()
         val languageVersionSettings = languageVersionSettings
         return if (this is KtBlockExpression) {
