@@ -12476,6 +12476,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/functions/localFunctions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
+            @TestMetadata("callBetweenLocalFunctions.kt")
+            public void testCallBetweenLocalFunctions() throws Exception {
+                runTest("compiler/testData/codegen/box/functions/localFunctions/callBetweenLocalFunctions.kt");
+            }
+
             @TestMetadata("callInlineLocalInLambda.kt")
             public void testCallInlineLocalInLambda() throws Exception {
                 runTest("compiler/testData/codegen/box/functions/localFunctions/callInlineLocalInLambda.kt");
