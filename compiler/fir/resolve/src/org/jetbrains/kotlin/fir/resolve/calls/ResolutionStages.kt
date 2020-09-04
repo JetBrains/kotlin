@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 abstract class ResolutionStage {
     abstract suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext)
@@ -218,8 +219,8 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
         val requireSuspendConversion = expectedType?.isSuspendFunctionType(callInfo.session) == true
         val resultingType: ConeKotlinType = when (fir) {
             is FirFunction -> callInfo.session.createAdaptedKFunctionType(
-                fir,
-                resultingReceiverType, returnTypeRef, expectedParameterTypes = expectedType?.typeArguments,
+                fir, resultingReceiverType, returnTypeRef,
+                expectedParameterTypes = expectedType?.typeArguments?.dropLast(1),
                 isSuspend = (fir as? FirSimpleFunction)?.isSuspend == true || requireSuspendConversion,
                 expectedReturnType = extractInputOutputTypesFromCallableReferenceExpectedType(expectedType, callInfo.session)?.outputType
             )
@@ -277,68 +278,95 @@ private fun FirSession.createAdaptedKFunctionType(
     function: FirFunction<*>,
     receiverType: ConeKotlinType?,
     returnTypeRef: FirResolvedTypeRef,
-    expectedParameterTypes: Array<out ConeTypeProjection>?,
+    expectedParameterTypes: List<ConeTypeProjection>?,
     isSuspend: Boolean,
     expectedReturnType: ConeKotlinType?
 ): ConeKotlinType {
     // The similar adaptations: defaults and coercion-to-unit happen at org.jetbrains.kotlin.resolve.calls.components.CallableReferencesCandidateFactory.getCallableReferenceAdaptation
-    val parameterTypes = mutableListOf<ConeKotlinType>()
-    val shift = if (receiverType != null) 1 else 0
-    val expectedParameterNumber =
-        if (expectedParameterTypes == null) null
-        // Drop the last one: return type, and the first one: receiver type, if needed
-        else expectedParameterTypes.size - 1 - shift
 
     fun ConeKotlinType?.isPotentiallyArray(): Boolean =
-        this != null && (this.arrayElementType() != null || this is ConeTypeVariableType)
+        this != null && (this is ConeTypeVariableType || this.arrayElementType() != null)
 
-    var lastVarargParameter: FirValueParameter? = null
-    for ((index, valueParameter) in function.valueParameters.withIndex()) {
-        // Update the last vararg parameter in preparation for adaptation.
-        if (valueParameter.isVararg) {
-            lastVarargParameter = valueParameter
+    fun ConeKotlinType?.isPotentiallyCompatible(other: ConeKotlinType): Boolean =
+        this != null &&
+                (this is ConeTypeVariableType || other is ConeTypeVariableType ||
+                        AbstractTypeChecker.isSubtypeOf(typeContext, this, other))
+
+    // TODO: refactor to iterative version?
+    fun adaptable(
+        remainingParameters: List<FirValueParameter>,
+        remainingExpectedParameterTypes: List<ConeTypeProjection>,
+        beingSpread: FirValueParameter? = null,
+    ): List<ConeKotlinType>? {
+        if (remainingParameters.isEmpty() && remainingExpectedParameterTypes.isEmpty()) {
+            return emptyList()
         }
-        // Pack value parameters until the expected parameter number is met.
-        if (expectedParameterNumber == null || index < expectedParameterNumber) {
-            // But, if the value parameter is vararg, make sure it matches with the expected parameter type.
-            if (expectedParameterTypes != null && valueParameter.isVararg) {
-                val expectedParameterType = (expectedParameterTypes[index + shift] as? ConeKotlinTypeProjection)?.type
-                if (!expectedParameterType.isPotentiallyArray()) {
-                    // Expect an element. Will spread vararg parameter later.
-                    continue
+        if (remainingParameters.isEmpty()) {
+            assert(remainingExpectedParameterTypes.isNotEmpty())
+            return null
+        }
+        if (remainingExpectedParameterTypes.isEmpty()) {
+            val valueParameter = remainingParameters.first()
+            return if (valueParameter.defaultValue != null || valueParameter.isVararg) {
+                // Keep moving to the next expected parameter type by using the default value or assuming nothing for vararg
+                adaptable(remainingParameters.drop(1), remainingExpectedParameterTypes)
+            } else {
+                null
+            }
+        }
+        assert(remainingParameters.isNotEmpty() && remainingExpectedParameterTypes.isNotEmpty())
+        val valueParameter = remainingParameters.first()
+        val valueParameterConeType = valueParameter.returnTypeRef.coneType
+        val expectedParameterType = (remainingExpectedParameterTypes.first() as? ConeKotlinTypeProjection)?.type
+        if (valueParameter.isVararg) {
+            val valueParameterArrayElementType = valueParameterConeType.arrayElementType()!!
+            // vararg as array
+            // NB: vararg should not be used in a mixed way, e.g., once spread, followed by an array use.
+            if (beingSpread == null && expectedParameterType.isPotentiallyArray()) {
+                val varargAsArray = adaptable(remainingParameters.drop(1), remainingExpectedParameterTypes.drop(1))
+                if (varargAsArray != null) {
+                    return listOf(valueParameterConeType) + varargAsArray
                 }
             }
-            parameterTypes += valueParameter.returnTypeRef.coneType
-            continue
+            // element case. spread or not
+            if (beingSpread == valueParameter || expectedParameterType.isPotentiallyCompatible(valueParameterArrayElementType)) {
+                val keepSpreading = adaptable(remainingParameters, remainingExpectedParameterTypes.drop(1), beingSpread = valueParameter)
+                if (keepSpreading != null) {
+                    return listOf(valueParameterArrayElementType) + keepSpreading
+                }
+                val endOfSpread = adaptable(remainingParameters.drop(1), remainingExpectedParameterTypes.drop(1))
+                if (endOfSpread != null) {
+                    return listOf(valueParameterArrayElementType) + endOfSpread
+                }
+            }
+            val nothingPassedToVararg = adaptable(remainingParameters.drop(1), remainingExpectedParameterTypes)
+            if (nothingPassedToVararg != null) {
+                return nothingPassedToVararg
+            }
+            // Otherwise, this vararg is not adaptable.
+            return null
         }
-        // After expected parameters are fulfilled, a value parameter which doesn't have a default value or isn't vararg should be added to
-        // the resulting type (so that it can reject incompatible function reference). In either case, we can't assume no actual arguments
-        // are given.
-        if (valueParameter.defaultValue == null && !valueParameter.isVararg) {
-            parameterTypes += valueParameter.returnTypeRef.coneType
-        }
-    }
-
-    // If a function with vararg is passed to a place where a spread of elements is expected, we can adapt the function reference to
-    // literally spread such vararg argument. E.g., foo(vararg xs: Char): String => bar(::foo) where bar(f: (Char, Char) -> String)
-    if (expectedParameterNumber != null &&
-        expectedParameterTypes != null &&
-        parameterTypes.size < expectedParameterNumber &&
-        lastVarargParameter != null
-    ) {
-        val varargArrayType = lastVarargParameter.returnTypeRef.coneType
-        val varargElementType = varargArrayType.varargElementType()
-        val expectedParameterType = (expectedParameterTypes[parameterTypes.size + shift] as? ConeKotlinTypeProjection)?.type
-        // Expect an array or potentially array (i.e., type variable). Pass vararg parameter as-is.
-        if (expectedParameterType.isPotentiallyArray()) {
-            parameterTypes += varargArrayType
-        } else {
-            // Expect an element. Spread vararg parameter.
-            while (parameterTypes.size < expectedParameterNumber) {
-                parameterTypes += varargElementType
+        if (expectedParameterType.isPotentiallyCompatible(valueParameterConeType)) {
+            val next = adaptable(remainingParameters.drop(1), remainingExpectedParameterTypes.drop(1))
+            if (next != null) {
+                return listOf(valueParameterConeType) + next
+            }
+            // Try using the default value if any
+            if (valueParameter.defaultValue != null) {
+                val trialWithDefaultValue = adaptable(remainingParameters.drop(1), remainingExpectedParameterTypes)
+                if (trialWithDefaultValue != null) {
+                    return trialWithDefaultValue
+                }
             }
         }
+        // Not adaptable due to the type mismatch or lack of default value.
+        return null
     }
+
+    val parameterTypes =
+        expectedParameterTypes?.let {
+            adaptable(function.valueParameters, if (receiverType != null) it.drop(1) else it)
+        } ?: function.valueParameters.map { it.returnTypeRef.coneType }
 
     val returnType =
         if (expectedReturnType != null && typeContext.run { expectedReturnType.isUnit() })

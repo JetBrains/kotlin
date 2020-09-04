@@ -62,7 +62,7 @@ FILE fqName:<root> fileName:/funWithDefaultParametersAsKCallableStar.kt
   FUN name:testRegularAndDefaultsStar visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useKCallableStar (fn: kotlin.reflect.KCallable<*>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        fn: FUNCTION_REFERENCE 'public final fun regularAndDefaults (x1: kotlin.String, x2: kotlin.String): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<kotlin.String, kotlin.Int> origin=null reflectionTarget=<same>
+        fn: FUNCTION_REFERENCE 'public final fun regularAndDefaults (x1: kotlin.String, x2: kotlin.String): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction2<kotlin.String, kotlin.String, kotlin.Int> origin=null reflectionTarget=<same>
   FUN name:testVarargsStar visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useKCallableStar (fn: kotlin.reflect.KCallable<*>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
