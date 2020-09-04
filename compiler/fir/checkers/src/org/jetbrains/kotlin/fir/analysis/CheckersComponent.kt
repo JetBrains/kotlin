@@ -76,7 +76,7 @@ private class ComposedDeclarationCheckers : DeclarationCheckers() {
 }
 
 private class ComposedExpressionCheckers : ExpressionCheckers() {
-    override val expressionCheckers: List<FirBasicExpresionChecker>
+    override val expressionCheckers: List<FirBasicExpressionChecker>
         get() = _expressionCheckers
     override val qualifiedAccessCheckers: List<FirQualifiedAccessChecker>
         get() = _qualifiedAccessCheckers
@@ -85,7 +85,7 @@ private class ComposedExpressionCheckers : ExpressionCheckers() {
     override val variableAssignmentCheckers: List<FirVariableAssignmentChecker>
         get() = _variableAssignmentCheckers
 
-    private val _expressionCheckers: MutableList<FirBasicExpresionChecker> = mutableListOf()
+    private val _expressionCheckers: MutableList<FirBasicExpressionChecker> = mutableListOf()
     private val _qualifiedAccessCheckers: MutableList<FirQualifiedAccessChecker> = mutableListOf()
     private val _functionCallCheckers: MutableList<FirFunctionCallChecker> = mutableListOf()
     private val _variableAssignmentCheckers: MutableList<FirVariableAssignmentChecker> = mutableListOf()

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSealedClassCons
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
 
 object CommonExpressionCheckers : ExpressionCheckers() {
-    override val expressionCheckers: List<FirBasicExpresionChecker> = listOf()
+    override val expressionCheckers: List<FirBasicExpressionChecker> = listOf()
     override val qualifiedAccessCheckers: List<FirQualifiedAccessChecker> = listOf(
         FirSuperNotAvailableChecker,
         FirNotASupertypeChecker,

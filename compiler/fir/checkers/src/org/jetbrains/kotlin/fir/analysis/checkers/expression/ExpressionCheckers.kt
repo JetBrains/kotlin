@@ -10,7 +10,7 @@ abstract class ExpressionCheckers {
         val EMPTY: ExpressionCheckers = object : ExpressionCheckers() {}
     }
 
-    open val expressionCheckers: List<FirBasicExpresionChecker> = emptyList()
+    open val expressionCheckers: List<FirBasicExpressionChecker> = emptyList()
     open val qualifiedAccessCheckers: List<FirQualifiedAccessChecker> = emptyList()
     open val functionCallCheckers: List<FirFunctionCallChecker> = emptyList()
     open val variableAssignmentCheckers: List<FirVariableAssignmentChecker> = emptyList()

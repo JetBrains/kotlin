@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.fir.checkers
 
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBasicExpresionChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBasicExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirVariableAssignmentChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.*
 
 object ExtendedExpressionCheckers : ExpressionCheckers() {
-    override val expressionCheckers: List<FirBasicExpresionChecker> = listOf(
+    override val expressionCheckers: List<FirBasicExpressionChecker> = listOf(
         ArrayEqualityCanBeReplacedWithEquals,
         RedundantSingleExpressionStringTemplateChecker,
         EmptyRangeChecker
