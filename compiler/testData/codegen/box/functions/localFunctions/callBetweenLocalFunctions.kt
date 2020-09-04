@@ -1,3 +1,4 @@
+// SKIP_DCE_DRIVEN
 
 fun box(): String {
     var a = 0
