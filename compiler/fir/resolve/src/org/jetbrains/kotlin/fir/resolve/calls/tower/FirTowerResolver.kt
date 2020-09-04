@@ -105,6 +105,7 @@ class FirTowerResolver(
                 candidateFactory.createCandidate(
                     it,
                     ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+                    scope,
                     dispatchReceiver,
                     implicitExtensionReceiverValue = null,
                     builtInExtensionFunctionReceiverValue = null

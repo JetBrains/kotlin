@@ -394,7 +394,8 @@ class FirCallResolver(
         if (constructorSymbol == null) return null
         val candidate = CandidateFactory(transformer.resolutionContext, callInfo).createCandidate(
             constructorSymbol!!,
-            ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
+            ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+            scope = null
         )
         val applicability = components.resolutionStageRunner.processCandidate(candidate, transformer.resolutionContext)
         return ResolutionResult(callInfo, applicability, listOf(candidate))

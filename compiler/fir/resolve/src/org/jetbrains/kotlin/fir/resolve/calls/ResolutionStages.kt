@@ -169,7 +169,7 @@ internal object MapArguments : ResolutionStage() {
         val symbol = candidate.symbol as? FirFunctionSymbol<*> ?: return sink.reportDiagnostic(HiddenCandidate)
         val function = symbol.fir
 
-        val mapping = mapArguments(callInfo.arguments, function)
+        val mapping = context.bodyResolveComponents.mapArguments(callInfo.arguments, function, candidate.originScope)
         candidate.argumentMapping = mapping.toArgumentToParameterMapping()
 
         mapping.diagnostics.forEach(sink::reportDiagnostic)

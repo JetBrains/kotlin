@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls.tower
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -147,6 +148,7 @@ private class TowerScopeLevelProcessor(
         symbol: AbstractFirBasedSymbol<*>,
         dispatchReceiverValue: ReceiverValue?,
         implicitExtensionReceiverValue: ImplicitReceiverValue<*>?,
+        scope: FirScope,
         builtInExtensionFunctionReceiverValue: ReceiverValue?
     ) {
         // Check explicit extension receiver for default package members
@@ -179,6 +181,7 @@ private class TowerScopeLevelProcessor(
             group, candidateFactory.createCandidate(
                 symbol,
                 explicitReceiverKind,
+                scope,
                 dispatchReceiverValue,
                 implicitExtensionReceiverValue,
                 builtInExtensionFunctionReceiverValue

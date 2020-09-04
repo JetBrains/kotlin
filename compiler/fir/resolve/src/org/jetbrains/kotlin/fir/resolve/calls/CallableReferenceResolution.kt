@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.buildNamedArgumentExpression
+import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.createFunctionalType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupportedCallableReferenceTarget
@@ -106,7 +107,8 @@ private fun buildReflectionType(
         is FirFunction -> {
             val unboundReferenceTarget = if (receiverType != null) 1 else 0
             val callableReferenceAdaptation =
-                getCallableReferenceAdaptation(context.session, fir, callInfo.expectedType, unboundReferenceTarget)
+                context.bodyResolveComponents
+                    .getCallableReferenceAdaptation(context.session, fir, callInfo.expectedType, unboundReferenceTarget)
 
             val parameters = mutableListOf<ConeKotlinType>()
 
@@ -153,7 +155,7 @@ private fun CallableReferenceAdaptation?.needCompatibilityResolveForCallableRefe
             mappedArguments.values.any { it is ResolvedCallArgument.VarargArgument }
 }
 
-private fun getCallableReferenceAdaptation(
+private fun BodyResolveComponents.getCallableReferenceAdaptation(
     session: FirSession,
     function: FirFunction<*>,
     expectedType: ConeKotlinType?,
@@ -169,7 +171,8 @@ private fun getCallableReferenceAdaptation(
     if (expectedArgumentsCount < 0) return null
 
     val fakeArguments = createFakeArgumentsForReference(function, expectedArgumentsCount, inputTypes, unboundReceiverCount)
-    val argumentMapping = mapArguments(fakeArguments, function)
+    // TODO: Use correct originScope
+    val argumentMapping = mapArguments(fakeArguments, function, originScope = null)
     if (argumentMapping.diagnostics.any { !it.applicability.isSuccess }) return null
 
     /**

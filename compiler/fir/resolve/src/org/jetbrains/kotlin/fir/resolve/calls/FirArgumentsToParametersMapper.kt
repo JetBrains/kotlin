@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.fir.expressions.FirLambdaArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildNamedArgumentExpression
+import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.defaultParameterResolver
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.name.Name
 import java.util.*
 import kotlin.collections.ArrayList
@@ -45,9 +48,10 @@ data class ArgumentMapping(
 
 private val EmptyArgumentMapping = ArgumentMapping(emptyMap(), emptyList())
 
-fun mapArguments(
+fun BodyResolveComponents.mapArguments(
     arguments: List<FirExpression>,
-    function: FirFunction<*>
+    function: FirFunction<*>,
+    originScope: FirScope?,
 ): ArgumentMapping {
     if (arguments.isEmpty() && function.valueParameters.isEmpty()) {
         return EmptyArgumentMapping
@@ -77,7 +81,7 @@ fun mapArguments(
         }
     }
 
-    val processor = FirCallArgumentsProcessor(function)
+    val processor = FirCallArgumentsProcessor(function, this, originScope)
     processor.processArgumentsInParenthesis(argumentsInParenthesis)
     if (externalArgument != null) {
         processor.processExternalArgument(externalArgument)
@@ -87,7 +91,11 @@ fun mapArguments(
     return ArgumentMapping(processor.result, processor.diagnostics ?: emptyList())
 }
 
-private class FirCallArgumentsProcessor(private val function: FirFunction<*>) {
+private class FirCallArgumentsProcessor(
+    private val function: FirFunction<*>,
+    private val bodyResolveComponents: BodyResolveComponents,
+    private val originScope: FirScope?,
+) {
     private var state = State.POSITION_ARGUMENTS
     private var currentPositionedParameterIndex = 0
     private var varargArguments: MutableList<FirExpression>? = null
@@ -207,9 +215,9 @@ private class FirCallArgumentsProcessor(private val function: FirFunction<*>) {
             }
         }
 
-        for (parameter in parameters) {
+        for ((index, parameter) in parameters.withIndex()) {
             if (!result.containsKey(parameter)) {
-                if (parameter.defaultValue != null) {
+                if (bodyResolveComponents.session.defaultParameterResolver.declaresDefaultValue(parameter, function, originScope, index)) {
                     result[parameter] = ResolvedCallArgument.DefaultArgument
                 } else if (parameter.isVararg) {
                     result[parameter] = ResolvedCallArgument.VarargArgument(emptyList())

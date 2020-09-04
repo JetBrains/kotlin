@@ -175,7 +175,8 @@ class FirSyntheticCallGenerator(
     private fun generateCandidate(callInfo: CallInfo, function: FirSimpleFunction, context: ResolutionContext): Candidate =
         CandidateFactory(context, callInfo).createCandidate(
             symbol = function.symbol,
-            explicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
+            explicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+            scope = null
         )
 
     private fun generateCallInfo(name: Name, argumentList: FirArgumentList, callKind: CallKind) = CallInfo(
