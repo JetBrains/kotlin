@@ -418,17 +418,17 @@ internal class UltraLightMembersCreator(
         if (isPrivate && declaration !is KtProperty) return emptyList()
 
         fun needsAccessor(accessor: KtPropertyAccessor?, type: MethodType): Boolean {
-
             if (onlyJvmStatic && !declaration.isJvmStatic(support) && !(accessor != null && accessor.isJvmStatic(support)))
                 return false
 
             if (declaration is KtProperty && declaration.hasDelegate())
                 return true
 
-            if (accessor?.hasModifier(PRIVATE_KEYWORD) == true || accessor?.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) == true)
-                return false
-
-            if (isPrivate && accessor?.hasBody() != true) return false
+            if (accessor?.hasBody() != true &&
+                (accessor?.hasModifier(PRIVATE_KEYWORD) == true ||
+                        accessor?.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) == true ||
+                        isPrivate)
+            ) return false
 
             if (!declaration.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)) return true
 
