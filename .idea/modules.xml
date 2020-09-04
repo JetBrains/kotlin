@@ -120,7 +120,6 @@
     <module old-name="artwork" new-name="intellij.android.artwork" />
     <module old-name="asp" new-name="intellij.asp" />
     <module old-name="aspectj" new-name="intellij.aspectj" />
-    <module old-name="aspectj-jps-plugin" new-name="intellij.aspectj.jps" />
     <module old-name="aspectj-tests" new-name="intellij.aspectj.tests" />
     <module old-name="aspectj-tests-j2ee" new-name="intellij.aspectj.tests.javaee" />
     <module old-name="batch-core" new-name="intellij.javaee.batch" />
@@ -172,7 +171,6 @@
     <module old-name="commandLineTool" new-name="intellij.php.commandLineTool" />
     <module old-name="commander" new-name="intellij.commander" />
     <module old-name="common" new-name="android.sdktools.common" />
-    <module old-name="common-javaFX-plugin" new-name="intellij.javaFX.common" />
     <module old-name="community-guitests" new-name="intellij.idea.community.guiTests" />
     <module old-name="community-main" new-name="intellij.idea.community.main" />
     <module old-name="community-resources" new-name="intellij.idea.community.resources" />
@@ -282,9 +280,7 @@
     <module old-name="firefox-protocol-generator" new-name="intellij.javascript.firefox.protocol.generator" />
     <module old-name="flags" new-name="android.sdktools.flags" />
     <module old-name="flex" new-name="intellij.flex" />
-    <module old-name="flex-jps-plugin" new-name="intellij.flex.jps" />
     <module old-name="flex-profiler" new-name="intellij.flex.profiler" />
-    <module old-name="flex-shared" new-name="intellij.flex.shared" />
     <module old-name="flex-tests" new-name="intellij.flex.tests" />
     <module old-name="forms-compiler" new-name="intellij.java.guiForms.compiler" />
     <module old-name="forms_rt" new-name="intellij.java.guiForms.rt" />
@@ -308,12 +304,9 @@
     <module old-name="grails-rt" new-name="intellij.groovy.grails.rt" />
     <module old-name="graph" new-name="intellij.platform.graph.impl" />
     <module old-name="graph-openapi" new-name="intellij.platform.graph" />
-    <module old-name="groovy-jps-plugin" new-name="intellij.groovy.jps" />
     <module old-name="groovy-mvc" new-name="intellij.groovy.grails" />
     <module old-name="groovy-psi" new-name="intellij.groovy.psi" />
-    <module old-name="groovy-rt-constants" new-name="intellij.groovy.constants.rt" />
     <module old-name="groovy-uast-tests" new-name="intellij.groovy.uast.tests" />
-    <module old-name="groovy_rt" new-name="intellij.groovy.rt" />
     <module old-name="haml" new-name="intellij.haml" />
     <module old-name="handlebars-idea" new-name="intellij.handlebars" />
     <module old-name="hg4idea" new-name="intellij.vcs.hg" />
@@ -365,7 +358,6 @@
     <module old-name="instrumentation-util-8" new-name="intellij.java.compiler.instrumentationUtil.java8" />
     <module old-name="integrationTests" new-name="intellij.php.integrationTests" />
     <module old-name="intellij.database.integration.tests" new-name="intellij.database.integrationTests" />
-    <module old-name="intellilang-jps-plugin" new-name="intellij.java.langInjection.jps" />
     <module old-name="internalUtilities" new-name="intellij.tools.internalUtilities" />
     <module old-name="ipnb" new-name="intellij.python.ipnb" />
     <module old-name="j2meplugin" new-name="intellij.j2me" />
@@ -390,7 +382,6 @@
     <module old-name="javaFX" new-name="intellij.javaFX" />
     <module old-name="javaFX-CE" new-name="intellij.javaFX.community" />
     <module old-name="javaFX-CSS" new-name="intellij.javaFX.css" />
-    <module old-name="javaFX-jps-plugin" new-name="intellij.javaFX.jps" />
     <module old-name="javac2" new-name="intellij.java.compiler.antTasks" />
     <module old-name="javacvs-src" new-name="intellij.vcs.cvs.javacvs" />
     <module old-name="javaee-api" new-name="intellij.javaee.platform" />
@@ -616,7 +607,6 @@
     <module old-name="ruby" new-name="intellij.ruby" />
     <module old-name="ruby-build" new-name="intellij.ruby.build" />
     <module old-name="ruby-chef" new-name="intellij.ruby.chef" />
-    <module old-name="ruby-chef-jps-plugin" new-name="intellij.ruby.chef.jps" />
     <module old-name="ruby-core" new-name="intellij.ruby.core" />
     <module old-name="ruby-coverage-common" new-name="intellij.ruby.coverage" />
     <module old-name="ruby-css" new-name="intellij.ruby.css" />

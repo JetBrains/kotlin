@@ -50,7 +50,6 @@
     <module old-name="colorSchemes" new-name="intellij.platform.colorSchemes" />
     <module old-name="commander" new-name="intellij.commander" />
     <module old-name="common" new-name="android.sdktools.common" />
-    <module old-name="common-javaFX-plugin" new-name="intellij.javaFX.common" />
     <module old-name="community-guitests" new-name="intellij.idea.community.guiTests" />
     <module old-name="community-main" new-name="intellij.idea.community.main" />
     <module old-name="community-resources" new-name="intellij.idea.community.resources" />
@@ -113,11 +112,8 @@
     <module old-name="gradle-tooling-extension-api" new-name="intellij.gradle.toolingExtension" />
     <module old-name="gradle-tooling-extension-impl" new-name="intellij.gradle.toolingExtension.impl" />
     <module old-name="gradle-tooling-extension-tests" new-name="intellij.gradle.toolingExtension.tests" />
-    <module old-name="groovy-jps-plugin" new-name="intellij.groovy.jps" />
     <module old-name="groovy-psi" new-name="intellij.groovy.psi" />
-    <module old-name="groovy-rt-constants" new-name="intellij.groovy.constants.rt" />
     <module old-name="groovy-uast-tests" new-name="intellij.groovy.uast.tests" />
-    <module old-name="groovy_rt" new-name="intellij.groovy.rt" />
     <module old-name="hg4idea" new-name="intellij.vcs.hg" />
     <module old-name="icons" new-name="intellij.platform.icons" />
     <module old-name="idea-ui" new-name="intellij.java.ui" />
@@ -132,7 +128,6 @@
     <module old-name="instant-run-runtime" new-name="android.sdktools.instant-run-runtime" />
     <module old-name="instrumentation-util" new-name="intellij.java.compiler.instrumentationUtil" />
     <module old-name="instrumentation-util-8" new-name="intellij.java.compiler.instrumentationUtil.java8" />
-    <module old-name="intellilang-jps-plugin" new-name="intellij.java.langInjection.jps" />
     <module old-name="ipnb" new-name="intellij.python.ipnb" />
     <module old-name="java-analysis-api" new-name="intellij.java.analysis" />
     <module old-name="java-analysis-impl" new-name="intellij.java.analysis.impl" />
@@ -149,7 +144,6 @@
     <module old-name="java-tests" new-name="intellij.java.tests" />
     <module old-name="javaFX" new-name="intellij.javaFX" />
     <module old-name="javaFX-CE" new-name="intellij.javaFX.community" />
-    <module old-name="javaFX-jps-plugin" new-name="intellij.javaFX.jps" />
     <module old-name="javac2" new-name="intellij.java.compiler.antTasks" />
     <module old-name="javacvs-src" new-name="intellij.vcs.cvs.javacvs" />
     <module old-name="jetgroovy" new-name="intellij.groovy" />
