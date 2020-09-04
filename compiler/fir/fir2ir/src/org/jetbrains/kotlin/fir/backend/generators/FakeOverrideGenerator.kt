@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.backend.collectCallableNamesFromSupertypes
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
@@ -29,8 +28,7 @@ class FakeOverrideGenerator(
     private val scopeSession: ScopeSession,
     private val classifierStorage: Fir2IrClassifierStorage,
     private val declarationStorage: Fir2IrDeclarationStorage,
-    private val conversionScope: Fir2IrConversionScope,
-    private val fakeOverrideMode: FakeOverrideMode
+    private val conversionScope: Fir2IrConversionScope
 ) {
 
     private val baseFunctionSymbols = mutableMapOf<IrFunction, FirNamedFunctionSymbol>()
@@ -64,7 +62,6 @@ class FakeOverrideGenerator(
 
     fun IrClass.getFakeOverrides(klass: FirClass<*>, processedCallableNames: MutableSet<Name>): List<IrDeclaration> {
         val result = mutableListOf<IrDeclaration>()
-        if (fakeOverrideMode == FakeOverrideMode.NONE) return emptyList()
         val superTypesCallableNames = klass.collectCallableNamesFromSupertypes(session)
         val useSiteMemberScope = klass.unsubstitutedScope(session, scopeSession)
         for (name in superTypesCallableNames) {
@@ -74,14 +71,9 @@ class FakeOverrideGenerator(
             useSiteMemberScope.processFunctionsByName(name) { functionSymbol ->
                 if (functionSymbol is FirNamedFunctionSymbol) {
                     val originalFunction = functionSymbol.fir
-                    if (originalFunction.isStatic && originalFunction.name in Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES) {
-                        return@processFunctionsByName
-                    }
                     val origin = IrDeclarationOrigin.FAKE_OVERRIDE
                     val baseSymbol = functionSymbol.deepestOverriddenSymbol() as FirNamedFunctionSymbol
-                    if (functionSymbol.isFakeOverride &&
-                        (functionSymbol.callableId.classId == klass.symbol.classId || fakeOverrideMode == FakeOverrideMode.SUBSTITUTION)
-                    ) {
+                    if (functionSymbol.isFakeOverride && functionSymbol.callableId.classId == klass.symbol.classId) {
                         // Substitution case
                         // NB: we can get same substituted FIR fake override in a different class, if it derives the same genetic type
                         // open class Base<T> {
@@ -104,7 +96,7 @@ class FakeOverrideGenerator(
                         irFunction.parent = this
                         baseFunctionSymbols[irFunction] = baseSymbol
                         result += irFunction
-                    } else if (fakeOverrideMode != FakeOverrideMode.SUBSTITUTION && originalFunction.allowsToHaveFakeOverrideIn(klass)) {
+                    } else if (originalFunction.allowsToHaveFakeOverrideIn(klass)) {
                         // Trivial fake override case
                         val fakeOverrideSymbol = FirClassSubstitutionScope.createFakeOverrideFunction(
                             session, originalFunction, baseSymbol,
@@ -135,9 +127,7 @@ class FakeOverrideGenerator(
                     val originalProperty = propertySymbol.fir
                     val origin = IrDeclarationOrigin.FAKE_OVERRIDE
                     val baseSymbol = propertySymbol.deepestOverriddenSymbol() as FirPropertySymbol
-                    if (propertySymbol.isFakeOverride &&
-                        (propertySymbol.callableId.classId == klass.symbol.classId || fakeOverrideMode == FakeOverrideMode.SUBSTITUTION)
-                    ) {
+                    if (propertySymbol.isFakeOverride && propertySymbol.callableId.classId == klass.symbol.classId) {
                         // Substitution case
                         // NB: see comment above about substituted function' parent
                         val irProperty = declarationStorage.getCachedIrProperty(originalProperty)?.takeIf { it.parent == this }
@@ -150,7 +140,7 @@ class FakeOverrideGenerator(
                         irProperty.parent = this
                         basePropertySymbols[irProperty] = baseSymbol
                         result += irProperty
-                    } else if (fakeOverrideMode != FakeOverrideMode.SUBSTITUTION && originalProperty.allowsToHaveFakeOverrideIn(klass)) {
+                    } else if (originalProperty.allowsToHaveFakeOverrideIn(klass)) {
                         // Trivial fake override case
                         val fakeOverrideSymbol = FirClassSubstitutionScope.createFakeOverrideProperty(
                             session, originalProperty, baseSymbol,

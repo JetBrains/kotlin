@@ -300,7 +300,7 @@ class Fir2IrConverter(
             externalDependenciesGenerator.generateUnboundSymbolsAsDependencies()
             classifierStorage.preCacheBuiltinClasses()
             val fakeOverrideGenerator = FakeOverrideGenerator(
-                session, scopeSession, classifierStorage, declarationStorage, conversionScope, FakeOverrideMode.NORMAL
+                session, scopeSession, classifierStorage, declarationStorage, conversionScope
             )
             components.fakeOverrideGenerator = fakeOverrideGenerator
             val fir2irVisitor = Fir2IrVisitor(converter, components, conversionScope)
