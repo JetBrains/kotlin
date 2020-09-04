@@ -20,6 +20,11 @@ import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.FieldDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -35,6 +40,8 @@ import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.createIrClassFromDescriptor
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.ir.util.properties
+import org.jetbrains.kotlin.ir.util.referenceFunction
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtEnumEntry
@@ -47,6 +54,7 @@ import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptor
 import org.jetbrains.kotlin.psi.synthetics.findClassDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegationResolver
+import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
@@ -88,6 +96,8 @@ class ClassGenerator(
                 classDescriptor.thisAsReceiverParameter,
                 classDescriptor.thisAsReceiverParameter.type.toIrType()
             )
+
+            generateFieldsForAdditionalReceivers(irClass, classDescriptor)
 
             val irPrimaryConstructor = generatePrimaryConstructor(irClass, ktClassOrObject)
             if (irPrimaryConstructor != null) {
@@ -423,6 +433,41 @@ class ClassGenerator(
         EnumClassMembersGenerator(declarationGenerator).generateSpecialMembers(irClass)
     }
 
+    private fun generateFieldsForAdditionalReceivers(irClass: IrClass, classDescriptor: ClassDescriptor) {
+        for ((fieldIndex, receiverDescriptor) in classDescriptor.contextReceivers.withIndex()) {
+            val descriptor = PropertyDescriptorImpl.create(
+                classDescriptor,
+                Annotations.EMPTY,
+                Modality.FINAL,
+                DescriptorVisibilities.DEFAULT_VISIBILITY,
+                false,
+                Name.identifier("additionalReceiverField$fieldIndex"),
+                CallableMemberDescriptor.Kind.DECLARATION,
+                SourceElement.NO_SOURCE,
+                false, false,
+                classDescriptor.isExpect,
+                false, false, false
+            )
+            descriptor.setType(
+                receiverDescriptor.type, emptyList(), DescriptorUtils.getDispatchReceiverParameterIfNeeded(classDescriptor), null,
+                emptyList()
+            )
+            descriptor.initialize(
+                null, null,
+                FieldDescriptorImpl(Annotations.EMPTY, descriptor),
+                null
+            )
+            context.additionalDescriptorStorage.put(receiverDescriptor.value, descriptor)
+            val irField = context.symbolTable.declareField(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                IrDeclarationOrigin.FIELD_FOR_CLASS_CONTEXT_RECEIVER,
+                descriptor, descriptor.type.toIrType(),
+                descriptor.visibility
+            )
+            irClass.addMember(irField)
+        }
+    }
+
     private fun generatePrimaryConstructor(irClass: IrClass, ktClassOrObject: KtPureClassOrObject): IrConstructor? {
         val classDescriptor = irClass.descriptor
         val primaryConstructorDescriptor = classDescriptor.unsubstitutedPrimaryConstructor ?: return null
@@ -459,7 +504,7 @@ class ClassGenerator(
         // generate real body declarations
         ktClassOrObject.body?.let { ktClassBody ->
             ktClassBody.declarations.mapNotNullTo(irClass.declarations) { ktDeclaration ->
-                declarationGenerator.generateClassMemberDeclaration(ktDeclaration, irClass)
+                declarationGenerator.generateClassMemberDeclaration(ktDeclaration, irClass, ktClassOrObject)
             }
         }
 

@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.ValueArgument
@@ -91,6 +92,20 @@ fun StatementGenerator.generateReceiver(defaultStartOffset: Int, defaultEndOffse
                             defaultStartOffset, defaultEndOffset, irReceiverType,
                             context.symbolTable.referenceValueParameter(receiverClassDescriptor.thisAsReceiverParameter)
                         )
+                }
+                is ExtensionClassReceiver -> {
+                    val receiverClassDescriptor = receiver.classDescriptor
+                    val thisAsReceiverParameter = receiverClassDescriptor.thisAsReceiverParameter
+                    val thisReceiver = IrGetValueImpl(
+                        defaultStartOffset, defaultEndOffset,
+                        thisAsReceiverParameter.type.toIrType(),
+                        context.symbolTable.referenceValue(thisAsReceiverParameter)
+                    )
+                    IrGetFieldImpl(
+                        defaultStartOffset, defaultEndOffset,
+                        context.symbolTable.referenceField(context.additionalDescriptorStorage.getField(receiver)),
+                        irReceiverType, thisReceiver
+                    )
                 }
                 is ThisClassReceiver ->
                     generateThisOrSuperReceiver(receiver, receiver.classDescriptor)
@@ -210,7 +225,10 @@ fun StatementGenerator.generateCallReceiver(
         else -> {
             dispatchReceiverValue = generateReceiverOrNull(ktDefaultElement, dispatchReceiver)
             extensionReceiverValue = generateReceiverOrNull(ktDefaultElement, extensionReceiver)
-            contextReceiverValues = contextReceivers.mapNotNull { generateReceiverOrNull(ktDefaultElement, it) }
+            contextReceiverValues = if (ktDefaultElement is KtConstructorDelegationCall) contextReceivers.mapNotNull {
+                generateReceiverOrNull(ktDefaultElement, it as ExtensionClassReceiver)
+            }
+            else contextReceivers.mapNotNull { generateReceiverOrNull(ktDefaultElement, it) }
         }
     }
 
