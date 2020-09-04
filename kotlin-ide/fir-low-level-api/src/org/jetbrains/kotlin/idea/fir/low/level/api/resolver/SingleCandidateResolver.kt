@@ -69,6 +69,7 @@ class SingleCandidateResolver(
             explicitReceiverKind = explicitReceiverKind,
             dispatchReceiverValue = dispatchReceiverValue,
             implicitExtensionReceiverValue = implicitExtensionReceiverValue,
+            scope = null,
         )
 
         val applicability = resolutionStageRunner.processCandidate(candidate, resolutionContext, stopOnFirstError = true)
