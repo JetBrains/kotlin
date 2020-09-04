@@ -141,6 +141,9 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xir-focus-on-test", description = "Only execute this test")
     var irFocusOnTest: String? by NullableStringFreezableVar(null)
 
+    @Argument(value = "-Xir-file-region-comments", description = "Comment which file the JS code comes from")
+    var irFileRegionComments: Boolean by FreezableVar(false)
+
     @Argument(value = "-Xir-per-module", description = "Splits generated .js per-module")
     var irPerModule: Boolean by FreezableVar(false)
 

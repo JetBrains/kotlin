@@ -216,6 +216,10 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 MainModule.SourceFiles(sourcesFiles)
             }
 
+            if (arguments.irFileRegionComments) {
+                config.configuration.put(JSConfigurationKeys.GENERATE_COMMENTS_WITH_FILE_PATH, true)
+            }
+
             val compiledModule = try {
                 compile(
                     projectJs,
@@ -232,7 +236,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     multiModule = arguments.irPerModule,
                     relativeRequirePath = true,
                     traceMethods = arguments.traceMethods,
-                    focusOnTest = arguments.irFocusOnTest
+                    focusOnTest = arguments.irFocusOnTest,
                 )
             } catch (e: JsIrCompilationError) {
                 return COMPILATION_ERROR
