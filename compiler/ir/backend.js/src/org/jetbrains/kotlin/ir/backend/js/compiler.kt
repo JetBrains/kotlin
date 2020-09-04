@@ -52,6 +52,7 @@ fun compile(
     traceMethods: Boolean = false,
     focusOnTest: String? = null,
     forceAllJs: Boolean = false,
+    legacyPropertyAccess: Boolean = false,
 ): CompilerResult {
     stageController = StageController()
 
@@ -65,7 +66,7 @@ fun compile(
         is MainModule.Klib -> dependencyModules
     }
 
-    val context = JsIrBackendContext(moduleDescriptor, irBuiltIns, symbolTable, allModules.first(), exportedDeclarations, configuration, es6mode = es6mode)
+    val context = JsIrBackendContext(moduleDescriptor, irBuiltIns, symbolTable, allModules.first(), exportedDeclarations, configuration, es6mode = es6mode, legacyPropertyAccess = legacyPropertyAccess)
 
     // Load declarations referenced during `context` initialization
     val irProviders = listOf(deserializer)

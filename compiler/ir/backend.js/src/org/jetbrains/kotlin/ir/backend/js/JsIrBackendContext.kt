@@ -43,7 +43,8 @@ class JsIrBackendContext(
     val additionalExportedDeclarationNames: Set<FqName>,
     override val configuration: CompilerConfiguration, // TODO: remove configuration from backend context
     override val scriptMode: Boolean = false,
-    override val es6mode: Boolean = false
+    override val es6mode: Boolean = false,
+    val legacyPropertyAccess: Boolean = false,
 ) : JsCommonBackendContext {
     override val transformedFunction
         get() = error("Use Mapping.inlineClassMemberToStatic instead")
