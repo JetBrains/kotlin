@@ -1454,7 +1454,7 @@
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedEqualsInspection"
                      groupPath="Kotlin"
-                     groupName="Redundant constructs"
+                     groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
