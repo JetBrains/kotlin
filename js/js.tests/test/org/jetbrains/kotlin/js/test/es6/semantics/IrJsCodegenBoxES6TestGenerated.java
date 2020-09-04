@@ -11823,6 +11823,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
                 runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/constructorWithInlineClassParameters.kt");
             }
 
+            @TestMetadata("equalsHashCodeToString.kt")
+            public void testEqualsHashCodeToString() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/equalsHashCodeToString.kt");
+            }
+
             @TestMetadata("funWithInlineClassParameters.kt")
             public void testFunWithInlineClassParameters() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/funWithInlineClassParameters.kt");

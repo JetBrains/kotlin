@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.FunctionsFromAnyGenerator;
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
+import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
@@ -29,6 +30,7 @@ import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.List;
 
@@ -78,7 +80,8 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
         MethodContext context = fieldOwnerContext.intoFunction(function);
         JvmDeclarationOrigin methodOrigin = JvmDeclarationOriginKt.OtherOrigin(function);
         String toStringMethodName = mapFunctionName(function);
-        MethodVisitor mv = v.newMethod(methodOrigin, getAccess(), toStringMethodName, getToStringDesc(), null, null);
+        String toStringMethodDesc = getToStringDesc();
+        MethodVisitor mv = v.newMethod(methodOrigin, getAccess(), toStringMethodName, toStringMethodDesc, null, null);
 
         if (!isInErasedInlineClass && classDescriptor.isInline()) {
             FunctionCodegen.generateMethodInsideInlineClassWrapper(methodOrigin, function, classDescriptor, mv, typeMapper);
@@ -137,6 +140,14 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
         iv.areturn(JAVA_STRING_TYPE);
 
         FunctionCodegen.endVisit(mv, toStringMethodName, getDeclaration());
+
+        recordMethodForFunctionIfRequired(function, toStringMethodName, toStringMethodDesc);
+    }
+
+    private void recordMethodForFunctionIfRequired(@NotNull FunctionDescriptor function, @NotNull String name, @NotNull String desc) {
+        if (isInErasedInlineClass) {
+            v.getSerializationBindings().put(JvmSerializationBindings.METHOD_FOR_FUNCTION, function, new Method(name, desc));
+        }
     }
 
     @Override
@@ -146,7 +157,8 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
         MethodContext context = fieldOwnerContext.intoFunction(function);
         JvmDeclarationOrigin methodOrigin = JvmDeclarationOriginKt.OtherOrigin(function);
         String hashCodeMethodName = mapFunctionName(function);
-        MethodVisitor mv = v.newMethod(methodOrigin, getAccess(), hashCodeMethodName, getHashCodeDesc(), null, null);
+        String hashCodeMethodDesc = getHashCodeDesc();
+        MethodVisitor mv = v.newMethod(methodOrigin, getAccess(), hashCodeMethodName, hashCodeMethodDesc, null, null);
 
         if (!isInErasedInlineClass && classDescriptor.isInline()) {
             FunctionCodegen.generateMethodInsideInlineClassWrapper(methodOrigin, function, classDescriptor, mv, typeMapper);
@@ -202,6 +214,8 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
         mv.visitInsn(IRETURN);
 
         FunctionCodegen.endVisit(mv, hashCodeMethodName, getDeclaration());
+
+        recordMethodForFunctionIfRequired(function, hashCodeMethodName, hashCodeMethodDesc);
     }
 
     private String mapFunctionName(@NotNull FunctionDescriptor functionDescriptor) {
@@ -215,7 +229,8 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
         MethodContext context = fieldOwnerContext.intoFunction(function);
         JvmDeclarationOrigin methodOrigin = JvmDeclarationOriginKt.OtherOrigin(function);
         String equalsMethodName = mapFunctionName(function);
-        MethodVisitor mv = v.newMethod(methodOrigin, getAccess(), equalsMethodName, getEqualsDesc(), null, null);
+        String equalsMethodDesc = getEqualsDesc();
+        MethodVisitor mv = v.newMethod(methodOrigin, getAccess(), equalsMethodName, equalsMethodDesc, null, null);
 
         if (!isInErasedInlineClass && classDescriptor.isInline()) {
             FunctionCodegen.generateMethodInsideInlineClassWrapper(methodOrigin, function, classDescriptor, mv, typeMapper);
@@ -266,6 +281,8 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
         iv.areturn(Type.INT_TYPE);
 
         FunctionCodegen.endVisit(mv, equalsMethodName, getDeclaration());
+
+        recordMethodForFunctionIfRequired(function, equalsMethodName, equalsMethodDesc);
     }
 
     private static void visitEndForAnnotationVisitor(@Nullable AnnotationVisitor annotation) {
