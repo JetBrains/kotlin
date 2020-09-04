@@ -171,7 +171,6 @@ internal class KonanIrLinker(
         }
 
         private val declaredDeclaration = mutableMapOf<IdSignature, IrClass>()
-        private val packageToFileMap = mutableMapOf<FqName, IrFile>()
 
         private fun IdSignature.isForwardDeclarationSignature(): Boolean {
             if (isPublic) {
@@ -191,28 +190,10 @@ internal class KonanIrLinker(
                 moduleDescriptor.findClassAcrossModuleDependencies(classId) ?: error("No declaration found with $idSig")
             }
 
-        private fun getIrFile(packageFragment: PackageFragmentDescriptor): IrFile {
-            val fqn = packageFragment.fqName
-            return packageToFileMap.getOrPut(packageFragment.fqName) {
-                val fileSymbol = IrFileSymbolImpl(packageFragment)
-                IrFileImpl(NaiveSourceBasedFileEntryImpl("forward declarations for $fqn"), fileSymbol, packageFragment.fqName).also {
-                    moduleFragment.files.add(it)
-                }
+        private fun buildForwardDeclarationStub(descriptor: ClassDescriptor): IrClass {
+            return stubGenerator.generateClassStub(descriptor).also {
+                it.origin = FORWARD_DECLARATION_ORIGIN
             }
-        }
-
-        private fun buildForwardDeclarationStub(idSig: IdSignature, descriptor: ClassDescriptor): IrClass {
-            val packageDescriptor = descriptor.containingDeclaration as PackageFragmentDescriptor
-            val irFile = getIrFile(packageDescriptor)
-
-            val klass = symbolTable.declareClassFromLinker(descriptor, idSig) { symbol ->
-                symbolTable.irFactory.createIrClassFromDescriptor(offset, offset, FORWARD_DECLARATION_ORIGIN, symbol, descriptor)
-            }
-
-            klass.parent = irFile
-            irFile.declarations.add(klass)
-
-            return klass
         }
 
         override fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
@@ -225,7 +206,7 @@ internal class KonanIrLinker(
                 return symbolTable.referenceClassFromLinker(descriptor, idSig)
             }
 
-            return declaredDeclaration.getOrPut(idSig) { buildForwardDeclarationStub(idSig, descriptor) }.symbol
+            return declaredDeclaration.getOrPut(idSig) { buildForwardDeclarationStub(descriptor) }.symbol
         }
 
         override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor, builtIns)
