@@ -14068,17 +14068,17 @@ public abstract class QuickFixTestGenerated extends AbstractQuickFixTest {
 
         @TestMetadata("unsafe.kt")
         public void testUnsafe() throws Exception {
-            runTest("idea/testData/quickfix/wrapWithSafeLetCall/unsafe.kt");
+            runTest("testData/quickfix/wrapWithSafeLetCall/unsafe.kt");
         }
 
         @TestMetadata("unsafe2.kt")
         public void testUnsafe2() throws Exception {
-            runTest("idea/testData/quickfix/wrapWithSafeLetCall/unsafe2.kt");
+            runTest("testData/quickfix/wrapWithSafeLetCall/unsafe2.kt");
         }
 
         @TestMetadata("unsafeForNullableParameter.kt")
         public void testUnsafeForNullableParameter() throws Exception {
-            runTest("idea/testData/quickfix/wrapWithSafeLetCall/unsafeForNullableParameter.kt");
+            runTest("testData/quickfix/wrapWithSafeLetCall/unsafeForNullableParameter.kt");
         }
 
         @TestMetadata("unstableValue.kt")

@@ -177,12 +177,12 @@ public abstract class ParameterInfoTestGenerated extends AbstractParameterInfoTe
 
         @TestMetadata("MixedNamedArguments.kt")
         public void testMixedNamedArguments() throws Exception {
-            runTest("idea/testData/parameterInfo/functionCall/MixedNamedArguments.kt");
+            runTest("testData/parameterInfo/functionCall/MixedNamedArguments.kt");
         }
 
         @TestMetadata("MixedNamedArguments2.kt")
         public void testMixedNamedArguments2() throws Exception {
-            runTest("idea/testData/parameterInfo/functionCall/MixedNamedArguments2.kt");
+            runTest("testData/parameterInfo/functionCall/MixedNamedArguments2.kt");
         }
 
         @TestMetadata("NamedAndDefaultParameter.kt")

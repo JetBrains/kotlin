@@ -3264,9 +3264,8 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
         }
     }
 
-    @TestMetadata("idea/testData/inspectionsLocal/convertInitializedValToNonNullType")
-    @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
+    @TestMetadata("testData/inspectionsLocal/convertInitializedValToNonNullType")
     public static class ConvertInitializedValToNonNullType extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
@@ -3274,22 +3273,22 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
 
         @TestMetadata("assignToMethodCall.kt")
         public void testAssignToMethodCall() throws Exception {
-            runTest("idea/testData/inspectionsLocal/convertInitializedValToNonNullType/assignToMethodCall.kt");
+            runTest("testData/inspectionsLocal/convertInitializedValToNonNullType/assignToMethodCall.kt");
         }
 
         @TestMetadata("assignToVariable.kt")
         public void testAssignToVariable() throws Exception {
-            runTest("idea/testData/inspectionsLocal/convertInitializedValToNonNullType/assignToVariable.kt");
+            runTest("testData/inspectionsLocal/convertInitializedValToNonNullType/assignToVariable.kt");
         }
 
         @TestMetadata("basic.kt")
         public void testBasic() throws Exception {
-            runTest("idea/testData/inspectionsLocal/convertInitializedValToNonNullType/basic.kt");
+            runTest("testData/inspectionsLocal/convertInitializedValToNonNullType/basic.kt");
         }
 
         @TestMetadata("negative.kt")
         public void testNegative() throws Exception {
-            runTest("idea/testData/inspectionsLocal/convertInitializedValToNonNullType/negative.kt");
+            runTest("testData/inspectionsLocal/convertInitializedValToNonNullType/negative.kt");
         }
     }
 
@@ -7599,88 +7598,6 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
         }
     }
 
-    @TestMetadata("idea/testData/inspectionsLocal/redundantNullableReturnType")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class RedundantNullableReturnType extends AbstractLocalInspectionTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        @TestMetadata("idea/testData/inspectionsLocal/redundantNullableReturnType/function")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Function extends AbstractLocalInspectionTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-            }
-
-            @TestMetadata("blockBody.kt")
-            public void testBlockBody() throws Exception {
-                runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/function/blockBody.kt");
-            }
-
-            @TestMetadata("blockBodyReturnsNullable.kt")
-            public void testBlockBodyReturnsNullable() throws Exception {
-                runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/function/blockBodyReturnsNullable.kt");
-            }
-
-            @TestMetadata("blockBodyWithSmartCast.kt")
-            public void testBlockBodyWithSmartCast() throws Exception {
-                runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/function/blockBodyWithSmartCast.kt");
-            }
-
-            @TestMetadata("notNullableReturnType.kt")
-            public void testNotNullableReturnType() throws Exception {
-                runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/function/notNullableReturnType.kt");
-            }
-
-            @TestMetadata("overridable.kt")
-            public void testOverridable() throws Exception {
-                runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/function/overridable.kt");
-            }
-
-            @TestMetadata("singleExpressionBody.kt")
-            public void testSingleExpressionBody() throws Exception {
-                runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/function/singleExpressionBody.kt");
-            }
-
-            @TestMetadata("singleExpressionBodyReturnsNullable.kt")
-            public void testSingleExpressionBodyReturnsNullable() throws Exception {
-                runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/function/singleExpressionBodyReturnsNullable.kt");
-            }
-        }
-
-        @TestMetadata("idea/testData/inspectionsLocal/redundantNullableReturnType/property")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Property extends AbstractLocalInspectionTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-            }
-
-            @TestMetadata("getter.kt")
-            public void testGetter() throws Exception {
-                runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/property/getter.kt");
-            }
-
-            @TestMetadata("getterWithBody.kt")
-            public void testGetterWithBody() throws Exception {
-                runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/property/getterWithBody.kt");
-            }
-
-            @TestMetadata("initializer.kt")
-            public void testInitializer() throws Exception {
-                runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/property/initializer.kt");
-            }
-
-            @TestMetadata("var.kt")
-            public void testVar() throws Exception {
-                runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/property/var.kt");
-            }
-        }
-    }
-
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction")
     public static class RedundantLambdaOrAnonymousFunction extends AbstractLocalInspectionTest {
@@ -7846,6 +7763,81 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
             @TestMetadata("withoutInvocation2.kt")
             public void testWithoutInvocation2() throws Exception {
                 runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/lambdaExpression/withoutInvocation2.kt");
+            }
+        }
+    }
+
+    @RunWith(JUnit3RunnerWithInners.class)
+    @TestMetadata("testData/inspectionsLocal/redundantNullableReturnType")
+    public abstract static class RedundantNullableReturnType extends AbstractLocalInspectionTest {
+        @RunWith(JUnit3RunnerWithInners.class)
+        @TestMetadata("testData/inspectionsLocal/redundantNullableReturnType/function")
+        public static class Function extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            @TestMetadata("blockBody.kt")
+            public void testBlockBody() throws Exception {
+                runTest("testData/inspectionsLocal/redundantNullableReturnType/function/blockBody.kt");
+            }
+
+            @TestMetadata("blockBodyReturnsNullable.kt")
+            public void testBlockBodyReturnsNullable() throws Exception {
+                runTest("testData/inspectionsLocal/redundantNullableReturnType/function/blockBodyReturnsNullable.kt");
+            }
+
+            @TestMetadata("blockBodyWithSmartCast.kt")
+            public void testBlockBodyWithSmartCast() throws Exception {
+                runTest("testData/inspectionsLocal/redundantNullableReturnType/function/blockBodyWithSmartCast.kt");
+            }
+
+            @TestMetadata("notNullableReturnType.kt")
+            public void testNotNullableReturnType() throws Exception {
+                runTest("testData/inspectionsLocal/redundantNullableReturnType/function/notNullableReturnType.kt");
+            }
+
+            @TestMetadata("overridable.kt")
+            public void testOverridable() throws Exception {
+                runTest("testData/inspectionsLocal/redundantNullableReturnType/function/overridable.kt");
+            }
+
+            @TestMetadata("singleExpressionBody.kt")
+            public void testSingleExpressionBody() throws Exception {
+                runTest("testData/inspectionsLocal/redundantNullableReturnType/function/singleExpressionBody.kt");
+            }
+
+            @TestMetadata("singleExpressionBodyReturnsNullable.kt")
+            public void testSingleExpressionBodyReturnsNullable() throws Exception {
+                runTest("testData/inspectionsLocal/redundantNullableReturnType/function/singleExpressionBodyReturnsNullable.kt");
+            }
+        }
+
+        @RunWith(JUnit3RunnerWithInners.class)
+        @TestMetadata("testData/inspectionsLocal/redundantNullableReturnType/property")
+        public static class Property extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            @TestMetadata("getter.kt")
+            public void testGetter() throws Exception {
+                runTest("testData/inspectionsLocal/redundantNullableReturnType/property/getter.kt");
+            }
+
+            @TestMetadata("getterWithBody.kt")
+            public void testGetterWithBody() throws Exception {
+                runTest("testData/inspectionsLocal/redundantNullableReturnType/property/getterWithBody.kt");
+            }
+
+            @TestMetadata("initializer.kt")
+            public void testInitializer() throws Exception {
+                runTest("testData/inspectionsLocal/redundantNullableReturnType/property/initializer.kt");
+            }
+
+            @TestMetadata("var.kt")
+            public void testVar() throws Exception {
+                runTest("testData/inspectionsLocal/redundantNullableReturnType/property/var.kt");
             }
         }
     }
@@ -10686,7 +10678,7 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
 
         @TestMetadata("stringIsBlank.kt")
         public void testStringIsBlank() throws Exception {
-            runTest("idea/testData/inspectionsLocal/replaceNegatedIsEmptyWithIsNotEmpty/stringIsBlank.kt");
+            runTest("testData/inspectionsLocal/replaceNegatedIsEmptyWithIsNotEmpty/stringIsBlank.kt");
         }
 
         @TestMetadata("stringIsEmpty.kt")
@@ -10696,7 +10688,7 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
 
         @TestMetadata("stringIsNotBlank.kt")
         public void testStringIsNotBlank() throws Exception {
-            runTest("idea/testData/inspectionsLocal/replaceNegatedIsEmptyWithIsNotEmpty/stringIsNotBlank.kt");
+            runTest("testData/inspectionsLocal/replaceNegatedIsEmptyWithIsNotEmpty/stringIsNotBlank.kt");
         }
 
         @TestMetadata("stringIsNotEmpty.kt")
@@ -12364,9 +12356,8 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
         }
     }
 
-    @TestMetadata("idea/testData/inspectionsLocal/simplifyNestedEachInScope")
-    @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
+    @TestMetadata("testData/inspectionsLocal/simplifyNestedEachInScope")
     public static class SimplifyNestedEachInScope extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
@@ -12374,67 +12365,67 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
 
         @TestMetadata("also.kt")
         public void testAlso() throws Exception {
-            runTest("idea/testData/inspectionsLocal/simplifyNestedEachInScope/also.kt");
+            runTest("testData/inspectionsLocal/simplifyNestedEachInScope/also.kt");
         }
 
         @TestMetadata("also2.kt")
         public void testAlso2() throws Exception {
-            runTest("idea/testData/inspectionsLocal/simplifyNestedEachInScope/also2.kt");
+            runTest("testData/inspectionsLocal/simplifyNestedEachInScope/also2.kt");
         }
 
         @TestMetadata("also3.kt")
         public void testAlso3() throws Exception {
-            runTest("idea/testData/inspectionsLocal/simplifyNestedEachInScope/also3.kt");
+            runTest("testData/inspectionsLocal/simplifyNestedEachInScope/also3.kt");
         }
 
         @TestMetadata("also4.kt")
         public void testAlso4() throws Exception {
-            runTest("idea/testData/inspectionsLocal/simplifyNestedEachInScope/also4.kt");
+            runTest("testData/inspectionsLocal/simplifyNestedEachInScope/also4.kt");
         }
 
         @TestMetadata("also5.kt")
         public void testAlso5() throws Exception {
-            runTest("idea/testData/inspectionsLocal/simplifyNestedEachInScope/also5.kt");
+            runTest("testData/inspectionsLocal/simplifyNestedEachInScope/also5.kt");
         }
 
         @TestMetadata("alsoLabel.kt")
         public void testAlsoLabel() throws Exception {
-            runTest("idea/testData/inspectionsLocal/simplifyNestedEachInScope/alsoLabel.kt");
+            runTest("testData/inspectionsLocal/simplifyNestedEachInScope/alsoLabel.kt");
         }
 
         @TestMetadata("alsoLabel2.kt")
         public void testAlsoLabel2() throws Exception {
-            runTest("idea/testData/inspectionsLocal/simplifyNestedEachInScope/alsoLabel2.kt");
+            runTest("testData/inspectionsLocal/simplifyNestedEachInScope/alsoLabel2.kt");
         }
 
         @TestMetadata("alsoLabel3.kt")
         public void testAlsoLabel3() throws Exception {
-            runTest("idea/testData/inspectionsLocal/simplifyNestedEachInScope/alsoLabel3.kt");
+            runTest("testData/inspectionsLocal/simplifyNestedEachInScope/alsoLabel3.kt");
         }
 
         @TestMetadata("apply.kt")
         public void testApply() throws Exception {
-            runTest("idea/testData/inspectionsLocal/simplifyNestedEachInScope/apply.kt");
+            runTest("testData/inspectionsLocal/simplifyNestedEachInScope/apply.kt");
         }
 
         @TestMetadata("apply2.kt")
         public void testApply2() throws Exception {
-            runTest("idea/testData/inspectionsLocal/simplifyNestedEachInScope/apply2.kt");
+            runTest("testData/inspectionsLocal/simplifyNestedEachInScope/apply2.kt");
         }
 
         @TestMetadata("apply3.kt")
         public void testApply3() throws Exception {
-            runTest("idea/testData/inspectionsLocal/simplifyNestedEachInScope/apply3.kt");
+            runTest("testData/inspectionsLocal/simplifyNestedEachInScope/apply3.kt");
         }
 
         @TestMetadata("applyLabel.kt")
         public void testApplyLabel() throws Exception {
-            runTest("idea/testData/inspectionsLocal/simplifyNestedEachInScope/applyLabel.kt");
+            runTest("testData/inspectionsLocal/simplifyNestedEachInScope/applyLabel.kt");
         }
 
         @TestMetadata("applyLabel2.kt")
         public void testApplyLabel2() throws Exception {
-            runTest("idea/testData/inspectionsLocal/simplifyNestedEachInScope/applyLabel2.kt");
+            runTest("testData/inspectionsLocal/simplifyNestedEachInScope/applyLabel2.kt");
         }
     }
 

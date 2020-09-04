@@ -7642,9 +7642,8 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
-    @TestMetadata("idea/testData/intentions/convertVariableAssignmentToExpression")
-    @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
+    @TestMetadata("testData/intentions/convertVariableAssignmentToExpression")
     public static class ConvertVariableAssignmentToExpression extends AbstractIntentionTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
@@ -7652,22 +7651,22 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("complexLhs.kt")
         public void testComplexLhs() throws Exception {
-            runTest("idea/testData/intentions/convertVariableAssignmentToExpression/complexLhs.kt");
+            runTest("testData/intentions/convertVariableAssignmentToExpression/complexLhs.kt");
         }
 
         @TestMetadata("complexRhs.kt")
         public void testComplexRhs() throws Exception {
-            runTest("idea/testData/intentions/convertVariableAssignmentToExpression/complexRhs.kt");
+            runTest("testData/intentions/convertVariableAssignmentToExpression/complexRhs.kt");
         }
 
         @TestMetadata("noAssignment.kt")
         public void testNoAssignment() throws Exception {
-            runTest("idea/testData/intentions/convertVariableAssignmentToExpression/noAssignment.kt");
+            runTest("testData/intentions/convertVariableAssignmentToExpression/noAssignment.kt");
         }
 
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
-            runTest("idea/testData/intentions/convertVariableAssignmentToExpression/simple.kt");
+            runTest("testData/intentions/convertVariableAssignmentToExpression/simple.kt");
         }
     }
 
@@ -9247,7 +9246,7 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("isBlank.kt")
         public void testIsBlank() throws Exception {
-            runTest("idea/testData/intentions/invertIfCondition/isBlank.kt");
+            runTest("testData/intentions/invertIfCondition/isBlank.kt");
         }
 
         @TestMetadata("isEmpty.kt")
@@ -9257,7 +9256,7 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("isNotBlank.kt")
         public void testIsNotBlank() throws Exception {
-            runTest("idea/testData/intentions/invertIfCondition/isNotBlank.kt");
+            runTest("testData/intentions/invertIfCondition/isNotBlank.kt");
         }
 
         @TestMetadata("isNotEmpty.kt")
@@ -9332,7 +9331,7 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("negatedIsBlank.kt")
         public void testNegatedIsBlank() throws Exception {
-            runTest("idea/testData/intentions/invertIfCondition/negatedIsBlank.kt");
+            runTest("testData/intentions/invertIfCondition/negatedIsBlank.kt");
         }
 
         @TestMetadata("negatedIsEmpty.kt")
@@ -9342,7 +9341,7 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("negatedIsNotBlank.kt")
         public void testNegatedIsNotBlank() throws Exception {
-            runTest("idea/testData/intentions/invertIfCondition/negatedIsNotBlank.kt");
+            runTest("testData/intentions/invertIfCondition/negatedIsNotBlank.kt");
         }
 
         @TestMetadata("negatedIsNotEmpty.kt")
