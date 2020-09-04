@@ -297,14 +297,14 @@ private fun Module.hasTestRoots() =
 private fun Module.hasRootsOfType(sourceRootType: JpsModuleSourceRootType<*>): Boolean =
     rootManager.contentEntries.any { it.getSourceFolders(sourceRootType).isNotEmpty() }
 
-private abstract class ModuleSourceScope(val module: Module) : GlobalSearchScope(module.project) {
+abstract class ModuleSourceScope(val module: Module) : GlobalSearchScope(module.project) {
     override fun compare(file1: VirtualFile, file2: VirtualFile) = 0
     override fun isSearchInModuleContent(aModule: Module) = aModule == module
     override fun isSearchInLibraries() = false
 }
 
 @Suppress("EqualsOrHashCode") // DelegatingGlobalSearchScope requires to provide calcHashCode()
-private class ModuleProductionSourceScope(module: Module) : ModuleSourceScope(module) {
+class ModuleProductionSourceScope(module: Module) : ModuleSourceScope(module) {
     val moduleFileIndex = ModuleRootManager.getInstance(module).fileIndex
 
     override fun equals(other: Any?): Boolean {

@@ -85,7 +85,7 @@ internal class KtFirScopeProvider(
             val firPackageScope =
                 FirPackageMemberScope(
                     packageSymbol.fqName,
-                    firResolveState.firIdeSourcesSession/*TODO use correct session here*/
+                    firResolveState.currentModuleSourcesSession/*TODO use correct session here*/
                 ).also(firScopeStorage::register)
             KtFirPackageScope(firPackageScope, project, builder, token)
         }

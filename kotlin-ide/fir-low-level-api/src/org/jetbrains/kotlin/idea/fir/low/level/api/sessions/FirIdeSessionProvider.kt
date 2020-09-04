@@ -18,26 +18,31 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.ThreadSafe
 internal class FirIdeSessionProvider(
     override val project: Project,
 ) : FirSessionProvider {
-    private lateinit var sourcesSession: FirIdeSourcesSession
+    private lateinit var currentModuleSourcesSession: FirIdeSourcesSession
+    private lateinit var dependentModulesModuleSourcesSession: FirIdeSourcesSession
     private lateinit var librariesSession: FirIdeLibrariesSession
 
 
-    fun setSourcesSession(sourcesSession: FirIdeSourcesSession) {
-        check(!this::sourcesSession.isInitialized)
-        this.sourcesSession = sourcesSession
-    }
-
-    fun setLibrariesSession(librariesSession: FirIdeLibrariesSession) {
-        check(!this::librariesSession.isInitialized)
+    fun init(
+        currentModuleSourcesSession: FirIdeSourcesSession,
+        dependentModulesModuleSourcesSession: FirIdeSourcesSession,
+        librariesSession: FirIdeLibrariesSession,
+    ) {
+        this.currentModuleSourcesSession = currentModuleSourcesSession
+        this.dependentModulesModuleSourcesSession = dependentModulesModuleSourcesSession
         this.librariesSession = librariesSession
     }
+
 
     override fun getSession(moduleInfo: ModuleInfo): FirSession = when {
         moduleInfo is IdeaModuleInfo && moduleInfo.isLibraryClasses() -> {
             librariesSession /* TODO check if library is in libraries session scope */
         }
+        moduleInfo == currentModuleSourcesSession.moduleInfo -> {
+            currentModuleSourcesSession
+        }
         moduleInfo is ModuleSourceInfo -> {
-            sourcesSession /* TODO check if source is in sources session scope */
+            currentModuleSourcesSession /* TODO check if source is in sources session scope */
         }
         else -> error("Invalid module info $moduleInfo")
     }
