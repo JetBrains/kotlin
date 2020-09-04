@@ -13,12 +13,4 @@ object FirDiagnosticsCollector {
         collector.registerAllComponents()
         return collector
     }
-
-    // Use in CLI compiler
-    @Suppress("unused")
-    fun createParallel(session: FirSession): AbstractDiagnosticCollector {
-        val collector = ParallelDiagnosticsCollector(session, numberOfThreads = 4)
-        collector.registerAllComponents()
-        return collector
-    }
 }
