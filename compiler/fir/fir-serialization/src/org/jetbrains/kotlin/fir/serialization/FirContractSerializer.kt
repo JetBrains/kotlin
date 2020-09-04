@@ -140,7 +140,7 @@ class FirContractSerializer {
                     isInstancePredicate: ConeIsInstancePredicate, data: Unit
                 ): ProtoBuf.Expression.Builder {
                     // write variable
-                    val builder = visitValueParameterReference(isInstancePredicate.arg, data)
+                    val builder = isInstancePredicate.arg.accept(this, data)
 
                     // write rhs type
                     builder.isInstanceTypeId = parentSerializer.typeId(isInstancePredicate.type)
@@ -153,7 +153,7 @@ class FirContractSerializer {
 
                 override fun visitIsNullPredicate(isNullPredicate: ConeIsNullPredicate, data: Unit): ProtoBuf.Expression.Builder {
                     // get builder with variable embedded into it
-                    val builder = visitValueParameterReference(isNullPredicate.arg, data)
+                    val builder = isNullPredicate.arg.accept(this, data)
 
                     // set flags
                     builder.writeFlags(Flags.getContractExpressionFlags(isNullPredicate.isNegated, true))

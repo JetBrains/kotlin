@@ -1,0 +1,39 @@
+FILE: propertyGetter.kt
+    public final fun returnValue(): R|kotlin/Any?| {
+        ^returnValue Null(null)
+    }
+    public final fun always(): R|kotlin/Boolean|
+    public final infix fun R|kotlin/Boolean|.implies(condition: R|kotlin/Boolean|): R|kotlin/Unit|
+    public final fun <T> identity(any: R|T|): R|T| {
+        ^identity R|<local>/any|
+    }
+    public final val something: R|kotlin/Any?|
+        public get(): R|kotlin/Any?|
+            [R|Contract description]
+             <
+                TRUE -> returnValue() is kotlin/String
+            >
+         {
+            [StubStatement]
+            ^ String(null)
+        }
+    public final fun test1(): R|kotlin/Unit| {
+        lval i: R|kotlin/String| = R|/something|
+        lval asString: R|kotlin/Int| = R|<local>/i|.R|kotlin/String.length|
+        when () {
+            ==(R|/something|.R|kotlin/String.get|(Int(0)), Char(A)) ->  {
+                R|kotlin/io/println|(String(A))
+            }
+        }
+
+    }
+    public final fun test2(): R|kotlin/Unit| {
+        lval i: R|kotlin/String| = R|/identity|<R|kotlin/String|>(R|/something|)
+        lval asString: R|kotlin/Int| = R|<local>/i|.R|kotlin/String.length|
+        when () {
+            ==(R|/identity|<R|kotlin/String|>(R|/something|).R|kotlin/String.get|(Int(0)), Char(A)) ->  {
+                R|kotlin/io/println|(String(A))
+            }
+        }
+
+    }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
@@ -126,6 +127,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             is FirQualifiedAccessExpression -> {
                 dataFlowAnalyzer.enterQualifiedAccessExpression()
                 result = components.transformQualifiedAccessUsingSmartcastInfo(result)
+                result = components.transformQualifiedAccessUsingConditionalContracts(result)
                 dataFlowAnalyzer.exitQualifiedAccessExpression(result)
             }
             is FirResolvedQualifier -> {
@@ -285,7 +287,8 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 }
             }
         }
-        return completeInference.compose()
+        val result = components.transformQualifiedAccessUsingConditionalContracts(completeInference)
+        return result.compose()
     }
 
     override fun transformBlock(block: FirBlock, data: ResolutionMode): CompositeTransformResult<FirStatement> {

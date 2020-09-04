@@ -1,0 +1,48 @@
+FILE: functionCall.kt
+    public final fun returnValue(): R|kotlin/Any?| {
+        ^returnValue Null(null)
+    }
+    public final fun always(): R|kotlin/Boolean|
+    public final infix fun R|kotlin/Boolean|.implies(condition: R|kotlin/Boolean|): R|kotlin/Unit|
+    public final fun <T> identity(any: R|T|): R|T| {
+        ^identity R|<local>/any|
+    }
+    public final fun length(x: R|kotlin/String?|): R|kotlin/Any?|
+        [R|Contract description]
+         <
+            x != null || x is kotlin/String -> returnValue() is kotlin/String
+        >
+     {
+        [StubStatement]
+        ^length R|<local>/x|?.{ $subj$.R|kotlin/String.plus|(String(A)) }
+    }
+    public final fun test1(x: R|kotlin/String|): R|kotlin/Unit| {
+        lval i: R|kotlin/String| = R|/length|
+        lval asString: R|kotlin/Int| = R|<local>/i|.R|kotlin/String.length|
+        when () {
+            ==(R|/length|.R|kotlin/String.get|(Int(0)), Char(A)) ->  {
+                R|kotlin/io/println|(String(A))
+            }
+        }
+
+    }
+    public final fun test2(x: R|kotlin/String?|): R|kotlin/Unit| {
+        lval i: R|kotlin/Any?| = R|/length|(R|<local>/x|)
+        lval asString: R|ERROR CLASS: Unresolved name: length| = R|<local>/i|.<Unresolved name: length>#
+        when () {
+            ==(R|/length|(R|<local>/x|).<Unresolved name: get>#(Int(0)), Char(A)) ->  {
+                R|kotlin/io/println|(String(A))
+            }
+        }
+
+    }
+    public final fun test3(x: R|kotlin/String|): R|kotlin/Unit| {
+        lval i: R|kotlin/String| = R|/identity|<R|kotlin/String|>(R|/length|)
+        lval asString: R|kotlin/Int| = R|<local>/i|.R|kotlin/String.length|
+        when () {
+            ==(R|/identity|<R|kotlin/String|>(R|/length|).R|kotlin/String.get|(Int(0)), Char(A)) ->  {
+                R|kotlin/io/println|(String(A))
+            }
+        }
+
+    }

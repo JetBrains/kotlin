@@ -38,9 +38,13 @@ class ConeEffectExtractor(
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: Nothing?): ConeContractDescriptionElement? {
         val resolvedId = functionCall.toResolvedCallableSymbol()?.callableId ?: return null
         return when (resolvedId) {
-            FirContractsDslNames.IMPLIES -> {
-                val effect = functionCall.explicitReceiver?.accept(this, null) as? ConeEffectDeclaration
-                    ?: return null
+            FirContractsDslNames.IMPLIES, FirContractsDslNames.IMPLIES_RETURNS -> {
+                val effect = when (val receiver = functionCall.explicitReceiver?.accept(this, null)) {
+                    is ConeEffectDeclaration -> receiver
+                    is ConeBooleanExpression -> ConeParametersEffectDeclaration(receiver)
+                    else -> null
+                } ?: return null
+
                 val condition = functionCall.argument.accept(this, null) as? ConeBooleanExpression
                     ?: return null
                 ConeConditionalEffectDeclaration(effect, condition)
@@ -66,6 +70,14 @@ class ConeEffectExtractor(
                     ?: return null
                 val kind = functionCall.arguments.getOrNull(1)?.parseInvocationKind() ?: EventOccurrencesRange.UNKNOWN
                 ConeCallsEffectDeclaration(reference, kind)
+            }
+
+            FirContractsDslNames.RETURN_VALUE -> {
+                ConeReturnValue()
+            }
+
+            FirContractsDslNames.ALWAYS -> {
+                ConeParametersEffectDeclaration(ConeBooleanConstantReference.TRUE)
             }
 
             BOOLEAN_AND, BOOLEAN_OR -> {
@@ -104,7 +116,7 @@ class ConeEffectExtractor(
         }
         val const = equalityOperatorCall.arguments[1] as? FirConstExpression<*> ?: return null
         if (const.kind != FirConstKind.Null) return null
-        val arg = equalityOperatorCall.arguments[0].accept(this, null) as? ConeValueParameterReference ?: return null
+        val arg = equalityOperatorCall.arguments[0].accept(this, null) as? ConeContractDescriptionValue ?: return null
         return ConeIsNullPredicate(arg, isNegated)
     }
 
@@ -158,7 +170,7 @@ class ConeEffectExtractor(
     }
 
     override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Nothing?): ConeContractDescriptionElement? {
-        val arg = typeOperatorCall.argument.accept(this, data) as? ConeValueParameterReference ?: return null
+        val arg = typeOperatorCall.argument.accept(this, data) as? ConeContractDescriptionValue ?: return null
         val type = typeOperatorCall.conversionTypeRef.coneType
         val isNegated = typeOperatorCall.operation == FirOperation.NOT_IS
         return ConeIsInstancePredicate(arg, type, isNegated)

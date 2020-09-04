@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.PrivateForInline
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
-import org.jetbrains.kotlin.fir.contracts.description.ConeBooleanConstantReference
-import org.jetbrains.kotlin.fir.contracts.description.ConeConditionalEffectDeclaration
-import org.jetbrains.kotlin.fir.contracts.description.ConeConstantReference
-import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclaration
+import org.jetbrains.kotlin.fir.contracts.collectReturnValueConditionalTypes
+import org.jetbrains.kotlin.fir.contracts.description.*
+import org.jetbrains.kotlin.fir.contracts.resolvedConeEffects
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -29,6 +27,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -112,6 +111,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     private var contractDescriptionVisitingMode = false
 
     protected val any = components.session.builtinTypes.anyType.type
+    private val nullableAny = components.session.builtinTypes.nullableAnyType.type
     private val nullableNothing = components.session.builtinTypes.nullableNothingType.type
 
     @PrivateForInline
@@ -153,6 +153,46 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         } finally {
             ignoreFunctionCalls = oldValue
         }
+    }
+
+    fun getTypeUsingConditionalContracts(
+        qualifiedAccess: FirQualifiedAccess,
+    ): MutableList<ConeKotlinType>? {
+        if (qualifiedAccess !is FirExpression) return null
+        val owner: FirContractDescriptionOwner? = qualifiedAccess.toContractDescriptionOwner()
+        val contractDescription = owner?.contractDescription as? FirResolvedContractDescription ?: return null
+        val conditionalEffects = contractDescription.resolvedConeEffects.filterIsInstance<ConeConditionalEffectDeclaration>()
+        if (conditionalEffects.isEmpty()) return null
+        val argumentsMapping = createArgumentsMapping(qualifiedAccess) ?: return null
+
+        val conditionalTypes = mutableListOf<ConeKotlinType>()
+
+        conditionalEffects.forEach { effectDeclaration ->
+            val effect = effectDeclaration.effect
+            if (effect is ConeParametersEffectDeclaration) {
+                fun ConeContractDescriptionValue.checkType(type: ConeKotlinType): Boolean = if (this is ConeValueParameterReference) {
+                    val parameterType = argumentsMapping[parameterIndex]?.typeRef?.coneType ?: nullableAny
+                    AbstractTypeChecker.isSubtypeOf(components.session.typeContext, parameterType, type)
+                } else false
+
+                fun ConeBooleanExpression.check(): Boolean = when (this) {
+                    is ConeBinaryLogicExpression -> if (kind == LogicOperationKind.AND) {
+                        left.check() && right.check()
+                    } else left.check() || right.check()
+
+                    is ConeBooleanConstantReference -> this == ConeBooleanConstantReference.TRUE
+                    is ConeIsInstancePredicate -> !isNegated && arg.checkType(type)
+                    is ConeIsNullPredicate -> isNegated && arg.checkType(any)
+                    else -> false
+                }
+
+                if (effect.value.check()) {
+                    effectDeclaration.collectReturnValueConditionalTypes(conditionalTypes, components.session.builtinTypes)
+                }
+            }
+        }
+
+        return if (conditionalTypes.isNotEmpty()) conditionalTypes else null
     }
 
     // ----------------------------------- Named function -----------------------------------
@@ -765,30 +805,19 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     }
 
     private fun processConditionalContract(qualifiedAccess: FirQualifiedAccess) {
-        val owner: FirContractDescriptionOwner? = when (qualifiedAccess) {
-            is FirFunctionCall -> qualifiedAccess.toResolvedCallableSymbol()?.fir as? FirSimpleFunction
-            is FirQualifiedAccessExpression -> {
-                val property = (qualifiedAccess.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol?.fir as? FirProperty
-                property?.getter
-            }
-            is FirVariableAssignment -> {
-                val property = (qualifiedAccess.lValue as? FirResolvedNamedReference)?.resolvedSymbol?.fir as? FirProperty
-                property?.setter
-            }
-            else -> null
-        }
-
+        val owner: FirContractDescriptionOwner? = qualifiedAccess.toContractDescriptionOwner()
         val contractDescription = owner?.contractDescription as? FirResolvedContractDescription ?: return
         val conditionalEffects = contractDescription.effects.map { it.effect }.filterIsInstance<ConeConditionalEffectDeclaration>()
         if (conditionalEffects.isEmpty()) return
         val argumentsMapping = createArgumentsMapping(qualifiedAccess) ?: return
+
         contractDescriptionVisitingMode = true
         graphBuilder.enterContract(qualifiedAccess).mergeIncomingFlow()
         val lastFlow = graphBuilder.lastNode.flow
         val functionCallVariable = variableStorage.getOrCreateVariable(lastFlow, qualifiedAccess)
         for (conditionalEffect in conditionalEffects) {
-            val fir = conditionalEffect.buildContractFir(argumentsMapping) ?: continue
             val effect = conditionalEffect.effect as? ConeReturnsEffectDeclaration ?: continue
+            val fir = conditionalEffect.buildContractFir(argumentsMapping) ?: continue
             fir.transformSingle(components.transformer, ResolutionMode.ContextDependent)
             val argumentVariable = variableStorage.getOrCreateVariable(lastFlow, fir)
             val lastNode = graphBuilder.lastNode

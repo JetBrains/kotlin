@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
@@ -49,6 +52,19 @@ fun FirExpression.toResolvedCallableReference(): FirResolvedNamedReference? {
 
 fun FirExpression.toResolvedCallableSymbol(): FirCallableSymbol<*>? {
     return toResolvedCallableReference()?.resolvedSymbol as FirCallableSymbol<*>?
+}
+
+fun FirQualifiedAccess.toContractDescriptionOwner(): FirContractDescriptionOwner? = when (this) {
+    is FirFunctionCall -> toResolvedCallableSymbol()?.fir as? FirSimpleFunction
+    is FirQualifiedAccessExpression -> {
+        val property = (calleeReference as? FirResolvedNamedReference)?.resolvedSymbol?.fir as? FirProperty
+        property?.getter
+    }
+    is FirVariableAssignment -> {
+        val property = (lValue as? FirResolvedNamedReference)?.resolvedSymbol?.fir as? FirProperty
+        property?.setter
+    }
+    else -> null
 }
 
 fun buildErrorLoop(source: FirSourceElement?, diagnostic: ConeDiagnostic): FirErrorLoop {

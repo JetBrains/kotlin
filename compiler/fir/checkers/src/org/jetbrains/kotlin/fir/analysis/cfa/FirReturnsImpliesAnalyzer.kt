@@ -161,14 +161,18 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
             } else (left ?: right)
         }
         is ConeIsInstancePredicate -> {
-            val fir = function.getParameterSymbol(arg.parameterIndex).fir
-            val realVar = variableStorage.getOrCreateRealVariable(flow, fir.symbol, fir)
-            realVar?.to(simpleTypeStatement(realVar, !isNegated, type))?.let { mutableMapOf(it) }
+            if (arg is ConeValueParameterReference) {
+                val fir = function.getParameterSymbol((arg as ConeValueParameterReference).parameterIndex).fir
+                val realVar = variableStorage.getOrCreateRealVariable(flow, fir.symbol, fir)
+                realVar?.to(simpleTypeStatement(realVar, !isNegated, type))?.let { mutableMapOf(it) }
+            } else null
         }
         is ConeIsNullPredicate -> {
-            val fir = function.getParameterSymbol(arg.parameterIndex).fir
-            val realVar = variableStorage.getOrCreateRealVariable(flow, fir.symbol, fir)
-            realVar?.to(simpleTypeStatement(realVar, isNegated, function.session.builtinTypes.anyType.type))?.let { mutableMapOf(it) }
+            if (arg is ConeValueParameterReference) {
+                val fir = function.getParameterSymbol((arg as ConeValueParameterReference).parameterIndex).fir
+                val realVar = variableStorage.getOrCreateRealVariable(flow, fir.symbol, fir)
+                realVar?.to(simpleTypeStatement(realVar, isNegated, function.session.builtinTypes.anyType.type))?.let { mutableMapOf(it) }
+            } else null
         }
         is ConeLogicalNot -> arg.buildTypeStatements(function, logicSystem, variableStorage, flow)
             ?.mapValuesTo(mutableMapOf()) { (_, value) -> value.invert() }

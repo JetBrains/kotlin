@@ -18,6 +18,14 @@ class ConeContractRenderer(private val builder: StringBuilder) : ConeContractDes
         builder.append(")")
     }
 
+    override fun visitParametersEffectDeclaration(parametersEffect: ConeParametersEffectDeclaration, data: Nothing?) {
+        parametersEffect.value.accept(this, data)
+    }
+
+    override fun visitReturnValue(returnValue: ConeReturnValue, data: Nothing?) {
+        builder.append("returnValue()")
+    }
+
     override fun visitCallsEffectDeclaration(callsEffect: ConeCallsEffectDeclaration, data: Nothing?) {
         builder.append("CallsInPlace(")
         callsEffect.valueParameterReference.accept(this, data)

@@ -1,0 +1,63 @@
+FILE: complexLeftPartAnd.kt
+    public final fun returnValue(): R|kotlin/Any?| {
+        ^returnValue Null(null)
+    }
+    public final fun always(): R|kotlin/Boolean|
+    public final infix fun R|kotlin/Boolean|.implies(condition: R|kotlin/Boolean|): R|kotlin/Unit|
+    public final class EncryptedData : R|kotlin/Any| {
+        public constructor(): R|EncryptedData| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Data : R|kotlin/Any| {
+        public constructor(): R|Data| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public final class Key : R|kotlin/Any| {
+        public constructor(): R|Key| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun decrypt(data: R|EncryptedData|, key: R|Key|): R|Data| {
+        ^decrypt R|/Data.Data|()
+    }
+    public final fun R|EncryptedData?|.decrypt(key: R|Key?|): R|Data?|
+        [R|Contract description]
+         <
+            this != null && key != null -> returnValue() != null
+        >
+     {
+        [StubStatement]
+        ^decrypt when () {
+            !=(this@R|/decrypt|, Null(null)) && !=(R|<local>/key|, Null(null)) ->  {
+                R|/decrypt|(this@R|/decrypt|, R|<local>/key|)
+            }
+            else ->  {
+                Null(null)
+            }
+        }
+
+    }
+    public final fun test(encrypted: R|EncryptedData|, key: R|Key|): R|kotlin/Unit| {
+        lval decrypted: R|Data| = R|<local>/encrypted|.R|/decrypt|
+        R|<local>/decrypted|.R|/Data.foo|()
+    }
+    public final fun test(encrypted: R|EncryptedData?|, key: R|Key|): R|kotlin/Unit| {
+        lval decrypted: R|Data?| = R|<local>/encrypted|.R|/decrypt|(R|<local>/key|)
+        R|<local>/decrypted|.<Inapplicable(WRONG_RECEIVER): /Data.foo>#()
+    }
+    public final fun test(encrypted: R|EncryptedData|, key: R|Key?|): R|kotlin/Unit| {
+        lval decrypted: R|Data?| = R|<local>/encrypted|.R|/decrypt|(R|<local>/key|)
+        R|<local>/decrypted|.<Inapplicable(WRONG_RECEIVER): /Data.foo>#()
+    }
+    public final fun test(encrypted: R|EncryptedData?|, key: R|Key?|): R|kotlin/Unit| {
+        lval decrypted: R|Data?| = R|<local>/encrypted|.R|/decrypt|(R|<local>/key|)
+        R|<local>/decrypted|.<Inapplicable(WRONG_RECEIVER): /Data.foo>#()
+    }

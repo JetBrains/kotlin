@@ -12,13 +12,17 @@ abstract class ConeContractDescriptionVisitor<out R, in D> {
     }
 
     // Effects
-    open fun visitEffectDeclaration(effectDeclaration: ConeEffectDeclaration, data: D): R = visitContractDescriptionElement(effectDeclaration, data)
+    open fun visitEffectDeclaration(effectDeclaration: ConeEffectDeclaration, data: D): R =
+        visitContractDescriptionElement(effectDeclaration, data)
 
     open fun visitConditionalEffectDeclaration(conditionalEffect: ConeConditionalEffectDeclaration, data: D): R =
         visitEffectDeclaration(conditionalEffect, data)
 
     open fun visitReturnsEffectDeclaration(returnsEffect: ConeReturnsEffectDeclaration, data: D): R =
         visitEffectDeclaration(returnsEffect, data)
+
+    open fun visitParametersEffectDeclaration(parametersEffect: ConeParametersEffectDeclaration, data: D): R =
+        visitEffectDeclaration(parametersEffect, data)
 
     open fun visitCallsEffectDeclaration(callsEffect: ConeCallsEffectDeclaration, data: D): R =
         visitEffectDeclaration(callsEffect, data)
@@ -48,6 +52,9 @@ abstract class ConeContractDescriptionVisitor<out R, in D> {
     open fun visitValueParameterReference(valueParameterReference: ConeValueParameterReference, data: D): R =
         visitValue(valueParameterReference, data)
 
-   open fun visitBooleanValueParameterReference(booleanValueParameterReference: ConeBooleanValueParameterReference, data: D): R =
+    open fun visitBooleanValueParameterReference(booleanValueParameterReference: ConeBooleanValueParameterReference, data: D): R =
         visitValueParameterReference(booleanValueParameterReference, data)
+
+    open fun visitReturnValue(returnValue: ConeReturnValue, data: D): R =
+        visitValue(returnValue, data)
 }

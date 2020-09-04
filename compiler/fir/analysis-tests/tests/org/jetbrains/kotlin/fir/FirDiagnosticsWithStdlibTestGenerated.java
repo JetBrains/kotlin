@@ -680,6 +680,54 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
                     }
                 }
 
+                @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/impliesReturns")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class ImpliesReturns extends AbstractFirDiagnosticsWithStdlibTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInImpliesReturns() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/impliesReturns"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                    }
+
+                    @TestMetadata("complexLeftPartAnd.kt")
+                    public void testComplexLeftPartAnd() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/impliesReturns/complexLeftPartAnd.kt");
+                    }
+
+                    @TestMetadata("complexLeftPartOr.kt")
+                    public void testComplexLeftPartOr() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/impliesReturns/complexLeftPartOr.kt");
+                    }
+
+                    @TestMetadata("functionCall.kt")
+                    public void testFunctionCall() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/impliesReturns/functionCall.kt");
+                    }
+
+                    @TestMetadata("impliesIsInstance.kt")
+                    public void testImpliesIsInstance() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/impliesReturns/impliesIsInstance.kt");
+                    }
+
+                    @TestMetadata("impliesNotNull.kt")
+                    public void testImpliesNotNull() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/impliesReturns/impliesNotNull.kt");
+                    }
+
+                    @TestMetadata("impliesUnionType.kt")
+                    public void testImpliesUnionType() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/impliesReturns/impliesUnionType.kt");
+                    }
+
+                    @TestMetadata("propertyGetter.kt")
+                    public void testPropertyGetter() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/impliesReturns/propertyGetter.kt");
+                    }
+                }
+
                 @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies")
                 @TestDataPath("$PROJECT_ROOT")
                 @RunWith(JUnit3RunnerWithInners.class)

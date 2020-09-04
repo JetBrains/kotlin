@@ -48,3 +48,8 @@ class ConeBooleanValueParameterReference(parameterIndex: Int, name: String) : Co
     override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitBooleanValueParameterReference(this, data)
 }
+
+class ConeReturnValue : ConeContractDescriptionValue {
+    override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
+        contractDescriptionVisitor.visitReturnValue(this, data)
+}
