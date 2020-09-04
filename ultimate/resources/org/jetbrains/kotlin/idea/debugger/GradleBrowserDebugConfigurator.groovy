@@ -1,3 +1,4 @@
+import com.intellij.openapi.externalSystem.rt.execution.ForkedDebuggerHelper
 import org.gradle.api.Task
 
 ({
@@ -24,19 +25,18 @@ import org.gradle.api.Task
         }
     }
 
-    gradle.taskGraph.beforeTask { Task task ->
-        forJsBrowserTestTask(task) {
-            if (task.hasProperty('debug')) {
-                ForkedDebuggerHelper.setupDebugger('%id', task.path, '', '%dispatchPort'.toInteger())
-                task.debug = true
-            }
-        }
-    }
-
-    gradle.taskGraph.afterTask { Task task ->
-        forJsBrowserTestTask(task) {
-            if (task.hasProperty('debug')) {
-                ForkedDebuggerHelper.signalizeFinish('%id', task.path, '%dispatchPort'.toInteger())
+    gradle.taskGraph.whenReady { taskGraph ->
+        taskGraph.allTasks.each { Task task ->
+            forJsBrowserTestTask(task) {
+                if (task.hasProperty('debug')) {
+                    task.doFirst {
+                        it.debug = true
+                        ForkedDebuggerHelper.setupDebugger('%id', task.path, '')
+                    }
+                    task.doLast {
+                        ForkedDebuggerHelper.signalizeFinish('%id', task.path)
+                    }
+                }
             }
         }
     }

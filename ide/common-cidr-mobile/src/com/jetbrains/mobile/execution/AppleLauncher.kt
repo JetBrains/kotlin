@@ -15,7 +15,7 @@ import com.jetbrains.cidr.execution.debugger.IPhoneSimulatorDebugProcess
 import com.jetbrains.cidr.execution.debugger.backend.DebuggerDriverConfiguration
 import com.jetbrains.cidr.execution.debugger.backend.XcodeLLDBDriverConfiguration
 import com.jetbrains.cidr.execution.simulatorSupport.SimulatorProcessHandler
-import com.jetbrains.cidr.execution.testing.CidrLauncher
+import com.jetbrains.cidr.execution.CidrLauncher
 import com.jetbrains.konan.debugger.addKotlinHandler
 import java.io.File
 

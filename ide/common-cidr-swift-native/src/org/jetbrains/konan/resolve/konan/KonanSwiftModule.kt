@@ -12,6 +12,7 @@ import com.jetbrains.swift.codeinsight.resolve.SwiftGlobalSymbolsImpl
 import com.jetbrains.swift.codeinsight.resolve.SwiftModule
 import com.jetbrains.swift.languageKind.SwiftLanguageKind
 import com.jetbrains.swift.psi.types.SwiftContext
+import com.jetbrains.swift.psi.types.SwiftPlace
 import com.jetbrains.swift.symbols.SwiftAttributesInfo
 import com.jetbrains.swift.symbols.SwiftModuleSymbol
 import com.jetbrains.swift.symbols.impl.SwiftSourceModuleSymbol
@@ -20,12 +21,12 @@ import org.jetbrains.konan.resolve.konan.KonanTarget.Companion.PRODUCT_MODULE_NA
 
 abstract class KonanSwiftModule : SwiftModule, UserDataHolder by UserDataHolderBase() {
     protected abstract val project: Project
-    protected abstract fun konanBridgeFile(): KonanBridgeVirtualFile?
+    abstract fun konanBridgeFile(): KonanBridgeVirtualFile?
 
     override fun isSourceModule(): Boolean = true
     override fun getSwiftInterfaceHeader(name: String): VirtualFile? = null
     override fun getBridgingHeaders(): List<VirtualFile> = emptyList()
-    override fun getDependencies(): List<SwiftModule> = emptyList()
+    override fun getDependencies(): Set<SwiftModule> = emptySet()
 
     override fun getSymbol(): SwiftModuleSymbol? {
         val bridgeFile = konanBridgeFile() ?: return null
@@ -43,7 +44,7 @@ abstract class KonanSwiftModule : SwiftModule, UserDataHolder by UserDataHolderB
         val table = FileSymbolTable.forFile(file, context)?.takeIf { !it.isEmpty } ?: return SwiftGlobalSymbols.EMPTY
 
         val bridgedSymbols = SwiftGlobalSymbolsImpl(SwiftGlobalSymbols.SymbolsOrigin.OBJC, this)
-        val processor = SwiftGlobalSymbolsImpl.SymbolProcessor(bridgedSymbols, false)
+        val processor = SwiftGlobalSymbolsImpl.SymbolProcessor(bridgedSymbols, SwiftPlace.Companion.of(project), false)
         val state = FileSymbolTable.ProcessingState(context, false)
         table.processSymbols(processor, null, state, null, null, null)
 

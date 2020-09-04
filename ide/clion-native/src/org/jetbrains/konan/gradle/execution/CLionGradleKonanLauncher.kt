@@ -110,7 +110,7 @@ class CLionGradleKonanLauncher(
             environment: CidrToolEnvironment,
             projectBaseDir: File?
     ): TextConsoleBuilder {
-        return CidrConsoleBuilder(myConfiguration.project, environment, projectBaseDir)
+        return CidrConsoleBuilder(myConfiguration.project, environment, projectBaseDir?.toPath())
     }
 
     private fun usePty(): Boolean {
@@ -135,7 +135,7 @@ class CLionGradleKonanLauncher(
         myExtensionsManager.patchCommandLineState(myConfiguration, runnerSettings, environment, projectBaseDir, state, runnerId, context)
         val backendFilterProvider = CidrDebugConsoleFilterProvider(environment, projectBaseDir)
         val parameters = getDebugParameters(environment, cl)
-        val process = KonanLocalDebugProcess(parameters, session, state.consoleBuilder, backendFilterProvider, true)
+        val process = KonanLocalDebugProcess(parameters, session, state.consoleBuilder, backendFilterProvider)
         configProcessHandler(process.processHandler, process.isDetachDefault, true, project)
         myExtensionsManager.attachExtensionsToProcess(myConfiguration,
                                                       process.processHandler,

@@ -68,12 +68,7 @@ class KotlinNativeIdeInitializer {
         extensionClass: Class<out T>
     ) {
         val extensionPoint = Extensions.getRootArea().getExtensionPoint(extensionPointName)
-        val extensionClassesToUnregister = extensionPoint.extensionList
-            .filter(extensionClass::isInstance)
-            .map { it::class.java.name }
-            .toSet()
-
-        unregisterExtensions(extensionPoint) { className, _ -> className in extensionClassesToUnregister }
+        unregisterExtensions(extensionPoint) { className, _ -> className == extensionClass.name }
     }
 
     private fun <T : Any> unregisterExtensionsFromPlugins(
@@ -88,7 +83,7 @@ class KotlinNativeIdeInitializer {
         extensionPoint: ExtensionPoint<T>,
         predicate: (String, ExtensionComponentAdapter) -> Boolean
     ) {
-        extensionPoint.unregisterExtensions(predicate.wrap(extensionPoint.name), false)
+        extensionPoint.unregisterExtensions(predicate.wrap(extensionPoint.toString()), false)
     }
 
     // TODO: drop this method as it forces all extensions to instantiate and then unregisters some of them.

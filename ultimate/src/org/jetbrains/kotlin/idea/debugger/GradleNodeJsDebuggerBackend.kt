@@ -15,18 +15,14 @@ import com.jetbrains.debugger.wip.JSRemoteDebugConfigurationType
 import java.io.File
 
 class GradleNodeJsDebuggerBackend : DebuggerBackendExtension {
-    override fun id(): String = "Gradle NodeJS"
+    override fun id(): String = "Gradle Kotlin/JS NodeJS"
 
     override fun initializationCode(dispatchPort: String, serializedParams: String): List<String> {
         return javaClass
             .getResourceAsStream("/org/jetbrains/kotlin/idea/debugger/GradleNodeJsDebugConfigurator.groovy")
             .bufferedReader()
             .readLines()
-            .map { line ->
-                line
-                    .replace("%id", id())
-                    .replace("%dispatchPort", dispatchPort)
-            }
+            .map { it.replace("%id", id()) }
     }
 
     override fun debugConfigurationSettings(

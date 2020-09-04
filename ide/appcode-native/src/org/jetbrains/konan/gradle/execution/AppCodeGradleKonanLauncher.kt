@@ -18,7 +18,7 @@ import com.jetbrains.cidr.CidrBundle
 import com.jetbrains.cidr.execution.*
 import com.jetbrains.cidr.execution.debugger.CidrDebugProcess
 import com.jetbrains.cidr.execution.debugger.CidrLocalDebugProcess
-import com.jetbrains.cidr.execution.testing.CidrLauncher
+import com.jetbrains.cidr.execution.CidrLauncher
 import com.jetbrains.cidr.lang.OCLog
 import com.jetbrains.cidr.lang.toolchains.CidrToolEnvironment
 import com.jetbrains.cidr.xcode.model.XcodeMetaData
@@ -109,7 +109,7 @@ class AppCodeGradleKonanLauncher(
           environment: CidrToolEnvironment,
           projectBaseDir: File?
   ): TextConsoleBuilder {
-    return CidrConsoleBuilder(myConfiguration.project, environment, projectBaseDir)
+    return CidrConsoleBuilder(myConfiguration.project, environment, projectBaseDir?.toPath())
   }
 
   private fun usePty(): Boolean {

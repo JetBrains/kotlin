@@ -1,0 +1,45 @@
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="/META-INF/KonanCidrCommonPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <id>org.jetbrains.kotlin.native.appcode</id>
+  <name>Kotlin/Native for AppCode</name>
+  <!--version_placeholder-->
+  <vendor>JetBrains</vendor>
+
+  <!--idea_version_placeholder-->
+
+  <description>Plugin for Kotlin/Native support in AppCode</description>
+
+  <change-notes/>
+
+  <depends>com.intellij.modules.appcode</depends>
+  <!--java_plugin_dependency-->
+
+<!--  <extensions defaultExtensionNs="org.jetbrains.kotlin.native">-->
+<!--    <gradleLauncherProvider implementation="org.jetbrains.konan.gradle.execution.AppCodeGradleKonanLauncherProvider"/>-->
+<!--  </extensions>-->
+
+  <extensions defaultExtensionNs="com.intellij">
+<!--    <configurationType implementation="org.jetbrains.konan.tests.AppCodeKonanTestRunConfigurationType"/>-->
+    <lang.documentationProvider language="kotlin" implementationClass="org.jetbrains.konan.documentation.KonanXcodeDocumentationProvider"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="appcode">
+    <xcodeTemplatePathsProvider implementation="org.jetbrains.konan.AppCodeKonanTemplatesProvider"/>
+    <xcodeExternalBuildProvider implementation="org.jetbrains.konan.gradle.execution.AppCodeGradleKonanExternalBuildProvider"/>
+  </extensions>
+
+  <application-components>
+    <component>
+      <interface-class>com.jetbrains.konan.KonanIconProvider</interface-class>
+      <implementation-class>org.jetbrains.konan.AppCodeNativeIconProvider</implementation-class>
+    </component>
+  </application-components>
+
+  <project-components>
+    <component>
+      <implementation-class>org.jetbrains.konan.internal.AppCodeGradleKonanProjectAttacher</implementation-class>
+    </component>
+  </project-components>
+
+</idea-plugin>

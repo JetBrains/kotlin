@@ -15,18 +15,14 @@ import com.jetbrains.debugger.wip.JSRemoteDebugConfigurationType
 private const val DEFAULT_DEBUGGING_PORT = 9222
 
 class GradleBrowserDebuggerBackend : DebuggerBackendExtension {
-    override fun id(): String = "Gradle Browser"
+    override fun id(): String = "Gradle Kotlin/JS Browser"
 
     override fun initializationCode(dispatchPort: String, serializedParams: String): List<String> {
         return javaClass
             .getResourceAsStream("/org/jetbrains/kotlin/idea/debugger/GradleBrowserDebugConfigurator.groovy")
             .bufferedReader()
             .readLines()
-            .map { line ->
-                line
-                    .replace("%id", id())
-                    .replace("%dispatchPort", dispatchPort)
-            }
+            .map { it.replace("%id", id()) }
     }
 
     override fun debugConfigurationSettings(

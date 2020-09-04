@@ -1,3 +1,4 @@
+import com.intellij.openapi.externalSystem.rt.execution.ForkedDebuggerHelper
 import org.gradle.api.Task
 
 ({
@@ -34,29 +35,31 @@ import org.gradle.api.Task
         }
     }
 
-    gradle.taskGraph.beforeTask { Task task ->
-        forNodeJsTask(task) {
-            if (task.hasProperty('args') && task.args) {
-                ForkedDebuggerHelper.setupDebugger('%id', task.path, '', '%dispatchPort'.toInteger())
-                task.args = ['--inspect-brk'] + task.args
+    gradle.taskGraph.whenReady { taskGraph ->
+        taskGraph.allTasks.each { Task task ->
+            forNodeJsTask(task) {
+                if (task.hasProperty('args') && task.args) {
+                    task.doFirst {
+                        it.args = ['--inspect-brk'] + task.args
+                        ForkedDebuggerHelper.setupDebugger('%id', task.path, '')
+                    }
+                    task.doLast {
+                        ForkedDebuggerHelper.signalizeFinish('%id', task.path)
+                    }
+                }
             }
-        }
 
-        forNodeJsTestTask(task) {
-            if (task.hasProperty('debug')) {
-                ForkedDebuggerHelper.setupDebugger('%id', task.path, '', '%dispatchPort'.toInteger())
-                task.debug = true
+            forNodeJsTestTask(task) {
+                if (task.hasProperty('debug')) {
+                    task.doFirst {
+                        it.debug = true
+                        ForkedDebuggerHelper.setupDebugger('%id', task.path, '')
+                    }
+                    task.doLast {
+                        ForkedDebuggerHelper.signalizeFinish('%id', task.path)
+                    }
+                }
             }
-        }
-    }
-
-    gradle.taskGraph.afterTask { Task task ->
-        forNodeJsTask(task) {
-            ForkedDebuggerHelper.signalizeFinish('%id', task.path, '%dispatchPort'.toInteger())
-        }
-
-        forNodeJsTestTask(task) {
-            ForkedDebuggerHelper.signalizeFinish('%id', task.path, '%dispatchPort'.toInteger())
         }
     }
 })()

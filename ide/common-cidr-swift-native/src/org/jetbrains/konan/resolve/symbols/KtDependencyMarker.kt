@@ -6,9 +6,12 @@ import com.intellij.psi.PsiElement
 import com.jetbrains.cidr.lang.symbols.DeepEqual
 import com.jetbrains.cidr.lang.symbols.OCSymbol.UNNAMED
 import com.jetbrains.cidr.lang.symbols.OCSymbolKind
-import gnu.trove.TObjectLongHashMap
 
-internal class KtDependencyMarker(private val containingFile: VirtualFile, val dependencies: TObjectLongHashMap<VirtualFile>) : KtSymbol {
+internal class KtDependencyMarker(
+    private val containingFile: VirtualFile,
+    val dependencies: KtDependencyMap,
+    @Transient var needsVerification: Boolean = false
+) : KtSymbol {
     override fun getKind(): OCSymbolKind = OCSymbolKind.FOREIGN_ELEMENT
     override fun getContainingFile(): VirtualFile = containingFile
     override fun getName(): String = UNNAMED

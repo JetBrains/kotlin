@@ -29,7 +29,7 @@ class AppCodeKonanTestRunConfigurationType: AppCodeRunConfigurationType(
     return all.filter { target ->
       target.isExecutable && target.buildConfigurationList.configurations.any { config ->
         XcodeMetaData.getAllResolveConfigurationsFor(config).any {
-          it.buildSettings.getBuildSetting("KONAN_TEST").boolean
+          XcodeMetaData.getBuildSettings(it)?.getBuildSetting("KONAN_TEST")?.boolean ?: false
         }
       }
     }

@@ -1,0 +1,31 @@
+# Dev Kotlin version:
+versions.ideaPluginForCidr=1.4.20-dev-2232
+versions.ideaPluginForCidr.ide=IJ2020.1-1
+versions.ideaPluginForCidr.repo=Kotlin_KotlinDev_Aggregate
+
+# Used for dependencies in shared modules when syncing to IDE
+# During build this value is substituted with the actual dependency
+versions.cidrPlatform=201.7223.105
+
+versions.appcode=201.7223.105
+versions.appcode.strict=true
+versions.appcode.repo=ijplatform_IjPlatform201_CIDR_AppCode_PublicInstallers
+versions.xcode-compat=0.2.5
+
+versions.clion=201.7223.86
+versions.clion.strict=true
+versions.clion.repo=ijplatform_IjPlatform201_CIDR_CLion_PublicInstallers
+
+versions.kotlinNativeBackend=1.4-M3-dev-15369
+versions.kotlinNativeBackend.repo=Kotlin_KotlinNative_Development_KotlinNativeLinuxBundle
+
+versions.nativeDebug=201.6487.11
+versions.nativeDebug.repo=ijplatform_IjPlatform201_Idea_InstallersForEapRelease
+
+versions.lldbFrontend.hash=06fd59c633549c0f325e0fd6cf0aa31b60dcc721
+versions.lldbFrontend.macos.artifact=LLDBFrontend
+versions.lldbFrontend.macos.repo=ijplatform_master_CIDR_InternalTools_LLDBFrontendOsX
+versions.lldbFrontend.windows.artifact=lldb-frontend.zip!x64/bin/LLDBFrontend.exe
+versions.lldbFrontend.windows.repo=ijplatform_master_CIDR_InternalTools_LLDBFrontendWin
+versions.lldbFrontend.linux.artifact=LLDBFrontend
+versions.lldbFrontend.linux.repo=ijplatform_master_CIDR_InternalTools_LLDBFrontendLinux

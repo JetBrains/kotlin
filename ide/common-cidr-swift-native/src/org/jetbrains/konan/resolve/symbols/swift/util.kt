@@ -6,10 +6,7 @@ import com.jetbrains.swift.psi.types.SwiftClassType
 import com.jetbrains.swift.psi.types.SwiftContext
 import com.jetbrains.swift.psi.types.SwiftType
 import com.jetbrains.swift.psi.types.SwiftTypeFactory
-import com.jetbrains.swift.symbols.SwiftAttributesInfo
-import com.jetbrains.swift.symbols.SwiftDeclarationSpecifiers
-import com.jetbrains.swift.symbols.SwiftSymbol
-import com.jetbrains.swift.symbols.SwiftTypeSymbol
+import com.jetbrains.swift.symbols.*
 import com.jetbrains.swift.symbols.impl.SwiftAttributesInfoImpl
 import com.jetbrains.swift.symbols.swiftoc.SwiftGlobalApiNotes
 import org.jetbrains.kotlin.backend.konan.objcexport.*
@@ -83,7 +80,7 @@ private class TypeConverter(
         val domain = typeFactory.createDomainTypeOfItems(params)
         val image = convert(returnType)
 
-        return typeFactory.createFunctionType(domain, image, false, SwiftAttributesInfo.EMPTY)
+        return typeFactory.createFunctionType(domain, image, false, SwiftTypeAttributesInfo.EMPTY)
     }
 
     private fun convertReference(className: String, typeKind: SwiftGlobalApiNotes.Kind): String {
@@ -94,7 +91,7 @@ private class TypeConverter(
     }
 
     private fun optionalType(component: SwiftType) = typeFactory.createOptionalType(component, context)
-    private fun selfType() = findClass(symbol)?.let { clazz -> typeFactory.createSelfType(clazz) } ?: SwiftType.UNKNOWN
+    private fun selfType() = findClass(symbol)?.let { clazz -> typeFactory.createSelfType(clazz, false) } ?: SwiftType.UNKNOWN
     private fun classType(ref: String) = typeFactory.createClassType(ref, context)
 }
 

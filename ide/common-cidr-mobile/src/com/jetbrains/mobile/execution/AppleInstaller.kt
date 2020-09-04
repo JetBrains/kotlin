@@ -1,6 +1,7 @@
 package com.jetbrains.mobile.execution
 
 import com.intellij.execution.configurations.GeneralCommandLine
+import com.intellij.execution.configurations.SimpleProgramParameters
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.jetbrains.cidr.execution.CidrCommandLineConfigurator
 import com.jetbrains.cidr.execution.CidrProgramParameters

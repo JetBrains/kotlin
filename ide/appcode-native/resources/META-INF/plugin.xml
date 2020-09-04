@@ -1,5 +1,6 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
   <xi:include href="/META-INF/KonanCidrCommonPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/KonanOCSwift.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <id>org.jetbrains.kotlin.native.appcode</id>
   <name>Kotlin/Native for AppCode</name>
@@ -21,12 +22,24 @@
 
   <extensions defaultExtensionNs="com.intellij">
 <!--    <configurationType implementation="org.jetbrains.konan.tests.AppCodeKonanTestRunConfigurationType"/>-->
-    <lang.documentationProvider language="kotlin" implementationClass="org.jetbrains.konan.documentation.KonanXcodeDocumentationProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="appcode">
     <xcodeTemplatePathsProvider implementation="org.jetbrains.konan.AppCodeKonanTemplatesProvider"/>
     <xcodeExternalBuildProvider implementation="org.jetbrains.konan.gradle.execution.AppCodeGradleKonanExternalBuildProvider"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="appcode.swift">
+    <sourceModuleProducer implementation="org.jetbrains.konan.resolve.konan.KonanSwiftSourceModuleProvider"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="cidr.lang">
+    <customHeaderProvider implementation="org.jetbrains.konan.resolve.konan.KonanFrameworkHeaderProvider"/>
+    <serializerProvider implementation="org.jetbrains.konan.resolve.konan.AppCodeKonanSerializerProvider"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="org.jetbrains.konan">
+    <konanConsumer implementation="org.jetbrains.konan.resolve.konan.AppCodeKonanConsumer"/>
   </extensions>
 
   <application-components>

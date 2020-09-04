@@ -10,7 +10,7 @@ import com.intellij.xdebugger.breakpoints.XBreakpointHandler
 import com.jetbrains.cidr.execution.debugger.breakpoints.CidrBreakpointHandler
 
 fun addKotlinHandler(cidrHandlers: Array<XBreakpointHandler<*>>, project: Project): Array<XBreakpointHandler<*>> {
-    val handlers = mutableListOf<XBreakpointHandler<*>>()
+    val handlers = mutableListOf(*cidrHandlers)
 
     cidrHandlers.firstOrNull { it is CidrBreakpointHandler }?.let {
         handlers.add(KonanBreakpointHandler(it as CidrBreakpointHandler, project))
