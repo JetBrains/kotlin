@@ -56,16 +56,6 @@ internal inline fun <K, V> PersistentMap<K, V>.put(
     }
 }
 
-@DfaInternals
-internal fun FirOperation.invert(): FirOperation = when (this) {
-    FirOperation.EQ -> FirOperation.NOT_EQ
-    FirOperation.NOT_EQ -> FirOperation.EQ
-    FirOperation.IDENTITY -> FirOperation.NOT_IDENTITY
-    FirOperation.NOT_IDENTITY -> FirOperation.IDENTITY
-    else -> throw IllegalArgumentException("$this can not be inverted")
-}
-
-@DfaInternals
 internal fun FirOperation.isEq(): Boolean {
     return when (this) {
         FirOperation.EQ, FirOperation.IDENTITY -> true
@@ -74,7 +64,7 @@ internal fun FirOperation.isEq(): Boolean {
     }
 }
 
-internal fun FirFunctionCall.isBooleanNot(): Boolean {
+fun FirFunctionCall.isBooleanNot(): Boolean {
     val symbol = calleeReference.safeAs<FirResolvedNamedReference>()?.resolvedSymbol as? FirNamedFunctionSymbol ?: return false
     return symbol.callableId == FirDataFlowAnalyzer.KOTLIN_BOOLEAN_NOT
 }

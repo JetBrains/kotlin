@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
+import kotlinx.collections.immutable.*
 import org.jetbrains.kotlin.fir.types.ConeInferenceContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.commonSuperTypeOrNull
@@ -17,6 +18,27 @@ abstract class Flow {
 
     abstract val directAliasMap: Map<RealVariable, RealVariableAndType>
     abstract val backwardsAliasMap: Map<RealVariable, List<RealVariable>>
+}
+
+abstract class AbstractPersistentFlow<FLOW : AbstractPersistentFlow<FLOW>>(
+    val previousFlow: FLOW?,
+) : Flow() {
+
+    val level: Int = (previousFlow?.level ?: 0) + 1
+    var logicStatements: PersistentImplications = previousFlow?.logicStatements ?: persistentMapOf()
+    var updatedAliasDiff: PersistentSet<RealVariable> = persistentSetOf()
+
+    /*
+    * val x = a
+    * val y = a
+    *
+    * directAliasMap: { x -> a, y -> a}
+    * backwardsAliasMap: { a -> [x, y] }
+    */
+    override var directAliasMap: PersistentMap<RealVariable, RealVariableAndType> = previousFlow?.directAliasMap ?: persistentMapOf()
+    override var backwardsAliasMap: PersistentMap<RealVariable, PersistentList<RealVariable>> = previousFlow?.backwardsAliasMap ?: persistentMapOf()
+
+    abstract fun getVariablesWithNewInfo(): Collection<RealVariable>
 }
 
 fun Flow.unwrapVariable(variable: RealVariable): RealVariable {
@@ -156,6 +178,14 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
 
     private fun andForTypes(types: Collection<Set<ConeKotlinType>>): MutableSet<ConeKotlinType> {
         return types.flatMapTo(mutableSetOf()) { it }
+    }
+
+    fun FLOW.addVariableAliases(
+        aliasedVariablesThatDontChangeAlias: MutableMap<RealVariable, RealVariableAndType>
+    ) {
+        for ((alias, underlyingVariable) in aliasedVariablesThatDontChangeAlias) {
+            addLocalVariableAlias(this, alias, underlyingVariable)
+        }
     }
 }
 
