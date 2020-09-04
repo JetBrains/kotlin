@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationCh
 import org.jetbrains.kotlin.fir.analysis.cfa.FirCallsEffectAnalyzer
 import org.jetbrains.kotlin.fir.analysis.cfa.FirPropertyInitializationAnalyzer
 import org.jetbrains.kotlin.fir.analysis.cfa.FirReturnsImpliesAnalyzer
+import org.jetbrains.kotlin.fir.analysis.cfa.FirTrueInAnalyzer
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 
@@ -52,7 +53,8 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
 
     override val controlFlowAnalyserCheckers: List<FirControlFlowChecker> = listOf(
         FirCallsEffectAnalyzer,
-        FirReturnsImpliesAnalyzer
+        FirReturnsImpliesAnalyzer,
+        FirTrueInAnalyzer
     )
 
     override val variableAssignmentCfaBasedCheckers: List<AbstractFirPropertyInitializationChecker> = listOf(

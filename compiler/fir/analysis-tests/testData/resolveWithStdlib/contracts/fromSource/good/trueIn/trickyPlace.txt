@@ -1,0 +1,95 @@
+FILE: trickyPlace.kt
+    public final infix fun R|kotlin/Boolean|.trueIn(target: R|kotlin/Any|): R|kotlin/Unit|
+    public final inline fun <R> runIf1(cond: R|kotlin/Boolean|, block: R|() -> R|): R|R?|
+        [R|Contract description]
+         <
+            cond trueIn block
+            CallsInPlace(block, AT_MOST_ONCE)
+        >
+     {
+        [StubStatement]
+        when () {
+            Boolean(true) ->  {
+                when () {
+                    R|<local>/cond| ->  {
+                        when () {
+                            Boolean(true) ->  {
+                            }
+                            else ->  {
+                                ^runIf1 R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|R|>|()
+                            }
+                        }
+
+                    }
+                }
+
+            }
+            else ->  {
+                ^runIf1 Null(null)
+            }
+        }
+
+        ^runIf1 Null(null)
+    }
+    public final inline fun <R> runIf2(cond: R|kotlin/Boolean|, block: R|() -> R|): R|R?|
+        [R|Contract description]
+         <
+            cond trueIn block
+        >
+     {
+        [StubStatement]
+        while(R|<local>/cond|) {
+            when () {
+                R|<local>/cond| ->  {
+                    R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|R|>|()
+                }
+            }
+
+        }
+
+        ^runIf2 Null(null)
+    }
+    public final inline fun <R> runIf3(cond: R|kotlin/Boolean|, block: R|() -> R|): R|R?|
+        [R|Contract description]
+         <
+            cond trueIn block
+        >
+     {
+        [StubStatement]
+        local final fun local(): R|kotlin/Unit| {
+            when () {
+                R|<local>/cond| ->  {
+                    R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|R|>|()
+                }
+            }
+
+        }
+
+        ^runIf3 Null(null)
+    }
+    public final inline fun <R> runIf4(cond: R|kotlin/Boolean|, block: R|() -> R|): R|R?|
+        [R|Contract description]
+         <
+            cond trueIn block
+        >
+     {
+        [StubStatement]
+        local final class A : R|kotlin/Any| {
+            public constructor(): R|A| {
+                super<R|kotlin/Any|>()
+            }
+
+            init {
+                when () {
+                    R|<local>/cond|.R|kotlin/Boolean.not|() ->  {
+                        throw Q|java/lang|.R|java/lang/IllegalStateException.IllegalStateException|()
+                    }
+                }
+
+                R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|R|>|()
+            }
+
+        }
+
+        ^runIf4 Null(null)
+    }

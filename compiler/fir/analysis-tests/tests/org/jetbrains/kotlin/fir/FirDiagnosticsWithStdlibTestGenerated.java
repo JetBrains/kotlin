@@ -613,6 +613,29 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
                         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/returnsImplies/propertyGetter.kt");
                     }
                 }
+
+                @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/trueIn")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class TrueIn extends AbstractFirDiagnosticsWithStdlibTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInTrueIn() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/trueIn"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                    }
+
+                    @TestMetadata("illegalCondition.kt")
+                    public void testIllegalCondition() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/trueIn/illegalCondition.kt");
+                    }
+
+                    @TestMetadata("illegalRunIf.kt")
+                    public void testIllegalRunIf() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/trueIn/illegalRunIf.kt");
+                    }
+                }
             }
 
             @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good")
@@ -765,24 +788,9 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
                         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/trueIn/and.kt");
                     }
 
-                    @TestMetadata("complex.kt")
-                    public void testComplex() throws Exception {
-                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/trueIn/complex.kt");
-                    }
-
-                    @TestMetadata("ifElse.kt")
-                    public void testIfElse() throws Exception {
-                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/trueIn/ifElse.kt");
-                    }
-
                     @TestMetadata("ifNotNull.kt")
                     public void testIfNotNull() throws Exception {
                         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/trueIn/ifNotNull.kt");
-                    }
-
-                    @TestMetadata("or.kt")
-                    public void testOr() throws Exception {
-                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/trueIn/or.kt");
                     }
 
                     @TestMetadata("runElse.kt")
@@ -793,6 +801,16 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
                     @TestMetadata("runIf.kt")
                     public void testRunIf() throws Exception {
                         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/trueIn/runIf.kt");
+                    }
+
+                    @TestMetadata("trickyCondition.kt")
+                    public void testTrickyCondition() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/trueIn/trickyCondition.kt");
+                    }
+
+                    @TestMetadata("trickyPlace.kt")
+                    public void testTrickyPlace() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/trueIn/trickyPlace.kt");
                     }
 
                     @TestMetadata("withDefaultValue.kt")

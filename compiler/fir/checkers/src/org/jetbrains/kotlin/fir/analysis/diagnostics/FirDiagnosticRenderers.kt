@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.contracts.description.ConeBooleanExpression
+import org.jetbrains.kotlin.fir.contracts.description.ConeContractRenderer
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
@@ -41,6 +43,10 @@ object FirDiagnosticRenderers {
 
     val FIR = Renderer { element: FirElement ->
         element.render()
+    }
+
+    val BOOLEAN_EXPRESSION = Renderer { expression: ConeBooleanExpression ->
+        buildString { expression.accept(ConeContractRenderer(this), null) }
     }
 
     val DECLARATION_NAME = Renderer { declaration: FirMemberDeclaration ->

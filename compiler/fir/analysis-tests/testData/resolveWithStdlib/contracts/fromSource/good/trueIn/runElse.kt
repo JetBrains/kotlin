@@ -7,7 +7,7 @@ inline fun <R> runElse(cond: Boolean, block: () -> R): R? {
         !cond trueIn block
         callsInPlace(block, InvocationKind.AT_MOST_ONCE)
     }
-    return if (cond) block() else null
+    return if (cond) null else block()
 }
 
 inline fun <R> Boolean.runElse(block: () -> R): R? {
@@ -15,7 +15,7 @@ inline fun <R> Boolean.runElse(block: () -> R): R? {
         !this@runElse trueIn block
         callsInPlace(block, InvocationKind.AT_MOST_ONCE)
     }
-    return if (this) block() else null
+    return if (this) null else block()
 }
 
 fun test1(s: String?) {

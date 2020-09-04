@@ -1,9 +1,9 @@
-FILE: runElse.kt
+FILE: illegalRunIf.kt
     public final infix fun R|kotlin/Boolean|.trueIn(target: R|kotlin/Any|): R|kotlin/Unit|
     public final inline fun <R> runElse(cond: R|kotlin/Boolean|, block: R|() -> R|): R|R?|
         [R|Contract description]
          <
-            !cond trueIn block
+            cond trueIn block
             CallsInPlace(block, AT_MOST_ONCE)
         >
      {
@@ -18,33 +18,31 @@ FILE: runElse.kt
         }
 
     }
-    public final inline fun <R> R|kotlin/Boolean|.runElse(block: R|() -> R|): R|R?|
+    public final inline fun <R> runAlways(cond: R|kotlin/Boolean|, block: R|() -> R|): R|R?|
         [R|Contract description]
          <
-            !this trueIn block
+            cond trueIn block
             CallsInPlace(block, AT_MOST_ONCE)
         >
      {
         [StubStatement]
-        ^runElse when () {
-            this@R|/runElse| ->  {
-                Null(null)
+        ^runAlways R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|R|>|()
+    }
+    public final inline fun <R> runBoth(cond: R|kotlin/Boolean|, block: R|() -> R|): R|R?|
+        [R|Contract description]
+         <
+            cond trueIn block
+            CallsInPlace(block, AT_MOST_ONCE)
+        >
+     {
+        [StubStatement]
+        ^runBoth when () {
+            R|<local>/cond| ->  {
+                R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|R|>|()
             }
             else ->  {
                 R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|R|>|()
             }
         }
 
-    }
-    public final fun test1(s: R|kotlin/String?|): R|kotlin/Unit| {
-        R|/runElse|<R|kotlin/Int|>(==(R|<local>/s|, Null(null)), <L> = runElse@fun <anonymous>(): R|kotlin/Int| <kind=AT_MOST_ONCE>  {
-            ^ R|<local>/s|.R|kotlin/String.length|
-        }
-        )
-    }
-    public final fun test2(s: R|kotlin/String?|): R|kotlin/Unit| {
-        ==(R|<local>/s|, Null(null)).R|/runElse|<R|kotlin/Int|>(<L> = runElse@fun <anonymous>(): R|kotlin/Int| <kind=AT_MOST_ONCE>  {
-            ^ R|<local>/s|.R|kotlin/String.length|
-        }
-        )
     }

@@ -1,0 +1,108 @@
+FILE: illegalCondition.kt
+    public final infix fun R|kotlin/Boolean|.trueIn(target: R|kotlin/Any|): R|kotlin/Unit|
+    public final inline fun <R> runIf1(cond: R|kotlin/Boolean|, block: R|() -> R|): R|R?|
+        [R|Contract description]
+         <
+            cond trueIn block
+            CallsInPlace(block, AT_MOST_ONCE)
+        >
+     {
+        [StubStatement]
+        ^runIf1 when () {
+            ==(R|<local>/cond|, Boolean(false)) ->  {
+                R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|R|>|()
+            }
+            else ->  {
+                Null(null)
+            }
+        }
+
+    }
+    public final inline fun <R> runIf2(cond: R|kotlin/Boolean|, block: R|() -> R|): R|R?|
+        [R|Contract description]
+         <
+            cond trueIn block
+            CallsInPlace(block, AT_MOST_ONCE)
+        >
+     {
+        [StubStatement]
+        ^runIf2 when () {
+            !=(R|<local>/cond|, Boolean(true)) ->  {
+                R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|R|>|()
+            }
+            else ->  {
+                Null(null)
+            }
+        }
+
+    }
+    public final inline fun <R> runIf3(cond: R|kotlin/Boolean|, block: R|() -> R|): R|R?|
+        [R|Contract description]
+         <
+            cond trueIn block
+            CallsInPlace(block, AT_MOST_ONCE)
+        >
+     {
+        [StubStatement]
+        ^runIf3 when () {
+            ==(==(R|<local>/cond|, Boolean(true)), Boolean(false)) ->  {
+                R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|R|>|()
+            }
+            else ->  {
+                Null(null)
+            }
+        }
+
+    }
+    public final inline fun <R> runIf4(cond: R|kotlin/Boolean|, block: R|() -> R|): R|R?|
+        [R|Contract description]
+         <
+            cond trueIn block
+            CallsInPlace(block, AT_MOST_ONCE)
+        >
+     {
+        [StubStatement]
+        ^runIf4 when () {
+            R|<local>/cond| || Boolean(true) ->  {
+                R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|R|>|()
+            }
+            else ->  {
+                Null(null)
+            }
+        }
+
+    }
+    public final inline fun <R> runIf5(cond: R|kotlin/Boolean|, block: R|() -> R|): R|R?|
+        [R|Contract description]
+         <
+            cond trueIn block
+            CallsInPlace(block, AT_MOST_ONCE)
+        >
+     {
+        [StubStatement]
+        ^runIf5 when () {
+            R|<local>/cond| || Boolean(false) ->  {
+                R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|R|>|()
+            }
+            else ->  {
+                Null(null)
+            }
+        }
+
+    }
+    public final inline fun <R> runIf6(cond: R|kotlin/Boolean|, block: R|() -> R|): R|R?|
+        [R|Contract description]
+         <
+            cond trueIn block
+            CallsInPlace(block, AT_MOST_ONCE)
+        >
+     {
+        [StubStatement]
+        when () {
+            R|<local>/cond| ->  {
+                ^runIf6 Null(null)
+            }
+        }
+
+        ^runIf6 R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|R|>|()
+    }
