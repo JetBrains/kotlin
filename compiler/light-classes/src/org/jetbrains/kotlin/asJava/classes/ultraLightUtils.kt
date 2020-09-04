@@ -14,8 +14,10 @@ import com.intellij.psi.impl.cache.ModifierFlags
 import com.intellij.psi.impl.cache.TypeInfo
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.impl.compiled.SignatureParsing
-import com.intellij.psi.impl.compiled.StubBuildingVisitor
-import com.intellij.psi.impl.light.*
+import com.intellij.psi.impl.compiled.StubBuildingVisitor.GUESSING_MAPPER
+import com.intellij.psi.impl.light.LightMethodBuilder
+import com.intellij.psi.impl.light.LightModifierList
+import com.intellij.psi.impl.light.LightParameterListBuilder
 import com.intellij.psi.util.TypeConversionUtil
 import com.intellij.util.BitUtil.isSet
 import com.intellij.util.IncorrectOperationException
@@ -23,8 +25,7 @@ import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.UltraLightClassModifierExtension
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
-import org.jetbrains.kotlin.asJava.elements.KotlinLightTypeParameterListBuilder
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.asJava.elements.psiType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
@@ -35,8 +36,10 @@ import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
@@ -156,32 +159,96 @@ internal fun KtElement.analyze() = LightClassGenerationSupport.getInstance(proje
 internal fun KotlinType.asPsiType(
     support: KtUltraLightSupport,
     mode: TypeMappingMode,
-    psiContext: PsiElement
-): PsiType = support.mapType(psiContext) { typeMapper, signatureWriter ->
+    psiContext: PsiElement,
+): PsiType = support.mapType(this, psiContext) { typeMapper, signatureWriter ->
     typeMapper.mapType(this, signatureWriter, mode)
 }
 
+// There is no other known way found to make PSI types annotated for now.
+// It seems we need for platform changes to do it more convenient way (KTIJ-141).
+private val setPsiTypeAnnotationProvider: (PsiType, TypeAnnotationProvider) -> Unit by lazyPub {
+    val klass = PsiType::class.java
+    val providerField = try {
+        klass.getDeclaredField("myAnnotationProvider")
+            .also { it.isAccessible = true }
+    } catch (e: NoSuchFieldException) {
+        if (ApplicationManager.getApplication().isInternal) throw e
+        null
+    } catch (e: SecurityException) {
+        if (ApplicationManager.getApplication().isInternal) throw e
+        null
+    }
+
+    { psiType, provider ->
+        providerField?.set(psiType, provider)
+    }
+}
+
+private fun annotateByKotlinType(
+    psiType: PsiType,
+    kotlinType: KotlinType,
+    psiContext: PsiElement,
+    ultraLightSupport: KtUltraLightSupport
+) {
+    fun KotlinType.getAnnotationsSequence(): Sequence<List<PsiAnnotation>> =
+        sequence {
+            yield(annotations.mapNotNull { it.toLightAnnotation(ultraLightSupport, psiContext) })
+            for (argument in arguments) {
+                yieldAll(argument.type.getAnnotationsSequence())
+            }
+        }
+
+    val annotationsIterator = kotlinType.getAnnotationsSequence().iterator()
+
+    fun recursiveAnnotator(psiType: PsiType) {
+        if (!annotationsIterator.hasNext()) return
+        val typeAnnotations = annotationsIterator.next()
+
+        if (psiType is PsiClassType) {
+            for (parameterType in psiType.parameters) {
+                recursiveAnnotator(parameterType)
+            }
+        } else if (psiType is PsiArrayType) {
+            recursiveAnnotator(psiType.componentType)
+        }
+
+        if (typeAnnotations.isEmpty()) return
+
+        val provider = TypeAnnotationProvider.Static.create(typeAnnotations.toTypedArray())
+
+        setPsiTypeAnnotationProvider(psiType, provider)
+    }
+
+    recursiveAnnotator(psiType)
+}
+
 internal fun KtUltraLightSupport.mapType(
+    kotlinType: KotlinType?,
     psiContext: PsiElement,
     mapTypeToSignatureWriter: (KotlinTypeMapper, JvmSignatureWriter) -> Unit
 ): PsiType {
     val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.SKIP_CHECKS)
     mapTypeToSignatureWriter(typeMapper, signatureWriter)
     val canonicalSignature = signatureWriter.toString()
-    return createTypeFromCanonicalText(canonicalSignature, psiContext)
+    return createTypeFromCanonicalText(kotlinType, canonicalSignature, psiContext)
 }
 
-fun createTypeFromCanonicalText(
+private fun KtUltraLightSupport.createTypeFromCanonicalText(
+    kotlinType: KotlinType?,
     canonicalSignature: String,
     psiContext: PsiElement
 ): PsiType {
     val signature = StringCharacterIterator(canonicalSignature)
-
-    val javaType = SignatureParsing.parseTypeString(signature, StubBuildingVisitor.GUESSING_MAPPER)
+    val javaType = SignatureParsing.parseTypeString(signature, GUESSING_MAPPER)
     val typeInfo = TypeInfo.fromString(javaType, false)
     val typeText = TypeInfo.createTypeText(typeInfo) ?: return PsiType.NULL
 
-    val type = ClsTypeElementImpl(psiContext, typeText, '\u0000').type
+    val typeElement = ClsTypeElementImpl(psiContext, typeText, '\u0000')
+    val type = typeElement.type
+    if (kotlinType != null) {
+        annotateByKotlinType(type, kotlinType, typeElement, this)
+    }
+
     if (type is PsiArrayType && psiContext is KtUltraLightParameter && psiContext.isVarArgs) {
         return PsiEllipsisType(type.componentType, type.annotationProvider)
     }

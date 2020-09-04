@@ -240,7 +240,7 @@ internal class UltraLightMembersCreator(
             ktDeclaration.resolve()?.getterIfProperty() as? FunctionDescriptor
                 ?: return PsiType.NULL
 
-        return support.mapType(wrapper) { typeMapper, signatureWriter ->
+        return support.mapType(desc.returnType, wrapper) { typeMapper, signatureWriter ->
             typeMapper.mapReturnType(desc, signatureWriter)
         }
     }

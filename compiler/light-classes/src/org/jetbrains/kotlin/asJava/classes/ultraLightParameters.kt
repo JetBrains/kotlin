@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.psi.*
+import com.intellij.psi.impl.compiled.ClsTypeElementImpl
+import com.intellij.psi.impl.source.PsiClassReferenceType
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.util.TypeConversionUtil
@@ -107,7 +109,6 @@ internal abstract class KtUltraLightParameter(
     override val psiTypeForNullabilityAnnotation: PsiType?
         get() = type
 
-
     protected fun computeParameterType(kotlinType: KotlinType?, containingDeclaration: CallableDescriptor?): PsiType {
         kotlinType ?: return PsiType.NULL
 
@@ -115,9 +116,10 @@ internal abstract class KtUltraLightParameter(
             return kotlinType.asPsiType(support, TypeMappingMode.DEFAULT, this)
         } else {
             val containingDescriptor = containingDeclaration ?: return PsiType.NULL
-            val mappedType = support.mapType(this) { typeMapper, sw ->
+            val mappedType = support.mapType(kotlinType, this) { typeMapper, sw ->
                 typeMapper.writeParameterType(sw, kotlinType, containingDescriptor)
             }
+
             return if (ultraLightMethod.checkNeedToErasureParametersTypes) TypeConversionUtil.erasure(mappedType) else mappedType
         }
     }

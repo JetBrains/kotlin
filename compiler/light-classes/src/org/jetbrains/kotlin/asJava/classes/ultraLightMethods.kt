@@ -258,7 +258,7 @@ internal class KtUltraLightMethodForDescriptor(
             delegate.isConstructor = true
             PsiType.VOID
         } else {
-            support.mapType(this) { typeMapper, signatureWriter ->
+            support.mapType(methodDescriptor.returnType, this) { typeMapper, signatureWriter ->
                 typeMapper.mapReturnType(methodDescriptor, signatureWriter)
             }
         }

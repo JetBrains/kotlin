@@ -126,7 +126,7 @@ internal open class KtUltraLightFieldImpl protected constructor(
                 val kotlinType = declaration.getKotlinType() ?: return@lazyPub PsiType.NULL
                 val descriptor = propertyDescriptor ?: return@lazyPub PsiType.NULL
 
-                support.mapType(this) { typeMapper, sw ->
+                support.mapType(kotlinType, this) { typeMapper, sw ->
                     typeMapper.writeFieldSignature(kotlinType, descriptor, sw)
                 }
             }
