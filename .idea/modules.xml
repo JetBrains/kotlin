@@ -1256,9 +1256,9 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/ide/intellij.go.ide.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/ide/intellij.go.ide.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/plan9/intellij.go.plan9.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/plan9/intellij.go.plan9.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/intellij.go.plugin.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/intellij.go.plugin.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/go-prebuilt-stubs/intellij.go.prebuiltStubs.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/go-prebuilt-stubs/intellij.go.prebuiltStubs.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/profiler/intellij.go.profiler.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/profiler/intellij.go.profiler.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/go-shared-indices/intellij.go.sharedIndices.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/go-shared-indices/intellij.go.sharedIndices.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/go-shared-indexes/intellij.go.sharedIndexes.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/go-shared-indexes/intellij.go.sharedIndexes.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/go-shared-indexes-bundled/intellij.go.sharedIndexes.bundled.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/go-shared-indexes-bundled/intellij.go.sharedIndexes.bundled.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/template/intellij.go.template.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/template/intellij.go.template.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/template-integration/intellij.go.template.integration.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/template-integration/intellij.go.template.integration.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/testing/intellij.go.testing.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/testing/intellij.go.testing.iml" />
