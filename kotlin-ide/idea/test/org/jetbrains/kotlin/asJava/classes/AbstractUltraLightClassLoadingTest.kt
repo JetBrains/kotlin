@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
+import org.jetbrains.kotlin.asJava.PsiClassRenderer
 import org.jetbrains.kotlin.asJava.PsiClassRenderer.renderClass
 import org.jetbrains.kotlin.idea.perf.UltraLightChecker
 import org.jetbrains.kotlin.idea.perf.UltraLightChecker.checkDescriptorsLeak
@@ -32,7 +33,13 @@ abstract class AbstractUltraLightClassLoadingTest : KotlinLightCodeInsightFixtur
                     LightClassGenerationSupport.getInstance(ktClass.project).createUltraLightClass(ktClass)?.let { it to ktClass }
                 }.joinToString("\n\n") { (ultraLightClass, ktClass) ->
                     with(UltraLightChecker) {
-                        ultraLightClass.renderClass().also {
+                        val extendedTypeRendererOld = PsiClassRenderer.extendedTypeRenderer
+                        try {
+                            PsiClassRenderer.extendedTypeRenderer = file.name == "typeAnnotations.kt"
+                            ultraLightClass.renderClass()
+                        } finally {
+                            PsiClassRenderer.extendedTypeRenderer = extendedTypeRendererOld
+                        }.also {
                             checkDescriptorsLeak(ultraLightClass)
                         }
                     }
