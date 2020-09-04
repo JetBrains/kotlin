@@ -13046,6 +13046,35 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/unusedEquals")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class UnusedEquals extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        @TestMetadata("equals.kt")
+        public void testEquals() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedEquals/equals.kt");
+        }
+
+        @TestMetadata("equals2.kt")
+        public void testEquals2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedEquals/equals2.kt");
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedEquals/simple.kt");
+        }
+
+        @TestMetadata("simple2.kt")
+        public void testSimple2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedEquals/simple2.kt");
+        }
+    }
+
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/unusedLambdaExpressionBody")
     public static class UnusedLambdaExpressionBody extends AbstractLocalInspectionTest {
