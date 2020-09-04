@@ -40,9 +40,6 @@ import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
 internal object FirIdeSessionFactory {
-    /**
-     * Should be invoked only under a [moduleInfo]-based lock
-     */
     fun createSourcesSession(
         project: Project,
         moduleInfo: ModuleSourceInfo,
@@ -97,9 +94,6 @@ internal object FirIdeSessionFactory {
         }
     }
 
-    /**
-     * Should be invoked only under a [moduleInfo]-based lock
-     */
     fun createLibrarySession(
         moduleInfo: ModuleSourceInfo,
         sessionProvider: FirIdeSessionProvider,
