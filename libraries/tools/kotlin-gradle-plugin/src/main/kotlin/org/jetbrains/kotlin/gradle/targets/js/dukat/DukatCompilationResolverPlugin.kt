@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.dukat
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.plugins.CompilationResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
@@ -36,6 +37,13 @@ internal class DukatCompilationResolverPlugin(
         }
 
         compilation.compileKotlinTaskProvider.dependsOn(integratedTask)
+
+        val target = compilation.target
+        if (target is KotlinJsTarget && target.irTarget != null) {
+            target.irTarget?.compilations?.named(compilation.name) {
+                it.compileKotlinTaskProvider.dependsOn(integratedTask)
+            }
+        }
 
         project.registerTask<SeparateDukatTask>(
             separateTaskName,
