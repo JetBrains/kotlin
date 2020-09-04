@@ -79,7 +79,7 @@ internal class KtFirScopeProvider(
             val firPackageScope =
                 FirPackageMemberScope(
                     packageSymbol.fqName,
-                    firResolveState.firIdeSourcesSession/*TODO use correct session here*/
+                    firResolveState.currentModuleSourcesSession/*TODO use correct session here*/
                 ).also(firScopeStorage::register)
             KtFirPackageScope(firPackageScope, project, builder, token)
         }
@@ -92,7 +92,7 @@ internal class KtFirScopeProvider(
     override fun getTypeScope(type: KtType): KtScope? {
         check(type is KtFirType) { "KtFirScopeProvider can only work with KtFirType, but ${type::class} was provided" }
 
-        val firTypeScope = type.coneType.scope(firResolveState.firIdeSourcesSession, ScopeSession()) ?: return null
+        val firTypeScope = type.coneType.scope(firResolveState.currentModuleSourcesSession, ScopeSession()) ?: return null
         return convertToKtScope(firTypeScope)
     }
 

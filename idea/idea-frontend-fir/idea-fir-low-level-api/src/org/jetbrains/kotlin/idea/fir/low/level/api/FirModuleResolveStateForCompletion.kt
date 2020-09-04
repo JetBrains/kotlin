@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.PsiToFirCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeProvider
+import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeCurrentModuleSourcesSession
+import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeDependentModulesSourcesSession
+import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeLibrariesSession
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -22,10 +25,11 @@ internal class FirModuleResolveStateForCompletion(
     private val originalState: FirModuleResolveStateImpl
 ) : FirModuleResolveState() {
     override val moduleInfo: IdeaModuleInfo get() = originalState.moduleInfo
-    override val firIdeSourcesSession: FirSession get() = originalState.firIdeSourcesSession
-    override val firIdeLibrariesSession: FirSession get() = originalState.firIdeSourcesSession
+    override val currentModuleSourcesSession: FirIdeCurrentModuleSourcesSession get() = originalState.currentModuleSourcesSession
+    override val dependentModulesSourcesSession: FirIdeDependentModulesSourcesSession get() = originalState.dependentModulesSourcesSession
+    override val librariesSession: FirIdeLibrariesSession get() = originalState.librariesSession
 
-    private val psiToFirCache = PsiToFirCache(originalState.fileCache)
+    private val psiToFirCache = PsiToFirCache(originalState.currentModuleSourcesSession.cache)
 
     override fun getSessionFor(moduleInfo: IdeaModuleInfo): FirSession =
         originalState.getSessionFor(moduleInfo)
@@ -34,7 +38,7 @@ internal class FirModuleResolveStateForCompletion(
         getCachedMappingForCompletion(element)?.let { return it }
         return originalState.elementBuilder.getOrBuildFirFor(
             element,
-            originalState.fileCache,
+            originalState.currentModuleSourcesSession.cache,
             psiToFirCache,
             toPhase
         )

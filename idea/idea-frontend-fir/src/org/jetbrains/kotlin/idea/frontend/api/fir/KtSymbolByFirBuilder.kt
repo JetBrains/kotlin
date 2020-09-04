@@ -47,11 +47,11 @@ internal class KtSymbolByFirBuilder private constructor(
         ConeTypeCheckerContext(
             isErrorTypeEqualsToAnything = true,
             isStubTypeEqualsToAnything = true,
-            resolveState.firIdeLibrariesSession
+            resolveState.currentModuleSourcesSession
         )
     }
 
-    private val firProvider get() = resolveState.firIdeSourcesSession.firSymbolProvider
+    private val firProvider get() = resolveState.currentModuleSourcesSession.firSymbolProvider
 
     constructor(
         resolveState: FirModuleResolveState,

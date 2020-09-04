@@ -31,6 +31,7 @@ internal class FirIdeResolveStateService(private val project: Project) {
         ConcurrentHashMap<IdeaModuleInfo, FirIdeLibrariesSession>()
     }
 
+
     private fun createResolveStateFor(moduleInfo: IdeaModuleInfo): FirModuleResolveStateImpl {
         require(moduleInfo is ModuleSourceInfo)
         val firPhaseRunner = FirPhaseRunner()
@@ -39,27 +40,32 @@ internal class FirIdeResolveStateService(private val project: Project) {
         val librariesSession = librarySessionCache.computeIfAbsent(moduleInfo) {
             FirIdeSessionFactory.createLibrarySession(moduleInfo, sessionProvider, project)
         }
-        val sourcesSession = FirIdeSessionFactory.createSourcesSession(
+
+        val dependentModulesSession = FirIdeSessionFactory.createDependentModulesSourcesSession(
             project,
             moduleInfo,
             firPhaseRunner,
             sessionProvider,
             librariesSession,
         )
+        val currentModuleSession = FirIdeSessionFactory.createCurrentModuleSourcesSession(
+            project,
+            moduleInfo,
+            firPhaseRunner,
+            dependentModulesSession,
+            sessionProvider,
+        )
 
-        sessionProvider.apply {
-            setSourcesSession(sourcesSession)
-            setLibrariesSession(librariesSession)
-        }
+        sessionProvider.init(currentModuleSession, dependentModulesSession, librariesSession)
 
         return FirModuleResolveStateImpl(
             moduleInfo,
-            sourcesSession,
+            currentModuleSession,
+            dependentModulesSession,
             librariesSession,
             sessionProvider,
-            sourcesSession.firFileBuilder,
-            FirLazyDeclarationResolver(sourcesSession.firFileBuilder),
-            sourcesSession.cache
+            currentModuleSession.firFileBuilder,
+            FirLazyDeclarationResolver(currentModuleSession.firFileBuilder),
         )
     }
 

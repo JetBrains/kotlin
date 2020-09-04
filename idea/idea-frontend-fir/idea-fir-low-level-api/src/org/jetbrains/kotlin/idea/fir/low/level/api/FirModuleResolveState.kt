@@ -21,14 +21,20 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeProvider
+import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.*
+import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeCurrentModuleSourcesSession
+import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeDependentModulesSourcesSession
+import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeLibrariesSession
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSessionProvider
+import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSourcesSession
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
 abstract class FirModuleResolveState {
     abstract val moduleInfo: IdeaModuleInfo
-    abstract val firIdeSourcesSession: FirSession
-    abstract val firIdeLibrariesSession: FirSession
+    abstract val currentModuleSourcesSession: FirSession
+    abstract val dependentModulesSourcesSession: FirSession
+    abstract val librariesSession: FirSession
 
     abstract fun getSessionFor(moduleInfo: IdeaModuleInfo): FirSession
 
@@ -56,24 +62,25 @@ abstract class FirModuleResolveState {
 }
 
 
-internal open class FirModuleResolveStateImpl(
+internal class FirModuleResolveStateImpl(
     override val moduleInfo: IdeaModuleInfo,
-    override val firIdeSourcesSession: FirSession,
-    override val firIdeLibrariesSession: FirSession,
+    override val currentModuleSourcesSession: FirIdeCurrentModuleSourcesSession,
+    override val dependentModulesSourcesSession: FirIdeDependentModulesSourcesSession,
+    override val librariesSession: FirIdeLibrariesSession,
     private val sessionProvider: FirIdeSessionProvider,
     val firFileBuilder: FirFileBuilder,
     val firLazyDeclarationResolver: FirLazyDeclarationResolver,
-    val fileCache: ModuleFileCache,
 ) : FirModuleResolveState() {
-    val psiToFirCache = PsiToFirCache(fileCache)
+    val psiToFirCache = PsiToFirCache(currentModuleSourcesSession.cache)
     val elementBuilder = FirElementBuilder(firFileBuilder, firLazyDeclarationResolver)
-    private val diagnosticsCollector = DiagnosticsCollector(firFileBuilder, fileCache)
+    private val diagnosticsCollector =
+        DiagnosticsCollector(firFileBuilder, elementBuilder, psiToFirCache, currentModuleSourcesSession.cache)
 
     override fun getSessionFor(moduleInfo: IdeaModuleInfo): FirSession =
         sessionProvider.getSession(moduleInfo)
 
     override fun getOrBuildFirFor(element: KtElement, toPhase: FirResolvePhase): FirElement =
-        elementBuilder.getOrBuildFirFor(element, fileCache, psiToFirCache, toPhase)
+        elementBuilder.getOrBuildFirFor(element, currentModuleSourcesSession.cache, psiToFirCache, toPhase)
 
     override fun getDiagnostics(element: KtElement): List<Diagnostic> =
         diagnosticsCollector.getDiagnosticsFor(element)
@@ -83,6 +90,10 @@ internal open class FirModuleResolveStateImpl(
     }
 
     override fun <D : FirDeclaration> resolvedFirToPhase(declaration: D, toPhase: FirResolvePhase): D {
+        val fileCache = when (val session = declaration.session) {
+            is FirIdeSourcesSession -> session.cache
+            else -> return declaration
+        }
         firLazyDeclarationResolver.lazyResolveDeclaration(declaration, fileCache, toPhase, checkPCE = true)
         return declaration
     }
@@ -99,7 +110,7 @@ internal open class FirModuleResolveStateImpl(
     ) {
         firLazyDeclarationResolver.runLazyResolveWithoutLock(
             firFunction,
-            fileCache,
+            currentModuleSourcesSession.cache,
             containerFirFile,
             firIdeProvider,
             toPhase,

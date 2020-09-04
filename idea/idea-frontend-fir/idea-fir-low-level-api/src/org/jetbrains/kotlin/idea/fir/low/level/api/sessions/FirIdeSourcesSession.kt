@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
  * [org.jetbrains.kotlin.fir.FirSession] responsible for all Kotlin & Java source modules analysing module transitively depends on
  */
 @OptIn(PrivateSessionConstructor::class)
-internal class FirIdeSourcesSession @PrivateSessionConstructor constructor(
+internal abstract class FirIdeSourcesSession @PrivateSessionConstructor constructor(
     moduleInfo: ModuleInfo,
     sessionProvider: FirIdeSessionProvider,
     override val scope: GlobalSearchScope,
@@ -23,3 +23,21 @@ internal class FirIdeSourcesSession @PrivateSessionConstructor constructor(
 ) : FirIdeSession(moduleInfo, sessionProvider) {
     val cache get() = firIdeProvider.cache
 }
+
+
+@OptIn(PrivateSessionConstructor::class)
+internal class FirIdeCurrentModuleSourcesSession @PrivateSessionConstructor constructor(
+    moduleInfo: ModuleInfo,
+    sessionProvider: FirIdeSessionProvider,
+    scope: GlobalSearchScope,
+    firFileBuilder: FirFileBuilder,
+) : FirIdeSourcesSession(moduleInfo, sessionProvider, scope, firFileBuilder) {
+}
+
+@OptIn(PrivateSessionConstructor::class)
+internal class FirIdeDependentModulesSourcesSession @PrivateSessionConstructor constructor(
+    moduleInfo: ModuleInfo,
+    sessionProvider: FirIdeSessionProvider,
+    scope: GlobalSearchScope,
+    firFileBuilder: FirFileBuilder,
+) : FirIdeSourcesSession(moduleInfo, sessionProvider, scope, firFileBuilder)
