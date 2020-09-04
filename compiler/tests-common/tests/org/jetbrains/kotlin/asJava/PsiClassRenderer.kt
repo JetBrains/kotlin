@@ -14,8 +14,43 @@ import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
+
+
 object PsiClassRenderer {
-    private fun PsiType.renderType() = getCanonicalText(true)
+
+    var extendedTypeRenderer = false
+
+    private fun PsiType.renderType() = StringBuffer().also { renderType(it) }.toString()
+    private fun PsiType.renderType(sb: StringBuffer) {
+        if (extendedTypeRenderer && annotations.isNotEmpty()) {
+            sb.append(annotations.joinToString(" ", postfix = " ") { it.renderAnnotation() })
+        }
+        when (this) {
+            is PsiClassType -> {
+                sb.append(PsiNameHelper.getQualifiedClassName(canonicalText, false))
+                if (parameterCount > 0) {
+                    sb.append("<")
+                    parameters.forEachIndexed { index, type ->
+                        type.renderType(sb)
+                        if (index < parameterCount - 1) sb.append(", ")
+                    }
+                    sb.append(">")
+                }
+            }
+            is PsiEllipsisType -> {
+                componentType.renderType(sb)
+                sb.append("...")
+            }
+            is PsiArrayType -> {
+                componentType.renderType(sb)
+                sb.append("[]")
+            }
+            else -> {
+                sb.append(canonicalText)
+            }
+        }
+    }
+
 
     private fun PsiReferenceList?.renderRefList(keyword: String, sortReferences: Boolean = true): String {
         if (this == null) return ""
