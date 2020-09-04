@@ -21,6 +21,9 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.descriptors.WrappedPropertyDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.ir.overrides.DeepCopyIrTreeWithSymbolsForFakeOverrides
+import org.jetbrains.kotlin.ir.overrides.FakeOverrideBuilderStrategy
+import org.jetbrains.kotlin.ir.overrides.IrOverridingUtil
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -55,42 +58,9 @@ class FakeOverrideBuilder(
     val signaturer: IdSignatureSerializer,
     val irBuiltIns: IrBuiltIns,
     val platformSpecificClassFilter: PlatformFakeOverrideClassFilter = DefaultFakeOverrideClassFilter
-) : FakeOverrideBuilderStrategy {
+) : FakeOverrideBuilderStrategy() {
     private val haveFakeOverrides = mutableSetOf<IrClass>()
-    override val propertyOverriddenSymbols = mutableMapOf<IrOverridableMember, List<IrSymbol>>()
     private val irOverridingUtil = IrOverridingUtil(irBuiltIns, this)
-
-    override fun fakeOverrideMember(
-        superType: IrType,
-        member: IrOverridableMember,
-        clazz: IrClass
-    ): IrOverridableMember {
-        require(superType is IrSimpleType) { "superType is $superType, expected IrSimpleType" }
-        val classifier = superType.classifier
-        require(classifier is IrClassSymbol) { "superType classifier is not IrClassSymbol: $classifier" }
-
-        val typeParameters = extractTypeParameters(classifier.owner)
-        val superArguments = superType.arguments
-        assert(typeParameters.size == superArguments.size) {
-            "typeParameters = $typeParameters size != typeArguments = $superArguments size "
-        }
-
-        val substitutionMap = mutableMapOf<IrTypeParameterSymbol, IrType>()
-
-        for (i in typeParameters.indices) {
-            val tp = typeParameters[i]
-            val ta = superArguments[i]
-            require(ta is IrTypeProjection) { "Unexpected super type argument: $ta @ $i" }
-            assert(ta.variance == Variance.INVARIANT) { "Unexpected variance in super type argument: ${ta.variance} @$i" }
-            substitutionMap[tp.symbol] = ta.type
-        }
-
-        val copier = DeepCopyIrTreeWithSymbolsForFakeOverrides(substitutionMap)
-        val deepCopyFakeOverride = copier.copy(member, clazz) as IrOverridableMember
-        deepCopyFakeOverride.parent = clazz
-
-        return deepCopyFakeOverride
-    }
 
     fun buildFakeOverrideChainsForClass(clazz: IrClass) {
         if (haveFakeOverrides.contains(clazz)) return

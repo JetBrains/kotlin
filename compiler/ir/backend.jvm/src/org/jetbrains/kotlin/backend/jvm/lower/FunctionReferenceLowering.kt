@@ -221,7 +221,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     generateSamEqualsHashCodeMethods(boundReceiverVar)
                 }
                 if (isKotlinFunInterface) {
-                    functionReferenceClass.addFakeOverridesViaIncorrectHeuristic()
+                    functionReferenceClass.addFakeOverrides(context.irBuiltIns)
                 }
 
                 +functionReferenceClass

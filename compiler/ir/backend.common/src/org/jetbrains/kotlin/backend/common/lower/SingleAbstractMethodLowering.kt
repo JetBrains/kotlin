@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
-import org.jetbrains.kotlin.backend.common.ir.addFakeOverridesViaIncorrectHeuristic
+import org.jetbrains.kotlin.backend.common.ir.addFakeOverrides
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -225,7 +225,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
         if (superType.needEqualsHashCodeMethods)
             generateEqualsHashCode(subclass, superType, field)
 
-        subclass.addFakeOverridesViaIncorrectHeuristic()
+        subclass.addFakeOverrides(context.irBuiltIns)
 
         return subclass
     }
