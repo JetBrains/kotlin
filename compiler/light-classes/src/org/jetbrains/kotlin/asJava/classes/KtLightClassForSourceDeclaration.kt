@@ -11,7 +11,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.*
 import com.intellij.psi.impl.InheritanceImplUtil
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
@@ -55,7 +54,6 @@ import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.*
 import javax.swing.Icon
-import kotlin.jvm.Throws
 
 private class KtLightClassModifierList(containingClass: KtLightClassForSourceDeclaration, computeModifiers: () -> Set<String>) :
     KtLightModifierList<KtLightClassForSourceDeclaration>(containingClass) {
@@ -360,7 +358,7 @@ abstract class KtLightClassForSourceDeclaration(
                 LightClassGenerationSupport.getInstance(classOrObject.project).run {
                     if (useUltraLightClasses) {
                         return createUltraLightClass(classOrObject)
-                            ?: error { "Unable to create UL class for ${classOrObject::javaClass.name}" }
+                            ?: error { "Unable to create UL class for ${classOrObject.javaClass.name}" }
                     }
                 }
             }
