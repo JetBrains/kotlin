@@ -110,7 +110,7 @@ fun translateCall(
     // @JsName-annotated external property accessors are translated as function calls
     if (function.getJsName() == null) {
         val property = function.correspondingPropertySymbol?.owner
-        if (property != null && property.isEffectivelyExternal()) {
+        if (property != null && (property.isEffectivelyExternal())) {
             val nameRef = JsNameRef(context.getNameForProperty(property), jsDispatchReceiver)
             return when (function) {
                 property.getter -> nameRef
@@ -220,7 +220,26 @@ fun translateCall(
             }
         }
     } else {
-        JsInvocation(ref, listOfNotNull(jsExtensionReceiver) + arguments)
+        val defaultResult = JsInvocation(ref, listOfNotNull(jsExtensionReceiver) + arguments)
+
+        val alternativeResult = if (jsDispatchReceiver != null && jsExtensionReceiver == null && context.staticContext.backendContext.legacyPropertyAccess) {
+            val property = function.correspondingPropertySymbol?.owner
+            if (property != null) {
+                val propertyName = context.getNameForProperty(property)
+                val args = mutableListOf(jsDispatchReceiver, JsStringLiteral(symbolName.ident), JsStringLiteral(propertyName.ident))
+                val fnName = when (function) {
+                    property.getter -> context.getNameForStaticFunction(context.staticContext.backendContext.intrinsics.safePropertyGet.owner)
+                    property.setter -> {
+                        args += arguments
+                        context.getNameForStaticFunction(context.staticContext.backendContext.intrinsics.safePropertySet.owner)
+                    }
+                    else -> error("Function must be an accessor of corresponding property")
+                }
+                JsInvocation(fnName.makeRef(), args)
+            } else null
+        } else null
+
+        alternativeResult ?: defaultResult
     }
 }
 

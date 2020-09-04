@@ -47,6 +47,7 @@ class JsIrBackendContext(
     override val es6mode: Boolean = false,
     val dceRuntimeDiagnostic: DceRuntimeDiagnostic? = null,
     val propertyLazyInitialization: Boolean = false,
+    val legacyPropertyAccess: Boolean = false,
 ) : JsCommonBackendContext {
     val fileToInitializationFuns: MutableMap<IrFile, IrSimpleFunction?> = mutableMapOf()
     val fileToInitializerPureness: MutableMap<IrFile, Boolean> = mutableMapOf()

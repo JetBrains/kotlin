@@ -315,6 +315,10 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val readSharedBox = defineReadSharedBox()
     val writeSharedBox = defineWriteSharedBox()
 
+
+    val safePropertyGet = getInternalFunction("safePropertyGet")
+    val safePropertySet = getInternalFunction("safePropertySet")
+
     val jsUndefined = defineJsUndefinedIntrinsic()
 
     // Helpers:
