@@ -1269,7 +1269,6 @@ public class DescriptorResolver {
         });
     }
 
-    @NotNull
     public PropertyDescriptor resolvePrimaryConstructorParameterToAProperty(
             @NotNull ClassDescriptor classDescriptor,
             @NotNull ValueParameterDescriptor valueParameter,

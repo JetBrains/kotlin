@@ -15842,6 +15842,40 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/extensionClasses")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ExtensionClasses {
+        @Test
+        public void testAllFilesPresentInExtensionClasses() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("constructors.kt")
+        public void testConstructors() throws Exception {
+            runTest("compiler/testData/codegen/box/extensionClasses/constructors.kt");
+        }
+
+        @Test
+        @TestMetadata("genericCollection.kt")
+        public void testGenericCollection() throws Exception {
+            runTest("compiler/testData/codegen/box/extensionClasses/genericCollection.kt");
+        }
+
+        @Test
+        @TestMetadata("generics.kt")
+        public void testGenerics() throws Exception {
+            runTest("compiler/testData/codegen/box/extensionClasses/generics.kt");
+        }
+
+        @Test
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("compiler/testData/codegen/box/extensionClasses/simple.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/extensionFunctions")
     @TestDataPath("$PROJECT_ROOT")
     public class ExtensionFunctions {
