@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil.JVM_MULTIFILE_CLASS_SHORT
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil.findAnnotationEntryOnFileNoResolve
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -130,11 +131,11 @@ class KtUltraLightClassForFacade(
     }
 
     private val _ownFields: List<KtLightField> by lazyPub {
-        if (multiFileClass) return@lazyPub emptyList()
-
         hashSetOf<String>().let { nameCache ->
             filesWithSupportsWithCreators.flatMap { (file, _, creator) ->
-                file.declarations.filterIsInstance<KtProperty>().mapNotNull {
+                val allProperties = file.declarations.filterIsInstance<KtProperty>()
+                val properties = if (multiFileClass) allProperties.filter { it.hasModifier(KtTokens.CONST_KEYWORD) } else allProperties
+                properties.mapNotNull {
                     creator.createPropertyField(it, nameCache, forceStatic = true)
                 }
             }
