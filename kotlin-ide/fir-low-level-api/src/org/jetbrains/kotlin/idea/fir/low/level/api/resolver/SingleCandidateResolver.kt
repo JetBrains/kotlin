@@ -97,7 +97,8 @@ class SingleCandidateResolver(
                 candidate = candidate
             )
         }
-        val completionResult = firCallCompleter.completeCall(fakeCall, resolutionParameters.expectedType)
+        val expectedType = resolutionParameters.expectedType ?: bodyResolveComponents.noExpectedType
+        val completionResult = firCallCompleter.completeCall(fakeCall, expectedType)
         return if (completionResult.callCompleted) {
             completionResult.result
         } else null

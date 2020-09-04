@@ -1391,6 +1391,11 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 runTest("testData/basic/common/extensions/NoMemberExtensionsFromCompanionObject.kt");
             }
 
+            @TestMetadata("ParametrizedExpectedType.kt")
+            public void testParametrizedExpectedType() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/extensions/ParametrizedExpectedType.kt");
+            }
+
             @TestMetadata("StarTypeArg.kt")
             public void testStarTypeArg() throws Exception {
                 runTest("testData/basic/common/extensions/StarTypeArg.kt");
