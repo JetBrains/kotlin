@@ -1,5 +1,112 @@
 # CHANGELOG
 
+## 1.4.10
+
+### Compiler
+
+#### Performance Improvements
+
+- [`KT-41149`](https://youtrack.jetbrains.com/issue/KT-41149) NI: Upgraded project from 1.3.72 to 1.4.0 hangs during build
+- [`KT-41335`](https://youtrack.jetbrains.com/issue/KT-41335) Kotlin Out of Memory When evaluating expression
+- [`KT-41400`](https://youtrack.jetbrains.com/issue/KT-41400) NI: Huge performance regression for kotlin compiler from 1.3.72 to 1.4.0 due to using list of dozen lambdas in a call
+
+#### Fixes
+
+- [`KT-41005`](https://youtrack.jetbrains.com/issue/KT-41005) Coercion to Unit doesn't take into account nullability of a return type for lambda
+- [`KT-41043`](https://youtrack.jetbrains.com/issue/KT-41043) NI: StackOverflowError through `PostponedArgumentInputTypesResolver.getAllDeeplyRelatedTypeVariables`
+- [`KT-41135`](https://youtrack.jetbrains.com/issue/KT-41135) Type Inference Regression For Property Delegate With Receiver Type
+- [`KT-41140`](https://youtrack.jetbrains.com/issue/KT-41140) Unresolved reference to parameter of a catch block from lambda expression on 1.4.0
+- [`KT-41150`](https://youtrack.jetbrains.com/issue/KT-41150) IllegalStateException: Couldn't obtain compiled function body for public final inline fun
+- [`KT-41164`](https://youtrack.jetbrains.com/issue/KT-41164) NI: "IllegalStateException: Error type encountered" with callbackFlow builder inside condition
+- [`KT-41202`](https://youtrack.jetbrains.com/issue/KT-41202) Type inference fails in 1.4.0
+- [`KT-41218`](https://youtrack.jetbrains.com/issue/KT-41218) HMPP: arrayList declarations are visible both from stdlib-common and stdlib-jvm and lead to false-positive resolution ambiguity in IDE
+- [`KT-41308`](https://youtrack.jetbrains.com/issue/KT-41308) 1.4.0 Type inference regression in suspend blocks with elvis operator expressions
+- [`KT-41357`](https://youtrack.jetbrains.com/issue/KT-41357) ClassCastException for unstable smart cast on a property call receiver
+- [`KT-41386`](https://youtrack.jetbrains.com/issue/KT-41386) NI: Type mismatch with generic type parameters
+- [`KT-41426`](https://youtrack.jetbrains.com/issue/KT-41426) Operator compareTo is not called with nullable type
+- [`KT-41430`](https://youtrack.jetbrains.com/issue/KT-41430) Broken choosing overload by lambda return type inside builder inference
+- [`KT-41470`](https://youtrack.jetbrains.com/issue/KT-41470) Wrong nullability assertion is generated when using the BuilderInference annotation
+- [`KT-41482`](https://youtrack.jetbrains.com/issue/KT-41482) Add a fallback compiler flag to disable the unified null checks behavior
+
+### IDE
+
+- [`KT-41325`](https://youtrack.jetbrains.com/issue/KT-41325) SOE in IDEKotlinAsJavaSupport
+- [`KT-41390`](https://youtrack.jetbrains.com/issue/KT-41390) Typo: equals & hashCode are written with the first uppercase letter
+
+### IDE. Code Style, Formatting
+
+- [`KT-41314`](https://youtrack.jetbrains.com/issue/KT-41314) Formatter: Frequent freezes when reformatting code (TrailingCommaPostFormatProcessor)
+
+### IDE. Debugger
+
+- [`KT-40417`](https://youtrack.jetbrains.com/issue/KT-40417) Coroutines Debugger: “No coroutine information found” in case of main() entry-point without explicit debug-artifact
+
+### IDE. Gradle. Script
+
+- [`KT-39542`](https://youtrack.jetbrains.com/issue/KT-39542) EA-218043: java.util.NoSuchElementException: No element of given type found (GradleBuildRootsManager)
+- [`KT-41283`](https://youtrack.jetbrains.com/issue/KT-41283) Gradle scripts unable to support 1.4 language level features yet
+
+### IDE. Inspections and Intentions
+
+- [`KT-41264`](https://youtrack.jetbrains.com/issue/KT-41264) Disable “Redundant inner modifier” in 1.4.10
+- [`KT-41395`](https://youtrack.jetbrains.com/issue/KT-41395) Inspection description misses a space (needs to be lowercase)
+
+### IDE. REPL
+
+- [`KT-40898`](https://youtrack.jetbrains.com/issue/KT-40898) REPL: "IllegalAccessError: tried to access field" caused by log4j
+
+### IDE. Wizards
+
+- [`KT-38921`](https://youtrack.jetbrains.com/issue/KT-38921) New project wizard: Backend/Console applications template with Groovy DSL generates build.gradle with KotlinCompile instead of compileKotlin
+
+### JavaScript
+
+- [`KT-38059`](https://youtrack.jetbrains.com/issue/KT-38059) Support arrays passed as named arguments to varargs
+- [`KT-40964`](https://youtrack.jetbrains.com/issue/KT-40964) KJS / IR: don't generate "import" (short names) for external interfaces
+- [`KT-41081`](https://youtrack.jetbrains.com/issue/KT-41081) KJS IR: nativeGetter, nativeSetter, nativeInvoke are not supported
+
+### Libraries
+
+- [`KT-41320`](https://youtrack.jetbrains.com/issue/KT-41320) Actual  kotlin.test annotation typealiases are inaccessible in modular environment
+
+### Middle-end. IR
+
+- [`KT-41324`](https://youtrack.jetbrains.com/issue/KT-41324) IR: "Compilation failed: null" caused by StackOverflowError in compiler in multi-module project
+
+### Native. C and ObjC Import
+
+- [`KT-39762`](https://youtrack.jetbrains.com/issue/KT-39762) cinterop on 1.4-M2 doesn't include @Deprecated Kotlin declaration for C declaration it fails to import
+
+### Native. ObjC Export
+
+- [`KT-39206`](https://youtrack.jetbrains.com/issue/KT-39206) New line characters in @Deprecated annotation cause syntax error in Kotlin/native exported header
+- [`KT-40976`](https://youtrack.jetbrains.com/issue/KT-40976) "Unrecognized selector sent to instance" exception invoking suspending lambda from Swift in Native iOS project
+
+### Reflection
+
+- [`KT-40842`](https://youtrack.jetbrains.com/issue/KT-40842) "AssertionError: Built-in class kotlin.Any is not found" on java modular run
+
+### Tools. Compiler Plugins
+
+- [`KT-41321`](https://youtrack.jetbrains.com/issue/KT-41321) Upgrading to 1.4.0 fails compiling native with <x> is not bound error
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-41083`](https://youtrack.jetbrains.com/issue/KT-41083) Transitive dependency on an MPP with host-specific source sets fails to resolve: "Couldn't resolve metadata artifact..."
+
+### Tools. Gradle. Native
+
+- [`KT-40834`](https://youtrack.jetbrains.com/issue/KT-40834) Cannot build Kotlin Multiplatform project on Windows 10 64-bit when the Cocoapods plugin is applied
+
+### Tools. Scripts
+
+- [`KT-35925`](https://youtrack.jetbrains.com/issue/KT-35925) REPL: Springboot autoconfiguration problem (META-INF/spring.factories not found ?)
+
+### Tools. kapt
+
+- [`KT-41313`](https://youtrack.jetbrains.com/issue/KT-41313) kapt 1.4.0 throws "ZipException: zip END header not found", when Graal SVM jar in classpath
+
+
 ## 1.4.0
 
 ### Compiler
