@@ -29,34 +29,34 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollector) : AbstractDiagnosticCollectorComponent(collector) {
     override fun visitErrorLoop(errorLoop: FirErrorLoop, data: CheckerContext) {
         val source = errorLoop.source ?: return
-        runCheck { reportFirDiagnostic(errorLoop.diagnostic, source, it) }
+        reportFirDiagnostic(errorLoop.diagnostic, source, reporter)
     }
 
     override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: CheckerContext) {
         val source = errorTypeRef.source ?: return
-        runCheck { reportFirDiagnostic(errorTypeRef.diagnostic, source, it) }
+        reportFirDiagnostic(errorTypeRef.diagnostic, source, reporter)
     }
 
     override fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference, data: CheckerContext) {
         val source = errorNamedReference.source ?: return
         // Don't report duplicated unresolved reference on annotation entry (already reported on its type)
         if (source.elementType == KtNodeTypes.ANNOTATION_ENTRY && errorNamedReference.diagnostic is ConeUnresolvedNameError) return
-        runCheck { reportFirDiagnostic(errorNamedReference.diagnostic, source, it) }
+        reportFirDiagnostic(errorNamedReference.diagnostic, source, reporter)
     }
 
     override fun visitErrorExpression(errorExpression: FirErrorExpression, data: CheckerContext) {
         val source = errorExpression.source ?: return
-        runCheck { reportFirDiagnostic(errorExpression.diagnostic, source, it) }
+        reportFirDiagnostic(errorExpression.diagnostic, source, reporter)
     }
 
     override fun visitErrorFunction(errorFunction: FirErrorFunction, data: CheckerContext) {
         val source = errorFunction.source ?: return
-        runCheck { reportFirDiagnostic(errorFunction.diagnostic, source, it) }
+        reportFirDiagnostic(errorFunction.diagnostic, source, reporter)
     }
 
     override fun visitErrorResolvedQualifier(errorResolvedQualifier: FirErrorResolvedQualifier, data: CheckerContext) {
         val source = errorResolvedQualifier.source ?: return
-        runCheck { reportFirDiagnostic(errorResolvedQualifier.diagnostic, source, it) }
+        reportFirDiagnostic(errorResolvedQualifier.diagnostic, source, reporter)
     }
 
     private fun reportFirDiagnostic(diagnostic: ConeDiagnostic, source: FirSourceElement, reporter: DiagnosticReporter) {

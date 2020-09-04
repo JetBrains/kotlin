@@ -34,13 +34,19 @@ internal class FirIdeDiagnosticsCollector private constructor(
 
     private inner class Reporter : DiagnosticReporter() {
         override fun report(diagnostic: FirDiagnostic<*>?) {
-            if (diagnostic !is FirPsiDiagnostic<*>) return
-            val psi = diagnostic.element.psi as? KtElement ?: return
-            result.addValueFor(psi, diagnostic.asPsiBasedDiagnostic())
+            checkCanceled()
+            try {
+                if (diagnostic !is FirPsiDiagnostic<*>) return
+                val psi = diagnostic.element.psi as? KtElement ?: return
+                result.addValueFor(psi, diagnostic.asPsiBasedDiagnostic())
+            } catch (e: Throwable) {
+                LOG.error(e)
+            }
         }
     }
 
-    private lateinit var reporter: Reporter
+    override var reporter: DiagnosticReporter = Reporter()
+        private set
 
     override fun initializeCollector() {
         reporter = Reporter()
@@ -49,15 +55,6 @@ internal class FirIdeDiagnosticsCollector private constructor(
     override fun getCollectedDiagnostics(): Iterable<FirDiagnostic<*>> {
         // Not necessary in IDE
         return emptyList()
-    }
-
-    override fun runCheck(block: (DiagnosticReporter) -> Unit) {
-        checkCanceled()
-        try {
-            block(reporter)
-        } catch (e: Throwable) {
-            LOG.error(e)
-        }
     }
 
     companion object {

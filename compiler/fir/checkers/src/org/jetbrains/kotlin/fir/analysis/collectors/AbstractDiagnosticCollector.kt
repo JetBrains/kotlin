@@ -44,7 +44,7 @@ abstract class AbstractDiagnosticCollector(
 
     protected abstract fun initializeCollector()
     protected abstract fun getCollectedDiagnostics(): Iterable<FirDiagnostic<*>>
-    abstract fun runCheck(block: (DiagnosticReporter) -> Unit)
+    abstract val reporter: DiagnosticReporter
 
     private val components: MutableList<AbstractDiagnosticCollectorComponent> = mutableListOf()
     private var componentsInitialized = false

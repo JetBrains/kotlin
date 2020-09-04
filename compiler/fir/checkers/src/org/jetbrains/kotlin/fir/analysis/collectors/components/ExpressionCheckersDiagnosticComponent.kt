@@ -16,75 +16,75 @@ class ExpressionCheckersDiagnosticComponent(collector: AbstractDiagnosticCollect
     private val checkers = session.checkersComponent.expressionCheckers
 
     override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: CheckerContext) {
-        runCheck { checkers.expressionCheckers.check(typeOperatorCall, data, it) }
+        checkers.expressionCheckers.check(typeOperatorCall, data, reporter)
     }
 
     override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: CheckerContext) {
-        runCheck { checkers.expressionCheckers.check(constExpression, data, it) }
+        checkers.expressionCheckers.check(constExpression, data, reporter)
     }
 
     override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: CheckerContext) {
-        runCheck { checkers.expressionCheckers.check(annotationCall, data, it) }
+        checkers.expressionCheckers.check(annotationCall, data, reporter)
     }
 
     override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: CheckerContext) {
-        runCheck { checkers.qualifiedAccessCheckers.check(qualifiedAccessExpression, data, it) }
+        checkers.qualifiedAccessCheckers.check(qualifiedAccessExpression, data, reporter)
     }
 
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: CheckerContext) {
-        runCheck { checkers.functionCallCheckers.check(functionCall, data, it) }
+        checkers.functionCallCheckers.check(functionCall, data, reporter)
     }
 
     override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: CheckerContext) {
-        runCheck { checkers.qualifiedAccessCheckers.check(callableReferenceAccess, data, it) }
+        checkers.qualifiedAccessCheckers.check(callableReferenceAccess, data, reporter)
     }
 
     override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: CheckerContext) {
-        runCheck { checkers.expressionCheckers.check(thisReceiverExpression, data, it) }
+        checkers.expressionCheckers.check(thisReceiverExpression, data, reporter)
     }
 
     override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: CheckerContext) {
-        runCheck { checkers.expressionCheckers.check(resolvedQualifier, data, it) }
+        checkers.expressionCheckers.check(resolvedQualifier, data, reporter)
     }
 
     override fun visitWhenExpression(whenExpression: FirWhenExpression, data: CheckerContext) {
-        runCheck { checkers.expressionCheckers.check(whenExpression, data, it) }
+        checkers.expressionCheckers.check(whenExpression, data, reporter)
     }
 
     override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: CheckerContext) {
-        runCheck { checkers.expressionCheckers.check(binaryLogicExpression, data, it) }
+        checkers.expressionCheckers.check(binaryLogicExpression, data, reporter)
     }
 
     override fun visitArrayOfCall(arrayOfCall: FirArrayOfCall, data: CheckerContext) {
-        runCheck { checkers.expressionCheckers.check(arrayOfCall, data, it) }
+        checkers.expressionCheckers.check(arrayOfCall, data, reporter)
     }
 
     override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: CheckerContext) {
-        runCheck { checkers.expressionCheckers.check(stringConcatenationCall, data, it) }
+        checkers.expressionCheckers.check(stringConcatenationCall, data, reporter)
     }
 
     override fun visitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, data: CheckerContext) {
-        runCheck { checkers.expressionCheckers.check(checkNotNullCall, data, it) }
+        checkers.expressionCheckers.check(checkNotNullCall, data, reporter)
     }
 
     override fun visitTryExpression(tryExpression: FirTryExpression, data: CheckerContext) {
-        runCheck { checkers.expressionCheckers.check(tryExpression, data, it) }
+        checkers.expressionCheckers.check(tryExpression, data, reporter)
     }
 
     override fun visitClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression, data: CheckerContext) {
-        runCheck { checkers.expressionCheckers.check(classReferenceExpression, data, it) }
+        checkers.expressionCheckers.check(classReferenceExpression, data, reporter)
     }
 
     override fun visitGetClassCall(getClassCall: FirGetClassCall, data: CheckerContext) {
-        runCheck { checkers.expressionCheckers.check(getClassCall, data, it) }
+        checkers.expressionCheckers.check(getClassCall, data, reporter)
     }
 
     override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: CheckerContext) {
-        runCheck { checkers.expressionCheckers.check(equalityOperatorCall, data, it) }
+        checkers.expressionCheckers.check(equalityOperatorCall, data, reporter)
     }
 
     override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: CheckerContext) {
-        runCheck { checkers.variableAssignmentCheckers.check(variableAssignment, data, it) }
+        checkers.variableAssignmentCheckers.check(variableAssignment, data, reporter)
     }
 
     private fun <E : FirStatement> List<FirExpressionChecker<E>>.check(expression: E, context: CheckerContext, reporter: DiagnosticReporter) {
