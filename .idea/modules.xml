@@ -105,11 +105,9 @@
     <module old-name="annotations-common" new-name="intellij.platform.annotations.common" />
     <module old-name="annotations-java8" new-name="intellij.platform.annotations" />
     <module old-name="ant" new-name="intellij.ant" />
-    <module old-name="ant-jps-plugin" new-name="intellij.ant.jps" />
     <module old-name="antlayout" new-name="intellij.tools.jps.antTasks" />
     <module old-name="aop-common" new-name="intellij.aopCommon" />
     <module old-name="apacheConfig" new-name="intellij.apacheConfig" />
-    <module old-name="appEngine-runtime" new-name="intellij.java.googleAppEngine.runtime" />
     <module old-name="appEngineForPhp" new-name="intellij.php.googleAppEngine" />
     <module old-name="appcode" new-name="intellij.appcode" />
     <module old-name="appcode-build" new-name="intellij.appcode.build" />
@@ -174,7 +172,6 @@
     <module old-name="commandLineTool" new-name="intellij.php.commandLineTool" />
     <module old-name="commander" new-name="intellij.commander" />
     <module old-name="common" new-name="android.sdktools.common" />
-    <module old-name="common-eclipse-util" new-name="intellij.eclipse.common" />
     <module old-name="common-javaFX-plugin" new-name="intellij.javaFX.common" />
     <module old-name="community-guitests" new-name="intellij.idea.community.guiTests" />
     <module old-name="community-main" new-name="intellij.idea.community.main" />
@@ -232,7 +229,6 @@
     <module old-name="designer" new-name="intellij.android.designer" />
     <module old-name="designer-tests" new-name="intellij.android.designer.tests" />
     <module old-name="devkit" new-name="intellij.devkit" />
-    <module old-name="devkit-jps-plugin" new-name="intellij.devkit.jps" />
     <module old-name="devkit-kotlin-tests" new-name="intellij.devkit.kotlin.tests" />
     <module old-name="diagram-api" new-name="intellij.diagram" />
     <module old-name="diagram-ide" new-name="intellij.diagram.ide" />
@@ -241,7 +237,6 @@
     <module old-name="diff-impl" new-name="intellij.platform.diff.impl" />
     <module old-name="diff-tests" new-name="intellij.platform.diff.tests" />
     <module old-name="django-db-config" new-name="intellij.python.djangoDbConfig" />
-    <module old-name="dmServer-jps-plugin" new-name="intellij.javaee.appServers.dmServer.jps" />
     <module old-name="dmServerSupport" new-name="intellij.javaee.appServers.dmServer" />
     <module old-name="dom-impl" new-name="intellij.xml.dom.impl" />
     <module old-name="dom-openapi" new-name="intellij.xml.dom" />
@@ -262,7 +257,6 @@
     <module old-name="dvcs-impl" new-name="intellij.platform.vcs.dvcs.impl" />
     <module old-name="dvlib" new-name="android.sdktools.dvlib" />
     <module old-name="eclipse" new-name="intellij.eclipse" />
-    <module old-name="eclipse-jps-plugin" new-name="intellij.eclipse.jps" />
     <module old-name="editor-ui-api" new-name="intellij.platform.editor" />
     <module old-name="editor-ui-ex" new-name="intellij.platform.editor.ex" />
     <module old-name="editorconfig" new-name="intellij.editorconfig" />
@@ -274,7 +268,6 @@
     <module old-name="emma" new-name="intellij.java.coverage.emma" />
     <module old-name="emma_rt" new-name="intellij.java.coverage.emma.rt" />
     <module old-name="error-prone" new-name="intellij.errorProne" />
-    <module old-name="error-prone-jps-plugin" new-name="intellij.errorProne.jps" />
     <module old-name="execution-impl" new-name="intellij.java.execution.impl" />
     <module old-name="execution-openapi" new-name="intellij.java.execution" />
     <module old-name="execution-tests" new-name="intellij.java.execution.tests" />
@@ -303,19 +296,15 @@
     <module old-name="github" new-name="intellij.vcs.github" />
     <module old-name="glassfish-independent" new-name="intellij.javaee.appServers.glassfish.agent.rt" />
     <module old-name="google-app-engine" new-name="intellij.java.googleAppEngine" />
-    <module old-name="google-app-engine-jps-plugin" new-name="intellij.java.googleAppEngine.jps" />
     <module old-name="google-app-engine-ultimate" new-name="intellij.java.googleAppEngine.ultimate" />
     <module old-name="gradle" new-name="intellij.gradle" />
     <module old-name="gradle-api-deps" new-name="intellij.tools.dependencies.gradle" />
     <module old-name="gradle-javaee" new-name="intellij.gradle.javaee" />
-    <module old-name="gradle-jps-plugin" new-name="intellij.gradle.jps" />
     <module old-name="gradle-tests" new-name="intellij.gradle.tests" />
     <module old-name="gradle-tooling-extension-api" new-name="intellij.gradle.toolingExtension" />
     <module old-name="gradle-tooling-extension-impl" new-name="intellij.gradle.toolingExtension.impl" />
     <module old-name="gradle-tooling-extension-tests" new-name="intellij.gradle.toolingExtension.tests" />
-    <module old-name="grails-compiler-patch" new-name="intellij.groovy.grails.compilerPatch" />
     <module old-name="grails-gradle-tooling" new-name="intellij.groovy.grails.gradleTooling" />
-    <module old-name="grails-jps-plugin" new-name="intellij.groovy.grails.jps" />
     <module old-name="grails-rt" new-name="intellij.groovy.grails.rt" />
     <module old-name="graph" new-name="intellij.platform.graph.impl" />
     <module old-name="graph-openapi" new-name="intellij.platform.graph" />
@@ -325,7 +314,6 @@
     <module old-name="groovy-rt-constants" new-name="intellij.groovy.constants.rt" />
     <module old-name="groovy-uast-tests" new-name="intellij.groovy.uast.tests" />
     <module old-name="groovy_rt" new-name="intellij.groovy.rt" />
-    <module old-name="gwt-jps-plugin" new-name="intellij.gwt.jps" />
     <module old-name="haml" new-name="intellij.haml" />
     <module old-name="handlebars-idea" new-name="intellij.handlebars" />
     <module old-name="hg4idea" new-name="intellij.vcs.hg" />
@@ -408,7 +396,6 @@
     <module old-name="javaee-api" new-name="intellij.javaee.platform" />
     <module old-name="javaee-extensions" new-name="intellij.javaee.extensions" />
     <module old-name="javaee-impl" new-name="intellij.javaee.platform.impl" />
-    <module old-name="javaee-jps-plugin" new-name="intellij.javaee.jps" />
     <module old-name="javaee-rt" new-name="intellij.javaee.rt" />
     <module old-name="javaee_oss_servers" new-name="intellij.javaee.appServers.content" />
     <module old-name="javaee_oss_servers-common-cloud" new-name="intellij.javaee.appServers.cloud" />
@@ -431,7 +418,6 @@
     <module old-name="joomla" new-name="intellij.joomla" />
     <module old-name="jpa-console" new-name="intellij.javaee.jpa.console" />
     <module old-name="jpa-impl" new-name="intellij.javaee.jpa.impl" />
-    <module old-name="jpa-jps-plugin" new-name="intellij.javaee.jpa.jps" />
     <module old-name="jpa-openapi" new-name="intellij.javaee.jpa" />
     <module old-name="jpa-ql" new-name="intellij.javaee.jpa.ql" />
     <module old-name="jpa-ql-tests" new-name="intellij.javaee.jpa.ql.tests" />
@@ -504,7 +490,6 @@
     <module old-name="maven-artifact-resolver-m3" new-name="intellij.maven.artifactResolver.m3" />
     <module old-name="maven-artifact-resolver-m31" new-name="intellij.maven.artifactResolver.m31" />
     <module old-name="maven-ext" new-name="intellij.maven.ext" />
-    <module old-name="maven-jps-plugin" new-name="intellij.maven.jps" />
     <module old-name="maven-server-api" new-name="intellij.maven.server" />
     <module old-name="maven2-server-impl" new-name="intellij.maven.server.m2.impl" />
     <module old-name="maven3-server-common" new-name="intellij.maven.server.m3.common" />
@@ -522,7 +507,6 @@
     <module old-name="ognl" new-name="intellij.struts2.ognl" />
     <module old-name="openapi" new-name="intellij.java" />
     <module old-name="osmorc-idea" new-name="intellij.osgi" />
-    <module old-name="osmorc-jps-plugin" new-name="intellij.osgi.jps" />
     <module old-name="perfd-host" new-name="intellij.android.perfdHost" />
     <module old-name="perflib" new-name="android.sdktools.perflib" />
     <module old-name="perforce-tests" new-name="intellij.vcs.perforce.tests" />
@@ -774,7 +758,6 @@
     <module old-name="uast-tests" new-name="intellij.platform.uast.tests" />
     <module old-name="ui-designer" new-name="intellij.java.guiForms.designer" />
     <module old-name="ui-designer-core" new-name="intellij.uiDesigner" />
-    <module old-name="ui-designer-jps-plugin" new-name="intellij.java.guiForms.jps" />
     <module old-name="uitest-framework" new-name="intellij.android.guiTestFramework" />
     <module old-name="ultimate-guitests" new-name="intellij.idea.ultimate.guiTests" />
     <module old-name="ultimate-guitests-main" new-name="intellij.idea.ultimate.guiTests.main" />
@@ -812,7 +795,6 @@
     <module old-name="webLogicIndependent" new-name="intellij.javaee.appServers.weblogic.agent.rt" />
     <module old-name="webLogicSrv" new-name="intellij.javaee.appServers.weblogic.agent.impl.rt" />
     <module old-name="webSphere" new-name="intellij.javaee.appServers.websphere" />
-    <module old-name="webSphere-jps-plugin" new-name="intellij.javaee.appServers.websphere.jps" />
     <module old-name="webSphereClient" new-name="intellij.javaee.appServers.websphere.agent.rt" />
     <module old-name="webSphereClientImpl" new-name="intellij.javaee.appServers.websphere.agent.impl.rt" />
     <module old-name="webSphereTests" new-name="intellij.javaee.appServers.websphere.tests" />
@@ -820,7 +802,6 @@
     <module old-name="webide-impl" new-name="intellij.platform.webide.impl" />
     <module old-name="webide-tests" new-name="intellij.php.webide.tests" />
     <module old-name="weblogic" new-name="intellij.javaee.appServers.weblogic" />
-    <module old-name="weblogic-jps-plugin" new-name="intellij.javaee.appServers.weblogic.jps" />
     <module old-name="websocket" new-name="intellij.javaee.websocket" />
     <module old-name="websocket-tests" new-name="intellij.javaee.websocket.tests" />
     <module old-name="wip-backend" new-name="intellij.javascript.wip.backend" />

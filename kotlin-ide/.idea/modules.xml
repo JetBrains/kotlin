@@ -31,9 +31,7 @@
     <module old-name="annotations-common" new-name="intellij.platform.annotations.common" />
     <module old-name="annotations-java8" new-name="intellij.platform.annotations" />
     <module old-name="ant" new-name="intellij.ant" />
-    <module old-name="ant-jps-plugin" new-name="intellij.ant.jps" />
     <module old-name="antlayout" new-name="intellij.tools.jps.antTasks" />
-    <module old-name="appEngine-runtime" new-name="intellij.java.googleAppEngine.runtime" />
     <module old-name="artwork" new-name="intellij.android.artwork" />
     <module old-name="binary-resources" new-name="android.sdktools.binary-resources" />
     <module old-name="boot" new-name="intellij.platform.boot" />
@@ -52,7 +50,6 @@
     <module old-name="colorSchemes" new-name="intellij.platform.colorSchemes" />
     <module old-name="commander" new-name="intellij.commander" />
     <module old-name="common" new-name="android.sdktools.common" />
-    <module old-name="common-eclipse-util" new-name="intellij.eclipse.common" />
     <module old-name="common-javaFX-plugin" new-name="intellij.javaFX.common" />
     <module old-name="community-guitests" new-name="intellij.idea.community.guiTests" />
     <module old-name="community-main" new-name="intellij.idea.community.main" />
@@ -80,7 +77,6 @@
     <module old-name="designer" new-name="intellij.android.designer" />
     <module old-name="designer-tests" new-name="intellij.android.designer.tests" />
     <module old-name="devkit" new-name="intellij.devkit" />
-    <module old-name="devkit-jps-plugin" new-name="intellij.devkit.jps" />
     <module old-name="devkit-kotlin-tests" new-name="intellij.devkit.kotlin.tests" />
     <module old-name="diff-api" new-name="intellij.platform.diff" />
     <module old-name="diff-impl" new-name="intellij.platform.diff.impl" />
@@ -94,7 +90,6 @@
     <module old-name="dvcs-impl" new-name="intellij.platform.vcs.dvcs.impl" />
     <module old-name="dvlib" new-name="android.sdktools.dvlib" />
     <module old-name="eclipse" new-name="intellij.eclipse" />
-    <module old-name="eclipse-jps-plugin" new-name="intellij.eclipse.jps" />
     <module old-name="editor-ui-api" new-name="intellij.platform.editor" />
     <module old-name="editor-ui-ex" new-name="intellij.platform.editor.ex" />
     <module old-name="editorconfig" new-name="intellij.editorconfig" />
@@ -112,10 +107,8 @@
     <module old-name="git4idea-rt" new-name="intellij.vcs.git.rt" />
     <module old-name="github" new-name="intellij.vcs.github" />
     <module old-name="google-app-engine" new-name="intellij.java.googleAppEngine" />
-    <module old-name="google-app-engine-jps-plugin" new-name="intellij.java.googleAppEngine.jps" />
     <module old-name="gradle" new-name="intellij.gradle" />
     <module old-name="gradle-api-deps" new-name="intellij.tools.dependencies.gradle" />
-    <module old-name="gradle-jps-plugin" new-name="intellij.gradle.jps" />
     <module old-name="gradle-tests" new-name="intellij.gradle.tests" />
     <module old-name="gradle-tooling-extension-api" new-name="intellij.gradle.toolingExtension" />
     <module old-name="gradle-tooling-extension-impl" new-name="intellij.gradle.toolingExtension.impl" />
@@ -201,7 +194,6 @@
     <module old-name="maven-artifact-resolver-m2" new-name="intellij.maven.artifactResolver.m2" />
     <module old-name="maven-artifact-resolver-m3" new-name="intellij.maven.artifactResolver.m3" />
     <module old-name="maven-artifact-resolver-m31" new-name="intellij.maven.artifactResolver.m31" />
-    <module old-name="maven-jps-plugin" new-name="intellij.maven.jps" />
     <module old-name="maven-server-api" new-name="intellij.maven.server" />
     <module old-name="maven2-server-impl" new-name="intellij.maven.server.m2.impl" />
     <module old-name="maven3-server-common" new-name="intellij.maven.server.m3.common" />
@@ -309,7 +301,6 @@
     <module old-name="uast-tests" new-name="intellij.platform.uast.tests" />
     <module old-name="ui-designer" new-name="intellij.java.guiForms.designer" />
     <module old-name="ui-designer-core" new-name="intellij.uiDesigner" />
-    <module old-name="ui-designer-jps-plugin" new-name="intellij.java.guiForms.jps" />
     <module old-name="uitest-framework" new-name="intellij.android.guiTestFramework" />
     <module old-name="updater" new-name="intellij.platform.updater" />
     <module old-name="usageView" new-name="intellij.platform.usageView" />
