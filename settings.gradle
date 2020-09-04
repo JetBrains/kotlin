@@ -314,6 +314,7 @@ include ":compiler:fir:cones",
         ":compiler:fir:dump",
         ":compiler:fir:jvm",
         ":compiler:fir:checkers",
+        ":compiler:fir:checkers:checkers-component-generator",
         ":compiler:fir:entrypoint",
         ":compiler:fir:analysis-tests"
 
