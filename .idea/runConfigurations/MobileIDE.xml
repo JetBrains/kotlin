@@ -1,0 +1,32 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="MobileIDE" type="Application" factoryName="Application">
+    <option name="ALTERNATIVE_JRE_PATH" value="BUNDLED" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <log_file alias="idea.log" path="$PROJECT_DIR$/out/mobile-ide-system/log/idea.log" />
+    <option name="MAIN_CLASS_NAME" value="com.intellij.idea.Main" />
+    <module name="intellij.mobile.ide" />
+    <selectedOptions>
+      <option name="before.launch.openToolWindow" />
+      <option name="beforeRunTasks" />
+      <option name="commandLineParameters" />
+      <option name="environmentVariables" />
+      <option name="jrePath" />
+      <option name="log.monitor" />
+      <option name="mainClass" />
+      <option name="module.classpath" />
+      <option name="shorten.command.line" />
+      <option name="vmParameters" />
+      <option name="workingDirectory" />
+    </selectedOptions>
+    <shortenClasspath name="ARGS_FILE" />
+    <option name="VM_PARAMETERS" value="-ea -Dsun.io.useCanonCaches=false -Xss2m -Xms256m -Xmx2000m -XX:NewSize=128m -XX:MaxNewSize=128m -XX:ReservedCodeCacheSize=240m -Dsun.awt.disablegrab=true -Didea.is.internal=true -Didea.platform.prefix=MobileIDE -Dapple.laf.useScreenMenuBar=true -Dapple.awt.graphics.UseQuartz=true -Didea.system.path=$PROJECT_DIR$/out/mobile-ide-system -Didea.config.path=$PROJECT_DIR$/out/mobile-ide-config -XX:SoftRefLRUPolicyMSPerMB=50 -Djdk.attach.allowAttachSelf -Dfus.internal.test.mode=true -XX:CICompilerCount=2 -Dkotlinx.coroutines.debug=off -Djdk.module.illegalAccess.silent=true -Dplugin.path=$PROJECT_DIR$/out/artifacts/KotlinPlugin,$PROJECT_DIR$/out/artifacts/MobilePlugin,$PROJECT_DIR$/out/artifacts/kotlin-android-extensions" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+      <option name="BuildArtifacts" enabled="true">
+        <artifact name="KotlinPlugin" />
+        <artifact name="MobilePlugin" />
+      </option>
+      <option name="RunConfigurationTask" enabled="true" run_configuration_name="DownloadAppCodeDependencies" run_configuration_type="JetRunConfigurationType" />
+    </method>
+  </configuration>
+</component>

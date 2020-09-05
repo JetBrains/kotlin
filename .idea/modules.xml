@@ -2122,6 +2122,17 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/yaml/intellij.yaml.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/yaml/intellij.yaml.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/Yeoman/intellij.yeoman.iml" filepath="$PROJECT_DIR$/intellij/plugins/Yeoman/intellij.yeoman.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/zkm/intellij.zkm.iml" filepath="$PROJECT_DIR$/intellij/plugins/zkm/intellij.zkm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlin-ultimate/cidr-gradle-tooling/kotlin-ultimate.cidr-gradle-tooling.iml" filepath="$PROJECT_DIR$/kotlin-ultimate/cidr-gradle-tooling/kotlin-ultimate.cidr-gradle-tooling.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlin-ultimate/common-cidr-mobile/kotlin-ultimate.common-cidr-mobile.iml" filepath="$PROJECT_DIR$/kotlin-ultimate/common-cidr-mobile/kotlin-ultimate.common-cidr-mobile.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlin-ultimate/common-cidr-native/kotlin-ultimate.common-cidr-native.iml" filepath="$PROJECT_DIR$/kotlin-ultimate/common-cidr-native/kotlin-ultimate.common-cidr-native.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlin-ultimate/common-cidr-swift-native/kotlin-ultimate.common-cidr-swift-native.iml" filepath="$PROJECT_DIR$/kotlin-ultimate/common-cidr-swift-native/kotlin-ultimate.common-cidr-swift-native.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlin-ultimate/common-cidr-swift-native/tests/kotlin-ultimate.common-cidr-swift-native.tests.iml" filepath="$PROJECT_DIR$/kotlin-ultimate/common-cidr-swift-native/tests/kotlin-ultimate.common-cidr-swift-native.tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlin-ultimate/common-native/kotlin-ultimate.common-native.iml" filepath="$PROJECT_DIR$/kotlin-ultimate/common-native/kotlin-ultimate.common-native.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlin-ultimate/common-noncidr-native/kotlin-ultimate.common-noncidr-native.iml" filepath="$PROJECT_DIR$/kotlin-ultimate/common-noncidr-native/kotlin-ultimate.common-noncidr-native.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlin-ultimate/mobile-native/kotlin-ultimate.mobile-native.iml" filepath="$PROJECT_DIR$/kotlin-ultimate/mobile-native/kotlin-ultimate.mobile-native.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlin-ultimate/mobile-native/kotlin-android-extensions/kotlin-ultimate.mobile-native.kotlin-android-extensions.iml" filepath="$PROJECT_DIR$/kotlin-ultimate/mobile-native/kotlin-android-extensions/kotlin-ultimate.mobile-native.kotlin-android-extensions.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlin-ultimate/ultimate/kotlin-ultimate.ultimate.iml" filepath="$PROJECT_DIR$/kotlin-ultimate/ultimate/kotlin-ultimate.ultimate.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlin-ultimate/ultimate-native/kotlin-ultimate.ultimate-native.iml" filepath="$PROJECT_DIR$/kotlin-ultimate/ultimate-native/kotlin-ultimate.ultimate-native.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/kotlin.all-tests/kotlin.all-tests.iml" filepath="$PROJECT_DIR$/kotlin/kotlin.all-tests/kotlin.all-tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/common/kotlin.common.iml" filepath="$PROJECT_DIR$/kotlin/common/kotlin.common.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/compiler-plugins/allopen/kotlin.compiler-plugins.allopen.iml" filepath="$PROJECT_DIR$/kotlin/compiler-plugins/allopen/kotlin.compiler-plugins.allopen.iml" />
