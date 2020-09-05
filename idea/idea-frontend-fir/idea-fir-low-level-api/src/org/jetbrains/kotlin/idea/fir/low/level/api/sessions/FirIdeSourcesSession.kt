@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.sessions
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
+import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 
@@ -37,6 +38,7 @@ internal class FirIdeCurrentModuleSourcesSession @PrivateSessionConstructor cons
 @OptIn(PrivateSessionConstructor::class)
 internal class FirIdeDependentModulesSourcesSession @PrivateSessionConstructor constructor(
     moduleInfo: ModuleInfo,
+    val dependentModules: List<ModuleSourceInfo>,
     sessionProvider: FirIdeSessionProvider,
     scope: GlobalSearchScope,
     firFileBuilder: FirFileBuilder,

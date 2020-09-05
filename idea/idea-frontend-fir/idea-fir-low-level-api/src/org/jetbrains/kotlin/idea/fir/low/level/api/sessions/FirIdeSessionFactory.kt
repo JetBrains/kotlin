@@ -81,9 +81,10 @@ internal object FirIdeSessionFactory {
         val firBuilder = FirFileBuilder(scopeProvider, firPhaseRunner)
         val dependentModules = moduleInfo.collectTransitiveDependenciesWithSelf()
             .filterIsInstance<ModuleSourceInfo>()
-            .filterNot { it === moduleInfo }
-        val searchScope = ModuleWithDependentsScope(project, dependentModules.mapTo(mutableListOf()) { it.module })
-        return FirIdeDependentModulesSourcesSession(moduleInfo, sessionProvider, searchScope, firBuilder).apply {
+            .filterNot { it == moduleInfo }
+        val searchScope = if (dependentModules.isNotEmpty()) GlobalSearchScope.union(dependentModules.map { it.contentScope() })
+        else GlobalSearchScope.EMPTY_SCOPE
+        return FirIdeDependentModulesSourcesSession(moduleInfo, dependentModules, sessionProvider, searchScope, firBuilder).apply {
             val cache = ModuleFileCacheImpl(this)
             registerCommonSourceSessionComponents(
                 project,
