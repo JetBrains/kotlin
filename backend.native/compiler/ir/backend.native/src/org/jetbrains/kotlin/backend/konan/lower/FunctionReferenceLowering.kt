@@ -331,7 +331,8 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
             }
 
             functionReferenceClass.superTypes += superTypes
-            functionReferenceClass.addFakeOverridesViaIncorrectHeuristic()
+
+            functionReferenceClass.addFakeOverrides(context.irBuiltIns)
 
             return BuiltFunctionReference(functionReferenceClass, constructor)
         }

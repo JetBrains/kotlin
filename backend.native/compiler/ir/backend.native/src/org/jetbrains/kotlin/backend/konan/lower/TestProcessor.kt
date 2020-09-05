@@ -529,7 +529,7 @@ internal class TestProcessor (val context: Context) {
             companionGetter?.let { declarations += it }
 
             superTypes += symbols.baseClassSuite.typeWith(listOf(testClassType, testCompanionType))
-            addFakeOverridesViaIncorrectHeuristic()
+            addFakeOverrides(context.irBuiltIns)
         }
     }
     //endregion
