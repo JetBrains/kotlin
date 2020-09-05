@@ -14,6 +14,8 @@ repositories {
 val projectsToShadow by extra(listOf(
         ":plugins:annotation-based-compiler-plugins-ide-support",
         ":compiler:backend",
+        ":compiler:resolution.common.jvm",
+        ":core:compiler.common.jvm",
         ":compiler:backend-common",
         ":compiler:backend.jvm",
         ":compiler:ir.backend.common",
@@ -112,7 +114,8 @@ val projectsToShadow by extra(listOf(
             )
         else
             emptyArray<String>()
-))
+    )
+)
 
 // Projects published to maven copied to the plugin as separate jars
 val libraryProjects = listOf(
