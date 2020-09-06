@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isFileClass
@@ -212,11 +213,21 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
             createKeyMapping(ArrayIterator, arrayClass, "iterator")
         )
 
+    private fun primitiveComparisonIntrinsics(
+        typeToIrFun: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>,
+        operator: KtSingleValueToken
+    ): List<Pair<Key, PrimitiveComparison>> =
+        PrimitiveType.values().mapNotNull { primitiveType ->
+            val irPrimitiveClassifier = irBuiltIns.primitiveTypeToIrType[primitiveType]!!.classifierOrFail
+            val irFunSymbol = typeToIrFun[irPrimitiveClassifier] ?: return@mapNotNull null
+            irFunSymbol.toKey()!! to PrimitiveComparison(primitiveType, operator)
+        }
+
     data class Key(val owner: FqName, val receiverParameterTypeName: FqName?, val name: String, val valueParameterTypeNames: List<FqName?>)
 
     companion object {
 
-        internal val INTRINSICS_CLASS_NAME = "kotlin/jvm/internal/Intrinsics"
+        internal const val INTRINSICS_CLASS_NAME = "kotlin/jvm/internal/Intrinsics"
         private val INC = Increment(1)
 
         private val DEC = Increment(-1)
@@ -267,12 +278,5 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
             }
 
 
-        private fun primitiveComparisonIntrinsics(
-            typeToIrFun: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>,
-            operator: KtSingleValueToken
-        ): List<Pair<Key, PrimitiveComparison>> =
-            typeToIrFun.map { (type, irFunSymbol) ->
-                irFunSymbol.toKey()!! to PrimitiveComparison(type.descriptor.defaultType, operator)
-            }
     }
 }
