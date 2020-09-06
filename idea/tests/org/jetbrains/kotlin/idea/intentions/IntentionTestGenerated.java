@@ -16381,66 +16381,66 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
-    @TestMetadata("idea/testData/intentions/swapIfStatements")
+    @TestMetadata("idea/testData/intentions/swapIfBranches")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class SwapIfStatements extends AbstractIntentionTest {
+    public static class SwapIfBranches extends AbstractIntentionTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
-        public void testAllFilesPresentInSwapIfStatements() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/intentions/swapIfStatements"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+        public void testAllFilesPresentInSwapIfBranches() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/intentions/swapIfBranches"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
         }
 
         @TestMetadata("block.kt")
         public void testBlock() throws Exception {
-            runTest("idea/testData/intentions/swapIfStatements/block.kt");
+            runTest("idea/testData/intentions/swapIfBranches/block.kt");
         }
 
         @TestMetadata("block2.kt")
         public void testBlock2() throws Exception {
-            runTest("idea/testData/intentions/swapIfStatements/block2.kt");
+            runTest("idea/testData/intentions/swapIfBranches/block2.kt");
         }
 
         @TestMetadata("block3.kt")
         public void testBlock3() throws Exception {
-            runTest("idea/testData/intentions/swapIfStatements/block3.kt");
+            runTest("idea/testData/intentions/swapIfBranches/block3.kt");
         }
 
         @TestMetadata("elseIf.kt")
         public void testElseIf() throws Exception {
-            runTest("idea/testData/intentions/swapIfStatements/elseIf.kt");
+            runTest("idea/testData/intentions/swapIfBranches/elseIf.kt");
         }
 
         @TestMetadata("hasElseIf.kt")
         public void testHasElseIf() throws Exception {
-            runTest("idea/testData/intentions/swapIfStatements/hasElseIf.kt");
+            runTest("idea/testData/intentions/swapIfBranches/hasElseIf.kt");
         }
 
         @TestMetadata("nonBlock.kt")
         public void testNonBlock() throws Exception {
-            runTest("idea/testData/intentions/swapIfStatements/nonBlock.kt");
+            runTest("idea/testData/intentions/swapIfBranches/nonBlock.kt");
         }
 
         @TestMetadata("nonBlock2.kt")
         public void testNonBlock2() throws Exception {
-            runTest("idea/testData/intentions/swapIfStatements/nonBlock2.kt");
+            runTest("idea/testData/intentions/swapIfBranches/nonBlock2.kt");
         }
 
         @TestMetadata("nonBlock3.kt")
         public void testNonBlock3() throws Exception {
-            runTest("idea/testData/intentions/swapIfStatements/nonBlock3.kt");
+            runTest("idea/testData/intentions/swapIfBranches/nonBlock3.kt");
         }
 
         @TestMetadata("nonBlock4.kt")
         public void testNonBlock4() throws Exception {
-            runTest("idea/testData/intentions/swapIfStatements/nonBlock4.kt");
+            runTest("idea/testData/intentions/swapIfBranches/nonBlock4.kt");
         }
 
         @TestMetadata("nonBlock5.kt")
         public void testNonBlock5() throws Exception {
-            runTest("idea/testData/intentions/swapIfStatements/nonBlock5.kt");
+            runTest("idea/testData/intentions/swapIfBranches/nonBlock5.kt");
         }
     }
 

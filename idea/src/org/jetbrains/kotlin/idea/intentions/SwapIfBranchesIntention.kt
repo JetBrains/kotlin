@@ -9,9 +9,9 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.*
 
-class SwapIfStatementsIntention : SelfTargetingIntention<KtIfExpression>(
+class SwapIfBranchesIntention : SelfTargetingIntention<KtIfExpression>(
     KtIfExpression::class.java,
-    KotlinBundle.lazyMessage("flip.if.statements")
+    KotlinBundle.lazyMessage("swap.then.else.branches")
 ) {
     override fun isApplicableTo(element: KtIfExpression, caretOffset: Int): Boolean {
         return element.ifKeyword.textRange.containsOffset(caretOffset)
