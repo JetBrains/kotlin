@@ -16,7 +16,6 @@ import com.intellij.codeInspection.ex.EntryPointsManagerBase
 import com.intellij.codeInspection.ex.EntryPointsManagerImpl
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
@@ -62,12 +61,10 @@ import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOpt
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
 import org.jetbrains.kotlin.idea.search.isCheapEnoughToSearchConsideringOperators
 import org.jetbrains.kotlin.idea.search.projectScope
-import org.jetbrains.kotlin.idea.search.usagesSearch.getAccessorNames
 import org.jetbrains.kotlin.idea.search.usagesSearch.getClassNameForCompanionObject
 import org.jetbrains.kotlin.idea.search.usagesSearch.isDataClassProperty
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
 import org.jetbrains.kotlin.idea.util.hasActualsFor
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -91,10 +88,6 @@ import javax.swing.JPanel
 
 class UnusedSymbolInspection : AbstractKotlinInspection() {
     companion object {
-        private val log = Logger.getInstance(
-            UnusedSymbolInspection::class.java
-        )
-
         private val javaInspection = UnusedDeclarationInspection()
 
         private val KOTLIN_ADDITIONAL_ANNOTATIONS = listOf("kotlin.test.*", "kotlin.js.JsExport")
@@ -118,7 +111,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             // that is not an actual entry point from Java language point of view
             if (declaration.isMainFunction()) return true
 
-            val lightElement: PsiElement? = when (declaration) {
+            val lightElement: PsiElement = when (declaration) {
                 is KtClassOrObject -> declaration.toLightClass()
                 is KtNamedFunction, is KtSecondaryConstructor -> LightClassUtil.getLightClassMethod(declaration as KtFunction)
                 is KtProperty, is KtParameter -> {
@@ -131,9 +124,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
                     )
                 }
                 else -> return false
-            }
-
-            if (lightElement == null) return false
+            } ?: return false
 
             if (isCheapEnough.value == TOO_MANY_OCCURRENCES) return false
 
@@ -155,7 +146,9 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             val useScope = psiSearchHelper.getUseScope(declaration)
             if (useScope is GlobalSearchScope) {
                 var zeroOccurrences = true
-                for (name in listOf(declaration.name) + declarationAccessorNames(declaration) + listOfNotNull(declaration.getClassNameForCompanionObject())) {
+                val list = listOf(declaration.name) + declarationAccessorNames(declaration) +
+                        listOfNotNull(declaration.getClassNameForCompanionObject())
+                for (name in list) {
                     if (name == null) continue
                     when (psiSearchHelper.isCheapEnoughToSearchConsideringOperators(name, useScope, null, null)) {
                         ZERO_OCCURRENCES -> {
@@ -170,23 +163,21 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             return FEW_OCCURRENCES
         }
 
-        fun declarationAccessorNames(declaration: KtNamedDeclaration): List<String> {
-            val accessors =
-                when (declaration) {
-                    is KtProperty -> listOfPropertyAccessorNames(declaration)
-                    is KtParameter -> listOfParameterAccessorNames(declaration)
-                    else -> emptyList()
-                }
-            if (log.isDebugEnabled && !isUnitTestMode()) {
-                val resolverAccessors = declaration.getAccessorNames()
-                if (accessors != resolverAccessors)
-                    log.error(
-                        "Accessor names for declaration ${declaration.text} differs: " +
-                                "$accessors vs $resolverAccessors in ${declaration.containingFile.name}"
-                    )
+        /**
+         * returns list of declaration accessor names e.g. pair of getter/setter for property declaration
+         *
+         * note: could be more than declaration.getAccessorNames()
+         * as declaration.getAccessorNames() relies on LightClasses and therefore some of them could be not available
+         * (as not accessible outside of class)
+         *
+         * e.g.: private setter w/o body is not visible outside of class and could not be used
+         */
+        private fun declarationAccessorNames(declaration: KtNamedDeclaration): List<String> =
+            when (declaration) {
+                is KtProperty -> listOfPropertyAccessorNames(declaration)
+                is KtParameter -> listOfParameterAccessorNames(declaration)
+                else -> emptyList()
             }
-            return accessors
-        }
 
         fun listOfParameterAccessorNames(parameter: KtParameter): List<String> {
             val accessors = mutableListOf<String>()
@@ -332,7 +323,11 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
         return hasNonTrivialUsages(declaration, isCheapEnough, descriptor)
     }
 
-    private fun hasNonTrivialUsages(declaration: KtNamedDeclaration, enoughToSearchUsages: Lazy<SearchCostResult>, descriptor: DeclarationDescriptor? = null): Boolean {
+    private fun hasNonTrivialUsages(
+        declaration: KtNamedDeclaration,
+        enoughToSearchUsages: Lazy<SearchCostResult>,
+        descriptor: DeclarationDescriptor? = null
+    ): Boolean {
         val project = declaration.project
         val psiSearchHelper = PsiSearchHelper.getInstance(project)
 
