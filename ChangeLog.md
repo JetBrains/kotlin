@@ -1,5 +1,363 @@
 # CHANGELOG
 
+## 1.4.10
+
+### Compiler
+
+#### Performance Improvements
+
+- [`KT-41149`](https://youtrack.jetbrains.com/issue/KT-41149) NI: Upgraded project from 1.3.72 to 1.4.0 hangs during build
+- [`KT-41335`](https://youtrack.jetbrains.com/issue/KT-41335) Kotlin Out of Memory When evaluating expression
+- [`KT-41400`](https://youtrack.jetbrains.com/issue/KT-41400) NI: Huge performance regression for kotlin compiler from 1.3.72 to 1.4.0 due to using list of dozen lambdas in a call
+
+#### Fixes
+
+- [`KT-41005`](https://youtrack.jetbrains.com/issue/KT-41005) Coercion to Unit doesn't take into account nullability of a return type for lambda
+- [`KT-41043`](https://youtrack.jetbrains.com/issue/KT-41043) NI: StackOverflowError through `PostponedArgumentInputTypesResolver.getAllDeeplyRelatedTypeVariables`
+- [`KT-41135`](https://youtrack.jetbrains.com/issue/KT-41135) Type Inference Regression For Property Delegate With Receiver Type
+- [`KT-41140`](https://youtrack.jetbrains.com/issue/KT-41140) Unresolved reference to parameter of a catch block from lambda expression on 1.4.0
+- [`KT-41150`](https://youtrack.jetbrains.com/issue/KT-41150) IllegalStateException: Couldn't obtain compiled function body for public final inline fun
+- [`KT-41164`](https://youtrack.jetbrains.com/issue/KT-41164) NI: "IllegalStateException: Error type encountered" with callbackFlow builder inside condition
+- [`KT-41202`](https://youtrack.jetbrains.com/issue/KT-41202) Type inference fails in 1.4.0
+- [`KT-41218`](https://youtrack.jetbrains.com/issue/KT-41218) HMPP: arrayList declarations are visible both from stdlib-common and stdlib-jvm and lead to false-positive resolution ambiguity in IDE
+- [`KT-41308`](https://youtrack.jetbrains.com/issue/KT-41308) 1.4.0 Type inference regression in suspend blocks with elvis operator expressions
+- [`KT-41357`](https://youtrack.jetbrains.com/issue/KT-41357) ClassCastException for unstable smart cast on a property call receiver
+- [`KT-41386`](https://youtrack.jetbrains.com/issue/KT-41386) NI: Type mismatch with generic type parameters
+- [`KT-41426`](https://youtrack.jetbrains.com/issue/KT-41426) Operator compareTo is not called with nullable type
+- [`KT-41430`](https://youtrack.jetbrains.com/issue/KT-41430) Broken choosing overload by lambda return type inside builder inference
+- [`KT-41470`](https://youtrack.jetbrains.com/issue/KT-41470) Wrong nullability assertion is generated when using the BuilderInference annotation
+- [`KT-41482`](https://youtrack.jetbrains.com/issue/KT-41482) Add a fallback compiler flag to disable the unified null checks behavior
+
+### IDE
+
+- [`KT-41325`](https://youtrack.jetbrains.com/issue/KT-41325) SOE in IDEKotlinAsJavaSupport
+- [`KT-41390`](https://youtrack.jetbrains.com/issue/KT-41390) Typo: equals & hashCode are written with the first uppercase letter
+
+### IDE. Code Style, Formatting
+
+- [`KT-41314`](https://youtrack.jetbrains.com/issue/KT-41314) Formatter: Frequent freezes when reformatting code (TrailingCommaPostFormatProcessor)
+
+### IDE. Debugger
+
+- [`KT-40417`](https://youtrack.jetbrains.com/issue/KT-40417) Coroutines Debugger: “No coroutine information found” in case of main() entry-point without explicit debug-artifact
+
+### IDE. Gradle. Script
+
+- [`KT-39542`](https://youtrack.jetbrains.com/issue/KT-39542) EA-218043: java.util.NoSuchElementException: No element of given type found (GradleBuildRootsManager)
+- [`KT-41283`](https://youtrack.jetbrains.com/issue/KT-41283) Gradle scripts unable to support 1.4 language level features yet
+
+### IDE. Inspections and Intentions
+
+- [`KT-41264`](https://youtrack.jetbrains.com/issue/KT-41264) Disable “Redundant inner modifier” in 1.4.10
+- [`KT-41395`](https://youtrack.jetbrains.com/issue/KT-41395) Inspection description misses a space (needs to be lowercase)
+
+### IDE. REPL
+
+- [`KT-40898`](https://youtrack.jetbrains.com/issue/KT-40898) REPL: "IllegalAccessError: tried to access field" caused by log4j
+
+### IDE. Wizards
+
+- [`KT-38921`](https://youtrack.jetbrains.com/issue/KT-38921) New project wizard: Backend/Console applications template with Groovy DSL generates build.gradle with KotlinCompile instead of compileKotlin
+
+### JavaScript
+
+- [`KT-38059`](https://youtrack.jetbrains.com/issue/KT-38059) Support arrays passed as named arguments to varargs
+- [`KT-40964`](https://youtrack.jetbrains.com/issue/KT-40964) KJS / IR: don't generate "import" (short names) for external interfaces
+- [`KT-41081`](https://youtrack.jetbrains.com/issue/KT-41081) KJS IR: nativeGetter, nativeSetter, nativeInvoke are not supported
+
+### Libraries
+
+- [`KT-41320`](https://youtrack.jetbrains.com/issue/KT-41320) Actual  kotlin.test annotation typealiases are inaccessible in modular environment
+
+### Middle-end. IR
+
+- [`KT-41324`](https://youtrack.jetbrains.com/issue/KT-41324) IR: "Compilation failed: null" caused by StackOverflowError in compiler in multi-module project
+
+### Native. C and ObjC Import
+
+- [`KT-39762`](https://youtrack.jetbrains.com/issue/KT-39762) cinterop on 1.4-M2 doesn't include @Deprecated Kotlin declaration for C declaration it fails to import
+
+### Native. ObjC Export
+
+- [`KT-39206`](https://youtrack.jetbrains.com/issue/KT-39206) New line characters in @Deprecated annotation cause syntax error in Kotlin/native exported header
+- [`KT-40976`](https://youtrack.jetbrains.com/issue/KT-40976) "Unrecognized selector sent to instance" exception invoking suspending lambda from Swift in Native iOS project
+
+### Reflection
+
+- [`KT-40842`](https://youtrack.jetbrains.com/issue/KT-40842) "AssertionError: Built-in class kotlin.Any is not found" on java modular run
+
+### Tools. Compiler Plugins
+
+- [`KT-41321`](https://youtrack.jetbrains.com/issue/KT-41321) Upgrading to 1.4.0 fails compiling native with <x> is not bound error
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-41083`](https://youtrack.jetbrains.com/issue/KT-41083) Transitive dependency on an MPP with host-specific source sets fails to resolve: "Couldn't resolve metadata artifact..."
+
+### Tools. Gradle. Native
+
+- [`KT-40834`](https://youtrack.jetbrains.com/issue/KT-40834) Cannot build Kotlin Multiplatform project on Windows 10 64-bit when the Cocoapods plugin is applied
+
+### Tools. Scripts
+
+- [`KT-35925`](https://youtrack.jetbrains.com/issue/KT-35925) REPL: Springboot autoconfiguration problem (META-INF/spring.factories not found ?)
+
+### Tools. kapt
+
+- [`KT-41313`](https://youtrack.jetbrains.com/issue/KT-41313) kapt 1.4.0 throws "ZipException: zip END header not found", when Graal SVM jar in classpath
+
+
+## 1.4.0
+
+### Compiler
+
+#### New Features
+
+- [`KT-23729`](https://youtrack.jetbrains.com/issue/KT-23729) Provide a way to generate JVM default method bodies in interfaces delegating to DefaultImpls
+- [`KT-30330`](https://youtrack.jetbrains.com/issue/KT-30330) Introduce KotlinNothingValueException and throw it instead of NPE on expressions of type Nothing
+- [`KT-38435`](https://youtrack.jetbrains.com/issue/KT-38435) Support suspend conversion on callable references in JVM backend
+
+#### Fixes
+
+- [`KT-35483`](https://youtrack.jetbrains.com/issue/KT-35483) NI: compatibility mode
+- [`KT-39728`](https://youtrack.jetbrains.com/issue/KT-39728) Declarations from `kotlin.reflect` resolved to expect-classes even in JVM modules in IDE
+- [`KT-40153`](https://youtrack.jetbrains.com/issue/KT-40153) REPL IDE services completion fails on imports completion
+- [`KT-40404`](https://youtrack.jetbrains.com/issue/KT-40404) Mixed named/positional arguments: argument can be passed twice
+- [`KT-40544`](https://youtrack.jetbrains.com/issue/KT-40544) NI: "TYPE_MISMATCH: Required: MutableList<out T!> Found: List<T>" caused by Java interface function
+- [`KT-40555`](https://youtrack.jetbrains.com/issue/KT-40555) NI: Spread operator allows inferred nullable types
+- [`KT-40646`](https://youtrack.jetbrains.com/issue/KT-40646) NI: TYPE_MISMATCH: "inferred type is Unit but Observer<T> was expected" caused by LieData.observe inference
+- [`KT-40691`](https://youtrack.jetbrains.com/issue/KT-40691) False positive CAPTURED_VAL_INITIALIZATION with EXACTLY_ONCE contract
+- [`KT-40693`](https://youtrack.jetbrains.com/issue/KT-40693) UnsupportedOperationException: no descriptor for type constructor of (CapturedType(out TResult)..CapturedType(out TResult)?)
+- [`KT-40824`](https://youtrack.jetbrains.com/issue/KT-40824) Usages of a typealias lose nullability and annotations in deserialization
+- [`KT-40843`](https://youtrack.jetbrains.com/issue/KT-40843) Unhandled exception for suspending methods that return Result type
+- [`KT-40869`](https://youtrack.jetbrains.com/issue/KT-40869) Recursion computation inside compiler resolve on a correct code
+- [`KT-40893`](https://youtrack.jetbrains.com/issue/KT-40893) Error "Captured values initialization is forbidden due to possible reassignment" when attempting to use the plusAssign operator with a java list inside an inline function
+- [`KT-40919`](https://youtrack.jetbrains.com/issue/KT-40919) kotlin.collections.ArrayDeque requires an explicit import when compiling with kotlinc 1.4-RC and -language-version 1.3
+- [`KT-40920`](https://youtrack.jetbrains.com/issue/KT-40920) Regression in JvmDefault: incorrect access to missing DefaultImpls on default methods in Java interface overriding Kotlin interface
+- [`KT-40978`](https://youtrack.jetbrains.com/issue/KT-40978) Prohibit using suspend functions as SAM in fun interfaces
+
+### Docs & Examples
+
+- [`KT-35218`](https://youtrack.jetbrains.com/issue/KT-35218) Fix misleading in JavaDoc for `createTempDir`/`createTempFile`
+- [`KT-36981`](https://youtrack.jetbrains.com/issue/KT-36981) Provide a visual illustration of source sets structure generated by `ios()`, `watchos()`, `tvos()` presets
+- [`KT-38050`](https://youtrack.jetbrains.com/issue/KT-38050) Language Guide: MPP reference: add sample of language settings for all roots instead of common root only
+
+### IDE
+
+- [`KT-30265`](https://youtrack.jetbrains.com/issue/KT-30265) IDE, MPP: False negative TYPE_PARAMETER_AS_REIFIED in common code
+- [`KT-40494`](https://youtrack.jetbrains.com/issue/KT-40494) UAST: "NoSuchElementException: No element of given type found" with use-site target annotation
+- [`KT-40639`](https://youtrack.jetbrains.com/issue/KT-40639) Shift IDE plugins updater numbers for Kotlin plugin
+
+### IDE. Code Style, Formatting
+
+- [`KT-40636`](https://youtrack.jetbrains.com/issue/KT-40636) Hard freeze on formatter: infinite recursion
+
+### IDE. Gradle Integration
+
+- [`KT-30116`](https://youtrack.jetbrains.com/issue/KT-30116) IDE: Unresolved reference in MPP module (androidMain source set) for annotation from common module (defined in commonMain and with JVM target)
+
+### IDE. Gradle. Script
+
+- [`KT-34552`](https://youtrack.jetbrains.com/issue/KT-34552) Deadlock in ScriptDefinitionsManager
+- [`KT-40675`](https://youtrack.jetbrains.com/issue/KT-40675) Gradle build file is not highlighted until navigating to symbol
+
+### IDE. JS
+
+- [`KT-40461`](https://youtrack.jetbrains.com/issue/KT-40461) Create new projects with kotlin.js.generate.executable.default=false
+
+### IDE. Script
+
+- [`KT-39547`](https://youtrack.jetbrains.com/issue/KT-39547) Kotlin script support freezes IDEA
+- [`KT-40242`](https://youtrack.jetbrains.com/issue/KT-40242) gradle.kts: Deadlock in ScriptClassRootsUpdater
+
+### IDE. Wizards
+
+- [`KT-36153`](https://youtrack.jetbrains.com/issue/KT-36153) New Project Wizard: provide more referential info on project structure editor screen
+- [`KT-39904`](https://youtrack.jetbrains.com/issue/KT-39904) New Project wizard 1.4: update Frontend Application to make it run with JS IR
+- [`KT-40149`](https://youtrack.jetbrains.com/issue/KT-40149) Gradle project wizard: templates for Kotlin/JS are not properly formatted
+
+### JavaScript
+
+- [`KT-25859`](https://youtrack.jetbrains.com/issue/KT-25859) JS: support function references to functions with vararg if expected type ends with repeated vararg element type
+- [`KT-40083`](https://youtrack.jetbrains.com/issue/KT-40083) K/JS-IR: java.lang.IllegalStateException: has not acquired a symbol yet
+- [`KT-40892`](https://youtrack.jetbrains.com/issue/KT-40892) KJS, IR: Unresolved references on importing classes from kotlinx-nodejs
+
+### Libraries
+
+- [`KT-39051`](https://youtrack.jetbrains.com/issue/KT-39051) Libraries native artifacts are published without sources
+
+### Tools. Gradle
+
+- [`KT-27816`](https://youtrack.jetbrains.com/issue/KT-27816) Provide a possibility to specify intermediate source sets between platform-agnostic and platform-specific test source sets
+- [`KT-37720`](https://youtrack.jetbrains.com/issue/KT-37720) Replace ArtifactTransform with TransformAction
+- [`KT-40559`](https://youtrack.jetbrains.com/issue/KT-40559) Adding the stdlib by default triggers warning in the Android Gradle Plugin
+
+### Tools. Gradle. JS
+
+- [`KT-40093`](https://youtrack.jetbrains.com/issue/KT-40093) Incorrect updating version of Kotlin/JS dependencies in package.json
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-27320`](https://youtrack.jetbrains.com/issue/KT-27320) Provide a way to reuse same sources for similar Native target
+- [`KT-40058`](https://youtrack.jetbrains.com/issue/KT-40058) NPE from mpp gradle plugin on kotlinx.benchmarks
+
+### Tools. Gradle. Native
+
+- [`KT-40801`](https://youtrack.jetbrains.com/issue/KT-40801) Gradle CocoaPods integration: Cannot change a framework name
+
+
+## 1.4-RC
+
+### Backend. Native
+
+- [`KT-40209`](https://youtrack.jetbrains.com/issue/KT-40209) java.lang.UnsupportedOperationException: org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl@76484173
+- [`KT-40367`](https://youtrack.jetbrains.com/issue/KT-40367) Kotlin/Native-Swift interop (iOS): Array member initialization failing in release builds
+
+### Compiler
+
+#### Fixes
+
+- [`KT-31025`](https://youtrack.jetbrains.com/issue/KT-31025) Type mismatch when callable reference is resolved with a functional expected type and SAM conversion
+- [`KT-37388`](https://youtrack.jetbrains.com/issue/KT-37388) Consider relaxing rules about inferring Nothing inside special constructions (if, try, when)
+- [`KT-37717`](https://youtrack.jetbrains.com/issue/KT-37717) NI: "IllegalStateException: Error type encountered" with @BuilderInference
+- [`KT-38427`](https://youtrack.jetbrains.com/issue/KT-38427) New inference in branched conditions (if, when) results in odd behavior with inconsistent compiler warnings and runtime errors
+- [`KT-38899`](https://youtrack.jetbrains.com/issue/KT-38899) NI: False positive IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION leads to NPE
+- [`KT-39468`](https://youtrack.jetbrains.com/issue/KT-39468) NI: overload resolution ambiguity between functions passing `T` and `Foo<T>` with a contravariant receiver
+- [`KT-39618`](https://youtrack.jetbrains.com/issue/KT-39618) NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER: unable to infer generic type on @BuilderInference annotated lambda parameter with receiver type
+- [`KT-39633`](https://youtrack.jetbrains.com/issue/KT-39633) NI: Incorrect type parameter instantiation based on contravariant type argument
+- [`KT-39691`](https://youtrack.jetbrains.com/issue/KT-39691) NI: Missing SAM conversion for nullable lambda
+- [`KT-39860`](https://youtrack.jetbrains.com/issue/KT-39860) Make Kotlin binaries publicly available (set KotlinCompilerVersion.IS_PRE_RELEASE = false)
+- [`KT-39900`](https://youtrack.jetbrains.com/issue/KT-39900) NI: Incorrect type inference in a lambda returning Unit
+- [`KT-39925`](https://youtrack.jetbrains.com/issue/KT-39925) New JVM default compilation mode doesn't check that JVM target is 1.8
+- [`KT-39943`](https://youtrack.jetbrains.com/issue/KT-39943) Write information about all-compatibility mode in metadata
+- [`KT-39953`](https://youtrack.jetbrains.com/issue/KT-39953) NI: ClassCastException "cannot be cast to java.lang.Void" with if-else in return statement in ANdroid project
+- [`KT-40045`](https://youtrack.jetbrains.com/issue/KT-40045) NI: lambda’s receiver type isn't inferred properly
+- [`KT-40057`](https://youtrack.jetbrains.com/issue/KT-40057) NI: provideDelegate org.jetbrains.kotlin.codegen.CompilationException: Back-end (JVM) Internal error: wrong bytecode generated for static initializer
+- [`KT-40060`](https://youtrack.jetbrains.com/issue/KT-40060) NI: postponed variable from the builder inference flows to back-end and leads to throw an exception
+- [`KT-40112`](https://youtrack.jetbrains.com/issue/KT-40112) Kotlin Gradle DSL: COMPATIBILITY_WARNING on `kotlin.sourceSets` block
+- [`KT-40113`](https://youtrack.jetbrains.com/issue/KT-40113) Kotlin Gradle DSL: "Expression 'main' cannot be invoked as a function" for `distributions.main` DSL block
+- [`KT-40128`](https://youtrack.jetbrains.com/issue/KT-40128) Introduce compiler key to disable compatibility resolution mechanism for new inference features
+- [`KT-40151`](https://youtrack.jetbrains.com/issue/KT-40151) NI: postponed variable isn't substituted for top-level CR inside builder inference
+- [`KT-40214`](https://youtrack.jetbrains.com/issue/KT-40214) AbstractMethodError in gradle subplugin which is used in Android app
+- [`KT-40234`](https://youtrack.jetbrains.com/issue/KT-40234) Deprecation level "hidden" has no effect on callable reference argument
+- [`KT-40247`](https://youtrack.jetbrains.com/issue/KT-40247) NI: false positive "function should be called from coroutine or another suspend function" for suspend invoke operator in try-catch
+- [`KT-40254`](https://youtrack.jetbrains.com/issue/KT-40254) Rewrite at slice with two callable reference arguments
+- [`KT-40269`](https://youtrack.jetbrains.com/issue/KT-40269) NI: "disabled Unit conversions" error has appeared on green code
+- [`KT-40337`](https://youtrack.jetbrains.com/issue/KT-40337) NI: false positive "function should be called from coroutine or another suspend function" for suspend invoke operator in `when` block
+- [`KT-40406`](https://youtrack.jetbrains.com/issue/KT-40406) Prohibit reflection on adapted callable references
+
+### IDE
+
+- [`KT-39968`](https://youtrack.jetbrains.com/issue/KT-39968) Paths in KotlinJavaRuntime library aren't updated after you run IDE from a different directory
+- [`KT-39989`](https://youtrack.jetbrains.com/issue/KT-39989) NullPointerException when opening Kotlin facets in Project Structure dialog in IDEA 192
+- [`KT-40311`](https://youtrack.jetbrains.com/issue/KT-40311) Create change_notes for 1.4 in IDE plugin description
+
+### IDE. Debugger
+
+- [`KT-39808`](https://youtrack.jetbrains.com/issue/KT-39808) (CoroutineDebugger) Doesn't start with kotlinx-coroutines-core >= 1.3.6
+- [`KT-40073`](https://youtrack.jetbrains.com/issue/KT-40073) (CoroutineDebugger) Change minimum supported kotlinx.coroutines version to 1.3.8*
+- [`KT-40172`](https://youtrack.jetbrains.com/issue/KT-40172) Restored frame variables isn't shown for suspended coroutines
+- [`KT-40635`](https://youtrack.jetbrains.com/issue/KT-40635) Coroutines Debugger: make IDE plugin accept coroutines 1.3.8-rc* versions as well
+
+### IDE. Gradle Integration
+
+- [`KT-38744`](https://youtrack.jetbrains.com/issue/KT-38744) No dependency between Android `test` and commonTest source sets with kotlin.mpp.enableGranularSourceSetsMetadata=true
+- [`KT-39037`](https://youtrack.jetbrains.com/issue/KT-39037) 'None of the consumable configurations have attributes' in MPP IDE import with transitive project dependency on self
+
+### IDE. Gradle. Script
+
+- [`KT-31137`](https://youtrack.jetbrains.com/issue/KT-31137) IntelliJ would get very slow when editing gradle buildSrc(using the kotlin dsl)
+- [`KT-36078`](https://youtrack.jetbrains.com/issue/KT-36078) Gradle Kotlin script context is not reloaded when gradle/wrapper/gradle-wrapper.properties file is changed
+- [`KT-39317`](https://youtrack.jetbrains.com/issue/KT-39317) ISE “Calling invokeAndWait from read-action leads to possible deadlock.” on importing simple Gradle-based project in nightly IJ
+
+### IDE. Inspections and Intentions
+
+- [`KT-28662`](https://youtrack.jetbrains.com/issue/KT-28662) Inspection to flag usage of the wrong Transient annotation on Kotlin Serializable class
+- [`KT-34209`](https://youtrack.jetbrains.com/issue/KT-34209) Switch default behaviour in 1.4 for insertion (to build script) via quick fix of the compiler option enabling inline classes
+- [`KT-36131`](https://youtrack.jetbrains.com/issue/KT-36131) Suggest to add a missing module dependency on an unresolved reference in Kotlin code
+- [`KT-37462`](https://youtrack.jetbrains.com/issue/KT-37462) Add "Add dependency to module" quickfix in multimodule Maven project
+- [`KT-39869`](https://youtrack.jetbrains.com/issue/KT-39869) Add whole project migration usages of kotlin.browser.* & kotlin.dom.* to kotlinx.browser.* & kotlinx.dom.* respectively
+
+### IDE. Wizards
+
+- [`KT-40004`](https://youtrack.jetbrains.com/issue/KT-40004) New Project wizard 1.4+: no `https://dl.bintray.com/kotlin/kotlinx` repository is added for kotlinx-html
+- [`KT-40037`](https://youtrack.jetbrains.com/issue/KT-40037) New Project wizard: update Ktor version
+- [`KT-40092`](https://youtrack.jetbrains.com/issue/KT-40092) Wizard: the templates panel on mac OS is too wide
+- [`KT-40232`](https://youtrack.jetbrains.com/issue/KT-40232) New Wizard: Android Sdk path doesn't have backslash escaping on Windows
+- [`KT-40371`](https://youtrack.jetbrains.com/issue/KT-40371) New Project Wizard: Frontend Application / Library results in broken run configuration
+- [`KT-40377`](https://youtrack.jetbrains.com/issue/KT-40377) New Project Wizard: Frontend Application defines NPM dependencies that are unnecessary with Kotlin 1.4-RC+
+- [`KT-40378`](https://youtrack.jetbrains.com/issue/KT-40378) New Project Wizard: Frontend Application, Disabling JavaScript test framework has no effect
+- [`KT-40407`](https://youtrack.jetbrains.com/issue/KT-40407) Wizard: do not add stdlib by default for Gradle projects in wizard
+
+### JS. Tools
+
+- [`KT-39984`](https://youtrack.jetbrains.com/issue/KT-39984) Update dukat version in toolchain near to release of 1.4-RC
+
+### JavaScript
+
+- [`KT-32186`](https://youtrack.jetbrains.com/issue/KT-32186) Make sure K/JS Reflection API documentation is correct and fix it.
+- [`KT-37563`](https://youtrack.jetbrains.com/issue/KT-37563) K/JS: stacktrace is not captured for exceptions without primary constructor inherited from Exception/Error
+- [`KT-37752`](https://youtrack.jetbrains.com/issue/KT-37752) Generated typescript incorrect for constructors of derived classes
+- [`KT-37883`](https://youtrack.jetbrains.com/issue/KT-37883) KJS: Generated TypeScript uses 'declare' rather than 'export'
+- [`KT-38771`](https://youtrack.jetbrains.com/issue/KT-38771) JS: support non-reified type parameters in typeOf
+- [`KT-39873`](https://youtrack.jetbrains.com/issue/KT-39873) Update Kotlin JavaScript wrappers due to NON_EXPORTABLE_TYPE diagnostic introduction
+- [`KT-40126`](https://youtrack.jetbrains.com/issue/KT-40126) [JS / IR] NPE while compiling interfaces with invoke which is passed as a delegate
+- [`KT-40216`](https://youtrack.jetbrains.com/issue/KT-40216) KJS / IR:  AssertionError caused by an anonymous object in the dependency project
+
+### Libraries
+
+- [`KT-33069`](https://youtrack.jetbrains.com/issue/KT-33069) StringBuilder common functions
+- [`KT-35972`](https://youtrack.jetbrains.com/issue/KT-35972) Add contract to builder functions
+- [`KT-37101`](https://youtrack.jetbrains.com/issue/KT-37101) Mark following api with DeprecatedSinceKotlin("1.4")
+- [`KT-38360`](https://youtrack.jetbrains.com/issue/KT-38360) Make sure that JB libraries correctly define their npm deps and republish them (after KT-30619)
+- [`KT-38817`](https://youtrack.jetbrains.com/issue/KT-38817) 'capitalize' should convert digraphs to title case
+- [`KT-40168`](https://youtrack.jetbrains.com/issue/KT-40168) Remove StringBuilder.capacity from common and JS parts
+
+### Middle-end. IR
+
+- [`KT-40520`](https://youtrack.jetbrains.com/issue/KT-40520) Assert during fake-override generation
+
+### Tools. Commonizer
+
+- [`KT-40199`](https://youtrack.jetbrains.com/issue/KT-40199) Commonizer loses nullability of abbreviated types
+
+### Tools. Compiler Plugins
+
+- [`KT-40036`](https://youtrack.jetbrains.com/issue/KT-40036) Add diagnostic that shows is serialization plugin compatible with serialization-runtime
+
+### Tools. Gradle
+
+- [`KT-39755`](https://youtrack.jetbrains.com/issue/KT-39755) [KJS / Gradle / Legacy mode] Directory with whitespace is not processed
+- [`KT-39809`](https://youtrack.jetbrains.com/issue/KT-39809) Kotlin Gradle plugin: ServiceConfigurationError: org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin: Provider org.jetbrains.kotlin.gradle.internal.AndroidSubplugin not a subtype
+- [`KT-39977`](https://youtrack.jetbrains.com/issue/KT-39977) Collect statistics of used -Xjvm-default options
+- [`KT-40300`](https://youtrack.jetbrains.com/issue/KT-40300) Fail the build if in MPP plugin no targets configured
+
+### Tools. Gradle. JS
+
+- [`KT-38170`](https://youtrack.jetbrains.com/issue/KT-38170) Investigate how to improve migration experience from pre 1.4.0 DSL to the new one
+- [`KT-39654`](https://youtrack.jetbrains.com/issue/KT-39654) Default CSS settings in webpack has priority over user's settings
+- [`KT-39842`](https://youtrack.jetbrains.com/issue/KT-39842) Kotlin/JS Gradle DSL: peerNpm dependency fails
+- [`KT-40048`](https://youtrack.jetbrains.com/issue/KT-40048) [Gradle, JS] Deprecate kotlin-frontend plugin
+- [`KT-40067`](https://youtrack.jetbrains.com/issue/KT-40067) [Gradle, JS] Public package.json for mixed JS/TS project
+- [`KT-40210`](https://youtrack.jetbrains.com/issue/KT-40210) Fail the build when Kotlin/JS target is not (properly) configured
+- [`KT-40320`](https://youtrack.jetbrains.com/issue/KT-40320) Gradle JS: make migration to the new Gradle DSL smoother
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-32239`](https://youtrack.jetbrains.com/issue/KT-32239) Custom configurations inside Kotlin JVM Gradle projects can't properly resolve multiplatform dependencies
+- [`KT-39897`](https://youtrack.jetbrains.com/issue/KT-39897) [Commonizer] Fast-pass for library fragments absent for some targets
+
+### Tools. J2K
+
+- [`KT-39739`](https://youtrack.jetbrains.com/issue/KT-39739) J2K: Access is allowed from event dispatch thread with IW lock only
+
+### Tools. kapt
+
+- [`KT-34604`](https://youtrack.jetbrains.com/issue/KT-34604) KAPT: Flaky NPE through `org.jetbrains.kotlin.kapt3.base.ProcessorLoader.doLoadProcessors`
+- [`KT-36302`](https://youtrack.jetbrains.com/issue/KT-36302) TypeTreeVisitor.visitMemberSelect IllegalStateException: node.sym must not be null on JDK 11
+- [`KT-39876`](https://youtrack.jetbrains.com/issue/KT-39876) KAPT: Serialization of classpath structure is incorrect if there are dependencies between types in jar/dir
+
+
 ## 1.4-M3
 
 ### Compiler
