@@ -415,6 +415,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         public void testHasSameNameParameter() throws Exception {
             runTest("idea/testData/quickfix/addConstructorParameterFromSuperTypeCall/hasSameNameParameter.kt");
         }
+
+        @TestMetadata("typeParameter.kt")
+        public void testTypeParameter() throws Exception {
+            runTest("idea/testData/quickfix/addConstructorParameterFromSuperTypeCall/typeParameter.kt");
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/addCrossinline")
