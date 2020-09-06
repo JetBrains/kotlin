@@ -2,7 +2,6 @@ package org.jetbrains.uast.test.kotlin
 
 import com.intellij.openapi.util.Conditions
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiRecursiveElementVisitor
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.util.PairProcessor
@@ -17,7 +16,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 import org.jetbrains.uast.UAnchorOwner
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UFile
-import org.jetbrains.uast.kotlin.KOTLIN_CACHED_UELEMENT_KEY
 import org.jetbrains.uast.kotlin.KotlinUastLanguagePlugin
 import org.jetbrains.uast.sourcePsiElement
 import org.jetbrains.uast.test.common.kotlin.RenderLogTestBase
@@ -79,8 +77,6 @@ interface AbstractKotlinRenderLogTest : RenderLogTestBase {
                 parentStack.pop()
             }
         })
-
-        file.psi.clearUastCaches()
 
         file.psi.accept(object : PsiRecursiveElementVisitor() {
             override fun visitElement(element: PsiElement) {
@@ -161,11 +157,3 @@ fun checkDescriptorsLeak(node: UElement) {
         })
 }
 
-private fun PsiFile.clearUastCaches() {
-    accept(object : PsiRecursiveElementVisitor() {
-        override fun visitElement(element: PsiElement) {
-            super.visitElement(element)
-            element.putUserData(KOTLIN_CACHED_UELEMENT_KEY, null)
-        }
-    })
-}

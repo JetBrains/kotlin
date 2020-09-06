@@ -20,6 +20,7 @@ import com.intellij.lang.Language
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.registry.Registry
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiEnumConstant
 import com.intellij.psi.PsiFile
@@ -275,6 +276,7 @@ internal object KotlinConverter {
                         ?: KotlinUFunctionCallExpression(element, givenParent)
                 }
             is KtImportDirective -> el<UImportStatement>(build(::KotlinUImportStatement))
+            is PsiComment -> el<UComment>(build(::UComment))
             else -> {
                 if (element is LeafPsiElement) {
                     if (element.elementType in identifiersTokens)
@@ -623,23 +625,9 @@ internal object KotlinConverter {
         givenParent: UElement?,
         expectedTypes: Array<out Class<out UElement>>
     ): UElement? {
-        if (element is UElement) return element
-
-
-        //if (element.isValid) {
-        //    element.getUserData(KOTLIN_CACHED_UELEMENT_KEY)?.get()?.let { cachedUElement ->
-        //        return if (expectedTypes.isAssignableFrom(cachedUElement.javaClass)) cachedUElement else null
-        //    }
-        //}
-
-        val uElement = convertDeclaration(element, givenParent, expectedTypes)
+        return if (element is UElement) element
+        else convertDeclaration(element, givenParent, expectedTypes)
             ?: KotlinConverter.convertPsiElement(element, givenParent, expectedTypes)
-        /*
-        if (uElement != null) {
-            element.putUserData(KOTLIN_CACHED_UELEMENT_KEY, WeakReference(uElement))
-        }
-        */
-        return uElement
     }
 
     private fun convertToPropertyAlternatives(
