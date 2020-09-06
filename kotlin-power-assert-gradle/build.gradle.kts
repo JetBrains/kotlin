@@ -3,13 +3,21 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   id("java-gradle-plugin")
   kotlin("jvm")
-
   id("com.gradle.plugin-publish")
+  id("com.github.gmazzo.buildconfig")
 }
 
 dependencies {
   implementation(kotlin("stdlib"))
   implementation(kotlin("gradle-plugin-api"))
+}
+
+buildConfig {
+  val project = project(":kotlin-power-assert-plugin")
+  packageName(project.group.toString())
+  buildConfigField("String", "PLUGIN_GROUP_ID", "\"${project.group}\"")
+  buildConfigField("String", "PLUGIN_ARTIFACT_ID", "\"${project.name}\"")
+  buildConfigField("String", "PLUGIN_VERSION", "\"${project.version}\"")
 }
 
 pluginBundle {

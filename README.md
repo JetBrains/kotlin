@@ -1,6 +1,6 @@
 # kotlin-power-assert
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.bnorm.power/kotlin-power-assert/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.bnorm.power/kotlin-power-assert)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.bnorm.power/kotlin-power-assert-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.bnorm.power/kotlin-power-assert-plugin)
 
 Kotlin Compiler Plugin which high-jacks Kotlin assert function calls and
 transforms them similar to [Groovy's Power Assert feature][groovy-power-assert].
