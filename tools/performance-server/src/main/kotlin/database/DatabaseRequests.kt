@@ -35,11 +35,12 @@ internal fun deleteBuildInfo(agentInfo: String, buildInfoIndex: ElasticSearchInd
 
 // Get infromation about builds details from database.
 internal fun getBuildsDescription(type: String?, branch: String?, agentInfo: String, buildInfoIndex: ElasticSearchIndex,
+                                  buildsCountToShow: Int, beforeDate: String?, afterDate: String?,
                                   onlyNumbers: Boolean = false): Promise<JsonArray> {
     val queryDescription = """
-            {   "size": 10000,
+            {   "size": $buildsCountToShow,
                 ${if (onlyNumbers) """"_source": ["buildNumber"],""" else ""}
-                "sort": {"_id": "desc" },
+                "sort": {"startTime": "desc" },
                 "query": {
                     "bool": {
                         "must": [ 
@@ -51,6 +52,16 @@ internal fun getBuildsDescription(type: String?, branch: String?, agentInfo: Str
                             }
                             """
     } ?: ""} 
+                            ${beforeDate?.let {
+        """,
+                            { "range": { "startTime": { "lt": "$it" } } }
+                            """
+    } ?: ""} 
+                            ${afterDate?.let {
+        """,
+                            { "range": { "startTime": { "gt": "$it" } } }
+                            """
+    } ?: ""}
                             ${branch?.let {
         """,
                             {"match": { "branch": "$it" }}
@@ -61,6 +72,7 @@ internal fun getBuildsDescription(type: String?, branch: String?, agentInfo: Str
                 }
             }
         """.trimIndent()
+
     return buildInfoIndex.search(queryDescription, listOf("hits.hits._source")).then { responseString ->
         val dbResponse = JsonTreeParser.parse(responseString).jsonObject
         dbResponse.getObjectOrNull("hits")?.getArrayOrNull("hits") ?: error("Wrong response:\n$responseString")
@@ -93,14 +105,18 @@ suspend fun buildExists(buildInfo: BuildInfo, buildInfoIndex: ElasticSearchIndex
 }
 
 // Get builds numbers corresponding to machine and branch.
-fun getBuildsNumbers(type: String?, branch: String?, agentInfo: String, buildInfoIndex: ElasticSearchIndex) =
-        getBuildsDescription(type, branch, agentInfo, buildInfoIndex, true).then { responseArray ->
+fun getBuildsNumbers(type: String?, branch: String?, agentInfo: String, buildsCountToShow: Int,
+                     buildInfoIndex: ElasticSearchIndex, beforeDate: String? = null, afterDate: String? = null) =
+        getBuildsDescription(type, branch, agentInfo, buildInfoIndex, buildsCountToShow, beforeDate, afterDate, true)
+                .then { responseArray ->
             responseArray.map { (it as JsonObject).getObject("_source").getPrimitive("buildNumber").content }
         }
 
 // Get full builds information corresponding to machine and branch.
-fun getBuildsInfo(type: String?, branch: String?, agentInfo: String, buildInfoIndex: ElasticSearchIndex) =
-        getBuildsDescription(type, branch, agentInfo, buildInfoIndex).then { responseArray ->
+fun getBuildsInfo(type: String?, branch: String?, agentInfo: String, buildsCountToShow: Int,
+                  buildInfoIndex: ElasticSearchIndex, beforeDate: String? = null,
+                  afterDate: String? = null) =
+        getBuildsDescription(type, branch, agentInfo, buildInfoIndex, buildsCountToShow, beforeDate, afterDate).then { responseArray ->
             responseArray.map { BuildInfo.create((it as JsonObject).getObject("_source")) }
         }
 

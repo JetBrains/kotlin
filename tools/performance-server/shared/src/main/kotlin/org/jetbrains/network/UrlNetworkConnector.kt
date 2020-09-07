@@ -35,6 +35,7 @@ class UrlNetworkConnector(private val host: String, private val port: Int? = nul
                 )
         ).then { response ->
             if (!response.ok) {
+                println(JSON.stringify(response))
                 errorHandler(fullUrl, response)
             } else {
                 response.text()

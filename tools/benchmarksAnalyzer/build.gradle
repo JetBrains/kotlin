@@ -154,6 +154,17 @@ kotlin {
             }
         }
     }
+
+    js {
+        browser {
+            distribution {
+                directory = new File("$projectDir/web/")
+            }
+            dceTask {
+                keep 'benchmarksAnalyzer.main_kand9s$'
+            }
+        }
+    }
 }
 
 def getMingwPath() {

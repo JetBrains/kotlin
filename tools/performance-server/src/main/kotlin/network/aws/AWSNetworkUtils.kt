@@ -39,13 +39,19 @@ external object AWSInstance {
         val handleRequest: dynamic
     }
 
-    class SharedIniFileCredentials(options: Map<String, String>) {
+    interface Credentials
+
+    class SharedIniFileCredentials(options: Map<String, String>): Credentials {
+        val accessKeyId: String
+    }
+
+    class EnvironmentCredentials(envPrefix: String): Credentials {
         val accessKeyId: String
     }
 
     class Signers() {
         class V4(request: HttpRequest, subsystem: String) {
-            fun addAuthorization(credentials: SharedIniFileCredentials, date: Date)
+            fun addAuthorization(credentials: Credentials, date: Date)
         }
     }
 }
@@ -58,6 +64,7 @@ class AWSNetworkConnector : NetworkConnector() {
     override fun <T : String?> sendBaseRequest(method: RequestMethod, path: String, user: String?, password: String?,
                                                acceptJsonContentType: Boolean, body: String?,
                                                errorHandler: (url: String, response: dynamic) -> Nothing?): Promise<T> {
+        val useEnvironmentCredentials = true // For easy test on localhost change to false.
         val AWSEndpoint = AWSInstance.Endpoint(AWSDomain)
         var request = AWSInstance.HttpRequest(AWSEndpoint, AWSRegion)
         request.method = method.toString()
@@ -71,7 +78,8 @@ class AWSNetworkConnector : NetworkConnector() {
             request.headers["Content-Length"] = js("Buffer").byteLength(request.body)
         }
 
-        val credentials = AWSInstance.SharedIniFileCredentials(mapOf<String, String>())
+        val credentials = if (useEnvironmentCredentials) AWSInstance.EnvironmentCredentials("AWS")
+            else AWSInstance.SharedIniFileCredentials(mapOf<String, String>())
         val signer = AWSInstance.Signers.V4(request, "es")
         signer.addAuthorization(credentials, Date())
 

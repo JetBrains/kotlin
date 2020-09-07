@@ -35,36 +35,12 @@ fun sendGetRequest(url: String) = window.fetch(url, RequestInit("GET")).then { r
         response.text()
 }.then { text -> text }
 
-// Get groups of builds for different zoom values.
-fun getBuildsGroup(builds: List<Build?>) = buildsNumberToShow?.let {
-    val buildsGroups = builds.chunked(buildsNumberToShow!!)
-    val expectedGroup = buildsGroups.size - 1 + stageToShow
-    val index = when {
-        expectedGroup < 0 -> 0
-        expectedGroup >= buildsGroups.size -> buildsGroups.size - 1
-        else -> expectedGroup
-    }
-    buildsGroups[index]
-} ?: builds
-
 // Get data for chart in needed format.
-fun getChartData(labels: List<String>, valuesList: Collection<List<*>>, stageToShow: Int = 0,
-                 buildsNumber: Int? = null, classNames: Array<String>? = null): dynamic {
+fun getChartData(labels: List<String>, valuesList: Collection<List<*>>,
+                 classNames: Array<String>? = null): dynamic {
     val chartData: dynamic = object {}
-    // Show only some part of data.
-    val (labelsData, valuesData) = buildsNumber?.let {
-        val labelsGroups = labels.chunked(buildsNumber)
-        val valuesListGroups = valuesList.map { it.chunked(buildsNumber) }
-        val expectedGroup = labelsGroups.size - 1 + stageToShow
-        val index = when {
-            expectedGroup < 0 -> 0
-            expectedGroup >= labelsGroups.size -> labelsGroups.size - 1
-            else -> expectedGroup
-        }
-        Pair(labelsGroups[index], valuesListGroups.map { it[index] })
-    } ?: Pair(labels, valuesList)
-    chartData["labels"] = labelsData.toTypedArray()
-    chartData["series"] = valuesData.mapIndexed { index, it ->
+    chartData["labels"] = labels.toTypedArray()
+    chartData["series"] = valuesList.mapIndexed { index, it ->
         val series: dynamic = object {}
         series["data"] = it.toTypedArray()
         classNames?.let { series["className"] = classNames[index] }
@@ -83,7 +59,7 @@ fun getChartOptions(samples: Array<String>, yTitle: String, classNames: Array<St
     val axisXObject: dynamic = object {}
     axisXObject["offset"] = 40
     axisXObject["labelInterpolationFnc"] = { value, index, labels ->
-        val labelsCount = 30
+        val labelsCount = 20
         val skipNumber = ceil((labels.length as Int).toDouble() / labelsCount).toInt()
         if (skipNumber > 1) {
             if (index % skipNumber == 0) value else null
@@ -126,9 +102,8 @@ fun customizeChart(chart: dynamic, chartContainer: String, jquerySelector: dynam
     chart.on("draw", { data ->
         var element = data.element
         if (data.type == "point") {
-            val buildsGroup = getBuildsGroup(builds)
             val pointSize = 12
-            val currentBuild = buildsGroup.get(data.index)
+            val currentBuild = builds.get(data.index)
             currentBuild?.let { currentBuild ->
                 // Higlight builds with failures.
                 if (currentBuild.failuresNumber > 0) {
@@ -154,7 +129,7 @@ fun customizeChart(chart: dynamic, chartContainer: String, jquerySelector: dynam
                 var shift = 1
                 var previousBuild: Build? = null
                 while (previousBuild == null && data.index - shift >= 0) {
-                    previousBuild = buildsGroup.get(data.index - shift)
+                    previousBuild = builds.get(data.index - shift)
                     shift++
                 }
                 val linkToDetailedInfo = "https://kotlin-native-performance.labs.jb.gg/?report=" +
@@ -204,21 +179,19 @@ fun customizeChart(chart: dynamic, chartContainer: String, jquerySelector: dynam
     })
 }
 
-var stageToShow = 0
+var buildsNumberToShow: Int = 200
+var beforeDate: String? = null
+var afterDate: String? = null
 
-var buildsNumberToShow: Int? = null
+external fun decodeURIComponent(url: String): String
+external fun encodeURIComponent(url: String): String
 
-fun waitForElements(elements: Iterable<Any?>, action: () -> Unit) {
-    if (elements.filterNotNull().size == elements.count())
-        action()
-    else window.setTimeout(waitForElements(elements, action), 500)
-}
+fun getDatesComponents() = "${beforeDate?.let {"&before=${encodeURIComponent(it)}"} ?: ""}" +
+        "${afterDate?.let {"&after=${encodeURIComponent(it)}"} ?: ""}"
 
 fun main(args: Array<String>) {
     val serverUrl = "https://kotlin-native-perf-summary.labs.jb.gg"
-    buildsNumberToShow = null
-    stageToShow = 0
-    val zoomRatio = 3
+    val zoomRatio = 2
 
     // Get parameters from request.
     val url = window.location.href
@@ -231,6 +204,10 @@ fun main(args: Array<String>) {
             parameters[key] = value
         }
     }
+
+    buildsNumberToShow = parameters["count"]?.toInt() ?: buildsNumberToShow
+    beforeDate = parameters["before"]?.let{ decodeURIComponent(it)}
+    afterDate = parameters["after"]?.let{ decodeURIComponent(it)}
 
     // Get branches.
     val branchesUrl = "$serverUrl/branches"
@@ -256,7 +233,8 @@ fun main(args: Array<String>) {
         autocompleteParameters["onSelect"] = { suggestion ->
             if (suggestion.value != parameters["build"]) {
                 val newLink = "http://${window.location.host}/?target=${parameters["target"]}&type=${parameters["type"]}" +
-                        "${if ((suggestion.value as String).isEmpty()) "" else "&build=${suggestion.value}"}"
+                        "${if ((suggestion.value as String).isEmpty()) "" else "&build=${suggestion.value}"}&count=$buildsNumberToShow" +
+                        getDatesComponents()
                 window.location.href = newLink
             }
         }
@@ -265,7 +243,8 @@ fun main(args: Array<String>) {
             val newValue = js("$(this).val()").toString()
             if (newValue.isEmpty() || newValue in buildsNumbers) {
                 val newLink = "http://${window.location.host}/?target=${parameters["target"]}&type=${parameters["type"]}" +
-                        "${if (newValue.isEmpty()) "" else "&build=$newValue"}"
+                        "${if (newValue.isEmpty()) "" else "&build=$newValue"}&count=$buildsNumberToShow" +
+                        getDatesComponents()
                 window.location.href = newLink
             }
         })
@@ -282,7 +261,7 @@ fun main(args: Array<String>) {
         val newValue = js("$(this).val()")
         if (newValue != parameters["target"]) {
             val newLink = "http://${window.location.host}/?target=$newValue&type=${parameters["type"]}&branch=${parameters["branch"]}" +
-                    "${if (parameters["build"]!!.isEmpty()) "" else "&build=${parameters["build"]}"}"
+                    "${if (parameters["build"]!!.isEmpty()) "" else "&build=${parameters["build"]}"}&count=$buildsNumberToShow"
             window.location.href = newLink
         }
     })
@@ -290,7 +269,7 @@ fun main(args: Array<String>) {
         val newValue = js("$(this).val()")
         if (newValue != parameters["type"]) {
             val newLink = "http://${window.location.host}/?target=${parameters["target"]}&type=$newValue&branch=${parameters["branch"]}" +
-                    "${if (parameters["build"]!!.isEmpty()) "" else "&build=${parameters["build"]}"}"
+                    "${if (parameters["build"]!!.isEmpty()) "" else "&build=${parameters["build"]}"}&count=$buildsNumberToShow"
             window.location.href = newLink
         }
     })
@@ -298,35 +277,35 @@ fun main(args: Array<String>) {
         val newValue = js("$(this).val()")
         if (newValue != parameters["branch"]) {
             val newLink = "http://${window.location.host}/?target=${parameters["target"]}&type=${parameters["type"]}&branch=$newValue" +
-                    "${if (parameters["build"]!!.isEmpty()) "" else "&build=${parameters["build"]}"}"
+                    "${if (parameters["build"]!!.isEmpty()) "" else "&build=${parameters["build"]}"}&count=$buildsNumberToShow"
             window.location.href = newLink
         }
     })
 
-    val platformSpecificBenchs = if (parameters["target"] == "Mac_OS_X") ",FrameworkBenchmarksAnalyzer,circlet_iosX64" else
+    val platformSpecificBenchs = if (parameters["target"] == "Mac_OS_X") ",FrameworkBenchmarksAnalyzer,SpaceFramework_iosX64" else
         if (parameters["target"] == "Linux") ",kotlinx.coroutines" else ""
 
     // Collect information for charts library.
-    val valuesToShow = mapOf("EXECUTION_TIME" to arrayOf(mapOf(
+    val valuesToShow = mapOf("EXECUTION_TIME" to listOf(mapOf(
             "normalize" to "true"
             )),
-            "COMPILE_TIME" to arrayOf(mapOf(
+            "COMPILE_TIME" to listOf(mapOf(
                     "samples" to "HelloWorld,Videoplayer$platformSpecificBenchs",
                     "agr" to "samples"
             )),
-            "CODE_SIZE" to arrayOf(mapOf(
+            "CODE_SIZE" to listOf(mapOf(
                     "normalize" to "true",
                     "exclude" to if (parameters["target"] == "Linux")
                         "kotlinx.coroutines"
                     else if (parameters["target"] == "Mac_OS_X")
-                        "circlet_iosX64"
+                        "SpaceFramework_iosX64"
                     else ""
-            ), mapOf(
+            ), if (platformSpecificBenchs.isNotEmpty()) mapOf(
                     "normalize" to "true",
                     "agr" to "samples",
                     "samples" to platformSpecificBenchs.removePrefix(",")
-            )),
-            "BUNDLE_SIZE" to arrayOf(mapOf("samples" to "KotlinNative",
+            ) else null).filterNotNull(),
+            "BUNDLE_SIZE" to listOf(mapOf("samples" to "KotlinNative",
                     "agr" to "samples"))
     )
 
@@ -344,13 +323,27 @@ fun main(args: Array<String>) {
     var bundleSizeChart: dynamic = null
 
     val descriptionUrl = "$serverUrl/buildsDesc/${parameters["target"]}?type=${parameters["type"]}" +
-            "${if (parameters["branch"] != "all") "&branch=${parameters["branch"]}" else ""}"
+            "${if (parameters["branch"] != "all") "&branch=${parameters["branch"]}" else ""}&count=$buildsNumberToShow" +
+            getDatesComponents()
 
     val metricUrl = "$serverUrl/metricValue/${parameters["target"]}/"
 
+    // Get builds description.
+    val buildsInfoPromise = sendGetRequest(descriptionUrl).then { response ->
+        val buildsInfo = response as String
+        val data = JsonTreeParser.parse(buildsInfo)
+        if (data !is JsonArray) {
+            error("Response is expected to be an array.")
+        }
+        data.jsonArray.map {
+            val element = it as JsonElement
+            if (element.isNull) null else Build.create(element as JsonObject)
+        }
+    }
+
     // Send requests to get all needed metric values.
-    valuesToShow.map { (metric, arrayOfSettings) ->
-        val resultValues = arrayOfSettings.map { settings ->
+    valuesToShow.map { (metric, listOfSettings) ->
+        val resultValues = listOfSettings.map { settings ->
             val getParameters = with(StringBuilder()) {
                 if (settings.isNotEmpty()) {
                     append("?")
@@ -372,7 +365,7 @@ fun main(args: Array<String>) {
             if (parameters["type"] != "all")
                 (if (getParameters.isEmpty() && branchParameter.isEmpty()) "?" else "&") + "type=${parameters["type"]}"
             else ""
-            }"
+            }&count=$buildsNumberToShow${getDatesComponents()}"
             sendGetRequest(url)
         }.toTypedArray()
 
@@ -397,33 +390,47 @@ fun main(args: Array<String>) {
                 "COMPILE_TIME" -> {
                     compileData = labels to values.map { it.map { it?.let { it / 1000 } } }
                     compileChart = Chartist.Line("#compile_chart",
-                            getChartData(labels, compileData.second, stageToShow, buildsNumberToShow),
+                            getChartData(labels, compileData.second),
                             getChartOptions(valuesToShow["COMPILE_TIME"]!![0]!!["samples"]!!.split(',').toTypedArray(),
                                     "Time, milliseconds"))
+                    buildsInfoPromise.then { builds ->
+                        customizeChart(compileChart, "compile_chart", js("$(\"#compile_chart\")"), builds, parameters)
+                        compileChart.update(getChartData(compileData.first, compileData.second))
+                    }
                 }
                 "EXECUTION_TIME" -> {
                     execData = labels to values
                     execChart = Chartist.Line("#exec_chart",
-                            getChartData(labels, execData.second, stageToShow, buildsNumberToShow),
+                            getChartData(labels, execData.second),
                             getChartOptions(arrayOf("Geometric Mean"), "Normalized time"))
+                    buildsInfoPromise.then { builds ->
+                        customizeChart(execChart, "exec_chart", js("$(\"#exec_chart\")"), builds, parameters)
+                        execChart.update(getChartData(execData.first, execData.second))
+                    }
                 }
                 "CODE_SIZE" -> {
                     codeSizeData = labels to values
                     codeSizeChart = Chartist.Line("#codesize_chart",
-                            getChartData(labels, codeSizeData.second,
-                                    stageToShow, buildsNumberToShow, sizeClassNames),
+                            getChartData(labels, codeSizeData.second),
                             getChartOptions(arrayOf("Geometric Mean") + platformSpecificBenchs.split(',')
                                     .filter { it.isNotEmpty() },
                                     "Normalized size",
                                     arrayOf("ct-series-4", "ct-series-5", "ct-series-6")))
+                    buildsInfoPromise.then { builds ->
+                        customizeChart(codeSizeChart, "codesize_chart", js("$(\"#codesize_chart\")"), builds, parameters)
+                        codeSizeChart.update(getChartData(codeSizeData.first, codeSizeData.second, sizeClassNames))
+                    }
                 }
                 "BUNDLE_SIZE" -> {
                     bundleSizeData = labels to values.map { it.map { it?.let { it.toInt() / 1024 / 1024 } } }
                     bundleSizeChart = Chartist.Line("#bundlesize_chart",
                             getChartData(labels,
-                                    bundleSizeData.second, stageToShow,
-                                    buildsNumberToShow, sizeClassNames),
+                                    bundleSizeData.second, sizeClassNames),
                             getChartOptions(arrayOf("Bundle size"), "Size, MB", arrayOf("ct-series-4")))
+                    buildsInfoPromise.then { builds ->
+                        customizeChart(bundleSizeChart, "bundlesize_chart", js("$(\"#bundlesize_chart\")"), builds, parameters)
+                        bundleSizeChart.update(getChartData(bundleSizeData.first, bundleSizeData.second, sizeClassNames))
+                    }
                 }
                 else -> error("No chart for metric $metric")
             }
@@ -433,69 +440,56 @@ fun main(args: Array<String>) {
 
     // Update all charts with using same data.
     val updateAllCharts: () -> Unit = {
-        execChart.update(getChartData(execData.first, execData.second, stageToShow, buildsNumberToShow))
-        compileChart.update(getChartData(compileData.first, compileData.second, stageToShow, buildsNumberToShow))
-        codeSizeChart.update(getChartData(codeSizeData.first, codeSizeData.second, stageToShow, buildsNumberToShow, sizeClassNames))
-        bundleSizeChart.update(getChartData(bundleSizeData.first, bundleSizeData.second, stageToShow, buildsNumberToShow, sizeClassNames))
-    }
-
-    // Get builds description.
-    sendGetRequest(descriptionUrl).then { response ->
-        val buildsInfo = response as String
-        val data = JsonTreeParser.parse(buildsInfo)
-        if (data !is JsonArray) {
-            error("Response is expected to be an array.")
-        }
-        val builds = data.jsonArray.map {
-            val element = it as JsonElement
-            if (element.isNull) null else Build.create(element as JsonObject)
-        }
-        waitForElements(listOf(execChart, compileChart, codeSizeChart, bundleSizeChart)) {
-            customizeChart(execChart, "exec_chart", js("$(\"#exec_chart\")"), builds, parameters)
-            customizeChart(compileChart, "compile_chart", js("$(\"#compile_chart\")"), builds, parameters)
-            customizeChart(codeSizeChart, "codesize_chart", js("$(\"#codesize_chart\")"), builds, parameters)
-            customizeChart(bundleSizeChart, "bundlesize_chart", js("$(\"#bundlesize_chart\")"), builds, parameters)
-            updateAllCharts()
-        }
+        execChart.update(getChartData(execData.first, execData.second))
+        compileChart.update(getChartData(compileData.first, compileData.second))
+        codeSizeChart.update(getChartData(codeSizeData.first, codeSizeData.second, sizeClassNames))
+        bundleSizeChart.update(getChartData(bundleSizeData.first, bundleSizeData.second, sizeClassNames))
     }
 
     js("$('#plusBtn')").click({
-        buildsNumberToShow = buildsNumberToShow?.let {
-            if (it / zoomRatio > zoomRatio) {
-                it / zoomRatio
+        buildsNumberToShow =
+            if (buildsNumberToShow / zoomRatio > zoomRatio) {
+                buildsNumberToShow / zoomRatio
             } else {
-                it
+                buildsNumberToShow
             }
-        } ?: execData.first.size / zoomRatio
-        updateAllCharts()
+
+        val newLink = "http://${window.location.host}/?target=${parameters["target"]}&type=${parameters["type"]}&branch=${parameters["branch"]}" +
+                "${if (parameters["build"]!!.isEmpty()) "" else "&build=${parameters["build"]}"}&count=$buildsNumberToShow" +
+                getDatesComponents()
+        window.location.href = newLink
+        Unit
     })
 
     js("$('#minusBtn')").click({
-        buildsNumberToShow = buildsNumberToShow?.let {
-            if (it * zoomRatio <= execData.first.size) {
-                it * zoomRatio
-            } else {
-                null
-            }
-        }
-        updateAllCharts()
+        buildsNumberToShow = buildsNumberToShow * zoomRatio
+        val newLink = "http://${window.location.host}/?target=${parameters["target"]}&type=${parameters["type"]}&branch=${parameters["branch"]}" +
+                "${if (parameters["build"]!!.isEmpty()) "" else "&build=${parameters["build"]}"}&count=$buildsNumberToShow" +
+                getDatesComponents()
+        window.location.href = newLink
+        Unit
     })
 
     js("$('#prevBtn')").click({
-        buildsNumberToShow?.let {
-            val bottomBorder = -execData.first.size / (buildsNumberToShow as Int)
-            if (stageToShow - 1 > bottomBorder) {
-                stageToShow--
-            }
-        } ?: run { stageToShow = 0 }
-        updateAllCharts()
+        buildsInfoPromise.then { builds ->
+            beforeDate = builds.firstOrNull()?.startTime
+            afterDate = null
+            val newLink = "http://${window.location.host}/?target=${parameters["target"]}&type=${parameters["type"]}&branch=${parameters["branch"]}" +
+                    "${if (parameters["build"]!!.isEmpty()) "" else "&build=${parameters["build"]}"}&count=$buildsNumberToShow" +
+                    "${beforeDate?.let {"&before=${encodeURIComponent(it)}"} ?: ""}"
+            window.location.href = newLink
+        }
     })
 
     js("$('#nextBtn')").click({
-        if (stageToShow + 1 <= 0) {
-            stageToShow++
+        buildsInfoPromise.then { builds ->
+            beforeDate = null
+            afterDate = builds.lastOrNull()?.startTime
+            val newLink = "http://${window.location.host}/?target=${parameters["target"]}&type=${parameters["type"]}&branch=${parameters["branch"]}" +
+                    "${if (parameters["build"]!!.isEmpty()) "" else "&build=${parameters["build"]}"}&count=$buildsNumberToShow" +
+                    "${afterDate?.let {"&after=${encodeURIComponent(it)}"} ?: ""}"
+            window.location.href = newLink
         }
-        updateAllCharts()
     })
 
     // Auto reload.

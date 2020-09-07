@@ -159,7 +159,9 @@ fun Array<String>.runCommand(workingDir: File = File("."),
                     waitFor(timeoutAmount, timeoutUnit)
                 }.inputStream.bufferedReader().readText()
     } catch (e: Exception) {
-        error("Couldn't run command $this")
+        println("Couldn't run command ${this.joinToString(" ")}")
+        println(e.stackTrace.joinToString("\n"))
+        error(e.message!!)
     }
 }
 

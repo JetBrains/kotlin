@@ -17,6 +17,8 @@ object CachableResponseDispatcher {
     // Storage of cached responses.
     private val cachedResponses = mutableMapOf<String, CachedResponse>()
 
+    private val cacheMaxSize = 200
+
     // Get response. If response isn't cached, use provided action to get response.
     fun getResponse(request: dynamic, response: dynamic,
                     action: (success: (result: Any) -> Unit, reject: () -> Unit) -> Unit) {
@@ -31,7 +33,9 @@ object CachableResponseDispatcher {
             response.json(it.cachedResult)
         } ?: run {
             action({ result: Any ->
-                cachedResponses[request.url] = CachedResponse(result, TimeSource.Monotonic.markNow())
+                if (cachedResponses.size >= cacheMaxSize) {
+                    cachedResponses[request.url] = CachedResponse(result, TimeSource.Monotonic.markNow())
+                }
                 response.json(result)
             }, { response.sendStatus(400) })
         }

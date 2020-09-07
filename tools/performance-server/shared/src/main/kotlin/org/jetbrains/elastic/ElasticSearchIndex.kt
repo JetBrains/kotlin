@@ -125,14 +125,11 @@ enum class ElasticSearchType {
 }
 
 abstract class ElasticSearchIndex(val indexName: String, val connector: ElasticSearchConnector) {
-    var nextId = 0L
-
     // Insert data.
     fun insert(data: JsonSerializable): Promise<String> {
         val description = data.toJson()
-        val writePath = "$indexName/_doc/$nextId?pretty"
-        nextId++
-        return connector.request(RequestMethod.PUT, writePath, body = description)
+        val writePath = "$indexName/_doc/"
+        return connector.request(RequestMethod.POST, writePath, body = description)
     }
 
     // Delete data.
@@ -146,25 +143,6 @@ abstract class ElasticSearchIndex(val indexName: String, val connector: ElasticS
         val path = "$indexName/_search?pretty${if (filterPathes.isNotEmpty())
             "&filter_path=" + filterPathes.joinToString(",") else ""}"
         return connector.request(RequestMethod.POST, path, body = requestJson)
-    }
-
-    init {
-        // Get latest id for index.
-        val queryBody = """{
-               "_source": ["_id"],
-               "size": 1,
-               "query": {
-                  "match_all": {}
-               }
-            }"""
-        search(queryBody, listOf("hits.total.value")).then { responseString ->
-            val response = JsonTreeParser.parse(responseString).jsonObject
-            val value = response.getObjectOrNull("hits")?.getObjectOrNull("total")?.getPrimitiveOrNull("value")?.content
-                    ?: error("Error response from ElasticSearch:\n$responseString")
-            nextId = value.toLong()
-        }.catch { errorMessage ->
-            error(errorMessage.message ?: "Failed getting next id for index $indexName")
-        }
     }
 
     abstract val mapping: Map<String, ElasticSearchType>

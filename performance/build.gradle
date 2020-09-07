@@ -81,16 +81,27 @@ task slackSummary(type: RegressionsSummaryReporter) {
                           'Windows': "${rootBuildDirectory}/targetsResults/Windows 10.txt".toString()]
 }
 
-private def uploadBenchmarkResultToArtifactory(String fileName) {
+private String getUploadedFile(String fileName) {
     def teamcityConfig = System.getenv("TEAMCITY_BUILD_PROPERTIES_FILE")
     if (teamcityConfig) {
         def buildProperties = new Properties()
         buildProperties.load(new FileInputStream(teamcityConfig))
-        def password = buildProperties.getProperty("artifactory.apikey")
         def buildNumber = buildProperties.getProperty("build.number")
         def target = System.getProperty("os.name").replaceAll("\\s", "")
+        return "${target}/${buildNumber}/${fileName}"
+    }
+    return null
+}
+
+private def uploadBenchmarkResultToArtifactory(String fileName) {
+    def teamcityConfig = System.getenv("TEAMCITY_BUILD_PROPERTIES_FILE")
+    if (teamcityConfig) {
+        def uploadedFile = getUploadedFile(fileName)
+        def buildProperties = new Properties()
+        buildProperties.load(new FileInputStream(teamcityConfig))
+        def password = buildProperties.getProperty("artifactory.apikey")
         MPPTools.uploadFileToArtifactory("${artifactoryUrl}", "${artifactoryRepo}",
-                "${target}/${buildNumber}/${fileName}", "${buildDir.absolutePath}/${fileName}", password)
+                uploadedFile, "${buildDir.absolutePath}/${fileName}", password)
     }
 }
 
@@ -161,6 +172,11 @@ task registerExternalBenchmarks {
 
 task registerBuild(type: BuildRegister) {
     onlyBranch = project.findProperty('kotlin.register.branch')
+    def uploadedFile = getUploadedFile(nativeJson)
+    if (uploadedFile != null) {
+        println("Use file from Artifacrory $uploadedFile")
+        fileWithResult = uploadedFile
+    }
     // Get bundle size.
     bundleSize = null
     if (project.findProperty('kotlin.bundleBuild') != null) {
@@ -172,7 +188,14 @@ task registerBuild(type: BuildRegister) {
 
 task registerExternalBuild(type: BuildRegister) {
     onlyBranch = project.findProperty('kotlin.register.branch')
-    fileWithResult = externalBenchmarksReport
+    def uploadedFile = getUploadedFile(externalBenchmarksReport)
+    if (uploadedFile != null) {
+        println("Use file from Artifacrory $uploadedFile")
+        fileWithResult = uploadedFile
+    } else {
+        fileWithResult = externalBenchmarksReport
+    }
+
 }
 
 registerExternalBenchmarks.finalizedBy registerExternalBuild
