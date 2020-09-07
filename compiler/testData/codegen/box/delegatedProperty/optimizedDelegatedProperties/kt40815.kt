@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 import kotlin.reflect.KProperty
 
 operator fun Int.provideDelegate(thiz: Any?, property: KProperty<*>): String = property.name

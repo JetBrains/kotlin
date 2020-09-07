@@ -966,17 +966,19 @@ class SymbolTable(
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: VariableDescriptorWithAccessors,
-        type: IrType
+        type: IrType,
+        factory: (IrLocalDelegatedPropertySymbol) -> IrLocalDelegatedProperty = {
+            irFactory.createLocalDelegatedProperty(
+                startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor), type, descriptor.isVar
+            )
+        }
     ): IrLocalDelegatedProperty =
         localDelegatedPropertySymbolTable.declareLocal(
             descriptor,
             { IrLocalDelegatedPropertySymbolImpl(descriptor) },
-        ) {
-            irFactory.createLocalDelegatedProperty(
-                startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor), type, descriptor.isVar
-            ).apply {
-                metadata = MetadataSource.LocalDelegatedProperty(descriptor)
-            }
+            factory
+        ).apply {
+            metadata = MetadataSource.LocalDelegatedProperty(descriptor)
         }
 
     fun referenceLocalDelegatedProperty(descriptor: VariableDescriptorWithAccessors) =

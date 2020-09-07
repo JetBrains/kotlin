@@ -149,16 +149,20 @@ private fun FirCallableSymbol<*>.toSymbol(declarationStorage: Fir2IrDeclarationS
             } else {
                 syntheticProperty.setter!!.delegate.symbol.toSymbol(declarationStorage, preferGetter)
             }
-        } ?: if (fir.isLocal) declarationStorage.getIrValueSymbol(this) else declarationStorage.getIrPropertyOrFieldSymbol(this)
+        } ?: fir.toSymbol(declarationStorage)
     }
-    is FirPropertySymbol -> {
-        if (fir.isLocal) declarationStorage.getIrValueSymbol(this) else declarationStorage.getIrPropertyOrFieldSymbol(this)
-    }
+    is FirPropertySymbol -> fir.toSymbol(declarationStorage)
     is FirFieldSymbol -> declarationStorage.getIrPropertyOrFieldSymbol(this)
     is FirBackingFieldSymbol -> declarationStorage.getIrBackingFieldSymbol(this)
     is FirDelegateFieldSymbol<*> -> declarationStorage.getIrBackingFieldSymbol(this)
     is FirVariableSymbol<*> -> declarationStorage.getIrValueSymbol(this)
     else -> null
+}
+
+private fun FirProperty.toSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbol? = when {
+    !isLocal -> declarationStorage.getIrPropertyOrFieldSymbol(symbol)
+    delegate != null -> declarationStorage.getIrLocalDelegatedPropertySymbol(symbol)
+    else -> declarationStorage.getIrValueSymbol(symbol)
 }
 
 fun FirConstExpression<*>.getIrConstKind(): IrConstKind<*> = when (kind) {

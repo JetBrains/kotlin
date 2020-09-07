@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.name.ClassId
 
 class Fir2IrLocalStorage {
@@ -35,13 +32,8 @@ class Fir2IrLocalStorage {
         return null
     }
 
-    fun getVariable(variable: FirVariable<*>): IrVariable? {
-        for (cache in cacheStack.asReversed()) {
-            val local = cache.getVariable(variable)
-            if (local != null) return local
-        }
-        return null
-    }
+    fun getVariable(variable: FirVariable<*>): IrVariable? =
+        last { getVariable(variable) }
 
     fun getLocalClass(localClass: FirClass<*>): IrClass? {
         return localClassCache[localClass]
@@ -51,10 +43,15 @@ class Fir2IrLocalStorage {
         return localClassCache.entries.find { (firClass, _) -> firClass.classId == classId }?.value
     }
 
-    fun getLocalFunction(localFunction: FirFunction<*>): IrSimpleFunction? {
+    fun getLocalFunction(localFunction: FirFunction<*>): IrSimpleFunction? =
+        last { getLocalFunction(localFunction) }
+
+    fun getDelegatedProperty(property: FirProperty): IrLocalDelegatedProperty? =
+        last { getDelegatedProperty(property) }
+
+    private inline fun <T> last(getter: Fir2IrScopeCache.() -> T?): T? {
         for (cache in cacheStack.asReversed()) {
-            val local = cache.getLocalFunction(localFunction)
-            if (local != null) return local
+            cache.getter()?.let { return it }
         }
         return null
     }
@@ -73,5 +70,9 @@ class Fir2IrLocalStorage {
 
     fun putLocalFunction(firFunction: FirFunction<*>, irFunction: IrSimpleFunction) {
         cacheStack.last().putLocalFunction(firFunction, irFunction)
+    }
+
+    fun putDelegatedProperty(firProperty: FirProperty, irProperty: IrLocalDelegatedProperty) {
+        cacheStack.last().putDelegatedProperty(firProperty, irProperty)
     }
 }
