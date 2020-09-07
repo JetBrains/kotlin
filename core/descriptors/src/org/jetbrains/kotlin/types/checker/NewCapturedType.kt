@@ -36,23 +36,56 @@ fun prepareArgumentTypeRegardingCaptureTypes(argumentType: UnwrappedType): Unwra
 
 fun captureFromExpression(type: UnwrappedType): UnwrappedType? {
     val typeConstructor = type.constructor
-    if (typeConstructor is IntersectionTypeConstructor) {
-        var changed = false
-        val capturedSupertypes = typeConstructor.supertypes.map { supertype ->
-            val unwrapped = supertype.unwrap()
-            captureFromExpression(unwrapped)?.apply { changed = true } ?: unwrapped
+
+    if (typeConstructor !is IntersectionTypeConstructor) {
+        return captureFromArguments(type, CaptureStatus.FROM_EXPRESSION)
+    }
+
+    /*
+     * We capture intersection types in two stages:
+     * capture type arguments for each component and replace it in the original type after that.
+     * This is to substitute captured types into flexible types properly:
+     * we should have the same captured types both for lower bound and for upper one.
+     *
+     * Example:
+     *  The original type: ({Comparable<*> & java.io.Serializable}..{Comparable<*>? & java.io.Serializable?})
+     *  Result of capturing arguments by components: [[CapturedType(*)], null]
+     *  The resulting type: ({Comparable<CapturedType(*)> & java.io.Serializable}..{Comparable<CapturedType(*)>? & java.io.Serializable?})
+     */
+    val capturedArgumentsByComponents = captureArgumentsForIntersectionType(typeConstructor) ?: return null
+
+    fun replaceArgumentsByComponents(typeToReplace: UnwrappedType) =
+        typeToReplace.constructor.supertypes.mapIndexed { i, componentType ->
+            val capturedArguments = capturedArgumentsByComponents[i] ?: return@mapIndexed componentType.asSimpleType()
+            componentType.unwrap().replaceArguments(capturedArguments)
         }
 
-        if (!changed) return null
+    return if (type is FlexibleType) {
+        val lowerIntersectedType =
+            intersectTypes(replaceArgumentsByComponents(type.lowerBound)).makeNullableAsSpecified(type.lowerBound.isMarkedNullable)
+        val upperIntersectedType =
+            intersectTypes(replaceArgumentsByComponents(type.upperBound)).makeNullableAsSpecified(type.upperBound.isMarkedNullable)
 
-        return intersectTypes(capturedSupertypes).makeNullableAsSpecified(type.isMarkedNullable)
+        KotlinTypeFactory.flexibleType(lowerIntersectedType, upperIntersectedType)
+    } else {
+        intersectTypes(replaceArgumentsByComponents(type)).makeNullableAsSpecified(type.isMarkedNullable)
     }
-    return captureFromArguments(type, CaptureStatus.FROM_EXPRESSION)
 }
 
 // this function suppose that input type is simple classifier type
 internal fun captureFromArguments(type: SimpleType, status: CaptureStatus) =
     captureArguments(type, status)?.let { type.replaceArguments(it) }
+
+private fun captureArgumentsForIntersectionType(typeConstructor: TypeConstructor): List<List<TypeProjection>?>? {
+    var changed = false
+    val capturedArgumentsByComponents = typeConstructor.supertypes.map { supertype ->
+        captureArguments(supertype.unwrap(), CaptureStatus.FROM_EXPRESSION)?.apply { changed = true }
+    }
+
+    if (!changed) return null
+
+    return capturedArgumentsByComponents
+}
 
 private fun captureFromArguments(type: UnwrappedType, status: CaptureStatus): UnwrappedType? {
     val capturedArguments = captureArguments(type, status) ?: return null
