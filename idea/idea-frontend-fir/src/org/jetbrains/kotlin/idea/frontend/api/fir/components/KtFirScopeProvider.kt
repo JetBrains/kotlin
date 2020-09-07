@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
+import com.intellij.psi.util.parentsOfType
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import java.util.*
 
@@ -108,18 +109,7 @@ internal class KtFirScopeProvider(
         originalFile: KtFile,
         positionInFakeFile: KtElement
     ): KtScopeContext = withValidityAssertion {
-        val originalFirFile = originalFile.getOrBuildFirOfType<FirFile>(firResolveState)
-        val fakeEnclosingFunction = positionInFakeFile.getNonStrictParentOfType<KtNamedFunction>()
-            ?: error("Cannot find enclosing function for ${positionInFakeFile.getElementTextInContext()}")
-        val originalEnclosingFunction = originalFile.findFunctionDeclarationAt(fakeEnclosingFunction.textOffset)
-            ?: error("Cannot find original function matching to ${fakeEnclosingFunction.getElementTextInContext()} in $originalFile")
-
-        val completionContext = LowLevelFirApiFacade.buildCompletionContextForFunction(
-            originalFirFile,
-            fakeEnclosingFunction,
-            originalEnclosingFunction,
-            state = firResolveState
-        )
+        val completionContext = buildCompletionContextForEnclosingDeclaration(originalFile, positionInFakeFile)
 
         val towerDataContext = completionContext.getTowerDataContext(positionInFakeFile)
 
@@ -143,9 +133,44 @@ internal class KtFirScopeProvider(
         )
     }
 
-    private fun KtFile.findFunctionDeclarationAt(offset: Int): KtNamedFunction? =
+    private fun buildCompletionContextForEnclosingDeclaration(
+        originalFile: KtFile,
+        positionInFakeFile: KtElement
+    ): LowLevelFirApiFacade.FirCompletionContext {
+        val originalFirFile = originalFile.getOrBuildFirOfType<FirFile>(firResolveState)
+        val fakeEnclosingFunction = positionInFakeFile.getNonStrictParentOfType<KtNamedFunction>()
+
+        if (fakeEnclosingFunction != null) {
+            val originalEnclosingFunction = originalFile.findDeclarationOfTypeAt<KtNamedFunction>(fakeEnclosingFunction.textOffset)
+                ?: error("Cannot find original function matching to ${fakeEnclosingFunction.getElementTextInContext()} in $originalFile")
+
+            return LowLevelFirApiFacade.buildCompletionContextForFunction(
+                originalFirFile,
+                fakeEnclosingFunction,
+                originalEnclosingFunction,
+                state = firResolveState
+            )
+        }
+
+        val fakeEnclosingProperty = positionInFakeFile.parentsOfType<KtProperty>().firstOrNull { !it.isLocal }
+        if (fakeEnclosingProperty != null) {
+            val originalEnclosingProperty = originalFile.findDeclarationOfTypeAt<KtProperty>(fakeEnclosingProperty.textOffset)
+                ?: error("Cannot find original property matching to ${fakeEnclosingProperty.getElementTextInContext()} in $originalFile")
+
+            return LowLevelFirApiFacade.buildCompletionContextForProperty(
+                originalFirFile,
+                fakeEnclosingProperty,
+                originalEnclosingProperty,
+                state = firResolveState
+            )
+        }
+
+        error("Cannot find enclosing declaration for ${positionInFakeFile.getElementTextInContext()}")
+    }
+
+    private inline fun<reified T: KtElement> KtFile.findDeclarationOfTypeAt(offset: Int): T? =
         findElementAt(offset)
-            ?.getNonStrictParentOfType<KtNamedFunction>()
+            ?.getNonStrictParentOfType<T>()
             ?.takeIf { it.textOffset == offset }
 
     private fun convertToKtScope(firScope: FirScope): KtScope {

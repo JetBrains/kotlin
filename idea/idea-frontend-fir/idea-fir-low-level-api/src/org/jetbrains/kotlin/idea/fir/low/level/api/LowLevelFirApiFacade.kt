@@ -10,9 +10,11 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
+import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyCopy
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
@@ -22,6 +24,7 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
+import org.jetbrains.kotlin.psi.KtProperty
 
 object LowLevelFirApiFacade {
     fun getResolveStateFor(element: KtElement): FirModuleResolveState =
@@ -82,7 +85,40 @@ object LowLevelFirApiFacade {
         }
 
         val function = frankensteinFunction.apply {
-            state.lazyResolveFunctionForCompletion(this, firFile, firIdeProvider, phase, contextCollector)
+            state.lazyResolveDeclarationForCompletion(this, firFile, firIdeProvider, phase, contextCollector)
+            state.recordPsiToFirMappingsForCompletionFrom(this, firFile, element.containingKtFile)
+        }
+
+        return FirCompletionContext(
+            function.session,
+            contextCollector,
+            state
+        )
+    }
+
+    fun buildCompletionContextForProperty(
+        firFile: FirFile,
+        element: KtProperty,
+        originalElement: KtProperty,
+        state: FirModuleResolveState,
+        phase: FirResolvePhase = FirResolvePhase.BODY_RESOLVE
+    ): FirCompletionContext {
+        val firIdeProvider = firFile.session.firIdeProvider
+        val originalProperty = state.getOrBuildFirFor(originalElement, phase) as FirProperty
+        val builtProperty = firIdeProvider.buildPropertyWithBody(element)
+        val contextCollector = FirTowerDataContextCollector()
+
+        val frankensteinProperty = buildPropertyCopy(originalProperty) {
+            symbol = builtProperty.symbol
+            getter = builtProperty.getter
+            setter = builtProperty.setter
+            resolvePhase = minOf(originalProperty.resolvePhase, FirResolvePhase.DECLARATIONS)
+            source = builtProperty.source
+            session = state.firIdeSourcesSession
+        }
+
+        val function = frankensteinProperty.apply {
+            state.lazyResolveDeclarationForCompletion(this, firFile, firIdeProvider, phase, contextCollector)
             state.recordPsiToFirMappingsForCompletionFrom(this, firFile, element.containingKtFile)
         }
 

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
@@ -55,14 +54,14 @@ internal class FirModuleResolveStateForCompletion(
         return originalState.resolvedFirToPhase(declaration, toPhase)
     }
 
-    override fun lazyResolveFunctionForCompletion(
-        firFunction: FirFunction<*>,
+    override fun lazyResolveDeclarationForCompletion(
+        firFunction: FirDeclaration,
         containerFirFile: FirFile,
         firIdeProvider: FirIdeProvider,
         toPhase: FirResolvePhase,
         towerDataContextCollector: FirTowerDataContextCollector
     ) {
-        originalState.lazyResolveFunctionForCompletion(firFunction, containerFirFile, firIdeProvider, toPhase, towerDataContextCollector)
+        originalState.lazyResolveDeclarationForCompletion(firFunction, containerFirFile, firIdeProvider, toPhase, towerDataContextCollector)
     }
 
     override fun getDiagnostics(element: KtElement): List<Diagnostic> {
