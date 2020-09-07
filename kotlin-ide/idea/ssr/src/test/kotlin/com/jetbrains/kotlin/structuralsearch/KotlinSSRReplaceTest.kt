@@ -49,6 +49,6 @@ abstract class KotlinSSRReplaceTest : BasePlatformTestCase() {
         val replacements: MutableList<ReplacementInfo> = SmartList()
         sink.matches.mapTo(replacements, replacer::buildReplacement)
         myFixture.project.executeWriteCommand("Structural Replace") { replacements.forEach(replacer::replace) }
-        assertEquals(myFixture.file.text, result)
+        assertEquals(result, myFixture.file.text)
     }
 }

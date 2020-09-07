@@ -24,20 +24,23 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
     override fun replace(info: ReplacementInfo, options: ReplaceOptions) {
         val searchTemplate = PatternCompiler.compilePattern(
             project, options.matchOptions, true, true
-        ).nodes.current()
+        ).let { it.targetNode ?: it.nodes.current() }.parentIfIdentifier()
         val replaceTemplate = MatcherImplUtil.createTreeFromText(
             info.replacement, PatternTreeContext.Block, options.matchOptions.fileType, project
         ).first()
-        replaceTemplate.structuralReplace(searchTemplate, info.matchResult.match)
+        val match = info.matchResult.match.parentIfIdentifier()
+        replaceTemplate.structuralReplace(searchTemplate, match)
         (0 until info.matchesCount).mapNotNull(info::getMatch).forEach {
-            it.replace(replaceTemplate)
+            it.parentIfIdentifier().replace(replaceTemplate)
         }
     }
 
+    private fun PsiElement.parentIfIdentifier(): PsiElement = if (node.elementType == KtTokens.IDENTIFIER) parent else this
+
     private fun PsiElement.structuralReplace(searchTemplate: PsiElement, match: PsiElement): PsiElement {
-        if(searchTemplate is KtDeclaration && this is KtDeclaration && match is KtDeclaration) {
+        if (searchTemplate is KtDeclaration && this is KtDeclaration && match is KtDeclaration) {
             replaceDeclaration(searchTemplate, match)
-            if(this is KtCallableDeclaration && searchTemplate is KtCallableDeclaration && match is KtCallableDeclaration) {
+            if (this is KtCallableDeclaration && searchTemplate is KtCallableDeclaration && match is KtCallableDeclaration) {
                 replaceCallableDeclaration(searchTemplate, match)
             }
             when {
@@ -57,7 +60,7 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
         match: KtModifierListOwner,
         modifier: KtModifierKeywordToken
     ): KtModifierListOwner {
-        if(!hasModifier(modifier) && match.hasModifier(modifier) && !searchTemplate.hasModifier(modifier)) {
+        if (!hasModifier(modifier) && match.hasModifier(modifier) && !searchTemplate.hasModifier(modifier)) {
             addModifier(modifier)
             modifierList?.addSurroundingWhiteSpace(
                 modifierList?.getModifier(modifier)!!,
@@ -69,17 +72,19 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
 
     private fun KtModifierListOwner.fixModifierListFormatting(match: KtModifierListOwner): KtModifierListOwner {
         modifierList?.children?.let { children ->
-            if(children.isNotEmpty() && children.last() is PsiWhiteSpace) children.last().delete()
+            if (children.isNotEmpty() && children.last() is PsiWhiteSpace) children.last().delete()
         }
-        modifierList?.let { rModL -> match.modifierList?.let { mModL ->
-            addSurroundingWhiteSpace(rModL, mModL)
-        } }
+        modifierList?.let { rModL ->
+            match.modifierList?.let { mModL ->
+                addSurroundingWhiteSpace(rModL, mModL)
+            }
+        }
         return this
     }
 
     private fun KtDeclaration.replaceDeclaration(searchTemplate: KtDeclaration, match: KtDeclaration): KtDeclaration {
         fun KtDeclaration.replaceVisibilityModifiers(searchTemplate: KtDeclaration, match: KtDeclaration): PsiElement {
-            if(visibilityModifierType() == null && searchTemplate.visibilityModifierType() == null) {
+            if (visibilityModifierType() == null && searchTemplate.visibilityModifierType() == null) {
                 match.visibilityModifierType()?.let {
                     addModifier(it)
                     modifierList?.addSurroundingWhiteSpace(visibilityModifier()!!, match.visibilityModifier()!!)
@@ -95,32 +100,32 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
         searchTemplate: KtCallableDeclaration,
         match: KtCallableDeclaration
     ): KtCallableDeclaration {
-        if(receiverTypeReference == null && searchTemplate.receiverTypeReference == null) {
+        if (receiverTypeReference == null && searchTemplate.receiverTypeReference == null) {
             match.receiverTypeReference?.let(this::setReceiverTypeReference)
         }
-        if(typeReference == null || searchTemplate.typeReference == null) {
+        if (typeReference == null || searchTemplate.typeReference == null) {
             match.colon?.let { addFormatted(it) }
             match.typeReference?.let { addFormatted(it) }
         }
-        if(valueParameterList == null && searchTemplate.valueParameterList == null) match.valueParameters.forEach {
+        if (valueParameterList == null && searchTemplate.valueParameterList == null) match.valueParameters.forEach {
             match.valueParameters.add(it)
         }
-        if(typeParameterList == null && searchTemplate.typeParameterList == null) match.typeParameters.forEach {
+        if (typeParameterList == null && searchTemplate.typeParameterList == null) match.typeParameters.forEach {
             addTypeParameter(it)
         }
         return this
     }
 
-    private fun KtClassOrObject.replaceClassOrObject(searchTemplate: KtClassOrObject, match: KtClassOrObject) : KtClassOrObject {
+    private fun KtClassOrObject.replaceClassOrObject(searchTemplate: KtClassOrObject, match: KtClassOrObject): KtClassOrObject {
         CLASS_MODIFIERS.forEach { replaceModifier(searchTemplate, match, it) }
         fixModifierListFormatting(match)
-        if(primaryConstructor == null && searchTemplate.primaryConstructor == null) match.primaryConstructor?.let {
+        if (primaryConstructor == null && searchTemplate.primaryConstructor == null) match.primaryConstructor?.let {
             addFormatted(it)
         }
-        if(getSuperTypeList() == null && searchTemplate.getSuperTypeList() == null) match.superTypeListEntries.forEach {
+        if (getSuperTypeList() == null && searchTemplate.getSuperTypeList() == null) match.superTypeListEntries.forEach {
             addSuperTypeListEntry(it)
         }
-        if(body == null && searchTemplate.body == null) match.body?.let { addFormatted(it) }
+        if (body == null && searchTemplate.body == null) match.body?.let { addFormatted(it) }
         return this
     }
 
@@ -129,8 +134,8 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
         fixModifierListFormatting(match)
         val searchParam = searchTemplate.valueParameterList
         val matchParam = match.valueParameterList
-        if(searchParam != null && matchParam != null) valueParameterList?.replaceParameterList(searchParam, matchParam)
-        if(!hasBody() && !searchTemplate.hasBody()) {
+        if (searchParam != null && matchParam != null) valueParameterList?.replaceParameterList(searchParam, matchParam)
+        if (!hasBody() && !searchTemplate.hasBody()) {
             match.equalsToken?.let { addFormatted(it) }
             match.bodyExpression?.let { addFormatted(it) }
         }
@@ -140,15 +145,15 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
     private fun KtProperty.replaceProperty(searchTemplate: KtProperty, match: KtProperty): KtProperty {
         PROPERTY_MODIFIERS.forEach { replaceModifier(searchTemplate, match, it) }
         fixModifierListFormatting(match)
-        if(!hasDelegate() && !hasInitializer()) {
-            if(!searchTemplate.hasInitializer()) {
+        if (!hasDelegate() && !hasInitializer()) {
+            if (!searchTemplate.hasInitializer()) {
                 match.equalsToken?.let { addFormatted(it) }
                 match.initializer?.let { addFormatted(it) }
             }
-            if(!searchTemplate.hasDelegate()) match.delegate?.let { addFormatted(it) }
+            if (!searchTemplate.hasDelegate()) match.delegate?.let { addFormatted(it) }
         }
-        if(!hasCustomGetter() && !searchTemplate.hasCustomGetter()) match.getter?.let { addFormatted(it) }
-        if(!hasCustomSetter() && !searchTemplate.hasCustomSetter()) match.setter?.let { addFormatted(it) }
+        if (!hasCustomGetter() && !searchTemplate.hasCustomGetter()) match.getter?.let { addFormatted(it) }
+        if (!hasCustomSetter() && !searchTemplate.hasCustomSetter()) match.setter?.let { addFormatted(it) }
         return this
     }
 
@@ -159,10 +164,10 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
         parameters.forEachIndexed { i, param ->
             val searchParam = searchTemplate.parameters.getOrNull(i)
             val matchParam = match.parameters.getOrNull(i)
-            if(param.typeReference == null && searchParam?.typeReference == null) {
+            if (param.typeReference == null && searchParam?.typeReference == null) {
                 matchParam?.typeReference?.let(param::setTypeReference)
             }
-            if(!param.hasDefaultValue() && (searchParam == null || !searchParam.hasDefaultValue())) {
+            if (!param.hasDefaultValue() && (searchParam == null || !searchParam.hasDefaultValue())) {
                 matchParam?.defaultValue?.let(param::setDefaultValue)
             }
         }
@@ -176,13 +181,13 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
         val prevAnchor = anchor.prevSibling
         val nextElement = match.nextSibling
         val prevElement = match.prevSibling
-        if(prevElement is PsiWhiteSpace) {
-            if(prevAnchor is PsiWhiteSpace) prevAnchor.replace(prevElement)
+        if (prevElement is PsiWhiteSpace) {
+            if (prevAnchor is PsiWhiteSpace) prevAnchor.replace(prevElement)
             else addBefore(prevElement, anchor)
 
         }
-        if(nextElement is PsiWhiteSpace) {
-            if(nextAnchor is PsiWhiteSpace) nextAnchor.replace(nextElement)
+        if (nextElement is PsiWhiteSpace) {
+            if (nextAnchor is PsiWhiteSpace) nextAnchor.replace(nextElement)
             else addAfter(nextElement, anchor)
         }
     }

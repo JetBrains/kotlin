@@ -100,20 +100,20 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         }
     }
 
-    override fun visitLeafPsiElement(element: LeafPsiElement) {
+    override fun visitLeafPsiElement(leafPsiElement: LeafPsiElement) {
         val other = getTreeElementDepar<LeafPsiElement>() ?: return
 
         // Match element type
-        if (!myMatchingVisitor.setResult(element.elementType == other.elementType)) return
+        if (!myMatchingVisitor.setResult(leafPsiElement.elementType == other.elementType)) return
 
-        when (element.elementType) {
+        when (leafPsiElement.elementType) {
             KDocTokens.TEXT -> {
-                myMatchingVisitor.result = when (val handler = element.getUserData(CompiledPattern.HANDLER_KEY)) {
-                    is LiteralWithSubstitutionHandler -> handler.match(element, other, myMatchingVisitor.matchContext)
-                    else -> matchTextOrVariable(element, other)
+                myMatchingVisitor.result = when (val handler = leafPsiElement.getUserData(CompiledPattern.HANDLER_KEY)) {
+                    is LiteralWithSubstitutionHandler -> handler.match(leafPsiElement, other, myMatchingVisitor.matchContext)
+                    else -> matchTextOrVariable(leafPsiElement, other)
                 }
             }
-            KDocTokens.TAG_NAME, KtTokens.IDENTIFIER -> myMatchingVisitor.result = matchTextOrVariable(element, other)
+            KDocTokens.TAG_NAME, KtTokens.IDENTIFIER -> myMatchingVisitor.result = matchTextOrVariable(leafPsiElement, other)
         }
     }
 
