@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.asJava
 
+import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.impl.java.stubs.PsiClassStub
 import com.intellij.psi.search.GlobalSearchScope
@@ -27,11 +28,19 @@ import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.utils.checkWithAttachment
 
 object LightClassUtil {
+    /**
+     * {@link kotlin.MetadataKt#kind} 4 = Multi-file class facade
+     */
+    const val MULTI_FILE_CLASS_FACADE = 4
+    const val KOTLIN_METADATA_ANNOTATION = "kotlin.Metadata"
+    const val METADATA_KIND = "k"
+    const val METADATA_DATA1 = "d1"
 
     fun findClass(stub: StubElement<*>, predicate: (PsiClassStub<*>) -> Boolean): PsiClass? {
         if (stub is PsiClassStub<*> && predicate(stub)) {
@@ -170,11 +179,30 @@ object LightClassUtil {
     private fun findFileFacade(ktFile: KtFile): PsiClass? {
         val fqName = ktFile.javaFileFacadeFqName
         val project = ktFile.project
-        val classesWithMatchingFqName =
-            JavaElementFinder.getInstance(project).findClasses(fqName.asString(), GlobalSearchScope.allScope(project))
+        val classesWithMatchingFqName = findPsiClass(project, fqName)
         return classesWithMatchingFqName.singleOrNull() ?: classesWithMatchingFqName.find {
             it.containingFile?.virtualFile == ktFile.virtualFile
         }
+    }
+
+    private fun findPsiClass(
+        project: Project,
+        fqName: FqName
+    ): Array<PsiClass> =
+        JavaElementFinder.getInstance(project).findClasses(fqName.asString(), GlobalSearchScope.allScope(project))
+
+    private fun findMultifileClassMetadata(psiClass: PsiClass): List<String>? {
+        val metadata = psiClass.getAnnotation(KOTLIN_METADATA_ANNOTATION)
+        if (metadata != null) {
+            val k = (metadata.findAttributeValue(METADATA_KIND) as? PsiLiteralValue)?.value as Int
+            if (k == MULTI_FILE_CLASS_FACADE) {
+                val d1 = (metadata.findAttributeValue(METADATA_DATA1) as? PsiArrayInitializerMemberValue)?.initializers?.mapNotNull {
+                    (it as? PsiLiteralValue)?.value as? String
+                } ?: emptyList()
+                return d1
+            }
+        }
+        return null
     }
 
     private fun getWrappingClasses(declaration: KtDeclaration): Sequence<PsiClass> {
@@ -183,7 +211,14 @@ object LightClassUtil {
         if (wrapperClassOrigin is KtObjectDeclaration && wrapperClassOrigin.isCompanion() && wrapperClass.parent is PsiClass) {
             return sequenceOf(wrapperClass, wrapperClass.parent as PsiClass)
         }
-        return sequenceOf(wrapperClass)
+        val wrappers = mutableListOf<PsiClass>(wrapperClass);
+        // for multipart classes we need to add parts to wrappingClasses, otherwise the declarations there wouldn't be found in stubs
+        findMultifileClassMetadata(wrapperClass)?.let {
+            it.forEach {
+                wrappers.addAll(findPsiClass(declaration.project, FqName.fromSegments(it.split("/"))).toList())
+            }
+        }
+        return wrappers.asSequence()
     }
 
     fun canGenerateLightClass(declaration: KtDeclaration): Boolean {
