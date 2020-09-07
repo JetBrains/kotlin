@@ -16,9 +16,16 @@
 
 package org.jetbrains.kotlin.jps.build
 
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.util.ThrowableRunnable
+import com.intellij.util.io.URLUtil
 import org.jetbrains.jps.builders.JpsBuildTestCase
+import org.jetbrains.jps.model.JpsDummyElement
+import org.jetbrains.jps.model.java.JpsJavaSdkType
 import org.jetbrains.jps.model.library.JpsLibrary
+import org.jetbrains.jps.model.library.JpsOrderRootType
+import org.jetbrains.jps.model.library.sdk.JpsSdk
+import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
 import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
 import org.jetbrains.kotlin.test.runTest
@@ -41,6 +48,14 @@ abstract class BaseKotlinJpsBuildTestCase : JpsBuildTestCase() {
             ThrowableRunnable { JpsKotlinCompilerRunner.releaseCompileServiceSession() },
             ThrowableRunnable { super.tearDown() }
         )
+    }
+
+    override fun addJdk(name: String, path: String?): JpsSdk<JpsDummyElement> {
+        val homePath = System.getProperty("java.home")
+        val versionString = System.getProperty("java.version")
+        val jdk = myModel.global.addSdk(name, homePath, versionString, JpsJavaSdkType.INSTANCE)
+        jdk.addRoot(JpsPathUtil.pathToUrl(path), JpsOrderRootType.COMPILED)
+        return jdk.properties
     }
 
     private val libraries = mutableMapOf<String, JpsLibrary>()
