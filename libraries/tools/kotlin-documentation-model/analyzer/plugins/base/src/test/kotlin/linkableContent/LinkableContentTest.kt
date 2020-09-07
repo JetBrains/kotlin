@@ -7,6 +7,7 @@ import org.jetbrains.dokka.base.transformers.pages.sourcelinks.SourceLinksTransf
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
 import org.jetbrains.dokka.model.WithGenerics
 import org.jetbrains.dokka.model.dfs
+import org.jetbrains.dokka.model.doc.Text
 import org.jetbrains.dokka.pages.*
 import org.jetbrains.dokka.plugability.plugin
 import org.jetbrains.dokka.testApi.testRunner.AbstractCoreTest
@@ -272,5 +273,43 @@ class LinkableContentTest : AbstractCoreTest() {
                 )
             }
         }
+    }
+
+    @Test
+    fun `Include module and package documentation with codeblock`() {
+
+        val testDataDir = getTestDataDir("multiplatform/basicMultiplatformTest").toAbsolutePath()
+        val includesDir = getTestDataDir("linkable/includes").toAbsolutePath()
+
+        val configuration = dokkaConfiguration {
+            moduleName = "example"
+            sourceSets {
+                sourceSet {
+                    analysisPlatform = "js"
+                    sourceRoots = listOf("jsMain", "commonMain", "jvmAndJsSecondCommonMain").map {
+                        Paths.get("$testDataDir/$it/kotlin").toString()
+                    }
+                    name = "js"
+                    includes = listOf(Paths.get("$includesDir/include2.md").toString())
+                }
+                sourceSet {
+                    analysisPlatform = "jvm"
+                    sourceRoots = listOf("jvmMain", "commonMain", "jvmAndJsSecondCommonMain").map {
+                        Paths.get("$testDataDir/$it/kotlin").toString()
+                    }
+                    name = "jvm"
+                    includes = listOf(Paths.get("$includesDir/include1.md").toString())
+                }
+            }
+        }
+
+        testFromData(configuration) {
+            documentablesMergingStage = {
+                Assertions.assertNotEquals(null, it.packages.first().documentation.values.single().dfs {
+                    (it as? Text)?.body?.contains("@SqlTable") ?: false
+                })
+            }
+        }
+
     }
 }
