@@ -21,10 +21,8 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtil.toSystemIndependentName
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.util.io.URLUtil
 import com.intellij.util.io.ZipUtil
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.api.CanceledStatus
@@ -47,8 +45,6 @@ import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.java.JpsJavaDependencyScope
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
-import org.jetbrains.jps.model.java.JpsJavaSdkType
-import org.jetbrains.jps.model.library.JpsOrderRootType
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.cli.common.Usage
@@ -959,18 +955,6 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         val expectedFile = File(getCurrentTestDataRoot(), "expected.txt")
 
         KotlinTestUtils.assertEqualsToFile(expectedFile, actual.toString())
-    }
-
-    fun testJre9() {
-        val jdk9Path = KtTestUtil.getJdk9Home().absolutePath
-
-        val jdk = myModel.global.addSdk(JDK_NAME, jdk9Path, "9", JpsJavaSdkType.INSTANCE)
-        jdk.addRoot(StandardFileSystems.JRT_PROTOCOL_PREFIX + jdk9Path + URLUtil.JAR_SEPARATOR + "java.base", JpsOrderRootType.COMPILED)
-
-        loadProject(workDir.absolutePath + File.separator + PROJECT_NAME + ".ipr")
-        addKotlinStdlibDependency()
-
-        buildAllModules().assertSuccessful()
     }
 
     fun testCustomDestination() {
