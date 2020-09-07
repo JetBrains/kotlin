@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.jps.build
 
+import com.intellij.openapi.vfs.StandardFileSystems
+import com.intellij.util.io.URLUtil
 import org.jetbrains.jps.model.JpsDummyElement
 import org.jetbrains.jps.model.JpsModuleRootModificationUtil
 import org.jetbrains.jps.model.JpsProject
@@ -26,7 +28,6 @@ import org.jetbrains.jps.model.library.JpsLibrary
 import org.jetbrains.jps.model.library.JpsOrderRootType
 import org.jetbrains.jps.model.library.sdk.JpsSdk
 import org.jetbrains.jps.model.module.JpsModule
-import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.test.KotlinRoot
 import java.io.File
 import java.io.IOException
@@ -43,7 +44,7 @@ abstract class AbstractKotlinJpsBuildTestCase : BaseKotlinJpsBuildTestCase() {
         val homePath = System.getProperty("java.home")
         val versionString = System.getProperty("java.version")
         val jdk = myModel.global.addSdk(name, homePath, versionString, JpsJavaSdkType.INSTANCE)
-        jdk.addRoot(JpsPathUtil.pathToUrl(path), JpsOrderRootType.COMPILED)
+        jdk.addRoot(StandardFileSystems.JRT_PROTOCOL_PREFIX + homePath + URLUtil.JAR_SEPARATOR + "java.base", JpsOrderRootType.COMPILED)
         return jdk.properties
     }
 

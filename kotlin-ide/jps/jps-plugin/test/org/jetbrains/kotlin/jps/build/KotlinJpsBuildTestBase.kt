@@ -11,7 +11,6 @@ import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.idea.test.runAll
-import org.jetbrains.kotlin.test.KotlinRoot
 import java.io.File
 import java.nio.file.Paths
 
@@ -25,9 +24,9 @@ abstract class KotlinJpsBuildTestBase : AbstractKotlinJpsBuildTestCase() {
         val currentTestMethod = this::class.members.firstOrNull { it.name == "test" + getTestName(false) }
         val workingDirFromAnnotation = currentTestMethod?.annotations?.filterIsInstance<WorkingDir>()?.firstOrNull()?.name
         val projDirPath = Paths.get(
-                TEST_DATA_PATH,
-                "general",
-                workingDirFromAnnotation ?: getTestName(false)
+            TEST_DATA_PATH,
+            "general",
+            workingDirFromAnnotation ?: getTestName(false)
         )
         originalProjectDir = projDirPath.toFile()
         workDir = copyTestDataToTmpDir(originalProjectDir)
@@ -64,7 +63,7 @@ abstract class KotlinJpsBuildTestBase : AbstractKotlinJpsBuildTestCase() {
         loadProject(workDir.absolutePath + File.separator + PROJECT_NAME + ".ipr")
 
         when (libraryDependency) {
-            LibraryDependency.NONE -> {}
+            LibraryDependency.NONE -> Unit
             LibraryDependency.JVM_MOCK_RUNTIME -> addKotlinMockRuntimeDependency()
             LibraryDependency.JVM_FULL_RUNTIME -> addKotlinStdlibDependency()
             LibraryDependency.JS_STDLIB -> addKotlinJavaScriptStdlibDependency()
@@ -79,9 +78,11 @@ abstract class KotlinJpsBuildTestBase : AbstractKotlinJpsBuildTestCase() {
         protected fun assertFilesExistInOutput(module: JpsModule, vararg relativePaths: String) {
             for (path in relativePaths) {
                 val outputFile = findFileInOutputDir(module, path)
-                assertTrue("Output not written: " + outputFile.absolutePath + "\n Directory contents: \n" + dirContents(
-                    outputFile.parentFile
-                ), outputFile.exists())
+                assertTrue(
+                    "Output not written: " + outputFile.absolutePath + "\n Directory contents: \n" + dirContents(
+                        outputFile.parentFile
+                    ), outputFile.exists()
+                )
             }
         }
 
