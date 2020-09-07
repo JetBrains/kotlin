@@ -22,7 +22,7 @@ class KotlinInlineRefactoringFUSCollector : CounterUsagesCollector() {
     override fun getGroup(): EventLogGroup = GROUP
 
     companion object {
-        private val GROUP = EventLogGroup("kotlin.ide.refactoring", 1)
+        private val GROUP = EventLogGroup("kotlin.ide.refactoring", 2)
         private val elementType = EventFields.Enum("element_type", ElementType::class.java)
         private val languageFrom = EventFields.String("language_from", listOf("{util#lang}"))
         private val languageTo = EventFields.String("language_to", listOf("{util#lang}"))
