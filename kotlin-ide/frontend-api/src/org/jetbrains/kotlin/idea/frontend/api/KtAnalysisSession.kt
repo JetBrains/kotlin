@@ -122,13 +122,11 @@ abstract class KtAnalysisSession(override val token: ValidityToken) : ValidityTo
 
     fun KtCallableSymbol.checkExtensionIsSuitable(
         originalPsiFile: KtFile,
-        originalPosition: PsiElement?,
         psiFakeCompletionExpression: KtSimpleNameExpression,
         psiReceiverExpression: KtExpression?,
     ): Boolean = completionCandidateChecker.checkExtensionFitsCandidate(
         this,
         originalPsiFile,
-        originalPosition,
         psiFakeCompletionExpression,
         psiReceiverExpression
     )

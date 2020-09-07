@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.completion
 import com.intellij.codeInsight.completion.*
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PsiJavaPatterns
-import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
@@ -81,7 +80,7 @@ private object KotlinAvailableScopesCompletionProvider {
             val (implicitScopes, _) = originalFile.getScopeContextForPosition(nameExpression)
 
             fun KtCallableSymbol.hasSuitableExtensionReceiver(): Boolean =
-                checkExtensionIsSuitable(originalFile, parameters.originalPosition, nameExpression, explicitReceiver)
+                checkExtensionIsSuitable(originalFile, nameExpression, explicitReceiver)
 
             when {
                 nameExpression.parent is KtUserType -> collectTypesCompletion(result, implicitScopes)

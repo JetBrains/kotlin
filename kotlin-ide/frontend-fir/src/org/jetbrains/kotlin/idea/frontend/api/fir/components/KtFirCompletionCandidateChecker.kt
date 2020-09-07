@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
-import com.intellij.psi.PsiElement
 import com.jetbrains.rd.util.getOrCreate
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -40,15 +39,14 @@ internal class KtFirCompletionCandidateChecker(
     override fun checkExtensionFitsCandidate(
         firSymbolForCandidate: KtCallableSymbol,
         originalFile: KtFile,
-        originalPosition: PsiElement?,
         nameExpression: KtSimpleNameExpression,
         possibleExplicitReceiver: KtExpression?,
     ): Boolean = withValidityAssertion {
         val functionFits = firSymbolForCandidate.withResolvedFirOfType<KtFirFunctionSymbol, FirSimpleFunction, Boolean> { firFunction ->
-            checkExtension(firFunction, originalFile, originalPosition, nameExpression, possibleExplicitReceiver)
+            checkExtension(firFunction, originalFile, nameExpression, possibleExplicitReceiver)
         }
         val propertyFits = firSymbolForCandidate.withResolvedFirOfType<KtFirPropertySymbol, FirProperty, Boolean> { firProperty ->
-            checkExtension(firProperty, originalFile, originalPosition, nameExpression, possibleExplicitReceiver)
+            checkExtension(firProperty, originalFile, nameExpression, possibleExplicitReceiver)
         }
 
         functionFits ?: propertyFits ?: false
@@ -61,14 +59,13 @@ internal class KtFirCompletionCandidateChecker(
     private fun checkExtension(
         candidateSymbol: FirCallableDeclaration<*>,
         originalFile: KtFile,
-        originalPosition: PsiElement?,
         nameExpression: KtSimpleNameExpression,
         possibleExplicitReceiver: KtExpression?,
     ): Boolean {
         val file = originalFile.getOrBuildFirOfType<FirFile>(firResolveState)
         val explicitReceiverExpression = possibleExplicitReceiver?.getOrBuildFirOfType<FirExpression>(firResolveState)
         val resolver = SingleCandidateResolver(firResolveState.firIdeSourcesSession, file)
-        val implicitReceivers = getImplicitReceivers(file, nameExpression, originalPosition)
+        val implicitReceivers = getImplicitReceivers(originalFile, file, nameExpression)
         for (implicitReceiverValue in implicitReceivers) {
             val resolutionParameters = ResolutionParameters(
                 singleCandidateResolutionMode = SingleCandidateResolutionMode.CHECK_EXTENSION_FOR_COMPLETION,
@@ -85,17 +82,17 @@ internal class KtFirCompletionCandidateChecker(
     }
 
     private fun getImplicitReceivers(
-        file: FirFile,
-        fakeNameExpression: KtSimpleNameExpression,
-        originalPosition: PsiElement?
+        originalFile: KtFile,
+        firFile: FirFile,
+        fakeNameExpression: KtSimpleNameExpression
     ): Sequence<ImplicitReceiverValue<*>?> {
         val fakeEnclosingFunction = fakeNameExpression.getNonStrictParentOfType<KtNamedFunction>()
             ?: error("Cannot find enclosing function for ${fakeNameExpression.getElementTextInContext()}")
-        val originalEnclosingFunction = originalPosition?.getNonStrictParentOfType<KtNamedFunction>()
+        val originalEnclosingFunction = originalFile.findFunctionDeclarationAt(fakeEnclosingFunction.textOffset)
             ?: error("Cannot find enclosing function for completion in provided position (or position is absent)")
-        val completionContext = completionContextCache.getOrCreate(file to fakeEnclosingFunction) {
+        val completionContext = completionContextCache.getOrCreate(firFile to fakeEnclosingFunction) {
             LowLevelFirApiFacade.buildCompletionContextForFunction(
-                file,
+                firFile,
                 fakeEnclosingFunction,
                 originalEnclosingFunction,
                 state = firResolveState
@@ -109,4 +106,9 @@ internal class KtFirCompletionCandidateChecker(
             yieldAll(towerDataContext.implicitReceiverStack)
         }
     }
+
+    private fun KtFile.findFunctionDeclarationAt(offset: Int): KtNamedFunction? =
+        findElementAt(offset)
+            ?.getNonStrictParentOfType<KtNamedFunction>()
+            ?.takeIf { it.textOffset == offset }
 }
