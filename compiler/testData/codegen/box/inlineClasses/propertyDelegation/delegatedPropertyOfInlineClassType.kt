@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-
 import kotlin.reflect.KProperty
 
 inline class ICInt(val i: Int)

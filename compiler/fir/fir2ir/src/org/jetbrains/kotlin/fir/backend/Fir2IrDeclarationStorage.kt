@@ -525,7 +525,7 @@ class Fir2IrDeclarationStorage(
     internal fun createIrPropertyAccessor(
         propertyAccessor: FirPropertyAccessor?,
         property: FirProperty,
-        correspondingProperty: IrProperty,
+        correspondingProperty: IrDeclarationWithName,
         propertyType: IrType,
         irParent: IrDeclarationParent?,
         thisReceiverOwner: IrClass? = irParent as? IrClass,
@@ -537,7 +537,7 @@ class Fir2IrDeclarationStorage(
     ): IrSimpleFunction {
         val prefix = if (isSetter) "set" else "get"
         val signature = if (isLocal) null else signatureComposer.composeAccessorSignature(property, isSetter)
-        val containerSource = correspondingProperty.containerSource
+        val containerSource = (correspondingProperty as? IrProperty)?.containerSource
         return declareIrAccessor(
             signature,
             containerSource,
@@ -550,8 +550,8 @@ class Fir2IrDeclarationStorage(
             irFactory.createFunction(
                 startOffset, endOffset, origin, symbol,
                 Name.special("<$prefix-${correspondingProperty.name}>"),
-                visibility ?: correspondingProperty.visibility,
-                correspondingProperty.modality, accessorReturnType,
+                visibility ?: (correspondingProperty as IrDeclarationWithVisibility).visibility,
+                (correspondingProperty as? IrOverridableMember)?.modality ?: Modality.FINAL, accessorReturnType,
                 isInline = propertyAccessor?.isInline == true,
                 isExternal = propertyAccessor?.isExternal == true,
                 isTailrec = false, isSuspend = false, isOperator = false,
@@ -559,7 +559,7 @@ class Fir2IrDeclarationStorage(
                 isExpect = false, isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
                 containerSource = containerSource,
             ).apply {
-                correspondingPropertySymbol = correspondingProperty.symbol
+                correspondingPropertySymbol = (correspondingProperty as? IrProperty)?.symbol
                 if (propertyAccessor != null) {
                     metadata = FirMetadataSource.Function(propertyAccessor)
                     // Note that deserialized annotations are stored in the accessor, not the property.
@@ -883,6 +883,41 @@ class Fir2IrDeclarationStorage(
         return irVariable
     }
 
+    fun createIrLocalDelegatedProperty(property: FirProperty, irParent: IrDeclarationParent): IrLocalDelegatedProperty {
+        val type = property.returnTypeRef.toIrType()
+        val origin = IrDeclarationOrigin.DEFINED
+        val irProperty = property.convertWithOffsets { startOffset, endOffset ->
+            val descriptor = WrappedVariableDescriptorWithAccessor()
+            symbolTable.declareLocalDelegatedProperty(startOffset, endOffset, origin, descriptor, type) {
+                irFactory.createLocalDelegatedProperty(startOffset, endOffset, origin, it, property.name, type, property.isVar).apply {
+                    descriptor.bind(this)
+                }
+            }
+        }.apply {
+            parent = irParent
+            enterScope(this)
+            delegate = declareIrVariable(
+                startOffset, endOffset, IrDeclarationOrigin.PROPERTY_DELEGATE,
+                Name.identifier("${property.name}\$delegate"), property.delegate!!.typeRef.toIrType(),
+                isVar = false, isConst = false, isLateinit = false
+            )
+            delegate.parent = irParent
+            getter = createIrPropertyAccessor(
+                property.getter, property, this, type, irParent, null, false,
+                IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR, startOffset, endOffset, isLocal
+            )
+            if (property.isVar) {
+                setter = createIrPropertyAccessor(
+                    property.setter, property, this, type, irParent, null, true,
+                    IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR, startOffset, endOffset, isLocal
+                )
+            }
+            leaveScope(this)
+        }
+        localStorage.putDelegatedProperty(property, irProperty)
+        return irProperty
+    }
+
     fun declareTemporaryVariable(base: IrExpression, nameHint: String? = null): IrVariable {
         return declareIrVariable(
             base.startOffset, base.endOffset, IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
@@ -1029,6 +1064,9 @@ class Fir2IrDeclarationStorage(
     fun getIrBackingFieldSymbol(firVariableSymbol: FirVariableSymbol<*>): IrSymbol {
         return when (val fir = firVariableSymbol.fir) {
             is FirProperty -> {
+                if (fir.isLocal) {
+                    return localStorage.getDelegatedProperty(fir)?.delegate?.symbol ?: getIrVariableSymbol(fir)
+                }
                 propertyCache[fir]?.let { return it.backingField!!.symbol }
                 val irParent = findIrParent(fir)
                 val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
@@ -1045,6 +1083,11 @@ class Fir2IrDeclarationStorage(
     private fun getIrVariableSymbol(firVariable: FirVariable<*>): IrVariableSymbol {
         return localStorage.getVariable(firVariable)?.symbol
             ?: throw IllegalArgumentException("Cannot find variable ${firVariable.render()} in local storage")
+    }
+
+    fun getIrLocalDelegatedPropertySymbol(firPropertySymbol: FirPropertySymbol): IrSymbol {
+        return localStorage.getDelegatedProperty(firPropertySymbol.fir)?.symbol
+            ?: throw IllegalArgumentException("Cannot find delegated property ${firPropertySymbol.fir.render()} in local storage")
     }
 
     fun getIrValueSymbol(firVariableSymbol: FirVariableSymbol<*>): IrSymbol {
