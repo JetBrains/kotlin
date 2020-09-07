@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
+import kotlin.test.assertTrue
 
 class DukatIntegrationIT : BaseGradleIT() {
     @Test
@@ -239,6 +240,40 @@ class DukatIntegrationIT : BaseGradleIT() {
             assertSuccessful()
 
             assertSingleFileExists(externalSrcs, "index.module_left-pad.kt")
+        }
+    }
+
+    @Test
+    fun testBothOnlyOnceGenerateDependencies() {
+        val project = Project(
+            projectName = "both",
+            directoryPrefix = "dukat-integration"
+        )
+        project.setupWorkingDir()
+        project.gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        val externalSrcs = "build/externals/both-jsLegacy/src"
+        project.build("compileKotlinJsIr") {
+            assertSuccessful()
+            assertTasksExecuted(":legacyGenerateExternalsIntegrated")
+
+            assertSingleFileExists(externalSrcs, "index.module_decamelize.kt")
+            val irExternals = "build/externals/both-jsIr/src"
+            val directoryFile = fileInWorkingDir(irExternals)
+            assertTrue(
+                !directoryFile.exists(),
+                "[$irExternals] should not contain files"
+            )
+        }
+
+        project.build(
+            "compileKotlinJsLegacy",
+            "--rerun-tasks"
+        ) {
+            assertSuccessful()
+            assertTasksExecuted(":legacyGenerateExternalsIntegrated")
+
+            assertSingleFileExists(externalSrcs, "index.module_decamelize.kt")
         }
     }
 
