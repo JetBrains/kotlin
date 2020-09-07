@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import java.util.*
 
 class RawFirBuilder(
     session: FirSession, val baseScopeProvider: FirScopeProvider, val stubMode: Boolean
@@ -63,7 +62,19 @@ class RawFirBuilder(
 
     fun buildFunctionWithBody(function: KtNamedFunction): FirFunction<*> {
         assert(!stubMode) { "Building FIR function with body isn't supported in stub mode" }
-        val parentsUpToFile = function.parents
+        setupContextForPosition(function)
+        return function.accept(Visitor(), Unit) as FirFunction<*>
+    }
+
+    fun buildPropertyWithBody(property: KtProperty): FirProperty {
+        require(!property.isLocal) { "Should not be used to build local properties (variables)" }
+        assert(!stubMode) { "Building FIR function with body isn't supported in stub mode" }
+        setupContextForPosition(property)
+        return property.accept(Visitor(), Unit) as FirProperty
+    }
+
+    private fun setupContextForPosition(position: KtElement) {
+        val parentsUpToFile = position.parents
         for (parent in parentsUpToFile.toList().asReversed()) {
             when (parent) {
                 is KtFile -> {
@@ -75,7 +86,6 @@ class RawFirBuilder(
                 }
             }
         }
-        return function.accept(Visitor(), Unit) as FirFunction<*>
     }
 
     override fun PsiElement.toFirSourceElement(kind: FirFakeSourceElementKind?): FirPsiSourceElement<*> {
