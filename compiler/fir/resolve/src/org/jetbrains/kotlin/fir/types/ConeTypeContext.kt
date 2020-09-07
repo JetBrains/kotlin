@@ -328,6 +328,10 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             ConeCapturedType(status, lowerType, argument, typeConstructor.getParameter(index))
         }
 
+        val substitutor = substitutorByMap((0 until argumentsCount).map { index ->
+            (typeConstructor.getParameter(index) as ConeTypeParameterLookupTag).toSymbol() to (newArguments[index] as ConeKotlinType)
+        }.toMap())
+
         for (index in 0 until argumentsCount) {
             val oldArgument = type.typeArguments[index]
             val newArgument = newArguments[index]
@@ -336,7 +340,9 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
             val parameter = typeConstructor.getParameter(index)
             val upperBounds = (0 until parameter.upperBoundCount()).mapTo(mutableListOf()) { paramIndex ->
-                parameter.getUpperBound(paramIndex) // TODO: substitution
+                substitutor.safeSubstitute(
+                    this as TypeSystemInferenceExtensionContext, parameter.getUpperBound(paramIndex)
+                )
             }
 
             if (!oldArgument.isStarProjection() && oldArgument.getVariance() == TypeVariance.OUT) {
