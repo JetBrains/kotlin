@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.util.parentsOfType
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -27,26 +26,18 @@ import org.jetbrains.kotlin.idea.frontend.api.components.KtScopeProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.scopes.*
-import org.jetbrains.kotlin.idea.frontend.api.fir.scopes.KtFirDeclaredMemberScope
-import org.jetbrains.kotlin.idea.frontend.api.fir.scopes.KtFirDelegatingScope
-import org.jetbrains.kotlin.idea.frontend.api.fir.scopes.KtFirMemberScope
-import org.jetbrains.kotlin.idea.frontend.api.fir.scopes.KtFirNonStarImportingScope
-import org.jetbrains.kotlin.idea.frontend.api.fir.scopes.KtFirPackageScope
-import org.jetbrains.kotlin.idea.frontend.api.fir.scopes.KtFirStarImportingScope
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirType
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.EnclosingDeclarationContext
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.buildCompletionContext
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.scopes.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
-import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import java.util.*
 
 internal class KtFirScopeProvider(
@@ -148,40 +139,10 @@ internal class KtFirScopeProvider(
         positionInFakeFile: KtElement
     ): LowLevelFirApiFacade.FirCompletionContext {
         val originalFirFile = originalFile.getOrBuildFirOfType<FirFile>(firResolveState)
-        val fakeEnclosingFunction = positionInFakeFile.getNonStrictParentOfType<KtNamedFunction>()
+        val declarationContext = EnclosingDeclarationContext.detect(originalFile, positionInFakeFile)
 
-        if (fakeEnclosingFunction != null) {
-            val originalEnclosingFunction = originalFile.findDeclarationOfTypeAt<KtNamedFunction>(fakeEnclosingFunction.textOffset)
-                ?: error("Cannot find original function matching to ${fakeEnclosingFunction.getElementTextInContext()} in $originalFile")
-
-            return LowLevelFirApiFacade.buildCompletionContextForFunction(
-                originalFirFile,
-                fakeEnclosingFunction,
-                originalEnclosingFunction,
-                state = firResolveState
-            )
-        }
-
-        val fakeEnclosingProperty = positionInFakeFile.parentsOfType<KtProperty>().firstOrNull { !it.isLocal }
-        if (fakeEnclosingProperty != null) {
-            val originalEnclosingProperty = originalFile.findDeclarationOfTypeAt<KtProperty>(fakeEnclosingProperty.textOffset)
-                ?: error("Cannot find original property matching to ${fakeEnclosingProperty.getElementTextInContext()} in $originalFile")
-
-            return LowLevelFirApiFacade.buildCompletionContextForProperty(
-                originalFirFile,
-                fakeEnclosingProperty,
-                originalEnclosingProperty,
-                state = firResolveState
-            )
-        }
-
-        error("Cannot find enclosing declaration for ${positionInFakeFile.getElementTextInContext()}")
+        return declarationContext.buildCompletionContext(originalFirFile, firResolveState)
     }
-
-    private inline fun<reified T: KtElement> KtFile.findDeclarationOfTypeAt(offset: Int): T? =
-        findElementAt(offset)
-            ?.getNonStrictParentOfType<T>()
-            ?.takeIf { it.textOffset == offset }
 
     private fun convertToKtScope(firScope: FirScope): KtScope {
         firScopeStorage.register(firScope)
