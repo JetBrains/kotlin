@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
@@ -46,8 +45,8 @@ abstract class FirModuleResolveState {
     abstract fun <D : FirDeclaration> resolvedFirToPhase(declaration: D, toPhase: FirResolvePhase): D
 
     // todo temporary, used only in completion
-    internal abstract fun lazyResolveFunctionForCompletion(
-        firFunction: FirFunction<*>,
+    internal abstract fun lazyResolveDeclarationForCompletion(
+        firFunction: FirDeclaration,
         containerFirFile: FirFile,
         firIdeProvider: FirIdeProvider,
         toPhase: FirResolvePhase,
@@ -91,8 +90,8 @@ internal open class FirModuleResolveStateImpl(
     override fun getCachedMappingForCompletion(element: KtElement): FirElement? =
         psiToFirCache.getCachedMapping(element)
 
-    override fun lazyResolveFunctionForCompletion(
-        firFunction: FirFunction<*>,
+    override fun lazyResolveDeclarationForCompletion(
+        firFunction: FirDeclaration,
         containerFirFile: FirFile,
         firIdeProvider: FirIdeProvider,
         toPhase: FirResolvePhase,

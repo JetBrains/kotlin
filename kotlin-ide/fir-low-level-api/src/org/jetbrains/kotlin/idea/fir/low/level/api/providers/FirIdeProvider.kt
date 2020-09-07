@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtProperty
 
 @ThreadSafeMutableState
 internal class FirIdeProvider(
@@ -101,6 +102,10 @@ internal class FirIdeProvider(
     // used only for completion
     fun buildFunctionWithBody(ktNamedFunction: KtNamedFunction): FirFunction<*> {
         return RawFirBuilder(session, kotlinScopeProvider, stubMode = false).buildFunctionWithBody(ktNamedFunction)
+    }
+
+    fun buildPropertyWithBody(ktNamedFunction: KtProperty): FirProperty {
+        return RawFirBuilder(session, kotlinScopeProvider, stubMode = false).buildPropertyWithBody(ktNamedFunction)
     }
 
 
