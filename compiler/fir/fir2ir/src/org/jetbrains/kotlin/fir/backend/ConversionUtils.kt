@@ -130,7 +130,7 @@ fun FirReference.toSymbol(
                 is FirClassSymbol<*> -> classifierStorage.getIrClassSymbol(boundSymbol).owner.thisReceiver?.symbol
                 is FirFunctionSymbol -> declarationStorage.getIrFunctionSymbol(boundSymbol).owner.extensionReceiverParameter?.symbol
                 is FirPropertySymbol -> {
-                    val property = declarationStorage.getIrPropertyOrFieldSymbol(boundSymbol).owner as? IrProperty
+                    val property = declarationStorage.getIrPropertySymbol(boundSymbol).owner as? IrProperty
                     property?.let { conversionScope.parentAccessorOfPropertyFromStack(it) }?.symbol
                 }
                 else -> null
@@ -149,20 +149,14 @@ private fun FirCallableSymbol<*>.toSymbol(declarationStorage: Fir2IrDeclarationS
             } else {
                 syntheticProperty.setter!!.delegate.symbol.toSymbol(declarationStorage, preferGetter)
             }
-        } ?: fir.toSymbol(declarationStorage)
+        } ?: declarationStorage.getIrPropertySymbol(this)
     }
-    is FirPropertySymbol -> fir.toSymbol(declarationStorage)
-    is FirFieldSymbol -> declarationStorage.getIrPropertyOrFieldSymbol(this)
+    is FirPropertySymbol -> declarationStorage.getIrPropertySymbol(this)
+    is FirFieldSymbol -> declarationStorage.getIrFieldSymbol(this)
     is FirBackingFieldSymbol -> declarationStorage.getIrBackingFieldSymbol(this)
     is FirDelegateFieldSymbol<*> -> declarationStorage.getIrBackingFieldSymbol(this)
     is FirVariableSymbol<*> -> declarationStorage.getIrValueSymbol(this)
     else -> null
-}
-
-private fun FirProperty.toSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbol? = when {
-    !isLocal -> declarationStorage.getIrPropertyOrFieldSymbol(symbol)
-    delegate != null -> declarationStorage.getIrLocalDelegatedPropertySymbol(symbol)
-    else -> declarationStorage.getIrValueSymbol(symbol)
 }
 
 fun FirConstExpression<*>.getIrConstKind(): IrConstKind<*> = when (kind) {
@@ -327,7 +321,7 @@ internal fun FirProperty.generateOverriddenAccessorSymbols(
         if (it.fir.visibility == Visibilities.Private) {
             return@processDirectlyOverriddenProperties ProcessorAction.NEXT
         }
-        val overriddenProperty = declarationStorage.getIrPropertyOrFieldSymbol(it.unwrapSubstitutionOverrides()) as IrPropertySymbol
+        val overriddenProperty = declarationStorage.getIrPropertySymbol(it.unwrapSubstitutionOverrides()) as IrPropertySymbol
         val overriddenAccessor = if (isGetter) overriddenProperty.owner.getter?.symbol else overriddenProperty.owner.setter?.symbol
         if (overriddenAccessor != null) {
             overriddenSet += overriddenAccessor

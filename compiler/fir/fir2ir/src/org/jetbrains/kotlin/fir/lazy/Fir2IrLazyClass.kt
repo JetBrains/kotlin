@@ -155,7 +155,7 @@ class Fir2IrLazyClass(
                         processedNames += declaration.name
                         scope.processPropertiesByName(declaration.name) {
                             if (it is FirPropertySymbol) {
-                                result += declarationStorage.getIrPropertyOrFieldSymbol(it).owner as IrProperty
+                                result += declarationStorage.getIrPropertySymbol(it).owner as IrProperty
                             }
                         }
                     }

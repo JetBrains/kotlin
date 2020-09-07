@@ -219,7 +219,7 @@ class FakeOverrideGenerator(
         isVar: Boolean,
         firOverriddenSymbol: FirPropertySymbol
     ): IrProperty {
-        val irSymbol = declarationStorage.getIrPropertyOrFieldSymbol(firOverriddenSymbol) as? IrPropertySymbol ?: return this
+        val irSymbol = declarationStorage.getIrPropertySymbol(firOverriddenSymbol) as? IrPropertySymbol ?: return this
         val overriddenProperty = irSymbol.owner
         getter?.apply {
             overriddenProperty.getter?.symbol?.let { overriddenSymbols = listOf(it) }
