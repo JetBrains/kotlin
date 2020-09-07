@@ -15,7 +15,6 @@ abstract class KtCompletionCandidateChecker : KtAnalysisSessionComponent() {
     abstract fun checkExtensionFitsCandidate(
         firSymbolForCandidate: KtCallableSymbol,
         originalFile: KtFile,
-        originalPosition: PsiElement?,
         nameExpression: KtSimpleNameExpression,
         possibleExplicitReceiver: KtExpression?,
     ): Boolean
