@@ -769,6 +769,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/callableReference/boundPropertyReferenceInInline.kt");
         }
 
+        @TestMetadata("kt36975.kt")
+        public void testKt36975() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/callableReference/kt36975.kt");
+        }
+
         @TestMetadata("nameIntrinsicWithImplicitThis.kt")
         public void testNameIntrinsicWithImplicitThis() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/callableReference/nameIntrinsicWithImplicitThis.kt");
