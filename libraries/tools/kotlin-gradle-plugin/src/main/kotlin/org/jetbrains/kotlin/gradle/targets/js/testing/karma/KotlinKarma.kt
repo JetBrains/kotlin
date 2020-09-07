@@ -53,7 +53,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
     }
 
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
-        get() = requiredDependencies
+        get() = requiredDependencies + webpackConfig.getRequiredDependencies(versions)
 
     override val settingsState: String
         get() = "KotlinKarma($config)"
@@ -183,8 +183,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
     private fun useWebpack() {
         requiredDependencies.add(versions.karmaWebpack)
         requiredDependencies.add(versions.webpack)
-
-        requiredDependencies.addAll(webpackConfig.getRequiredDependencies(versions))
 
         addPreprocessor("webpack")
         confJsWriters.add {
