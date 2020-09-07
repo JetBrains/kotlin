@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.backend.jvm.lower.hasAssertionsDisabledField
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
@@ -270,7 +270,7 @@ abstract class ClassCodegen protected constructor(
         if (field.origin != JvmLoweredDeclarationOrigin.CONTINUATION_CLASS_RESULT_FIELD) {
             val skipNullabilityAnnotations =
                 flags and (Opcodes.ACC_SYNTHETIC or Opcodes.ACC_ENUM) != 0 ||
-                        field.origin == JvmLoweredDeclarationOrigin.FIELD_FOR_STATIC_LAMBDA_INSTANCE
+                        field.origin == JvmLoweredDeclarationOrigin.FIELD_FOR_STATIC_CALLABLE_REFERENCE_INSTANCE
             object : AnnotationCodegen(this@ClassCodegen, context, skipNullabilityAnnotations) {
                 override fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor {
                     return fv.visitAnnotation(descr, visible)

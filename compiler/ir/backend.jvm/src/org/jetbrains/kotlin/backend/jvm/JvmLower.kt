@@ -315,7 +315,7 @@ private val jvmFilePhases = listOf(
     returnableBlocksPhase,
     localDeclarationsPhase,
     jvmLocalClassExtractionPhase,
-    staticLambdaPhase,
+    staticCallableReferencePhase,
 
     jvmDefaultConstructorPhase,
 

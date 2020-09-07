@@ -35,21 +35,21 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
-internal val staticLambdaPhase = makeIrFilePhase(
-    ::StaticLambdaLowering,
-    name = "StaticLambdaPhase",
+internal val staticCallableReferencePhase = makeIrFilePhase(
+    ::StaticCallableReferenceLowering,
+    name = "StaticCallableReferencePhase",
     description = "Turn static callable references into singletons"
 )
 
-class StaticLambdaLowering(val backendContext: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoid() {
-    private val staticLambdaFields = HashMap<IrClass, IrField>()
+class StaticCallableReferenceLowering(val backendContext: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoid() {
+    private val staticInstanceFields = HashMap<IrClass, IrField>()
 
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
 
     override fun visitClass(declaration: IrClass): IrStatement {
         declaration.transformChildrenVoid()
         if (declaration.isSyntheticSingleton) {
-            declaration.declarations += getFieldForStaticLambdaInstance(declaration).also { field ->
+            declaration.declarations += getFieldForStaticCallableReferenceInstance(declaration).also { field ->
                 field.initializer = backendContext.createIrBuilder(field.symbol).run {
                     irExprBody(irCall(declaration.primaryConstructor!!))
                 }
@@ -58,17 +58,17 @@ class StaticLambdaLowering(val backendContext: JvmBackendContext) : FileLowering
         return declaration
     }
 
-    private fun getFieldForStaticLambdaInstance(lambdaClass: IrClass): IrField =
-        staticLambdaFields.getOrPut(lambdaClass) {
+    private fun getFieldForStaticCallableReferenceInstance(irClass: IrClass): IrField =
+        staticInstanceFields.getOrPut(irClass) {
             backendContext.irFactory.buildField {
                 name = Name.identifier(JvmAbi.INSTANCE_FIELD)
-                type = lambdaClass.defaultType
-                origin = JvmLoweredDeclarationOrigin.FIELD_FOR_STATIC_LAMBDA_INSTANCE
+                type = irClass.defaultType
+                origin = JvmLoweredDeclarationOrigin.FIELD_FOR_STATIC_CALLABLE_REFERENCE_INSTANCE
                 isFinal = true
                 isStatic = true
                 visibility = DescriptorVisibilities.PUBLIC
             }.apply {
-                parent = lambdaClass
+                parent = irClass
             }
         }
 
@@ -77,14 +77,16 @@ class StaticLambdaLowering(val backendContext: JvmBackendContext) : FileLowering
         if (!constructor.constructedClass.isSyntheticSingleton)
             return super.visitConstructorCall(expression)
 
-        val instanceField = getFieldForStaticLambdaInstance(constructor.constructedClass)
+        val instanceField = getFieldForStaticCallableReferenceInstance(constructor.constructedClass)
         return IrGetFieldImpl(expression.startOffset, expression.endOffset, instanceField.symbol, expression.type)
     }
 
     // Recognize callable references with no value or type arguments. The only type arguments in Kotlin stem from usages of
     // reified type parameters, which we unfortunately don't record as parameters so we have to check the body of the class.
     private val IrClass.isSyntheticSingleton: Boolean
-        get() = (origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL || origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL)
+        get() = (origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL
+                || origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
+                || origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE)
                 && primaryConstructor!!.valueParameters.isEmpty()
                 && !containsReifiedTypeParameters
 
