@@ -665,6 +665,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         public void testPlatformTypes() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/nullabilityAnnotations/platformTypes.kt");
         }
+
+        @TestMetadata("samAdapterForJavaInterfaceWithNullability.kt")
+        public void testSamAdapterForJavaInterfaceWithNullability() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/nullabilityAnnotations/samAdapterForJavaInterfaceWithNullability.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeListing/specialBridges")
