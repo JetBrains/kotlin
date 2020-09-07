@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
@@ -29,9 +30,11 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal class KtFirCompletionCandidateChecker(
-    override val analysisSession: KtFirAnalysisSession,
+    analysisSession: KtFirAnalysisSession,
     override val token: ValidityToken,
 ) : KtCompletionCandidateChecker(), KtFirAnalysisSessionComponent {
+    override val analysisSession: KtFirAnalysisSession by weakRef(analysisSession)
+
     private val completionContextCache = HashMap<Pair<FirFile, KtNamedFunction>, LowLevelFirApiFacade.FirCompletionContext>()
 
     override fun checkExtensionFitsCandidate(
