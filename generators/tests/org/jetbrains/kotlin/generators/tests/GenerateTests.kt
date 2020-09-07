@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.copyright.AbstractUpdateKotlinCopyrightTest
 import org.jetbrains.kotlin.findUsages.AbstractFindUsagesTest
 import org.jetbrains.kotlin.findUsages.AbstractFindUsagesWithDisableComponentSearchTest
 import org.jetbrains.kotlin.findUsages.AbstractKotlinFindUsagesWithLibraryTest
+import org.jetbrains.kotlin.findUsages.AbstractKotlinFindUsagesWithStdlibTest
 import org.jetbrains.kotlin.fir.plugin.AbstractFirAllOpenDiagnosticTest
 import org.jetbrains.kotlin.formatter.AbstractFormatterTest
 import org.jetbrains.kotlin.formatter.AbstractTypingIndentationTestBase
@@ -606,6 +607,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractKotlinFindUsagesWithLibraryTest> {
                 model("findUsages/libraryUsages", pattern = """^(.+)\.0\.kt$""")
+            }
+
+            testClass<AbstractKotlinFindUsagesWithStdlibTest> {
+                model("findUsages/stdlibUsages", pattern = """^(.+)\.0\.kt$""")
             }
 
             testClass<AbstractMoveTest> {
