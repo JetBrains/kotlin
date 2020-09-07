@@ -573,7 +573,7 @@ open class IrBasedClassDescriptor(owner: IrClass) : ClassDescriptor, IrBasedDecl
 
     override fun getStaticScope() = MemberScope.Empty
 
-    override fun getSource() = SourceElement.NO_SOURCE
+    override fun getSource() = owner.source
 
     override fun getConstructors() =
         owner.declarations.filterIsInstance<IrConstructor>().filter { !it.origin.isSynthetic }.map { it.toIrBasedDescriptor() }.toList()
