@@ -70,7 +70,6 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.KotlinCompilerStandalone
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
@@ -92,13 +91,19 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         private val EXCLUDE_FILES = arrayOf("Excluded.class", "YetAnotherExcluded.class")
         private val NOTHING = arrayOf<String>()
         private val KOTLIN_JS_LIBRARY = "jslib-example"
-        private val PATH_TO_KOTLIN_JS_LIBRARY = AbstractKotlinJpsBuildTestCase.TEST_DATA_PATH + "general/KotlinJavaScriptProjectWithDirectoryAsLibrary/" + KOTLIN_JS_LIBRARY
+        private val PATH_TO_KOTLIN_JS_LIBRARY = TEST_DATA_PATH + "general/KotlinJavaScriptProjectWithDirectoryAsLibrary/" + KOTLIN_JS_LIBRARY
         private val KOTLIN_JS_LIBRARY_JAR = "$KOTLIN_JS_LIBRARY.jar"
 
         private fun getMethodsOfClass(classFile: File): Set<String> {
             val result = TreeSet<String>()
             ClassReader(FileUtil.loadFileBytes(classFile)).accept(object : ClassVisitor(Opcodes.API_VERSION) {
-                override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?): MethodVisitor? {
+                override fun visitMethod(
+                    access: Int,
+                    name: String,
+                    desc: String,
+                    signature: String?,
+                    exceptions: Array<String>?
+                ): MethodVisitor? {
                     result.add(name)
                     return null
                 }
@@ -250,8 +255,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         val jslibDir = File(workDir, "KotlinJavaScript")
         try {
             ZipUtil.extract(jslibJar, jslibDir, null)
-        }
-        catch (ex: IOException) {
+        } catch (ex: IOException) {
             throw IllegalStateException(ex.message)
         }
 
@@ -378,8 +382,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
 
         if (IncrementalCompilation.isEnabledForJvm()) {
             checkWhen(touch("src/foo.kt"), null, arrayOf(module("kotlinProject"), klass("kotlinProject", "Foo")))
-        }
-        else {
+        } else {
             val allClasses = myProject.outputPaths()
             checkWhen(touch("src/foo.kt"), null, allClasses)
         }
@@ -398,8 +401,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         if (IncrementalCompilation.isEnabledForJvm()) {
             checkWhen(touch("src/foo.kt"), null, arrayOf(module("kotlinProject"), klass("kotlinProject", "Foo")))
             checkWhen(touch("src/dir/subdir/bar.kt"), null, arrayOf(module("kotlinProject"), klass("kotlinProject", "Bar")))
-        }
-        else {
+        } else {
             val allClasses = myProject.outputPaths()
             checkWhen(touch("src/foo.kt"), null, allClasses)
             checkWhen(touch("src/dir/subdir/bar.kt"), null, allClasses)
@@ -418,8 +420,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
 
         if (IncrementalCompilation.isEnabledForJvm()) {
             checkWhen(touch("src/foo.kt"), null, arrayOf(module("kotlinProject"), klass("kotlinProject", "Foo")))
-        }
-        else {
+        } else {
             val allClasses = myProject.outputPaths()
             checkWhen(touch("src/foo.kt"), null, allClasses)
         }
@@ -436,17 +437,20 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         if (IncrementalCompilation.isEnabledForJvm()) {
             checkWhen(touch("src/test1.kt"), null, packageClasses("kotlinProject", "src/test1.kt", "_DefaultPackage"))
             checkWhen(touch("src/test2.kt"), null, packageClasses("kotlinProject", "src/test2.kt", "_DefaultPackage"))
-        }
-        else {
+        } else {
             val allClasses = myProject.outputPaths()
             checkWhen(touch("src/test1.kt"), null, allClasses)
             checkWhen(touch("src/test2.kt"), null, allClasses)
         }
 
-        checkWhen(arrayOf(del("src/test1.kt"), del("src/test2.kt")), NOTHING,
-                  arrayOf(packagePartClass("kotlinProject", "src/test1.kt", "_DefaultPackage"),
-                          packagePartClass("kotlinProject", "src/test2.kt", "_DefaultPackage"),
-                          module("kotlinProject")))
+        checkWhen(
+            arrayOf(del("src/test1.kt"), del("src/test2.kt")), NOTHING,
+            arrayOf(
+                packagePartClass("kotlinProject", "src/test1.kt", "_DefaultPackage"),
+                packagePartClass("kotlinProject", "src/test2.kt", "_DefaultPackage"),
+                module("kotlinProject")
+            )
+        )
 
         assertFilesNotExistInOutput(myProject.modules.get(0), "_DefaultPackage.class")
     }
@@ -505,8 +509,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         if (IncrementalCompilation.isEnabledForJvm()) {
             checkWhen(touch("src/kt2.kt"), null, packageClasses("kotlinProject", "src/kt2.kt", "kt2.Kt2Kt"))
             checkWhen(touch("module2/src/kt1.kt"), null, packageClasses("module2", "module2/src/kt1.kt", "kt1.Kt1Kt"))
-        }
-        else {
+        } else {
             val allClasses = myProject.outputPaths()
             checkWhen(touch("src/kt2.kt"), null, allClasses)
             checkWhen(touch("module2/src/kt1.kt"), null, allClasses)
@@ -528,8 +531,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         if (IncrementalCompilation.isEnabledForJvm()) {
             checkWhen(touch("module1/src/a.kt"), null, packageClasses("module1", "module1/src/a.kt", "test.TestPackage"))
             checkWhen(touch("module2/src/b.kt"), null, packageClasses("module2", "module2/src/b.kt", "test.TestPackage"))
-        }
-        else {
+        } else {
             val allClasses = myProject.outputPaths()
             checkWhen(touch("module1/src/a.kt"), null, allClasses)
             checkWhen(touch("module2/src/b.kt"), null, allClasses)
@@ -550,8 +552,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         if (IncrementalCompilation.isEnabledForJvm()) {
             checkWhen(touch("module1/src/a.kt"), null, packageClasses("module1", "module1/src/a.kt", "test.TestPackage"))
             checkWhen(touch("module2/src/b.kt"), null, packageClasses("module2", "module2/src/b.kt", "test.TestPackage"))
-        }
-        else {
+        } else {
             val allProductionClasses = myProject.outputPaths(tests = false)
             checkWhen(touch("module1/src/a.kt"), null, allProductionClasses)
             checkWhen(touch("module2/src/b.kt"), null, allProductionClasses)
@@ -594,7 +595,13 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         val sources = listOf(File(workDir, "oldModuleLib/src"))
         val libraryJar = KotlinCompilerStandalone(sources).compile()
 
-        addDependency(JpsJavaDependencyScope.COMPILE, Lists.newArrayList(findModule("module1"), findModule("module2")), false, "module-lib", libraryJar)
+        addDependency(
+            JpsJavaDependencyScope.COMPILE,
+            Lists.newArrayList(findModule("module1"), findModule("module2")),
+            false,
+            "module-lib",
+            libraryJar
+        )
 
         val result = buildAllModules()
         result.assertSuccessful()
@@ -668,11 +675,9 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
             val zip = ZipOutputStream(FileOutputStream(jarFile))
             ZipUtil.addDirToZipRecursively(zip, jarFile, File(PATH_TO_KOTLIN_JS_LIBRARY), "", null, null)
             zip.close()
-        }
-        catch (ex: FileNotFoundException) {
+        } catch (ex: FileNotFoundException) {
             throw IllegalStateException(ex.message)
-        }
-        catch (ex: IOException) {
+        } catch (ex: IOException) {
             throw IllegalStateException(ex.message)
         }
 
@@ -733,7 +738,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
                     appendLine("package foo")
                     appendLine("class Foo$i {")
                     for (j in 0..methodCount) {
-                        appendLine("  fun get${j*j}(): Int = square($j)")
+                        appendLine("  fun get${j * j}(): Int = square($j)")
                     }
                     appendLine("}")
 
@@ -866,8 +871,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
 
         if (IncrementalCompilation.isEnabledForJvm()) {
             checkWhen(touch("src/utils.kt"), null, packageClasses("kotlinProject", "src/utils.kt", "_DefaultPackage"))
-        }
-        else {
+        } else {
             val allClasses = findModule("kotlinProject").outputFilesPaths()
             checkWhen(touch("src/utils.kt"), null, allClasses.toTypedArray())
         }
@@ -918,8 +922,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
                 buildAllModules().assertSuccessful()
                 assertCompiled(KotlinBuilder.KOTLIN_BUILDER_NAME, "src/Bar.kt", "src/Foo.kt")
             }
-        }
-        finally {
+        } finally {
             System.clearProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY)
         }
     }
@@ -962,7 +965,9 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
                     chunk: KotlinChunk?,
                     target: KotlinModuleBuildTarget<*>?,
                     attributesDiff: CacheAttributesDiff<*>
-                ) {}
+                ) {
+                }
+
                 override fun addCustomMessage(message: String) {}
                 override fun buildFinished(exitCode: ModuleLevelBuilder.ExitCode) {}
                 override fun markedAsDirtyBeforeRound(files: Iterable<File>) {}
@@ -1003,19 +1008,19 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
 
     private fun BuildResult.checkErrors() {
         val actualErrors = getMessages(BuildMessage.Kind.ERROR)
-                .map { it as CompilerMessage }
-                .map { "${it.messageText} at line ${it.line}, column ${it.column}" }.sorted().joinToString("\n")
+            .map { it as CompilerMessage }
+            .map { "${it.messageText} at line ${it.line}, column ${it.column}" }.sorted().joinToString("\n")
         val expectedFile = File(getCurrentTestDataRoot(), "errors.txt")
         KotlinTestUtils.assertEqualsToFile(expectedFile, actualErrors)
     }
 
-    private fun getCurrentTestDataRoot() = File("testData/general/" + getTestName(false))
+    private fun getCurrentTestDataRoot() = File(TEST_DATA_PATH + "general/" + getTestName(false))
 
     private fun buildCustom(
-            canceledStatus: CanceledStatus,
-            logger: TestProjectBuilderLogger,
-            buildResult: BuildResult,
-            setupProject: ProjectDescriptor.() -> Unit = {}
+        canceledStatus: CanceledStatus,
+        logger: TestProjectBuilderLogger,
+        buildResult: BuildResult,
+        setupProject: ProjectDescriptor.() -> Unit = {}
     ) {
         val scopeBuilder = CompileScopeTestBuilder.make().allModules()
         val descriptor = this.createProjectDescriptor(BuildLoggingManager(logger))
@@ -1026,8 +1031,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
             val builder = IncProjectBuilder(descriptor, BuilderRegistry.getInstance(), this.myBuildParams, canceledStatus, true)
             builder.addMessageHandler(buildResult)
             builder.build(scopeBuilder.build(), false)
-        }
-        finally {
+        } finally {
             descriptor.dataManager.flush(false)
             descriptor.release()
         }
@@ -1085,7 +1089,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     }
 
     private fun JpsProject.outputPaths(production: Boolean = true, tests: Boolean = true) =
-            modules.flatMap { it.outputFilesPaths(production = production, tests = tests) }.toTypedArray()
+        modules.flatMap { it.outputFilesPaths(production = production, tests = tests) }.toTypedArray()
 
     private fun JpsModule.outputFilesPaths(production: Boolean = true, tests: Boolean = true): List<String> {
         val outputFiles = arrayListOf<File>()
@@ -1105,7 +1109,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         get() = outDir(forTests = true)
 
     private fun JpsModule.outDir(forTests: Boolean) =
-            JpsJavaExtensionService.getInstance().getOutputDirectory(this, forTests)!!
+        JpsJavaExtensionService.getInstance().getOutputDirectory(this, forTests)!!
 
     protected enum class Operation {
         CHANGE,

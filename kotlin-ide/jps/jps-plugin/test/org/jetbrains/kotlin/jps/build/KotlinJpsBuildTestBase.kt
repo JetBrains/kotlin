@@ -25,7 +25,6 @@ abstract class KotlinJpsBuildTestBase : AbstractKotlinJpsBuildTestCase() {
         val currentTestMethod = this::class.members.firstOrNull { it.name == "test" + getTestName(false) }
         val workingDirFromAnnotation = currentTestMethod?.annotations?.filterIsInstance<WorkingDir>()?.firstOrNull()?.name
         val projDirPath = Paths.get(
-                KotlinRoot.DIR.path,
                 TEST_DATA_PATH,
                 "general",
                 workingDirFromAnnotation ?: getTestName(false)

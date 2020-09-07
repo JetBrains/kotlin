@@ -27,6 +27,7 @@ import org.jetbrains.jps.model.library.JpsOrderRootType
 import org.jetbrains.jps.model.library.sdk.JpsSdk
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
+import org.jetbrains.kotlin.test.KotlinRoot
 import java.io.File
 import java.io.IOException
 
@@ -67,7 +68,7 @@ abstract class AbstractKotlinJpsBuildTestCase : BaseKotlinJpsBuildTestCase() {
     }
 
     companion object {
-        val TEST_DATA_PATH = "jps/jps-plugin/testData/"
+        val TEST_DATA_PATH = KotlinRoot.DIR.absolutePath + "/jps/jps-plugin/testData/"
 
         @JvmStatic
         protected fun addKotlinStdlibDependency(modules: Collection<JpsModule>, exported: Boolean = false): JpsLibrary {
