@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.backend.jvm.codegen.MethodSignatureMapper
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.ir.copyCorrespondingPropertyFrom
 import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
+import org.jetbrains.kotlin.builtins.CompanionObjectMapping
+import org.jetbrains.kotlin.builtins.isMappedIntrinsicCompanionObjectClassId
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -25,7 +27,6 @@ import org.jetbrains.kotlin.ir.builders.setSourceRange
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil.isMappedIntrinsicCompanionObject
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
@@ -62,7 +63,7 @@ class JvmCachedDeclarations(
     fun getFieldForObjectInstance(singleton: IrClass): IrField =
         singletonFieldDeclarations.getOrPut(singleton) {
             val originalVisibility = singleton.visibility
-            val isNotMappedCompanion = singleton.isCompanion && !isMappedIntrinsicCompanionObject(singleton.descriptor)
+            val isNotMappedCompanion = singleton.isCompanion && !singleton.isMappedIntrinsicCompanionObject()
             val useProperVisibilityForCompanion =
                 languageVersionSettings.supportsFeature(LanguageFeature.ProperVisibilityForCompanionObjectInstanceField)
                         && singleton.isCompanion
@@ -83,6 +84,9 @@ class JvmCachedDeclarations(
                 parent = if (isNotMappedCompanion) singleton.parent else singleton
             }
         }
+
+    private fun IrClass.isMappedIntrinsicCompanionObject() =
+        isCompanion && classId?.let { CompanionObjectMapping.isMappedIntrinsicCompanionObjectClassId(it) } == true
 
     fun getPrivateFieldForObjectInstance(singleton: IrClass): IrField =
         if (singleton.isCompanion && singleton.parentAsClass.isJvmInterface)
