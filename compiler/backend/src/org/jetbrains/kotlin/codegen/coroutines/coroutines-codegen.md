@@ -6,27 +6,27 @@ importantly, why the compiler behaves like this (or, to be precise, should behav
 the compiler and advanced Kotlin programmers to understand the reasons behind specific design decisions.
 
 The document is JVM-centric, that means it explains how things work in JVM BE since this is the area I am most familiar with and since in
-JVM, there are guaranties of backward compatibility, which the compiler shall obey in both so-called "Old JVM" back-end, as well as in the
-new JVM_IR one. The naming of the new back-end can differ from the official documentation: the document uses the "IR" suffix, while the
-official documentation omits it.
+JVM, there are guaranties of backward compatibility, which the compiler shall obey in both so-called "Old JVM" back-end, and in the new
+JVM_IR one. The new back-end's naming can differ from the official documentation: the document uses the "IR" suffix, while the official
+documentation omits it.
 
 If the name of a section of the document has an "Old JVM:" prefix, it explains old JVM back-end specific details; if the prefix is "JVM_IR,"
-then it is JVM_IR back-end specific. If the prefix is plain "JVM," the explanation applies to both the old back-end and the new one. If there
-is no such prefix, the section explains the general behavior of coroutines and shall apply to all back-ends.
+then it is JVM_IR back-end specific. If the prefix is common "JVM," the explanation applies to both the old back-end and the new one. 
+Otherwise, the section explains the general behavior of coroutines and shall apply to all back-ends.
 
-The document sticks to release coroutines since we deprecated experimental coroutines in 1.3, and JVM_IR does
-not support them. However, there are sections, which explain differences in code generation between release and experimental coroutines
-wherever appropriate, since we technically still support them. Sections, which describe experimental coroutines, have a "1.2" prefix.
+The document sticks to release coroutines since we deprecated experimental coroutines in 1.3, and JVM_IR does not support them. However,
+some sections explain differences in code generation between release and experimental coroutines wherever appropriate, since we technically
+still support them. Sections, which describe experimental coroutines, have a "1.2" prefix.
 
-If the current implementation is not ideal (or has a bug), there is a description of the difference and the steps to implement the "correct"
-version. These subsections start with "FIXME."
+If the current implementation is not ideal (or has a bug), there is a description of the difference, and the steps to implement the
+"correct" version. These subsections start with "FIXME."
 
 Throughout the document term "coroutine" will represent either a suspend lambda or a suspend function, which is different from the usual
 definition of coroutines - something like a lightweight thread. The document reuses the term since "suspend lambda or function" is wordy,
 and when it requires the typical definition, it says explicitly "a coroutine in a broad sense."
 
-The document often uses the term "undefined behavior," which means that we consciously rejected defining the behavior. Thus, the behavior
-may vary from version to version, from back-end to back-end, and one should use it with extreme caution.
+The document often uses the term "undefined behavior," which means that we consciously rejected defining it. Thus, the behavior may vary
+from version to version, from back-end to back-end, and one should use it with extreme caution.
 
 Lastly, most of the examples presented in the document actually suspend, so one is sure every piece is in place since coroutines is a broad
 and complex topic, and it is easy to forget one piece, which will lead to a runtime error or even worse, semantically wrong code execution.
@@ -52,9 +52,9 @@ suspend fun main() {
 which, upon running, will print `1` and `2`, as expected.
 
 One can call a suspend function only from other suspend function or suspend lambda, but it can call ordinary, non-suspendable functions. For
-example, both `dummy` and `println` are used only inside the lambda. Because one is not allowed to call suspendable functions from ordinary,
-we can imagine two worlds: suspendable and ordinary. Alternatively, one can consider them as being of two different colors, and we color the
-program by using the "suspend" modifier.
+example, both `dummy` and `println` are used only inside the lambda. Because one cannot call suspendable functions from ordinary, we can
+imagine two worlds: suspendable and ordinary. Alternatively, one can consider them as two different colors, and we color the program by
+using the "suspend" modifier.
 
 The lambda, creatively named `lambda`, contains two suspend calls (`dummy`) and one from the `main` function to the lambda itself,
 but there is no suspension. Let us add it:
@@ -98,8 +98,8 @@ fun builder(c: suspend () -> Unit) {
     })
 }
 ```
-A separate section explains the exact mechanism of starting a coroutine (in a broad sense) and how one can write their builders. For now,
-consider `builder` as a boilerplate to cross the worlds.
+A separate section explains the exact mechanism of starting a coroutine (in a broad sense) and writing their builders. For now, consider
+`builder` as a boilerplate to cross the worlds.
 
 Now, when we change `main` to use the builder and not suspend itself
 ```kotlin
@@ -254,7 +254,7 @@ is turned into a coroutine, which is, by definition, is a suspendable unit of co
 
 That is the reason why we need to turn linear code into a state machine.
 
-On a closing note, the state machine should be flat; in other words, there should be no state-machine inside the state of a state-machine.
+On a closing note, the state machine should be flat; in other words, there should be no state-machine inside a state-machine state.
 Otherwise, inner state-machine states will rewrite `label`, breaking the whole suspend-resume machinery and leading to weird behavior,
 ranging from CCE to infinite loops. Similar buggy behavior happens when several suspending calls are in one state: when the first call
 suspends, and then the execution resumes, skipping all the remaining code in the state. Both these bugs were quite frequent in the early
@@ -283,8 +283,8 @@ points by checking these markers, and then it generates the state-machine.
 FIXME: I should rename `CoroutineTransformerMethodVisitor` to `StateMachineBuilder` already.
 
 #### JS & Native: Suspend Markers
-The difference between JVM_IR and JS_IR/Native in regards to coroutine codegen non-JVM back-ends do not generate suspending markers in the
-resulting code. They still collect suspension points, however.
+The difference between JVM_IR and JS_IR/Native regarding coroutine codegen non-JVM back-ends do not generate suspending markers in the
+resulting code.
 That is because they assume the closed-world model; in other words, they do not generate libraries in their target languages, which could
 contain suspending inline functions. Thus, the back-ends run the inliner before all lowerings, and they generate state machine during a
 suspend lowering, whereas JVM_IR still relies on the old back-end's `CoroutineTransfromerMethodVisitor` to do this since we cannot just
@@ -352,14 +352,14 @@ The type parameter is the same as the type parameter of
 section, where we create a continuation object. The object overrides `resumeWith` with the same signature.
 
 Adding the `continuation` parameter to suspend lambdas and functions is known as Continuation-Passing Style, the style actively used in
-lisps. For example, in Scheme, if a function returns a value in a continuation-passing style, it passes the value to the continuation
+lisps. For example, if a function returns a value in a continuation-passing style in Scheme, it passes the value to the continuation
 parameter. So, a function accepts the continuation parameter, and the caller passes the continuation by calling `call/cc` intrinsic. The
- same happens in Kotlin with passing return value to caller's continuation's `resumeWith`. However, unlike Scheme, Kotlin does not use
- something like `call/cc`. Every coroutine already has a continuation. The caller passes it to the callee as an argument. Since the
- coroutine passes the return value to `resumeWith`, its parameter has the same type as the return type of the coroutine. Technically, the
- type is `Result<T>`, but it is just a union `T | Throwable`; in this case, `T` is `Unit`. The next section uses return types other than
- `Unit` to illustrate how to resume a coroutine with a value. The other part, `Throwable`, is for resuming a coroutine with an exception
- and is explained in the relevant section.
+same happens in Kotlin with passing return value to caller's continuation's `resumeWith`. However, unlike Scheme, Kotlin does not use
+something like `call/cc`. Every coroutine already has a continuation. The caller passes it to the callee as an argument. Since the coroutine
+passes the return value to `resumeWith`, its parameter has the same type as the coroutine's return type. Technically, the type is
+`Result<T>`, but it is just a union `T | Throwable`; in this case, `T` is `Unit`. The next section uses return types other than `Unit` to
+illustrate how to resume a coroutine with a value. The other part, `Throwable`, is for resuming a coroutine with an exception and is
+explained in the relevant section.
 
 After we passed parent coroutine's continuation to a child coroutine, we need to store it somewhere. Since "parent coroutine's
 continuation" is quite long and mouthful for a name, we call it 'completion'. We chose this name because the coroutine calls it upon the
@@ -417,8 +417,8 @@ fun main() {
 }
 ```
 if one runs the program, it prints `42`. However, `suspendMe` does not return `42`. It just suspends and returns nothing. By the way,
-`suspendMe`'s continuation has type `Continuation<Int>`, i.e., the return type of the function is used as a type argument of `Continuation`
-interface, as I mentioned in the previous section (about continuation-passing style).
+`suspendMe`'s continuation has type `Continuation<Int>`, i.e., the compiler moves function's return to type argument of the `Continuation`
+interface I mentioned in the previous section (about continuation-passing style).
 
 The state-machine section touched upon the `$result` variable inside the `invokeSuspend` function. The listing shows the `invokeSuspend`
 function of `a`, but, unlike the previous example, with its signature:
@@ -451,9 +451,9 @@ So, what happens, when we call `resume` inside `suspendCoroutine`? Like
 ```kotlin
 suspendCoroutine<Int> { it.resume(42) }
 ```
-Following the resume process, `resume` calls continuation's `resumeWith`, which calls `invokeSuspend` with
-value `42`. Then, this will be `$result` and work the same as if `suspendMe` returned `42`. In other words, `suspendCoroutine` with an
-unconditional resume will not suspend the coroutine and is semantically the same as returning the value.
+Following the resume process, `resume` calls continuation's `resumeWith`, which calls `invokeSuspend` with value `42`. `$result` then
+contains the value and work the same as if `suspendMe` returned `42`. In other words, `suspendCoroutine` with an unconditional resume will
+not suspend the coroutine and is semantically the same as returning the value.
 
 It is important to note that passing `COROUTINE_SUSPENDED` to continuation's `resumeWith` leads to undefined behavior.
 
@@ -487,9 +487,9 @@ fun main() {
     c?.resumeWithException(IllegalStateException("BOO"))
 }
 ```
-which, upon running, will print the exception. Note, that it is printed inside the `builder` function (because of
-`println(result.exceptionOrNull())`). There are a couple of things happening here: one is inside the generated
-state machine, and the other is inside `BaseContinuationImpl`'s `resumeWith`.
+which, upon running, will print the exception. Note, that it is printed inside the `builder` function
+(because of `println(result.exceptionOrNull())`). There are a couple of things happening here: inside the generated state machine and inside
+`BaseContinuationImpl`'s `resumeWith`.
 
 First, we change the generated state machine. As explained before, the type of `$result` variable is `Int | COROUTINE_SUSPENDED |
 Result$Failue(Throwable)`, but when we resume, by convention, its type cannot be `COROUTINE_SUSPENDED`. Still, the type is `Int |
@@ -601,7 +601,7 @@ fun main() {
     c?.resume(Unit)
 }
 ```
-here, we should save `a1` before `suspendMe`, and we should restore it after the resumption. Similarly, we should save both `a1` and `a2`
+We should save `a1` before `suspendMe`, and we should restore it after the resumption. Similarly, we should save both `a1` and `a2`
 before `+`, since the compiler does not generally know whether suspend call will suspend, so it assumes that the suspension might happen in
 each suspension point. So, it spills the locals before each call and unspills after it.
 
@@ -641,7 +641,7 @@ fun invokeSuspend($result: Any?): Any? {
 ```
 
 As one can see, the generated code does not spill and unspill variables, which are dead, in other words, which are not required afterward.
-Furthermore, it cleans the field for spilled variables of reference types up to avoid memory leaks by pushing `null` to it so that GC can
+Furthermore, it cleans the field for spilled variables of reference types to avoid memory leaks by pushing `null` to it so that GC can
 collect the object.
 
 #### Spilled Variables Naming
@@ -687,8 +687,8 @@ nullify all of them every suspension point. Instead, the compiler checks which o
 
 Additionally, the compiler shrinks and splits LVT records for local variables, so a debugger will not show dead variables as uninitialized.
 
-FIXME: Currently, dead variables do not present in LVT. So, if a programmer defines a variable but does not use it, the compiler removes the
-LVT record for the variable. We can ease this restriction and assume the variable to be alive until the following suspension point.
+FIXME: Currently, dead variables do not present in LVT. So, if a programmer defines a variable but does not use it, the compiler removes its
+LVT record. We can ease this restriction and assume the variable to be alive until the following suspension point.
 
 #### Stack spilling
 In the previous examples, the stack was clean before a call, meaning that there were only call arguments before the call, and only the call
@@ -911,7 +911,7 @@ So, it does five different things:
 
 First, let us examine how one can access a continuation argument without suspending current executions.
 `suspendCoroutineUninterceptedOrReturn` is an intrinsic function that does only one thing: inlines provided lambda parameter passing
-continuation parameter to it. Since its purpose is to give access to the continuation argument, which is invisible in suspend functions
+continuation parameter to it. Its purpose is to give access to the continuation argument, which is invisible in suspend functions
 and lambdas. Thus we cannot write in pure Kotlin. It has to be intrinsic.
 
 Fun fact: since the lambda returns `returnType | COROUTINE_SUSPENDED`, the compiler does not check its return type, so there can be some
@@ -998,8 +998,8 @@ when a wrapped coroutine suspends, `getOrThrow` tells `suspendCoroutine` to susp
 
 We have already covered how a coroutine suspends, what happens when it resumes and how the compiler handles it. However, we have never
 looked at how one can create or start a coroutine. In all previous examples, one could notice a call to `startCoroutine`. There are two
-versions of the function: one is to start a suspend lambda without parameters and the other one - to start a coroutine with either one
-parameter or a receiver. It is defined as follows:
+versions of the function: to start a suspend lambda without parameters and to start a coroutine with either one parameter or a receiver. It
+is defined as follows:
 ```kotlin
 public fun <T> (suspend () -> T).startCoroutine(completion: Continuation<T>) {
     createCoroutineUnintercepted(completion).intercepted().resume(Unit)
@@ -1010,16 +1010,15 @@ So, it
 2. intercepts it
 3. starts it
 
-Once again, `createCoroutineUnintercepted` has two versions - one without parameters and the other one with exactly one parameter. All it
-does is calling suspending lambda's `create` function. After the interception, we resume the coroutine with a dummy value. As I explained
-in the resume with the value section, the state-machine ignores the value in its first state. Thus, it is the perfect way to start a
-coroutine without calling `invokeSuspend`. However, the way we start callable references is different. Since they are tail-call, in other
-words, do not have a
-continuation inside an object, we wrap them in a hand-written one.
+Once again, `createCoroutineUnintercepted` has two versions - without parameters and with exactly one parameter. All it does is calling
+suspending lambda's `create` function. After the interception, we resume the coroutine with a dummy value. As explained in the resume with
+the value section, the state-machine ignores its first state value. Thus, it is the perfect way to start a coroutine without calling
+`invokeSuspend`. However, the way we start callable references is different. Since they are tail-call, in other words, do not have
+a continuation inside an object, we wrap them in a hand-written one.
 
 #### create
 
-`create` is generated by the compiler and it
+`create` is generated by the compiler, and it
 1. creates a copy of the lambda by calling a constructor with captured variables
 2. puts `create`'s arguments into parameter fields.
 
@@ -1039,17 +1038,17 @@ public fun create(value: Any?, completion: Continuation): Continuation {
 ```
 note that the constructor, in addition to captured parameters, accepts a completion object.
 
-In Old JVM BE, `create` is generated for every suspend lambda even when we do not need the function. I.e., even for suspending lambdas with
+In Old JVM BE, `create` is generated for every suspend lambda even when we do not need it. I.e., even for suspending lambdas with
 more than one parameter. There are only two versions of `createCoroutineUnintercepted`, and there are no other places where we call
 `create` (apart from compiler-generated `invoke`s). Thus, in JVM_IR BE, we fixed the slip-up, and it generates the `create` function only
 for functions with zero on one parameter.
 
 ##### Lambda Parameters
 
-We need to put the arguments of the suspend lambda into fields since there can be only one argument of `invokeSuspend` - `$result`.
-The compiler moves the lambda body into `invokeSuspend`. Thus, `invokeSuspend` does all the computation. We reuse fields for spilled
-variables for parameters as well. For example, if we have a lambda with type `suspend Int.(Long, Any) -> Unit`, then `I$0` hold value of
-extension receiver,' `J$0` - the first argument, `L$1` - the second one.
+We need to put the suspend lambda arguments into fields since there can be only one argument of `invokeSuspend` - `$result`. The compiler
+moves the lambda body into `invokeSuspend`. Thus, `invokeSuspend` does all the computation. We reuse fields for spilled variables for
+parameters as well. For example, if we have a lambda with type `suspend Int.(Long, Any) -> Unit`, then `I$0` hold value of extension
+receiver,' `J$0` - the first argument, `L$1` - the second one.
 
 This way, we can reuse spilled variables cleanup logic for parameters. If we used separate fields for parameters, we would need to manually
 push `null` to them as we do for spilled variable fields if we do not need them anymore.
@@ -1362,12 +1361,11 @@ The compiler knows the arity, but the completion is provided as an argument to t
 
 ### kotlin.suspend
 
-`suspend` soft keyword cannot be used with lambdas or function expression yet. It is not supported in the parser.
-However, writing the type of the variable is quite annoying, so, since 1.3, there is a function `kotlin.suspend`, which
-can precede lambda without parameters and turn it into suspend one. Since `suspend` is a soft keyword, it is possible to
-name a function `suspend`. A user can define `suspend` function, which accepts lambdas, but token sequence `suspend {`
-can only be used with `kotlin.suspend`. That is just for the transition period and while suspend lambdas and function
-expressions are not supported in the parser.
+`suspend` soft keyword cannot be used with lambdas or function expression yet. It is not supported in the parser. However, writing the type
+of the variable is quite annoying, so, since 1.3, there is a function `kotlin.suspend`, which can precede lambda without parameters and turn
+it into suspend one. Since `suspend` is a soft keyword, it is possible to name a function `suspend`. A user can define a function named
+`suspend`, which accepts lambdas, but the token sequence `suspend {` can only be used with `kotlin.suspend`. That is just for the transition
+period and while suspend lambdas and function expressions are not supported in the parser.
 
 FIXME: Support it in the parser and stop using the hack.
 
@@ -1429,12 +1427,12 @@ suspendFun5
 ```
 thus, instead of moving the function body to lambda, we keep it in the function and build the state-machine there. However, we also keep the
 'lambda', so we store all spilled variables there and the label. This 'lambda' is called continuation, and it is, essentially, the state of
-the coroutine. So, unlike suspend lambdas, we split the state (and call it continuation) and the state-machine for suspending functions.
+the coroutine. Unlike suspend lambdas, we split the state (and call it continuation) and the state-machine for suspending functions.
 
 ### Start
 
 Nevertheless, there is another problem. To properly support the completion chain, we need to create the continuation and store the
-continuation parameter in the `completion` field. Also, we need to support resuming the coroutine, i.e., we need to get `label` and spilled
+continuation parameter in the `completion` field. We also need to support resuming the coroutine, i.e., we need to get `label` and spilled
 variables from the continuation. So, we need to distinguish these two cases: starting anew and continuing previously suspended execution.
 The easiest way to do this is to check for the type of continuation parameter. So, the function preamble will look like:
 ```kotlin
@@ -1466,7 +1464,7 @@ fun test($completion: Continuation<Unit>): Any? {
     // state machine
 }
 ```
-here, we assume that in recursive calls, the sign bit is unset, while the continuation class sets it during the resume process. So, let us
+here, we assume that the sign bit is unset in recursive calls, while the continuation class sets it during the resume process. So, let us
 see how we resume and set the bit.
 
 ### Resume
@@ -1613,7 +1611,7 @@ It overrides `BaseContinuationImpl`'s `invokeSuspend`.
 9. public final `invoke` of type `(<params>,Ljava/lang/Object;)Ljava/lang/Object;`. `<params>` are erased.
 10. public final `invoke` of type `(<params>,Lkotlin/coroutines/Continuation;)Ljava/lang/Object;`. `<params>` are unerased.
 11. public or package-private constructor: `<init>` of type `(<captured-variables>,Lkotlin/coroutines/Continuation;)V`,
-where we call `SuspendLambda`'s constructor with arity and completion and initlialize captured variables.
+where we call `SuspendLambda`'s constructor with arity and completion and initialize captured variables.
 As for suspending lambdas, the compiler knows the function's arity, but the completion is provided as an argument to the constructor.
 
 FIXME: There is a massive amount of bugs because of this implementation. For example, local suspend functions can hardly be recursive.
@@ -1673,7 +1671,7 @@ INVOKESTATIC InlineMarker.afterInlineCall
 ARETURN
 ```
 
-After tail-call optimization the code becomes
+After tail-call optimization, the code becomes
 ```text
 ALOAD 1 // continuation
 INVOKESTATIC returnsInt
@@ -1762,10 +1760,10 @@ generated by JVM_IR do.
 
 #### Redundant Locals Elimination
 
-As explained in the section about variables spilling, the inliner spills stack before inlining and unspills it after. That results in a
-bunch of repeated ASTORE and ALOAD instructions, which can break tail-call elimination since there can be a sequence of `ASTORE; ALOAD`
-between the suspension point and ARETURN. This bytecode modification simplifies the chains and enables tail-call optimization for these
-cases.
+As explained in the section about variables spilling, the inliner spills stack before inlining and unspills it after the inlining. That
+results in a bunch of repeated ASTORE and ALOAD instructions, which can break tail-call elimination since there can be a sequence of
+`ASTORE; ALOAD` between the suspension point and ARETURN. This bytecode modification simplifies the chains and enables tail-call
+optimization for these cases.
 
 #### Tail-Call Optimization for Functions Returning Unit
 
@@ -1799,11 +1797,11 @@ POP
 GETSTATIC kotlin/Unit.INSTANCE
 ARETURN
 ```
-as one sees, `Unit` is `POP`ed, and then is pushed to the stack and returned. We unfortunately, cannot just remove
+as one sees, `Unit` is `POP`ed, and then is pushed to the stack and returned. Unfortunately, we cannot just remove
 `POP; GETSTATIC kotlin/Unit.INSTANCE`: if we replace `returnsUnit` with `returnsInt`, the bytecode is the same. Since inside
-`CoroutineTransformerMethodVisitor` we do not have information about return types of suspending calls,
-we see all of them as just `Any?`, we need to mark calls to functions, returning Unit, with a marker. The marker is similar to suspend
-markers, but with a different argument: `ICONST_2`. So, full bytecode for `tailCall3` function becomes
+`CoroutineTransformerMethodVisitor` we do not have information about return types of suspending calls, we see all of them as just `Any?`, we
+need to mark calls to functions, returning Unit, with a marker. The marker is similar to suspend markers, but with a different argument:
+`ICONST_2`. So, full bytecode for the `tailCall3` function becomes
 ```text
 INVOKESTATIC InlineMarker.beforeInlineCall
 ALOAD 1 // continuation
@@ -1909,10 +1907,9 @@ Let us have a look at the completion chain:
       +-----------+
 ```
 That is right; there is only one continuation, generated by the compiler: `main$1`. Moreover, it is passed to `generic` and then to `tx`,
-since these functions are tail-call and do not create a continuation themselves. In `tx`, it is saved so that we can resume it in `main`.
-When we call `resume` on it, its `resumeWith` calls `invokeSuspend` and passes `Dummy` as `$result`. The value will be on the stack at the
-beginning of the last state inside the state-machine. It would appear that the suspend function returning `Unit` (in this case `generic`)
-returns `Dummy`.
+since these functions are tail-call and do not create a continuation. In `tx`, it is saved to resume it in `main`. When we call `resume` on
+it, its `resumeWith` calls `invokeSuspend` and passes `Dummy` as `$result`. The value will be on the stack at the beginning of the last
+state inside the state-machine. It would appear that the suspend function returning `Unit` (in this case `generic`) returns `Dummy`.
 
 To fix the issue, we generate `POP; GETSTATIC kotlin/Unit.INSTANCE` on the call site, when we are sure that callee returns `Unit`. By the
 way, we do the same in `callSuspend` and `callSuspendBy` functions.
