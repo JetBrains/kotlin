@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAMES
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -1012,53 +1010,54 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    fun getIrPropertyOrFieldSymbol(firVariableSymbol: FirVariableSymbol<*>): IrSymbol {
-        return when (val fir = firVariableSymbol.fir) {
-            is FirProperty -> {
-                propertyCache[fir]?.let { return it.symbol }
-                val signature = signatureComposer.composeSignature(fir)
-                val irParent = findIrParent(fir)
-                val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
-                if (signature != null) {
-                    symbolTable.referencePropertyIfAny(signature)?.let { irPropertySymbol ->
-                        val irProperty = irPropertySymbol.owner
-                        propertyCache[fir] = irProperty
-                        return irPropertySymbol
-                    }
-                    // TODO: package fragment members (?)
-                    if (irParent is Fir2IrLazyClass) {
-                        assert(parentOrigin != IrDeclarationOrigin.DEFINED) {
-                            "Should not have reference to public API uncached property from source code"
+    fun getIrPropertySymbol(firPropertySymbol: FirPropertySymbol): IrSymbol {
+        val fir = firPropertySymbol.fir
+        if (fir.isLocal) {
+            return localStorage.getDelegatedProperty(fir)?.symbol ?: getIrVariableSymbol(fir)
+        }
+        propertyCache[fir]?.let { return it.symbol }
+        val signature = signatureComposer.composeSignature(fir)
+        val irParent = findIrParent(fir)
+        val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
+        if (signature != null) {
+            symbolTable.referencePropertyIfAny(signature)?.let { irPropertySymbol ->
+                val irProperty = irPropertySymbol.owner
+                propertyCache[fir] = irProperty
+                return irPropertySymbol
+            }
+            // TODO: package fragment members (?)
+            if (irParent is Fir2IrLazyClass) {
+                assert(parentOrigin != IrDeclarationOrigin.DEFINED) {
+                    "Should not have reference to public API uncached property from source code"
+                }
+                val symbol = Fir2IrPropertySymbol(signature, fir.containerSource)
+                val irProperty = fir.convertWithOffsets { startOffset, endOffset ->
+                    symbolTable.declareProperty(signature, { symbol }) {
+                        val isFakeOverride =
+                            firPropertySymbol.isFakeOverride &&
+                                    firPropertySymbol.callableId != firPropertySymbol.overriddenSymbol?.callableId
+                        Fir2IrLazyProperty(
+                            components, startOffset, endOffset, parentOrigin, fir, irParent.fir, symbol, isFakeOverride
+                        ).apply {
+                            parent = irParent
                         }
-                        val symbol = Fir2IrPropertySymbol(signature, fir.containerSource)
-                        val irProperty = fir.convertWithOffsets { startOffset, endOffset ->
-                            symbolTable.declareProperty(signature, { symbol }) {
-                                val isFakeOverride =
-                                    firVariableSymbol is FirPropertySymbol && firVariableSymbol.isFakeOverride &&
-                                            firVariableSymbol.callableId != firVariableSymbol.overriddenSymbol?.callableId
-                                Fir2IrLazyProperty(
-                                    components, startOffset, endOffset, parentOrigin, fir, irParent.fir, symbol, isFakeOverride
-                                ).apply {
-                                    parent = irParent
-                                }
-                            }
-                        }
-                        propertyCache[fir] = irProperty
-                        return symbol
                     }
                 }
-                createIrProperty(fir, irParent, origin = parentOrigin).apply {
-                    setAndModifyParent(irParent)
-                }.symbol
+                propertyCache[fir] = irProperty
+                return symbol
             }
-            is FirField -> {
-                fieldCache[fir]?.let { return it.symbol }
-                createIrField(fir).apply {
-                    setAndModifyParent(findIrParent(fir))
-                }.symbol
-            }
-            else -> throw IllegalArgumentException("Unexpected fir in property symbol: ${fir.render()}")
         }
+        return createIrProperty(fir, irParent, origin = parentOrigin).apply {
+            setAndModifyParent(irParent)
+        }.symbol
+    }
+
+    fun getIrFieldSymbol(firFieldSymbol: FirFieldSymbol): IrSymbol {
+        val fir = firFieldSymbol.fir
+        val irProperty = fieldCache[fir] ?: createIrField(fir).apply {
+            setAndModifyParent(findIrParent(fir))
+        }
+        return irProperty.symbol
     }
 
     fun getIrBackingFieldSymbol(firVariableSymbol: FirVariableSymbol<*>): IrSymbol {
@@ -1083,11 +1082,6 @@ class Fir2IrDeclarationStorage(
     private fun getIrVariableSymbol(firVariable: FirVariable<*>): IrVariableSymbol {
         return localStorage.getVariable(firVariable)?.symbol
             ?: throw IllegalArgumentException("Cannot find variable ${firVariable.render()} in local storage")
-    }
-
-    fun getIrLocalDelegatedPropertySymbol(firPropertySymbol: FirPropertySymbol): IrSymbol {
-        return localStorage.getDelegatedProperty(firPropertySymbol.fir)?.symbol
-            ?: throw IllegalArgumentException("Cannot find delegated property ${firPropertySymbol.fir.render()} in local storage")
     }
 
     fun getIrValueSymbol(firVariableSymbol: FirVariableSymbol<*>): IrSymbol {
