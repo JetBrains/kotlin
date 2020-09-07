@@ -16,17 +16,12 @@
 
 package org.jetbrains.kotlin.jps.build
 
-import com.intellij.openapi.vfs.StandardFileSystems
-import com.intellij.util.io.URLUtil
-import org.jetbrains.jps.model.JpsDummyElement
 import org.jetbrains.jps.model.JpsModuleRootModificationUtil
 import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.jps.model.java.JpsJavaDependencyScope
 import org.jetbrains.jps.model.java.JpsJavaLibraryType
-import org.jetbrains.jps.model.java.JpsJavaSdkType
 import org.jetbrains.jps.model.library.JpsLibrary
 import org.jetbrains.jps.model.library.JpsOrderRootType
-import org.jetbrains.jps.model.library.sdk.JpsSdk
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.kotlin.test.KotlinRoot
 import java.io.File
@@ -38,14 +33,6 @@ abstract class AbstractKotlinJpsBuildTestCase : BaseKotlinJpsBuildTestCase() {
     @Throws(IOException::class)
     override fun doGetProjectDir(): File? {
         return workDir
-    }
-
-    override fun addJdk(name: String, path: String?): JpsSdk<JpsDummyElement> {
-        val homePath = System.getProperty("java.home")
-        val versionString = System.getProperty("java.version")
-        val jdk = myModel.global.addSdk(name, homePath, versionString, JpsJavaSdkType.INSTANCE)
-        jdk.addRoot(StandardFileSystems.JRT_PROTOCOL_PREFIX + homePath + URLUtil.JAR_SEPARATOR + "java.base", JpsOrderRootType.COMPILED)
-        return jdk.properties
     }
 
     protected fun addKotlinMockRuntimeDependency(): JpsLibrary {
