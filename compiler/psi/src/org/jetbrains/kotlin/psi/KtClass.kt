@@ -23,8 +23,6 @@ open class KtClass : KtClassOrObject {
     private val _stub: KotlinClassStub?
         get() = stub as? KotlinClassStub
 
-    fun getColon(): PsiElement? = findChildByType(KtTokens.COLON)
-
     fun getProperties(): List<KtProperty> = body?.properties.orEmpty()
 
     fun isInterface(): Boolean =
