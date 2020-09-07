@@ -418,6 +418,11 @@ public abstract class ParameterInfoTestGenerated extends AbstractParameterInfoTe
             runTest("testData/parameterInfo/typeArguments/Overloads.kt");
         }
 
+        @TestMetadata("ParameterizedClassConstructor.kt")
+        public void testParameterizedClassConstructor() throws Exception {
+            runTest("idea/testData/parameterInfo/typeArguments/ParameterizedClassConstructor.kt");
+        }
+
         @TestMetadata("Reified.kt")
         public void testReified() throws Exception {
             runTest("testData/parameterInfo/typeArguments/Reified.kt");
