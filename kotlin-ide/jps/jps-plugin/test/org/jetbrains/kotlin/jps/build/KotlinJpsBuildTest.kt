@@ -1009,7 +1009,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         KotlinTestUtils.assertEqualsToFile(expectedFile, actualErrors)
     }
 
-    private fun getCurrentTestDataRoot() = File(AbstractKotlinJpsBuildTestCase.TEST_DATA_PATH + "general/" + getTestName(false))
+    private fun getCurrentTestDataRoot() = File("testData/general/" + getTestName(false))
 
     private fun buildCustom(
             canceledStatus: CanceledStatus,
