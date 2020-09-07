@@ -1919,10 +1919,10 @@ generally, the compiler disables tail-call optimization for functions returning 
 non-`Unit` type.
 
 ### Returning Inline Classes
-Previously, if a suspend function returns an inline class, the value of the class is boxed. That is undesirable for inline classes
-containing reference types since it leads to additional allocations. Thus, if the compiler can verify that callee returns an inline class,
-it does not generate boxing instructions in the callee and unboxing instructions in the caller. Otherwise, the callee returns a boxed
-value, as in the following example:
+Before 1.4, if a suspend function returns an inline class, the class's value is boxed. That is undesirable for inline classes containing
+reference types since it leads to additional allocations. Thus, if the compiler can verify that callee returns an inline class, it does not
+generate boxing instructions in the callee and unboxing instructions in the caller. Otherwise, the callee returns a boxed value, as in the
+following example:
 ```kotlin
 inline class IC(val a: Any)
 
@@ -1941,15 +1941,15 @@ suspend fun main() {
 ```
 Here, the compiler cannot verify that the call-site always expects inline class. Thus, `overrideMe` always boxes the class.
 
-However, the optimization is not as straightforward as it seems. There are two paths of the execution of a suspend call: direct when
-the callee returns to the caller, and resume route when the callee returns to `invokeSuspend` and then to `resumeWith`, which calls
+However, the optimization is not as straightforward as it seems. There are two paths of the execution of a suspend call: direct when the
+callee returns to the caller, and resume route when the callee returns to `invokeSuspend` and then to `resumeWith`, which calls
 `completion.resumeWith`, which calls `invokeSuspend,` which calls the caller. In the direct path (the most common case), the class is
-unboxed.
+unboxed. 
 
 However, in the resume path, we should box the inline class (in this case, we care less about performance).
-`BaseContinuationImpl.resumeWith` calls `invokeSuspend`, and it expects that the return type of `invokeSuspend` is
-"T | COROUTINE_SUSPENDED", where T is a boxed inline class in this case. Breaking this contract leads to throwing the exception in
-the following example:
+`BaseContinuationImpl.resumeWith` calls `invokeSuspend`, and it expects that the return type of
+`invokeSuspend` is "T | COROUTINE_SUSPENDED", where T is a boxed inline class in this case. Breaking this contract leads to throwing the
+exception in the following example:
 ```kotlin
 import kotlin.coroutines.*
 
@@ -1985,19 +1985,19 @@ suspend fun signInFlowStepFirst(): Result<Unit> = try {
 The explanation of the bug cause is not that simple:
 1. `signInFlowStepFirst` call `suspendMe` and suspends
 2. We resume the execution with an exception.
-3. Inside `signInFlowStepFirst`, we wrap the exception with Result class, just like in a burrito.
-4. Since it is the resume path (we resumed the execution), the execution returns to `invokeSuspend`, which returns
-`Result$Failure` to `BaseContinuationImpl.resumeWith`.
+3. Inside `signInFlowStepFirst`, we wrap the exception with Result class, just like in a burrito. 
+4. Since it is the resume path (we resumed the execution), the execution returns to `invokeSuspend`, which returns `Result$Failure` to
+`BaseContinuationImpl.resumeWith`.
 5. `BaseContinuationImpl.resumeWith` wraps `Result$Failure` with another `Result`, but since `Result` is an inline class, the result
 (pun not intended) of the operation is the same `Result$Failure`.
-6. `BaseContinuationImpl.resumeWith` calls `completion.resumeWith`, passing the `Result$Failure` as the argument, which is considered
-as `resumeWithException` by the completion.
+6. `BaseContinuationImpl.resumeWith` calls `completion.resumeWith`, passing the `Result$Failure` as the argument, which is considered as
+`resumeWithException` by the completion.
 
-So. We need to box inline class inside `invokeSuspend` if the function returns inline class, and the compiler has optimized boxing, as
-well as inside the callable reference. That fixes the coroutine contract of `invokeSuspend`.
+So. We need to box inline class inside `invokeSuspend` if the function returns inline class, and the compiler has optimized boxing, as well
+as inside the callable reference. That fixes the coroutine contract of `invokeSuspend`.
 
-However, in the direct path, generated code expects an unboxed value. So, in the resume path of the caller, we should unbox it. There
-are a couple of places we can unbox it: `invokeSuspend` and unspilling inside a state-machine. Consider the following snippet:
+However, in the direct path, generated code expects an unboxed value. So, in the resume path of the caller, we should unbox it. There are a
+couple of places we can unbox it: `invokeSuspend` and unspilling inside a state-machine. Consider the following snippet:
 ```kotlin
 import kotlin.coroutines.*
 
@@ -2029,10 +2029,40 @@ Here, we resume the `test` function twice, once with the inline class, the other
 only once: during the first resumption. Meaning that we need to add complex logic to `invokeSuspend` if we want to box the value. It is
 simpler to do the boxing inside the state-machine.
 
-#### Inlining
-Note: this section is about inlining. Nevertheless, it is too specific to be put in the corresponding section.
+#### Unbox Inline Class Markers
+The state-machine section explained how the compiler turns sequential code into a state-machine. In a couple of words, it generates markers
+around suspension points. So, if we want to pass information from the codegen to the state-machine builder, or the inliner, some markers
+are a go-to. Naturally, we generate markers for the unboxing sequence we need to generate at the resume path.
 
-However, we do not always have a state-machine. Consider the following example:
+Consider the following example.
+```kotlin
+inline class IC(val s: String)
+
+suspend fun ic() = IC("OK")
+
+suspend fun main() {
+    println(ic().s)
+}
+```
+The codegen has to generate an unboxing sequence for the `IC` class in the `main` function, so the class builder moves it to the resume path
+since `main` is not a tail-call function, and thus has a state-machine, unlike `ic`. Also, it should tell the builder that these
+instructions are to move. Thus, it surrounds them with new markers, now with ids `8` and `9`.
+
+```text
+INVOKESTATIC ic(Lkolint/coroutines/Continuation;)Ljava/lang/Object;
+BIPUSH 8
+INVOKESTATIC kotlin/jvm/internal/InlineMarker(I)V
+CHECKCAST LIC;
+INVOKEVIRTUAL IC.unbox-impl()Ljava/lang/String;
+CHECKCAST Ljava/lang/Object;
+BIPUSH 9
+INVOKESTATIC kotlin/jvm/internal/InlineMarker(I)V
+```
+Note that `CHECKCAST Ljava/lang/Object;` is a part of the closing marker. We need to generate it not to interfere with bytecode analysis.
+Otherwise, bytecode analysis assumes that the suspend call's return type is `String`, not `Any?`. After moving the unboxing to the resume
+path, the builder removes the cast.
+
+This way of passing the information also applies to inlining. Consider the following example:
 ```kotlin
 import kotlin.coroutines.*
 
@@ -2066,9 +2096,8 @@ fun main() {
     c?.resume(IC("OK1"))
 }
 ```
-Here, `inlineMe$$forInline` has no state-machine, and thus, the direct path is similar to the resume path. After inlining, the compiler
-has no idea that it should generate unboxing in the resume path. To fix the issue, the compiler can add a marker to show that there should
-be boxing in the resume path. For example, it can generate something like
+Here, `inlineMe$$forInline` has no state-machine, and thus, the direct path is similar to the resume path. However, the codegen generates
+the markers and the inliner inlines the markes:
 ```text
 ICONST_1
 INVOKESTATIC kotlin.jvm.internal.InlineMarker.mark(I)V
@@ -2078,9 +2107,12 @@ INVOKESTATIC kotlin.jvm.internal.InlineMarker.mark(I)V
 ICONST_8
 INVOKESTATIC kotlin.jvm.internal.InlineMarker.mark(I)V
 // After this marker, there should be a call to box-impl
-INVOKESTATIC IC.box-impl(Ljava/lang/Object;)LIC;
+INVOKEVIRTUAL IC.unbox-impl(Ljava/lang/Object;)LIC;
+CHECKCAST Ljava/lang/Object;
+BIPUSH 9
+INVOKESTATIC kotlin/jvm/internal/InlineMarker(I)V
 ```
-Generating the marker fixes the issue with inlining.
+Finally, after the inlining, the state-machine builder moves the unboxing to the resume path.
 
 ## Inline
 
@@ -3135,6 +3167,7 @@ Yep, `c` is both not suspend functional type and non-suspend functional type.
 Unlike suspend lambdas, we cannot just call `create` when we start a coroutine (in a broad sense) from a callable reference. Since the
 object does not have a `create` method and is not a continuation.
 
-Hence, instead, we write the continuation by hand, and in the `invokeSuspend` function, we write a state-machine by hand as well. See `createCoroutineFromSuspendFunction` for specifics.
+Hence, instead, we write the continuation by hand, and in the `invokeSuspend` function, we write a state-machine by hand as well. See
+`createCoroutineFromSuspendFunction` for specifics.
 
 FIXME: As explained in the tail-call suspend lambdas section, we can reuse this mechanism for tail-call suspend lambdas.
