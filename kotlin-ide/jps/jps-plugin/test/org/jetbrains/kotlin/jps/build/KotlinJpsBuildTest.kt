@@ -21,12 +21,8 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtil.toSystemIndependentName
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.StandardFileSystems
-import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.LightVirtualFile
-import com.intellij.testFramework.TestApplicationManager
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.util.io.URLUtil
 import com.intellij.util.io.ZipUtil
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.api.CanceledStatus
@@ -49,8 +45,6 @@ import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.java.JpsJavaDependencyScope
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
-import org.jetbrains.jps.model.java.JpsJavaSdkType
-import org.jetbrains.jps.model.library.JpsOrderRootType
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.cli.common.Usage
@@ -60,7 +54,6 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY
-import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.jps.build.KotlinJpsBuildTestBase.LibraryDependency.*
@@ -93,7 +86,8 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         private val EXCLUDE_FILES = arrayOf("Excluded.class", "YetAnotherExcluded.class")
         private val NOTHING = arrayOf<String>()
         private val KOTLIN_JS_LIBRARY = "jslib-example"
-        private val PATH_TO_KOTLIN_JS_LIBRARY = TEST_DATA_PATH + "general/KotlinJavaScriptProjectWithDirectoryAsLibrary/" + KOTLIN_JS_LIBRARY
+        private val PATH_TO_KOTLIN_JS_LIBRARY =
+            TEST_DATA_PATH + "general/KotlinJavaScriptProjectWithDirectoryAsLibrary/" + KOTLIN_JS_LIBRARY
         private val KOTLIN_JS_LIBRARY_JAR = "$KOTLIN_JS_LIBRARY.jar"
 
         private fun getMethodsOfClass(classFile: File): Set<String> {
@@ -637,40 +631,6 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         result.assertSuccessful()
     }
 
-    /*
-     * Here we're checking that enabling inference in IDE doesn't affect compilation via JPS
-     *
-     * the following two tests are connected:
-     * - testKotlinProjectWithEnabledNewInferenceInIDE checks that project is compiled when new inference is enabled only in IDE
-     *   - this is done via project component
-     * - testKotlinProjectWithErrorsBecauseOfNewInference checks that project isn't compiled when new inference is enabled in the compiler
-     *
-     * So, if the former will fail => option affects JPS compilation, it's bad. Also, if the latter test fails => test is useless as it's
-     * compiled with new and old inference.
-     *
-     */
-    fun testKotlinProjectWithEnabledNewInferenceInIDE() {
-        initProject(JVM_MOCK_RUNTIME)
-        val module = myProject.modules.single()
-        val args = module.kotlinCompilerArguments
-        args.languageVersion = LanguageVersion.KOTLIN_1_3.versionString
-        myProject.kotlinCommonCompilerArguments = args
-
-        buildAllModules().assertSuccessful()
-    }
-
-    fun testKotlinProjectWithErrorsBecauseOfNewInference() {
-        initProject(JVM_MOCK_RUNTIME)
-        val module = myProject.modules.single()
-        val args = module.kotlinCompilerArguments
-        args.newInference = true
-        myProject.kotlinCommonCompilerArguments = args
-
-        val result = buildAllModules()
-        result.assertFailed()
-        result.checkErrors()
-    }
-
     private fun createKotlinJavaScriptLibraryArchive() {
         val jarFile = File(workDir, KOTLIN_JS_LIBRARY_JAR)
         try {
@@ -980,18 +940,6 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         val expectedFile = File(getCurrentTestDataRoot(), "expected.txt")
 
         KotlinTestUtils.assertEqualsToFile(expectedFile, actual.toString())
-    }
-
-    fun testJre9() {
-        val jdk9Path = KotlinTestUtils.getJdk9Home().absolutePath
-
-        val jdk = myModel.global.addSdk(JDK_NAME, jdk9Path, "9", JpsJavaSdkType.INSTANCE)
-        jdk.addRoot(StandardFileSystems.JRT_PROTOCOL_PREFIX + jdk9Path + URLUtil.JAR_SEPARATOR + "java.base", JpsOrderRootType.COMPILED)
-
-        loadProject(workDir.absolutePath + File.separator + PROJECT_NAME + ".ipr")
-        addKotlinStdlibDependency()
-
-        buildAllModules().assertSuccessful()
     }
 
     fun testCustomDestination() {
