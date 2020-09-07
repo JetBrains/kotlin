@@ -11,7 +11,6 @@
             <element id="module-output" name="kotlin-ultimate.common-native" />
             <element id="module-output" name="kotlin-ultimate.mobile-native" />
           </element>
-          <element id="file-copy" path="$PROJECT_DIR$/../kotlin-native/backend.native/build/libs/backend.native.jar" />
           <element id="library" level="project" name="kxml2" />
           <element id="library" level="module" name="precompiled-ddmlib" module-name="android.sdktools.ddmlib" />
           <element id="library" level="module" name="precompiled-common" module-name="android.sdktools.common" />
@@ -19,10 +18,10 @@
           <element id="archive" name="cidr-gradle-tooling.jar">
             <element id="module-output" name="kotlin-ultimate.cidr-gradle-tooling" />
           </element>
-          <element id="file-copy" path="$PROJECT_DIR$/../kotlin-native/extracted/konan.serializer/build/libs/konan.serializer.jar" />
           <element id="library" level="project" name="kotlinc.kotlin-stdlib-jdk8" />
           <element id="library" level="project" name="kotlinc.kotlin-reflect" />
           <element id="library" level="module" name="org.jetbrains.gradle.apple:apple-gradle-plugin-api:202.6397.11" module-name="kotlin-ultimate.mobile-native" />
+          <element id="library" level="module" name="org.jetbrains.konan:backend.native:1.4.10-rc1-19-mobile" module-name="kotlin-ultimate.common-cidr-swift-native" />
         </element>
       </element>
       <element id="directory" name="kotlin-android-extensions">
