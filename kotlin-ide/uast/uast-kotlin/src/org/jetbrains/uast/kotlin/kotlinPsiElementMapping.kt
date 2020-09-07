@@ -16,16 +16,16 @@ import org.jetbrains.uast.kotlin.psi.*
 import org.jetbrains.uast.psi.UElementWithLocation
 import org.jetbrains.uast.util.ClassSet
 import org.jetbrains.uast.util.classSetOf
+import org.jetbrains.uast.util.emptyClassSet
 
 
 internal fun canConvert(element: PsiElement, targets: Array<out Class<out UElement>>): Boolean {
-    val elementCls = element.javaClass
     val originalCls = element.originalElement.javaClass
-    return targets.any { getPossibleSourceTypes(it).let { elementCls in it || originalCls in it } }
+    return targets.any { getPossibleSourceTypes(it).let { originalCls in it } }
 }
 
 internal fun getPossibleSourceTypes(uastType: Class<out UElement>) =
-    possibleSourceTypes[uastType] ?: error("Kotlin UAST possibleSourceTypes misses value for $uastType")
+    possibleSourceTypes[uastType] ?: emptyClassSet()
 
 /**
  * For every [UElement] subtype states from which [PsiElement] subtypes it can be obtained.
