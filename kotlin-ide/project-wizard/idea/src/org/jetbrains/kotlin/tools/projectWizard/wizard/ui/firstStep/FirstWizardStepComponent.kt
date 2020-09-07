@@ -22,12 +22,15 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeWizard
 import org.jetbrains.kotlin.tools.projectWizard.wizard.KotlinNewProjectWizardUIBundle
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.modulesEditor.ModulesEditorComponent
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.PathSettingComponent
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.StringSettingComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.TitledComponentsList
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.createSettingComponent
 import java.awt.Cursor
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.JComponent
+import javax.swing.tree.DefaultTreeCellEditor
 
 class FirstWizardStepComponent(ideWizard: IdeWizard) : WizardStepComponent(ideWizard.context) {
     private val context = ideWizard.context
@@ -47,13 +50,23 @@ class ProjectSettingsComponent(ideWizard: IdeWizard) : DynamicComponent(ideWizar
     private val buildSystemSetting = BuildSystemTypeSettingComponent(context).asSubComponent().apply {
         component.addBorder(JBUI.Borders.empty(0, /*left&right*/4))
     }
-    private val buildSystemAdditionalSettingsComponent = BuildSystemAdditionalSettingsComponent(ideWizard).asSubComponent()
+
+    private var locationWasUpdatedByHand: Boolean = false
+    private var artifactIdWasUpdatedByHand: Boolean = false
+
+    private val buildSystemAdditionalSettingsComponent =
+        BuildSystemAdditionalSettingsComponent(
+            ideWizard,
+            onUserTypeInArtifactId = { artifactIdWasUpdatedByHand = true },
+        ).asSubComponent()
     private val jdkComponent = JdkComponent(ideWizard).asSubComponent()
 
     private val nameAndLocationComponent = TitledComponentsList(
         listOf(
             StructurePlugin.name.reference.createSettingComponent(context),
-            StructurePlugin.projectPath.reference.createSettingComponent(context),
+            StructurePlugin.projectPath.reference.createSettingComponent(context).also {
+                (it as? PathSettingComponent)?.onUserType { locationWasUpdatedByHand = true }
+            },
             projectTemplateComponent,
             buildSystemSetting,
             jdkComponent
@@ -77,9 +90,6 @@ class ProjectSettingsComponent(ideWizard: IdeWizard) : DynamicComponent(ideWizar
         }
     }
 
-    private var locationWasUpdatedByHand: Boolean = false
-    private var artifactIdWasUpdatedByHand: Boolean = false
-
     override fun onValueUpdated(reference: SettingReference<*, *>?) {
         super.onValueUpdated(reference)
         when (reference?.path) {
@@ -92,9 +102,6 @@ class ProjectSettingsComponent(ideWizard: IdeWizard) : DynamicComponent(ideWizar
             }
             StructurePlugin.artifactId.path -> {
                 artifactIdWasUpdatedByHand = true
-            }
-            StructurePlugin.projectPath.path -> {
-                locationWasUpdatedByHand = true
             }
         }
     }
@@ -117,8 +124,11 @@ class ProjectSettingsComponent(ideWizard: IdeWizard) : DynamicComponent(ideWizar
     }
 }
 
-class BuildSystemAdditionalSettingsComponent(ideWizard: IdeWizard) : DynamicComponent(ideWizard.context) {
-    private val pomSettingsList = PomSettingsComponent(ideWizard.context).asSubComponent()
+class BuildSystemAdditionalSettingsComponent(
+    ideWizard: IdeWizard,
+    onUserTypeInArtifactId: () -> Unit,
+) : DynamicComponent(ideWizard.context) {
+    private val pomSettingsList = PomSettingsComponent(ideWizard.context, onUserTypeInArtifactId).asSubComponent()
     private val kotlinJpsRuntimeComponent = KotlinJpsRuntimeComponent(ideWizard).asSubComponent()
 
     override fun onValueUpdated(reference: SettingReference<*, *>?) {
@@ -159,10 +169,12 @@ class BuildSystemAdditionalSettingsComponent(ideWizard: IdeWizard) : DynamicComp
     override val component: JComponent = section
 }
 
-private class PomSettingsComponent(context: Context) : TitledComponentsList(
+private class PomSettingsComponent(context: Context, onUserTypeInArtifactId: () -> Unit) : TitledComponentsList(
     listOf(
         StructurePlugin.groupId.reference.createSettingComponent(context),
-        StructurePlugin.artifactId.reference.createSettingComponent(context),
+        StructurePlugin.artifactId.reference.createSettingComponent(context).also {
+            (it as? StringSettingComponent)?.onUserType(onUserTypeInArtifactId)
+        },
         StructurePlugin.version.reference.createSettingComponent(context)
     ),
     context,

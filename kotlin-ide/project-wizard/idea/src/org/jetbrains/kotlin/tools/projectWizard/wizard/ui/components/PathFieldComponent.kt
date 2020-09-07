@@ -8,6 +8,8 @@ import org.jetbrains.kotlin.tools.projectWizard.core.asPath
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingValidator
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.componentWithCommentAtBottom
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.withOnUpdatedListener
+import java.awt.event.KeyAdapter
+import java.awt.event.KeyEvent
 import java.nio.file.Path
 import java.nio.file.Paths
 import javax.swing.JComponent
@@ -25,7 +27,7 @@ class PathFieldComponent(
     validator,
     onValueUpdate
 ) {
-    val textFieldWithBrowseButton = TextFieldWithBrowseButton().apply {
+    private val textFieldWithBrowseButton = TextFieldWithBrowseButton().apply {
         textField.text = initialValue?.toString().orEmpty()
         textField.withOnUpdatedListener { path -> fireValueUpdated(path.trim().asPath()) }
         addBrowseFolderListener(
@@ -34,6 +36,12 @@ class PathFieldComponent(
                 null
             )
         )
+    }
+
+    fun onUserType(action: () -> Unit) {
+        textFieldWithBrowseButton.textField.addKeyListener(object : KeyAdapter() {
+            override fun keyReleased(e: KeyEvent?) = action()
+        })
     }
 
     override val alignTarget: JComponent? get() = textFieldWithBrowseButton
