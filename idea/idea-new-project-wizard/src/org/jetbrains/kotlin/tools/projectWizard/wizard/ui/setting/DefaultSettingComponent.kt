@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.label
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.customPanel
 import java.awt.BorderLayout
 import java.awt.event.ItemEvent
+import java.awt.event.KeyAdapter
+import java.awt.event.KeyEvent
 import java.nio.file.Path
 import javax.swing.DefaultComboBoxModel
 import javax.swing.JComponent
@@ -160,6 +162,10 @@ class StringSettingComponent(
         validator = setting.validator,
         onValueUpdate = { newValue -> value = newValue }
     ).asSubComponent()
+
+    fun onUserType(action: () -> Unit) {
+        uiComponent.onUserType(action)
+    }
 }
 
 class PathSettingComponent(
@@ -177,4 +183,8 @@ class PathSettingComponent(
         validator = settingValidator { path -> setting.validator.validate(this, path) },
         onValueUpdate = { newValue -> value = newValue }
     ).asSubComponent()
+
+    fun onUserType(action: () -> Unit) {
+        uiComponent.onUserType(action)
+    }
 }

@@ -87,7 +87,6 @@ abstract class UIComponent<V : Any>(
         uiComponent.requestFocus()
     }
 
-
     override fun navigateTo(error: ValidationResult.ValidationError) {
         val errorInThisComponent = read {
             getUiValue()?.let { validator?.validate?.invoke(this, it)?.isSpecificError(error) } == true

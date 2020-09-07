@@ -6,6 +6,8 @@ import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingValidator
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.componentWithCommentAtBottom
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.textField
+import java.awt.event.KeyAdapter
+import java.awt.event.KeyEvent
 import javax.swing.JComponent
 
 class TextFieldComponent(
@@ -32,6 +34,12 @@ class TextFieldComponent(
 
     override fun updateUiValue(newValue: String) = safeUpdateUi {
         textField.text = newValue
+    }
+
+    fun onUserType(action: () -> Unit) {
+        textField.addKeyListener(object : KeyAdapter() {
+            override fun keyReleased(e: KeyEvent?) = action()
+        })
     }
 
     fun disable(@Nls message: String) {
