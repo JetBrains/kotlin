@@ -11,13 +11,12 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.types.isNullableAny
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /**
  * This lowering pass replaces [IrStringConcatenation]s with StringBuilder appends.
@@ -68,9 +67,10 @@ internal class StringConcatenationLowering(context: Context) : FileLoweringPass,
 
         builder.at(expression)
         val arguments = expression.arguments
-        return when (arguments.size) {
-            0 -> builder.irString("")
-            1 -> {
+        return when {
+            arguments.isEmpty() -> builder.irString("")
+
+            arguments.size == 1 -> {
                 val argument = arguments[0]
                 if (argument.type.isNullable())
                     builder.irCall(symbols.extensionToString).apply {
@@ -82,6 +82,20 @@ internal class StringConcatenationLowering(context: Context) : FileLoweringPass,
                     dispatchReceiver = argument
                 }
             }
+
+            arguments.size == 2 && arguments[0].type.isStringClassType() ->
+                if (arguments[0].type.isNullable())
+                    builder.irCall(symbols.stringPlus).apply {
+                        extensionReceiver = arguments[0]
+                        putValueArgument(0, arguments[1])
+                    }
+                else
+                    builder.irCall(symbols.string.functions
+                            .single { it.owner.name == OperatorNameConventions.PLUS }).apply {
+                        dispatchReceiver = arguments[0]
+                        putValueArgument(0, arguments[1])
+                    }
+
             else -> builder.irBlock(expression) {
                 val stringBuilderImpl = createTmpVariable(irCall(constructor))
                 expression.arguments.forEach { arg ->
