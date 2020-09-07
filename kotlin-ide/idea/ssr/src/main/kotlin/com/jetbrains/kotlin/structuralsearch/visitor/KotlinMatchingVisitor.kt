@@ -1009,18 +1009,11 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitAnnotatedExpression(expression: KtAnnotatedExpression) {
-        when (val other = myMatchingVisitor.element) {
-            is KtAnnotatedExpression -> myMatchingVisitor.result =
-                if (expression.annotationEntries.all
-                    { val handler = getHandler(it); handler is SubstitutionHandler && handler.maxOccurs == 0 }
-                    && other.annotationEntries.any()
-                ) false
-                else myMatchingVisitor.match(expression.baseExpression, other.baseExpression)
-                        && myMatchingVisitor.matchInAnyOrder(expression.annotationEntries, other.annotationEntries)
-            else -> {
-                myMatchingVisitor.result = if (expression.annotationEntries.all
-                    { val handler = getHandler(it); handler is SubstitutionHandler && handler.minOccurs == 0 }
-                ) myMatchingVisitor.match(expression.baseExpression, other) else false
+        myMatchingVisitor.result = when (val other = myMatchingVisitor.element) {
+            is KtAnnotatedExpression -> myMatchingVisitor.match(expression.baseExpression, other.baseExpression)
+                    && myMatchingVisitor.matchInAnyOrder(expression.annotationEntries, other.annotationEntries)
+            else -> myMatchingVisitor.match(expression.baseExpression, other) && expression.annotationEntries.all {
+                val handler = getHandler(it); handler is SubstitutionHandler && handler.minOccurs == 0
             }
         }
     }
