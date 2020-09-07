@@ -43,7 +43,9 @@ abstract class Parser {
     private fun jkdocToListOfPairs(javadoc: String): List<Pair<String, String>> =
         "description $javadoc"
             .split("\n@")
-            .map {
-                it.substringBefore(' ') to it.substringAfter(' ')
+            .map { content ->
+                val contentWithEscapedAts = content.replace("\\@", "@")
+                val (tag, body) = contentWithEscapedAts.split(" ", limit = 2)
+                tag to body
             }
 }
