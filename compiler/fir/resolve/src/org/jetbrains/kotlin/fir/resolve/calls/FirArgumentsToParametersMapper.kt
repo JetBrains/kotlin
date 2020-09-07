@@ -114,20 +114,20 @@ private class FirCallArgumentsProcessor(private val function: FirFunction<*>) {
 
         val parameter = parameters.getOrNull(currentPositionedParameterIndex)
         if (parameter == null) {
-             addDiagnostic(TooManyArguments(argument, function))
+            addDiagnostic(TooManyArguments(argument, function))
             return false
         }
 
-        if (!parameter.isVararg) {
+        return if (!parameter.isVararg) {
             currentPositionedParameterIndex++
 
             result[parameter] = ResolvedCallArgument.SimpleArgument(argument)
-            return false
+            false
         }
         // all position arguments will be mapped to current vararg parameter
         else {
             addVarargArgument(argument)
-            return true
+            true
         }
     }
 
