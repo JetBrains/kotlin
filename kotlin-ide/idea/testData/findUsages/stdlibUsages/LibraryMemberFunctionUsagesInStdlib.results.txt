@@ -1,0 +1,1 @@
+Function call 8 val f = mapOf(Pair("1","2")).keys.single( { true } )
