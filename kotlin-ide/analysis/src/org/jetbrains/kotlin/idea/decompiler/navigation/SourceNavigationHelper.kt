@@ -19,7 +19,11 @@ import com.intellij.psi.stubs.StringStubIndexExtension
 import com.intellij.util.containers.ContainerUtil
 import gnu.trove.THashSet
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.fileClasses.JvmMultifileClassPartInfo
+import org.jetbrains.kotlin.fileClasses.fileClassInfo
+import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.caches.project.BinaryModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.ScriptDependenciesInfo
 import org.jetbrains.kotlin.idea.caches.project.getBinaryLibrariesModuleInfos
@@ -72,10 +76,23 @@ object SourceNavigationHelper {
                 }
             }
 
-            NavigationKind.SOURCES_TO_CLASS_FILES -> getLibrarySourcesModuleInfos(
-                declaration.project,
-                vFile
-            ).map { it.binariesModuleInfo.binariesScope() }.union()
+            NavigationKind.SOURCES_TO_CLASS_FILES -> {
+                if (containingFile.fileClassInfo is JvmMultifileClassPartInfo) {
+                    // if the asked element is multifile classs, it might be compiled into .kotlin_metadata and .class
+                    // but we don't have support of metadata declarations in light classes and in reference search (without
+                    // acceptOverrides). That's why we include only .class jar in the scope.
+                    val psiClass = JavaElementFinder.getInstance(containingFile.project)
+                        .findClass(containingFile.javaFileFacadeFqName.asString(), declaration.resolveScope)
+                    if (psiClass != null) {
+                        return getBinaryLibrariesModuleInfos(declaration.project, psiClass.containingFile.virtualFile)
+                            .map { it.binariesScope() }.union()
+                    }
+                }
+                getLibrarySourcesModuleInfos(
+                    declaration.project,
+                    vFile
+                ).map { it.binariesModuleInfo.binariesScope() }.union()
+            }
         }
     }
 
