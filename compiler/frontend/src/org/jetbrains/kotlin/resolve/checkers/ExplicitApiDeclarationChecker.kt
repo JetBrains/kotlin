@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
+import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
 
 class ExplicitApiDeclarationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
@@ -22,7 +23,7 @@ class ExplicitApiDeclarationChecker : DeclarationChecker {
 
         if (descriptor !is DeclarationDescriptorWithVisibility) return
         if (descriptor is ClassDescriptor && descriptor.kind == ClassKind.ENUM_ENTRY) return // Enum entries does not have visibilities
-        if (!descriptor.isEffectivelyPublicApi) return
+        if (!descriptor.isEffectivelyPublicApi && !descriptor.isPublishedApi()) return
 
         checkVisibilityModifier(state, declaration, descriptor, context)
         checkExplicitReturnType(state, declaration, descriptor, context)
@@ -105,7 +106,9 @@ class ExplicitApiDeclarationChecker : DeclarationChecker {
             val callableMemberDescriptor = descriptor as? CallableMemberDescriptor
 
             val visibility = callableMemberDescriptor?.effectiveVisibility()?.toVisibility()
-            return (checkForPublicApi && visibility?.isPublicAPI == true) || (checkForInternal && visibility == Visibilities.Internal) ||
+            val isPublicApi =
+                visibility?.isPublicAPI == true || (visibility == Visibilities.Internal && callableMemberDescriptor.isPublishedApi())
+            return (checkForPublicApi && isPublicApi) || (checkForInternal && visibility == Visibilities.Internal) ||
                     (checkForPrivate && visibility == Visibilities.Internal)
         }
 
