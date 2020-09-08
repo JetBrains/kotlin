@@ -170,7 +170,7 @@ private class ReturnTypeCalculatorWithJump(
     val designationMapForLocalClasses: Map<FirCallableMemberDeclaration<*>, List<FirClass<*>>> = mapOf()
 ) : ReturnTypeCalculator {
 
-    var outerBodyResolveContext: FirAbstractBodyResolveTransformer.BodyResolveContext? = null
+    var outerBodyResolveContext: BodyResolveContext? = null
 
     override fun tryCalculateReturnType(declaration: FirTypedDeclaration): FirResolvedTypeRef {
         if (declaration is FirValueParameter && declaration.returnTypeRef is FirImplicitTypeRef) {

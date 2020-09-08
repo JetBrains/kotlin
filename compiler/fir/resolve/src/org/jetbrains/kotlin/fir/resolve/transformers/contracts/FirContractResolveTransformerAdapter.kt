@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.AdapterForResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -41,7 +42,7 @@ class FirContractResolveTransformerAdapter(session: FirSession, scopeSession: Sc
 fun <F : FirClass<F>> F.runContractResolveForLocalClass(
     session: FirSession,
     scopeSession: ScopeSession,
-    outerBodyResolveContext: FirAbstractBodyResolveTransformer.BodyResolveContext,
+    outerBodyResolveContext: BodyResolveContext,
     targetedClasses: Set<FirClass<*>>
 ): F {
     val newContext = outerBodyResolveContext.createSnapshotForLocalClasses(
