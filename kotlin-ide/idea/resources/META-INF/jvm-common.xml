@@ -162,6 +162,11 @@
                    defaultValue="false"
                    restartRequired="false"/>
 
+      <registryKey key="kotlin.uast.use.psi.type.precheck"
+                   description="Whether to use Psi Source type checking optimization"
+                   defaultValue="true"
+                   restartRequired="false"/>
+
       <registryKey key="kotlin.jps.instrument.bytecode"
                    description="Enable bytecode instrumentation for Kotlin classes"
                    defaultValue="false"
