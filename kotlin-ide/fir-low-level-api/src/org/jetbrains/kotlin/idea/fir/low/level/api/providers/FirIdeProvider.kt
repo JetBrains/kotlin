@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.providers
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.NoMutableState
+import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
@@ -30,6 +32,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
+@ThreadSafeMutableState
 internal class FirIdeProvider(
     project: Project,
     val session: FirSession,
@@ -116,6 +119,7 @@ internal class FirIdeProvider(
         return emptySet()
     }
 
+    @NoMutableState
     private inner class SymbolProvider : FirSymbolProvider(session) {
         override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> =
             providerHelper.getTopLevelCallableSymbols(packageFqName, name)
