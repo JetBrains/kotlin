@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.utils.addToStdlib.min
 
 
@@ -45,17 +46,17 @@ internal object CheckExplicitReceiverConsistency : ResolutionStage() {
         when (receiverKind) {
             NO_EXPLICIT_RECEIVER -> {
                 if (explicitReceiver != null && explicitReceiver !is FirResolvedQualifier && !explicitReceiver.isSuperReferenceExpression()) {
-                    return sink.yieldApplicability(CandidateApplicability.WRONG_RECEIVER)
+                    return sink.yieldApplicability(CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER)
                 }
             }
             EXTENSION_RECEIVER, DISPATCH_RECEIVER -> {
                 if (explicitReceiver == null) {
-                    return sink.yieldApplicability(CandidateApplicability.WRONG_RECEIVER)
+                    return sink.yieldApplicability(CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER)
                 }
             }
             BOTH_RECEIVERS -> {
                 if (explicitReceiver == null) {
-                    return sink.yieldApplicability(CandidateApplicability.WRONG_RECEIVER)
+                    return sink.yieldApplicability(CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER)
                 }
                 // Here we should also check additional invoke receiver
             }

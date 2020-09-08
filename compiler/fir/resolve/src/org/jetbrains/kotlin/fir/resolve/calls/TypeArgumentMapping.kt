@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.impl.FirTypePlaceholderProjection
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 
 sealed class TypeArgumentMapping {
     abstract operator fun get(typeParameterIndex: Int): FirTypeProjection

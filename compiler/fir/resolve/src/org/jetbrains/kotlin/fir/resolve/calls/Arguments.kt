@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.model.CaptureStatus
 
 fun Candidate.resolveArgumentExpression(
@@ -264,7 +265,7 @@ private fun checkApplicabilityForArgumentType(
     if (expectedType == null) return
     if (isReceiver && isDispatch) {
         if (!expectedType.isNullable && argumentType.isMarkedNullable) {
-            sink.reportApplicability(CandidateApplicability.WRONG_RECEIVER)
+            sink.reportApplicability(CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER)
         }
         return
     }
@@ -277,10 +278,10 @@ private fun checkApplicabilityForArgumentType(
         val nullableExpectedType = expectedType.withNullability(ConeNullability.NULLABLE, sink.components.session.typeContext)
 
         if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, nullableExpectedType, position)) {
-            sink.reportApplicability(CandidateApplicability.WRONG_RECEIVER) // TODO
+            sink.reportApplicability(CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER) // TODO
         } else {
             csBuilder.addSubtypeConstraint(argumentType, expectedType, position)
-            sink.reportApplicability(CandidateApplicability.WRONG_RECEIVER)
+            sink.reportApplicability(CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER)
         }
     }
 }

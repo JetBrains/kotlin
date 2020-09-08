@@ -73,16 +73,6 @@ data class CallInfo(
         )
 }
 
-enum class CandidateApplicability {
-    HIDDEN,
-    WRONG_RECEIVER,
-    PARAMETER_MAPPING_ERROR,
-    INAPPLICABLE,
-    SYNTHETIC_RESOLVED,
-    RESOLVED_LOW_PRIORITY,
-    RESOLVED
-}
-
 class Candidate(
     val symbol: AbstractFirBasedSymbol<*>,
     val dispatchReceiverValue: ReceiverValue?,
