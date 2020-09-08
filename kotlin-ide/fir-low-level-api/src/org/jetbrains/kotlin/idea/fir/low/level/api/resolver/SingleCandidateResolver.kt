@@ -47,7 +47,7 @@ class SingleCandidateResolver(
         stubBodyResolveTransformer,
         bodyResolveComponents,
     )
-    private val resolutionStageRunner = ResolutionStageRunner(bodyResolveComponents.inferenceComponents)
+    private val resolutionStageRunner = ResolutionStageRunner(ResolutionContext(firSession, bodyResolveComponents))
 
     fun resolveSingleCandidate(
         resolutionParameters: ResolutionParameters
