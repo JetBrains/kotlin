@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
 import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.types.*
@@ -36,6 +37,7 @@ class ConstraintSystemCompleter(private val components: BodyResolveComponents) {
         completionMode: ConstraintSystemCompletionMode,
         topLevelAtoms: List<FirStatement>,
         candidateReturnType: ConeKotlinType,
+        context: ResolutionContext,
         collectVariablesFromContext: Boolean = false,
         analyze: (PostponedResolvedAtom) -> Unit
     ) {
@@ -52,7 +54,7 @@ class ConstraintSystemCompleter(private val components: BodyResolveComponents) {
 
             if (
                 completionMode == ConstraintSystemCompletionMode.FULL &&
-                resolveLambdaOrCallableReferenceWithTypeVariableAsExpectedType(c, variableForFixation, postponedAtoms, analyze)
+                resolveLambdaOrCallableReferenceWithTypeVariableAsExpectedType(c, variableForFixation, postponedAtoms, context, analyze)
             ) {
                 continue
             }
@@ -81,6 +83,7 @@ class ConstraintSystemCompleter(private val components: BodyResolveComponents) {
         c: ConstraintSystemCompletionContext,
         variableForFixation: VariableFixationFinder.VariableForFixation,
         postponedAtoms: List<PostponedResolvedAtom>,
+        context: ResolutionContext,
         analyze: (PostponedResolvedAtom) -> Unit
     ): Boolean {
         val variable = variableForFixation.variable as ConeTypeVariableTypeConstructor
@@ -110,7 +113,7 @@ class ConstraintSystemCompleter(private val components: BodyResolveComponents) {
                     isSuitable = { isBuiltinFunctionalType(components.session) },
                     typeVariableCreator = { ConeTypeVariableForLambdaReturnType(postponedAtom.atom, "_R") },
                     newAtomCreator = { returnTypeVariable, expectedType ->
-                        postponedAtom.transformToResolvedLambda(csBuilder, components.resolutionContext, expectedType, returnTypeVariable)
+                        postponedAtom.transformToResolvedLambda(csBuilder, context, expectedType, returnTypeVariable)
                     }
                 )
             }

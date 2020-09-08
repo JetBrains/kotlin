@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.FirQualifiedAccessExpressionBuilder
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.calls.ExpressionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -24,10 +23,12 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal class FirInvokeResolveTowerExtension(
-    private val components: BodyResolveComponents,
+    private val context: ResolutionContext,
     private val manager: TowerResolveManager,
     private val candidateFactoriesAndCollectors: CandidateFactoriesAndCollectors
 ) {
+    private val components: BodyResolveComponents
+        get() = context.bodyResolveComponents
 
     fun enqueueResolveTasksForQualifier(info: CallInfo, receiver: FirResolvedQualifier) {
         if (info.callKind != CallKind.Function) return
@@ -108,7 +109,7 @@ internal class FirInvokeResolveTowerExtension(
             manager,
             towerDataElementsForName,
             collector,
-            CandidateFactory(components, invokeReceiverInfo),
+            CandidateFactory(context, invokeReceiverInfo),
             onSuccessfulLevel = { towerGroup ->
                 enqueueResolverTasksForInvokeReceiverCandidates(
                     invokeBuiltinExtensionMode, info,
@@ -182,7 +183,7 @@ internal class FirInvokeResolveTowerExtension(
         useImplicitReceiverAsBuiltinInvokeArgument: Boolean,
         receiverGroup: TowerGroup
     ) {
-        val invokeOnGivenReceiverCandidateFactory = CandidateFactory(components, invokeFunctionInfo)
+        val invokeOnGivenReceiverCandidateFactory = CandidateFactory(context, invokeFunctionInfo)
         val task = InvokeFunctionResolveTask(
             components,
             manager,

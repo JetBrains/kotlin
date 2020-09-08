@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.InvocationKindTransformer
@@ -41,7 +42,7 @@ class FirCallCompleter(
 ) : BodyResolveComponents by components {
     val completer = ConstraintSystemCompleter(components)
     private val inferenceSession
-        get() = inferenceComponents.inferenceSession
+        get() = transformer.context.inferenceSession
 
     data class CompletionResult<T>(val result: T, val callCompleted: Boolean)
 
@@ -65,13 +66,13 @@ class FirCallCompleter(
 
         val completionMode = candidate.computeCompletionMode(inferenceComponents, expectedTypeRef, initialType)
 
-        val analyzer = createPostponedArgumentsAnalyzer()
+        val analyzer = createPostponedArgumentsAnalyzer(transformer.resolutionContext)
         call.transformSingle(InvocationKindTransformer, null)
 
         return when (completionMode) {
             ConstraintSystemCompletionMode.FULL -> {
                 if (inferenceSession.shouldRunCompletion(call)) {
-                    completer.complete(candidate.system.asConstraintSystemCompleterContext(), completionMode, listOf(call), initialType) {
+                    completer.complete(candidate.system.asConstraintSystemCompleterContext(), completionMode, listOf(call), initialType, transformer.resolutionContext) {
                         analyzer.analyze(candidate.system.asPostponedArgumentsAnalyzerContext(), it, candidate)
                     }
                     val finalSubstitutor =
@@ -94,7 +95,13 @@ class FirCallCompleter(
             }
 
             ConstraintSystemCompletionMode.PARTIAL -> {
-                completer.complete(candidate.system.asConstraintSystemCompleterContext(), completionMode, listOf(call), initialType) {
+                completer.complete(
+                    candidate.system.asConstraintSystemCompleterContext(),
+                    completionMode,
+                    listOf(call),
+                    initialType,
+                    transformer.resolutionContext
+                ) {
                     analyzer.analyze(candidate.system.asPostponedArgumentsAnalyzerContext(), it, candidate)
                 }
                 val approximatedCall = call.transformSingle(integerOperatorsTypeUpdater, null)
@@ -119,10 +126,10 @@ class FirCallCompleter(
         )
     }
 
-    fun createPostponedArgumentsAnalyzer(): PostponedArgumentsAnalyzer {
+    fun createPostponedArgumentsAnalyzer(context: ResolutionContext): PostponedArgumentsAnalyzer {
         val lambdaAnalyzer = LambdaAnalyzerImpl()
         return PostponedArgumentsAnalyzer(
-            resolutionContext,
+            context,
             lambdaAnalyzer,
             inferenceComponents,
             transformer.components.callResolver
@@ -179,7 +186,7 @@ class FirCallCompleter(
 
             val builderInferenceSession = runIf(stubsForPostponedVariables.isNotEmpty()) {
                 @Suppress("UNCHECKED_CAST")
-                FirBuilderInferenceSession(components, stubsForPostponedVariables as Map<ConeTypeVariable, ConeStubType>)
+                FirBuilderInferenceSession(transformer.resolutionContext, stubsForPostponedVariables as Map<ConeTypeVariable, ConeStubType>)
             }
 
             val localContext = towerDataContextForAnonymousFunctions.get(lambdaArgument.symbol) ?: error(
@@ -187,7 +194,7 @@ class FirCallCompleter(
             )
             transformer.context.withTowerDataContext(localContext) {
                 if (builderInferenceSession != null) {
-                    components.inferenceComponents.withInferenceSession(builderInferenceSession) {
+                    transformer.context.withInferenceSession(builderInferenceSession) {
                         lambdaArgument.transformSingle(transformer, ResolutionMode.LambdaResolution(expectedReturnTypeRef))
                     }
                 } else {

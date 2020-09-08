@@ -13,8 +13,8 @@ import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.coroutines.intrinsics.createCoroutineUnintercepted
 import kotlin.coroutines.resume
 
-class ResolutionStageRunner(private val context: ResolutionContext) {
-    fun processCandidate(candidate: Candidate, stopOnFirstError: Boolean = true): CandidateApplicability {
+class ResolutionStageRunner {
+    fun processCandidate(candidate: Candidate, context: ResolutionContext, stopOnFirstError: Boolean = true): CandidateApplicability {
         val sink = CheckerSinkImpl(stopOnFirstError = stopOnFirstError)
         var finished = false
         sink.continuation = suspend {

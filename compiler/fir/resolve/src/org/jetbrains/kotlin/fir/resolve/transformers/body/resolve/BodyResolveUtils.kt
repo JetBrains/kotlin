@@ -11,13 +11,13 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildVarargArgumentsExpression
-import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.arrayElementType
@@ -43,7 +43,7 @@ internal fun inferenceComponents(
     scopeSession: ScopeSession
 ): InferenceComponents {
     val inferenceContext = session.typeContext
-    return InferenceComponents(inferenceContext, session, returnTypeCalculator, scopeSession)
+    return InferenceComponents(session)
 }
 
 internal fun remapArgumentsWithVararg(

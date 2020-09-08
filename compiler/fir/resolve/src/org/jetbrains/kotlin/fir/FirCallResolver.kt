@@ -146,9 +146,7 @@ class FirCallResolver(
             transformer.components.containingDeclarations,
         )
         towerResolver.reset()
-        val result = towerResolver.runResolver(
-            info,
-        )
+        val result = towerResolver.runResolver(info, transformer.resolutionContext)
         val bestCandidates = result.bestCandidates()
         val reducedCandidates = if (!result.currentApplicability.isSuccess) {
             bestCandidates.toSet()
@@ -256,6 +254,7 @@ class FirCallResolver(
         val localCollector = CandidateCollector(this, resolutionStageRunner)
         val result = towerResolver.runResolver(
             info,
+            transformer.resolutionContext,
             collector = localCollector,
             manager = TowerResolveManager(localCollector),
         )
@@ -317,7 +316,8 @@ class FirCallResolver(
 
         val result = towerResolver.runResolverForDelegatingConstructor(
             callInfo,
-            constructedType
+            constructedType,
+            transformer.resolutionContext
         )
 
         return callResolver.selectDelegatingConstructorCall(delegatedConstructorCall, name, result, callInfo)
@@ -396,11 +396,11 @@ class FirCallResolver(
             }
         }
         if (constructorSymbol == null) return null
-        val candidate = CandidateFactory(components, callInfo).createCandidate(
+        val candidate = CandidateFactory(transformer.resolutionContext, callInfo).createCandidate(
             constructorSymbol!!,
             ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
         )
-        val applicability = resolutionStageRunner.processCandidate(candidate)
+        val applicability = resolutionStageRunner.processCandidate(candidate, transformer.resolutionContext)
         return ResolutionResult(callInfo, applicability, listOf(candidate))
     }
 
@@ -541,8 +541,8 @@ class FirCallResolver(
         source: FirSourceElement?,
         name: Name
     ): FirErrorReferenceWithCandidate {
-        val candidate = CandidateFactory(components, callInfo).createErrorCandidate(diagnostic)
-        resolutionStageRunner.processCandidate(candidate, stopOnFirstError = false)
+        val candidate = CandidateFactory(transformer.resolutionContext, callInfo).createErrorCandidate(diagnostic)
+        resolutionStageRunner.processCandidate(candidate, transformer.resolutionContext, stopOnFirstError = false)
         return FirErrorReferenceWithCandidate(source, name, candidate, diagnostic)
     }
 
@@ -552,7 +552,7 @@ class FirCallResolver(
         diagnostic: ConeDiagnostic
     ): FirErrorReferenceWithCandidate {
         if (!candidate.fullyAnalyzed) {
-            resolutionStageRunner.processCandidate(candidate, stopOnFirstError = false)
+            resolutionStageRunner.processCandidate(candidate, transformer.resolutionContext, stopOnFirstError = false)
         }
         return FirErrorReferenceWithCandidate(source, candidate.callInfo.name, candidate, diagnostic)
     }

@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildErrorFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildErrorProperty
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorFunctionSymbol
@@ -21,30 +20,30 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 
 class CandidateFactory private constructor(
-    val bodyResolveComponents: BodyResolveComponents,
+    val context: ResolutionContext,
     val callInfo: CallInfo,
     private val baseSystem: ConstraintStorage
 ) {
 
     companion object {
-        private fun buildBaseSystem(bodyResolveComponents: BodyResolveComponents, callInfo: CallInfo): ConstraintStorage {
-            val system = bodyResolveComponents.inferenceComponents.createConstraintSystem()
+        private fun buildBaseSystem(context: ResolutionContext, callInfo: CallInfo): ConstraintStorage {
+            val system = context.inferenceComponents.createConstraintSystem()
             callInfo.arguments.forEach {
                 system.addSubsystemFromExpression(it)
             }
-            system.addOtherSystem(bodyResolveComponents.inferenceComponents.inferenceSession.currentConstraintSystem)
+            system.addOtherSystem(context.bodyResolveContext.inferenceSession.currentConstraintSystem)
             return system.asReadOnlyStorage()
         }
     }
 
-    constructor(bodyResolveComponents: BodyResolveComponents, callInfo: CallInfo) :
-            this(bodyResolveComponents, callInfo, buildBaseSystem(bodyResolveComponents, callInfo))
+    constructor(context: ResolutionContext, callInfo: CallInfo) :
+            this(context, callInfo, buildBaseSystem(context, callInfo))
 
     fun replaceCallInfo(callInfo: CallInfo): CandidateFactory {
         if (this.callInfo.arguments.size != callInfo.arguments.size) {
             throw AssertionError("Incorrect replacement of call info in CandidateFactory")
         }
-        return CandidateFactory(bodyResolveComponents, callInfo, baseSystem)
+        return CandidateFactory(context, callInfo, baseSystem)
     }
 
     fun createCandidate(
@@ -56,7 +55,7 @@ class CandidateFactory private constructor(
     ): Candidate {
         return Candidate(
             symbol, dispatchReceiverValue, implicitExtensionReceiverValue,
-            explicitReceiverKind, bodyResolveComponents.inferenceComponents.constraintSystemFactory, baseSystem,
+            explicitReceiverKind, context.inferenceComponents.constraintSystemFactory, baseSystem,
             builtInExtensionFunctionReceiverValue?.receiverExpression?.let {
                 callInfo.withReceiverAsArgument(it)
             } ?: callInfo
@@ -78,7 +77,7 @@ class CandidateFactory private constructor(
             dispatchReceiverValue = null,
             implicitExtensionReceiverValue = null,
             explicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
-            bodyResolveComponents.inferenceComponents.constraintSystemFactory,
+            context.inferenceComponents.constraintSystemFactory,
             baseSystem,
             callInfo
         )
@@ -87,7 +86,7 @@ class CandidateFactory private constructor(
     private fun createErrorFunctionSymbol(diagnostic: ConeDiagnostic): FirErrorFunctionSymbol {
         return FirErrorFunctionSymbol().also {
             buildErrorFunction {
-                session = this@CandidateFactory.bodyResolveComponents.session
+                session = context.session
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
                 origin = FirDeclarationOrigin.Synthetic
                 this.diagnostic = diagnostic
@@ -99,7 +98,7 @@ class CandidateFactory private constructor(
     private fun createErrorPropertySymbol(diagnostic: ConeDiagnostic): FirErrorPropertySymbol {
         return FirErrorPropertySymbol(diagnostic).also {
             buildErrorProperty {
-                session = this@CandidateFactory.bodyResolveComponents.session
+                session = context.session
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
                 origin = FirDeclarationOrigin.Synthetic
                 name = FirErrorPropertySymbol.NAME

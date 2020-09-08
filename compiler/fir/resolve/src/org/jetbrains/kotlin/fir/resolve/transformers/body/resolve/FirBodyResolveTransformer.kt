@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.asTowerDataElement
+import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
@@ -40,6 +41,8 @@ open class FirBodyResolveTransformer(
         outerBodyResolveContext ?: BodyResolveContext(returnTypeCalculator, DataFlowAnalyzerContext.empty(session))
     final override val components: BodyResolveTransformerComponents =
         BodyResolveTransformerComponents(session, scopeSession, this, context)
+
+    final override val resolutionContext: ResolutionContext = ResolutionContext(session, components, context)
 
     internal open val expressionsTransformer = FirExpressionsResolveTransformer(this)
     protected open val declarationsTransformer = FirDeclarationsResolveTransformer(this)

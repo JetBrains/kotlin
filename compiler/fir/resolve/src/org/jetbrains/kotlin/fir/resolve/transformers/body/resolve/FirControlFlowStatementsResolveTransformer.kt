@@ -79,7 +79,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
                 else -> {
                     whenExpression = whenExpression.transformBranches(transformer, ResolutionMode.ContextDependent)
 
-                    whenExpression = syntheticCallGenerator.generateCalleeForWhenExpression(whenExpression) ?: run {
+                    whenExpression = syntheticCallGenerator.generateCalleeForWhenExpression(whenExpression, resolutionContext) ?: run {
                         whenExpression = whenExpression.transformSingle(whenExhaustivenessTransformer, null)
                         dataFlowAnalyzer.exitWhenExpression(whenExpression)
                         whenExpression.resultType = buildErrorTypeRef {
@@ -149,7 +149,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
         var callCompleted = false
 
         @Suppress("NAME_SHADOWING")
-        var result = syntheticCallGenerator.generateCalleeForTryExpression(tryExpression)?.let {
+        var result = syntheticCallGenerator.generateCalleeForTryExpression(tryExpression, resolutionContext)?.let {
             val expectedTypeRef = data.expectedType
             val completionResult = callCompleter.completeCall(it, expectedTypeRef)
             callCompleted = completionResult.callCompleted
@@ -218,7 +218,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
         dataFlowAnalyzer.exitElvisLhs(elvisExpression)
         elvisExpression.transformRhs(transformer, ResolutionMode.ContextDependent)
 
-        val result = syntheticCallGenerator.generateCalleeForElvisExpression(elvisExpression)?.let {
+        val result = syntheticCallGenerator.generateCalleeForElvisExpression(elvisExpression, resolutionContext)?.let {
             callCompleter.completeCall(it, data.expectedType).result
         } ?: elvisExpression.also {
             it.resultType = buildErrorTypeRef {

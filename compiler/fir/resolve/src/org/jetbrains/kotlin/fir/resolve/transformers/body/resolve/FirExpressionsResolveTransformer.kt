@@ -456,7 +456,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     private inline fun <T> resolveCandidateForAssignmentOperatorCall(block: () -> T): T {
         return dataFlowAnalyzer.withIgnoreFunctionCalls {
             callResolver.withNoArgumentsTransform {
-                inferenceComponents.withInferenceSession(InferenceSessionForAssignmentOperatorCall) {
+                context.withInferenceSession(InferenceSessionForAssignmentOperatorCall) {
                     block()
                 }
             }
@@ -546,7 +546,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         checkNotNullCall.argumentList.transformArguments(transformer, ResolutionMode.ContextDependent)
 
         var callCompleted = false
-        val result = components.syntheticCallGenerator.generateCalleeForCheckNotNullCall(checkNotNullCall)?.let {
+        val result = components.syntheticCallGenerator.generateCalleeForCheckNotNullCall(checkNotNullCall, resolutionContext)?.let {
             val completionResult = callCompleter.completeCall(it, data.expectedType)
             callCompleted = completionResult.callCompleted
             completionResult.result
@@ -629,7 +629,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         if (data !is ResolutionMode.ContextDependent) {
             val resolvedReference =
                 components.syntheticCallGenerator.resolveCallableReferenceWithSyntheticOuterCall(
-                    callableReferenceAccess, data.expectedType,
+                    callableReferenceAccess, data.expectedType, resolutionContext,
                 ) ?: callableReferenceAccess
 
             return resolvedReference.compose()

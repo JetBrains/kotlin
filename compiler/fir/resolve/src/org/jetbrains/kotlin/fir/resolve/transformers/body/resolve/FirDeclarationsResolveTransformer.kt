@@ -214,11 +214,11 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         val inferenceSession = FirDelegatedPropertyInferenceSession(
             property,
             delegateExpression,
-            components,
-            callCompleter.createPostponedArgumentsAnalyzer()
+            resolutionContext,
+            callCompleter.createPostponedArgumentsAnalyzer(resolutionContext)
         )
 
-        components.inferenceComponents.withInferenceSession(inferenceSession) {
+        context.withInferenceSession(inferenceSession) {
             property.transformAccessors()
             val completedCalls = inferenceSession.completeCandidates()
             val finalSubstitutor = inferenceSession.createFinalSubstitutor()

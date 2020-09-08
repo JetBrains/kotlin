@@ -160,7 +160,7 @@ private class TowerScopeLevelProcessor(
                 val declarationReceiverType = (symbol as? FirCallableSymbol<*>)?.fir?.receiverTypeRef?.coneType
                 if (declarationReceiverType is ConeClassLikeType) {
                     if (!AbstractTypeChecker.isSubtypeOf(
-                            candidateFactory.bodyResolveComponents.inferenceComponents.ctx,
+                            candidateFactory.context.inferenceComponents.ctx,
                             extensionReceiverType,
                             declarationReceiverType.lookupTag.constructClassType(
                                 declarationReceiverType.typeArguments.map { ConeStarProjection }.toTypedArray(),
@@ -181,7 +181,7 @@ private class TowerScopeLevelProcessor(
                 dispatchReceiverValue,
                 implicitExtensionReceiverValue,
                 builtInExtensionFunctionReceiverValue
-            )
+            ), candidateFactory.context
         )
     }
 

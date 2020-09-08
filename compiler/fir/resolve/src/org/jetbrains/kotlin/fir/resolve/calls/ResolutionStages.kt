@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.inference.*
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -32,7 +33,8 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 
 data class ResolutionContext(
     val session: FirSession,
-    val bodyResolveComponents: BodyResolveComponents
+    val bodyResolveComponents: BodyResolveComponents,
+    val bodyResolveContext: BodyResolveContext
 ) {
     val inferenceComponents: InferenceComponents
         get() = bodyResolveComponents.inferenceComponents

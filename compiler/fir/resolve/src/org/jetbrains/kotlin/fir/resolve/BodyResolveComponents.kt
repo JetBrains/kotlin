@@ -10,7 +10,10 @@ import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.fir.FirCallResolver
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
+import org.jetbrains.kotlin.fir.resolve.calls.ResolutionStageRunner
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
@@ -56,8 +59,6 @@ interface BodyResolveComponents : SessionHolder {
     val integerLiteralTypeApproximator: IntegerLiteralTypeApproximationTransformer
     val integerOperatorsTypeUpdater: IntegerOperatorsTypeUpdater
     val outerClassManager: FirOuterClassManager
-
-    val resolutionContext: ResolutionContext
 }
 
 typealias FirLocalScopes = PersistentList<FirLocalScope>

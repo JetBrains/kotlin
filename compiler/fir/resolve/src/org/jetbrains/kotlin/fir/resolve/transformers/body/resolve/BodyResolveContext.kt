@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStack
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
 import org.jetbrains.kotlin.fir.resolve.dfa.PersistentFlow
+import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceSession
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
@@ -51,6 +52,20 @@ class BodyResolveContext(
     var containers: PersistentList<FirDeclaration> = persistentListOf()
 
     val towerDataContextForAnonymousFunctions: MutableMap<FirAnonymousFunctionSymbol, FirTowerDataContext> = mutableMapOf()
+
+    @set:PrivateForInline
+    var inferenceSession: FirInferenceSession = FirInferenceSession.DEFAULT
+
+    @OptIn(PrivateForInline::class)
+    inline fun <R> withInferenceSession(inferenceSession: FirInferenceSession, block: () -> R): R {
+        val oldSession = this.inferenceSession
+        this.inferenceSession = inferenceSession
+        return try {
+            block()
+        } finally {
+            this.inferenceSession = oldSession
+        }
+    }
 
     @OptIn(PrivateForInline::class)
     inline fun <T> withNewTowerDataForClassParts(newContexts: FirTowerDataContextsForClassParts, f: () -> T): T {

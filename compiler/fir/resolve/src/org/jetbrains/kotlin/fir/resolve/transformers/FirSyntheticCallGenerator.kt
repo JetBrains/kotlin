@@ -51,7 +51,7 @@ class FirSyntheticCallGenerator(
     private val checkNotNullFunction: FirSimpleFunction = generateSyntheticCheckNotNullFunction()
     private val elvisFunction: FirSimpleFunction = generateSyntheticElvisFunction()
 
-    fun generateCalleeForWhenExpression(whenExpression: FirWhenExpression): FirWhenExpression? {
+    fun generateCalleeForWhenExpression(whenExpression: FirWhenExpression, context: ResolutionContext): FirWhenExpression? {
         val stubReference = whenExpression.calleeReference
         // TODO: Investigate: assertion failed in ModularizedTest
         // assert(stubReference is FirStubReference)
@@ -63,13 +63,14 @@ class FirSyntheticCallGenerator(
         val reference = generateCalleeReferenceWithCandidate(
             whenSelectFunction,
             argumentList,
-            SyntheticCallableId.WHEN.callableName
+            SyntheticCallableId.WHEN.callableName,
+            context = context
         ) ?: return null // TODO
 
         return whenExpression.transformCalleeReference(UpdateReference, reference)
     }
 
-    fun generateCalleeForTryExpression(tryExpression: FirTryExpression): FirTryExpression? {
+    fun generateCalleeForTryExpression(tryExpression: FirTryExpression, context: ResolutionContext): FirTryExpression? {
         val stubReference = tryExpression.calleeReference
         assert(stubReference is FirStubReference)
 
@@ -85,26 +86,28 @@ class FirSyntheticCallGenerator(
         val reference = generateCalleeReferenceWithCandidate(
             trySelectFunction,
             argumentList,
-            SyntheticCallableId.TRY.callableName
+            SyntheticCallableId.TRY.callableName,
+            context = context
         ) ?: return null // TODO
 
         return tryExpression.transformCalleeReference(UpdateReference, reference)
     }
 
-    fun generateCalleeForCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall): FirCheckNotNullCall? {
+    fun generateCalleeForCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, context: ResolutionContext): FirCheckNotNullCall? {
         val stubReference = checkNotNullCall.calleeReference
         if (stubReference !is FirStubReference) return null
 
         val reference = generateCalleeReferenceWithCandidate(
             checkNotNullFunction,
             checkNotNullCall.argumentList,
-            SyntheticCallableId.CHECK_NOT_NULL.callableName
+            SyntheticCallableId.CHECK_NOT_NULL.callableName,
+            context = context
         ) ?: return null // TODO
 
         return checkNotNullCall.transformCalleeReference(UpdateReference, reference)
     }
 
-    fun generateCalleeForElvisExpression(elvisExpression: FirElvisExpression): FirElvisExpression? {
+    fun generateCalleeForElvisExpression(elvisExpression: FirElvisExpression, context: ResolutionContext): FirElvisExpression? {
         if (elvisExpression.calleeReference !is FirStubReference) return null
 
         val argumentList = buildArgumentList {
@@ -114,7 +117,8 @@ class FirSyntheticCallGenerator(
         val reference = generateCalleeReferenceWithCandidate(
             elvisFunction,
             argumentList,
-            SyntheticCallableId.ELVIS_NOT_NULL.callableName
+            SyntheticCallableId.ELVIS_NOT_NULL.callableName,
+            context = context
         ) ?: return null
 
         return elvisExpression.transformCalleeReference(UpdateReference, reference)
@@ -122,13 +126,18 @@ class FirSyntheticCallGenerator(
 
     fun resolveCallableReferenceWithSyntheticOuterCall(
         callableReferenceAccess: FirCallableReferenceAccess,
-        expectedTypeRef: FirTypeRef?
+        expectedTypeRef: FirTypeRef?,
+        context: ResolutionContext
     ): FirCallableReferenceAccess? {
         val argumentList = buildUnaryArgumentList(callableReferenceAccess)
 
         val reference =
             generateCalleeReferenceWithCandidate(
-                idFunction, argumentList, SyntheticCallableId.ID.callableName, CallKind.SyntheticIdForCallableReferencesResolution
+                idFunction,
+                argumentList,
+                SyntheticCallableId.ID.callableName,
+                CallKind.SyntheticIdForCallableReferencesResolution,
+                context
             ) ?: return callableReferenceAccess.transformCalleeReference(
                 StoreCalleeReference,
                 buildErrorNamedReference {
@@ -149,11 +158,12 @@ class FirSyntheticCallGenerator(
         function: FirSimpleFunction,
         argumentList: FirArgumentList,
         name: Name,
-        callKind: CallKind = CallKind.SyntheticSelect
+        callKind: CallKind = CallKind.SyntheticSelect,
+        context: ResolutionContext
     ): FirNamedReferenceWithCandidate? {
         val callInfo = generateCallInfo(name, argumentList, callKind)
-        val candidate = generateCandidate(callInfo, function)
-        val applicability = resolutionStageRunner.processCandidate(candidate)
+        val candidate = generateCandidate(callInfo, function, context)
+        val applicability = resolutionStageRunner.processCandidate(candidate, context)
         if (applicability <= CandidateApplicability.INAPPLICABLE) {
             return null
         }
@@ -161,8 +171,8 @@ class FirSyntheticCallGenerator(
         return FirNamedReferenceWithCandidate(null, name, candidate)
     }
 
-    private fun generateCandidate(callInfo: CallInfo, function: FirSimpleFunction): Candidate =
-        CandidateFactory(components, callInfo).createCandidate(
+    private fun generateCandidate(callInfo: CallInfo, function: FirSimpleFunction, context: ResolutionContext): Candidate =
+        CandidateFactory(context, callInfo).createCandidate(
             symbol = function.symbol,
             explicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
         )
