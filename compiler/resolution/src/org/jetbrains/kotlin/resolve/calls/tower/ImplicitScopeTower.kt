@@ -91,11 +91,11 @@ class CandidateWithBoundDispatchReceiver(
 
 @JvmName("getResultApplicabilityForConstraintErrors")
 fun getResultApplicability(diagnostics: Collection<ConstraintSystemError>): CandidateApplicability =
-    diagnostics.maxByOrNull { it.applicability }?.applicability ?: RESOLVED
+    diagnostics.minByOrNull { it.applicability }?.applicability ?: RESOLVED
 
 @JvmName("getResultApplicabilityForCallDiagnostics")
 fun getResultApplicability(diagnostics: Collection<KotlinCallDiagnostic>): CandidateApplicability =
-    diagnostics.maxByOrNull { it.candidateApplicability }?.candidateApplicability ?: RESOLVED
+    diagnostics.minByOrNull { it.candidateApplicability }?.candidateApplicability ?: RESOLVED
 
 abstract class ResolutionDiagnostic(candidateApplicability: CandidateApplicability) :
     KotlinCallDiagnostic(candidateApplicability) {

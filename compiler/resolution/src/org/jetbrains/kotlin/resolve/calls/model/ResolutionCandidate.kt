@@ -102,7 +102,7 @@ class KotlinResolutionCandidate(
 
     override fun addDiagnostic(diagnostic: KotlinCallDiagnostic) {
         diagnosticsFromResolutionParts.add(diagnostic)
-        currentApplicability = maxOf(diagnostic.candidateApplicability, currentApplicability)
+        currentApplicability = minOf(diagnostic.candidateApplicability, currentApplicability)
     }
 
     fun getSubResolvedAtoms(): List<ResolvedAtom> = subResolvedAtoms
@@ -168,7 +168,7 @@ class KotlinResolutionCandidate(
             processParts(stopOnFirstError = false)
 
             val systemApplicability = getResultApplicability(getSystem().errors)
-            return maxOf(currentApplicability, systemApplicability, variableApplicability)
+            return minOf(currentApplicability, systemApplicability, variableApplicability)
         }
 
     override fun addCompatibilityWarning(other: Candidate) {
