@@ -4,7 +4,7 @@ import com.intellij.ui.components.JBCheckBox
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingValidator
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.componentWithCommentAtRight
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.componentWithCommentAtBottom
 import javax.swing.JComponent
 
 class CheckboxComponent(
@@ -29,7 +29,7 @@ class CheckboxComponent(
 
     override val alignTarget: JComponent? get() = checkbox
 
-    override val uiComponent = componentWithCommentAtRight(checkbox, description)
+    override val uiComponent = componentWithCommentAtBottom(checkbox, description, gap = 2)
 
     override fun updateUiValue(newValue: Boolean) = safeUpdateUi {
         checkbox.isSelected = newValue
