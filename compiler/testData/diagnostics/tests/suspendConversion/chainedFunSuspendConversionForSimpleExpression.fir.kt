@@ -9,6 +9,6 @@ fun foo(s: SuspendRunnable) {}
 
 fun test(f: () -> Unit) {
     foo { }
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(f)
+    foo(f)
 }
 

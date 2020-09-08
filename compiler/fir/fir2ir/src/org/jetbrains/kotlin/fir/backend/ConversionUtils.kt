@@ -477,14 +477,21 @@ fun Fir2IrComponents.createSafeCallConstruction(
     }
 }
 
-fun Fir2IrComponents.createTemporaryVariableForSafeCallConstruction(
+fun Fir2IrComponents.createTemporaryVariable(
     receiverExpression: IrExpression,
-    conversionScope: Fir2IrConversionScope
+    conversionScope: Fir2IrConversionScope,
+    nameHint: String? = null
 ): Pair<IrVariable, IrValueSymbol> {
-    val receiverVariable = declarationStorage.declareTemporaryVariable(receiverExpression, "safe_receiver").apply {
+    val receiverVariable = declarationStorage.declareTemporaryVariable(receiverExpression, nameHint).apply {
         parent = conversionScope.parentFromStack()
     }
     val variableSymbol = receiverVariable.symbol
 
     return Pair(receiverVariable, variableSymbol)
 }
+
+fun Fir2IrComponents.createTemporaryVariableForSafeCallConstruction(
+    receiverExpression: IrExpression,
+    conversionScope: Fir2IrConversionScope
+): Pair<IrVariable, IrValueSymbol> =
+    createTemporaryVariable(receiverExpression, conversionScope, "safe_receiver")
