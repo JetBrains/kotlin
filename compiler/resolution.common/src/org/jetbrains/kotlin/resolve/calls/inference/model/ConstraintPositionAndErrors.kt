@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.model
 
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.*
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
@@ -78,7 +78,7 @@ object SimpleConstraintSystemConstraintPosition : ConstraintPosition()
 
 // ------------------------------------------------ Errors ------------------------------------------------
 
-sealed class ConstraintSystemError(val applicability: ResolutionCandidateApplicability)
+sealed class ConstraintSystemError(val applicability: CandidateApplicability)
 
 class NewConstraintError(
     val lowerType: KotlinTypeMarker,

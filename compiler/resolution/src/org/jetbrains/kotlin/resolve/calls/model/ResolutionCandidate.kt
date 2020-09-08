@@ -84,7 +84,7 @@ class KotlinResolutionCandidate(
 ) : Candidate, KotlinDiagnosticsHolder {
     val diagnosticsFromResolutionParts = arrayListOf<KotlinCallDiagnostic>() // TODO: this is mutable list, take diagnostics only once!
     private var newSystem: NewConstraintSystemImpl? = null
-    private var currentApplicability = ResolutionCandidateApplicability.RESOLVED
+    private var currentApplicability = CandidateApplicability.RESOLVED
     private var subResolvedAtoms: MutableList<ResolvedAtom> = arrayListOf()
 
     private val stepCount = resolutionSequence.sumBy { it.run { workCount() } }
@@ -155,7 +155,7 @@ class KotlinResolutionCandidate(
         get() = callComponents.statelessCallbacks.getVariableCandidateIfInvoke(resolvedCall.atom)
 
     private val variableApplicability
-        get() = variableCandidateIfInvoke?.resultingApplicability ?: ResolutionCandidateApplicability.RESOLVED
+        get() = variableCandidateIfInvoke?.resultingApplicability ?: CandidateApplicability.RESOLVED
 
     override val isSuccessful: Boolean
         get() {
@@ -163,7 +163,7 @@ class KotlinResolutionCandidate(
             return currentApplicability.isSuccess && variableApplicability.isSuccess && !getSystem().hasContradiction
         }
 
-    override val resultingApplicability: ResolutionCandidateApplicability
+    override val resultingApplicability: CandidateApplicability
         get() {
             processParts(stopOnFirstError = false)
 

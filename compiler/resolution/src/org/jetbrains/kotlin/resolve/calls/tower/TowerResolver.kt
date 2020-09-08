@@ -35,7 +35,7 @@ interface Candidate {
     // this operation should be very fast
     val isSuccessful: Boolean
 
-    val resultingApplicability: ResolutionCandidateApplicability
+    val resultingApplicability: CandidateApplicability
 
     fun addCompatibilityWarning(other: Candidate)
 }
@@ -315,7 +315,7 @@ class TowerResolver {
 
         override fun pushCandidates(candidates: Collection<C>) {
             candidates.filterNotTo(allCandidates) {
-                it.resultingApplicability == ResolutionCandidateApplicability.HIDDEN
+                it.resultingApplicability == CandidateApplicability.HIDDEN
             }
         }
     }
@@ -352,12 +352,12 @@ class TowerResolver {
         }
 
         private fun isSuccessfulCandidate(candidate: C): Boolean {
-            return candidate.resultingApplicability == ResolutionCandidateApplicability.RESOLVED
-                    || candidate.resultingApplicability == ResolutionCandidateApplicability.RESOLVED_WITH_ERROR
+            return candidate.resultingApplicability == CandidateApplicability.RESOLVED
+                    || candidate.resultingApplicability == CandidateApplicability.RESOLVED_WITH_ERROR
         }
 
         private fun isSuccessfulPreserveCompatibility(candidate: C): Boolean =
-            candidate.resultingApplicability == ResolutionCandidateApplicability.RESOLVED_NEED_PRESERVE_COMPATIBILITY
+            candidate.resultingApplicability == CandidateApplicability.RESOLVED_NEED_PRESERVE_COMPATIBILITY
 
         override fun pushCandidates(candidates: Collection<C>) {
             val thereIsSuccessful = candidates.any { it.isSuccessful }
@@ -378,12 +378,12 @@ class TowerResolver {
         override fun getFinalCandidates(): Collection<C> {
             val moreSuitableGroup = candidateGroups.minByOrNull { it.groupApplicability } ?: return emptyList()
             val groupApplicability = moreSuitableGroup.groupApplicability
-            if (groupApplicability == ResolutionCandidateApplicability.HIDDEN) return emptyList()
+            if (groupApplicability == CandidateApplicability.HIDDEN) return emptyList()
 
             return moreSuitableGroup.filter { it.resultingApplicability == groupApplicability }
         }
 
-        private val Collection<C>.groupApplicability: ResolutionCandidateApplicability
-            get() = minOfOrNull { it.resultingApplicability } ?: ResolutionCandidateApplicability.HIDDEN
+        private val Collection<C>.groupApplicability: CandidateApplicability
+            get() = minOfOrNull { it.resultingApplicability } ?: CandidateApplicability.HIDDEN
     }
 }

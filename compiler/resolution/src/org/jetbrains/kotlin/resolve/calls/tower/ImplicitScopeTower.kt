@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.resolve.calls.model.DiagnosticReporter
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.*
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability.*
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
@@ -90,14 +90,14 @@ class CandidateWithBoundDispatchReceiver(
 )
 
 @JvmName("getResultApplicabilityForConstraintErrors")
-fun getResultApplicability(diagnostics: Collection<ConstraintSystemError>): ResolutionCandidateApplicability =
+fun getResultApplicability(diagnostics: Collection<ConstraintSystemError>): CandidateApplicability =
     diagnostics.maxByOrNull { it.applicability }?.applicability ?: RESOLVED
 
 @JvmName("getResultApplicabilityForCallDiagnostics")
-fun getResultApplicability(diagnostics: Collection<KotlinCallDiagnostic>): ResolutionCandidateApplicability =
+fun getResultApplicability(diagnostics: Collection<KotlinCallDiagnostic>): CandidateApplicability =
     diagnostics.maxByOrNull { it.candidateApplicability }?.candidateApplicability ?: RESOLVED
 
-abstract class ResolutionDiagnostic(candidateApplicability: ResolutionCandidateApplicability) :
+abstract class ResolutionDiagnostic(candidateApplicability: CandidateApplicability) :
     KotlinCallDiagnostic(candidateApplicability) {
     override fun report(reporter: DiagnosticReporter) {
         // do nothing

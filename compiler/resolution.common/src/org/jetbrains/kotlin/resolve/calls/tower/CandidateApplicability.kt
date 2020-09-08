@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
-enum class ResolutionCandidateApplicability {
+enum class CandidateApplicability {
     RESOLVED, // call success or has uncompleted inference or in other words possible successful candidate
     RESOLVED_WITH_ERROR, // call has error, but it is still successful from resolution perspective
     RESOLVED_NEED_PRESERVE_COMPATIBILITY, // call resolved successfully, but using new features that changes resolve
@@ -21,5 +21,5 @@ enum class ResolutionCandidateApplicability {
     RESOLVED_TO_SAM_WITH_VARARG, // migration warning up to 1.5 (when resolve to function with SAM conversion and array without spread as vararg)
 }
 
-val ResolutionCandidateApplicability.isSuccess: Boolean
-    get() = this <= ResolutionCandidateApplicability.RESOLVED_LOW_PRIORITY
+val CandidateApplicability.isSuccess: Boolean
+    get() = this <= CandidateApplicability.RESOLVED_LOW_PRIORITY

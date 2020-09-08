@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceCandidate
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.*
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability.*
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
 
@@ -142,7 +142,7 @@ class SmartCastDiagnostic(
 sealed class UnstableSmartCast(
     val argument: ExpressionKotlinCallArgument,
     val targetType: UnwrappedType,
-    applicability: ResolutionCandidateApplicability,
+    applicability: CandidateApplicability,
 ) : KotlinCallDiagnostic(applicability) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(argument, this)
 

@@ -261,7 +261,7 @@ class PSICallResolver(
             return transformManyCandidatesAndRecordTrace(it, tracingStrategy, trace, context)
         }
 
-        if (getResultApplicability(diagnostics) == ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER) {
+        if (getResultApplicability(diagnostics) == CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER) {
             val singleCandidate = result.resultCallAtom() ?: error("Should be not null for result: $result")
             val resolvedCall = kotlinToResolvedCallTransformer.onlyTransform<D>(singleCandidate, diagnostics).also {
                 tracingStrategy.unresolvedReferenceWrongReceiver(trace, listOf(it))
@@ -333,7 +333,7 @@ class PSICallResolver(
 
     private fun Collection<KotlinResolutionCandidate>.areAllFailedWithInapplicableWrongReceiver() =
         all {
-            it.resultingApplicability == ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
+            it.resultingApplicability == CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
         }
 
     private fun CallResolutionResult.areAllInapplicable(): Boolean {
@@ -343,9 +343,9 @@ class PSICallResolver(
         }
 
         val applicability = getResultApplicability(diagnostics)
-        return applicability == ResolutionCandidateApplicability.INAPPLICABLE ||
-                applicability == ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER ||
-                applicability == ResolutionCandidateApplicability.HIDDEN
+        return applicability == CandidateApplicability.INAPPLICABLE ||
+                applicability == CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER ||
+                applicability == CandidateApplicability.HIDDEN
     }
 
     // true if we found something

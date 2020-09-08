@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve.calls.components
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
 
 class TypeArgumentsToParametersMapper {
 
