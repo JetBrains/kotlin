@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyAccessorCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyCopy
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -110,8 +111,22 @@ object LowLevelFirApiFacade {
 
         val frankensteinProperty = buildPropertyCopy(originalProperty) {
             symbol = builtProperty.symbol
+
+            // getter does not have parameters to resolve
             getter = builtProperty.getter
-            setter = builtProperty.setter
+
+            val originalSetter = setter
+            val builtSetter = builtProperty.setter
+            if (originalSetter != null && builtSetter != null) {
+                setter = buildPropertyAccessorCopy(originalSetter) {
+                    body = builtSetter.body
+                    symbol = builtSetter.symbol
+                    resolvePhase = minOf(builtSetter.resolvePhase, FirResolvePhase.DECLARATIONS)
+                    source = builtSetter.source
+                    session = state.firIdeSourcesSession
+                }
+            }
+
             resolvePhase = minOf(originalProperty.resolvePhase, FirResolvePhase.DECLARATIONS)
             source = builtProperty.source
             session = state.firIdeSourcesSession
