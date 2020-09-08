@@ -12,8 +12,9 @@ import org.jetbrains.kotlin.spec.codegen.AbstractBlackBoxCodegenTestSpec
 import org.jetbrains.kotlin.spec.parsing.AbstractParsingTestSpec
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.SPEC_TESTDATA_PATH
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.SPEC_TEST_PATH
+import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.TESTS_MAP_FILENAME
+import org.jetbrains.kotlin.spec.utils.SectionsJsonMapGenerator
 import org.jetbrains.kotlin.spec.utils.TestsJsonMapGenerator
-import org.jetbrains.kotlin.spec.utils.TestsJsonMapGenerator.TESTS_MAP_FILENAME
 import java.io.File
 import java.nio.file.Files
 
@@ -72,6 +73,6 @@ fun generateTests() {
 
 fun main() {
     TestsJsonMapGenerator.buildTestsMapPerSection()
-    TestsJsonMapGenerator.buildTestsMapPerSection()
+    SectionsJsonMapGenerator.writeSectionsMapJsons()
     generateTests()
 }
