@@ -6,15 +6,12 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.PrivateForInline
-import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import kotlin.coroutines.Continuation
 
 abstract class CheckerSink {
     abstract fun reportDiagnostic(diagnostic: ResolutionDiagnostic)
-
-    abstract val components: InferenceComponents
 
     abstract val needYielding: Boolean
 
@@ -35,7 +32,6 @@ suspend inline fun CheckerSink.yieldDiagnostic(diagnostic: ResolutionDiagnostic)
 }
 
 class CheckerSinkImpl(
-    override val components: InferenceComponents,
     var continuation: Continuation<Unit>? = null,
     val stopOnFirstError: Boolean = true
 ) : CheckerSink() {

@@ -15,7 +15,7 @@ import kotlin.coroutines.resume
 
 class ResolutionStageRunner(private val context: ResolutionContext) {
     fun processCandidate(candidate: Candidate, stopOnFirstError: Boolean = true): CandidateApplicability {
-        val sink = CheckerSinkImpl(context.bodyResolveComponents.inferenceComponents, stopOnFirstError = stopOnFirstError)
+        val sink = CheckerSinkImpl(stopOnFirstError = stopOnFirstError)
         var finished = false
         sink.continuation = suspend {
             candidate.callInfo.callKind.resolutionSequence.forEachIndexed { index, stage ->

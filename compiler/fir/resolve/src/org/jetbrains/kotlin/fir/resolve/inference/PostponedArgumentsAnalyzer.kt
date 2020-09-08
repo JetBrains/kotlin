@@ -151,7 +151,7 @@ class PostponedArgumentsAnalyzer(
 
         returnArguments.forEach { c.addSubsystemFromExpression(it) }
 
-        val checkerSink: CheckerSink = CheckerSinkImpl(components)
+        val checkerSink: CheckerSink = CheckerSinkImpl()
 
         var hasExpressionInReturnArguments = false
         returnArguments.forEach {

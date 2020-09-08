@@ -78,7 +78,8 @@ fun Candidate.resolveArgumentExpression(
                     SimpleConstraintSystemConstraintPosition,
                     isReceiver = false,
                     isDispatch = false,
-                    sink = sink
+                    sink = sink,
+                    context = context
                 )
             }
         }
@@ -142,7 +143,8 @@ private fun Candidate.resolveBlockArgument(
             SimpleConstraintSystemConstraintPosition,
             isReceiver = false,
             isDispatch = false,
-            sink = sink
+            sink = sink,
+            context = context
         )
         return
     }
@@ -187,7 +189,7 @@ fun Candidate.resolveSubCallArgument(
     val type: ConeKotlinType = if (candidate.symbol.fir is FirIntegerOperator) {
         (argument as FirFunctionCall).resultType.coneType
     } else {
-        sink.components.returnTypeCalculator.tryCalculateReturnType(candidate.symbol.firUnsafe()).type
+        context.returnTypeCalculator.tryCalculateReturnType(candidate.symbol.firUnsafe()).type
     }
     val argumentType = candidate.substitutor.substituteOrSelf(type)
     resolvePlainArgumentType(csBuilder, argumentType, expectedType, sink, context, isReceiver, isDispatch, useNullableArgumentType)
@@ -228,7 +230,7 @@ fun Candidate.resolvePlainArgumentType(
 ) {
     val position = SimpleConstraintSystemConstraintPosition //TODO
 
-    val session = sink.components.session
+    val session = context.session
     val capturedType = prepareCapturedType(argumentType, context)
 
     val argumentTypeForApplicabilityCheck =
@@ -238,7 +240,7 @@ fun Candidate.resolvePlainArgumentType(
             capturedType
 
     checkApplicabilityForArgumentType(
-        csBuilder, argumentTypeForApplicabilityCheck, expectedType, position, isReceiver, isDispatch, sink
+        csBuilder, argumentTypeForApplicabilityCheck, expectedType, position, isReceiver, isDispatch, sink, context
     )
 }
 
@@ -271,7 +273,8 @@ private fun checkApplicabilityForArgumentType(
     position: SimpleConstraintSystemConstraintPosition,
     isReceiver: Boolean,
     isDispatch: Boolean,
-    sink: CheckerSink
+    sink: CheckerSink,
+    context: ResolutionContext
 ) {
     if (expectedType == null) return
     if (isReceiver && isDispatch) {
@@ -286,7 +289,7 @@ private fun checkApplicabilityForArgumentType(
             return
         }
 
-        val nullableExpectedType = expectedType.withNullability(ConeNullability.NULLABLE, sink.components.session.typeContext)
+        val nullableExpectedType = expectedType.withNullability(ConeNullability.NULLABLE, context.session.typeContext)
 
         if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, nullableExpectedType, position)) {
             sink.reportDiagnostic(InapplicableWrongReceiver) // TODO
@@ -305,9 +308,9 @@ internal fun Candidate.resolveArgument(
     context: ResolutionContext
 ) {
 
-    argument.resultType.ensureResolvedTypeDeclaration(sink.components.session)
+    argument.resultType.ensureResolvedTypeDeclaration(context.session)
 
-    val expectedType = prepareExpectedType(sink.components.session, argument, parameter, context)
+    val expectedType = prepareExpectedType(context.session, argument, parameter, context)
     resolveArgumentExpression(
         this.system.getBuilder(),
         argument,
