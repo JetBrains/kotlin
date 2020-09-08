@@ -1,5 +1,6 @@
 package expectActuals
 
+import org.jetbrains.dokka.model.withDescendants
 import org.jetbrains.dokka.pages.ClasslikePageNode
 import org.jetbrains.dokka.pages.PageNode
 import org.jetbrains.dokka.testApi.testRunner.AbstractCoreTest
@@ -8,8 +9,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 
 
 class ExpectActualsTest : AbstractCoreTest() {
-
-    fun PageNode.childrenRec(): List<PageNode> = listOf(this) + children.flatMap { it.childrenRec() }
 
     @Test
     fun `three same named expect actual classes`() {
@@ -143,7 +142,7 @@ class ExpectActualsTest : AbstractCoreTest() {
             configuration
         ) {
             pagesTransformationStage = {
-                val allChildren = it.childrenRec().filterIsInstance<ClasslikePageNode>()
+                val allChildren = it.withDescendants().filterIsInstance<ClasslikePageNode>().toList()
                 val commonJ = allChildren.filter { it.name == "A(jvm, js)" }
                 val commonN1 = allChildren.filter { it.name == "A(mingwX64, linuxX64)" }
                 val commonN2 = allChildren.filter { it.name == "A(iosX64, iosArm64)" }
