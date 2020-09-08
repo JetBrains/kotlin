@@ -10,6 +10,8 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import javax.swing.JComponent
+import javax.swing.JPanel
+import javax.swing.SpringLayout
 import javax.swing.SwingConstants
 
 class CommentLabel(text: String? = null) : JBLabel() {
@@ -34,21 +36,11 @@ class CommentLabel(text: String? = null) : JBLabel() {
 fun commentLabel(text: String, init: JBLabel.() -> Unit = {}) =
     CommentLabel(text).apply(init)
 
-fun componentWithCommentAtRight(component: JComponent, label: String?) = borderPanel {
-    addToLeft(component)
-    label?.let {
-        addToCenter(commentLabel(it) {
-            withBorder(JBUI.Borders.emptyLeft(5))
-            verticalAlignment = SwingConstants.CENTER
-        })
-    }
-}
-
-fun componentWithCommentAtBottom(component: JComponent, label: String?) = borderPanel {
+fun componentWithCommentAtBottom(component: JComponent, label: String?, gap: Int = 4) = borderPanel {
     addToTop(component)
     label?.let {
         addToCenter(commentLabel(it) {
-            withBorder(JBUI.Borders.emptyLeft(4))
+            withBorder(JBUI.Borders.emptyLeft(gap))
         })
     }
 }
