@@ -132,6 +132,14 @@ val hostRuntimeTests by tasks.registering {
     dependsOn("${hostName}RuntimeTests")
 }
 
+val hostStdAllocRuntimeTests by tasks.registering {
+    dependsOn("${hostName}StdAllocRuntimeTests")
+}
+
+val hostMimallocRuntimeTests by tasks.registering {
+    dependsOn("${hostName}MimallocRuntimeTests")
+}
+
 val assemble by tasks.registering {
     dependsOn(tasks.withType(CompileToBitcode::class).matching {
         it.outputGroup == "main"
