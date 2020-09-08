@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.checkers
 
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.ExplicitApiMode
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
@@ -121,6 +122,21 @@ class ExplicitApiDeclarationChecker : DeclarationChecker {
             if (element is KtNamedFunction && element.hasBlockBody()) return false
 
             return true
+        }
+
+        fun publicReturnTypeShouldBePresentInApiMode(
+            element: KtCallableDeclaration,
+            languageVersionSettings: LanguageVersionSettings,
+            descriptor: DeclarationDescriptor?
+        ): Boolean {
+            val isInApiMode = languageVersionSettings.getFlag(AnalysisFlags.explicitApiMode) != ExplicitApiMode.DISABLED
+            return isInApiMode && returnTypeRequired(
+                element,
+                descriptor,
+                checkForPublicApi = true,
+                checkForInternal = false,
+                checkForPrivate = false
+            )
         }
     }
 }

@@ -14417,6 +14417,29 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/removeExplicitTypeWithApiMode")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveExplicitTypeWithApiMode extends AbstractIntentionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInRemoveExplicitTypeWithApiMode() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/intentions/removeExplicitTypeWithApiMode"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+        }
+
+        @TestMetadata("nonPublicFunction.kt")
+        public void testNonPublicFunction() throws Exception {
+            runTest("idea/testData/intentions/removeExplicitTypeWithApiMode/nonPublicFunction.kt");
+        }
+
+        @TestMetadata("publicFunction.kt")
+        public void testPublicFunction() throws Exception {
+            runTest("idea/testData/intentions/removeExplicitTypeWithApiMode/publicFunction.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/removeForLoopIndices")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
