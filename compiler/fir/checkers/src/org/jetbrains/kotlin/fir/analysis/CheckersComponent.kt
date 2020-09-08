@@ -7,14 +7,18 @@ package org.jetbrains.kotlin.fir.analysis
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.SessionConfiguration
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.ComposedDeclarationCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.ComposedExpressionCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 
 @RequiresOptIn
 annotation class CheckersComponentInternal
 
+@NoMutableState
 class CheckersComponent : FirSessionComponent {
     val declarationCheckers: DeclarationCheckers get() = _declarationCheckers
     private val _declarationCheckers = ComposedDeclarationCheckers()

@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.fir.signaturer
 
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.backend.Fir2IrSignatureComposer
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.render
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.FqName
 
+@NoMutableState
 class FirBasedSignatureComposer(private val mangler: FirMangler) : Fir2IrSignatureComposer {
     inner class SignatureBuilder : FirVisitorVoid() {
         var hashId: Long? = null

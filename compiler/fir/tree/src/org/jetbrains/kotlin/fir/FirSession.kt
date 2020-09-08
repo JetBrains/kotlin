@@ -15,12 +15,6 @@ import org.jetbrains.kotlin.fir.utils.TypeRegistry
 import org.jetbrains.kotlin.utils.Jsr305State
 import kotlin.reflect.KClass
 
-@RequiresOptIn
-annotation class PrivateSessionConstructor
-
-@RequiresOptIn
-annotation class SessionConfiguration
-
 interface FirSessionComponent
 
 abstract class FirSession @PrivateSessionConstructor constructor(val sessionProvider: FirSessionProvider?) : ComponentArrayOwner<FirSessionComponent, FirSessionComponent>() {

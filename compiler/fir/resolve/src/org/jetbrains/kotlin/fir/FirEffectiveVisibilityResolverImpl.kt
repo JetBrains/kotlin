@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
+@ThreadSafeMutableState
 open class FirEffectiveVisibilityResolverImpl(private val session: FirSession) : FirEffectiveVisibilityResolver() {
     private val cache = mutableMapOf<FirSourceElement, FirEffectiveVisibility>()
 

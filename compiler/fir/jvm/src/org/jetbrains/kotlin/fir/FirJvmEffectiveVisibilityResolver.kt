@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 
+@NoMutableState
 class FirJvmEffectiveVisibilityResolver(session: FirSession) : FirEffectiveVisibilityResolverImpl(session) {
     override fun computeEffectiveVisibility(visibility: Visibility, containerSymbol: FirClassLikeSymbol<*>?): FirEffectiveVisibility {
         return when (visibility) {

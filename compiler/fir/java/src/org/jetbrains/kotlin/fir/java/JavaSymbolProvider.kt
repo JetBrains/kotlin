@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.types.Variance.INVARIANT
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 
+@ThreadSafeMutableState
 class JavaSymbolProvider(
     session: FirSession,
     val project: Project,

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 
+@NoMutableState
 abstract class FirEffectiveVisibilityResolver : FirSessionComponent {
     abstract fun resolveFor(
         declaration: FirMemberDeclaration,
