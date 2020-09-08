@@ -14,6 +14,6 @@ fun test1() {
 
 // candidate without suspend conversions is more specific
 fun test2(f: () -> Int, g: suspend () -> Int) {
-    foo(f)
+    <!AMBIGUITY!>foo<!>(f)
     foo(g)
 }

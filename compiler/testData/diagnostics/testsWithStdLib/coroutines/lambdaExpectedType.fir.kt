@@ -21,7 +21,7 @@ fun foo() {
     builder { 1 }
 
     val x = { 1 }
-    <!INAPPLICABLE_CANDIDATE!>builder<!>(x)
+    builder(x)
     builder({1} as (suspend () -> Int))
 
     var i: Int = 1
@@ -32,7 +32,7 @@ fun foo() {
     genericBuilder<Int> { "" }
 
     val y = { 1 }
-    <!INAPPLICABLE_CANDIDATE!>genericBuilder<!>(y)
+    genericBuilder(y)
 
     unitBuilder {}
     unitBuilder { 1 }

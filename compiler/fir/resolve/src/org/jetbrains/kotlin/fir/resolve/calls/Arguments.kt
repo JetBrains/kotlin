@@ -11,10 +11,9 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.createFunctionalType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
-import org.jetbrains.kotlin.fir.resolve.inference.preprocessCallableReference
-import org.jetbrains.kotlin.fir.resolve.inference.preprocessLambdaArgument
+import org.jetbrains.kotlin.fir.resolve.inference.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
@@ -233,11 +232,28 @@ fun Candidate.resolvePlainArgumentType(
     val session = context.session
     val capturedType = prepareCapturedType(argumentType, context)
 
-    val argumentTypeForApplicabilityCheck =
+    var argumentTypeForApplicabilityCheck =
         if (useNullableArgumentType)
             capturedType.withNullability(ConeNullability.NULLABLE, session.typeContext)
         else
             capturedType
+
+    // If the argument is of functional type and the expected type is a suspend function type, we need to do "suspend conversion."
+    // TODO: should refer to LanguageVersionSettings.SuspendConversion
+    // TODO: should prefer another candidate without suspend conversion when ambiguous
+    if (expectedType?.isSuspendFunctionType(session) == true &&
+        argumentTypeForApplicabilityCheck.isBuiltinFunctionalType(session) &&
+        !argumentTypeForApplicabilityCheck.isSuspendFunctionType(session)
+    ) {
+        val typeParameters = argumentTypeForApplicabilityCheck.typeArguments.map { it as ConeKotlinType }
+        argumentTypeForApplicabilityCheck =
+            createFunctionalType(
+                typeParameters.dropLast(1), null, typeParameters.last(),
+                isSuspend = true,
+                isKFunctionType = argumentTypeForApplicabilityCheck.isKFunctionType(session)
+            )
+        substitutor.substituteOrSelf(argumentTypeForApplicabilityCheck)
+    }
 
     checkApplicabilityForArgumentType(
         csBuilder, argumentTypeForApplicabilityCheck, expectedType, position, isReceiver, isDispatch, sink, context

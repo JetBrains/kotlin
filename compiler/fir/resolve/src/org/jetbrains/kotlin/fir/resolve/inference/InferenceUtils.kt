@@ -16,28 +16,32 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 @OptIn(ExperimentalContracts::class)
-fun ConeKotlinType.isBuiltinFunctionalType(session: FirSession): Boolean {
+private fun ConeKotlinType.functionClassKind(session: FirSession): FunctionClassKind? {
     contract {
-        returns(true) implies (this@isBuiltinFunctionalType is ConeClassLikeType)
+        returns(true) implies (this@functionClassKind is ConeClassLikeType)
     }
-    if (this !is ConeClassLikeType) return false
+    if (this !is ConeClassLikeType) return null
     val classId = fullyExpandedType(session).lookupTag.classId
-    val kind = FunctionClassKind.byClassNamePrefix(classId.packageFqName, classId.relativeClassName.asString()) ?: return false
+    return FunctionClassKind.byClassNamePrefix(classId.packageFqName, classId.relativeClassName.asString())
+}
+
+fun ConeKotlinType.isBuiltinFunctionalType(session: FirSession): Boolean {
+    val kind = functionClassKind(session) ?: return false
     return kind == FunctionClassKind.Function ||
             kind == FunctionClassKind.KFunction ||
             kind == FunctionClassKind.SuspendFunction ||
             kind == FunctionClassKind.KSuspendFunction
 }
 
-@OptIn(ExperimentalContracts::class)
 fun ConeKotlinType.isSuspendFunctionType(session: FirSession): Boolean {
-    contract {
-        returns(true) implies (this@isSuspendFunctionType is ConeClassLikeType)
-    }
-    if (this !is ConeClassLikeType) return false
-    val classId = this.fullyExpandedType(session).lookupTag.classId
-    val kind = FunctionClassKind.byClassNamePrefix(classId.packageFqName, classId.relativeClassName.asString()) ?: return false
+    val kind = functionClassKind(session) ?: return false
     return kind == FunctionClassKind.SuspendFunction ||
+            kind == FunctionClassKind.KSuspendFunction
+}
+
+fun ConeKotlinType.isKFunctionType(session: FirSession): Boolean {
+    val kind = functionClassKind(session) ?: return false
+    return kind == FunctionClassKind.KFunction ||
             kind == FunctionClassKind.KSuspendFunction
 }
 
