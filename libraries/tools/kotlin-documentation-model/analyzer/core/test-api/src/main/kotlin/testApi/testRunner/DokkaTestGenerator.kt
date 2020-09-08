@@ -19,6 +19,10 @@ internal class DokkaTestGenerator(
             dokkaGenerator.initializePlugins(configuration, logger, additionalPlugins)
         pluginsSetupStage(context)
 
+        verificationStage {
+            dokkaGenerator.validityCheck(context)
+        }
+
         val modulesFromPlatforms = dokkaGenerator.createDocumentationModels(context)
         documentablesCreationStage(modulesFromPlatforms)
 

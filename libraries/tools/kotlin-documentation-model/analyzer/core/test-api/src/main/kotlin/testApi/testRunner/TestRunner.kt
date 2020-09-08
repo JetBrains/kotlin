@@ -140,6 +140,7 @@ abstract class AbstractCoreTest(
 
     protected class TestBuilder {
         var pluginsSetupStage: (DokkaContext) -> Unit = {}
+        var verificationStage: (() -> Unit) -> Unit = {}
         var documentablesCreationStage: (List<DModule>) -> Unit = {}
         var documentablesFirstTransformationStep: (List<DModule>) -> Unit = {}
         var documentablesMergingStage: (DModule) -> Unit = {}
@@ -151,6 +152,7 @@ abstract class AbstractCoreTest(
         @PublishedApi
         internal fun build() = TestMethods(
             pluginsSetupStage,
+            verificationStage,
             documentablesCreationStage,
             documentablesFirstTransformationStep,
             documentablesMergingStage,
@@ -193,6 +195,7 @@ abstract class AbstractCoreTest(
 
 data class TestMethods(
     val pluginsSetupStage: (DokkaContext) -> Unit,
+    val verificationStage: (() -> Unit) -> Unit,
     val documentablesCreationStage: (List<DModule>) -> Unit,
     val documentablesFirstTransformationStep: (List<DModule>) -> Unit,
     val documentablesMergingStage: (DModule) -> Unit,

@@ -9,9 +9,11 @@ import org.jetbrains.dokka.transformers.documentation.PreMergeDocumentableTransf
 import org.jetbrains.dokka.transformers.pages.PageCreator
 import org.jetbrains.dokka.transformers.pages.PageTransformer
 import org.jetbrains.dokka.transformers.sources.SourceToDocumentableTranslator
+import org.jetbrains.dokka.validity.PreGenerationChecker
 import kotlin.reflect.KProperty
 
 object CoreExtensions {
+    val preGenerationCheck by coreExtension<PreGenerationChecker>()
     val sourceToDocumentableTranslator by coreExtension<SourceToDocumentableTranslator>()
     val preMergeDocumentableTransformer by coreExtension<PreMergeDocumentableTransformer>()
     val documentableMerger by coreExtension<DocumentableMerger>()
