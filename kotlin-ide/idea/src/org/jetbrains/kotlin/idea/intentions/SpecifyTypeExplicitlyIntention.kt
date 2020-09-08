@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.idea.core.unquote
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getResolutionScope
@@ -43,6 +44,14 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingRangeIntention<KtCallableDec
 ), HighPriorityAction {
     override fun applicabilityRange(element: KtCallableDeclaration): TextRange? {
         if (!ExplicitApiDeclarationChecker.returnTypeCheckIsApplicable(element)) return null
+        // If ApiMode is on, then this intention duplicates corresponding quickfix for compiler error
+        // and we disable it here.
+        if (ExplicitApiDeclarationChecker.publicReturnTypeShouldBePresentInApiMode(
+                element,
+                element.languageVersionSettings,
+                element.resolveToDescriptorIfAny()
+            )
+        ) return null
         setTextGetter(
             if (element is KtFunction)
                 KotlinBundle.lazyMessage("specify.return.type.explicitly")
