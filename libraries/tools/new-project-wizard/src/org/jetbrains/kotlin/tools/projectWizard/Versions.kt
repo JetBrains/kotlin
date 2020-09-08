@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 
 @Suppress("ClassName", "SpellCheckingInspection")
 object Versions {
-    val KOTLIN = version("1.4.0") // used as fallback version
+    val KOTLIN = version("1.4.10") // used as fallback version
     val GRADLE = version("6.3")
     val KTOR: (kotlinVersion: Version) -> Version = { version("1.4.0") }
     val JUNIT = version("4.12")
