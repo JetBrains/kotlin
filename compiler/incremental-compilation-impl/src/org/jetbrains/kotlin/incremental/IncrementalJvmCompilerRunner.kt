@@ -25,8 +25,10 @@ import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.FilteringMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -38,6 +40,7 @@ import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
+import org.jetbrains.kotlin.incremental.util.BufferingMessageCollector
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
@@ -125,23 +128,46 @@ class IncrementalJvmCompilerRunner(
 
     private var dirtyClasspathChanges: Collection<FqName> = emptySet()
 
-    private val psiFileFactory: PsiFileFactory by lazy {
-        val rootDisposable = Disposer.newDisposable()
-        val configuration = CompilerConfiguration()
-        val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-        val project = environment.project
-        PsiFileFactory.getInstance(project)
+    private val psiFileProvider = object {
+        val messageCollector = BufferingMessageCollector()
+
+        fun javaFile(file: File): PsiFile? =
+            psiFileFactory.createFileFromText(file.nameWithoutExtension, JavaLanguage.INSTANCE, file.readText())
+
+        private val psiFileFactory: PsiFileFactory by lazy {
+            val rootDisposable = Disposer.newDisposable()
+            val configuration = CompilerConfiguration()
+            val filterMessageCollector = FilteringMessageCollector(messageCollector, { !it.isError })
+            configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, filterMessageCollector)
+            val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+            val project = environment.project
+            PsiFileFactory.getInstance(project)
+        }
     }
 
     private val changedUntrackedJavaClasses = mutableSetOf<ClassId>()
 
     private var javaFilesProcessor =
         if (!usePreciseJavaTracking)
-            ChangedJavaFilesProcessor(reporter) { it.psiFile() }
+            ChangedJavaFilesProcessor(reporter) { psiFileProvider.javaFile(it) }
         else
             null
 
     override fun calculateSourcesToCompile(
+        caches: IncrementalJvmCachesManager,
+        changedFiles: ChangedFiles.Known,
+        args: K2JVMCompilerArguments,
+        messageCollector: MessageCollector
+    ): CompilationMode {
+        return try {
+            calculateSourcesToCompileImpl(caches, changedFiles, args)
+        } finally {
+            psiFileProvider.messageCollector.flush(messageCollector)
+            psiFileProvider.messageCollector.clear()
+        }
+    }
+
+    private fun calculateSourcesToCompileImpl(
         caches: IncrementalJvmCachesManager,
         changedFiles: ChangedFiles.Known,
         args: K2JVMCompilerArguments
@@ -201,7 +227,7 @@ class IncrementalJvmCompilerRunner(
                     return false
                 }
 
-                val psiFile = javaFile.psiFile()
+                val psiFile = psiFileProvider.javaFile(javaFile)
                 if (psiFile !is PsiJavaFile) {
                     reporter.report { "[Precise Java tracking] Expected PsiJavaFile, got ${psiFile?.javaClass}" }
                     return false
@@ -222,9 +248,6 @@ class IncrementalJvmCompilerRunner(
         caches.platformCache.markDirty(javaFiles)
         return true
     }
-
-    private fun File.psiFile(): PsiFile? =
-        psiFileFactory.createFileFromText(nameWithoutExtension, JavaLanguage.INSTANCE, readText())
 
     private fun processChangedUntrackedJavaClass(psiClass: PsiClass, classId: ClassId) {
         changedUntrackedJavaClasses.add(classId)

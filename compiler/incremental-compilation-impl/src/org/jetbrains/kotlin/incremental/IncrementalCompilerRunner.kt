@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compilerRunner.MessageCollectorToOutputItemsCollectorAdapter
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
@@ -31,6 +29,7 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.parsing.classesFqNames
+import org.jetbrains.kotlin.incremental.util.BufferingMessageCollector
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.File
@@ -83,7 +82,7 @@ abstract class IncrementalCompilerRunner<
 
         return try {
             val changedFiles = providedChangedFiles ?: caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
-            val compilationMode = sourcesToCompile(caches, changedFiles, args)
+            val compilationMode = sourcesToCompile(caches, changedFiles, args, messageCollector)
 
             val exitCode = when (compilationMode) {
                 is CompilationMode.Incremental -> {
@@ -131,13 +130,23 @@ abstract class IncrementalCompilerRunner<
         workingDir.mkdirs()
     }
 
-    private fun sourcesToCompile(caches: CacheManager, changedFiles: ChangedFiles, args: Args): CompilationMode =
+    private fun sourcesToCompile(
+        caches: CacheManager,
+        changedFiles: ChangedFiles,
+        args: Args,
+        messageCollector: MessageCollector
+    ): CompilationMode =
         when (changedFiles) {
-            is ChangedFiles.Known -> calculateSourcesToCompile(caches, changedFiles, args)
+            is ChangedFiles.Known -> calculateSourcesToCompile(caches, changedFiles, args, messageCollector)
             is ChangedFiles.Unknown -> CompilationMode.Rebuild { "inputs' changes are unknown (first or clean build)" }
         }
 
-    protected abstract fun calculateSourcesToCompile(caches: CacheManager, changedFiles: ChangedFiles.Known, args: Args): CompilationMode
+    protected abstract fun calculateSourcesToCompile(
+        caches: CacheManager,
+        changedFiles: ChangedFiles.Known,
+        args: Args,
+        messageCollector: MessageCollector
+    ): CompilationMode
 
     protected fun initDirtyFiles(dirtyFiles: DirtyFilesContainer, changedFiles: ChangedFiles.Known) {
         dirtyFiles.add(changedFiles.modified, "was modified since last time")
@@ -197,7 +206,7 @@ abstract class IncrementalCompilerRunner<
         caches: CacheManager,
         allKotlinSources: List<File>,
         compilationMode: CompilationMode,
-        messageCollector: MessageCollector
+        originalMessageCollector: MessageCollector
     ): ExitCode {
         preBuildHook(args, compilationMode)
 
@@ -234,7 +243,7 @@ abstract class IncrementalCompilerRunner<
 
             args.reportOutputFiles = true
             val outputItemsCollector = OutputItemsCollectorImpl()
-            val temporaryMessageCollector = TemporaryMessageCollector(messageCollector)
+            val temporaryMessageCollector = BufferingMessageCollector()
             val messageCollectorAdapter = MessageCollectorToOutputItemsCollectorAdapter(temporaryMessageCollector, outputItemsCollector)
 
             exitCode = runCompiler(sourcesToCompile.toSet(), args, caches, services, messageCollectorAdapter)
@@ -252,7 +261,7 @@ abstract class IncrementalCompilerRunner<
             }
 
             reporter.reportCompileIteration(compilationMode is CompilationMode.Incremental, sourcesToCompile, exitCode)
-            temporaryMessageCollector.flush()
+            temporaryMessageCollector.flush(originalMessageCollector)
 
             if (exitCode != ExitCode.OK) break
 
@@ -352,23 +361,3 @@ abstract class IncrementalCompilerRunner<
     }
 }
 
-private class TemporaryMessageCollector(private val delegate: MessageCollector) : MessageCollector {
-    private class Message(val severity: CompilerMessageSeverity, val message: String, val location: CompilerMessageSourceLocation?)
-
-    private val messages = ArrayList<Message>()
-
-    override fun clear() {
-        messages.clear()
-    }
-
-    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
-        messages.add(Message(severity, message, location))
-    }
-
-    override fun hasErrors(): Boolean =
-        messages.any { it.severity.isError }
-
-    fun flush() {
-        messages.forEach { delegate.report(it.severity, it.message, it.location) }
-    }
-}
