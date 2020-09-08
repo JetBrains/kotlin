@@ -1658,6 +1658,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
                 runTest("compiler/testData/ir/irText/expressions/sam/genericSamProjectedOut.kt");
             }
 
+            @TestMetadata("genericSamSmartcast.kt")
+            public void testGenericSamSmartcast() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/sam/genericSamSmartcast.kt");
+            }
+
             @TestMetadata("samByProjectedType.kt")
             public void testSamByProjectedType() throws Exception {
                 runTest("compiler/testData/ir/irText/expressions/sam/samByProjectedType.kt");
