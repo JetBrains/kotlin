@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.buildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
@@ -162,6 +163,7 @@ object JvmTargetConfigurator : JvmModuleConfigurator,
         reader: Reader,
         module: Module
     ): List<BuildSystemIR> = irsList {
+        +super<SimpleTargetConfigurator>.createInnerTargetIrs(reader, module)
         reader {
             inContextOfModuleConfigurator(module) {
                 val targetVersionValue = JvmModuleConfigurator.targetJvmVersion.reference.settingValue.value
@@ -173,6 +175,14 @@ object JvmTargetConfigurator : JvmModuleConfigurator,
                 }
                 if (Settings.javaSupport.reference.settingValue) {
                     "withJava"()
+                }
+            }
+            val testFramework = inContextOfModuleConfigurator(module) { ModuleConfiguratorWithTests.testFramework.reference.settingValue }
+            if (testFramework != KotlinTestFramework.NONE) {
+                testFramework.usePlatform?.let { usePlatform ->
+                    "testRuns[\"test\"].executionTask.configure" {
+                        +"$usePlatform()"
+                    }
                 }
             }
         }

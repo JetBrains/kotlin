@@ -15,6 +15,9 @@ dependencies {
     implementation project(':c')
     testImplementation 'org.jetbrains.kotlin:kotlin-test-junit'
 }
+test {
+    useJUnit()
+}
 compileKotlin {
     kotlinOptions.jvmTarget = '1.8'
 }
