@@ -90,6 +90,7 @@ object JvmSinglePlatformModuleConfigurator : JvmModuleConfigurator,
         module: Module
     ): List<BuildSystemIR> =
         buildList {
+            +super<JvmModuleConfigurator>.createBuildFileIRs(reader, configurationData, module)
             if (configurationData.buildSystemType == BuildSystemType.GradleKotlinDsl) {
                 +GradleImportIR("org.jetbrains.kotlin.gradle.tasks.KotlinCompile")
             }

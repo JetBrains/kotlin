@@ -17,18 +17,19 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.templates.Template
 
 @Suppress("EnumEntryName")
-enum class ModuleKind : DisplayableSettingItem {
-    multiplatform,
-    target,
-    singleplatformJvm,
-    singleplatformAndroid,
-    singleplatformJsBrowser,
-    singleplatformJsNode,
+enum class ModuleKind(val isSingleplatform: Boolean) : DisplayableSettingItem {
+    multiplatform(isSingleplatform = false),
+    target(isSingleplatform = false),
+    singleplatformJvm(isSingleplatform = true),
+    singleplatformAndroid(isSingleplatform = true),
+    singleplatformJsBrowser(isSingleplatform = true),
+    singleplatformJsNode(isSingleplatform = true),
     ;
 
     override val text: String
         get() = name
 }
+
 
 // TODO separate to classes
 class Module(

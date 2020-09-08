@@ -15,6 +15,9 @@ kotlin {
         compilations.all {
             kotlinOptions.jvmTarget = '9'
         }
+        testRuns["test"].executionTask.configure {
+            useJUnit()
+        }
     }
     js('a', LEGACY) {
         browser {

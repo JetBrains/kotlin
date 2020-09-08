@@ -196,6 +196,11 @@ object AndroidTargetConfigurator : TargetConfigurator,
             )
         }
 
+    override fun createBuildFileIRs(reader: Reader, configurationData: ModulesToIrConversionData, module: Module): List<BuildSystemIR> =
+        buildList {
+            +super<AndroidModuleConfigurator>.createBuildFileIRs(reader, configurationData, module)
+            +super<ModuleConfiguratorWithTests>.createBuildFileIRs(reader, configurationData, module)
+        }
 
     val androidPlugin by enumSetting<AndroidGradlePlugin>(
         KotlinNewProjectWizardBundle.message("module.configurator.android.setting.android.plugin"),

@@ -42,6 +42,8 @@ class GradleIRListBuilder private constructor() : GradleIRBuilderBase {
 
     operator fun String.unaryPlus() = RawGradleIR { +this@unaryPlus }.also(irs::add)
     operator fun BuildSystemIR.unaryPlus() = also(irs::add)
+    operator fun Collection<BuildSystemIR>.unaryPlus() = also(irs::addAll)
+
     fun addRaw(raw: GradlePrinter.() -> Unit) = RawGradleIR(raw).also(irs::add)
     fun addRaw(@NonNls raw: String) = RawGradleIR { +raw }.also(irs::add)
 

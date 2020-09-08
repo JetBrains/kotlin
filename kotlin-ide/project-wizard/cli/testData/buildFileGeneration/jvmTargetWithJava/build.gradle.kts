@@ -16,6 +16,9 @@ kotlin {
             kotlinOptions.jvmTarget = "1.8"
         }
         withJava()
+        testRuns["test"].executionTask.configure {
+            useJUnit()
+        }
     }
     sourceSets {
         val jvmMain by getting

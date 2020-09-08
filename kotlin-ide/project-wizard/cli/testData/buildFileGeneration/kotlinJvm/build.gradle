@@ -13,6 +13,9 @@ repositories {
 dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test-junit'
 }
+test {
+    useJUnit()
+}
 compileKotlin {
     kotlinOptions.jvmTarget = '1.6'
 }

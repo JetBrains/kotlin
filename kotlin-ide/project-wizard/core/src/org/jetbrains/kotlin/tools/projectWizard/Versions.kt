@@ -13,6 +13,7 @@ object Versions {
     val GRADLE = version("6.3")
     val KTOR: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("1.3.2-$kotlinVersion") }
     val JUNIT = version("4.12")
+    val JUNIT5 = version("5.6.0")
 
     object ANDROID {
         val ANDROID_MATERIAL = version("1.2.0")
@@ -39,6 +40,11 @@ object Versions {
 
     object GRADLE_PLUGINS {
         val ANDROID = version("4.0.1")
+    }
+
+    object MAVEN_PLUGINS {
+        val SUREFIRE = version("2.22.2")
+        val FAILSAFE = SUREFIRE
     }
 }
 
