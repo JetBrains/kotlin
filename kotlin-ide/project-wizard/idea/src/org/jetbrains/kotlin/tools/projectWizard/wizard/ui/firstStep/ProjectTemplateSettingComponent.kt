@@ -54,6 +54,7 @@ class ProjectTemplateSettingComponent(
         addToBottom(templateDescriptionComponent.component.addBorder(JBUI.Borders.empty(/*top*/8,/*left*/ 3, 0, 0)))
     }
 
+
     private fun applySelectedTemplate() = modify {
         value?.let(::applyProjectTemplate)
     }
@@ -74,6 +75,7 @@ class ProjectTemplateSettingComponent(
         if (setting.type.values.isNotEmpty()) {
             list.selectedIndex = 0
             value = setting.type.values.firstOrNull()
+            applySelectedTemplate()
         }
     }
 }
