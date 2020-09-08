@@ -86,7 +86,7 @@ internal class KtSymbolByFirBuilder private constructor(
             is FirRegularClass -> buildClassSymbol(fir)
             is FirSimpleFunction -> buildFunctionSymbol(fir)
             is FirProperty -> buildVariableSymbol(fir)
-            is FirValueParameterImpl -> buildParameterSymbol(fir)
+            is FirValueParameter -> buildParameterSymbol(fir)
             is FirConstructor -> buildConstructorSymbol(fir)
             is FirTypeParameter -> buildTypeParameterSymbol(fir)
             is FirTypeAlias -> buildTypeAliasSymbol(fir)
