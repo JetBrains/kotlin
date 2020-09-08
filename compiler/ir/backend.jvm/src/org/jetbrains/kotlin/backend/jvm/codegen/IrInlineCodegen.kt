@@ -157,7 +157,8 @@ class IrInlineCodegen(
         try {
             performInline(
                 expression.symbol.owner.typeParameters.map { it.symbol },
-                function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
+                // Always look for default lambdas to allow custom default argument handling in compiler plugins.
+                true,
                 false,
                 codegen.typeMapper.typeSystem,
                 registerLineNumberAfterwards = false,
@@ -186,6 +187,7 @@ class IrInlineCodegen(
     }
 
     override fun extractDefaultLambdas(node: MethodNode): List<DefaultLambda> {
+        if (maskStartIndex == -1) return listOf()
         return expandMaskConditionsAndUpdateVariableNodes(
             node, maskStartIndex, maskValues, methodHandleInDefaultMethodIndex,
             extractDefaultLambdaOffsetAndDescriptor(jvmSignature, function),
