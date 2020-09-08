@@ -46,8 +46,7 @@ data class BuildFileIR(
         is GradlePrinter -> {
             distinctImportsOrNull()?.let { imports ->
                 imports.listNl()
-                nl()
-                nl()
+                nl(lineBreaks = 2)
             }
             irsOfTypeOrNull<BuildScriptIR>()?.let { buildScriptIrs ->
                 sectionCall("buildscript", needIndent = true) {
@@ -56,15 +55,15 @@ data class BuildFileIR(
                     sectionCall("dependencies", buildScriptIrs.filterIsInstance<BuildScriptDependencyIR>())
                 }
             }
-            sectionCall("plugins", irsOfType<BuildSystemPluginIR>()); nlIndented()
+            sectionCall("plugins", irsOfType<BuildSystemPluginIR>()); nl(lineBreaks = 2)
             pom.render(this); nl()
 
             sectionCall("repositories", distinctRepositories())
-            nl()
+            nl(lineBreaks = 2)
             modules.render(this)
             irsOfTypeOrNull<FreeIR>()?.let { freeIrs ->
-                nl()
-                freeIrs.listNl()
+                nl(2)
+                freeIrs.listNl(lineBreaks = 2)
             }.ignore()
         }
         is MavenPrinter -> pom {

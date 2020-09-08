@@ -1,6 +1,7 @@
 plugins {
     kotlin("js") version "KOTLIN_VERSION"
 }
+
 group = "me.user"
 version = "1.0-SNAPSHOT"
 
@@ -11,9 +12,11 @@ repositories {
         url = uri("https://dl.bintray.com/kotlin/kotlin-dev")
     }
 }
+
 dependencies {
     testImplementation(kotlin("test-js"))
 }
+
 kotlin {
     js(LEGACY) {
         browser {

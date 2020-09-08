@@ -37,8 +37,8 @@ MavenPrinter(override val indent: Int = 4) : BuildFilePrinter() {
     }
 
     // We already have line break after node
-    override fun <T : BuildSystemIR> List<T>.listNl(needFirstIndent: Boolean) {
-        list(separator = { +"" }) { it.render(this) }
+    override fun <T : BuildSystemIR> List<T>.listNl(needFirstIndent: Boolean, lineBreaks: Int) {
+        list(separator = { nl(lineBreaks = (lineBreaks - 1).coerceAtLeast(0)) }) { it.render(this) }
     }
 
     val String.quotified
