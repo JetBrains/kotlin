@@ -54,12 +54,10 @@ object MppModuleConfigurator : ModuleConfigurator,
     override fun getConfiguratorProperties(): List<ModuleConfiguratorProperty<*>> =
         listOf(mppSources)
 
+    // TODO remove when be removed in KMM wizard
     val generateTests by booleanSetting("Generate Tests", GenerationPhase.PROJECT_GENERATION) {
         defaultValue = value(false)
     }
-
-    override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> =
-        super.getConfiguratorSettings() + generateTests
 
     override fun Writer.runArbitraryTask(
         configurationData: ModulesToIrConversionData,
