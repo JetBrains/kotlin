@@ -47,7 +47,7 @@ class SingleCandidateResolver(
         stubBodyResolveTransformer,
         bodyResolveComponents,
     )
-    private val resolutionStageRunner = ResolutionStageRunner(ResolutionContext(firSession, bodyResolveComponents))
+    private val resolutionStageRunner = ResolutionStageRunner()
 
     fun resolveSingleCandidate(
         resolutionParameters: ResolutionParameters
@@ -62,14 +62,16 @@ class SingleCandidateResolver(
         val dispatchReceiverValue = partProvider.dispatchReceiverValue()
         val implicitExtensionReceiverValue = partProvider.implicitExtensionReceiverValue()
 
-        val candidate = CandidateFactory(bodyResolveComponents, callInfo).createCandidate(
+        val resolutionContext = stubBodyResolveTransformer.resolutionContext
+
+        val candidate = CandidateFactory(resolutionContext, callInfo).createCandidate(
             resolutionParameters.callableSymbol,
             explicitReceiverKind = explicitReceiverKind,
             dispatchReceiverValue = dispatchReceiverValue,
             implicitExtensionReceiverValue = implicitExtensionReceiverValue,
         )
 
-        val applicability = resolutionStageRunner.processCandidate(candidate, stopOnFirstError = true)
+        val applicability = resolutionStageRunner.processCandidate(candidate, resolutionContext, stopOnFirstError = true)
         if (applicability.isSuccess) {
             return completeResolvedCandidate(candidate, resolutionParameters)
         }
