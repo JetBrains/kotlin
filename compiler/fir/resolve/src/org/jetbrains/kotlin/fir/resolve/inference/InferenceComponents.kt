@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.types.ConeInferenceContext
 import org.jetbrains.kotlin.fir.types.ConeTypeCheckerContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintIncorporator
@@ -15,7 +16,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 
-class InferenceComponents(val session: FirSession) {
+class InferenceComponents(val session: FirSession) : FirSessionComponent {
     val ctx: ConeInferenceContext = ConeTypeCheckerContext(isErrorTypeEqualsToAnything = false, isStubTypeEqualsToAnything = false, session)
 
     val approximator: AbstractTypeApproximator = object : AbstractTypeApproximator(ctx) {}
@@ -36,3 +37,5 @@ class InferenceComponents(val session: FirSession) {
         }
     }
 }
+
+val FirSession.inferenceComponents: InferenceComponents by FirSession.sessionComponentAccessor()

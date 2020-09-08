@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ResolutionStageRunner
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
+import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -74,7 +75,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
     protected inline val symbolProvider: FirSymbolProvider get() = components.symbolProvider
 
     protected inline val implicitReceiverStack: ImplicitReceiverStack get() = components.implicitReceiverStack
-    protected inline val inferenceComponents: InferenceComponents get() = components.inferenceComponents
+    protected inline val inferenceComponents: InferenceComponents get() = session.inferenceComponents
     protected inline val resolutionStageRunner: ResolutionStageRunner get() = components.resolutionStageRunner
     protected inline val samResolver: FirSamResolver get() = components.samResolver
     protected inline val typeResolverTransformer: FirSpecificTypeResolverTransformer get() = components.typeResolverTransformer
@@ -115,7 +116,6 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val noExpectedType: FirTypeRef = buildImplicitTypeRef()
         override val symbolProvider: FirSymbolProvider = session.firSymbolProvider
 
-        override val inferenceComponents: InferenceComponents = inferenceComponents(session, returnTypeCalculator, scopeSession)
         override val resolutionStageRunner: ResolutionStageRunner = ResolutionStageRunner()
         override val samResolver: FirSamResolver = FirSamResolverImpl(session, scopeSession)
         private val qualifiedResolver: FirQualifiedNameResolver = FirQualifiedNameResolver(this)
@@ -131,7 +131,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
             FirDataFlowAnalyzer.createFirDataFlowAnalyzer(this, context.dataFlowAnalyzerContext)
         override val syntheticCallGenerator: FirSyntheticCallGenerator = FirSyntheticCallGenerator(this)
         override val integerLiteralTypeApproximator: IntegerLiteralTypeApproximationTransformer =
-            IntegerLiteralTypeApproximationTransformer(symbolProvider, inferenceComponents.ctx, inferenceComponents.session)
+            IntegerLiteralTypeApproximationTransformer(symbolProvider, session.inferenceComponents.ctx, session)
         override val doubleColonExpressionResolver: FirDoubleColonExpressionResolver =
             FirDoubleColonExpressionResolver(session, integerLiteralTypeApproximator)
         override val integerOperatorsTypeUpdater: IntegerOperatorsTypeUpdater = IntegerOperatorsTypeUpdater(integerLiteralTypeApproximator)

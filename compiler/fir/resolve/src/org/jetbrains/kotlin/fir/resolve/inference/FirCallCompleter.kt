@@ -64,7 +64,7 @@ class FirCallCompleter(
             candidate.system.addSubtypeConstraint(initialType, expectedTypeRef.type, SimpleConstraintSystemConstraintPosition)
         }
 
-        val completionMode = candidate.computeCompletionMode(inferenceComponents, expectedTypeRef, initialType)
+        val completionMode = candidate.computeCompletionMode(session.inferenceComponents, expectedTypeRef, initialType)
 
         val analyzer = createPostponedArgumentsAnalyzer(transformer.resolutionContext)
         call.transformSingle(InvocationKindTransformer, null)
@@ -76,11 +76,11 @@ class FirCallCompleter(
                         analyzer.analyze(candidate.system.asPostponedArgumentsAnalyzerContext(), it, candidate)
                     }
                     val finalSubstitutor =
-                        candidate.system.asReadOnlyStorage().buildAbstractResultingSubstitutor(inferenceComponents.ctx) as ConeSubstitutor
+                        candidate.system.asReadOnlyStorage().buildAbstractResultingSubstitutor(session.inferenceComponents.ctx) as ConeSubstitutor
                     val completedCall = call.transformSingle(
                         FirCallCompletionResultsWriterTransformer(
                             session, finalSubstitutor, returnTypeCalculator,
-                            inferenceComponents.approximator,
+                            session.inferenceComponents.approximator,
                             integerOperatorsTypeUpdater,
                             integerLiteralTypeApproximator
                         ),
@@ -119,7 +119,7 @@ class FirCallCompleter(
     ): FirCallCompletionResultsWriterTransformer {
         return FirCallCompletionResultsWriterTransformer(
             session, substitutor, returnTypeCalculator,
-            inferenceComponents.approximator,
+            session.inferenceComponents.approximator,
             integerOperatorsTypeUpdater,
             integerLiteralTypeApproximator,
             mode
@@ -131,7 +131,7 @@ class FirCallCompleter(
         return PostponedArgumentsAnalyzer(
             context,
             lambdaAnalyzer,
-            inferenceComponents,
+            session.inferenceComponents,
             transformer.components.callResolver
         )
     }
@@ -210,7 +210,7 @@ class FirCallCompleter(
     }
 
     private fun ConeKotlinType.approximateLambdaInputType(): ConeKotlinType =
-        inferenceComponents.approximator.approximateToSuperType(
+        session.inferenceComponents.approximator.approximateToSuperType(
             this, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
         ) as ConeKotlinType? ?: this
 }

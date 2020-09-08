@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.tower.FirTowerResolver
 import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerResolveManager
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedCallableReferenceAtom
+import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreNameReference
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
@@ -55,9 +56,8 @@ class FirCallResolver(
         components, resolutionStageRunner,
     )
 
-    private val conflictResolver =
-        inferenceComponents.session.callConflictResolverFactory
-            .create(TypeSpecificityComparator.NONE, inferenceComponents)
+    private val conflictResolver: ConeCallConflictResolver =
+        session.callConflictResolverFactory.create(TypeSpecificityComparator.NONE, session.inferenceComponents)
 
     @PrivateForInline
     var needTransformArguments: Boolean = true

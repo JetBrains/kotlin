@@ -37,7 +37,7 @@ data class ResolutionContext(
     val bodyResolveContext: BodyResolveContext
 ) {
     val inferenceComponents: InferenceComponents
-        get() = bodyResolveComponents.inferenceComponents
+        get() = session.inferenceComponents
 
     val returnTypeCalculator: ReturnTypeCalculator
         get() = bodyResolveComponents.returnTypeCalculator

@@ -64,7 +64,7 @@ class FirDelegatedPropertyInferenceSession(
     fun completeCandidates(): List<FirResolvable> {
         @Suppress("UNCHECKED_CAST")
         val resolvedCalls = partiallyResolvedCalls.map { it.first }
-        val commonSystem = components.inferenceComponents.createConstraintSystem().apply {
+        val commonSystem = components.session.inferenceComponents.createConstraintSystem().apply {
             addOtherSystem(currentConstraintSystem)
         }
         prepareForCompletion(commonSystem, resolvedCalls)
@@ -100,7 +100,7 @@ class FirDelegatedPropertyInferenceSession(
 
     fun createFinalSubstitutor(): ConeSubstitutor {
         return resultingConstraintSystem.asReadOnlyStorage()
-            .buildAbstractResultingSubstitutor(components.inferenceComponents.ctx) as ConeSubstitutor
+            .buildAbstractResultingSubstitutor(components.session.inferenceComponents.ctx) as ConeSubstitutor
     }
 
     private fun Candidate.addConstraintsForGetValueMethod(commonSystem: ConstraintSystemBuilder) {

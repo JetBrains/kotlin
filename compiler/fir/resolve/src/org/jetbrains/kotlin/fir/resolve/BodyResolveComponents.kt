@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionStageRunner
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
-import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
 import org.jetbrains.kotlin.fir.resolve.transformers.IntegerLiteralTypeApproximationTransformer
@@ -48,7 +47,6 @@ interface BodyResolveComponents : SessionHolder {
     val symbolProvider: FirSymbolProvider
     val file: FirFile
     val container: FirDeclaration
-    val inferenceComponents: InferenceComponents
     val resolutionStageRunner: ResolutionStageRunner
     val samResolver: FirSamResolver
     val callResolver: FirCallResolver
