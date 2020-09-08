@@ -36,10 +36,11 @@ class ResolutionStageRunner(val components: InferenceComponents) {
 
         while (!finished) {
             sink.continuation!!.resume(Unit)
-            if (!sink.current.isSuccess) {
+            if (!sink.currentApplicability.isSuccess) {
                 break
             }
         }
-        return sink.current
+        candidate.diagnostics += sink.diagnostics
+        return sink.currentApplicability
     }
 }

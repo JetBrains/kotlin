@@ -50,3 +50,11 @@ class NameNotFound(
     override val argument: FirExpression,
     val function: FirFunction<*>
 ) : InapplicableArgumentDiagnostic()
+
+object InapplicableCandidate : ResolutionDiagnostic(CandidateApplicability.INAPPLICABLE)
+
+object HiddenCandidate : ResolutionDiagnostic(CandidateApplicability.HIDDEN)
+
+object ResolvedWithLowPriority : ResolutionDiagnostic(CandidateApplicability.RESOLVED_LOW_PRIORITY)
+
+object InapplicableWrongReceiver : ResolutionDiagnostic(CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER)

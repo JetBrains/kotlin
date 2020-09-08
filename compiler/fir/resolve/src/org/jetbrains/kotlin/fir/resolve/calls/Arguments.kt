@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.model.CaptureStatus
 
 fun Candidate.resolveArgumentExpression(
@@ -202,7 +201,7 @@ fun Candidate.resolvePlainExpressionArgument(
 private fun Candidate.checkApplicabilityForIntegerOperatorCall(sink: CheckerSink, argument: FirExpression) {
     if (symbol.fir !is FirIntegerOperator) return
     if (argument !is FirConstExpression<*> && argument !is FirIntegerOperatorCall) {
-        sink.reportApplicability(CandidateApplicability.INAPPLICABLE)
+        sink.reportDiagnostic(InapplicableCandidate)
     }
 }
 
@@ -265,7 +264,7 @@ private fun checkApplicabilityForArgumentType(
     if (expectedType == null) return
     if (isReceiver && isDispatch) {
         if (!expectedType.isNullable && argumentType.isMarkedNullable) {
-            sink.reportApplicability(CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER)
+            sink.reportDiagnostic(InapplicableWrongReceiver)
         }
         return
     }
@@ -278,10 +277,10 @@ private fun checkApplicabilityForArgumentType(
         val nullableExpectedType = expectedType.withNullability(ConeNullability.NULLABLE, sink.components.session.typeContext)
 
         if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, nullableExpectedType, position)) {
-            sink.reportApplicability(CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER) // TODO
+            sink.reportDiagnostic(InapplicableWrongReceiver) // TODO
         } else {
             csBuilder.addSubtypeConstraint(argumentType, expectedType, position)
-            sink.reportApplicability(CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER)
+            sink.reportDiagnostic(InapplicableWrongReceiver)
         }
     }
 }

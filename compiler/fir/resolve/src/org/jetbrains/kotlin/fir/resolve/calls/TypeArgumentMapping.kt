@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.impl.FirTypePlaceholderProjection
-import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 
 sealed class TypeArgumentMapping {
     abstract operator fun get(typeParameterIndex: Int): FirTypeProjection
@@ -38,7 +37,7 @@ internal object MapTypeArguments : ResolutionStage() {
             candidate.typeArgumentMapping = TypeArgumentMapping.Mapped(typeArguments)
         } else {
             candidate.typeArgumentMapping = TypeArgumentMapping.Mapped(emptyList())
-            sink.yieldApplicability(CandidateApplicability.INAPPLICABLE)
+            sink.yieldDiagnostic(InapplicableCandidate)
         }
     }
 }
@@ -46,7 +45,7 @@ internal object MapTypeArguments : ResolutionStage() {
 internal object NoTypeArguments : ResolutionStage() {
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
         if (callInfo.typeArguments.isNotEmpty()) {
-            sink.yieldApplicability(CandidateApplicability.INAPPLICABLE)
+            sink.yieldDiagnostic(InapplicableCandidate)
         }
         candidate.typeArgumentMapping = TypeArgumentMapping.NoExplicitArguments
     }

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import kotlin.coroutines.Continuation
 
 abstract class CheckerSink {
-    abstract fun reportApplicability(new: CandidateApplicability)
+    abstract fun reportDiagnostic(diagnostic: ResolutionDiagnostic)
 
     abstract val components: InferenceComponents
 
@@ -29,8 +29,8 @@ suspend inline fun CheckerSink.yieldIfNeed() {
     }
 }
 
-suspend inline fun CheckerSink.yieldApplicability(new: CandidateApplicability) {
-    reportApplicability(new)
+suspend inline fun CheckerSink.yieldDiagnostic(diagnostic: ResolutionDiagnostic) {
+    reportDiagnostic(diagnostic)
     yieldIfNeed()
 }
 
@@ -39,11 +39,17 @@ class CheckerSinkImpl(
     var continuation: Continuation<Unit>? = null,
     val stopOnFirstError: Boolean = true
 ) : CheckerSink() {
-    var current = CandidateApplicability.RESOLVED
+    var currentApplicability = CandidateApplicability.RESOLVED
         private set
 
-    override fun reportApplicability(new: CandidateApplicability) {
-        if (new < current) current = new
+    private val _diagnostics: MutableList<ResolutionDiagnostic> = mutableListOf()
+
+    val diagnostics: List<ResolutionDiagnostic>
+        get() = _diagnostics
+
+    override fun reportDiagnostic(diagnostic: ResolutionDiagnostic) {
+        _diagnostics += diagnostic
+        if (diagnostic.applicability < currentApplicability) currentApplicability = diagnostic.applicability
     }
 
     @PrivateForInline
@@ -53,6 +59,6 @@ class CheckerSinkImpl(
     }
 
     override val needYielding: Boolean
-        get() = stopOnFirstError && !current.isSuccess
+        get() = stopOnFirstError && !currentApplicability.isSuccess
 
 }

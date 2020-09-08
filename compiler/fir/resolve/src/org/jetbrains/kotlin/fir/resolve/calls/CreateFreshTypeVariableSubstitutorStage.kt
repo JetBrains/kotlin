@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirTypePlaceholderProjection
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 
 internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
@@ -37,7 +36,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
 
         // bad function -- error on declaration side
         if (csBuilder.hasContradiction) {
-            sink.yieldApplicability(CandidateApplicability.INAPPLICABLE) //TODO: auto report it
+            sink.yieldDiagnostic(InapplicableCandidate) //TODO: auto report it
             return
         }
 
