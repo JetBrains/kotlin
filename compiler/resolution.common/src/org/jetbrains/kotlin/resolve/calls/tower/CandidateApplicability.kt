@@ -18,11 +18,7 @@ enum class CandidateApplicability {
     RESOLVED_LOW_PRIORITY,
     RESOLVED_NEED_PRESERVE_COMPATIBILITY, // call resolved successfully, but using new features that changes resolve
     RESOLVED_WITH_ERROR, // call has error, but it is still successful from resolution perspective
-    RESOLVED; // call success or has uncompleted inference or in other words possible successful candidate
-
-    companion object {
-        val SYNTHETIC_RESOLVED: CandidateApplicability = RESOLVED_LOW_PRIORITY
-    }
+    RESOLVED, // call success or has uncompleted inference or in other words possible successful candidate
 }
 
 val CandidateApplicability.isSuccess: Boolean

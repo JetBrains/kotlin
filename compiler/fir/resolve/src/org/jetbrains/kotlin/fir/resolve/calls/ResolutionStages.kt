@@ -366,7 +366,7 @@ private fun FirSession.createAdaptedKFunctionType(
 internal object DiscriminateSynthetics : CheckerStage() {
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
         if (candidate.symbol is SyntheticSymbol) {
-            sink.reportApplicability(CandidateApplicability.SYNTHETIC_RESOLVED)
+            sink.reportApplicability(CandidateApplicability.RESOLVED_LOW_PRIORITY)
         }
     }
 }
