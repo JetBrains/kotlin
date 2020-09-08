@@ -79,3 +79,25 @@ inline fun buildPropertyAccessor(init: FirPropertyAccessorBuilder.() -> Unit): F
     }
     return FirPropertyAccessorBuilder().apply(init).build()
 }
+
+@OptIn(ExperimentalContracts::class)
+inline fun buildPropertyAccessorCopy(original: FirPropertyAccessor, init: FirPropertyAccessorBuilder.() -> Unit): FirPropertyAccessor {
+    contract {
+        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+    }
+    val copyBuilder = FirPropertyAccessorBuilder()
+    copyBuilder.source = original.source
+    copyBuilder.session = original.session
+    copyBuilder.resolvePhase = original.resolvePhase
+    copyBuilder.origin = original.origin
+    copyBuilder.returnTypeRef = original.returnTypeRef
+    copyBuilder.valueParameters.addAll(original.valueParameters)
+    copyBuilder.body = original.body
+    copyBuilder.contractDescription = original.contractDescription
+    copyBuilder.symbol = original.symbol
+    copyBuilder.isGetter = original.isGetter
+    copyBuilder.status = original.status
+    copyBuilder.annotations.addAll(original.annotations)
+    copyBuilder.typeParameters.addAll(original.typeParameters)
+    return copyBuilder.apply(init).build()
+}
