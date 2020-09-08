@@ -224,7 +224,7 @@ private fun IrTypeParameter.copySuperTypesFrom(source: IrTypeParameter, srcToDst
     val target = this
     val sourceParent = source.parent as IrTypeParametersContainer
     val targetParent = target.parent as IrTypeParametersContainer
-    target.superTypes += source.superTypes.map {
+    target.superTypes = source.superTypes.map {
         it.remapTypeParameters(sourceParent, targetParent, srcToDstParameterMap)
     }
 }
@@ -594,6 +594,12 @@ private fun IrSimpleFunction.copyAndRenameConflictingTypeParametersFrom(
             updateFrom(contextType)
             name = Name.identifier(newName)
         })
+    }
+
+    val zipped = contextParameters.zip(newParameters)
+    val parameterMap = zipped.toMap()
+    for ((oldParameter, newParameter) in zipped) {
+        newParameter.copySuperTypesFrom(oldParameter, parameterMap)
     }
 
     typeParameters = typeParameters + newParameters

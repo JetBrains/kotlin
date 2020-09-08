@@ -24,14 +24,19 @@ private class RemapTypesHelper(private val typeRemapper: TypeRemapper) : IrEleme
         element.acceptChildrenVoid(this)
     }
 
-    override fun visitExpression(expression: IrExpression) {
-        expression.type = typeRemapper.remapType(expression.type)
-        super.visitExpression(expression)
+    override fun visitClass(declaration: IrClass) {
+        declaration.superTypes = declaration.superTypes.map { typeRemapper.remapType(it) }
+        super.visitClass(declaration)
     }
 
     override fun visitValueParameter(declaration: IrValueParameter) {
         declaration.type = typeRemapper.remapType(declaration.type)
         super.visitValueParameter(declaration)
+    }
+
+    override fun visitTypeParameter(declaration: IrTypeParameter) {
+        declaration.superTypes = declaration.superTypes.map { typeRemapper.remapType(it) }
+        super.visitTypeParameter(declaration)
     }
 
     override fun visitVariable(declaration: IrVariable) {
@@ -57,6 +62,11 @@ private class RemapTypesHelper(private val typeRemapper: TypeRemapper) : IrEleme
     override fun visitTypeAlias(declaration: IrTypeAlias) {
         declaration.expandedType = typeRemapper.remapType(declaration.expandedType)
         super.visitTypeAlias(declaration)
+    }
+
+    override fun visitExpression(expression: IrExpression) {
+        expression.type = typeRemapper.remapType(expression.type)
+        super.visitExpression(expression)
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall) {

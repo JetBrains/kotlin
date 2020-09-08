@@ -223,6 +223,12 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
             includeInParent(closureBuilder)
         }
 
+        override fun visitTypeParameter(declaration: IrTypeParameter, data: ClosureBuilder?) {
+            for (superType in declaration.superTypes) {
+                data?.seeType(superType)
+            }
+        }
+
         override fun visitValueAccess(expression: IrValueAccessExpression, data: ClosureBuilder?) {
             data?.seeVariable(expression.symbol)
             super.visitValueAccess(expression, data)

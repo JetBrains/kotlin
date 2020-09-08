@@ -10731,6 +10731,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/functions/localFunctions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
 
+            @TestMetadata("boundTypeParameterInSupertype.kt")
+            public void testBoundTypeParameterInSupertype() throws Exception {
+                runTest("compiler/testData/codegen/box/functions/localFunctions/boundTypeParameterInSupertype.kt");
+            }
+
             @TestMetadata("callBetweenLocalFunctions.kt")
             public void testCallBetweenLocalFunctions() throws Exception {
                 runTest("compiler/testData/codegen/box/functions/localFunctions/callBetweenLocalFunctions.kt");

@@ -22,14 +22,9 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
-import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -195,28 +190,7 @@ class LocalDeclarationsLowering(
 
     }
 
-    private fun LocalContext.remapType(type: IrType): IrType {
-        if (type !is IrSimpleType) return type
-        val classifier = (type.classifier as? IrTypeParameterSymbol)?.let { capturedTypeParameterToTypeParameter[it.owner]?.symbol }
-            ?: type.classifier
-        val arguments = type.arguments.map { remapTypeArgument(it) }
-        return IrSimpleTypeImpl(
-            classifier, type.hasQuestionMark, arguments, type.annotations,
-            type.abbreviation?.let { remapTypeAbbreviation(it) }
-        )
-    }
-
-    private fun LocalContext.remapTypeArgument(argument: IrTypeArgument) =
-        (argument as? IrTypeProjection)?.let { makeTypeProjection(remapType(it.type), it.variance) }
-            ?: argument
-
-    private fun LocalContext.remapTypeAbbreviation(abbreviation: IrTypeAbbreviation): IrTypeAbbreviation =
-        IrTypeAbbreviationImpl(
-            abbreviation.typeAlias,         // TODO: if/when the language gets local or nested type aliases, this will need remapping.
-            abbreviation.hasQuestionMark,
-            abbreviation.arguments.map { remapTypeArgument(it) },
-            abbreviation.annotations
-        )
+    private fun LocalContext.remapType(type: IrType): IrType = typeRemapper.remapType(type)
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     private inner class LocalDeclarationsTransformer(
@@ -252,14 +226,13 @@ class LocalDeclarationsLowering(
             localFunctions.values.forEach {
                 it.transformedDeclaration.apply {
                     val original = it.declaration
-                    val typeRemapper = TypeParameterAdjustmentTypeRemapper(it.capturedTypeParameterToTypeParameter)
 
                     this.body = original.body
-                    this.body?.remapTypes(typeRemapper)
+                    this.body?.remapTypes(it.typeRemapper)
 
                     original.valueParameters.filter { v -> v.defaultValue != null }.forEach { argument ->
                         val body = argument.defaultValue!!
-                        body.remapTypes(typeRemapper)
+                        body.remapTypes(it.typeRemapper)
                         oldParameterToNew[argument]!!.defaultValue = body
                     }
                     acceptChildren(SetDeclarationsParentVisitor, this)
@@ -928,46 +901,6 @@ class LocalDeclarationsLowering(
             }, Data(null, false))
         }
     }
-}
-
-class TypeParameterAdjustmentTypeRemapper(val typeParameterMap: Map<IrTypeParameter, IrTypeParameter>) : TypeRemapper {
-    override fun enterScope(irTypeParametersContainer: IrTypeParametersContainer) {}
-    override fun leaveScope() {}
-
-    override fun remapType(type: IrType): IrType =
-        if (type !is IrSimpleType)
-            type
-        else
-            IrSimpleTypeImpl(
-                null,
-                type.classifier.remap(),
-                type.hasQuestionMark,
-                type.arguments.map { it.remap() },
-                type.annotations,
-                type.abbreviation?.remap()
-            ).apply {
-                annotations.forEach { it.remapTypes(this@TypeParameterAdjustmentTypeRemapper) }
-            }
-
-    private fun IrClassifierSymbol.remap() =
-        (owner as? IrTypeParameter)?.let { typeParameterMap[it]?.symbol }
-            ?: this
-
-    private fun IrTypeArgument.remap() =
-        if (this is IrTypeProjection)
-            makeTypeProjection(remapType(type), variance)
-        else
-            this
-
-    private fun IrTypeAbbreviation.remap() =
-        IrTypeAbbreviationImpl(
-            typeAlias,
-            hasQuestionMark,
-            arguments.map { it.remap() },
-            annotations
-        ).apply {
-            annotations.forEach { it.remapTypes(this@TypeParameterAdjustmentTypeRemapper) }
-        }
 }
 
 // Local inner classes capture anything through outer
