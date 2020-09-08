@@ -3161,7 +3161,7 @@ suspend fun main() {
     println(callSuspend(::callMe))
 }
 ```
-Yep, `c` is both not suspend functional type and non-suspend functional type.
+Yep, `c` is both suspend functional type and non-suspend functional type.
 
 ### Start
 Unlike suspend lambdas, we cannot just call `create` when we start a coroutine (in a broad sense) from a callable reference. Since the
@@ -3171,3 +3171,45 @@ Hence, instead, we write the continuation by hand, and in the `invokeSuspend` fu
 `createCoroutineFromSuspendFunction` for specifics.
 
 FIXME: As explained in the tail-call suspend lambdas section, we can reuse this mechanism for tail-call suspend lambdas.
+
+### Returning Inline Classes
+The following example:
+```kotlin
+import kotlin.coroutines.*
+
+inline class IC(val a: Any)
+
+suspend fun callSuspend(c: suspend () -> Any) {
+    println(c())
+}
+
+fun builder(c: suspend () -> Unit) {
+    c.startCoroutine(Continuation(EmptyCoroutineContext) { it.getOrThrow() })
+}
+
+var c: Continuation<IC>? = null
+
+suspend fun returnsIC() = suspendCoroutine<IC> { c = it }
+
+fun main() {
+    builder {
+        callSuspend(::returnsIC)
+    }
+    c?.resume(IC("OK"))
+}
+```
+used to throw KNPE inside `BaseContinuationImpl.resumeWith` before 1.4.20. The KNPE happens when we try to finish a coroutine (in a broad
+sense) twice. Why wrapping a suspend function returning unboxed inline class leads to double finish?
+
+The answer becomes apparent when we try to follow the execution of the example step by step.
+1. `returnsIC` function returns `COROUTINE_SUSPENDED`.
+2. The callable reference should return the boxed class since it overrides generic `FunctionN` and its `invoke` method returns the generic
+type. Thus, it assumes that the function returns the unboxed type and boxes it.
+3. The `BaseContinuationImpl.resumeWith` function does not receive `COROUTINE_SUSPENDED`, since it is boxed inside the inline class, and
+runs shutdown procedure.
+4. When we resume the execution, the suspend function returns the unboxed inline class.
+5. The callable reference boxes it.
+6. `BaseContinuationImpl.resumeWith` function runs shutdown procedure once again. The KNPE is thrown.
+
+To fix the issue, callable references to suspend functions returning unboxed inline classes check for `COROUTINE_SUSPENDED` and only then
+box the return value.
