@@ -94,6 +94,33 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
                 return result
             }
 
+            // Handle SAM conversions which wrap a function reference:
+            //     class sam$n(private val receiver: R) : Interface { override fun method(...) = receiver.target(...) }
+            //
+            // This avoids materializing an invokable KFunction representing, thus producing one less class.
+            // This is actually very common, as `Interface { something }` is a local function + a SAM-conversion
+            // of a reference to it into an implementation.
+            override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
+                if (expression.operator == IrTypeOperator.SAM_CONVERSION) {
+                    val invokable = expression.argument
+                    val reference = if (invokable is IrFunctionReference) {
+                        invokable
+                    } else if (invokable is IrBlock && (invokable.origin.isLambda)
+                            && invokable.statements.last() is IrFunctionReference) {
+                        // By this point the lambda's function has been replaced with empty IrComposite by LocalDeclarationsLowering.
+                        val statements = invokable.statements
+                        require(statements.size == 2)
+                        require((statements[0] as? IrComposite)?.statements?.isEmpty() == true)
+                        statements[1] as IrFunctionReference
+                    } else {
+                        return super.visitTypeOperator(expression)
+                    }
+                    reference.transformChildrenVoid()
+                    return transformFunctionReference(reference, expression.typeOperand)
+                }
+                return super.visitTypeOperator(expression)
+            }
+
             override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
                 expression.transformChildrenVoid(this)
 
@@ -119,8 +146,12 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
                     return expression
                 }
 
+                return transformFunctionReference(expression)
+            }
+
+            fun transformFunctionReference(expression: IrFunctionReference, samSuperType: IrType? = null): IrExpression {
                 val parent: IrDeclarationContainer = (currentClass?.irElement as? IrClass) ?: irFile
-                val loweredFunctionReference = FunctionReferenceBuilder(parent, expression).build()
+                val loweredFunctionReference = FunctionReferenceBuilder(parent, expression, samSuperType).build()
                 generatedClasses.add(loweredFunctionReference.functionReferenceClass)
                 val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol,
                         expression.startOffset, expression.endOffset)
@@ -130,7 +161,8 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
                     }
                 }
             }
-        }, null)
+        }, data = null)
+
         irFile.declarations += generatedClasses
     }
 
@@ -146,7 +178,8 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
     private val continuationClassSymbol = getContinuationSymbol.owner.returnType.classifierOrFail as IrClassSymbol
 
     private inner class FunctionReferenceBuilder(val parent: IrDeclarationParent,
-                                                 val functionReference: IrFunctionReference) {
+                                                 val functionReference: IrFunctionReference,
+                                                 val samSuperType: IrType?) {
 
         private val startOffset = functionReference.startOffset
         private val endOffset = functionReference.endOffset
@@ -158,6 +191,12 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
         private val typeArgumentsMap = referencedFunction.typeParameters.associate { typeParam ->
             typeParam.symbol to functionReference.getTypeArgument(typeParam.index)!!
         }
+
+        private val isLambda = functionReference.origin.isLambda
+        private val isKFunction = functionReference.type.isKFunction()
+        private val isKSuspendFunction = functionReference.type.isKSuspendFunction()
+
+        private val samSuperClass = samSuperType?.let { it.classOrNull ?: error("Expected a class but was: ${it.render()}") }
 
         private val adapteeCall: IrFunctionAccessExpression? =
                 // TODO: Copied from JVM.
@@ -228,10 +267,6 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
         private val kSuspendFunctionImplSymbol = symbols.kSuspendFunctionImpl
         private val kSuspendFunctionImplConstructorSymbol = kSuspendFunctionImplSymbol.constructors.single()
 
-        val isLambda = functionReference.origin.isLambda
-        val isKFunction = functionReference.type.isKFunction()
-        val isKSuspendFunction = functionReference.type.isKSuspendFunction()
-
         fun build(): BuiltFunctionReference {
             val numberOfParameters = unboundFunctionParameters.size
             val functionParameterTypes = unboundFunctionParameters.map { it.type }
@@ -267,12 +302,32 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
             }
 
             val constructor = buildConstructor()
-            if (!isKSuspendFunction)
+            val functionInvoke = if (isKSuspendFunction)
+                null
+            else
                 buildInvokeMethod(functionClass.getInvokeFunction())
-            suspendFunctionClass?.let {
-                val invokeMethod = buildInvokeMethod(it.getInvokeFunction())
-                if (isKSuspendFunction)
-                    invokeMethod.overriddenSymbols += functionClass.getInvokeFunction().symbol
+            val suspendFunctionInvoke = if (suspendFunctionClass == null)
+                null
+            else {
+                buildInvokeMethod(suspendFunctionClass.getInvokeFunction()).also {
+                    if (isKSuspendFunction)
+                        it.overriddenSymbols += functionClass.getInvokeFunction().symbol
+                }
+            }
+            samSuperType?.let { superTypes += it }
+            val sam = samSuperClass?.functions?.single { it.owner.modality == Modality.ABSTRACT }
+            if (sam != null) {
+                if (sam.owner.extensionReceiverParameter != null)
+                    buildInvokeMethod(sam.owner)
+                else {
+                    // The signatures of SAM and [invoke] coincide - no need to build additional function.
+                    val properInvoke = if (sam.isSuspend)
+                        suspendFunctionInvoke
+                    else
+                        functionInvoke
+                    if (properInvoke != null)
+                        properInvoke.overriddenSymbols += sam
+                }
             }
 
             functionReferenceClass.superTypes += superTypes
@@ -320,7 +375,7 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
                         putValueArgument(1, irString(functionReferenceTarget.fullName))
                         putValueArgument(2, receiver)
                         putValueArgument(3, irInt(arity))
-                        putValueArgument(4, irInt(getAdaptedCallableReferenceFlags()))
+                        putValueArgument(4, irInt(getFlags()))
                         putValueArgument(5, with(kTypeGenerator) { irKType(referencedFunction.returnType) })
                     }
                     +IrInstanceInitializerCallImpl(startOffset, endOffset, functionReferenceClass.symbol, irBuiltIns.unitType)
@@ -334,6 +389,9 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
 
         private val IrFunction.fullName: String
             get() = parent.fqNameForIrSerialization.child(Name.identifier(functionName)).asString()
+
+        private fun getFlags() =
+                (if (referencedFunction.isSuspend) 1 else 0) + getAdaptedCallableReferenceFlags() shl 1
 
         private fun getAdaptedCallableReferenceFlags(): Int {
             if (adaptedReferenceOriginalTarget == null) return 0
@@ -386,6 +444,8 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
 
                 this.createDispatchReceiverParameter()
 
+                extensionReceiverParameter = superFunction.extensionReceiverParameter?.copyTo(function)
+
                 valueParameters += superFunction.valueParameters.mapIndexed { index, parameter ->
                     parameter.copyTo(function, DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL, index,
                             type = parameter.type.substitute(typeArgumentsMap))
@@ -407,7 +467,10 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
                                                         argumentToPropertiesMap[parameter]!!
                                                 )
                                             else {
-                                                if (function.isSuspend && unboundIndex == valueParameters.size)
+                                                if (parameter == referencedFunction.extensionReceiverParameter
+                                                        && extensionReceiverParameter != null)
+                                                    irGet(extensionReceiverParameter!!)
+                                                else if (function.isSuspend && unboundIndex == valueParameters.size)
                                                 // For suspend functions the last argument is continuation and it is implicit.
                                                     irCall(getContinuationSymbol.owner, listOf(returnType))
                                                 else

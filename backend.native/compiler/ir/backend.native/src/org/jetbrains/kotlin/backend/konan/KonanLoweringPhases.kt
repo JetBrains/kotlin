@@ -251,19 +251,6 @@ internal val dataClassesPhase = makeKonanFileLoweringPhase(
         description = "Data classes lowering"
 )
 
-internal val singleAbstractMethodPhase = makeKonanFileLoweringPhase(
-        ::NativeSingleAbstractMethodLowering,
-        name = "SingleAbstractMethod",
-        description = "Replace SAM conversions with instances of interface-implementing classes"
-)
-
-internal val builtinOperatorPhase = makeKonanFileLoweringPhase(
-        ::BuiltinOperatorLowering,
-        name = "BuiltinOperators",
-        description = "BuiltIn operators lowering",
-        prerequisite = setOf(defaultParameterExtentPhase, singleAbstractMethodPhase)
-)
-
 internal val finallyBlocksPhase = makeKonanFileLoweringPhase(
         ::FinallyBlocksLowering,
         name = "FinallyBlocks",
@@ -294,7 +281,21 @@ internal val functionReferencePhase = makeKonanFileLoweringPhase(
         ::FunctionReferenceLowering,
         name = "FunctionReference",
         description = "Function references lowering",
-        prerequisite = setOf(delegationPhase) // TODO: make weak dependency on `testProcessorPhase`
+        prerequisite = setOf(delegationPhase, localFunctionsPhase) // TODO: make weak dependency on `testProcessorPhase`
+)
+
+internal val singleAbstractMethodPhase = makeKonanFileLoweringPhase(
+        ::NativeSingleAbstractMethodLowering,
+        name = "SingleAbstractMethod",
+        description = "Replace SAM conversions with instances of interface-implementing classes",
+        prerequisite = setOf(functionReferencePhase)
+)
+
+internal val builtinOperatorPhase = makeKonanFileLoweringPhase(
+        ::BuiltinOperatorLowering,
+        name = "BuiltinOperators",
+        description = "BuiltIn operators lowering",
+        prerequisite = setOf(defaultParameterExtentPhase, singleAbstractMethodPhase)
 )
 
 internal val interopPhase = makeKonanFileLoweringPhase(
