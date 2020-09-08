@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -21,21 +22,23 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.KtPsiFactory.CallableBuilder
 import org.jetbrains.kotlin.psi.KtPsiFactory.CallableBuilder.Target.CONSTRUCTOR
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.parents
 
-class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtPrimaryConstructor>(
-    KtPrimaryConstructor::class.java,
+class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingRangeIntention<KtClass>(
+    KtClass::class.java,
     KotlinBundle.lazyMessage("convert.to.secondary.constructor")
 ) {
-    override fun isApplicableTo(element: KtPrimaryConstructor, caretOffset: Int): Boolean {
-        val containingClass = element.containingClassOrObject as? KtClass ?: return false
-        if (containingClass.isAnnotation() || containingClass.isData()
-            || containingClass.superTypeListEntries.any { it is KtDelegatedSuperTypeEntry }
-        ) return false
-        return element.valueParameters.all { !it.hasValOrVar() || (it.name != null && it.annotationEntries.isEmpty()) }
+    override fun applicabilityRange(element: KtClass): TextRange? {
+        val primaryCtor = element.primaryConstructor ?: return null
+        val startOffset =
+            (if (primaryCtor.getConstructorKeyword() != null) primaryCtor else element.nameIdentifier)?.startOffset ?: return null
+        if (element.isAnnotation() || element.isData() || element.superTypeListEntries.any { it is KtDelegatedSuperTypeEntry }) return null
+        if (primaryCtor.valueParameters.any { it.hasValOrVar() && (it.name == null || it.annotationEntries.isNotEmpty()) }) return null
+        return TextRange(startOffset, primaryCtor.endOffset)
     }
 
     private fun KtReferenceExpression.isIndependent(classDescriptor: ClassDescriptor, context: BindingContext): Boolean =
@@ -54,15 +57,15 @@ class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtP
         return !propertyInitializer.anyDescendantOfType<KtReferenceExpression> { !it.isIndependent(classDescriptor, context) }
     }
 
-    override fun applyTo(element: KtPrimaryConstructor, editor: Editor?) {
-        val klass = element.containingClassOrObject as? KtClass ?: return
-        if (klass.isAnnotation()) return
-        val context = klass.analyze()
-        val factory = KtPsiFactory(klass)
-        val commentSaver = CommentSaver(element)
+    override fun applyTo(element: KtClass, editor: Editor?) {
+        val primaryCtor = element.primaryConstructor ?: return
+        if (element.isAnnotation()) return
+        val context = element.analyze()
+        val factory = KtPsiFactory(element)
+        val commentSaver = CommentSaver(primaryCtor)
         val initializerMap = mutableMapOf<KtProperty, String>()
-        for (property in klass.getProperties()) {
-            if (property.isIndependent(klass, context)) continue
+        for (property in element.getProperties()) {
+            if (property.isIndependent(element, context)) continue
             if (property.typeReference == null) {
                 with(SpecifyTypeExplicitlyIntention()) {
                     if (applicabilityRange(property) != null) {
@@ -77,10 +80,10 @@ class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtP
         }
         val constructor = factory.createSecondaryConstructor(
             CallableBuilder(CONSTRUCTOR).apply {
-                element.modifierList?.let { modifier(it.text) }
+                primaryCtor.modifierList?.let { modifier(it.text) }
                 typeParams()
                 name()
-                for (valueParameter in element.valueParameters) {
+                for (valueParameter in primaryCtor.valueParameters) {
                     val annotations = valueParameter.annotationEntries.joinToString(separator = " ") { it.text }
                     val vararg = if (valueParameter.isVarArg) VARARG_KEYWORD.value else ""
                     param(
@@ -89,18 +92,18 @@ class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtP
                     )
                 }
                 noReturnType()
-                for (superTypeEntry in klass.superTypeListEntries) {
+                for (superTypeEntry in element.superTypeListEntries) {
                     if (superTypeEntry is KtSuperTypeCallEntry) {
                         superDelegation(superTypeEntry.valueArgumentList?.text ?: "")
                         superTypeEntry.replace(factory.createSuperTypeEntry(superTypeEntry.typeReference!!.text))
                     }
                 }
                 val valueParameterInitializers =
-                    element.valueParameters.asSequence().filter { it.hasValOrVar() }.joinToString(separator = "\n") {
+                    primaryCtor.valueParameters.asSequence().filter { it.hasValOrVar() }.joinToString(separator = "\n") {
                         val name = it.name!!
                         "this.$name = $name"
                     }
-                val classBodyInitializers = klass.declarations.asSequence().filter {
+                val classBodyInitializers = element.declarations.asSequence().filter {
                     (it is KtProperty && initializerMap[it] != null) || it is KtAnonymousInitializer
                 }.joinToString(separator = "\n") {
                     if (it is KtProperty) {
@@ -112,8 +115,8 @@ class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtP
                             ""
                         }
                     } else {
-                        ((it as KtAnonymousInitializer).body as? KtBlockExpression)?.statements?.joinToString(separator = "\n") {
-                            it.text
+                        ((it as KtAnonymousInitializer).body as? KtBlockExpression)?.statements?.joinToString(separator = "\n") { stmt ->
+                            stmt.text
                         } ?: ""
                     }
                 }
@@ -124,20 +127,20 @@ class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtP
             }.asString()
         )
 
-        val lastEnumEntry = klass.declarations.lastOrNull { it is KtEnumEntry } as? KtEnumEntry
+        val lastEnumEntry = element.declarations.lastOrNull { it is KtEnumEntry } as? KtEnumEntry
         val secondaryConstructor =
-            lastEnumEntry?.let { klass.addDeclarationAfter(constructor, it) } ?: klass.addDeclarationBefore(constructor, null)
+            lastEnumEntry?.let { element.addDeclarationAfter(constructor, it) } ?: element.addDeclarationBefore(constructor, null)
         commentSaver.restore(secondaryConstructor)
 
-        convertValueParametersToProperties(element, klass, factory, lastEnumEntry)
-        if (klass.isEnum()) {
-            addSemicolonIfNotExist(klass, factory, lastEnumEntry)
+        convertValueParametersToProperties(primaryCtor, element, factory, lastEnumEntry)
+        if (element.isEnum()) {
+            addSemicolonIfNotExist(element, factory, lastEnumEntry)
         }
 
-        for (anonymousInitializer in klass.getAnonymousInitializers()) {
+        for (anonymousInitializer in element.getAnonymousInitializers()) {
             anonymousInitializer.delete()
         }
-        element.delete()
+        primaryCtor.delete()
     }
 
     private fun convertValueParametersToProperties(
