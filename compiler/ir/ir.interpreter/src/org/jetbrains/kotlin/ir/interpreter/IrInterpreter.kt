@@ -393,8 +393,14 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
             return Next
         }
 
-        val state = Common(irClass).apply { this.addTypeArguments(typeArguments) }
-        if (irClass.isLocal) state.fields.addAll(stack.getAll()) // TODO save only necessary declarations
+        val state = stack.getVariable(constructorCall.getThisReceiver()).state as Common
+        state.addTypeArguments(typeArguments)
+
+        if (irClass.isLocal) {
+            state.fields.addAll(stack.getAll()) // TODO save only necessary declarations
+            valueArguments.addAll(stack.getAll())
+        }
+
         if (irClass.isInner) {
             constructorCall.dispatchReceiver!!.interpret().check { return it }
             state.outerClass = Variable(irClass.parentAsClass.thisReceiver!!.symbol, stack.popReturnValue())
@@ -403,25 +409,44 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
             // used to get information from outer class
             valueArguments.add(state.outerClass!!)
         }
-        valueArguments.add(Variable(irClass.thisReceiver!!.symbol, state)) //used to set up fields in body
+
+        valueArguments.add(Variable(constructorCall.getThisReceiver(), state)) //used to set up fields in body
         return stack.newFrame(initPool = valueArguments + state.typeArguments) {
             val statements = constructorCall.getBody()!!.statements
-            // enum entry use IrTypeOperatorCall with IMPLICIT_COERCION_TO_UNIT as delegation call, but we need the value
-            ((statements[0] as? IrTypeOperatorCall)?.argument ?: statements[0]).interpret().check { return@newFrame it }
+            when (val irStatement = statements[0]) {
+                is IrTypeOperatorCall -> {
+                    // enum entry use IrTypeOperatorCall with IMPLICIT_COERCION_TO_UNIT as delegation call, but we need the value
+                    stack.addVar(Variable((irStatement.argument as IrFunctionAccessExpression).getThisReceiver(), state))
+                    irStatement.argument.interpret().check { return@newFrame it }
+                }
+                is IrFunctionAccessExpression -> {
+                    stack.addVar(Variable(irStatement.getThisReceiver(), state))
+                    irStatement.interpret().check { return@newFrame it }
+                }
+                is IrBlock -> {
+                    stack.addVar(Variable((irStatement.statements.last() as IrFunctionAccessExpression).getThisReceiver(), state))
+                    irStatement.interpret().check { return@newFrame it }
+                }
+                else -> TODO("${irStatement::class.java} is not supported as first statement in constructor call")
+            }
             val returnedState = stack.popReturnValue() as Complex
 
             for (i in 1 until statements.size) statements[i].interpret().check { return@newFrame it }
 
-            stack.pushReturnValue(state.apply { this.copyFieldsFrom(returnedState) })
+            state.superWrapperClass = returnedState.superWrapperClass ?: returnedState as? Wrapper
+            stack.pushReturnValue(state)
             Next
         }
     }
 
     private fun interpretConstructorCall(constructorCall: IrConstructorCall): ExecutionResult {
-        return interpretConstructor(constructorCall)
+        val irClass = constructorCall.symbol.owner.parentAsClass
+        val classState = Variable(constructorCall.getThisReceiver(), Common(irClass))
+        return stack.newFrame(asSubFrame = true, initPool = listOf(classState)) { interpretConstructor(constructorCall) }
     }
 
     private fun interpretEnumConstructorCall(enumConstructorCall: IrEnumConstructorCall): ExecutionResult {
+        // interpretConstructorCall logic is implemented in interpretEnumEntry
         return interpretConstructor(enumConstructorCall)
     }
 
@@ -605,12 +630,19 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
     private fun getOrCreateObjectValue(objectClass: IrClass): ExecutionResult {
         mapOfObjects[objectClass.symbol]?.let { return Next.apply { stack.pushReturnValue(it) } }
 
-        val objectState = when {
-            objectClass.hasAnnotation(evaluateIntrinsicAnnotation) -> Wrapper.getCompanionObject(objectClass)
-            else -> Common(objectClass) // TODO test type arguments
+        when {
+            objectClass.hasAnnotation(evaluateIntrinsicAnnotation) -> mapOfObjects[objectClass.symbol] = Wrapper.getCompanionObject(objectClass)
+            else -> {
+                val state = Common(objectClass)
+                mapOfObjects[objectClass.symbol] = state // TODO test type arguments
+
+                val variable = Variable(objectClass.thisReceiver!!.symbol, state)
+                val constructor = objectClass.constructors.first()
+                val constructorCall = IrConstructorCallImpl.fromSymbolOwner(constructor.returnType, constructor.symbol)
+                stack.newFrame(asSubFrame = true, initPool = listOf(variable)) { interpretConstructor(constructorCall) }.check { return it }
+            }
         }
-        mapOfObjects[objectClass.symbol] = objectState
-        stack.pushReturnValue(objectState)
+        stack.pushReturnValue(mapOfObjects[objectClass.symbol]!!)
         return Next
     }
 
@@ -649,9 +681,14 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
             valueArguments.forEachIndexed { index, irConst -> enumSuperCall.putValueArgument(index, irConst) }
         }
 
-        val executionResult = enumEntry.initializerExpression?.interpret()?.check { return it }
+        val enumConstructorCall = enumEntry.initializerExpression?.expression as? IrEnumConstructorCall
+            ?: throw InterpreterError("Initializer at enum entry ${enumEntry.fqNameWhenAvailable} is null")
+        val enumClassState = Variable(enumConstructorCall.getThisReceiver(), Common(enumEntry.correspondingClass ?: enumClass))
+        val executionResult = stack.newFrame(asSubFrame = true, initPool = listOf(enumClassState)) {
+            enumConstructorCall.interpret()
+        }
         enumSuperCall?.apply { (0 until this.valueArgumentsCount).forEach { putValueArgument(it, null) } } // restore to null
-        return executionResult ?: throw InterpreterError("Initializer at enum entry ${enumEntry.fqNameWhenAvailable} is null")
+        return executionResult
     }
 
     private fun interpretTypeOperatorCall(expression: IrTypeOperatorCall): ExecutionResult {

@@ -36,6 +36,8 @@ internal fun IrFunction.getReceiver(): IrSymbol? = this.getDispatchReceiver() ?:
 
 internal fun IrFunctionAccessExpression.getBody(): IrBody? = this.symbol.owner.body
 
+internal fun IrFunctionAccessExpression.getThisReceiver(): IrValueSymbol = this.symbol.owner.parentAsClass.thisReceiver!!.symbol
+
 internal fun State.toIrExpression(expression: IrExpression): IrExpression {
     val start = expression.startOffset
     val end = expression.endOffset

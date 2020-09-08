@@ -53,7 +53,7 @@ internal interface Complex: State {
         if (owner.parent == superWrapperClass?.irClass) return owner
         if (!owner.isFakeOverride || owner.body != null || owner.parentAsClass.defaultType.isAny()) return owner
 
-        val overriddenOwner = owner.overriddenSymbols.singleOrNull { !it.owner.parentAsClass.isInterface }?.owner
+        val overriddenOwner = owner.overriddenSymbols.let { it.singleOrNull { it.owner.body != null } ?: it.singleOrNull() }?.owner
         return overriddenOwner?.let { getOverridden(it) } ?: owner.getLastOverridden() as IrSimpleFunction
     }
 
