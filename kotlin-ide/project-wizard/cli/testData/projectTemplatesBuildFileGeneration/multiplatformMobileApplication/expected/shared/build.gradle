@@ -5,6 +5,7 @@ plugins {
     id 'com.android.library'
     id 'kotlin-android-extensions'
 }
+
 group = 'me.user'
 version = '1.0-SNAPSHOT'
 
@@ -17,6 +18,7 @@ repositories {
         url 'https://dl.bintray.com/kotlin/kotlin-dev'
     }
 }
+
 kotlin {
     android()
     ios {
@@ -55,6 +57,7 @@ kotlin {
         }
     }
 }
+
 android {
     compileSdkVersion 29
     sourceSets.main.manifest.srcFile('src/androidMain/AndroidManifest.xml')
@@ -70,6 +73,7 @@ android {
         }
     }
 }
+
 task(packForXcode, type: Sync) {
     group = 'build'
     def mode = System.getenv('CONFIGURATION') ?: 'DEBUG'
@@ -82,4 +86,5 @@ task(packForXcode, type: Sync) {
     from({ framework.outputDirectory })
     into(targetDir)
 }
+
 tasks.getByName('build').dependsOn(packForXcode)

@@ -4,6 +4,7 @@ plugins {
     kotlin("multiplatform") version "KOTLIN_VERSION"
     application
 }
+
 group = "me.user"
 version = "1.0-SNAPSHOT"
 
@@ -23,6 +24,7 @@ repositories {
         url = uri("https://dl.bintray.com/kotlin/kotlin-js-wrappers")
     }
 }
+
 kotlin {
     jvm {
         compilations.all {
@@ -83,17 +85,21 @@ kotlin {
         }
     }
 }
+
 application {
     mainClassName = "ServerKt"
 }
+
 tasks.getByName<KotlinWebpack>("jsBrowserProductionWebpack") {
     outputFileName = "output.js"
 }
+
 tasks.getByName<Jar>("jvmJar") {
     dependsOn(tasks.getByName("jsBrowserProductionWebpack"))
     val jsBrowserProductionWebpack = tasks.getByName<KotlinWebpack>("jsBrowserProductionWebpack")
     from(File(jsBrowserProductionWebpack.destinationDirectory, jsBrowserProductionWebpack.outputFileName))
 }
+
 tasks.getByName<JavaExec>("run") {
     dependsOn(tasks.getByName<Jar>("jvmJar"))
     classpath(tasks.getByName<Jar>("jvmJar"))

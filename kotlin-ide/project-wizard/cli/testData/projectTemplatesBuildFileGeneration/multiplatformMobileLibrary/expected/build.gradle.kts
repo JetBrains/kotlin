@@ -3,6 +3,7 @@ plugins {
     id("com.android.library")
     id("kotlin-android-extensions")
 }
+
 group = "me.user"
 version = "1.0-SNAPSHOT"
 
@@ -15,6 +16,7 @@ repositories {
         url = uri("https://dl.bintray.com/kotlin/kotlin-dev")
     }
 }
+
 kotlin {
     android()
     iosX64("ios") {
@@ -47,6 +49,7 @@ kotlin {
         val iosTest by getting
     }
 }
+
 android {
     compileSdkVersion(29)
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")

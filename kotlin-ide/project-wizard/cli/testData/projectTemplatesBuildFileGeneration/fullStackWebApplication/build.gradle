@@ -4,6 +4,7 @@ plugins {
     id 'org.jetbrains.kotlin.multiplatform' version 'KOTLIN_VERSION'
     id 'application'
 }
+
 group = 'me.user'
 version = '1.0-SNAPSHOT'
 
@@ -23,6 +24,7 @@ repositories {
         url 'https://dl.bintray.com/kotlin/kotlin-js-wrappers'
     }
 }
+
 kotlin {
     jvm {
         compilations.all {
@@ -85,17 +87,21 @@ kotlin {
         }
     }
 }
+
 application {
     mainClassName = 'ServerKt'
 }
+
 tasks.getByName('jsBrowserProductionWebpack') {
     outputFileName = 'output.js'
 }
+
 tasks.getByName('jvmJar') {
     dependsOn(tasks.getByName('jsBrowserProductionWebpack'))
     def jsBrowserProductionWebpack = tasks.getByName('jsBrowserProductionWebpack')
     from(new File(jsBrowserProductionWebpack.destinationDirectory, jsBrowserProductionWebpack.outputFileName))
 }
+
 tasks.getByName('run') {
     dependsOn(tasks.getByName('jvmJar'))
     classpath(tasks.getByName('jvmJar'))

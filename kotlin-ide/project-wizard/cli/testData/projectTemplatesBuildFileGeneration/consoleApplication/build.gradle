@@ -2,6 +2,7 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version 'KOTLIN_VERSION'
     id 'application'
 }
+
 group = 'me.user'
 version = '1.0-SNAPSHOT'
 
@@ -11,15 +12,19 @@ repositories {
         url 'https://dl.bintray.com/kotlin/kotlin-dev'
     }
 }
+
 dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test-junit'
 }
+
 test {
     useJUnit()
 }
+
 compileKotlin {
     kotlinOptions.jvmTarget = '1.8'
 }
+
 application {
     mainClassName = 'MainKt'
 }

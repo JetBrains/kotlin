@@ -1,6 +1,7 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm'
 }
+
 group = 'testGroupId'
 version = '1.0-SNAPSHOT'
 
@@ -10,13 +11,16 @@ repositories {
         url 'https://dl.bintray.com/kotlin/kotlin-dev'
     }
 }
+
 dependencies {
     rootProject
     testImplementation 'org.jetbrains.kotlin:kotlin-test-junit'
 }
+
 test {
     useJUnit()
 }
+
 compileKotlin {
     kotlinOptions.jvmTarget = '1.8'
 }

@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithTests
 plugins {
     id 'org.jetbrains.kotlin.multiplatform' version 'KOTLIN_VERSION'
 }
+
 group = 'me.user'
 version = '1.0-SNAPSHOT'
 
@@ -12,6 +13,7 @@ repositories {
         url 'https://dl.bintray.com/kotlin/kotlin-dev'
     }
 }
+
 kotlin {
     def hostOs = System.getProperty("os.name")
     def isMingwX64 = hostOs.startsWith("Windows")
