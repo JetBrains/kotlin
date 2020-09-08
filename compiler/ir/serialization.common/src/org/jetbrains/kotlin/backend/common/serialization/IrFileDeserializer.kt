@@ -1090,7 +1090,7 @@ abstract class IrFileDeserializer(
         }
 
         for (i in protos.indices) {
-            protos[i].superTypeList.mapTo(result[i].superTypes) { deserializeIrType(it) }
+            result[i].superTypes = protos[i].superTypeList.map { deserializeIrType(it) }
         }
 
         return result

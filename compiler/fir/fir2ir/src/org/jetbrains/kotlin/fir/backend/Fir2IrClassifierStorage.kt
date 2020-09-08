@@ -111,7 +111,7 @@ class Fir2IrClassifierStorage(
             getIrTypeParameter(typeParameter, index, typeContext).apply {
                 parent = this@setTypeParameters
                 if (superTypes.isEmpty()) {
-                    typeParameter.bounds.mapTo(superTypes) { it.toIrType() }
+                    superTypes = typeParameter.bounds.map { it.toIrType() }
                 }
             }
         }
@@ -369,7 +369,7 @@ class Fir2IrClassifierStorage(
         getCachedIrTypeParameter(typeParameter, index, typeContext)?.let { return it }
         return typeParameter.run {
             val irTypeParameter = createIrTypeParameterWithoutBounds(typeParameter, index, typeContext)
-            bounds.mapTo(irTypeParameter.superTypes) { it.toIrType() }
+            irTypeParameter.superTypes = bounds.map { it.toIrType() }
             irTypeParameter
         }
     }

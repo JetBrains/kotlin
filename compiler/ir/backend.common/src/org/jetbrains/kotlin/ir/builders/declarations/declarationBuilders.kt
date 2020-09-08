@@ -291,7 +291,7 @@ internal fun IrFactory.buildTypeParameter(builder: IrTypeParameterBuilder, paren
             name, index, isReified, variance
         ).also {
             wrappedDescriptor.bind(it)
-            it.superTypes.addAll(superTypes)
+            it.superTypes = superTypes
             it.parent = parent
         }
     }

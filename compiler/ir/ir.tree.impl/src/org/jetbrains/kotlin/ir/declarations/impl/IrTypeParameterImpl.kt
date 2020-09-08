@@ -53,5 +53,5 @@ class IrTypeParameterImpl(
     override val descriptor: TypeParameterDescriptor
         get() = symbol.descriptor
 
-    override val superTypes: MutableList<IrType> = SmartList()
+    override var superTypes: List<IrType> = emptyList()
 }

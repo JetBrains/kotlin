@@ -8,10 +8,13 @@ package org.jetbrains.kotlin.ir.declarations.persistent.carriers
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.types.IrType
 
 internal interface TypeParameterCarrier : DeclarationCarrier {
+    var superTypesField: List<IrType>
+
     override fun clone(): TypeParameterCarrier {
-        return TypeParameterCarrierImpl(lastModified, parentField, originField, annotationsField)
+        return TypeParameterCarrierImpl(lastModified, parentField, originField, annotationsField, superTypesField)
     }
 }
 
@@ -19,5 +22,6 @@ internal class TypeParameterCarrierImpl(
     override val lastModified: Int,
     override var parentField: IrDeclarationParent?,
     override var originField: IrDeclarationOrigin,
-    override var annotationsField: List<IrConstructorCall>
+    override var annotationsField: List<IrConstructorCall>,
+    override var superTypesField: List<IrType>,
 ) : TypeParameterCarrier

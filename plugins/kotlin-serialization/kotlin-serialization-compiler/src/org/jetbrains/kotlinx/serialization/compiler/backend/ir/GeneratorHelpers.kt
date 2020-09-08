@@ -416,7 +416,7 @@ interface IrBuilderExtension {
         }
 
         newTypeParameters.forEach { typeParameter ->
-            typeParameter.superTypes.addAll(typeParameter.descriptor.upperBounds.map { it.toIrType() })
+            typeParameter.superTypes = typeParameter.descriptor.upperBounds.map { it.toIrType() }
         }
 
         typeParameters = newTypeParameters
