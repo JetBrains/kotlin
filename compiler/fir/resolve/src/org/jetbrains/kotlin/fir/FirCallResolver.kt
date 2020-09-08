@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.Variance
 
 class FirCallResolver(
@@ -149,7 +150,7 @@ class FirCallResolver(
             info,
         )
         val bestCandidates = result.bestCandidates()
-        val reducedCandidates = if (result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED) {
+        val reducedCandidates = if (!result.currentApplicability.isSuccess) {
             bestCandidates.toSet()
         } else {
             val onSuperReference = (explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference is FirSuperReference
@@ -157,7 +158,7 @@ class FirCallResolver(
                 bestCandidates, discriminateGenerics = true, discriminateAbstracts = onSuperReference
             )
         }
-        if ((reducedCandidates.isEmpty() || result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED) &&
+        if ((reducedCandidates.isEmpty() || !result.currentApplicability.isSuccess) &&
             explicitReceiver?.typeRef?.coneTypeSafe<ConeIntegerLiteralType>() != null
         ) {
             val approximatedQualifiedAccess = qualifiedAccess.transformExplicitReceiver(integerLiteralTypeApproximator, null)
@@ -192,8 +193,7 @@ class FirCallResolver(
         )
 
         if (qualifiedAccess.explicitReceiver == null) {
-            if (result.applicability < CandidateApplicability.SYNTHETIC_RESOLVED
-            ) {
+            if (!result.applicability.isSuccess) {
                 // We should run QualifierResolver if no successful candidates are available
                 // Otherwise expression (even ambiguous) beat qualifier
                 qualifiedResolver.tryResolveAsQualifier(qualifiedAccess.source)?.let { resolvedQualifier ->
@@ -260,7 +260,7 @@ class FirCallResolver(
             manager = TowerResolveManager(localCollector),
         )
         val bestCandidates = result.bestCandidates()
-        val noSuccessfulCandidates = result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED
+        val noSuccessfulCandidates = !result.currentApplicability.isSuccess
         val reducedCandidates = if (noSuccessfulCandidates) {
             bestCandidates.toSet()
         } else {
@@ -419,7 +419,7 @@ class FirCallResolver(
         call: FirDelegatedConstructorCall, name: Name, result: CandidateCollector, callInfo: CallInfo
     ): FirDelegatedConstructorCall {
         val bestCandidates = result.bestCandidates()
-        val reducedCandidates = if (result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED) {
+        val reducedCandidates = if (!result.currentApplicability.isSuccess) {
             bestCandidates.toSet()
         } else {
             conflictResolver.chooseMaximallySpecificCandidates(bestCandidates, discriminateGenerics = true)
@@ -498,7 +498,7 @@ class FirCallResolver(
                 name
             )
 
-            applicability < CandidateApplicability.SYNTHETIC_RESOLVED -> {
+            !applicability.isSuccess -> {
                 val candidate = candidates.single()
                 val diagnostic = when (applicability) {
                     CandidateApplicability.HIDDEN -> ConeHiddenCandidateError(candidate.symbol)

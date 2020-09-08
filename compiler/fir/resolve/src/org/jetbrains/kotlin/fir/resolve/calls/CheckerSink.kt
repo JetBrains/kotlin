@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import kotlin.coroutines.Continuation
 
 abstract class CheckerSink {
@@ -52,6 +53,6 @@ class CheckerSinkImpl(
     }
 
     override val needYielding: Boolean
-        get() = stopOnFirstError && current < CandidateApplicability.SYNTHETIC_RESOLVED
+        get() = stopOnFirstError && !current.isSuccess
 
 }

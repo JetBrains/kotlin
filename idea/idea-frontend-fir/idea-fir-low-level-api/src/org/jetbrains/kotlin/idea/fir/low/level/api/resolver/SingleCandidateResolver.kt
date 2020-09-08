@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolve
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 
 class SingleCandidateResolver(
     private val firSession: FirSession,
@@ -70,7 +70,7 @@ class SingleCandidateResolver(
         )
 
         val applicability = resolutionStageRunner.processCandidate(candidate, stopOnFirstError = true)
-        if (applicability >= CandidateApplicability.SYNTHETIC_RESOLVED) {
+        if (applicability.isSuccess) {
             return completeResolvedCandidate(candidate, resolutionParameters)
         }
         return null

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerGroup
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 
 open class CandidateCollector(
     val components: BodyResolveComponents,
@@ -50,7 +51,7 @@ open class CandidateCollector(
         isSuccess() && bestGroup < group
 
     fun isSuccess(): Boolean {
-        return currentApplicability >= CandidateApplicability.SYNTHETIC_RESOLVED
+        return currentApplicability.isSuccess
     }
 }
 

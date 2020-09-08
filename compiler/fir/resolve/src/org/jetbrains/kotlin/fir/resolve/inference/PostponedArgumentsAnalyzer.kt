@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.model.CoroutinePosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.model.StubTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.types.model.freshTypeConstructor
@@ -78,7 +79,7 @@ class PostponedArgumentsAnalyzer(
             ?: Pair(null, CandidateApplicability.INAPPLICABLE)
 
         val namedReference = when {
-            resultingCandidate == null || applicability < CandidateApplicability.SYNTHETIC_RESOLVED ->
+            resultingCandidate == null || !applicability.isSuccess ->
                 buildErrorNamedReference {
                     source = callableReferenceAccess.source
                     diagnostic = ConeUnresolvedReferenceError(callableReferenceAccess.calleeReference.name)
