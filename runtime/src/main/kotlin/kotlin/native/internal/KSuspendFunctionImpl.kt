@@ -7,24 +7,12 @@ package kotlin.native.internal
 
 import kotlin.reflect.KType
 import kotlin.reflect.KFunction
+import kotlin.reflect.KClass
 
 @FixmeReflection
 internal abstract class KSuspendFunctionImpl<out R>(
-        override val name: String, val fqName: String,
-        val bound: Boolean, val receiver: Any?,
-        override val returnType: KType
-): KFunction<R> {
-
-    override fun equals(other: Any?): Boolean {
-        if (other !is KSuspendFunctionImpl<*>) return false
-        return fqName == other.fqName && bound == other.bound && receiver == other.receiver
-    }
-
-    override fun hashCode(): Int {
-        return (fqName.hashCode() * 31 + if (bound) 1 else 0) * 31 + receiver.hashCode()
-    }
-
-    override fun toString(): String {
-        return "suspend function $name"
-    }
+        name: String, fqName: String, receiver: Any?,
+        arity: Int, flags: Int, returnType: KType
+): KFunctionImpl<R>(name, fqName, receiver, arity, flags, returnType) {
+    override fun toString() = "suspend function $name"
 }

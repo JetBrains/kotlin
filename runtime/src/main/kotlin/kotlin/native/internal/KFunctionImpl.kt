@@ -9,16 +9,24 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KType
 
 @FixmeReflection
-open class KFunctionImpl<out R>(override val name: String, val fqName: String, val bound: Boolean, val receiver: Any?,
-                                override val returnType: KType): KFunction<R> {
+internal abstract class KFunctionImpl<out R>(
+        override val name: String, val fqName: String, val receiver: Any?,
+        val arity: Int, val flags: Int, override val returnType: KType
+): KFunction<R> {
     override fun equals(other: Any?): Boolean {
         if (other !is KFunctionImpl<*>) return false
-        return fqName == other.fqName && bound == other.bound && receiver == other.receiver
+        return fqName == other.fqName && receiver == other.receiver
+                && arity == other.arity && flags == other.flags
     }
 
-    override fun hashCode(): Int {
-        return (fqName.hashCode() * 31 + if (bound) 1 else 0) * 31 + receiver.hashCode()
+    private fun evalutePolynom(x: Int, vararg coeffs: Int): Int {
+        var res = 0
+        for (coeff in coeffs)
+            res = res * x + coeff
+        return res
     }
+
+    override fun hashCode() = evalutePolynom(31, fqName.hashCode(), receiver.hashCode(), arity, flags)
 
     override fun toString(): String {
         return "${if (name == "<init>") "constructor" else "function " + name}"

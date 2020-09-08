@@ -159,12 +159,38 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
             typeParam.symbol to functionReference.getTypeArgument(typeParam.index)!!
         }
 
+        private val adapteeCall: IrFunctionAccessExpression? =
+                // TODO: Copied from JVM.
+                if (referencedFunction.origin == IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE) {
+                    // The body of a callable reference adapter contains either only a call, or an IMPLICIT_COERCION_TO_UNIT type operator
+                    // applied to a call. That call's target is the original function which we need to get owner/name/signature.
+                    val call = when (val statement = referencedFunction.body!!.statements.single()) {
+                        is IrTypeOperatorCall -> {
+                            assert(statement.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT) {
+                                "Unexpected type operator in ADAPTER_FOR_CALLABLE_REFERENCE: ${referencedFunction.render()}"
+                            }
+                            statement.argument
+                        }
+                        is IrReturn -> statement.value
+                        else -> statement
+                    }
+                    if (call !is IrFunctionAccessExpression) {
+                        throw UnsupportedOperationException("Unknown structure of ADAPTER_FOR_CALLABLE_REFERENCE: ${referencedFunction.render()}")
+                    }
+                    call
+                } else {
+                    null
+                }
+
+        private val adaptedReferenceOriginalTarget: IrFunction? = adapteeCall?.symbol?.owner
+        private val functionReferenceTarget = adaptedReferenceOriginalTarget ?: referencedFunction
+
         private val functionReferenceClass: IrClass = WrappedClassDescriptor().let {
             IrClassImpl(
                     startOffset,endOffset,
                     DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
                     IrClassSymbolImpl(it),
-                    "${referencedFunction.name}\$FUNCTION_REFERENCE\$${context.functionReferenceCount++}".synthesizedName,
+                    "${functionReferenceTarget.name}\$FUNCTION_REFERENCE\$${context.functionReferenceCount++}".synthesizedName,
                     ClassKind.CLASS,
                     DescriptorVisibilities.PRIVATE,
                     Modality.FINAL,
@@ -202,6 +228,7 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
         private val kSuspendFunctionImplSymbol = symbols.kSuspendFunctionImpl
         private val kSuspendFunctionImplConstructorSymbol = kSuspendFunctionImplSymbol.constructors.single()
 
+        val isLambda = functionReference.origin.isLambda
         val isKFunction = functionReference.type.isKFunction()
         val isKSuspendFunction = functionReference.type.isKSuspendFunction()
 
@@ -220,10 +247,10 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
                 superTypes += suspendFunctionClass.typeWith(functionParameterTypes + referencedFunction.returnType)
             }
             else {
-                superTypes += if (isKFunction)
-                    kFunctionImplSymbol.typeWith(referencedFunction.returnType)
-                else
+                superTypes += if (isLambda)
                     irBuiltIns.anyType
+                else
+                    kFunctionImplSymbol.typeWith(referencedFunction.returnType)
                 functionClass = (if (isKFunction) symbols.kFunctionN(numberOfParameters) else symbols.functionN(numberOfParameters)).owner
                 superTypes += functionClass.typeWith(functionParameterTypes + referencedFunction.returnType)
                 val lastParameterType = unboundFunctionParameters.lastOrNull()?.type
@@ -278,21 +305,23 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
 
                 body = context.createIrBuilder(symbol, startOffset, endOffset).irBlockBody {
                     val superConstructor = when {
-                        isKFunction -> kFunctionImplConstructorSymbol.owner
                         isKSuspendFunction -> kSuspendFunctionImplConstructorSymbol.owner
-                        else -> irBuiltIns.anyClass.owner.constructors.single()
+                        isLambda -> irBuiltIns.anyClass.owner.constructors.single()
+                        else -> kFunctionImplConstructorSymbol.owner
                     }
                     +irDelegatingConstructorCall(superConstructor).apply applyIrDelegationConstructorCall@ {
-                        if (!isKFunction && !isKSuspendFunction) return@applyIrDelegationConstructorCall
-                        val name = ((referencedFunction as? IrSimpleFunction)?.attributeOwnerId as? IrSimpleFunction)?.name
-                                ?: referencedFunction.name
-                        putValueArgument(0, irString(name.asString()))
-                        putValueArgument(1, irString((functionReference.symbol.owner).fullName))
-                        putValueArgument(2, irBoolean(boundFunctionParameters.isNotEmpty()))
+                        if (isLambda) return@applyIrDelegationConstructorCall
+                        val name = ((functionReferenceTarget as? IrSimpleFunction)?.attributeOwnerId as? IrSimpleFunction)?.name
+                                ?: functionReferenceTarget.name
                         val needReceiver = boundFunctionParameters.singleOrNull()?.descriptor is ReceiverParameterDescriptor
                         val receiver = if (needReceiver) irGet(valueParameters.single()) else irNull()
-                        putValueArgument(3, receiver)
-                        putValueArgument(4, with(kTypeGenerator) { irKType(referencedFunction.returnType) })
+                        val arity = unboundFunctionParameters.size + if (functionReferenceTarget.isSuspend) 1 else 0
+                        putValueArgument(0, irString(name.asString()))
+                        putValueArgument(1, irString(functionReferenceTarget.fullName))
+                        putValueArgument(2, receiver)
+                        putValueArgument(3, irInt(arity))
+                        putValueArgument(4, irInt(getAdaptedCallableReferenceFlags()))
+                        putValueArgument(5, with(kTypeGenerator) { irKType(referencedFunction.returnType) })
                     }
                     +IrInstanceInitializerCallImpl(startOffset, endOffset, functionReferenceClass.symbol, irBuiltIns.unitType)
                     // Save all arguments to fields.
@@ -305,6 +334,32 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
 
         private val IrFunction.fullName: String
             get() = parent.fqNameForIrSerialization.child(Name.identifier(functionName)).asString()
+
+        private fun getAdaptedCallableReferenceFlags(): Int {
+            if (adaptedReferenceOriginalTarget == null) return 0
+
+            val isVarargMappedToElementBit = if (hasVarargMappedToElement()) 1 else 0
+            val isSuspendConvertedBit =
+                    if (!adaptedReferenceOriginalTarget.isSuspend && referencedFunction.isSuspend) 1 else 0
+            val isCoercedToUnitBit =
+                    if (!adaptedReferenceOriginalTarget.returnType.isUnit() && referencedFunction.returnType.isUnit()) 1 else 0
+
+            return isVarargMappedToElementBit +
+                    (isSuspendConvertedBit shl 1) +
+                    (isCoercedToUnitBit shl 2)
+        }
+
+        private fun hasVarargMappedToElement(): Boolean {
+            if (adapteeCall == null) return false
+            for (i in 0 until adapteeCall.valueArgumentsCount) {
+                val arg = adapteeCall.getValueArgument(i) ?: continue
+                if (arg !is IrVararg) continue
+                for (varargElement in arg.elements) {
+                    if (varargElement is IrGetValue) return true
+                }
+            }
+            return false
+        }
 
         private fun buildInvokeMethod(superFunction: IrSimpleFunction): IrSimpleFunction = WrappedSimpleFunctionDescriptor().let {
             IrFunctionImpl(
