@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import kotlin.coroutines.Continuation
@@ -14,15 +13,15 @@ import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.coroutines.intrinsics.createCoroutineUnintercepted
 import kotlin.coroutines.resume
 
-class ResolutionStageRunner(val components: InferenceComponents) {
+class ResolutionStageRunner(private val context: ResolutionContext) {
     fun processCandidate(candidate: Candidate, stopOnFirstError: Boolean = true): CandidateApplicability {
-        val sink = CheckerSinkImpl(components, stopOnFirstError = stopOnFirstError)
+        val sink = CheckerSinkImpl(context.bodyResolveComponents.inferenceComponents, stopOnFirstError = stopOnFirstError)
         var finished = false
         sink.continuation = suspend {
             candidate.callInfo.callKind.resolutionSequence.forEachIndexed { index, stage ->
                 if (index < candidate.passedStages) return@forEachIndexed
                 candidate.passedStages++
-                stage.check(candidate, sink, candidate.callInfo)
+                stage.check(candidate, candidate.callInfo, sink, context)
             }
         }.createCoroutineUnintercepted(completion = object : Continuation<Unit> {
             override val context: CoroutineContext

@@ -352,7 +352,7 @@ class FirCallCompletionResultsWriterTransformer(
     private fun Candidate.createArgumentsMapping(): ExpectedArgumentType? {
         return argumentMapping?.map { (argument, valueParameter) ->
             val expectedType = if (valueParameter.isVararg) {
-                valueParameter.returnTypeRef.substitute(this).varargElementType(session)
+                valueParameter.returnTypeRef.substitute(this).varargElementType()
             } else {
                 valueParameter.returnTypeRef.substitute(this)
             }

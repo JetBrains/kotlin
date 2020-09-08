@@ -43,7 +43,15 @@ class InferenceComponents(
         }
     }
 
+    val constraintSystemFactory = ConstraintSystemFactory()
+
     fun createConstraintSystem(): NewConstraintSystemImpl {
         return NewConstraintSystemImpl(injector, ctx)
+    }
+
+    inner class ConstraintSystemFactory {
+        fun createConstraintSystem(): NewConstraintSystemImpl {
+            return this@InferenceComponents.createConstraintSystem()
+        }
     }
 }

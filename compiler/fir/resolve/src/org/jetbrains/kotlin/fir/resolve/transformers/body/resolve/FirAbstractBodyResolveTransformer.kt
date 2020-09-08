@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionStageRunner
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
@@ -92,6 +93,8 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         val transformer: FirBodyResolveTransformer,
         val context: BodyResolveContext
     ) : BodyResolveComponents {
+        override val resolutionContext: ResolutionContext = ResolutionContext(session, this@BodyResolveTransformerComponents)
+
         override val fileImportsScope: List<FirScope> get() = context.fileImportsScope
         override val towerDataElements: List<FirTowerDataElement> get() = context.towerDataContext.towerDataElements
         override val localScopes: FirLocalScopes get() = context.towerDataContext.localScopes
@@ -109,7 +112,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val symbolProvider: FirSymbolProvider = session.firSymbolProvider
 
         override val inferenceComponents: InferenceComponents = inferenceComponents(session, returnTypeCalculator, scopeSession)
-        override val resolutionStageRunner: ResolutionStageRunner = ResolutionStageRunner(inferenceComponents)
+        override val resolutionStageRunner: ResolutionStageRunner = ResolutionStageRunner(resolutionContext)
         override val samResolver: FirSamResolver = FirSamResolverImpl(session, scopeSession)
         private val qualifiedResolver: FirQualifiedNameResolver = FirQualifiedNameResolver(this)
         override val callResolver: FirCallResolver = FirCallResolver(

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 
 internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
-    override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
+    override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val declaration = candidate.symbol.fir
         if (declaration !is FirTypeParameterRefsOwner || declaration.typeParameters.isEmpty()) {
             candidate.substitutor = ConeSubstitutor.Empty
@@ -66,7 +66,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
                     getTypePreservingFlexibilityWrtTypeVariable(
                         typeArgument.typeRef.coneType,
                         typeParameter,
-                        candidate.bodyResolveComponents.inferenceComponents.ctx
+                        context.bodyResolveComponents.inferenceComponents.ctx
                     ),
                     SimpleConstraintSystemConstraintPosition // TODO
                 )

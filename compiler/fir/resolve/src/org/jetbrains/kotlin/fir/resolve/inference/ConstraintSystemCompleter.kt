@@ -81,7 +81,6 @@ class ConstraintSystemCompleter(private val components: BodyResolveComponents) {
         c: ConstraintSystemCompletionContext,
         variableForFixation: VariableFixationFinder.VariableForFixation,
         postponedAtoms: List<PostponedResolvedAtom>,
-        /*diagnosticsHolder: KotlinDiagnosticsHolder,*/
         analyze: (PostponedResolvedAtom) -> Unit
     ): Boolean {
         val variable = variableForFixation.variable as ConeTypeVariableTypeConstructor
@@ -111,7 +110,7 @@ class ConstraintSystemCompleter(private val components: BodyResolveComponents) {
                     isSuitable = { isBuiltinFunctionalType(components.session) },
                     typeVariableCreator = { ConeTypeVariableForLambdaReturnType(postponedAtom.atom, "_R") },
                     newAtomCreator = { returnTypeVariable, expectedType ->
-                        postponedAtom.transformToResolvedLambda(csBuilder, expectedType, returnTypeVariable)
+                        postponedAtom.transformToResolvedLambda(csBuilder, components.resolutionContext, expectedType, returnTypeVariable)
                     }
                 )
             }

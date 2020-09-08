@@ -56,7 +56,7 @@ class CandidateFactory private constructor(
     ): Candidate {
         return Candidate(
             symbol, dispatchReceiverValue, implicitExtensionReceiverValue,
-            explicitReceiverKind, bodyResolveComponents, baseSystem,
+            explicitReceiverKind, bodyResolveComponents.inferenceComponents.constraintSystemFactory, baseSystem,
             builtInExtensionFunctionReceiverValue?.receiverExpression?.let {
                 callInfo.withReceiverAsArgument(it)
             } ?: callInfo
@@ -78,7 +78,7 @@ class CandidateFactory private constructor(
             dispatchReceiverValue = null,
             implicitExtensionReceiverValue = null,
             explicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
-            bodyResolveComponents,
+            bodyResolveComponents.inferenceComponents.constraintSystemFactory,
             baseSystem,
             callInfo
         )
