@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.types.FirQualifierPart
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver {
+class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver() {
 
     override fun resolveSymbolWithPrefix(parts: List<FirQualifierPart>, prefix: ClassId): FirClassifierSymbol<*>? {
         val symbolProvider = session.firSymbolProvider

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.ClassId
 
-class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
+class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
     private val symbolProvider by lazy {
         session.firSymbolProvider
