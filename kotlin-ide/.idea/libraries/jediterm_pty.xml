@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="libraryTable">
   <library name="jediterm-pty" type="repository">
-    <properties include-transitive-deps="false" maven-id="org.jetbrains.jediterm:jediterm-pty:2.30" />
+    <properties include-transitive-deps="false" maven-id="org.jetbrains.jediterm:jediterm-pty:2.31" />
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/jediterm/jediterm-pty/2.30/jediterm-pty-2.30.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/jediterm/jediterm-pty/2.31/jediterm-pty-2.31.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/jediterm/jediterm-pty/2.30/jediterm-pty-2.30-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/jediterm/jediterm-pty/2.31/jediterm-pty-2.31-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
