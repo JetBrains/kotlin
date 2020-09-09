@@ -1,3 +1,4 @@
+// PROBLEM: none
 fun test() = 42
 
 fun foo() {
