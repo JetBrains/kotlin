@@ -345,12 +345,11 @@ class ResolvedAtomCompleter(
                 (callableCandidate.candidate.typeParameters.map { it.typeConstructor } zip resultTypeParameters).toMap()
             )
 
-        val firstSubstitution = typeParametersSubstitutor.toOldSubstitution()
-        val secondSubstitution = resultSubstitutor.toOldSubstitution()
-        val resultSubstitutor = TypeSubstitutor.createChainedSubstitutor(
-            firstSubstitution,
-            secondSubstitution
-        )
+        val resultSubstitutor = if (callableCandidate.candidate.isSupportedForCallableReference()) {
+            val firstSubstitution = typeParametersSubstitutor.toOldSubstitution()
+            val secondSubstitution = resultSubstitutor.toOldSubstitution()
+            TypeSubstitutor.createChainedSubstitutor(firstSubstitution, secondSubstitution)
+        } else TypeSubstitutor.EMPTY
 
         val psiCallArgument = resolvedAtom.atom.psiCallArgument as CallableReferenceKotlinCallArgumentImpl
         val callableReferenceExpression = psiCallArgument.ktCallableReferenceExpression

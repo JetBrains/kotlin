@@ -1786,11 +1786,6 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/callableReference/callableReferenceAsLastExpressionInBlock.kt");
             }
 
-            @TestMetadata("callableReferenceToLocalVariable.kt")
-            public void testCallableReferenceToLocalVariable() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/callableReference/callableReferenceToLocalVariable.kt");
-            }
-
             @TestMetadata("classVsPackage.kt")
             public void testClassVsPackage() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/classVsPackage.kt");
@@ -2557,11 +2552,6 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/callableReference/property/kt7945_unrelatedClass.kt");
                 }
 
-                @TestMetadata("localVariable.kt")
-                public void testLocalVariable() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/callableReference/property/localVariable.kt");
-                }
-
                 @TestMetadata("memberFromTopLevel.kt")
                 public void testMemberFromTopLevel() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/callableReference/property/memberFromTopLevel.kt");
@@ -2580,11 +2570,6 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("samePriorityForFunctionsAndProperties.kt")
                 public void testSamePriorityForFunctionsAndProperties() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/callableReference/property/samePriorityForFunctionsAndProperties.kt");
-                }
-
-                @TestMetadata("syntheticProperties.kt")
-                public void testSyntheticProperties() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/callableReference/property/syntheticProperties.kt");
                 }
 
                 @TestMetadata("topLevelFromTopLevel.kt")
@@ -2853,6 +2838,44 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("withVararg.kt")
                 public void testWithVararg() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/callableReference/resolve/withVararg.kt");
+                }
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/callableReference/unsupported")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Unsupported extends AbstractDiagnosticsUsingJavacTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInUnsupported() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/unsupported"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @TestMetadata("callableReferenceToLocalVariable.kt")
+                public void testCallableReferenceToLocalVariable() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/unsupported/callableReferenceToLocalVariable.kt");
+                }
+
+                @TestMetadata("localVariable.kt")
+                public void testLocalVariable() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/unsupported/localVariable.kt");
+                }
+
+                @TestMetadata("localVariableWithSubstitution.kt")
+                public void testLocalVariableWithSubstitution() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/unsupported/localVariableWithSubstitution.kt");
+                }
+
+                @TestMetadata("parameterWithSubstitution.kt")
+                public void testParameterWithSubstitution() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/unsupported/parameterWithSubstitution.kt");
+                }
+
+                @TestMetadata("syntheticProperties.kt")
+                public void testSyntheticProperties() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/unsupported/syntheticProperties.kt");
                 }
             }
         }

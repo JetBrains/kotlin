@@ -3058,6 +3058,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             runTest("compiler/testData/diagnostics/testsWithStdLib/inference/arrayConstructor.kt");
         }
 
+        @TestMetadata("callableReferenceOnParameter.kt")
+        public void testCallableReferenceOnParameter() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/inference/callableReferenceOnParameter.kt");
+        }
+
         @TestMetadata("integerLiterals.kt")
         public void testIntegerLiterals() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/inference/integerLiterals.kt");
