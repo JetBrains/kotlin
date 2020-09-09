@@ -21,7 +21,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Disposer
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.Runnable
@@ -29,7 +28,7 @@ import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
 
 
-public object EDT : CoroutineDispatcher() {
+object EDT : CoroutineDispatcher() {
     override fun isDispatchNeeded(context: CoroutineContext): Boolean {
         return !ApplicationManager.getApplication().isDispatchThread
     }
@@ -50,12 +49,10 @@ public object EDT : CoroutineDispatcher() {
 val Project.cancelOnDisposal: Job
     get() = ServiceManager.getService(this, ProjectJob::class.java).sharedJob
 
-internal class ProjectJob(project: Project) {
+internal class ProjectJob(project: Project) : Disposable {
     internal val sharedJob: Job = Job()
 
-    init {
-        Disposer.register(project, Disposable {
-            sharedJob.cancel()
-        })
+    override fun dispose() {
+        sharedJob.cancel()
     }
 }
