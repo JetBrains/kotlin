@@ -41,6 +41,12 @@ class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
         testConfigurationCacheOf(":Lib:compileFlavor1DebugKotlin", ":Android:compileFlavor1DebugKotlin")
     }
 
+    @Test
+    fun testKotlinAndroidProjectTests() = with(Project("AndroidIncrementalMultiModule")) {
+        applyAndroid40Alpha4KotlinVersionWorkaround()
+        testConfigurationCacheOf(":app:compileDebugAndroidTestKotlin", ":app:compileDebugUnitTestKotlin")
+    }
+
     /**
      * Android Gradle plugin 4.0-alpha4 depends on the EAP versions of some o.j.k modules.
      * Force the current Kotlin version, so the EAP versions are not queried from the
