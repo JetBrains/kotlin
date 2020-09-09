@@ -4008,6 +4008,29 @@ public class JvmOldAgainstIrBoxInlineTestGenerated extends AbstractJvmOldAgainst
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/boxInline/suspend/inlineClass")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class InlineClass extends AbstractJvmOldAgainstIrBoxInlineTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JVM_MULTI_MODULE_OLD_AGAINST_IR, testDataFilePath, "// IGNORE_BACKEND_MULTI_MODULE: ");
+            }
+
+            public void testAllFilesPresentInInlineClass() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/inlineClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_OLD_AGAINST_IR, true);
+            }
+
+            @TestMetadata("returnUnboxedDirect.kt")
+            public void testReturnUnboxedDirect() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/suspend/inlineClass/returnUnboxedDirect.kt");
+            }
+
+            @TestMetadata("returnUnboxedResume.kt")
+            public void testReturnUnboxedResume() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/suspend/inlineClass/returnUnboxedResume.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/boxInline/suspend/inlineUsedAsNoinline")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
