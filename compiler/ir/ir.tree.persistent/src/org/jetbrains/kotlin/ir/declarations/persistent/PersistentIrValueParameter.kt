@@ -38,7 +38,7 @@ internal class PersistentIrValueParameter(
     override val name: Name,
     override val index: Int,
     type: IrType,
-    override val varargElementType: IrType?,
+    varargElementType: IrType?,
     override val isCrossinline: Boolean,
     override val isNoinline: Boolean,
     override val isHidden: Boolean = false
@@ -87,4 +87,13 @@ internal class PersistentIrValueParameter(
             }
         }
 
+    override var varargElementTypeField: IrType? = varargElementType
+
+    override var varargElementType: IrType?
+        get() = getCarrier().varargElementTypeField
+        set(v) {
+            if (varargElementType !== v) {
+                setCarrier().varargElementTypeField = v
+            }
+        }
 }

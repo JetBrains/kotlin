@@ -29,7 +29,7 @@ abstract class IrValueParameter : IrValueDeclaration(), IrSymbolDeclaration<IrVa
     abstract override val descriptor: ParameterDescriptor
 
     abstract val index: Int
-    abstract val varargElementType: IrType?
+    abstract var varargElementType: IrType?
     abstract val isCrossinline: Boolean
     abstract val isNoinline: Boolean
     // if true parameter is not included into IdSignature.

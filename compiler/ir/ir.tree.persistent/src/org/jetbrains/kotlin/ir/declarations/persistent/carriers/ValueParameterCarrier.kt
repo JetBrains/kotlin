@@ -14,10 +14,11 @@ import org.jetbrains.kotlin.ir.types.IrType
 internal interface ValueParameterCarrier : DeclarationCarrier {
     var defaultValueField: IrExpressionBody?
     var typeField: IrType
+    var varargElementTypeField: IrType?
 
     override fun clone(): ValueParameterCarrier {
         return ValueParameterCarrierImpl(
-            lastModified, parentField, originField, annotationsField, defaultValueField, typeField
+            lastModified, parentField, originField, annotationsField, defaultValueField, typeField, varargElementTypeField
         )
     }
 }
@@ -29,4 +30,5 @@ internal class ValueParameterCarrierImpl(
     override var annotationsField: List<IrConstructorCall>,
     override var defaultValueField: IrExpressionBody?,
     override var typeField: IrType,
+    override var varargElementTypeField: IrType?,
 ) : ValueParameterCarrier
