@@ -10736,6 +10736,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
                 runTest("compiler/testData/codegen/box/functions/localFunctions/boundTypeParameterInSupertype.kt");
             }
 
+            @TestMetadata("boundTypeParameterInVararg.kt")
+            public void testBoundTypeParameterInVararg() throws Exception {
+                runTest("compiler/testData/codegen/box/functions/localFunctions/boundTypeParameterInVararg.kt");
+            }
+
             @TestMetadata("callBetweenLocalFunctions.kt")
             public void testCallBetweenLocalFunctions() throws Exception {
                 runTest("compiler/testData/codegen/box/functions/localFunctions/callBetweenLocalFunctions.kt");
