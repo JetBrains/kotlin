@@ -213,6 +213,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                                     "-Didea.system.path=${sandboxDir.absolutePath}",
                                     "-Didea.config.path=${sandboxDir.absolutePath}/config",
                                     "-Didea.tooling.debug=true",
+                                    "-Dfus.internal.test.mode=true",
                                     "-Dapple.laf.useScreenMenuBar=true",
                                     "-Dapple.awt.graphics.UseQuartz=true",
                                     "-Dsun.io.useCanonCaches=false",
