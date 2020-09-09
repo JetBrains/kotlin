@@ -97,6 +97,7 @@ class Candidate(
     var resultingTypeForCallableReference: ConeKotlinType? = null
     var outerConstraintBuilderEffect: (ConstraintSystemOperation.() -> Unit)? = null
     var usesSAM: Boolean = false
+    var usesSuspendConversion: Boolean = false
 
     var argumentMapping: Map<FirExpression, FirValueParameter>? = null
     lateinit var typeArgumentMapping: TypeArgumentMapping

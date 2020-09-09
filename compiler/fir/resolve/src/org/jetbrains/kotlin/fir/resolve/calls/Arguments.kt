@@ -240,7 +240,6 @@ fun Candidate.resolvePlainArgumentType(
 
     // If the argument is of functional type and the expected type is a suspend function type, we need to do "suspend conversion."
     // TODO: should refer to LanguageVersionSettings.SuspendConversion
-    // TODO: should prefer another candidate without suspend conversion when ambiguous
     if (expectedType?.isSuspendFunctionType(session) == true &&
         argumentTypeForApplicabilityCheck.isBuiltinFunctionalType(session) &&
         !argumentTypeForApplicabilityCheck.isSuspendFunctionType(session)
@@ -253,6 +252,7 @@ fun Candidate.resolvePlainArgumentType(
                 isKFunctionType = argumentTypeForApplicabilityCheck.isKFunctionType(session)
             )
         substitutor.substituteOrSelf(argumentTypeForApplicabilityCheck)
+        usesSuspendConversion = true
     }
 
     checkApplicabilityForArgumentType(
