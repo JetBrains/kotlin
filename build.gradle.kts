@@ -465,16 +465,6 @@ allprojects {
         outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KT-37089") { true }
     }
 
-    tasks.withType<SourceTask>().configureEach {
-        doFirst {
-            source.visit {
-                if (file.isDirectory && file.listFiles()?.isEmpty() == true) {
-                    logger.warn("Empty source directories may cause build cache misses: " + file.absolutePath)
-                }
-            }
-        }
-    }
-
     normalization {
         runtimeClasspath {
             ignore("META-INF/MANIFEST.MF")
@@ -531,6 +521,22 @@ allprojects {
 
         apply(from = "$rootDir/gradle/cacheRedirector.gradle.kts")
         apply(from = "$rootDir/gradle/testRetry.gradle.kts")
+    }
+}
+
+gradle.buildFinished {
+    val taskGraph = gradle?.taskGraph
+    if (taskGraph != null) {
+        taskGraph.allTasks
+                .filterIsInstance<SourceTask>()
+                .filter { it.didWork }
+                .forEach {
+                    it.source.visit {
+                        if (file.isDirectory && file.listFiles()?.isEmpty() == true) {
+                            logger.warn("Empty source directories may cause build cache misses: " + file.absolutePath)
+                        }
+                    }
+                }
     }
 }
 
