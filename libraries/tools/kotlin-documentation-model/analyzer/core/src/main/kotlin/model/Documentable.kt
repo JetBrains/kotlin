@@ -399,6 +399,8 @@ data class Invariance<out T : Bound>(override val inner: T) : Variance<T>() {
     override fun toString() = ""
 }
 
+data class TypeAliased(val typeAlias: Bound, val inner: Bound) : Bound()
+
 data class PrimitiveJavaType(val name: String) : Bound()
 object Void : Bound()
 object JavaObject : Bound()

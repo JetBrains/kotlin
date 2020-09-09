@@ -35,14 +35,15 @@ object KotlinSignatureUtils : JvmSignatureUtils {
     val Bound.driOrNull: DRI?
         get() {
             return when (this) {
-                is TypeParameter -> this.dri
-                is TypeConstructor -> this.dri
-                is Nullable -> this.inner.driOrNull
-                is PrimitiveJavaType -> this.dri
+                is TypeParameter -> dri
+                is TypeConstructor -> dri
+                is Nullable -> inner.driOrNull
+                is PrimitiveJavaType -> dri
                 is Void -> DriOfUnit
                 is JavaObject -> DriOfAny
                 is Dynamic -> null
                 is UnresolvedBound -> null
+                is TypeAliased -> typeAlias.driOrNull
             }
         }
 
@@ -57,6 +58,7 @@ object KotlinSignatureUtils : JvmSignatureUtils {
         is UnresolvedBound -> emptyList()
         is Variance<*> -> inner.drisOfAllNestedBounds
         is Star -> emptyList()
+        is TypeAliased -> listOfNotNull(typeAlias.driOrNull, inner.driOrNull)
     }
 
 }
