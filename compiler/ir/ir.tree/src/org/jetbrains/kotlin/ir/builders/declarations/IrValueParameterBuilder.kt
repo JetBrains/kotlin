@@ -17,6 +17,7 @@ class IrValueParameterBuilder : IrDeclarationBuilder() {
     var varargElementType: IrType? = null
     var isCrossInline = false
     var isNoinline = false
+    var isHidden = false
 
     fun updateFrom(from: IrValueParameter) {
         super.updateFrom(from)
@@ -26,5 +27,6 @@ class IrValueParameterBuilder : IrDeclarationBuilder() {
         varargElementType = from.varargElementType
         isCrossInline = from.isCrossinline
         isNoinline = from.isNoinline
+        isHidden = from.isHidden
     }
 }
