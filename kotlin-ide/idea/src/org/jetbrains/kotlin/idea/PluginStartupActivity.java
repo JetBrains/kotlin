@@ -45,7 +45,8 @@ public class PluginStartupActivity implements StartupActivity {
         }
         catch (Throwable throwable) {
             LOG.debug("Excluding Kotlin plugin updates using old API", throwable);
-            UpdateChecker.getDisabledToUpdate().add(PluginId.getId("org.jetbrains.kotlin"));
+            //UpdateChecker.getDisabledToUpdate().add(PluginId.getId("org.jetbrains.kotlin"));
+            UpdateChecker.getDisabledToUpdatePlugins().add("org.jetbrains.kotlin");
         }
 
         KotlinPluginCompatibilityVerifier.checkCompatibility();
