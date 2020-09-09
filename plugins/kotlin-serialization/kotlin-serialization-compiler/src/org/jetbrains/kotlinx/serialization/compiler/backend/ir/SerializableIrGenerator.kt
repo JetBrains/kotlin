@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
@@ -55,7 +53,8 @@ class SerializableIrGenerator(
 
             // Missing field exception parts
             val exceptionFqn = getSerializationPackageFqn(MISSING_FIELD_EXC)
-            val exceptionCtorRef = compilerContext.referenceConstructors(exceptionFqn).single { it.owner.isPrimary }
+            val exceptionCtorRef = compilerContext.referenceConstructors(exceptionFqn)
+                .single { it.owner.valueParameters.singleOrNull()?.type?.isString() == true }
             val exceptionType = exceptionCtorRef.owner.returnType
 
             val serializableProperties = properties.serializableProperties
