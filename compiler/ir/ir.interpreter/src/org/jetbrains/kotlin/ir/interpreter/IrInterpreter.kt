@@ -750,7 +750,10 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
             it.interpret().check { executionResult -> return executionResult }
             return@flatMap when (val result = stack.popReturnValue()) {
                 is Wrapper -> listOf(result.value)
-                is Primitive<*> -> arrayToList(result.value)
+                is Primitive<*> -> when {
+                    expression.varargElementType.isArray() -> listOf(result.value)
+                    else -> arrayToList(result.value)
+                }
                 is Common -> when {
                     result.irClass.defaultType.isUnsignedArray() -> arrayToList((result.fields.single().state as Primitive<*>).value)
                     else -> listOf(result.asProxy(this, elementIrClass?.owner))
