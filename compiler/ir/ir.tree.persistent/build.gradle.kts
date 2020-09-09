@@ -8,6 +8,9 @@ dependencies {
 }
 
 sourceSets {
-    "main" { projectDefault() }
+    "main" {
+        projectDefault()
+        this.java.srcDir("gen")
+    }
     "test" {}
 }
