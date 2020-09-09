@@ -199,6 +199,7 @@ interface IrFactory {
         varargElementType: IrType?,
         isCrossinline: Boolean,
         isNoinline: Boolean,
+        isHidden: Boolean = false
     ): IrValueParameter
 
     // Bodies
