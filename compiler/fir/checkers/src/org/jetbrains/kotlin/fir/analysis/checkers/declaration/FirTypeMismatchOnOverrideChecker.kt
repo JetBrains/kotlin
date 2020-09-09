@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
+import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -47,28 +47,16 @@ object FirTypeMismatchOnOverrideChecker : FirRegularClassChecker() {
         }
     }
 
-    private fun FirTypeScope.getDirectOverridesOf(function: FirSimpleFunction): List<FirFunctionSymbol<*>> {
-        val overriddenFunctions = mutableSetOf<FirFunctionSymbol<*>>()
-
+    private fun FirTypeScope.retrieveDirectOverriddenOf(function: FirSimpleFunction): List<FirFunctionSymbol<*>> {
         processFunctionsByName(function.name) {}
-        processDirectlyOverriddenFunctions(function.symbol) {
-            overriddenFunctions.add(it)
-            ProcessorAction.NEXT
-        }
 
-        return overriddenFunctions.toList()
+        return getDirectOverriddenFunctions(function.symbol as FirNamedFunctionSymbol)
     }
 
-    private fun FirTypeScope.getDirectOverridesOf(property: FirProperty): List<FirPropertySymbol> {
-        val overriddenProperties = mutableSetOf<FirPropertySymbol>()
-
+    private fun FirTypeScope.retrieveDirectOverriddenOf(property: FirProperty): List<FirPropertySymbol> {
         processPropertiesByName(property.name) {}
-        processDirectlyOverriddenProperties(property.symbol) {
-            overriddenProperties.add(it)
-            ProcessorAction.NEXT
-        }
 
-        return overriddenProperties.toList()
+        return getDirectOverriddenProperties(property.symbol)
     }
 
     private fun ConeKotlinType.substituteAllTypeParameters(
@@ -128,7 +116,7 @@ object FirTypeMismatchOnOverrideChecker : FirRegularClassChecker() {
             return
         }
 
-        val overriddenFunctionSymbols = firTypeScope.getDirectOverridesOf(function)
+        val overriddenFunctionSymbols = firTypeScope.retrieveDirectOverriddenOf(function)
 
         if (overriddenFunctionSymbols.isEmpty()) {
             return
@@ -160,7 +148,7 @@ object FirTypeMismatchOnOverrideChecker : FirRegularClassChecker() {
             return
         }
 
-        val overriddenPropertySymbols = firTypeScope.getDirectOverridesOf(property)
+        val overriddenPropertySymbols = firTypeScope.retrieveDirectOverriddenOf(property)
 
         if (overriddenPropertySymbols.isEmpty()) {
             return

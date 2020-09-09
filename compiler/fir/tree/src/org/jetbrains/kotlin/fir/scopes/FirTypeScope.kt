@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.scopes
 
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.Name
 
@@ -128,4 +129,27 @@ inline fun FirTypeScope.processDirectlyOverriddenProperties(
     crossinline processor: (FirPropertySymbol) -> ProcessorAction
 ): ProcessorAction = processDirectOverriddenPropertiesWithBaseScope(propertySymbol) { overridden, _ ->
     processor(overridden)
+}
+
+fun FirTypeScope.getDirectOverriddenFunctions(function: FirNamedFunctionSymbol): List<FirNamedFunctionSymbol> {
+    val overriddenFunctions = mutableSetOf<FirNamedFunctionSymbol>()
+
+    processDirectlyOverriddenFunctions(function) {
+        if (it !is FirNamedFunctionSymbol) return@processDirectlyOverriddenFunctions ProcessorAction.NEXT
+        overriddenFunctions.add(it)
+        ProcessorAction.NEXT
+    }
+
+    return overriddenFunctions.toList()
+}
+
+fun FirTypeScope.getDirectOverriddenProperties(property: FirPropertySymbol): List<FirPropertySymbol> {
+    val overriddenProperties = mutableSetOf<FirPropertySymbol>()
+
+    processDirectlyOverriddenProperties(property) {
+        overriddenProperties.add(it)
+        ProcessorAction.NEXT
+    }
+
+    return overriddenProperties.toList()
 }
