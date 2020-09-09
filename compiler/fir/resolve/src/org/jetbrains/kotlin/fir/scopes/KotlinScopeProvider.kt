@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.impl.*
@@ -61,7 +60,8 @@ class KotlinScopeProvider(
             FirClassUseSiteMemberScope(
                 useSiteSession,
                 FirTypeIntersectionScope.prepareIntersectionScope(
-                    useSiteSession, FirStandardOverrideChecker(useSiteSession), scopes
+                    useSiteSession, FirStandardOverrideChecker(useSiteSession), scopes,
+                    klass.classId,
                 ),
                 decoratedDeclaredMemberScope
             )

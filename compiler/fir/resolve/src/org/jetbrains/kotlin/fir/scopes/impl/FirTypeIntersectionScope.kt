@@ -16,11 +16,13 @@ import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeCheckerContext
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
@@ -31,6 +33,7 @@ class FirTypeIntersectionScope private constructor(
     session: FirSession,
     overrideChecker: FirOverrideChecker,
     private val scopes: List<FirTypeScope>,
+    private val derivedClassId: ClassId?,
 ) : AbstractFirOverrideScope(session, overrideChecker) {
     private val absentFunctions: MutableSet<Name> = mutableSetOf()
     private val absentProperties: MutableSet<Name> = mutableSetOf()
@@ -136,7 +139,7 @@ class FirTypeIntersectionScope private constructor(
     ): FirNamedFunctionSymbol {
         val newSymbol =
             FirNamedFunctionSymbol(
-                mostSpecific.callableId,
+                CallableId(derivedClassId ?: mostSpecific.callableId.classId!!, mostSpecific.fir.name),
                 mostSpecific.isFakeOverride,
                 mostSpecific,
                 isIntersectionOverride = true
@@ -155,7 +158,7 @@ class FirTypeIntersectionScope private constructor(
                     mostSpecificParameter
                 } else {
                     val overriddenWithDefaultParameter = overriddenWithDefault.valueParameters[index]
-                    createValueParameterCopy(mostSpecificParameter, overriddenWithDefaultParameter.defaultValue).apply {
+                    createValueParameterCopy(mostSpecificParameter, null).apply {
                         annotations += mostSpecificParameter.annotations
                     }.build()
                 }
@@ -366,10 +369,11 @@ class FirTypeIntersectionScope private constructor(
         fun prepareIntersectionScope(
             session: FirSession,
             overrideChecker: FirOverrideChecker,
-            scopes: List<FirTypeScope>
+            scopes: List<FirTypeScope>,
+            derivedClassId: ClassId? = null,
         ): FirTypeScope {
             scopes.singleOrNull()?.let { return it }
-            return FirTypeIntersectionScope(session, overrideChecker, scopes)
+            return FirTypeIntersectionScope(session, overrideChecker, scopes, derivedClassId)
         }
     }
 }
