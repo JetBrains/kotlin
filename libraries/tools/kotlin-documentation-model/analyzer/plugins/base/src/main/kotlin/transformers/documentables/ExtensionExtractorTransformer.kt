@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.toList
+import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.driOrNull
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.DriOfAny
 import org.jetbrains.dokka.model.*
@@ -101,6 +102,7 @@ private fun Callable.findReceiverDRIs(bound: Bound): Sequence<DRI> = when (bound
     is JavaObject -> sequenceOf(DriOfAny)
     is Dynamic -> sequenceOf(DriOfAny)
     is UnresolvedBound -> emptySequence()
+    is TypeAliased -> findReceiverDRIs(bound.typeAlias)
 }
 
 private fun <T, U> Iterable<Pair<T, U>>.toMultiMap(): Map<T, List<U>> =
