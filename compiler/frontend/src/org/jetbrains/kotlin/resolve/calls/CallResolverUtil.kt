@@ -236,9 +236,12 @@ private fun arrayAssignmentToVarargInNamedFormInAnnotation(
 ): Boolean {
     if (!languageVersionSettings.supportsFeature(LanguageFeature.AssigningArraysToVarargsInNamedFormInAnnotations)) return false
 
-    if (!isParameterOfAnnotation(parameterDescriptor)) return false
+    val isAllowedAssigningSingleElementsToVarargsInNamedForm =
+        !languageVersionSettings.supportsFeature(LanguageFeature.ProhibitAssigningSingleElementsToVarargsInNamedForm)
 
-    return argument.isNamed() && parameterDescriptor.isVararg && isArrayOrArrayLiteral(argument, trace)
+    if (isAllowedAssigningSingleElementsToVarargsInNamedForm && !isArrayOrArrayLiteral(argument, trace)) return false
+
+    return isParameterOfAnnotation(parameterDescriptor) && argument.isNamed() && parameterDescriptor.isVararg
 }
 
 private fun arrayAssignmentToVarargInNamedFormInFunction(
@@ -249,7 +252,12 @@ private fun arrayAssignmentToVarargInNamedFormInFunction(
 ): Boolean {
     if (!languageVersionSettings.supportsFeature(LanguageFeature.AllowAssigningArrayElementsToVarargsInNamedFormForFunctions)) return false
 
-    return argument.isNamed() && parameterDescriptor.isVararg && isArrayOrArrayLiteral(argument, trace)
+    val isAllowedAssigningSingleElementsToVarargsInNamedForm =
+        !languageVersionSettings.supportsFeature(LanguageFeature.ProhibitAssigningSingleElementsToVarargsInNamedForm)
+
+    if (isAllowedAssigningSingleElementsToVarargsInNamedForm && !isArrayOrArrayLiteral(argument, trace)) return false
+
+    return argument.isNamed() && parameterDescriptor.isVararg
 }
 
 fun isArrayOrArrayLiteral(argument: ValueArgument, trace: BindingTrace): Boolean {
