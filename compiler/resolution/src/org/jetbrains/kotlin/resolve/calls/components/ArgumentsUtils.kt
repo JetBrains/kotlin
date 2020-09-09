@@ -151,9 +151,12 @@ private fun KotlinCallArgument.isArrayAssignedAsNamedArgumentInAnnotation(
 ): Boolean {
     if (!languageVersionSettings.supportsFeature(LanguageFeature.AssigningArraysToVarargsInNamedFormInAnnotations)) return false
 
-    if (this.argumentName == null || !parameter.isVararg) return false
+    val isAllowedAssigningSingleElementsToVarargsInNamedForm =
+        !languageVersionSettings.supportsFeature(LanguageFeature.ProhibitAssigningSingleElementsToVarargsInNamedForm)
 
-    return isParameterOfAnnotation(parameter) && this.isArrayOrArrayLiteral()
+    if (isAllowedAssigningSingleElementsToVarargsInNamedForm && !isArrayOrArrayLiteral()) return false
+
+    return this.argumentName != null && parameter.isVararg && isParameterOfAnnotation(parameter)
 }
 
 private fun KotlinCallArgument.isArrayAssignedAsNamedArgumentInFunction(
@@ -162,9 +165,12 @@ private fun KotlinCallArgument.isArrayAssignedAsNamedArgumentInFunction(
 ): Boolean {
     if (!languageVersionSettings.supportsFeature(LanguageFeature.AllowAssigningArrayElementsToVarargsInNamedFormForFunctions)) return false
 
-    if (this.argumentName == null || !parameter.isVararg) return false
+    val isAllowedAssigningSingleElementsToVarargsInNamedForm =
+        !languageVersionSettings.supportsFeature(LanguageFeature.ProhibitAssigningSingleElementsToVarargsInNamedForm)
 
-    return this.isArrayOrArrayLiteral()
+    if (isAllowedAssigningSingleElementsToVarargsInNamedForm && !isArrayOrArrayLiteral()) return false
+
+    return this.argumentName != null && parameter.isVararg
 }
 
 fun KotlinCallArgument.isArrayOrArrayLiteral(): Boolean {

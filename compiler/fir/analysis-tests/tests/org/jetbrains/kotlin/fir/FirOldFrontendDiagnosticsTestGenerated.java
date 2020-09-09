@@ -24860,6 +24860,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/varargs/AmbiguousVararg.kt");
         }
 
+        @TestMetadata("assignArrayToVararagInNamedFormWithInference.kt")
+        public void testAssignArrayToVararagInNamedFormWithInference() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/varargs/assignArrayToVararagInNamedFormWithInference.kt");
+        }
+
         @TestMetadata("assignArrayToVararagInNamedForm_1_3.kt")
         public void testAssignArrayToVararagInNamedForm_1_3() throws Exception {
             runTest("compiler/testData/diagnostics/tests/varargs/assignArrayToVararagInNamedForm_1_3.kt");
