@@ -300,7 +300,7 @@ class ChangeMemberFunctionSignatureFix private constructor(
                 ) {
                     override fun isAutoSelectionEnabled() = false
 
-                    override fun onChosen(selectedValue: Signature, finalChoice: Boolean): PopupStep<Any>? {
+                    override fun onChosen(selectedValue: Signature, finalChoice: Boolean): PopupStep<*>? {
                         if (finalChoice) {
                             changeSignature(selectedValue)
                         }

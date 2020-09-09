@@ -282,7 +282,7 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
             return AllIcons.FileTypes.Archive
         }
 
-        override fun onChosen(selectedValue: BinaryVersionedFile<BinaryVersion>, finalChoice: Boolean): PopupStep<Any>? {
+        override fun onChosen(selectedValue: BinaryVersionedFile<BinaryVersion>, finalChoice: Boolean): PopupStep<*>? {
             navigateToLibraryRoot(project, selectedValue.file)
             return PopupStep.FINAL_CHOICE
         }
