@@ -249,6 +249,11 @@ public class ParcelIrBoxTestGenerated extends AbstractParcelIrBoxTest {
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/primitiveTypes.kt");
     }
 
+    @TestMetadata("sealedClass.kt")
+    public void testSealedClass() throws Exception {
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/sealedClass.kt");
+    }
+
     @TestMetadata("simple.kt")
     public void testSimple() throws Exception {
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/simple.kt");
