@@ -378,10 +378,14 @@ open class WrappedSimpleFunctionDescriptor : SimpleFunctionDescriptor, WrappedCa
         (containingDeclaration as ClassDescriptor).thisAsReceiverParameter
     }
 
-    override fun getExtensionReceiverParameter() = owner.extensionReceiverParameter?.descriptor as? ReceiverParameterDescriptor
+    override fun getExtensionReceiverParameter() = owner.extensionReceiverParameter?.let {
+        if (it.isHidden) null else
+        it.descriptor as? ReceiverParameterDescriptor
+    }
     override fun getTypeParameters() = owner.typeParameters.map { it.descriptor }
     override fun getValueParameters() = owner.valueParameters
         .asSequence()
+        .filter { !it.isHidden }
         .mapNotNull { it.descriptor as? ValueParameterDescriptor }
         .toMutableList()
 
