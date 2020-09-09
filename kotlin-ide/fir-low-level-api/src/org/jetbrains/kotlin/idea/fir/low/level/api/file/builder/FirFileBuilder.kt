@@ -45,7 +45,7 @@ internal class FirFileBuilder(
         val firFile = buildRawFirFileWithCaching(ktFile, cache)
         if (toPhase > FirResolvePhase.RAW_FIR) {
             cache.firFileLockProvider.withLock(firFile) {
-                //add lock for implit type resolve phase & super type
+                if (firFile.resolvePhase >= toPhase) return@withLock
                 runResolveWithoutLock(firFile, fromPhase = firFile.resolvePhase, toPhase = toPhase, checkPCE = checkPCE)
             }
         }
