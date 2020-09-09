@@ -76,4 +76,5 @@ val Bound.name: String?
         is Void -> "void"
         is Dynamic -> "dynamic"
         is UnresolvedBound -> "<ERROR CLASS>"
+        is TypeAliased -> typeAlias.name
     }
