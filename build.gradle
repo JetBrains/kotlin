@@ -312,8 +312,9 @@ task detectJarCollision(type: CollisionDetector) {
         resolvingRules["META-INF/extensions/compiler.xml"] = "kotlin-compiler"
         resolvingRules["META-INF/compiler.version"] = "kotlin-compiler"
         resolvingRules["kotlinManifest.properties"] = "kotlin-compiler"
-        librariesWithIgnoredClassCollisions.addAll(["util", "container", "resolution", "serialization", "psi", "frontend",
-                                                    "config", "config.jvm", "js.config", "javac-wrapper",
+        librariesWithIgnoredClassCollisions.addAll(["util", "container", "resolution.common", "resolution", "serialization", "psi",
+                                                    "deserialization.common", "deserialization.common.jvm",
+        											"frontend", "config", "config.jvm", "js.config", "javac-wrapper",
                                                     "frontend.common", "frontend.java", "cli-common", "ir.tree",
                                                     "ir.tree.impl", "ir.tree.persisting",
                                                     "ir.psi2ir", "ir.backend.common", "backend.jvm", "backend.js",
