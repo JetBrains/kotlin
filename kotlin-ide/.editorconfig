@@ -6,6 +6,10 @@ tab_width = 4
 ij_continuation_indent_size = 8
 ij_formatter_tags_enabled = false
 
+[*.xml]
+indent_size = 2
+tab_width = 2
+
 [*.java]
 ij_java_align_multiline_parameters = false
 ij_java_field_name_prefix = ""
