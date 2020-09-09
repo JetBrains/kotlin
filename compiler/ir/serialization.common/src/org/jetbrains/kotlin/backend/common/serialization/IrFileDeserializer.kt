@@ -1008,7 +1008,8 @@ abstract class IrFileDeserializer(
                 deserializeIrType(nameAndType.typeIndex),
                 if (proto.hasVarargElementType()) deserializeIrType(proto.varargElementType) else null,
                 flags.isCrossInline,
-                flags.isNoInline
+                flags.isNoInline,
+                flags.isHidden
             ).apply {
                 if (proto.hasDefaultValue())
                     defaultValue = irFactory.createExpressionBody(deserializeExpressionBody(proto.defaultValue))
