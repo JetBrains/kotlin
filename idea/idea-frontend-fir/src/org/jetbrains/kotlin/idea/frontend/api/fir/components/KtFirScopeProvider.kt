@@ -137,7 +137,10 @@ internal class KtFirScopeProvider(
             firLocalScopes.mapTo(this, ::convertToKtScope)
         }
 
-        KtScopeContext(getCompositeScope(allKtScopes), implicitReceiversTypes)
+        KtScopeContext(
+            getCompositeScope(allKtScopes.asReversed()),
+            implicitReceiversTypes.asReversed()
+        )
     }
 
     private fun KtFile.findFunctionDeclarationAt(offset: Int): KtNamedFunction? =
