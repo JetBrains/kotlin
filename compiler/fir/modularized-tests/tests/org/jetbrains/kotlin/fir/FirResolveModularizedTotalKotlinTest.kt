@@ -9,6 +9,8 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
+import com.sun.jna.Library
+import com.sun.jna.Native
 import com.sun.management.HotSpotDiagnosticMXBean
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.common.profiling.AsyncProfilerHelper
@@ -26,10 +28,12 @@ import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.createAllCompilerResolveProcessors
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import sun.management.ManagementFactoryHelper
 import java.io.File
 import java.io.FileOutputStream
 import java.io.PrintStream
 import java.lang.management.ManagementFactory
+import java.text.DecimalFormat
 
 
 private const val FAIL_FAST = true
@@ -52,12 +56,69 @@ private val ASYNC_PROFILER_START_CMD = System.getProperty("fir.bench.use.async.p
 private val ASYNC_PROFILER_STOP_CMD = System.getProperty("fir.bench.use.async.profiler.cmd.stop")
 private val PROFILER_SNAPSHOT_DIR = System.getProperty("fir.bench.snapshot.dir") ?: "tmp/snapshots"
 
+private val REPORT_PASS_EVENTS = System.getProperty("fir.bench.report.pass.events", "false").toBooleanLenient()!!
+
+private interface CLibrary : Library {
+    fun getpid(): Int
+    fun gettid(): Int
+
+    companion object {
+        val INSTANCE = Native.load("c", CLibrary::class.java) as CLibrary
+    }
+}
+
+internal fun isolate() {
+    val isolatedList = System.getenv("DOCKER_ISOLATED_CPUSET")
+    val othersList = System.getenv("DOCKER_CPUSET")
+    println("Trying to set affinity, other: '$othersList', isolated: '$isolatedList'")
+    if (othersList != null) {
+        println("Will move others affinity to '$othersList'")
+        ProcessBuilder().command("bash", "-c", "ps -ae -o pid= | xargs -n 1 taskset -cap $othersList ").inheritIO().start().waitFor()
+    }
+    if (isolatedList != null) {
+        val selfPid = CLibrary.INSTANCE.getpid()
+        val selfTid = CLibrary.INSTANCE.gettid()
+        println("Will pin self affinity, my pid: $selfPid, my tid: $selfTid")
+        ProcessBuilder().command("taskset", "-cp", isolatedList, "$selfTid").inheritIO().start().waitFor()
+    }
+    if (othersList == null && isolatedList == null) {
+        println("No affinity specified")
+    }
+}
+
+class PassEventReporter(private val stream: PrintStream) : AutoCloseable {
+
+    private val decimalFormat = DecimalFormat().apply {
+        this.maximumFractionDigits = 3
+    }
+
+    private fun formatStamp(): String {
+        val uptime = ManagementFactoryHelper.getRuntimeMXBean().uptime
+        return decimalFormat.format(uptime.toDouble() / 1000)
+    }
+
+    fun reportPassStart(num: Int) {
+        stream.println("<pass_start num='$num' stamp='${formatStamp()}'/>")
+    }
+
+    fun reportPassEnd(num: Int) {
+        stream.println("<pass_end num='$num' stamp='${formatStamp()}'/>")
+        stream.flush()
+    }
+
+    override fun close() {
+        stream.close()
+    }
+}
+
 class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
     private lateinit var dump: MultiModuleHtmlFirDump
     private lateinit var bench: FirResolveBench
     private var bestStatistics: FirResolveBench.TotalStatistics? = null
     private var bestPass: Int = 0
+
+    private var passEventReporter: PassEventReporter? = null
 
     private val asyncProfiler = if (ASYNC_PROFILER_LIB != null) {
         try {
@@ -92,7 +153,6 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         val project = environment.project
         val ktFiles = environment.getSourceFiles()
 
-
         val scope = GlobalSearchScope.filesScope(project, ktFiles.map { it.virtualFile })
             .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
         val librariesScope = ProjectScope.getLibrariesScope(project)
@@ -107,6 +167,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         }
 
         val firProvider = session.firProvider as FirProviderImpl
+
         val firFiles = if (USE_LIGHT_TREE) {
             val lightTree2Fir = LightTree2Fir(session, firProvider.kotlinScopeProvider, stubMode = false)
 
@@ -125,9 +186,9 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
             bench.buildFiles(builder, ktFiles)
         }
 
-        //println("Raw FIR up, files: ${firFiles.size}")
 
         bench.processFiles(firFiles, processors)
+
         createMemoryDump(moduleData)
 
         val disambiguatedName = moduleData.disambiguatedName()
@@ -182,6 +243,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     override fun beforePass(pass: Int) {
         if (DUMP_FIR) dump = MultiModuleHtmlFirDump(File(FIR_HTML_DUMP_PATH))
         System.gc()
+        passEventReporter?.reportPassStart(pass)
         executeAsyncProfilerCommand(ASYNC_PROFILER_START_CMD, pass)
     }
 
@@ -202,6 +264,8 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         }
 
         executeAsyncProfilerCommand(ASYNC_PROFILER_STOP_CMD, pass)
+
+        passEventReporter?.reportPassEnd(pass)
     }
 
     override fun afterAllPasses() {
@@ -237,10 +301,21 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         }
     }
 
+    private fun beforeAllPasses() {
+        isolate()
+
+        if (REPORT_PASS_EVENTS) {
+            passEventReporter =
+                PassEventReporter(PrintStream(FileOutputStream(reportDir().resolve("pass-events-$reportDateStr.log"), true)))
+        }
+    }
+
     fun testTotalKotlin() {
+
+        beforeAllPasses()
+
         for (i in 0 until PASSES) {
             println("Pass $i")
-
             bench = FirResolveBench(withProgress = false)
             runTestOnce(i)
         }
