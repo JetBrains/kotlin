@@ -1,19 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="libraryTable">
   <library name="TestNG" type="repository">
-    <properties maven-id="org.testng:testng:6.8.21">
-      <exclude>
-        <dependency maven-id="org.beanshell:bsh" />
-      </exclude>
-    </properties>
+    <properties include-transitive-deps="false" maven-id="org.testng:testng:7.1.0" />
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/testng/testng/6.8.21/testng-6.8.21.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/com/beust/jcommander/1.27/jcommander-1.27.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/testng/testng/7.1.0/testng-7.1.0.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/testng/testng/6.8.21/testng-6.8.21-sources.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/com/beust/jcommander/1.27/jcommander-1.27-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/testng/testng/7.1.0/testng-7.1.0-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
