@@ -32,6 +32,11 @@ abstract class IrValueParameter : IrValueDeclaration(), IrSymbolDeclaration<IrVa
     abstract val varargElementType: IrType?
     abstract val isCrossinline: Boolean
     abstract val isNoinline: Boolean
+    // if true parameter is not included into IdSignature.
+    // Skipping hidden params makes IrFunction be look similar to FE.
+    // NOTE: it is introduced to fix KT-40980 because more clear solution was not possible to implement.
+    // Once we are able to load any top-level declaration from klib this hack should be deprecated and removed.
+    abstract val isHidden: Boolean
 
     abstract var defaultValue: IrExpressionBody?
 
