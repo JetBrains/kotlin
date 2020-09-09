@@ -7,11 +7,9 @@ jvmTarget = "1.6"
 javaHome = rootProject.extra["JDK_16"] as String
 
 dependencies {
-    compile(project(":core:metadata"))
+    api(project(":core:metadata.jvm"))
     api(project(":core:deserialization.common"))
-    compile(project(":core:util.runtime"))
-    compile(project(":core:descriptors"))
-    compile(commonDep("javax.inject"))
+    implementation(project(":core:compiler.common.jvm"))
 }
 
 sourceSets {

@@ -11,7 +11,7 @@ dependencies {
     compile(project(":core:descriptors"))
     compile(project(":core:deserialization"))
     api(project(":core:compiler.common.jvm"))
-    compile(project(":core:metadata.jvm"))
+    api(project(":core:deserialization.common.jvm"))
     compile(project(":core:util.runtime"))
     compile(commonDep("javax.inject"))
 }

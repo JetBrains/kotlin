@@ -28,6 +28,7 @@ dependencies {
     shadows(project(":core:compiler.common"))
     shadows(project(":core:metadata"))
     shadows(project(":core:deserialization"))
+    shadows(project(":core:deserialization.common"))
     shadows(project(":compiler:serialization"))
     shadows(project(":kotlin-util-klib-metadata"))
     shadows(project(":kotlin-util-klib"))

@@ -14,6 +14,8 @@ dependencies {
     api(project(":compiler:fir:jvm"))
     api(project(":compiler:fir:fir-deserialization"))
 
+    implementation(project(":core:deserialization.common.jvm"))
+
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }
 
