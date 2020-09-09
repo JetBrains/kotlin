@@ -42,7 +42,7 @@ class ConeOverloadConflictResolver(
                 candidates
 
         return chooseMaximallySpecificCandidates(
-            fixedCandidates, discriminateGenerics, discriminateAbstracts, discriminateSAMs = true
+            fixedCandidates, discriminateGenerics, discriminateAbstracts, discriminateSAMs = true, discriminateSuspendConversions = true
         )
     }
 
@@ -63,7 +63,8 @@ class ConeOverloadConflictResolver(
         candidates: Set<Candidate>,
         discriminateGenerics: Boolean,
         discriminateAbstracts: Boolean,
-        discriminateSAMs: Boolean
+        discriminateSAMs: Boolean,
+        discriminateSuspendConversions: Boolean,
     ): Set<Candidate> {
         findMaximallySpecificCall(candidates, false)?.let { return setOf(it) }
 
@@ -78,7 +79,23 @@ class ConeOverloadConflictResolver(
                 0, candidates.size -> {
                 }
                 else -> return chooseMaximallySpecificCandidates(
-                    filtered, discriminateGenerics, discriminateAbstracts, discriminateSAMs = false
+                    filtered, discriminateGenerics, discriminateAbstracts, discriminateSAMs = false, discriminateSuspendConversions
+                )
+            }
+        }
+
+        if (discriminateSuspendConversions) {
+            val filtered = candidates.filterTo(mutableSetOf()) { !it.usesSuspendConversion }
+            when (filtered.size) {
+                1 -> return filtered
+                0, candidates.size -> {
+                }
+                else -> return chooseMaximallySpecificCandidates(
+                    filtered,
+                    discriminateGenerics,
+                    discriminateAbstracts,
+                    discriminateSAMs = false,
+                    discriminateSuspendConversions = false
                 )
             }
         }
@@ -90,7 +107,11 @@ class ConeOverloadConflictResolver(
                 0, candidates.size -> {
                 }
                 else -> return chooseMaximallySpecificCandidates(
-                    filtered, discriminateGenerics, discriminateAbstracts = false, discriminateSAMs = false
+                    filtered,
+                    discriminateGenerics,
+                    discriminateAbstracts = false,
+                    discriminateSAMs = false,
+                    discriminateSuspendConversions = false
                 )
             }
         }

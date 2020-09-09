@@ -226,7 +226,7 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
             is FirVariable<*> -> createKPropertyType(fir, resultingReceiverType, returnTypeRef)
             else -> ConeKotlinErrorType(ConeSimpleDiagnostic("Unknown callable kind: ${fir::class}", DiagnosticKind.UnknownCallableKind))
         }.let(candidate.substitutor::substituteOrSelf)
-
+        candidate.usesSuspendConversion = requireSuspendConversion
         candidate.resultingTypeForCallableReference = resultingType
         candidate.outerConstraintBuilderEffect = fun ConstraintSystemOperation.() {
             addOtherSystem(candidate.system.asReadOnlyStorage())
