@@ -41,6 +41,7 @@ class MoveVariableDeclarationIntoWhenInspection : AbstractKotlinInspection(), Cl
 
             val action = property.action(expression)
             if (action == Action.NOTHING) return
+            if (action == Action.MOVE && !property.isOneLiner()) return
 
             holder.registerProblem(
                 property,
