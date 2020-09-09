@@ -31,6 +31,7 @@ private class RemapTypesHelper(private val typeRemapper: TypeRemapper) : IrEleme
 
     override fun visitValueParameter(declaration: IrValueParameter) {
         declaration.type = typeRemapper.remapType(declaration.type)
+        declaration.varargElementType = declaration.varargElementType?.let { typeRemapper.remapType(it) }
         super.visitValueParameter(declaration)
     }
 

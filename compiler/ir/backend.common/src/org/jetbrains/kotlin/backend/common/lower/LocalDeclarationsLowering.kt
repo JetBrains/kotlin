@@ -190,7 +190,15 @@ class LocalDeclarationsLowering(
 
     }
 
-    private fun LocalContext.remapType(type: IrType): IrType = typeRemapper.remapType(type)
+    private fun LocalContext.remapType(type: IrType): IrType {
+        if (capturedTypeParameterToTypeParameter.isEmpty()) return type
+        return typeRemapper.remapType(type)
+    }
+
+    private fun LocalContext.remapTypes(body: IrBody) {
+        if (capturedTypeParameterToTypeParameter.isEmpty()) return
+        body.remapTypes(typeRemapper)
+    }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     private inner class LocalDeclarationsTransformer(
@@ -223,21 +231,21 @@ class LocalDeclarationsLowering(
         }
 
         private fun insertLoweredDeclarationForLocalFunctions() {
-            localFunctions.values.forEach {
-                it.transformedDeclaration.apply {
-                    val original = it.declaration
+            localFunctions.values.forEach { localContext ->
+                localContext.transformedDeclaration.apply {
+                    val original = localContext.declaration
 
                     this.body = original.body
-                    this.body?.remapTypes(it.typeRemapper)
+                    this.body?.let { localContext.remapTypes(it) }
 
                     original.valueParameters.filter { v -> v.defaultValue != null }.forEach { argument ->
                         val body = argument.defaultValue!!
-                        body.remapTypes(it.typeRemapper)
+                        localContext.remapTypes(body)
                         oldParameterToNew[argument]!!.defaultValue = body
                     }
                     acceptChildren(SetDeclarationsParentVisitor, this)
                 }
-                it.ownerForLoweredDeclaration.addChild(it.transformedDeclaration)
+                localContext.ownerForLoweredDeclaration.addChild(localContext.transformedDeclaration)
             }
         }
 
@@ -642,7 +650,8 @@ class LocalDeclarationsLowering(
                 v.copyTo(
                     newDeclaration,
                     index = v.index + capturedValues.size,
-                    type = localFunctionContext.remapType(v.type)
+                    type = localFunctionContext.remapType(v.type),
+                    varargElementType = v.varargElementType?.let { localFunctionContext.remapType(it) }
                 ).also {
                     newParameterToOld.putAbsentOrSame(it, v)
                 }
