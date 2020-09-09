@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 class C {
     val prop: List<F<caret>>
 }
