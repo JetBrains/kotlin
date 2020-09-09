@@ -1836,6 +1836,11 @@ task coroutines_functionReference_lambdaAsSuspendLambda(type: KonanLocalTest) {
     source = "codegen/coroutines/functionReference_lambdaAsSuspendLambda.kt"
 }
 
+task coroutines_kt41394(type: KonanLocalTest) {
+    goldValue = ""
+    source = "codegen/coroutines/kt41394.kt"
+}
+
 standaloneTest('coroutines_suspendConversion') {
     goldValue = ""
     source = "codegen/coroutines/suspendConversion.kt"

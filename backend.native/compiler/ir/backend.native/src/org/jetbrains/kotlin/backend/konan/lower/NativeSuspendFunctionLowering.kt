@@ -48,12 +48,8 @@ internal class NativeSuspendFunctionsLowering(ctx: Context): AbstractSuspendFunc
             "${function.name}COROUTINE\$${context.coroutineCount++}".synthesizedName
 
     override fun initializeStateMachine(coroutineConstructors: List<IrConstructor>, coroutineClassThis: IrValueDeclaration) {
-        for (constructor in coroutineConstructors) {
-            val labelField = constructor.parentAsClass.declarations.single { it is IrField && it.name.asString() == "label" } as IrField
-            (constructor.body as IrBlockBody).statements += with(context.createIrBuilder(constructor.symbol, constructor.startOffset, constructor.endOffset)) {
-                irSetField(irGet(coroutineClassThis), labelField, irCall(symbols.getNativeNullPtr.owner))
-            }
-        }
+        // Nothing to do: it's redundant to initialize the "label" field with null
+        // since all freshly allocated objects are zeroed out.
     }
 
     override fun IrBlockBodyBuilder.generateCoroutineStart(invokeSuspendFunction: IrFunction, receiver: IrExpression) {
