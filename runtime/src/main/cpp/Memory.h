@@ -541,6 +541,7 @@ OBJ_GETTER(DerefStablePointer, void*) RUNTIME_NOTHROW;
 OBJ_GETTER(AdoptStablePointer, void*) RUNTIME_NOTHROW;
 // Check mutability state.
 void MutationCheck(ObjHeader* obj);
+void CheckLifetimesConstraint(ObjHeader* obj, ObjHeader* pointee) RUNTIME_NOTHROW;
 // Freeze object subgraph.
 void FreezeSubgraph(ObjHeader* obj);
 // Ensure this object shall block freezing.

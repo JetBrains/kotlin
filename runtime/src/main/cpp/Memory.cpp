@@ -3439,6 +3439,14 @@ void MutationCheck(ObjHeader* obj) {
     ThrowInvalidMutabilityException(obj);
 }
 
+void CheckLifetimesConstraint(ObjHeader* obj, ObjHeader* pointee) {
+  if (!obj->local() && pointee != nullptr && pointee->local()) {
+    konan::consolePrintf("Attempt to store a stack object %p into a heap object %p\n", pointee, obj);
+    konan::consolePrintf("This is a compiler bug, please report it to https://kotl.in/issue\n");
+    konan::abort();
+  }
+}
+
 void EnsureNeverFrozen(ObjHeader* object) {
   ensureNeverFrozen(object);
 }
