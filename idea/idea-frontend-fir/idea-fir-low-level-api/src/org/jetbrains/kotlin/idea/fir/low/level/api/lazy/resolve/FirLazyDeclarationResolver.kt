@@ -75,6 +75,7 @@ internal class FirLazyDeclarationResolver(
         towerDataContextCollector: FirTowerDataContextCollector? = null,
         checkPCE: Boolean
     ) {
+        if (firDeclarationToResolve.resolvePhase >= toPhase) return
         val nonLazyPhase = minOf(toPhase, FirResolvePhase.DECLARATIONS)
         if (firDeclarationToResolve.resolvePhase < nonLazyPhase) {
             firFileBuilder.runResolveWithoutLock(
