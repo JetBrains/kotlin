@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.isOperator
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLambdaArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildNamedArgumentExpression
 import org.jetbrains.kotlin.name.Name
 import java.util.*
 import kotlin.collections.ArrayList
@@ -50,10 +53,28 @@ fun mapArguments(
         return EmptyArgumentMapping
     }
     val externalArgument: FirExpression? = arguments.lastOrNull { it is FirLambdaArgumentExpression }
-    val argumentsInParenthesis: List<FirExpression> = if (externalArgument == null) {
+    var argumentsInParenthesis: List<FirExpression> = if (externalArgument == null) {
         arguments
     } else {
         arguments.subList(0, arguments.size - 1)
+    }
+
+    // If this is an overloading indexed access operator, it could have default values in the middle.
+    // For proper argument mapping, wrap the last one, which is supposed to be the updated value, as a named argument.
+    if ((function as? FirSimpleFunction)?.isOperator == true &&
+        function.name == Name.identifier("set") &&
+        function.valueParameters.any { it.defaultValue != null }
+    ) {
+        val v = argumentsInParenthesis.last()
+        if (v !is FirNamedArgumentExpression) {
+            val namedV = buildNamedArgumentExpression {
+                source = v.source
+                expression = v
+                isSpread = false
+                name = function.valueParameters.last().name
+            }
+            argumentsInParenthesis = argumentsInParenthesis.dropLast(1) + listOf(namedV)
+        }
     }
 
     val processor = FirCallArgumentsProcessor(function)
