@@ -288,15 +288,17 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     }
 
     @get:Internal // takes part in the compiler arguments
-    val friendPaths: Array<String> by project.provider {
-        taskData.compilation.run {
-            if (this !is AbstractKotlinCompilation<*>) return@run emptyArray<String>()
-            associateWithTransitiveClosure
-                .flatMap { it.output.classesDirs }
-                .plus(friendArtifacts)
-                .map { it.absolutePath }.toTypedArray()
+    val friendPaths: FileCollection = project.files(
+        project.provider {
+            taskData.compilation.run {
+                if (this !is AbstractKotlinCompilation<*>) return@run project.files()
+                mutableListOf<FileCollection>().also { allCollections ->
+                    associateWithTransitiveClosure.forEach { allCollections.add(it.output.classesDirs) }
+                    allCollections.add(friendArtifacts)
+                }
+            }
         }
-    }
+    )
 
     private val kotlinLogger by lazy { GradleKotlinLogger(logger) }
 
@@ -415,7 +417,7 @@ class KotlinJvmCompilerArgumentsProvider
     (taskProvider: KotlinCompile) : KotlinCompileArgumentsProvider<KotlinCompile>(taskProvider) {
 
     val moduleName: String
-    val friendPaths: Array<String>
+    val friendPaths: FileCollection
     val compileClasspath: Iterable<File>
     val destinationDir: File
     internal val kotlinOptions: List<KotlinJvmOptionsImpl?>
@@ -643,10 +645,9 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
     internal val friendDependencies: List<String>
         get() {
             val filter = libraryFilter
-            return friendPaths.filter {
-                val file = File(it)
-                file.exists() && filter(file)
-            }
+            return friendPaths.files.filter {
+                it.exists() && filter(it)
+            }.map { it.absolutePath }
         }
 
     @Suppress("unused")

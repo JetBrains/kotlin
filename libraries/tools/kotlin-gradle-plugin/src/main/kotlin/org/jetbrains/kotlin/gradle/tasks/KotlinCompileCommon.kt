@@ -70,7 +70,7 @@ open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArgumen
             classpath = classpathList.joinToString(File.pathSeparator)
             destination = destinationDir.canonicalPath
 
-            friendPaths = this@KotlinCompileCommon.friendPaths
+            friendPaths = this@KotlinCompileCommon.friendPaths.files.map { it.absolutePath }.toTypedArray()
             refinesPaths = refinesMetadataPaths.map { it.absolutePath }.toTypedArray()
         }
 
