@@ -109,7 +109,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
         private fun replaceExpression(expressionToReplace: KtExpression, addToReferences: Boolean): KtExpression {
             val isActualExpression = expression == expressionToReplace
 
-            val replacement = psiFactory.createExpression(nameSuggestions.asSequence().single().first())
+            val replacement = psiFactory.createExpression(nameSuggestions.single().first())
             val substringInfo = expressionToReplace.extractableSubstringInfo
             var result = when {
                 expressionToReplace.isLambdaOutsideParentheses() -> {
@@ -155,7 +155,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
             } else {
                 buildString {
                     append("$varOvVal ")
-                    append(nameSuggestions.asSequence().single().first())
+                    append(nameSuggestions.single().first())
                     if (noTypeInference) {
                         val typeToRender = expressionType ?: resolutionFacade.moduleDescriptor.builtIns.anyType
                         append(": ").append(IdeDescriptorRenderers.SOURCE_CODE.renderType(typeToRender))
@@ -716,7 +716,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
         }
 
         if (!CommonRefactoringUtil.checkReadOnlyStatus(project, expression)) return
-        
+
         val physicalExpression = expression.substringContextOrThis
 
         val resolutionFacade = physicalExpression.getResolutionFacade()
