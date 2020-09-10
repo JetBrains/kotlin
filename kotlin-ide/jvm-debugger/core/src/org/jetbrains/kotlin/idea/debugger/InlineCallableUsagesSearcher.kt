@@ -46,6 +46,7 @@ class InlineCallableUsagesSearcher(val project: Project, val searchScope: Global
 
             val task = Runnable {
                 for (reference in ReferencesSearch.search(declaration, getScopeForInlineDeclarationUsages(declaration))) {
+                    ProgressManager.checkCanceled()
                     processReference(declaration, reference, alreadyVisited)?.let { searchResult += it }
                 }
             }
