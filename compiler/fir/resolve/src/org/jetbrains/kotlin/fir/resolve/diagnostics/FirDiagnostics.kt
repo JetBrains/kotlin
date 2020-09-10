@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.fir.resolve.diagnostics
 
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -78,6 +80,10 @@ class ConeWrongNumberOfTypeArgumentsError(val desiredCount: Int, val type: FirRe
 
 class ConeInstanceAccessBeforeSuperCall(val target: String) : ConeDiagnostic() {
     override val reason: String get() = "Cannot access ''${target}'' before superclass constructor has been called"
+}
+
+class ConeUnsupportedCallableReferenceTarget(val fir: FirCallableDeclaration<*>) : ConeDiagnostic() {
+    override val reason: String get() = "Unsupported declaration for callable reference: ${fir.render()}"
 }
 
 private fun describeSymbol(symbol: AbstractFirBasedSymbol<*>): String {

@@ -88,10 +88,6 @@ class CallableReferenceAdaptation(
     val suspendConversionStrategy: SuspendConversionStrategy
 )
 
-enum class SuspendConversionStrategy {
-    SUSPEND_CONVERSION, NO_CONVERSION
-}
-
 /**
  * cases: class A {}, class B { companion object }, object C, enum class D { E }
  * A::foo <-> Type

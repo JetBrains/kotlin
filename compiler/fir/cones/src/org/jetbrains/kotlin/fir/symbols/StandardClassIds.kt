@@ -42,6 +42,7 @@ object StandardClassIds {
     val String = "String".baseId()
 
     val KProperty = "KProperty".reflectId()
+    val KMutableProperty = "KMutableProperty".reflectId()
     val KProperty0 = "KProperty0".reflectId()
     val KMutableProperty0 = "KMutableProperty0".reflectId()
     val KProperty1 = "KProperty1".reflectId()
@@ -50,6 +51,7 @@ object StandardClassIds {
     val KMutableProperty2 = "KMutableProperty2".reflectId()
     val KFunction = "KFunction".reflectId()
     val KClass = "KClass".reflectId()
+    val KCallable = "KCallable".reflectId()
 
     val Comparable = "Comparable".baseId()
     val Number = "Number".baseId()

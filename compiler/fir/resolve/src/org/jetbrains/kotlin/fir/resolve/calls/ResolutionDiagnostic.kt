@@ -58,3 +58,5 @@ object HiddenCandidate : ResolutionDiagnostic(CandidateApplicability.HIDDEN)
 object ResolvedWithLowPriority : ResolutionDiagnostic(CandidateApplicability.RESOLVED_LOW_PRIORITY)
 
 object InapplicableWrongReceiver : ResolutionDiagnostic(CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER)
+
+object LowerPriorityToPreserveCompatibilityDiagnostic : ResolutionDiagnostic(CandidateApplicability.RESOLVED_NEED_PRESERVE_COMPATIBILITY)

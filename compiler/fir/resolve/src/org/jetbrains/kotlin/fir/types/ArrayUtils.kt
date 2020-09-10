@@ -7,6 +7,10 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 
+fun ConeKotlinType.createOutArrayType(nullable: Boolean = false): ConeKotlinType {
+    return ConeKotlinTypeProjectionOut(this).createArrayOf(nullable)
+}
+
 fun ConeTypeProjection.createArrayOf(nullable: Boolean = false): ConeKotlinType {
     if (this is ConeKotlinTypeProjection) {
         val type = type.lowerBoundIfFlexible()
