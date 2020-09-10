@@ -229,9 +229,9 @@ class OperatorToFunctionIntention : SelfTargetingIntention<KtExpression>(
             val transformation = "$calleeText.${OperatorNameConventions.INVOKE.asString()}" + "($argumentsWithReceiverIfNeeded)"
             val transformed = KtPsiFactory(element).createExpression(transformation)
             val callExpression = transformed.getCalleeExpressionIfAny()?.parent as? KtCallExpression
-            if (callExpression != null) {
+            if (callExpression != null && funcLitArgs.isNotEmpty()) {
                 funcLitArgs.forEach { callExpression.add(it) }
-                if (funcLitArgs.isNotEmpty() && argumentsWithReceiverIfNeeded.isEmpty()) {
+                if (argumentsWithReceiverIfNeeded.isEmpty()) {
                     callExpression.valueArgumentList?.delete()
                 }
             }
