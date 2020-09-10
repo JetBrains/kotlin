@@ -190,7 +190,7 @@ open class DefaultArgumentStubGenerator(
         //
         // This control flow limits us to an if-then (without an else), and this together with the
         // restriction on loading the parameter in the default case means we cannot create any temporaries.
-        +irIfThen(defaultFlag, irSet(parameter.symbol, default))
+        +irIfThen(irNotEquals(defaultFlag, irInt(0)), irSet(parameter.symbol, default))
         return parameter
     }
 
