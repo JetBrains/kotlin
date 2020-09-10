@@ -20,13 +20,19 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 interface PackageFragmentProvider {
-    fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor>
+    fun collectPackageFragments(fqName: FqName, packageFragments: MutableCollection<PackageFragmentDescriptor>)
+
+    fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> {
+        val packageFragments = mutableListOf<PackageFragmentDescriptor>()
+        collectPackageFragments(fqName, packageFragments)
+        return packageFragments
+    }
 
     fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName>
 
 
     object Empty : PackageFragmentProvider {
-        override fun getPackageFragments(fqName: FqName) = emptyList<PackageFragmentDescriptor>()
+        override fun collectPackageFragments(fqName: FqName, packageFragments: MutableCollection<PackageFragmentDescriptor>) {}
 
         override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean) = emptySet<FqName>()
     }

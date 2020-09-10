@@ -241,10 +241,10 @@ private class DelegatingPackageFragmentProvider<M : ModuleInfo>(
 ) : PackageFragmentProvider {
     private val syntheticFilePackages = moduleContent.syntheticFiles.map { it.packageFqName }.toSet()
 
-    override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> {
-        if (certainlyDoesNotExist(fqName)) return emptyList()
+    override fun collectPackageFragments(fqName: FqName, packageFragments: MutableCollection<PackageFragmentDescriptor>) {
+        if (certainlyDoesNotExist(fqName)) return
 
-        return resolverForProject.resolverForModuleDescriptor(module).packageFragmentProvider.getPackageFragments(fqName)
+        resolverForProject.resolverForModuleDescriptor(module).packageFragmentProvider.collectPackageFragments(fqName, packageFragments)
     }
 
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {

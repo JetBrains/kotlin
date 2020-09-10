@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import com.intellij.codeInsight.completion.CompletionUtilCore
 import com.intellij.psi.impl.source.DummyHolder
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.config.AnalysisFlags
@@ -573,6 +574,9 @@ class QualifiedExpressionResolver(val languageVersionSettings: LanguageVersionSe
         context: ExpressionTypingContext
     ): Qualifier? {
         val name = expression.getReferencedNameAsName()
+        if (!expression.isPhysical && !name.isSpecial && name.asString().endsWith(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED)) {
+            return null
+        }
 
         val location = KotlinLookupLocation(expression)
         val qualifierDescriptor = when (receiver) {
