@@ -527,7 +527,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
 
             // Access to static members that need an accessor must be because they are inherited,
             // hence accessed on a _s_upertype.
-            isStatic -> "\$s" + parentAsClass.descriptor.syntheticAccessorToSuperSuffix()
+            isStatic -> "\$s" + parentAsClass.syntheticAccessorToSuperSuffix()
 
             else -> ""
         }
