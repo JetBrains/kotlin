@@ -237,6 +237,7 @@ include ":benchmarks",
         ":tools:kotlinp",
         ":kotlin-gradle-plugin-api",
         ":kotlin-gradle-plugin-dsl-codegen",
+        ":kotlin-gradle-plugin-npm-versions-codegen",
         ":kotlin-gradle-statistics",
         ":kotlin-gradle-plugin",
         ":kotlin-gradle-plugin-model",
@@ -489,6 +490,7 @@ project(':sam-with-receiver-ide-plugin').projectDir = "$rootDir/plugins/sam-with
 project(':tools:kotlinp').projectDir = "$rootDir/libraries/tools/kotlinp" as File
 project(':kotlin-gradle-plugin-api').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-api" as File
 project(':kotlin-gradle-plugin-dsl-codegen').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-dsl-codegen" as File
+project(':kotlin-gradle-plugin-npm-versions-codegen').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-npm-versions-codegen" as File
 project(':kotlin-gradle-statistics').projectDir = "$rootDir/libraries/tools/kotlin-gradle-statistics" as File
 project(':kotlin-gradle-plugin').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin" as File
 project(':kotlin-gradle-plugin-model').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-model" as File
