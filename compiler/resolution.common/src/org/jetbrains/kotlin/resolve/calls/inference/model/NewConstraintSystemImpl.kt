@@ -41,21 +41,29 @@ class NewConstraintSystemImpl(
         COMPLETION
     }
 
+    /*
+     * If remove spread operator then call `checkState` will resolve to itself
+     *   instead of fun checkState(vararg allowedState: State)
+     */
+    @Suppress("RemoveRedundantSpreadOperator")
     private fun checkState(a: State) {
         if (!AbstractTypeChecker.RUN_SLOW_ASSERTIONS) return
         checkState(*arrayOf(a))
     }
 
+    @Suppress("RemoveRedundantSpreadOperator")
     private fun checkState(a: State, b: State) {
         if (!AbstractTypeChecker.RUN_SLOW_ASSERTIONS) return
         checkState(*arrayOf(a, b))
     }
 
+    @Suppress("RemoveRedundantSpreadOperator")
     private fun checkState(a: State, b: State, c: State) {
         if (!AbstractTypeChecker.RUN_SLOW_ASSERTIONS) return
         checkState(*arrayOf(a, b, c))
     }
 
+    @Suppress("RemoveRedundantSpreadOperator")
     private fun checkState(a: State, b: State, c: State, d: State) {
         if (!AbstractTypeChecker.RUN_SLOW_ASSERTIONS) return
         checkState(*arrayOf(a, b, c, d))
