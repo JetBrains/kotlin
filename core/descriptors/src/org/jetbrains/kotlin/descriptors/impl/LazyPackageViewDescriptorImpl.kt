@@ -28,9 +28,9 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 
 class LazyPackageViewDescriptorImpl(
-        override val module: ModuleDescriptorImpl,
-        override val fqName: FqName,
-        storageManager: StorageManager
+    override val module: ModuleDescriptorImpl,
+    override val fqName: FqName,
+    storageManager: StorageManager
 ) : DeclarationDescriptorImpl(Annotations.EMPTY, fqName.shortNameOrSpecial()), PackageViewDescriptor {
 
     override val fragments: List<PackageFragmentDescriptor> by storageManager.createLazyValue {

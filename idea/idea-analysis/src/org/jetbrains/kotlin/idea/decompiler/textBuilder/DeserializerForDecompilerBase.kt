@@ -29,8 +29,8 @@ abstract class DeserializerForDecompilerBase(val directoryPackageFqName: FqName)
     protected val moduleDescriptor: ModuleDescriptorImpl = createDummyModule("module for building decompiled sources")
 
     protected val packageFragmentProvider: PackageFragmentProvider = object : PackageFragmentProvider {
-        override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> {
-            return listOf(createDummyPackageFragment(fqName))
+        override fun collectPackageFragments(fqName: FqName, packageFragments: MutableCollection<PackageFragmentDescriptor>) {
+            packageFragments.add(createDummyPackageFragment(fqName))
         }
 
         override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
