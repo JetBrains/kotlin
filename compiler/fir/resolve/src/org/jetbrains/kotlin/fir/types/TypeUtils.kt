@@ -161,3 +161,13 @@ fun ConeKotlinType.isExtensionFunctionType(session: FirSession): Boolean {
 fun FirTypeRef.isExtensionFunctionType(session: FirSession): Boolean {
     return coneTypeSafe<ConeKotlinType>()?.isExtensionFunctionType(session) == true
 }
+
+fun ConeKotlinType.isUnsafeVarianceType(session: FirSession): Boolean {
+    val type = this.lowerBoundIfFlexible().fullyExpandedType(session)
+    return type.attributes.unsafeVarianceType != null
+}
+
+fun FirTypeRef.isUnsafeVarianceType(session: FirSession): Boolean {
+    return coneTypeSafe<ConeKotlinType>()?.isUnsafeVarianceType(session) == true
+}
+
