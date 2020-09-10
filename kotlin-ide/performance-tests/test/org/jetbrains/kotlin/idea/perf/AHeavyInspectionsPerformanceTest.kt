@@ -12,12 +12,13 @@ import org.jetbrains.kotlin.idea.perf.util.ExternalProject
 import org.jetbrains.kotlin.idea.perf.util.lastPathSegment
 import org.jetbrains.kotlin.idea.perf.util.suite
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
-import org.junit.Ignore
 import org.junit.runner.RunWith
 
 /**
- * Run the only specified exceptions on the selected files in Kotling project.
+ * Run the only specified exceptions on the selected files in Kotlin project.
+ *
  * Used for 'The Kotlin sources: kt files heavy inspections' graph.
+ *
  * @TODO Should be run before typing tests as the testing project becomes unusable afterwards.
  */
 @RunWith(JUnit3RunnerWithInners::class)
@@ -56,13 +57,14 @@ class AHeavyInspectionsPerformanceTest : UsefulTestCase() {
         }
     }
 
-    @Ignore
     fun testUnusedSymbolLocalInspection() {
         suite {
-            config.warmup = 1
-            config.iterations = 2
-            config.profilerConfig.enabled = true
-            config.profilerConfig.tracing = true
+            with(config) {
+                warmup = 1
+                iterations = 2
+                //profilerConfig.enabled = true
+                //profilerConfig.tracing = true
+            }
             app {
                 project(ExternalProject.KOTLIN_AUTO) {
                     for (inspection in listOfInspections.sliceArray(0 until 1)) {
@@ -88,13 +90,14 @@ class AHeavyInspectionsPerformanceTest : UsefulTestCase() {
         ExternalProject.autoOpenAction("../unused")
     )
 
-    @Ignore
     fun testSingleInspection1() {
         suite {
-            config.warmup = 0
-            config.iterations = 1
-            config.profilerConfig.enabled = true
-            config.profilerConfig.tracing = true
+            with(config) {
+                warmup = 0
+                iterations = 1
+                //profilerConfig.enabled = true
+                //profilerConfig.tracing = true
+            }
             app {
                 project(UNUSED_AUTO) {
                     for (inspection in listOfInspections.sliceArray(0..1)) {
