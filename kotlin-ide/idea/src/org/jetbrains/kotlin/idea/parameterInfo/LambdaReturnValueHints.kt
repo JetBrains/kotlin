@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsResultOfLambda
+import org.jetbrains.kotlin.resolve.BindingContext.USED_AS_RESULT_OF_LAMBDA
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 @Suppress("UnstableApiUsage")
@@ -45,7 +45,7 @@ fun provideLambdaReturnValueHints(expression: KtExpression): List<InlayInfo> {
     }
 
     val bindingContext = expression.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
-    if (expression.isUsedAsResultOfLambda(bindingContext)) {
+    if (bindingContext[USED_AS_RESULT_OF_LAMBDA, expression] == true) {
         val lambdaName = getNameOfFunctionThatTakesLambda(expression) ?: "lambda"
         return listOf(
             InlayInfo("$TYPE_INFO_PREFIX^$lambdaName", expression.endOffset)
