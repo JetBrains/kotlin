@@ -330,7 +330,11 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val outputKind = linkTask["getOutputKind"]["name"] as? String ?: return null
         val konanTargetName = linkTask["getTarget"] as? String ?: error("No arch target found")
         val outputFile = (linkTask["getOutputFile"] as? Provider<*>)?.orNull as? File ?: return null
-        val compilationTarget = linkTask["getCompilation"]["getTarget"]
+        val compilation = if (linkTask["getCompilation"] is Provider<*>)
+            (linkTask["getCompilation"] as Provider<*>).get()
+        else
+            linkTask["getCompilation"]
+        val compilationTarget = compilation["getTarget"]
         val compilationTargetName = compilationTarget["getName"] as? String ?: return null
         val isTests = linkTask["getProcessTests"] as? Boolean ?: return null
 
