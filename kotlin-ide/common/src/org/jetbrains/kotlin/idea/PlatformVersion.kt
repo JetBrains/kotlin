@@ -25,6 +25,8 @@ data class PlatformVersion(val platform: Platform, val version: String /* 3.1 or
             val version = ApplicationInfo.getInstance().run { majorVersion + "." + minorVersion.substringBefore(".") }
             return PlatformVersion(platform, version)
         }
+
+        fun isAndroidStudio(): Boolean = getCurrent()?.platform == Platform.ANDROID_STUDIO
     }
 
     enum class Platform(val qualifier: String, val presentableText: String) {

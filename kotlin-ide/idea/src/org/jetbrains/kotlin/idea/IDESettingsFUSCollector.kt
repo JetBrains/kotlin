@@ -17,6 +17,9 @@ import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 
 class IDESettingsFUSCollector : ProjectUsagesCollector() {
     override fun getMetrics(project: Project): Set<MetricEvent> {
+        if (PlatformVersion.isAndroidStudio()) {
+            return emptySet()
+        }
         val metrics = mutableSetOf<MetricEvent>()
 
         for (definition in ScriptDefinitionsManager.getInstance(project).getAllDefinitions()) {

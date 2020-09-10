@@ -9,10 +9,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.idea.maven.project.MavenProjectsManager
+import org.jetbrains.kotlin.idea.PlatformVersion
 import java.nio.file.Path
 
 class MavenProjectImporter(private val project: Project) {
     fun importProject(path: Path) {
+        if (PlatformVersion.isAndroidStudio()) {
+            return // AS does not support Maven
+        }
         val mavenProjectManager = MavenProjectsManager.getInstance(project)
 
         val rootFile = LocalFileSystem.getInstance().findFileByPath(path.toString())!!

@@ -12,6 +12,7 @@ import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesColle
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
+import org.jetbrains.kotlin.idea.PlatformVersion
 import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
@@ -25,6 +26,9 @@ import org.jetbrains.kotlin.platform.konan.isNative
 class ProjectConfigurationCollector : ProjectUsagesCollector() {
 
     override fun getMetrics(project: Project): Set<MetricEvent> {
+        if (PlatformVersion.isAndroidStudio()) {
+            return emptySet()
+        }
         val metrics = mutableSetOf<MetricEvent>()
         val modulesWithFacet = ProjectFacetManager.getInstance(project).getModulesWithFacet(KotlinFacetType.TYPE_ID)
 
