@@ -14,6 +14,6 @@ fun test(a: A<out CharSequence>, y: Out<CharSequence>) {
     val i = a.foo()
     // TODO: These diagnostic are wrong, type of 'i' --- 'In<Nothing>' is not projected itself,
     // but it's approximation result caused by 'a' projection
-    i.invoke1("")
-    i.invoke2(y)
+    i.<!INAPPLICABLE_CANDIDATE!>invoke1<!>("")
+    i.<!INAPPLICABLE_CANDIDATE!>invoke2<!>(y)
 }
