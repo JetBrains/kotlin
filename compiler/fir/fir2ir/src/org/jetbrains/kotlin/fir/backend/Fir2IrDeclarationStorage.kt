@@ -304,7 +304,9 @@ class Fir2IrDeclarationStorage(
         with(classifierStorage) {
             val thisOrigin = IrDeclarationOrigin.DEFINED
             if (function !is FirConstructor) {
-                val receiverTypeRef = if (function !is FirPropertyAccessor) function?.receiverTypeRef else parentPropertyReceiverType
+                val receiverTypeRef =
+                    if (function !is FirPropertyAccessor && function != null) function.receiverTypeRef
+                    else parentPropertyReceiverType
                 if (receiverTypeRef != null) {
                     extensionReceiverParameter = receiverTypeRef.convertWithOffsets { startOffset, endOffset ->
                         declareThisReceiverParameter(
