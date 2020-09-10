@@ -21,10 +21,10 @@ import com.intellij.openapi.application.ApplicationManager;
 import java.io.File;
 import java.io.IOException;
 
-public class PluginStartupService {
+public class PluginStartupApplicationService {
 
-    public static PluginStartupService getInstance() {
-        return ApplicationManager.getApplication().getService(PluginStartupService.class);
+    public static PluginStartupApplicationService getInstance() {
+        return ApplicationManager.getApplication().getService(PluginStartupApplicationService.class);
     }
 
     private String aliveFlagPath;
