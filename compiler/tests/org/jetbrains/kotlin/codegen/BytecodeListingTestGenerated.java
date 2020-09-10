@@ -49,21 +49,6 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         runTest("compiler/testData/codegen/bytecodeListing/defaultImpls.kt");
     }
 
-    @TestMetadata("deprecatedEnumEntryFields.kt")
-    public void testDeprecatedEnumEntryFields() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/deprecatedEnumEntryFields.kt");
-    }
-
-    @TestMetadata("deprecatedLateinitVar.kt")
-    public void testDeprecatedLateinitVar() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/deprecatedLateinitVar.kt");
-    }
-
-    @TestMetadata("deprecatedProperty.kt")
-    public void testDeprecatedProperty() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/deprecatedProperty.kt");
-    }
-
     @TestMetadata("emptyMultifileFacade.kt")
     public void testEmptyMultifileFacade() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/emptyMultifileFacade.kt");
@@ -387,6 +372,39 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             public void testUnreachable() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeListing/coroutines/spilling/unreachable.kt");
             }
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/bytecodeListing/deprecated")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Deprecated extends AbstractBytecodeListingTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInDeprecated() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/deprecated"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("deprecatedClass.kt")
+        public void testDeprecatedClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/deprecated/deprecatedClass.kt");
+        }
+
+        @TestMetadata("deprecatedEnumEntryFields.kt")
+        public void testDeprecatedEnumEntryFields() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/deprecated/deprecatedEnumEntryFields.kt");
+        }
+
+        @TestMetadata("deprecatedLateinitVar.kt")
+        public void testDeprecatedLateinitVar() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/deprecated/deprecatedLateinitVar.kt");
+        }
+
+        @TestMetadata("deprecatedProperty.kt")
+        public void testDeprecatedProperty() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/deprecated/deprecatedProperty.kt");
         }
     }
 

@@ -162,7 +162,7 @@ class FunctionCodegen(
 
     private fun IrFunction.calculateMethodFlags(): Int {
         if (origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
-            return getVisibilityForDefaultArgumentStub() or Opcodes.ACC_SYNTHETIC or deprecationFlags.let {
+            return getVisibilityForDefaultArgumentStub() or Opcodes.ACC_SYNTHETIC or functionDeprecationFlags.let {
                 if (this is IrConstructor) it else it or Opcodes.ACC_STATIC
             }
         }
@@ -186,7 +186,7 @@ class FunctionCodegen(
         val isStrict = hasAnnotation(STRICTFP_ANNOTATION_FQ_NAME)
         val isSynchronized = hasAnnotation(SYNCHRONIZED_ANNOTATION_FQ_NAME)
 
-        return getVisibilityAccessFlag() or modalityFlag or deprecationFlags or
+        return getVisibilityAccessFlag() or modalityFlag or functionDeprecationFlags or
                 (if (isStatic) Opcodes.ACC_STATIC else 0) or
                 (if (isVararg) Opcodes.ACC_VARARGS else 0) or
                 (if (isExternal) Opcodes.ACC_NATIVE else 0) or

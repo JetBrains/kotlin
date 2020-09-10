@@ -408,13 +408,12 @@ fun IrClass.isOptionalAnnotationClass(): Boolean =
     isAnnotationClass &&
             hasAnnotation(ExpectedActualDeclarationChecker.OPTIONAL_EXPECTATION_FQ_NAME)
 
-val IrAnnotationContainer.deprecationFlags: Int
+val IrDeclaration.callableDeprecationFlags: Int
     get() {
         val annotation = annotations.findAnnotation(FqNames.deprecated)
-            ?: return if ((this as? IrDeclaration)?.origin?.let {
-                    it == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY
-                } == true
-            ) Opcodes.ACC_DEPRECATED else 0
+            ?: return if ((this as? IrDeclaration)?.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY)
+                Opcodes.ACC_DEPRECATED
+            else 0
         val isHidden = (annotation.getValueArgument(2) as? IrGetEnumValue)?.symbol?.owner
             ?.name?.asString() == DeprecationLevel.HIDDEN.name
         return Opcodes.ACC_DEPRECATED or if (isHidden) Opcodes.ACC_SYNTHETIC else 0
@@ -426,11 +425,11 @@ val IrAnnotationContainer.deprecationFlags: Int
 val IrFunction.isSyntheticMethodForProperty: Boolean
     get() = name.asString().endsWith(JvmAbi.ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX)
 
-val IrFunction.deprecationFlags: Int
+val IrFunction.functionDeprecationFlags: Int
     get() {
         val originFlags = if (isSyntheticMethodForProperty) Opcodes.ACC_DEPRECATED else 0
-        val propertyFlags = (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.deprecationFlags ?: 0
-        return originFlags or propertyFlags or (this as IrAnnotationContainer).deprecationFlags
+        val propertyFlags = (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.callableDeprecationFlags ?: 0
+        return originFlags or propertyFlags or callableDeprecationFlags
     }
 
 val IrDeclaration.psiElement: PsiElement?

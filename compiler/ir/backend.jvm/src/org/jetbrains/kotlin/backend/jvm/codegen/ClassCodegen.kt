@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.buildAssertionsDisabledField
 import org.jetbrains.kotlin.backend.jvm.lower.hasAssertionsDisabledField
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -395,16 +396,18 @@ abstract class ClassCodegen protected constructor(
 }
 
 private val IrClass.flags: Int
-    get() = origin.flags or getVisibilityAccessFlagForClass() or deprecationFlags or when {
-        isAnnotationClass -> Opcodes.ACC_ANNOTATION or Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
-        isInterface -> Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
-        isEnumClass -> Opcodes.ACC_ENUM or Opcodes.ACC_SUPER or modality.flags
-        else -> Opcodes.ACC_SUPER or modality.flags
-    }
+    get() = origin.flags or getVisibilityAccessFlagForClass() or
+            (if (annotations.hasAnnotation(StandardNames.FqNames.deprecated)) Opcodes.ACC_DEPRECATED else 0) or
+            when {
+                isAnnotationClass -> Opcodes.ACC_ANNOTATION or Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
+                isInterface -> Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
+                isEnumClass -> Opcodes.ACC_ENUM or Opcodes.ACC_SUPER or modality.flags
+                else -> Opcodes.ACC_SUPER or modality.flags
+            }
 
 private fun IrField.computeFieldFlags(languageVersionSettings: LanguageVersionSettings): Int =
     origin.flags or visibility.flags or
-            this.specialDeprecationFlag or (correspondingPropertySymbol?.owner?.deprecationFlags ?: 0) or
+            this.specialDeprecationFlag or (correspondingPropertySymbol?.owner?.callableDeprecationFlags ?: 0) or
             (if (annotations.hasAnnotation(KOTLIN_DEPRECATED)) Opcodes.ACC_DEPRECATED else 0) or
             (if (isFinal) Opcodes.ACC_FINAL else 0) or
             (if (isStatic) Opcodes.ACC_STATIC else 0) or
