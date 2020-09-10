@@ -17,17 +17,14 @@
 package org.jetbrains.kotlin.backend.common.overrides
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.IrDynamicType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.collectAndFilterRealOverrides
 import org.jetbrains.kotlin.ir.util.isReal
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo
@@ -225,7 +222,11 @@ class IrOverridingUtil(
         if (!hasOpen && hasAbstract) {
             return if (transformAbstractToClassModality) current.modality else Modality.ABSTRACT
         }
-        return getMinimalModality(members, transformAbstractToClassModality, current.modality)
+
+        val realOverrides = members
+            .map{ originals[it]!! }
+            .collectAndFilterRealOverrides()
+        return getMinimalModality(realOverrides, transformAbstractToClassModality, current.modality)
     }
 
     private fun areEquivalent(a: IrOverridableMember, b: IrOverridableMember) = (a == b)
