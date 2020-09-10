@@ -145,7 +145,7 @@ fun getCompileOnlyBenchmarksOpts(project: Project, defaultCompilerOpts: List<Str
 
 // Find file with set name in directory.
 fun findFile(fileName: String, directory: String): String? =
-        File(directory).walkTopDown().filter { !it.name.endsWith(".dSYM") }
+        File(directory).walkTopDown().filter { !it.absolutePath.contains(".dSYM") }
                 .find { it.name == fileName }?.getAbsolutePath()
 
 fun uploadFileToArtifactory(url: String, project: String, artifactoryFilePath: String,
