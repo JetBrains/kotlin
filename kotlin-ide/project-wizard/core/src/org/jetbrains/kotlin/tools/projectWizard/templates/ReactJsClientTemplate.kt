@@ -67,17 +67,17 @@ class ReactJsClientTemplate : JsClientTemplate() {
     override fun Writer.getRequiredLibraries(module: ModuleIR): List<DependencyIR> = withSettingsOf(module.originalModule) {
         buildList {
             val kotlinVersion = KotlinPlugin.version.propertyValue
-            +Dependencies.KOTLIN_REACT(kotlinVersion.version)
-            +Dependencies.KOTLIN_REACT_DOM(kotlinVersion.version)
+            +Dependencies.KOTLIN_REACT
+            +Dependencies.KOTLIN_REACT_DOM
             if (useStyledComponents.reference.settingValue) {
-                +Dependencies.KOTLIN_STYLED(kotlinVersion.version)
+                +Dependencies.KOTLIN_STYLED
             }
             if (useReactRouterDom.reference.settingValue) {
-                +Dependencies.KOTLIN_REACT_ROUTER_DOM(kotlinVersion.version)
+                +Dependencies.KOTLIN_REACT_ROUTER_DOM
             }
             if (useReactRedux.reference.settingValue) {
-                +Dependencies.KOTLIN_REDUX(kotlinVersion.version)
-                +Dependencies.KOTLIN_REACT_REDUX(kotlinVersion.version)
+                +Dependencies.KOTLIN_REDUX
+                +Dependencies.KOTLIN_REACT_REDUX
             }
         }
     }
@@ -133,12 +133,11 @@ class ReactJsClientTemplate : JsClientTemplate() {
             Versions.JS_WRAPPERS.KOTLIN_REACT_REDUX
         )
 
-        private fun wrapperDependency(artifact: String, version: (Version) -> Version) = { kotlinVersion: Version ->
+        private fun wrapperDependency(artifact: String, version: Version) =
             ArtifactBasedLibraryDependencyIR(
                 MavenArtifact(Repositories.KOTLIN_JS_WRAPPERS_BINTRAY, "org.jetbrains", artifact),
-                version(kotlinVersion),
+                version,
                 DependencyType.MAIN
             )
-        }
     }
 }

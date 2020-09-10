@@ -46,7 +46,7 @@ class SimpleJsClientTemplate : JsClientTemplate() {
             if (useKotlinxHtml.reference.settingValue()) {
                 +ArtifactBasedLibraryDependencyIR(
                     MavenArtifact(Repositories.KOTLINX, "org.jetbrains.kotlinx", "kotlinx-html"),
-                    Versions.KOTLINX.KOTLINX_HTML(KotlinPlugin.version.propertyValue.version),
+                    Versions.KOTLINX.KOTLINX_HTML,
                     DependencyType.MAIN
                 )
             }
