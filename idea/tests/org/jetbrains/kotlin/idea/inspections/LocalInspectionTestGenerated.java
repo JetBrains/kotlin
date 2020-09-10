@@ -9211,6 +9211,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/redundantWith/emptyExpressionInReturn.kt");
         }
 
+        @TestMetadata("inFunctionBlockBodyWithReturn.kt")
+        public void testInFunctionBlockBodyWithReturn() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantWith/inFunctionBlockBodyWithReturn.kt");
+        }
+
+        @TestMetadata("inFunctionBodyWithReturn.kt")
+        public void testInFunctionBodyWithReturn() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantWith/inFunctionBodyWithReturn.kt");
+        }
+
         @TestMetadata("nested.kt")
         public void testNested() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantWith/nested.kt");
@@ -9244,6 +9254,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("notApplicable_inFunctionBody.kt")
         public void testNotApplicable_inFunctionBody() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantWith/notApplicable_inFunctionBody.kt");
+        }
+
+        @TestMetadata("notApplicable_inFunctionBodyWithReturn.kt")
+        public void testNotApplicable_inFunctionBodyWithReturn() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantWith/notApplicable_inFunctionBodyWithReturn.kt");
         }
 
         @TestMetadata("notApplicable_inProperty.kt")
