@@ -15,6 +15,8 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.newvfs.NewVirtualFile
+import com.intellij.openapi.vfs.newvfs.NewVirtualFileSystem
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.PathUtil
 import com.intellij.util.SmartList
@@ -58,6 +60,7 @@ import org.jetbrains.kotlin.platform.konan.NativePlatform
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
+import org.jetbrains.kotlin.resolve.jvm.TopPackageNamesProvider
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.types.typeUtil.closure
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -459,9 +462,40 @@ object NotUnderContentRootModuleInfo : IdeaModuleInfo {
         get() = platform.single().findAnalyzerServices()
 }
 
+internal open class PoweredLibraryScopeBase(project: Project, classes: Array<VirtualFile>, sources: Array<VirtualFile>) :
+    LibraryScopeBase(project, classes, sources), TopPackageNamesProvider {
+
+    private val entriesVirtualFileSystems: Set<NewVirtualFileSystem>? = run {
+        val fileSystems = mutableSetOf<NewVirtualFileSystem>()
+        for (file in classes + sources) {
+            val newVirtualFile = file as? NewVirtualFile ?: return@run null
+            fileSystems.add(newVirtualFile.fileSystem)
+        }
+        fileSystems
+    }
+
+    override val topPackageNames: Set<String> by lazy {
+        (classes + sources)
+            .flatMap { it.children.toList() }
+            .filter(VirtualFile::isDirectory)
+            .map(VirtualFile::getName)
+            .toSet() + "" // empty package is always present
+    }
+
+    override fun contains(file: VirtualFile): Boolean {
+        ((file as? NewVirtualFile)?.fileSystem)?.let {
+            if (entriesVirtualFileSystems != null && !entriesVirtualFileSystems.contains(it)) {
+                return false
+            }
+        }
+        return super.contains(file)
+    }
+
+}
+
 @Suppress("EqualsOrHashCode") // DelegatingGlobalSearchScope requires to provide calcHashCode()
 private class LibraryWithoutSourceScope(project: Project, private val library: Library) :
-    LibraryScopeBase(project, library.getFiles(OrderRootType.CLASSES), arrayOf<VirtualFile>()) {
+    PoweredLibraryScopeBase(project, library.getFiles(OrderRootType.CLASSES), arrayOf()) {
 
     override fun getFileRoot(file: VirtualFile): VirtualFile? = myIndex.getClassRootForFile(file)
 
@@ -474,7 +508,7 @@ private class LibraryWithoutSourceScope(project: Project, private val library: L
 
 @Suppress("EqualsOrHashCode") // DelegatingGlobalSearchScope requires to provide calcHashCode()
 private class LibrarySourceScope(project: Project, private val library: Library) :
-    LibraryScopeBase(project, arrayOf<VirtualFile>(), library.getFiles(OrderRootType.SOURCES)) {
+    PoweredLibraryScopeBase(project, arrayOf(), library.getFiles(OrderRootType.SOURCES)) {
 
     override fun getFileRoot(file: VirtualFile): VirtualFile? = myIndex.getSourceRootForFile(file)
 
@@ -488,7 +522,7 @@ private class LibrarySourceScope(project: Project, private val library: Library)
 //TODO: (module refactoring) android sdk has modified scope
 @Suppress("EqualsOrHashCode") // DelegatingGlobalSearchScope requires to provide calcHashCode()
 private class SdkScope(project: Project, val sdk: Sdk) :
-    LibraryScopeBase(project, sdk.rootProvider.getFiles(OrderRootType.CLASSES), arrayOf<VirtualFile>()) {
+    PoweredLibraryScopeBase(project, sdk.rootProvider.getFiles(OrderRootType.CLASSES), arrayOf()) {
 
     override fun equals(other: Any?) = other is SdkScope && sdk == other.sdk
 
