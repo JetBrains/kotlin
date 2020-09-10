@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrRawFunctionReferenceImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -159,6 +156,13 @@ class SecondaryConstructorLowering(val context: JsIrBackendContext) : Declaratio
         override fun visitGetValue(expression: IrGetValue) = symbolMapping[expression.symbol.owner]?.let {
             expression.run { IrGetValueImpl(startOffset, endOffset, type, it.symbol, origin) }
         } ?: expression
+
+        override fun visitSetValue(expression: IrSetValue): IrExpression {
+            expression.transformChildrenVoid()
+            return symbolMapping[expression.symbol.owner]?.let {
+                expression.run { IrSetValueImpl(startOffset, endOffset, type, it.symbol, expression.value, origin) }
+            } ?: expression
+        }
     }
 }
 
