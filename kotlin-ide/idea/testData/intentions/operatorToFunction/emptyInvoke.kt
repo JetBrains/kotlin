@@ -1,0 +1,3 @@
+val a = (fun() {
+
+})<caret>()

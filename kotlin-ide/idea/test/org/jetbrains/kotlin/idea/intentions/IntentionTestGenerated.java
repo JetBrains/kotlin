@@ -12271,6 +12271,11 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("testData/intentions/operatorToFunction/compoundAssignment2.kt");
         }
 
+        @TestMetadata("emptyInvoke.kt")
+        public void testEmptyInvoke() throws Exception {
+            runTest("testData/intentions/operatorToFunction/emptyInvoke.kt");
+        }
+
         @TestMetadata("functionCallMultipleArgument.kt")
         public void testFunctionCallMultipleArgument() throws Exception {
             runTest("testData/intentions/operatorToFunction/functionCallMultipleArgument.kt");

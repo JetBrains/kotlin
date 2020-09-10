@@ -49,6 +49,11 @@ public abstract class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/anonymousFunction/lambdaWithReceiverAsParameter3.kt");
         }
 
+        @TestMetadata("withComment.kt")
+        public void testWithComment() throws Exception {
+            runTest("testData/refactoring/inline/anonymousFunction/withComment.kt");
+        }
+
         @TestMetadata("withConstantParameter.kt")
         public void testWithConstantParameter() throws Exception {
             runTest("testData/refactoring/inline/anonymousFunction/withConstantParameter.kt");
@@ -1218,6 +1223,11 @@ public abstract class InlineTestGenerated extends AbstractInlineTest {
         @TestMetadata("ReturnNotInTheEnd.kt")
         public void testReturnNotInTheEnd() throws Exception {
             runTest("testData/refactoring/inline/namedFunction/ReturnNotInTheEnd.kt");
+        }
+
+        @TestMetadata("runWithComment.kt")
+        public void testRunWithComment() throws Exception {
+            runTest("testData/refactoring/inline/namedFunction/runWithComment.kt");
         }
 
         @TestMetadata("sameNameInThisAndParameter.kt")

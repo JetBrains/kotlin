@@ -231,7 +231,7 @@ class OperatorToFunctionIntention : SelfTargetingIntention<KtExpression>(
             val callExpression = transformed.getCalleeExpressionIfAny()?.parent as? KtCallExpression
             if (callExpression != null) {
                 funcLitArgs.forEach { callExpression.add(it) }
-                if (argumentsWithReceiverIfNeeded.isEmpty()) {
+                if (funcLitArgs.isNotEmpty() && argumentsWithReceiverIfNeeded.isEmpty()) {
                     callExpression.valueArgumentList?.delete()
                 }
             }
