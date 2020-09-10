@@ -16,7 +16,7 @@ class Case1 {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
             this.x
             y.x
-            y.x.inv()
+            y.x.<!INAPPLICABLE_CANDIDATE!>inv<!>()
         } else {
             x = 10
         }

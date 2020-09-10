@@ -236,7 +236,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
                 when (val symbol = toClassLikeSymbol().also { it?.ensureResolved(FirResolvePhase.TYPES, session) }) {
                     is FirClassSymbol<*> -> symbol.fir.superConeTypes
                     is FirTypeAliasSymbol -> listOfNotNull(symbol.fir.expandedConeType)
-                    else -> emptyList()
+                    else -> listOf(session.builtinTypes.anyType.type)
                 }
             }
             is ConeCapturedTypeConstructor -> supertypes!!
@@ -518,7 +518,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun TypeConstructorMarker.isError(): Boolean {
-        return this is ErrorTypeConstructor || (this is ConeClassLikeLookupTag && this.toSymbol(session) == null)
+        return this is ErrorTypeConstructor
     }
 }
 

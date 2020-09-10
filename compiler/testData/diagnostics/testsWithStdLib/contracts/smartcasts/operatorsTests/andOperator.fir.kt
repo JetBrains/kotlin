@@ -42,17 +42,17 @@ fun truetrue(x: Any?) {
         x.inc()
     }
     x.<!UNRESOLVED_REFERENCE!>length<!>
-    x.<!AMBIGUITY!>inc<!>()
+    x.<!UNRESOLVED_REFERENCE!>inc<!>()
 }
 
 fun truefalse(x: Any?) {
     if (trueWhenString(x) && falseWhenInt(x)) {
         x.length
-        x.<!AMBIGUITY!>inc<!>()
+        x.<!UNRESOLVED_REFERENCE!>inc<!>()
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!AMBIGUITY!>inc<!>()
+        x.<!UNRESOLVED_REFERENCE!>inc<!>()
     }
 }
 
@@ -63,19 +63,19 @@ fun falsetrue(x: Any?) {
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!AMBIGUITY!>inc<!>()
+        x.<!UNRESOLVED_REFERENCE!>inc<!>()
     }
 }
 
 fun falsefalse(x: Any?) {
     if (falseWhenString(x) && falseWhenInt(x)) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!AMBIGUITY!>inc<!>()
+        x.<!UNRESOLVED_REFERENCE!>inc<!>()
     }
     else {
         // Note that we can't argue that we have any of smartcasts here,
         // because we don't know which one of both arguments was 'false' to bring us here
         x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!AMBIGUITY!>inc<!>()
+        x.<!NONE_APPLICABLE!>inc<!>()
     }
 }

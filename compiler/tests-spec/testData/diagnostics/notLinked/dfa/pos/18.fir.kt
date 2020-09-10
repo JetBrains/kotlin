@@ -109,7 +109,7 @@ fun case_8(x: Int?) {
     for (i in 0..10) {
         if (false || false || false || x == nullableNothingProperty) continue
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>()
     }
 }
 
@@ -118,7 +118,7 @@ fun case_9(list: List<Int?>) {
     for (element in list) {
         if (element != implicitNullableNothingProperty && true && true && true) else { break }
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>element<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>element<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>element<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>()
     }
 }
 
@@ -205,9 +205,9 @@ fun case_15(map: MutableMap<Int?, Int?>, y: Nothing?) {
         if (k != y) else break
         if (v != y) else continue
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>k<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>k<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>k<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>v<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>v<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>v<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>()
     }
 }
 
@@ -216,9 +216,9 @@ fun case_16(map: Map<Int?, Int?>) {
     for ((k, v) in map) {
         if (k !== implicitNullableNothingProperty && v !== implicitNullableNothingProperty) else { continue }
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>k<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>k<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>k<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>v<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>v<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>v<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>()
     }
 }
 

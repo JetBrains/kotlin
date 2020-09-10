@@ -128,6 +128,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/getOnKProperty.kt");
     }
 
+    @TestMetadata("getOrPutAmbiguity.kt")
+    public void testGetOrPutAmbiguity() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/getOrPutAmbiguity.kt");
+    }
+
     @TestMetadata("hashMapTypeAlias.kt")
     public void testHashMapTypeAlias() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/hashMapTypeAlias.kt");

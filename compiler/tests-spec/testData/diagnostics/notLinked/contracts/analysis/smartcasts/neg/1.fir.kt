@@ -11,13 +11,13 @@ fun case_1(value_1: Any?) {
 // TESTCASE NUMBER: 2
 fun case_2(value_1: Int?) {
     funWithReturnsAndInvertCondition(value_1 != null)
-    <!AMBIGUITY!>println<!>(value_1.<!AMBIGUITY!>inc<!>())
+    println(value_1.<!INAPPLICABLE_CANDIDATE!>inc<!>())
 }
 
 // TESTCASE NUMBER: 3
 fun case_3(value_1: Int?) {
     funWithReturns(value_1 == null)
-    <!AMBIGUITY!>println<!>(value_1.<!AMBIGUITY!>inc<!>())
+    println(value_1.<!INAPPLICABLE_CANDIDATE!>inc<!>())
 }
 
 // TESTCASE NUMBER: 4
@@ -44,7 +44,7 @@ object case_7_object {
 }
 fun case_7() {
     funWithReturns(case_7_object.prop_1 == null)
-    case_7_object.prop_1.<!AMBIGUITY!>inc<!>()
+    case_7_object.prop_1.<!INAPPLICABLE_CANDIDATE!>inc<!>()
 }
 
 // TESTCASE NUMBER: 8

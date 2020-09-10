@@ -14,7 +14,7 @@ fun nullWhenNull(x: Int?): Int? {
 
 fun testNullWhenNull(x: Int?) {
     if (nullWhenNull(x) == null) {
-        x.<!AMBIGUITY!>dec<!>()
+        x.<!INAPPLICABLE_CANDIDATE!>dec<!>()
     }
     else {
         x.dec()
@@ -24,10 +24,10 @@ fun testNullWhenNull(x: Int?) {
         x.dec()
     }
     else {
-        x.<!AMBIGUITY!>dec<!>()
+        x.<!INAPPLICABLE_CANDIDATE!>dec<!>()
     }
 
-    x.<!AMBIGUITY!>dec<!>()
+    x.<!INAPPLICABLE_CANDIDATE!>dec<!>()
 }
 
 // NB. it is the same function as `nullWhenNull`, but annotations specifies other facet of the function behaviour
@@ -43,15 +43,15 @@ fun testNotNullWhenNotNull (x: Int?) {
         x == null
     }
     else {
-        x.<!AMBIGUITY!>dec<!>()
+        x.<!INAPPLICABLE_CANDIDATE!>dec<!>()
     }
 
     if (notNullWhenNotNull(x) != null) {
-        x.<!AMBIGUITY!>dec<!>()
+        x.<!INAPPLICABLE_CANDIDATE!>dec<!>()
     }
     else {
         x == null
     }
 
-    x.<!AMBIGUITY!>dec<!>()
+    x.<!INAPPLICABLE_CANDIDATE!>dec<!>()
 }

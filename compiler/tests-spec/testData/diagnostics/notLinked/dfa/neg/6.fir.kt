@@ -6,7 +6,7 @@
 fun case_1(x: Any?) {
     if (x is Int || x !is Int) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!UNRESOLVED_REFERENCE!>inv<!>()
     }
 }
 
@@ -64,7 +64,7 @@ fun case_7(x: Any) {
 fun case_8(x: Any?) {
     if (x is Int? == x is Int?) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>?.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>?.<!UNRESOLVED_REFERENCE!>inv<!>()
     }
 }
 

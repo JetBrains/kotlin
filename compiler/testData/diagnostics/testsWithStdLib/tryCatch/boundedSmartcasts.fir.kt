@@ -13,11 +13,11 @@ fun test0(x: Int?) {
 
     if (x != null) {
         x.inc()
-        y.<!AMBIGUITY!>inc<!>()
+        y.<!INAPPLICABLE_CANDIDATE!>inc<!>()
     }
 
     if (y != null) {
-        x.<!AMBIGUITY!>inc<!>()
+        x.<!INAPPLICABLE_CANDIDATE!>inc<!>()
         y.inc()
     }
 }
@@ -32,11 +32,11 @@ fun test1(x: Int?) {
 
     if (x != null) {
         x.inc()
-        y.<!AMBIGUITY!>inc<!>()
+        y.<!INAPPLICABLE_CANDIDATE!>inc<!>()
     }
 
     if (y != null) {
-        x.<!AMBIGUITY!>inc<!>()
+        x.<!INAPPLICABLE_CANDIDATE!>inc<!>()
         y.inc()
     }
 }
@@ -51,11 +51,11 @@ fun test2(x: Int?) {
 
     if (x != null) {
         x.inc()
-        y.<!AMBIGUITY!>inc<!>()
+        y.<!INAPPLICABLE_CANDIDATE!>inc<!>()
     }
 
     if (y != null) {
-        x.<!AMBIGUITY!>inc<!>()
+        x.<!INAPPLICABLE_CANDIDATE!>inc<!>()
         y.inc()
     }
 }
@@ -69,11 +69,11 @@ fun test3(x: Int?) {
 
     if (x != null) {
         x.inc()
-        y.<!AMBIGUITY!>inc<!>()
+        y.<!INAPPLICABLE_CANDIDATE!>inc<!>()
     }
 
     if (y != null) {
-        x.<!AMBIGUITY!>inc<!>()
+        x.<!INAPPLICABLE_CANDIDATE!>inc<!>()
         y.inc()
     }
 }
@@ -91,11 +91,11 @@ fun test5(x: Int?) {
 
     if (x != null) {
         x.inc()
-        y.<!AMBIGUITY!>inc<!>()
+        y.<!INAPPLICABLE_CANDIDATE!>inc<!>()
     }
 
     if (y != null) {
-        x.<!AMBIGUITY!>inc<!>()
+        x.<!INAPPLICABLE_CANDIDATE!>inc<!>()
         y.inc()
     }
 }
