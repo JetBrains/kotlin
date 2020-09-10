@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.backend.jvm.lower.hasAssertionsDisabledField
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -260,7 +262,7 @@ abstract class ClassCodegen protected constructor(
             if (field.origin == IrDeclarationOrigin.PROPERTY_DELEGATE) null
             else context.methodSignatureMapper.mapFieldSignature(field)
         val fieldName = field.name.asString()
-        val flags = field.flags
+        val flags = field.computeFieldFlags(state.languageVersionSettings)
         val fv = visitor.newField(
             field.OtherOrigin, flags, fieldName, fieldType.descriptor,
             fieldSignature, (field.initializer?.expression as? IrConst<*>)?.value
@@ -400,15 +402,23 @@ private val IrClass.flags: Int
         else -> Opcodes.ACC_SUPER or modality.flags
     }
 
-private val IrField.flags: Int
-    get() = origin.flags or visibility.flags or
+private fun IrField.computeFieldFlags(languageVersionSettings: LanguageVersionSettings): Int =
+    origin.flags or visibility.flags or
             this.specialDeprecationFlag or (correspondingPropertySymbol?.owner?.deprecationFlags ?: 0) or
             (if (annotations.hasAnnotation(KOTLIN_DEPRECATED)) Opcodes.ACC_DEPRECATED else 0) or
             (if (isFinal) Opcodes.ACC_FINAL else 0) or
             (if (isStatic) Opcodes.ACC_STATIC else 0) or
             (if (hasAnnotation(VOLATILE_ANNOTATION_FQ_NAME)) Opcodes.ACC_VOLATILE else 0) or
             (if (hasAnnotation(TRANSIENT_ANNOTATION_FQ_NAME)) Opcodes.ACC_TRANSIENT else 0) or
-            (if (hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)) Opcodes.ACC_SYNTHETIC else 0)
+            (if (hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) ||
+                isPrivateCompanionFieldInInterface(languageVersionSettings)
+            ) Opcodes.ACC_SYNTHETIC else 0)
+
+private fun IrField.isPrivateCompanionFieldInInterface(languageVersionSettings: LanguageVersionSettings): Boolean =
+    origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE &&
+            languageVersionSettings.supportsFeature(LanguageFeature.ProperVisibilityForCompanionObjectInstanceField) &&
+            parentAsClass.isJvmInterface &&
+            DescriptorVisibilities.isPrivate(parentAsClass.companionObject()!!.visibility)
 
 private val IrField.specialDeprecationFlag: Int
     get() = if (shouldHaveSpecialDeprecationFlag()) Opcodes.ACC_DEPRECATED else 0

@@ -1,5 +1,4 @@
 // !LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
-// IGNORE_BACKEND: JVM_IR
 
 open class TestProtectedCompanionInClass {
     protected companion object
