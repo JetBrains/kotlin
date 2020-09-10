@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.utils.SmartList
 class IrVarargImpl(
     override val startOffset: Int,
     override val endOffset: Int,
-    override val type: IrType,
+    override var type: IrType,
     override val varargElementType: IrType
 ) : IrVararg() {
     constructor(

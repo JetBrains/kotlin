@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 class IrBlockImpl(
     override val startOffset: Int,
     override val endOffset: Int,
-    override val type: IrType,
+    override var type: IrType,
     override val origin: IrStatementOrigin? = null,
 ) : IrBlock() {
     constructor(
@@ -63,7 +63,7 @@ fun IrBlockImpl.inlineStatement(statement: IrStatement) {
 class IrReturnableBlockImpl(
     override val startOffset: Int,
     override val endOffset: Int,
-    override val type: IrType,
+    override var type: IrType,
     override val symbol: IrReturnableBlockSymbol,
     override val origin: IrStatementOrigin? = null,
     override val inlineFunctionSymbol: IrFunctionSymbol? = null

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.utils.SmartList
 class IrDynamicOperatorExpressionImpl(
     override val startOffset: Int,
     override val endOffset: Int,
-    override val type: IrType,
+    override var type: IrType,
     override val operator: IrDynamicOperator
 ) : IrDynamicOperatorExpression() {
     override lateinit var receiver: IrExpression

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 class IrClassReferenceImpl(
     override val startOffset: Int,
     override val endOffset: Int,
-    override val type: IrType,
+    override var type: IrType,
     override val symbol: IrClassifierSymbol,
     override val classType: IrType
 ) : IrClassReference() {

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 class IrTypeOperatorCallImpl(
     override val startOffset: Int,
     override val endOffset: Int,
-    override val type: IrType,
+    override var type: IrType,
     override val operator: IrTypeOperator,
     override val typeOperand: IrType,
     override var argument: IrExpression,

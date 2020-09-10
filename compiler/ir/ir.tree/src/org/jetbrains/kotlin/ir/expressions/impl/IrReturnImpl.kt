@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 class IrReturnImpl(
     override val startOffset: Int,
     override val endOffset: Int,
-    override val type: IrType,
+    override var type: IrType,
     override val returnTargetSymbol: IrReturnTargetSymbol,
     override var value: IrExpression
 ) : IrReturn() {

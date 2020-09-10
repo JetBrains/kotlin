@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 class IrDelegatingConstructorCallImpl(
     override val startOffset: Int,
     override val endOffset: Int,
-    override val type: IrType,
+    override var type: IrType,
     override val symbol: IrConstructorSymbol,
     typeArgumentsCount: Int,
     valueArgumentsCount: Int

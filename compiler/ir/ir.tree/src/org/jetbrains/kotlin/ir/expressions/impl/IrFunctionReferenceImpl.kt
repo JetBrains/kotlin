@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.name.Name
 class IrFunctionReferenceImpl(
     override val startOffset: Int,
     override val endOffset: Int,
-    override val type: IrType,
+    override var type: IrType,
     override val symbol: IrFunctionSymbol,
     typeArgumentsCount: Int,
     override val valueArgumentsCount: Int,

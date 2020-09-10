@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 class IrDynamicMemberExpressionImpl(
     override val startOffset: Int,
     override val endOffset: Int,
-    override val type: IrType,
+    override var type: IrType,
     override val memberName: String,
     override var receiver: IrExpression
 ) : IrDynamicMemberExpression() {

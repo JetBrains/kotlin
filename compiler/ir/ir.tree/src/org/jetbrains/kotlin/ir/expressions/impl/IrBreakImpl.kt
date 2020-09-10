@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 class IrBreakImpl(
     override val startOffset: Int,
     override val endOffset: Int,
-    override val type: IrType,
+    override var type: IrType,
     override var loop: IrLoop,
 ) : IrBreak() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

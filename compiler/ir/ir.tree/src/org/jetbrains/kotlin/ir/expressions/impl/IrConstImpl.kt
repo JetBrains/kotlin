@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 class IrConstImpl<T>(
     override val startOffset: Int,
     override val endOffset: Int,
-    override val type: IrType,
+    override var type: IrType,
     override val kind: IrConstKind<T>,
     override val value: T
 ) : IrConst<T>() {

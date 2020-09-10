@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.utils.SmartList
 class IrErrorCallExpressionImpl(
     override val startOffset: Int,
     override val endOffset: Int,
-    override val type: IrType,
+    override var type: IrType,
     override val description: String
 ) : IrErrorCallExpression() {
     override var explicitReceiver: IrExpression? = null

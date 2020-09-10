@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.name.Name
 class IrPropertyReferenceImpl(
     override val startOffset: Int,
     override val endOffset: Int,
-    override val type: IrType,
+    override var type: IrType,
     override val symbol: IrPropertySymbol,
     typeArgumentsCount: Int,
     override val field: IrFieldSymbol?,

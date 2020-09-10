@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.utils.SmartList
 class IrTryImpl(
     override val startOffset: Int,
     override val endOffset: Int,
-    override val type: IrType,
+    override var type: IrType,
 ) : IrTry() {
     constructor(
         startOffset: Int,
