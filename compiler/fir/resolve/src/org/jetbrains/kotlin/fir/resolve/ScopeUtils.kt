@@ -32,7 +32,7 @@ fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession)
 
             fir.symbol.ensureResolved(FirResolvePhase.STATUS, useSiteSession)
 
-            val substitution = createSubstitution(fir.typeParameters, fullyExpandedType.typeArguments, useSiteSession)
+            val substitution = createSubstitution(fir.typeParameters, fullyExpandedType, useSiteSession)
 
             fir.scope(substitutorByMap(substitution), useSiteSession, scopeSession, skipPrivateMembers = false)
         }

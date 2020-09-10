@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.types.model.CaptureStatus
 
 abstract class SupertypeSupplier {
     abstract fun forClass(firClass: FirClass<*>): List<ConeClassLikeType>
@@ -63,9 +64,11 @@ data class SubstitutionScopeKey(val type: ConeClassLikeType) : ScopeSessionKey<F
 /* TODO REMOVE */
 fun createSubstitution(
     typeParameters: List<FirTypeParameterRef>, // TODO: or really declared?
-    typeArguments: Array<out ConeTypeProjection>,
+    type: ConeClassLikeType,
     session: FirSession
 ): Map<FirTypeParameterSymbol, ConeKotlinType> {
+    val capturedOrType = session.typeContext.captureFromArguments(type, CaptureStatus.FOR_SUBTYPING) ?: type
+    val typeArguments = (capturedOrType as ConeClassLikeType).typeArguments
     return typeParameters.zip(typeArguments) { typeParameter, typeArgument ->
         val typeParameterSymbol = typeParameter.symbol
         typeParameterSymbol to when (typeArgument) {
@@ -92,14 +95,14 @@ fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
     if (this.typeArguments.isEmpty()) return useSiteMemberScope
     return builder.getOrBuild(declaration.symbol, SubstitutionScopeKey(this)) {
         val typeParameters = (declaration as? FirTypeParameterRefsOwner)?.typeParameters.orEmpty()
-        val originalSubstitution = createSubstitution(typeParameters, typeArguments, session)
+        val originalSubstitution = createSubstitution(typeParameters, this, session)
         val platformClass = session.platformClassMapper.getCorrespondingPlatformClass(declaration)
         if (platformClass != null) {
             // This kind of substitution is necessary when method which is mapped from Java (e.g. Java Map.forEach)
             // is called on an external type, like MyMap<String, String>,
             // to determine parameter types properly (e.g. String, String instead of K, V)
             val platformTypeParameters = platformClass.typeParameters
-            val platformSubstitution = createSubstitution(platformTypeParameters, typeArguments, session)
+            val platformSubstitution = createSubstitution(platformTypeParameters, this, session)
             FirClassSubstitutionScope(
                 session, useSiteMemberScope, builder, originalSubstitution + platformSubstitution,
                 skipPrivateMembers = true, derivedClassId = derivedClassId

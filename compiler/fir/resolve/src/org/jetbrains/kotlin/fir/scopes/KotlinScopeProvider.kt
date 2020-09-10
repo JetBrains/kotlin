@@ -70,7 +70,7 @@ class KotlinScopeProvider(
 
     private fun substitutor(symbol: FirRegularClassSymbol, type: ConeClassLikeType, useSiteSession: FirSession): ConeSubstitutor {
         if (type.typeArguments.isEmpty()) return ConeSubstitutor.Empty
-        val originalSubstitution = createSubstitution(symbol.fir.typeParameters, type.typeArguments, useSiteSession)
+        val originalSubstitution = createSubstitution(symbol.fir.typeParameters, type, useSiteSession)
         return substitutorByMap(originalSubstitution)
     }
 
