@@ -46,12 +46,21 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
         val methodStubsToGenerate = generateRelevantStubMethods(irClass)
         if (methodStubsToGenerate.isEmpty()) return
 
+
         // We don't need to generate stub for existing methods, but for FAKE_OVERRIDE methods with ABSTRACT modality,
         // it means an abstract function in superclass that is not implemented yet,
         // stub generation is still needed to avoid invocation error.
-        val existingMethodsBySignature = irClass.functions.filterNot {
+        val existingMethods = irClass.functions.filterNot {
             it.modality == Modality.ABSTRACT && it.isFakeOverride
-        }.associateBy { it.toJvmSignature() }
+        }
+        val existingMethodsBySignature = existingMethods.associateBy { it.toJvmSignature() }.toMutableMap()
+
+        // Signature matching is not sufficient to detect specialized implementations of interface-returning methods:
+        // Subclass checks are necessary on return types of (list)iterator and sublist implementations.
+        if (irClass.isSubclassOf(context.ir.symbols.list.owner)) {
+            val concreteImplementations = existingMethods.filterNot { it.modality == Modality.ABSTRACT || it.name.isSpecial }
+            identifyListInterfaceImplementations(concreteImplementations, existingMethodsBySignature)
+        }
 
         for (member in methodStubsToGenerate) {
             val signature = member.toJvmSignature()
@@ -130,6 +139,47 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
     }
 
     private fun IrSimpleFunction.toJvmSignature(): String = collectionStubComputer.getJvmSignature(this)
+
+    //TODO: Ignores type parameters.
+    private fun identifyListInterfaceImplementations(
+        implementations: Sequence<IrSimpleFunction>,
+        existingMethodsBySignature: MutableMap<String, IrSimpleFunction>
+    ) {
+        implementations.find {
+            it.name.identifier == "listIterator" &&
+                    it.valueParameters.size == 1 &&
+                    it.valueParameters[0].type.isInt() &&
+                    it.returnType.isSubtypeOfClass(context.ir.symbols.listIterator)
+        }?.let {
+            existingMethodsBySignature.putIfAbsent("listIterator(I)Ljava/util/ListIterator;", it)
+        }
+
+        implementations.find {
+            it.name.identifier == "listIterator" &&
+                    it.valueParameters.isEmpty() &&
+                    it.returnType.isSubtypeOfClass(context.ir.symbols.listIterator)
+        }?.let {
+            existingMethodsBySignature.putIfAbsent("listIterator()Ljava/util/ListIterator;", it)
+        }
+
+        implementations.find {
+            it.name.identifier == "iterator" &&
+                    it.valueParameters.isEmpty() &&
+                    it.returnType.isSubtypeOfClass(context.ir.symbols.iterator)
+        }?.let {
+            existingMethodsBySignature.putIfAbsent("iterator()Ljava/util/Iterator;", it)
+        }
+
+        implementations.find {
+            it.name.identifier == "subList" &&
+                    it.valueParameters.size == 2 &&
+                    it.valueParameters[0].type.isInt() &&
+                    it.valueParameters[1].type.isInt() &&
+                    it.returnType.isSubtypeOfClass(context.ir.symbols.list)
+        }?.let {
+            existingMethodsBySignature.put("subList(II)Ljava/util/List;", it)
+        }
+    }
 
     private fun createStubMethod(
         function: IrSimpleFunction,

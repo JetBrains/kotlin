@@ -1,0 +1,45 @@
+@kotlin.Metadata
+public final class MySet$MySetIterator {
+    // source: 'noStubsForMutableSetIterators.kt'
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.List): void
+    public synthetic bridge method hasNext(): boolean
+    public @org.jetbrains.annotations.NotNull method hasNext(): java.lang.Void
+    public synthetic bridge method next(): java.lang.Object
+    public @org.jetbrains.annotations.NotNull method next(): java.lang.Void
+    public @org.jetbrains.annotations.NotNull method remove(): java.lang.Void
+    public synthetic bridge method remove(): void
+    public final inner class MySet$MySetIterator
+}
+
+@kotlin.Metadata
+public final class MySet {
+    // source: 'noStubsForMutableSetIterators.kt'
+    private final @org.jetbrains.annotations.NotNull field elements: java.util.ArrayList
+    public method <init>(): void
+    public synthetic bridge method add(p0: java.lang.Object): boolean
+    public @org.jetbrains.annotations.NotNull method add(p0: java.lang.Object): java.lang.Void
+    public @org.jetbrains.annotations.NotNull method addAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): java.lang.Void
+    public synthetic bridge method addAll(p0: java.util.Collection): boolean
+    public @org.jetbrains.annotations.NotNull method clear(): java.lang.Void
+    public synthetic bridge method clear(): void
+    public bridge final method contains(p0: java.lang.Object): boolean
+    public @org.jetbrains.annotations.NotNull method contains(p0: java.lang.Object): java.lang.Void
+    public @org.jetbrains.annotations.NotNull method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): java.lang.Void
+    public bridge final method containsAll(p0: java.util.Collection): boolean
+    public final @org.jetbrains.annotations.NotNull method getElements(): java.util.ArrayList
+    public method getSize(): int
+    public synthetic bridge method isEmpty(): boolean
+    public @org.jetbrains.annotations.NotNull method isEmpty(): java.lang.Void
+    public @org.jetbrains.annotations.NotNull method iterator(): MySet$MySetIterator
+    public synthetic bridge method iterator(): java.util.Iterator
+    public bridge final method remove(p0: java.lang.Object): boolean
+    public @org.jetbrains.annotations.NotNull method remove(p0: java.lang.Object): java.lang.Void
+    public @org.jetbrains.annotations.NotNull method removeAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): java.lang.Void
+    public bridge final method removeAll(p0: java.util.Collection): boolean
+    public @org.jetbrains.annotations.NotNull method retainAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): java.lang.Void
+    public bridge final method retainAll(p0: java.util.Collection): boolean
+    public bridge final method size(): int
+    public method toArray(): java.lang.Object[]
+    public method toArray(p0: java.lang.Object[]): java.lang.Object[]
+    public final inner class MySet$MySetIterator
+}
