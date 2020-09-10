@@ -61,6 +61,9 @@ internal abstract class AbstractValueUsageTransformer(
     private fun IrExpression.useForVariable(variable: IrVariable): IrExpression =
             this.useAsValue(variable)
 
+    private fun IrExpression.useForValue(value: IrValueDeclaration) =
+            this.useAsValue(value)
+
     private fun IrExpression.useForField(field: IrField): IrExpression =
             this.useAs(field.type)
 
@@ -144,10 +147,10 @@ internal abstract class AbstractValueUsageTransformer(
         return expression
     }
 
-    override fun visitSetVariable(expression: IrSetVariable): IrExpression {
+    override fun visitSetValue(expression: IrSetValue): IrExpression {
         expression.transformChildrenVoid(this)
 
-        expression.value = expression.value.useForVariable(expression.symbol.owner)
+        expression.value = expression.value.useForValue(expression.symbol.owner)
 
         return expression
     }

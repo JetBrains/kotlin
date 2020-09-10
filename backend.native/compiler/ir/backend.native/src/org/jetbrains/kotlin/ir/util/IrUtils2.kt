@@ -259,7 +259,7 @@ fun IrBuilderWithScope.irCallOp(
         }
 
 fun IrBuilderWithScope.irSetVar(variable: IrVariable, value: IrExpression) =
-        irSetVar(variable.symbol, value)
+        irSet(variable.symbol, value)
 
 fun IrBuilderWithScope.irCatch(type: IrType) =
         IrCatchImpl(

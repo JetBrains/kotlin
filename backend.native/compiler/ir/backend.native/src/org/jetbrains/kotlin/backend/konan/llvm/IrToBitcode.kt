@@ -130,9 +130,9 @@ internal interface CodeContext {
     fun genDeclareVariable(variable: IrVariable, value: LLVMValueRef?, variableLocation: VariableDebugLocation?): Int
 
     /**
-     * @return index of variable declared before, or -1 if no such variable has been declared yet.
+     * @return index of value declared before, or -1 if no such variable has been declared yet.
      */
-    fun getDeclaredVariable(variable: IrVariable): Int
+    fun getDeclaredValue(value: IrValueDeclaration): Int
 
     /**
      * Generates the code to obtain a value available in this context.
@@ -244,7 +244,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         override fun genDeclareVariable(variable: IrVariable, value: LLVMValueRef?, variableLocation: VariableDebugLocation?) = unsupported(variable)
 
-        override fun getDeclaredVariable(variable: IrVariable) = -1
+        override fun getDeclaredValue(value: IrValueDeclaration) = -1
 
         override fun genGetValue(value: IrValueDeclaration) = unsupported(value)
 
@@ -576,9 +576,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             return functionGenerationContext.vars.createVariable(variable, value, variableLocation)
         }
 
-        override fun getDeclaredVariable(variable: IrVariable): Int {
-            val index = functionGenerationContext.vars.indexOf(variable)
-            return if (index < 0) super.getDeclaredVariable(variable) else return index
+        override fun getDeclaredValue(value: IrValueDeclaration): Int {
+            val index = functionGenerationContext.vars.indexOf(value)
+            return if (index < 0) super.getDeclaredValue(value) else index
         }
 
         override fun genGetValue(value: IrValueDeclaration): LLVMValueRef {
@@ -862,7 +862,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             is IrInstanceInitializerCall ->
                                         return evaluateInstanceInitializerCall(value)
             is IrGetValue            -> return evaluateGetValue               (value)
-            is IrSetVariable         -> return evaluateSetVariable            (value)
+            is IrSetValue            -> return evaluateSetValue               (value)
             is IrGetField            -> return evaluateGetField               (value)
             is IrSetField            -> return evaluateSetField               (value)
             is IrConst<*>            -> return evaluateConst                  (value)
@@ -1267,10 +1267,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateSetVariable(value: IrSetVariable): LLVMValueRef {
-        context.log{"evaluateSetVariable            : ${ir2string(value)}"}
+    private fun evaluateSetValue(value: IrSetValue): LLVMValueRef {
+        context.log{"evaluateSetValue               : ${ir2string(value)}"}
         val result = evaluateExpression(value.value)
-        val variable = currentCodeContext.getDeclaredVariable(value.symbol.owner)
+        val variable = currentCodeContext.getDeclaredValue(value.symbol.owner)
         functionGenerationContext.vars.store(result, variable)
         assert(value.type.isUnit())
         return functionGenerationContext.theUnitInstanceRef.llvm

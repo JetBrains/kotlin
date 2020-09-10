@@ -121,7 +121,6 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
 
             else -> this.type
         }
-
         return this.adaptIfNecessary(actualType, type)
     }
 
@@ -466,6 +465,12 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
                         }
 
                         parameterMapping[expression.symbol]?.let { return irGet(it) }
+                        return expression
+                    }
+
+                    override fun visitSetValue(expression: IrSetValue): IrExpression {
+                        expression.transformChildrenVoid()
+                        parameterMapping[expression.symbol]?.let { return irSet(it.symbol, expression.value) }
                         return expression
                     }
 

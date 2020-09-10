@@ -165,7 +165,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
     }
 
     private fun IrBuilderWithScope.incrementVariable(variable: IrVariable, value: IrExpression): IrExpression {
-        return irSetVar(variable.symbol, intPlus().apply {
+        return irSet(variable.symbol, intPlus().apply {
             dispatchReceiver = irGet(variable)
             putValueArgument(0, value)
         })

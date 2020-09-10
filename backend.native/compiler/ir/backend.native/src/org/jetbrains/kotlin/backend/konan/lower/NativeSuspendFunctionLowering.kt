@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrSetVariableImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSuspendableExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSuspensionPointImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -123,6 +123,13 @@ internal class NativeSuspendFunctionsLowering(ctx: Context): AbstractSuspendFunc
                     return irGetField(irGet(thisReceiver), capturedValue)
                 }
 
+                override fun visitSetValue(expression: IrSetValue): IrExpression {
+                    expression.transformChildrenVoid(this)
+                    val capturedValue = argumentToPropertiesMap[expression.symbol.owner]
+                            ?: return expression
+                    return irSetField(irGet(thisReceiver), capturedValue, expression.value)
+                }
+
                 // Save/restore state at suspension points.
                 override fun visitExpression(expression: IrExpression): IrExpression {
                     expression.transformChildrenVoid(this)
@@ -202,13 +209,13 @@ internal class NativeSuspendFunctionsLowering(ctx: Context): AbstractSuspendFunc
                         origin      = expression.origin)
             }
 
-            override fun visitSetVariable(expression: IrSetVariable): IrExpression {
+            override fun visitSetValue(expression: IrSetValue): IrExpression {
                 expression.transformChildrenVoid(this)
 
                 val newVariable = variablesMap[expression.symbol.owner]
                         ?: return expression
 
-                return IrSetVariableImpl(
+                return IrSetValueImpl(
                         startOffset = expression.startOffset,
                         endOffset   = expression.endOffset,
                         type        = context.irBuiltIns.unitType,
@@ -384,7 +391,7 @@ internal class NativeSuspendFunctionsLowering(ctx: Context): AbstractSuspendFunc
                         result                     = irBlock(startOffset, endOffset) {
                             if (!calledSaveState)
                                 +irCall(saveState)
-                            +irSetVar(suspendResult.symbol, suspendCall)
+                            +irSet(suspendResult.symbol, suspendCall)
                             +irReturnIfSuspended(suspendResult)
                             +irGet(suspendResult)
                         },
