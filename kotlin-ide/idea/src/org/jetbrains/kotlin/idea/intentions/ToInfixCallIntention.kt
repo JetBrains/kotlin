@@ -22,7 +22,7 @@ class ToInfixCallIntention : SelfTargetingIntention<KtCallExpression>(
         val calleeExpr = element.calleeExpression as? KtNameReferenceExpression ?: return false
         if (!calleeExpr.textRange.containsOffset(caretOffset)) return false
 
-        val dotQualified = element.getQualifiedExpressionForSelector() ?: return false
+        val dotQualified = element.getQualifiedExpressionForSelector() as? KtDotQualifiedExpression ?: return false
 
         if (element.typeArgumentList != null) return false
 
