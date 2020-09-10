@@ -218,12 +218,24 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
         // TODO: should refer to LanguageVersionSettings.SuspendConversion
         val requireSuspendConversion = expectedType?.isSuspendFunctionType(callInfo.session) == true
         val resultingType: ConeKotlinType = when (fir) {
-            is FirFunction -> callInfo.session.createAdaptedKFunctionType(
-                fir, resultingReceiverType, returnTypeRef,
-                expectedParameterTypes = expectedType?.typeArguments?.dropLast(1),
-                isSuspend = (fir as? FirSimpleFunction)?.isSuspend == true || requireSuspendConversion,
-                expectedReturnType = extractInputOutputTypesFromCallableReferenceExpectedType(expectedType, callInfo.session)?.outputType
-            )
+            is FirFunction -> {
+                // Do not adapt references against KCallable type. It's impossible map defaults/vararg to absent parameters of KCallable.
+                if (expectedType?.isKCallable(callInfo.session) == true) {
+                    createFunctionalType(
+                        fir.valueParameters.map { it.returnTypeRef.coneType }, resultingReceiverType, returnTypeRef.coneType,
+                        isSuspend = (fir as? FirSimpleFunction)?.isSuspend == true,
+                        isKFunctionType = true
+                    )
+                } else {
+                    callInfo.session.createAdaptedKFunctionType(
+                        fir, resultingReceiverType, returnTypeRef,
+                        expectedParameterTypes = expectedType?.typeArguments?.dropLast(1),
+                        isSuspend = (fir as? FirSimpleFunction)?.isSuspend == true || requireSuspendConversion,
+                        expectedReturnType =
+                        extractInputOutputTypesFromCallableReferenceExpectedType(expectedType, callInfo.session)?.outputType
+                    )
+                }
+            }
             is FirVariable<*> -> createKPropertyType(fir, resultingReceiverType, returnTypeRef)
             else -> ConeKotlinErrorType(ConeSimpleDiagnostic("Unknown callable kind: ${fir::class}", DiagnosticKind.UnknownCallableKind))
         }.let(candidate.substitutor::substituteOrSelf)
