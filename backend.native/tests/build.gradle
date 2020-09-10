@@ -3583,6 +3583,12 @@ createInterop("auxiliaryCppSources") {
     it.extraOpts "-Xsource-compiler-option", "-std=c++17"
 }
 
+createInterop("incomplete_types") {
+    it.defFile 'interop/incomplete_types/library.def'
+    it.headers "$projectDir/interop/incomplete_types/library.h"
+    it.extraOpts "-Xcompile-source", "$projectDir/interop/incomplete_types/library.cpp"
+}
+
 createInterop("embedStaticLibraries") {
     it.defFile 'interop/embedStaticLibraries/embedStaticLibraries.def'
     it.headers "$projectDir/interop/embedStaticLibraries/embedStaticLibraries.h"
@@ -3837,6 +3843,14 @@ interopTest("interop_auxiliarySources") {
     source = "interop/auxiliary_sources/main.kt"
     interop = 'auxiliaryCppSources'
 }
+
+interopTest("interop_incompleteTypes") {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    source = "interop/incomplete_types/main.kt"
+    interop = 'incomplete_types'
+}
+
+
 
 interopTest("interop_embedStaticLibraries") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
