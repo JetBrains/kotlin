@@ -37,7 +37,7 @@ internal class PersistentIrValueParameter(
     override val symbol: IrValueParameterSymbol,
     override val name: Name,
     override val index: Int,
-    override val type: IrType,
+    type: IrType,
     override val varargElementType: IrType?,
     override val isCrossinline: Boolean,
     override val isNoinline: Boolean,
@@ -76,4 +76,15 @@ internal class PersistentIrValueParameter(
                 setCarrier().defaultValueField = v
             }
         }
+
+    override var typeField: IrType = type
+
+    override var type: IrType
+        get() = getCarrier().typeField
+        set(v) {
+            if (type !== v) {
+                setCarrier().typeField = v
+            }
+        }
+
 }

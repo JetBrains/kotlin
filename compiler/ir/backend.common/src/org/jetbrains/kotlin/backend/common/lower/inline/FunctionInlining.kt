@@ -542,7 +542,11 @@ class FunctionInlining(
         override val startOffset: Int get() = UNDEFINED_OFFSET
         override val endOffset: Int get() = UNDEFINED_OFFSET
 
-        override val type: IrType get() = symbol.owner.type
+        override var type: IrType
+            get() = symbol.owner.type
+            set(value) {
+                symbol.owner.type = value
+            }
 
         override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D) =
             visitor.visitGetValue(this, data)

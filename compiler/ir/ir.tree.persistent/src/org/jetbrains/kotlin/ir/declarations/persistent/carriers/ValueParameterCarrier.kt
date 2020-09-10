@@ -9,12 +9,16 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.types.IrType
 
 internal interface ValueParameterCarrier : DeclarationCarrier {
     var defaultValueField: IrExpressionBody?
+    var typeField: IrType
 
     override fun clone(): ValueParameterCarrier {
-        return ValueParameterCarrierImpl(lastModified, parentField, originField, annotationsField, defaultValueField)
+        return ValueParameterCarrierImpl(
+            lastModified, parentField, originField, annotationsField, defaultValueField, typeField
+        )
     }
 }
 
@@ -23,5 +27,6 @@ internal class ValueParameterCarrierImpl(
     override var parentField: IrDeclarationParent?,
     override var originField: IrDeclarationOrigin,
     override var annotationsField: List<IrConstructorCall>,
-    override var defaultValueField: IrExpressionBody?
+    override var defaultValueField: IrExpressionBody?,
+    override var typeField: IrType,
 ) : ValueParameterCarrier

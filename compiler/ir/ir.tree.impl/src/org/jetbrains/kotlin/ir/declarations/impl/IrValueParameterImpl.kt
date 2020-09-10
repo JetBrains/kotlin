@@ -35,7 +35,7 @@ class IrValueParameterImpl(
     override val symbol: IrValueParameterSymbol,
     override val name: Name,
     override val index: Int,
-    override val type: IrType,
+    override var type: IrType,
     override val varargElementType: IrType?,
     override val isCrossinline: Boolean,
     override val isNoinline: Boolean,

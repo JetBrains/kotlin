@@ -46,7 +46,11 @@ class IrDispatchPoint(val target: SuspendState) : IrExpression() {
     override val startOffset: Int get() = UNDEFINED_OFFSET
     override val endOffset: Int get() = UNDEFINED_OFFSET
 
-    override val type: IrType get() = target.entryBlock.type
+    override var type: IrType
+        get() = target.entryBlock.type
+        set(value) {
+            target.entryBlock.type = value
+        }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D) = visitor.visitExpression(this, data)
 
