@@ -715,6 +715,8 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
             return showErrorHint(project, editor, KotlinBundle.message("cannot.refactor.no.expression"))
         }
 
+        if (!CommonRefactoringUtil.checkReadOnlyStatus(project, expression)) return
+        
         val physicalExpression = expression.substringContextOrThis
 
         val resolutionFacade = physicalExpression.getResolutionFacade()
