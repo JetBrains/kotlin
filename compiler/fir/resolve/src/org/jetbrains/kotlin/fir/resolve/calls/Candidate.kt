@@ -85,7 +85,7 @@ class Candidate(
 ) {
 
     var systemInitialized: Boolean = false
-    val system: NewConstraintSystemImpl by lazy {
+    val system: NewConstraintSystemImpl by lazy(LazyThreadSafetyMode.NONE) {
         val system = constraintSystemFactory.createConstraintSystem()
         system.addOtherSystem(baseSystem)
         systemInitialized = true
