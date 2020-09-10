@@ -3265,34 +3265,6 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
     }
 
     @RunWith(JUnit3RunnerWithInners.class)
-    @TestMetadata("testData/inspectionsLocal/convertInitializedValToNonNullType")
-    public static class ConvertInitializedValToNonNullType extends AbstractLocalInspectionTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        @TestMetadata("assignToMethodCall.kt")
-        public void testAssignToMethodCall() throws Exception {
-            runTest("testData/inspectionsLocal/convertInitializedValToNonNullType/assignToMethodCall.kt");
-        }
-
-        @TestMetadata("assignToVariable.kt")
-        public void testAssignToVariable() throws Exception {
-            runTest("testData/inspectionsLocal/convertInitializedValToNonNullType/assignToVariable.kt");
-        }
-
-        @TestMetadata("basic.kt")
-        public void testBasic() throws Exception {
-            runTest("testData/inspectionsLocal/convertInitializedValToNonNullType/basic.kt");
-        }
-
-        @TestMetadata("negative.kt")
-        public void testNegative() throws Exception {
-            runTest("testData/inspectionsLocal/convertInitializedValToNonNullType/negative.kt");
-        }
-    }
-
-    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/convertNaNEquality")
     public static class ConvertNaNEquality extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
