@@ -188,13 +188,13 @@ public interface IrOperationOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrSetField getSetField();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable set_variable = 21;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue set_value = 21;</code>
    */
-  boolean hasSetVariable();
+  boolean hasSetValue();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable set_variable = 21;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue set_value = 21;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable getSetVariable();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue getSetValue();
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStringConcat string_concat = 22;</code>
