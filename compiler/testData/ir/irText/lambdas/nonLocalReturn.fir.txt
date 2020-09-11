@@ -39,7 +39,7 @@ FILE fqName:<root> fileName:/nonLocalReturn.kt
                   block: FUN_EXPR type=kotlin.Function0<kotlin.Nothing> origin=LAMBDA
                     FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Nothing
                       BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Nothing declared in <root>.test3.<anonymous>'
+                        RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test3'
                           GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
   FUN name:testLrmFoo1 visibility:public modality:FINAL <> (ints:kotlin.collections.List<kotlin.Int>) returnType:kotlin.Unit
     VALUE_PARAMETER name:ints index:0 type:kotlin.collections.List<kotlin.Int>
