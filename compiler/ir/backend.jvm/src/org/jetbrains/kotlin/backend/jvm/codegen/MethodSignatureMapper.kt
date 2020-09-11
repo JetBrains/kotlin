@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.codegen.state.isMethodWithDeclarationSiteWildcardsFq
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunction
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.descriptors.IrBasedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
@@ -70,6 +71,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
     }
 
     fun mapFunctionName(function: IrFunction, skipSpecial: Boolean = false): String {
+        if (function !is IrSimpleFunction) return function.name.asString()
+
         if (!skipSpecial) {
             if (function.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) {
                 val platformName = function.getJvmNameFromAnnotation()
@@ -80,7 +83,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
             if (nameForSpecialFunction != null) return nameForSpecialFunction
         }
 
-        val property = (function as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
+        val property = function.correspondingPropertySymbol?.owner
         if (property != null) {
             val propertyName = property.name.asString()
             val propertyParent = property.parentAsClass
@@ -102,7 +105,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         return mangleMemberNameIfRequired(function.name.asString(), function)
     }
 
-    private fun mangleMemberNameIfRequired(name: String, function: IrFunction): String {
+    private fun mangleMemberNameIfRequired(name: String, function: IrSimpleFunction): String {
         val newName = JvmCodegenUtil.sanitizeNameIfNeeded(name, context.state.languageVersionSettings)
 
         if (function.isTopLevel) {
@@ -120,18 +123,17 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
             newName
     }
 
-    private fun IrFunction.shouldMangleAsInternal() =
-        this !is IrConstructor &&
-                origin != JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR &&
+    private fun IrSimpleFunction.shouldMangleAsInternal(): Boolean =
+        origin != JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR &&
                 visibility == DescriptorVisibilities.INTERNAL &&
                 !isPublishedApi()
 
-    private fun getModuleName(function: IrFunction): String =
-        (if (function is IrLazyFunctionBase)
+    private fun getModuleName(function: IrSimpleFunction): String =
+        (if (function is IrLazyFunction)
             getJvmModuleNameForDeserialized(function)
         else null) ?: context.state.moduleName
 
-    private fun IrFunction.isPublishedApi(): Boolean =
+    private fun IrSimpleFunction.isPublishedApi(): Boolean =
         propertyIfAccessor.annotations.hasAnnotation(StandardNames.FqNames.publishedApi)
 
     fun mapReturnType(declaration: IrDeclaration, sw: JvmSignatureWriter? = null): Type {
@@ -365,10 +367,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         return current
     }
 
-    private fun getJvmMethodNameIfSpecial(irFunction: IrFunction): String? =
-        (irFunction as? IrSimpleFunction)?.run {
-            getBuiltinSpecialPropertyGetterName() ?: getDifferentNameForJvmBuiltinFunction()
-        }
+    private fun getJvmMethodNameIfSpecial(irFunction: IrSimpleFunction): String? =
+        irFunction.getBuiltinSpecialPropertyGetterName() ?: irFunction.getDifferentNameForJvmBuiltinFunction()
 
     private val IrSimpleFunction.isBuiltIn: Boolean
         get() = getPackageFragment()?.fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME ||
@@ -406,7 +406,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
     }
 
     // From org.jetbrains.kotlin.load.kotlin.getJvmModuleNameForDeserializedDescriptor
-    private fun getJvmModuleNameForDeserialized(function: IrLazyFunctionBase): String? {
+    private fun getJvmModuleNameForDeserialized(function: IrLazyFunction): String? {
         var current: IrDeclarationParent? = function.parent
         while (current != null) {
             when (current) {
