@@ -56,8 +56,15 @@ open class RunKotlinNativeTask @Inject constructor(private val linkTask: Task,
 
     private fun execBenchmarkOnce(benchmark: String, warmupCount: Int, repeatCount: Int) : String {
         val output = ByteArrayOutputStream()
+        val useCset = project.property("useCset").toString().toBoolean()
         project.exec {
-            it.executable = executable
+            if (useCset) {
+                it.executable = "cset"
+                it.args("shield", "--exec", "--", executable)
+            } else {
+                it.executable = executable
+            }
+
             it.args(argumentsList)
             it.args("-f", benchmark)
             // Logging with application should be done only in case it controls running benchmarks itself.
@@ -69,7 +76,7 @@ open class RunKotlinNativeTask @Inject constructor(private val linkTask: Task,
             it.args("-r", repeatCount.toString())
             it.standardOutput = output
         }
-        return output.toString().removePrefix("[").removeSuffix("]")
+        return output.toString().substringAfter("[").removeSuffix("]")
     }
 
     private fun execBenchmarkRepeatedly(benchmark: String, warmupCount: Int, repeatCount: Int) : List<String> {
