@@ -488,7 +488,10 @@ class KotlinCoreEnvironment private constructor(
             }
         }
 
-        private fun disposeApplicationEnvironment() {
+        /**
+         * This method is also used in Gradle after configuration phase finished.
+         */
+        fun disposeApplicationEnvironment() {
             synchronized(APPLICATION_LOCK) {
                 val environment = ourApplicationEnvironment ?: return
                 ourApplicationEnvironment = null
