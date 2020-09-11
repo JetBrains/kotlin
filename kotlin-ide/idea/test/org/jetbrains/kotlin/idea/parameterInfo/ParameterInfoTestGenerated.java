@@ -202,12 +202,12 @@ public abstract class ParameterInfoTestGenerated extends AbstractParameterInfoTe
 
         @TestMetadata("NamedParameter3.kt")
         public void testNamedParameter3() throws Exception {
-            runTest("idea/testData/parameterInfo/functionCall/NamedParameter3.kt");
+            runTest("testData/parameterInfo/functionCall/NamedParameter3.kt");
         }
 
         @TestMetadata("NamedParameter4.kt")
         public void testNamedParameter4() throws Exception {
-            runTest("idea/testData/parameterInfo/functionCall/NamedParameter4.kt");
+            runTest("testData/parameterInfo/functionCall/NamedParameter4.kt");
         }
 
         @TestMetadata("NoAnnotations.kt")
@@ -337,12 +337,12 @@ public abstract class ParameterInfoTestGenerated extends AbstractParameterInfoTe
 
         @TestMetadata("TooManyArgs2.kt")
         public void testTooManyArgs2() throws Exception {
-            runTest("idea/testData/parameterInfo/functionCall/TooManyArgs2.kt");
+            runTest("testData/parameterInfo/functionCall/TooManyArgs2.kt");
         }
 
         @TestMetadata("TrailingComma.kt")
         public void testTrailingComma() throws Exception {
-            runTest("idea/testData/parameterInfo/functionCall/TrailingComma.kt");
+            runTest("testData/parameterInfo/functionCall/TrailingComma.kt");
         }
 
         @TestMetadata("TwoFunctions.kt")
@@ -420,7 +420,7 @@ public abstract class ParameterInfoTestGenerated extends AbstractParameterInfoTe
 
         @TestMetadata("ParameterizedClassConstructor.kt")
         public void testParameterizedClassConstructor() throws Exception {
-            runTest("idea/testData/parameterInfo/typeArguments/ParameterizedClassConstructor.kt");
+            runTest("testData/parameterInfo/typeArguments/ParameterizedClassConstructor.kt");
         }
 
         @TestMetadata("Reified.kt")

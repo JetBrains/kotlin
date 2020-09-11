@@ -1523,7 +1523,7 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
 
             @TestMetadata("map.kt")
             public void testMap() throws Exception {
-                runTest("idea/testData/inspectionsLocal/collections/redundantAsSequence/map.kt");
+                runTest("testData/inspectionsLocal/collections/redundantAsSequence/map.kt");
             }
 
             @TestMetadata("notTermination.kt")
@@ -6334,7 +6334,7 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
 
         @TestMetadata("multiLineWithOneLineInitializer.kt")
         public void testMultiLineWithOneLineInitializer() throws Exception {
-            runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/multiLineWithOneLineInitializer.kt");
+            runTest("testData/inspectionsLocal/moveVariableDeclarationIntoWhen/multiLineWithOneLineInitializer.kt");
         }
 
         @TestMetadata("notApplicableInBinaryExpression.kt")
@@ -6344,7 +6344,7 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
 
         @TestMetadata("notApplicableMultiLineWithOneLineInitializer.kt")
         public void testNotApplicableMultiLineWithOneLineInitializer() throws Exception {
-            runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/notApplicableMultiLineWithOneLineInitializer.kt");
+            runTest("testData/inspectionsLocal/moveVariableDeclarationIntoWhen/notApplicableMultiLineWithOneLineInitializer.kt");
         }
 
         @TestMetadata("notApplicableMultyLine.kt")
@@ -13061,9 +13061,8 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
         }
     }
 
-    @TestMetadata("idea/testData/inspectionsLocal/unusedEquals")
-    @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
+    @TestMetadata("testData/inspectionsLocal/unusedEquals")
     public static class UnusedEquals extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
@@ -13071,22 +13070,22 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
 
         @TestMetadata("equals.kt")
         public void testEquals() throws Exception {
-            runTest("idea/testData/inspectionsLocal/unusedEquals/equals.kt");
+            runTest("testData/inspectionsLocal/unusedEquals/equals.kt");
         }
 
         @TestMetadata("equals2.kt")
         public void testEquals2() throws Exception {
-            runTest("idea/testData/inspectionsLocal/unusedEquals/equals2.kt");
+            runTest("testData/inspectionsLocal/unusedEquals/equals2.kt");
         }
 
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
-            runTest("idea/testData/inspectionsLocal/unusedEquals/simple.kt");
+            runTest("testData/inspectionsLocal/unusedEquals/simple.kt");
         }
 
         @TestMetadata("simple2.kt")
         public void testSimple2() throws Exception {
-            runTest("idea/testData/inspectionsLocal/unusedEquals/simple2.kt");
+            runTest("testData/inspectionsLocal/unusedEquals/simple2.kt");
         }
     }
 
