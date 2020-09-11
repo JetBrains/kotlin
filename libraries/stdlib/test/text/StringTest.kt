@@ -1397,7 +1397,7 @@ class StringTest {
     }
 
     @Test
-    fun scanReduceIndexed() = withOneCharSequenceArg { arg1 ->
+    fun runningReduceIndexed() = withOneCharSequenceArg { arg1 ->
         for (size in 0 until 4) {
             val expected = listOf(0, 1, 6, 27).take(size).map { it.toChar() }
             val source = arg1((0.toChar() until size.toChar()).joinToString(separator = ""))
