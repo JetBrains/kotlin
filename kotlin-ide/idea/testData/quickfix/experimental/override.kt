@@ -6,6 +6,7 @@
 // ACTION: Add '@OptIn(MyExperimentalAPI::class)' annotation to containing class 'Derived'
 // ACTION: Add '-Xopt-in=MyExperimentalAPI' to module light_idea_test_case compiler arguments
 // ACTION: Enable a trailing comma by default in the formatter
+// ACTION: Go To Super Method
 // ERROR: This declaration overrides experimental member of supertype 'Base' and must be annotated with '@MyExperimentalAPI'
 
 @RequiresOptIn

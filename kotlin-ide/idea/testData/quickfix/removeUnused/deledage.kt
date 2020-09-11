@@ -1,6 +1,7 @@
 // "Safe delete 'something'" "false"
 // ACTION: Convert function to property
 // ACTION: Convert to block body
+// ACTION: Go To Super Method
 // ACTION: Specify return type explicitly
 
 interface Inter {
