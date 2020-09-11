@@ -229,6 +229,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         safeCallExpression: FirSafeCallExpression,
         data: ResolutionMode
     ): CompositeTransformResult<FirStatement> {
+        safeCallExpression.transformAnnotations(this, ResolutionMode.ContextIndependent)
         safeCallExpression.transformReceiver(this, ResolutionMode.ContextIndependent)
 
         val receiver = safeCallExpression.receiver
