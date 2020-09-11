@@ -10,6 +10,7 @@ import kotlin.reflect.full.createInstance
 
 abstract class DokkaPlugin {
     private val extensionDelegates = mutableListOf<KProperty<*>>()
+    private val unsafePlugins = mutableListOf<Lazy<Extension<*, *, *>>>()
 
     @PublishedApi
     internal var context: DokkaContext? = null
@@ -37,10 +38,14 @@ abstract class DokkaPlugin {
     }
 
     internal fun internalInstall(ctx: DokkaContextConfiguration, configuration: DokkaConfiguration) {
-        extensionDelegates.asSequence()
+        val extensionsToInstall = extensionDelegates.asSequence()
             .filterIsInstance<KProperty1<DokkaPlugin, Extension<*, *, *>>>() // should be always true
-            .map { it.get(this) }
-            .forEach { if (configuration.(it.condition)()) ctx.installExtension(it) }
+            .map { it.get(this) } + unsafePlugins.map{ it.value }
+        extensionsToInstall.forEach { if (configuration.(it.condition)()) ctx.installExtension(it) }
+    }
+
+    protected fun <T: Any> unsafeInstall(ext: Lazy<Extension<T, *, *>>){
+         unsafePlugins.add(ext)
     }
 }
 
