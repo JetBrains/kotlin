@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.generators.gradle.targets.js
 
 import kotlinx.coroutines.runBlocking
 import org.apache.velocity.VelocityContext
-import org.apache.velocity.app.Velocity
 import org.apache.velocity.app.VelocityEngine
 import org.apache.velocity.runtime.RuntimeConstants.RESOURCE_LOADER
 import java.io.File
@@ -35,18 +34,19 @@ fun main() {
 
     val template = velocityEngine.getTemplate("$fileName.vm")
 
-    runBlocking {
-        val packages = VersionFetcher(coroutineContext).use {
+    val packages = VersionFetcher().use {
+        runBlocking {
             it.fetch()
         }
-        findLastVersions(packages)
-            .also {
-                context.put("dependencies", it)
-            }
+    }
 
-        targetFile.writer().use {
-            template.merge(context, it)
+    findLastVersions(packages)
+        .also {
+            context.put("dependencies", it)
         }
+
+    targetFile.writer().use {
+        template.merge(context, it)
     }
 }
 

@@ -9,43 +9,39 @@ import com.google.gson.Gson
 import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.async
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.coroutineScope
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
-import kotlin.coroutines.CoroutineContext
 
 
-class VersionFetcher(
-    private val coroutineContext: CoroutineContext
-) : AutoCloseable {
+class VersionFetcher : AutoCloseable {
     private val client = HttpClient()
 
     suspend fun fetch(): List<PackageInformation> {
-        return npmPackages
-            .map { fetchPackageInformationAsync(it) }
-            .map { fetched ->
-                val (packageName, value) = fetched.await()
-                val fetchedPackageInformation = Gson().fromJson(value, FetchedPackageInformation::class.java)
-                PackageInformation(
-                    packageName,
-                    fetchedPackageInformation.versions.keys
-                )
-            }
+        return coroutineScope {
+            npmPackages
+                .map { async { fetchPackageInformationAsync(it) } }
+                .map { fetched ->
+                    val (packageName, value) = fetched.await()
+                    val fetchedPackageInformation = Gson().fromJson(value, FetchedPackageInformation::class.java)
+                    PackageInformation(
+                        packageName,
+                        fetchedPackageInformation.versions.keys
+                    )
+                }
+        }
     }
 
-    private suspend fun fetchPackageInformationAsync(packageName: String) =
-        withContext(coroutineContext) {
-            val packagePath =
-                if (packageName.startsWith("@"))
-                    "@" + encodeURIComponent(packageName)
-                else
-                    encodeURIComponent(packageName)
+    private suspend fun fetchPackageInformationAsync(packageName: String): Pair<String, String> {
+        val packagePath =
+            if (packageName.startsWith("@"))
+                "@" + encodeURIComponent(packageName)
+            else
+                encodeURIComponent(packageName)
 
-            async {
-                packageName to client.get<String>("http://registry.npmjs.org/$packagePath")
-            }
-        }
+        return (packageName to client.get<String>("http://registry.npmjs.org/$packagePath"))
+    }
 
     override fun close() {
         client.close()
