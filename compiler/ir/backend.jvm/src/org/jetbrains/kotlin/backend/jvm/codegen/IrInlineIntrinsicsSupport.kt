@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.backend.jvm.lower.FunctionReferenceLowering
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
@@ -94,5 +94,5 @@ class IrInlineIntrinsicsSupport(
         )
     }
 
-    override fun toKotlinType(type: IrType): KotlinType = type.toKotlinType()
+    override fun toKotlinType(type: IrType): KotlinType = type.toIrBasedKotlinType()
 }
