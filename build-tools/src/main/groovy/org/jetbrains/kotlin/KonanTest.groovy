@@ -407,7 +407,7 @@ fun runTest() {
 
     static def excludeList = [
             "external/compiler/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt", // KT-36880
-            "external/compiler/compileKotlinAgainstKotlin/useDeserializedFunInterface.kt" // KT-37634
+            "external/compiler/compileKotlinAgainstKotlin/specialBridgesInDependencies.kt" // FIXME: inherits final class
     ]
 
     boolean isEnabledForNativeBackend(String fileName) {
