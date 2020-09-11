@@ -530,6 +530,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/analysis-tests/testData/resolve/arguments/lambdaInUnresolvedCall.kt");
         }
 
+        @TestMetadata("namedArrayInAnnotation.kt")
+        public void testNamedArrayInAnnotation() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/arguments/namedArrayInAnnotation.kt");
+        }
+
         @TestMetadata("operatorsOverLiterals.kt")
         public void testOperatorsOverLiterals() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/arguments/operatorsOverLiterals.kt");

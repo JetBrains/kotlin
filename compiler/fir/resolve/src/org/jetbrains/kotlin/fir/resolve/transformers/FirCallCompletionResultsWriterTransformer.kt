@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.varargElementType
 import org.jetbrains.kotlin.fir.resolve.constructFunctionalTypeRef
+import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.inference.returnType
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
@@ -535,6 +537,17 @@ class FirCallCompletionResultsWriterTransformer(
         if (data == ExpectedArgumentType.NoApproximation) return constExpression.compose()
         val expectedType = data?.getExpectedType(constExpression)
         return constExpression.transform(integerApproximator, expectedType)
+    }
+
+    override fun transformArrayOfCall(arrayOfCall: FirArrayOfCall, data: ExpectedArgumentType?): CompositeTransformResult<FirStatement> {
+        if (arrayOfCall.typeRef !is FirImplicitTypeRef) return arrayOfCall.compose()
+        val expectedArrayType = data?.getExpectedType(arrayOfCall)
+        val expectedArrayElementType = expectedArrayType?.arrayElementType()
+        arrayOfCall.transformChildren(this, expectedArrayElementType?.toExpectedType())
+        val arrayElementType = session.inferenceComponents.ctx.commonSuperTypeOrNull(arrayOfCall.arguments.map { it.typeRef.coneType })
+            ?: session.builtinTypes.nullableAnyType.type
+        arrayOfCall.resultType = arrayOfCall.typeRef.resolvedTypeFromPrototype(arrayElementType.createArrayOf())
+        return arrayOfCall.compose()
     }
 
     private fun FirNamedReferenceWithCandidate.toResolvedReference() = if (this is FirErrorReferenceWithCandidate) {
