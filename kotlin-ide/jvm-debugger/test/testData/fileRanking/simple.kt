@@ -1,13 +1,13 @@
 //FILE: a/a.kt
 class A {
     fun a() {
-        System.out.println("a")
+        println("a")
     }
 }
 
 //FILE: b/a.kt
 class B {
     fun b() {
-        System.out.println("b")
+        println("b")
     }
 }
