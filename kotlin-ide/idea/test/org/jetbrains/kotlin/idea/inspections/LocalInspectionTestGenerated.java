@@ -7789,6 +7789,16 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
                 runTest("testData/inspectionsLocal/redundantNullableReturnType/function/overridable.kt");
             }
 
+            @TestMetadata("returnNullableForLambda.kt")
+            public void testReturnNullableForLambda() throws Exception {
+                runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/function/returnNullableForLambda.kt");
+            }
+
+            @TestMetadata("returnNullableForLocalFunction.kt")
+            public void testReturnNullableForLocalFunction() throws Exception {
+                runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/function/returnNullableForLocalFunction.kt");
+            }
+
             @TestMetadata("returnNullableFromLambdaInBlockBody.kt")
             public void testReturnNullableFromLambdaInBlockBody() throws Exception {
                 runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/function/returnNullableFromLambdaInBlockBody.kt");

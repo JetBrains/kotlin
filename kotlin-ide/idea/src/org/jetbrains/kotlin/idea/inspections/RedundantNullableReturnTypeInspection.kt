@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.textRangeIn
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypes
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.types.KotlinType
@@ -51,7 +52,7 @@ class RedundantNullableReturnTypeInspection : AbstractKotlinInspection() {
                 is KtProperty -> declaration.initializer ?: declaration.accessors.singleOrNull { it.isGetter }?.bodyExpression
                 else -> null
             } ?: return
-            val actualReturnTypes = body.actualReturnTypes()
+            val actualReturnTypes = body.actualReturnTypes(declaration)
             if (actualReturnTypes.isEmpty() || actualReturnTypes.any { it.isNullable() }) return
 
             val declarationName = declaration.nameAsSafeName.asString()
@@ -69,12 +70,14 @@ class RedundantNullableReturnTypeInspection : AbstractKotlinInspection() {
         }
     }
 
-    private fun KtExpression.actualReturnTypes(): List<KotlinType> {
+    private fun KtExpression.actualReturnTypes(declaration: KtDeclaration): List<KotlinType> {
         val context = analyze()
         val dataFlowValueFactory = getResolutionFacade().frontendService<DataFlowValueFactory>()
         val moduleDescriptor = findModuleDescriptor()
         val languageVersionSettings = languageVersionSettings
-        val returnTypes = collectDescendantsOfType<KtReturnExpression>().flatMap {
+        val returnTypes = collectDescendantsOfType<KtReturnExpression> {
+            it.labelQualifier == null && it.getParentOfTypes(true, KtNamedFunction::class.java, KtProperty::class.java) == declaration
+        }.flatMap {
             it.returnedExpression.types(context, dataFlowValueFactory, moduleDescriptor, languageVersionSettings)
         }
         return if (this is KtBlockExpression) {
