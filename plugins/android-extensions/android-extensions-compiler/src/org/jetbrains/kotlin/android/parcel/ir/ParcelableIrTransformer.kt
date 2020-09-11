@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclaration
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -107,7 +107,7 @@ class ParcelableIrTransformer(private val context: IrPluginContext, private val 
         val parcelableProperties = declaration.parcelableProperties
 
         // If the companion extends Parceler, it can override parts of the generated implementation.
-        val parcelerObject = declaration.companionObject()?.safeAs<IrClass>()?.takeIf {
+        val parcelerObject = declaration.companionObject()?.takeIf {
             it.isSubclassOfFqName(PARCELER_FQNAME.asString())
         }
 

@@ -166,7 +166,7 @@ class IrEfficientParcelableParcelSerializer(private val irClass: IrClass) : IrPa
         val creator: IrExpression = irClass.fields.find { it.name == CREATOR_NAME }?.let { creatorField ->
             irGetField(null, creatorField)
         } ?: irCall(irClass.creatorGetter!!).apply {
-            dispatchReceiver = irGetObject((irClass.companionObject()!! as IrClass).symbol)
+            dispatchReceiver = irGetObject(irClass.companionObject()!!.symbol)
         }
 
         return parcelableCreatorCreateFromParcel(creator, irGet(parcel))

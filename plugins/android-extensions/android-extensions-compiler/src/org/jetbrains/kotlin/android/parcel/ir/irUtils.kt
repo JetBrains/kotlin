@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 // true if the class should be processed by the parcelize plugin
 val IrClass.isParcelize: Boolean
@@ -34,7 +33,7 @@ val IrClass.isParcelize: Boolean
 
 // Finds the getter for a pre-existing CREATOR field on the class companion, which is used for manual Parcelable implementations in Kotlin.
 val IrClass.creatorGetter: IrSimpleFunctionSymbol?
-    get() = companionObject()?.safeAs<IrClass>()?.getPropertyGetter(CREATOR_NAME.asString())?.takeIf {
+    get() = companionObject()?.getPropertyGetter(CREATOR_NAME.asString())?.takeIf {
         it.owner.correspondingPropertySymbol?.owner?.backingField?.hasAnnotation(FqName("kotlin.jvm.JvmField")) == true
     }
 

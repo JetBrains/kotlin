@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.backend.jvm.intrinsics.receiverAndArgs
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.hasMangledParameters
 import org.jetbrains.kotlin.codegen.syntheticAccessorToSuperSuffix
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -242,7 +242,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
     private fun IrDeclarationWithVisibility.accessorParent(parent: IrDeclarationParent = this.parent) =
         if (visibility == JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY) {
             val classes = allScopes.map { it.irElement }.filterIsInstance<IrClass>()
-            val companions = classes.mapNotNull { it.companionObject() }.filterIsInstance<IrClass>()
+            val companions = classes.mapNotNull(IrClass::companionObject)
             val objectsInScope =
                 classes.flatMap { it.declarations.filter(IrDeclaration::isAnonymousObject).filterIsInstance<IrClass>() }
             val candidates = objectsInScope + companions + classes
