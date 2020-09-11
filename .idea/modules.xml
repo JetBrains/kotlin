@@ -2060,11 +2060,6 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/vaadin/intellij.vaadin.iml" filepath="$PROJECT_DIR$/intellij/plugins/vaadin/intellij.vaadin.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/vagrant/intellij.vagrant.iml" filepath="$PROJECT_DIR$/intellij/plugins/vagrant/intellij.vagrant.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/changeReminder/intellij.vcs.changeReminder.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/changeReminder/intellij.vcs.changeReminder.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/cvs/cvs-plugin/intellij.vcs.cvs.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/cvs/cvs-plugin/intellij.vcs.cvs.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/cvs/cvs-core/intellij.vcs.cvs.core.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/cvs/cvs-core/intellij.vcs.cvs.core.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/cvs/javacvs-src/intellij.vcs.cvs.javacvs.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/cvs/javacvs-src/intellij.vcs.cvs.javacvs.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/cvs/smartcvs-src/intellij.vcs.cvs.smartcvs.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/cvs/smartcvs-src/intellij.vcs.cvs.smartcvs.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/cvs2/testSource/intellij.vcs.cvs.tests.iml" filepath="$PROJECT_DIR$/intellij/plugins/cvs2/testSource/intellij.vcs.cvs.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/git4idea/intellij.vcs.git.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/git4idea/intellij.vcs.git.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/git4idea/rt/intellij.vcs.git.rt.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/git4idea/rt/intellij.vcs.git.rt.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/github/intellij.vcs.github.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/github/intellij.vcs.github.iml" />
