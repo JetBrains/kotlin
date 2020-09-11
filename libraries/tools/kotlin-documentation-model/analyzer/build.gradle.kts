@@ -15,6 +15,7 @@ allprojects {
     group = "org.jetbrains.dokka"
     version = dokka_version
 
+
     val language_version: String by project
     tasks.withType(KotlinCompile::class).all {
         kotlinOptions {
