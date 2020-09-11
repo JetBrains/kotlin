@@ -139,7 +139,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
         useChromeLike(debuggableChrome)
     }
 
-    fun usePhantomJS() = useBrowser("PhantomJS", versions.karmaPhantomJsLauncher)
+    fun usePhantomJS() = useBrowser("PhantomJS", versions.karmaPhantomjsLauncher)
 
     private fun useFirefoxLike(id: String) = useBrowser(id, versions.karmaFirefoxLauncher)
 
@@ -255,7 +255,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
     }
 
     fun useSourceMapSupport() {
-        requiredDependencies.add(versions.karmaSourceMapLoader)
+        requiredDependencies.add(versions.karmaSourcemapLoader)
         sourceMaps = true
         addPreprocessor("sourcemap")
     }
