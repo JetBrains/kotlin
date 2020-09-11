@@ -847,6 +847,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/builderInference.kt");
         }
 
+        @TestMetadata("builderInferenceAndCoercionToUnit.kt")
+        public void testBuilderInferenceAndCoercionToUnit() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/builderInferenceAndCoercionToUnit.kt");
+        }
+
         @TestMetadata("builderInferenceFromStdlib.kt")
         public void testBuilderInferenceFromStdlib() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/builderInferenceFromStdlib.kt");

@@ -294,7 +294,7 @@ private enum class VarargMappingState {
 
 private fun FirFunction<*>.indexOf(valueParameter: FirValueParameter): Int = valueParameters.indexOf(valueParameter)
 
-private val ConeKotlinType.isUnit: Boolean
+val ConeKotlinType.isUnit: Boolean
     get() {
         val type = this.lowerBoundIfFlexible()
         if (type.isNullable) return false

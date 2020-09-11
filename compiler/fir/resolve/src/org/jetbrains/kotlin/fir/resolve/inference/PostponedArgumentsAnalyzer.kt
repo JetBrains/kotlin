@@ -154,13 +154,14 @@ class PostponedArgumentsAnalyzer(
         val checkerSink: CheckerSink = CheckerSinkImpl()
 
         var hasExpressionInReturnArguments = false
+        val lambdaReturnType = lambda.returnType.let(::substitute).takeUnless { it.isUnit }
         returnArguments.forEach {
             if (it !is FirExpression) return@forEach
             hasExpressionInReturnArguments = true
             candidate.resolveArgumentExpression(
                 c.getBuilder(),
                 it,
-                lambda.returnType.let(::substitute),
+                lambdaReturnType,
                 lambda.atom.returnTypeRef, // TODO: proper ref
                 checkerSink,
                 context = resolutionContext,
@@ -169,8 +170,7 @@ class PostponedArgumentsAnalyzer(
             )
         }
 
-        if (!hasExpressionInReturnArguments) {
-            val lambdaReturnType = lambda.returnType.let(::substitute)
+        if (!hasExpressionInReturnArguments && lambdaReturnType != null) {
             /*LambdaArgumentConstraintPosition(lambda)*/
             c.getBuilder().addEqualityConstraint(lambdaReturnType, unitType, SimpleConstraintSystemConstraintPosition)
         }
