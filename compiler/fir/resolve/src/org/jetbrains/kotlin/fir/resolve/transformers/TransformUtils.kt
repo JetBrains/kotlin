@@ -101,7 +101,7 @@ internal fun FirTypedDeclaration.transformTypeToArrayType() {
     transformReturnTypeRef(
         StoreType,
         returnTypeRef.withReplacedConeType(
-            ConeKotlinTypeProjectionOut(returnType).createArrayOf(),
+            ConeKotlinTypeProjectionOut(returnType).createArrayType(),
             FirFakeSourceElementKind.ArrayTypeFromVarargParameter
         )
     )

@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.fir.types
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 
 fun ConeKotlinType.createOutArrayType(nullable: Boolean = false): ConeKotlinType {
-    return ConeKotlinTypeProjectionOut(this).createArrayOf(nullable)
+    return ConeKotlinTypeProjectionOut(this).createArrayType(nullable)
 }
 
-fun ConeTypeProjection.createArrayOf(nullable: Boolean = false): ConeKotlinType {
+fun ConeTypeProjection.createArrayType(nullable: Boolean = false): ConeKotlinType {
     if (this is ConeKotlinTypeProjection) {
         val type = type.lowerBoundIfFlexible()
         if (type is ConeClassLikeType && type.nullability != ConeNullability.NULLABLE) {

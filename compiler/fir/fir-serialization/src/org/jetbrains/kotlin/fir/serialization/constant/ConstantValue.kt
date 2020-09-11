@@ -139,7 +139,7 @@ internal class KClassValue(value: Value) : ConstantValue<KClassValue.Value>(valu
                 val klass = session.firSymbolProvider.getClassLikeSymbolByFqName(classId)?.fir as? FirRegularClass ?: return null
                 var type: ConeKotlinType = klass.defaultType().replaceArgumentsWithStarProjections()
                 repeat(arrayDimensions) {
-                    type = type.createArrayOf()
+                    type = type.createArrayType()
                 }
                 return type
             }

@@ -214,7 +214,7 @@ class FirSyntheticCallGenerator(
 
         val (typeParameter, returnType) = generateSyntheticSelectTypeParameter()
 
-        val argumentType = buildResolvedTypeRef { type = returnType.type.createArrayOf() }
+        val argumentType = buildResolvedTypeRef { type = returnType.type.createArrayType() }
         val typeArgument = buildTypeProjectionWithVariance {
             typeRef = returnType
             variance = Variance.INVARIANT
