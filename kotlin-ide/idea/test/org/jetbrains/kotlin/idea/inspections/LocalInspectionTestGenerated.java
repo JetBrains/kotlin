@@ -7789,6 +7789,16 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
                 runTest("testData/inspectionsLocal/redundantNullableReturnType/function/overridable.kt");
             }
 
+            @TestMetadata("returnNullableFromLambdaInBlockBody.kt")
+            public void testReturnNullableFromLambdaInBlockBody() throws Exception {
+                runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/function/returnNullableFromLambdaInBlockBody.kt");
+            }
+
+            @TestMetadata("returnNullableFromLambdaInSingleExpressionBody.kt")
+            public void testReturnNullableFromLambdaInSingleExpressionBody() throws Exception {
+                runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/function/returnNullableFromLambdaInSingleExpressionBody.kt");
+            }
+
             @TestMetadata("singleExpressionBody.kt")
             public void testSingleExpressionBody() throws Exception {
                 runTest("testData/inspectionsLocal/redundantNullableReturnType/function/singleExpressionBody.kt");
@@ -7820,6 +7830,11 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
             @TestMetadata("initializer.kt")
             public void testInitializer() throws Exception {
                 runTest("testData/inspectionsLocal/redundantNullableReturnType/property/initializer.kt");
+            }
+
+            @TestMetadata("returnNullableFromLambdaInGetter.kt")
+            public void testReturnNullableFromLambdaInGetter() throws Exception {
+                runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/property/returnNullableFromLambdaInGetter.kt");
             }
 
             @TestMetadata("var.kt")

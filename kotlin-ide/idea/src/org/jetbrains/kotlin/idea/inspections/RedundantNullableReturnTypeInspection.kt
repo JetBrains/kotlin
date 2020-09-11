@@ -74,12 +74,13 @@ class RedundantNullableReturnTypeInspection : AbstractKotlinInspection() {
         val dataFlowValueFactory = getResolutionFacade().frontendService<DataFlowValueFactory>()
         val moduleDescriptor = findModuleDescriptor()
         val languageVersionSettings = languageVersionSettings
+        val returnTypes = collectDescendantsOfType<KtReturnExpression>().flatMap {
+            it.returnedExpression.types(context, dataFlowValueFactory, moduleDescriptor, languageVersionSettings)
+        }
         return if (this is KtBlockExpression) {
-            collectDescendantsOfType<KtReturnExpression>().flatMap {
-                it.returnedExpression.types(context, dataFlowValueFactory, moduleDescriptor, languageVersionSettings)
-            }
+            returnTypes
         } else {
-            types(context, dataFlowValueFactory, moduleDescriptor, languageVersionSettings)
+            returnTypes + types(context, dataFlowValueFactory, moduleDescriptor, languageVersionSettings)
         }
     }
 
