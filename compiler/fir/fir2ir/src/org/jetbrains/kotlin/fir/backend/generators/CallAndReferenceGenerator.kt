@@ -186,7 +186,7 @@ class CallAndReferenceGenerator(
                             startOffset, endOffset, type, symbol,
                             typeArgumentsCount = symbol.owner.typeParameters.size,
                             valueArgumentsCount = symbol.owner.valueParameters.size,
-                            origin = qualifiedAccess.calleeReference.statementOrigin(),
+                            origin = qualifiedAccess.calleeReference.statementOrigin(session),
                             superQualifierSymbol = dispatchReceiver.superQualifierSymbol(symbol)
                         )
                     }
@@ -227,7 +227,7 @@ class CallAndReferenceGenerator(
                     )
                     is IrValueSymbol -> IrGetValueImpl(
                         startOffset, endOffset, type, symbol,
-                        origin = qualifiedAccess.calleeReference.statementOrigin()
+                        origin = qualifiedAccess.calleeReference.statementOrigin(session)
                     )
                     is IrEnumEntrySymbol -> IrGetEnumValueImpl(startOffset, endOffset, type, symbol)
                     else -> generateErrorCallExpression(startOffset, endOffset, qualifiedAccess.calleeReference, type)

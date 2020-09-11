@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/genericConstructorCallWithTypeArguments.kt
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): T of <root>.testArray declared in <root>.testArray'
                   CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=T of <root>.testArray origin=INVOKE
-                    $this: GET_VAR 'block: kotlin.Function0<T of <root>.testArray> [crossinline] declared in <root>.testArray' type=kotlin.Function0<T of <root>.testArray> origin=null
+                    $this: GET_VAR 'block: kotlin.Function0<T of <root>.testArray> [crossinline] declared in <root>.testArray' type=kotlin.Function0<T of <root>.testArray> origin=VARIABLE_AS_FUNCTION
   CLASS CLASS name:Box modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Box<T of <root>.Box>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
