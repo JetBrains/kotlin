@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.codegen.replaceValueParametersIn
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.codegen.state.extractTypeMappingModeFromAnnotation
 import org.jetbrains.kotlin.codegen.state.isMethodWithDeclarationSiteWildcardsFqName
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -45,6 +44,7 @@ import org.jetbrains.kotlin.load.kotlin.signatures
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -108,25 +108,38 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
     private fun mangleMemberNameIfRequired(name: String, function: IrSimpleFunction): String {
         val newName = JvmCodegenUtil.sanitizeNameIfNeeded(name, context.state.languageVersionSettings)
 
-        if (function.isTopLevel) {
-            if (DescriptorVisibilities.isPrivate(function.suspendFunctionOriginal().visibility) &&
-                newName != "<clinit>" && (function.parent as? IrClass)?.attributeOwnerId in context.multifileFacadeForPart
-            ) {
-                return "$newName$${function.parentAsClass.name.asString()}"
-            }
-            return newName
+        val suffix = when {
+            function.isTopLevel ->
+                if (function.isInvisibleInMultifilePart()) function.parentAsClass.name.asString() else null
+            function.shouldMangleAsInternal() ->
+                NameUtils.sanitizeAsJavaIdentifier(getModuleName(function))
+            else -> null
+        } ?: return newName
+
+        if (function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
+            assert(newName.endsWith(JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX)) { "Default adapter should end with \$default: ${function.render()}" }
+            return newName.substringBeforeLast(JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX) + "$" + suffix + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX
         }
 
-        return if (function.shouldMangleAsInternal())
-            KotlinTypeMapper.InternalNameMapper.mangleInternalName(newName, getModuleName(function))
-        else
-            newName
+        return "$newName$$suffix"
     }
 
+    private fun IrSimpleFunction.isInvisibleInMultifilePart(): Boolean =
+        name.asString() != "<clinit>" &&
+                (parent as? IrClass)?.attributeOwnerId in context.multifileFacadeForPart &&
+                (DescriptorVisibilities.isPrivate(suspendFunctionOriginal().visibility) ||
+                        originalForDefaultAdapter?.isInvisibleInMultifilePart() == true)
+
     private fun IrSimpleFunction.shouldMangleAsInternal(): Boolean =
-        origin != JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR &&
+        (origin != JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR &&
                 visibility == DescriptorVisibilities.INTERNAL &&
-                !isPublishedApi()
+                !isPublishedApi())
+                || originalForDefaultAdapter?.shouldMangleAsInternal() == true
+
+    private val IrSimpleFunction.originalForDefaultAdapter: IrSimpleFunction?
+        get() = if (origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
+            ((body?.statements?.lastOrNull() as? IrReturn)?.value as? IrCall)?.symbol?.owner
+        } else null
 
     private fun getModuleName(function: IrSimpleFunction): String =
         (if (function is IrLazyFunction)

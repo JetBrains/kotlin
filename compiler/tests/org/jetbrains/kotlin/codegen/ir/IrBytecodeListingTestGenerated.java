@@ -345,6 +345,29 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/bytecodeListing/defaultArguments")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DefaultArguments extends AbstractIrBytecodeListingTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInDefaultArguments() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("internalNameMangling.kt")
+        public void testInternalNameMangling() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/defaultArguments/internalNameMangling.kt");
+        }
+
+        @TestMetadata("privateFunctionInMultifilePart.kt")
+        public void testPrivateFunctionInMultifilePart() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/defaultArguments/privateFunctionInMultifilePart.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeListing/deprecated")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
