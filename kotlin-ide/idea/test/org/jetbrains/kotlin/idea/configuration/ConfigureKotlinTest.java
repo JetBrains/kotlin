@@ -339,7 +339,7 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
             TargetPlatform platform = JvmPlatforms.INSTANCE.jvmPlatformByTargetVersion(jvmTarget);
             FacetUtilsKt.configureFacet(
                     facet,
-                    "1.1",
+                    "1.4",
                     LanguageFeature.State.ENABLED,
                     platform,
                     modelsProvider

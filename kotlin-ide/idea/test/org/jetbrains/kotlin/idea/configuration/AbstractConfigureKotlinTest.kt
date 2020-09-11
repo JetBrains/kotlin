@@ -9,6 +9,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.testFramework.IdeaTestUtil
 import junit.framework.TestCase
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator.FileState
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.PathUtil
@@ -88,10 +89,10 @@ abstract class AbstractConfigureKotlinTest : AbstractConfigureKotlinTestBase() {
 
     companion object {
         private val pathToExistentRuntimeJar: String
-            get() = PathUtil.kotlinPathsForDistDirectory.stdlibPath.parent
+            get() = KotlinArtifacts.instance.kotlinStdlib.parent
 
         private val pathToExistentJsJar: String
-            get() = PathUtil.kotlinPathsForDistDirectory.jsStdLibJarPath.parent
+            get() = KotlinArtifacts.instance.kotlinStdlibJs.parent
     }
 
     protected fun configure(module: Module, jarState: FileState, configurator: KotlinProjectConfigurator) {
