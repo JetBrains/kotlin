@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.highlighter.markers
 
+import com.intellij.openapi.util.NlsContexts
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.idea.caches.project.implementedDescriptors
@@ -39,8 +40,10 @@ fun getExpectedDeclarationTooltip(declaration: KtDeclaration): String? {
 fun KtDeclaration.allNavigatableExpectedDeclarations(): List<KtDeclaration> =
     listOfNotNull(expectedDeclarationIfAny()) + findMarkerBoundDeclarations().mapNotNull { it.expectedDeclarationIfAny() }
 
+@NlsContexts.PopupTitle
 fun KtDeclaration.navigateToExpectedTitle() = KotlinBundle.message("highlighter.title.choose.expected.for", name.toString())
 
+@NlsContexts.TabTitle
 fun KtDeclaration.navigateToExpectedUsagesTitle() = KotlinBundle.message("highlighter.title.expected.for", name.toString())
 
 fun buildNavigateToExpectedDeclarationsPopup(element: PsiElement?): NavigationPopupDescriptor? {

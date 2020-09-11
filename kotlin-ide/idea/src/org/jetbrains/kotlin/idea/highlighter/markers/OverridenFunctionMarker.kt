@@ -17,10 +17,8 @@
 package org.jetbrains.kotlin.idea.highlighter.markers
 
 import com.intellij.codeInsight.daemon.DaemonBundle
-import com.intellij.codeInsight.daemon.impl.GutterIconTooltipHelper
-import com.intellij.codeInsight.navigation.ListBackgroundUpdaterTask
+import com.intellij.codeInsight.navigation.BackgroundUpdaterTask
 import com.intellij.ide.util.MethodCellRenderer
-import com.intellij.ide.util.PsiElementListCellRenderer
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.keymap.KeymapUtil
@@ -68,7 +66,7 @@ internal fun <T> getOverriddenDeclarations(mappingToJava: MutableMap<PsiElement,
                 }
             }
 
-            !mappingToJava.isEmpty()
+            mappingToJava.isNotEmpty()
         }
     }
 
@@ -111,14 +109,14 @@ fun getSubclassedClassTooltip(klass: PsiClass): String? {
     val comparator = renderer.comparator
     return subclasses.toList().sortedWith(comparator).joinToString(
         prefix = "<html><body>$start", postfix = "$postfix</body</html>", separator = "<br>"
-    ) {
-        val moduleNameRequired = if (it is KtLightClass) {
-            val origin = it.kotlinOrigin
+    ) { clazz ->
+        val moduleNameRequired = if (clazz is KtLightClass) {
+            val origin = clazz.kotlinOrigin
             origin?.hasActualModifier() == true || origin?.isExpectDeclaration() == true
         } else false
-        val moduleName = it.module?.name
-        val elementText = renderer.getElementText(it) + (moduleName?.takeIf { moduleNameRequired }?.let { " [$it]" } ?: "")
-        val refText = (moduleName?.let { "$it:" } ?: "") + ClassPresentationUtil.getNameForClass(it, /* qualified = */ true)
+        val moduleName = clazz.module?.name
+        val elementText = renderer.getElementText(clazz) + (moduleName?.takeIf { moduleNameRequired }?.let { " [$it]" } ?: "")
+        val refText = (moduleName?.let { "$it:" } ?: "") + ClassPresentationUtil.getNameForClass(clazz, /* qualified = */ true)
         "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"#kotlinClass/$refText\">$elementText</a>"
     }
 }
@@ -140,7 +138,11 @@ fun getOverriddenMethodTooltip(method: PsiMethod): String? {
 
     val start = if (isAbstract) DaemonBundle.message("method.is.implemented.header") else DaemonBundle.message("method.is.overriden.header")
 
-    return GutterIconTooltipHelper.composeText(overridingJavaMethods, start, "&nbsp;&nbsp;&nbsp;&nbsp;{1}")
+    return com.intellij.codeInsight.daemon.impl.GutterIconTooltipHelper.composeText(
+        overridingJavaMethods,
+        start,
+        "&nbsp;&nbsp;&nbsp;&nbsp;{1}"
+    )
 }
 
 fun buildNavigateToOverriddenMethodPopup(e: MouseEvent?, element: PsiElement?): NavigationPopupDescriptor? {
@@ -152,7 +154,7 @@ fun buildNavigateToOverriddenMethodPopup(e: MouseEvent?, element: PsiElement?): 
         return null
     }
 
-    val processor = PsiElementProcessor.CollectElementsWithLimit<PsiMethod>(2, THashSet<PsiMethod>())
+    val processor = PsiElementProcessor.CollectElementsWithLimit(2, THashSet<PsiMethod>())
     if (!ProgressManager.getInstance().runProcessWithProgressSynchronously(
             {
                 method.forEachOverridingMethod {
@@ -161,7 +163,10 @@ fun buildNavigateToOverriddenMethodPopup(e: MouseEvent?, element: PsiElement?): 
                     }
                 }
             },
-            KotlinBundle.message("highlighter.title.searching.for.overriding.declarations"), true, method.project, e?.component as JComponent?
+            KotlinBundle.message("highlighter.title.searching.for.overriding.declarations"),
+            true,
+            method.project,
+            e?.component as JComponent?
         )
     ) {
         return null
@@ -173,7 +178,7 @@ fun buildNavigateToOverriddenMethodPopup(e: MouseEvent?, element: PsiElement?): 
     val renderer = MethodCellRenderer(false)
     overridingJavaMethods = overridingJavaMethods.sortedWith(renderer.comparator)
 
-    val methodsUpdater = OverridingMethodsUpdater(method, renderer)
+    val methodsUpdater = OverridingMethodsUpdater(method, renderer.comparator)
     return NavigationPopupDescriptor(
         overridingJavaMethods,
         methodsUpdater.getCaption(overridingJavaMethods.size),
@@ -185,9 +190,14 @@ fun buildNavigateToOverriddenMethodPopup(e: MouseEvent?, element: PsiElement?): 
 
 private class OverridingMethodsUpdater(
     private val myMethod: PsiMethod,
-    private val myRenderer: PsiElementListCellRenderer<out PsiElement>
-) :
-    ListBackgroundUpdaterTask(myMethod.project, KotlinBundle.message("highlighter.title.searching.for.overriding.methods")) {
+    comparator: Comparator<PsiMethod>,
+) : BackgroundUpdaterTask(
+    myMethod.project,
+    KotlinBundle.message("highlighter.title.searching.for.overriding.methods"),
+    createComparatorWrapper { o1: PsiElement, o2: PsiElement ->
+        if (o1 is PsiMethod && o2 is PsiMethod) comparator.compare(o1, o2) else 0
+    }
+) {
     override fun getCaption(size: Int): String {
         return if (myMethod.hasModifierProperty(PsiModifier.ABSTRACT))
             DaemonBundle.message("navigation.title.implementation.method", myMethod.name, size)!!
@@ -199,7 +209,7 @@ private class OverridingMethodsUpdater(
         super.run(indicator)
         val processor = object : CommonProcessors.CollectProcessor<PsiMethod>() {
             override fun process(psiMethod: PsiMethod): Boolean {
-                if (!updateComponent(psiMethod, myRenderer.comparator)) {
+                if (!updateComponent(psiMethod)) {
                     indicator.cancel()
                 }
                 indicator.checkCanceled()

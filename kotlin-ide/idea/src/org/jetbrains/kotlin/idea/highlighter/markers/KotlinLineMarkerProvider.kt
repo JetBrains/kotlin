@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.idea.highlighter.markers
 
-import com.intellij.codeHighlighting.Pass
 import com.intellij.codeInsight.daemon.*
 import com.intellij.codeInsight.daemon.impl.LineMarkerNavigator
 import com.intellij.codeInsight.daemon.impl.MarkerType
 import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
-import com.intellij.codeInsight.navigation.ListBackgroundUpdaterTask
+import com.intellij.codeInsight.navigation.BackgroundUpdaterTask
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.colors.CodeInsightColors
@@ -19,6 +18,7 @@ import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.editor.markup.SeparatorPlacement
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbService
+import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
 import com.intellij.psi.search.searches.ClassInheritorsSearch
@@ -75,7 +75,7 @@ class KotlinLineMarkerProvider : LineMarkerProviderDescriptor() {
     private fun createLineSeparatorByElement(element: PsiElement): LineMarkerInfo<PsiElement> {
         val anchor = PsiTreeUtil.getDeepestFirst(element)
 
-        val info = LineMarkerInfo(anchor, anchor.textRange, null, Pass.LINE_MARKERS, null, null, GutterIconRenderer.Alignment.RIGHT)
+        val info = LineMarkerInfo(anchor, anchor.textRange)
         info.separatorColor = EditorColorsManager.getInstance().globalScheme.getColor(CodeInsightColors.METHOD_SEPARATORS_COLOR)
         info.separatorPlacement = SeparatorPlacement.TOP
         return info
@@ -128,10 +128,10 @@ class KotlinLineMarkerProvider : LineMarkerProviderDescriptor() {
 
 data class NavigationPopupDescriptor(
     val targets: Collection<NavigatablePsiElement>,
-    val title: String,
-    val findUsagesTitle: String,
-    val renderer: ListCellRenderer<*>,
-    val updater: ListBackgroundUpdaterTask? = null
+    @NlsContexts.PopupTitle val title: String,
+    @NlsContexts.TabTitle val findUsagesTitle: String,
+    val renderer: ListCellRenderer<in NavigatablePsiElement>,
+    val updater: BackgroundUpdaterTask? = null
 ) {
     fun showPopup(e: MouseEvent?) {
         PsiElementListNavigator.openTargets(e, targets.toTypedArray(), title, findUsagesTitle, renderer, updater)
@@ -245,9 +245,7 @@ private val EXPECTED_DECLARATION = object : MarkerType(
 private fun isImplementsAndNotOverrides(
     descriptor: CallableMemberDescriptor,
     overriddenMembers: Collection<CallableMemberDescriptor>
-): Boolean {
-    return descriptor.modality != Modality.ABSTRACT && overriddenMembers.all { it.modality == Modality.ABSTRACT }
-}
+): Boolean = descriptor.modality != Modality.ABSTRACT && overriddenMembers.all { it.modality == Modality.ABSTRACT }
 
 private fun collectSuperDeclarationMarkers(declaration: KtDeclaration, result: LineMarkerInfos) {
     if (!(KotlinLineMarkerOptions.implementingOption.isEnabled || KotlinLineMarkerOptions.overridingOption.isEnabled)) return
@@ -266,20 +264,23 @@ private fun collectSuperDeclarationMarkers(declaration: KtDeclaration, result: L
     // NOTE: Don't store descriptors in line markers because line markers are not deleted while editing other files and this can prevent
     // clearing the whole BindingTrace.
 
+    val gutter = if (implements) KotlinLineMarkerOptions.implementingOption else KotlinLineMarkerOptions.overridingOption
     val lineMarkerInfo = LineMarkerInfo(
         anchor,
         anchor.textRange,
-        if (implements) KotlinLineMarkerOptions.implementingOption.icon else KotlinLineMarkerOptions.overridingOption.icon,
-        Pass.LINE_MARKERS,
+        gutter.icon!!,
         SuperDeclarationMarkerTooltip,
         SuperDeclarationMarkerNavigationHandler(),
-        GutterIconRenderer.Alignment.RIGHT
+        GutterIconRenderer.Alignment.RIGHT,
+        { gutter.name },
     )
+
     NavigateAction.setNavigateAction(
         lineMarkerInfo,
-        if (declaration is KtNamedFunction) KotlinBundle.message("highlighter.action.text.go.to.super.method") else KotlinBundle.message(
-            "highlighter.action.text.go.to.super.property"
-        ),
+        if (declaration is KtNamedFunction)
+            KotlinBundle.message("highlighter.action.text.go.to.super.method")
+        else
+            KotlinBundle.message("highlighter.action.text.go.to.super.property"),
         IdeActions.ACTION_GOTO_SUPER
     )
     result.add(lineMarkerInfo)
@@ -297,21 +298,24 @@ private fun collectInheritedClassMarker(element: KtClass, result: LineMarkerInfo
     if (ClassInheritorsSearch.search(lightClass, false).findFirst() == null) return
 
     val anchor = element.nameIdentifier ?: element
-
+    val gutter = if (element.isInterface()) KotlinLineMarkerOptions.implementedOption else KotlinLineMarkerOptions.overriddenOption
+    val icon = gutter.icon ?: return
     val lineMarkerInfo = LineMarkerInfo(
         anchor,
         anchor.textRange,
-        if (element.isInterface()) KotlinLineMarkerOptions.implementedOption.icon else KotlinLineMarkerOptions.overriddenOption.icon,
-        Pass.LINE_MARKERS,
+        icon,
         SUBCLASSED_CLASS.tooltip,
         SUBCLASSED_CLASS.navigationHandler,
-        GutterIconRenderer.Alignment.RIGHT
+        GutterIconRenderer.Alignment.RIGHT,
+        { gutter.name }
     )
+
     NavigateAction.setNavigateAction(
         lineMarkerInfo,
-        if (element.isInterface()) KotlinBundle.message("highlighter.action.text.go.to.implementations") else KotlinBundle.message(
-            "highlighter.action.text.go.to.subclasses"
-        ),
+        if (element.isInterface())
+            KotlinBundle.message("highlighter.action.text.go.to.implementations")
+        else
+            KotlinBundle.message("highlighter.action.text.go.to.subclasses"),
         IdeActions.ACTION_GOTO_IMPLEMENTATION
     )
     result.add(lineMarkerInfo)
@@ -337,32 +341,33 @@ private fun collectOverriddenPropertyAccessors(
         ProgressManager.checkCanceled()
 
         val anchor = (property as? PsiNameIdentifierOwner)?.nameIdentifier ?: property
-
+        val gutter = if (isImplemented(property)) KotlinLineMarkerOptions.implementedOption else KotlinLineMarkerOptions.overriddenOption
         val lineMarkerInfo = LineMarkerInfo(
             anchor,
             anchor.textRange,
-            if (isImplemented(property)) KotlinLineMarkerOptions.implementedOption.icon else KotlinLineMarkerOptions.overriddenOption.icon,
-            Pass.LINE_MARKERS,
+            gutter.icon!!,
             OVERRIDDEN_PROPERTY.tooltip,
             OVERRIDDEN_PROPERTY.navigationHandler,
-            GutterIconRenderer.Alignment.RIGHT
+            GutterIconRenderer.Alignment.RIGHT,
+            { gutter.name },
         )
+
         NavigateAction.setNavigateAction(
             lineMarkerInfo,
             KotlinBundle.message("highlighter.action.text.go.to.overridden.properties"),
             IdeActions.ACTION_GOTO_IMPLEMENTATION
         )
+
         result.add(lineMarkerInfo)
     }
 }
 
 private val KtNamedDeclaration.expectOrActualAnchor
-    get() =
-        nameIdentifier ?: when (this) {
-            is KtConstructor<*> -> getConstructorKeyword() ?: getValueParameterList()?.leftParenthesis
-            is KtObjectDeclaration -> getObjectKeyword()
-            else -> null
-        } ?: this
+    get() = nameIdentifier ?: when (this) {
+        is KtConstructor<*> -> getConstructorKeyword() ?: valueParameterList?.leftParenthesis
+        is KtObjectDeclaration -> getObjectKeyword()
+        else -> null
+    } ?: this
 
 private fun collectMultiplatformMarkers(
     declaration: KtNamedDeclaration,
@@ -397,9 +402,8 @@ private fun KtNamedDeclaration.requiresNoMarkers(
     document: Document? = PsiDocumentManager.getInstance(project).getDocument(containingFile)
 ): Boolean {
     when (this) {
-        is KtPrimaryConstructor -> {
-            return true
-        }
+        is KtPrimaryConstructor -> return true
+
         is KtParameter,
         is KtEnumEntry -> {
             if (document?.areAnchorsOnOneLine(this, containingClassOrObject) == true) {
@@ -434,21 +438,27 @@ internal fun KtDeclaration.findMarkerBoundDeclarations(): Sequence<KtNamedDeclar
 
     return when (this) {
         is KtParameter -> {
-            val propertyParameters = takeIf { hasValOrVar() }?.containingClassOrObject?.primaryConstructorParameters
+            val propertyParameters = takeIf { hasValOrVar() }?.containingClassOrObject
+                ?.primaryConstructorParameters
                 ?: return emptySequence()
+
             propertyParameters.asSequence().dropWhile {
                 it !== this
             }.drop(1).takeBound(this).filter { it.hasValOrVar() }
         }
+
         is KtEnumEntry -> {
             val enumEntries = containingClassOrObject?.body?.enumEntries ?: return emptySequence()
-            enumEntries.asSequence().dropWhile {
-                it !== this
-            }.drop(1).takeBound(this)
+            enumEntries.asSequence().dropWhile { it !== this }.drop(1).takeBound(this)
         }
+
         is KtClass -> {
-            val boundParameters =
-                primaryConstructor?.valueParameters?.asSequence()?.takeBound(this)?.filter { it.hasValOrVar() }.orEmpty()
+            val boundParameters = primaryConstructor?.valueParameters
+                ?.asSequence()
+                ?.takeBound(this)
+                ?.filter { it.hasValOrVar() }
+                .orEmpty()
+
             val boundEnumEntries = this.takeIf { isEnum() }?.body?.enumEntries?.asSequence()?.takeBound(this).orEmpty()
             boundParameters + boundEnumEntries
         }
@@ -460,7 +470,8 @@ private fun collectActualMarkers(
     declaration: KtNamedDeclaration,
     result: LineMarkerInfos
 ) {
-    if (!KotlinLineMarkerOptions.actualOption.isEnabled) return
+    val gutter = KotlinLineMarkerOptions.actualOption
+    if (!gutter.isEnabled) return
     if (declaration.requiresNoMarkers()) return
     if (!declaration.hasAtLeastOneActual()) return
 
@@ -469,12 +480,13 @@ private fun collectActualMarkers(
     val lineMarkerInfo = LineMarkerInfo(
         anchor,
         anchor.textRange,
-        KotlinLineMarkerOptions.actualOption.icon,
-        Pass.LINE_MARKERS,
+        gutter.icon!!,
         PLATFORM_ACTUAL.tooltip,
         PLATFORM_ACTUAL.navigationHandler,
-        GutterIconRenderer.Alignment.RIGHT
+        GutterIconRenderer.Alignment.RIGHT,
+        { gutter.name },
     )
+
     NavigateAction.setNavigateAction(
         lineMarkerInfo,
         KotlinBundle.message("highlighter.action.text.go.to.actual.declarations"),
@@ -493,16 +505,17 @@ private fun collectExpectedMarkers(
     if (!declaration.hasMatchingExpected()) return
 
     val anchor = declaration.expectOrActualAnchor
-
+    val gutter = KotlinLineMarkerOptions.expectOption
     val lineMarkerInfo = LineMarkerInfo(
         anchor,
         anchor.textRange,
-        KotlinLineMarkerOptions.expectOption.icon,
-        Pass.LINE_MARKERS,
+        gutter.icon!!,
         EXPECTED_DECLARATION.tooltip,
         EXPECTED_DECLARATION.navigationHandler,
-        GutterIconRenderer.Alignment.RIGHT
+        GutterIconRenderer.Alignment.RIGHT,
+        { gutter.name },
     )
+
     NavigateAction.setNavigateAction(
         lineMarkerInfo,
         KotlinBundle.message("highlighter.action.text.go.to.expected.declaration"),
@@ -533,20 +546,23 @@ private fun collectOverriddenFunctions(functions: Collection<KtNamedFunction>, r
         ProgressManager.checkCanceled()
 
         val anchor = function.nameIdentifier ?: function
-
+        val gutter = if (isImplemented(function)) KotlinLineMarkerOptions.implementedOption else KotlinLineMarkerOptions.overriddenOption
         val lineMarkerInfo = LineMarkerInfo(
             anchor,
             anchor.textRange,
-            if (isImplemented(function)) KotlinLineMarkerOptions.implementedOption.icon else KotlinLineMarkerOptions.overriddenOption.icon,
-            Pass.LINE_MARKERS, OVERRIDDEN_FUNCTION.tooltip,
+            gutter.icon!!,
+            OVERRIDDEN_FUNCTION.tooltip,
             OVERRIDDEN_FUNCTION.navigationHandler,
-            GutterIconRenderer.Alignment.RIGHT
+            GutterIconRenderer.Alignment.RIGHT,
+            { gutter.name },
         )
+
         NavigateAction.setNavigateAction(
             lineMarkerInfo,
             KotlinBundle.message("highlighter.action.text.go.to.overridden.methods"),
             IdeActions.ACTION_GOTO_IMPLEMENTATION
         )
+
         result.add(lineMarkerInfo)
     }
 }

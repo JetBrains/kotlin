@@ -140,14 +140,13 @@ class KotlinRecursiveCallLineMarkerProvider : LineMarkerProvider {
 
 }
 
-internal fun getElementForLineMark(callElement: PsiElement): PsiElement =
-    when (callElement) {
-        is KtSimpleNameExpression -> callElement.getReferencedNameElement()
-        else ->
-            // a fallback,
-            //but who knows what to reference in KtArrayAccessExpression ?
-            generateSequence(callElement, { it.firstChild }).last()
-    }
+internal fun getElementForLineMark(callElement: PsiElement): PsiElement = when (callElement) {
+    is KtSimpleNameExpression -> callElement.getReferencedNameElement()
+    else ->
+        // a fallback,
+        //but who knows what to reference in KtArrayAccessExpression ?
+        generateSequence(callElement, { it.firstChild }).last()
+}
 
 private fun PsiElement.getLineNumber(): Int {
     return PsiDocumentManager.getInstance(project).getDocument(containingFile)!!.getLineNumber(textOffset)
@@ -155,34 +154,28 @@ private fun PsiElement.getLineNumber(): Int {
 
 private fun getCallNameFromPsi(element: KtElement): Name? {
     when (element) {
-        is KtSimpleNameExpression -> {
-            val elementParent = element.getParent()
-            when (elementParent) {
-                is KtCallExpression -> return Name.identifier(element.getText())
-                is KtOperationExpression -> {
-                    val operationReference = elementParent.operationReference
-                    if (element == operationReference) {
-                        val node = operationReference.getReferencedNameElementType()
-                        return if (node is KtToken) {
-                            val conventionName = if (elementParent is KtPrefixExpression)
-                                OperatorConventions.getNameForOperationSymbol(node, true, false)
-                            else
-                                OperatorConventions.getNameForOperationSymbol(node)
+        is KtSimpleNameExpression -> when (val elementParent = element.getParent()) {
+            is KtCallExpression -> return Name.identifier(element.getText())
+            is KtOperationExpression -> {
+                val operationReference = elementParent.operationReference
+                if (element == operationReference) {
+                    val node = operationReference.getReferencedNameElementType()
+                    return if (node is KtToken) {
+                        val conventionName = if (elementParent is KtPrefixExpression)
+                            OperatorConventions.getNameForOperationSymbol(node, true, false)
+                        else
+                            OperatorConventions.getNameForOperationSymbol(node)
 
-                            conventionName ?: Name.identifier(element.getText())
-                        } else {
-                            Name.identifier(element.getText())
-                        }
+                        conventionName ?: Name.identifier(element.getText())
+                    } else {
+                        Name.identifier(element.getText())
                     }
                 }
             }
         }
-        is KtArrayAccessExpression ->
-            return OperatorNameConventions.GET
-        is KtThisExpression ->
-            if (element.getParent() is KtCallExpression) {
-                return OperatorNameConventions.INVOKE
-            }
+
+        is KtArrayAccessExpression -> return OperatorNameConventions.GET
+        is KtThisExpression -> if (element.getParent() is KtCallExpression) return OperatorNameConventions.INVOKE
     }
 
     return null
