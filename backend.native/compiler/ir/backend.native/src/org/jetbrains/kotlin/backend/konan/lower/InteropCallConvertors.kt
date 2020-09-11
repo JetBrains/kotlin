@@ -229,7 +229,7 @@ private fun InteropCallContext.convertIntegralToEnum(
         enumType: IrType
 ): IrExpression {
     val enumClass = enumType.getClass()!!
-    val companionClass = enumClass.companionObject()!! as IrClass
+    val companionClass = enumClass.companionObject()!!
     val byValue = companionClass.simpleFunctions().single { it.name.asString() == "byValue" }
     val byValueArg = castPrimitiveIfNeeded(value, intergralType, byValue.valueParameters.first().type)
     return builder.irCall(byValue).apply {
