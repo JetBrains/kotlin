@@ -1,10 +1,12 @@
 package translators
 
+import org.jetbrains.dokka.model.*
 import org.junit.jupiter.api.Assertions.*
 import org.jetbrains.dokka.model.doc.CodeBlock
 import org.jetbrains.dokka.model.doc.P
 import org.jetbrains.dokka.model.doc.Text
 import org.jetbrains.dokka.testApi.testRunner.AbstractCoreTest
+import org.junit.Assert
 import org.junit.jupiter.api.Test
 
 class DefaultDescriptorToDocumentableTranslatorTest : AbstractCoreTest() {
@@ -144,6 +146,513 @@ class DefaultDescriptorToDocumentableTranslatorTest : AbstractCoreTest() {
                     )
                 )
                 assertEquals(expected, description?.root?.children)
+            }
+        }
+    }
+
+    private sealed class TestSuite {
+        abstract val propertyName: String
+
+        data class PropertyDoesntExist(
+            override val propertyName: String
+        ) : TestSuite()
+
+
+        data class PropertyExists(
+            override val propertyName: String,
+            val modifier: KotlinModifier,
+            val visibility: KotlinVisibility,
+            val additionalModifiers: Set<ExtraModifiers.KotlinOnlyModifiers>
+        ) : TestSuite()
+
+        data class FunctionDoesntExist(
+            override val propertyName: String,
+        ) : TestSuite()
+
+        data class FunctionExists(
+            override val propertyName: String,
+            val modifier: KotlinModifier,
+            val visibility: KotlinVisibility,
+            val additionalModifiers: Set<ExtraModifiers.KotlinOnlyModifiers>
+        ) : TestSuite()
+    }
+
+    private fun runTestSuitesAgainstGivenClasses(classlikes: List<DClasslike>, testSuites: List<List<TestSuite>>) {
+        classlikes.zip(testSuites).forEach { (classlike, testSuites) ->
+            testSuites.forEach { testSuite ->
+                when (testSuite) {
+                    is TestSuite.PropertyDoesntExist -> Assert.assertEquals(
+                        "Test for class ${classlike.name} failed",
+                        null,
+                        classlike.properties.firstOrNull { it.name == testSuite.propertyName })
+                    is TestSuite.PropertyExists -> classlike.properties.single { it.name == testSuite.propertyName }
+                        .run {
+                            Assert.assertEquals(
+                                "Test for class ${classlike.name} with property $name failed",
+                                testSuite.modifier,
+                                modifier.values.single()
+                            )
+                            Assert.assertEquals(
+                                "Test for class ${classlike.name} with property $name failed",
+                                testSuite.visibility,
+                                visibility.values.single()
+                            )
+                            Assert.assertEquals(
+                                "Test for class ${classlike.name} with property $name failed",
+                                testSuite.additionalModifiers,
+                                extra[AdditionalModifiers]?.content?.values?.single()
+                            )
+                        }
+                    is TestSuite.FunctionDoesntExist -> Assert.assertEquals(
+                        "Test for class ${classlike.name} failed",
+                        null,
+                        classlike.functions.firstOrNull { it.name == testSuite.propertyName })
+                    is TestSuite.FunctionExists -> classlike.functions.single { it.name == testSuite.propertyName }
+                        .run {
+                            Assert.assertEquals(
+                                "Test for class ${classlike.name} with function $name failed",
+                                testSuite.modifier,
+                                modifier.values.single()
+                            )
+                            Assert.assertEquals(
+                                "Test for class ${classlike.name} with function $name failed",
+                                testSuite.visibility,
+                                visibility.values.single()
+                            )
+                            Assert.assertEquals(
+                                "Test for class ${classlike.name} with function $name failed",
+                                testSuite.additionalModifiers,
+                                extra[AdditionalModifiers]?.content?.values?.single()
+                            )
+                        }
+                }
+            }
+        }
+    }
+
+    @Test
+    fun `derived properties with includeNonPublic`() {
+
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src/main/kotlin")
+                    includeNonPublic = true
+                }
+            }
+        }
+
+        testInline(
+            """
+            |/src/main/kotlin/sample/XD.kt
+            |package sample
+            |
+            |open class A {
+            |    private val privateProperty: Int = 1
+            |    protected val protectedProperty: Int = 2
+            |    internal val internalProperty: Int = 3
+            |    val publicProperty: Int = 4
+            |    open val propertyToOverride: Int = 5
+            |
+            |    private fun privateFun(): Int = 6
+            |    protected fun protectedFun(): Int = 7
+            |    internal fun internalFun(): Int = 8
+            |    fun publicFun(): Int = 9
+            |    open fun funToOverride(): Int = 10
+            |}
+            |
+            |open class B : A() {
+            |    override val propertyToOverride: Int = 11
+            |
+            |    override fun funToOverride(): Int = 12
+            |}
+            |class C : B()
+            """.trimIndent(),
+            configuration
+        ) {
+
+            documentablesMergingStage = { module ->
+                val classes = module.packages.single().classlikes.sortedBy { it.name }
+
+                val testSuites: List<List<TestSuite>> = listOf(
+                    listOf(
+                        TestSuite.PropertyExists(
+                            "privateProperty",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Private,
+                            emptySet()
+                        ),
+                        TestSuite.PropertyExists(
+                            "protectedProperty",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Protected,
+                            emptySet()
+                        ),
+                        TestSuite.PropertyExists(
+                            "internalProperty",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Internal,
+                            emptySet()
+                        ),
+                        TestSuite.PropertyExists(
+                            "publicProperty",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Public,
+                            emptySet()
+                        ),
+                        TestSuite.PropertyExists(
+                            "propertyToOverride",
+                            KotlinModifier.Open,
+                            KotlinVisibility.Public,
+                            emptySet()
+                        ),
+                        TestSuite.FunctionExists(
+                            "privateFun",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Private,
+                            emptySet()
+                        ),
+                        TestSuite.FunctionExists(
+                            "protectedFun",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Protected,
+                            emptySet()
+                        ),
+                        TestSuite.FunctionExists(
+                            "internalFun",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Internal,
+                            emptySet()
+                        ),
+                        TestSuite.FunctionExists(
+                            "publicFun",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Public,
+                            emptySet()
+                        ),
+                        TestSuite.FunctionExists(
+                            "funToOverride",
+                            KotlinModifier.Open,
+                            KotlinVisibility.Public,
+                            emptySet()
+                        )
+                    ),
+                    listOf(
+                        TestSuite.PropertyExists(
+                            "privateProperty",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Private,
+                            emptySet()
+                        ),
+                        TestSuite.PropertyExists(
+                            "protectedProperty",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Protected,
+                            emptySet()
+                        ),
+                        TestSuite.PropertyExists(
+                            "internalProperty",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Internal,
+                            emptySet()
+                        ),
+                        TestSuite.PropertyExists(
+                            "publicProperty",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Public,
+                            emptySet()
+                        ),
+                        TestSuite.PropertyExists(
+                            "propertyToOverride",
+                            KotlinModifier.Open,
+                            KotlinVisibility.Public,
+                            setOf(ExtraModifiers.KotlinOnlyModifiers.Override)
+                        ),
+                        TestSuite.FunctionExists(
+                            "privateFun",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Private,
+                            emptySet()
+                        ),
+                        TestSuite.FunctionExists(
+                            "protectedFun",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Protected,
+                            emptySet()
+                        ),
+                        TestSuite.FunctionExists(
+                            "internalFun",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Internal,
+                            emptySet()
+                        ),
+                        TestSuite.FunctionExists(
+                            "publicFun",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Public,
+                            emptySet()
+                        ),
+                        TestSuite.FunctionExists(
+                            "funToOverride",
+                            KotlinModifier.Open,
+                            KotlinVisibility.Public,
+                            setOf(ExtraModifiers.KotlinOnlyModifiers.Override)
+                        )
+                    ),
+                    listOf(
+                        TestSuite.PropertyExists(
+                            "privateProperty",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Private,
+                            emptySet()
+                        ),
+                        TestSuite.PropertyExists(
+                            "protectedProperty",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Protected,
+                            emptySet()
+                        ),
+                        TestSuite.PropertyExists(
+                            "internalProperty",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Internal,
+                            emptySet()
+                        ),
+                        TestSuite.PropertyExists(
+                            "publicProperty",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Public,
+                            emptySet()
+                        ),
+                        TestSuite.PropertyExists(
+                            "propertyToOverride",
+                            KotlinModifier.Open,
+                            KotlinVisibility.Public,
+                            setOf(ExtraModifiers.KotlinOnlyModifiers.Override)
+                        ),
+                        TestSuite.FunctionExists(
+                            "privateFun",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Private,
+                            emptySet()
+                        ),
+                        TestSuite.FunctionExists(
+                            "protectedFun",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Protected,
+                            emptySet()
+                        ),
+                        TestSuite.FunctionExists(
+                            "internalFun",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Internal,
+                            emptySet()
+                        ),
+                        TestSuite.FunctionExists(
+                            "publicFun",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Public,
+                            emptySet()
+                        ),
+                        TestSuite.FunctionExists(
+                            "funToOverride",
+                            KotlinModifier.Open,
+                            KotlinVisibility.Public,
+                            setOf(ExtraModifiers.KotlinOnlyModifiers.Override)
+                        )
+                    )
+                )
+
+                runTestSuitesAgainstGivenClasses(classes, testSuites)
+            }
+        }
+    }
+
+
+    @Test
+    fun `derived properties with no includeNonPublic`() {
+
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src/main/kotlin")
+                    includeNonPublic = false
+                }
+            }
+        }
+
+        testInline(
+            """
+            |/src/main/kotlin/sample/XD.kt
+            |package sample
+            |
+            |open class A {
+            |    private val privateProperty: Int = 1
+            |    protected val protectedProperty: Int = 2
+            |    internal val internalProperty: Int = 3
+            |    val publicProperty: Int = 4
+            |    open val propertyToOverride: Int = 5
+            |    open val propertyToOverrideButCloseMeanwhile: Int = 6
+            |
+            |    private fun privateFun(): Int = 7
+            |    protected fun protectedFun(): Int = 8
+            |    internal fun internalFun(): Int = 9
+            |    fun publicFun(): Int = 10
+            |    open fun funToOverride(): Int = 11
+            |    open fun funToOverrideButCloseMeanwhile(): Int = 12
+            |}
+            |
+            |open class B : A() {
+            |    override val propertyToOverride: Int = 13
+            |    final override val propertyToOverrideButCloseMeanwhile: Int = 14
+            |
+            |    override fun funToOverride(): Int = 15
+            |    final override fun funToOverrideButCloseMeanwhile(): Int = 16
+            |}
+            |class C : B()
+            """.trimIndent(),
+            configuration
+        ) {
+
+            documentablesMergingStage = { module ->
+                val classes = module.packages.single().classlikes.sortedBy { it.name }
+
+                val testSuites: List<List<TestSuite>> = listOf(
+                    listOf(
+                        TestSuite.PropertyDoesntExist("privateProperty"),
+                        TestSuite.PropertyDoesntExist("protectedProperty"),
+                        TestSuite.PropertyDoesntExist("internalProperty"),
+                        TestSuite.PropertyExists(
+                            "publicProperty",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Public,
+                            emptySet()
+                        ),
+                        TestSuite.PropertyExists(
+                            "propertyToOverride",
+                            KotlinModifier.Open,
+                            KotlinVisibility.Public,
+                            emptySet()
+                        ),
+                        TestSuite.PropertyExists(
+                            "propertyToOverrideButCloseMeanwhile",
+                            KotlinModifier.Open,
+                            KotlinVisibility.Public,
+                            emptySet()
+                        ),
+                        TestSuite.FunctionDoesntExist("privateFun"),
+                        TestSuite.FunctionDoesntExist("protectedFun"),
+                        TestSuite.FunctionDoesntExist("internalFun"),
+                        TestSuite.FunctionExists(
+                            "publicFun",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Public,
+                            emptySet()
+                        ),
+                        TestSuite.FunctionExists(
+                            "funToOverride",
+                            KotlinModifier.Open,
+                            KotlinVisibility.Public,
+                            emptySet()
+                        ),
+                        TestSuite.FunctionExists(
+                            "funToOverrideButCloseMeanwhile",
+                            KotlinModifier.Open,
+                            KotlinVisibility.Public,
+                            emptySet()
+                        )
+                    ),
+                    listOf(
+                        TestSuite.PropertyDoesntExist("privateProperty"),
+                        TestSuite.PropertyDoesntExist("protectedProperty"),
+                        TestSuite.PropertyDoesntExist("internalProperty"),
+                        TestSuite.PropertyExists(
+                            "publicProperty",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Public,
+                            emptySet()
+                        ),
+                        TestSuite.PropertyExists(
+                            "propertyToOverride",
+                            KotlinModifier.Open,
+                            KotlinVisibility.Public,
+                            setOf(ExtraModifiers.KotlinOnlyModifiers.Override)
+                        ),
+                        TestSuite.PropertyExists(
+                            "propertyToOverrideButCloseMeanwhile",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Public,
+                            setOf(ExtraModifiers.KotlinOnlyModifiers.Override)
+                        ),
+                        TestSuite.FunctionDoesntExist("privateFun"),
+                        TestSuite.FunctionDoesntExist("protectedFun"),
+                        TestSuite.FunctionDoesntExist("internalFun"),
+                        TestSuite.FunctionExists(
+                            "publicFun",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Public,
+                            emptySet()
+                        ),
+                        TestSuite.FunctionExists(
+                            "funToOverride",
+                            KotlinModifier.Open,
+                            KotlinVisibility.Public,
+                            setOf(ExtraModifiers.KotlinOnlyModifiers.Override)
+                        ),
+                        TestSuite.FunctionExists(
+                            "funToOverrideButCloseMeanwhile",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Public,
+                            setOf(ExtraModifiers.KotlinOnlyModifiers.Override)
+                        )
+                    ),
+                    listOf(
+                        TestSuite.PropertyDoesntExist("privateProperty"),
+                        TestSuite.PropertyDoesntExist("protectedProperty"),
+                        TestSuite.PropertyDoesntExist("internalProperty"),
+                        TestSuite.PropertyExists(
+                            "publicProperty",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Public,
+                            emptySet()
+                        ),
+                        TestSuite.PropertyExists(
+                            "propertyToOverride",
+                            KotlinModifier.Open,
+                            KotlinVisibility.Public,
+                            setOf(ExtraModifiers.KotlinOnlyModifiers.Override)
+                        ),
+                        TestSuite.PropertyExists(
+                            "propertyToOverrideButCloseMeanwhile",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Public,
+                            setOf(ExtraModifiers.KotlinOnlyModifiers.Override)
+                        ),
+                        TestSuite.FunctionDoesntExist("privateFun"),
+                        TestSuite.FunctionDoesntExist("protectedFun"),
+                        TestSuite.FunctionDoesntExist("internalFun"),
+                        TestSuite.FunctionExists(
+                            "publicFun",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Public,
+                            emptySet()
+                        ),
+                        TestSuite.FunctionExists(
+                            "funToOverride",
+                            KotlinModifier.Open,
+                            KotlinVisibility.Public,
+                            setOf(ExtraModifiers.KotlinOnlyModifiers.Override)
+                        ),
+                        TestSuite.FunctionExists(
+                            "funToOverrideButCloseMeanwhile",
+                            KotlinModifier.Final,
+                            KotlinVisibility.Public,
+                            setOf(ExtraModifiers.KotlinOnlyModifiers.Override)
+                        )
+                    )
+                )
+
+                runTestSuitesAgainstGivenClasses(classes, testSuites)
             }
         }
     }
