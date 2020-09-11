@@ -14,12 +14,14 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.createFunctionalType
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredCallableSymbols
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -70,7 +72,7 @@ internal class AdapterGenerator(
         function: IrFunction
     ): Boolean =
         needSuspendConversion(type, function) || needCoercionToUnit(type, function) ||
-            needVarargSpread(callableReferenceAccess, type, function)
+                needVarargSpread(callableReferenceAccess, type, function)
 
     /**
      * For example,
@@ -136,7 +138,6 @@ internal class AdapterGenerator(
         return coneType.toIrType() as IrSimpleType
     }
 
-    // TODO: refactor to share some logic with suspend conversion on arguments
     internal fun generateAdaptedCallableReference(
         callableReferenceAccess: FirCallableReferenceAccess,
         explicitReceiverExpression: IrExpression?,
@@ -398,32 +399,35 @@ internal class AdapterGenerator(
         }
     }
 
-    // TODO: refactor to share some logic with suspend conversion for callable reference
+    /**
+     * For example,
+     * fun consumer(f: suspend () -> Unit) = ...
+     * fun nonSuspendFunction = { ... }
+     * fun useSite(...) = { ... consumer(nonSuspendFunction) ... }
+     *
+     * At the use site, instead of the argument, we can put the suspend lambda as an adapter.
+     *
+     * Instead of functions, a class with an overridden invoke can be used too:
+     * class Foo {
+     *   override fun invoke() = ...
+     * }
+     * fun useSite(...) = { ... consumer(Foo()) ... }
+     */
     internal fun IrExpression.applySuspendConversionIfNeeded(
         argument: FirExpression,
         parameter: FirValueParameter?
     ): IrExpression {
+        // TODO: should refer to LanguageVersionSettings.SuspendConversion
         if (this is IrBlock && origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE) {
             return this
         }
-        if (parameter == null || !needSuspendConversion(argument, parameter)) {
+        if (parameter?.returnTypeRef?.coneType?.isSuspendFunctionType(session) != true) {
             return this
         }
 
         val suspendConvertedType = parameter.returnTypeRef.toIrType() as IrSimpleType
         val returnType = suspendConvertedType.arguments.last().typeOrNull!!
-        val invokeSymbol =
-            (argument.typeRef.coneType as? ConeClassLikeType)?.lookupTag?.classId
-                ?.let { classId ->
-                    session.firSymbolProvider
-                        .getClassDeclaredCallableSymbols(classId, Name.identifier("invoke"))
-                        .filterIsInstance<FirFunctionSymbol<*>>()
-                        .find { firFunctionSymbol ->
-                            firFunctionSymbol.fir.valueParameters.size == suspendConvertedType.arguments.size - 1
-                        }?.let { firFunctionSymbol ->
-                            declarationStorage.getIrFunctionSymbol(firFunctionSymbol) as? IrSimpleFunctionSymbol
-                        }
-                } ?: return this
+        val invokeSymbol = findInvokeSymbol(suspendConvertedType, argument) ?: return this
         return argument.convertWithOffsets { startOffset, endOffset ->
             val irAdapterFunction = createAdapterFunctionForArgument(startOffset, endOffset, suspendConvertedType)
             // TODO: Should be able to reuse `this` if that is an immutable IrGetValue
@@ -448,19 +452,41 @@ internal class AdapterGenerator(
         }
     }
 
-    /**
-     * For example,
-     * fun consumer(f: suspend () -> Unit) = ...
-     * fun nonSuspendFunction = { ... }
-     * fun useSite(...) = { ... consumer(nonSuspendFunction) ... }
-     *
-     * At the use site, instead of the argument, we can put the suspend lambda as an adapter.
-     */
-    private fun needSuspendConversion(argument: FirExpression, parameter: FirValueParameter): Boolean =
-        // TODO: should refer to LanguageVersionSettings.SuspendConversion
-        parameter.returnTypeRef.coneType.isSuspendFunctionType(session) &&
-                argument.typeRef.coneType.isBuiltinFunctionalType(session) &&
-                !argument.typeRef.coneType.isSuspendFunctionType(session)
+    private fun findInvokeSymbol(type: IrSimpleType, argument: FirExpression): IrSimpleFunctionSymbol? {
+        val argumentType = argument.typeRef.coneType
+        // Either the argument type is a non-suspend functional type
+        if (argumentType.isBuiltinFunctionalType(session) && !argumentType.isSuspendFunctionType(session)) {
+            return (argument.typeRef.coneType as? ConeClassLikeType)?.lookupTag?.classId
+                ?.let { classId ->
+                    session.firSymbolProvider
+                        .getClassDeclaredCallableSymbols(classId, Name.identifier("invoke"))
+                        .filterIsInstance<FirFunctionSymbol<*>>()
+                        .find { firFunctionSymbol ->
+                            firFunctionSymbol.fir.valueParameters.size == type.arguments.size - 1
+                        }?.let { firFunctionSymbol ->
+                            declarationStorage.getIrFunctionSymbol(firFunctionSymbol) as? IrSimpleFunctionSymbol
+                        }
+                }
+        }
+
+        // Or is a class-like type whose corresponding class is a user-defined and has an overridden `invoke`.
+        if (argumentType is ConeClassLikeType) {
+            val klass =
+                (session.firSymbolProvider.getClassLikeSymbolByFqName(argumentType.lookupTag.classId) as? FirRegularClassSymbol)?.fir
+                    ?: return null
+            if (klass.origin != FirDeclarationOrigin.Source) {
+                return null
+            }
+            return klass.declarations
+                .filterIsInstance<FirSimpleFunction>()
+                .singleOrNull { it.name == Name.identifier("invoke") && it.valueParameters.size == type.arguments.size - 1 }
+                ?.let { invokeFunction ->
+                    declarationStorage.getIrFunctionSymbol(invokeFunction.symbol) as? IrSimpleFunctionSymbol
+                }
+        }
+
+        return null
+    }
 
     private fun createAdapterFunctionForArgument(
         startOffset: Int,
