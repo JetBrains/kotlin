@@ -282,7 +282,7 @@ class RunExternalTestGroup extends JavaExec {
                 text = text.replaceFirst(packagePattern, "package $pkg")
             } else {
                 pkg = sourceName
-                text = insertInTextAfter(text, "\npackage $pkg\n", "@file:Suppress")
+                text = insertInTextAfter(text, "\npackage $pkg\n", "@file:")
             }
             if (text =~ boxPattern) {
                 imports.add("${pkg}.*")
@@ -331,7 +331,7 @@ class RunExternalTestGroup extends JavaExec {
                     pkg = 'package ' + (text =~ packagePattern)[0][1]
                     text = text.replaceFirst(packagePattern, '')
                 }
-                text = insertInTextAfter(text, (pkg ? "\n$pkg\n" : "") + "import $sourceName.*\n", "@file:Suppress")
+                text = insertInTextAfter(text, (pkg ? "\n$pkg\n" : "") + "import $sourceName.*\n", "@file:")
             }
             // now replace all package usages in full qualified names
             def res = ""                      // filesToCompile
