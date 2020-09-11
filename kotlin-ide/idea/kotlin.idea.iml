@@ -109,5 +109,6 @@
     <orderEntry type="module" module-name="intellij.statsCollector.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.copyright" />
     <orderEntry type="module" module-name="intellij.properties.psi" scope="TEST" />
+    <orderEntry type="library" name="jaxb-api" level="project" />
   </component>
 </module>
