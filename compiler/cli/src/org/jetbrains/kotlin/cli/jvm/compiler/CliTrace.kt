@@ -85,7 +85,7 @@ open class CliBindingTrace @TestOnly constructor() : BindingTraceContext() {
                 if (key is KtDeclaration) {
                     if (!KtPsiUtil.isLocal(key)) {
                         kotlinCodeAnalyzer!!.resolveToDescriptor(key)
-                        return super.get<K, V>(slice, key)
+                        return super.get(slice, key)
                     }
                 }
             }
