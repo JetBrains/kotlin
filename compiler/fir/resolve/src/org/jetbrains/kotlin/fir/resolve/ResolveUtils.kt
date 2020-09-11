@@ -275,7 +275,7 @@ fun CallableId.isIteratorHasNext(): Boolean =
             && packageName.asString() == "kotlin.collections"
 
 fun CallableId.isIterator(): Boolean =
-    callableName.asString() == "iterator" && packageName.asString() == "kotlin.collections"
+    callableName.asString() == "iterator" && packageName.asString() in arrayOf("kotlin.collections", "kotlin.ranges")
 
 fun FirAnnotationCall.fqName(session: FirSession): FqName? {
     val symbol = session.firSymbolProvider.getSymbolByTypeRef<FirRegularClassSymbol>(annotationTypeRef) ?: return null
