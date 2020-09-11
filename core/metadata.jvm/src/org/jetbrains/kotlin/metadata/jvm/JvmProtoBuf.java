@@ -3991,7 +3991,8 @@ public final class JvmProtoBuf {
    * <code>extend .org.jetbrains.kotlin.metadata.Class { ... }</code>
    *
    * <pre>
-   * isFunctionBodyInInterface: 0 if actual body generated in DefaultImpl, 1 - otherwise (in interface default method)
+   * first bit: isFunctionBodyInInterface: 0 if actual body generated in DefaultImpl, 1 - otherwise (in interface default method)
+   * second bit: is all-compatibility mode or not, 1 - yes, 0 - no
    * </pre>
    */
   public static final

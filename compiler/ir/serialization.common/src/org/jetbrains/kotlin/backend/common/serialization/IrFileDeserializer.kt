@@ -80,7 +80,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrProperty as Pro
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrPropertyReference as ProtoPropertyReference
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrReturn as ProtoReturn
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSetField as ProtoSetField
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable as ProtoSetVariable
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue as ProtoSetValue
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType as ProtoSimpleType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSpreadElement as ProtoSpreadElement
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement as ProtoStatement
@@ -607,7 +607,7 @@ abstract class IrFileDeserializer(
         return IrSetFieldImpl(start, end, symbol, receiver, value, builtIns.unitType, origin, superQualifier)
     }
 
-    private fun deserializeSetVariable(proto: ProtoSetVariable, start: Int, end: Int): IrSetValue {
+    private fun deserializeSetValue(proto: ProtoSetValue, start: Int, end: Int): IrSetValue {
         val symbol = deserializeIrSymbolAndRemap(proto.symbol) as IrVariableSymbol
         val value = deserializeExpression(proto.value)
         val origin = if (proto.hasOriginName()) deserializeIrStatementOrigin(proto.originName) else null
@@ -879,7 +879,7 @@ abstract class IrFileDeserializer(
             PROPERTY_REFERENCE -> deserializePropertyReference(proto.propertyReference, start, end, type)
             RETURN -> deserializeReturn(proto.`return`, start, end)
             SET_FIELD -> deserializeSetField(proto.setField, start, end)
-            SET_VARIABLE -> deserializeSetVariable(proto.setVariable, start, end)
+            SET_VALUE -> deserializeSetValue(proto.setValue, start, end)
             STRING_CONCAT -> deserializeStringConcat(proto.stringConcat, start, end, type)
             THROW -> deserializeThrow(proto.`throw`, start, end)
             TRY -> deserializeTry(proto.`try`, start, end, type)

@@ -3,8 +3,8 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.proto;
 
-public interface IrSetVariableOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable)
+public interface IrSetValueOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue)
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
