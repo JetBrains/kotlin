@@ -4390,6 +4390,25 @@ if (isAppleTarget(project)) {
         swiftSources = ['framework/multiple']
     }
 
+    frameworkTest("testMultipleFrameworksStatic") {
+        framework('FirstStatic') {
+            artifact = 'First'
+            sources = ['framework/multiple/framework1', 'framework/multiple/shared']
+            bitcode = true
+            isStatic = true
+            opts = ['-Xstatic-framework', "-Xpre-link-caches=enable"]
+        }
+        framework('SecondStatic') {
+            artifact = 'Second'
+            sources = ['framework/multiple/framework2', 'framework/multiple/shared']
+            bitcode = true
+            isStatic = true
+            opts = ['-Xstatic-framework', "-Xpre-link-caches=enable"]
+        }
+        codesign = false
+        swiftSources = ['framework/multiple']
+    }
+
     frameworkTest("testGh3343Framework") {
         framework('Gh3343') {
             sources = ['framework/gh3343']
