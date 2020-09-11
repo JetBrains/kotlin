@@ -4,30 +4,30 @@
 package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 /**
- * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable}
+ * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue}
  */
-public final class IrSetVariable extends
+public final class IrSetValue extends
     org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
-    // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable)
-    IrSetVariableOrBuilder {
-  // Use IrSetVariable.newBuilder() to construct.
-  private IrSetVariable(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
+    // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue)
+    IrSetValueOrBuilder {
+  // Use IrSetValue.newBuilder() to construct.
+  private IrSetValue(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
     super(builder);
     this.unknownFields = builder.getUnknownFields();
   }
-  private IrSetVariable(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
+  private IrSetValue(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
 
-  private static final IrSetVariable defaultInstance;
-  public static IrSetVariable getDefaultInstance() {
+  private static final IrSetValue defaultInstance;
+  public static IrSetValue getDefaultInstance() {
     return defaultInstance;
   }
 
-  public IrSetVariable getDefaultInstanceForType() {
+  public IrSetValue getDefaultInstanceForType() {
     return defaultInstance;
   }
 
   private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
-  private IrSetVariable(
+  private IrSetValue(
       org.jetbrains.kotlin.protobuf.CodedInputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
@@ -94,18 +94,18 @@ public final class IrSetVariable extends
       makeExtensionsImmutable();
     }
   }
-  public static org.jetbrains.kotlin.protobuf.Parser<IrSetVariable> PARSER =
-      new org.jetbrains.kotlin.protobuf.AbstractParser<IrSetVariable>() {
-    public IrSetVariable parsePartialFrom(
+  public static org.jetbrains.kotlin.protobuf.Parser<IrSetValue> PARSER =
+      new org.jetbrains.kotlin.protobuf.AbstractParser<IrSetValue>() {
+    public IrSetValue parsePartialFrom(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-      return new IrSetVariable(input, extensionRegistry);
+      return new IrSetValue(input, extensionRegistry);
     }
   };
 
   @java.lang.Override
-  public org.jetbrains.kotlin.protobuf.Parser<IrSetVariable> getParserForType() {
+  public org.jetbrains.kotlin.protobuf.Parser<IrSetValue> getParserForType() {
     return PARSER;
   }
 
@@ -227,53 +227,53 @@ public final class IrSetVariable extends
     return super.writeReplace();
   }
 
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue parseFrom(
       org.jetbrains.kotlin.protobuf.ByteString data)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue parseFrom(
       org.jetbrains.kotlin.protobuf.ByteString data,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable parseFrom(byte[] data)
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue parseFrom(byte[] data)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue parseFrom(
       byte[] data,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable parseFrom(java.io.InputStream input)
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return PARSER.parseFrom(input);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue parseFrom(
       java.io.InputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return PARSER.parseFrom(input, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable parseDelimitedFrom(java.io.InputStream input)
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return PARSER.parseDelimitedFrom(input);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable parseDelimitedFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue parseDelimitedFrom(
       java.io.InputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return PARSER.parseDelimitedFrom(input, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue parseFrom(
       org.jetbrains.kotlin.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return PARSER.parseFrom(input);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue parseFrom(
       org.jetbrains.kotlin.protobuf.CodedInputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -282,21 +282,21 @@ public final class IrSetVariable extends
 
   public static Builder newBuilder() { return Builder.create(); }
   public Builder newBuilderForType() { return newBuilder(); }
-  public static Builder newBuilder(org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable prototype) {
+  public static Builder newBuilder(org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue prototype) {
     return newBuilder().mergeFrom(prototype);
   }
   public Builder toBuilder() { return newBuilder(this); }
 
   /**
-   * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable}
+   * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue}
    */
   public static final class Builder extends
       org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable, Builder>
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue, Builder>
       implements
-      // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable)
-      org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariableOrBuilder {
-    // Construct using org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable.newBuilder()
+      // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue)
+      org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValueOrBuilder {
+    // Construct using org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -322,20 +322,20 @@ public final class IrSetVariable extends
       return create().mergeFrom(buildPartial());
     }
 
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable getDefaultInstanceForType() {
-      return org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable.getDefaultInstance();
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue getDefaultInstanceForType() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue.getDefaultInstance();
     }
 
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable build() {
-      org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable result = buildPartial();
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue build() {
+      org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
       return result;
     }
 
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable buildPartial() {
-      org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable result = new org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable(this);
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue buildPartial() {
+      org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue result = new org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue(this);
       int from_bitField0_ = bitField0_;
       int to_bitField0_ = 0;
       if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
@@ -354,8 +354,8 @@ public final class IrSetVariable extends
       return result;
     }
 
-    public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable other) {
-      if (other == org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable.getDefaultInstance()) return this;
+    public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue other) {
+      if (other == org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue.getDefaultInstance()) return this;
       if (other.hasSymbol()) {
         setSymbol(other.getSymbol());
       }
@@ -390,11 +390,11 @@ public final class IrSetVariable extends
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable parsedMessage = null;
+      org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable) e.getUnfinishedMessage();
+        parsedMessage = (org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue) e.getUnfinishedMessage();
         throw e;
       } finally {
         if (parsedMessage != null) {
@@ -529,13 +529,13 @@ public final class IrSetVariable extends
       return this;
     }
 
-    // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable)
+    // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue)
   }
 
   static {
-    defaultInstance = new IrSetVariable(true);
+    defaultInstance = new IrSetValue(true);
     defaultInstance.initFields();
   }
 
-  // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable)
+  // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue)
 }

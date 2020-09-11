@@ -74,7 +74,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrProperty as Pro
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrPropertyReference as ProtoPropertyReference
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrReturn as ProtoReturn
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSetField as ProtoSetField
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable as ProtoSetVariable
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue as ProtoSetValue
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType as ProtoSimpleType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSpreadElement as ProtoSpreadElement
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement as ProtoStatement
@@ -673,8 +673,8 @@ open class IrFileSerializer(
             }
             .build()
 
-    private fun serializeSetVariable(expression: IrSetValue): ProtoSetVariable =
-        ProtoSetVariable.newBuilder()
+    private fun serializeSetValue(expression: IrSetValue): ProtoSetValue =
+        ProtoSetValue.newBuilder()
             .setSymbol(serializeIrSymbol(expression.symbol))
             .setValue(serializeExpression(expression.value)).apply {
                 expression.origin?.let { originName = serializeIrStatementOrigin(it) }
@@ -933,7 +933,7 @@ open class IrFileSerializer(
             is IrPropertyReference -> operationProto.propertyReference = serializePropertyReference(expression)
             is IrReturn -> operationProto.`return` = serializeReturn(expression)
             is IrSetField -> operationProto.setField = serializeSetField(expression)
-            is IrSetValue -> operationProto.setVariable = serializeSetVariable(expression)
+            is IrSetValue -> operationProto.setValue = serializeSetValue(expression)
             is IrStringConcatenation -> operationProto.stringConcat = serializeStringConcat(expression)
             is IrThrow -> operationProto.`throw` = serializeThrow(expression)
             is IrTry -> operationProto.`try` = serializeTry(expression)
