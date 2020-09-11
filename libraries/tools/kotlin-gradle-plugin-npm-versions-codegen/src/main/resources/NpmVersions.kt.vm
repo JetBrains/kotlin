@@ -1,0 +1,18 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package $package
+
+/**
+ * Package versions used by tasks
+ */
+// DO NOT MODIFY DIRECTLY! Use org.jetbrains.kotlin.generators.gradle.targets.js.MainKt
+class $class {
+#foreach( $dep in $dependencies )
+    val $dep.camelize() = NpmPackageVersion("$dep.name", "$dep.version")
+#end
+
+    val kotlinJsTestRunner = KotlinGradleNpmPackage("test-js-runner")
+}

@@ -18,34 +18,43 @@ import kotlin.coroutines.CoroutineContext
 
 class VersionFetcher(
     private val coroutineContext: CoroutineContext
-) {
+) : AutoCloseable {
     private val client = HttpClient()
 
     suspend fun fetch(): List<PackageInformation> {
-        return withContext(coroutineContext) {
-            npmPackages
-                .map { packageName ->
-                    val packagePath =
-                        if (packageName.startsWith("@"))
-                            "@" + encodeURIComponent(packageName)
-                        else
-                            encodeURIComponent(packageName)
+        return npmPackages
+            .map { fetchPackageInformationAsync(it) }
+            .map { fetched ->
+                val (packageName, value) = fetched.await()
+                val fetchedPackageInformation = Gson().fromJson(value, FetchedPackageInformation::class.java)
+                PackageInformation(
+                    packageName,
+                    fetchedPackageInformation.versions.keys
+                )
+            }
+    }
 
-                    val fetch = async<String> {
-                        client.get("http://registry.npmjs.org/$packagePath")
-                    }
+    private suspend fun fetchPackageInformationAsync(packageName: String) =
+        withContext(coroutineContext) {
+            val packagePath =
+                if (packageName.startsWith("@"))
+                    "@" + encodeURIComponent(packageName)
+                else
+                    encodeURIComponent(packageName)
 
-                    val fetchedPackageInformation = Gson().fromJson(fetch.await(), FetchedPackageInformation::class.java)
-                    PackageInformation(
-                        packageName,
-                        fetchedPackageInformation.versions.keys
-                    )
-                }.also {
-                    client.close()
-                }
+            async {
+                packageName to client.get<String>("http://registry.npmjs.org/$packagePath")
+            }
         }
+
+    override fun close() {
+        client.close()
     }
 }
+
+private data class FetchedPackageInformation(
+    val versions: Map<String, Any>
+)
 
 fun encodeURIComponent(s: String): String {
     return try {
@@ -60,17 +69,3 @@ fun encodeURIComponent(s: String): String {
         s
     }
 }
-
-data class PackageInformation(
-    val name: String,
-    val versions: Set<String>
-)
-
-data class Package(
-    val name: String,
-    val version: SemVer
-)
-
-data class FetchedPackageInformation(
-    val versions: Map<String, Any>
-)

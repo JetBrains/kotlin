@@ -6,14 +6,47 @@
 package org.jetbrains.kotlin.generators.gradle.targets.js
 
 import kotlinx.coroutines.runBlocking
+import org.apache.velocity.VelocityContext
+import org.apache.velocity.app.Velocity
+import org.apache.velocity.app.VelocityEngine
+import org.apache.velocity.runtime.RuntimeConstants.RESOURCE_LOADER
+import java.io.File
 
 fun main() {
+    val outputSourceRoot = System.getProperties()["org.jetbrains.kotlin.generators.gradle.targets.js.outputSourceRoot"]
+    val packageName = "org.jetbrains.kotlin.gradle.targets.js"
+    val className = "NpmVersions"
+    val fileName = "$className.kt"
+    val targetFile = File("$outputSourceRoot")
+        .resolve(packageName.replace(".", "/"))
+        .resolve(fileName)
+
+    val context = VelocityContext()
+        .apply {
+            put("package", packageName)
+            put("class", className)
+        }
+
+    val velocityEngine = VelocityEngine().apply {
+        setProperty(RESOURCE_LOADER, "class")
+        setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader")
+        init()
+    }
+
+    val template = velocityEngine.getTemplate("$fileName.vm")
+
     runBlocking {
-        val packages = VersionFetcher(coroutineContext).fetch()
+        val packages = VersionFetcher(coroutineContext).use {
+            it.fetch()
+        }
         findLastVersions(packages)
-            .forEach {
-                println(it)
+            .also {
+                context.put("dependencies", it)
             }
+
+        targetFile.writer().use {
+            template.merge(context, it)
+        }
     }
 }
 
