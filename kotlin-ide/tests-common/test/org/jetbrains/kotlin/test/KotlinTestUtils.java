@@ -24,11 +24,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
+import com.intellij.testFramework.IdeaTestUtil;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.testFramework.TestDataFile;
 import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.util.PathUtil;
-import com.intellij.util.containers.ContainerUtil;
 import junit.framework.TestCase;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
@@ -128,7 +128,7 @@ public class KotlinTestUtils {
     }
 
     public static File findMockJdkRtJar() {
-        return new File(KotlinRoot.DIR, "compiler/testData/mockJDK/jre/lib/rt.jar");
+        return new File(IdeaTestUtil.getMockJdk18Path().getAbsolutePath(), "jre/lib/rt.jar");
     }
 
     @NotNull
@@ -309,14 +309,7 @@ public class KotlinTestUtils {
 
     @NotNull
     public static File getJdk9Home() {
-        String jdk9 = System.getenv("JDK_9");
-        if (jdk9 == null) {
-            jdk9 = System.getenv("JDK_19");
-            if (jdk9 == null) {
-                throw new AssertionError("Environment variable JDK_9 is not set!");
-            }
-        }
-        return new File(jdk9);
+        return IdeaTestUtil.getMockJdk9Path();
     }
 
     public static void assertEqualsToFile(@NotNull File expectedFile, @NotNull Editor editor) {
