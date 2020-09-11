@@ -18,14 +18,7 @@ class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
             androidHome = KotlinTestUtils.findAndroidSdk(),
             androidGradlePluginVersion = androidGradlePluginVersion,
             configurationCache = true,
-            /* AGP causes a configuration cache problem:
-                 - plugin 'com.android.internal.application': registration of listener on 'TaskExecutionGraph.addTaskExecutionListener' is unsupported
-
-               which causes tests to fail when configuration-cache-problems=fail is used.
-               However, everything works fine with WARN level reporting.
-               TODO: switch to FAIL when AGP no longer causes the cache problem
-             */
-            configurationCacheProblems = ConfigurationCacheProblems.WARN
+            configurationCacheProblems = ConfigurationCacheProblems.FAIL
         )
 
     @Test
