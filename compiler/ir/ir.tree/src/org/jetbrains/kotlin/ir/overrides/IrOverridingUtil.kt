@@ -91,7 +91,8 @@ class IrOverridingUtil(
                 is IrProperty -> {
                     fakeOverrideBuilder.propertyOverriddenSymbols[this] =
                         value.map { it as? IrPropertySymbol ?: error("Unexpected property overridden symbol: $it") }
-                    this.getter!!.overriddenSymbols = value.map { (it.owner as IrProperty).getter!!.symbol }
+                    val getter = this.getter ?: error("Property has no getter: ${render()}")
+                    getter.overriddenSymbols = value.map { (it.owner as IrProperty).getter!!.symbol }
                     this.setter?.let { setter ->
                         setter.overriddenSymbols = value.mapNotNull { (it.owner as IrProperty).setter?.symbol }
                     }
@@ -162,10 +163,12 @@ class IrOverridingUtil(
             val superClass = superType.getClass() ?: error("Unexpected super type: $superType")
             superClass.declarations
                 .filterIsInstance<IrOverridableMember>()
-                .filter { it !in overriddenMembers }
-                .map { overridenMember ->
-                    val fakeOverride = fakeOverrideBuilder.fakeOverrideMember(superType, overridenMember, clazz)
-                    originals[fakeOverride] = overridenMember
+                .filterNot {
+                    it in overriddenMembers || it.isStaticMember || DescriptorVisibilities.isPrivate(it.visibility)
+                }
+                .map { overriddenMember ->
+                    val fakeOverride = fakeOverrideBuilder.fakeOverrideMember(superType, overriddenMember, clazz)
+                    originals[fakeOverride] = overriddenMember
                     originalSuperTypes[fakeOverride] = superType
                     fakeOverride
                 }
@@ -178,6 +181,16 @@ class IrOverridingUtil(
         }
         return fakeOverrides
     }
+
+    private val IrOverridableMember.isStaticMember: Boolean
+        get() = when (this) {
+            is IrFunction ->
+                dispatchReceiverParameter == null
+            is IrProperty ->
+                backingField?.isStatic == true ||
+                        getter?.let { it.dispatchReceiverParameter == null } == true
+            else -> error("Unknown overridable member: ${render()}")
+        }
 
     private fun generateOverridesInFunctionGroup(
         membersFromSupertypes: List<IrOverridableMember>,
