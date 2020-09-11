@@ -20,7 +20,10 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.PathUtil
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
-import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.daemon.common.COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS
+import org.jetbrains.kotlin.daemon.common.COMPILE_DAEMON_ENABLED_PROPERTY
+import org.jetbrains.kotlin.daemon.common.COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY
+import org.jetbrains.kotlin.daemon.common.OSKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 

@@ -16,7 +16,6 @@ import com.intellij.slicer.SliceNode
 import com.intellij.slicer.SliceRootNode
 import com.intellij.usages.TextChunk
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.psiUtil.contains
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.awt.Font

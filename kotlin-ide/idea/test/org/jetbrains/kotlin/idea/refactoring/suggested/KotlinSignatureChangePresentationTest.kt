@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.idea.refactoring.suggested
 
+import com.intellij.refactoring.suggested.BaseSignatureChangePresentationTest
 import com.intellij.refactoring.suggested.SuggestedRefactoringSupport.Parameter
 import com.intellij.refactoring.suggested.SuggestedRefactoringSupport.Signature
-import com.intellij.refactoring.suggested.BaseSignatureChangePresentationTest
 
 class KotlinSignatureChangePresentationTest : BaseSignatureChangePresentationTest() {
     override val refactoringSupport = KotlinSuggestedRefactoringSupport()

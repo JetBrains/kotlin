@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.console.KotlinConsoleRunner
 import org.jetbrains.kotlin.idea.run.createLibraryWithLongPaths
 import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.Test
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 import kotlin.reflect.KMutableProperty0
 import kotlin.test.assertFalse

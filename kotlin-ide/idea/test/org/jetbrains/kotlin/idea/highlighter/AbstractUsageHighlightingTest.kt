@@ -13,7 +13,8 @@ import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.markup.RangeHighlighter
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.testFramework.ExpectedHighlightingData
-import org.jetbrains.kotlin.idea.test.*
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.extractMarkerOffset
 
 abstract class AbstractUsageHighlightingTest : KotlinLightCodeInsightFixtureTestCase() {
     companion object {

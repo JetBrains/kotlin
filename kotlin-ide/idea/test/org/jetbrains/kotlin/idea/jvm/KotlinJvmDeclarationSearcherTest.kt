@@ -11,7 +11,6 @@ import com.intellij.lang.jvm.JvmMethod
 import com.intellij.lang.jvm.JvmParameter
 import com.intellij.lang.jvm.source.JvmDeclarationSearch
 import com.intellij.lang.jvm.source.JvmDeclarationSearcher
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiRecursiveElementVisitor
 import org.jetbrains.kotlin.idea.KotlinLanguage

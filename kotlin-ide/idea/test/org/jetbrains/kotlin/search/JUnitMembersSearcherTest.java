@@ -13,8 +13,8 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.junit.internal.runners.JUnit38ClassRunner;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.junit.internal.runners.JUnit38ClassRunner;
 import org.junit.runner.RunWith;
 
 import java.io.File;

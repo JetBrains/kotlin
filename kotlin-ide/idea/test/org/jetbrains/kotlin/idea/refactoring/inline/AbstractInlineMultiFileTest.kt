@@ -6,30 +6,14 @@
 package org.jetbrains.kotlin.idea.refactoring.inline
 
 import com.google.gson.JsonObject
-import com.intellij.codeInsight.TargetElementUtil
-import com.intellij.codeInsight.TargetElementUtil.ELEMENT_NAME_ACCEPTED
-import com.intellij.codeInsight.TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED
 import com.intellij.lang.refactoring.InlineActionHandler
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.refactoring.BaseRefactoringProcessor
-import com.intellij.refactoring.util.CommonRefactoringUtil
-import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
-import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.inspections.findExistingEditor
 import org.jetbrains.kotlin.idea.refactoring.AbstractMultifileRefactoringTest
 import org.jetbrains.kotlin.idea.refactoring.runRefactoringTest
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.withCustomCompilerOptions
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import java.io.File
 
 abstract class AbstractInlineMultiFileTest : AbstractMultifileRefactoringTest() {
     override fun runRefactoring(path: String, config: JsonObject, rootDir: VirtualFile, project: Project) {

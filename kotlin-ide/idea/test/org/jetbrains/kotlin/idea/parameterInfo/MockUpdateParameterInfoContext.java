@@ -13,7 +13,6 @@ import com.intellij.openapi.util.UserDataHolderEx;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture;
-import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class MockUpdateParameterInfoContext implements UpdateParameterInfoContext {

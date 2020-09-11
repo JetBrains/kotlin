@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.intention.IntentionActionBean
-import com.intellij.codeInsight.intention.IntentionManager
 import com.intellij.codeInsight.intention.impl.config.IntentionManagerImpl
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.testFramework.LightPlatformTestCase

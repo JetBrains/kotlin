@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.navigationToolbar
 
 import com.intellij.ide.navigationToolbar.NavBarModel
-import com.intellij.ide.navigationToolbar.NavBarModelExtension
 import com.intellij.ide.navigationToolbar.NavBarPresentation
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.ex.EditorEx

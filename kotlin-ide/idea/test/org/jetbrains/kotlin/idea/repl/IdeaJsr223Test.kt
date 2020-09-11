@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.idea.repl
 
 import com.intellij.testFramework.PlatformTestCase
-import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.Test
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 import javax.script.ScriptContext
 import javax.script.ScriptEngine

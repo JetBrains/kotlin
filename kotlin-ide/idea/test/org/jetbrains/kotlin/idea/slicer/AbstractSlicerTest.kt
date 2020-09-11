@@ -10,7 +10,6 @@ import com.intellij.slicer.SliceRootNode
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractSlicerTest : KotlinLightCodeInsightFixtureTestCase() {

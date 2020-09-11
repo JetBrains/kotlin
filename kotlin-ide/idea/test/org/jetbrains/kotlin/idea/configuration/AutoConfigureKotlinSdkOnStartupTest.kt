@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.idea.configuration
 
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
-import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.Assert
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 
 // Do not add new tests here since application is initialized only once
