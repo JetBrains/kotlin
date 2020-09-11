@@ -50,6 +50,24 @@ func testIsolation3() throws {
 #endif
 }
 
+// https://youtrack.jetbrains.com/issue/KT-34261
+// When First and Second are static frameworks with caches, this test fails due to bad cache isolation:
+// Caches included into both frameworks have 'ktypew' globals (with same name, hidden visibility and common linkage)
+// for writable part of this "unexposed stdlib class" TypeInfo.
+// ld ignores hidden visibility and merges common globals, so two independent frameworks happen to share
+// the same global instead of two different globals. Things go wrong at runtime then: this writable TypeInfo part
+// is used to store Obj-C class for this Kotlin class. So after the first object is obtained in Swift, both TypeInfos
+// have its class, and the second object is wrong then.
+func testIsolation4() throws {
+    let obj1: Any = First.SharedKt.getUnexposedStdlibClassInstance()
+    try assertTrue(obj1 is First.KotlinBase)
+    try assertFalse(obj1 is Second.KotlinBase)
+
+    let obj2: Any = Second.SharedKt.getUnexposedStdlibClassInstance()
+    try assertFalse(obj2 is First.KotlinBase)
+    try assertTrue(obj2 is Second.KotlinBase)
+}
+
 class MultipleTests : TestProvider {
     var tests: [TestCase] = []
 
@@ -60,6 +78,7 @@ class MultipleTests : TestProvider {
             TestCase(name: "TestIsolation1", method: withAutorelease(testIsolation1)),
             TestCase(name: "TestIsolation2", method: withAutorelease(testIsolation2)),
             TestCase(name: "TestIsolation3", method: withAutorelease(testIsolation3)),
+            TestCase(name: "TestIsolation4", method: withAutorelease(testIsolation4)),
         ]
         providers.append(self)
     }

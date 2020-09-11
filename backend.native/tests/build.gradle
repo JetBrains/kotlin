@@ -4391,6 +4391,11 @@ if (isAppleTarget(project)) {
     }
 
     frameworkTest("testMultipleFrameworksStatic") {
+        if (cacheTesting != null) {
+            // See https://youtrack.jetbrains.com/issue/KT-34261.
+            expectedExitStatus = 134
+        }
+
         framework('FirstStatic') {
             artifact = 'First'
             sources = ['framework/multiple/framework1', 'framework/multiple/shared']

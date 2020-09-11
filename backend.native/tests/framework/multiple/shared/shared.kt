@@ -9,3 +9,6 @@ object RuntimeState {
         return Worker.current.processQueue()
     }
 }
+
+// Note: this assumes that IntRange class is not exposed by the enclosing framework.
+fun getUnexposedStdlibClassInstance(): Any = 0..2
