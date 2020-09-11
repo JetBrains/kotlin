@@ -44,7 +44,7 @@ FILE fqName:<root> fileName:/kt37131.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun use (fn: kotlin.Function0<kotlin.Any>): kotlin.Any declared in <root>'
         CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Any origin=INVOKE
-          $this: GET_VAR 'fn: kotlin.Function0<kotlin.Any> declared in <root>.use' type=kotlin.Function0<kotlin.Any> origin=null
+          $this: GET_VAR 'fn: kotlin.Function0<kotlin.Any> declared in <root>.use' type=kotlin.Function0<kotlin.Any> origin=VARIABLE_AS_FUNCTION
   FUN name:testFn visibility:public modality:FINAL <> () returnType:kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testFn (): kotlin.Any declared in <root>'

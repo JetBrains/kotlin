@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.SyntheticPropertySymbol
+import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -382,7 +383,7 @@ private val nameToOperationConventionOrigin = mutableMapOf(
     OperatorNameConventions.RANGE_TO to IrStatementOrigin.RANGE
 )
 
-internal fun FirReference.statementOrigin(): IrStatementOrigin? {
+internal fun FirReference.statementOrigin(session: FirSession): IrStatementOrigin? {
     return when (this) {
         is FirPropertyFromParameterResolvedNamedReference -> IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
         is FirResolvedNamedReference -> when (val symbol = resolvedSymbol) {
@@ -399,6 +400,12 @@ internal fun FirReference.statementOrigin(): IrStatementOrigin? {
                 source?.elementType == KtNodeTypes.OPERATION_REFERENCE ->
                     nameToOperationConventionOrigin[symbol.callableId.callableName]
                 else ->
+                    null
+            }
+            is FirVariableSymbol -> {
+                if ((symbol.fir as FirVariable).returnTypeRef.coneTypeSafe<ConeKotlinType>()?.isBuiltinFunctionalType(session) == true) {
+                    IrStatementOrigin.VARIABLE_AS_FUNCTION
+                } else
                     null
             }
             else -> null

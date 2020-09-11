@@ -225,7 +225,7 @@ FILE fqName:<root> fileName:/DeepCopyIrTree.kt
         irTypeParametersContainer: GET_VAR 'irTypeParametersContainer: <root>.IrTypeParametersContainer declared in <root>.withinScope' type=<root>.IrTypeParametersContainer origin=null
       VAR name:result type:T of <root>.withinScope [val]
         CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=T of <root>.withinScope origin=INVOKE
-          $this: GET_VAR 'fn: kotlin.Function0<T of <root>.withinScope> declared in <root>.withinScope' type=kotlin.Function0<T of <root>.withinScope> origin=null
+          $this: GET_VAR 'fn: kotlin.Function0<T of <root>.withinScope> declared in <root>.withinScope' type=kotlin.Function0<T of <root>.withinScope> origin=VARIABLE_AS_FUNCTION
       CALL 'public abstract fun leaveScope (): kotlin.Unit declared in <root>.TypeRemapper' type=kotlin.Unit origin=null
         $this: GET_VAR '<this>: <root>.TypeRemapper declared in <root>.withinScope' type=<root>.TypeRemapper origin=null
       RETURN type=kotlin.Nothing from='public final fun withinScope <T> (irTypeParametersContainer: <root>.IrTypeParametersContainer, fn: kotlin.Function0<T of <root>.withinScope>): T of <root>.withinScope [inline] declared in <root>'
