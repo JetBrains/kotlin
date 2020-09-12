@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.symbols.PossiblyFirFakeOverrideSymbol
+import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSession
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelTypeAliasFqNameIndex
@@ -143,4 +143,4 @@ fun FirElement.findPsi(project: Project): PsiElement? =
     psi ?: FirIdeDeserializedDeclarationSourceProvider.findPsi(this, project)
 
 fun FirElement.findPsi(session: FirSession): PsiElement? =
-    findPsi(session.sessionProvider!!.project)
+    findPsi((session as FirIdeSession).project)

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api
 
+import com.google.common.collect.MapMaker
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -13,23 +14,23 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveP
 import org.jetbrains.kotlin.fir.resolve.transformers.createTransformerBasedProcessorByPhase
 import java.util.*
 
-class FirTransformerProvider(session: FirSession) : FirSessionComponent {
-    private val scopeSession = ThreadLocal.withInitial { ScopeSession() }
-    private val transformers = ThreadLocal.withInitial {
-        val scopesSession = scopeSession.get()
-        EnumMap<FirResolvePhase, FirTransformerBasedResolveProcessor>(FirResolvePhase::class.java).apply {
-            FirResolvePhase.values().forEach { resolvePhase ->
-                if (resolvePhase != FirResolvePhase.RAW_FIR) {
-                    put(resolvePhase, resolvePhase.createTransformerBasedProcessorByPhase(session, scopesSession))
+class FirTransformerProvider {
+    private val scopeSession = MapMaker().weakKeys().makeMap<FirSession, ScopeSession>()
+    private val transformers = MapMaker().weakKeys().makeMap<FirSession, EnumMap<FirResolvePhase, FirTransformerBasedResolveProcessor>>()
+
+
+    fun getTransformerForPhase(session: FirSession, phase: FirResolvePhase): FirTransformerBasedResolveProcessor =
+        transformers.computeIfAbsent(session) {
+            val scopesSession = getScopeSession(session)
+            EnumMap<FirResolvePhase, FirTransformerBasedResolveProcessor>(FirResolvePhase::class.java).apply {
+                FirResolvePhase.values().forEach { resolvePhase ->
+                    if (resolvePhase != FirResolvePhase.RAW_FIR) {
+                        put(resolvePhase, resolvePhase.createTransformerBasedProcessorByPhase(session, scopesSession))
+                    }
                 }
             }
-        }
-    }
+        }.getValue(phase)
 
-    fun getTransformerForPhase(phase: FirResolvePhase): FirTransformerBasedResolveProcessor =
-        transformers.get().getValue(phase)
-
-    fun getScopeSession(): ScopeSession = scopeSession.get()
+    fun getScopeSession(session: FirSession): ScopeSession =
+        scopeSession.getOrPut(session) { ScopeSession() }
 }
-
-val FirSession.firTransformerProvider: FirTransformerProvider by FirSession.sessionComponentAccessor()

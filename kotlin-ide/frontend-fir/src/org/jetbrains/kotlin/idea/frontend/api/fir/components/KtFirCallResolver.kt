@@ -50,7 +50,7 @@ internal class KtFirCallResolver(
     }
 
     private fun resolveCall(firCall: FirFunctionCall, callExpression: KtExpression): CallInfo? {
-        val session = firResolveState.currentModuleSourcesSession
+        val session = firResolveState.rootModuleSession
         val resolvedFunctionSymbol = firCall.calleeReference.toTargetSymbol(session, firSymbolBuilder)
         val resolvedCalleeSymbol = (firCall.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol
         return when {

@@ -6,18 +6,11 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.sessions
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 
-/**
- * [org.jetbrains.kotlin.fir.FirSession] responsible for all libraries analysing module transitively depends on
- */
 @OptIn(PrivateSessionConstructor::class)
-internal class FirIdeLibrariesSession @PrivateSessionConstructor constructor(
-    moduleInfo: ModuleInfo,
+class FirIdeBuiltinsAndCloneableSession @PrivateSessionConstructor constructor(
     override val project: Project,
-    override val scope: GlobalSearchScope,
     builtinTypes: BuiltinTypes,
-) : FirIdeModuleSession(moduleInfo, builtinTypes)
+) : FirIdeSession(builtinTypes)

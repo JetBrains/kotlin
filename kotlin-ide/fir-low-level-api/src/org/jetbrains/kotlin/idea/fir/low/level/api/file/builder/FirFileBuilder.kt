@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.util.lockWithPCECheck
 @ThreadSafe
 internal class FirFileBuilder(
     private val scopeProvider: FirScopeProvider,
-    private val firPhaseRunner: FirPhaseRunner
+    val firPhaseRunner: FirPhaseRunner
 ) {
     /**
      * Builds a [FirFile] by given [ktFile] and records it's parenting info if it not present in [cache]

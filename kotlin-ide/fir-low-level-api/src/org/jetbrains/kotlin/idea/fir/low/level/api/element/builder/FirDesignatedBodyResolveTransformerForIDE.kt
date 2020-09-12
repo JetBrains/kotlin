@@ -21,12 +21,12 @@ internal class FirDesignatedBodyResolveTransformerForIDE(
     private val designation: Iterator<FirElement>,
     session: FirSession,
     scopeSession: ScopeSession,
-    implicitTypeOnly: Boolean,
+    phase: FirResolvePhase,
     private val towerDataContextCollector: FirTowerDataContextCollector? = null
 ) : FirBodyResolveTransformer(
     session,
-    phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
-    implicitTypeOnly = implicitTypeOnly,
+    phase = phase,
+    implicitTypeOnly = phase == FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
     scopeSession = scopeSession,
     returnTypeCalculator = createReturnTypeCalculatorForIDE(session, scopeSession)
 ) {

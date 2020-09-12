@@ -10,7 +10,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -47,11 +46,11 @@ internal class KtSymbolByFirBuilder private constructor(
         ConeTypeCheckerContext(
             isErrorTypeEqualsToAnything = true,
             isStubTypeEqualsToAnything = true,
-            resolveState.currentModuleSourcesSession
+            resolveState.rootModuleSession
         )
     }
 
-    private val firProvider get() = resolveState.currentModuleSourcesSession.firSymbolProvider
+    private val firProvider get() = resolveState.rootModuleSession.firSymbolProvider
 
     constructor(
         resolveState: FirModuleResolveState,
