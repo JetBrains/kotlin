@@ -14,12 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
-import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FileStructureCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FirElementsRecorder
-import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeProvider
-import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeCurrentModuleSourcesSession
-import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeDependentModulesSourcesSession
-import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeLibrariesSession
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -27,10 +22,8 @@ internal class FirModuleResolveStateForCompletion(
     private val originalState: FirModuleResolveStateImpl
 ) : FirModuleResolveState() {
     override val moduleInfo: IdeaModuleInfo get() = originalState.moduleInfo
-    override val currentModuleSourcesSession: FirIdeCurrentModuleSourcesSession get() = originalState.currentModuleSourcesSession
-    override val dependentModulesSourcesSession: FirIdeDependentModulesSourcesSession get() = originalState.dependentModulesSourcesSession
-    override val librariesSession: FirIdeLibrariesSession get() = originalState.librariesSession
-
+    override val rootModuleSession get() = originalState.rootModuleSession
+    override val firTransformerProvider: FirTransformerProvider get() = originalState.firTransformerProvider
     private val fileStructureCache = originalState.fileStructureCache
 
     private val completionMapping = mutableMapOf<KtElement, FirElement>()
@@ -42,7 +35,7 @@ internal class FirModuleResolveStateForCompletion(
         completionMapping[element]?.let { return it }
         return originalState.elementBuilder.getOrBuildFirFor(
             element,
-            originalState.currentModuleSourcesSession.cache,
+            originalState.rootModuleSession.cache,
             fileStructureCache,
         )
     }

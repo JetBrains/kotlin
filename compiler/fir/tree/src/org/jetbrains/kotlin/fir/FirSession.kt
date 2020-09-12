@@ -30,7 +30,7 @@ abstract class FirSession @PrivateSessionConstructor constructor(val sessionProv
 
     open val moduleInfo: ModuleInfo? get() = null
 
-    val builtinTypes: BuiltinTypes = BuiltinTypes()
+    open val builtinTypes: BuiltinTypes = BuiltinTypes()
 
     final override val typeRegistry: TypeRegistry<FirSessionComponent, FirSessionComponent> = Companion
 

@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirDesignated
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
-import org.jetbrains.kotlin.idea.fir.low.level.api.firTransformerProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.checkCanceled
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.executeWithoutPCE
@@ -128,7 +127,7 @@ internal class FirLazyDeclarationResolver(
         if (designation.all { it.resolvePhase >= toPhase }) {
             return
         }
-        val scopeSession = containerFirFile.session.firTransformerProvider.getScopeSession()
+        val scopeSession = firFileBuilder.firPhaseRunner.transformerProvider.getScopeSession(containerFirFile.session)
         val transformer = FirDesignatedBodyResolveTransformerForIDE(
             designation.iterator(), containerFirFile.session,
             scopeSession,

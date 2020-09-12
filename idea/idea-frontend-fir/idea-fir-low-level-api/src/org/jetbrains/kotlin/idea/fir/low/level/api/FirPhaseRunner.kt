@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.util.executeWithoutPCE
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-internal class FirPhaseRunner {
+internal class FirPhaseRunner(val transformerProvider: FirTransformerProvider) {
     private val superTypesBodyResolveLock = ReentrantLock()
     private val implicitTypesResolveLock = ReentrantLock()
 
@@ -28,7 +28,7 @@ internal class FirPhaseRunner {
     }
 
     private fun runPhaseWithoutLock(firFile: FirFile, phase: FirResolvePhase) {
-        val phaseProcessor = firFile.session.firTransformerProvider.getTransformerForPhase(phase)
+        val phaseProcessor = transformerProvider.getTransformerForPhase(firFile.session, phase)
         executeWithoutPCE { phaseProcessor.processFile(firFile) }
     }
 }

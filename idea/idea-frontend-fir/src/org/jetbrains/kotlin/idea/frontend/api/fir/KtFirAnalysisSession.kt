@@ -40,7 +40,7 @@ private constructor(
     override val callResolver: KtCallResolver = KtFirCallResolver(this, token)
     override val scopeProvider by threadLocal { KtFirScopeProvider(this, firSymbolBuilder, project, firResolveState, token) }
     override val symbolProvider: KtSymbolProvider =
-        KtFirSymbolProvider(this, firResolveState.currentModuleSourcesSession.firSymbolProvider, firResolveState, firSymbolBuilder, token)
+        KtFirSymbolProvider(this, firResolveState.rootModuleSession.firSymbolProvider, firResolveState, firSymbolBuilder, token)
     override val completionCandidateChecker: KtCompletionCandidateChecker by threadLocal { KtFirCompletionCandidateChecker(this, token) }
     override val symbolDeclarationOverridesProvider: KtSymbolDeclarationOverridesProvider
             by threadLocal { KtFirSymbolDeclarationOverridesProvider(this, token) }
