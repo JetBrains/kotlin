@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.idea.perf
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.testFramework.RunAll
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl.ensureIndexesUpToDate
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.WARM_UP
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
@@ -25,10 +27,6 @@ abstract class AbstractPerformanceHighlightingTest : KotlinLightCodeInsightFixtu
         @JvmStatic
         val stats: Stats = Stats("highlight")
 
-        init {
-            // there is no @AfterClass for junit3.8
-            Runtime.getRuntime().addShutdownHook(Thread(Runnable { stats.close() }))
-        }
     }
 
     override fun setUp() {
@@ -42,7 +40,10 @@ abstract class AbstractPerformanceHighlightingTest : KotlinLightCodeInsightFixtu
 
     override fun tearDown() {
         commitAllDocuments()
-        super.tearDown()
+        RunAll(
+            ThrowableRunnable { super.tearDown() },
+            ThrowableRunnable { stats.flush() }
+        ).run()
     }
 
     private fun doWarmUpPerfTest() {

@@ -9,6 +9,8 @@ import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.psi.PsiFile
+import com.intellij.testFramework.RunAll
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.AbstractCopyPasteTest
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.WARM_UP
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
@@ -27,11 +29,6 @@ abstract class AbstractPerformanceLiteralKotlinToKotlinCopyPasteTest : AbstractC
 
         @JvmStatic
         val stats: Stats = Stats("Literal-k2k-CopyPaste")
-
-        init {
-            // there is no @AfterClass for junit3.8
-            Runtime.getRuntime().addShutdownHook(Thread(Runnable { stats.close() }))
-        }
     }
 
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
@@ -43,6 +40,13 @@ abstract class AbstractPerformanceLiteralKotlinToKotlinCopyPasteTest : AbstractC
             doWarmUpPerfTest()
             warmedUp = true
         }
+    }
+
+    override fun tearDown() {
+        RunAll(
+            ThrowableRunnable { super.tearDown() },
+            ThrowableRunnable { stats.flush() }
+        ).run()
     }
 
     private fun doWarmUpPerfTest() {

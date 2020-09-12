@@ -9,6 +9,8 @@ import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.testFramework.RunAll
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.highlighter.KotlinPsiChecker
 import org.jetbrains.kotlin.idea.highlighter.KotlinPsiCheckerAndHighlightingUpdater
@@ -35,11 +37,6 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
         @JvmStatic
         val timer: AtomicLong = AtomicLong()
 
-        init {
-            // there is no @AfterClass for junit3.8
-            Runtime.getRuntime().addShutdownHook(Thread { hwStats.close() })
-        }
-
         fun resetTimestamp() {
             timer.set(0)
         }
@@ -52,6 +49,13 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
     override fun setUp() {
         super.setUp()
         warmUp.warmUp(this)
+    }
+
+    override fun tearDown() {
+        RunAll(
+            ThrowableRunnable { super.tearDown() },
+            ThrowableRunnable { hwStats.flush() }
+        ).run()
     }
 
     fun testHelloWorldProject() {
@@ -337,14 +341,18 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
                 profilerConfig.enabled = true
             }
 
+            val metricChildren = mutableListOf<Metric>()
+
             extraStats.printWarmUpTimings(
                 "annotator",
-                extraTimingsNs.take(warmUpIterations).toTypedArray()
+                extraTimingsNs.take(warmUpIterations).toTypedArray(),
+                metricChildren
             )
 
-            extraStats.appendTimings(
+            extraStats.processTimings(
                 "annotator",
-                extraTimingsNs.drop(warmUpIterations).toTypedArray()
+                extraTimingsNs.drop(warmUpIterations).toTypedArray(),
+                metricChildren
             )
         }
     }
