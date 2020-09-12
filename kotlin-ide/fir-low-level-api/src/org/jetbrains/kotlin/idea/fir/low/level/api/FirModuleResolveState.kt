@@ -39,6 +39,8 @@ abstract class FirModuleResolveState {
 
     abstract fun getOrBuildFirFor(element: KtElement, toPhase: FirResolvePhase): FirElement
 
+    abstract fun getFirFile(ktFile: KtFile): FirFile
+
     abstract fun getDiagnostics(element: KtElement): List<Diagnostic>
 
     // todo temporary, used only in completion
@@ -76,6 +78,9 @@ internal class FirModuleResolveStateImpl(
 
     override fun getOrBuildFirFor(element: KtElement, toPhase: FirResolvePhase): FirElement =
         elementBuilder.getOrBuildFirFor(element, currentModuleSourcesSession.cache, fileStructureCache)
+
+    override fun getFirFile(ktFile: KtFile): FirFile =
+        firFileBuilder.buildRawFirFileWithCaching(ktFile, currentModuleSourcesSession.cache)
 
     override fun getDiagnostics(element: KtElement): List<Diagnostic> =
         diagnosticsCollector.getDiagnosticsFor(element)

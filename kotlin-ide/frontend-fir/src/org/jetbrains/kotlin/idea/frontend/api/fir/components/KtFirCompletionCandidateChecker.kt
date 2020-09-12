@@ -66,9 +66,9 @@ internal class KtFirCompletionCandidateChecker(
         nameExpression: KtSimpleNameExpression,
         possibleExplicitReceiver: KtExpression?,
     ): Boolean {
-        val file = originalFile.getOrBuildFirOfType<FirFile>(firResolveState)
+        val file = firResolveState.getFirFile(originalFile)
         val explicitReceiverExpression = possibleExplicitReceiver?.getOrBuildFirOfType<FirExpression>(firResolveState)
-        val resolver = SingleCandidateResolver(firResolveState.firIdeSourcesSession, file)
+        val resolver = SingleCandidateResolver(firResolveState.currentModuleSourcesSession, file)
         val implicitReceivers = getImplicitReceivers(originalFile, file, nameExpression)
         for (implicitReceiverValue in implicitReceivers) {
             val resolutionParameters = ResolutionParameters(
