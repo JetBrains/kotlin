@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.konan.optimizations
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
 import org.jetbrains.kotlin.backend.konan.descriptors.isBuiltInOperator
-import org.jetbrains.kotlin.backend.konan.descriptors.target
 import org.jetbrains.kotlin.backend.konan.ir.allParameters
 import org.jetbrains.kotlin.backend.konan.ir.isOverridableOrOverrides
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
@@ -17,6 +16,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.backend.konan.llvm.symbolName
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_BRIDGE_METHOD
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
+import org.jetbrains.kotlin.backend.konan.optimizations.DataFlowIR.Function.Companion.appendCastTo
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -285,17 +285,19 @@ internal object DataFlowIR {
 
     class Function(val symbol: FunctionSymbol, val body: FunctionBody) {
 
-        fun debugOutput() {
-            println("FUNCTION $symbol")
-            println("Params: ${symbol.parameters.contentToString()}")
+        fun debugOutput() = println(debugString())
+
+        fun debugString() = buildString {
+            appendLine("FUNCTION $symbol")
+            appendLine("Params: ${symbol.parameters.contentToString()}")
             val nodes = listOf(body.rootScope) + body.allScopes.flatMap { it.nodes }
             val ids = nodes.withIndex().associateBy({ it.value }, { it.index })
             nodes.forEach {
-                println("    NODE #${ids[it]!!}")
-                printNode(it, ids)
+                appendLine("    NODE #${ids[it]!!}")
+                appendLine(nodeToString(it, ids))
             }
-            println("    RETURNS")
-            printNode(body.returns, ids)
+            appendLine("    RETURNS")
+            append(nodeToString(body.returns, ids))
         }
 
         companion object {
@@ -303,169 +305,125 @@ internal object DataFlowIR {
 
             fun nodeToString(node: Node, ids: Map<Node, Int>) = when (node) {
                 is Node.Const ->
-                    "        CONST ${node.type}\n"
+                    "        CONST ${node.type}"
 
                 Node.Null ->
-                    "        NULL\n"
+                    "        NULL"
 
                 is Node.Parameter ->
-                    "        PARAM ${node.index}\n"
+                    "        PARAM ${node.index}"
 
                 is Node.Singleton ->
-                    "        SINGLETON ${node.type}\n"
+                    "        SINGLETON ${node.type}"
 
                 is Node.AllocInstance ->
-                    "        ALLOC INSTANCE ${node.type}\n"
+                    "        ALLOC INSTANCE ${node.type}"
 
                 is Node.FunctionReference ->
-                    "        FUNCTION REFERENCE ${node.symbol}\n"
+                    "        FUNCTION REFERENCE ${node.symbol}"
 
-                is Node.StaticCall -> {
-                    buildString {
-                        appendLine("        STATIC CALL ${node.callee}. Return type = ${node.returnType}")
-                        node.arguments.forEach {
-                            append("            ARG #${ids[it.node]!!}")
-                            if (it.castToType == null)
-                                appendLine()
-                            else
-                                appendLine(" CASTED TO ${it.castToType}")
-                        }
+                is Node.StaticCall -> buildString {
+                    append("        STATIC CALL ${node.callee}. Return type = ${node.returnType}")
+                    appendList(node.arguments) {
+                        append("            ARG #${ids[it.node]!!}")
+                        appendCastTo(it.castToType)
                     }
                 }
 
-                is Node.VtableCall -> {
-                    buildString {
-                        appendLine("        VIRTUAL CALL ${node.callee}. Return type = ${node.returnType}")
-                        appendLine("            RECEIVER: ${node.receiverType}")
-                        appendLine("            VTABLE INDEX: ${node.calleeVtableIndex}")
-                        node.arguments.forEach {
-                            append("            ARG #${ids[it.node]!!}")
-                            if (it.castToType == null)
-                                appendLine()
-                            else
-                                appendLine(" CASTED TO ${it.castToType}")
-                        }
+                is Node.VtableCall -> buildString {
+                    appendLine("        VIRTUAL CALL ${node.callee}. Return type = ${node.returnType}")
+                    appendLine("            RECEIVER: ${node.receiverType}")
+                    append("            VTABLE INDEX: ${node.calleeVtableIndex}")
+                    appendList(node.arguments) {
+                        append("            ARG #${ids[it.node]!!}")
+                        appendCastTo(it.castToType)
                     }
                 }
 
-                is Node.ItableCall -> {
-                    buildString {
-                        appendLine("        INTERFACE CALL ${node.callee}. Return type = ${node.returnType}")
-                        appendLine("            RECEIVER: ${node.receiverType}")
-                        appendLine("            METHOD HASH: ${node.calleeHash}")
-                        node.arguments.forEach {
-                            append("            ARG #${ids[it.node]!!}")
-                            if (it.castToType == null)
-                                appendLine()
-                            else
-                                appendLine(" CASTED TO ${it.castToType}")
-                        }
+                is Node.ItableCall -> buildString {
+                    appendLine("        INTERFACE CALL ${node.callee}. Return type = ${node.returnType}")
+                    appendLine("            RECEIVER: ${node.receiverType}")
+                    append("            METHOD HASH: ${node.calleeHash}")
+                    appendList(node.arguments) {
+                        append("            ARG #${ids[it.node]!!}")
+                        appendCastTo(it.castToType)
                     }
                 }
 
-                is Node.NewObject -> {
-                    buildString {
-                        appendLine("        NEW OBJECT ${node.callee}")
-                        appendLine("        CONSTRUCTED TYPE ${node.constructedType}")
-                        node.arguments.forEach {
-                            append("            ARG #${ids[it.node]!!}")
-                            if (it.castToType == null)
-                                appendLine()
-                            else
-                                appendLine(" CASTED TO ${it.castToType}")
-                        }
+                is Node.NewObject -> buildString {
+                    appendLine("        NEW OBJECT ${node.callee}")
+                    append("        CONSTRUCTED TYPE ${node.constructedType}")
+                    appendList(node.arguments) {
+                        append("            ARG #${ids[it.node]!!}")
+                        appendCastTo(it.castToType)
                     }
                 }
 
-                is Node.FieldRead -> {
-                    buildString {
-                        appendLine("        FIELD READ ${node.field}")
-                        append("            RECEIVER #${node.receiver?.node?.let { ids[it]!! } ?: "null"}")
-                        if (node.receiver?.castToType == null)
-                            appendLine()
-                        else
-                            appendLine(" CASTED TO ${node.receiver.castToType}")
+                is Node.FieldRead -> buildString {
+                    appendLine("        FIELD READ ${node.field}")
+                    append("            RECEIVER #${node.receiver?.node?.let { ids[it]!! } ?: "null"}")
+                    appendCastTo(node.receiver?.castToType)
+                }
+
+                is Node.FieldWrite -> buildString {
+                    appendLine("        FIELD WRITE ${node.field}")
+                    append("            RECEIVER #${node.receiver?.node?.let { ids[it]!! } ?: "null"}")
+                    appendCastTo(node.receiver?.castToType)
+                    appendLine()
+                    append("            VALUE #${ids[node.value.node]!!}")
+                    appendCastTo(node.value.castToType)
+                }
+
+                is Node.ArrayRead -> buildString {
+                    appendLine("        ARRAY READ")
+                    append("            ARRAY #${ids[node.array.node]}")
+                    appendCastTo(node.array.castToType)
+                    appendLine()
+                    append("            INDEX #${ids[node.index.node]!!}")
+                    appendCastTo(node.index.castToType)
+                }
+
+                is Node.ArrayWrite -> buildString {
+                    appendLine("        ARRAY WRITE")
+                    append("            ARRAY #${ids[node.array.node]}")
+                    appendCastTo(node.array.castToType)
+                    appendLine()
+                    append("            INDEX #${ids[node.index.node]!!}")
+                    appendCastTo(node.index.castToType)
+                    appendLine()
+                    append("            VALUE #${ids[node.value.node]!!}")
+                    appendCastTo(node.value.castToType)
+                }
+
+                is Node.Variable -> buildString {
+                    append("       ${node.kind}")
+                    appendList(node.values) {
+                        append("            VAL #${ids[it.node]!!}")
+                        appendCastTo(it.castToType)
                     }
                 }
 
-                is Node.FieldWrite -> {
-                    buildString {
-                        appendLine("        FIELD WRITE ${node.field}")
-                        append("            RECEIVER #${node.receiver?.node?.let { ids[it]!! } ?: "null"}")
-                        if (node.receiver?.castToType == null)
-                            appendLine()
-                        else
-                            appendLine(" CASTED TO ${node.receiver.castToType}")
-                        print("            VALUE #${ids[node.value.node]!!}")
-                        if (node.value.castToType == null)
-                            appendLine()
-                        else
-                            appendLine(" CASTED TO ${node.value.castToType}")
+                is Node.Scope -> buildString {
+                    append("       SCOPE ${node.depth}")
+                    appendList(node.nodes.toList()) {
+                        append("            SUBNODE #${ids[it]!!}")
                     }
                 }
 
-                is Node.ArrayRead -> {
-                    buildString {
-                        appendLine("        ARRAY READ")
-                        append("            ARRAY #${ids[node.array.node]}")
-                        if (node.array.castToType == null)
-                            appendLine()
-                        else
-                            appendLine(" CASTED TO ${node.array.castToType}")
-                        append("            INDEX #${ids[node.index.node]!!}")
-                        if (node.index.castToType == null)
-                            appendLine()
-                        else
-                            appendLine(" CASTED TO ${node.index.castToType}")
-                    }
-                }
+                else -> "        UNKNOWN: ${node::class.java}"
+            }
 
-                is Node.ArrayWrite -> {
-                    buildString {
-                        appendLine("        ARRAY WRITE")
-                        append("            ARRAY #${ids[node.array.node]}")
-                        if (node.array.castToType == null)
-                            appendLine()
-                        else
-                            appendLine(" CASTED TO ${node.array.castToType}")
-                        append("            INDEX #${ids[node.index.node]!!}")
-                        if (node.index.castToType == null)
-                            appendLine()
-                        else
-                            appendLine(" CASTED TO ${node.index.castToType}")
-                        print("            VALUE #${ids[node.value.node]!!}")
-                        if (node.value.castToType == null)
-                            appendLine()
-                        else
-                            appendLine(" CASTED TO ${node.value.castToType}")
-                    }
+            private fun <T> StringBuilder.appendList(list: List<T>, itemPrinter: StringBuilder.(T) -> Unit) {
+                if (list.isEmpty()) return
+                for (i in list.indices) {
+                    appendLine()
+                    itemPrinter(list[i])
                 }
+            }
 
-                is Node.Variable -> {
-                    buildString {
-                        appendLine("       ${node.kind}")
-                        node.values.forEach {
-                            append("            VAL #${ids[it.node]!!}")
-                            if (it.castToType == null)
-                                appendLine()
-                            else
-                                appendLine(" CASTED TO ${it.castToType}")
-                        }
-                    }
-                }
-
-                is Node.Scope -> {
-                    val result = StringBuilder()
-                    result.appendLine("       SCOPE ${node.depth}")
-                    node.nodes.forEach {
-                        result.appendLine("            SUBNODE #${ids[it]!!}")
-                    }
-                    result.toString()
-                }
-
-                else -> {
-                    "        UNKNOWN: ${node::class.java}\n"
-                }
+            private fun StringBuilder.appendCastTo(type: Type?) {
+                if (type != null)
+                    append(" CASTED TO ${type}")
             }
         }
     }

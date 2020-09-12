@@ -43,9 +43,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
 import org.jetbrains.kotlin.library.SerializedIrModule
@@ -429,3 +426,12 @@ private fun MemberScope.getContributedClassifier(name: String) =
 
 private fun MemberScope.getContributedFunctions(name: String) =
         this.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BUILTINS)
+
+internal class ContextLogger(val context: Context) {
+    operator fun String.unaryPlus() = context.log { this }
+}
+
+internal fun Context.logMultiple(messageBuilder: ContextLogger.() -> Unit) {
+    if (!inVerbosePhase) return
+    with(ContextLogger(this)) { messageBuilder() }
+}

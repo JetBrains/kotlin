@@ -8,15 +8,10 @@ package org.jetbrains.kotlin.backend.konan.optimizations
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.logMultiple
 import org.jetbrains.kotlin.backend.konan.descriptors.isArrayWithFixedSizeItems
 
 internal object LocalEscapeAnalysis {
-    private val DEBUG = 0
-
-    private inline fun DEBUG_OUTPUT(severity: Int, block: () -> Unit) {
-        if (DEBUG > severity) block()
-    }
-
     private enum class EscapeState {
         GLOBAL_ESCAPE,       // escape through global reference
         ARG_ESCAPE,          // escapes through function arguments, return or throw
@@ -187,7 +182,7 @@ internal object LocalEscapeAnalysis {
                 }
                 ir?.let {
                     lifetimes.put(it, Lifetime.STACK)
-                    DEBUG_OUTPUT(3) { println("${ir} does not escape") }
+                    context.log { "$ir does not escape" }
                 }
             }
         }
@@ -195,18 +190,18 @@ internal object LocalEscapeAnalysis {
 
     fun analyze(context: Context, moduleDFG: ModuleDFG, lifetimes: MutableMap<IrElement, Lifetime>) {
         moduleDFG.functions.forEach { (name, function) ->
-            DEBUG_OUTPUT(5) {
-                println("===============================================")
-                println("Visiting $name")
-                println("DATA FLOW IR:")
-                function.debugOutput()
+            context.logMultiple {
+                +"==============================================="
+                +"Visiting $name"
+                +"DATA FLOW IR:"
+                +function.debugString()
             }
             FunctionAnalyzer(function, context).analyze(lifetimes)
         }
     }
 
     fun computeLifetimes(context: Context, moduleDFG: ModuleDFG, lifetimes: MutableMap<IrElement, Lifetime>) {
-        DEBUG_OUTPUT(1) { println("In local EA") }
+        context.log { "In local EA" }
         assert(lifetimes.isEmpty())
         analyze(context, moduleDFG, lifetimes)
     }

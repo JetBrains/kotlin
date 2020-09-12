@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenFunctions
-import org.jetbrains.kotlin.backend.konan.descriptors.target
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
@@ -177,12 +176,6 @@ internal class ModuleDFG(val functions: Map<DataFlowIR.FunctionSymbol, DataFlowI
 
 internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFragment) {
 
-    private val DEBUG = 0
-
-    private inline fun DEBUG_OUTPUT(severity: Int, block: () -> Unit) {
-        if (DEBUG > severity) block()
-    }
-
     private val TAKE_NAMES = true // Take fqNames for all functions and types (for debug purposes).
 
     private inline fun takeName(block: () -> String) = if (TAKE_NAMES) block() else null
@@ -211,9 +204,9 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                 assert (body != null || declaration.constructedClass.isNonGeneratedAnnotation()) {
                     "Non-annotation class constructor has empty body"
                 }
-                DEBUG_OUTPUT(0) {
-                    println("Analysing function ${declaration.descriptor}")
-                    println("IR: ${ir2stringWhole(declaration)}")
+                context.logMultiple {
+                    +"Analysing function ${declaration.descriptor}"
+                    +"IR: ${ir2stringWhole(declaration)}"
                 }
                 analyze(declaration, body)
             }
@@ -224,9 +217,9 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                     // External function or intrinsic.
                     symbolTable.mapFunction(declaration)
                 } else {
-                    DEBUG_OUTPUT(0) {
-                        println("Analysing function ${declaration.descriptor}")
-                        println("IR: ${ir2stringWhole(declaration)}")
+                    context.logMultiple {
+                        +"Analysing function ${declaration.descriptor}"
+                        +"IR: ${ir2stringWhole(declaration)}"
                     }
                     analyze(declaration, body)
                 }
@@ -235,9 +228,9 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
             override fun visitField(declaration: IrField) {
                 if (declaration.parent is IrFile)
                     declaration.initializer?.let {
-                        DEBUG_OUTPUT(0) {
-                            println("Analysing global field ${declaration.descriptor}")
-                            println("IR: ${ir2stringWhole(declaration)}")
+                        context.logMultiple {
+                            +"Analysing global field ${declaration.descriptor}"
+                            +"IR: ${ir2stringWhole(declaration)}"
                         }
                         analyze(declaration, IrSetFieldImpl(it.startOffset, it.endOffset, declaration.symbol, null,
                                 it.expression, context.irBuiltIns.unitType))
@@ -249,29 +242,25 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                 val visitor = ElementFinderVisitor()
                 body?.acceptVoid(visitor)
 
-                DEBUG_OUTPUT(0) {
-                    println("FIRST PHASE")
-                    visitor.variableValues.elementData.forEach { t, u ->
-                        println("VAR $t [LOOP ${u.loop}]:")
-                        u.values.forEach {
-                            println("    ${ir2stringWhole(it)}")
-                        }
+                context.logMultiple {
+                    +"FIRST PHASE"
+                    visitor.variableValues.elementData.forEach { (t, u) ->
+                        +"VAR $t [LOOP ${u.loop}]:"
+                        u.values.forEach { +"    ${ir2stringWhole(it)}" }
                     }
                     visitor.expressions.forEach { t ->
-                        println("EXP [LOOP ${t.value}] ${ir2stringWhole(t.key)}")
+                        +"EXP [LOOP ${t.value}] ${ir2stringWhole(t.key)}"
                     }
                 }
 
                 // Compute transitive closure of possible values for variables.
                 visitor.variableValues.computeClosure()
 
-                DEBUG_OUTPUT(0) {
-                    println("SECOND PHASE")
-                    visitor.variableValues.elementData.forEach { t, u ->
-                        println("VAR $t [LOOP ${u.loop}]:")
-                        u.values.forEach {
-                            println("    ${ir2stringWhole(it)}")
-                        }
+                context.logMultiple {
+                    +"SECOND PHASE"
+                    visitor.variableValues.elementData.forEach { (t, u) ->
+                        +"VAR $t [LOOP ${u.loop}]:"
+                        u.values.forEach { +"    ${ir2stringWhole(it)}" }
                     }
                 }
 
@@ -279,27 +268,28 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                         declaration, visitor.expressions, visitor.parentLoops, visitor.returnValues,
                         visitor.thrownValues, visitor.catchParameters).build()
 
-                DEBUG_OUTPUT(0) {
-                    function.debugOutput()
+                context.logMultiple {
+                    +function.debugString()
+                    +""
                 }
 
-                functions.put(function.symbol, function)
+                functions[function.symbol] = function
             }
         }, data = null)
 
-        DEBUG_OUTPUT(1) {
-            println("SYMBOL TABLE:")
+        context.logMultiple {
+            +"SYMBOL TABLE:"
             symbolTable.classMap.forEach { irClass, type ->
-                println("    DESCRIPTOR: ${irClass.descriptor}")
-                println("    TYPE: $type")
+                +"    DESCRIPTOR: ${irClass.descriptor}"
+                +"    TYPE: $type"
                 if (type !is DataFlowIR.Type.Declared)
                     return@forEach
-                println("        SUPER TYPES:")
-                type.superTypes.forEach { println("            $it") }
-                println("        VTABLE:")
-                type.vtable.forEach { println("            $it") }
-                println("        ITABLE:")
-                type.itable.forEach { println("            ${it.key} -> ${it.value}") }
+                +"        SUPER TYPES:"
+                type.superTypes.forEach { +"            $it" }
+                +"        VTABLE:"
+                type.vtable.forEach { +"            $it" }
+                +"        ITABLE:"
+                type.itable.forEach { +"            ${it.key} -> ${it.value}" }
             }
         }
 
@@ -618,9 +608,9 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                 return variables[valueDeclaration]!!
             }
             return nodes.getOrPut(expression) {
-                DEBUG_OUTPUT(0) {
-                    println("Converting expression")
-                    println(ir2stringWhole(expression))
+                context.logMultiple {
+                    +"Converting expression"
+                    +ir2stringWhole(expression)
                 }
                 val values = mutableListOf<IrExpression>()
                 val edges = mutableListOf<DataFlowIR.Edge>()

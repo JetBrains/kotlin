@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.DirectedGraphMultiNode
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.logMultiple
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import kotlin.math.min
 
@@ -103,12 +104,6 @@ internal object EscapeAnalysis {
      *     After the above transformation has been made, finally, simple lifetime propagation can be performed,
      *     seeing all edges directed.
      */
-
-    private val DEBUG = 0
-
-    private inline fun DEBUG_OUTPUT(severity: Int, block: () -> Unit) {
-        if (DEBUG > severity) block()
-    }
 
     // A special marker field for external types implemented in the runtime (mainly, arrays).
     // The types being passed to the constructor are not used in the analysis - just put there anything.
@@ -317,16 +312,14 @@ internal object EscapeAnalysis {
                 return true
             }
 
-            override fun toString() = debugOutput(null)
+            override fun toString() = debugString(null)
 
-            fun debugOutput(root: String?): String {
-                val result = StringBuilder()
-                result.append(root ?: kind.toString())
+            fun debugString(root: String?) = buildString {
+                append(root ?: kind.toString())
                 path.forEach {
-                    result.append('.')
-                    result.append(it.name ?: "<no_name@${it.hash}>")
+                    append('.')
+                    append(it.name ?: "<no_name@${it.hash}>")
                 }
-                return result.toString()
             }
 
             fun goto(field: DataFlowIR.Field?) = when (field) {
@@ -447,7 +440,7 @@ internal object EscapeAnalysis {
     }
 
     private class InterproceduralAnalysis(
-            context: Context,
+            val context: Context,
             val callGraph: CallGraph,
             val intraproceduralAnalysisResults: Map<DataFlowIR.FunctionSymbol, FunctionAnalysisResult>,
             val externalModulesDFG: ExternalModulesDFG,
@@ -466,48 +459,44 @@ internal object EscapeAnalysis {
         val escapeAnalysisResults = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, FunctionEscapeAnalysisResult>()
 
         fun analyze() {
-
-            DEBUG_OUTPUT(0) {
-                println("CALL GRAPH")
-                callGraph.directEdges.forEach { t, u ->
-                    println("    FUN $t")
+            context.logMultiple {
+                +"CALL GRAPH"
+                callGraph.directEdges.forEach { (t, u) ->
+                    +"    FUN $t"
                     u.callSites.forEach {
                         val label = when {
                             it.isVirtual -> "VIRTUAL"
                             callGraph.directEdges.containsKey(it.actualCallee) -> "LOCAL"
                             else -> "EXTERNAL"
                         }
-                        println("        CALLS $label ${it.actualCallee}")
+                        +"        CALLS $label ${it.actualCallee}"
                     }
-                    callGraph.reversedEdges[t]!!.forEach {
-                        println("        CALLED BY $it")
-                    }
+                    callGraph.reversedEdges[t]!!.forEach { +"        CALLED BY $it" }
                 }
+                +""
             }
 
             val condensation = DirectedGraphCondensationBuilder(callGraph).build()
 
-            DEBUG_OUTPUT(0) {
-                println("CONDENSATION")
+            context.logMultiple {
+                +"CONDENSATION"
                 condensation.topologicalOrder.forEach { multiNode ->
-                    println("    MULTI-NODE")
-                    multiNode.nodes.forEach {
-                        println("        $it")
-                    }
+                    +"    MULTI-NODE"
+                    multiNode.nodes.forEach { +"        $it" }
                 }
-                println("CONDENSATION(DETAILED)")
+                +""
+                +"CONDENSATION(DETAILED)"
                 condensation.topologicalOrder.forEach { multiNode ->
-                    println("    MULTI-NODE")
+                    +"    MULTI-NODE"
                     multiNode.nodes.forEach {
-                        println("        $it")
+                        +"        $it"
                         callGraph.directEdges[it]!!.callSites
                                 .filter { callGraph.directEdges.containsKey(it.actualCallee) }
-                                .forEach { println("            CALLS ${it.actualCallee}") }
-                        callGraph.reversedEdges[it]!!.forEach {
-                            println("            CALLED BY $it")
-                        }
+                                .forEach { +"            CALLS ${it.actualCallee}" }
+                        callGraph.reversedEdges[it]!!.forEach { +"            CALLED BY $it" }
                     }
                 }
+                +""
             }
 
             for (functionSymbol in callGraph.directEdges.keys) {
@@ -519,9 +508,9 @@ internal object EscapeAnalysis {
             for (multiNode in condensation.topologicalOrder.reversed())
                 analyze(callGraph, multiNode)
 
-            DEBUG_OUTPUT(1) {
-                println("Managed to alloc on stack: ${stackAllocsCount * 100.0 / (globalAllocsCount + stackAllocsCount)}%")
-                println("Total graph size: $totalGraphSize")
+            context.logMultiple {
+                +"Managed to alloc on stack: ${stackAllocsCount * 100.0 / (globalAllocsCount + stackAllocsCount)}%"
+                +"Total graph size: $totalGraphSize"
             }
         }
 
@@ -532,15 +521,15 @@ internal object EscapeAnalysis {
         private fun analyze(callGraph: CallGraph, multiNode: DirectedGraphMultiNode<DataFlowIR.FunctionSymbol.Declared>) {
             val nodes = multiNode.nodes.filter { intraproceduralAnalysisResults.containsKey(it) }.toMutableSet()
 
-            DEBUG_OUTPUT(0) {
-                println("Analyzing multiNode:\n    ${nodes.joinToString("\n   ") { it.toString() }}")
+            context.logMultiple {
+                +"Analyzing multiNode:\n    ${nodes.joinToString("\n   ") { it.toString() }}"
                 nodes.forEach { from ->
-                    println("DataFlowIR")
+                    +"DataFlowIR"
                     intraproceduralAnalysisResults[from]!!.function.debugOutput()
                     callGraph.directEdges[from]!!.callSites.forEach { to ->
-                        println("CALL")
-                        println("   from $from")
-                        println("   to ${to.actualCallee}")
+                        +"CALL"
+                        +"   from $from"
+                        +"   to ${to.actualCallee}"
                     }
                 }
             }
@@ -553,30 +542,23 @@ internal object EscapeAnalysis {
                 val function = toAnalyze.first()
                 toAnalyze.remove(function)
                 numberOfRuns[function] = numberOfRuns[function]!! + 1
-
-                DEBUG_OUTPUT(0) { println("Processing function $function") }
+                context.log { "Processing function $function" }
 
                 val startResult = escapeAnalysisResults[function]!!
-
-                DEBUG_OUTPUT(0) { println("Start escape analysis result:\n$startResult") }
+                context.log { "Start escape analysis result:\n$startResult" }
 
                 analyze(callGraph, pointsToGraphs[function]!!, function)
                 val endResult = escapeAnalysisResults[function]!!
+
                 if (startResult == endResult) {
-
-                    DEBUG_OUTPUT(0) { println("Escape analysis is not changed") }
-
+                    context.log { "Escape analysis is not changed" }
                 } else {
-
-                    DEBUG_OUTPUT(0) { println("Escape analysis was refined:\n$endResult") }
-
+                    context.log { "Escape analysis was refined:\n$endResult" }
                     if (numberOfRuns[function]!! > 1) {
-
-                        DEBUG_OUTPUT(0) {
-                            println("WARNING: Escape analysis for $function seems not to be converging." +
-                                    " Assuming conservative results.")
+                        context.log {
+                            "WARNING: Escape analysis for $function seems not to be converging." +
+                                    " Assuming conservative results."
                         }
-
                         escapeAnalysisResults[function] = FunctionEscapeAnalysisResult.pessimistic(function.parameters.size)
                         nodes.remove(function)
                     }
@@ -632,11 +614,9 @@ internal object EscapeAnalysis {
                 pointerSize /* typeinfo */ + 4 /* size */ + itemSize * length
 
         private fun analyze(callGraph: CallGraph, pointsToGraph: PointsToGraph, function: DataFlowIR.FunctionSymbol.Declared) {
-            DEBUG_OUTPUT(0) {
-                println("Before calls analysis")
-                pointsToGraph.print()
-                pointsToGraph.printDigraph(false)
-            }
+            context.log {"Before calls analysis" }
+            pointsToGraph.log()
+            pointsToGraph.logDigraph(false)
 
             callGraph.directEdges[function]!!.callSites.forEach {
                 val callee = it.actualCallee
@@ -648,20 +628,16 @@ internal object EscapeAnalysis {
                 pointsToGraph.processCall(it, calleeEAResult)
             }
 
-            DEBUG_OUTPUT(0) {
-                println("After calls analysis")
-                pointsToGraph.print()
-                pointsToGraph.printDigraph(false)
-            }
+            context.log { "After calls analysis" }
+            pointsToGraph.log()
+            pointsToGraph.logDigraph(false)
 
             // Build transitive closure.
             val eaResult = pointsToGraph.buildClosure()
 
-            DEBUG_OUTPUT(0) {
-                println("After closure building")
-                pointsToGraph.print()
-                pointsToGraph.printDigraph(true)
-            }
+            context.log { "After closure building" }
+            pointsToGraph.log()
+            pointsToGraph.logDigraph(true)
 
             escapeAnalysisResults[function] = eaResult
 
@@ -678,38 +654,29 @@ internal object EscapeAnalysis {
             val callee = callSite.actualCallee.resolved()
 
             val calleeEAResult = if (callSite.isVirtual) {
-
-                DEBUG_OUTPUT(0) { println("A virtual call: $callee") }
-
+                context.log { "A virtual call: $callee" }
                 FunctionEscapeAnalysisResult.pessimistic(callee.parameters.size)
             } else {
-
-                DEBUG_OUTPUT(0) { println("An external call: $callee") }
-
+                context.log { "An external call: $callee" }
                 if (callee.name?.startsWith("kfun:kotlin.") == true
                         // TODO: Is it possible to do it in a more fine-grained fashion?
                         && !callee.name.startsWith("kfun:kotlin.native.concurrent")) {
-
-                    DEBUG_OUTPUT(0) { println("A function from K/N runtime - can use annotations") }
-
+                    context.log { "A function from K/N runtime - can use annotations" }
                     FunctionEscapeAnalysisResult.fromBits(
                             callee.escapes ?: 0,
                             (0..callee.parameters.size).map { callee.pointsTo?.elementAtOrNull(it) ?: 0 }
                     )
                 } else {
-
-                    DEBUG_OUTPUT(0) { println("An unknown function - assume pessimistic result") }
-
+                    context.log { "An unknown function - assume pessimistic result" }
                     FunctionEscapeAnalysisResult.pessimistic(callee.parameters.size)
                 }
             }
 
-            DEBUG_OUTPUT(0) {
-                println("Escape analysis result")
-                println(calleeEAResult.toString())
-                println()
+            context.logMultiple {
+                +"Escape analysis result"
+                +calleeEAResult.toString()
+                +""
             }
-
             return calleeEAResult
         }
 
@@ -806,12 +773,11 @@ internal object EscapeAnalysis {
 
             fun escapes(node: PointsToGraphNode) = node in reachableFromEscapeOrigins || node in referencingEscapeOrigins
 
-            val ids = if (DEBUG > 0)
-                (listOf(functionAnalysisResult.function.body.rootScope)
-                        + functionAnalysisResult.function.body.allScopes.flatMap { it.nodes }
-                        )
-                        .withIndex().associateBy({ it.value }, { it.index })
-            else null
+            val ids = (
+                    listOf(functionAnalysisResult.function.body.rootScope)
+                            + functionAnalysisResult.function.body.allScopes.flatMap { it.nodes }
+                    )
+                    .withIndex().associateBy({ it.value }, { it.index })
 
             fun lifetimeOf(node: DataFlowIR.Node) = nodes[node]!!.let { it.forcedLifetime ?: lifetimeOf(it) }
 
@@ -846,16 +812,12 @@ internal object EscapeAnalysis {
             private val returnValues: Set<DataFlowIR.Node>
 
             init {
-
-                DEBUG_OUTPUT(0) {
-                    println("Building points-to graph for function $functionSymbol")
-                    println("Results of preliminary function analysis")
+                context.logMultiple {
+                    +"Building points-to graph for function $functionSymbol"
+                    +"Results of preliminary function analysis"
                 }
-
                 functionAnalysisResult.nodesRoles.forEach { (node, roles) ->
-
-                    DEBUG_OUTPUT(0) { println("NODE ${nodeToString(node)}: $roles") }
-
+                    context.log { "NODE ${nodeToString(node)}: $roles" }
                     nodes[node] = newNode(roles, node)
                 }
 
@@ -904,13 +866,13 @@ internal object EscapeAnalysis {
                 }
             }
 
-            private fun nodeToStringWhole(node: DataFlowIR.Node) = DataFlowIR.Function.nodeToString(node, ids!!)
+            private fun nodeToStringWhole(node: DataFlowIR.Node) = DataFlowIR.Function.nodeToString(node, ids)
 
-            private fun nodeToString(node: DataFlowIR.Node) = ids!![node].toString()
+            private fun nodeToString(node: DataFlowIR.Node) = ids[node].toString()
 
-            fun print() {
-                println("POINTS-TO GRAPH")
-                println("NODES")
+            fun log() = context.logMultiple {
+                +"POINTS-TO GRAPH"
+                +"NODES"
                 val tempIds = mutableMapOf<PointsToGraphNode, Int>()
                 var tempIndex = 0
                 allNodes.forEach {
@@ -919,18 +881,17 @@ internal object EscapeAnalysis {
                 }
                 allNodes.forEach {
                     val tempId = tempIds[it]
-                    println("    ${lifetimeOf(it)} ${it.depth} ${if (it in escapeOrigins) "ESCAPES" else ""} ${it.node?.let { nodeToString(it) } ?: "t$tempId"}")
-                    print(it.node?.let { nodeToStringWhole(it) } ?: "        t$tempId\n")
+                    +"    ${lifetimeOf(it)} ${it.depth} ${if (it in escapeOrigins) "ESCAPES" else ""} ${it.node?.let { nodeToString(it) } ?: "t$tempId"}"
+                    +(it.node?.let { nodeToStringWhole(it) } ?: "        t$tempId")
                 }
             }
 
-            fun printDigraph(
+            fun logDigraph(
                     markDrains: Boolean,
                     nodeFilter: (PointsToGraphNode) -> Boolean = { true },
                     nodeLabel: ((PointsToGraphNode) -> String)? = null
-            ) {
-                println("digraph {")
-                val ids = ids!!
+            ) = context.logMultiple {
+                +"digraph {"
                 val tempIds = mutableMapOf<PointsToGraphNode, Int>()
                 var tempIndex = 0
                 allNodes.forEach {
@@ -951,24 +912,23 @@ internal object EscapeAnalysis {
                         if (!nodeFilter(to)) continue
                         when (it) {
                             is PointsToGraphEdge.Assignment ->
-                                println("    \"${from.format()}\" -> \"${to.format()}\";")
+                                +"    \"${from.format()}\" -> \"${to.format()}\";"
                             is PointsToGraphEdge.Field ->
-                                println("    \"${from.format()}\" -> \"${to.format()}\" [ label=\"${it.field.name}\"];")
+                                +"    \"${from.format()}\" -> \"${to.format()}\" [ label=\"${it.field.name}\"];"
                         }
                     }
                 }
-                println("}")
+                +"}"
             }
 
             fun processCall(callSite: CallGraphNode.CallSite, calleeEscapeAnalysisResult: FunctionEscapeAnalysisResult) {
                 val call = callSite.call
-
-                DEBUG_OUTPUT(0) {
-                    println("Processing callSite")
-                    println(nodeToStringWhole(call))
-                    println("Actual callee: ${callSite.actualCallee}")
-                    println("Callee escape analysis result:")
-                    println(calleeEscapeAnalysisResult.toString())
+                context.logMultiple {
+                    +"Processing callSite"
+                    +nodeToStringWhole(call)
+                    +"Actual callee: ${callSite.actualCallee}"
+                    +"Callee escape analysis result:"
+                    +calleeEscapeAnalysisResult.toString()
                 }
 
                 val arguments = if (call is DataFlowIR.Node.NewObject) {
@@ -1009,56 +969,44 @@ internal object EscapeAnalysis {
                 calleeEscapeAnalysisResult.escapes.forEach { escapingNode ->
                     val (arg, node) = mapNode(escapingNode)
                     if (node == null) {
-
-                        DEBUG_OUTPUT(0) { println("WARNING: There is no node ${nodeToString(arg!!)}") }
-
+                        context.log { "WARNING: There is no node ${nodeToString(arg!!)}" }
                         return@forEach
                     }
                     escapeOrigins += node
-
-                    DEBUG_OUTPUT(0) {
-                        println("Node ${escapingNode.debugOutput(arg?.let { nodeToString(it) })} escapes")
-                    }
+                    context.log { "Node ${escapingNode.debugString(arg?.let { nodeToString(it) })} escapes" }
                 }
 
                 calleeEscapeAnalysisResult.pointsTo.edges.forEach { edge ->
                     val (fromArg, fromNode) = mapNode(edge.from)
                     if (fromNode == null) {
-
-                        DEBUG_OUTPUT(0) { println("WARNING: There is no node ${nodeToString(fromArg!!)}") }
-
+                        context.log { "WARNING: There is no node ${nodeToString(fromArg!!)}" }
                         return@forEach
                     }
                     val (toArg, toNode) = mapNode(edge.to)
                     if (toNode == null) {
-
-                        DEBUG_OUTPUT(0) { println("WARNING: There is no node ${nodeToString(toArg!!)}") }
-
+                        context.log { "WARNING: There is no node ${nodeToString(toArg!!)}" }
                         return@forEach
                     }
                     fromNode.addAssignmentEdge(toNode)
 
-                    DEBUG_OUTPUT(0) {
-                        println("Adding edge")
-                        println("    FROM ${edge.from.debugOutput(fromArg?.let { nodeToString(it) })}")
-                        println("    TO ${edge.to.debugOutput(toArg?.let { nodeToString(it) })}")
+                    context.logMultiple {
+                        +"Adding edge"
+                        +"    FROM ${edge.from.debugString(fromArg?.let { nodeToString(it) })}"
+                        +"    TO ${edge.to.debugString(toArg?.let { nodeToString(it) })}"
                     }
                 }
             }
 
             fun buildClosure(): FunctionEscapeAnalysisResult {
-
-                DEBUG_OUTPUT(0) {
-                    println("BUILDING CLOSURE")
-                    println("Return values:")
-                    returnValues.forEach {
-                        println("    ${nodeToString(it)}")
-                    }
+                context.logMultiple {
+                    +"BUILDING CLOSURE"
+                    +"Return values:"
+                    returnValues.forEach { +"    ${nodeToString(it)}" }
                 }
 
                 buildDrains()
 
-                DEBUG_OUTPUT(0) { printDigraph(true) }
+                logDigraph(true)
 
                 computeLifetimes()
 
@@ -1072,9 +1020,7 @@ internal object EscapeAnalysis {
                  */
                 val (numberOfDrains, nodeIds) = paintInterestingNodes()
 
-                DEBUG_OUTPUT(0) {
-                    printDigraph(true, { nodeIds[it] != null }, { nodeIds[it].toString() })
-                }
+                logDigraph(true, { nodeIds[it] != null }, { nodeIds[it].toString() })
 
                 // TODO: Remove redundant edges.
                 val compressedEdges = mutableListOf<CompressedPointsToGraph.Edge>()
@@ -1616,11 +1562,7 @@ internal object EscapeAnalysis {
 
                     if (lifetime != computedLifetime) {
                         if (propagateExiledToHeapObjects && node.isAlloc) {
-
-                            DEBUG_OUTPUT(0) {
-                                println("Forcing node ${nodeToString(node)} to escape")
-                            }
-
+                            context.log { "Forcing node ${nodeToString(node)} to escape" }
                             escapeOrigins += ptgNode
                             propagateEscapeOrigin(ptgNode)
                         } else {
@@ -1640,11 +1582,7 @@ internal object EscapeAnalysis {
                         allowedToAlloc = 0
                         // Do not exile primitive arrays - they ain't reference no object.
                         if (irClass.symbol == symbols.array && propagateExiledToHeapObjects) {
-
-                            DEBUG_OUTPUT(0) {
-                                println("Forcing node ${nodeToString(ptgNode.node!!)} to escape")
-                            }
-
+                            context.log { "Forcing node ${nodeToString(ptgNode.node!!)} to escape" }
                             escapeOrigins += ptgNode
                             propagateEscapeOrigin(ptgNode)
                         } else {

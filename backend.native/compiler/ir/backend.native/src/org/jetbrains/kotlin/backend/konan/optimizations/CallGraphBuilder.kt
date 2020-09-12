@@ -59,12 +59,6 @@ internal class CallGraphBuilder(
         val nonDevirtualizedCallSitesUnfoldFactor: Int
 ) {
 
-    private val DEBUG = 0
-
-    private inline fun DEBUG_OUTPUT(severity: Int, block: () -> Unit) {
-        if (DEBUG > severity) block()
-    }
-
     private val devirtualizedCallSites = devirtualizationAnalysisResult.devirtualizedCallSites
 
     private fun DataFlowIR.FunctionSymbol.resolved(): DataFlowIR.FunctionSymbol {
