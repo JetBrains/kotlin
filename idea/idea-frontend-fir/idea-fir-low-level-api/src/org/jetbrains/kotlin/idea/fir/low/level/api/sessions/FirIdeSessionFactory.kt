@@ -110,6 +110,7 @@ internal object FirIdeSessionFactory {
 
         registerCommonComponents()
         registerResolveComponents()
+        registerIdeComponents()
 
         val provider = FirIdeProvider(
             project,
@@ -165,6 +166,7 @@ internal object FirIdeSessionFactory {
         return FirIdeLibrariesSession(moduleInfo, sessionProvider, searchScope).apply {
             registerCommonComponents()
             registerJavaSpecificComponents()
+            registerIdeComponents()
 
             val javaSymbolProvider = JavaSymbolProvider(this, sessionProvider.project, searchScope)
 
@@ -191,5 +193,10 @@ internal object FirIdeSessionFactory {
                 )
             )
         }
+    }
+
+    private fun FirIdeSession.registerIdeComponents() {
+        register(IdeSessionComponents::class, IdeSessionComponents.create(this))
+        register(FirTransformerProvider::class, FirTransformerProvider(this))
     }
 }
