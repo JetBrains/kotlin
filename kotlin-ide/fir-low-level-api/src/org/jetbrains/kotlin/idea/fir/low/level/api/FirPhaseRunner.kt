@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.createTransformerBasedProcessorByPhase
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.executeWithoutPCE
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
@@ -17,20 +15,20 @@ internal class FirPhaseRunner {
     private val superTypesBodyResolveLock = ReentrantLock()
     private val implicitTypesResolveLock = ReentrantLock()
 
-    fun runPhase(firFile: FirFile, phase: FirResolvePhase, scopeSession: ScopeSession) = when (phase) {
+    fun runPhase(firFile: FirFile, phase: FirResolvePhase) = when (phase) {
         FirResolvePhase.SUPER_TYPES -> superTypesBodyResolveLock.withLock {
-            runPhaseWithoutLock(firFile, phase, scopeSession)
+            runPhaseWithoutLock(firFile, phase)
         }
         FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> implicitTypesResolveLock.withLock {
-            runPhaseWithoutLock(firFile, phase, scopeSession)
+            runPhaseWithoutLock(firFile, phase)
         }
         else -> {
-            runPhaseWithoutLock(firFile, phase, scopeSession)
+            runPhaseWithoutLock(firFile, phase)
         }
     }
 
-    private fun runPhaseWithoutLock(firFile: FirFile, phase: FirResolvePhase, scopeSession: ScopeSession) {
-        val phaseProcessor = phase.createTransformerBasedProcessorByPhase(firFile.session, scopeSession)
+    private fun runPhaseWithoutLock(firFile: FirFile, phase: FirResolvePhase) {
+        val phaseProcessor = firFile.session.firTransformerProvider.getTransformerForPhase(phase)
         executeWithoutPCE { phaseProcessor.processFile(firFile) }
     }
 }

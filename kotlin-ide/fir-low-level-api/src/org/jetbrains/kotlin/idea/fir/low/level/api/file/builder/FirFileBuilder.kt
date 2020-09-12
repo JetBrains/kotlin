@@ -72,12 +72,11 @@ internal class FirFileBuilder(
         assert(fromPhase <= toPhase) {
             "Trying to resolve file ${firFile.name} from $fromPhase to $toPhase"
         }
-        val scopeSession = ScopeSession()
         var currentPhase = fromPhase
         while (currentPhase < toPhase) {
             if (checkPCE) checkCanceled()
             currentPhase = currentPhase.next
-            firPhaseRunner.runPhase(firFile, currentPhase, scopeSession)
+            firPhaseRunner.runPhase(firFile, currentPhase)
         }
     }
 
