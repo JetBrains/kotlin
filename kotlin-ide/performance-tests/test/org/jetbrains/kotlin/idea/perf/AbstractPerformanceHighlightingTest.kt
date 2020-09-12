@@ -27,10 +27,6 @@ abstract class AbstractPerformanceHighlightingTest : KotlinLightCodeInsightFixtu
         @JvmStatic
         val stats: Stats = Stats("highlight")
 
-        init {
-            // there is no @AfterClass for junit3.8
-            Runtime.getRuntime().addShutdownHook(Thread(Runnable { stats.close() }))
-        }
     }
 
     override fun setUp() {
@@ -45,7 +41,8 @@ abstract class AbstractPerformanceHighlightingTest : KotlinLightCodeInsightFixtu
     override fun tearDown() {
         runAll(
             ThrowableRunnable { commitAllDocuments() },
-            ThrowableRunnable { super.tearDown() }
+            ThrowableRunnable { super.tearDown() },
+            ThrowableRunnable { stats.flush() }
         )
     }
 

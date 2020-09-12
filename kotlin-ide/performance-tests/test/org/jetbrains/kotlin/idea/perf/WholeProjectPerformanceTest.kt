@@ -100,7 +100,7 @@ abstract class WholeProjectPerformanceTest : DaemonAnalyzerTestCase(), WholeProj
             fun appendInspectionResult(file: String, id: String, nanoTime: Long) {
                 totals.merge(id, nanoTime) { a, b -> a + b }
 
-                perfStats.append(file, id, nanoTime)
+                //perfStats.append(file, id, nanoTime)
             }
 
             TeamCity.suite("TotalPerFile") {

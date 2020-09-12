@@ -63,7 +63,7 @@ object TeamCity {
     }
 
     inline fun testStarted(testName: String) {
-        message { "testStarted name='$testName'" }
+        message { "testStarted name='$testName' captureStandardOutput='true'" }
     }
 
     inline fun metadata(testName: String, name: String, value: Number) {

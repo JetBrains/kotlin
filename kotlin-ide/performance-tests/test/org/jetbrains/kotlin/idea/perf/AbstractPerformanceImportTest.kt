@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.idea.perf
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.LightProjectDescriptor
+import com.intellij.testFramework.RunAll
+import com.intellij.util.ThrowableRunnable
 import junit.framework.TestCase
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -29,6 +31,13 @@ abstract class AbstractPerformanceImportTest : KotlinLightCodeInsightFixtureTest
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     protected abstract fun stats(): Stats
+
+    override fun tearDown() {
+        RunAll(
+            ThrowableRunnable { super.tearDown() },
+            ThrowableRunnable { stats().flush() }
+        ).run()
+    }
 
     protected fun doPerfTest(unused: String) {
         val testName = getTestName(false)

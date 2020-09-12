@@ -35,11 +35,6 @@ abstract class AbstractPerformanceCompletionIncrementalResolveTest : KotlinLight
 
         @JvmStatic
         val stats: Stats = Stats("completion-incremental")
-
-        init {
-            // there is no @AfterClass for junit3.8
-            Runtime.getRuntime().addShutdownHook(Thread(Runnable { stats.close() }))
-        }
     }
 
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
@@ -56,7 +51,8 @@ abstract class AbstractPerformanceCompletionIncrementalResolveTest : KotlinLight
     override fun tearDown() {
         runAll(
             ThrowableRunnable { commitAllDocuments() },
-            ThrowableRunnable { super.tearDown() }
+            ThrowableRunnable { super.tearDown() },
+            ThrowableRunnable { stats.flush() }
         )
     }
 

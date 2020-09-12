@@ -40,11 +40,6 @@ abstract class AbstractPerformanceCompletionHandlerTests(
     companion object {
         @JvmStatic
         val statsMap: MutableMap<String, Stats> = mutableMapOf()
-
-        init {
-            // there is no @AfterClass for junit3.8
-            Runtime.getRuntime().addShutdownHook(Thread(Runnable { statsMap.values.forEach { it.close() } }))
-        }
     }
 
     private fun stats(): Stats {
@@ -57,7 +52,8 @@ abstract class AbstractPerformanceCompletionHandlerTests(
     override fun tearDown() {
         runAll(
             ThrowableRunnable { commitAllDocuments() },
-            ThrowableRunnable { super.tearDown() }
+            ThrowableRunnable { super.tearDown() },
+            ThrowableRunnable { statsMap.values.forEach(Stats::flush) }
         )
     }
 

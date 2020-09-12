@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.idea.perf
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.EditorTestUtil
+import org.jetbrains.kotlin.idea.test.runAll
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.formatter.FormatSettingsUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.configureCodeStyleAndRun
@@ -23,6 +25,13 @@ abstract class AbstractPerformanceTypingIndentationTest : KotlinLightCodeInsight
     companion object {
         @JvmStatic
         val stats: Stats = Stats("typing-indentation")
+    }
+
+    override fun tearDown() {
+        runAll(
+            ThrowableRunnable { super.tearDown() },
+            ThrowableRunnable { stats.flush() }
+        )
     }
 
     protected fun doPerfTest(unused: String) {
