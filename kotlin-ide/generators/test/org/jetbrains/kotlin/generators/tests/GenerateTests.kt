@@ -871,7 +871,7 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         }
 
         testClass<AbstractSlicerTreeTest> {
-            model("slicer")
+            model("slicer", excludedDirectories = listOf("mpp"))
         }
 
         testClass<AbstractSlicerLeafGroupingTest> {
