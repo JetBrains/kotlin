@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 annotation class Ann(vararg val i: Boolean)
 fun foo() {

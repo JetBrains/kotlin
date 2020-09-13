@@ -22,5 +22,5 @@ fun main1() {}
 fun main2() {}
 
 val q = A()
-@Ann(q.z)
+@Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>q.z<!>)
 fun main3() {}

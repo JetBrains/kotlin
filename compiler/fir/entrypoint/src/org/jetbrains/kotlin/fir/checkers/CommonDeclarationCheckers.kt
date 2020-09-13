@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 
 object CommonDeclarationCheckers : DeclarationCheckers() {
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker> = setOf(
+        FirAnnotationArgumentChecker,
         FirAnnotationClassDeclarationChecker,
         FirModifierChecker,
         FirManyCompanionObjectsChecker,
