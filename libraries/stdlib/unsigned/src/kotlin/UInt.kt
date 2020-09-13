@@ -145,12 +145,24 @@ public inline class UInt @PublishedApi internal constructor(@PublishedApi intern
     @kotlin.internal.InlineOnly
     public inline operator fun rangeTo(other: UInt): UIntRange = UIntRange(this, other)
 
-    /** Shifts this value left by the [bitCount] number of bits. */
+    /**
+     * Shifts this value left by the [bitCount] number of bits.
+     *
+     * Note that only the five lowest-order bits of the [bitCount] are used as the shift distance.
+     * The shift distance actually used is therefore always in the range `0..31`.
+     */
     @kotlin.internal.InlineOnly
     public inline infix fun shl(bitCount: Int): UInt = UInt(data shl bitCount)
-    /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros. */
+
+    /**
+     * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros.
+     *
+     * Note that only the five lowest-order bits of the [bitCount] are used as the shift distance.
+     * The shift distance actually used is therefore always in the range `0..31`.
+     */
     @kotlin.internal.InlineOnly
     public inline infix fun shr(bitCount: Int): UInt = UInt(data ushr bitCount)
+
     /** Performs a bitwise AND operation between the two values. */
     @kotlin.internal.InlineOnly
     public inline infix fun and(other: UInt): UInt = UInt(this.data and other.data)
