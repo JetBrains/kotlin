@@ -916,6 +916,26 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/diagnostics"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
+        @TestMetadata("annotationArgumentKClassLiteralTypeError.kt")
+        public void testAnnotationArgumentKClassLiteralTypeError() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/annotationArgumentKClassLiteralTypeError.kt");
+        }
+
+        @TestMetadata("annotationArgumentMustBeConst.kt")
+        public void testAnnotationArgumentMustBeConst() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/annotationArgumentMustBeConst.kt");
+        }
+
+        @TestMetadata("annotationArgumentMustBeEnumConst.kt")
+        public void testAnnotationArgumentMustBeEnumConst() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/annotationArgumentMustBeEnumConst.kt");
+        }
+
+        @TestMetadata("annotationArgumentMustBeKClassLiteral.kt")
+        public void testAnnotationArgumentMustBeKClassLiteral() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/annotationArgumentMustBeKClassLiteral.kt");
+        }
+
         @TestMetadata("annotationClassMember.kt")
         public void testAnnotationClassMember() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/annotationClassMember.kt");
@@ -1009,6 +1029,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         @TestMetadata("methodOfAnyImplementedInInterface.kt")
         public void testMethodOfAnyImplementedInInterface() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/methodOfAnyImplementedInInterface.kt");
+        }
+
+        @TestMetadata("nonConstValInAnnotationArgument.kt")
+        public void testNonConstValInAnnotationArgument() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/nonConstValInAnnotationArgument.kt");
         }
 
         @TestMetadata("notASupertype.kt")

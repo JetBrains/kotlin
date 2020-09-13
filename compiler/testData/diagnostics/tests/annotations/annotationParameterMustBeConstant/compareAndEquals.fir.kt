@@ -7,10 +7,10 @@ fun foo() {
     val a4 = a1 > a2
 
     @Ann(
-            a1,
-            a2,
-            a3,
-            a1 > a2,
-            a1 == a2
+        <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>a1<!>,
+        <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>a2<!>,
+        <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>a3<!>,
+        <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>a1 > a2<!>,
+        <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>a1 == a2<!>
     ) val b = 1
 }
