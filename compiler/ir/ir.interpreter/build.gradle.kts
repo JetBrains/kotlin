@@ -4,7 +4,8 @@ plugins {
 }
 
 dependencies {
-    compile(project(":compiler:ir.tree"))
+    compileOnly(project(":compiler:ir.tree"))
+    compileOnly(project(":kotlin-reflect-api"))
 }
 
 sourceSets {

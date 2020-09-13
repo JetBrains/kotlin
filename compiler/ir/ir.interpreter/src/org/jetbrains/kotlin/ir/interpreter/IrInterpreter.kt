@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.interpreter.exceptions.*
 import org.jetbrains.kotlin.ir.interpreter.intrinsics.IntrinsicEvaluator
 import org.jetbrains.kotlin.ir.interpreter.proxy.CommonProxy.Companion.asProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
+import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.ReflectionProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.wrap
 import org.jetbrains.kotlin.ir.interpreter.stack.StackImpl
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
@@ -140,6 +141,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
                 is IrStringConcatenation -> interpretStringConcatenation(this)
                 is IrFunctionExpression -> interpretFunctionExpression(this)
                 is IrFunctionReference -> interpretFunctionReference(this)
+                is IrPropertyReference -> interpretPropertyReference(this)
                 is IrComposite -> interpretComposite(this)
 
                 else -> TODO("${this.javaClass} not supported")
@@ -317,6 +319,10 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
             return@newFrame when {
                 dispatchReceiver is Wrapper && !isInlineOnly -> dispatchReceiver.getMethod(irFunction).invokeMethod(irFunction)
                 irFunction.hasAnnotation(evaluateIntrinsicAnnotation) -> Wrapper.getStaticMethod(irFunction).invokeMethod(irFunction)
+                dispatchReceiver is ReflectionState -> {
+                    stack.pushReturnValue((dispatchReceiver.wrap(this) as ReflectionProxy).evaluate(expression, stack.getAll()))
+                    Next
+                }
                 dispatchReceiver is Primitive<*> -> calculateBuiltIns(irFunction) // 'is Primitive' check for js char and js long
                 irFunction.body == null ->
                     irFunction.trySubstituteFunctionBody() ?: irFunction.tryCalculateLazyConst() ?: calculateBuiltIns(irFunction)
@@ -872,5 +878,13 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
             null -> interpretStatements(expression.statements) // is null for body of do while loop
             else -> TODO("${expression.origin} not implemented")
         }
+    }
+
+    private fun interpretPropertyReference(propertyReference: IrPropertyReference): ExecutionResult {
+        val dispatchReceiver = propertyReference.dispatchReceiver?.interpret()?.check { return it }?.let { stack.popReturnValue() }
+        val extensionReceiver = propertyReference.extensionReceiver?.interpret()?.check { return it }?.let { stack.popReturnValue() }
+        val propertyState = KPropertyState(propertyReference, dispatchReceiver, extensionReceiver)
+        stack.pushReturnValue(propertyState)
+        return Next
     }
 }
