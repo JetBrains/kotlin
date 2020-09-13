@@ -255,4 +255,8 @@ class IrCompileTimeChecker(
     override fun visitThrow(expression: IrThrow, data: Nothing?): Boolean {
         return expression.value.accept(this, data)
     }
+
+    override fun visitPropertyReference(expression: IrPropertyReference, data: Nothing?): Boolean {
+        return mode.canEvaluateFunction(expression.getter!!.owner)
+    }
 }
