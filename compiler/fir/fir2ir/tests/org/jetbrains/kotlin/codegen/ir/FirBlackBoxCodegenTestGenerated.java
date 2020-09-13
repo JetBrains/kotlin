@@ -12607,6 +12607,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             runTest("compiler/testData/codegen/box/inference/integerLiteralTypeInLamdaReturnType.kt");
         }
 
+        @TestMetadata("interactionWihtIntersectionTypesAndJava.kt")
+        public void testInteractionWihtIntersectionTypesAndJava() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/interactionWihtIntersectionTypesAndJava.kt");
+        }
+
         @TestMetadata("kt10822.kt")
         public void testKt10822() throws Exception {
             runTest("compiler/testData/codegen/box/inference/kt10822.kt");
