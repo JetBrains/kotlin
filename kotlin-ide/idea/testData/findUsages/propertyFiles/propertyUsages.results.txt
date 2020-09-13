@@ -6,5 +6,6 @@
 [propertyUsages.1.kt] Usage in string constants 26 -"foo.bar"
 [propertyUsages.1.kt] Usage in string constants 27 1["foo.bar"]
 [propertyUsages.1.kt] Usage in string constants 28 "foo.bar"["test"]
+[propertyUsages.1.kt] Usage in string constants 29 "test"["foo.bar"]
 [propertyUsages.2.java] Usage in string constants 3 @PropertyKey(resourceBundle = "propertyUsages.0") String s1 = "foo.bar"
 [propertyUsages.2.java] Usage in string constants 5 PropertyUsages_1Kt.message("foo.bar");
