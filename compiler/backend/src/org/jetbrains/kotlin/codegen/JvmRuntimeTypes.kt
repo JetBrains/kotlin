@@ -162,7 +162,7 @@ class JvmRuntimeTypes(
             referencedFunction.isSuspend || isSuspendConversion
         )
 
-        val suspendFunctionType = if (referencedFunction.isSuspend) suspendFunctionInterface?.defaultType else null
+        val suspendFunctionType = if (referencedFunction.isSuspend || isSuspendConversion) suspendFunctionInterface?.defaultType else null
         val superClass = when {
             generateOptimizedCallableReferenceSuperClasses -> when {
                 isAdaptedCallableReference || isSuspendConversion -> adaptedFunctionReference
