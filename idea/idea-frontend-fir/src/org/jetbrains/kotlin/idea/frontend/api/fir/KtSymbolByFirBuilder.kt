@@ -201,7 +201,7 @@ internal class KtSymbolByFirBuilder private constructor(
             is ConeClassErrorType -> KtFirErrorType(coneType, typeCheckerContext, token)
             is ConeFlexibleType -> KtFirFlexibleType(coneType, typeCheckerContext, token, this)
             is ConeIntersectionType -> KtFirIntersectionType(coneType, typeCheckerContext, token, this)
-            else -> TODO()
+            else -> TODO(coneType::class.toString())
         }
     }
 }
