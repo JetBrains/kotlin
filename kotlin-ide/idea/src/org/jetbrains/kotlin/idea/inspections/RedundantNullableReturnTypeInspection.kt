@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.textRangeIn
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypes
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getTargetFunctionDescriptor
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isNullable
@@ -47,12 +47,24 @@ class RedundantNullableReturnTypeInspection : AbstractKotlinInspection() {
 
             if (declaration.isOverridable()) return
 
-            val body = when (declaration) {
-                is KtNamedFunction -> declaration.bodyExpression
-                is KtProperty -> declaration.initializer ?: declaration.accessors.singleOrNull { it.isGetter }?.bodyExpression
+            val (body, targetDeclaration) = when (declaration) {
+                is KtNamedFunction -> {
+                    val body = declaration.bodyExpression
+                    if (body != null) body to declaration else null
+                }
+                is KtProperty -> {
+                    val initializer = declaration.initializer
+                    val getter = declaration.accessors.singleOrNull { it.isGetter }
+                    val getterBody = getter?.bodyExpression
+                    when {
+                        initializer != null -> initializer to declaration
+                        getterBody != null -> getterBody to getter
+                        else -> null
+                    }
+                }
                 else -> null
             } ?: return
-            val actualReturnTypes = body.actualReturnTypes(declaration)
+            val actualReturnTypes = body.actualReturnTypes(targetDeclaration)
             if (actualReturnTypes.isEmpty() || actualReturnTypes.any { it.isNullable() }) return
 
             val declarationName = declaration.nameAsSafeName.asString()
@@ -72,11 +84,12 @@ class RedundantNullableReturnTypeInspection : AbstractKotlinInspection() {
 
     private fun KtExpression.actualReturnTypes(declaration: KtDeclaration): List<KotlinType> {
         val context = analyze()
+        val declarationDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration] ?: return emptyList()
         val dataFlowValueFactory = getResolutionFacade().frontendService<DataFlowValueFactory>()
         val moduleDescriptor = findModuleDescriptor()
         val languageVersionSettings = languageVersionSettings
         val returnTypes = collectDescendantsOfType<KtReturnExpression> {
-            it.labelQualifier == null && it.getParentOfTypes(true, KtNamedFunction::class.java, KtProperty::class.java) == declaration
+            it.labelQualifier == null && it.getTargetFunctionDescriptor(context) == declarationDescriptor
         }.flatMap {
             it.returnedExpression.types(context, dataFlowValueFactory, moduleDescriptor, languageVersionSettings)
         }
