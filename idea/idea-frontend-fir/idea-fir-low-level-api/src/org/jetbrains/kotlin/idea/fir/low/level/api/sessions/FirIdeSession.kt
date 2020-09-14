@@ -19,6 +19,7 @@ abstract class FirIdeSession(override val builtinTypes: BuiltinTypes) : FirSessi
 }
 
 @OptIn(PrivateSessionConstructor::class)
-abstract class FirIdeModuleSession(override val moduleInfo: ModuleInfo, builtinTypes: BuiltinTypes) : FirIdeSession(builtinTypes) {
+abstract class FirIdeModuleSession(builtinTypes: BuiltinTypes) : FirIdeSession(builtinTypes) {
+    abstract override val moduleInfo: ModuleInfo
     abstract val scope: GlobalSearchScope
 }

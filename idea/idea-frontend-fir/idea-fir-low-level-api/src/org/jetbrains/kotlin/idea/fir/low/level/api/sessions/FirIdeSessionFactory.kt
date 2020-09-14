@@ -57,10 +57,11 @@ internal object FirIdeSessionFactory {
         val scopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
         val firBuilder = FirFileBuilder(scopeProvider, firPhaseRunner)
         val searchScope = ModuleProductionSourceScope(moduleInfo.module)
-        val session = FirIdeSourcesSession(moduleInfo, project, searchScope, firBuilder, builtinTypes)
-        sessionsCache[moduleInfo] = session
         val dependentModules = moduleInfo.dependenciesWithoutSelf()
             .filterIsInstanceTo<ModuleSourceInfo, MutableList<ModuleSourceInfo>>(mutableListOf())
+        val session = FirIdeSourcesSession(moduleInfo, dependentModules, project, searchScope, firBuilder, builtinTypes)
+        sessionsCache[moduleInfo] = session
+
 
         return session.apply {
             val cache = ModuleFileCacheImpl(this)

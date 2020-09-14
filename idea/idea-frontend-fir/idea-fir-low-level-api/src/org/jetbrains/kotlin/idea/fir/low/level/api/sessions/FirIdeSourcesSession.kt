@@ -10,17 +10,20 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
+import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 
 @OptIn(PrivateSessionConstructor::class)
 internal class FirIdeSourcesSession @PrivateSessionConstructor constructor(
-    moduleInfo: ModuleInfo,
+    override val moduleInfo: ModuleSourceInfo,
+    val dependencies: List<ModuleSourceInfo>,
     override val project: Project,
     override val scope: GlobalSearchScope,
     val firFileBuilder: FirFileBuilder,
     builtinTypes: BuiltinTypes,
-) : FirIdeModuleSession(moduleInfo, builtinTypes) {
+) : FirIdeModuleSession( builtinTypes) {
     val cache get() = firIdeProvider.cache
 }
 
