@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.backend.jvm.ir.eraseTypeParameters
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmAbstract
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
@@ -261,11 +261,17 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
                                 methodInfo = specialBridge.methodInfo?.copy(argumentsToCheck = 0), // For potential argument boxing
                                 isFinal = false,
                             )
-                            // The part after ?: is needed for methods with default implementations in collection interfaces:
+                            // The part after '?:' is needed for methods with default implementations in collection interfaces:
                             // MutableMap.remove() and getOrDefault().
                             val superTarget = overriddenFromClass.takeIf { !it.isFakeOverride } ?: specialBridge.overridden
-                            irClass.declarations.remove(irFunction)
-                            irClass.addSpecialBridge(superBridge, superTarget)
+                            if (superBridge.signature == superTarget.jvmMethod) {
+                                // If the resulting bridge to a super member matches the signature of the bridge callee,
+                                // bridge is not needed.
+                                irFunction
+                            } else {
+                                irClass.declarations.remove(irFunction)
+                                irClass.addSpecialBridge(superBridge, superTarget)
+                            }
                         }
                         else -> irFunction
                     }
