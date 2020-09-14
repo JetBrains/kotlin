@@ -222,7 +222,10 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                     this.returnTypeRef = returnTypeRef
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                     isGetter = true
-                    status = FirResolvedDeclarationStatusImpl(visibility, modality)
+                    status = FirResolvedDeclarationStatusImpl(visibility, modality).apply {
+                        isInline = Flags.IS_INLINE_ACCESSOR.get(getterFlags)
+                        isExternal = Flags.IS_EXTERNAL_ACCESSOR.get(getterFlags)
+                    }
                     annotations +=
                         c.annotationDeserializer.loadPropertyGetterAnnotations(
                             c.containerSource, proto, local.nameResolver, local.typeTable, getterFlags
@@ -247,7 +250,10 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                     this.returnTypeRef = FirImplicitUnitTypeRef(source)
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                     isGetter = false
-                    status = FirResolvedDeclarationStatusImpl(visibility, modality)
+                    status = FirResolvedDeclarationStatusImpl(visibility, modality).apply {
+                        isInline = Flags.IS_INLINE_ACCESSOR.get(setterFlags)
+                        isExternal = Flags.IS_EXTERNAL_ACCESSOR.get(setterFlags)
+                    }
                     annotations +=
                         c.annotationDeserializer.loadPropertySetterAnnotations(
                             c.containerSource, proto, local.nameResolver, local.typeTable, setterFlags
@@ -288,6 +294,8 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 isOverride = false
                 isConst = Flags.IS_CONST.get(flags)
                 isLateInit = Flags.IS_LATEINIT.get(flags)
+                isInline = Flags.IS_INLINE.get(flags)
+                isExternal = Flags.IS_EXTERNAL_PROPERTY.get(flags)
             }
 
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES

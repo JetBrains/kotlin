@@ -67,6 +67,7 @@ fun deserializeClassToSymbol(
         isInner = Flags.IS_INNER.get(flags)
         isData = Flags.IS_DATA.get(classProto.flags)
         isInline = Flags.IS_INLINE_CLASS.get(classProto.flags)
+        isExternal = Flags.IS_EXTERNAL_CLASS.get(classProto.flags)
     }
     val isSealed = modality == Modality.SEALED
     val annotationDeserializer = defaultAnnotationDeserializer ?: FirBuiltinAnnotationDeserializer(session)
