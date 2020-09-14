@@ -158,7 +158,7 @@ private fun needToDeclareOut(element: PsiElement, lastStatementOffset: Int, scop
     ) {
         val refs = ReferencesSearch.search(element, scope, false).toArray(PsiReference.EMPTY_ARRAY)
         if (refs.isNotEmpty()) {
-            val lastRef = refs[refs.size - 1]
+            val lastRef = refs.maxByOrNull { it.element.textOffset } ?: return false
             if (lastRef.element.textOffset > lastStatementOffset) {
                 return true
             }
