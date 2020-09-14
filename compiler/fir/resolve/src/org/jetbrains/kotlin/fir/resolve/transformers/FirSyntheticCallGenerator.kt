@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.SyntheticCallableId
@@ -43,8 +42,10 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.Variance
 
 class FirSyntheticCallGenerator(
-    private val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents
-) : BodyResolveComponents by components {
+    private val components: BodyResolveComponents
+) {
+    private val session = components.session
+
     private val whenSelectFunction: FirSimpleFunction = generateSyntheticSelectFunction(SyntheticCallableId.WHEN)
     private val trySelectFunction: FirSimpleFunction = generateSyntheticSelectFunction(SyntheticCallableId.TRY)
     private val idFunction: FirSimpleFunction = generateSyntheticSelectFunction(SyntheticCallableId.ID)
@@ -150,7 +151,7 @@ class FirSyntheticCallGenerator(
             this.argumentList = argumentList
         }
 
-        val argument = callCompleter.completeCall(fakeCallElement, expectedTypeRef).result.argument
+        val argument = components.callCompleter.completeCall(fakeCallElement, expectedTypeRef).result.argument
         return ((argument as? FirVarargArgumentsExpression)?.arguments?.get(0) ?: argument) as FirCallableReferenceAccess?
     }
 
@@ -163,7 +164,7 @@ class FirSyntheticCallGenerator(
     ): FirNamedReferenceWithCandidate? {
         val callInfo = generateCallInfo(name, argumentList, callKind)
         val candidate = generateCandidate(callInfo, function, context)
-        val applicability = resolutionStageRunner.processCandidate(candidate, context)
+        val applicability = components.resolutionStageRunner.processCandidate(candidate, context)
         if (applicability <= CandidateApplicability.INAPPLICABLE) {
             return null
         }
@@ -185,8 +186,8 @@ class FirSyntheticCallGenerator(
         isPotentialQualifierPart = false,
         typeArguments = emptyList(),
         session = session,
-        containingFile = file,
-        containingDeclarations = containingDeclarations
+        containingFile = components.file,
+        containingDeclarations = components.containingDeclarations
     )
 
     private fun generateSyntheticSelectTypeParameter(): Pair<FirTypeParameter, FirResolvedTypeRef> {

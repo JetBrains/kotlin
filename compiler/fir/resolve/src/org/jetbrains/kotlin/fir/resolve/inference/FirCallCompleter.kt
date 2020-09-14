@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
@@ -39,7 +38,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 class FirCallCompleter(
     private val transformer: FirBodyResolveTransformer,
     private val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents
-) : BodyResolveComponents by components {
+) {
+    private val session = components.session
     val completer = ConstraintSystemCompleter(components)
     private val inferenceSession
         get() = transformer.context.inferenceSession
@@ -48,7 +48,7 @@ class FirCallCompleter(
 
     fun <T> completeCall(call: T, expectedTypeRef: FirTypeRef?): CompletionResult<T>
             where T : FirResolvable, T : FirStatement {
-        val typeRef = typeFromCallee(call)
+        val typeRef = components.typeFromCallee(call)
 
         val reference = call.calleeReference as? FirNamedReferenceWithCandidate ?: return CompletionResult(call, true)
         val candidate = reference.candidate
@@ -79,10 +79,10 @@ class FirCallCompleter(
                         candidate.system.asReadOnlyStorage().buildAbstractResultingSubstitutor(session.inferenceComponents.ctx) as ConeSubstitutor
                     val completedCall = call.transformSingle(
                         FirCallCompletionResultsWriterTransformer(
-                            session, finalSubstitutor, returnTypeCalculator,
+                            session, finalSubstitutor, components.returnTypeCalculator,
                             session.inferenceComponents.approximator,
-                            integerOperatorsTypeUpdater,
-                            integerLiteralTypeApproximator
+                            components.integerOperatorsTypeUpdater,
+                            components.integerLiteralTypeApproximator
                         ),
                         null
                     )
@@ -104,7 +104,7 @@ class FirCallCompleter(
                 ) {
                     analyzer.analyze(candidate.system.asPostponedArgumentsAnalyzerContext(), it, candidate)
                 }
-                val approximatedCall = call.transformSingle(integerOperatorsTypeUpdater, null)
+                val approximatedCall = call.transformSingle(components.integerOperatorsTypeUpdater, null)
                 inferenceSession.addPartiallyResolvedCall(approximatedCall)
                 CompletionResult(approximatedCall, false)
             }
@@ -118,10 +118,10 @@ class FirCallCompleter(
         mode: FirCallCompletionResultsWriterTransformer.Mode = FirCallCompletionResultsWriterTransformer.Mode.Normal
     ): FirCallCompletionResultsWriterTransformer {
         return FirCallCompletionResultsWriterTransformer(
-            session, substitutor, returnTypeCalculator,
+            session, substitutor, components.returnTypeCalculator,
             session.inferenceComponents.approximator,
-            integerOperatorsTypeUpdater,
-            integerLiteralTypeApproximator,
+            components.integerOperatorsTypeUpdater,
+            components.integerLiteralTypeApproximator,
             mode
         )
     }
@@ -182,14 +182,14 @@ class FirCallCompleter(
             }
 
             lambdaArgument.replaceValueParameters(lambdaArgument.valueParameters + listOfNotNull(itParam))
-            lambdaArgument.replaceReturnTypeRef(expectedReturnTypeRef ?: noExpectedType)
+            lambdaArgument.replaceReturnTypeRef(expectedReturnTypeRef ?: components.noExpectedType)
 
             val builderInferenceSession = runIf(stubsForPostponedVariables.isNotEmpty()) {
                 @Suppress("UNCHECKED_CAST")
                 FirBuilderInferenceSession(transformer.resolutionContext, stubsForPostponedVariables as Map<ConeTypeVariable, ConeStubType>)
             }
 
-            val localContext = towerDataContextForAnonymousFunctions.get(lambdaArgument.symbol) ?: error(
+            val localContext = components.towerDataContextForAnonymousFunctions.get(lambdaArgument.symbol) ?: error(
                 ""
             )
             transformer.context.withTowerDataContext(localContext) {
@@ -203,7 +203,7 @@ class FirCallCompleter(
             }
             transformer.context.dropContextForAnonymousFunction(lambdaArgument)
 
-            val returnArguments = dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(lambdaArgument)
+            val returnArguments = components.dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(lambdaArgument)
 
             return ReturnArgumentsAnalysisResult(returnArguments, builderInferenceSession)
         }

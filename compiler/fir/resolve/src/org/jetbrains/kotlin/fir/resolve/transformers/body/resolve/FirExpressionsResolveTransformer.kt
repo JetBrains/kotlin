@@ -927,6 +927,6 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     // ------------------------------------------------------------------------------------------------
 
     internal fun <T> storeTypeFromCallee(access: T) where T : FirQualifiedAccess, T : FirExpression {
-        access.resultType = callCompleter.typeFromCallee(access)
+        access.resultType = components.typeFromCallee(access)
     }
 }

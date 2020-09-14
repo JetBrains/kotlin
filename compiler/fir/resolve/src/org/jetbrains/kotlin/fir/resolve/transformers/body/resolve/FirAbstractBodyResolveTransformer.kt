@@ -99,7 +99,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val scopeSession: ScopeSession,
         val transformer: FirBodyResolveTransformer,
         val context: BodyResolveContext
-    ) : BodyResolveComponents {
+    ) : BodyResolveComponents() {
         override val fileImportsScope: List<FirScope> get() = context.fileImportsScope
         override val towerDataElements: List<FirTowerDataElement> get() = context.towerDataContext.towerDataElements
         override val localScopes: FirLocalScopes get() = context.towerDataContext.localScopes
