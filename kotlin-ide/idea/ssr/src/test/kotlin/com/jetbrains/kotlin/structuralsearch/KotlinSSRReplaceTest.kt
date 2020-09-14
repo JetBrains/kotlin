@@ -40,6 +40,7 @@ abstract class KotlinSSRReplaceTest : BasePlatformTestCase() {
         val matcher = Matcher(project, matchOptions)
         val sink = CollectingMatchResultSink()
         matcher.findMatches(sink)
+        assert(sink.matches.size > 0) { "Amount of matches should be greater than 0." }
         val replaceOptions = ReplaceConfiguration(searchConfiguration).replaceOptions.apply {
             isToReformatAccordingToStyle = reformat
             StringToConstraintsTransformer.transformCriteria(replacePattern, matchOptions)
