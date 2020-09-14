@@ -53,7 +53,7 @@ class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(
             HierarchySearchRequest(klass, klass.useScope, false).searchInheritors().mapNotNull { it.unwrapped }
         } ?: return
 
-        val subclassesByContainer = subclasses.groupBy {
+        val subclassesByContainer = subclasses.sortedBy { it.textOffset }.groupBy {
             if (it !is KtObjectDeclaration) return@groupBy null
             if (it.superTypeListEntries.size != 1) return@groupBy null
             val containingClass = it.containingClassOrObject as? KtClass ?: return@groupBy null
