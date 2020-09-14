@@ -145,7 +145,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 withGetter = true
             }
             default("annotations", "mutableListOf()")
-            defaultFalse("isSuspend")
             useTypes(coneClassErrorTypeType)
         }
 

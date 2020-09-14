@@ -58,7 +58,6 @@ fun FirFunction<*>.constructFunctionalTypeRef(isSuspend: Boolean = false): FirRe
     return buildResolvedTypeRef {
         source = this@constructFunctionalTypeRef.source?.fakeElement(FirFakeSourceElementKind.ImplicitTypeRef)
         type = functionalType
-        this.isSuspend = isSuspend
     }
 }
 

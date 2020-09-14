@@ -22,11 +22,11 @@ internal class FirResolvedFunctionTypeRefImpl(
     override val source: FirSourceElement?,
     override val annotations: MutableList<FirAnnotationCall>,
     override val type: ConeKotlinType,
-    override val isSuspend: Boolean,
     override val isMarkedNullable: Boolean,
     override var receiverTypeRef: FirTypeRef?,
     override val valueParameters: MutableList<FirValueParameter>,
     override var returnTypeRef: FirTypeRef,
+    override val isSuspend: Boolean,
 ) : FirResolvedFunctionTypeRef() {
     override val delegatedTypeRef: FirTypeRef? get() = null
 

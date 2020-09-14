@@ -174,10 +174,7 @@ class FirIntegerOperator @FirImplementationDetail constructor(
     }
 }
 
-class FirILTTypeRefPlaceHolder(
-    isUnsigned: Boolean,
-    override val isSuspend: Boolean = false
-) : FirResolvedTypeRef() {
+class FirILTTypeRefPlaceHolder(isUnsigned: Boolean) : FirResolvedTypeRef() {
     override val source: FirSourceElement? get() = null
     override val annotations: List<FirAnnotationCall> get() = emptyList()
     override var type: ConeIntegerLiteralType = ConeIntegerLiteralTypeImpl(0, isUnsigned)

@@ -26,7 +26,6 @@ internal class FirErrorTypeRefImpl(
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override val type: ConeKotlinType = ConeClassErrorType(diagnostic)
     override val delegatedTypeRef: FirTypeRef? get() = null
-    override val isSuspend: Boolean = false
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }

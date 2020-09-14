@@ -20,7 +20,6 @@ abstract class FirResolvedTypeRef : FirPureAbstractElement(), FirTypeRef {
     abstract override val annotations: List<FirAnnotationCall>
     abstract val type: ConeKotlinType
     abstract val delegatedTypeRef: FirTypeRef?
-    abstract val isSuspend: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedTypeRef(this, data)
 

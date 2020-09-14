@@ -27,22 +27,22 @@ class FirResolvedFunctionTypeRefBuilder : FirAnnotationContainerBuilder {
     override var source: FirSourceElement? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     lateinit var type: ConeKotlinType
-    var isSuspend: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     var isMarkedNullable: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     var receiverTypeRef: FirTypeRef? = null
     val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     lateinit var returnTypeRef: FirTypeRef
+    var isSuspend: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
 
     override fun build(): FirResolvedFunctionTypeRef {
         return FirResolvedFunctionTypeRefImpl(
             source,
             annotations,
             type,
-            isSuspend,
             isMarkedNullable,
             receiverTypeRef,
             valueParameters,
             returnTypeRef,
+            isSuspend,
         )
     }
 
@@ -65,10 +65,10 @@ inline fun buildResolvedFunctionTypeRefCopy(original: FirResolvedFunctionTypeRef
     copyBuilder.source = original.source
     copyBuilder.annotations.addAll(original.annotations)
     copyBuilder.type = original.type
-    copyBuilder.isSuspend = original.isSuspend
     copyBuilder.isMarkedNullable = original.isMarkedNullable
     copyBuilder.receiverTypeRef = original.receiverTypeRef
     copyBuilder.valueParameters.addAll(original.valueParameters)
     copyBuilder.returnTypeRef = original.returnTypeRef
+    copyBuilder.isSuspend = original.isSuspend
     return copyBuilder.apply(init).build()
 }
