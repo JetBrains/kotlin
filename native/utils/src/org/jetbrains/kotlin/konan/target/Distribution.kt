@@ -43,6 +43,10 @@ class Distribution(
     fun additionalPropertyFiles(genericName: String) =
         preconfiguredPropertyFiles(genericName) + userPropertyFiles(genericName)
 
+    /**
+     * Please note that konan.properties uses simple resolving mechanism.
+     * See [org.jetbrains.kotlin.konan.properties.resolveValue].
+     */
     val properties by lazy {
         val result = Properties()
 
