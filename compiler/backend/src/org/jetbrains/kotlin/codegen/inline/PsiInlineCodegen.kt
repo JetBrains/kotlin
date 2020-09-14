@@ -64,7 +64,7 @@ class PsiInlineCodegen(
         }
         try {
             val registerLineNumber = registerLineNumberAfterwards(resolvedCall)
-            performInline(resolvedCall?.typeArguments?.keys?.toList(), callDefault, callDefault, codegen.typeSystem, registerLineNumber, false)
+            performInline(resolvedCall?.typeArguments?.keys?.toList(), callDefault, callDefault, codegen.typeSystem, registerLineNumber)
         } finally {
             state.globalInlineContext.exitFromInlining()
         }

@@ -29,12 +29,6 @@ fun box(): String {
     return "OK"
 }
 
-// JVM_IR steps on line 15 both on the way in and on the way out
-// of the massert method. This is consistent with what would
-// happen if massert was not inline and we used force-step-into
-// to step through the $default method. JVM only hits line 15 on
-// the way in.
-
 // LINENUMBERS
 // test.kt:24 box
 // test.kt:15 box
@@ -43,9 +37,6 @@ fun box(): String {
 // test.kt:16 box
 // test.kt:17 box
 // test.kt:21 box
-// LINENUMBERS JVM_IR
-// test.kt:15 box
-// LINENUMBERS
 // test.kt:25 box
 // test.kt:6 box
 // test.kt:3 getMASSERTIONS_ENABLED
