@@ -1,4 +1,5 @@
 // !LANGUAGE: -NewInference
+// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
 // FILE: example/Hello.java
@@ -37,6 +38,7 @@ fun box(): String {
     // a::someFunction parameter has type of Nothing
     // while it's completely safe to pass a lambda for a SAM
     // since Hello is effectively contravariant by its parameter
+    // NB: this ^ is not supported by FIR yet
     a.someFunction {
         result = it
     }
