@@ -514,9 +514,13 @@ fun runTest() {
                         if (!module.isDefaultModule()) {
                             def klibModulePath = "${executablePath()}.${module.name}.klib"
                             libs.addAll(module.dependencies)
+                            def klibs = libs.collectMany { ["-l", "${executablePath()}.${it}.klib"] }.toList()
+                            def friends = module.friends ?
+                                    module.friends.collectMany {
+                                        ["-friend-modules", "${executablePath()}.${it}.klib"]
+                                    }.toList() : []
                             runCompiler(compileList.findAll { it.module == module }.collect { it.path },
-                                    klibModulePath, flags + ["-p", "library"] +
-                                    libs.collectMany { ["-l", "${executablePath()}.${it}.klib"] }.toList())
+                                    klibModulePath, flags + ["-p", "library"] + klibs + friends)
                         }
                     }
 
@@ -526,8 +530,13 @@ fun runTest() {
                     compileMain.forEach { f ->
                         libs.addAll(f.module.dependencies)
                     }
-                    if (!compileMain.empty) runCompiler(compileMain.collect { it.path }, executablePath(),
-                            flags + libs.collectMany { ["-l", "${executablePath()}.${it}.klib"] }.toList())
+                    def friends = compileMain.collectMany {it.module.friends }.toSet()
+                    if (!compileMain.empty) {
+                        runCompiler(compileMain.collect { it.path }, executablePath(), flags +
+                                libs.collectMany { ["-l", "${executablePath()}.${it}.klib"] }.toList() +
+                                friends.collectMany {["-friend-modules", "${executablePath()}.${it}.klib"]}.toList()
+                        )
+                    }
                 }
             } catch (Exception ex) {
                 project.logger.quiet("ERROR: Compilation failed for test suite: $name with exception", ex)
