@@ -339,7 +339,6 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         val callableId = CallableId(c.packageFqName, c.relativeClassName, callableName)
         val symbol = FirNamedFunctionSymbol(callableId)
         val local = c.childContext(proto.typeParameterList)
-        // TODO: support contracts
 
         val simpleFunction = buildSimpleFunction {
             session = c.session

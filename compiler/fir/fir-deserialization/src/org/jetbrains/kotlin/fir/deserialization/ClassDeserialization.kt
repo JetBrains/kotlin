@@ -111,7 +111,7 @@ fun deserializeClassToSymbol(
 
         val superTypesDeserialized = classProto.supertypes(context.typeTable).map { supertypeProto ->
             typeDeserializer.simpleType(supertypeProto, ConeAttributes.Empty)
-        }// TODO: + c.components.additionalClassPartsProvider.getSupertypes(this@DeserializedClassDescriptor)
+        }
 
         superTypesDeserialized.mapNotNullTo(superTypeRefs) {
             if (it == null) return@mapNotNullTo null
