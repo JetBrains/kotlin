@@ -39,9 +39,6 @@ fun <R : FirTypeRef> R.copyWithNewSourceKind(newKind: FirFakeSourceElementKind):
             qualifier += typeRef.qualifier
             annotations += typeRef.annotations
         }
-        is FirResolvedFunctionTypeRef -> buildResolvedFunctionTypeRefCopy(typeRef) {
-            source = newSource
-        }
         is FirImplicitTypeRef -> buildImplicitTypeRefCopy(typeRef) {
             source = newSource
         }

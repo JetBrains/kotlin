@@ -146,7 +146,6 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val userTypeRef = element("UserTypeRef", TypeRef, typeRefWithNullability)
     val dynamicTypeRef = element("DynamicTypeRef", TypeRef, typeRefWithNullability)
     val functionTypeRef = element("FunctionTypeRef", TypeRef, typeRefWithNullability)
-    val resolvedFunctionTypeRef = element("ResolvedFunctionTypeRef", TypeRef, resolvedTypeRef, functionTypeRef)
     val implicitTypeRef = element("ImplicitTypeRef", TypeRef, typeRef)
     val composedSuperTypeRef = element("ComposedSuperTypeRef", TypeRef, typeRef)
 

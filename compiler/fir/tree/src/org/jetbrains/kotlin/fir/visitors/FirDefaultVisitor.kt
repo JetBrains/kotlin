@@ -23,10 +23,6 @@ abstract class FirDefaultVisitor<R, D> : FirVisitor<R, D>() {
         return visitResolvedTypeRef(errorTypeRef, data)
     }
 
-    override fun visitResolvedFunctionTypeRef(resolvedFunctionTypeRef: FirResolvedFunctionTypeRef, data: D): R {
-        return visitResolvedTypeRef(resolvedFunctionTypeRef, data)
-    }
-
     override fun visitTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability, data: D): R {
         return visitTypeRef(typeRefWithNullability, data)
     }

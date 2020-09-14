@@ -370,13 +370,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             useTypes(errorTypeRefImpl, coneStubDiagnosticType)
         }
 
-        impl(resolvedFunctionTypeRef) {
-            default("delegatedTypeRef") {
-                value = "null"
-                withGetter = true
-            }
-        }
-
         impl(errorFunction) {
             defaultNull("receiverTypeRef", "body", withGetter = true)
             default("returnTypeRef", "FirErrorTypeRefImpl(null, diagnostic)")

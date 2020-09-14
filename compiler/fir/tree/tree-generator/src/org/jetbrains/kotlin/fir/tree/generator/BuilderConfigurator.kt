@@ -228,10 +228,6 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             withCopy()
         }
 
-        builder(resolvedFunctionTypeRef) {
-            withCopy()
-        }
-
         builder(implicitTypeRef) {
             withCopy()
         }

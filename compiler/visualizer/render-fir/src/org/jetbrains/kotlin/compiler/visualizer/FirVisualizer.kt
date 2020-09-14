@@ -489,16 +489,6 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             data.append("[ERROR : ${errorTypeRef.diagnostic.reason}]")
         }
 
-        override fun visitResolvedFunctionTypeRef(resolvedFunctionTypeRef: FirResolvedFunctionTypeRef, data: StringBuilder) {
-            resolvedFunctionTypeRef.receiverTypeRef?.let {
-                it.accept(this, data)
-                data.append(".")
-            }
-            visitValueParameters(resolvedFunctionTypeRef.valueParameters, data)
-            data.append(" -> ")
-            resolvedFunctionTypeRef.returnTypeRef.accept(this, data)
-        }
-
         override fun visitTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability, data: StringBuilder) {
             if (typeRefWithNullability.isMarkedNullable) {
                 data.append("?")

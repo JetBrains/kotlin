@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.types.impl
 
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -26,7 +25,7 @@ internal class FirFunctionTypeRefImpl(
     override val valueParameters: MutableList<FirValueParameter>,
     override var returnTypeRef: FirTypeRef,
     override val isSuspend: Boolean,
-) : FirPureAbstractElement(), FirFunctionTypeRef {
+) : FirFunctionTypeRef() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         receiverTypeRef?.accept(visitor, data)
