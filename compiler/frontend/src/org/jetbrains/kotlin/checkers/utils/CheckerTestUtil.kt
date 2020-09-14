@@ -62,7 +62,7 @@ object CheckerTestUtil {
     private const val IGNORE_DIAGNOSTIC_PARAMETER = "IGNORE"
     private const val INDIVIDUAL_DIAGNOSTIC = """(\w+;)?(\w+:)?(\w+)(?:\(((?:".*?")(?:,\s*".*?")*)\))?"""
 
-    internal val rangeStartOrEndPattern = Pattern.compile("(<!$INDIVIDUAL_DIAGNOSTIC(,\\s*$INDIVIDUAL_DIAGNOSTIC)*!>)|(<!>)")
+    val rangeStartOrEndPattern = Pattern.compile("(<!$INDIVIDUAL_DIAGNOSTIC(,\\s*$INDIVIDUAL_DIAGNOSTIC)*!>)|(<!>)")
     val individualDiagnosticPattern: Pattern = Pattern.compile(INDIVIDUAL_DIAGNOSTIC)
 
     fun getDiagnosticsIncludingSyntaxErrors(
