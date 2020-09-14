@@ -403,7 +403,7 @@ internal fun FirReference.statementOrigin(session: FirSession): IrStatementOrigi
                     null
             }
             is FirVariableSymbol -> {
-                if ((symbol.fir as FirVariable).returnTypeRef.coneTypeSafe<ConeKotlinType>()?.isBuiltinFunctionalType(session) == true) {
+                if ((symbol.fir as FirVariable).returnTypeRef.coneType.isBuiltinFunctionalType(session)) {
                     IrStatementOrigin.VARIABLE_AS_FUNCTION
                 } else
                     null
