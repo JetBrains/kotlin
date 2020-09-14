@@ -125,12 +125,32 @@ data class BuildRegister(val buildId: String, val teamCityUser: String, val team
     fun sendTeamCityRequest(url: String, json: Boolean = false) =
             UrlNetworkConnector(teamCityUrl).sendRequest(RequestMethod.GET, url, teamCityUser, teamCityPassword, json)
 
+    fun getBranchName(project: String): Promise<String> {
+        val url = "builds?locator=id:$buildId&fields=build(revisions(revision(vcsBranchName,vcs-root-instance)))"
+        var branch: String? = null
+        return sendTeamCityRequest(url, true).then { response ->
+            val data = JsonTreeParser.parse(response).jsonObject
+            data.getArray("build").forEach {
+                (it as JsonObject).getObject("revisions").getArray("revision").forEach {
+                    val currentBranch = (it as JsonObject).getPrimitive("vcsBranchName").content.removePrefix("refs/heads/")
+                    val currentProject = (it as JsonObject).getObject("vcs-root-instance").getPrimitive("name").content
+                    if (project == currentProject) {
+                        branch = currentBranch
+                    }
+                    return@forEach
+                }
+            }
+            branch ?: error("No project $project can be found in build $buildId")
+        }
+    }
+
+
     private fun format(timeValue: Int): String =
             if (timeValue < 10) "0$timeValue" else "$timeValue"
 
     fun getBuildInformation(): Promise<TCBuildInfo> {
         return Promise.all(arrayOf(sendTeamCityRequest("$teamCityBuildUrl/number"),
-                sendTeamCityRequest("$teamCityBuildUrl/branchName"),
+                getBranchName("Kotlin Native"),
                 sendTeamCityRequest("$teamCityBuildUrl/startDate"))).then { results ->
             val (buildNumber, branch, startTime) = results
             val currentTime = Date()
