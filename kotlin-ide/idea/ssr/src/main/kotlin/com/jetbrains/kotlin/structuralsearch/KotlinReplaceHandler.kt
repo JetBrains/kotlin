@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.js.translate.declaration.hasCustomSetter
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
-import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
+import java.lang.Integer.min
 
 class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHandler() {
     override fun replace(info: ReplacementInfo, options: ReplaceOptions) {
@@ -51,8 +51,21 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
                 this is KtProperty && searchTemplate is KtProperty && match is KtProperty ->
                     replaceProperty(searchTemplate, match)
             }
+        } else { // KtExpression
+            fixWhiteSpace(match)
         }
         return this
+    }
+
+    private fun PsiElement.fixWhiteSpace(match: PsiElement) {
+        var indentationLength = Int.MAX_VALUE
+        match.collectDescendantsOfType<PsiWhiteSpace> { it.text.contains("\n") }.forEach {
+            indentationLength = min(indentationLength, it.text.length)
+        }
+        if(indentationLength > 1) indentationLength-- // exclude /n
+        collectDescendantsOfType<PsiWhiteSpace> { it.text.contains("\n") }.forEach {
+            it.replace(KtPsiFactory(this).createWhiteSpace("\n${" ".repeat(indentationLength + it.text.length - 1)}"))
+        }
     }
 
     private fun KtModifierListOwner.replaceModifier(
