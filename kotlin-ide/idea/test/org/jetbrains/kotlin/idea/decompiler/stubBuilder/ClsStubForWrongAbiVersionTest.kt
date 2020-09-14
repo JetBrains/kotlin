@@ -7,15 +7,13 @@ package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.findTestLibraryRoot
+import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.junit.Ignore
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 import java.io.File
 
 @RunWith(JUnit38ClassRunner::class)
-@Ignore("has to be deleted as it seems a compiler test")
 class ClsStubBuilderForWrongAbiVersionTest : AbstractClsStubBuilderTest() {
 
     fun testPackage() = testStubsForFileWithWrongAbiVersion("Wrong_packageKt")
@@ -29,6 +27,6 @@ class ClsStubBuilderForWrongAbiVersionTest : AbstractClsStubBuilderTest() {
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
-        return KotlinJdkAndLibraryProjectDescriptor(File(KotlinTestUtils.getTestDataPathBase() + "/cli/jvm/wrongAbiVersionLib/bin"))
+        return KotlinJdkAndLibraryProjectDescriptor(File(IDEA_TEST_DATA_DIR.absolutePath + "/wrongAbiVersionLib/bin"))
     }
 }
