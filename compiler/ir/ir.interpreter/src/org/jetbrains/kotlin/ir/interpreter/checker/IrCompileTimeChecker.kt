@@ -38,7 +38,7 @@ class IrCompileTimeChecker(
 
     private fun visitConstructor(expression: IrFunctionAccessExpression): Boolean {
         return when {
-            !visitValueParameters(expression, null) -> false
+            !visitValueParameters(expression, null) || !mode.canEvaluateFunction(expression.symbol.owner) -> false
             else -> if (mode.canEvaluateBody(expression.symbol.owner)) expression.symbol.owner.body?.accept(this, null) != false else true
         }
     }
