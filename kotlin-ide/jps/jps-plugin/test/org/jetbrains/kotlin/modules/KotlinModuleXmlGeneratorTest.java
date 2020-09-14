@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.modules;
 import junit.framework.TestCase;
 import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType;
 import org.jetbrains.kotlin.build.JvmSourceRoot;
+import org.jetbrains.kotlin.idea.test.TestUtilsKt;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
@@ -26,7 +27,11 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public class KotlinModuleXmlGeneratorTest extends TestCase {
-    public void testBasic() throws Exception {
+    private static String getTestDataPath() {
+        return TestUtilsKt.IDEA_TEST_DATA_DIR.getAbsolutePath() + "/modules.xml";
+    }
+
+    public void testBasic() {
         String actual = new KotlinModuleXmlBuilder().addModule(
                 "name",
                 "output",
@@ -40,10 +45,10 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Collections.emptySet(),
                 Collections.emptyList()
         ).asText().toString();
-        KotlinTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/basic.xml"), actual);
+        KotlinTestUtils.assertEqualsToFile(new File(getTestDataPath() + "/basic.xml"), actual);
     }
 
-    public void testFiltered() throws Exception {
+    public void testFiltered() {
         String actual = new KotlinModuleXmlBuilder().addModule(
                 "name",
                 "output",
@@ -57,10 +62,10 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Collections.singleton(new File("cp1")),
                 Collections.emptyList()
         ).asText().toString();
-        KotlinTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/filtered.xml"), actual);
+        KotlinTestUtils.assertEqualsToFile(new File(getTestDataPath() + "/filtered.xml"), actual);
     }
 
-    public void testMultiple() throws Exception {
+    public void testMultiple() {
         KotlinModuleXmlBuilder builder = new KotlinModuleXmlBuilder();
         builder.addModule(
                 "name",
@@ -89,10 +94,10 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Collections.emptyList()
         );
         String actual = builder.asText().toString();
-        KotlinTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/multiple.xml"), actual);
+        KotlinTestUtils.assertEqualsToFile(new File(getTestDataPath() + "/multiple.xml"), actual);
     }
 
-    public void testModularJdkRoot() throws Exception {
+    public void testModularJdkRoot() {
         String actual = new KotlinModuleXmlBuilder().addModule(
                 "name",
                 "output",
@@ -106,6 +111,6 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Collections.emptySet(),
                 Collections.emptyList()
         ).asText().toString();
-        KotlinTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/modularJdkRoot.xml"), actual);
+        KotlinTestUtils.assertEqualsToFile(new File(getTestDataPath() + "/modularJdkRoot.xml"), actual);
     }
 }
