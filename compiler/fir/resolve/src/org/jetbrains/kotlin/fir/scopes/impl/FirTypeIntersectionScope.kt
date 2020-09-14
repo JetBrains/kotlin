@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -145,36 +142,20 @@ class FirTypeIntersectionScope private constructor(
                 isIntersectionOverride = true
             )
         val mostSpecificFunction = mostSpecific.fir
-        createFunctionCopy(mostSpecific.fir, newSymbol).apply {
-            resolvePhase = mostSpecificFunction.resolvePhase
-            origin = FirDeclarationOrigin.IntersectionOverride
-            typeParameters += mostSpecificFunction.typeParameters
-            valueParameters += mostSpecificFunction.valueParameters.mapIndexed { index, mostSpecificParameter ->
-                val overriddenWithDefault =
-                    extractedOverrides.firstOrNull {
-                        it.member.fir.valueParameters.getOrNull(index)?.defaultValue != null
-                    }?.member?.fir
-                if (overriddenWithDefault == null) {
-                    mostSpecificParameter
-                } else {
-                    val overriddenWithDefaultParameter = overriddenWithDefault.valueParameters[index]
-                    createValueParameterCopy(mostSpecificParameter, null).apply {
-                        annotations += mostSpecificParameter.annotations
-                    }.build()
-                }
-            }
-        }.build()
+        FirClassSubstitutionScope.createCopyForFirFunction(
+            newSymbol,
+            mostSpecificFunction, session, FirDeclarationOrigin.IntersectionOverride,
+            mostSpecificFunction.isExpect,
+        )
         return newSymbol
     }
 
     private fun createIntersectionOverride(mostSpecific: FirPropertySymbol): FirPropertySymbol {
         val newSymbol = FirPropertySymbol(mostSpecific.callableId, mostSpecific.isFakeOverride, mostSpecific, isIntersectionOverride = true)
         val mostSpecificProperty = mostSpecific.fir
-        createPropertyCopy(mostSpecific.fir, newSymbol).apply {
-            resolvePhase = mostSpecificProperty.resolvePhase
-            origin = FirDeclarationOrigin.IntersectionOverride
-            typeParameters += mostSpecificProperty.typeParameters
-        }.build()
+        FirClassSubstitutionScope.createCopyForFirProperty(
+            newSymbol, mostSpecificProperty, mostSpecificProperty.session
+        )
         return newSymbol
     }
 

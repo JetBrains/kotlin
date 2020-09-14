@@ -290,17 +290,41 @@ class FirClassSubstitutionScope(
             newReturnType: ConeKotlinType? = null,
             newParameterTypes: List<ConeKotlinType?>? = null,
             newTypeParameters: List<FirTypeParameter>? = null,
-            isExpect: Boolean = baseFunction.isExpect
+            isExpect: Boolean = baseFunction.isExpect,
         ): FirSimpleFunction {
             // TODO: consider using here some light-weight functions instead of pseudo-real FirMemberFunctionImpl
             // As second alternative, we can invent some light-weight kind of FirRegularClass
+            return createCopyForFirFunction(
+                fakeOverrideSymbol,
+                baseFunction,
+                session,
+                FirDeclarationOrigin.FakeOverride,
+                isExpect,
+                newParameterTypes,
+                newTypeParameters,
+                newReceiverType,
+                newReturnType
+            )
+        }
+
+        fun createCopyForFirFunction(
+            newSymbol: FirFunctionSymbol<FirSimpleFunction>,
+            baseFunction: FirSimpleFunction,
+            session: FirSession,
+            origin: FirDeclarationOrigin,
+            isExpect: Boolean = baseFunction.isExpect,
+            newParameterTypes: List<ConeKotlinType?>? = null,
+            newTypeParameters: List<FirTypeParameter>? = null,
+            newReceiverType: ConeKotlinType? = null,
+            newReturnType: ConeKotlinType? = null
+        ): FirSimpleFunction {
             return buildSimpleFunction {
                 source = baseFunction.source
                 this.session = session
-                origin = FirDeclarationOrigin.FakeOverride
+                this.origin = origin
                 name = baseFunction.name
                 status = baseFunction.status.withExpect(isExpect)
-                symbol = fakeOverrideSymbol
+                symbol = newSymbol
                 resolvePhase = baseFunction.resolvePhase
 
                 typeParameters += configureAnnotationsTypeParametersAndSignature(
@@ -413,21 +437,39 @@ class FirClassSubstitutionScope(
                 CallableId(derivedClassId ?: baseSymbol.callableId.classId!!, baseProperty.name),
                 isFakeOverride = true, overriddenSymbol = baseSymbol
             )
-            buildProperty {
+            createCopyForFirProperty(
+                symbol, baseProperty, session, isExpect,
+                newTypeParameters, newReceiverType, newReturnType
+            )
+            return symbol
+        }
+
+        fun createCopyForFirProperty(
+            newSymbol: FirPropertySymbol,
+            baseProperty: FirProperty,
+            session: FirSession,
+            isExpect: Boolean = baseProperty.isExpect,
+            newTypeParameters: List<FirTypeParameter>? = null,
+            newReceiverType: ConeKotlinType? = null,
+            newReturnType: ConeKotlinType? = null,
+        ): FirProperty {
+            return buildProperty {
                 source = baseProperty.source
                 this.session = session
                 origin = FirDeclarationOrigin.FakeOverride
                 name = baseProperty.name
                 isVar = baseProperty.isVar
-                this.symbol = symbol
+                this.symbol = newSymbol
                 isLocal = false
                 status = baseProperty.status.withExpect(isExpect)
                 resolvePhase = baseProperty.resolvePhase
                 typeParameters += configureAnnotationsTypeParametersAndSignature(
-                    baseProperty, newTypeParameters, newReceiverType, newReturnType
+                    baseProperty,
+                    newTypeParameters,
+                    newReceiverType,
+                    newReturnType
                 )
             }
-            return symbol
         }
 
         private fun FirPropertyBuilder.configureAnnotationsTypeParametersAndSignature(
