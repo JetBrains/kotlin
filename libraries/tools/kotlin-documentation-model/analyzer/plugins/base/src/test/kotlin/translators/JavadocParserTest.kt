@@ -5,6 +5,7 @@ import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.childrenOfType
 import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.model.firstChildOfType
+import org.jetbrains.dokka.model.firstMemberOfType
 import org.jetbrains.dokka.testApi.testRunner.AbstractCoreTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
@@ -144,9 +145,9 @@ class JavadocParserTest : AbstractCoreTest() {
         performJavadocTest { module ->
             val authors = module.findClasslike().documentation.values.single().childrenOfType<Author>()
             assertEquals(3, authors.size)
-            assertEquals("James Gosling", authors[0].firstChildOfType<Text>().text())
-            assertEquals("Arthur van Hoff", authors[1].firstChildOfType<Text>().text())
-            assertEquals("Alan Liu", authors[2].firstChildOfType<Text>().text())
+            assertEquals("James Gosling", authors[0].firstMemberOfType<Text>().text())
+            assertEquals("Arthur van Hoff", authors[1].firstMemberOfType<Text>().text())
+            assertEquals("Alan Liu", authors[2].firstMemberOfType<Text>().text())
         }
     }
 

@@ -51,7 +51,8 @@ data class CodeBlock(
 
 data class CustomDocTag(
     override val children: List<DocTag> = emptyList(),
-    override val params: Map<String, String> = emptyMap()
+    override val params: Map<String, String> = emptyMap(),
+    val name: String
 ) : DocTag()
 
 data class Dd(

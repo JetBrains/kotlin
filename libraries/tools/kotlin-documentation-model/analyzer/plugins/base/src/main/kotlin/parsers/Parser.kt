@@ -18,8 +18,15 @@ abstract class Parser {
                 "author" -> Author(parseStringToDocNode(it.second))
                 "version" -> Version(parseStringToDocNode(it.second))
                 "since" -> Since(parseStringToDocNode(it.second))
-                "see" -> See(parseStringToDocNode(it.second.substringAfter(' ')), it.second.substringBefore(' '), null)
-                "param" -> Param(parseStringToDocNode(it.second.substringAfter(' ')), it.second.substringBefore(' '))
+                "see" -> See(
+                    parseStringToDocNode(it.second.substringAfter(' ')),
+                    it.second.substringBefore(' '),
+                    null
+                )
+                "param" -> Param(
+                    parseStringToDocNode(it.second.substringAfter(' ')),
+                    it.second.substringBefore(' ')
+                )
                 "property" -> Property(
                     parseStringToDocNode(it.second.substringAfter(' ')),
                     it.second.substringBefore(' ')
@@ -32,7 +39,10 @@ abstract class Parser {
                     it.second.substringBefore(' ')
                 )
                 "deprecated" -> Deprecated(parseStringToDocNode(it.second))
-                "sample" -> Sample(parseStringToDocNode(it.second.substringAfter(' ')), it.second.substringBefore(' '))
+                "sample" -> Sample(
+                    parseStringToDocNode(it.second.substringAfter(' ')),
+                    it.second.substringBefore(' ')
+                )
                 "suppress" -> Suppress(parseStringToDocNode(it.second))
                 else -> CustomTagWrapper(parseStringToDocNode(it.second), it.first)
             }
