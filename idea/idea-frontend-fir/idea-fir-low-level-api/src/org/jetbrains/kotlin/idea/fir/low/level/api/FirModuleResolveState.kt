@@ -100,16 +100,18 @@ internal class FirModuleResolveStateImpl(
         toPhase: FirResolvePhase,
         towerDataContextCollector: FirTowerDataContextCollector
     ) {
-        firLazyDeclarationResolver.runLazyResolveWithoutLock(
-            firFunction,
-            rootModuleSession.cache,
-            containerFirFile,
-            firIdeProvider,
-            fromPhase = firFunction.resolvePhase,
-            toPhase,
-            towerDataContextCollector,
-            checkPCE = false
-        )
+        firFileBuilder.runCustomResolveWithPCECheck(containerFirFile, rootModuleSession.cache) {
+            firLazyDeclarationResolver.runLazyResolveWithoutLock(
+                firFunction,
+                rootModuleSession.cache,
+                containerFirFile,
+                firIdeProvider,
+                fromPhase = firFunction.resolvePhase,
+                toPhase,
+                towerDataContextCollector,
+                checkPCE = true
+            )
+        }
     }
 }
 
