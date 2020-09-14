@@ -1,8 +1,10 @@
 package testApi.testRunner
 
+import org.intellij.markdown.MarkdownElementTypes
 import org.jetbrains.dokka.*
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
+import org.jetbrains.dokka.model.doc.CustomDocTag
 import org.jetbrains.dokka.model.doc.Description
 import org.jetbrains.dokka.model.doc.DocumentationNode
 import org.jetbrains.dokka.model.doc.Text
@@ -187,6 +189,6 @@ fun dPackage(
 )
 
 fun documentationNode(vararg texts: String): DocumentationNode {
-    return DocumentationNode(texts.toList().map { Description(Text(it)) })
+    return DocumentationNode(texts.toList().map { Description(CustomDocTag(listOf(Text(it)), name = MarkdownElementTypes.MARKDOWN_FILE.name)) })
 }
 

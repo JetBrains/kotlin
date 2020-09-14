@@ -30,16 +30,21 @@ class CommentTest : AbstractModelTest("/src/main/kotlin/comment/Test.kt", "comme
         ) {
             with((this / "comment" / "prop1").cast<DProperty>()) {
                 name equals "prop1"
-                with(this.docs().firstOrNull()?.root.assertNotNull("Code")) {
-                    (children.firstOrNull() as? Text)
+                with(this.docs().firstOrNull()?.children?.firstOrNull()?.assertNotNull("Code")) {
+                    (this?.children?.firstOrNull() as? Text)
                         ?.body equals "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>."
 
-                    params["lang"] equals "brainfuck"
+                    this?.params?.get("lang") equals "brainfuck"
                 }
             }
             with((this / "comment" / "prop2").cast<DProperty>()) {
                 name equals "prop2"
-                comments() equals "a + b - c"
+                with(this.docs().firstOrNull()?.children?.firstOrNull()?.assertNotNull("Code")) {
+                    (this?.children?.firstOrNull() as? Text)
+                        ?.body equals "a + b - c"
+
+                    this?.params?.get("lang") equals null
+                }
             }
         }
     }
@@ -88,7 +93,7 @@ class CommentTest : AbstractModelTest("/src/main/kotlin/comment/Test.kt", "comme
         """
         ) {
             with((this / "comment" / "property").cast<DProperty>()) {
-                comments() equals "doc1\ndoc2 doc3"
+                comments() equals "doc1\ndoc2 doc3\n"
             }
         }
     }
@@ -108,7 +113,7 @@ class CommentTest : AbstractModelTest("/src/main/kotlin/comment/Test.kt", "comme
         """
         ) {
             with((this / "comment" / "property").cast<DProperty>()) {
-                comments() equals "doc1\ndoc2 doc3"
+                comments() equals "doc1\ndoc2 doc3\n"
             }
         }
     }
@@ -122,7 +127,7 @@ class CommentTest : AbstractModelTest("/src/main/kotlin/comment/Test.kt", "comme
         """
         ) {
             with((this / "comment" / "property").cast<DProperty>()) {
-                comments() equals "doc"
+                comments() equals "doc\n"
             }
         }
     }
@@ -137,7 +142,7 @@ class CommentTest : AbstractModelTest("/src/main/kotlin/comment/Test.kt", "comme
         """
         ) {
             with((this / "comment" / "property").cast<DProperty>()) {
-                comments() equals "doc"
+                comments() equals "doc\n"
             }
         }
     }
@@ -152,7 +157,7 @@ class CommentTest : AbstractModelTest("/src/main/kotlin/comment/Test.kt", "comme
         """
         ) {
             with((this / "comment" / "property").cast<DProperty>()) {
-                comments() equals "doc"
+                comments() equals "doc\n"
             }
         }
     }
@@ -169,7 +174,7 @@ class CommentTest : AbstractModelTest("/src/main/kotlin/comment/Test.kt", "comme
         """
         ) {
             with((this / "comment" / "property").cast<DProperty>()) {
-                comments() equals "Summary\none: []"
+                comments() equals "Summary\n\none: []"
                 docs().find { it is CustomTagWrapper && it.name == "one" }.let {
                     with(it.assertNotNull("'one' entry")) {
                         root.children counts 0
@@ -189,7 +194,8 @@ class CommentTest : AbstractModelTest("/src/main/kotlin/comment/Test.kt", "comme
         """
         ) {
             with((this / "comment" / "property").cast<DProperty>()) {
-                comments() equals """it's "useful""""
+                comments() equals """it's "useful"
+"""
             }
         }
     }
@@ -206,7 +212,7 @@ class CommentTest : AbstractModelTest("/src/main/kotlin/comment/Test.kt", "comme
         """
         ) {
             with((this / "comment" / "property").cast<DProperty>()) {
-                comments() equals "Summary\none: [section one]"
+                comments() equals "Summary\n\none: [section one\n]"
             }
         }
     }
@@ -225,7 +231,7 @@ class CommentTest : AbstractModelTest("/src/main/kotlin/comment/Test.kt", "comme
         """
         ) {
             with((this / "comment" / "property").cast<DProperty>()) {
-                comments() equals "Summary\none: [section one]\ntwo: [section two]"
+                comments() equals "Summary\n\none: [section one\n]\ntwo: [section two\n]"
             }
         }
     }
@@ -244,7 +250,7 @@ class CommentTest : AbstractModelTest("/src/main/kotlin/comment/Test.kt", "comme
         """
         ) {
             with((this / "comment" / "property").cast<DProperty>()) {
-                comments() equals "Summary\none: [line one line two]"
+                comments() equals "Summary\n\none: [line one line two\n]"
             }
         }
     }
