@@ -462,11 +462,6 @@ public class IrKotlinSteppingTestGenerated extends AbstractIrKotlinSteppingTest 
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/kt24343.kt");
         }
 
-        @TestMetadata("kt34905.kt")
-        public void testKt34905() throws Exception {
-            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/kt34905.kt");
-        }
-
         @TestMetadata("lambdaToInlineFold.kt")
         public void testLambdaToInlineFold() throws Exception {
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/lambdaToInlineFold.kt");
