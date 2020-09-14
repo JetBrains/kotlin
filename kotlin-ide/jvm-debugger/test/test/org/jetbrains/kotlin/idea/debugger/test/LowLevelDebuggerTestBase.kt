@@ -27,6 +27,7 @@ abstract class LowLevelDebuggerTestBase : CodegenTestCase() {
     }
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
+        // TODO: KTIJ-147
         return
 
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.STDLIB_REFLECT, *listOfNotNull(writeJavaFiles(files)).toTypedArray())
