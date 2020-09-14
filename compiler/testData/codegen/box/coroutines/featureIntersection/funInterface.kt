@@ -2,7 +2,6 @@
 // WITH_COROUTINES
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
 
 import helpers.*
 import kotlin.coroutines.*

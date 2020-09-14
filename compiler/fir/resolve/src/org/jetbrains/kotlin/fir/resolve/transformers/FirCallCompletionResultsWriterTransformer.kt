@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -17,6 +18,8 @@ import org.jetbrains.kotlin.fir.resolve.calls.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.varargElementType
 import org.jetbrains.kotlin.fir.resolve.constructFunctionalTypeRef
+import org.jetbrains.kotlin.fir.resolve.createFunctionalType
+import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
@@ -436,7 +439,26 @@ class FirCallCompletionResultsWriterTransformer(
         anonymousFunction: FirAnonymousFunction,
         data: ExpectedArgumentType?,
     ): CompositeTransformResult<FirStatement> {
-        val expectedType = data?.getExpectedType(anonymousFunction)?.takeIf { it.isBuiltinFunctionalType(session) }
+        val expectedType = data?.getExpectedType(anonymousFunction)?.let { expectedArgumentType ->
+            // From the argument mapping, the expected type of this anonymous function would be:
+            when {
+                // a built-in functional type, no-brainer
+                expectedArgumentType.isBuiltinFunctionalType(session) -> expectedArgumentType
+                // fun interface (a.k.a. SAM), then unwrap it and build a functional type from that interface function
+                expectedArgumentType is ConeClassLikeType -> {
+                    val sam =
+                        (session.firProvider.getFirClassifierByFqName(expectedArgumentType.lookupTag.classId) as? FirClass)
+                            ?.takeIf { it.classKind == ClassKind.INTERFACE }
+                            ?.declarations?.singleOrNull() as? FirSimpleFunction
+                    sam?.let {
+                        createFunctionalType(
+                            sam.valueParameters.map { it.returnTypeRef.coneType }, null, sam.returnTypeRef.coneType, sam.isSuspend
+                        )
+                    }
+                }
+                else -> null
+            }
+        }
 
         var needUpdateLambdaType = false
 
