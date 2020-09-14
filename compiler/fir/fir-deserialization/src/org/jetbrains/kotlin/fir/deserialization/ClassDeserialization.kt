@@ -193,6 +193,8 @@ fun deserializeClassToSymbol(
         }
         (it.annotations as MutableList<FirAnnotationCall>) +=
             context.annotationDeserializer.loadClassAnnotations(classProto, context.nameResolver)
+
+        it.versionRequirementsTable = context.versionRequirementTable
     }
 }
 
