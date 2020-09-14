@@ -218,7 +218,9 @@ class IntegerOperatorsTypeUpdater(private val approximator: IntegerLiteralTypeAp
                     }
                     else -> {
                         val expectedType = when (argumentType.classId) {
-                            StandardClassIds.Long -> argumentType
+                            StandardClassIds.Long,
+                            StandardClassIds.Float,
+                            StandardClassIds.Double -> argumentType
                             else -> ConeIntegerLiteralTypeImpl.createType(StandardClassIds.Int)
                         }
                         functionCall.transformSingle(approximator, expectedType)

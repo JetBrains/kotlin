@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
@@ -42,6 +39,7 @@ class FirIntegerLiteralTypeScope(private val session: FirSession, val isUnsigned
 
     companion object {
         val BINARY_OPERATOR_NAMES = FirIntegerOperator.Kind.values().filterNot { it.unary }.map { it.operatorName }
+        val FLOATING_BINARY_OPERATOR_NAMES = FirIntegerOperator.Kind.values().filter { it.withFloatingRhs }.map { it.operatorName }
         val UNARY_OPERATOR_NAMES = FirIntegerOperator.Kind.values().filter { it.unary }.map { it.operatorName }
         private val ALL_OPERATORS = FirIntegerOperator.Kind.values().map { it.operatorName to it }.toMap()
 
@@ -52,18 +50,16 @@ class FirIntegerLiteralTypeScope(private val session: FirSession, val isUnsigned
     private val BINARY_OPERATOR_SYMBOLS = BINARY_OPERATOR_NAMES.map { name ->
         name to FirNamedFunctionSymbol(CallableId(name)).apply {
             createFirFunction(name, this).apply {
-                val valueParameterName = Name.identifier("arg")
-                valueParameters += buildValueParameter {
-                    source = null
-                    origin = FirDeclarationOrigin.Synthetic
-                    session = this@FirIntegerLiteralTypeScope.session
-                    returnTypeRef = FirILTTypeRefPlaceHolder(isUnsigned)
-                    this.name = valueParameterName
-                    symbol = FirVariableSymbol(valueParameterName)
-                    defaultValue = null
-                    isCrossinline = false
-                    isNoinline = false
-                    isVararg = false
+                valueParameters += createValueParameter(FirILTTypeRefPlaceHolder(isUnsigned))
+            }
+        }
+    }.toMap()
+
+    private val FLOATING_BINARY_OPERATOR_SYMBOLS = FLOATING_BINARY_OPERATOR_NAMES.map { name ->
+        name to listOf(session.builtinTypes.floatType, session.builtinTypes.doubleType).map { typeRef ->
+            FirNamedFunctionSymbol(CallableId(name)).apply {
+                createFirFunction(name, this, typeRef).apply {
+                    valueParameters += createValueParameter(typeRef)
                 }
             }
         }
@@ -75,10 +71,14 @@ class FirIntegerLiteralTypeScope(private val session: FirSession, val isUnsigned
     }.toMap()
 
     @OptIn(FirImplementationDetail::class)
-    private fun createFirFunction(name: Name, symbol: FirNamedFunctionSymbol): FirSimpleFunctionImpl = FirIntegerOperator(
+    private fun createFirFunction(
+        name: Name,
+        symbol: FirNamedFunctionSymbol,
+        returnTypeRef: FirResolvedTypeRef = FirILTTypeRefPlaceHolder(isUnsigned)
+    ): FirSimpleFunctionImpl = FirIntegerOperator(
         source = null,
         session,
-        FirILTTypeRefPlaceHolder(isUnsigned),
+        returnTypeRef,
         receiverTypeRef = null,
         ALL_OPERATORS.getValue(name),
         FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL),
@@ -87,11 +87,29 @@ class FirIntegerLiteralTypeScope(private val session: FirSession, val isUnsigned
         resolvePhase = FirResolvePhase.BODY_RESOLVE
     }
 
+    private fun createValueParameter(returnTypeRef: FirResolvedTypeRef): FirValueParameter {
+        return buildValueParameter {
+            source = null
+            origin = FirDeclarationOrigin.Synthetic
+            session = this@FirIntegerLiteralTypeScope.session
+            this.returnTypeRef = returnTypeRef
+            name = Name.identifier("arg")
+            symbol = FirVariableSymbol(name)
+            defaultValue = null
+            isCrossinline = false
+            isNoinline = false
+            isVararg = false
+        }
+    }
+
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
-        val symbol = BINARY_OPERATOR_SYMBOLS[name]
-            ?: UNARY_OPERATOR_SYMBOLS[name]
-            ?: return
+        UNARY_OPERATOR_SYMBOLS[name]?.let {
+            processor(it)
+            return
+        }
+        val symbol = BINARY_OPERATOR_SYMBOLS[name] ?: return
         processor(symbol)
+        FLOATING_BINARY_OPERATOR_SYMBOLS[name]?.forEach(processor)
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
@@ -138,21 +156,21 @@ class FirIntegerOperator @FirImplementationDetail constructor(
     annotations = mutableListOf(),
     typeParameters = mutableListOf(),
 ) {
-    enum class Kind(val unary: Boolean, val operatorName: Name) {
-        PLUS(false, OperatorNameConventions.PLUS),
-        MINUS(false, OperatorNameConventions.MINUS),
-        TIMES(false, OperatorNameConventions.TIMES),
-        DIV(false, OperatorNameConventions.DIV),
-        REM(false, OperatorNameConventions.REM),
-        SHL(false, Name.identifier("shl")),
-        SHR(false, Name.identifier("shr")),
-        USHR(false, Name.identifier("ushr")),
-        XOR(false, Name.identifier("xor")),
-        AND(false, Name.identifier("and")),
-        OR(false, Name.identifier("or")),
-        UNARY_PLUS(true, OperatorNameConventions.UNARY_PLUS),
-        UNARY_MINUS(true, OperatorNameConventions.UNARY_MINUS),
-        INV(true, Name.identifier("inv"))
+    enum class Kind(val operatorName: Name, val unary: Boolean, val withFloatingRhs: Boolean) {
+        PLUS(OperatorNameConventions.PLUS, unary = false, withFloatingRhs = true),
+        MINUS(OperatorNameConventions.MINUS, unary = false, withFloatingRhs = true),
+        TIMES(OperatorNameConventions.TIMES, unary = false, withFloatingRhs = true),
+        DIV(OperatorNameConventions.DIV, unary = false, withFloatingRhs = true),
+        REM(OperatorNameConventions.REM, unary = false, withFloatingRhs = true),
+        SHL(Name.identifier("shl"), unary = false, withFloatingRhs = false),
+        SHR(Name.identifier("shr"), unary = false, withFloatingRhs = false),
+        USHR(Name.identifier("ushr"), unary = false, withFloatingRhs = false),
+        XOR(Name.identifier("xor"), unary = false, withFloatingRhs = false),
+        AND(Name.identifier("and"), unary = false, withFloatingRhs = false),
+        OR(Name.identifier("or"), unary = false, withFloatingRhs = false),
+        UNARY_PLUS(OperatorNameConventions.UNARY_PLUS, unary = true, withFloatingRhs = false),
+        UNARY_MINUS(OperatorNameConventions.UNARY_MINUS, unary = true, withFloatingRhs = false),
+        INV(Name.identifier("inv"), unary = true, withFloatingRhs = false),
     }
 }
 

@@ -346,8 +346,9 @@ private fun Candidate.prepareExpectedType(
     context: ResolutionContext
 ): ConeKotlinType? {
     if (parameter == null) return null
-    if (parameter.returnTypeRef is FirILTTypeRefPlaceHolder && argument.resultType is FirResolvedTypeRef)
-        return argument.resultType.coneType
+    val parameterReturnTypeRef = parameter.returnTypeRef
+    if (parameterReturnTypeRef is FirILTTypeRefPlaceHolder && argument.resultType is FirResolvedTypeRef)
+        return argument.resultType.coneType.takeIf { it in parameterReturnTypeRef.type.possibleTypes } ?: session.builtinTypes.intType.type
     val basicExpectedType = argument.getExpectedType(session, parameter/*, LanguageVersionSettings*/)
     val expectedType = getExpectedTypeWithSAMConversion(session, argument, basicExpectedType, context) ?: basicExpectedType
     return this.substitutor.substituteOrSelf(expectedType)
