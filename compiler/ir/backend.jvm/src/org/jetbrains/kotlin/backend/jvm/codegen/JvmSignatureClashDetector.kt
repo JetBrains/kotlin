@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.*
 import org.jetbrains.kotlin.utils.SmartSet
@@ -168,7 +169,7 @@ class JvmSignatureClashDetector(
         return JvmDeclarationOrigin(
             JvmDeclarationOriginKind.OTHER,
             context.psiSourceManager.findPsiElement(this),
-            descriptor
+            toIrBasedDescriptor()
         )
     }
 
