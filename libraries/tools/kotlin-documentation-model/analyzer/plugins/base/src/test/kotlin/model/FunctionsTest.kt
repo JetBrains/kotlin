@@ -118,14 +118,14 @@ class FunctionTest : AbstractModelTest("/src/main/kotlin/function/Test.kt", "fun
         """
         ) {
             with((this / "function" / "function").cast<DFunction>()) {
-                comments() equals "Multiline\nFunction Documentation"
+                comments() equals "Multiline\nFunction Documentation\n"
 
                 name equals "function"
                 parameters counts 1
                 parameters.firstOrNull().assertNotNull("Parameter: ").also {
                     it.name equals "x"
                     it.type.name equals "Int"
-                    it.comments() equals "parameter"
+                    it.comments() equals "parameter\n"
                 }
 
                 type.assertNotNull("Return type: ").name equals "Unit"

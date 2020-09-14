@@ -162,6 +162,12 @@ open class MarkdownParser(
         return linksHandler(linkText, link, linkTitle)
     }
 
+    private fun markdownFileHandler(node: ASTNode) =
+        DocTagsFromIElementFactory.getInstance(
+            node.type,
+            children = node.children.evaluateChildren()
+        )
+
     private fun autoLinksHandler(node: ASTNode): DocTag {
         val link = text.substring(node.startOffset + 1, node.endOffset - 1)
 
@@ -205,11 +211,6 @@ open class MarkdownParser(
         MarkdownTokenTypes.TEXT,
         body = text.substring(node.startOffset, node.endOffset).transform()
     )
-
-    private fun markdownFileHandler(node: ASTNode) = if (node.children.size == 1)
-        visitNode(node.children.first())
-    else
-        defaultHandler(node)
 
     private fun strikeThroughHandler(node: ASTNode) = DocTagsFromIElementFactory.getInstance(
         node.type,
@@ -448,9 +449,9 @@ open class MarkdownParser(
                             KDocKnownTag.SEE -> See(
                                 parseStringToDocNode(it.getContent()),
                                 it.getSubjectName().orEmpty(),
-                                parseStringToDocNode("[${it.getSubjectName()}]")
+                                (parseStringToDocNode("[${it.getSubjectName()}]"))
                                     .let {
-                                        val link = it.children[0]
+                                        val link = it.children[0].children[0]
                                         if (link is DocumentationLink) link.dri
                                         else null
                                     }

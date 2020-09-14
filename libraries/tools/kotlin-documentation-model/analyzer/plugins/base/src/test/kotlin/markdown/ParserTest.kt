@@ -1,6 +1,7 @@
 package org.jetbrains.dokka.tests
 
 import markdown.KDocTest
+import org.intellij.markdown.MarkdownElementTypes
 import org.jetbrains.dokka.model.doc.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -17,7 +18,10 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(listOf(Text("This is simple test of string Next line")))
+                    CustomDocTag(
+                        listOf(P(listOf(Text("This is simple test of string Next line")))),
+                        name = MarkdownElementTypes.MARKDOWN_FILE.name
+                    )
                 )
             )
         )
@@ -33,12 +37,17 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(
+                    CustomDocTag(
                         listOf(
-                            Text("This is simple test of string"),
-                            Br,
-                            Text("Next line")
-                        )
+                            P(
+                                listOf(
+                                    Text("This is simple test of string"),
+                                    Br,
+                                    Text("Next line")
+                                )
+                            )
+                        ),
+                        name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -55,15 +64,19 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(
+                    CustomDocTag(
                         listOf(
-                            Text("This is "),
-                            B(listOf(Text("simple"))),
-                            Text(" test of "),
-                            I(listOf(Text("string"))),
-                            Text(" Next "),
-                            B(listOf(I(listOf(Text("line")))))
-                        )
+                            P(
+                                listOf(
+                                    Text("This is "),
+                                    B(listOf(Text("simple"))),
+                                    Text(" test of "),
+                                    I(listOf(Text("string"))),
+                                    Text(" Next "),
+                                    B(listOf(I(listOf(Text("line")))))
+                                )
+                            )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -79,7 +92,10 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(listOf(Text("This is simple text with: colon!")))
+                    CustomDocTag(
+                        listOf(P(listOf(Text("This is simple text with: colon!")))),
+                        name = MarkdownElementTypes.MARKDOWN_FILE.name
+                    )
                 )
             )
         )
@@ -96,7 +112,10 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(listOf(Text("Text and String")))
+                    CustomDocTag(
+                        listOf(P(listOf(Text("Text and String")))),
+                        name = MarkdownElementTypes.MARKDOWN_FILE.name
+                    )
                 )
             )
         )
@@ -115,11 +134,11 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(
+                    CustomDocTag(
                         listOf(
                             P(listOf(Text("Paragraph number one"))),
                             P(listOf(Text("Paragraph"), Br, Text("number two")))
-                        )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -133,7 +152,10 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(listOf(I(listOf(Text("text")))))
+                    CustomDocTag(
+                        listOf(P(listOf(I(listOf(Text("text")))))),
+                        name = MarkdownElementTypes.MARKDOWN_FILE.name
+                    )
                 )
             )
         )
@@ -146,7 +168,10 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(listOf(Text("text_with_underscores")))
+                    CustomDocTag(
+                        listOf(P(listOf(Text("text_with_underscores")))),
+                        name = MarkdownElementTypes.MARKDOWN_FILE.name
+                    )
                 )
             )
         )
@@ -159,7 +184,10 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(listOf(I(listOf(Text("text")))))
+                    CustomDocTag(
+                        listOf(P(listOf(I(listOf(Text("text")))))),
+                        name = MarkdownElementTypes.MARKDOWN_FILE.name
+                    )
                 )
             )
         )
@@ -169,20 +197,25 @@ class ParserTest : KDocTest() {
     @Test
     fun `Stars as italic bounds`() {
         val kdoc = "The abstract syntax tree node for a multiplying expression.  A multiplying\n" +
-            "expression is a binary expression where the operator is a multiplying operator\n" +
-            "such as \"*\", \"/\", or \"mod\".  A simple example would be \"5*x\"."
+                "expression is a binary expression where the operator is a multiplying operator\n" +
+                "such as \"*\", \"/\", or \"mod\".  A simple example would be \"5*x\"."
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(
+                    CustomDocTag(
                         listOf(
-                            Text("The abstract syntax tree node for a multiplying expression.  A multiplying " +
-                                "expression is a binary expression where the operator is a multiplying operator " +
-                                "such as \""
-                            ),
-                            I(listOf(Text("\", \"/\", or \"mod\".  A simple example would be \"5"))),
-                            Text("x\".")
-                        )
+                            P(
+                                listOf(
+                                    Text(
+                                        "The abstract syntax tree node for a multiplying expression.  A multiplying " +
+                                                "expression is a binary expression where the operator is a multiplying operator " +
+                                                "such as \""
+                                    ),
+                                    I(listOf(Text("\", \"/\", or \"mod\".  A simple example would be \"5"))),
+                                    Text("x\".")
+                                )
+                            )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -198,15 +231,20 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(
+                    CustomDocTag(
                         listOf(
-                            Text("The abstract syntax tree node for a multiplying expression.  A multiplying " +
-                                    "expression is a binary expression where the operator is a multiplying operator " +
-                                    "such as \""
-                            ),
-                            B(listOf(Text("\", \"/\", or \"mod\".  A simple example would be \"5"))),
-                            Text("x\".")
-                        )
+                            P(
+                                listOf(
+                                    Text(
+                                        "The abstract syntax tree node for a multiplying expression.  A multiplying " +
+                                                "expression is a binary expression where the operator is a multiplying operator " +
+                                                "such as \""
+                                    ),
+                                    B(listOf(Text("\", \"/\", or \"mod\".  A simple example would be \"5"))),
+                                    Text("x\".")
+                                )
+                            )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -220,7 +258,11 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(listOf(Text("Embedded*Star")))
+                    CustomDocTag(
+                        listOf(
+                            P(listOf(Text("Embedded*Star")))
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
+                    )
                 )
             )
         )
@@ -237,11 +279,15 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    Ul(
+                    CustomDocTag(
                         listOf(
-                            Li(listOf(P(listOf(Text("list item 1"))))),
-                            Li(listOf(P(listOf(Text("list item 2")))))
-                        )
+                            Ul(
+                                listOf(
+                                    Li(listOf(P(listOf(Text("list item 1"))))),
+                                    Li(listOf(P(listOf(Text("list item 2")))))
+                                )
+                            )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -260,11 +306,15 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    Ul(
+                    CustomDocTag(
                         listOf(
-                            Li(listOf(P(listOf(Text("list item 1 continue 1"))))),
-                            Li(listOf(P(listOf(Text("list item 2"), Br, Text("continue 2")))))
-                        )
+                            Ul(
+                                listOf(
+                                    Li(listOf(P(listOf(Text("list item 1 continue 1"))))),
+                                    Li(listOf(P(listOf(Text("list item 2"), Br, Text("continue 2")))))
+                                )
+                            )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -283,31 +333,35 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    Ul(
+                    CustomDocTag(
                         listOf(
-                            Li(
+                            Ul(
                                 listOf(
-                                    P(
+                                    Li(
                                         listOf(
-                                            Text("list "),
-                                            B(listOf(Text("item"))),
-                                            Text(" 1 continue 1")
+                                            P(
+                                                listOf(
+                                                    Text("list "),
+                                                    B(listOf(Text("item"))),
+                                                    Text(" 1 continue 1")
+                                                )
+                                            )
                                         )
-                                    )
-                                )
-                            ),
-                            Li(
-                                listOf(
-                                    P(
+                                    ),
+                                    Li(
                                         listOf(
-                                            Text("list "),
-                                            B(listOf(Text("item"))),
-                                            Text(" 2 continue 2")
+                                            P(
+                                                listOf(
+                                                    Text("list "),
+                                                    B(listOf(Text("item"))),
+                                                    Text(" 2 continue 2")
+                                                )
+                                            )
                                         )
                                     )
                                 )
                             )
-                        )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -333,7 +387,7 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(
+                    CustomDocTag(
                         listOf(
                             Ul(
                                 listOf(
@@ -355,7 +409,7 @@ class ParserTest : KDocTest() {
                                 )
                             ),
                             P(listOf(Text("New paragraph")))
-                        )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -372,12 +426,16 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    Ol(
+                    CustomDocTag(
                         listOf(
-                            Li(listOf(P(listOf(Text("list item 1"))))),
-                            Li(listOf(P(listOf(Text("list item 2")))))
-                        ),
-                        mapOf("start" to "1")
+                            Ol(
+                                listOf(
+                                    Li(listOf(P(listOf(Text("list item 1"))))),
+                                    Li(listOf(P(listOf(Text("list item 2")))))
+                                ),
+                                mapOf("start" to "1")
+                            )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -395,12 +453,16 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    Ol(
+                    CustomDocTag(
                         listOf(
-                            Li(listOf(P(listOf(Text("list item 1"))))),
-                            Li(listOf(P(listOf(Text("list item 2")))))
-                        ),
-                        mapOf("start" to "9")
+                            Ol(
+                                listOf(
+                                    Li(listOf(P(listOf(Text("list item 1"))))),
+                                    Li(listOf(P(listOf(Text("list item 2")))))
+                                ),
+                                mapOf("start" to "9")
+                            )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -419,12 +481,16 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    Ol(
+                    CustomDocTag(
                         listOf(
-                            Li(listOf(P(listOf(Text("list item 1 continue 1"))))),
-                            Li(listOf(P(listOf(Text("list item 2 continue 2")))))
-                        ),
-                        mapOf("start" to "2")
+                            Ol(
+                                listOf(
+                                    Li(listOf(P(listOf(Text("list item 1 continue 1"))))),
+                                    Li(listOf(P(listOf(Text("list item 2 continue 2")))))
+                                ),
+                                mapOf("start" to "2")
+                            )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -443,32 +509,36 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    Ol(
+                    CustomDocTag(
                         listOf(
-                            Li(
+                            Ol(
                                 listOf(
-                                    P(
+                                    Li(
                                         listOf(
-                                            Text("list "),
-                                            B(listOf(Text("item"))),
-                                            Text(" 1 continue 1")
+                                            P(
+                                                listOf(
+                                                    Text("list "),
+                                                    B(listOf(Text("item"))),
+                                                    Text(" 1 continue 1")
+                                                )
+                                            )
+                                        )
+                                    ),
+                                    Li(
+                                        listOf(
+                                            P(
+                                                listOf(
+                                                    Text("list "),
+                                                    B(listOf(Text("item"))),
+                                                    Text(" 2 continue 2")
+                                                )
+                                            )
                                         )
                                     )
-                                )
-                            ),
-                            Li(
-                                listOf(
-                                    P(
-                                        listOf(
-                                            Text("list "),
-                                            B(listOf(Text("item"))),
-                                            Text(" 2 continue 2")
-                                        )
-                                    )
-                                )
+                                ),
+                                mapOf("start" to "1")
                             )
-                        ),
-                        mapOf("start" to "1")
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -494,7 +564,7 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(
+                    CustomDocTag(
                         listOf(
                             Ol(
                                 listOf(
@@ -519,7 +589,7 @@ class ParserTest : KDocTest() {
                                 mapOf("start" to "1")
                             ),
                             P(listOf(Text("New paragraph")))
-                        )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -545,7 +615,7 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(
+                    CustomDocTag(
                         listOf(
                             Ol(
                                 listOf(
@@ -569,7 +639,7 @@ class ParserTest : KDocTest() {
                                 mapOf("start" to "1")
                             ),
                             P(listOf(Text("New paragraph")))
-                        )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -588,12 +658,12 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(
+                    CustomDocTag(
                         listOf(
                             H1(listOf(Text("Header 1"))),
                             P(listOf(Text("Following text"))),
                             P(listOf(Text("New paragraph")))
-                        )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -621,7 +691,7 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(
+                    CustomDocTag(
                         listOf(
                             H1(listOf(Text("Header 1"))),
                             P(listOf(Text("Text 1"))),
@@ -635,7 +705,7 @@ class ParserTest : KDocTest() {
                             P(listOf(Text("Text 5"))),
                             H6(listOf(Text("Header 6"))),
                             P(listOf(Text("Text 6")))
-                        )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -652,12 +722,16 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(
+                    CustomDocTag(
                         listOf(
-                            B(listOf(Text("line 1"))),
-                            Br,
-                            B(listOf(Text("line 2")))
-                        )
+                            P(
+                                listOf(
+                                    B(listOf(Text("line 1"))),
+                                    Br,
+                                    B(listOf(Text("line 2")))
+                                )
+                            )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -681,7 +755,7 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(
+                    CustomDocTag(
                         listOf(
                             HorizontalRule,
                             P(listOf(Text("text 1"))),
@@ -692,7 +766,7 @@ class ParserTest : KDocTest() {
                             HorizontalRule,
                             P(listOf(Text("text 4"))),
                             HorizontalRule
-                        )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -713,7 +787,7 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(
+                    CustomDocTag(
                         listOf(
                             BlockQuote(
                                 listOf(
@@ -730,7 +804,7 @@ class ParserTest : KDocTest() {
                                     P(listOf(Text("Quote")))
                                 )
                             )
-                        )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -756,7 +830,7 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(
+                    CustomDocTag(
                         listOf(
                             BlockQuote(
                                 listOf(
@@ -775,7 +849,7 @@ class ParserTest : KDocTest() {
                                     P(listOf(Text("Quote")))
                                 )
                             )
-                        )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -802,7 +876,7 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(
+                    CustomDocTag(
                         listOf(
                             BlockQuote(
                                 listOf(
@@ -837,7 +911,7 @@ class ParserTest : KDocTest() {
                                     P(listOf(Text("Quote")))
                                 )
                             )
-                        )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -854,11 +928,15 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(
+                    CustomDocTag(
                         listOf(
-                            CodeInline(listOf(Text("Some code"))),
-                            Text(" Sample text")
-                        )
+                            P(
+                                listOf(
+                                    CodeInline(listOf(Text("Some code"))),
+                                    Text(" Sample text")
+                                )
+                            )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -883,7 +961,7 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(
+                    CustomDocTag(
                         listOf(
                             CodeBlock(
                                 listOf(
@@ -897,7 +975,7 @@ class ParserTest : KDocTest() {
                                 mapOf("lang" to "kotlin")
                             ),
                             P(listOf(Text("Sample text")))
-                        )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -914,13 +992,17 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(
+                    CustomDocTag(
                         listOf(
-                            A(
-                                listOf(Text("I'm an inline-style link")),
-                                mapOf("href" to "https://www.google.com")
+                            P(
+                                listOf(
+                                    A(
+                                        listOf(Text("I'm an inline-style link")),
+                                        mapOf("href" to "https://www.google.com")
+                                    )
+                                )
                             )
-                        )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -936,13 +1018,17 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(
+                    CustomDocTag(
                         listOf(
-                            A(
-                                listOf(Text("I'm an inline-style link with title")),
-                                mapOf("href" to "https://www.google.com", "title" to "Google's Homepage")
+                            P(
+                                listOf(
+                                    A(
+                                        listOf(Text("I'm an inline-style link with title")),
+                                        mapOf("href" to "https://www.google.com", "title" to "Google's Homepage")
+                                    )
+                                )
                             )
-                        )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -960,7 +1046,7 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(
+                    CustomDocTag(
                         listOf(
                             P(
                                 listOf(
@@ -970,7 +1056,7 @@ class ParserTest : KDocTest() {
                                     )
                                 )
                             )
-                        )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -988,7 +1074,7 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(
+                    CustomDocTag(
                         listOf(
                             P(
                                 listOf(
@@ -998,7 +1084,7 @@ class ParserTest : KDocTest() {
                                     )
                                 )
                             )
-                        )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -1016,7 +1102,7 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(
+                    CustomDocTag(
                         listOf(
                             P(
                                 listOf(
@@ -1028,7 +1114,7 @@ class ParserTest : KDocTest() {
                                     Text(".")
                                 )
                             )
-                        )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -1046,15 +1132,19 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(
+                    CustomDocTag(
                         listOf(
-                            Text("URLs and URLs in angle brackets will automatically get turned into links. http://www.example.com or "),
-                            A(
-                                listOf(Text("http://www.example.com")),
-                                mapOf("href" to "http://www.example.com")
-                            ),
-                            Text(" and sometimes example.com (but not on Github, for example).")
-                        )
+                            P(
+                                listOf(
+                                    Text("URLs and URLs in angle brackets will automatically get turned into links. http://www.example.com or "),
+                                    A(
+                                        listOf(Text("http://www.example.com")),
+                                        mapOf("href" to "http://www.example.com")
+                                    ),
+                                    Text(" and sometimes example.com (but not on Github, for example).")
+                                )
+                            )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -1088,7 +1178,7 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(
+                    CustomDocTag(
                         listOf(
                             P(
                                 listOf(
@@ -1143,7 +1233,7 @@ class ParserTest : KDocTest() {
                                 )
                             ),
                             P(listOf(Text("Some text to show that the reference links can follow later.")))
-                        )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -1157,10 +1247,14 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(
+                    CustomDocTag(
                         listOf(
-                            Text("text text")
-                        )
+                            P(
+                                listOf(
+                                    Text("text text")
+                                )
+                            )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -1174,16 +1268,20 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(
+                    CustomDocTag(
                         listOf(
-                            Img(
-                                emptyList(),
-                                mapOf(
-                                    "href" to "https://www.google.pl/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
-                                    "alt" to "Sample image"
+                            P(
+                                listOf(
+                                    Img(
+                                        emptyList(),
+                                        mapOf(
+                                            "href" to "https://www.google.pl/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
+                                            "alt" to "Sample image"
+                                        )
+                                    )
                                 )
                             )
-                        )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -1198,15 +1296,19 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(
+                    CustomDocTag(
                         listOf(
-                            Text("It's very easy to make some words "),
-                            B(listOf(Text("bold"))),
-                            Text(" and other words "),
-                            I(listOf(Text("italic"))),
-                            Text(" with Markdown. You can even "),
-                            A(listOf(Text("link to Google!")), mapOf("href" to "http://google.com"))
-                        )
+                            P(
+                                listOf(
+                                    Text("It's very easy to make some words "),
+                                    B(listOf(Text("bold"))),
+                                    Text(" and other words "),
+                                    I(listOf(Text("italic"))),
+                                    Text(" with Markdown. You can even "),
+                                    A(listOf(Text("link to Google!")), mapOf("href" to "http://google.com"))
+                                )
+                            )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -1225,7 +1327,7 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(
+                    CustomDocTag(
                         listOf(
                             P(listOf(Text("Here is some example how to use conditional instructions:"))),
                             CodeBlock(
@@ -1239,7 +1341,7 @@ class ParserTest : KDocTest() {
                                     )
                                 )
                             )
-                        )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -1256,51 +1358,55 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    Table(
+                    CustomDocTag(
                         listOf(
-                            Th(
+                            Table(
                                 listOf(
-                                    Td(
+                                    Th(
                                         listOf(
-                                            Text("First Header")
+                                            Td(
+                                                listOf(
+                                                    Text("First Header")
+                                                )
+                                            ),
+                                            Td(
+                                                listOf(
+                                                    Text("Second Header")
+                                                )
+                                            )
                                         )
                                     ),
-                                    Td(
+                                    Tr(
                                         listOf(
-                                            Text("Second Header")
-                                        )
-                                    )
-                                )
-                            ),
-                            Tr(
-                                listOf(
-                                    Td(
-                                        listOf(
-                                            Text("Content from cell 1")
-                                        )
-                                    ),
-                                    Td(
-                                        listOf(
-                                            Text("Content from cell 2")
-                                        )
-                                    )
-                                )
-                            ),
-                            Tr(
-                                listOf(
-                                    Td(
-                                        listOf(
-                                            Text("Content in the first column")
+                                            Td(
+                                                listOf(
+                                                    Text("Content from cell 1")
+                                                )
+                                            ),
+                                            Td(
+                                                listOf(
+                                                    Text("Content from cell 2")
+                                                )
+                                            )
                                         )
                                     ),
-                                    Td(
+                                    Tr(
                                         listOf(
-                                            Text("Content in the second column")
+                                            Td(
+                                                listOf(
+                                                    Text("Content in the first column")
+                                                )
+                                            ),
+                                            Td(
+                                                listOf(
+                                                    Text("Content in the second column")
+                                                )
+                                            )
                                         )
                                     )
                                 )
                             )
-                        )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
@@ -1316,11 +1422,15 @@ class ParserTest : KDocTest() {
         val expectedDocumentationNode = DocumentationNode(
             listOf(
                 Description(
-                    P(
+                    CustomDocTag(
                         listOf(
-                            Text("This is "),
-                            Strikethrough(listOf(Text("strikethroughed")))
-                        )
+                            P(
+                                listOf(
+                                    Text("This is "),
+                                    Strikethrough(listOf(Text("strikethroughed")))
+                                )
+                            )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
                     )
                 )
             )
