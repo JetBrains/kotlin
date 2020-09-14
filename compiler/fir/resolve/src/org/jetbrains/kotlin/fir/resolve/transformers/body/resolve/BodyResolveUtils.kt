@@ -5,17 +5,23 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
+import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildVarargArgumentsExpression
-import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.arrayElementType
+import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import kotlin.math.min
 
 inline fun <reified T : FirElement> FirBasedSymbol<*>.firUnsafe(): T {
@@ -58,4 +64,28 @@ internal fun remapArgumentsWithVararg(
     }
     newArgumentMapping[varargArgument] = varargParameter
     return newArgumentMapping
+}
+
+fun FirBlock.writeResultType(session: FirSession) {
+    val resultExpression = when (val statement = statements.lastOrNull()) {
+        is FirReturnExpression -> statement.result
+        is FirExpression -> statement
+        else -> null
+    }
+    resultType = if (resultExpression == null) {
+        resultType.resolvedTypeFromPrototype(session.builtinTypes.unitType.type)
+    } else {
+        val theType = resultExpression.resultType
+        if (theType is FirResolvedTypeRef) {
+            buildResolvedTypeRef {
+                source = theType.source?.fakeElement(FirFakeSourceElementKind.ImplicitTypeRef)
+                type = theType.type
+                annotations += theType.annotations
+            }
+        } else {
+            buildErrorTypeRef {
+                diagnostic = ConeSimpleDiagnostic("No type for block", DiagnosticKind.InferenceError)
+            }
+        }
+    }
 }

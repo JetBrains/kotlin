@@ -317,28 +317,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             )
         }
         block.transformOtherChildren(transformer, data)
-
-        val resultExpression = when (val statement = block.statements.lastOrNull()) {
-            is FirReturnExpression -> statement.result
-            is FirExpression -> statement
-            else -> null
-        }
-        block.resultType = if (resultExpression == null) {
-            block.resultType.resolvedTypeFromPrototype(session.builtinTypes.unitType.type)
-        } else {
-            val theType = resultExpression.resultType
-            if (theType is FirResolvedTypeRef) {
-                buildResolvedTypeRef {
-                    source = theType.source?.fakeElement(FirFakeSourceElementKind.ImplicitTypeRef)
-                    type = theType.type
-                    annotations += theType.annotations
-                }
-            } else {
-                buildErrorTypeRef {
-                    diagnostic = ConeSimpleDiagnostic("No type for block", DiagnosticKind.InferenceError)
-                }
-            }
-        }
+        block.writeResultType(session)
 
         dataFlowAnalyzer.exitBlock(block)
     }
