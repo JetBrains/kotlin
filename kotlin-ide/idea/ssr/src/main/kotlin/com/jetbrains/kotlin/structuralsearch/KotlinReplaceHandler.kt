@@ -122,6 +122,10 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
         if (primaryConstructor == null && searchTemplate.primaryConstructor == null) match.primaryConstructor?.let {
             addFormatted(it)
         }
+        val paramList = getPrimaryConstructorParameterList()
+        val searchParamList = searchTemplate.getPrimaryConstructorParameterList()
+        val matchParamList = match.getPrimaryConstructorParameterList()
+        if(searchParamList != null && matchParamList != null) paramList?.replaceParameterList(searchParamList, matchParamList)
         if (getSuperTypeList() == null && searchTemplate.getSuperTypeList() == null) match.superTypeListEntries.forEach {
             addSuperTypeListEntry(it)
         }
@@ -165,12 +169,17 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
             val searchParam = searchTemplate.parameters.getOrNull(i) ?: return@forEachIndexed
             val matchParam = match.parameters.getOrNull(i) ?: return@forEachIndexed
             if (param.typeReference == null && searchParam.typeReference == null) {
-                matchParam.typeReference?.let(param::setTypeReference)
-                param.addSurroundingWhiteSpace(param.colon!!, matchParam.colon!!)
+                matchParam.typeReference?.let{
+                    param.typeReference = it
+                    param.addSurroundingWhiteSpace(param.colon!!, matchParam.colon!!)
+                }
+
             }
             if (!param.hasDefaultValue() && (!searchParam.hasDefaultValue())) {
-                matchParam.defaultValue?.let(param::setDefaultValue)
-                param.addSurroundingWhiteSpace(param.equalsToken!!, matchParam.equalsToken!!)
+                matchParam.defaultValue?.let {
+                    param.setDefaultValue(it)
+                    param.addSurroundingWhiteSpace(param.equalsToken!!, matchParam.equalsToken!!)
+                }
             }
         }
         return this
