@@ -42,8 +42,7 @@ class FirDeserializationContext(
     val annotationDeserializer: AbstractAnnotationDeserializer,
     val constDeserializer: FirConstDeserializer,
     val containerSource: DeserializedContainerSource?,
-    outerTypeParameters: List<FirTypeParameterSymbol>,
-    val components: FirDeserializationComponents
+    outerTypeParameters: List<FirTypeParameterSymbol>
 ) {
     val allTypeParameters: List<FirTypeParameterSymbol> =
         typeDeserializer.ownTypeParameters + outerTypeParameters
@@ -62,7 +61,7 @@ class FirDeserializationContext(
             session, nameResolver, typeTable, typeParameterProtos, typeDeserializer
         ),
         annotationDeserializer, constDeserializer, containerSource,
-        if (capturesTypeParameters) allTypeParameters else emptyList(), components
+        if (capturesTypeParameters) allTypeParameters else emptyList()
     )
 
     val memberDeserializer: FirMemberDeserializer = FirMemberDeserializer(this)
@@ -138,16 +137,10 @@ class FirDeserializationContext(
                 annotationDeserializer,
                 constDeserializer,
                 containerSource,
-                emptyList(),
-                FirDeserializationComponents()
+                emptyList()
             )
         }
     }
-}
-
-// TODO: Move something here
-class FirDeserializationComponents {
-
 }
 
 class FirMemberDeserializer(private val c: FirDeserializationContext) {
