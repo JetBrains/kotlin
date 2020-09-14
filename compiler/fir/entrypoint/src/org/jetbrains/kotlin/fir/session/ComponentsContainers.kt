@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionService
 import org.jetbrains.kotlin.fir.extensions.FirPredicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.FirRegisteredPluginAnnotations
 import org.jetbrains.kotlin.fir.java.FirJavaVisibilityChecker
+import org.jetbrains.kotlin.fir.java.enhancement.FirJsr305StateContainer
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticNamesProvider
@@ -52,10 +53,11 @@ fun FirModuleBasedSession.registerResolveComponents() {
  * Resolve components which have specific implementations on JVM
  */
 @OptIn(SessionConfiguration::class)
-fun FirModuleBasedSession.registerJavaSpecificComponents() {
+fun FirModuleBasedSession.registerJavaSpecificResolveComponents() {
     register(FirVisibilityChecker::class, FirJavaVisibilityChecker)
     register(ConeCallConflictResolverFactory::class, JvmCallConflictResolverFactory)
     register(FirEffectiveVisibilityResolver::class, FirJvmEffectiveVisibilityResolver(this))
     register(FirPlatformClassMapper::class, FirJavaClassMapper(this))
     register(FirSyntheticNamesProvider::class, FirJavaSyntheticNamesProvider)
+    register(FirJsr305StateContainer::class, FirJsr305StateContainer.Default)
 }

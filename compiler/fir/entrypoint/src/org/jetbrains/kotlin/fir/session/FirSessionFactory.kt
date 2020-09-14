@@ -67,7 +67,7 @@ object FirSessionFactory {
         return FirJavaModuleBasedSession(moduleInfo, sessionProvider).apply {
             registerCommonComponents()
             registerResolveComponents()
-            registerJavaSpecificComponents()
+            registerJavaSpecificResolveComponents()
 
             val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
 
