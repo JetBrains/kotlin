@@ -222,8 +222,8 @@ class MarkdownParser(
             defaultHandler(node)
 
         private fun strikeThroughHandler(node: ASTNode) = DocTagsFromIElementFactory.getInstance(
-            GFMElementTypes.STRIKETHROUGH,
-            body = text.substring(node.startOffset, node.endOffset).transform()
+            node.type,
+            children = node.children.evaluateChildrenWithDroppedEnclosingTokens(2)
         )
 
         private fun tableHandler(node: ASTNode) = DocTagsFromIElementFactory.getInstance(
