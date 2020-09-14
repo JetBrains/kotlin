@@ -1307,5 +1307,25 @@ class ParserTest : KDocTest() {
         )
         executeTest(kdoc, expectedDocumentationNode)
     }
+
+    @Test
+    fun `Text with Strikethrough`() {
+        val kdoc = """
+        | This is ~~strikethroughed~~
+        """.trimMargin()
+        val expectedDocumentationNode = DocumentationNode(
+            listOf(
+                Description(
+                    P(
+                        listOf(
+                            Text("This is "),
+                            Strikethrough(listOf(Text("strikethroughed")))
+                        )
+                    )
+                )
+            )
+        )
+        executeTest(kdoc, expectedDocumentationNode)
+    }
 }
 
