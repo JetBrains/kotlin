@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirPhaseManager
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.fir.session.registerCommonComponents
-import org.jetbrains.kotlin.fir.session.registerJavaSpecificComponents
+import org.jetbrains.kotlin.fir.session.registerJavaSpecificResolveComponents
 import org.jetbrains.kotlin.fir.session.registerResolveComponents
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.IDEPackagePartProvider
@@ -89,7 +89,7 @@ internal object FirIdeSessionFactory {
                     }
                 ) as FirSymbolProvider
             )
-            registerJavaSpecificComponents()
+            registerJavaSpecificResolveComponents()
             FirSessionFactory.FirSessionConfigurator(this).apply {
                 registerCommonCheckers()
                 init()
@@ -115,7 +115,7 @@ internal object FirIdeSessionFactory {
         val kotlinClassFinder = VirtualFileFinderFactory.getInstance(project).create(searchScope)
         return FirIdeLibrariesSession(moduleInfo, sessionProvider, searchScope).apply {
             registerCommonComponents()
-            registerJavaSpecificComponents()
+            registerJavaSpecificResolveComponents()
 
             val javaSymbolProvider = JavaSymbolProvider(this, sessionProvider.project, searchScope)
 
