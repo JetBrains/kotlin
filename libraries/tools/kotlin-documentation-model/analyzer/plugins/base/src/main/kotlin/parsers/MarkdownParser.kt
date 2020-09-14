@@ -369,7 +369,7 @@ class MarkdownParser(
 
         private fun List<DocTag>.trimSurroundingTokensIfText() = mapIndexed { index, elem ->
             val elemTransformed = if (index == 0 && elem is Text) elem.copy(elem.body.trimStart()) else elem
-            if (index == size - 1 && elemTransformed is Text) elemTransformed.copy(elemTransformed.body.trimEnd()) else elemTransformed
+            if (index == lastIndex && elemTransformed is Text) elemTransformed.copy(elemTransformed.body.trimEnd()) else elemTransformed
         }
 
         private val notLeafNodes = listOf(MarkdownTokenTypes.HORIZONTAL_RULE, MarkdownTokenTypes.HARD_LINE_BREAK)
