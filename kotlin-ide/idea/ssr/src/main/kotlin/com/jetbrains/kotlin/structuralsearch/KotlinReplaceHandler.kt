@@ -162,13 +162,15 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
         match: KtParameterList
     ): KtParameterList {
         parameters.forEachIndexed { i, param ->
-            val searchParam = searchTemplate.parameters.getOrNull(i)
-            val matchParam = match.parameters.getOrNull(i)
-            if (param.typeReference == null && searchParam?.typeReference == null) {
-                matchParam?.typeReference?.let(param::setTypeReference)
+            val searchParam = searchTemplate.parameters.getOrNull(i) ?: return@forEachIndexed
+            val matchParam = match.parameters.getOrNull(i) ?: return@forEachIndexed
+            if (param.typeReference == null && searchParam.typeReference == null) {
+                matchParam.typeReference?.let(param::setTypeReference)
+                param.addSurroundingWhiteSpace(param.colon!!, matchParam.colon!!)
             }
-            if (!param.hasDefaultValue() && (searchParam == null || !searchParam.hasDefaultValue())) {
-                matchParam?.defaultValue?.let(param::setDefaultValue)
+            if (!param.hasDefaultValue() && (!searchParam.hasDefaultValue())) {
+                matchParam.defaultValue?.let(param::setDefaultValue)
+                param.addSurroundingWhiteSpace(param.equalsToken!!, matchParam.equalsToken!!)
             }
         }
         return this

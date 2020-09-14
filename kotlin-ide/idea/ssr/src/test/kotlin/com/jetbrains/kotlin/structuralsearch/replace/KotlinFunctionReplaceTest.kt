@@ -38,4 +38,51 @@ class KotlinFunctionReplaceTest : KotlinSSRReplaceTest() {
             result = "public  fun foo() {}"
         )
     }
+    
+    fun testFunctionParameterFormatCopy() {
+        doTest(
+            searchPattern = "fun '_ID('_PARAM)",
+            replacePattern = "fun '_ID('_PARAM)",
+            match = "public fun foo(bar  :  Int  =  0)  {}",
+            result = "public fun foo(bar  :  Int  =  0)  {}"
+        )
+    }
+
+    fun testFunctionTypedParameterFormatCopy() {
+        doTest(
+            searchPattern = "fun '_ID('_PARAM : '_TYPE)",
+            replacePattern = "fun '_ID('_PARAM : '_TYPE)",
+            match = "public fun foo(bar : Int  =  0)  {}",
+            result = "public fun foo(bar : Int  =  0)  {}"
+        )
+    }
+
+    fun testFunctionDefaultParameterFormatCopy() {
+        doTest(
+            searchPattern = "fun '_ID('_PARAM : '_TYPE = '_INIT)",
+            replacePattern = "fun '_ID('_PARAM : '_TYPE = '_INIT)",
+            match = "public fun foo(bar : Int = 0)  {}",
+            result = "public fun foo(bar : Int = 0)  {}"
+        )
+    }
+
+// wait for kotlin compiler changes
+//    fun testSuperTypeFormatCopy() {
+//        doTest(
+//            searchPattern = "class '_ID",
+//            replacePattern = "class '_ID",
+//            match = """
+//                interface Foo
+//                interface Bar
+//
+//                class FooBar  :  Foo  ,  Bar
+//            """.trimIndent(),
+//            result = """
+//                interface Foo
+//                interface Bar
+//
+//                class FooBar  :  Foo  ,  Bar
+//            """.trimIndent()
+//        )
+//    }
 }
