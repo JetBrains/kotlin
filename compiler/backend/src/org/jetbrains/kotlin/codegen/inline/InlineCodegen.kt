@@ -133,14 +133,13 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         mapDefaultSignature: Boolean,
         typeSystem: TypeSystemCommonBackendContext,
         registerLineNumberAfterwards: Boolean,
-        isCallOfFunctionInCorrespondingDefaultDispatch: Boolean
     ) {
         var nodeAndSmap: SMAPAndMethodNode? = null
         try {
             nodeAndSmap = createInlineMethodNode(
                 functionDescriptor, methodOwner, jvmSignature, mapDefaultSignature, typeArguments, typeSystem, state, sourceCompiler
             )
-            endCall(inlineCall(nodeAndSmap, inlineDefaultLambdas, isCallOfFunctionInCorrespondingDefaultDispatch), registerLineNumberAfterwards)
+            endCall(inlineCall(nodeAndSmap, inlineDefaultLambdas), registerLineNumberAfterwards)
         } catch (e: CompilationException) {
             throw e
         } catch (e: InlineException) {
@@ -206,7 +205,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                 ?: error("No stack value for continuation parameter of suspend function")
     }
 
-    protected fun inlineCall(nodeAndSmap: SMAPAndMethodNode, inlineDefaultLambda: Boolean, isCallOfFunctionInCorrespondingDefaultDispatch: Boolean): InlineResult {
+    private fun inlineCall(nodeAndSmap: SMAPAndMethodNode, inlineDefaultLambda: Boolean): InlineResult {
         assert(delayedHiddenWriting == null) { "'putHiddenParamsIntoLocals' should be called after 'processAndPutHiddenParameters(true)'" }
         val node = nodeAndSmap.node
         if (inlineDefaultLambda) {
@@ -234,7 +233,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         val inliner = MethodInliner(
             node, parameters, info, FieldRemapper(null, null, parameters), isSameModule,
             "Method inlining " + sourceCompiler.callElementText,
-            SourceMapCopier(sourceMapper, nodeAndSmap.classSMAP, callSite.takeIf { !isCallOfFunctionInCorrespondingDefaultDispatch }),
+            SourceMapCopier(sourceMapper, nodeAndSmap.classSMAP, callSite),
             info.callSiteInfo, if (functionDescriptor.isInlineOnly()) InlineOnlySmapSkipper(codegen) else null,
             !isInlinedToInlineFunInKotlinRuntime()
         ) //with captured

@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-// TODO KT-36769 Missing LVT entries for inline function (default) parameters at call site
-
 inline fun test(p: String = "OK"): String {
     return p
 }
