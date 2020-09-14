@@ -189,7 +189,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
                             conflicts.putValue(callable, KotlinBundle.message("can.t.modify.0", renderedCallable))
                         }
 
-                        usageLoop@ for (ref in callable.searchReferencesOrMethodReferences()) {
+                        usageLoop@ for (ref in callable.searchReferencesOrMethodReferences().sortedByDescending { it.element.textLength }) {
                             val refElement = ref.element
                             when (ref) {
                                 is KtSimpleReference<*> -> processExternalUsage(conflicts, refElement, usages)
