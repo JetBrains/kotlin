@@ -59,8 +59,7 @@ internal class CharValue(value: Char) : IntegerValueConstant<Char>(value) {
         '\b' -> "\\b"
         '\t' -> "\\t"
         '\n' -> "\\n"
-        //TODO: KT-8507
-        12.toChar() -> "\\f"
+        '\u000c' -> "\\f"
         '\r' -> "\\r"
         else -> if (isPrintableUnicode(c)) c.toString() else "?"
     }
@@ -83,7 +82,10 @@ internal class DoubleValue(value: Double) : ConstantValue<Double>(value) {
     override fun toString(): String = "$value.toDouble()"
 }
 
-internal class EnumValue(val enumClassId: ClassId, val enumEntryName: Name) : ConstantValue<Pair<ClassId, Name>>(enumClassId to enumEntryName) {
+internal class EnumValue(
+    val enumClassId: ClassId,
+    val enumEntryName: Name
+) : ConstantValue<Pair<ClassId, Name>>(enumClassId to enumEntryName) {
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitEnumValue(this, data)
 
     override fun toString(): String = "${enumClassId.shortClassName}.$enumEntryName"
