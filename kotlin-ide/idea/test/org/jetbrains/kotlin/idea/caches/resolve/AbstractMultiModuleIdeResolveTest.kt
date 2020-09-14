@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromTextFile
 import org.jetbrains.kotlin.idea.project.KotlinMultiplatformAnalysisModeComponent
+import org.jetbrains.kotlin.idea.codeMetaInfo.AbstractDiagnosticCodeMetaInfoTest
 import org.jetbrains.kotlin.idea.resolve.getDataFlowValueFactory
 import org.jetbrains.kotlin.idea.resolve.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
@@ -205,7 +206,7 @@ abstract class AbstractMultiModuleIdeResolveTest : AbstractMultiModuleTest() {
     }
 }
 
-abstract class AbstractMultiplatformAnalysisTest : AbstractMultiModuleIdeResolveTest() {
+abstract class AbstractMultiplatformAnalysisTest : AbstractDiagnosticCodeMetaInfoTest() {
     override fun getTestDataDirectory() = IDEA_TEST_DATA_DIR.resolve("multiplatform")
 
     override fun setUp() {
