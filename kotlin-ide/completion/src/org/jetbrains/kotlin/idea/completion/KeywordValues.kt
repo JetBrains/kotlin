@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.elementType
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -19,7 +21,13 @@ import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.toFuzzyType
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtOperationReferenceExpression
+import org.jetbrains.kotlin.psi.KtValueArgument
+import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
+import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.TypeProjectionImpl
@@ -28,9 +36,17 @@ import org.jetbrains.kotlin.types.typeUtil.isBooleanOrNullableBoolean
 
 object KeywordValues {
     interface Consumer {
+        /**
+         * @param suitableOnPsiLevel together with [expectedInfoMatcher] the function is called to make a decision whether
+         * [factory's][factory] output should be tagged with [priority]. Note that the function is used only as a fallback (in the case
+         * where [expectedInfoMatcher] has no input data to process).
+         *
+         * Function receiver is a current position of the caret.
+         */
         fun consume(
             lookupString: String,
             expectedInfoMatcher: (ExpectedInfo) -> ExpectedInfoMatch,
+            suitableOnPsiLevel: PsiElement.() -> Boolean = { false },
             priority: SmartCompletionItemPriority,
             factory: () -> LookupElement
         )
@@ -62,10 +78,10 @@ object KeywordValues {
                 else
                     ExpectedInfoMatch.noMatch
             }
-            consumer.consume("true", booleanInfoMatcher, SmartCompletionItemPriority.TRUE) {
+            consumer.consume("true", booleanInfoMatcher, priority =  SmartCompletionItemPriority.TRUE) {
                 LookupElementBuilder.create(KeywordLookupObject(), "true").bold()
             }
-            consumer.consume("false", booleanInfoMatcher, SmartCompletionItemPriority.FALSE) {
+            consumer.consume("false", booleanInfoMatcher, priority = SmartCompletionItemPriority.FALSE) {
                 LookupElementBuilder.create(KeywordLookupObject(), "false").bold()
             }
 
@@ -78,7 +94,17 @@ object KeywordValues {
                     else -> ExpectedInfoMatch.noMatch
                 }
             }
-            consumer.consume("null", nullMatcher, SmartCompletionItemPriority.NULL) {
+
+            // Position (this) is suitable for 'null' when the caret points to a function argument (fun is not imported!) or
+            // it's a part of a binary expression (left- or right- hand side) with unknown declarations.
+            val positionIsSuitableForNull: PsiElement.() -> Boolean = {
+                elementType == KtTokens.IDENTIFIER
+                        && (context?.parent is KtValueArgument || (context is KtExpression
+                        && ((context as KtExpression).getPrevSiblingIgnoringWhitespaceAndComments() is KtOperationReferenceExpression
+                        || (context as KtExpression).getNextSiblingIgnoringWhitespaceAndComments() is KtOperationReferenceExpression)))
+            }
+
+            consumer.consume("null", nullMatcher, positionIsSuitableForNull, SmartCompletionItemPriority.NULL) {
                 LookupElementBuilder.create(KeywordLookupObject(), "null").bold()
             }
         }
@@ -91,7 +117,7 @@ object KeywordValues {
                     KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, kClassDescriptor, listOf(TypeProjectionImpl(qualifierType)))
                 val kClassTypes = listOf(classLiteralType.toFuzzyType(emptyList()))
                 val kClassMatcher = { info: ExpectedInfo -> kClassTypes.matchExpectedInfo(info) }
-                consumer.consume("class", kClassMatcher, SmartCompletionItemPriority.CLASS_LITERAL) {
+                consumer.consume("class", kClassMatcher, priority =  SmartCompletionItemPriority.CLASS_LITERAL) {
                     LookupElementBuilder.create(KeywordLookupObject(), "class").bold()
                 }
 
@@ -107,7 +133,7 @@ object KeywordValues {
                         )
                         val javaClassTypes = listOf(javaLangClassType.toFuzzyType(emptyList()))
                         val javaClassMatcher = { info: ExpectedInfo -> javaClassTypes.matchExpectedInfo(info) }
-                        consumer.consume("class", javaClassMatcher, SmartCompletionItemPriority.CLASS_LITERAL) {
+                        consumer.consume("class", javaClassMatcher, priority = SmartCompletionItemPriority.CLASS_LITERAL) {
                             LookupElementBuilder.create(KeywordLookupObject(), "class.java")
                                 .withPresentableText("class")
                                 .withTailText(".java")

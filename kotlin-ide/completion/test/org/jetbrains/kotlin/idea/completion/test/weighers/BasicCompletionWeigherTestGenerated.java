@@ -166,6 +166,31 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
         runTest("testData/weighers/basic/NoExpectedType.kt");
     }
 
+    @TestMetadata("NullArgForInfixFunctionOnTheLeft.kt")
+    public void testNullArgForInfixFunctionOnTheLeft() throws Exception {
+        runTest("testData/weighers/basic/NullArgForInfixFunctionOnTheLeft.kt");
+    }
+
+    @TestMetadata("NullArgForInfixFunctionOnTheRight.kt")
+    public void testNullArgForInfixFunctionOnTheRight() throws Exception {
+        runTest("testData/weighers/basic/NullArgForInfixFunctionOnTheRight.kt");
+    }
+
+    @TestMetadata("NullArgForNotImportedFunction.kt")
+    public void testNullArgForNotImportedFunction() throws Exception {
+        runTest("testData/weighers/basic/NullArgForNotImportedFunction.kt");
+    }
+
+    @TestMetadata("NullForIfConditionOnTheLeft.kt")
+    public void testNullForIfConditionOnTheLeft() throws Exception {
+        runTest("testData/weighers/basic/NullForIfConditionOnTheLeft.kt");
+    }
+
+    @TestMetadata("NullForIfConditionOnTheRight.kt")
+    public void testNullForIfConditionOnTheRight() throws Exception {
+        runTest("testData/weighers/basic/NullForIfConditionOnTheRight.kt");
+    }
+
     @TestMetadata("Packages.kt")
     public void testPackages() throws Exception {
         runTest("testData/weighers/basic/Packages.kt");

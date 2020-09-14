@@ -546,6 +546,7 @@ class BasicCompletionSession(
                 override fun consume(
                     lookupString: String,
                     expectedInfoMatcher: (ExpectedInfo) -> ExpectedInfoMatch,
+                    suitableOnPsiLevel: PsiElement.() -> Boolean,
                     priority: SmartCompletionItemPriority,
                     factory: () -> LookupElement
                 ) {
@@ -556,7 +557,11 @@ class BasicCompletionSession(
                         assert(!match.makeNotNullable) { "Nullable keyword values not supported" }
                         match.isMatch()
                     }
-                    if (matched) {
+
+                    // 'expectedInfos' is filled with the compiler's insight.
+                    // In cases like missing import statement or undeclared variable desired data cannot be retrieved. Here is where we can
+                    // analyse PSI and calling 'suitableOnPsiLevel()' does the trick.
+                    if (matched || (expectedInfos.isEmpty() && position.suitableOnPsiLevel())) {
                         lookupElement.putUserData(SmartCompletionInBasicWeigher.KEYWORD_VALUE_MATCHED_KEY, Unit)
                         lookupElement.putUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY, priority)
                     }

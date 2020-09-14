@@ -18,6 +18,7 @@ import com.intellij.psi.*
 import com.intellij.psi.search.PsiElementProcessor
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.elementType
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -101,6 +102,7 @@ class KotlinCompletionContributor : CompletionContributor() {
                 ?: specialExtensionReceiverDummyIdentifier(tokenBefore)
                 ?: specialInTypeArgsDummyIdentifier(tokenBefore)
                 ?: specialInArgumentListDummyIdentifier(tokenBefore)
+                ?: specialInBinaryExpressionDummyIdentifier(tokenBefore)
                 ?: DEFAULT_DUMMY_IDENTIFIER
         }
 
@@ -474,6 +476,12 @@ class KotlinCompletionContributor : CompletionContributor() {
         // we need to use a regular identifier.
         val argumentList = tokenBefore?.getNonStrictParentOfType<KtValueArgumentList>() ?: return null
         if (argumentList.parent is KtConstructorDelegationCall) return CompletionUtil.DUMMY_IDENTIFIER_TRIMMED
+        return null
+    }
+
+    private fun specialInBinaryExpressionDummyIdentifier(tokenBefore: PsiElement?): String? {
+        if (tokenBefore.elementType == KtTokens.IDENTIFIER && tokenBefore?.context?.context is KtBinaryExpression)
+            return CompletionUtilCore.DUMMY_IDENTIFIER
         return null
     }
 

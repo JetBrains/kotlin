@@ -10,6 +10,7 @@ import com.intellij.codeInsight.completion.OffsetKey
 import com.intellij.codeInsight.completion.PrefixMatcher
 import com.intellij.codeInsight.lookup.*
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -197,6 +198,7 @@ class SmartCompletion(
                 override fun consume(
                     lookupString: String,
                     expectedInfoMatcher: (ExpectedInfo) -> ExpectedInfoMatch,
+                    suitableOnPsiLevel: PsiElement.() -> Boolean,
                     priority: SmartCompletionItemPriority,
                     factory: () -> LookupElement
                 ) {
