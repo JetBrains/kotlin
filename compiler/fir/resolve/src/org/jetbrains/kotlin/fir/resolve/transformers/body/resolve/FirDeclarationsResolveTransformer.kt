@@ -968,6 +968,19 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
     }
 
+    private fun ConeKotlinType.requiresApproximationInPublicPosition(): Boolean {
+        return when (this) {
+            is ConeIntegerLiteralType,
+            is ConeCapturedType,
+            is ConeDefinitelyNotNullType,
+            is ConeIntersectionType -> true
+            is ConeClassLikeType -> typeArguments.any {
+                it is ConeKotlinTypeProjection && it.type.requiresApproximationInPublicPosition()
+            }
+            else -> false
+        }
+    }
+
     private fun FirTypeRef.approximateTypeIfNeeded(
         containingCallableVisibility: Visibility?,
         isInlineFunction: Boolean = false
@@ -975,20 +988,14 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         val approximatedType = if (this is FirResolvedTypeRef &&
             (containingCallableVisibility == Public || containingCallableVisibility == Protected)
         ) {
-            when (this.type) {
-                is ConeIntegerLiteralType,
-                is ConeCapturedType,
-                is ConeDefinitelyNotNullType,
-                is ConeIntersectionType -> {
-                    this.withReplacedConeType(
-                        inferenceComponents.approximator.approximateToSuperType(
-                            this.type, TypeApproximatorConfiguration.PublicDeclaration
-                        ) as ConeKotlinType
-                    )
-                }
-                else -> {
-                    this
-                }
+            if (type.requiresApproximationInPublicPosition()) {
+                this.withReplacedConeType(
+                    inferenceComponents.approximator.approximateToSuperType(
+                        this.type, TypeApproximatorConfiguration.PublicDeclaration
+                    ) as? ConeKotlinType
+                )
+            } else {
+                this
             }
         } else {
             this
