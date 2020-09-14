@@ -167,7 +167,6 @@
         <element id="library" level="project" name="javaslang" />
         <element id="library" level="project" name="kotlinx-collections-immutable-jvm" />
         <element id="library" level="project" name="javax-inject" />
-        <element id="library" level="module" name="completion-ranking-kotlin" module-name="kotlin.idea" />
         <element id="archive" name="kotlin-stdlib.jar">
           <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib/1.4.0-rc-279/kotlin-stdlib-1.4.0-rc-279.jar" path-in-jar="/" />
         </element>
@@ -197,6 +196,7 @@
         <element id="archive" name="kotlin-coroutines-experimental-compat.jar">
           <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-coroutines-experimental-compat/1.4.0-rc-279/kotlin-coroutines-experimental-compat-1.4.0-rc-279.jar" path-in-jar="/" />
         </element>
+        <element id="library" level="project" name="completion-ranking-kotlin" />
       </element>
       <element id="directory" name="kotlinc">
         <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-dist-for-ide/1.4.0-rc-279/kotlin-dist-for-ide-1.4.0-rc-279.jar" path-in-jar="/" />
