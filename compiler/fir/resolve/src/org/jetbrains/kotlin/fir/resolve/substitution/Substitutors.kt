@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.fir.resolve.substitution
 
+import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
 abstract class AbstractConeSubstitutor : ConeSubstitutor() {
     private fun wrapProjection(old: ConeTypeProjection, newType: ConeKotlinType): ConeTypeProjection {
@@ -145,6 +147,13 @@ fun ConeSubstitutor.chain(other: ConeSubstitutor): ConeSubstitutor {
 data class ConeSubstitutorByMap(val substitution: Map<FirTypeParameterSymbol, ConeKotlinType>) : AbstractConeSubstitutor() {
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         if (type !is ConeTypeParameterType) return null
-        return substitution[type.lookupTag.symbol].updateNullabilityIfNeeded(type)
+        val result = substitution[type.lookupTag.symbol].updateNullabilityIfNeeded(type) ?: return null
+        val session = type.lookupTag.symbol.fir.session
+        if (type.isUnsafeVarianceType(session)) {
+            return session.inferenceComponents.approximator.approximateToSuperType(
+                result, TypeApproximatorConfiguration.SubtypeCapturedTypesApproximation
+            ) as? ConeKotlinType ?: result
+        }
+        return result
     }
 }
