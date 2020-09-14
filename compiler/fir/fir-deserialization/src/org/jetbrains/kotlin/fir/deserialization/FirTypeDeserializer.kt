@@ -102,7 +102,6 @@ class FirTypeDeserializer(
             val lowerBound = simpleType(proto, attributes)
             val upperBound = simpleType(proto.flexibleUpperBound(typeTable)!!, attributes)
             return ConeFlexibleType(lowerBound!!, upperBound!!)
-            //c.components.flexibleTypeDeserializer.create(proto, id, lowerBound, upperBound)
         }
 
         return simpleType(proto, attributes) ?: ConeKotlinErrorType(ConeSimpleDiagnostic("?!id:0", DiagnosticKind.DeserializationError))
@@ -125,7 +124,6 @@ class FirTypeDeserializer(
         (fir as? FirTypeParameterRefsOwner)?.typeParameters?.map { it.symbol }.orEmpty()
 
     fun simpleType(proto: ProtoBuf.Type, attributes: ConeAttributes): ConeLookupTagBasedType? {
-
         val constructor = typeSymbol(proto) ?: return null
         if (constructor is ConeTypeParameterLookupTag) return ConeTypeParameterTypeImpl(constructor, isNullable = proto.nullable)
         if (constructor !is ConeClassLikeLookupTag) return null
@@ -134,21 +132,16 @@ class FirTypeDeserializer(
             argumentList + outerType(typeTable)?.collectAllArguments().orEmpty()
 
         val arguments = proto.collectAllArguments().map(this::typeArgument).toTypedArray()
-
         val simpleType = if (Flags.SUSPEND_TYPE.get(proto.flags)) {
             createSuspendFunctionType(constructor, arguments, isNullable = proto.nullable, attributes)
         } else {
             ConeClassLikeTypeImpl(constructor, arguments, isNullable = proto.nullable, attributes)
         }
-
         val abbreviatedTypeProto = proto.abbreviatedType(typeTable) ?: return simpleType
-
         return simpleType(abbreviatedTypeProto, attributes)
-
     }
 
     private fun createSuspendFunctionTypeForBasicCase(
-        //annotations: Annotations, TODO?,
         functionTypeConstructor: ConeClassLikeLookupTag,
         arguments: Array<ConeTypeProjection>,
         isNullable: Boolean,
@@ -160,13 +153,9 @@ class FirTypeDeserializer(
             return true
         }
 
-        val returnType = arguments.lastOrNull()
         val continuationType = arguments.getOrNull(arguments.lastIndex - 1) as? ConeClassLikeType ?: return null
-
         if (!continuationType.isContinuation()) return ConeClassLikeTypeImpl(functionTypeConstructor, arguments, isNullable, attributes)
-
         val suspendReturnType = continuationType.typeArguments.single() as ConeKotlinTypeProjection
-
         val valueParameters = arguments.dropLast(2)
 
         val kind = FunctionClassKind.SuspendFunction
@@ -178,7 +167,6 @@ class FirTypeDeserializer(
     }
 
     private fun createSuspendFunctionType(
-        //annotations: Annotations, TODO?
         functionTypeConstructor: ConeClassLikeLookupTag,
         arguments: Array<ConeTypeProjection>,
         isNullable: Boolean,
@@ -186,8 +174,7 @@ class FirTypeDeserializer(
     ): ConeClassLikeType {
         val result =
             when (functionTypeConstructor.toSymbol(session)!!.firUnsafe<FirTypeParameterRefsOwner>().typeParameters.size - arguments.size) {
-                0 -> createSuspendFunctionTypeForBasicCase(/* annotations, */ functionTypeConstructor, arguments, isNullable, attributes)
-//                 This case for types written by eap compiler 1.1
+                0 -> createSuspendFunctionTypeForBasicCase(functionTypeConstructor, arguments, isNullable, attributes)
                 1 -> {
                     val arity = arguments.size - 1
                     if (arity >= 0) {
@@ -213,7 +200,6 @@ class FirTypeDeserializer(
     }
 
     private fun typeSymbol(proto: ProtoBuf.Type): ConeClassifierLookupTag? {
-
         return when {
             proto.hasClassName() -> computeClassifier(proto.className)
             proto.hasTypeAliasName() -> computeClassifier(proto.typeAliasName)
@@ -235,10 +221,7 @@ class FirTypeDeserializer(
         val variance = ProtoEnumFlags.variance(typeArgumentProto.projection)
         val type = typeArgumentProto.type(typeTable)
             ?: return ConeKotlinErrorType(ConeSimpleDiagnostic("No type recorded", DiagnosticKind.DeserializationError))
-
-        // TODO: check that here we don't have any attributes
         val coneType = type(type, ConeAttributes.Empty)
         return coneType.toTypeProjection(variance)
     }
-
 }
