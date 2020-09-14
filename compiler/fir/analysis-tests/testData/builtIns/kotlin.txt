@@ -339,7 +339,7 @@ public abstract interface Comparable<in T> : R|kotlin/Any| {
 
 }
 
-@R|kotlin/annotation/Target|() @R|kotlin/annotation/MustBeDocumented|() public final annotation class Deprecated : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CLASS|(), R|kotlin/annotation/AnnotationTarget.FUNCTION|(), R|kotlin/annotation/AnnotationTarget.PROPERTY|(), R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|(), R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|(), R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|(), R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|(), R|kotlin/annotation/AnnotationTarget.TYPEALIAS|())) @R|kotlin/annotation/MustBeDocumented|() public final annotation class Deprecated : R|kotlin/Annotation| {
     public final val level: R|kotlin/DeprecationLevel|
         public get(): R|kotlin/DeprecationLevel|
 
@@ -353,7 +353,7 @@ public abstract interface Comparable<in T> : R|kotlin/Any| {
 
 }
 
-@R|kotlin/annotation/Target|() @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.4)) public final annotation class DeprecatedSinceKotlin : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CLASS|(), R|kotlin/annotation/AnnotationTarget.FUNCTION|(), R|kotlin/annotation/AnnotationTarget.PROPERTY|(), R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|(), R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|(), R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|(), R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|(), R|kotlin/annotation/AnnotationTarget.TYPEALIAS|())) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.4)) public final annotation class DeprecatedSinceKotlin : R|kotlin/Annotation| {
     public final val errorSince: R|kotlin/String|
         public get(): R|kotlin/String|
 
@@ -484,7 +484,7 @@ public final class Double : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Double>
 
     public final operator fun times(other: R|kotlin/Short|): R|kotlin/Double|
 
-    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(toInt().toByte())) ) public open fun toByte(): R|kotlin/Byte|
+    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(toInt().toByte())) ) public open fun toByte(): R|kotlin/Byte|
 
     public open fun toChar(): R|kotlin/Char|
 
@@ -496,7 +496,7 @@ public final class Double : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Double>
 
     public open fun toLong(): R|kotlin/Long|
 
-    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(toInt().toShort())) ) public open fun toShort(): R|kotlin/Short|
+    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(toInt().toShort())) ) public open fun toShort(): R|kotlin/Short|
 
     public final operator fun unaryMinus(): R|kotlin/Double|
 
@@ -524,7 +524,7 @@ public final class DoubleArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/S
 
 }
 
-@R|kotlin/annotation/Target|() @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|()) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.1)) public final annotation class DslMarker : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|())) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|()) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.1)) public final annotation class DslMarker : R|kotlin/Annotation| {
     public constructor(): R|kotlin/DslMarker|
 
 }
@@ -555,7 +555,7 @@ public abstract class Enum<E> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
 
 }
 
-@R|kotlin/annotation/Target|() @R|kotlin/annotation/MustBeDocumented|() public final annotation class ExtensionFunctionType : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.TYPE|())) @R|kotlin/annotation/MustBeDocumented|() public final annotation class ExtensionFunctionType : R|kotlin/Annotation| {
     public constructor(): R|kotlin/ExtensionFunctionType|
 
 }
@@ -663,7 +663,7 @@ public final class Float : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Float>|,
 
     public final operator fun times(other: R|kotlin/Short|): R|kotlin/Float|
 
-    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(toInt().toByte())) ) public open fun toByte(): R|kotlin/Byte|
+    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(toInt().toByte())) ) public open fun toByte(): R|kotlin/Byte|
 
     public open fun toChar(): R|kotlin/Char|
 
@@ -675,7 +675,7 @@ public final class Float : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Float>|,
 
     public open fun toLong(): R|kotlin/Long|
 
-    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(toInt().toShort())) ) public open fun toShort(): R|kotlin/Short|
+    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(toInt().toShort())) ) public open fun toShort(): R|kotlin/Short|
 
     public final operator fun unaryMinus(): R|kotlin/Float|
 
@@ -1042,7 +1042,7 @@ public abstract class Number : R|kotlin/Any|, R|java/io/Serializable| {
 
 }
 
-@R|kotlin/annotation/Target|() @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.1)) public final annotation class ParameterName : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.TYPE|())) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.1)) public final annotation class ParameterName : R|kotlin/Annotation| {
     public final val name: R|kotlin/String|
         public get(): R|kotlin/String|
 
@@ -1050,12 +1050,12 @@ public abstract class Number : R|kotlin/Any|, R|java/io/Serializable| {
 
 }
 
-@R|kotlin/annotation/Target|() @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|()) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.1)) public final annotation class PublishedApi : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CLASS|(), R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|(), R|kotlin/annotation/AnnotationTarget.FUNCTION|(), R|kotlin/annotation/AnnotationTarget.PROPERTY|())) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|()) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.1)) public final annotation class PublishedApi : R|kotlin/Annotation| {
     public constructor(): R|kotlin/PublishedApi|
 
 }
 
-@R|kotlin/annotation/Target|() @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|()) @R|kotlin/annotation/MustBeDocumented|() public final annotation class ReplaceWith : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>()) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|()) @R|kotlin/annotation/MustBeDocumented|() public final annotation class ReplaceWith : R|kotlin/Annotation| {
     public final val expression: R|kotlin/String|
         public get(): R|kotlin/String|
 
@@ -1208,7 +1208,7 @@ public final class ShortArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Se
 
 }
 
-@R|kotlin/annotation/Target|() @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|()) @R|kotlin/annotation/MustBeDocumented|() public final annotation class SinceKotlin : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CLASS|(), R|kotlin/annotation/AnnotationTarget.PROPERTY|(), R|kotlin/annotation/AnnotationTarget.FIELD|(), R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|(), R|kotlin/annotation/AnnotationTarget.FUNCTION|(), R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|(), R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|(), R|kotlin/annotation/AnnotationTarget.TYPEALIAS|())) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|()) @R|kotlin/annotation/MustBeDocumented|() public final annotation class SinceKotlin : R|kotlin/Annotation| {
     public final val version: R|kotlin/String|
         public get(): R|kotlin/String|
 
@@ -1237,7 +1237,7 @@ public final class String : R|kotlin/Comparable<kotlin/String>|, R|kotlin/CharSe
 
 }
 
-@R|kotlin/annotation/Target|() @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.SOURCE|()) public final annotation class Suppress : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CLASS|(), R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|(), R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|(), R|kotlin/annotation/AnnotationTarget.PROPERTY|(), R|kotlin/annotation/AnnotationTarget.FIELD|(), R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|(), R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|(), R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|(), R|kotlin/annotation/AnnotationTarget.FUNCTION|(), R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|(), R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|(), R|kotlin/annotation/AnnotationTarget.TYPE|(), R|kotlin/annotation/AnnotationTarget.EXPRESSION|(), R|kotlin/annotation/AnnotationTarget.FILE|(), R|kotlin/annotation/AnnotationTarget.TYPEALIAS|())) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.SOURCE|()) public final annotation class Suppress : R|kotlin/Annotation| {
     public final val names: R|kotlin/Array<out kotlin/String>|
         public get(): R|kotlin/Array<out kotlin/String>|
 
@@ -1269,7 +1269,7 @@ public final object Unit : R|kotlin/Any| {
 
 }
 
-@R|kotlin/annotation/Target|() @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.SOURCE|()) @R|kotlin/annotation/MustBeDocumented|() public final annotation class UnsafeVariance : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.TYPE|())) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.SOURCE|()) @R|kotlin/annotation/MustBeDocumented|() public final annotation class UnsafeVariance : R|kotlin/Annotation| {
     public constructor(): R|kotlin/UnsafeVariance|
 
 }

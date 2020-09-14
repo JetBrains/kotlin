@@ -23,10 +23,9 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.constructType
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.Type.*
 import org.jetbrains.kotlin.metadata.deserialization.Flags
@@ -180,7 +179,7 @@ abstract class AbstractAnnotationDeserializer(
                 arguments = proto.argumentList.mapNotNull {
                     val name = nameResolver.getName(it.nameId)
                     val parameter = parameterByName[name] ?: return@mapNotNull null
-                    val value = resolveValue(parameter.returnTypeRef, it.value, nameResolver) ?: return@mapNotNull null
+                    val value = resolveValue(parameter.returnTypeRef.coneType, it.value, nameResolver)
                     buildNamedArgumentExpression {
                         expression = value
                         isSpread = false
@@ -207,16 +206,32 @@ abstract class AbstractAnnotationDeserializer(
     }
 
     fun resolveValue(
-        expectedType: FirTypeRef, value: ProtoBuf.Annotation.Argument.Value, nameResolver: NameResolver
-    ): FirExpression? {
-        // TODO: val isUnsigned = Flags.IS_UNSIGNED.get(value.flags)
+        expectedType: ConeKotlinType, value: ProtoBuf.Annotation.Argument.Value, nameResolver: NameResolver
+    ): FirExpression {
+        val isUnsigned = Flags.IS_UNSIGNED.get(value.flags)
 
-        val result: FirExpression = when (value.type) {
-            BYTE -> const(FirConstKind.Byte, value.intValue.toByte())
+        return when (value.type) {
+            BYTE -> {
+                val kind = if (isUnsigned) FirConstKind.UnsignedByte else FirConstKind.Byte
+                const(kind, value.intValue.toByte())
+            }
+
+            SHORT -> {
+                val kind = if (isUnsigned) FirConstKind.UnsignedShort else FirConstKind.Short
+                const(kind, value.intValue.toShort())
+            }
+
+            INT -> {
+                val kind = if (isUnsigned) FirConstKind.UnsignedInt else FirConstKind.Int
+                const(kind, value.intValue.toInt())
+            }
+
+            LONG -> {
+                val kind = if (isUnsigned) FirConstKind.UnsignedLong else FirConstKind.Long
+                const(kind, value.intValue)
+            }
+
             CHAR -> const(FirConstKind.Char, value.intValue.toChar())
-            SHORT -> const(FirConstKind.Short, value.intValue.toShort())
-            INT -> const(FirConstKind.Int, value.intValue.toInt())
-            LONG -> const(FirConstKind.Long, value.intValue)
             FLOAT -> const(FirConstKind.Float, value.floatValue)
             DOUBLE -> const(FirConstKind.Double, value.doubleValue)
             BOOLEAN -> const(FirConstKind.Boolean, (value.intValue != 0L))
@@ -238,28 +253,35 @@ abstract class AbstractAnnotationDeserializer(
                 val classId = nameResolver.getClassId(value.classId)
                 val entryName = nameResolver.getName(value.enumValueId)
 
-
                 val enumLookupTag = ConeClassLikeLookupTagImpl(classId)
-                val enumSymbol = enumLookupTag.toSymbol(this@AbstractAnnotationDeserializer.session)
+                val enumSymbol = enumLookupTag.toSymbol(session)
                 val firClass = enumSymbol?.fir as? FirRegularClass
                 val enumEntries = firClass?.collectEnumEntries() ?: emptyList()
                 val enumEntrySymbol = enumEntries.find { it.name == entryName }
-                this.calleeReference = enumEntrySymbol?.let {
+                calleeReference = enumEntrySymbol?.let {
                     buildResolvedNamedReference {
                         name = entryName
                         resolvedSymbol = it.symbol
                     }
                 } ?: buildErrorNamedReference {
-                    diagnostic = ConeSimpleDiagnostic("Strange deserialized enum value: $classId.$entryName", DiagnosticKind.DeserializationError)
+                    diagnostic =
+                        ConeSimpleDiagnostic("Strange deserialized enum value: $classId.$entryName", DiagnosticKind.DeserializationError)
                 }
             }
-//            ARRAY -> {
-//                TODO: see AnnotationDeserializer
-//            }
-//            else -> error("Unsupported annotation argument type: ${value.type} (expected $expectedType)")
-            else -> return null
+            ARRAY -> {
+                val expectedArrayElementType = expectedType.arrayElementType() ?: session.builtinTypes.anyType.type
+                buildArrayOfCall {
+                    argumentList = buildArgumentList {
+                        value.arrayElementList.mapTo(arguments) { resolveValue(expectedArrayElementType, it, nameResolver) }
+                    }
+                    typeRef = buildResolvedTypeRef {
+                        type = expectedArrayElementType.createArrayType()
+                    }
+                }
+            }
+
+            else -> error("Unsupported annotation argument type: ${value.type} (expected $expectedType)")
         }
-        return result
     }
 
     private fun <T> const(kind: FirConstKind<T>, value: T) = buildConstExpression(null, kind, value)
