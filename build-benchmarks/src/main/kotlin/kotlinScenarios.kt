@@ -6,6 +6,7 @@ fun kotlinBenchmarks() =
         val coreUtilCoreLib = changeableFile("coreUtil/CoreLibKt")
         val compilerCommonBackendContext = changeableFile("compiler/CommonBackendContext")
         val kotlinGradlePluginConfigurationPhaseAware = changeableFile("kotlinGradlePlugin/ConfigurationPhaseAware")
+        val buildSrc = changeableFile("buildSrc/BuildPropertiesExtKt")
 
         defaultTasks(Tasks.DIST, Tasks.COMPILER_TEST_CLASSES, Tasks.IDEA_TEST_CLASSES, Tasks.KOTLIN_GRADLE_PLUGIN_COMPILE_JAVA)
         defaultJdk = System.getenv("JDK_8")
@@ -36,6 +37,20 @@ fun kotlinBenchmarks() =
                 runTasks(Tasks.CLEAN)
             }
             step {}
+        }
+
+        scenario("(buildSrc, Kotlin) add public fun") {
+            step {
+                changeFile(buildSrc, TypeOfChange.ADD_PUBLIC_FUNCTION)
+                runTasks()
+            }
+        }
+
+        scenario("(buildSrc, Kotlin) add private fun") {
+            step {
+                changeFile(buildSrc, TypeOfChange.ADD_PRIVATE_FUNCTION)
+                runTasks()
+            }
         }
 
         scenario("clean build parallel") {
