@@ -12,7 +12,7 @@ headers = jni.h stdbool.h \
      android/keycodes.h \
      android/log.h android/looper.h \
      android/multinetwork.h \
-     android/native_activity.h android/native_window.h android/ndk-version.h \
+     android/native_activity.h android/native_window.h android/native_window_jni.h android/ndk-version.h \
      android/obb.h \
      android/rect.h \
      android/sensor.h android/set_abort_message.h android/sharedmem.h android/sharedmem_jni.h \
