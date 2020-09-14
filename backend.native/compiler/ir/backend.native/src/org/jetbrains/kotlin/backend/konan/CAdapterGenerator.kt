@@ -137,7 +137,7 @@ private fun isExportedClass(descriptor: ClassDescriptor): Boolean {
     return true
 }
 
-private fun AnnotationDescriptor.properValue(key: String) =
+internal fun AnnotationDescriptor.properValue(key: String) =
         this.argumentValue(key)?.toString()?.removeSurrounding("\"")
 
 private fun functionImplName(descriptor: DeclarationDescriptor, default: String, shortName: Boolean): String {

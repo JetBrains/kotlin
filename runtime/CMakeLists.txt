@@ -69,6 +69,8 @@ add_executable(runtime
 	src/main/cpp/ObjCInteropUtils.mm
 	src/main/cpp/ObjCExportCollectionUtils.mm
 	src/main/cpp/ObjCExportErrors.mm
+	src/main/cpp/ObjCExportExceptionDetails.mm
+
 	src/objc/cpp/ObjCExportNumbers.mm
 	src/objc/cpp/ObjCExportClasses.mm
 	src/objc/cpp/ObjCExportCollections.mm

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.*
 import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenFunctions
 import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
+import org.jetbrains.kotlin.backend.konan.descriptors.konanLibrary
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.ir.companionObject
@@ -50,6 +51,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.konan.ForeignExceptionMode
 
 internal class InteropLowering(context: Context) : FileLoweringPass {
     // TODO: merge these lowerings.
@@ -1006,7 +1008,10 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
 
         if (function.annotations.hasAnnotation(RuntimeNames.cCall)) {
             context.llvmImports.add(function.llvmSymbolOrigin)
-            return generateWithStubs { generateCCall(expression, builder, isInvoke = false) }
+            val exceptionMode = ForeignExceptionMode.byValue(
+                    function.module.konanLibrary?.manifestProperties?.getProperty(ForeignExceptionMode.manifestKey)
+            )
+            return generateWithStubs { generateCCall(expression, builder, isInvoke = false, exceptionMode) }
         }
 
         val failCompilation = { msg: String -> context.reportCompilationError(msg, irFile, expression) }

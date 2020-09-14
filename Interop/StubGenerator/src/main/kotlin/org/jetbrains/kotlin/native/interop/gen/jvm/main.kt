@@ -27,6 +27,7 @@ import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import kotlinx.cli.default
 import kotlinx.cli.required
+import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -200,7 +201,7 @@ private fun processCLib(flavorName: String, cinteropArguments: CInteropArguments
     val manifestAddend = additionalArgs.manifest?.let { File(it) }
 
     if (defFile == null && cinteropArguments.pkg == null) {
-        cinteropArguments.argParser.printError("-def or -pkg should provided!")
+        cinteropArguments.argParser.printError("-def or -pkg should be provided!")
     }
 
     val tool = prepareTool(cinteropArguments.target, flavor)
@@ -326,6 +327,13 @@ private fun processCLib(flavorName: String, cinteropArguments: CInteropArguments
         def.manifestAddendProperties["ir_provider"] = KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
     }
     stubIrContext.addManifestProperties(def.manifestAddendProperties)
+
+    // cinterop command line option overrides def file property
+    val foreignExceptionMode = cinteropArguments.foreignExceptionMode?: def.config.foreignExceptionMode
+    foreignExceptionMode?.let {
+        def.manifestAddendProperties[ForeignExceptionMode.manifestKey] =
+                ForeignExceptionMode.byValue(it).value   // may throw IllegalArgumentException
+    }
 
     manifestAddend?.parentFile?.mkdirs()
     manifestAddend?.let { def.manifestAddendProperties.storeProperties(it) }

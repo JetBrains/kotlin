@@ -29,6 +29,7 @@ const val TEMP_DIR = "Xtemporary-files-dir"
 const val NOPACK = "nopack"
 const val COMPILE_SOURCES = "Xcompile-source"
 const val SHORT_MODULE_NAME = "Xshort-module-name"
+const val FOREIGN_EXCEPTION_MODE = "Xforeign-exception-mode"
 
 // TODO: unify camel and snake cases.
 // Possible solution is to accept both cases
@@ -119,6 +120,9 @@ open class CInteropArguments(argParser: ArgParser =
             fullName = "Xmodule-name",
             description = "A full name of the library used for dependency resolution"
     )
+
+    val foreignExceptionMode by argParser.option(ArgType.String, FOREIGN_EXCEPTION_MODE,
+            description = "Handle native exception in Kotlin: <terminate|objc-wrap>")
 }
 
 class JSInteropArguments(argParser: ArgParser = ArgParser("jsinterop",

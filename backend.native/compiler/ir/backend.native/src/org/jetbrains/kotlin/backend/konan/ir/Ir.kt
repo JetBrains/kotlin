@@ -195,6 +195,8 @@ internal class KonanSymbols(
     val interopCreateNSStringFromKString =
             symbolTable.referenceSimpleFunction(context.interopBuiltIns.CreateNSStringFromKString)
 
+    val createForeignException = interopFunction("CreateForeignException")
+
     val interopObjCGetSelector = interopFunction("objCGetSelector")
 
     val interopCEnumVar = interopClass("CEnumVar")

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
 import org.jetbrains.kotlin.ir.expressions.IrReturn
+import org.jetbrains.kotlin.konan.ForeignExceptionMode
 
 private fun IrConstructor.isAnyConstructorDelegation(context: Context): Boolean {
         val statements = this.body?.statements ?: return false
@@ -703,23 +704,49 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         return LLVMBuildExtractElement(builder, vector, index, name)!!
     }
 
-    fun filteringExceptionHandler(codeContext: CodeContext): ExceptionHandler {
+    fun filteringExceptionHandler(codeContext: CodeContext, foreignExceptionMode: ForeignExceptionMode.Mode): ExceptionHandler {
         val lpBlock = basicBlockInFunction("filteringExceptionHandler", position()?.start)
+
+        val wrapExceptionMode = context.config.target.family.isAppleFamily &&
+                foreignExceptionMode == ForeignExceptionMode.Mode.OBJC_WRAP
 
         appendingTo(lpBlock) {
             val landingpad = gxxLandingpad(2)
             LLVMAddClause(landingpad, kotlinExceptionRtti.llvm)
+            if (wrapExceptionMode) {
+                LLVMAddClause(landingpad, objcNSExceptionRtti.llvm)
+            }
             LLVMAddClause(landingpad, LLVMConstNull(kInt8Ptr))
 
             val fatalForeignExceptionBlock = basicBlock("fatalForeignException", position()?.start)
             val forwardKotlinExceptionBlock = basicBlock("forwardKotlinException", position()?.start)
 
+            val typeId = extractValue(landingpad, 1)
             val isKotlinException = icmpEq(
-                    extractValue(landingpad, 1),
+                    typeId,
                     call(context.llvm.llvmEhTypeidFor, listOf(kotlinExceptionRtti.llvm))
             )
 
-            condBr(isKotlinException, forwardKotlinExceptionBlock, fatalForeignExceptionBlock)
+            if (wrapExceptionMode) {
+                val foreignExceptionBlock = basicBlock("foreignException", position()?.start)
+                val forwardNativeExceptionBlock = basicBlock("forwardNativeException", position()?.start)
+
+                condBr(isKotlinException, forwardKotlinExceptionBlock, foreignExceptionBlock)
+                appendingTo(foreignExceptionBlock) {
+                    val isObjCException = icmpEq(
+                            typeId,
+                            call(context.llvm.llvmEhTypeidFor, listOf(objcNSExceptionRtti.llvm))
+                    )
+                    condBr(isObjCException, forwardNativeExceptionBlock, fatalForeignExceptionBlock)
+
+                    appendingTo(forwardNativeExceptionBlock) {
+                        val exception = createForeignException(landingpad, codeContext.exceptionHandler)
+                        codeContext.genThrow(exception)
+                    }
+                }
+            } else {
+                condBr(isKotlinException, forwardKotlinExceptionBlock, fatalForeignExceptionBlock)
+            }
 
             appendingTo(forwardKotlinExceptionBlock) {
                 // Rethrow Kotlin exception to real handler.
@@ -731,6 +758,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 call(context.llvm.cxaBeginCatchFunction, listOf(exceptionRecord))
                 terminate()
             }
+
         }
 
         return object : ExceptionHandler.Local() {
@@ -770,7 +798,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
 
         LLVMAddClause(landingpadResult, LLVMConstNull(kInt8Ptr))
 
-        // FIXME: properly handle C++ exceptions: currently C++ exception can be thrown out from try-finally
+        // TODO: properly handle C++ exceptions: currently C++ exception can be thrown out from try-finally
         // bypassing the finally block.
 
         return extractKotlinException(landingpadResult)
@@ -795,6 +823,21 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         call(endCatch, listOf())
 
         return exceptionPtr
+    }
+
+    private fun createForeignException(landingpadResult: LLVMValueRef, exceptionHandler: ExceptionHandler): LLVMValueRef {
+        val exceptionRecord = extractValue(landingpadResult, 0, "er")
+
+        // __cxa_begin_catch returns pointer to C++ exception object.
+        val exceptionRawPtr = call(context.llvm.cxaBeginCatchFunction, listOf(exceptionRecord))
+
+        // This will take care of ARC - need to be done in the catching scope, i.e. before __cxa_end_catch
+        val exception = call(context.ir.symbols.createForeignException.owner.llvmFunction,
+                listOf(exceptionRawPtr),
+                Lifetime.GLOBAL, exceptionHandler)
+
+        call(context.llvm.cxaEndCatchFunction, listOf())
+        return exception
     }
 
     inline fun ifThenElse(
@@ -1272,6 +1315,14 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 int8TypePtr,
                 origin = context.stdlibModule.llvmSymbolOrigin
         )).bitcast(int8TypePtr)
+
+    private val objcNSExceptionRtti: ConstPointer by lazy {
+        constPointer(importGlobal(
+                "OBJC_EHTYPE_\$_NSException", // typeinfo for NSException*
+                int8TypePtr,
+                origin = context.stdlibModule.llvmSymbolOrigin
+        )).bitcast(int8TypePtr)
+    }
 
     //-------------------------------------------------------------------------//
 

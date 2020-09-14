@@ -18,7 +18,13 @@ fun exc_handler(x: Any?) : Unit {
 }
 
 fun main() {
+    // This does not work anymore, as NSException propagated as ForeignException
+    // so we got `Uncaught Kotlin exception` instead. Use normal try/catch.
     objc_setUncaughtExceptionHandler(staticCFunction(::exc_handler))
 
-    println(NSJSONSerialization())
+    try {
+        println(NSJSONSerialization())
+    } catch (e: Exception) { // ForeignException expected
+        println(e)
+    }
 }

@@ -31,3 +31,22 @@ class KonanExternalToolFailure(message: String, val toolName: String, cause: Thr
  */
 class MissingXcodeException(message: String, cause: Throwable? = null) : KonanException(message, cause)
 
+/**
+ * Native exception handling in Kotlin: terminate, wrap, etc.
+ * Foreign exceptionMode mode is per library option: controlled by cinterop command-line option or def file property
+ * than stored in klib manifest and used by compiler to generate appropriate handler.
+ */
+class ForeignExceptionMode {
+    companion object {
+        val manifestKey = "foreignExceptionMode"
+        val default = Mode.TERMINATE
+        fun byValue(value: String?): Mode = value?.let {
+            Mode.values().find { it.value == value }
+                    ?: throw IllegalArgumentException("Illegal ForeignExceptionMode $value")
+        } ?: default
+    }
+    enum class Mode(val value: String) {
+        TERMINATE("terminate"),
+        OBJC_WRAP("objc-wrap")
+    }
+}

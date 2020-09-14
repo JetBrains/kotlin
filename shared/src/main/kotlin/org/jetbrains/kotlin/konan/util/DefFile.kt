@@ -113,6 +113,11 @@ class DefFile(val file:File?, val config:DefFileConfig, val manifestAddendProper
         val disableDesignatedInitializerChecks by lazy {
             properties.getProperty("disableDesignatedInitializerChecks")?.toBoolean() ?: false
         }
+
+        val foreignExceptionMode by lazy {
+            properties.getProperty("foreignExceptionMode")
+        }
+
     }
 }
 
