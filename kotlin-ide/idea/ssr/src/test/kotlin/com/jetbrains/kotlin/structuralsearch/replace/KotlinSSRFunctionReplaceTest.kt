@@ -2,7 +2,7 @@ package com.jetbrains.kotlin.structuralsearch.replace
 
 import com.jetbrains.kotlin.structuralsearch.KotlinSSRReplaceTest
 
-class KotlinFunctionReplaceTest : KotlinSSRReplaceTest() {
+class KotlinSSRFunctionReplaceTest : KotlinSSRReplaceTest() {
     fun testVisibilityModifierCopy() {
         doTest(
             searchPattern = "fun '_ID('_PARAM*)",
@@ -21,7 +21,7 @@ class KotlinFunctionReplaceTest : KotlinSSRReplaceTest() {
         )
     }
 
-    fun testVisibilityModifierReplacement() {
+    fun testVisibilityModifierReplace() {
         doTest(
             searchPattern = "public fun '_ID('_PARAM*)",
             replacePattern = "private fun '_ID('_PARAM)",

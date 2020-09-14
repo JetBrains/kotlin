@@ -2,7 +2,7 @@ package com.jetbrains.kotlin.structuralsearch.replace
 
 import com.jetbrains.kotlin.structuralsearch.KotlinSSRReplaceTest
 
-class KotlinClassReplaceTest : KotlinSSRReplaceTest() {
+class KotlinSSRClassReplaceTest : KotlinSSRReplaceTest() {
     fun testClassModifierReplacement() {
         doTest(
             searchPattern = "public class '_ID('_PARAM : '_TYPE)",

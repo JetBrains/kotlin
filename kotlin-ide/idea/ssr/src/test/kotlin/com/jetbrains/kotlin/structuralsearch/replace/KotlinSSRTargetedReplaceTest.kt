@@ -2,7 +2,7 @@ package com.jetbrains.kotlin.structuralsearch.replace
 
 import com.jetbrains.kotlin.structuralsearch.KotlinSSRReplaceTest
 
-class KotlinTargetedReplaceTest : KotlinSSRReplaceTest() {
+class KotlinSSRTargetedReplaceTest : KotlinSSRReplaceTest() {
     fun testTargetedField() {
         doTest(
             searchPattern = """
