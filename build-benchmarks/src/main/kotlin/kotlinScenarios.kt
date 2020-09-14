@@ -68,6 +68,7 @@ fun kotlinBenchmarks() =
             step {
                 runTasks(Tasks.KOTLIN_GRADLE_PLUGIN_TEST)
             }
+            repeat = 5U
         }
 
         scenario("Run gradle plugin tests after changes") {
@@ -76,6 +77,7 @@ fun kotlinBenchmarks() =
                 changeFile(kotlinGradlePluginConfigurationPhaseAware, TypeOfChange.ADD_PRIVATE_FUNCTION)
                 runTasks(Tasks.KOTLIN_GRADLE_PLUGIN_TEST)
             }
+            repeat = 5U
         }
 
         scenario("(non-leaf, core) add private function") {
