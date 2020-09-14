@@ -45,9 +45,8 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
         // Do-while has a specific scope structure (its block and condition effectively share the scope)
         return withNewLocalScope {
             doWhileLoop.also(dataFlowAnalyzer::enterDoWhileLoop)
-                .apply {
-                    transformer.expressionsTransformer.transformBlockInCurrentScope(block, context)
-                    dataFlowAnalyzer
+                .also {
+                    transformer.expressionsTransformer.transformBlockInCurrentScope(it.block, context)
                 }
                 .also(dataFlowAnalyzer::enterDoWhileLoopCondition).transformCondition(transformer, context)
                 .also(dataFlowAnalyzer::exitDoWhileLoop)
@@ -140,7 +139,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
             return tryExpression.compose()
         }
 
-        tryExpression.annotations.forEach { it.accept(this, data) }
+        tryExpression.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
         dataFlowAnalyzer.enterTryExpression(tryExpression)
         tryExpression.transformTryBlock(transformer, ResolutionMode.ContextDependent)
         dataFlowAnalyzer.exitTryMainBlock(tryExpression)
@@ -211,7 +210,10 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
 
     // ------------------------------- Elvis -------------------------------
 
-    override fun transformElvisExpression(elvisExpression: FirElvisExpression, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+    override fun transformElvisExpression(
+        elvisExpression: FirElvisExpression,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
         if (elvisExpression.calleeReference is FirResolvedNamedReference) return elvisExpression.compose()
         elvisExpression.transformAnnotations(transformer, data)
         elvisExpression.transformLhs(transformer, ResolutionMode.ContextDependent)

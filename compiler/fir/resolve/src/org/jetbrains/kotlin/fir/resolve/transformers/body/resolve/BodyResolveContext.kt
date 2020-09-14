@@ -70,9 +70,7 @@ class BodyResolveContext(
     @OptIn(PrivateForInline::class)
     inline fun <T> withNewTowerDataForClassParts(newContexts: FirTowerDataContextsForClassParts, f: () -> T): T {
         val old = towerDataContextsForClassParts
-
         towerDataContextsForClassParts = newContexts
-
         return try {
             f()
         } finally {
@@ -180,7 +178,7 @@ class BodyResolveContext(
     fun createSnapshotForLocalClasses(
         returnTypeCalculator: ReturnTypeCalculator,
         targetedLocalClasses: Set<FirClass<*>>
-    ) = BodyResolveContext(returnTypeCalculator, dataFlowAnalyzerContext, targetedLocalClasses, outerLocalClassForNested).apply {
+    ): BodyResolveContext = BodyResolveContext(returnTypeCalculator, dataFlowAnalyzerContext, targetedLocalClasses, outerLocalClassForNested).apply {
         file = this@BodyResolveContext.file
         towerDataContextForAnonymousFunctions.putAll(this@BodyResolveContext.towerDataContextForAnonymousFunctions)
         containers = this@BodyResolveContext.containers
