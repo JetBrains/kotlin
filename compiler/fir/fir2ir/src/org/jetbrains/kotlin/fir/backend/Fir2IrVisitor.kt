@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class Fir2IrVisitor(
     private val converter: Fir2IrConverter,
@@ -567,7 +568,18 @@ class Fir2IrVisitor(
             null -> null
             is FirResolvedQualifier -> callGenerator.convertToGetObject(expression, callableReferenceMode)
             is FirExpressionWithSmartcast -> convertToImplicitCastExpression(expression, calleeReference)
-            else -> convertToIrExpression(expression)
+            is FirFunctionCall, is FirThisReceiverExpression, is FirCallableReferenceAccess -> convertToIrExpression(expression)
+            else -> if (expression is FirQualifiedAccessExpression && expression.explicitReceiver == null) {
+                val variableAsFunctionMode = calleeReference is FirResolvedNamedReference &&
+                        calleeReference.name != OperatorNameConventions.INVOKE &&
+                        (calleeReference.resolvedSymbol as? FirCallableSymbol)?.callableId?.callableName == OperatorNameConventions.INVOKE
+                callGenerator.convertToIrCall(
+                    expression, expression.typeRef, explicitReceiverExpression = null,
+                    variableAsFunctionMode = variableAsFunctionMode
+                )
+            } else {
+                convertToIrExpression(expression)
+            }
         }
     }
 

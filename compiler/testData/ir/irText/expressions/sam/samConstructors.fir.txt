@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/samConstructors.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (a: kotlin.Function0<kotlin.Unit>): java.lang.Runnable declared in <root>'
         TYPE_OP type=java.lang.Runnable origin=SAM_CONVERSION typeOperand=java.lang.Runnable
-          GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test2' type=kotlin.Function0<kotlin.Unit> origin=VARIABLE_AS_FUNCTION
+          GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test2' type=kotlin.Function0<kotlin.Unit> origin=null
   FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
   FUN name:test3 visibility:public modality:FINAL <> () returnType:java.lang.Runnable

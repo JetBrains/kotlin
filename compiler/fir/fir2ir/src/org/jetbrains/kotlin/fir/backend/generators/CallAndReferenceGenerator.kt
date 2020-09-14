@@ -159,7 +159,8 @@ class CallAndReferenceGenerator(
         qualifiedAccess: FirQualifiedAccess,
         typeRef: FirTypeRef,
         explicitReceiverExpression: IrExpression?,
-        annotationMode: Boolean = false
+        annotationMode: Boolean = false,
+        variableAsFunctionMode: Boolean = false
     ): IrExpression {
         try {
             val type = typeRef.toIrType()
@@ -186,7 +187,7 @@ class CallAndReferenceGenerator(
                             startOffset, endOffset, type, symbol,
                             typeArgumentsCount = symbol.owner.typeParameters.size,
                             valueArgumentsCount = symbol.owner.valueParameters.size,
-                            origin = qualifiedAccess.calleeReference.statementOrigin(session),
+                            origin = qualifiedAccess.calleeReference.statementOrigin(),
                             superQualifierSymbol = dispatchReceiver.superQualifierSymbol(symbol)
                         )
                     }
@@ -227,7 +228,8 @@ class CallAndReferenceGenerator(
                     )
                     is IrValueSymbol -> IrGetValueImpl(
                         startOffset, endOffset, type, symbol,
-                        origin = qualifiedAccess.calleeReference.statementOrigin(session)
+                        origin = if (variableAsFunctionMode) IrStatementOrigin.VARIABLE_AS_FUNCTION
+                        else qualifiedAccess.calleeReference.statementOrigin()
                     )
                     is IrEnumEntrySymbol -> IrGetEnumValueImpl(startOffset, endOffset, type, symbol)
                     else -> generateErrorCallExpression(startOffset, endOffset, qualifiedAccess.calleeReference, type)
@@ -235,8 +237,10 @@ class CallAndReferenceGenerator(
             }.applyCallArguments(qualifiedAccess as? FirCall, annotationMode)
                 .applyTypeArguments(qualifiedAccess).applyReceivers(qualifiedAccess, explicitReceiverExpression)
         } catch (e: Throwable) {
-            throw IllegalStateException("Error while translating ${qualifiedAccess.render()} " +
-                                                "from file ${conversionScope.containingFileIfAny()?.name ?: "???"} to BE IR", e)
+            throw IllegalStateException(
+                "Error while translating ${qualifiedAccess.render()} " +
+                        "from file ${conversionScope.containingFileIfAny()?.name ?: "???"} to BE IR", e
+            )
         }
     }
 
