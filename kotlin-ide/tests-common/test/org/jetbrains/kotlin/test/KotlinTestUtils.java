@@ -64,6 +64,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -100,11 +101,6 @@ public class KotlinTestUtils {
         return KotlinCoreEnvironment.createForTests(
                 disposable, newConfiguration(configurationKind, jdkKind, KotlinArtifacts.getInstance().getJetbrainsAnnotations()), EnvironmentConfigFiles.JVM_CONFIG_FILES
         );
-    }
-
-    @NotNull
-    public static String getTestDataPathBase() {
-        return new File(KotlinRoot.DIR, "compiler/testData").getPath();
     }
 
     @NotNull
@@ -402,7 +398,7 @@ public class KotlinTestUtils {
                 int firstLineEnd = text.indexOf('\n');
                 return StringUtil.trimTrailing(text.substring(firstLineEnd + 1));
             }
-        }, "");
+        });
 
         Assert.assertEquals("Exactly two files expected: ", 2, files.size());
 
@@ -490,7 +486,7 @@ public class KotlinTestUtils {
         JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
         DiagnosticCollector<JavaFileObject> diagnosticCollector = new DiagnosticCollector<>();
         try (StandardJavaFileManager fileManager =
-                     javaCompiler.getStandardFileManager(diagnosticCollector, Locale.ENGLISH, Charset.forName("utf-8"))) {
+                     javaCompiler.getStandardFileManager(diagnosticCollector, Locale.ENGLISH, StandardCharsets.UTF_8)) {
             Iterable<? extends JavaFileObject> javaFileObjectsFromFiles = fileManager.getJavaFileObjectsFromFiles(files);
 
             JavaCompiler.CompilationTask task = javaCompiler.getTask(

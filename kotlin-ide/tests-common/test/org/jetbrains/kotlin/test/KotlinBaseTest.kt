@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.test
 
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableMap
-import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings
 import org.jetbrains.kotlin.checkers.parseLanguageVersionSettings
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -23,29 +22,10 @@ import java.util.*
 import java.util.regex.Pattern
 
 abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() {
-
-    @JvmField
-    protected var coroutinesPackage: String = ""
-
-    @Throws(Exception::class)
-    override fun setUp() {
-        coroutinesPackage = ""
-        super.setUp()
-    }
-
-    @Throws(java.lang.Exception::class)
-    protected open fun doTestWithCoroutinesPackageReplacement(filePath: String, coroutinesPackage: String) {
-        this.coroutinesPackage = coroutinesPackage
-        doTest(filePath)
-    }
-
     @Throws(java.lang.Exception::class)
     protected open fun doTest(filePath: String) {
         val file = File(filePath)
-        var expectedText = KotlinTestUtils.doLoadFile(file)
-        if (coroutinesPackage.isNotEmpty()) {
-            expectedText = expectedText.replace("COROUTINES_PACKAGE", coroutinesPackage)
-        }
+        val expectedText = KotlinTestUtils.doLoadFile(file)
         doMultiFileTest(file, createTestFilesFromFile(file, expectedText))
     }
 
@@ -82,7 +62,6 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
         updateConfigurationByDirectivesInTestFiles(
             testFilesWithConfigurationDirectives,
             configuration,
-            coroutinesPackage,
             parseDirectivesPerFiles()
         )
         updateConfiguration(configuration)
@@ -184,11 +163,9 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
         private fun updateConfigurationByDirectivesInTestFiles(
             testFilesWithConfigurationDirectives: List<TestFile>,
             configuration: CompilerConfiguration,
-            coroutinesPackage: String,
             usePreparsedDirectives: Boolean
         ) {
             var explicitLanguageVersionSettings: LanguageVersionSettings? = null
-            var disableReleaseCoroutines = false
             var includeCompatExperimentalCoroutines = false
             val kotlinConfigurationFlags: MutableList<String> = ArrayList(0)
             for (testFile in testFilesWithConfigurationDirectives) {
@@ -218,10 +195,6 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
                 }
                 if (directives.contains("COMMON_COROUTINES_TEST")) {
                     assert(!directives.contains("COROUTINES_PACKAGE")) { "Must replace COROUTINES_PACKAGE prior to tests compilation" }
-                    if (DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString() == coroutinesPackage) {
-                        disableReleaseCoroutines = true
-                        includeCompatExperimentalCoroutines = true
-                    }
                 }
                 if (content.contains(DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString())) {
                     includeCompatExperimentalCoroutines = true
@@ -232,16 +205,11 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
                     explicitLanguageVersionSettings = fileLanguageVersionSettings
                 }
             }
-            if (disableReleaseCoroutines) {
-                explicitLanguageVersionSettings = CompilerTestLanguageVersionSettings(
-                    Collections.singletonMap(LanguageFeature.ReleaseCoroutines, LanguageFeature.State.DISABLED),
-                    ApiVersion.LATEST_STABLE,
-                    LanguageVersion.LATEST_STABLE, emptyMap()
-                )
-            }
+
             if (includeCompatExperimentalCoroutines) {
                 configuration.addJvmClasspathRoot(KotlinArtifacts.instance.kotlinCoroutinesExperimentalCompat)
             }
+
             if (explicitLanguageVersionSettings != null) {
                 configuration.languageVersionSettings = explicitLanguageVersionSettings
             }

@@ -43,7 +43,7 @@ abstract class LowLevelDebuggerTestBase : CodegenTestCase() {
 
         loadMultiFiles(files)
         val classBuilderFactory = OriginCollectingClassBuilderFactory(ClassBuilderMode.FULL)
-        val generationState = GenerationUtils.compileFiles(myFiles.psiFiles, myEnvironment, classBuilderFactory)
+        val generationState = GenerationUtils.compileFiles(myFiles, myEnvironment, classBuilderFactory)
         classFileFactory = generationState.factory
 
         val tempDirForTest = Files.createTempDirectory("debuggerTest").toFile()

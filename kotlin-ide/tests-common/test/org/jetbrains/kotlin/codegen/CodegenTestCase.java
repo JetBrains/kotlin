@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.codegen;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.testFramework.TestDataFile;
 import kotlin.collections.ArraysKt;
 import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
@@ -31,24 +29,13 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.TestFile> {
-    private static final String DEFAULT_TEST_FILE_NAME = "a_test";
-
     protected KotlinCoreEnvironment myEnvironment;
-    protected CodegenTestFiles myFiles;
+    protected List<KtFile> myFiles;
     protected ClassFileFactory classFileFactory;
     protected GeneratedClassLoader initializedClassLoader;
 
     protected final void createEnvironmentWithMockJdkAndIdeaAnnotations(
             @NotNull ConfigurationKind configurationKind,
-            @NotNull File... javaSourceRoots
-    ) {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(configurationKind, Collections.emptyList(), TestJdkKind.MOCK_JDK, javaSourceRoots);
-    }
-
-    protected final void createEnvironmentWithMockJdkAndIdeaAnnotations(
-            @NotNull ConfigurationKind configurationKind,
-            @NotNull List<TestFile> testFilesWithConfigurationDirectives,
-            @NotNull TestJdkKind testJdkKind,
             @NotNull File... javaSourceRoots
     ) {
         if (myEnvironment != null) {
@@ -57,11 +44,11 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
 
         CompilerConfiguration configuration = createConfiguration(
                 configurationKind,
-                testJdkKind,
+                TestJdkKind.MOCK_JDK,
                 getBackend(),
                 Collections.singletonList(KotlinArtifacts.getInstance().getJetbrainsAnnotations()),
                 ArraysKt.filterNotNull(javaSourceRoots),
-                testFilesWithConfigurationDirectives
+                Collections.emptyList()
         );
 
         myEnvironment = KotlinCoreEnvironment.createForTests(
@@ -83,39 +70,12 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         super.tearDown();
     }
 
-    protected void loadText(@NotNull String text) {
-        myFiles = CodegenTestFiles.create(DEFAULT_TEST_FILE_NAME + ".kt", text, myEnvironment.getProject());
-    }
-
-    @NotNull
-    protected String loadFile(@NotNull @TestDataFile String name) {
-        return loadFileByFullPath(KotlinTestUtils.getTestDataPathBase() + "/codegen/" + name);
-    }
-
-    @NotNull
-    protected String loadFileByFullPath(@NotNull String fullPath) {
-        try {
-            File file = new File(fullPath);
-            String content = FileUtil.loadFile(file, Charsets.UTF_8.name(), true);
-            assert myFiles == null : "Should not initialize myFiles twice";
-            myFiles = CodegenTestFiles.create(file.getName(), content, myEnvironment.getProject());
-            return content;
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    protected void loadFile() {
-        loadFile(getPrefix() + "/" + getTestName(true) + ".kt");
-    }
-
     protected void loadMultiFiles(@NotNull List<TestFile> files) {
         myFiles = loadMultiFiles(files, myEnvironment.getProject());
     }
 
     @NotNull
-    public static CodegenTestFiles loadMultiFiles(@NotNull List<TestFile> files, @NotNull Project project) {
+    public static List<KtFile> loadMultiFiles(@NotNull List<TestFile> files, @NotNull Project project) {
         Collections.sort(files);
 
         List<KtFile> ktFiles = new ArrayList<>(files.size());
@@ -127,24 +87,11 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
             }
         }
 
-        return CodegenTestFiles.create(ktFiles);
+        return ktFiles;
     }
 
     @NotNull
-    protected String codegenTestBasePath() {
-        return "compiler/testData/codegen/";
-    }
-
-    @NotNull
-    protected String relativePath(@NotNull File file) {
-        return FilesKt.toRelativeString(file.getAbsoluteFile(), new File(codegenTestBasePath()).getAbsoluteFile());
-    }
-
-    @NotNull
-    protected String getPrefix() {
-        throw new UnsupportedOperationException();
-    }
-
+    @Override
     protected TargetBackend getBackend() {
         return TargetBackend.JVM;
     }
@@ -154,43 +101,31 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         File file = new File(filePath);
 
         String expectedText = KotlinTestUtils.doLoadFile(file);
-        if (!coroutinesPackage.isEmpty()) {
-            expectedText = expectedText.replace("COROUTINES_PACKAGE", coroutinesPackage);
-        }
-
         List<TestFile> testFiles = createTestFilesFromFile(file, expectedText);
 
         doMultiFileTest(file, testFiles);
     }
 
     @Override
-    protected void doTestWithCoroutinesPackageReplacement(@NotNull String filePath, @NotNull String packageName) throws Exception {
-        this.coroutinesPackage = packageName;
-        doTest(filePath);
-    }
-
-    @Override
     @NotNull
     protected List<TestFile> createTestFilesFromFile(@NotNull File file, @NotNull String expectedText) {
-        return createTestFilesFromFile(file, expectedText, coroutinesPackage, parseDirectivesPerFiles(), getBackend());
+        return createTestFilesFromFile(file, expectedText, parseDirectivesPerFiles(), getBackend());
     }
 
     @NotNull
     public static List<TestFile> createTestFilesFromFile(
             @NotNull File file,
             @NotNull String expectedText,
-            @NotNull String coroutinesPackage,
             boolean parseDirectivesPerFiles,
             @NotNull TargetBackend backend
     ) {
-        List<TestFile> testFiles =
-                TestFiles.createTestFiles(file.getName(), expectedText, new TestFiles.TestFileFactoryNoModules<TestFile>() {
-                    @NotNull
-                    @Override
-                    public TestFile create(@NotNull String fileName, @NotNull String text, @NotNull Directives directives) {
-                        return new TestFile(fileName, text, directives);
-                    }
-                }, false, coroutinesPackage, parseDirectivesPerFiles);
+        List<TestFile> testFiles = TestFiles.createTestFiles(file.getName(), expectedText, new TestFiles.TestFileFactoryNoModules<>() {
+            @NotNull
+            @Override
+            public TestFile create(@NotNull String fileName, @NotNull String text, @NotNull Directives directives) {
+                return new TestFile(fileName, text, directives);
+            }
+        }, false, parseDirectivesPerFiles);
         if (InTextDirectivesUtils.isDirectiveDefined(expectedText, "WITH_HELPERS")) {
             testFiles.add(new TestFile("CodegenTestHelpers.kt", TestHelperGeneratorKt.createTextForCodegenTestHelpers(backend)));
         }
