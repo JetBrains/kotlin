@@ -884,6 +884,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/jsitter/fleet.jsitter.iml" filepath="$PROJECT_DIR$/intellij/fleet/jsitter/fleet.jsitter.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/plugins/go/fleet.language.go.iml" filepath="$PROJECT_DIR$/intellij/fleet/plugins/go/fleet.language.go.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/plugins/java/fleet.language.java.iml" filepath="$PROJECT_DIR$/intellij/fleet/plugins/java/fleet.language.java.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/fleet/plugins/javascript/fleet.language.javascript.iml" filepath="$PROJECT_DIR$/intellij/fleet/plugins/javascript/fleet.language.javascript.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/plugins/json/fleet.language.json.iml" filepath="$PROJECT_DIR$/intellij/fleet/plugins/json/fleet.language.json.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/plugins/kotlin/fleet.language.kotlin.iml" filepath="$PROJECT_DIR$/intellij/fleet/plugins/kotlin/fleet.language.kotlin.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/plugins/markdown/fleet.language.markdown.iml" filepath="$PROJECT_DIR$/intellij/fleet/plugins/markdown/fleet.language.markdown.iml" />
@@ -1885,8 +1886,8 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/rplugin/ide/pc/intellij.r.ide.pc.main.iml" filepath="$PROJECT_DIR$/intellij/rplugin/ide/pc/intellij.r.ide.pc.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/rplugin/ide/py/intellij.r.ide.py.main.iml" filepath="$PROJECT_DIR$/intellij/rplugin/ide/py/intellij.r.ide.py.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/rplugin/plugin/intellij.r.plugin.iml" filepath="$PROJECT_DIR$/intellij/rplugin/plugin/intellij.r.plugin.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/rplugin/plugin/intellij.r.plugin.ds.iml" filepath="$PROJECT_DIR$/intellij/rplugin/plugin/intellij.r.plugin.ds.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/rplugin/plugin/build/intellij.r.plugin.build.iml" filepath="$PROJECT_DIR$/intellij/rplugin/plugin/build/intellij.r.plugin.build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/rplugin/plugin/intellij.r.plugin.ds.iml" filepath="$PROJECT_DIR$/intellij/rplugin/plugin/intellij.r.plugin.ds.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/rplugin/python/intellij.r.python.iml" filepath="$PROJECT_DIR$/intellij/rplugin/python/intellij.r.python.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/rplugin/ultimate/intellij.r.ultimate.iml" filepath="$PROJECT_DIR$/intellij/rplugin/ultimate/intellij.r.ultimate.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/rplugin/ultimate/tests/intellij.r.ultimate.tests.iml" filepath="$PROJECT_DIR$/intellij/rplugin/ultimate/tests/intellij.r.ultimate.tests.iml" />
@@ -1953,6 +1954,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/ruby/intellij.rubymine.iml" filepath="$PROJECT_DIR$/intellij/ruby/intellij.rubymine.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/ruby/intellij.rubymine.customization.iml" filepath="$PROJECT_DIR$/intellij/ruby/intellij.rubymine.customization.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/ruby/intellij.rubymine.main.iml" filepath="$PROJECT_DIR$/intellij/ruby/intellij.rubymine.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/safe-push/intellij.safe.push.iml" filepath="$PROJECT_DIR$/intellij/plugins/safe-push/intellij.safe.push.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/sass/intellij.sass.iml" filepath="$PROJECT_DIR$/intellij/plugins/sass/intellij.sass.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/frameworks/selenium/selenium/intellij.selenium.iml" filepath="$PROJECT_DIR$/intellij/plugins/frameworks/selenium/selenium/intellij.selenium.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/frameworks/selenium/selenium-docker/intellij.selenium.docker.iml" filepath="$PROJECT_DIR$/intellij/plugins/frameworks/selenium/selenium-docker/intellij.selenium.docker.iml" />
@@ -2117,7 +2119,6 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/yaml/intellij.yaml.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/yaml/intellij.yaml.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/Yeoman/intellij.yeoman.iml" filepath="$PROJECT_DIR$/intellij/plugins/Yeoman/intellij.yeoman.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/zkm/intellij.zkm.iml" filepath="$PROJECT_DIR$/intellij/plugins/zkm/intellij.zkm.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/safe-push/intellij.safe.push.iml" filepath="$PROJECT_DIR$/intellij/plugins/safe-push/intellij.safe.push.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin-ultimate/cidr-gradle-tooling/kotlin-ultimate.cidr-gradle-tooling.iml" filepath="$PROJECT_DIR$/kotlin-ultimate/cidr-gradle-tooling/kotlin-ultimate.cidr-gradle-tooling.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin-ultimate/common-cidr-mobile/kotlin-ultimate.common-cidr-mobile.iml" filepath="$PROJECT_DIR$/kotlin-ultimate/common-cidr-mobile/kotlin-ultimate.common-cidr-mobile.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin-ultimate/common-cidr-native/kotlin-ultimate.common-cidr-native.iml" filepath="$PROJECT_DIR$/kotlin-ultimate/common-cidr-native/kotlin-ultimate.common-cidr-native.iml" />
