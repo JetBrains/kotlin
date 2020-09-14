@@ -69,3 +69,51 @@ fun Properties.keepOnlyDefaultProfiles() {
     // TODO: it actually affects only resolution made in :dependencies,
     // that's why we assume that 'default' profile comes first (and check this above).
 }
+
+
+/**
+ * Wraps [propertyList] with resolving mechanism. See [String.resolveValue].
+ */
+fun Properties.resolvablePropertyList(
+    key: String, suffix: String? = null, escapeInQuotes: Boolean = false,
+    visitedProperties: MutableSet<String> = mutableSetOf()
+): List<String> = propertyList(key, suffix, escapeInQuotes).flatMap {
+    // We need to create a copy of a visitedProperties to avoid collisions
+    // between different elements of the list.
+    it.resolveValue(this, visitedProperties.toMutableSet())
+}
+
+/**
+ * Wraps [propertyString] with resolving mechanism. See [String.resolveValue].
+ */
+fun Properties.resolvablePropertyString(
+    key: String, suffix: String? = null,
+    visitedProperties: MutableSet<String> = mutableSetOf()
+): String? = propertyString(key, suffix)
+    ?.split(' ')
+    ?.flatMap { it.resolveValue(this, visitedProperties) }
+    ?.joinToString(" ")
+
+/**
+ * Adds trivial symbol resolving mechanism to properties files.
+ *
+ * Given the following properties file:
+ *
+ *      key0 = value1 value2
+ *      key1 = value3 $key0
+ *      key2 = $key1
+ *
+ * "$key1".resolveValue(properties) will return List("value3", "value1", "value2")
+ */
+private fun String.resolveValue(properties: Properties, visitedProperties: MutableSet<String> = mutableSetOf()): List<String> =
+    when {
+        startsWith("$") -> {
+            val property = this.substringAfter('$')
+            // Keep track of visited properties to avoid running in circles.
+            if (!visitedProperties.add(property)) {
+                error("Circular dependency: ${visitedProperties.joinToString()}")
+            }
+            properties.resolvablePropertyList(property, visitedProperties = visitedProperties)
+        }
+        else -> listOf(this)
+    }
