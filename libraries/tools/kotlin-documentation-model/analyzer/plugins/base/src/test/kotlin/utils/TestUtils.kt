@@ -52,8 +52,8 @@ fun TagWrapper.text(): String = when (val t = this) {
 fun DocTag.text(): String = when (val t = this) {
     is Text -> t.body
     is Code -> t.children.joinToString("\n") { it.text() }
-    is P -> t.children.joinToString(separator = "\n") { it.text() }
-    else -> t.toString()
+    is P -> t.children.joinToString("") { it.text() } + "\n"
+    else -> t.children.joinToString("") { it.text() }
 }
 
 fun <T : Documentable> T?.comments(): String = docs().map { it.text() }

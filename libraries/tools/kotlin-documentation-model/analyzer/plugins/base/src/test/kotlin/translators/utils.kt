@@ -7,7 +7,7 @@ import java.util.NoSuchElementException
 
 fun DModule.documentationOf(className: String, functionName: String? = null): String =
     descriptionOf(className, functionName)
-        ?.firstChildOfType<Text>()
+        ?.firstMemberOfType<Text>()
         ?.body.orEmpty()
 
 fun DModule.descriptionOf(className: String, functionName: String? = null): Description? {
