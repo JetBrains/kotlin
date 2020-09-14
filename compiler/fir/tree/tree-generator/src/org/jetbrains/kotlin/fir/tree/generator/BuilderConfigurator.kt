@@ -325,7 +325,8 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             expression to "FirExpressionStub",
             varargArgumentsExpression,
             checkedSafeCallSubject,
-            safeCallExpression
+            safeCallExpression,
+            arrayOfCall
         )
         elementsWithDefaultTypeRef.forEach {
             val (element, name) = when (it) {
