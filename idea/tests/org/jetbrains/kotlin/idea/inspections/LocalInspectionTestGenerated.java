@@ -8269,6 +8269,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/function/returnNullableFromLambdaInSingleExpressionBody.kt");
             }
 
+            @TestMetadata("returnNullableInElvis.kt")
+            public void testReturnNullableInElvis() throws Exception {
+                runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/function/returnNullableInElvis.kt");
+            }
+
             @TestMetadata("singleExpressionBody.kt")
             public void testSingleExpressionBody() throws Exception {
                 runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/function/singleExpressionBody.kt");
@@ -8310,6 +8315,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("returnNullableFromLambdaInGetter.kt")
             public void testReturnNullableFromLambdaInGetter() throws Exception {
                 runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/property/returnNullableFromLambdaInGetter.kt");
+            }
+
+            @TestMetadata("returnNullableInElvis.kt")
+            public void testReturnNullableInElvis() throws Exception {
+                runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/property/returnNullableInElvis.kt");
             }
 
             @TestMetadata("var.kt")
