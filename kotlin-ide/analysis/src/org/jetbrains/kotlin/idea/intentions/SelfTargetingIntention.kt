@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInspection.IntentionWrapper
+import com.intellij.codeInspection.util.IntentionFamilyName
+import com.intellij.codeInspection.util.IntentionName
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -15,7 +17,6 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.annotations.Nls
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.psi.CREATE_BY_PATTERN_MAY_NOT_REFORMAT
 import org.jetbrains.kotlin.psi.KtBlockExpression
@@ -26,30 +27,30 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 @Suppress("EqualsOrHashCode")
 abstract class SelfTargetingIntention<TElement : PsiElement>(
     val elementType: Class<TElement>,
-    @Nls private var textGetter: () -> String,
-    @Nls private val familyNameGetter: () -> String = textGetter,
+    private var textGetter: () -> @IntentionName String,
+    private val familyNameGetter: () -> @IntentionFamilyName String = textGetter,
 ) : IntentionAction {
     @Deprecated("Replace with primary constructor", ReplaceWith("SelfTargetingIntention<TElement>(elementType, { text }, { familyName })"))
     constructor(
         elementType: Class<TElement>,
-        @Nls text: String,
-        @Nls familyName: String = text,
+        text: @IntentionName String,
+        familyName: @IntentionFamilyName String = text,
     ) : this(elementType, { text }, { familyName })
 
-    protected val defaultText: String get() = defaultTextGetter()
-    protected val defaultTextGetter: () -> String = textGetter
+    protected val defaultText: @IntentionName String get() = defaultTextGetter()
+    protected val defaultTextGetter: () -> @IntentionName String = textGetter
 
     @Deprecated("Replace with `setTextGetter`", ReplaceWith("setTextGetter { text }"))
-    protected fun setText(@Nls text: String) {
+    protected fun setText(@IntentionName text: String) {
         this.textGetter = { text }
     }
 
-    protected fun setTextGetter(@Nls textGetter: () -> String) {
+    protected fun setTextGetter(textGetter: () -> @IntentionName String) {
         this.textGetter = textGetter
     }
 
-    final override fun getText() = textGetter()
-    final override fun getFamilyName() = familyNameGetter()
+    final override fun getText(): @IntentionName String = textGetter()
+    final override fun getFamilyName(): @IntentionFamilyName String = familyNameGetter()
 
     abstract fun isApplicableTo(element: TElement, caretOffset: Int): Boolean
 
@@ -130,8 +131,8 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
 
 abstract class SelfTargetingRangeIntention<TElement : PsiElement>(
     elementType: Class<TElement>,
-    @Nls textGetter: () -> String,
-    @Nls familyNameGetter: () -> String = textGetter,
+    textGetter: () -> @IntentionName String,
+    familyNameGetter: () -> @IntentionFamilyName String = textGetter,
 ) : SelfTargetingIntention<TElement>(elementType, textGetter, familyNameGetter) {
 
     @Deprecated(
@@ -140,8 +141,8 @@ abstract class SelfTargetingRangeIntention<TElement : PsiElement>(
     )
     constructor(
         elementType: Class<TElement>,
-        @Nls text: String,
-        @Nls familyName: String = text,
+        text: @IntentionName String,
+        familyName: @IntentionFamilyName String = text,
     ) : this(elementType, { text }, { familyName })
 
     abstract fun applicabilityRange(element: TElement): TextRange?
@@ -154,8 +155,8 @@ abstract class SelfTargetingRangeIntention<TElement : PsiElement>(
 
 abstract class SelfTargetingOffsetIndependentIntention<TElement : KtElement>(
     elementType: Class<TElement>,
-    @Nls textGetter: () -> String,
-    @Nls familyNameGetter: () -> String = textGetter,
+    textGetter: () -> @IntentionName String,
+    familyNameGetter: () -> @IntentionFamilyName String = textGetter,
 ) : SelfTargetingRangeIntention<TElement>(elementType, textGetter, familyNameGetter) {
 
     @Deprecated(
@@ -164,8 +165,8 @@ abstract class SelfTargetingOffsetIndependentIntention<TElement : KtElement>(
     )
     constructor(
         elementType: Class<TElement>,
-        @Nls text: String,
-        @Nls familyName: String = text,
+        text: @IntentionName String,
+        familyName: @IntentionFamilyName String = text,
     ) : this(elementType, { text }, { familyName })
 
     abstract fun isApplicableTo(element: TElement): Boolean
