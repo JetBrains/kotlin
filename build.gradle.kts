@@ -961,7 +961,7 @@ val zipPlugin by task<Zip> {
     setExecutablePermissions()
 
     doLast {
-        logger.lifecycle("Plugin artifacts packed to $archiveFile")
+        logger.lifecycle("Plugin artifacts packed to ${archiveFile.get()}")
     }
 }
 
