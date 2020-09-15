@@ -524,7 +524,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
         renderFlagsList(
             "vararg".takeIf { varargElementType != null },
             "crossinline".takeIf { isCrossinline },
-            "noinline".takeIf { isNoinline }
+            "noinline".takeIf { isNoinline },
         )
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?): String =

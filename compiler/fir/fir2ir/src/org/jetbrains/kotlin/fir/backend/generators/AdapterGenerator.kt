@@ -274,7 +274,8 @@ internal class AdapterGenerator(
                 type,
                 varargElementType = null,
                 isCrossinline = false,
-                isNoinline = false
+                isNoinline = false,
+                isAssignable = false
             ).also { irAdapterValueParameter ->
                 descriptor.bind(irAdapterValueParameter)
                 irAdapterValueParameter.parent = adapterFunction

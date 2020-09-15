@@ -126,7 +126,8 @@ fun IrValueParameter.copyTo(
     varargElementType: IrType? = this.varargElementType, // TODO: remapTypeParameters here as well
     defaultValue: IrExpressionBody? = this.defaultValue,
     isCrossinline: Boolean = this.isCrossinline,
-    isNoinline: Boolean = this.isNoinline
+    isNoinline: Boolean = this.isNoinline,
+    isAssignable: Boolean = this.isAssignable
 ): IrValueParameter {
     val descriptor = if (index < 0) {
         WrappedReceiverParameterDescriptor()
@@ -143,7 +144,7 @@ fun IrValueParameter.copyTo(
     }
     return factory.createValueParameter(
         startOffset, endOffset, origin, symbol,
-        name, index, type, varargElementType, isCrossinline, isNoinline
+        name, index, type, varargElementType, isCrossinline, isNoinline, isAssignable = isAssignable
     ).also {
         descriptor.bind(it)
         it.parent = irFunction
@@ -171,7 +172,7 @@ fun IrFunction.copyReceiverParametersFrom(from: IrFunction) {
             startOffset, endOffset, origin,
             IrValueParameterSymbolImpl(newDescriptor),
             name,
-            index, type, varargElementType, isCrossinline, isNoinline
+            index, type, varargElementType, isCrossinline, isNoinline, false
         ).also { parameter ->
             parameter.parent = this@copyReceiverParametersFrom
             newDescriptor.bind(this)
@@ -421,6 +422,7 @@ fun IrFunction.createDispatchReceiverParameter(origin: IrDeclarationOrigin? = nu
         -1,
         parentAsClass.defaultType,
         null,
+        false,
         false,
         false
     ).apply {

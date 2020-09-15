@@ -392,7 +392,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
                 name,
                 index,
                 type.toIrType(),
-                varargElementType = null, isCrossinline = false, isNoinline = false
+                varargElementType = null, isCrossinline = false, isNoinline = false, isAssignable = false
             ).also { irAdapterValueParameter ->
                 descriptor.bind(irAdapterValueParameter)
             }

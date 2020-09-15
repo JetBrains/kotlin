@@ -32,7 +32,7 @@ interface IrLazyDeclarationBase : IrDeclaration {
     fun ReceiverParameterDescriptor.generateReceiverParameterStub(): IrValueParameter =
         factory.createValueParameter(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, IrValueParameterSymbolImpl(this),
-            name, -1, type.toIrType(), null, isCrossinline = false, isNoinline = false
+            name, -1, type.toIrType(), null, isCrossinline = false, isNoinline = false, isAssignable = false
         )
 
     fun generateMemberStubs(memberScope: MemberScope, container: MutableList<IrDeclaration>) {
