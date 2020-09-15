@@ -1,13 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="libraryTable">
   <library name="TestNG" type="repository">
-    <properties include-transitive-deps="false" maven-id="org.testng:testng:7.1.0" />
+    <properties maven-id="org.testng:testng:7.1.0" />
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/org/testng/testng/7.1.0/testng-7.1.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/beust/jcommander/1.72/jcommander-1.72.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/google/inject/guice/4.1.0/guice-4.1.0-no_aop.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/javax/inject/javax.inject/1/javax.inject-1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/aopalliance/aopalliance/1.0/aopalliance-1.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/google/guava/guava/19.0/guava-19.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/yaml/snakeyaml/1.21/snakeyaml-1.21.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
       <root url="jar://$MAVEN_REPOSITORY$/org/testng/testng/7.1.0/testng-7.1.0-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/beust/jcommander/1.72/jcommander-1.72-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/google/inject/guice/4.1.0/guice-4.1.0-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/javax/inject/javax.inject/1/javax.inject-1-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/aopalliance/aopalliance/1.0/aopalliance-1.0-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/google/guava/guava/19.0/guava-19.0-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/yaml/snakeyaml/1.21/snakeyaml-1.21-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
