@@ -197,7 +197,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
 
         allMetadataJar.configure {
             it.from(generateMetadata.map { it.resultXmlFile }) { spec ->
-                spec.into("META-INF").rename { MULTIPLATFORM_PROJECT_METADATA_FILE_NAME }
+                spec.into("META-INF").rename { MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME }
             }
         }
     }

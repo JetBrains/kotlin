@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
+import com.google.gson.stream.JsonWriter
 import org.gradle.api.Project
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
@@ -18,6 +22,7 @@ import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
+import java.io.StringWriter
 import javax.xml.parsers.DocumentBuilderFactory
 
 data class ModuleDependencyIdentifier(
@@ -33,6 +38,8 @@ sealed class SourceSetMetadataLayout(
 ) {
     object METADATA : SourceSetMetadataLayout("metadata", "jar")
     object KLIB : SourceSetMetadataLayout("klib", "klib")
+
+    override fun toString(): String = name
 
     companion object {
         private val values = listOf(METADATA, KLIB)
@@ -119,41 +126,40 @@ internal fun buildKotlinProjectStructureMetadata(project: Project): KotlinProjec
     )
 }
 
-internal fun KotlinProjectStructureMetadata.toXmlDocument(): Document {
-    return DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument().apply {
-        fun Node.node(name: String, action: Element.() -> Unit) = appendChild(createElement(name).apply(action))
-        fun Node.textNode(name: String, value: String) =
-            appendChild(createElement(name).apply { appendChild(createTextNode(value)) })
+internal fun <Serializer> KotlinProjectStructureMetadata.serialize(
+    serializer: Serializer,
+    node: Serializer.(name: String, Serializer.() -> Unit) -> Unit,
+    multiNodes: Serializer.(name: String, Serializer.() -> Unit) -> Unit,
+    multiNodesItem: Serializer.(name: String, Serializer.() -> Unit) -> Unit,
+    value: Serializer.(key: String, value: String) -> Unit,
+    multiValue: Serializer.(name: String, values: List<String>) -> Unit
+) = with(serializer) {
+    node(ROOT_NODE_NAME) {
+        value(FORMAT_VERSION_NODE_NAME, formatVersion)
 
-        node(ROOT_NODE_NAME) {
-            textNode(FORMAT_VERSION_NODE_NAME, formatVersion)
-
-            node(VARIANTS_NODE_NAME) {
-                sourceSetNamesByVariantName.forEach { (variantName, sourceSets) ->
-                    node(VARIANT_NODE_NAME) {
-                        textNode(NAME_NODE_NAME, variantName)
-                        sourceSets.forEach { sourceSetName -> textNode(SOURCE_SET_NODE_NAME, sourceSetName) }
-                    }
+        multiNodes(VARIANTS_NODE_NAME) {
+            sourceSetNamesByVariantName.forEach { (variantName, sourceSets) ->
+                multiNodesItem(VARIANT_NODE_NAME) {
+                    value(NAME_NODE_NAME, variantName)
+                    multiValue(SOURCE_SET_NODE_NAME, sourceSets.toList())
                 }
             }
+        }
 
-            node(SOURCE_SETS_NODE_NAME) {
-                val keys = sourceSetsDependsOnRelation.keys + sourceSetModuleDependencies.keys
-                for (sourceSet in keys) {
-                    node(SOURCE_SET_NODE_NAME) {
-                        textNode(NAME_NODE_NAME, sourceSet)
-                        sourceSetsDependsOnRelation[sourceSet].orEmpty().forEach { dependsOn ->
-                            textNode(DEPENDS_ON_NODE_NAME, dependsOn)
-                        }
-                        sourceSetModuleDependencies[sourceSet].orEmpty().forEach { moduleDependency ->
-                            textNode(MODULE_DEPENDENCY_NODE_NAME, moduleDependency.groupId + ":" + moduleDependency.moduleId)
-                        }
-                        sourceSetBinaryLayout[sourceSet]?.let { binaryLayout ->
-                            textNode(BINARY_LAYOUT_NODE_NAME, binaryLayout.name)
-                        }
-                        if (sourceSet in hostSpecificSourceSets) {
-                            textNode(HOST_SPECIFIC_NODE_NAME, "true")
-                        }
+        multiNodes(SOURCE_SETS_NODE_NAME) {
+            val keys = sourceSetsDependsOnRelation.keys + sourceSetModuleDependencies.keys
+            for (sourceSet in keys) {
+                multiNodesItem(SOURCE_SET_NODE_NAME) {
+                    value(NAME_NODE_NAME, sourceSet)
+                    multiValue(DEPENDS_ON_NODE_NAME, sourceSetsDependsOnRelation[sourceSet].orEmpty().toList())
+                    multiValue(MODULE_DEPENDENCY_NODE_NAME, sourceSetModuleDependencies[sourceSet].orEmpty().map { moduleDependency ->
+                        moduleDependency.groupId + ":" + moduleDependency.moduleId
+                    })
+                    sourceSetBinaryLayout[sourceSet]?.let { binaryLayout ->
+                        value(BINARY_LAYOUT_NODE_NAME, binaryLayout.name)
+                    }
+                    if (sourceSet in hostSpecificSourceSets) {
+                        value(HOST_SPECIFIC_NODE_NAME, "true")
                     }
                 }
             }
@@ -161,21 +167,76 @@ internal fun KotlinProjectStructureMetadata.toXmlDocument(): Document {
     }
 }
 
+internal fun KotlinProjectStructureMetadata.toXmlDocument(): Document {
+    return DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument().apply {
+        val node: Node.(String, Node.() -> Unit) -> Unit = { name, content -> appendChild(createElement(name).apply(content)) }
+        val textNode: Node.(String, String) -> Unit =
+            { name, value -> appendChild(createElement(name).apply { appendChild(createTextNode(value)) }) }
+        serialize(this as Node, node, node, node, textNode, { name, values -> for (v in values) textNode(name, v) })
+    }
+}
+
+internal fun KotlinProjectStructureMetadata.toJson(): String {
+    val gson = GsonBuilder().setPrettyPrinting().create()
+    val stringWriter = StringWriter()
+    with(gson.newJsonWriter(stringWriter)) {
+        val obj: JsonWriter.(String, JsonWriter.() -> Unit) -> Unit =
+            { name, content -> if (name.isNotEmpty()) name(name); beginObject(); content(); endObject() }
+        val property: JsonWriter.(String, String) -> Unit = { name, value -> name(name); value(value) }
+        val array: JsonWriter.(String, JsonWriter.() -> Unit) -> Unit =
+            { name, contents -> name(name); beginArray(); contents(); endArray() }
+
+        beginObject()
+        serialize(this, obj, array, { _, fn -> obj("", fn) }, property, { key, values -> array(key) { values.forEach { value(it) } } })
+        endObject()
+    }
+    return stringWriter.toString()
+}
+
 private val NodeList.elements: Iterable<Element> get() = (0 until length).map { this@elements.item(it) }.filterIsInstance<Element>()
 
+internal fun parseKotlinSourceSetMetadataFromJson(string: String): KotlinProjectStructureMetadata? {
+    @Suppress("DEPRECATION") // The replacement doesn't compile against old dependencies such as AS 4.0
+    val json = JsonParser().parse(string).asJsonObject
+    val nodeNamed: JsonObject.(String) -> JsonObject? = { name -> get(name)?.asJsonObject }
+    val valueNamed: JsonObject.(String) -> String? = { name -> get(name)?.asString }
+    val multiObjects: JsonObject.(String?) -> Iterable<JsonObject> = { name -> get(name).asJsonArray.map { it.asJsonObject } }
+    val multiValues: JsonObject.(String?) -> Iterable<String> = { name -> get(name).asJsonArray.map { it.asString } }
+
+    return parseKotlinSourceSetMetadata({ json.get(ROOT_NODE_NAME).asJsonObject }, valueNamed, multiObjects, multiValues)
+}
+
 internal fun parseKotlinSourceSetMetadataFromXml(document: Document): KotlinProjectStructureMetadata? {
-    val projectStructureNode = document.getElementsByTagName(ROOT_NODE_NAME).elements.single()
+    val nodeNamed: Element.(String) -> Element? = { name -> getElementsByTagName(name).elements.singleOrNull() }
+    val valueNamed: Element.(String) -> String? =
+        { name -> getElementsByTagName(name).run { if (length > 0) item(0).textContent else null } }
+    val multiObjects: Element.(String) -> Iterable<Element> = { name -> nodeNamed(name)?.childNodes?.elements ?: emptyList()}
+    val multiValues: Element.(String) -> Iterable<String> = { name -> getElementsByTagName(name).elements.map { it.textContent } }
 
-    val formatVersion = projectStructureNode.getElementsByTagName(FORMAT_VERSION_NODE_NAME).item(0).textContent
+    return parseKotlinSourceSetMetadata(
+        { document.getElementsByTagName(ROOT_NODE_NAME).elements.single() },
+        valueNamed,
+        multiObjects,
+        multiValues
+    )
+}
 
-    val variantsNode = projectStructureNode.getElementsByTagName(VARIANTS_NODE_NAME).item(0) ?: return null
+internal fun <ParsingContext> parseKotlinSourceSetMetadata(
+    getRoot: () -> ParsingContext,
+    valueNamed: ParsingContext.(key: String) -> String?,
+    multiObjects: ParsingContext.(named: String) -> Iterable<ParsingContext>,
+    multiValues: ParsingContext.(named: String) -> Iterable<String>
+): KotlinProjectStructureMetadata? {
+    val projectStructureNode = getRoot()
+
+    val formatVersion = checkNotNull(projectStructureNode.valueNamed(FORMAT_VERSION_NODE_NAME))
+    val variantsNode = projectStructureNode.multiObjects(VARIANTS_NODE_NAME)
 
     val sourceSetsByVariant = mutableMapOf<String, Set<String>>()
 
-    variantsNode.childNodes.elements.filter { it.tagName == VARIANT_NODE_NAME }.forEach { variantNode ->
-        val variantName = variantNode.getElementsByTagName(NAME_NODE_NAME).elements.single().textContent
-        val sourceSets =
-            variantNode.childNodes.elements.filter { it.tagName == SOURCE_SET_NODE_NAME }.mapTo(mutableSetOf()) { it.textContent }
+    variantsNode.forEach { variantNode ->
+        val variantName = requireNotNull(variantNode.valueNamed(NAME_NODE_NAME))
+        val sourceSets = variantNode.multiValues(SOURCE_SET_NODE_NAME).toSet()
 
         sourceSetsByVariant[variantName] = sourceSets
     }
@@ -185,33 +246,23 @@ internal fun parseKotlinSourceSetMetadataFromXml(document: Document): KotlinProj
     val sourceSetBinaryLayout = mutableMapOf<String, SourceSetMetadataLayout>()
     val hostSpecificSourceSets = mutableSetOf<String>()
 
-    val sourceSetsNode = projectStructureNode.getElementsByTagName(SOURCE_SETS_NODE_NAME).item(0) ?: return null
+    val sourceSetsNode = projectStructureNode.multiObjects(SOURCE_SETS_NODE_NAME)
 
-    sourceSetsNode.childNodes.elements.filter { it.tagName == SOURCE_SET_NODE_NAME }.forEach { sourceSetNode ->
-        val sourceSetName = sourceSetNode.getElementsByTagName(NAME_NODE_NAME).elements.single().textContent
+    sourceSetsNode.forEach { sourceSetNode ->
+        val sourceSetName = checkNotNull(sourceSetNode.valueNamed(NAME_NODE_NAME))
 
-        val dependsOn = mutableSetOf<String>()
-        val moduleDependencies = mutableSetOf<ModuleDependencyIdentifier>()
-
-        sourceSetNode.childNodes.elements.forEach { node ->
-            when (node.tagName) {
-                DEPENDS_ON_NODE_NAME -> dependsOn.add(node.textContent)
-                MODULE_DEPENDENCY_NODE_NAME -> {
-                    val (groupId, moduleId) = node.textContent.split(":")
-                    moduleDependencies.add(ModuleDependencyIdentifier(groupId, moduleId))
-                }
-                BINARY_LAYOUT_NODE_NAME -> {
-                    SourceSetMetadataLayout.byName(node.textContent)?.let { binaryLayout ->
-                        sourceSetBinaryLayout[sourceSetName] = binaryLayout
-                    }
-                }
-                HOST_SPECIFIC_NODE_NAME -> {
-                    if (node.textContent == "true") {
-                        hostSpecificSourceSets.add(sourceSetName)
-                    }
-                }
-            }
+        val dependsOn = sourceSetNode.multiValues(DEPENDS_ON_NODE_NAME).toSet()
+        val moduleDependencies = sourceSetNode.multiValues(MODULE_DEPENDENCY_NODE_NAME).mapTo(mutableSetOf()) {
+            val (groupId, moduleId) = it.split(":")
+            ModuleDependencyIdentifier(groupId, moduleId)
         }
+
+        sourceSetNode.valueNamed(HOST_SPECIFIC_NODE_NAME)
+            ?.let { if (it.toBoolean()) hostSpecificSourceSets.add(sourceSetName) }
+
+        sourceSetNode.valueNamed(BINARY_LAYOUT_NODE_NAME)
+            ?.let { SourceSetMetadataLayout.byName(it) }
+            ?.let { sourceSetBinaryLayout[sourceSetName] = it }
 
         sourceSetDependsOnRelation[sourceSetName] = dependsOn
         sourceSetModuleDependencies[sourceSetName] = moduleDependencies
