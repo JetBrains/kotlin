@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.idea.search
 
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.SearchScope
+import org.jetbrains.kotlin.idea.caches.resolve.util.hasJavaResolutionFacade
 import org.jetbrains.kotlin.idea.core.isInheritable
 import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingMethod
@@ -16,12 +18,15 @@ import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOpt
 import org.jetbrains.kotlin.idea.search.usagesSearch.*
 import org.jetbrains.kotlin.idea.stubindex.KotlinTypeAliasShortNameIndex
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.idea.util.expectedDeclarationIfAny
 import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.ImportPath
 
 class KotlinSearchUsagesSupportImpl : KotlinSearchUsagesSupport {
+    override fun actualsForExpected(declaration: KtDeclaration, module: Module?): Set<KtDeclaration> =
+        declaration.actualsForExpected(module)
 
     override fun dataClassComponentMethodName(element: KtParameter): String? =
         element.dataClassComponentFunction()?.name?.asString()
@@ -106,4 +111,13 @@ class KotlinSearchUsagesSupportImpl : KotlinSearchUsagesSupport {
 
     override fun isExpectDeclaration(declaration: KtDeclaration): Boolean =
         declaration.isExpectDeclaration()
+
+    override fun canBeResolvedWithFrontEnd(element: PsiElement): Boolean =
+        element.hasJavaResolutionFacade()
+
+    override fun createConstructorHandle(ktDeclaration: KtDeclaration): KotlinSearchUsagesSupport.ConstructorCallHandle =
+        KotlinConstructorCallLazyDescriptorHandle(ktDeclaration)
+
+    override fun createConstructorHandle(psiMethod: PsiMethod): KotlinSearchUsagesSupport.ConstructorCallHandle =
+        JavaConstructorCallLazyDescriptorHandle(psiMethod)
 }

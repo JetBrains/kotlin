@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.search
 
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
@@ -16,6 +17,10 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.ImportPath
 
 interface KotlinSearchUsagesSupport {
+
+    interface ConstructorCallHandle {
+        fun referencedTo(element: KtElement): Boolean
+    }
 
     companion object {
         fun getInstance(project: Project): KotlinSearchUsagesSupport {
@@ -96,7 +101,21 @@ interface KotlinSearchUsagesSupport {
 
         fun KtDeclaration.isExpectDeclaration(): Boolean =
             getInstance(project).isExpectDeclaration(this)
+
+        fun KtDeclaration.actualsForExpected(module: Module? = null): Set<KtDeclaration> =
+            getInstance(project).actualsForExpected(this, module)
+
+        fun PsiElement.canBeResolvedWithFrontEnd(): Boolean =
+            getInstance(project).canBeResolvedWithFrontEnd(this)
+
+        fun createConstructorHandle(ktDeclaration: KtDeclaration): ConstructorCallHandle =
+            getInstance(ktDeclaration.project).createConstructorHandle(ktDeclaration)
+
+        fun createConstructorHandle(psiMethod: PsiMethod): ConstructorCallHandle =
+            getInstance(psiMethod.project).createConstructorHandle(psiMethod)
     }
+
+    fun actualsForExpected(declaration: KtDeclaration, module: Module? = null): Set<KtDeclaration>
 
     fun dataClassComponentMethodName(element: KtParameter): String?
 
@@ -153,4 +172,10 @@ interface KotlinSearchUsagesSupport {
     fun expectedDeclarationIfAny(declaration: KtDeclaration): KtDeclaration?
 
     fun isExpectDeclaration(declaration: KtDeclaration): Boolean
+
+    fun canBeResolvedWithFrontEnd(element: PsiElement): Boolean
+
+    fun createConstructorHandle(ktDeclaration: KtDeclaration): ConstructorCallHandle
+
+    fun createConstructorHandle(psiMethod: PsiMethod): ConstructorCallHandle
 }
