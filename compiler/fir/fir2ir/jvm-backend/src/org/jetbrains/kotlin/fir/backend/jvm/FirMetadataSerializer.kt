@@ -39,61 +39,79 @@ class FirMetadataSerializer(
 ) : MetadataSerializer {
     private val approximator = object : AbstractTypeApproximator(session.typeContext) {}
 
-    private fun FirTypeRef.approximated(toSuper: Boolean): FirTypeRef {
+    private fun FirTypeRef.approximated(toSuper: Boolean, typeParameterSet: MutableCollection<FirTypeParameter>): FirTypeRef {
         val approximatedType = if (toSuper)
             approximator.approximateToSuperType(coneType, TypeApproximatorConfiguration.PublicDeclaration)
         else
             approximator.approximateToSubType(coneType, TypeApproximatorConfiguration.PublicDeclaration)
-        return withReplacedConeType(approximatedType as? ConeKotlinType)
+        return withReplacedConeType(approximatedType as? ConeKotlinType).apply { coneType.collectTypeParameters(typeParameterSet) }
+    }
+
+    private fun ConeKotlinType.collectTypeParameters(c: MutableCollection<FirTypeParameter>) {
+        when (this) {
+            is ConeFlexibleType -> {
+                lowerBound.collectTypeParameters(c)
+                upperBound.collectTypeParameters(c)
+            }
+            is ConeClassLikeType ->
+                for (projection in type.typeArguments) {
+                    if (projection is ConeKotlinTypeProjection) {
+                        projection.type.collectTypeParameters(c)
+                    }
+                }
+            is ConeTypeParameterType -> c.add(lookupTag.typeParameterSymbol.fir)
+            else -> Unit
+        }
     }
 
     private fun FirFunction<*>.copyToFreeAnonymousFunction(): FirAnonymousFunction {
         val function = this
         return buildAnonymousFunction {
+            val typeParameterSet = function.typeParameters.filterIsInstanceTo(mutableSetOf<FirTypeParameter>())
             session = function.session
             origin = FirDeclarationOrigin.Source
             symbol = FirAnonymousFunctionSymbol()
-            returnTypeRef = function.returnTypeRef.approximated(toSuper = true)
-            receiverTypeRef = function.receiverTypeRef?.approximated(toSuper = false)
+            returnTypeRef = function.returnTypeRef.approximated(toSuper = true, typeParameterSet)
+            receiverTypeRef = function.receiverTypeRef?.approximated(toSuper = false, typeParameterSet)
             isLambda = (function as? FirAnonymousFunction)?.isLambda == true
             valueParameters.addAll(function.valueParameters.map {
                 buildValueParameterCopy(it) {
-                    returnTypeRef = it.returnTypeRef.approximated(toSuper = false)
+                    returnTypeRef = it.returnTypeRef.approximated(toSuper = false, typeParameterSet)
                 }
             })
-            // TODO need containers' type parameters too
-            function.typeParameters.filterIsInstanceTo(typeParameters)
+            typeParameters += typeParameterSet
         }
     }
 
     private fun FirPropertyAccessor.copyToFreeAccessor(): FirPropertyAccessor {
         val accessor = this
         return buildPropertyAccessor {
+            val typeParameterSet = accessor.typeParameters.toMutableSet()
             session = accessor.session
             origin = FirDeclarationOrigin.Source
-            returnTypeRef = accessor.returnTypeRef.approximated(toSuper = true)
+            returnTypeRef = accessor.returnTypeRef.approximated(toSuper = true, typeParameterSet)
             symbol = FirPropertyAccessorSymbol()
             isGetter = accessor.isGetter
             status = accessor.status
             accessor.valueParameters.mapTo(valueParameters) {
                 buildValueParameterCopy(it) {
-                    returnTypeRef = it.returnTypeRef.approximated(toSuper = false)
+                    returnTypeRef = it.returnTypeRef.approximated(toSuper = false, typeParameterSet)
                 }
             }
             annotations += accessor.annotations
-            // TODO need containers' type parameters too
-            typeParameters += accessor.typeParameters
+            typeParameters += typeParameterSet
         }
     }
 
     private fun FirProperty.copyToFreeProperty(): FirProperty {
         val property = this
         return buildProperty {
+            val typeParameterSet = property.typeParameters.toMutableSet()
             session = property.session
             origin = FirDeclarationOrigin.Source
             symbol = FirPropertySymbol(property.symbol.callableId)
-            returnTypeRef = property.returnTypeRef.approximated(toSuper = true)
-            receiverTypeRef = property.receiverTypeRef?.approximated(toSuper = false)
+            returnTypeRef = property.returnTypeRef.approximated(toSuper = true, typeParameterSet)
+            receiverTypeRef = property.receiverTypeRef?.approximated(toSuper = false, typeParameterSet)
             name = property.name
             initializer = property.initializer
             delegate = property.delegate
@@ -106,8 +124,7 @@ class FirMetadataSerializer(
             isLocal = property.isLocal
             status = property.status
             annotations += property.annotations
-            // TODO need containers' type parameters too
-            typeParameters += property.typeParameters
+            typeParameters += typeParameterSet
         }.apply {
             delegateFieldSymbol?.fir = this
         }
