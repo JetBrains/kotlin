@@ -5008,6 +5008,16 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             runTest("compiler/testData/codegen/box/collections/removeClash.kt");
         }
 
+        @TestMetadata("removeOverriddenInJava.kt")
+        public void testRemoveOverriddenInJava() throws Exception {
+            runTest("compiler/testData/codegen/box/collections/removeOverriddenInJava.kt");
+        }
+
+        @TestMetadata("removeOverriddenInJava_Map.kt")
+        public void testRemoveOverriddenInJava_Map() throws Exception {
+            runTest("compiler/testData/codegen/box/collections/removeOverriddenInJava_Map.kt");
+        }
+
         @TestMetadata("strList.kt")
         public void testStrList() throws Exception {
             runTest("compiler/testData/codegen/box/collections/strList.kt");

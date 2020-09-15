@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
@@ -50,8 +49,8 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
             it.modality == Modality.ABSTRACT && it.isFakeOverride
         }.associateBy { it.toSignature() }
 
-        for (member in methodStubsToGenerate) {
-            val existingMethod = existingMethodsBySignature[member.toSignature()]
+        for ((signature, member) in methodStubsToGenerate) {
+            val existingMethod = existingMethodsBySignature[signature] // TODO KT-41915
             if (existingMethod != null) {
                 // In the case that we find a defined method that matches the stub signature, we add the overridden symbols to that
                 // defined method, so that bridge lowering can still generate correct bridge for that method
@@ -66,8 +65,8 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
 
     private fun createStubMethod(
         function: IrSimpleFunction, irClass: IrClass, substitutionMap: Map<IrTypeParameterSymbol, IrType>
-    ): IrSimpleFunction {
-        return context.irFactory.buildFun {
+    ): Pair<String, IrSimpleFunction> {
+        val newMethod = context.irFactory.buildFun {
             name = function.name
             returnType = function.returnType.substitute(substitutionMap)
             visibility = function.visibility
@@ -90,19 +89,41 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
                 }
             }
         }
+        val signatureToCheckPresence = newMethod.toSignature()
+        // NB 'remove' method requires some special handling (and that's why we need to track both signature and function):
+        // - we check that 'remove(T)' is present in the class, where 'T' is a type argument of the collection type
+        //   (this matches the signature of the method created above);
+        // - if it is absent, we add 'remove(Any?)' member function,
+        //   which corresponds to method 'remove' in java.util.Collection and java.util.Map.
+        if (newMethod.name.asString() == "remove") {
+            // Note that replacing value parameter types with 'Any?' handles both MutableCollection and MutableMap case:
+            // java.util.Collection<E>#remove has signature 'boolean remove(Object)', and
+            // java.util.Map<K, V>#remove has signature 'V remove(Object)'.
+            newMethod.valueParameters = function.valueParameters.map {
+                it.copyWithCustomTypeSubstitution(newMethod) { context.irBuiltIns.anyNType }
+            }
+        }
+        return signatureToCheckPresence to newMethod
     }
 
     // Copy value parameter with type substitution
     private fun IrValueParameter.copyWithSubstitution(
-        target: IrSimpleFunction, substitutionMap: Map<IrTypeParameterSymbol, IrType>
+        target: IrSimpleFunction,
+        substitutionMap: Map<IrTypeParameterSymbol, IrType>
+    ): IrValueParameter =
+        copyWithCustomTypeSubstitution(target) { it.substitute(substitutionMap) }
+
+    private fun IrValueParameter.copyWithCustomTypeSubstitution(
+        target: IrSimpleFunction,
+        substituteType: (IrType) -> IrType
     ): IrValueParameter {
         val parameter = this
         return buildValueParameter(target) {
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
             name = parameter.name
             index = parameter.index
-            type = parameter.type.substitute(substitutionMap)
-            varargElementType = parameter.varargElementType?.substitute(substitutionMap)
+            type = substituteType(parameter.type)
+            varargElementType = parameter.varargElementType?.let { substituteType(it) }
             isCrossInline = parameter.isCrossinline
             isNoinline = parameter.isNoinline
         }
@@ -129,7 +150,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
     }
 
     // Compute stubs that should be generated, compare based on signature
-    private fun generateRelevantStubMethods(irClass: IrClass): Set<IrSimpleFunction> {
+    private fun generateRelevantStubMethods(irClass: IrClass): Map<String, IrSimpleFunction> {
         val ourStubsForCollectionClasses = collectionStubComputer.stubsForCollectionClasses(irClass)
         val superStubClasses = irClass.superClass?.superClassChain?.map { superClass ->
             collectionStubComputer.stubsForCollectionClasses(superClass).map { it.readOnlyClass }
@@ -148,7 +169,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
             mutableOnlyMethods.map { function ->
                 createStubMethod(function, irClass, substitutionMap)
             }
-        }.toHashSet()
+        }.toMap()
     }
 
     private fun Collection<IrType>.findMostSpecificTypeForClass(classifier: IrClassSymbol): IrType {

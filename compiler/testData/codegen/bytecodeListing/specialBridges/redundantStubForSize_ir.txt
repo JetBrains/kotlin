@@ -19,8 +19,7 @@ public final class A2 {
     public method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
     public method isEmpty(): boolean
     public @org.jetbrains.annotations.NotNull method iterator(): java.util.Iterator
-    public bridge final method remove(p0: java.lang.Object): boolean
-    public method remove(p0: java.lang.String): boolean
+    public method remove(p0: java.lang.Object): boolean
     public method removeAll(p0: java.util.Collection): boolean
     public method retainAll(p0: java.util.Collection): boolean
     public bridge final method size(): int
