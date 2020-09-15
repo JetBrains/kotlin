@@ -43,10 +43,13 @@ class CoroutineTransformer(
     fun shouldGenerateStateMachine(node: MethodNode): Boolean {
         // Continuations are similar to lambdas from bird's view, but we should never generate state machine for them
         if (isContinuationNotLambda()) return false
-        // there can be suspend lambdas inside inline functions, which do not
-        // capture crossinline lambdas, thus, there is no need to transform them
         return isSuspendFunctionWithFakeConstructorCall(node) || (isSuspendLambda(node) && !isStateMachine(node))
     }
+
+    // there can be suspend lambdas inside inline functions, which do not
+    // capture crossinline lambdas, thus, there is no need to transform them
+    fun suspendLambdaWithGeneratedStateMachine(node: MethodNode): Boolean =
+        !isContinuationNotLambda() && isSuspendLambda(node) && isStateMachine(node)
 
     private fun isContinuationNotLambda(): Boolean = inliningContext.isContinuation &&
             if (state.languageVersionSettings.isReleaseCoroutines()) superClassName.endsWith("ContinuationImpl")

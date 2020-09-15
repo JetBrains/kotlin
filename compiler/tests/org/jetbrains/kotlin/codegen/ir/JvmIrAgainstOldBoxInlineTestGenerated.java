@@ -3808,6 +3808,11 @@ public class JvmIrAgainstOldBoxInlineTestGenerated extends AbstractJvmIrAgainstO
             runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/crossinlineSuspendLambdaInsideCrossinlineSuspendLambda.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("debugMetadataCrossinline.kt")
+        public void testDebugMetadataCrossinline() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/suspend/debugMetadataCrossinline.kt");
+        }
+
         @TestMetadata("delegatedProperties.kt")
         public void testDelegatedProperties_1_3() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/delegatedProperties.kt", "kotlin.coroutines");

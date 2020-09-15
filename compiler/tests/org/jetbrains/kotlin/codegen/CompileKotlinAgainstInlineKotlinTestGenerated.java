@@ -3818,6 +3818,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/crossinlineSuspendLambdaInsideCrossinlineSuspendLambda.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("debugMetadataCrossinline.kt")
+        public void testDebugMetadataCrossinline() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/suspend/debugMetadataCrossinline.kt");
+        }
+
         @TestMetadata("delegatedProperties.kt")
         public void testDelegatedProperties_1_2() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/delegatedProperties.kt", "kotlin.coroutines.experimental");
