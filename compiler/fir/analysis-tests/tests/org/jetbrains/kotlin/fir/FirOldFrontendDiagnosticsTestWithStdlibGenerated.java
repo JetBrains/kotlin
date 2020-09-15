@@ -3200,6 +3200,11 @@ public class FirOldFrontendDiagnosticsTestWithStdlibGenerated extends AbstractFi
                     runTest("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis/kt38799.kt");
                 }
 
+                @TestMetadata("manyArguments.kt")
+                public void testManyArguments() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis/manyArguments.kt");
+                }
+
                 @TestMetadata("moreSpecificOutputType.kt")
                 public void testMoreSpecificOutputType() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis/moreSpecificOutputType.kt");
