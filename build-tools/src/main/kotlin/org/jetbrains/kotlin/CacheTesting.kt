@@ -51,6 +51,7 @@ fun configureCacheTesting(project: Project): CacheTesting? {
                 "-o", "$cacheDir/stdlib-cache",
                 "-Xmake-cache=$stdlib",
                 "-no-default-libs", "-nostdlib",
+                "-target", target,
                 "-g"
         )
     }
