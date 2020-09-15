@@ -382,6 +382,23 @@ check(1 == 2) { "the world is broken" }
       PowerAssertComponentRegistrar(setOf(FqName("kotlin.check")))
     )
   }
+
+  @Test
+  fun carriageReturnRemoval() {
+    assertMessage(
+      """
+fun main() {
+  val a = 0
+  assert(a == 42)
+}""".replace("\n", "\r\n"),
+      """
+Assertion failed
+assert(a == 42)
+       | |
+       | false
+       0
+""".trimIndent())
+  }
 }
 
 fun assertMessage(
@@ -390,7 +407,7 @@ fun assertMessage(
   vararg plugins: ComponentRegistrar = arrayOf(PowerAssertComponentRegistrar(setOf(FqName("kotlin.assert"))))
 ) {
   val result = KotlinCompilation().apply {
-    sources = listOf(SourceFile.kotlin("main.kt", source))
+    sources = listOf(SourceFile.kotlin("main.kt", source, trimIndent = false))
     useIR = true
     messageOutputStream = System.out
     compilerPlugins = plugins.toList()
