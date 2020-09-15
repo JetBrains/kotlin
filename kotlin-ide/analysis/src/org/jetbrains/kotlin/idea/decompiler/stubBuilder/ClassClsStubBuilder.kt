@@ -219,6 +219,7 @@ private class ClassClsStubBuilder(
             }
         }
 
+        // FIXME using this function breaks the order of `MemberComparator` (see KT-41859)
         createDeclarationsStubs(
             classBody, c, thisAsProtoContainer, classProto.functionList, classProto.propertyList, classProto.typeAliasList
         )
