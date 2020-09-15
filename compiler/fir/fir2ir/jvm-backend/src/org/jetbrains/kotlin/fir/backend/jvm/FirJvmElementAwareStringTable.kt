@@ -5,17 +5,13 @@
 
 package org.jetbrains.kotlin.fir.backend.jvm
 
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.serialization.FirElementAwareStringTable
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmNameResolver
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 
 class FirJvmElementAwareStringTable(
-    private val typeMapper: KotlinTypeMapperBase,
     nameResolver: JvmNameResolver? = null
 ) : JvmStringTable(nameResolver), FirElementAwareStringTable {
     override fun getLocalClassIdReplacement(classLikeDeclaration: FirClassLikeDeclaration<*>): ClassId {

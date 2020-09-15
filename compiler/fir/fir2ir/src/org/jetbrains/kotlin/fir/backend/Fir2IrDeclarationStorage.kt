@@ -894,6 +894,7 @@ class Fir2IrDeclarationStorage(
             }
         }.apply {
             parent = irParent
+            metadata = FirMetadataSource.Property(property)
             enterScope(this)
             delegate = declareIrVariable(
                 startOffset, endOffset, IrDeclarationOrigin.PROPERTY_DELEGATE,

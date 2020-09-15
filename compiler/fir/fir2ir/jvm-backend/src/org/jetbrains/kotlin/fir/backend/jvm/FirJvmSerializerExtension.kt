@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.backend.jvm
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -22,7 +21,6 @@ import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.serialization.FirSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.nonSourceAnnotations
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
@@ -40,15 +38,15 @@ import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
-class FirJvmSerializerExtension @JvmOverloads constructor(
+class FirJvmSerializerExtension(
     override val session: FirSession,
     private val bindings: JvmSerializationBindings,
     state: GenerationState,
     private val irClass: IrClass,
-    private val typeMapper: KotlinTypeMapperBase = state.typeMapper
+    private val localDelegatedProperties: List<FirProperty>
 ) : FirSerializerExtension() {
     private val globalBindings = state.globalSerializationBindings
-    override val stringTable = FirJvmElementAwareStringTable(typeMapper)
+    override val stringTable = FirJvmElementAwareStringTable()
     private val useTypeTable = state.useTypeTableInSerializer
     private val moduleName = state.moduleName
     private val classBuilderMode = state.classBuilderMode
@@ -75,7 +73,6 @@ class FirJvmSerializerExtension @JvmOverloads constructor(
         return classBuilderMode != ClassBuilderMode.ABI || nestedClass.visibility != Visibilities.Private
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun serializeClass(
         klass: FirClass<*>,
         proto: ProtoBuf.Class.Builder,
@@ -86,11 +83,7 @@ class FirJvmSerializerExtension @JvmOverloads constructor(
         if (moduleName != JvmProtoBufUtil.DEFAULT_MODULE_NAME) {
             proto.setExtension(JvmProtoBuf.classModuleName, stringTable.getStringIndex(moduleName))
         }
-        //TODO: support local delegated properties in new defaults scheme
-        val containerAsmType =
-            if (klass is FirRegularClass && klass.classKind == ClassKind.INTERFACE) typeMapper.mapDefaultImpls(irClass.descriptor)
-            else typeMapper.mapClass(irClass.descriptor)
-        writeLocalProperties(proto, containerAsmType, JvmProtoBuf.classLocalVariable)
+        writeLocalProperties(proto, JvmProtoBuf.classLocalVariable)
         writeVersionRequirementForJvmDefaultIfNeeded(klass, proto, versionRequirementTable)
 
         if (jvmDefaultMode.forAllMethodsWithBody && klass is FirRegularClass && klass.classKind == ClassKind.INTERFACE) {
@@ -148,24 +141,19 @@ class FirJvmSerializerExtension @JvmOverloads constructor(
         }
     }
 
-    fun serializeJvmPackage(proto: ProtoBuf.Package.Builder, partAsmType: Type) {
-        writeLocalProperties(proto, partAsmType, JvmProtoBuf.packageLocalVariable)
+    fun serializeJvmPackage(proto: ProtoBuf.Package.Builder) {
+        writeLocalProperties(proto, JvmProtoBuf.packageLocalVariable)
     }
 
     @Suppress("UNUSED_PARAMETER")
     private fun <MessageType : GeneratedMessageLite.ExtendableMessage<MessageType>, BuilderType : GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>> writeLocalProperties(
         proto: BuilderType,
-        classAsmType: Type,
         extension: GeneratedMessageLite.GeneratedExtension<MessageType, List<ProtoBuf.Property>>
     ) {
-        // TODO
-//        val localVariables = CodegenBinding.getLocalDelegatedProperties(codegenBinding, classAsmType) ?: return
-//
-//        for (localVariable in localVariables) {
-//            val propertyDescriptor = createFreeFakeLocalPropertyDescriptor(localVariable)
-//            val serializer = FirElementSerializer.createForLambda(this)
-//            proto.addExtension(extension, serializer.propertyProto(propertyDescriptor)?.build() ?: continue)
-//        }
+        for (localVariable in localDelegatedProperties) {
+            val serializer = FirElementSerializer.createForLambda(session, this)
+            proto.addExtension(extension, serializer.propertyProto(localVariable)?.build() ?: continue)
+        }
     }
 
     override fun serializeFlexibleType(

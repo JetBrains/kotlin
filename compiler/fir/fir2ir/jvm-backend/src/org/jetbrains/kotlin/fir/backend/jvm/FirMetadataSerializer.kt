@@ -10,15 +10,15 @@ import org.jetbrains.kotlin.backend.jvm.codegen.MetadataSerializer
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
@@ -34,7 +34,6 @@ class FirMetadataSerializer(
     private val session: FirSession,
     private val context: JvmBackendContext,
     private val irClass: IrClass,
-    private val type: Type,
     private val serializationBindings: JvmSerializationBindings,
     parent: MetadataSerializer?
 ) : MetadataSerializer {
@@ -62,12 +61,64 @@ class FirMetadataSerializer(
                     returnTypeRef = it.returnTypeRef.approximated(toSuper = false)
                 }
             })
-            typeParameters.addAll(function.typeParameters.filterIsInstance<FirTypeParameter>())
+            // TODO need containers' type parameters too
+            function.typeParameters.filterIsInstanceTo(typeParameters)
         }
     }
 
+    private fun FirPropertyAccessor.copyToFreeAccessor(): FirPropertyAccessor {
+        val accessor = this
+        return buildPropertyAccessor {
+            session = accessor.session
+            origin = FirDeclarationOrigin.Source
+            returnTypeRef = accessor.returnTypeRef.approximated(toSuper = true)
+            symbol = FirPropertyAccessorSymbol()
+            isGetter = accessor.isGetter
+            status = accessor.status
+            accessor.valueParameters.mapTo(valueParameters) {
+                buildValueParameterCopy(it) {
+                    returnTypeRef = it.returnTypeRef.approximated(toSuper = false)
+                }
+            }
+            annotations += accessor.annotations
+            // TODO need containers' type parameters too
+            typeParameters += accessor.typeParameters
+        }
+    }
+
+    private fun FirProperty.copyToFreeProperty(): FirProperty {
+        val property = this
+        return buildProperty {
+            session = property.session
+            origin = FirDeclarationOrigin.Source
+            symbol = FirPropertySymbol(property.symbol.callableId)
+            returnTypeRef = property.returnTypeRef.approximated(toSuper = true)
+            receiverTypeRef = property.receiverTypeRef?.approximated(toSuper = false)
+            name = property.name
+            initializer = property.initializer
+            delegate = property.delegate
+            delegateFieldSymbol = property.delegateFieldSymbol?.let {
+                FirDelegateFieldSymbol(it.callableId)
+            }
+            getter = property.getter?.copyToFreeAccessor()
+            setter = property.setter?.copyToFreeAccessor()
+            isVar = property.isVar
+            isLocal = property.isLocal
+            status = property.status
+            annotations += property.annotations
+            // TODO need containers' type parameters too
+            typeParameters += property.typeParameters
+        }.apply {
+            delegateFieldSymbol?.fir = this
+        }
+    }
+
+    private val localDelegatedProperties = context.localDelegatedProperties[irClass.attributeOwnerId]?.map {
+        (it.owner.metadata as FirMetadataSource.Property).fir.copyToFreeProperty()
+    } ?: emptyList()
+
     private val serializerExtension =
-        FirJvmSerializerExtension(session, serializationBindings, context.state, irClass, context.typeMapper)
+        FirJvmSerializerExtension(session, serializationBindings, context.state, irClass, localDelegatedProperties)
 
     private val serializer: FirElementSerializer? =
         when (val metadata = irClass.metadata) {
@@ -84,7 +135,7 @@ class FirMetadataSerializer(
             is FirMetadataSource.Class -> serializer!!.classProto(metadata.fir).build()
             is FirMetadataSource.File ->
                 serializer!!.packagePartProto(irClass.getPackageFragment()!!.fqName, metadata.fir).apply {
-                    serializerExtension.serializeJvmPackage(this, type)
+                    serializerExtension.serializeJvmPackage(this)
                 }.build()
             is FirMetadataSource.Function ->
                 serializer!!.functionProto(metadata.fir.copyToFreeAnonymousFunction())?.build()
