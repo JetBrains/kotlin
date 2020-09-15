@@ -142,6 +142,17 @@ class ScopeValidator(
         super.visitTypeOperator(expression)
     }
 
+    override fun visitClassReference(expression: IrClassReference) {
+        // classType should only contain star projections, but check it to be sure.
+        visitTypeAccess(expression, expression.classType)
+        super.visitClassReference(expression)
+    }
+
+    override fun visitExpression(expression: IrExpression) {
+        visitTypeAccess(expression, expression.type)
+        super.visitExpression(expression)
+    }
+
     private fun visitTypeAccess(element: IrElement, type: IrType) {
         if (type !is IrSimpleType) return
         if (type.classifier is IrTypeParameterSymbol && type.classifier.owner !in accessibleTypeParameters) {
@@ -152,11 +163,6 @@ class ScopeValidator(
                 visitTypeAccess(element, arg.type)
             }
         }
-    }
-
-    override fun visitExpression(expression: IrExpression) {
-        visitTypeAccess(expression, expression.type)
-        super.visitExpression(expression)
     }
 
     private inline fun handleTypeParameterContainer(typeParameters: List<IrTypeParameter>, block: () -> Unit) {
