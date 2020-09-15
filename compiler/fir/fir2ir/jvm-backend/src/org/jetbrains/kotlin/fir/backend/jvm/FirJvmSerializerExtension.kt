@@ -82,7 +82,7 @@ class FirJvmSerializerExtension @JvmOverloads constructor(
         versionRequirementTable: MutableVersionRequirementTable,
         childSerializer: FirElementSerializer
     ) {
-        assert((irClass.metadata as FirMetadataSource.Class).klass == klass)
+        assert((irClass.metadata as FirMetadataSource.Class).fir == klass)
         if (moduleName != JvmProtoBufUtil.DEFAULT_MODULE_NAME) {
             proto.setExtension(JvmProtoBuf.classModuleName, stringTable.getStringIndex(moduleName))
         }

@@ -51,7 +51,7 @@ class FirJvmClassCodegen(
     private val serializer: FirElementSerializer? =
         when (val metadata = irClass.metadata) {
             is FirMetadataSource.Class -> FirElementSerializer.create(
-                metadata.klass, serializerExtension, (parentClassCodegen as? FirJvmClassCodegen)?.serializer
+                metadata.fir, serializerExtension, (parentClassCodegen as? FirJvmClassCodegen)?.serializer
             )
             is FirMetadataSource.File -> FirElementSerializer.createTopLevel(session, serializerExtension)
             is FirMetadataSource.Function -> FirElementSerializer.createForLambda(session, serializerExtension)
@@ -107,7 +107,7 @@ class FirJvmClassCodegen(
 
         when (val metadata = irClass.metadata) {
             is FirMetadataSource.Class -> {
-                val classProto = serializer!!.classProto(metadata.klass).build()
+                val classProto = serializer!!.classProto(metadata.fir).build()
                 writeKotlinMetadata(visitor, state, KotlinClassHeader.Kind.CLASS, extraFlags) {
                     AsmUtil.writeAnnotationData(it, classProto, serializer.stringTable as JvmStringTable)
                 }
@@ -118,7 +118,7 @@ class FirJvmClassCodegen(
             }
             is FirMetadataSource.File -> {
                 val packageFqName = irClass.getPackageFragment()!!.fqName
-                val packageProto = serializer!!.packagePartProto(packageFqName, metadata.file)
+                val packageProto = serializer!!.packagePartProto(packageFqName, metadata.fir)
 
                 serializerExtension.serializeJvmPackage(packageProto, type)
 
@@ -137,7 +137,7 @@ class FirJvmClassCodegen(
                 }
             }
             is FirMetadataSource.Function -> {
-                val fakeAnonymousFunction = metadata.function.copyToFreeAnonymousFunction()
+                val fakeAnonymousFunction = metadata.fir.copyToFreeAnonymousFunction()
                 val functionProto = serializer!!.functionProto(fakeAnonymousFunction)?.build()
                 writeKotlinMetadata(visitor, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, extraFlags) {
                     if (functionProto != null) {
@@ -164,18 +164,18 @@ class FirJvmClassCodegen(
 
     override fun bindMethodMetadata(method: IrFunction, signature: Method) {
         when (val metadata = method.metadata) {
-            is FirMetadataSource.Variable -> {
+            is FirMetadataSource.Property -> {
                 // We can't check for JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS because for interface methods
                 // moved to DefaultImpls, origin is changed to DEFAULT_IMPLS
                 // TODO: fix origin somehow, because otherwise $annotations methods in interfaces also don't have ACC_SYNTHETIC
                 assert(method.name.asString().endsWith(JvmAbi.ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX)) { method.dump() }
 
                 state.globalSerializationBindings.put(
-                    FirJvmSerializerExtension.SYNTHETIC_METHOD_FOR_FIR_VARIABLE, metadata.variable, signature
+                    FirJvmSerializerExtension.SYNTHETIC_METHOD_FOR_FIR_VARIABLE, metadata.fir, signature
                 )
             }
             is FirMetadataSource.Function -> {
-                visitor.serializationBindings.put(FirJvmSerializerExtension.METHOD_FOR_FIR_FUNCTION, metadata.function, signature)
+                visitor.serializationBindings.put(FirJvmSerializerExtension.METHOD_FOR_FIR_FUNCTION, metadata.fir, signature)
             }
             null -> {
             }
@@ -188,7 +188,7 @@ class FirJvmClassCodegen(
     override fun bindFieldMetadata(field: IrField, fieldType: Type, fieldName: String) {
         val metadata = field.metadata
         if (metadata is FirMetadataSource.Property) {
-            state.globalSerializationBindings.put(FirJvmSerializerExtension.FIELD_FOR_PROPERTY, metadata.property, fieldType to fieldName)
+            state.globalSerializationBindings.put(FirJvmSerializerExtension.FIELD_FOR_PROPERTY, metadata.fir, fieldType to fieldName)
         }
     }
 }

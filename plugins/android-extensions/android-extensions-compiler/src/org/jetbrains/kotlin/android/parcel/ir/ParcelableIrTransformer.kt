@@ -123,7 +123,7 @@ class ParcelableIrTransformer(private val context: IrPluginContext, private val 
                     irExprBody(irInt(flags))
                 }
 
-                metadata = MetadataSource.Function(
+                metadata = DescriptorMetadataSource.Function(
                     declaration.descriptor.findFunction(ParcelableSyntheticComponent.ComponentKind.DESCRIBE_CONTENTS)!!
                 )
             }
@@ -178,7 +178,7 @@ class ParcelableIrTransformer(private val context: IrPluginContext, private val 
                     }
                 }
 
-                metadata = MetadataSource.Function(
+                metadata = DescriptorMetadataSource.Function(
                     declaration.descriptor.findFunction(ParcelableSyntheticComponent.ComponentKind.WRITE_TO_PARCEL)!!
                 )
             }

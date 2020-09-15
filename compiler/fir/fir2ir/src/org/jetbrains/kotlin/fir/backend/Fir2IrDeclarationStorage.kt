@@ -672,7 +672,7 @@ class Fir2IrDeclarationStorage(
                     isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
                     containerSource = property.containerSource,
                 ).apply {
-                    metadata = FirMetadataSource.Variable(property)
+                    metadata = FirMetadataSource.Property(property)
                     convertAnnotationsFromLibrary(property)
                     enterScope(this)
                     if (irParent != null) {
@@ -791,7 +791,6 @@ class Fir2IrDeclarationStorage(
                     isExternal = false,
                     isStatic = field.isStatic
                 ).apply {
-                    metadata = FirMetadataSource.Variable(field)
                     descriptor.bind(this)
                     fieldCache[field] = this
                 }

@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
+import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -32,11 +32,11 @@ class DescriptorBasedClassCodegen internal constructor(
     private val serializerExtension = JvmSerializerExtension(visitor.serializationBindings, state, typeMapper)
     private val serializer: DescriptorSerializer? =
         when (val metadata = irClass.metadata) {
-            is MetadataSource.Class -> DescriptorSerializer.create(
+            is DescriptorMetadataSource.Class -> DescriptorSerializer.create(
                 metadata.descriptor, serializerExtension, (parentClassCodegen as? DescriptorBasedClassCodegen)?.serializer
             )
-            is MetadataSource.File -> DescriptorSerializer.createTopLevel(serializerExtension)
-            is MetadataSource.Function -> DescriptorSerializer.createForLambda(serializerExtension)
+            is DescriptorMetadataSource.File -> DescriptorSerializer.createTopLevel(serializerExtension)
+            is DescriptorMetadataSource.Function -> DescriptorSerializer.createForLambda(serializerExtension)
             else -> null
         }
 
@@ -47,7 +47,7 @@ class DescriptorBasedClassCodegen internal constructor(
             state.bindingTrace.record(
                 CodegenBinding.DELEGATED_PROPERTIES_WITH_METADATA,
                 type,
-                localDelegatedProperties.mapNotNull { (it.owner.metadata as? MetadataSource.LocalDelegatedProperty)?.descriptor }
+                localDelegatedProperties.mapNotNull { (it.owner.metadata as? DescriptorMetadataSource.LocalDelegatedProperty)?.descriptor }
             )
         }
 
@@ -58,7 +58,7 @@ class DescriptorBasedClassCodegen internal constructor(
         }
 
         when (val metadata = irClass.metadata) {
-            is MetadataSource.Class -> {
+            is DescriptorMetadataSource.Class -> {
                 val classProto = serializer!!.classProto(metadata.descriptor).build()
                 writeKotlinMetadata(visitor, state, KotlinClassHeader.Kind.CLASS, extraFlags) {
                     AsmUtil.writeAnnotationData(it, serializer, classProto)
@@ -68,7 +68,7 @@ class DescriptorBasedClassCodegen internal constructor(
                     "JvmPackageName is not supported for classes: ${irClass.render()}"
                 }
             }
-            is MetadataSource.File -> {
+            is DescriptorMetadataSource.File -> {
                 val packageFqName = irClass.getPackageFragment()!!.fqName
                 val packageProto = serializer!!.packagePartProto(packageFqName, metadata.descriptors)
 
@@ -88,7 +88,7 @@ class DescriptorBasedClassCodegen internal constructor(
                     }
                 }
             }
-            is MetadataSource.Function -> {
+            is DescriptorMetadataSource.Function -> {
                 val fakeDescriptor = createFreeFakeLambdaDescriptor(metadata.descriptor, state.typeApproximator)
                 val functionProto = serializer!!.functionProto(fakeDescriptor)?.build()
                 writeKotlinMetadata(visitor, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, extraFlags) {
@@ -116,7 +116,7 @@ class DescriptorBasedClassCodegen internal constructor(
 
     override fun bindMethodMetadata(method: IrFunction, signature: Method) {
         when (val metadata = method.metadata) {
-            is MetadataSource.Property -> {
+            is DescriptorMetadataSource.Property -> {
                 // We can't check for JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS because for interface methods
                 // moved to DefaultImpls, origin is changed to DEFAULT_IMPLS
                 // TODO: fix origin somehow, because otherwise $annotations methods in interfaces also don't have ACC_SYNTHETIC
@@ -126,7 +126,7 @@ class DescriptorBasedClassCodegen internal constructor(
                     JvmSerializationBindings.SYNTHETIC_METHOD_FOR_PROPERTY, metadata.descriptor, signature
                 )
             }
-            is MetadataSource.Function -> {
+            is DescriptorMetadataSource.Function -> {
                 visitor.serializationBindings.put(JvmSerializationBindings.METHOD_FOR_FUNCTION, metadata.descriptor, signature)
             }
             null -> {
@@ -136,7 +136,7 @@ class DescriptorBasedClassCodegen internal constructor(
     }
 
     override fun bindFieldMetadata(field: IrField, fieldType: Type, fieldName: String) {
-        val descriptor = (field.metadata as? MetadataSource.Property)?.descriptor
+        val descriptor = (field.metadata as? DescriptorMetadataSource.Property)?.descriptor
         if (descriptor != null) {
             state.globalSerializationBindings.put(JvmSerializationBindings.FIELD_FOR_PROPERTY, descriptor, fieldType to fieldName)
         }

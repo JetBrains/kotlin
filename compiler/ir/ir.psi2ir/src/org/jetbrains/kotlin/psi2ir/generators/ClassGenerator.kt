@@ -91,7 +91,7 @@ class ClassGenerator(
                 startOffset, endOffset, IrDeclarationOrigin.DEFINED, it, classDescriptor,
                 context.symbolTable.nameProvider.nameForDeclaration(classDescriptor), visibility, modality
             ).apply {
-                metadata = MetadataSource.Class(it.descriptor)
+                metadata = DescriptorMetadataSource.Class(it.descriptor)
             }
         }.buildWithScope { irClass ->
             declarationGenerator.generateGlobalTypeParametersDeclarations(irClass, classDescriptor.declaredTypeParameters)
