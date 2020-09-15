@@ -59,12 +59,16 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
 
     @OptIn(PrivateForInline::class)
     internal inline fun <T> withFullBodyResolve(crossinline l: () -> T): T {
-        if (!implicitTypeOnly) return l()
-        implicitTypeOnly = false
+        val shouldSwitchMode = implicitTypeOnly
+        if (shouldSwitchMode) {
+            implicitTypeOnly = false
+        }
         return try {
             l()
         } finally {
-            implicitTypeOnly = true
+            if (shouldSwitchMode) {
+                implicitTypeOnly = true
+            }
         }
     }
 

@@ -91,10 +91,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     }
 
     protected inline fun <T> withTypeParametersOf(declaration: FirMemberDeclaration, crossinline l: () -> T): T {
-        val scope = createTypeParameterScope(declaration) ?: return l()
-
+        val scope = createTypeParameterScope(declaration)
         return context.withTowerDataCleanup {
-            context.addNonLocalTowerDataElement(scope.asTowerDataElement(isLocal = false))
+            scope?.let { context.addNonLocalTowerDataElement(it.asTowerDataElement(isLocal = false)) }
             l()
         }
     }
@@ -111,14 +110,16 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             }
             return property.compose()
         }
+
+        if (property.isLocal) {
+            prepareSignatureForBodyResolve(property)
+            property.transformStatus(this, property.resolveStatus(property.status).mode())
+            property.getter?.let { it.transformStatus(this, it.resolveStatus(it.status).mode()) }
+            property.setter?.let { it.transformStatus(this, it.resolveStatus(it.status).mode()) }
+            return transformLocalVariable(property)
+        }
+
         return withTypeParametersOf(property) {
-            if (property.isLocal) {
-                prepareSignatureForBodyResolve(property)
-                property.transformStatus(this, property.resolveStatus(property.status).mode())
-                property.getter?.let { it.transformStatus(this, it.resolveStatus(it.status).mode()) }
-                property.setter?.let { it.transformStatus(this, it.resolveStatus(it.status).mode()) }
-                return@withTypeParametersOf transformLocalVariable(property)
-            }
             val returnTypeRef = property.returnTypeRef
             if (returnTypeRef !is FirImplicitTypeRef && implicitTypeOnly) return@withTypeParametersOf property.compose()
             if (property.resolvePhase == transformerPhase) return@withTypeParametersOf property.compose()
