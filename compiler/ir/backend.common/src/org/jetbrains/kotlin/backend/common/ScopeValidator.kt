@@ -123,6 +123,13 @@ class ScopeValidator(
         super.visitVariableAccess(expression)
     }
 
+    override fun visitMemberAccess(expression: IrMemberAccessExpression<*>) {
+        for (i in 0 until expression.typeArgumentsCount) {
+            expression.getTypeArgument(i)?.let { visitTypeAccess(expression, it) }
+        }
+        super.visitMemberAccess(expression)
+    }
+
     override fun visitCatch(aCatch: IrCatch) {
         // catchParameter only has scope over result expression
         handleValuesContainer(emptyList()) {
