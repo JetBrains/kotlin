@@ -94,33 +94,16 @@ open class TransformKotlinGranularMetadata
         transformation.metadataDependencyResolutions
     }
 
-    //TODO avoid using it
+    private val extractableFilesByResolution: Map<out MetadataDependencyResolution, ExtractableMetadataFiles>
+        get() = metadataDependencyResolutions
+            .filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
+            .associate { it to it.getExtractableMetadataFiles(outputsDir) }
+
     @get:Internal
     internal val filesByResolution: Map<out MetadataDependencyResolution, FileCollection>
-        get() = metadataDependencyResolutions.filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
-            .associate { it to project.files(it.getMetadataFilesBySourceSet(outputsDir, doProcessFiles = false).values) }
+        get() = extractableFilesByResolution.mapValues { (_, value) -> project.files(value.getMetadataFilesPerSourceSet(false).values) }
 
-//    @get:Internal
-//    internal val filesByOriginalFiles: Map<out Iterable<File>, FileCollection> by project.provider {
-//        metadataDependencyResolutions.associate {
-//            it.originalArtifactFiles to project.files(
-//                when (it) {
-//                    is MetadataDependencyResolution.ChooseVisibleSourceSets ->
-//                        it.getMetadataFilesBySourceSet(outputsDir, doProcessFiles = false).values
-//                    is MetadataDependencyResolution.ExcludeAsUnrequested ->
-//                        emptyList()
-//                    is MetadataDependencyResolution.KeepOriginalDependency ->
-//                        it.originalArtifactFiles
-//                }
-//            )
-//        }
-//    }
-
-    private val extractableFiles by project.provider {
-        transformation.metadataDependencyResolutions
-            .filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
-            .map { it.getExtractableMetadataFiles(outputsDir) }
-    }
+    private val extractableFiles by project.provider { extractableFilesByResolution.values }
 
     @TaskAction
     fun transformMetadata() {
