@@ -256,7 +256,7 @@ class Fir2IrDeclarationStorage(
                     startOffset, endOffset, IrDeclarationOrigin.DEFINED, symbol,
                     Name.special("<set-?>"), 0, type,
                     varargElementType = null,
-                    isCrossinline = false, isNoinline = false
+                    isCrossinline = false, isNoinline = false, isAssignable = false
                 ).apply {
                     this.parent = parent
                     descriptor.bind(this)
@@ -843,7 +843,7 @@ class Fir2IrDeclarationStorage(
                     valueParameter.name, index, type,
                     if (!valueParameter.isVararg) null
                     else valueParameter.returnTypeRef.coneType.arrayElementType()?.toIrType(typeContext),
-                    valueParameter.isCrossinline, valueParameter.isNoinline
+                    valueParameter.isCrossinline, valueParameter.isNoinline, false
                 ).apply {
                     descriptor.bind(this)
                     if (valueParameter.defaultValue.let {
