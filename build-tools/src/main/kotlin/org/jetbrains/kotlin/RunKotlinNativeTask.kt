@@ -56,7 +56,7 @@ open class RunKotlinNativeTask @Inject constructor(private val linkTask: Task,
 
     private fun execBenchmarkOnce(benchmark: String, warmupCount: Int, repeatCount: Int) : String {
         val output = ByteArrayOutputStream()
-        val useCset = project.property("useCset").toString().toBoolean()
+        val useCset = project.findProperty("useCset")?.toString()?.toBoolean() ?: false
         project.exec {
             if (useCset) {
                 it.executable = "cset"
