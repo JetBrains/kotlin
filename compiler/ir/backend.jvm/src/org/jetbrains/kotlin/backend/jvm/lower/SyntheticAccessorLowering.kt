@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.intrinsics.receiverAndArgs
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.hasMangledParameters
-import org.jetbrains.kotlin.codegen.syntheticAccessorToSuperSuffix
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -292,6 +291,8 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         val source = this
 
         return factory.buildFun {
+            startOffset = parent.startOffset
+            endOffset = parent.startOffset
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
             name = source.accessorName(expression.superQualifierSymbol)
             visibility = DescriptorVisibilities.PUBLIC
@@ -306,7 +307,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             accessor.returnType = source.returnType.remapTypeParameters(source, accessor)
 
             accessor.body = IrExpressionBodyImpl(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                accessor.startOffset, accessor.startOffset,
                 createSimpleFunctionCall(accessor, source.symbol, expression.superQualifierSymbol)
             )
         }
@@ -314,7 +315,8 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
 
     private fun createSimpleFunctionCall(accessor: IrFunction, targetSymbol: IrSimpleFunctionSymbol, superQualifierSymbol: IrClassSymbol?) =
         IrCallImpl(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            accessor.startOffset,
+            accessor.endOffset,
             accessor.returnType,
             targetSymbol, targetSymbol.owner.typeParameters.size,
             superQualifierSymbol = superQualifierSymbol
@@ -324,6 +326,8 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
 
     private fun makeGetterAccessorSymbol(fieldSymbol: IrFieldSymbol, parent: IrClass): IrSimpleFunctionSymbol =
         context.irFactory.buildFun {
+            startOffset = parent.startOffset
+            endOffset = parent.startOffset
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
             name = fieldSymbol.owner.accessorNameForGetter()
             visibility = DescriptorVisibilities.PUBLIC
@@ -346,11 +350,11 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
     private fun createAccessorBodyForGetter(targetField: IrField, accessor: IrSimpleFunction): IrBody {
         val maybeDispatchReceiver =
             if (targetField.isStatic) null
-            else IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, accessor.valueParameters[0].symbol)
+            else IrGetValueImpl(accessor.startOffset, accessor.endOffset, accessor.valueParameters[0].symbol)
         return IrExpressionBodyImpl(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            accessor.startOffset, accessor.endOffset,
             IrGetFieldImpl(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                accessor.startOffset, accessor.endOffset,
                 targetField.symbol,
                 targetField.type,
                 maybeDispatchReceiver
@@ -360,6 +364,8 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
 
     private fun makeSetterAccessorSymbol(fieldSymbol: IrFieldSymbol, parent: IrClass): IrSimpleFunctionSymbol =
         context.irFactory.buildFun {
+            startOffset = parent.startOffset
+            endOffset = parent.startOffset
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
             name = fieldSymbol.owner.accessorNameForSetter()
             visibility = DescriptorVisibilities.PUBLIC
@@ -384,15 +390,15 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
     private fun createAccessorBodyForSetter(targetField: IrField, accessor: IrSimpleFunction): IrBody {
         val maybeDispatchReceiver =
             if (targetField.isStatic) null
-            else IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, accessor.valueParameters[0].symbol)
+            else IrGetValueImpl(accessor.startOffset, accessor.endOffset, accessor.valueParameters[0].symbol)
         val value = IrGetValueImpl(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            accessor.startOffset, accessor.endOffset,
             accessor.valueParameters[if (targetField.isStatic) 0 else 1].symbol
         )
         return IrExpressionBodyImpl(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            accessor.startOffset, accessor.endOffset,
             IrSetFieldImpl(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                accessor.startOffset, accessor.endOffset,
                 targetField.symbol,
                 maybeDispatchReceiver,
                 value,
