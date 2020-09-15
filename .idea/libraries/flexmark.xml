@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="libraryTable">
   <library name="flexmark" type="repository">
-    <properties maven-id="com.vladsch.flexmark:flexmark-all:0.60.2" />
+    <properties maven-id="com.vladsch.flexmark:flexmark-all:0.60.2">
+      <exclude>
+        <dependency maven-id="org.jetbrains:annotations" />
+      </exclude>
+    </properties>
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark-all/0.60.2/flexmark-all-0.60.2.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark/0.60.2/flexmark-0.60.2.jar!/" />
@@ -54,7 +58,6 @@
       <root url="jar://$MAVEN_REPOSITORY$/com/openhtmltopdf/openhtmltopdf-jsoup-dom-converter/1.0.0/openhtmltopdf-jsoup-dom-converter-1.0.0.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark-profile-pegdown/0.60.2/flexmark-profile-pegdown-0.60.2.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark-util-ast/0.60.2/flexmark-util-ast-0.60.2.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/annotations/15.0/annotations-15.0.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark-util-builder/0.60.2/flexmark-util-builder-0.60.2.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark-util-collection/0.60.2/flexmark-util-collection-0.60.2.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark-util-data/0.60.2/flexmark-util-data-0.60.2.jar!/" />
@@ -117,7 +120,6 @@
       <root url="jar://$MAVEN_REPOSITORY$/com/openhtmltopdf/openhtmltopdf-jsoup-dom-converter/1.0.0/openhtmltopdf-jsoup-dom-converter-1.0.0-javadoc.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark-profile-pegdown/0.60.2/flexmark-profile-pegdown-0.60.2-javadoc.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark-util-ast/0.60.2/flexmark-util-ast-0.60.2-javadoc.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/annotations/15.0/annotations-15.0-javadoc.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark-util-builder/0.60.2/flexmark-util-builder-0.60.2-javadoc.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark-util-collection/0.60.2/flexmark-util-collection-0.60.2-javadoc.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark-util-data/0.60.2/flexmark-util-data-0.60.2-javadoc.jar!/" />
@@ -180,7 +182,6 @@
       <root url="jar://$MAVEN_REPOSITORY$/com/openhtmltopdf/openhtmltopdf-jsoup-dom-converter/1.0.0/openhtmltopdf-jsoup-dom-converter-1.0.0-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark-profile-pegdown/0.60.2/flexmark-profile-pegdown-0.60.2-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark-util-ast/0.60.2/flexmark-util-ast-0.60.2-sources.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/annotations/15.0/annotations-15.0-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark-util-builder/0.60.2/flexmark-util-builder-0.60.2-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark-util-collection/0.60.2/flexmark-util-collection-0.60.2-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark-util-data/0.60.2/flexmark-util-data-0.60.2-sources.jar!/" />
