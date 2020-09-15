@@ -653,6 +653,12 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         }
 
         @Override
+        protected boolean getShouldReportCyclicScopeWithCompanionWarning() {
+            return !c.getLanguageVersionSettings()
+                    .supportsFeature(LanguageFeature.ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion);
+        }
+
+        @Override
         protected void reportScopesLoopError(@NotNull KotlinType type) {
             PsiElement reportOn = DescriptorToSourceUtils.getSourceFromDescriptor(type.getConstructor().getDeclarationDescriptor());
 
