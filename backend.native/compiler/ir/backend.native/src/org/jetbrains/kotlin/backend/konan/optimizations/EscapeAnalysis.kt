@@ -8,12 +8,13 @@ package org.jetbrains.kotlin.backend.konan.optimizations
 import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
+import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.DirectedGraphCondensationBuilder
 import org.jetbrains.kotlin.backend.konan.DirectedGraphMultiNode
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.logMultiple
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import kotlin.math.min
 
@@ -1661,13 +1662,30 @@ internal object EscapeAnalysis {
                          callGraph: CallGraph, lifetimes: MutableMap<IrElement, Lifetime>) {
         assert(lifetimes.isEmpty())
 
-        val intraproceduralAnalysisResult =
-                IntraproceduralAnalysis(context, moduleDFG, externalModulesDFG, callGraph).analyze()
-        InterproceduralAnalysis(context, callGraph, intraproceduralAnalysisResult, externalModulesDFG, lifetimes,
-                // TODO: This is a bit conservative, but for more aggressive option some support from runtime is
-                // needed (namely, determining that a pointer is from the stack; this is easy for x86 or x64,
-                //         but what about all other platforms?).
-                propagateExiledToHeapObjects = true
-        ).analyze()
+        try {
+            val intraproceduralAnalysisResult =
+                    IntraproceduralAnalysis(context, moduleDFG, externalModulesDFG, callGraph).analyze()
+            InterproceduralAnalysis(context, callGraph, intraproceduralAnalysisResult, externalModulesDFG, lifetimes,
+                    // TODO: This is a bit conservative, but for more aggressive option some support from runtime is
+                    // needed (namely, determining that a pointer is from the stack; this is easy for x86 or x64,
+                    //         but what about all other platforms?).
+                    propagateExiledToHeapObjects = true
+            ).analyze()
+        } catch (t: Throwable) {
+            val extraUserInfo =
+                        """
+                        Please try to disable escape analysis and rerun the build. To do it add the following snippet to the gradle script:
+
+                            kotlin.targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget> {
+                                binaries.all {
+                                    freeCompilerArgs += "-Xdisable-phases=EscapeAnalysis"
+                                }
+                            }
+
+                        In case of using command line compiler add this option: "-Xdisable-phases=EscapeAnalysis".
+                        Also, consider filing an issue with full Gradle log here: https://kotl.in/issue
+                        """.trimIndent()
+            context.reportCompilationError("Escape analysis failure:\n$extraUserInfo\n\n${t.message}\n${t.stackTraceToString()}")
+        }
     }
 }
