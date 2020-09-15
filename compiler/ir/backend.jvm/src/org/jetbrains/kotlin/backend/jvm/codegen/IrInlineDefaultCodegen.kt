@@ -20,7 +20,7 @@ import org.jetbrains.org.objectweb.asm.Type
  * Such calls are inlined verbatim in the JVM backend (see InlineCodegenForDefaultBody.kt).
  * For compatibility we have to do the same thing in the JVM IR backend.
  */
-object IrInlineDefaultCodegen : IrCallGenerator {
+object IrInlineDefaultCodegen : IrInlineCallGenerator {
     override fun genValueAndPut(
         irValueParameter: IrValueParameter,
         argumentExpression: IrExpression,
@@ -34,7 +34,12 @@ object IrInlineDefaultCodegen : IrCallGenerator {
         assert(argumentExpression is IrGetValue || argumentExpression is IrTypeOperatorCall && argumentExpression.argument is IrGetValue)
     }
 
-    override fun genCall(callableMethod: IrCallableMethod, codegen: ExpressionCodegen, expression: IrFunctionAccessExpression) {
+    override fun genInlineCall(
+        callableMethod: IrCallableMethod,
+        codegen: ExpressionCodegen,
+        expression: IrFunctionAccessExpression,
+        isInsideIfCondition: Boolean
+    ) {
         val function = expression.symbol.owner
         val nodeAndSmap = codegen.classCodegen.generateMethodNode(function, codegen.delegatedPropertyOptimizer)
         val childSourceMapper = SourceMapCopier(codegen.smap, nodeAndSmap.classSMAP)

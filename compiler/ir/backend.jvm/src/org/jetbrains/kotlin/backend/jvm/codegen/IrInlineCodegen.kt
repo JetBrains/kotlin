@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
-import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.IrExpressionLambda
+import org.jetbrains.kotlin.codegen.JvmKotlinType
+import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.ValueKind
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -41,7 +43,7 @@ class IrInlineCodegen(
     InlineCodegen<ExpressionCodegen>(
         codegen, state, function.toIrBasedDescriptor(), methodOwner, signature, typeParameterMappings, sourceCompiler, reifiedTypeInliner
     ),
-    IrCallGenerator {
+    IrInlineCallGenerator {
 
     override fun generateAssertFieldIfNeeded(info: RootInliningContext) {
         if (info.generateAssertField) {
@@ -134,33 +136,20 @@ class IrInlineCodegen(
         invocationParamBuilder.markValueParametersStart()
     }
 
-    override fun genCall(
+    override fun genInlineCall(
         callableMethod: IrCallableMethod,
         codegen: ExpressionCodegen,
         expression: IrFunctionAccessExpression,
         isInsideIfCondition: Boolean,
     ) {
-        val element = codegen.context.psiSourceManager.findPsiElement(expression, codegen.irFunction)
-            ?: codegen.context.psiSourceManager.findPsiElement(codegen.irFunction)
-        if (!state.globalInlineContext.enterIntoInlining(
-                expression.symbol.owner.suspendFunctionOriginal().toIrBasedDescriptor(), element)
-        ) {
-            val message = "Call is a part of inline call cycle: ${expression.render()}"
-            AsmUtil.genThrow(codegen.v, "java/lang/UnsupportedOperationException", message)
-            return
-        }
-        try {
-            performInline(
-                expression.symbol.owner.typeParameters.map { it.symbol },
-                // Always look for default lambdas to allow custom default argument handling in compiler plugins.
-                true,
-                false,
-                codegen.typeMapper.typeSystem,
-                registerLineNumberAfterwards = isInsideIfCondition,
-            )
-        } finally {
-            state.globalInlineContext.exitFromInlining()
-        }
+        performInline(
+            expression.symbol.owner.typeParameters.map { it.symbol },
+            // Always look for default lambdas to allow custom default argument handling in compiler plugins.
+            true,
+            false,
+            codegen.typeMapper.typeSystem,
+            registerLineNumberAfterwards = isInsideIfCondition,
+        )
     }
 
     private fun rememberClosure(
