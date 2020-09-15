@@ -77,7 +77,8 @@ abstract class AbstractNavigateToLibrarySourceTest : AbstractNavigateToLibraryTe
 
 abstract class AbstractNavigateJavaToLibrarySourceTest : AbstractNavigateToLibraryTest() {
     protected val mockLibraryFacility = MockLibraryFacility(
-        source = IDEA_TEST_DATA_DIR.resolve("decompiler/navigation/fromJavaSource")
+        source = IDEA_TEST_DATA_DIR.resolve("decompiler/navigation/fromJavaSource"),
+        attachSources = false,
     )
 
     override val expectedFileExt: String = ".source.expected"
