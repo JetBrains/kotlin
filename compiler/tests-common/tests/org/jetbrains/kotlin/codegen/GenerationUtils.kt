@@ -140,8 +140,8 @@ object GenerationUtils {
         generationState.beforeCompile()
         codegenFactory.generateModuleInFrontendIRMode(
             generationState, moduleFragment, symbolTable, sourceManager
-        ) { context, irClass, type, serializationBindings, parent ->
-            FirMetadataSerializer(session, context, irClass, type, serializationBindings, parent)
+        ) { context, irClass, _, serializationBindings, parent ->
+            FirMetadataSerializer(session, context, irClass, serializationBindings, parent)
         }
 
         generationState.factory.done()
