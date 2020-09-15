@@ -589,7 +589,7 @@ class SymbolTable(
                 visibility ?: it.descriptor.visibility, !it.descriptor.isVar, it.descriptor.isEffectivelyExternal(),
                 it.descriptor.dispatchReceiverParameter == null
             ).apply {
-                metadata = MetadataSource.Property(it.descriptor)
+                metadata = DescriptorMetadataSource.Property(it.descriptor)
             }
         }
     ): IrField =
@@ -662,7 +662,7 @@ class SymbolTable(
                 isExternal = descriptor.isEffectivelyExternal(),
                 isExpect = descriptor.isExpect
             ).apply {
-                metadata = MetadataSource.Property(symbol.descriptor)
+                metadata = DescriptorMetadataSource.Property(symbol.descriptor)
             }
         }
     ): IrProperty =
@@ -978,7 +978,7 @@ class SymbolTable(
             { IrLocalDelegatedPropertySymbolImpl(descriptor) },
             factory
         ).apply {
-            metadata = MetadataSource.LocalDelegatedProperty(descriptor)
+            metadata = DescriptorMetadataSource.LocalDelegatedProperty(descriptor)
         }
 
     fun referenceLocalDelegatedProperty(descriptor: VariableDescriptorWithAccessors) =

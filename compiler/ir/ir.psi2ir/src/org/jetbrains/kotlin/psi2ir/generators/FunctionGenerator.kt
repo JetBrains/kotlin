@@ -260,7 +260,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                     visibility, IrUninitializedType, isInline, isEffectivelyExternal(), isPrimary, isExpect
                 )
             }.apply {
-                metadata = MetadataSource.Function(it.descriptor)
+                metadata = DescriptorMetadataSource.Function(it.descriptor)
             }
         }.buildWithScope { irConstructor ->
             generateValueParameterDeclarations(irConstructor, ktParametersElement, null)

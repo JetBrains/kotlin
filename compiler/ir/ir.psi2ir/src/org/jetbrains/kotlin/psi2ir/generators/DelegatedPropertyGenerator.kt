@@ -136,7 +136,7 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
                     startOffset, endOffset, origin, it, delegateDescriptor.name, type, delegateDescriptor.visibility,
                     !delegateDescriptor.isVar, false, delegateDescriptor.dispatchReceiverParameter == null
                 ).apply {
-                    metadata = MetadataSource.Property(propertyDescriptor)
+                    metadata = DescriptorMetadataSource.Property(propertyDescriptor)
                 }
             }.also { irDelegate ->
                 irDelegate.initializer = generateInitializerBodyForPropertyDelegate(

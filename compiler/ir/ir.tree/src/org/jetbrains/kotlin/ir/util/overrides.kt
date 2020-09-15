@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 
 @ObsoleteDescriptorBasedAPI
@@ -25,7 +25,7 @@ fun SymbolTable.declareSimpleFunctionWithOverrides(
                 startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(this),
                 visibility, modality, IrUninitializedType, isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect
             ).also { declaration ->
-                declaration.metadata = MetadataSource.Function(this)
+                declaration.metadata = DescriptorMetadataSource.Function(this)
             }
         }
     }.also { declaration ->
