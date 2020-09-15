@@ -590,6 +590,11 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             runTest("testData/stepping/stepOver/soInlineLibFun.kt");
         }
 
+        @TestMetadata("soInlineLibFunInWhen.kt")
+        public void testSoInlineLibFunInWhen() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/soInlineLibFunInWhen.kt");
+        }
+
         @TestMetadata("soInlineOperatorIterator.kt")
         public void testSoInlineOperatorIterator() throws Exception {
             runTest("testData/stepping/stepOver/soInlineOperatorIterator.kt");
