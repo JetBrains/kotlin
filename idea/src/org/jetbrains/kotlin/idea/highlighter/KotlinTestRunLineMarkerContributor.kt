@@ -54,7 +54,7 @@ class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
                     HostManager.hostIsMac -> target in listOf(
                         KonanTarget.IOS_X64,
                         KonanTarget.MACOS_X64,
-                        KonanTarget.WATCHOS_X64,
+                        KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_X86,
                         KonanTarget.TVOS_X64
                     )
                     HostManager.hostIsLinux -> target == KonanTarget.LINUX_X64
