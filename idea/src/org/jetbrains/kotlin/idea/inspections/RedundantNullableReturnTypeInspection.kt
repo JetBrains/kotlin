@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.resolve.getDataFlowValueFactory
 import org.jetbrains.kotlin.idea.util.textRangeIn
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypes
@@ -45,7 +46,7 @@ class RedundantNullableReturnTypeInspection : AbstractKotlinInspection() {
             if (typeElement.innerType == null) return
             val questionMark = typeElement.questionMarkNode as? LeafPsiElement ?: return
 
-            if (declaration.isOverridable()) return
+            if (declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD) || declaration.isOverridable()) return
 
             val body = when (declaration) {
                 is KtNamedFunction -> declaration.bodyExpression

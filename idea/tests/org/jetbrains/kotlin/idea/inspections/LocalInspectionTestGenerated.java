@@ -8249,6 +8249,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/function/overridable.kt");
             }
 
+            @TestMetadata("overridden.kt")
+            public void testOverridden() throws Exception {
+                runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/function/overridden.kt");
+            }
+
             @TestMetadata("returnNullableForLambda.kt")
             public void testReturnNullableForLambda() throws Exception {
                 runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/function/returnNullableForLambda.kt");
@@ -8305,6 +8310,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("initializer.kt")
             public void testInitializer() throws Exception {
                 runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/property/initializer.kt");
+            }
+
+            @TestMetadata("overridden.kt")
+            public void testOverridden() throws Exception {
+                runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/property/overridden.kt");
             }
 
             @TestMetadata("returnNullableFromLambdaInGetter.kt")
