@@ -1829,6 +1829,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/defaultArguments/kt11962.kt");
         }
 
+        @TestMetadata("localVariablesInInlinedDefaultStubs.kt")
+        public void testLocalVariablesInInlinedDefaultStubs() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/defaultArguments/localVariablesInInlinedDefaultStubs.kt");
+        }
+
         @TestMetadata("maskAndArgumentElimination.kt")
         public void testMaskAndArgumentElimination() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/defaultArguments/maskAndArgumentElimination.kt");
@@ -1847,6 +1852,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("noAccessorForDefault.kt")
         public void testNoAccessorForDefault() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/defaultArguments/noAccessorForDefault.kt");
+        }
+
+        @TestMetadata("noAnonymousObjectRegenerationInDefaultStub.kt")
+        public void testNoAnonymousObjectRegenerationInDefaultStub() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/defaultArguments/noAnonymousObjectRegenerationInDefaultStub.kt");
         }
 
         @TestMetadata("noEmptyArray.kt")
