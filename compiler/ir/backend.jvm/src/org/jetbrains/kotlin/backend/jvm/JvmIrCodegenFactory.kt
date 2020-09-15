@@ -17,15 +17,12 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
-import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.MultifileClassCodegen
 import org.jetbrains.kotlin.codegen.PackageCodegen
 import org.jetbrains.kotlin.codegen.PackageCodegenImpl
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrFunctionFactory
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -45,7 +42,7 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
         irModuleFragment: IrModuleFragment,
         symbolTable: SymbolTable,
         sourceManager: PsiSourceManager,
-        createCodegen: (IrClass, JvmBackendContext, IrFunction?) -> ClassCodegen?,
+        serializerFactory: MetadataSerializerFactory,
     ) {
         irModuleFragment.irBuiltins.functionFactory = IrFunctionFactory(irModuleFragment.irBuiltins, symbolTable)
         val extensions = JvmGeneratorExtensions()
@@ -54,7 +51,7 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
         )
 
         JvmBackendFacade.doGenerateFilesInternal(
-            state, irModuleFragment, symbolTable, sourceManager, phaseConfig, irProviders, extensions, createCodegen
+            state, irModuleFragment, symbolTable, sourceManager, phaseConfig, irProviders, extensions, serializerFactory
         )
     }
 
