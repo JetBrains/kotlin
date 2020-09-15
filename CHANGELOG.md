@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+## Version 0.5.
+
+_2020-09-14_
+
+Bug Fixes:
+ * Support Windows-style line-separators in compiled files.
+
 ## Version 0.5.0
 
 _2020-08-29_
