@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
+import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -83,4 +84,8 @@ private class RemapTypesHelper(private val typeRemapper: TypeRemapper) : IrEleme
         super.visitTypeOperator(expression)
     }
 
+    override fun visitVararg(expression: IrVararg) {
+        expression.varargElementType = typeRemapper.remapType(expression.varargElementType)
+        super.visitVararg(expression)
+    }
 }

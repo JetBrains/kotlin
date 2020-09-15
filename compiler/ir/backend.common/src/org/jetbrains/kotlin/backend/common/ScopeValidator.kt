@@ -148,6 +148,11 @@ class ScopeValidator(
         super.visitClassReference(expression)
     }
 
+    override fun visitVararg(expression: IrVararg) {
+        visitTypeAccess(expression, expression.varargElementType)
+        super.visitVararg(expression)
+    }
+
     override fun visitExpression(expression: IrExpression) {
         visitTypeAccess(expression, expression.type)
         super.visitExpression(expression)
