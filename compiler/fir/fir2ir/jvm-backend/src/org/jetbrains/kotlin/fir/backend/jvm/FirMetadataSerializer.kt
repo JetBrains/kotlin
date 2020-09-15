@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.typeContext
-import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*

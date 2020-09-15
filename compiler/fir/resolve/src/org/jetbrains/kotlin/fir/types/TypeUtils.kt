@@ -5,9 +5,18 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.classId
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.fakeElement
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLookupTagWithFixedSymbol
+import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
@@ -174,6 +183,36 @@ fun FirTypeRef.isUnsafeVarianceType(session: FirSession): Boolean {
     return coneTypeSafe<ConeKotlinType>()?.isUnsafeVarianceType(session) == true
 }
 
+// Unlike other cases, return types may be implicit, i.e. unresolved
+// But in that cases newType should also be `null`
+fun FirTypeRef.withReplacedReturnType(newType: ConeKotlinType?): FirTypeRef {
+    require(this is FirResolvedTypeRef || newType == null)
+    if (newType == null) return this
+
+    return buildResolvedTypeRef {
+        source = this@withReplacedReturnType.source
+        type = newType
+        annotations += this@withReplacedReturnType.annotations
+    }
+}
+
+fun FirTypeRef.withReplacedConeType(
+    newType: ConeKotlinType?,
+    firFakeSourceElementKind: FirFakeSourceElementKind? = null
+): FirResolvedTypeRef {
+    require(this is FirResolvedTypeRef)
+    if (newType == null) return this
+
+    return buildResolvedTypeRef {
+        source = if (firFakeSourceElementKind != null)
+            this@withReplacedConeType.source?.fakeElement(firFakeSourceElementKind)
+        else
+            this@withReplacedConeType.source
+        type = newType
+        annotations += this@withReplacedConeType.annotations
+    }
+}
+
 fun FirTypeRef.approximated(
     typeApproximator: AbstractTypeApproximator,
     toSuper: Boolean,
@@ -184,5 +223,79 @@ fun FirTypeRef.approximated(
     else
         typeApproximator.approximateToSubType(coneType, conf)
     return withReplacedConeType(approximatedType as? ConeKotlinType)
+}
+
+fun FirTypeRef.approximatedIfNeededOrSelf(
+    approximator: AbstractTypeApproximator,
+    containingCallableVisibility: Visibility?,
+    isInlineFunction: Boolean = false
+): FirTypeRef {
+    val approximatedType = if (this is FirResolvedTypeRef &&
+        (containingCallableVisibility == Visibilities.Public || containingCallableVisibility == Visibilities.Protected)
+    ) {
+        if (type.requiresApproximationInPublicPosition()) this.approximated(approximator, toSuper = true) else this
+    } else {
+        this
+    }
+    return approximatedType.hideLocalTypeIfNeeded(containingCallableVisibility, isInlineFunction)
+}
+
+private fun ConeKotlinType.requiresApproximationInPublicPosition(): Boolean {
+    return when (this) {
+        is ConeIntegerLiteralType,
+        is ConeCapturedType,
+        is ConeDefinitelyNotNullType,
+        is ConeIntersectionType -> true
+        is ConeClassLikeType -> typeArguments.any {
+            it is ConeKotlinTypeProjection && it.type.requiresApproximationInPublicPosition()
+        }
+        else -> false
+    }
+}
+
+/*
+ * Suppose a function without an explicit return type just returns an anonymous object:
+ *
+ *   fun foo(...) = object : ObjectSuperType {
+ *     override fun ...
+ *   }
+ *
+ * Without unwrapping, the return type ended up with that anonymous object (<no name provided>), while the resolved super type, which
+ * acts like an implementing interface, is a better fit. In fact, exposing an anonymous object types is prohibited for certain cases,
+ * e.g., KT-33917. We can also apply this to any local types.
+ */
+private fun FirTypeRef.hideLocalTypeIfNeeded(
+    containingCallableVisibility: Visibility?,
+    isInlineFunction: Boolean = false
+): FirTypeRef {
+    if (containingCallableVisibility == null) {
+        return this
+    }
+    // Approximate types for non-private (all but package private or private) members.
+    // Also private inline functions, as per KT-33917.
+    if (containingCallableVisibility == Visibilities.Public ||
+        containingCallableVisibility == Visibilities.Protected ||
+        containingCallableVisibility == Visibilities.Internal ||
+        (containingCallableVisibility == Visibilities.Private && isInlineFunction)
+    ) {
+        val firClass =
+            (((this as? FirResolvedTypeRef)
+                ?.type as? ConeClassLikeType)
+                ?.lookupTag as? ConeClassLookupTagWithFixedSymbol)
+                ?.symbol?.fir
+        if (firClass?.classId?.isLocal != true) {
+            return this
+        }
+        if (firClass.superTypeRefs.size > 1) {
+            return buildErrorTypeRef {
+                diagnostic = ConeSimpleDiagnostic("Cannot hide local type ${firClass.render()}")
+            }
+        }
+        val superType = firClass.superTypeRefs.single()
+        if (superType is FirResolvedTypeRef && !superType.isAny) {
+            return superType
+        }
+    }
+    return this
 }
 

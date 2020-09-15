@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.providers.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolved
-import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
