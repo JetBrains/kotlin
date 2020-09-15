@@ -57,7 +57,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
-import org.jetbrains.kotlin.fir.backend.jvm.FirJvmClassCodegen
+import org.jetbrains.kotlin.fir.backend.jvm.FirMetadataSerializer
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
@@ -399,8 +399,8 @@ object KotlinToJVMBytecodeCompiler {
             generationState.beforeCompile()
             codegenFactory.generateModuleInFrontendIRMode(
                 generationState, moduleFragment, symbolTable, sourceManager
-            ) { irClass, context, parentFunction ->
-                FirJvmClassCodegen(irClass, context, parentFunction, session)
+            ) { context, irClass, type, serializationBindings, parent ->
+                FirMetadataSerializer(session, context, irClass, type, serializationBindings, parent)
             }
             CodegenFactory.doCheckCancelled(generationState)
             generationState.factory.done()
