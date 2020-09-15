@@ -1,21 +1,29 @@
 <node text="List  (kotlin.collections)" base="true">
-  <node text="AbstractList  (java.util)">
-    <node text="AbstractSequentialList  (java.util)"/>
-    <node text="ArrayList  (java.util)"/>
-    <node text="ArrayList in Arrays  (java.util)"/>
-    <node text="CopiesList in Collections  (java.util)"/>
-    <node text="EmptyList in Collections  (java.util)"/>
-    <node text="SingletonList in Collections  (java.util)"/>
-    <node text="SubList in ArrayList  (java.util)"/>
-  </node>
-  <node text="AbstractList  (kotlin.collections)">
-    <node text="MovingSubList  (kotlin.collections)"/>
-    <node text="RingBuffer  (kotlin.collections)"/>
-    <node text="ReversedListReadOnly  (kotlin.collections)"/>
-  </node>
-  <node text="ArrayList  (java.util)"/>
-  <node text="CheckedList in Collections  (java.util)"/>
+  <node text="LinkedList  (java.util)"/>
+  <node text="CopyOnWriteArrayList  (java.util.concurrent)"/>
   <node text="EmptyList  (kotlin.collections)"/>
-  <node text="SynchronizedList in Collections  (java.util)"/>
   <node text="UnmodifiableList in Collections  (java.util)"/>
+  <node text="AbstractList  (java.util)">
+    <node text="ArrayList in Arrays  (java.util)"/>
+    <node text="SubList in ArrayList  (java.util)"/>
+    <node text="CopiesList in Collections  (java.util)"/>
+    <node text="AbstractSequentialList  (java.util)">
+      <node text="LinkedList  (java.util)"/>
+    </node>
+    <node text="EmptyList in Collections  (java.util)"/>
+    <node text="COWSubList in CopyOnWriteArrayList  (java.util.concurrent)"/>
+    <node text="SingletonList in Collections  (java.util)"/>
+    <node text="SubList  (java.util)"/>
+    <node text="ArrayList  (java.util)"/>
+    <node text="Vector  (java.util)"/>
+  </node>
+  <node text="CheckedList in Collections  (java.util)"/>
+  <node text="AbstractList  (kotlin.collections)">
+    <node text="ReversedListReadOnly  (kotlin.collections)"/>
+    <node text="RingBuffer  (kotlin.collections)"/>
+    <node text="MovingSubList  (kotlin.collections)"/>
+  </node>
+  <node text="SynchronizedList in Collections  (java.util)"/>
+  <node text="ArrayList  (java.util)"/>
+  <node text="Vector  (java.util)"/>
 </node>
