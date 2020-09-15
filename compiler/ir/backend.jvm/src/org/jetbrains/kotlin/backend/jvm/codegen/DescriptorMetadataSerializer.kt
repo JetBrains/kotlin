@@ -41,7 +41,9 @@ class DescriptorMetadataSerializer(
         if (localDelegatedProperties != null && localDelegatedProperties.isNotEmpty()) {
             context.state.bindingTrace.record(
                 CodegenBinding.DELEGATED_PROPERTIES_WITH_METADATA,
-                type,
+                // When serializing metadata for interfaces, `JvmSerializerExtension.serializeClass`
+                // looks at `$DefaultImpls` for some reason that's probably related to the old backend.
+                if (irClass.isInterface) context.typeMapper.mapClass(context.cachedDeclarations.getDefaultImplsClass(irClass)) else type,
                 localDelegatedProperties.mapNotNull { (it.owner.metadata as? DescriptorMetadataSource.LocalDelegatedProperty)?.descriptor }
             )
         }
