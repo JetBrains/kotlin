@@ -348,7 +348,8 @@ open class DeepCopyIrTreeWithSymbols(
             declaration.type.remapType(),
             declaration.varargElementType?.remapType(),
             declaration.isCrossinline,
-            declaration.isNoinline
+            declaration.isNoinline,
+            false
         ).apply {
             transformAnnotations(declaration)
             defaultValue = declaration.defaultValue?.transform()

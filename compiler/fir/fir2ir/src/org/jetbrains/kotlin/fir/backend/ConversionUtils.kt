@@ -421,7 +421,7 @@ internal fun IrDeclarationParent.declareThisReceiverParameter(
         symbolTable.irFactory.createValueParameter(
             startOffset, endOffset, thisOrigin, symbol,
             Name.special("<this>"), -1, thisType,
-            varargElementType = null, isCrossinline = false, isNoinline = false
+            varargElementType = null, isCrossinline = false, isNoinline = false, isAssignable = false
         ).apply {
             this.parent = this@declareThisReceiverParameter
             receiverDescriptor.bind(this)

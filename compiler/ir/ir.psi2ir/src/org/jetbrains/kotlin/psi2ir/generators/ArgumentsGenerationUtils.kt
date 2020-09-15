@@ -415,7 +415,7 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
                     Name.identifier("p$index"),
                     index,
                     irParameterType,
-                    varargElementType = null, isCrossinline = false, isNoinline = false
+                    varargElementType = null, isCrossinline = false, isNoinline = false, isAssignable = false
                 )
             }.also {
                 adaptedParameterDescriptor.bind(it)

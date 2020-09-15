@@ -237,9 +237,12 @@ object PersistentIrFactory : IrFactory {
         varargElementType: IrType?,
         isCrossinline: Boolean,
         isNoinline: Boolean,
-        isHidden: Boolean
+        isHidden: Boolean,
+        isAssignable: Boolean
     ): IrValueParameter =
-        PersistentIrValueParameter(startOffset, endOffset, origin, symbol, name, index, type, varargElementType, isCrossinline, isNoinline, isHidden)
+        PersistentIrValueParameter(
+            startOffset, endOffset, origin, symbol, name, index, type, varargElementType, isCrossinline, isNoinline, isHidden, isAssignable
+        )
 
     override fun createExpressionBody(
         startOffset: Int,

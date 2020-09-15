@@ -581,7 +581,8 @@ private fun IrFunction.generateDefaultsFunctionImpl(
             type = if (makeNullable) newType.makeNullable() else newType,
             defaultValue = if (it.defaultValue != null) {
                 factory.createExpressionBody(IrErrorExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it.type, "Default Stub"))
-            } else null
+            } else null,
+            isAssignable = it.defaultValue != null
         )
     }
 

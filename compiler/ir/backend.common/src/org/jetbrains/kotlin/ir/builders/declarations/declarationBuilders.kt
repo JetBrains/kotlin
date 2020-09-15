@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.types.Variance
 
 @PublishedApi
@@ -213,7 +212,7 @@ fun <D> buildReceiverParameter(
     parent.factory.createValueParameter(
         startOffset, endOffset, origin,
         IrValueParameterSymbolImpl(wrappedDescriptor),
-        RECEIVER_PARAMETER_NAME, -1, type, null, isCrossinline = false, isNoinline = false
+        RECEIVER_PARAMETER_NAME, -1, type, null, isCrossinline = false, isNoinline = false, isAssignable = false
     ).also {
         wrappedDescriptor.bind(it)
         it.parent = parent
@@ -227,7 +226,7 @@ internal fun IrFactory.buildValueParameter(builder: IrValueParameterBuilder, par
         return createValueParameter(
             startOffset, endOffset, origin,
             IrValueParameterSymbolImpl(wrappedDescriptor),
-            name, index, type, varargElementType, isCrossInline, isNoinline, isHidden
+            name, index, type, varargElementType, isCrossInline, isNoinline, isHidden, false
         ).also {
             wrappedDescriptor.bind(it)
             it.parent = parent
