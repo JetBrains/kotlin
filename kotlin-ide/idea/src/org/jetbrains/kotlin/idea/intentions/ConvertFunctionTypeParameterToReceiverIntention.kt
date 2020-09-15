@@ -218,7 +218,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
             project.checkConflictsInteractively(conflicts) {
                 project.executeWriteCommand(text) {
                     val elementsToShorten = ArrayList<KtElement>()
-                    usages.sortedBy { it.element?.textOffset }.forEach { it.process(data, elementsToShorten) }
+                    usages.sortedByDescending { it.element?.textOffset }.forEach { it.process(data, elementsToShorten) }
                     ShortenReferences.DEFAULT.process(elementsToShorten)
                 }
             }

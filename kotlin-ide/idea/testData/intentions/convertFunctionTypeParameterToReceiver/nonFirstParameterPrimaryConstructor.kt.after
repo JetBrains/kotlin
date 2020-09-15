@@ -22,8 +22,8 @@ fun baz(f: (Int, Boolean) -> String) {
 
     Foo { i -> (::g)(i, this) }
 
-    val lambda = lambda()
-    Foo { i -> lambda(i, this) }
+    val f2 = lambda()
+    Foo { i -> f2(i, this) }
 
     Foo { i -> "${i + 1} $this" }
 }
@@ -31,9 +31,9 @@ fun baz(f: (Int, Boolean) -> String) {
 class Baz1(f: (Int, Boolean) -> String) : Foo({ i -> f(i, this) })
 class Baz2 : Foo({ i -> (::g)(i, this) })
 
-val lambda = lambda()
+val f1 = lambda()
 
-class Baz3 : Foo({ i -> lambda(i, this) })
+class Baz3 : Foo({ i -> f1(i, this) })
 class Baz4 : Foo({ i -> "${i + 1} $this" })
 
 class Baz5 : Foo {
