@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import java.io.File
+import java.io.InputStream
 import java.util.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
@@ -344,16 +345,20 @@ private class JarArtifactMppDependencyMetadataExtractor(
 
     val metadataArtifactBySourceSet: MutableMap<String, File> = mutableMapOf()
 
+    private fun parseJsonProjectStructureMetadata(input: InputStream) =
+        parseKotlinSourceSetMetadataFromJson(input.reader().readText())
+
+    private fun parseXmlProjectStructureMetadata(input: InputStream) =
+        parseKotlinSourceSetMetadataFromXml(DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(input))
+
     override fun getProjectStructureMetadata(): KotlinProjectStructureMetadata? {
         return ZipFile(primaryArtifact).use { zip ->
-            val metadata = zip.getEntry("META-INF/$MULTIPLATFORM_PROJECT_METADATA_FILE_NAME")
-                ?: return null
+            val (metadata, parseFunction) =
+                zip.getEntry("META-INF/$MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME")?.to(::parseJsonProjectStructureMetadata)
+                    ?: zip.getEntry("META-INF/$MULTIPLATFORM_PROJECT_METADATA_FILE_NAME")?.to(::parseXmlProjectStructureMetadata)
+                    ?: return null
 
-            val metadataXmlDocument = zip.getInputStream(metadata).use { inputStream ->
-                DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream)
-            }
-
-            parseKotlinSourceSetMetadataFromXml(metadataXmlDocument)
+            zip.getInputStream(metadata).use(parseFunction)
         }
     }
 

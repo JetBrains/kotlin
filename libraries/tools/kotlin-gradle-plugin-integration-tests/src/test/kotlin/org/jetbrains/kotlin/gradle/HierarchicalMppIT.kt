@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.internals.MULTIPLATFORM_PROJECT_METADATA_FILE_NAME
-import org.jetbrains.kotlin.gradle.internals.parseKotlinSourceSetMetadataFromXml
+import org.jetbrains.kotlin.gradle.internals.MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME
+import org.jetbrains.kotlin.gradle.internals.parseKotlinSourceSetMetadataFromJson
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.ModuleDependencyIdentifier
@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.modify
 import java.io.File
 import java.util.zip.ZipFile
-import javax.xml.parsers.DocumentBuilderFactory
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -216,7 +215,7 @@ class HierarchicalMppIT : BaseGradleIT() {
             )
         ).use { publishedMetadataJar ->
             publishedMetadataJar.checkAllEntryNamesArePresent(
-                "META-INF/$MULTIPLATFORM_PROJECT_METADATA_FILE_NAME",
+                "META-INF/$MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME",
 
                 "commonMain/default/manifest",
                 "commonMain/default/linkdata/package_com.example/",
@@ -254,7 +253,7 @@ class HierarchicalMppIT : BaseGradleIT() {
             )
         ).use { publishedMetadataJar ->
             publishedMetadataJar.checkAllEntryNamesArePresent(
-                "META-INF/$MULTIPLATFORM_PROJECT_METADATA_FILE_NAME",
+                "META-INF/$MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME",
 
                 "commonMain/default/manifest",
                 "commonMain/default/linkdata/package_com.example.bar/",
@@ -441,10 +440,8 @@ class HierarchicalMppIT : BaseGradleIT() {
     }
 
     private fun ZipFile.getProjectStructureMetadata(): KotlinProjectStructureMetadata {
-        val documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-        val document = getInputStream(getEntry("META-INF/$MULTIPLATFORM_PROJECT_METADATA_FILE_NAME"))
-            .use { inputStream -> documentBuilder.parse(inputStream) }
-        return checkNotNull(parseKotlinSourceSetMetadataFromXml(document))
+        val json = getInputStream(getEntry("META-INF/$MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME")).reader().readText()
+        return checkNotNull(parseKotlinSourceSetMetadataFromJson(json))
     }
 
     @Test
