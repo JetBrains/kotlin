@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
+import java.util.*
 
 abstract class CallableRefactoring<out T : CallableDescriptor>(
     val project: Project,
@@ -179,7 +180,7 @@ abstract class CallableRefactoring<out T : CallableDescriptor>(
 }
 
 fun getAffectedCallables(project: Project, descriptorsForChange: Collection<CallableDescriptor>): Collection<PsiElement> {
-    val results = hashSetOf<PsiElement>()
+    val results = TreeSet<PsiElement>(compareBy { it.textOffset })
     for (descriptor in descriptorsForChange) {
         val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) ?: continue
         collectAffectedCallables(declaration, results)

@@ -189,7 +189,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
                             conflicts.putValue(callable, KotlinBundle.message("can.t.modify.0", renderedCallable))
                         }
 
-                        usageLoop@ for (ref in callable.searchReferencesOrMethodReferences().sortedByDescending { it.element.textLength }) {
+                        usageLoop@ for (ref in callable.searchReferencesOrMethodReferences()) {
                             val refElement = ref.element
                             when (ref) {
                                 is KtSimpleReference<*> -> processExternalUsage(conflicts, refElement, usages)
@@ -218,7 +218,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
             project.checkConflictsInteractively(conflicts) {
                 project.executeWriteCommand(text) {
                     val elementsToShorten = ArrayList<KtElement>()
-                    usages.forEach { it.process(data, elementsToShorten) }
+                    usages.sortedBy { it.element?.textOffset }.forEach { it.process(data, elementsToShorten) }
                     ShortenReferences.DEFAULT.process(elementsToShorten)
                 }
             }
