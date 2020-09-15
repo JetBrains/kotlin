@@ -28,15 +28,15 @@ import com.intellij.util.QueryExecutor
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightClass
+import org.jetbrains.kotlin.idea.asJava.LightClassProvider.Companion.providedCreateKtFakeLightClass
+import org.jetbrains.kotlin.idea.asJava.LightClassProvider.Companion.providedToLightClass
+import org.jetbrains.kotlin.idea.search.KotlinSearchUsagesSupport.Companion.actualsForExpected
+import org.jetbrains.kotlin.idea.search.KotlinSearchUsagesSupport.Companion.forEachOverridingMethod
+import org.jetbrains.kotlin.idea.search.KotlinSearchUsagesSupport.Companion.isExpectDeclaration
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachImplementation
-import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingMethod
 import org.jetbrains.kotlin.idea.search.declarationsSearch.toPossiblyFakeLightMethods
-import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.contains
 import java.util.*
@@ -107,7 +107,9 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
         }
 
         private fun processClassImplementations(klass: KtClass, consumer: Processor<PsiElement>): Boolean {
-            val psiClass = runReadAction { klass.toLightClass() ?: KtFakeLightClass(klass) }
+            val psiClass = runReadAction { klass.providedToLightClass() ?: providedCreateKtFakeLightClass(klass) }
+                as? KtLightClass
+                ?: return false //TODO Implement FIR support for not nullable providedCreateKtFakeLightClass
 
             val searchScope = runReadAction { psiClass.useScope }
             if (searchScope is LocalSearchScope) {

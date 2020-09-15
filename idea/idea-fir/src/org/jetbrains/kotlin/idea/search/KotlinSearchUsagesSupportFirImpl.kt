@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.search
 
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
@@ -14,6 +15,10 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.ImportPath
 
 class KotlinSearchUsagesSupportFirImpl : KotlinSearchUsagesSupport {
+    override fun actualsForExpected(declaration: KtDeclaration, module: Module?): Set<KtDeclaration> {
+        return emptySet()
+    }
+
     override fun dataClassComponentMethodName(element: KtParameter): String? {
         return null
     }
@@ -108,5 +113,28 @@ class KotlinSearchUsagesSupportFirImpl : KotlinSearchUsagesSupport {
 
     override fun isExpectDeclaration(declaration: KtDeclaration): Boolean {
         return false
+    }
+
+    override fun canBeResolvedWithFrontEnd(element: PsiElement): Boolean {
+        //TODO FIR: Is the same as PsiElement.hasJavaResolutionFacade() as for FIR?
+        return element.originalElement.containingFile != null
+    }
+
+    override fun createConstructorHandle(ktDeclaration: KtDeclaration): KotlinSearchUsagesSupport.ConstructorCallHandle {
+        //TODO FIR: This is the stub. Need to implement
+        return object : KotlinSearchUsagesSupport.ConstructorCallHandle {
+            override fun referencedTo(element: KtElement): Boolean {
+                return false
+            }
+        }
+    }
+
+    override fun createConstructorHandle(psiMethod: PsiMethod): KotlinSearchUsagesSupport.ConstructorCallHandle {
+        //TODO FIR: This is the stub. Need to implement
+        return object : KotlinSearchUsagesSupport.ConstructorCallHandle {
+            override fun referencedTo(element: KtElement): Boolean {
+                return false
+            }
+        }
     }
 }
