@@ -13,7 +13,6 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.testFramework.LightProjectDescriptor
-import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
@@ -24,9 +23,6 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractInlineTest : KotlinLightCodeInsightFixtureTestCase() {
-    val fixture: JavaCodeInsightTestFixture
-        get() = myFixture
-
     protected fun doTest(unused: String) {
         val testDataFile = testDataFile()
         val afterFile = File(testDataPath, "${fileName()}.after")
@@ -37,7 +33,7 @@ abstract class AbstractInlineTest : KotlinLightCodeInsightFixtureTestCase() {
             name != mainFileName && name.startsWith("$mainFileBaseName.") && (name.endsWith(".kt") || name.endsWith(".java"))
         } ?: emptyArray()
 
-        val allFiles = (extraFiles + testDataFile).associateBy { fixture.configureByFile(it.name) }
+        val allFiles = (extraFiles + testDataFile).associateBy { myFixture.configureByFile(it.name) }
         val fileWithCaret = allFiles.values.singleOrNull { "<caret>" in it.readText() } ?: error("Must have one <caret>")
         val file = myFixture.configureByFile(fileWithCaret.name)
 
@@ -56,7 +52,7 @@ abstract class AbstractInlineTest : KotlinLightCodeInsightFixtureTestCase() {
             val expectedErrors = InTextDirectivesUtils.findLinesWithPrefixesRemoved(myFixture.file.text, "// ERROR: ")
             if (handler != null) {
                 try {
-                    runWriteAction { handler.inlineElement(myFixture.project, myFixture.editor, targetElement) }
+                    runWriteAction { handler.inlineElement(project, editor, targetElement) }
                     for ((extraPsiFile, extraFile) in allFiles) {
                         KotlinTestUtils.assertEqualsToFile(File("${extraFile.path}.after"), extraPsiFile.text)
                     }
@@ -78,6 +74,6 @@ abstract class AbstractInlineTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 }
 
-abstract class AbstractInlineTestWithSomeDescriptors: AbstractInlineTest() {
+abstract class AbstractInlineTestWithSomeDescriptors : AbstractInlineTest() {
     override fun getProjectDescriptor(): LightProjectDescriptor = getProjectDescriptorFromFileDirective()
 }
