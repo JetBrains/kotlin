@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.run
 
 import com.intellij.execution.Location
-import com.intellij.execution.PsiLocation
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.ConfigurationFromContext
 import com.intellij.execution.junit.InheritorChooser
@@ -80,23 +79,16 @@ abstract class AbstractKotlinMultiplatformTestMethodGradleConfigurationProducer 
     ) {
         val dataContext = MultiplatformTestTasksChooser.createContext(context.dataContext, psiMethod.name)
 
-        val availableTargets =
-            classes
-                .mapNotNull { psiClass -> psiClass.module }
-                .flatMap { module -> module.externalSystemTestRunTasks() }
-                .map { extTask -> extTask.targetName }
-                .distinct()
+        val contextualSuffix = (context.location as? PsiMemberParameterizedLocation)?.paramSetName?.trim('[', ']')
 
-        mppTestTasksChooser.multiplatformChooseTasks(context.project, dataContext, classes.asList()) { tasks ->
+        mppTestTasksChooser.multiplatformChooseTasks(context.project, dataContext, classes.asList(), contextualSuffix) { tasks ->
             val configuration = fromContext.configuration as ExternalSystemRunConfiguration
             val settings = configuration.settings
 
             val result = settings.applyTestConfiguration(context.module, tasks, *classes) {
                 var filters = createTestFilterFrom(context.location, it, psiMethod, true)
-                if (context.location is PsiMemberParameterizedLocation) {
-                    availableTargets.forEach { targetName ->
-                        filters = filters.replace("[*$targetName*]", "")
-                    }
+                if (context.location is PsiMemberParameterizedLocation && contextualSuffix != null) {
+                    filters = filters.replace("[*$contextualSuffix*]", "")
                 }
                 filters
             }
