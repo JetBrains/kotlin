@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -143,7 +145,8 @@ class IrInlineCodegen(
     override fun genCall(
         callableMethod: IrCallableMethod,
         codegen: ExpressionCodegen,
-        expression: IrFunctionAccessExpression
+        expression: IrFunctionAccessExpression,
+        isInsideIfCondition: Boolean,
     ) {
         val element = codegen.context.psiSourceManager.findPsiElement(expression, codegen.irFunction)
             ?: codegen.context.psiSourceManager.findPsiElement(codegen.irFunction)
@@ -161,7 +164,7 @@ class IrInlineCodegen(
                 true,
                 false,
                 codegen.typeMapper.typeSystem,
-                registerLineNumberAfterwards = false,
+                registerLineNumberAfterwards = isInsideIfCondition,
                 isCallOfFunctionInCorrespondingDefaultDispatch = codegen.irFunction == codegen.context.mapping.defaultArgumentsDispatchFunction[function]
             )
         } finally {

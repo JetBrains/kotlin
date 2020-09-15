@@ -188,6 +188,12 @@ public class SteppingTestGenerated extends AbstractSteppingTest {
     }
 
     @Test
+    @TestMetadata("ifWithInlineInCondition.kt")
+    public void testIfWithInlineInCondition() throws Exception {
+        runTest("compiler/testData/debug/stepping/ifWithInlineInCondition.kt");
+    }
+
+    @Test
     @TestMetadata("iincStepping.kt")
     public void testIincStepping() throws Exception {
         runTest("compiler/testData/debug/stepping/iincStepping.kt");
@@ -473,6 +479,12 @@ public class SteppingTestGenerated extends AbstractSteppingTest {
     @TestMetadata("whenSubject2.kt")
     public void testWhenSubject2() throws Exception {
         runTest("compiler/testData/debug/stepping/whenSubject2.kt");
+    }
+
+    @Test
+    @TestMetadata("whenWithInlineInCondition.kt")
+    public void testWhenWithInlineInCondition() throws Exception {
+        runTest("compiler/testData/debug/stepping/whenWithInlineInCondition.kt");
     }
 
     @Test

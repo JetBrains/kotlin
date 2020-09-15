@@ -131,6 +131,8 @@ class ExpressionCodegen(
     override var lastLineNumber: Int = -1
     var noLineNumberScope: Boolean = false
 
+    private var isInsideCondition = false
+
     private val closureReifiedMarkers = hashMapOf<IrClass, ReifiedTypeParametersUsages>()
 
     private val IrType.asmType: Type
@@ -429,7 +431,7 @@ class ExpressionCodegen(
         val generatorForActualCall =
             // Do not inline callee to continuation, instead, call it
             if (irFunction.isInvokeSuspendOfContinuation()) IrCallGenerator.DefaultCallGenerator else callGenerator
-        generatorForActualCall.genCall(callable, this, expression)
+        generatorForActualCall.genCall(callable, this, expression, isInsideCondition)
 
         if (isSuspensionPoint != SuspensionPointKind.NEVER) {
             addSuspendMarker(mv, isStartNotEnd = false, isSuspensionPoint == SuspensionPointKind.NOT_INLINE)
@@ -829,7 +831,10 @@ class ExpressionCodegen(
                 if (branch.condition.isFalseConst())
                     continue // The branch body is dead code.
             } else {
+                val oldIsInsideCondition = isInsideCondition
+                isInsideCondition = true
                 branch.condition.accept(this, data).coerceToBoolean().jumpIfFalse(elseLabel)
+                isInsideCondition = oldIsInsideCondition
             }
             val result = branch.result.accept(this, data)
             if (!exhaustive) {
@@ -1250,9 +1255,17 @@ class ExpressionCodegen(
     }
 
     override fun markLineNumberAfterInlineIfNeeded(registerLineNumberAfterwards: Boolean) {
-        // Inline function has its own line number which is in a separate instance of codegen,
-        // therefore we need to reset lastLineNumber to force a line number generation after visiting inline function.
-        lastLineNumber = -1
+        if (noLineNumberScope || registerLineNumberAfterwards) {
+            if (lastLineNumber > -1) {
+                val label = Label()
+                v.visitLabel(label)
+                v.visitLineNumber(lastLineNumber, label)
+            }
+        } else {
+            // Inline function has its own line number which is in a separate instance of codegen,
+            // therefore we need to reset lastLineNumber to force a line number generation after visiting inline function.
+            lastLineNumber = -1
+        }
     }
 
     fun isFinallyMarkerRequired(): Boolean {

@@ -1,5 +1,5 @@
 //FILE: test.kt
-// IGNORE_BACKEND: JVM_IR
+
 
 fun box() {
     if (listOf(1, 2, 3).myAny { it > 2 }) {
