@@ -6,6 +6,7 @@ import com.intellij.openapi.externalSystem.model.ProjectKeys;
 import com.intellij.openapi.externalSystem.model.project.*;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.SmartList;
@@ -13,6 +14,7 @@ import com.intellij.util.containers.MultiMap;
 import gnu.trove.THashSet;
 import org.gradle.tooling.ProjectConnection;
 import org.gradle.tooling.model.build.BuildEnvironment;
+import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.model.Build;
@@ -78,9 +80,9 @@ public final class GradleBuildSrcProjectsResolver {
     Map<String, String> includedBuildsPaths = new HashMap<>();
     Map<String, String> buildNames = new HashMap<>();
     buildNames.put(projectPath, mainBuildProjectData.getExternalName());
-    DataNode<CompositeBuildData> compositeBuildData = find(mainBuildProjectDataNode, CompositeBuildData.KEY);
+    CompositeBuildData compositeBuildData = getCompositeBuildData(mainBuildProjectDataNode);
     if (compositeBuildData != null) {
-      for (BuildParticipant buildParticipant : compositeBuildData.getData().getCompositeParticipants()) {
+      for (BuildParticipant buildParticipant : compositeBuildData.getCompositeParticipants()) {
         String buildParticipantRootPath = buildParticipant.getRootPath();
         buildNames.put(buildParticipantRootPath, buildParticipant.getRootProjectName());
         for (String path : buildParticipant.getProjects()) {
@@ -139,6 +141,7 @@ public final class GradleBuildSrcProjectsResolver {
         else {
           buildSrcProjectSettings = new GradleExecutionSettings(gradleHome, null, DistributionType.LOCAL, false);
         }
+        includeRootBuildIncludedBuildsIfNeeded(projectPath, buildPath, buildSrcProjectSettings, compositeBuildData);
       }
       else {
         buildSrcProjectSettings = myMainBuildExecutionSettings;
@@ -160,6 +163,32 @@ public final class GradleBuildSrcProjectsResolver {
                             buildSrcResolverCtx,
                             myProjectResolver.getProjectDataFunction(buildSrcResolverCtx, myResolverChain, true));
     });
+  }
+
+  private void includeRootBuildIncludedBuildsIfNeeded(@NotNull String rootBuildPath,
+                                                      @NotNull String buildPath,
+                                                      @NotNull GradleExecutionSettings buildSrcProjectSettings,
+                                                      @Nullable CompositeBuildData compositeBuildData) {
+    if (compositeBuildData == null) return;
+    String projectGradleVersion = myResolverContext.getProjectGradleVersion();
+    GradleVersion gradleBaseVersion = projectGradleVersion == null ? null : GradleVersion.version(projectGradleVersion).getBaseVersion();
+    if (gradleBaseVersion == null) return;
+
+    // since 6.7 included builds become "visible" for `buildSrc` project https://docs.gradle.org/6.7-rc-1/release-notes.html#build-src
+    if (gradleBaseVersion.compareTo(GradleVersion.version("6.7")) < 0) return;
+
+    // the change is supported currently only for `buildSrc` project of root build in the composite.
+    if (!FileUtil.pathsEqual(buildPath, rootBuildPath)) return;
+
+    for (BuildParticipant buildParticipant : compositeBuildData.getCompositeParticipants()) {
+      buildSrcProjectSettings.withArguments(GradleConstants.INCLUDE_BUILD_CMD_OPTION, buildParticipant.getRootPath());
+    }
+  }
+
+  @Nullable
+  private static CompositeBuildData getCompositeBuildData(@NotNull DataNode<ProjectData> mainBuildProjectDataNode) {
+    DataNode<CompositeBuildData> compositeBuildDataNode = find(mainBuildProjectDataNode, CompositeBuildData.KEY);
+    return compositeBuildDataNode != null ? compositeBuildDataNode.getData() : null;
   }
 
   private void handleBuildSrcProject(@NotNull DataNode<ProjectData> resultProjectDataNode,

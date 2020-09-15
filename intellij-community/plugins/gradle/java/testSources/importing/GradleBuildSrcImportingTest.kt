@@ -51,4 +51,25 @@ class GradleBuildSrcImportingTest : GradleImportingTestCase() {
     assertModules("project", "project.main", "project.test", "project.buildSrc")
 
   }
+
+  @TargetVersions("6.7+") // since 6.7 included builds become "visible" for `buildSrc` project https://docs.gradle.org/6.7-rc-1/release-notes.html#build-src
+  @Test
+  fun `test buildSrc with applied plugins provided by included build of the root project`() {
+    createProjectSubFile("buildSrc/build.gradle", "plugins { id 'myproject.my-test-plugin' }\n")
+    createProjectSubFile("buildSrc/settings.gradle", "")
+    val depJar = createProjectJarSubFile("buildSrc/libs/myLib.jar")
+    createProjectSubFile("build-plugins/settings.gradle", "")
+    createProjectSubFile("build-plugins/build.gradle", "plugins { id 'groovy-gradle-plugin' }\n")
+    createProjectSubFile("build-plugins/src/main/groovy/myproject.my-test-plugin.gradle",
+                         "plugins { id 'java' }\n" +
+                         "dependencies { implementation files('libs/myLib.jar') }\n")
+
+    createSettingsFile("includeBuild 'build-plugins'")
+    importProject("")
+    assertModules("project",
+                  "project.buildSrc", "project.buildSrc.main", "project.buildSrc.test",
+                  "build-plugins", "build-plugins.main", "build-plugins.test")
+
+    assertModuleLibDep("project.buildSrc.main", depJar.presentableUrl, depJar.url)
+  }
 }
