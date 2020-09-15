@@ -165,6 +165,8 @@ open class LiveLiteralTransformer(
 
     private val liveLiteral =
         getInternalFunction("liveLiteral").bindIfNecessary()
+    private val isLiveLiteralsEnabled =
+        getInternalProperty("isLiveLiteralsEnabled").bindIfNecessary()
     private val liveLiteralInfoAnnotation =
         getInternalClass("LiveLiteralInfo").bindIfNecessary()
     private val liveLiteralFileInfoAnnotation =
@@ -311,6 +313,7 @@ open class LiveLiteralTransformer(
             val thisParam = fn.dispatchReceiverParameter!!
             fn.annotations += irLiveLiteralInfoAnnotation(key, literalValue.startOffset)
             fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
+                // if (!isLiveLiteralsEnabled) return defaultValueField
                 // val a = stateField
                 // val b = if (a == null) {
                 //     val c = liveLiteralState("key", defaultValueField)
@@ -318,6 +321,14 @@ open class LiveLiteralTransformer(
                 //     c
                 // } else a
                 // return b.value
+                +irIf(
+                    condition = irNot(irCall(isLiveLiteralsEnabled)),
+                    body = irReturn(irGet(
+                        literalType,
+                        irGet(thisParam),
+                        defaultProp.getter!!.symbol
+                    ))
+                )
                 val a = irTemporary(irGet(stateType, irGet(thisParam), stateProp.getter!!.symbol))
                 val b = irIfNull(
                     type = stateType,

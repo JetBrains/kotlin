@@ -207,6 +207,10 @@ abstract class AbstractComposeLowering(
         ComposeFqNames.internalFqNameFor(name)
     )
 
+    fun getInternalProperty(name: String) = getTopLevelPropertyGetter(
+        ComposeFqNames.internalFqNameFor(name)
+    )
+
     fun getInternalClass(name: String) = getTopLevelClass(
         ComposeFqNames.internalFqNameFor(name)
     )
