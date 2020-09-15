@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="libraryTable">
   <library name="com.vladsch.flexmark:flexmark-all:0.60" type="repository">
-    <properties maven-id="com.vladsch.flexmark:flexmark-all:0.60.2" />
+    <properties maven-id="com.vladsch.flexmark:flexmark-all:0.60.2">
+      <exclude>
+        <dependency maven-id="com.ibm.icu:icu4j" />
+      </exclude>
+    </properties>
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark-all/0.60.2/flexmark-all-0.60.2.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark/0.60.2/flexmark-0.60.2.jar!/" />
@@ -50,7 +54,6 @@
       <root url="jar://$MAVEN_REPOSITORY$/org/apache/pdfbox/xmpbox/2.0.16/xmpbox-2.0.16.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/de/rototor/pdfbox/graphics2d/0.24/graphics2d-0.24.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/openhtmltopdf/openhtmltopdf-rtl-support/1.0.0/openhtmltopdf-rtl-support-1.0.0.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/com/ibm/icu/icu4j/59.1/icu4j-59.1.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/openhtmltopdf/openhtmltopdf-jsoup-dom-converter/1.0.0/openhtmltopdf-jsoup-dom-converter-1.0.0.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark-profile-pegdown/0.60.2/flexmark-profile-pegdown-0.60.2.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark-util-ast/0.60.2/flexmark-util-ast-0.60.2.jar!/" />
@@ -113,7 +116,6 @@
       <root url="jar://$MAVEN_REPOSITORY$/org/apache/pdfbox/xmpbox/2.0.16/xmpbox-2.0.16-javadoc.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/de/rototor/pdfbox/graphics2d/0.24/graphics2d-0.24-javadoc.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/openhtmltopdf/openhtmltopdf-rtl-support/1.0.0/openhtmltopdf-rtl-support-1.0.0-javadoc.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/com/ibm/icu/icu4j/59.1/icu4j-59.1-javadoc.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/openhtmltopdf/openhtmltopdf-jsoup-dom-converter/1.0.0/openhtmltopdf-jsoup-dom-converter-1.0.0-javadoc.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark-profile-pegdown/0.60.2/flexmark-profile-pegdown-0.60.2-javadoc.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark-util-ast/0.60.2/flexmark-util-ast-0.60.2-javadoc.jar!/" />
@@ -176,7 +178,6 @@
       <root url="jar://$MAVEN_REPOSITORY$/org/apache/pdfbox/xmpbox/2.0.16/xmpbox-2.0.16-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/de/rototor/pdfbox/graphics2d/0.24/graphics2d-0.24-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/openhtmltopdf/openhtmltopdf-rtl-support/1.0.0/openhtmltopdf-rtl-support-1.0.0-sources.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/com/ibm/icu/icu4j/59.1/icu4j-59.1-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/openhtmltopdf/openhtmltopdf-jsoup-dom-converter/1.0.0/openhtmltopdf-jsoup-dom-converter-1.0.0-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark-profile-pegdown/0.60.2/flexmark-profile-pegdown-0.60.2-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark-util-ast/0.60.2/flexmark-util-ast-0.60.2-sources.jar!/" />
