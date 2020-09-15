@@ -23,7 +23,7 @@ internal class KtFirSymbolDeclarationOverridesProvider(
     private fun FirTypeScope.processCallableByName(declaration: FirDeclaration) = when (declaration) {
         is FirSimpleFunction -> processFunctionsByName(declaration.name) { }
         is FirProperty -> processPropertiesByName(declaration.name) { }
-        else -> error { " Invalid FIR symbol to process " }
+        else -> error { "Invalid FIR symbol to process: ${declaration::class}" }
     }
 
     private fun FirTypeScope.processOverriddenDeclarations(
@@ -32,7 +32,7 @@ internal class KtFirSymbolDeclarationOverridesProvider(
     ) = when (declaration) {
         is FirSimpleFunction -> processOverriddenFunctions(declaration.symbol) { processor.invoke(it.fir) }
         is FirProperty -> processOverriddenProperties(declaration.symbol) { processor.invoke(it.fir) }
-        else -> error { " Invalid FIR symbol to process " }
+        else -> error { "Invalid FIR symbol to process: ${declaration::class}" }
     }
 
     override fun <T : KtSymbol> getOverriddenSymbols(

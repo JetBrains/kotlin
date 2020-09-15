@@ -24,10 +24,8 @@ interface LightClassProvider {
 
     fun getLightClassMethods(function: KtFunction): List<PsiMethod>
 
-    //getLightClassPropertyMethods.allDeclarations
     fun getLightClassParameterDeclarations(parameter: KtParameter): List<PsiNamedElement>
 
-    //getLightClassPropertyMethods.allDeclarations
     fun getLightClassPropertyDeclarations(property: KtProperty): List<PsiNamedElement>
 
     fun toLightClassWithBuiltinMapping(classOrObject: KtClassOrObject): PsiClass?
@@ -60,11 +58,9 @@ interface LightClassProvider {
         fun providedGetLightClassMethods(function: KtFunction): List<PsiMethod> =
             getInstance(function.project).getLightClassMethods(function)
 
-        //getLightClassPropertyMethods.allDeclarations
         fun providedGetLightClassParameterDeclarations(parameter: KtParameter): List<PsiNamedElement> =
             getInstance(parameter.project).getLightClassParameterDeclarations(parameter)
 
-        //getLightClassPropertyMethods.allDeclarations
         fun providedGetLightClassPropertyDeclarations(property: KtProperty): List<PsiNamedElement> =
             getInstance(property.project).getLightClassPropertyDeclarations(property)
 
