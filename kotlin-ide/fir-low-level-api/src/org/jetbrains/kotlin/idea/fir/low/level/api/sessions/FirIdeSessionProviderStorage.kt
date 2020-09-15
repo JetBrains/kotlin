@@ -32,6 +32,7 @@ internal class FirIdeSessionProviderStorage(private val project: Project) {
                     rootModule,
                     builtinsAndCloneableSession,
                     firPhaseRunner,
+                    cache.sessionInvalidator,
                     builtinTypes,
                     sessions,
                     isRootModule = true
@@ -45,10 +46,15 @@ internal class FirIdeSessionProviderStorage(private val project: Project) {
 }
 
 private class FromModuleViewSessionCache(
-    val root: ModuleSourceInfo
+    val root: ModuleSourceInfo,
 ) {
     @Volatile
     private var mappings: Map<ModuleSourceInfo, FirSessionWithModificationTracker> = emptyMap()
+
+    val sessionInvalidator: FirSessionInvalidator = FirSessionInvalidator { session ->
+        mappings[session.moduleInfo]?.invalidate()
+    }
+
 
     inline fun <R> withMappings(
         action: (Map<ModuleSourceInfo, FirIdeSourcesSession>) -> Pair<Map<ModuleSourceInfo, FirIdeSourcesSession>, R>
@@ -60,7 +66,36 @@ private class FromModuleViewSessionCache(
 
     @OptIn(ExperimentalStdlibApi::class)
     private fun getSessions(): Map<ModuleSourceInfo, FirIdeSourcesSession> = buildMap {
-        mappings.forEach { (module, session) -> if (session.isValid) put(module, session.firSession) }
+        val sessions = mappings.values
+        val sessionToValidity = hashMapOf<FirSessionWithModificationTracker, Boolean>()
+
+        var isValid = true
+        fun dfs(session: FirSessionWithModificationTracker) {
+            sessionToValidity[session]?.let { valid ->
+                if (!valid) isValid = false
+                return
+            }
+            sessionToValidity[session] = session.isValid
+            session.firSession.dependencies.forEach { dependency ->
+                mappings[dependency]?.let(::dfs)
+            }
+            if (!session.isValid) {
+                isValid = false
+            }
+            if (!isValid) {
+                sessionToValidity[session] = false
+            }
+        }
+
+        for (session in sessions) {
+            if (session !in sessionToValidity) {
+                isValid = true
+                dfs(session)
+            }
+        }
+        return sessionToValidity.entries
+            .mapNotNull { (session, valid) -> session.takeIf { valid } }
+            .associate { session -> session.firSession.moduleInfo to session.firSession }
     }
 }
 
@@ -70,5 +105,12 @@ private class FirSessionWithModificationTracker(
     private val modificationTracker = KotlinModuleOutOfCodeBlockModificationTracker(firSession.moduleInfo.module)
     private val timeStamp = modificationTracker.modificationCount
 
-    val isValid: Boolean get() = modificationTracker.modificationCount == timeStamp
+    @Volatile
+    private var isInvalidated = false
+
+    fun invalidate() {
+        isInvalidated = true
+    }
+
+    val isValid: Boolean get() = isInvalidated || modificationTracker.modificationCount == timeStamp
 }

@@ -14,11 +14,13 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirPhaseManager
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
+import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirSessionInvalidator
 
 @ThreadSafeMutableState
 internal class IdeFirPhaseManager(
     private val lazyDeclarationResolver: FirLazyDeclarationResolver,
-    private val cache: ModuleFileCache
+    private val cache: ModuleFileCache,
+    private val sessionInvalidator: FirSessionInvalidator,
 ) : FirPhaseManager() {
     override fun ensureResolved(
         symbol: AbstractFirBasedSymbol<*>,
@@ -34,6 +36,11 @@ internal class IdeFirPhaseManager(
             "Incorrect resolvePhase: actual: $availablePhase, expected: $requiredPhase\n For: ${symbol.fir.render()}"
         }
 
-        lazyDeclarationResolver.lazyResolveDeclaration(result, cache, requiredPhase, checkPCE = false)
+        try {
+            lazyDeclarationResolver.lazyResolveDeclaration(result, cache, requiredPhase, checkPCE = true)
+        } catch (e: Throwable) {
+            sessionInvalidator.invalidate((symbol.fir as FirDeclaration).session)
+            throw e
+        }
     }
 }

@@ -49,6 +49,7 @@ internal object FirIdeSessionFactory {
         moduleInfo: ModuleSourceInfo,
         builtinsAndCloneableSession: FirIdeBuiltinsAndCloneableSession,
         firPhaseRunner: FirPhaseRunner,
+        sessionInvalidator: FirSessionInvalidator,
         builtinTypes: BuiltinTypes,
         sessionsCache: MutableMap<ModuleSourceInfo, FirIdeSourcesSession>,
         isRootModule: Boolean,
@@ -65,7 +66,7 @@ internal object FirIdeSessionFactory {
 
         return session.apply {
             val cache = ModuleFileCacheImpl(this)
-            val firPhaseManager = IdeFirPhaseManager(FirLazyDeclarationResolver(firFileBuilder), cache)
+            val firPhaseManager = IdeFirPhaseManager(FirLazyDeclarationResolver(firFileBuilder), cache, sessionInvalidator)
 
             registerCommonComponents()
             registerResolveComponents()
@@ -104,6 +105,7 @@ internal object FirIdeSessionFactory {
                                     it,
                                     builtinsAndCloneableSession,
                                     firPhaseRunner,
+                                    sessionInvalidator,
                                     builtinTypes,
                                     sessionsCache,
                                     isRootModule = false
