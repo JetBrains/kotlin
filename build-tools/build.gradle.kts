@@ -61,7 +61,7 @@ dependencies {
     api("org.jetbrains.kotlin:kotlin-native-shared:$konanVersion")
     implementation("com.github.jengelman.gradle.plugins:shadow:5.1.0")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-metadata-klib:0.0.1-dev-7")
+    implementation("org.jetbrains.kotlinx:kotlinx-metadata-klib:0.0.1-dev-9")
 }
 
 sourceSets["main"].withConvention(KotlinSourceSet::class) {
