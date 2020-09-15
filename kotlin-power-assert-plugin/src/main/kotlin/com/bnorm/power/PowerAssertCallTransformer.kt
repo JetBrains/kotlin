@@ -84,7 +84,7 @@ class PowerAssertCallTransformer(
 
   override fun lower(irFile: IrFile) {
     file = irFile
-    fileSource = File(irFile.path).readText()
+    fileSource = File(irFile.path).readText().replace("\r\n", "\n")
 
     irFile.transformChildrenVoid()
   }
