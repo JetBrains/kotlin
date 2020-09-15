@@ -19,11 +19,11 @@ class KotlinInterfaceDependencyMemberInfoModel<T : KtNamedDeclaration, M : Membe
     init {
         setTooltipProvider { memberInfo ->
             val dependencies = myMemberDependencyGraph.getDependenciesOf(memberInfo.member).ifEmpty { return@setTooltipProvider null }
-            buildString {
-                append(RefactoringBundle.message("interface.member.dependency.required.by.interfaces", dependencies.size))
-                append(" ")
-                dependencies.joinTo(this) { it.name ?: "" }
-            }
+            RefactoringBundle.message(
+                "interface.member.dependency.required.by.interfaces.list",
+                dependencies.size,
+                dependencies.joinToString { it.name ?: "" }
+            )
         }
     }
 

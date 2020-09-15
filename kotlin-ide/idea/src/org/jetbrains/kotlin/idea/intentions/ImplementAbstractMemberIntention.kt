@@ -10,6 +10,7 @@ import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInsight.generation.OverrideImplementUtil
 import com.intellij.ide.util.PsiClassListCellRenderer
 import com.intellij.ide.util.PsiElementListCellRenderer
+import com.intellij.java.JavaBundle
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
@@ -132,7 +133,7 @@ abstract class ImplementAbstractMemberIntentionBase : SelfTargetingRangeIntentio
 
     private fun implementInClass(member: KtNamedDeclaration, targetClasses: List<PsiElement>) {
         val project = member.project
-        project.executeCommand<Unit>(CodeInsightBundle.message("intention.implement.abstract.method.command.name")) {
+        project.executeCommand<Unit>(JavaBundle.message("intention.implement.abstract.method.command.name")) {
             if (!FileModificationService.getInstance().preparePsiElementsForWrite(targetClasses)) return@executeCommand
             runWriteAction<Unit> {
                 for (targetClass in targetClasses) {
@@ -192,7 +193,7 @@ abstract class ImplementAbstractMemberIntentionBase : SelfTargetingRangeIntentio
         val project = element.project
 
         val classesToProcess = project.runSynchronouslyWithProgress(
-            CodeInsightBundle.message("intention.implement.abstract.method.searching.for.descendants.progress"),
+            JavaBundle.message("intention.implement.abstract.method.searching.for.descendants.progress"),
             true
         ) { findClassesToProcess(element).toList() } ?: return
         if (classesToProcess.isEmpty()) return

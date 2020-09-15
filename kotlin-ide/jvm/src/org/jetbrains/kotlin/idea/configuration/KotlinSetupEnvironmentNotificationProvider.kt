@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
+import com.intellij.ide.JavaUiBundle
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
@@ -78,7 +79,7 @@ class KotlinSetupEnvironmentNotificationProvider(private val myProject: Project)
 
         private fun createSetupSdkPanel(project: Project, file: PsiFile): EditorNotificationPanel {
             return EditorNotificationPanel().apply {
-                setText(ProjectBundle.message("project.sdk.not.defined"))
+                text = JavaUiBundle.message("project.sdk.not.defined")
                 createActionLabel(ProjectBundle.message("project.sdk.setup")) {
                     ProjectSettingsService.getInstance(project).chooseAndSetSdk() ?: return@createActionLabel
 

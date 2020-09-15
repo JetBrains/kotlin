@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.java.refactoring.JavaRefactoringBundle
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiComment
@@ -53,7 +54,7 @@ sealed class ConvertToScopeIntention(private val scopeFunction: ScopeFunction) :
     override fun applyTo(element: KtExpression, editor: Editor?) {
         if (!tryApplyTo(element, dryRun = false)) {
             val message = RefactoringBundle.getCannotRefactorMessage(
-                RefactoringBundle.message("refactoring.is.not.supported.in.the.current.context", text)
+                JavaRefactoringBundle.message("refactoring.is.not.supported.in.the.current.context", text)
             )
             CommonRefactoringUtil.showErrorHint(element.project, editor, message, text, null)
         }

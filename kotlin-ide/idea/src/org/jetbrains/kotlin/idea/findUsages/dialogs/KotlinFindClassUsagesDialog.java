@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.idea.findUsages.dialogs;
 
-import com.intellij.find.FindBundle;
 import com.intellij.find.findUsages.FindClassUsagesDialog;
 import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.find.findUsages.FindUsagesOptions;
 import com.intellij.find.findUsages.JavaClassFindUsagesOptions;
+import com.intellij.java.JavaBundle;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiClass;
@@ -85,8 +85,7 @@ public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
                         : klass.isAnnotation()
                           ? factory.createAnnotationType(name)
                           : factory.createInterface(name);
-        }
-        else {
+        } else {
             javaClass = factory.createClass(name);
         }
 
@@ -108,17 +107,17 @@ public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
 
         Utils.renameCheckbox(
                 findWhatPanel,
-                FindBundle.message("find.what.methods.usages.checkbox"),
+                JavaBundle.message("find.what.methods.usages.checkbox"),
                 KotlinBundle.message("find.declaration.functions.usages.checkbox")
         );
         Utils.renameCheckbox(
                 findWhatPanel,
-                FindBundle.message("find.what.fields.usages.checkbox"),
+                JavaBundle.message("find.what.fields.usages.checkbox"),
                 KotlinBundle.message("find.declaration.properties.usages.checkbox")
         );
-        Utils.removeCheckbox(findWhatPanel, FindBundle.message("find.what.implementing.classes.checkbox"));
-        Utils.removeCheckbox(findWhatPanel, FindBundle.message("find.what.derived.interfaces.checkbox"));
-        Utils.removeCheckbox(findWhatPanel, FindBundle.message("find.what.derived.classes.checkbox"));
+        Utils.removeCheckbox(findWhatPanel, JavaBundle.message("find.what.implementing.classes.checkbox"));
+        Utils.removeCheckbox(findWhatPanel, JavaBundle.message("find.what.derived.interfaces.checkbox"));
+        Utils.removeCheckbox(findWhatPanel, JavaBundle.message("find.what.derived.classes.checkbox"));
 
         derivedClasses = addCheckboxToPanel(
                 KotlinBundle.message("find.declaration.derived.classes.checkbox"),

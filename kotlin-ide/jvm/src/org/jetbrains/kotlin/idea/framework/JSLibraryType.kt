@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.framework
 
+import com.intellij.ide.JavaUiBundle
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.fileChooser.FileChooserDescriptor
 import com.intellij.openapi.fileChooser.FileElement
@@ -55,7 +56,7 @@ class JSLibraryType : LibraryType<DummyLibraryProperties>(JSLibraryKind) {
                 ProjectBundle.message("library.attach.files.action")
             else
                 ProjectBundle.message("library.attach.files.to.library.action", libraryName!!)
-            descriptor.description = ProjectBundle.message("library.java.attach.files.description")
+            descriptor.description = JavaUiBundle.message("library.java.attach.files.description")
             return descriptor
         }
 

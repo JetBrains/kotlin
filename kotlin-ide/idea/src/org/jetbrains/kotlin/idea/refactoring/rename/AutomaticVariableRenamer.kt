@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
+import com.intellij.java.refactoring.JavaRefactoringBundle
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiClass
@@ -13,7 +14,6 @@ import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.PsiVariable
 import com.intellij.psi.codeStyle.JavaCodeStyleManager
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.rename.naming.AutomaticRenamer
 import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory
 import com.intellij.usageView.UsageInfo
@@ -72,11 +72,11 @@ class AutomaticVariableRenamer(
         suggestAllNames(klass.name?.unquote(), newClassName.unquote())
     }
 
-    override fun getDialogTitle() = RefactoringBundle.message("rename.variables.title")
+    override fun getDialogTitle() = JavaRefactoringBundle.message("rename.variables.title")
 
-    override fun getDialogDescription() = RefactoringBundle.message("rename.variables.with.the.following.names.to")
+    override fun getDialogDescription() = JavaRefactoringBundle.message("rename.variables.with.the.following.names.to")
 
-    override fun entityName() = RefactoringBundle.message("entity.name.variable")
+    override fun entityName() = JavaRefactoringBundle.message("entity.name.variable")
 
     override fun nameToCanonicalName(name: String, element: PsiNamedElement): String? {
         if (element !is KtNamedDeclaration) return name
@@ -137,7 +137,7 @@ open class AutomaticVariableRenamerFactory : AutomaticRenamerFactory {
         KotlinRefactoringSettings.instance.renameVariables = enabled
     }
 
-    override fun getOptionName(): String? = RefactoringBundle.message("rename.variables")
+    override fun getOptionName(): String? = JavaRefactoringBundle.message("rename.variables")
 }
 
 class AutomaticVariableRenamerFactoryForJavaClass : AutomaticVariableRenamerFactory() {

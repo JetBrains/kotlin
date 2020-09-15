@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.idea.core.formatter
 
-import com.intellij.openapi.application.ApplicationBundle
-
 class KotlinPackageEntry(
     packageName: String,
     val withSubpackages: Boolean
@@ -15,8 +13,7 @@ class KotlinPackageEntry(
 
     companion object {
         @JvmField
-        val ALL_OTHER_IMPORTS_ENTRY =
-            KotlinPackageEntry(ApplicationBundle.message("listbox.import.all.other.imports"), withSubpackages = true)
+        val ALL_OTHER_IMPORTS_ENTRY = KotlinPackageEntry("<all other imports>", withSubpackages = true)
 
         @JvmField
         val ALL_OTHER_ALIAS_IMPORTS_ENTRY = KotlinPackageEntry("<all other alias imports>", withSubpackages = true)

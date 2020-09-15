@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractClass
 
+import com.intellij.java.refactoring.JavaRefactoringBundle
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.RefactoringBundle
 import org.jetbrains.kotlin.idea.KotlinBundle
@@ -31,7 +32,7 @@ object KotlinExtractSuperclassHandler : KotlinExtractSuperHandlerBase(false) {
         if (superMessage != null) return superMessage
         if (klass is KtClass) {
             if (klass.isInterface()) return RefactoringBundle.message("superclass.cannot.be.extracted.from.an.interface")
-            if (klass.isEnum()) return RefactoringBundle.message("superclass.cannot.be.extracted.from.an.enum")
+            if (klass.isEnum()) return JavaRefactoringBundle.message("superclass.cannot.be.extracted.from.an.enum")
             if (klass.isAnnotation()) return KotlinBundle.message("error.text.superclass.cannot.be.extracted.from.an.annotation.class")
         }
         return null

@@ -23,6 +23,7 @@ import com.intellij.find.findUsages.FindUsagesHandler.NULL_HANDLER
 import com.intellij.find.findUsages.FindUsagesHandlerFactory
 import com.intellij.find.findUsages.FindUsagesOptions
 import com.intellij.find.findUsages.JavaFindUsagesHandlerFactory
+import com.intellij.java.JavaBundle
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.psi.PsiElement
@@ -156,8 +157,8 @@ class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactor
     private fun askWhetherShouldSearchForParameterInOverridingMethods(parameter: KtParameter): Boolean {
         return Messages.showOkCancelDialog(
             parameter.project,
-            FindBundle.message("find.parameter.usages.in.overriding.methods.prompt", parameter.name),
-            FindBundle.message("find.parameter.usages.in.overriding.methods.title"),
+            JavaBundle.message("find.parameter.usages.in.overriding.methods.prompt", parameter.name),
+            JavaBundle.message("find.parameter.usages.in.overriding.methods.title"),
             CommonBundle.getYesButtonText(), CommonBundle.getNoButtonText(),
             Messages.getQuestionIcon()
         ) == Messages.OK

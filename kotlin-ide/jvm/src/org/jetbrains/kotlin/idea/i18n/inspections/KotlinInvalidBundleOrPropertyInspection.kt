@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.idea.i18n.inspections
 
-import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.codeInspection.i18n.JavaI18nUtil
+import com.intellij.java.i18n.JavaI18nBundle
 import com.intellij.lang.properties.ResourceBundleReference
 import com.intellij.lang.properties.psi.Property
 import com.intellij.lang.properties.references.PropertyReference
@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class KotlinInvalidBundleOrPropertyInspection : AbstractKotlinInspection() {
-    override fun getDisplayName(): String = CodeInsightBundle.message("inspection.unresolved.property.key.reference.name")
+    override fun getDisplayName(): String = JavaI18nBundle.message("inspection.unresolved.property.key.reference.name")
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : KtVisitorVoid() {
@@ -43,7 +43,7 @@ class KotlinInvalidBundleOrPropertyInspection : AbstractKotlinInspection() {
                 if (ref.multiResolve(true).isEmpty()) {
                     holder.registerProblem(
                         template,
-                        CodeInsightBundle.message("inspection.invalid.resource.bundle.reference", ref.canonicalText),
+                        JavaI18nBundle.message("inspection.invalid.resource.bundle.reference", ref.canonicalText),
                         ProblemHighlightType.LIKE_UNKNOWN_SYMBOL,
                         TextRange(0, template.textLength)
                     )
@@ -56,7 +56,7 @@ class KotlinInvalidBundleOrPropertyInspection : AbstractKotlinInspection() {
                     if (!ref.isSoft) {
                         holder.registerProblem(
                             template,
-                            CodeInsightBundle.message("inspection.unresolved.property.key.reference.message", ref.canonicalText),
+                            JavaI18nBundle.message("inspection.unresolved.property.key.reference.message", ref.canonicalText),
                             ProblemHighlightType.LIKE_UNKNOWN_SYMBOL,
                             TextRange(0, template.textLength),
                             *ref.quickFixes
@@ -84,7 +84,7 @@ class KotlinInvalidBundleOrPropertyInspection : AbstractKotlinInspection() {
                 val expectedArgumentCount = JavaI18nUtil.getPropertyValuePlaceholdersCount(property.value ?: "")
                 val actualArgumentCount = messageArgument.arguments.size
                 if (actualArgumentCount < expectedArgumentCount) {
-                    val description = CodeInsightBundle.message(
+                    val description = JavaI18nBundle.message(
                         "property.has.more.parameters.than.passed",
                         ref.canonicalText, expectedArgumentCount, actualArgumentCount
                     )

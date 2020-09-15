@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
+import com.intellij.java.refactoring.JavaRefactoringBundle
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.search.searches.ClassInheritorsSearch
@@ -32,8 +33,8 @@ class AutomaticInheritorRenamer(klass: KtClass, newName: String) : AutomaticRena
     }
 
     override fun getDialogTitle() = RefactoringBundle.message("rename.inheritors.title")
-    override fun getDialogDescription() = RefactoringBundle.message("rename.inheritors.with.the.following.names.to")
-    override fun entityName() = RefactoringBundle.message("entity.name.inheritor")
+    override fun getDialogDescription() = JavaRefactoringBundle.message("rename.inheritors.with.the.following.names.to")
+    override fun entityName() = JavaRefactoringBundle.message("entity.name.inheritor")
 }
 
 class AutomaticInheritorRenamerFactory : AutomaticRenamerFactory {

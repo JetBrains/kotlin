@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
+import com.intellij.java.refactoring.JavaRefactoringBundle
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
-import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.rename.naming.AutomaticRenamer
 import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory
 import com.intellij.usageView.UsageInfo
@@ -76,7 +76,7 @@ class AutomaticOverloadsRenamerFactory : AutomaticRenamerFactory {
         return element.getOverloads().size > 1
     }
 
-    override fun getOptionName() = RefactoringBundle.message("rename.overloads")
+    override fun getOptionName() = JavaRefactoringBundle.message("rename.overloads")
 
     override fun isEnabled() = KotlinRefactoringSettings.instance.renameOverloads
 

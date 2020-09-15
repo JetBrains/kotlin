@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.idea.debugger.surroundWith
 
-import com.intellij.codeInsight.CodeInsightBundle
-import com.intellij.debugger.JavaDebuggerBundle
 import com.intellij.debugger.DebuggerInvocationUtil
 import com.intellij.debugger.DebuggerManagerEx
+import com.intellij.debugger.JavaDebuggerBundle
 import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.openapi.application.Result
 import com.intellij.openapi.command.WriteCommandAction
@@ -74,7 +73,7 @@ class KotlinRuntimeTypeCastSurrounder : KotlinExpressionSurrounder() {
 
             val project = myEditor.project
             DebuggerInvocationUtil.invokeLater(project, Runnable {
-                object : WriteCommandAction<Any>(project, CodeInsightBundle.message("command.name.surround.with.runtime.cast")) {
+                object : WriteCommandAction<Any>(project, JavaDebuggerBundle.message("command.name.surround.with.runtime.cast")) {
                     override fun run(result: Result<Any>) {
                         try {
                             val factory = KtPsiFactory(myElement.project)

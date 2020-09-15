@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.idea.actions.generate
 
-import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.generation.ui.AbstractGenerateEqualsWizard
 import com.intellij.ide.wizard.StepAdapter
+import com.intellij.java.JavaBundle
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.refactoring.classMembers.AbstractMemberInfoModel
@@ -109,12 +109,12 @@ class KotlinGenerateEqualsWizard(
         private val panel = JPanel(VerticalFlowLayout())
 
         init {
-            with(NonFocusableCheckBox(CodeInsightBundle.message("generate.equals.hashcode.accept.sublcasses"))) {
+            with(NonFocusableCheckBox(JavaBundle.message("generate.equals.hashcode.accept.sublcasses"))) {
                 isSelected = CodeInsightSettings.getInstance().USE_INSTANCEOF_ON_EQUALS_PARAMETER
                 addActionListener { CodeInsightSettings.getInstance().USE_INSTANCEOF_ON_EQUALS_PARAMETER = isSelected }
                 panel.add(this)
             }
-            panel.add(JLabel(CodeInsightBundle.message("generate.equals.hashcode.accept.sublcasses.explanation")))
+            panel.add(JLabel(JavaBundle.message("generate.equals.hashcode.accept.sublcasses.explanation")))
         }
 
         override fun getComponent() = panel

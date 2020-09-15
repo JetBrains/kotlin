@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.idea.refactoring.copy
 
 import com.intellij.ide.util.DirectoryChooser
+import com.intellij.java.refactoring.JavaRefactoringBundle
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
@@ -25,8 +26,8 @@ import com.intellij.util.IncorrectOperationException
 import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.refactoring.Pass
 import org.jetbrains.kotlin.idea.refactoring.hasIdentifiersOnly
 import org.jetbrains.kotlin.idea.refactoring.ui.KotlinDestinationFolderComboBox
@@ -66,8 +67,12 @@ class CopyKotlinDeclarationDialog(
         get() = ((destinationComboBox.comboBox.selectedItem as? DirectoryChooser.ItemWrapper)?.directory ?: originalFile).sourceRoot
 
     init {
-        informationLabel.text =
-            RefactoringBundle.message("copy.class.copy.0.1", UsageViewUtil.getType(declaration), UsageViewUtil.getLongName(declaration))
+        informationLabel.text = JavaRefactoringBundle.message(
+            "copy.class.copy.0.1",
+            UsageViewUtil.getType(declaration),
+            UsageViewUtil.getLongName(declaration)
+        )
+
         informationLabel.font = informationLabel.font.deriveFont(Font.BOLD)
 
         init()
@@ -91,7 +96,7 @@ class CopyKotlinDeclarationDialog(
         packageNameField =
             PackageNameReferenceEditorCombo(qualifiedName, project, RECENTS_KEY, RefactoringBundle.message("choose.destination.package"))
         packageNameField.setTextFieldPreferredWidth(max(qualifiedName.length + 5, 40))
-        packageLabel.text = RefactoringBundle.message("destination.package")
+        packageLabel.text = JavaRefactoringBundle.message("destination.package")
         packageLabel.labelFor = packageNameField
 
         val label = JLabel(RefactoringBundle.message("target.destination.folder"))
@@ -127,11 +132,11 @@ class CopyKotlinDeclarationDialog(
         val manager = PsiManager.getInstance(project)
 
         if (packageName.isNotEmpty() && !FqNameUnsafe(packageName).hasIdentifiersOnly()) {
-            return RefactoringBundle.message("invalid.target.package.name.specified")
+            return JavaRefactoringBundle.message("invalid.target.package.name.specified")
         }
 
         if (newName.isNullOrEmpty()) {
-            return RefactoringBundle.message("no.class.name.specified")
+            return JavaRefactoringBundle.message("no.class.name.specified")
         }
 
         try {

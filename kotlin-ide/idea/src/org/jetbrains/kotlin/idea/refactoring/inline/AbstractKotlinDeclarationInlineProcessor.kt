@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.inline
 
+import com.intellij.java.refactoring.JavaRefactoringBundle
 import com.intellij.lang.findUsages.DescriptiveNameUtil
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -14,7 +15,10 @@ import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewBundle
 import com.intellij.usageView.UsageViewDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtTypeAlias
 
 abstract class AbstractKotlinDeclarationInlineProcessor<TElement : KtDeclaration>(
     protected val declaration: TElement,
@@ -49,7 +53,7 @@ abstract class AbstractKotlinDeclarationInlineProcessor<TElement : KtDeclaration
             UsageViewBundle.getOccurencesString(usagesCount, filesCount),
         )
 
-        override fun getCodeReferencesText(usagesCount: Int, filesCount: Int) = RefactoringBundle.message(
+        override fun getCodeReferencesText(usagesCount: Int, filesCount: Int) = JavaRefactoringBundle.message(
             "invocations.to.be.inlined",
             UsageViewBundle.getReferencesString(usagesCount, filesCount),
         )

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui
 
+import com.intellij.java.refactoring.JavaRefactoringBundle
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
@@ -16,7 +17,6 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.refactoring.PackageWrapper
-import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.RefactoringMessageUtil
 import com.intellij.refactoring.util.RefactoringUtil
 import com.intellij.util.IncorrectOperationException
@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.move.getTargetPackageFqName
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
 import org.jetbrains.kotlin.idea.roots.getSuitableDestinationSourceRoots
-import org.jetbrains.kotlin.idea.statistics.MoveRefactoringFUSCollector.MovedEntity
 import org.jetbrains.kotlin.idea.statistics.MoveRefactoringFUSCollector.MoveRefactoringDestination
+import org.jetbrains.kotlin.idea.statistics.MoveRefactoringFUSCollector.MovedEntity
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -110,7 +110,7 @@ internal abstract class MoveKotlinNestedClassesToUpperLevelModel(
     private fun getTargetContainerWithValidation(): PsiElement {
 
         if (className.isEmpty()) {
-            throw ConfigurationException(RefactoringBundle.message("no.class.name.specified"))
+            throw ConfigurationException(JavaRefactoringBundle.message("no.class.name.specified"))
         }
         if (!className.isIdentifier()) {
             throw ConfigurationException(RefactoringMessageUtil.getIncorrectIdentifierMessage(className))
@@ -118,7 +118,7 @@ internal abstract class MoveKotlinNestedClassesToUpperLevelModel(
 
         if (passOuterClass) {
             if (parameter.isNullOrEmpty()) {
-                throw ConfigurationException(RefactoringBundle.message("no.parameter.name.specified"))
+                throw ConfigurationException(JavaRefactoringBundle.message("no.parameter.name.specified"))
             }
             if (!parameter.isIdentifier()) {
                 throw ConfigurationException(RefactoringMessageUtil.getIncorrectIdentifierMessage(parameter))
@@ -132,7 +132,7 @@ internal abstract class MoveKotlinNestedClassesToUpperLevelModel(
             if (targetClass != null) {
                 for (member in targetClass.declarations) {
                     if (member is KtClassOrObject && className == member.getName()) {
-                        throw ConfigurationException(RefactoringBundle.message("inner.class.exists", className, targetClass.name))
+                        throw ConfigurationException(JavaRefactoringBundle.message("inner.class.exists", className, targetClass.name))
                     }
                 }
             }

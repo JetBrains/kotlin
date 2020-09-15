@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.idea.actions.generate
 
-import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.ide.util.MemberChooser
+import com.intellij.java.JavaBundle
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -63,7 +63,7 @@ class KotlinGenerateSecondaryConstructorAction : KotlinGenerateMemberActionBase<
         if (ApplicationManager.getApplication().isUnitTestMode || candidates.size <= 1) return candidates
 
         return with(MemberChooser(candidates.toTypedArray(), false, true, klass.project)) {
-            title = CodeInsightBundle.message("generate.constructor.super.constructor.chooser.title")
+            title = JavaBundle.message("generate.constructor.super.constructor.chooser.title")
             setCopyJavadocVisible(false)
             show()
 
