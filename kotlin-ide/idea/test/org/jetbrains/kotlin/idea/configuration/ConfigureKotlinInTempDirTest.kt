@@ -7,10 +7,13 @@ package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.impl.ApplicationImpl
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.VersionView
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifactNames
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
@@ -18,6 +21,7 @@ import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.junit.Assert
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
+import java.io.File
 
 @RunWith(JUnit38ClassRunner::class)
 open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinInTempDirTest() {
@@ -28,6 +32,29 @@ open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinInTempDirTest()
         Assert.assertEquals(LanguageVersion.KOTLIN_1_0, myProject.getLanguageVersionSettings(null).languageVersion)
         application.saveAll()
         Assert.assertTrue(project.baseDir.findFileByRelativePath(".idea/kotlinc.xml") == null)
+    }
+
+    fun testTwoModulesWithNonDefaultPath_doNotCopyInDefault() {
+        doTestConfigureModulesWithNonDefaultSetup(jvmConfigurator)
+        assertEmpty(getCanBeConfiguredModules(myProject, jsConfigurator))
+    }
+
+    fun testTwoModulesWithJSNonDefaultPath_doNotCopyInDefault() {
+        doTestConfigureModulesWithNonDefaultSetup(jsConfigurator)
+        assertEmpty(getCanBeConfiguredModules(myProject, jvmConfigurator))
+    }
+
+    fun testLibraryNonDefault_libExistInDefault() {
+        val module = module
+
+        // Move fake runtime jar to default library path to pretend library is already configured
+        FileUtil.copy(
+            File(project.basePath + "/lib/" + KotlinArtifactNames.KOTLIN_STDLIB),
+            File(jvmConfigurator.getDefaultPathToJarFile(project) + "/" + KotlinArtifactNames.KOTLIN_STDLIB)
+        )
+        assertNotConfigured(module, jvmConfigurator)
+        jvmConfigurator.configure(myProject, emptyList())
+        assertProperlyConfigured(module, jvmConfigurator)
     }
 
     fun testNoKotlincExistsNoSettingsLatestRuntime() {
@@ -103,7 +130,6 @@ open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinInTempDirTest()
         val moduleFileContentAfter = String(module.moduleFile!!.contentsToByteArray())
         Assert.assertEquals(moduleFileContentBefore, moduleFileContentAfter)
     }
-
 
     fun testLoadAndSaveOldNativePlatformOldNativeFacet() = doTestLoadAndSaveProjectWithFacetConfig(
         "platform=\"Native \"",

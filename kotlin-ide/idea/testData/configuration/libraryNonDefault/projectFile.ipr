@@ -5,15 +5,15 @@
       <module fileurl="file://$PROJECT_DIR$/module1.iml" filepath="$PROJECT_DIR$/module1.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK"/>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1" project-jdk-name="11" project-jdk-type="JavaSDK"/>
   <component name="libraryTable">
     <library name="KotlinJavaRuntime">
       <CLASSES>
-        <root url="jar://$TEMP_TEST_DIR$/kotlin-stblib.jar!/" />
+        <root url="jar://$PROJECT_DIR$/kotlin-stblib.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES>
-        <root url="jar://$TEMP_TEST_DIR$/kotlin-stblib.jar!/src" />
+        <root url="jar://$PROJECT_DIR$/kotlin-stblib.jar!/src" />
       </SOURCES>
     </library>
   </component>

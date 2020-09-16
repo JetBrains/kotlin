@@ -16,7 +16,6 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.RootPolicy;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiJavaModule;
 import com.intellij.psi.PsiRequiresStatement;
@@ -40,11 +39,10 @@ import org.jetbrains.kotlin.platform.TargetPlatform;
 import org.jetbrains.kotlin.platform.js.JsPlatforms;
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms;
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleKt;
+import org.jetbrains.kotlin.utils.PathUtil;
 import org.junit.internal.runners.JUnit38ClassRunner;
 import org.junit.runner.RunWith;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.StreamSupport;
@@ -60,11 +58,21 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         ModuleRootManager.getInstance(getModule()).orderEntries().forEachLibrary(library -> {
             assertSameElements(
                     Arrays.stream(library.getRootProvider().getFiles(OrderRootType.CLASSES)).map(VirtualFile::getName).toArray(),
-                    KotlinArtifactNames.KOTLIN_STDLIB, KotlinArtifactNames.KOTLIN_REFLECT, KotlinArtifactNames.KOTLIN_TEST);
+                    KotlinArtifactNames.KOTLIN_STDLIB,
+                    KotlinArtifactNames.KOTLIN_REFLECT,
+                    KotlinArtifactNames.KOTLIN_TEST,
+                    KotlinArtifactNames.KOTLIN_STDLIB_JDK7,
+                    KotlinArtifactNames.KOTLIN_STDLIB_JDK8
+            );
 
             assertSameElements(
                     Arrays.stream(library.getRootProvider().getFiles(OrderRootType.SOURCES)).map(VirtualFile::getName).toArray(),
-                    KotlinArtifactNames.KOTLIN_STDLIB, KotlinArtifactNames.KOTLIN_REFLECT, KotlinArtifactNames.KOTLIN_TEST);
+                    KotlinArtifactNames.KOTLIN_STDLIB_SOURCES,
+                    PathUtil.KOTLIN_TEST_SRC_JAR,
+                    PathUtil.KOTLIN_REFLECT_SRC_JAR,
+                    KotlinArtifactNames.KOTLIN_STDLIB_JDK7_SOURCES,
+                    KotlinArtifactNames.KOTLIN_STDLIB_JDK8_SOURCES
+            );
 
             return true;
         });
@@ -96,36 +104,12 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
             if (module.getName().equals("module1")) {
                 configure(module, KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY, getJvmConfigurator());
                 assertConfigured(module, getJvmConfigurator());
-            }
-            else if (module.getName().equals("module2")) {
+            } else if (module.getName().equals("module2")) {
                 assertNotConfigured(module, getJvmConfigurator());
                 configure(module, KotlinWithLibraryConfigurator.FileState.EXISTS, getJvmConfigurator());
                 assertConfigured(module, getJvmConfigurator());
             }
         }
-    }
-
-    public void testLibraryNonDefault_libExistInDefault() throws IOException {
-        Module module = getModule();
-
-        // Move fake runtime jar to default library path to pretend library is already configured
-        FileUtil.copy(
-                new File(getProject().getBasePath() + "/lib/" + KotlinArtifactNames.KOTLIN_STDLIB),
-                new File(getJvmConfigurator().getDefaultPathToJarFile(getProject()) + "/" + KotlinArtifactNames.KOTLIN_STDLIB));
-
-        assertNotConfigured(module, getJvmConfigurator());
-        getJvmConfigurator().configure(myProject, emptyList());
-        assertProperlyConfigured(module, getJvmConfigurator());
-    }
-
-    public void testTwoModulesWithNonDefaultPath_doNotCopyInDefault() {
-        doTestConfigureModulesWithNonDefaultSetup(getJvmConfigurator());
-        assertEmpty(ConfigureKotlinInProjectUtilsKt.getCanBeConfiguredModules(myProject, getJsConfigurator()));
-    }
-
-    public void testTwoModulesWithJSNonDefaultPath_doNotCopyInDefault() {
-        doTestConfigureModulesWithNonDefaultSetup(getJsConfigurator());
-        assertEmpty(ConfigureKotlinInProjectUtilsKt.getCanBeConfiguredModules(myProject, getJvmConfigurator()));
     }
 
     public void testNewLibrary_jarExists_js() {
@@ -212,7 +196,8 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         assertEquals("1.0", arguments.getApiVersion());
         assertEquals(LanguageFeature.State.ENABLED_WITH_WARNING, CoroutineSupport.byCompilerArguments(arguments));
         assertEquals("1.7", arguments.getJvmTarget());
-        assertEquals("-version -Xallow-kotlin-package -Xskip-metadata-version-check", settings.getCompilerSettings().getAdditionalArguments());
+        assertEquals("-version -Xallow-kotlin-package -Xskip-metadata-version-check",
+                     settings.getCompilerSettings().getAdditionalArguments());
     }
 
     public void testJsProjectWithV1FacetConfig() {
@@ -240,7 +225,8 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         assertEquals("1.0", arguments.getApiVersion());
         assertEquals(LanguageFeature.State.ENABLED, CoroutineSupport.byCompilerArguments(arguments));
         assertEquals("1.7", arguments.getJvmTarget());
-        assertEquals("-version -Xallow-kotlin-package -Xskip-metadata-version-check", settings.getCompilerSettings().getAdditionalArguments());
+        assertEquals("-version -Xallow-kotlin-package -Xskip-metadata-version-check",
+                     settings.getCompilerSettings().getAdditionalArguments());
     }
 
     public void testJsProjectWithV2FacetConfig() {
@@ -268,7 +254,8 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         assertEquals("1.0", arguments.getApiVersion());
         assertEquals(LanguageFeature.State.ENABLED, CoroutineSupport.byCompilerArguments(arguments));
         assertEquals("1.7", arguments.getJvmTarget());
-        assertEquals("-version -Xallow-kotlin-package -Xskip-metadata-version-check", settings.getCompilerSettings().getAdditionalArguments());
+        assertEquals("-version -Xallow-kotlin-package -Xskip-metadata-version-check",
+                     settings.getCompilerSettings().getAdditionalArguments());
     }
 
     public void testJvmProjectWithJvmTarget11() {
@@ -286,7 +273,8 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         assert module2 != null;
 
         assertEquals(emptyList(), KotlinFacet.Companion.get(module1).getConfiguration().getSettings().getImplementedModuleNames());
-        assertEquals(singletonList("module1"), KotlinFacet.Companion.get(module2).getConfiguration().getSettings().getImplementedModuleNames());
+        assertEquals(singletonList("module1"),
+                     KotlinFacet.Companion.get(module2).getConfiguration().getSettings().getImplementedModuleNames());
     }
 
     public void testJava9WithModuleInfo() {
@@ -298,7 +286,8 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
     }
 
     public void testProjectWithFreeArgs() {
-        assertEquals(singletonList("true"), KotlinCommonCompilerArgumentsHolder.Companion.getInstance(myProject).getSettings().getFreeArgs());
+        assertEquals(singletonList("true"),
+                     KotlinCommonCompilerArgumentsHolder.Companion.getInstance(myProject).getSettings().getFreeArgs());
     }
 
     public void testProjectWithInternalArgs() {
@@ -347,8 +336,7 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
             assertEquals(platform, facet.getConfiguration().getSettings().getTargetPlatform());
             assertEquals(jvmTarget.getDescription(),
                          ((K2JVMCompilerArguments) facet.getConfiguration().getSettings().getCompilerArguments()).getJvmTarget());
-        }
-        finally {
+        } finally {
             modelsProvider.dispose();
         }
     }

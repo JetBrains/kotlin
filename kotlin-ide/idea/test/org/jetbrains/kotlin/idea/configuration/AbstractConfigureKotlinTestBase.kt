@@ -1,28 +1,19 @@
 package org.jetbrains.kotlin.idea.configuration
 
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Ref
 import com.intellij.testFramework.HeavyPlatformTestCase
 import com.intellij.testFramework.IdeaTestUtil
-import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.addJdk
-import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.test.KotlinRoot
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils.disposeVfsRootAccess
 import java.io.File
 import java.nio.file.Path
 
 abstract class AbstractConfigureKotlinTestBase : HeavyPlatformTestCase() {
     protected lateinit var projectRoot: File
-        private set
-
-    private lateinit var vfsDisposable: Ref<Disposable>
 
     protected val jvmConfigurator: KotlinJavaModuleConfigurator by lazy {
         object : KotlinJavaModuleConfigurator() {
@@ -39,21 +30,15 @@ abstract class AbstractConfigureKotlinTestBase : HeavyPlatformTestCase() {
     protected val modules: Array<Module>
         get() = ModuleManager.getInstance(myProject).modules
 
-    private val projectName: String
+    protected val projectName: String
         get() = getTestName(true).substringBefore("_")
 
     override fun setUp() {
-        projectRoot = KotlinTestUtils.tmpDirForReusableFolder("configure")
-        vfsDisposable = KotlinTestUtils.allowRootAccess(this, projectRoot.path)
+        projectRoot = createProjectRoot()
         super.setUp()
     }
 
-    override fun tearDown() {
-        runAll(
-            ThrowableRunnable { disposeVfsRootAccess(vfsDisposable) },
-            ThrowableRunnable { super.tearDown() }
-        )
-    }
+    open fun createProjectRoot(): File = KotlinRoot.DIR.resolve("idea/testData/configuration").resolve(projectName)
 
     override fun initApplication() {
         super.initApplication()
@@ -68,16 +53,13 @@ abstract class AbstractConfigureKotlinTestBase : HeavyPlatformTestCase() {
     }
 
     override fun getProjectDirOrFile(isDirectoryBasedProject: Boolean): Path {
-        val originalDir = KotlinRoot.DIR.resolve("idea/testData/configuration").resolve(projectName)
-        originalDir.copyRecursively(projectRoot)
-
         val projectFile = projectRoot.resolve("projectFile.ipr")
         return (if (projectFile.exists()) projectFile else projectRoot).toPath()
     }
 
     override fun setUpModule() {
         val modules = ModuleManager.getInstance(project).modules
-        myModule = modules.singleOrNull() ?: error("Single module expected, got $modules")
+        myModule = modules.first()
     }
 
     protected fun getOppositeConfigurator(configurator: KotlinWithLibraryConfigurator): KotlinWithLibraryConfigurator {
