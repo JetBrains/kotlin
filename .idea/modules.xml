@@ -611,7 +611,7 @@
     <module old-name="ruby-coverage-common" new-name="intellij.ruby.coverage" />
     <module old-name="ruby-css" new-name="intellij.ruby.css" />
     <module old-name="ruby-cucumber" new-name="intellij.ruby.cucumber" />
-    <module old-name="ruby-db-config" new-name="intellij.ruby.dbConfig" />
+    <module old-name="ruby-db-config" new-name="intellij.ruby.database" />
     <module old-name="ruby-docker" new-name="intellij.ruby.docker" />
     <module old-name="ruby-ext" new-name="intellij.ruby.ext" />
     <module old-name="ruby-guitests" new-name="intellij.ruby.guiTests" />
@@ -1924,7 +1924,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/ruby/ruby-css/intellij.ruby.css.iml" filepath="$PROJECT_DIR$/intellij/ruby/ruby-css/intellij.ruby.css.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/ruby/ruby-cucumber/intellij.ruby.cucumber.iml" filepath="$PROJECT_DIR$/intellij/ruby/ruby-cucumber/intellij.ruby.cucumber.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/ruby/ruby-plugin-cucumber/intellij.ruby.cucumber.java.iml" filepath="$PROJECT_DIR$/intellij/ruby/ruby-plugin-cucumber/intellij.ruby.cucumber.java.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/ruby/ruby-db-config/intellij.ruby.dbConfig.iml" filepath="$PROJECT_DIR$/intellij/ruby/ruby-db-config/intellij.ruby.dbConfig.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/ruby/ruby-database/intellij.ruby.database.iml" filepath="$PROJECT_DIR$/intellij/ruby/ruby-database/intellij.ruby.database.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/ruby/debug-intermediate/intellij.ruby.debugIntermediate.iml" filepath="$PROJECT_DIR$/intellij/ruby/debug-intermediate/intellij.ruby.debugIntermediate.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/ruby/ruby-docker/intellij.ruby.docker.iml" filepath="$PROJECT_DIR$/intellij/ruby/ruby-docker/intellij.ruby.docker.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/ruby/ruby-docker-tests/intellij.ruby.docker.tests.iml" filepath="$PROJECT_DIR$/intellij/ruby/ruby-docker-tests/intellij.ruby.docker.tests.iml" />
