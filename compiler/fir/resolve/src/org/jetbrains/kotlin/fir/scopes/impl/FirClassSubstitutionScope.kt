@@ -626,33 +626,3 @@ class FirClassSubstitutionScope(
         return useSiteMemberScope.getClassifierNames()
     }
 }
-
-// Unlike other cases, return types may be implicit, i.e. unresolved
-// But in that cases newType should also be `null`
-fun FirTypeRef.withReplacedReturnType(newType: ConeKotlinType?): FirTypeRef {
-    require(this is FirResolvedTypeRef || newType == null)
-    if (newType == null) return this
-
-    return buildResolvedTypeRef {
-        source = this@withReplacedReturnType.source
-        type = newType
-        annotations += this@withReplacedReturnType.annotations
-    }
-}
-
-fun FirTypeRef.withReplacedConeType(
-    newType: ConeKotlinType?,
-    firFakeSourceElementKind: FirFakeSourceElementKind? = null
-): FirResolvedTypeRef {
-    require(this is FirResolvedTypeRef)
-    if (newType == null) return this
-
-    return buildResolvedTypeRef {
-        source = if (firFakeSourceElementKind != null)
-            this@withReplacedConeType.source?.fakeElement(firFakeSourceElementKind)
-        else
-            this@withReplacedConeType.source
-        type = newType
-        annotations += this@withReplacedConeType.annotations
-    }
-}
