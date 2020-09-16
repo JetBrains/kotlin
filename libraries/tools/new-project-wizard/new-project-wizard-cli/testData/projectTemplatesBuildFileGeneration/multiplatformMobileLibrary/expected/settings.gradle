@@ -5,7 +5,7 @@ pluginManagement {
         google()
         jcenter()
         maven {
-            url 'https://dl.bintray.com/kotlin/kotlin-dev'
+            url 'KOTLIN_REPO'
         }
     }
     resolutionStrategy {

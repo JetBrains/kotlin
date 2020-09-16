@@ -15,7 +15,7 @@ repositories {
     jcenter()
     mavenCentral()
     maven {
-        url 'https://dl.bintray.com/kotlin/kotlin-dev'
+        url 'KOTLIN_REPO'
     }
 }
 

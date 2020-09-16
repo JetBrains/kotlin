@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.tools.projectWizard.Versions
 import org.jetbrains.kotlin.tools.projectWizard.core.div
 import org.jetbrains.kotlin.tools.projectWizard.core.service.Services
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repositories
 import org.jetbrains.kotlin.tools.projectWizard.wizard.Wizard
 import java.nio.file.Files
 import java.nio.file.Path
@@ -50,9 +51,18 @@ abstract class AbstractBuildFileGenerationTest : UsefulTestCase() {
             fileContent.replace(
                 KotlinVersionProviderTestWizardService.TEST_KOTLIN_VERSION.toString(),
                 KOTLIN_VERSION_PLACEHOLDER
+            ).replaceAllTo(
+                listOf(
+                    Repositories.KOTLIN_EAP_BINTRAY.url,
+                    Repositories.KOTLIN_DEV_BINTRAY.url,
+                    KotlinVersionProviderTestWizardService.KOTLIN_EAP_BINTRAY_WITH_CACHE_REDIRECTOR.url,
+                    KotlinVersionProviderTestWizardService.KOTLIN_DEV_BINTRAY_WITH_CACHE_REDIRECTOR.url,
+                ),
+                KOTLIN_REPO_PLACEHOLDER
             )
         }
     }
+
 
     private fun Path.allBuildFiles(buildSystem: BuildSystem) =
         listFiles { it.fileName.toString() in buildSystem.allBuildFileNames }
@@ -63,5 +73,11 @@ abstract class AbstractBuildFileGenerationTest : UsefulTestCase() {
     companion object {
         private const val EXPECTED_DIRECTORY_NAME = "expected"
         private const val KOTLIN_VERSION_PLACEHOLDER = "KOTLIN_VERSION"
+        private const val KOTLIN_REPO_PLACEHOLDER = "KOTLIN_REPO"
     }
 }
+
+private fun String.replaceAllTo(oldValues: Collection<String>, newValue: String) =
+    oldValues.fold(this) { state, oldValue ->
+        state.replace(oldValue, newValue)
+    }
