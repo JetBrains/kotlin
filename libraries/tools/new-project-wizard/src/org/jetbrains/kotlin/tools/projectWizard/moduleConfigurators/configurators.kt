@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
+import org.jetbrains.kotlin.tools.projectWizard.core.ListBuilder
 import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.ModuleConfiguratorSetting
@@ -68,8 +69,12 @@ object JvmSinglePlatformModuleConfigurator : JvmModuleConfigurator,
     ModuleConfiguratorWithModuleType {
     override val moduleType get() = ModuleType.jvm
     override val moduleKind: ModuleKind get() = ModuleKind.singleplatformJvm
-    @NonNls override val suggestedModuleName = "jvm"
-    @NonNls override val id = "JVM Module"
+
+    @NonNls
+    override val suggestedModuleName = "jvm"
+
+    @NonNls
+    override val id = "JVM Module"
     override val text = KotlinNewProjectWizardBundle.message("module.configurator.jvm")
 
 
@@ -110,18 +115,21 @@ object JvmSinglePlatformModuleConfigurator : JvmModuleConfigurator,
                     )
                 }
                 BuildSystemType.GradleGroovyDsl -> {
-                    +GradleSectionIR(
-                        "compileKotlin",
-                        irs = listOf(
-                            GradleAssignmentIR("kotlinOptions.jvmTarget", GradleStringConstIR(targetVersionValue))
-                        )
-                    )
+                    +jvmTargetSetup("compileKotlin", targetVersionValue)
+                    +jvmTargetSetup("compileTestKotlin", targetVersionValue)
                 }
                 BuildSystemType.Maven -> {
                     +MavenPropertyIR("kotlin.compiler.jvmTarget", targetVersionValue)
                 }
             }
         }
+
+    private fun jvmTargetSetup(taskName: String, targetVersion: String) = GradleSectionIR(
+        taskName,
+        irs = listOf(
+            GradleAssignmentIR("kotlinOptions.jvmTarget", GradleStringConstIR(targetVersion))
+        )
+    )
 }
 
 
