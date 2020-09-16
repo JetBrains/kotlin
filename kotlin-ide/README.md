@@ -43,6 +43,11 @@ Now you should be able to open and build the project.
 
 Use the provided "IDEA" build configuration to run an IntelliJ IDEA instance with your modifications to the Kotlin plugin.
 
+### 1.5 Kotlin Ultimate
+
+Kotlin Ultimate uses LLDBFrontend native binary for providing Kotlin/Native debugging. If you need to test this functionality
+of Kotlin plugin then run `DownloadAppCodeDependencies` once before running debug IDE.
+
 ## 2. Frequently Asked Questions
 
 Q. How can I contribute to the Kotlin IDEA plugin?
