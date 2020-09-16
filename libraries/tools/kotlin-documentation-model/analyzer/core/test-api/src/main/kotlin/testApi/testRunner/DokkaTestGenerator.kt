@@ -1,7 +1,9 @@
 package org.jetbrains.dokka.testApi.testRunner
 
+import org.jetbrains.dokka.CoreExtensions
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.DokkaGenerator
+import org.jetbrains.dokka.generation.SingleModuleGeneration
 import org.jetbrains.dokka.plugability.DokkaPlugin
 import org.jetbrains.dokka.utilities.DokkaLogger
 
@@ -19,31 +21,31 @@ internal class DokkaTestGenerator(
             dokkaGenerator.initializePlugins(configuration, logger, additionalPlugins)
         pluginsSetupStage(context)
 
-        verificationStage {
-            dokkaGenerator.validityCheck(context)
-        }
+        val singleModuleGeneration = context.single(CoreExtensions.generation) as SingleModuleGeneration
 
-        val modulesFromPlatforms = dokkaGenerator.createDocumentationModels(context)
+        val modulesFromPlatforms = singleModuleGeneration.createDocumentationModels()
         documentablesCreationStage(modulesFromPlatforms)
 
-        val filteredModules = dokkaGenerator.transformDocumentationModelBeforeMerge(modulesFromPlatforms, context)
+        verificationStage { singleModuleGeneration.validityCheck(context) }
+
+        val filteredModules = singleModuleGeneration.transformDocumentationModelBeforeMerge(modulesFromPlatforms)
         documentablesFirstTransformationStep(filteredModules)
 
-        val documentationModel = dokkaGenerator.mergeDocumentationModels(filteredModules, context)
+        val documentationModel = singleModuleGeneration.mergeDocumentationModels(filteredModules)
         documentablesMergingStage(documentationModel)
 
-        val transformedDocumentation = dokkaGenerator.transformDocumentationModelAfterMerge(documentationModel, context)
+        val transformedDocumentation = singleModuleGeneration.transformDocumentationModelAfterMerge(documentationModel)
         documentablesTransformationStage(transformedDocumentation)
 
-        val pages = dokkaGenerator.createPages(transformedDocumentation, context)
+        val pages = singleModuleGeneration.createPages(transformedDocumentation)
         pagesGenerationStage(pages)
 
-        val transformedPages = dokkaGenerator.transformPages(pages, context)
+        val transformedPages = singleModuleGeneration.transformPages(pages)
         pagesTransformationStage(transformedPages)
 
-        dokkaGenerator.render(transformedPages, context)
+        singleModuleGeneration.render(transformedPages)
         renderingStage(transformedPages, context)
 
-        dokkaGenerator.reportAfterRendering(context)
+        singleModuleGeneration.reportAfterRendering()
     }
 }
