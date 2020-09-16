@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor
@@ -24,9 +26,8 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
-import org.jetbrains.kotlin.ir.types.createType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isSuspend
@@ -179,3 +180,23 @@ internal fun createFakeContinuation(context: JvmBackendContext): IrExpression = 
     context.ir.symbols.continuationClass.createType(true, listOf(makeTypeProjection(context.irBuiltIns.anyNType, Variance.INVARIANT))),
     "FAKE_CONTINUATION"
 )
+
+internal fun IrFunction.originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass(): IrType? {
+    if (!isSuspend) return null
+    // Check whether we in fact return inline class
+    if (returnType.classOrNull?.owner?.isInline != true) return null
+    val unboxedReturnType = returnType.makeNotNull().unboxInlineClass()
+    // Force boxing for primitives
+    if (unboxedReturnType.isPrimitiveType()) return null
+    // Force boxing for nullable inline class types with nullable underlying type
+    if (returnType.isNullable() && unboxedReturnType.isNullable()) return null
+    // Force boxing if the function overrides function with different type modulo nullability ignoring type parameters
+    if ((this as? IrSimpleFunction)?.let {
+            it.overriddenSymbols.any { overridden ->
+                (overridden.owner.returnType.isNullable() && overridden.owner.returnType.makeNotNull().unboxInlineClass().isNullable()) ||
+                        overridden.owner.returnType.makeNotNull().classOrNull != returnType.makeNotNull().classOrNull
+            }
+        } != false) return null
+    // Don't box other inline classes
+    return returnType
+}

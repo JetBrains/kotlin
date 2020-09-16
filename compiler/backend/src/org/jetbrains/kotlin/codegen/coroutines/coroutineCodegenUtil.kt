@@ -491,7 +491,7 @@ fun InstructionAdapter.loadCoroutineSuspendedMarker(languageVersionSettings: Lan
     )
 }
 
-internal fun InstructionAdapter.generateCoroutineSuspendedCheck(languageVersionSettings: LanguageVersionSettings) {
+fun InstructionAdapter.generateCoroutineSuspendedCheck(languageVersionSettings: LanguageVersionSettings) {
     dup()
     loadCoroutineSuspendedMarker(languageVersionSettings)
     val elseLabel = Label()

@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-
 @Suppress("RESULT_CLASS_IN_RETURN_TYPE")
 suspend fun signInFlowStepFirst(): Result<Unit> = Result.success(Unit)
 

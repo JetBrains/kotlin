@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -414,15 +415,19 @@ fun addInlineMarker(v: InstructionAdapter, isStartNotEnd: Boolean) {
 internal fun addUnboxInlineClassMarkersIfNeeded(v: InstructionAdapter, descriptor: CallableDescriptor, typeMapper: KotlinTypeMapper) {
     val inlineClass = (descriptor as? FunctionDescriptor)?.originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass(typeMapper)
     if (inlineClass != null) {
-        addBeforeUnboxInlineClassMarker(v)
-        StackValue.unboxInlineClass(AsmTypes.OBJECT_TYPE, inlineClass, v)
-        // Suspend functions always returns Any?, but the unboxing disrupts type analysis of the bytecode.
-        // For example, if the underlying type is String, CHECKCAST String is removed.
-        // However, the unboxing is moved to the resume path, the direct path still has Any?, but now, without the CHECKCAST.
-        // Thus, we add CHECKCAST Object, which we remove, after we copy the unboxing to the resume path.
-        v.checkcast(AsmTypes.OBJECT_TYPE)
-        addAfterUnboxInlineClassMarker(v)
+        generateResumePathUnboxing(v, inlineClass)
     }
+}
+
+fun generateResumePathUnboxing(v: InstructionAdapter, inlineClass: KotlinType) {
+    addBeforeUnboxInlineClassMarker(v)
+    StackValue.unboxInlineClass(AsmTypes.OBJECT_TYPE, inlineClass, v)
+    // Suspend functions always returns Any?, but the unboxing disrupts type analysis of the bytecode.
+    // For example, if the underlying type is String, CHECKCAST String is removed.
+    // However, the unboxing is moved to the resume path, the direct path still has Any?, but now, without the CHECKCAST.
+    // Thus, we add CHECKCAST Object, which we remove, after we copy the unboxing to the resume path.
+    v.checkcast(AsmTypes.OBJECT_TYPE)
+    addAfterUnboxInlineClassMarker(v)
 }
 
 private fun addBeforeUnboxInlineClassMarker(v: InstructionAdapter) {

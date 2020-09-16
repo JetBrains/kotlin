@@ -14,9 +14,11 @@ import org.jetbrains.kotlin.backend.jvm.intrinsics.JavaClassProperty
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.constantValue
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
+import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.*
 import org.jetbrains.kotlin.codegen.coroutines.SuspensionPointKind
+import org.jetbrains.kotlin.codegen.coroutines.generateCoroutineSuspendedCheck
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.putNeedClassReificationMarker
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind.AS
@@ -225,10 +227,20 @@ class ExpressionCodegen(
             if (irFunction.origin != JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER) {
                 irFunction.markLineNumber(startOffset = irFunction is IrConstructor && irFunction.isPrimary)
             }
-            val returnType = signature.returnType
-            val returnIrType = if (irFunction !is IrConstructor) irFunction.returnType else context.irBuiltIns.unitType
-            result.materializeAt(returnType, returnIrType)
-            mv.areturn(returnType)
+            if (irFunction.isSuspend && irFunction.origin == IrDeclarationOrigin.BRIDGE) {
+                mv.areturn(OBJECT_TYPE)
+            } else {
+                var returnType = signature.returnType
+                var returnIrType = if (irFunction !is IrConstructor) irFunction.returnType else context.irBuiltIns.unitType
+                val unboxedInlineClass =
+                    irFunction.suspendFunctionOriginal().originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass()
+                if (unboxedInlineClass != null) {
+                    returnIrType = unboxedInlineClass
+                    returnType = unboxedInlineClass.asmType
+                }
+                result.materializeAt(returnType, returnIrType)
+                mv.areturn(returnType)
+            }
         }
         val endLabel = markNewLabel()
         writeLocalVariablesInTable(info, endLabel)
@@ -436,9 +448,30 @@ class ExpressionCodegen(
             if (irFunction.isInvokeSuspendOfContinuation()) IrCallGenerator.DefaultCallGenerator else callGenerator
         generatorForActualCall.genCall(callable, this, expression, isInsideCondition)
 
+        val unboxedInlineClassIrType =
+            callee.suspendFunctionOriginal().originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass()
+
         if (isSuspensionPoint != SuspensionPointKind.NEVER) {
             addSuspendMarker(mv, isStartNotEnd = false, isSuspensionPoint == SuspensionPointKind.NOT_INLINE)
+            if (unboxedInlineClassIrType != null) {
+                generateResumePathUnboxing(mv, unboxedInlineClassIrType.toIrBasedKotlinType())
+            }
             addInlineMarker(mv, isStartNotEnd = false)
+        }
+
+        if (unboxedInlineClassIrType != null) {
+            val isFunctionReference = irFunction.origin != IrDeclarationOrigin.BRIDGE &&
+                    irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
+
+            val isDelegateCall = irFunction.origin == IrDeclarationOrigin.DELEGATED_MEMBER
+
+            if (irFunction.isInvokeSuspendOfContinuation() || isFunctionReference || isDelegateCall) {
+                mv.generateCoroutineSuspendedCheck(state.languageVersionSettings)
+                mv.checkcast(unboxedInlineClassIrType.asmType)
+            }
+            if (irFunction.isInvokeSuspendOfContinuation()) {
+                StackValue.boxInlineClass(unboxedInlineClassIrType.toIrBasedKotlinType(), mv)
+            }
         }
 
         return when {
@@ -461,6 +494,18 @@ class ExpressionCodegen(
                 wrapJavaClassesIntoKClasses(mv)
                 MaterialValue(this, AsmTypes.K_CLASS_ARRAY_TYPE, expression.type)
             }
+            unboxedInlineClassIrType != null && !irFunction.isInvokeSuspendOfContinuation() ->
+                object : PromisedValue(this, unboxedInlineClassIrType.asmType, unboxedInlineClassIrType) {
+                    override fun materializeAt(target: Type, irTarget: IrType) {
+                        mv.checkcast(unboxedInlineClassIrType.asmType)
+                        MaterialValue(this@ExpressionCodegen, unboxedInlineClassIrType.asmType, unboxedInlineClassIrType)
+                            .materializeAt(target, irTarget)
+                    }
+
+                    override fun discard() {
+                        pop(mv, OBJECT_TYPE)
+                    }
+                }
             else ->
                 MaterialValue(this, callable.asmMethod.returnType, callee.returnType)
         }
@@ -787,9 +832,16 @@ class ExpressionCodegen(
             return unitValue
         }
 
-        val returnType = if (owner == irFunction) signature.returnType else methodSignatureMapper.mapReturnType(owner)
+        var returnType = if (owner == irFunction) signature.returnType else methodSignatureMapper.mapReturnType(owner)
+        var returnIrType = owner.returnType
+
+        val unboxedInlineClass = owner.suspendFunctionOriginal().originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass()
+        if (unboxedInlineClass != null) {
+            returnIrType = unboxedInlineClass
+            returnType = unboxedInlineClass.asmType
+        }
         val afterReturnLabel = Label()
-        expression.value.accept(this, data).materializeAt(returnType, owner.returnType)
+        expression.value.accept(this, data).materializeAt(returnType, returnIrType)
         generateFinallyBlocksIfNeeded(returnType, afterReturnLabel, data)
         expression.markLineNumber(startOffset = true)
         if (isNonLocalReturn) {
