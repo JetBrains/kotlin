@@ -72,4 +72,36 @@ class GradleBuildSrcImportingTest : GradleImportingTestCase() {
 
     assertModuleLibDep("project.buildSrc.main", depJar.presentableUrl, depJar.url)
   }
+
+  /**
+   * since 6.7 included builds become "visible" for `buildSrc` project https://docs.gradle.org/6.7-rc-1/release-notes.html#build-src
+   * !!! Note, this is true only for builds included from the "root" build and it becomes visible also for "nested" `buildSrc` projects !!!
+   * Transitive included builds are not visible even for related "transitive" `buildSrc` projects
+   * due to limitation caused by specific ordering requirement:  "include order is important if an included build provides a plugin which should be discovered very very early".
+   * It can be improved in the future Gradle releases.
+   */
+  @TargetVersions("6.7+")
+  @Test
+  fun `test nested buildSrc with applied plugins provided by included build of the root project`() {
+    createProjectSubFile("build-plugins/settings.gradle", "")
+    createProjectSubFile("build-plugins/build.gradle", "plugins { id 'groovy-gradle-plugin' }\n")
+    createProjectSubFile("build-plugins/src/main/groovy/myproject.my-test-plugin.gradle",
+                         "plugins { id 'java' }\n" +
+                         "dependencies { implementation files('libs/myLib.jar') }\n")
+
+    createProjectSubFile("another-build/settings.gradle", "")
+    createProjectSubFile("another-build/buildSrc/build.gradle", "plugins { id 'myproject.my-test-plugin' }\n")
+    createProjectSubFile("another-build/buildSrc/settings.gradle", "")
+    val depJar = createProjectJarSubFile("another-build/buildSrc/libs/myLib.jar")
+
+    createSettingsFile("includeBuild 'build-plugins'\n" +
+                       "includeBuild 'another-build'")
+
+    importProject("")
+    assertModules("project",
+                  "build-plugins", "build-plugins.main", "build-plugins.test",
+                  "another-build", "another-build.buildSrc", "another-build.buildSrc.main", "another-build.buildSrc.test")
+
+    assertModuleLibDep("another-build.buildSrc.main", depJar.presentableUrl, depJar.url)
+  }
 }
