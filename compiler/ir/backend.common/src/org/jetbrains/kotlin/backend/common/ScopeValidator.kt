@@ -15,179 +15,158 @@ import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /* Make sure that all the variable references and type parameter references are within the scope of the corresponding variables and
    type parameters.
 */
 class ScopeValidator(
     private val reportError: ReportError
-) : IrElementVisitorVoid {
+) {
 
-    
-    private val accessibleValues = mutableSetOf<IrValueDeclaration>()
-    private val valuesStack = mutableListOf<MutableSet<IrValueDeclaration>>()
-
-    private val accessibleTypeParameters = mutableSetOf<IrTypeParameter>()
-
-
-    override fun visitElement(element: IrElement) {
-        element.acceptChildrenVoid(this)
+    fun check(element: IrElement) {
+        element.accept(Checker(), Visibles(emptySet(), mutableSetOf()))
     }
 
-    override fun visitClass(declaration: IrClass) {
-        handleTypeParameterContainer(declaration.typeParameters) {
+    inner class Visibles(val typeParameters: Set<IrTypeParameter>, val values: MutableSet<IrValueDeclaration>) {
+        fun visitTypeAccess(element: IrElement, type: IrType) {
+            if (type !is IrSimpleType) return
+            if (type.classifier is IrTypeParameterSymbol && type.classifier.owner !in this.typeParameters) {
+                reportError(element, "Type parameter ${type.classifier.owner.render()} not accessible")
+            }
+            for (arg in type.arguments) {
+                if (arg is IrTypeProjection) {
+                    visitTypeAccess(element, arg.type)
+                }
+            }
+        }
+
+        fun visitVariableAccess(element: IrElement, variable: IrValueDeclaration) {
+            if (variable !in this.values) {
+                reportError(element, "Value ${variable.render()} not accessible")
+            }
+        }
+
+        fun extend(newTypeParameters: Collection<IrTypeParameter>, newValues: Collection<IrValueDeclaration>): Visibles =
+            Visibles(
+                if (newTypeParameters.isEmpty()) typeParameters else typeParameters + newTypeParameters,
+                (values + newValues).toMutableSet()
+            )
+    }
+
+    inner class Checker : IrElementVisitor<Unit, Visibles> {
+        override fun visitElement(element: IrElement, data: Visibles) {
+            element.acceptChildren(this, data)
+        }
+
+        override fun visitClass(declaration: IrClass, data: Visibles) {
+            val newVisibles = data.extend(declaration.typeParameters, listOfNotNull(declaration.thisReceiver))
             for (superType in declaration.superTypes) {
-                visitTypeAccess(declaration, superType)
+                newVisibles.visitTypeAccess(declaration, superType)
             }
-            handleValuesContainer(listOfNotNull(declaration.thisReceiver)) {
-                super.visitClass(declaration)
-            }
+            super.visitClass(declaration, newVisibles)
         }
-    }
 
-    override fun visitFunction(declaration: IrFunction) {
-        handleTypeParameterContainer(declaration.typeParameters) {
-            visitTypeAccess(declaration, declaration.returnType)
-            handleValuesContainer(declaration.valueParameters) {
-                declaration.dispatchReceiverParameter?.let { addAccessibleValue(it) }
-                declaration.extensionReceiverParameter?.let { addAccessibleValue(it) }
-                super.visitFunction(declaration)
-            }
+        override fun visitFunction(declaration: IrFunction, data: Visibles) {
+            val newVisibles = data.extend(
+                declaration.typeParameters,
+                listOfNotNull(declaration.dispatchReceiverParameter, declaration.extensionReceiverParameter) + declaration.valueParameters
+            )
+
+            newVisibles.visitTypeAccess(declaration, declaration.returnType)
+            super.visitFunction(declaration, newVisibles)
         }
-    }
 
-    override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) {
-        val primaryConstructor = declaration.parentAsClass.primaryConstructor()
-        if (primaryConstructor == null) {
-            super.visitAnonymousInitializer(declaration)
-        } else {
-            handleValuesContainer(primaryConstructor.valueParameters) {
-                super.visitAnonymousInitializer(declaration)
+        override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: Visibles) {
+            val primaryConstructor = declaration.parentAsClass.primaryConstructor()
+            if (primaryConstructor == null) {
+                super.visitAnonymousInitializer(declaration, data)
+            } else {
+                super.visitAnonymousInitializer(declaration, data.extend(emptySet(), primaryConstructor.valueParameters))
             }
         }
-    }
 
-    override fun visitField(declaration: IrField) {
-        visitTypeAccess(declaration, declaration.type)
-        if (declaration.initializer == null) {
-            return super.visitField(declaration)
-        }
-        val primaryConstructor = (declaration.parent as? IrClass)?.primaryConstructor()
-        if (primaryConstructor == null) {
-            super.visitField(declaration)
-        } else {
-            handleValuesContainer(primaryConstructor.valueParameters) {
-                super.visitField(declaration)
+        override fun visitField(declaration: IrField, data: Visibles) {
+            data.visitTypeAccess(declaration, declaration.type)
+            if (declaration.initializer == null) {
+                return super.visitField(declaration, data)
+            }
+            val primaryConstructor = (declaration.parent as? IrClass)?.primaryConstructor()
+            if (primaryConstructor == null) {
+                super.visitField(declaration, data)
+            } else {
+                super.visitField(declaration, data.extend(emptySet(), primaryConstructor.valueParameters))
             }
         }
-    }
 
-    override fun visitBlock(expression: IrBlock) {
-        handleValuesContainer(emptyList()) {
-            super.visitBlock(expression)
+        override fun visitBlock(expression: IrBlock, data: Visibles) {
+            // Entering a new scope
+            super.visitBlock(expression, data.extend(emptySet(), emptySet()))
         }
-    }
 
-    override fun visitVariable(declaration: IrVariable) {
-        visitTypeAccess(declaration, declaration.type)
-        super.visitVariable(declaration)
-        addAccessibleValue(declaration)
-    }
-
-    override fun visitTypeAlias(declaration: IrTypeAlias) {
-        handleTypeParameterContainer(declaration.typeParameters) {
-            visitTypeAccess(declaration, declaration.expandedType)
-            super.visitTypeAlias(declaration)
+        override fun visitVariable(declaration: IrVariable, data: Visibles) {
+            data.visitTypeAccess(declaration, declaration.type)
+            super.visitVariable(declaration, data)
+            data.values.add(declaration)
         }
-    }
 
-    override fun visitTypeParameter(declaration: IrTypeParameter) {
-        for (superType in declaration.superTypes) {
-            visitTypeAccess(declaration, superType)
+        override fun visitTypeAlias(declaration: IrTypeAlias, data: Visibles) {
+            val newVisibles = data.extend(declaration.typeParameters, emptySet())
+            newVisibles.visitTypeAccess(declaration, declaration.expandedType)
+            super.visitTypeAlias(declaration, newVisibles)
         }
-        super.visitTypeParameter(declaration)
-    }
 
-    override fun visitValueParameter(declaration: IrValueParameter) {
-        visitTypeAccess(declaration, declaration.type)
-        declaration.varargElementType?.let { visitTypeAccess(declaration, it) }
-        super.visitValueParameter(declaration)
-    }
-
-    override fun visitVariableAccess(expression: IrValueAccessExpression) {
-        if (expression.symbol.owner !in accessibleValues) {
-            reportError(expression, "Value ${expression.symbol.owner.render()} not accessible")
-        }
-        super.visitVariableAccess(expression)
-    }
-
-    override fun visitMemberAccess(expression: IrMemberAccessExpression<*>) {
-        for (i in 0 until expression.typeArgumentsCount) {
-            expression.getTypeArgument(i)?.let { visitTypeAccess(expression, it) }
-        }
-        super.visitMemberAccess(expression)
-    }
-
-    override fun visitCatch(aCatch: IrCatch) {
-        // catchParameter only has scope over result expression
-        handleValuesContainer(emptyList()) {
-            super.visitCatch(aCatch)
-        }
-    }
-
-    override fun visitTypeOperator(expression: IrTypeOperatorCall) {
-        visitTypeAccess(expression, expression.typeOperand)
-        super.visitTypeOperator(expression)
-    }
-
-    override fun visitClassReference(expression: IrClassReference) {
-        // classType should only contain star projections, but check it to be sure.
-        visitTypeAccess(expression, expression.classType)
-        super.visitClassReference(expression)
-    }
-
-    override fun visitVararg(expression: IrVararg) {
-        visitTypeAccess(expression, expression.varargElementType)
-        super.visitVararg(expression)
-    }
-
-    override fun visitExpression(expression: IrExpression) {
-        visitTypeAccess(expression, expression.type)
-        super.visitExpression(expression)
-    }
-
-    private fun visitTypeAccess(element: IrElement, type: IrType) {
-        if (type !is IrSimpleType) return
-        if (type.classifier is IrTypeParameterSymbol && type.classifier.owner !in accessibleTypeParameters) {
-            reportError(element, "Type parameter ${type.classifier.owner.render()} not accessible")
-        }
-        for (arg in type.arguments) {
-            if (arg is IrTypeProjection) {
-                visitTypeAccess(element, arg.type)
+        override fun visitTypeParameter(declaration: IrTypeParameter, data: Visibles) {
+            for (superType in declaration.superTypes) {
+                data.visitTypeAccess(declaration, superType)
             }
+            super.visitTypeParameter(declaration, data)
         }
-    }
 
-    private inline fun handleTypeParameterContainer(typeParameters: List<IrTypeParameter>, block: () -> Unit) {
-        accessibleTypeParameters.addAll(typeParameters)
-        block()
-        accessibleTypeParameters.removeAll(typeParameters)
-    }
+        override fun visitValueParameter(declaration: IrValueParameter, data: Visibles) {
+            data.visitTypeAccess(declaration, declaration.type)
+            declaration.varargElementType?.let { data.visitTypeAccess(declaration, it) }
+            super.visitValueParameter(declaration, data)
+        }
 
-    private inline fun handleValuesContainer(values: List<IrValueDeclaration>, block: () -> Unit) {
-        accessibleValues.addAll(values)
-        valuesStack.add(values.toMutableSet())
-        block()
-        val toDrop = valuesStack.removeLast()
-        accessibleValues.removeAll(toDrop)
-    }
+        override fun visitValueAccess(expression: IrValueAccessExpression, data: Visibles) {
+            data.visitVariableAccess(expression, expression.symbol.owner)
+            super.visitValueAccess(expression, data)
+        }
 
-    private fun addAccessibleValue(value: IrValueDeclaration) {
-        accessibleValues.add(value)
-        valuesStack.last().add(value)
-    }
+        override fun visitMemberAccess(expression: IrMemberAccessExpression<*>, data: Visibles) {
+            for (i in 0 until expression.typeArgumentsCount) {
+                expression.getTypeArgument(i)?.let { data.visitTypeAccess(expression, it) }
+            }
+            super.visitMemberAccess(expression, data)
+        }
 
-    private fun IrClass.primaryConstructor(): IrConstructor? = constructors.singleOrNull { it.isPrimary }
+        override fun visitCatch(aCatch: IrCatch, data: Visibles) {
+            // catchParameter only has scope over result expression, so create a new scope
+            super.visitCatch(aCatch, data.extend(emptySet(), emptySet()))
+        }
+
+        override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Visibles) {
+            data.visitTypeAccess(expression, expression.typeOperand)
+            super.visitTypeOperator(expression, data)
+        }
+
+        override fun visitClassReference(expression: IrClassReference, data: Visibles) {
+            // classType should only contain star projections, but check it to be sure.
+            data.visitTypeAccess(expression, expression.classType)
+            super.visitClassReference(expression, data)
+        }
+
+        override fun visitVararg(expression: IrVararg, data: Visibles) {
+            data.visitTypeAccess(expression, expression.varargElementType)
+            super.visitVararg(expression, data)
+        }
+
+        override fun visitExpression(expression: IrExpression, data: Visibles) {
+            data.visitTypeAccess(expression, expression.type)
+            super.visitExpression(expression, data)
+        }
+
+        private fun IrClass.primaryConstructor(): IrConstructor? = constructors.singleOrNull { it.isPrimary }
+    }
 }

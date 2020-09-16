@@ -67,7 +67,7 @@ class IrValidator(val context: CommonBackendContext, val config: IrValidatorConf
         currentFile = declaration
         super.visitFile(declaration)
         if (config.checkScopes) {
-            ScopeValidator(this::error).visitFile(declaration)
+            ScopeValidator(this::error).check(declaration)
         }
     }
 
