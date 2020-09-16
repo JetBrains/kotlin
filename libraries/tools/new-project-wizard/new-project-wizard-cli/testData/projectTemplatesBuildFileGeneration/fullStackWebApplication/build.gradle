@@ -15,7 +15,7 @@ repositories {
         url 'https://dl.bintray.com/kotlin/ktor'
     }
     maven {
-        url 'https://dl.bintray.com/kotlin/kotlin-dev'
+        url 'KOTLIN_REPO'
     }
     maven {
         url 'https://dl.bintray.com/kotlin/kotlinx'
