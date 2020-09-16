@@ -32,7 +32,7 @@ internal class FirModuleResolveStateForCompletion(
         originalState.getSessionFor(moduleInfo)
 
     override fun getOrBuildFirFor(element: KtElement, toPhase: FirResolvePhase): FirElement {
-        completionMapping[element]?.let { return it }
+        completionMapping[originalState.elementBuilder.getPsiAsFirElementSource(element)]?.let { return it }
         return originalState.elementBuilder.getOrBuildFirFor(
             element,
             originalState.rootModuleSession.cache,
