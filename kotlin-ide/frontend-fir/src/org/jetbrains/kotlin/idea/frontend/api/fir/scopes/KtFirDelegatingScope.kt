@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScope
+import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.name.Name
@@ -41,12 +41,12 @@ internal abstract class KtFirDelegatingScope<S>(
         firScope.getClassifierNames()
     }
 
-    override fun getCallableSymbols(): Sequence<KtCallableSymbol> = withValidityAssertion {
-        firScope.getCallableSymbols(getCallableNames(), builder)
+    override fun getCallableSymbols(nameFilter: KtScopeNameFilter): Sequence<KtCallableSymbol> = withValidityAssertion {
+        firScope.getCallableSymbols(getCallableNames().filter(nameFilter), builder)
     }
 
-    override fun getClassifierSymbols(): Sequence<KtClassifierSymbol> = withValidityAssertion {
-        firScope.getClassifierSymbols(getClassifierNames(), builder)
+    override fun getClassifierSymbols(nameFilter: KtScopeNameFilter): Sequence<KtClassifierSymbol> = withValidityAssertion {
+        firScope.getClassifierSymbols(getClassifierNames().filter(nameFilter), builder)
     }
 
     override fun containsName(name: Name): Boolean = withValidityAssertion {

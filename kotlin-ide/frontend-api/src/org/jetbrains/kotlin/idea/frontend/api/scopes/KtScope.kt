@@ -27,13 +27,15 @@ interface KtScope : ValidityTokenOwner {
         }
     }
 
-    fun getCallableSymbols(): Sequence<KtCallableSymbol>
-    fun getClassifierSymbols(): Sequence<KtClassifierSymbol>
+    fun getCallableSymbols(nameFilter: KtScopeNameFilter = { true }): Sequence<KtCallableSymbol>
+    fun getClassifierSymbols(nameFilter: KtScopeNameFilter = { true }): Sequence<KtClassifierSymbol>
 
     fun containsName(name: Name): Boolean = withValidityAssertion {
         name in getCallableNames() || name in getClassifierNames()
     }
 }
+
+typealias KtScopeNameFilter = (Name) -> Boolean
 
 interface KtCompositeScope : KtScope {
     val subScopes: List<KtScope>
