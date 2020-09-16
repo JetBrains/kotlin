@@ -40,7 +40,7 @@ class Extension<T : Any, Ordering : OrderingKind, Override : OverrideKind> inter
         get() = { conditions.all { it(this) } }
 }
 
-private fun <T : Any> Extension(
+internal fun <T : Any> Extension(
     extensionPoint: ExtensionPoint<T>,
     pluginClass: String,
     extensionName: String,
