@@ -100,9 +100,6 @@ class ProjectSettingsComponent(ideWizard: IdeWizard) : DynamicComponent(ideWizar
                     tryArtifactIdByProjectName()
                 }
             }
-            StructurePlugin.artifactId.path -> {
-                artifactIdWasUpdatedByHand = true
-            }
         }
     }
 
