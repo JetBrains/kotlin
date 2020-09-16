@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.jsr223
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.daemon.client.DaemonReportMessage
@@ -25,8 +25,9 @@ import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.client.KotlinRemoteReplCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.utils.KotlinPaths
-import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import javax.script.ScriptContext
@@ -45,7 +46,8 @@ class KotlinJsr223JvmScriptEngine4Idea(
 ) : KotlinJsr223JvmScriptEngineBase(factory) {
 
     private val daemon by lazy {
-        val classPath = PathUtil.kotlinPathsForIdeaPlugin.classPath(KotlinPaths.ClassPaths.CompilerWithScripting)
+        val libPath = KotlinPathsFromHomeDir(KotlinArtifacts.instance.kotlincDirectory)
+        val classPath = libPath.classPath(KotlinPaths.ClassPaths.CompilerWithScripting)
         assert(classPath.all { it.exists() })
         val compilerId = CompilerId.makeCompilerId(classPath)
         val daemonOptions = configureDaemonOptions()

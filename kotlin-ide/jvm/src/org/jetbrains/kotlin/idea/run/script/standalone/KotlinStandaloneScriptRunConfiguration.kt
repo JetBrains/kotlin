@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.idea.run.KotlinRunConfiguration
 import org.jetbrains.kotlin.idea.run.script.standalone.KotlinStandaloneScriptRunConfigurationProducer.Companion.pathFromPsiElement
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil.isProjectSourceFile
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.*
 
@@ -206,7 +205,7 @@ private class ScriptCommandLineState(
         val scriptVFile =
             LocalFileSystem.getInstance().findFileByIoFile(File(filePath)) ?: throw CantRunException("Script file was not found in project")
 
-        params.classPath.add(PathUtil.kotlinPathsForIdeaPlugin.compilerPath)
+        params.classPath.add(KotlinArtifacts.instance.kotlinCompiler)
 
         val scriptClasspath = ScriptConfigurationManager.getInstance(environment.project).getScriptClasspath(scriptVFile)
         scriptClasspath.forEach {
