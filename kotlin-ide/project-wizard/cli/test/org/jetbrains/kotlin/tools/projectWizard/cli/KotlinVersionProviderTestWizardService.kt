@@ -37,8 +37,8 @@ class KotlinVersionProviderTestWizardService() : KotlinVersionProviderService(),
     companion object {
         private const val CACHE_REDIRECTOR_BINTRAY_URL = "https://cache-redirector.jetbrains.com/dl.bintray.com"
 
-        private val KOTLIN_EAP_BINTRAY_WITH_CACHE_REDIRECTOR = BintrayRepository("kotlin/kotlin-eap", CACHE_REDIRECTOR_BINTRAY_URL)
-        private val KOTLIN_DEV_BINTRAY_WITH_CACHE_REDIRECTOR = BintrayRepository("kotlin/kotlin-dev", CACHE_REDIRECTOR_BINTRAY_URL)
+        val KOTLIN_EAP_BINTRAY_WITH_CACHE_REDIRECTOR = BintrayRepository("kotlin/kotlin-eap", CACHE_REDIRECTOR_BINTRAY_URL)
+        val KOTLIN_DEV_BINTRAY_WITH_CACHE_REDIRECTOR = BintrayRepository("kotlin/kotlin-dev", CACHE_REDIRECTOR_BINTRAY_URL)
 
 
         val TEST_KOTLIN_VERSION by lazy {
