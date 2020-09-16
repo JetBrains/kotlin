@@ -882,6 +882,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/ij.connector/fleet.ij.connector.iml" filepath="$PROJECT_DIR$/intellij/fleet/ij.connector/fleet.ij.connector.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/ij.parsing/fleet.ij.parsing.iml" filepath="$PROJECT_DIR$/intellij/fleet/ij.parsing/fleet.ij.parsing.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/jsitter/fleet.jsitter.iml" filepath="$PROJECT_DIR$/intellij/fleet/jsitter/fleet.jsitter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/fleet/plugins/css/fleet.language.css.iml" filepath="$PROJECT_DIR$/intellij/fleet/plugins/css/fleet.language.css.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/plugins/go/fleet.language.go.iml" filepath="$PROJECT_DIR$/intellij/fleet/plugins/go/fleet.language.go.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/plugins/java/fleet.language.java.iml" filepath="$PROJECT_DIR$/intellij/fleet/plugins/java/fleet.language.java.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/plugins/javascript/fleet.language.javascript.iml" filepath="$PROJECT_DIR$/intellij/fleet/plugins/javascript/fleet.language.javascript.iml" />
