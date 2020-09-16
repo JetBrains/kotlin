@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FileStructureC
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi2ir.deparenthesize
 
 /**
  * Maps [KtElement] to [FirElement]
@@ -23,6 +24,22 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
  */
 @ThreadSafe
 internal class FirElementBuilder {
+    fun getPsiAsFirElementSource(element: KtElement): KtElement {
+        val deparenthesized = if (element is KtPropertyDelegate) element.deparenthesize() else element
+        return when {
+            deparenthesized is KtParenthesizedExpression -> deparenthesized.deparenthesize()
+            deparenthesized is KtPropertyDelegate -> deparenthesized.expression ?: element
+            deparenthesized is KtQualifiedExpression && deparenthesized.selectorExpression is KtCallExpression -> {
+                /*
+                 KtQualifiedExpression with KtCallExpression in selector transformed in FIR to FirFunctionCall expression
+                 Which will have a receiver as qualifier
+                 */
+                deparenthesized.selectorExpression ?: error("Incomplete code:\n${element.getElementTextInContext()}")
+            }
+            else -> deparenthesized
+        }
+    }
+
     fun getOrBuildFirFor(
         element: KtElement,
         moduleFileCache: ModuleFileCache,
@@ -31,17 +48,7 @@ internal class FirElementBuilder {
         val fileStructure = fileStructureCache.getFileStructure(element.containingKtFile, moduleFileCache)
         val mappings = fileStructure.getStructureElementFor(element).mappings
 
-        val psi = when {
-            element is KtPropertyDelegate -> element.expression ?: element
-            element is KtQualifiedExpression && element.selectorExpression is KtCallExpression -> {
-                /*
-                 KtQualifiedExpression with KtCallExpression in selector transformed in FIR to FirFunctionCall expression
-                 Which will have a receiver as qualifier
-                 */
-                element.selectorExpression ?: error("Incomplete code:\n${element.getElementTextInContext()}")
-            }
-            else -> element
-        }
+        val psi = getPsiAsFirElementSource(element)
         mappings[psi]?.let { return it }
         return psi.getFirOfClosestParent(mappings)?.second
             ?: error("FirElement is not found for:\n${element.getElementTextInContext()}")
