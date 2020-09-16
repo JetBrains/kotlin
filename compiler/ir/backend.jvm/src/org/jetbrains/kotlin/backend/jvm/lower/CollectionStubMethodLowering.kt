@@ -24,6 +24,9 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 internal val collectionStubMethodLowering = makeIrFilePhase(
     ::CollectionStubMethodLowering,
@@ -47,26 +50,27 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
         // stub generation is still needed to avoid invocation error.
         val existingMethodsBySignature = irClass.functions.filterNot {
             it.modality == Modality.ABSTRACT && it.isFakeOverride
-        }.associateBy { it.toSignature() }
+        }.associateBy { it.toJvmSignature() }
 
-        for ((signature, member) in methodStubsToGenerate) {
+        for (member in methodStubsToGenerate) {
+            val signature = member.toJvmSignature()
             val existingMethod = existingMethodsBySignature[signature] // TODO KT-41915
-            if (existingMethod != null) {
+            if (existingMethod != null && areEquivalentSignatures(existingMethod, member)) {
                 // In the case that we find a defined method that matches the stub signature, we add the overridden symbols to that
                 // defined method, so that bridge lowering can still generate correct bridge for that method
                 existingMethod.overriddenSymbols += member.overriddenSymbols
             } else {
-                irClass.declarations.add(member)
+                irClass.declarations.add(member.hackRemoveMethodIfRequired())
             }
         }
     }
 
-    private fun IrSimpleFunction.toSignature(): String = collectionStubComputer.getSignature(this)
+    private fun IrSimpleFunction.toJvmSignature(): String = collectionStubComputer.getJvmSignature(this)
 
     private fun createStubMethod(
         function: IrSimpleFunction, irClass: IrClass, substitutionMap: Map<IrTypeParameterSymbol, IrType>
-    ): Pair<String, IrSimpleFunction> {
-        val newMethod = context.irFactory.buildFun {
+    ): IrSimpleFunction {
+        return context.irFactory.buildFun {
             name = function.name
             returnType = function.returnType.substitute(substitutionMap)
             visibility = function.visibility
@@ -89,21 +93,34 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
                 }
             }
         }
-        val signatureToCheckPresence = newMethod.toSignature()
-        // NB 'remove' method requires some special handling (and that's why we need to track both signature and function):
+    }
+
+    private fun areEquivalentSignatures(fun1: IrSimpleFunction, fun2: IrSimpleFunction): Boolean {
+        if (fun1.typeParameters.size != fun2.typeParameters.size) return false
+        if (fun1.valueParameters.size != fun2.valueParameters.size) return false
+        val typeChecker = IrTypeCheckerContextWithAdditionalAxioms(context.irBuiltIns, fun1.typeParameters, fun2.typeParameters)
+            .cast<AbstractTypeCheckerContext>()
+        return fun1.valueParameters.zip(fun2.valueParameters)
+            .all { (valueParameter1, valueParameter2) ->
+                AbstractTypeChecker.equalTypes(typeChecker, valueParameter1.type, valueParameter2.type)
+            }
+    }
+
+    private fun IrSimpleFunction.hackRemoveMethodIfRequired(): IrSimpleFunction {
+        // NB 'remove' method requires some special handling:
         // - we check that 'remove(T)' is present in the class, where 'T' is a type argument of the collection type
         //   (this matches the signature of the method created above);
         // - if it is absent, we add 'remove(Any?)' member function,
         //   which corresponds to method 'remove' in java.util.Collection and java.util.Map.
-        if (newMethod.name.asString() == "remove") {
+        if (name.asString() == "remove") {
             // Note that replacing value parameter types with 'Any?' handles both MutableCollection and MutableMap case:
             // java.util.Collection<E>#remove has signature 'boolean remove(Object)', and
             // java.util.Map<K, V>#remove has signature 'V remove(Object)'.
-            newMethod.valueParameters = function.valueParameters.map {
-                it.copyWithCustomTypeSubstitution(newMethod) { context.irBuiltIns.anyNType }
+            valueParameters = valueParameters.map {
+                it.copyWithCustomTypeSubstitution(this) { context.irBuiltIns.anyNType }
             }
         }
-        return signatureToCheckPresence to newMethod
+        return this
     }
 
     // Copy value parameter with type substitution
@@ -150,7 +167,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
     }
 
     // Compute stubs that should be generated, compare based on signature
-    private fun generateRelevantStubMethods(irClass: IrClass): Map<String, IrSimpleFunction> {
+    private fun generateRelevantStubMethods(irClass: IrClass): List<IrSimpleFunction> {
         val ourStubsForCollectionClasses = collectionStubComputer.stubsForCollectionClasses(irClass)
         val superStubClasses = irClass.superClass?.superClassChain?.map { superClass ->
             collectionStubComputer.stubsForCollectionClasses(superClass).map { it.readOnlyClass }
@@ -169,7 +186,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
             mutableOnlyMethods.map { function ->
                 createStubMethod(function, irClass, substitutionMap)
             }
-        }.toMap()
+        }
     }
 
     private fun Collection<IrType>.findMostSpecificTypeForClass(classifier: IrClassSymbol): IrType {
@@ -190,7 +207,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
 }
 
 internal class CollectionStubComputer(val context: JvmBackendContext) {
-    fun getSignature(irFunction: IrSimpleFunction): String = context.methodSignatureMapper.mapAsmMethod(irFunction).toString()
+    fun getJvmSignature(irFunction: IrSimpleFunction): String = context.methodSignatureMapper.mapAsmMethod(irFunction).toString()
 
     inner class StubsForCollectionClass(
         val readOnlyClass: IrClassSymbol,
@@ -207,12 +224,12 @@ internal class CollectionStubComputer(val context: JvmBackendContext) {
         val mutableOnlyMethods: Collection<IrSimpleFunction> by lazy {
             val readOnlyMethodSignatures = readOnlyClass
                 .functions
-                .map { getSignature(it.owner) }
+                .map { getJvmSignature(it.owner) }
                 .filter { it !in specialCaseStubSignaturesForOldBackend }
                 .toHashSet()
             mutableClass.functions
                 .map { it.owner }
-                .filter { getSignature(it) !in readOnlyMethodSignatures }
+                .filter { getJvmSignature(it) !in readOnlyMethodSignatures }
                 .toHashSet()
         }
 
