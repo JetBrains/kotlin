@@ -11,7 +11,10 @@ import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.openapi.diagnostic.ControlFlowException
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.Document
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
@@ -30,14 +33,14 @@ internal class KotlinFirLookupElementFactory {
     private val functionLookupElementFactory = FunctionLookupElementFactory()
     private val typeParameterLookupElementFactory = TypeParameterLookupElementFactory()
 
-    fun createLookupElement(symbol: KtNamedSymbol): LookupElement {
+    fun createLookupElement(symbol: KtNamedSymbol): LookupElement? {
         val elementBuilder = when (symbol) {
             is KtFunctionSymbol -> functionLookupElementFactory.createLookup(symbol)
             is KtVariableLikeSymbol -> variableLookupElementFactory.createLookup(symbol)
             is KtClassLikeSymbol -> classLookupElementFactory.createLookup(symbol)
             is KtTypeParameterSymbol -> typeParameterLookupElementFactory.createLookup(symbol)
             else -> throw IllegalArgumentException("Cannot create a lookup element for $symbol")
-        }
+        } ?: return null
 
         return elementBuilder
             .withPsiElement(symbol.psi) // TODO check if it is a heavy operation and should be postponed
@@ -75,11 +78,17 @@ private class VariableLookupElementFactory {
 }
 
 private class FunctionLookupElementFactory {
-    fun createLookup(symbol: KtFunctionSymbol): LookupElementBuilder {
-        return LookupElementBuilder.create(UniqueLookupObject(), symbol.name.asString())
-            .withTailText(getTailText(symbol), true)
-            .withTypeText(ShortNamesRenderer.renderType(symbol.type))
-            .withInsertHandler(createInsertHandler(symbol))
+    fun createLookup(symbol: KtFunctionSymbol): LookupElementBuilder? {
+        return try {
+            LookupElementBuilder.create(UniqueLookupObject(), symbol.name.asString())
+                .withTailText(getTailText(symbol), true)
+                .withTypeText(ShortNamesRenderer.renderType(symbol.type))
+                .withInsertHandler(createInsertHandler(symbol))
+        } catch (e: Throwable) {
+            if (e is ControlFlowException) throw e
+            LOG.error(e)
+            null
+        }
     }
 
     private fun getTailText(symbol: KtFunctionSymbol): String {
@@ -97,6 +106,10 @@ private class FunctionLookupElementFactory {
             inputValueArguments = symbol.valueParameters.isNotEmpty(),
             insertEmptyLambda = insertLambdaBraces(symbol)
         )
+    }
+
+    companion object {
+        private val LOG = logger<FunctionLookupElementFactory>()
     }
 }
 

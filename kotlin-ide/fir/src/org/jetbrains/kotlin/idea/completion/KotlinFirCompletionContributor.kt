@@ -68,7 +68,7 @@ private object KotlinAvailableScopesCompletionProvider {
 
     private fun CompletionResultSet.addSymbolToCompletion(symbol: KtSymbol) {
         if (symbol !is KtNamedSymbol) return
-        addElement(lookupElementFactory.createLookupElement(symbol))
+        lookupElementFactory.createLookupElement(symbol)?.let(::addElement)
     }
 
     @OptIn(InvalidWayOfUsingAnalysisSession::class)
