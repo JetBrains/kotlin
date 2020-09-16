@@ -58,6 +58,11 @@ abstract class AbstractAnnotationDeserializer(
         return annotations.map { deserializeAnnotation(it, nameResolver) }
     }
 
+    fun loadTypeAliasAnnotations(aliasProto: ProtoBuf.TypeAlias, nameResolver: NameResolver): List<FirAnnotationCall> {
+        if (!Flags.HAS_ANNOTATIONS.get(aliasProto.flags)) return emptyList()
+        return aliasProto.annotationList.map { deserializeAnnotation(it, nameResolver) }
+    }
+
     open fun loadFunctionAnnotations(
         containerSource: DeserializedContainerSource?,
         functionProto: ProtoBuf.Function,
