@@ -227,11 +227,15 @@ private fun FirExpression.createConventionCall(
     }
 }
 
-fun generateAccessExpression(source: FirSourceElement?, name: Name): FirQualifiedAccessExpression =
+fun generateAccessExpression(
+    qualifiedSource: FirSourceElement?,
+    calleReferenceSource: FirSourceElement?,
+    name: Name
+): FirQualifiedAccessExpression =
     buildQualifiedAccessExpression {
-        this.source = source
+        this.source = qualifiedSource
         calleeReference = buildSimpleNamedReference {
-            this.source = source
+            this.source = calleReferenceSource
             this.name = name
         }
     }

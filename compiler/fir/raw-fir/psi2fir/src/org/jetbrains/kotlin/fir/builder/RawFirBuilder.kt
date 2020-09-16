@@ -1430,7 +1430,11 @@ class RawFirBuilder(
         }
 
         override fun visitSimpleNameExpression(expression: KtSimpleNameExpression, data: Unit): FirElement {
-            return generateAccessExpression(expression.toFirSourceElement(), expression.getReferencedNameAsName())
+            val qualifiedSource = when {
+                expression.getQualifiedExpressionForSelector() != null -> expression.parent
+                else -> expression
+            }.toFirSourceElement()
+            return generateAccessExpression(qualifiedSource, expression.toFirSourceElement(), expression.getReferencedNameAsName())
         }
 
         override fun visitConstantExpression(expression: KtConstantExpression, data: Unit): FirElement =
