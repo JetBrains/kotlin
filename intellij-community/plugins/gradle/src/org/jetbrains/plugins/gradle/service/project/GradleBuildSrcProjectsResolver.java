@@ -141,7 +141,7 @@ public final class GradleBuildSrcProjectsResolver {
         else {
           buildSrcProjectSettings = new GradleExecutionSettings(gradleHome, null, DistributionType.LOCAL, false);
         }
-        includeRootBuildIncludedBuildsIfNeeded(projectPath, buildPath, buildSrcProjectSettings, compositeBuildData);
+        includeRootBuildIncludedBuildsIfNeeded(buildSrcProjectSettings, compositeBuildData);
       }
       else {
         buildSrcProjectSettings = myMainBuildExecutionSettings;
@@ -165,9 +165,7 @@ public final class GradleBuildSrcProjectsResolver {
     });
   }
 
-  private void includeRootBuildIncludedBuildsIfNeeded(@NotNull String rootBuildPath,
-                                                      @NotNull String buildPath,
-                                                      @NotNull GradleExecutionSettings buildSrcProjectSettings,
+  private void includeRootBuildIncludedBuildsIfNeeded(@NotNull GradleExecutionSettings buildSrcProjectSettings,
                                                       @Nullable CompositeBuildData compositeBuildData) {
     if (compositeBuildData == null) return;
     String projectGradleVersion = myResolverContext.getProjectGradleVersion();
@@ -175,11 +173,11 @@ public final class GradleBuildSrcProjectsResolver {
     if (gradleBaseVersion == null) return;
 
     // since 6.7 included builds become "visible" for `buildSrc` project https://docs.gradle.org/6.7-rc-1/release-notes.html#build-src
+    // !!! Note, this is true only for builds included from the "root" build !!!
+    // Transitive included builds are not visible even for related "transitive" `buildSrc` projects
+    // due to limitation caused by specific ordering requirement:  "include order is important if an included build provides a plugin which should be discovered very very early".
+    // It can be improved in the future Gradle releases.
     if (gradleBaseVersion.compareTo(GradleVersion.version("6.7")) < 0) return;
-
-    // the change is supported currently only for `buildSrc` project of root build in the composite.
-    if (!FileUtil.pathsEqual(buildPath, rootBuildPath)) return;
-
     for (BuildParticipant buildParticipant : compositeBuildData.getCompositeParticipants()) {
       buildSrcProjectSettings.withArguments(GradleConstants.INCLUDE_BUILD_CMD_OPTION, buildParticipant.getRootPath());
     }
