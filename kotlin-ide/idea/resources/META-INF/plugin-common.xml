@@ -524,7 +524,7 @@
     <highlightUsagesHandlerFactory implementation="org.jetbrains.kotlin.idea.highlighter.KotlinHighlightExitPointsHandlerFactory"/>
     <highlightUsagesHandlerFactory implementation="org.jetbrains.kotlin.idea.highlighter.KotlinHighlightImplicitItHandlerFactory"/>
     <findUsagesHandlerFactory implementation="org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory"/>
-    <usageTypeProvider implementation="org.jetbrains.kotlin.idea.findUsages.KotlinUsageTypeProvider"/>
+    <usageTypeProvider implementation="org.jetbrains.kotlin.idea.findUsages.KotlinUsageTypeProviderImpl"/>
 
     <refactoring.safeDeleteProcessor
         id="kotlinProcessor"
