@@ -7,10 +7,13 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
+import org.jetbrains.kotlin.types.AbstractTypeApproximator
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
 fun ConeInferenceContext.commonSuperTypeOrNull(types: List<ConeKotlinType>): ConeKotlinType? {
     return when (types.size) {
@@ -169,5 +172,17 @@ fun ConeKotlinType.isUnsafeVarianceType(session: FirSession): Boolean {
 
 fun FirTypeRef.isUnsafeVarianceType(session: FirSession): Boolean {
     return coneTypeSafe<ConeKotlinType>()?.isUnsafeVarianceType(session) == true
+}
+
+fun FirTypeRef.approximated(
+    typeApproximator: AbstractTypeApproximator,
+    toSuper: Boolean,
+    conf: TypeApproximatorConfiguration = TypeApproximatorConfiguration.PublicDeclaration
+): FirTypeRef {
+    val approximatedType = if (toSuper)
+        typeApproximator.approximateToSuperType(coneType, conf)
+    else
+        typeApproximator.approximateToSubType(coneType, conf)
+    return withReplacedConeType(approximatedType as? ConeKotlinType)
 }
 

@@ -48,6 +48,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.RequireKotlinConstants
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
+import org.jetbrains.kotlin.types.AbstractTypeApproximator
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
 class FirElementSerializer private constructor(
     private val session: FirSession,
@@ -57,6 +59,7 @@ class FirElementSerializer private constructor(
     private val typeTable: MutableTypeTable,
     private val versionRequirementTable: MutableVersionRequirementTable?,
     private val serializeTypeTableToFunction: Boolean,
+    private val typeApproximator: AbstractTypeApproximator,
 ) {
     private val contractSerializer = FirContractSerializer()
 
@@ -261,7 +264,7 @@ class FirElementSerializer private constructor(
         if (useTypeTable()) {
             builder.returnTypeId = local.typeId(property.returnTypeRef)
         } else {
-            builder.setReturnType(local.typeProto(property.returnTypeRef))
+            builder.setReturnType(local.typeProto(property.returnTypeRef, toSuper = true))
         }
 
         for (typeParameter in property.typeParameters) {
@@ -334,7 +337,7 @@ class FirElementSerializer private constructor(
         if (useTypeTable()) {
             builder.returnTypeId = local.typeId(function.returnTypeRef)
         } else {
-            builder.setReturnType(local.typeProto(function.returnTypeRef))
+            builder.setReturnType(local.typeProto(function.returnTypeRef, toSuper = true))
         }
 
         for (typeParameter in function.typeParameters) {
@@ -546,8 +549,16 @@ class FirElementSerializer private constructor(
 
     fun typeId(type: ConeKotlinType): Int = typeTable[typeProto(type)]
 
-    private fun typeProto(typeRef: FirTypeRef): ProtoBuf.Type.Builder {
-        return typeProto(typeRef.coneType).also {
+    private fun typeProto(typeRef: FirTypeRef, toSuper: Boolean = false): ProtoBuf.Type.Builder {
+        val approximatedType = when (typeRef.coneType) {
+            is ConeIntegerLiteralType,
+            is ConeCapturedType,
+            is ConeDefinitelyNotNullType,
+            is ConeIntersectionType ->
+                typeRef.approximated(typeApproximator, toSuper)
+            else -> typeRef
+        }
+        return typeProto(approximatedType.coneType).also {
             extension.serializeType(typeRef, it)
         }
     }
@@ -587,6 +598,16 @@ class FirElementSerializer private constructor(
                 } else {
                     builder.typeParameter = getTypeParameterId(typeParameter)
                 }
+            }
+            is ConeCapturedType,
+            is ConeDefinitelyNotNullType,
+            is ConeIntersectionType,
+            is ConeIntegerLiteralType -> {
+                val approximatedType = typeApproximator.approximateToSubType(type, TypeApproximatorConfiguration.PublicDeclaration)
+                assert(approximatedType != type && approximatedType is ConeKotlinType) {
+                    "Approximation failed: ${type.render()}"
+                }
+                return typeProto(approximatedType as ConeKotlinType)
             }
             else -> {
                 throw AssertionError("Should not be here: ${type::class.java}")
@@ -690,7 +711,8 @@ class FirElementSerializer private constructor(
     private fun createChildSerializer(declaration: FirDeclaration): FirElementSerializer =
         FirElementSerializer(
             session, declaration, Interner(typeParameters), extension,
-            typeTable, versionRequirementTable, serializeTypeTableToFunction = false
+            typeTable, versionRequirementTable, serializeTypeTableToFunction = false,
+            typeApproximator
         )
 
     val stringTable: FirElementAwareStringTable
@@ -816,33 +838,44 @@ class FirElementSerializer private constructor(
 
     companion object {
         @JvmStatic
-        fun createTopLevel(session: FirSession, extension: FirSerializerExtension): FirElementSerializer =
+        fun createTopLevel(
+            session: FirSession,
+            extension: FirSerializerExtension,
+            typeApproximator: AbstractTypeApproximator,
+        ): FirElementSerializer =
             FirElementSerializer(
                 session, null,
                 Interner(), extension, MutableTypeTable(), MutableVersionRequirementTable(),
-                serializeTypeTableToFunction = false
+                serializeTypeTableToFunction = false,
+                typeApproximator
             )
 
         @JvmStatic
-        fun createForLambda(session: FirSession, extension: FirSerializerExtension): FirElementSerializer =
+        fun createForLambda(
+            session: FirSession,
+            extension: FirSerializerExtension,
+            typeApproximator: AbstractTypeApproximator,
+        ): FirElementSerializer =
             FirElementSerializer(
                 session, null,
                 Interner(), extension, MutableTypeTable(),
-                versionRequirementTable = null, serializeTypeTableToFunction = true
+                versionRequirementTable = null, serializeTypeTableToFunction = true,
+                typeApproximator
             )
 
         @JvmStatic
         fun create(
             klass: FirClass<*>,
             extension: FirSerializerExtension,
-            parentSerializer: FirElementSerializer?
+            parentSerializer: FirElementSerializer?,
+            typeApproximator: AbstractTypeApproximator,
         ): FirElementSerializer {
             val parentClassId = klass.symbol.classId.outerClassId
             val parent = if (parentClassId != null && !parentClassId.isLocal) {
                 val parentClass = klass.session.firSymbolProvider.getClassLikeSymbolByFqName(parentClassId)!!.fir as FirRegularClass
-                parentSerializer ?: create(parentClass, extension, null)
+                parentSerializer ?: create(parentClass, extension, null, typeApproximator)
             } else {
-                createTopLevel(klass.session, extension)
+                createTopLevel(klass.session, extension, typeApproximator)
             }
 
             // Calculate type parameter ids for the outer class beforehand, as it would've had happened if we were always
@@ -859,7 +892,8 @@ class FirElementSerializer private constructor(
                 } else {
                     MutableVersionRequirementTable()
                 },
-                serializeTypeTableToFunction = false
+                serializeTypeTableToFunction = false,
+                typeApproximator
             )
             for (typeParameter in klass.typeParameters) {
                 if (typeParameter !is FirTypeParameter) continue
