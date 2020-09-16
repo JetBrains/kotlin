@@ -1,5 +1,6 @@
 package org.jetbrains.dokka.plugability
 
+import org.jetbrains.dokka.CoreExtensions
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.utilities.DokkaLogger
 import java.io.File
@@ -29,6 +30,7 @@ interface DokkaContext {
             pluginOverrides: List<DokkaPlugin>
         ): DokkaContext =
             DokkaContextConfigurationImpl(logger, configuration).apply {
+                CoreExtensions.installTo(this)
                 // File(it.path) is a workaround for an incorrect filesystem in a File instance returned by Gradle.
                 configuration.pluginsClasspath.map { File(it.path).toURI().toURL() }
                     .toTypedArray()
