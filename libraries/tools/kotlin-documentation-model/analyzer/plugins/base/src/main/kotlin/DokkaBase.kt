@@ -4,7 +4,6 @@ package org.jetbrains.dokka.base
 
 import org.jetbrains.dokka.CoreExtensions
 import org.jetbrains.dokka.analysis.KotlinAnalysis
-import org.jetbrains.dokka.base.allModulePage.MultimodulePageCreator
 import org.jetbrains.dokka.base.renderers.*
 import org.jetbrains.dokka.base.renderers.html.*
 import org.jetbrains.dokka.base.resolvers.external.ExternalLocationProviderFactory
@@ -203,12 +202,6 @@ class DokkaBase : DokkaPlugin() {
 
     val sourcesetDependencyAppender by extending {
         htmlPreprocessors providing ::SourcesetDependencyAppender order { after(rootCreator) }
-    }
-
-    val allModulePageCreators by extending {
-        CoreExtensions.allModulePageCreator providing {
-            MultimodulePageCreator(it)
-        }
     }
 
     val baseSearchbarDataInstaller by extending {
