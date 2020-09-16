@@ -145,6 +145,7 @@ object LowLevelFirApiFacade {
 
         return buildPropertyCopy(originalProperty) {
             symbol = builtProperty.symbol
+            initializer = builtProperty.initializer
 
             getter = builtProperty.getter
             setter = copySetter
