@@ -289,7 +289,21 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
     }
     val isMember = ownerSymbol != null
 
-    fun thisRef(): FirExpression =
+    /*
+     * If we have delegation with provide delegate then we generate call like
+     *   `delegateExpression.provideDelegate(this, ::prop)`
+     * Note that `this` is always  reference for dispatch receiver
+     *   unlike other `this` references in `getValue` `setValue` calls, where
+     *  `this` is reference to closest receiver (extension, then dispatch)
+     *
+     * So for top-level extension properties we should generate
+     *   val A.prop by delegateExpression.provideDelegate(null, ::prop)
+     *      get() = delegate.getValue(this@prop, ::prop)
+     *
+     * And for this case we can pass isForDelegateProviderCall to this reference
+     *   generator function
+     */
+    fun thisRef(isForDelegateProviderCall: Boolean = false): FirExpression =
         when {
             ownerSymbol != null -> buildThisReceiverExpression {
                 source = delegateBuilder.source
@@ -301,7 +315,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
                     type = ownerSymbol.constructStarProjectedType(typeParameterNumber)
                 }
             }
-            isExtension -> buildThisReceiverExpression {
+            isExtension && !isForDelegateProviderCall -> buildThisReceiverExpression {
                 source = delegateBuilder.source
                 calleeReference = buildImplicitThisReference {
                     boundSymbol = this@generateAccessorsByDelegate.symbol
@@ -353,7 +367,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
             source = delegateBuilder.source
             name = PROVIDE_DELEGATE
         }
-        argumentList = buildBinaryArgumentList(thisRef(), propertyRef())
+        argumentList = buildBinaryArgumentList(thisRef(isForDelegateProviderCall = true), propertyRef())
     }
     delegate = delegateBuilder.build()
     if (stubMode) return
