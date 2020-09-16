@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.getAnalysisSessionFor
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtCompositeScope
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScope
+import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
@@ -33,7 +34,7 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
         if (shouldSuppressCompletion(parameters, result.prefixMatcher)) return
 
-        KotlinAvailableScopesCompletionProvider.addCompletions(parameters, result)
+        KotlinAvailableScopesCompletionProvider(result.prefixMatcher).addCompletions(parameters, result)
     }
 
     private val AFTER_NUMBER_LITERAL = PsiJavaPatterns.psiElement().afterLeafSkipping(
@@ -59,8 +60,11 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
     }
 }
 
-private object KotlinAvailableScopesCompletionProvider {
+private class KotlinAvailableScopesCompletionProvider(prefixMatcher: PrefixMatcher) {
     private val lookupElementFactory = KotlinFirLookupElementFactory()
+
+    private val scopeNameFilter: KtScopeNameFilter =
+        { name -> !name.isSpecial && prefixMatcher.prefixMatches(name.identifier) }
 
     private fun CompletionResultSet.addSymbolToCompletion(symbol: KtSymbol) {
         if (symbol !is KtNamedSymbol) return
@@ -92,7 +96,7 @@ private object KotlinAvailableScopesCompletionProvider {
     }
 
     private fun collectTypesCompletion(result: CompletionResultSet, implicitScopes: KtScope) {
-        val availableClasses = implicitScopes.getClassifierSymbols()
+        val availableClasses = implicitScopes.getClassifierSymbols(scopeNameFilter)
         availableClasses.forEach { result.addSymbolToCompletion(it) }
     }
 
@@ -106,11 +110,11 @@ private object KotlinAvailableScopesCompletionProvider {
         val possibleReceiverScope = typeOfPossibleReceiver.getTypeScope() ?: return
 
         val nonExtensionMembers = possibleReceiverScope
-            .getCallableSymbols()
+            .getCallableSymbols(scopeNameFilter)
             .filterNot { it.isExtension }
 
         val extensionNonMembers = implicitScopes
-            .getCallableSymbols()
+            .getCallableSymbols(scopeNameFilter)
             .filter { it.isExtension && it.hasSuitableExtensionReceiver() }
 
         nonExtensionMembers.forEach { result.addSymbolToCompletion(it) }
@@ -123,11 +127,11 @@ private object KotlinAvailableScopesCompletionProvider {
         hasSuitableExtensionReceiver: KtCallableSymbol.() -> Boolean,
     ) {
         val availableNonExtensions = implicitScopes
-            .getCallableSymbols()
+            .getCallableSymbols(scopeNameFilter)
             .filterNot { it.isExtension }
 
         val extensionsWhichCanBeCalled = implicitScopes
-            .getCallableSymbols()
+            .getCallableSymbols(scopeNameFilter)
             .filter { it.isExtension && it.hasSuitableExtensionReceiver() }
 
         availableNonExtensions.forEach { result.addSymbolToCompletion(it) }
