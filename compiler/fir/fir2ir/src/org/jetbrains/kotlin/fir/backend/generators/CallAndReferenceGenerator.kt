@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -29,6 +31,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.psi2ir.generators.hasNoSideEffects
+import org.jetbrains.kotlin.types.AbstractTypeApproximator
 
 class CallAndReferenceGenerator(
     private val components: Fir2IrComponents,
@@ -36,6 +39,7 @@ class CallAndReferenceGenerator(
     private val conversionScope: Fir2IrConversionScope
 ) : Fir2IrComponents by components {
 
+    private val approximator = object : AbstractTypeApproximator(session.typeContext) {}
     private val adapterGenerator = AdapterGenerator(components, conversionScope)
 
     private fun FirTypeRef.toIrType(): IrType = with(typeConverter) { toIrType() }
@@ -563,7 +567,13 @@ class CallAndReferenceGenerator(
                 if (argumentsCount <= typeArgumentsCount) {
                     apply {
                         for ((index, argument) in access.typeArguments.withIndex()) {
-                            val argumentIrType = (argument as FirTypeProjectionWithVariance).typeRef.toIrType()
+                            val typeParameter = access.findTypeParameter(index)
+                            val argumentFirType = (argument as FirTypeProjectionWithVariance).typeRef
+                            val argumentIrType = if (typeParameter?.isReified == true) {
+                                argumentFirType.approximateTypeIfNeeded(approximator, Visibilities.Public).toIrType()
+                            } else {
+                                argumentFirType.toIrType()
+                            }
                             putTypeArgument(index, argumentIrType)
                         }
                     }
@@ -586,6 +596,9 @@ class CallAndReferenceGenerator(
             else -> this
         }
     }
+
+    private fun FirQualifiedAccess.findTypeParameter(index: Int): FirTypeParameter? =
+        ((calleeReference as? FirResolvedNamedReference)?.resolvedSymbol?.fir as? FirTypeParametersOwner)?.typeParameters?.get(index)
 
     private fun FirQualifiedAccess.findIrDispatchReceiver(explicitReceiverExpression: IrExpression?): IrExpression? =
         findIrReceiver(explicitReceiverExpression, isDispatch = true)
