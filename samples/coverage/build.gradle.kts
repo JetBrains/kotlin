@@ -5,11 +5,6 @@ plugins {
 }
 
 kotlin {
-    sourceSets {
-        val commonMain by getting
-        val commonTest by getting
-    }
-
     // Determine host preset.
     val hostOs = System.getProperty("os.name")
     val isMingwX64 = hostOs.startsWith("Windows")
@@ -29,6 +24,11 @@ kotlin {
         binaries.getTest("DEBUG").apply {
             freeCompilerArgs += listOf("-Xlibrary-to-cover=${compilations["main"].output.classesDirs.singleFile.absolutePath}")
         }
+    }
+
+    sourceSets {
+        val commonMain by getting
+        val commonTest by getting
     }
 }
 
