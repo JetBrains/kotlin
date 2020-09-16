@@ -173,7 +173,7 @@ public final class GradleBuildSrcProjectsResolver {
     if (gradleBaseVersion == null) return;
 
     // since 6.7 included builds become "visible" for `buildSrc` project https://docs.gradle.org/6.7-rc-1/release-notes.html#build-src
-    // !!! Note, this is true only for builds included from the "root" build !!!
+    // !!! Note, this is true only for builds included from the "root" build and it becomes visible also for "nested" `buildSrc` projects !!!
     // Transitive included builds are not visible even for related "transitive" `buildSrc` projects
     // due to limitation caused by specific ordering requirement:  "include order is important if an included build provides a plugin which should be discovered very very early".
     // It can be improved in the future Gradle releases.
