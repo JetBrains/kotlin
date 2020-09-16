@@ -15,11 +15,16 @@
  */
 package com.intellij.openapi.externalSystem.action.task;
 
-import com.intellij.execution.RunManager;
+import com.intellij.execution.ExecutionException;
+import com.intellij.execution.Executor;
+import com.intellij.execution.ExecutorRegistry;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.ConfigurationContext;
+import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.action.ExternalSystemActionUtil;
 import com.intellij.openapi.externalSystem.action.ExternalSystemNodeAction;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
@@ -28,11 +33,14 @@ import com.intellij.openapi.externalSystem.model.task.TaskData;
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Vladislav.Soroka
  */
 public class RunExternalSystemTaskAction extends ExternalSystemNodeAction<TaskData> {
+
+  private static final Logger LOG = Logger.getInstance(RunExternalSystemTaskAction.class);
 
   public RunExternalSystemTaskAction() {
     super(TaskData.class);
@@ -44,19 +52,62 @@ public class RunExternalSystemTaskAction extends ExternalSystemNodeAction<TaskDa
                          @NotNull TaskData taskData,
                          @NotNull AnActionEvent e) {
     final ExternalTaskExecutionInfo taskExecutionInfo = ExternalSystemActionUtil.buildTaskInfo(taskData);
-    ExternalSystemUtil.runTask(taskExecutionInfo.getSettings(), taskExecutionInfo.getExecutorId(), project, projectSystemId);
+    final ConfigurationContext context = ConfigurationContext.getFromContext(e.getDataContext());
 
-    final DataContext dataContext = e.getDataContext();
-    final ConfigurationContext context = ConfigurationContext.getFromContext(dataContext);
-    RunnerAndConfigurationSettings configuration = context.findExisting();
-    RunManager runManager = context.getRunManager();
-    if (configuration == null) {
-      configuration = context.getConfiguration();
-      if (configuration == null) {
-        return;
-      }
-      runManager.setTemporaryConfiguration(configuration);
+    RunnerAndConfigurationSettings configuration = findOrGet(context);
+    if (configuration == null ||
+        !runTaskAsExistingConfiguration(project, projectSystemId, taskExecutionInfo, configuration)) {
+      runTaskAsNewRunConfiguration(project, projectSystemId, taskExecutionInfo);
+      configuration = findOrGet(context); // if created during runTaskAsNewRunConfiguration
     }
-    runManager.setSelectedConfiguration(configuration);
+
+    context.getRunManager().setSelectedConfiguration(configuration);
+  }
+
+  @Nullable
+  private static RunnerAndConfigurationSettings findOrGet(@NotNull ConfigurationContext context) {
+    RunnerAndConfigurationSettings result = context.findExisting();
+    if (result == null) {
+      result = context.getConfiguration();
+      if (result != null) {
+        context.getRunManager().setTemporaryConfiguration(result);
+      }
+    }
+    return result;
+  }
+
+  private static boolean runTaskAsExistingConfiguration(@NotNull Project project,
+                                                        @NotNull ProjectSystemId projectSystemId,
+                                                        @NotNull ExternalTaskExecutionInfo taskExecutionInfo,
+                                                        @NotNull RunnerAndConfigurationSettings configuration) {
+    final String executorId = taskExecutionInfo.getExecutorId();
+    String runnerId = ExternalSystemUtil.getRunnerId(executorId);
+    if (runnerId == null) {
+      return false;
+    }
+    Executor executor = ExecutorRegistry.getInstance().getExecutorById(executorId);
+    ProgramRunner<?> runner = ProgramRunner.findRunnerById(runnerId);
+
+    if (executor == null || runner == null) {
+      return false;
+    }
+
+    ExecutionEnvironment environment = new ExecutionEnvironment(executor, runner, configuration, project);
+    ApplicationManager.getApplication().invokeLater(() -> {
+      try {
+        environment.getRunner().execute(environment);
+      }
+      catch (ExecutionException exception) {
+        LOG.error("Failed to execute " + projectSystemId.getReadableName() + " task.", exception);
+      }
+    });
+
+    return true;
+  }
+
+  private static void runTaskAsNewRunConfiguration(@NotNull Project project,
+                                                   @NotNull ProjectSystemId projectSystemId,
+                                                   @NotNull ExternalTaskExecutionInfo taskExecutionInfo) {
+    ExternalSystemUtil.runTask(taskExecutionInfo.getSettings(), taskExecutionInfo.getExecutorId(), project, projectSystemId);
   }
 }
