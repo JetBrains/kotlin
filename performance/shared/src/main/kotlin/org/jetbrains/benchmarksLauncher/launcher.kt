@@ -77,10 +77,10 @@ abstract class Launcher {
         logger.log("Warm up iterations for benchmark $name\n")
         runBenchmark(benchmarkInstance, benchmark, numWarmIterations)
         var autoEvaluatedNumberOfMeasureIteration = 1
-        while (true && benchmark.useAutoEvaluatedNumberOfMeasure) {
+        while (benchmark.useAutoEvaluatedNumberOfMeasure) {
             var j = autoEvaluatedNumberOfMeasureIteration
             val time = runBenchmark(benchmarkInstance, benchmark, j)
-            if (time >= 100L * 1_000_000) // 100ms
+            if (time >= 2000L * 1_000_000) // 2s
                 break
             autoEvaluatedNumberOfMeasureIteration *= 2
         }
