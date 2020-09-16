@@ -3,19 +3,9 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.backend.common.CheckDeclarationParentsVisitor
 import org.jetbrains.kotlin.backend.common.IrValidator
 import org.jetbrains.kotlin.backend.common.IrValidatorConfig
-import org.jetbrains.kotlin.backend.common.LoggingContext
-import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
-import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.*
-import org.jetbrains.kotlin.backend.common.serialization.mangle.ManglerChecker
-import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.Ir2DescriptorManglerAdapter
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
-import org.jetbrains.kotlin.backend.konan.descriptors.isForwardDeclarationModule
-import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
-import org.jetbrains.kotlin.backend.konan.descriptors.konanLibrary
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
-import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
@@ -23,23 +13,22 @@ import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
-import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
-import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.irBlockBody
+import org.jetbrains.kotlin.ir.builders.irGetObjectValue
+import org.jetbrains.kotlin.ir.builders.irReturn
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
-import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
-import org.jetbrains.kotlin.utils.DFS
 import java.util.Collections.emptySet
 
 internal fun moduleValidationCallback(state: ActionState, module: IrModuleFragment, context: Context) {
@@ -320,6 +309,67 @@ internal val entryPointPhase = makeCustomPhase<Context, IrModuleFragment>(
         }
 )
 
+internal val exportInternalAbiPhase = makeKonanModuleOpPhase(
+        name = "exportInternalAbi",
+        description = "Add accessors to private entities",
+        prerequisite = emptySet(),
+        op = { context, module ->
+            val visitor = object : IrElementVisitorVoid {
+                override fun visitElement(element: IrElement) {
+                    element.acceptChildrenVoid(this)
+                }
+
+                override fun visitClass(declaration: IrClass) {
+                    declaration.acceptChildrenVoid(this)
+                    if (declaration.isCompanion) {
+                        val function = context.irFactory.buildFun {
+                            name = InternalAbi.getCompanionObjectAccessorName(declaration)
+                            origin = InternalAbi.INTERNAL_ABI_ORIGIN
+                            returnType = declaration.defaultType
+                        }
+                        context.createIrBuilder(function.symbol).apply {
+                            function.body = irBlockBody {
+                                +irReturn(irGetObjectValue(declaration.defaultType, declaration.symbol))
+                            }
+                        }
+                        context.internalAbi.declare(function, declaration.module)
+                    }
+
+                }
+            }
+            module.acceptChildrenVoid(visitor)
+        }
+)
+
+internal val useInternalAbiPhase = makeKonanModuleOpPhase(
+        name = "useInternalAbi",
+        description = "Use internal ABI functions to access private entities",
+        prerequisite = emptySet(),
+        op = { context, module ->
+            val accessors = mutableMapOf<IrClass, IrSimpleFunction>()
+            val transformer = object : IrElementTransformerVoid() {
+                override fun visitGetObjectValue(expression: IrGetObjectValue): IrExpression {
+                    val irClass = expression.symbol.owner
+                    if (!irClass.isCompanion || context.llvmModuleSpecification.containsDeclaration(irClass)) {
+                        return expression
+                    }
+                    val accessor = accessors.getOrPut(irClass) {
+                        context.irFactory.buildFun {
+                            name = InternalAbi.getCompanionObjectAccessorName(irClass)
+                            returnType = irClass.defaultType
+                            origin = InternalAbi.INTERNAL_ABI_ORIGIN
+                            isExternal = true
+                        }.also {
+                            context.internalAbi.reference(it, irClass.module)
+                        }
+                    }
+                    return IrCallImpl(expression.startOffset, expression.endOffset, expression.type, accessor.symbol)
+                }
+            }
+            module.transformChildrenVoid(transformer)
+        }
+)
+
 internal val bitcodePhase = NamedCompilerPhase(
         name = "Bitcode",
         description = "LLVM Bitcode generation",
@@ -346,6 +396,8 @@ private val backendCodegen = namedUnitPhase(
                 dependenciesLowerPhase then // Then lower all libraries in topological order.
                                             // With that we guarantee that inline functions are unlowered while being inlined.
                 entryPointPhase then
+                exportInternalAbiPhase then
+                useInternalAbiPhase then
                 bitcodePhase then
                 verifyBitcodePhase then
                 printBitcodePhase then
@@ -395,6 +447,7 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
         disableUnless(serializerPhase, config.produce == CompilerOutputKind.LIBRARY)
         disableIf(dependenciesLowerPhase, config.produce == CompilerOutputKind.LIBRARY)
         disableUnless(entryPointPhase, config.produce == CompilerOutputKind.PROGRAM)
+        disableUnless(exportInternalAbiPhase, config.produce.isCache)
         disableIf(bitcodePhase, config.produce == CompilerOutputKind.LIBRARY)
         disableUnless(bitcodeOptimizationPhase, config.produce.involvesLinkStage)
         disableUnless(linkBitcodeDependenciesPhase, config.produce.involvesLinkStage)

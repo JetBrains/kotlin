@@ -292,7 +292,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
                 throw Error("Another IrModule in the context.")
             }
             field = module!!
-            internalAbi.init(module)
             ir = KonanIr(this, module)
         }
 

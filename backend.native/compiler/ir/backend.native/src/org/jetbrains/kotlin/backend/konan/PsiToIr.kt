@@ -157,6 +157,8 @@ internal fun Context.psiToIr(symbolTable: SymbolTable) {
     // Note: coupled with [shouldLower] below.
     irModules = linker.modules.filterValues { llvmModuleSpecification.containsModule(it) }
 
+    internalAbi.init(irModules.values + irModule!!)
+
     ir.symbols = symbols
 
     functionIrClassFactory.module =

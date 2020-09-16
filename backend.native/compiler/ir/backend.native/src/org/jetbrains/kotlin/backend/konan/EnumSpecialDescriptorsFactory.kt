@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irReturn
@@ -109,37 +110,19 @@ internal class EnumSpecialDeclarationsFactory(val context: Context) {
 
     // We can't move property getter to the top-level scope.
     // So add a wrapper instead.
-    private fun createValuesGetterWrapper(enumClass: IrClass, isExternal: Boolean): IrSimpleFunction {
-        return WrappedSimpleFunctionDescriptor().let {
-            val valuesType = valuesArrayType(enumClass)
-            val origin = if (isExternal) InternalAbi.INTERNAL_ABI_ORIGIN else DECLARATION_ORIGIN_ENUM
-            val name = context.internalAbi.getMangledNameFor("get-VALUES", enumClass)
-            IrFunctionImpl(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                    origin,
-                    IrSimpleFunctionSymbolImpl(it),
-                    name,
-                    DescriptorVisibilities.PUBLIC,
-                    Modality.FINAL,
-                    valuesType,
-                    isInline = false,
-                    isExternal = isExternal,
-                    isTailrec = false,
-                    isSuspend = false,
-                    isExpect = false,
-                    isFakeOverride = false,
-                    isOperator = false,
-                    isInfix = false
-            ).apply {
-                it.bind(this)
+    private fun createValuesGetterWrapper(enumClass: IrClass, isExternal: Boolean): IrSimpleFunction =
+            context.irFactory.buildFun {
+                name = InternalAbi.getEnumValuesAccessorName(enumClass)
+                returnType = valuesArrayType(enumClass)
+                origin = InternalAbi.INTERNAL_ABI_ORIGIN
+                this.isExternal = isExternal
+            }.also {
                 if (isExternal) {
-                    context.internalAbi.reference(this, enumClass.module)
+                    context.internalAbi.reference(it, enumClass.module)
                 } else {
-                    context.internalAbi.declare(this)
+                    context.internalAbi.declare(it, enumClass.module)
                 }
             }
-        }
-    }
 
     fun createExternalLoweredEnum(enumClass: IrClass): ExternalLoweredEnum {
         val enumEntriesMap = enumEntriesMap(enumClass)
