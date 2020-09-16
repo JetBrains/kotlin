@@ -583,11 +583,8 @@ task bundleRegular(type: (isWindows()) ? Zip : Tar) {
         exclude 'klib/testLibrary'
         // Don't include platform libraries into the bundle (generate them at the user side instead).
         exclude 'klib/platform'
-        exclude {
-            // Exclude platform libraries caches too.
-            !it.isDirectory() && it.relativePath.startsWithAny("klib/cache") &&
-                    it.name != "libstdlib-cache.a" && it.name != "libkotlinx-cli-cache.a"
-        }
+        // Exclude platform libraries caches too. Keep caches for stdlib and endorsed libs.
+        exclude 'klib/cache/*/org.jetbrains.kotlin.native.platform.*/**'
         into archiveBaseName
     }
     from(project.rootDir) {
