@@ -533,6 +533,26 @@ __attribute__((swift_name("Kt39206Kt")))
 @end;
 
 __attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("Ckt41907")))
+@interface KtCkt41907 : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end;
+
+__attribute__((swift_name("Ikt41907")))
+@protocol KtIkt41907
+@required
+- (void)fooC:(KtCkt41907 *)c __attribute__((swift_name("foo(c:)")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("Kt41907Kt")))
+@interface KtKt41907Kt : KtBase
++ (void)escapeCC:(KtCkt41907 *)c __attribute__((swift_name("escapeC(c:)")));
++ (void)testKt41907O:(id<KtIkt41907>)o __attribute__((swift_name("testKt41907(o:)")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("LibraryKt")))
 @interface KtLibraryKt : KtBase
 + (NSString *)readDataFromLibraryClassInput:(KtA *)input __attribute__((swift_name("readDataFromLibraryClass(input:)")));

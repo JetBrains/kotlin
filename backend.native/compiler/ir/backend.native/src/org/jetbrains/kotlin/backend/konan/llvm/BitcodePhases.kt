@@ -211,13 +211,25 @@ internal val escapeAnalysisPhase = makeKonanModuleOpPhase(
         op = { context, _ ->
             val entryPoint = context.ir.symbols.entryPoint?.owner
             val externalModulesDFG = ExternalModulesDFG(emptyList(), emptyMap(), emptyMap(), emptyMap())
+            val nonDevirtualizedCallSitesUnfoldFactor =
+                    if (entryPoint != null) {
+                        // For a final program it can be safely assumed that what classes we see is what we got,
+                        // so can take those. In theory we can always unfold call sites using type hierarchy, but
+                        // the analysis might converge much, much slower, so take only reasonably small for now.
+                        5
+                    }
+                    else {
+                        // Can't tolerate any non-devirtualized call site for a library.
+                        // TODO: What about private virtual functions?
+                        // Note: 0 is also bad - this means that there're no inheritors in the current source set,
+                        // but there might be some provided by the users of the library being produced.
+                        -1
+                    }
             val callGraph = CallGraphBuilder(
                     context, context.moduleDFG!!,
                     externalModulesDFG,
                     context.devirtualizationAnalysisResult!!,
-                    // Can't tolerate any non-devirtualized call site for a library.
-                    // TODO: What about private virtual functions?
-                    nonDevirtualizedCallSitesUnfoldFactor = if (entryPoint == null) 0 else 5
+                    nonDevirtualizedCallSitesUnfoldFactor
             ).build()
             EscapeAnalysis.computeLifetimes(
                     context, context.moduleDFG!!, externalModulesDFG, callGraph, context.lifetimes
