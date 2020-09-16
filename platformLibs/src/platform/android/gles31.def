@@ -1,5 +1,5 @@
-depends = glesCommon posix
+depends = gles3 glesCommon posix
 package = platform.gles31
-headers = GLES3/gl31.h GLES3/gl3ext.h GLES3/gl3platform.h
+headers = GLES3/gl31.h
 headerFilter = GLES3/**
 linkerOpts = -lGLESv3
