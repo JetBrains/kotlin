@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.repl
 
-import com.intellij.testFramework.PlatformTestCase
+import com.intellij.testFramework.LightPlatformTestCase
 import org.junit.Test
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
@@ -16,8 +16,7 @@ import javax.script.ScriptException
 import kotlin.test.assertFails
 
 @RunWith(JUnit38ClassRunner::class)
-class IdeaJsr223Test : PlatformTestCase() {
-
+class IdeaJsr223Test : LightPlatformTestCase() {
     @Test
     fun testJsr223Engine() {
         val semgr = ScriptEngineManager()
