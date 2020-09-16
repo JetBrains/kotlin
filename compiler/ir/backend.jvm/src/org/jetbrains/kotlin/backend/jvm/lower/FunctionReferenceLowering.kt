@@ -396,7 +396,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 }
             }
 
-            body = context.createJvmIrBuilder(symbol).run {
+            body = context.createJvmIrBuilder(symbol, startOffset, endOffset).run {
                 var unboundIndex = 0
                 irExprBody(irCall(callee).apply {
                     for ((typeParameter, typeArgument) in typeArgumentsMap) {
