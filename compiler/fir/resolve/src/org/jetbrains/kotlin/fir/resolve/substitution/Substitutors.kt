@@ -151,7 +151,7 @@ data class ConeSubstitutorByMap(val substitution: Map<FirTypeParameterSymbol, Co
         val session = type.lookupTag.symbol.fir.session
         if (type.isUnsafeVarianceType(session)) {
             return session.inferenceComponents.approximator.approximateToSuperType(
-                result, TypeApproximatorConfiguration.SubtypeCapturedTypesApproximation
+                result, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
             ) as? ConeKotlinType ?: result
         }
         return result

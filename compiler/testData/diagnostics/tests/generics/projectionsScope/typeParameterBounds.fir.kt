@@ -19,7 +19,7 @@ fun foo2(a: A<out CharSequence>, b: A<in CharSequence>) {
     a.foo1(Out())
     a.foo1(Out<Nothing>())
 
-    a.<!INAPPLICABLE_CANDIDATE!>foo2<!>(Inv())
+    a.foo2(Inv())
     a.<!INAPPLICABLE_CANDIDATE!>foo2<!>(Inv<CharSequence>())
     a.<!INAPPLICABLE_CANDIDATE!>foo2<!><Inv<CharSequence>>(Inv())
 
@@ -31,7 +31,7 @@ fun foo2(a: A<out CharSequence>, b: A<in CharSequence>) {
     b.foo1(Out<CharSequence>())
     b.foo1<Out<CharSequence>>(Out())
 
-    b.<!INAPPLICABLE_CANDIDATE!>foo2<!>(Inv())
+    b.foo2(Inv())
     b.<!INAPPLICABLE_CANDIDATE!>foo2<!>(Inv<CharSequence>())
     b.<!INAPPLICABLE_CANDIDATE!>foo2<!><Inv<CharSequence>>(Inv())
 

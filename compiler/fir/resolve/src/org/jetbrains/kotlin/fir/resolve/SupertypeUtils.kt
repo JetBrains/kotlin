@@ -67,7 +67,7 @@ fun createSubstitution(
     type: ConeClassLikeType,
     session: FirSession
 ): Map<FirTypeParameterSymbol, ConeKotlinType> {
-    val capturedOrType = session.typeContext.captureFromArguments(type, CaptureStatus.FOR_SUBTYPING) ?: type
+    val capturedOrType = session.typeContext.captureFromArguments(type, CaptureStatus.FROM_EXPRESSION) ?: type
     val typeArguments = (capturedOrType as ConeClassLikeType).typeArguments
     return typeParameters.zip(typeArguments) { typeParameter, typeArgument ->
         val typeParameterSymbol = typeParameter.symbol
