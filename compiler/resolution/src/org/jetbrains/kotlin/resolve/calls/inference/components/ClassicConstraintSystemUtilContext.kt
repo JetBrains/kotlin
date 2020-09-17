@@ -5,17 +5,27 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.builtins.*
+import org.jetbrains.kotlin.builtins.getPureArgumentsForFunctionalTypeOrSubtype
 import org.jetbrains.kotlin.resolve.calls.components.CreateFreshVariablesSubstitutor.shouldBeFlexible
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
-import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallableDescriptor
+import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver.Companion.TYPE_VARIABLE_NAME_FOR_CR_RETURN_TYPE
+import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver.Companion.TYPE_VARIABLE_NAME_FOR_LAMBDA_RETURN_TYPE
+import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver.Companion.TYPE_VARIABLE_NAME_PREFIX_FOR_CR_PARAMETER_TYPE
+import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver.Companion.TYPE_VARIABLE_NAME_PREFIX_FOR_LAMBDA_PARAMETER_TYPE
+import org.jetbrains.kotlin.resolve.calls.inference.model.*
+import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.unCapture as unCaptureKotlinType
 
-class ClassicConstraintSystemUtilContext(val kotlinTypeRefiner: KotlinTypeRefiner) : ConstraintSystemUtilContext {
+class ClassicConstraintSystemUtilContext(
+    val kotlinTypeRefiner: KotlinTypeRefiner,
+    val builtIns: KotlinBuiltIns,
+) : ConstraintSystemUtilContext {
     override fun TypeVariableMarker.shouldBeFlexible(): Boolean {
         return this is TypeVariableFromCallableDescriptor && this.originalTypeParameter.shouldBeFlexible()
     }
@@ -39,5 +49,111 @@ class ClassicConstraintSystemUtilContext(val kotlinTypeRefiner: KotlinTypeRefine
     override fun KotlinTypeMarker.refineType(): KotlinTypeMarker {
         require(this is KotlinType)
         return kotlinTypeRefiner.refineType(this)
+    }
+
+    override fun extractFunctionalTypeFromSupertypes(type: KotlinTypeMarker): KotlinTypeMarker {
+        require(type is KotlinType)
+        return type.extractFunctionalTypeFromSupertypes()
+    }
+
+    override fun KotlinTypeMarker.extractArgumentsForFunctionalTypeOrSubtype(): List<KotlinTypeMarker> {
+        require(this is KotlinType)
+        return this.getPureArgumentsForFunctionalTypeOrSubtype()
+    }
+
+    override fun KotlinTypeMarker.isFunctionOrKFunctionTypeWithAnySuspendability(): Boolean {
+        require(this is KotlinType)
+        return this.isFunctionOrKFunctionTypeWithAnySuspendability
+    }
+
+    override fun KotlinTypeMarker.isSuspendFunctionTypeOrSubtype(): Boolean {
+        require(this is KotlinType)
+        return this.isSuspendFunctionTypeOrSubtype
+    }
+
+    override fun <T> createArgumentConstraintPosition(argument: T): ArgumentConstraintPosition<T> {
+        require(argument is ResolvedAtom)
+        @Suppress("UNCHECKED_CAST")
+        return ArgumentConstraintPositionImpl(argument.atom as KotlinCallArgument) as ArgumentConstraintPosition<T>
+    }
+
+    override fun <T> createFixVariableConstraintPosition(variable: TypeVariableMarker, atom: T): FixVariableConstraintPosition<T> {
+        require(atom is ResolvedAtom)
+        @Suppress("UNCHECKED_CAST")
+        return FixVariableConstraintPositionImpl(variable, atom) as FixVariableConstraintPosition<T>
+    }
+
+    override fun extractParameterTypesFromDeclaration(declaration: PostponedAtomWithRevisableExpectedType): List<KotlinTypeMarker?>? {
+        require(declaration is ResolvedAtom)
+        return when (val atom = declaration.atom) {
+            is FunctionExpression -> {
+                val receiverType = atom.receiverType
+                if (receiverType != null) listOf(receiverType) + atom.parametersTypes else atom.parametersTypes.toList()
+            }
+            is LambdaKotlinCallArgument -> atom.parametersTypes?.toList()
+            else -> null
+        }
+    }
+
+    override fun KotlinTypeMarker.isExtensionFunctionType(): Boolean {
+        require(this is KotlinType)
+        return this.isExtensionFunctionType
+    }
+
+    override fun getFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker {
+        return getFunctionDescriptor(builtIns, parametersNumber, isSuspend).typeConstructor
+    }
+
+    override fun getKFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker {
+        return getKFunctionDescriptor(builtIns, parametersNumber, isSuspend).typeConstructor
+    }
+
+    override fun isAnonymousFunction(argument: PostponedAtomWithRevisableExpectedType): Boolean {
+        require(argument is ResolvedAtom)
+        return argument.atom is FunctionExpression
+    }
+
+    override fun PostponedAtomWithRevisableExpectedType.isFunctionExpressionWithReceiver(): Boolean {
+        require(this is ResolvedAtom)
+        val atom = this.atom
+        return atom is FunctionExpression && atom.receiverType != null
+    }
+
+    override fun createTypeVariableForLambdaReturnType(): TypeVariableMarker {
+        return TypeVariableForLambdaReturnType(
+            builtIns,
+            TYPE_VARIABLE_NAME_FOR_LAMBDA_RETURN_TYPE
+        )
+    }
+
+    override fun createTypeVariableForLambdaParameterType(
+        argument: PostponedAtomWithRevisableExpectedType,
+        index: Int
+    ): TypeVariableMarker {
+        require(argument is ResolvedAtom)
+        val atom = argument.atom as PostponableKotlinCallArgument
+        return TypeVariableForLambdaParameterType(
+            atom,
+            index,
+            builtIns,
+            TYPE_VARIABLE_NAME_PREFIX_FOR_LAMBDA_PARAMETER_TYPE + (index + 1)
+        )
+    }
+
+    override fun createTypeVariableForCallableReferenceParameterType(
+        argument: PostponedAtomWithRevisableExpectedType,
+        index: Int
+    ): TypeVariableMarker {
+        return TypeVariableForCallableReferenceParameterType(
+            builtIns,
+            TYPE_VARIABLE_NAME_PREFIX_FOR_CR_PARAMETER_TYPE + (index + 1)
+        )
+    }
+
+    override fun createTypeVariableForCallableReferenceReturnType(): TypeVariableMarker {
+        return TypeVariableForCallableReferenceReturnType(
+            builtIns,
+            TYPE_VARIABLE_NAME_FOR_CR_RETURN_TYPE
+        )
     }
 }

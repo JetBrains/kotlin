@@ -160,6 +160,12 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             ?: session.builtinTypes.anyType.type//StandardClassIds.Any(session.firSymbolProvider).constructType(emptyArray(), false) // TODO wtf
     }
 
+    override fun KotlinTypeMarker.getArguments(): List<TypeArgumentMarker> {
+        require(this is ConeKotlinType)
+
+        return this.typeArguments.toList()
+    }
+
     override fun KotlinTypeMarker.asTypeArgument(): TypeArgumentMarker {
         require(this is ConeKotlinType)
 

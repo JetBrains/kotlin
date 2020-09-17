@@ -232,6 +232,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun KotlinTypeMarker.argumentsCount(): Int
     fun KotlinTypeMarker.getArgument(index: Int): TypeArgumentMarker
+    fun KotlinTypeMarker.getArguments(): List<TypeArgumentMarker>
 
     fun SimpleTypeMarker.getArgumentOrNull(index: Int): TypeArgumentMarker? {
         if (index in 0 until argumentsCount()) return getArgument(index)

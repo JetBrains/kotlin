@@ -17,8 +17,10 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
 //  --------------------------- Variables ---------------------------
 
@@ -30,7 +32,7 @@ sealed class PostponedResolvedAtom : PostponedResolvedAtomMarker {
     abstract override val inputTypes: Collection<ConeKotlinType>
     abstract override val outputType: ConeKotlinType?
     override var analyzed: Boolean = false
-    abstract val expectedType: ConeKotlinType?
+    abstract override val expectedType: ConeKotlinType?
 }
 
 //  ------------- Lambdas -------------
@@ -62,13 +64,20 @@ class LambdaWithTypeVariableAsExpectedTypeAtom(
     override val expectedType: ConeKotlinType,
     val expectedTypeRef: FirTypeRef,
     val candidateOfOuterCall: Candidate
-) : PostponedResolvedAtom() {
+) : PostponedResolvedAtom(), PostponedAtomWithRevisableExpectedType {
     init {
         candidateOfOuterCall.postponedAtoms += this
     }
 
     override val inputTypes: Collection<ConeKotlinType> get() = listOf(expectedType)
     override val outputType: ConeKotlinType? get() = null
+    override var revisedExpectedType: ConeKotlinType? = null
+        private set
+
+    override fun reviseExpectedType(expectedType: KotlinTypeMarker) {
+        require(expectedType is ConeKotlinType)
+        revisedExpectedType = expectedType
+    }
 }
 
 //  ------------- References -------------

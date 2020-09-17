@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.typeUtil.unCapture
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -92,28 +93,36 @@ class ResolvedSubCallArgument(override val atom: SubKotlinCallArgument, resolveI
     }
 }
 
-interface PostponedAtomWithRevisableExpectedType {
-    var revisedExpectedType: UnwrappedType?
-    val expectedType: UnwrappedType?
-    val atom: PostponableKotlinCallArgument
-}
 
 sealed class PostponedResolvedAtom : ResolvedAtom(), PostponedResolvedAtomMarker {
     abstract override val inputTypes: Collection<UnwrappedType>
     abstract override val outputType: UnwrappedType?
-    abstract val expectedType: UnwrappedType?
+    abstract override val expectedType: UnwrappedType?
 }
 
 class LambdaWithTypeVariableAsExpectedTypeAtom(
     override val atom: LambdaKotlinCallArgument,
     override val expectedType: UnwrappedType
-) : PostponedResolvedAtom(), PostponedAtomWithRevisableExpectedType {
+) : PostponedResolvedAtom(), LambdaWithTypeVariableAsExpectedTypeMarker {
     override val inputTypes: Collection<UnwrappedType> get() = listOf(expectedType)
     override val outputType: UnwrappedType? get() = null
 
     override var revisedExpectedType: UnwrappedType? = null
+        private set
 
-    var parameterTypesFromDeclaration: List<UnwrappedType?>? = null
+    override var parameterTypesFromDeclaration: List<UnwrappedType?>? = null
+        private set
+
+    override fun updateParameterTypesFromDeclaration(types: List<KotlinTypeMarker?>?) {
+        @Suppress("UNCHECKED_CAST")
+        types as List<UnwrappedType?>?
+        parameterTypesFromDeclaration = types
+    }
+
+    override fun reviseExpectedType(expectedType: KotlinTypeMarker) {
+        require(expectedType is UnwrappedType)
+        revisedExpectedType = expectedType
+    }
 
     fun setAnalyzed(resolvedLambdaAtom: ResolvedLambdaAtom) {
         setAnalyzedResults(listOf(resolvedLambdaAtom))
@@ -202,8 +211,17 @@ class CallableReferenceWithRevisedExpectedTypeAtom(
 
 class PostponedCallableReferenceAtom(
     eagerCallableReferenceAtom: EagerCallableReferenceAtom
-) : AbstractPostponedCallableReferenceAtom(eagerCallableReferenceAtom.atom, eagerCallableReferenceAtom.expectedType), PostponedAtomWithRevisableExpectedType {
+) : AbstractPostponedCallableReferenceAtom(eagerCallableReferenceAtom.atom, eagerCallableReferenceAtom.expectedType),
+    PostponedCallableReferenceMarker,
+    PostponedAtomWithRevisableExpectedType
+{
     override var revisedExpectedType: UnwrappedType? = null
+        private set
+
+    override fun reviseExpectedType(expectedType: KotlinTypeMarker) {
+        require(expectedType is UnwrappedType)
+        revisedExpectedType = expectedType
+    }
 }
 
 class ResolvedCollectionLiteralAtom(

@@ -161,6 +161,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this.arguments[index]
     }
 
+    override fun KotlinTypeMarker.getArguments(): List<TypeArgumentMarker> {
+        require(this is KotlinType, this::errorMessage)
+        return this.arguments
+    }
+
     override fun TypeArgumentMarker.isStarProjection(): Boolean {
         require(this is TypeProjection, this::errorMessage)
         return this.isStarProjection

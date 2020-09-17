@@ -14,13 +14,15 @@ import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class KotlinConstraintSystemCompleter(
     private val resultTypeResolver: ResultTypeResolver,
     val variableFixationFinder: VariableFixationFinder,
+    private val ctx: ConstraintSystemUtilContext,
 ) {
-    private val postponedArgumentInputTypesResolver = PostponedArgumentInputTypesResolver(resultTypeResolver, variableFixationFinder)
+    private val postponedArgumentInputTypesResolver = PostponedArgumentInputTypesResolver(resultTypeResolver, variableFixationFinder, ctx)
 
     fun runCompletion(
         c: ConstraintSystemCompletionContext,
@@ -103,9 +105,10 @@ class KotlinConstraintSystemCompleter(
                         argument,
                         postponedArguments,
                         topLevelType,
-                        topLevelAtoms,
                         dependencyProvider,
-                    )
+                    ) {
+                        findResolvedAtomBy(it, topLevelAtoms) ?: topLevelAtoms.firstOrNull()
+                    }
 
                     if (wasFixedSomeVariable)
                         continue@completion
@@ -113,7 +116,7 @@ class KotlinConstraintSystemCompleter(
 
                 // Stage 4: create atoms with revised expected types if needed
                 for (argument in postponedArgumentsWithRevisableType) {
-                    val wasTransformedSomeArgument = postponedArgumentInputTypesResolver.transformToAtomWithNewFunctionalExpectedType(
+                    val wasTransformedSomeArgument = transformToAtomWithNewFunctionalExpectedType(
                         asConstraintSystemCompletionContext(), argument, diagnosticsHolder
                     )
 
@@ -141,6 +144,27 @@ class KotlinConstraintSystemCompleter(
 
             break
         }
+    }
+
+    private fun transformToAtomWithNewFunctionalExpectedType(
+        c: ConstraintSystemCompletionContext,
+        argument: PostponedAtomWithRevisableExpectedType,
+        diagnosticsHolder: KotlinDiagnosticsHolder
+    ): Boolean = with(ctx) {
+        val revisedExpectedType: UnwrappedType =
+            argument.revisedExpectedType?.takeIf { it.isFunctionOrKFunctionTypeWithAnySuspendability() }?.cast() ?: return false
+
+        when (argument) {
+            is PostponedCallableReferenceAtom ->
+                CallableReferenceWithRevisedExpectedTypeAtom(argument.atom, revisedExpectedType).also {
+                    argument.setAnalyzedResults(null, listOf(it))
+                }
+            is LambdaWithTypeVariableAsExpectedTypeAtom ->
+                argument.transformToResolvedLambda(c.getBuilder(), diagnosticsHolder, revisedExpectedType)
+            else -> throw IllegalStateException("Unsupported postponed argument type of $argument")
+        }
+
+        return true
     }
 
     private fun ConstraintSystemCompletionContext.analyzeArgumentWithFixedParameterTypes(
