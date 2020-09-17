@@ -7,8 +7,11 @@ import com.intellij.ide.util.ElementsChooser;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 
 import javax.swing.*;
+import java.util.List;
+import java.util.concurrent.Future;
 
 public abstract class SearchEverywhereUIBase extends BigPopupUI {
   public static final String SEARCH_EVERYWHERE_SEARCH_FILED_KEY = "search-everywhere-textfield"; //only for testing purposes
@@ -72,4 +75,7 @@ public abstract class SearchEverywhereUIBase extends BigPopupUI {
       return res;
     }
   }
+
+  @TestOnly public abstract Future<List<Object>> findElementsForPattern(String pattern);
+  @TestOnly public abstract void clearResults();
 }

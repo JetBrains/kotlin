@@ -987,8 +987,10 @@ public final class SearchEverywhereUI extends SearchEverywhereUIBase implements 
     return isAllTabSelected() ? getAllTabContributors() : Collections.singleton(mySelectedTab.getContributor().get());
   }
 
+  @Override
   @TestOnly
   public Future<List<Object>> findElementsForPattern(String pattern) {
+    clearResults();
     CompletableFuture<List<Object>> future = new CompletableFuture<>();
     mySearchListener.setTestCallback(list -> {
       future.complete(list);
@@ -996,6 +998,13 @@ public final class SearchEverywhereUI extends SearchEverywhereUIBase implements 
     });
     mySearchField.setText(pattern);
     return future;
+  }
+
+  @Override
+  @TestOnly
+  public void clearResults() {
+    myListModel.clear();
+    mySearchField.setText("");
   }
 
   private class CompositeCellRenderer implements ListCellRenderer<Object> {
