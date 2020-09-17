@@ -8729,6 +8729,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/interfaceDelegation.kt");
             }
 
+            @TestMetadata("returnInlineClass.kt")
+            public void testReturnInlineClass() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/returnInlineClass.kt");
+            }
+
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/simple.kt");
