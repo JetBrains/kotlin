@@ -3160,21 +3160,6 @@ since adapted function references are not supported in reflection. So, instead o
 Unlike usual callable references, the one in the example should accept the continuation parameter, but it should ignore it since the
 function is ordinary.
 
-FIXME: These adapted references shall use the `SuspendFunction` marker as well. Otherwise, the user can get funny behavior as in the
-example:
-```kotlin
-fun callMe(): String = "OK"
-
-suspend fun isSuspend(c: suspend () -> String) = c is suspend () -> String
-suspend fun callSuspend(c: suspend () -> String) = (c as suspend () -> String)()
-
-suspend fun main() {
-    println(isSuspend(::callMe))
-    println(callSuspend(::callMe))
-}
-```
-Yep, `c` is both suspend functional type and non-suspend functional type.
-
 ### Start
 Unlike suspend lambdas, we cannot just call `create` when we start a coroutine (in a broad sense) from a callable reference. Since the
 object does not have a `create` method and is not a continuation.
