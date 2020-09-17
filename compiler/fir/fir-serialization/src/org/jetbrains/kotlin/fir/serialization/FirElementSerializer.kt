@@ -552,7 +552,6 @@ class FirElementSerializer private constructor(
     private fun typeProto(typeRef: FirTypeRef, toSuper: Boolean = false): ProtoBuf.Type.Builder {
         val approximatedType = when (typeRef.coneType) {
             is ConeIntegerLiteralType,
-            is ConeCapturedType,
             is ConeDefinitelyNotNullType,
             is ConeIntersectionType ->
                 typeRef.approximated(typeApproximator, toSuper)
@@ -599,7 +598,6 @@ class FirElementSerializer private constructor(
                     builder.typeParameter = getTypeParameterId(typeParameter)
                 }
             }
-            is ConeCapturedType,
             is ConeDefinitelyNotNullType,
             is ConeIntersectionType,
             is ConeIntegerLiteralType -> {
@@ -608,6 +606,9 @@ class FirElementSerializer private constructor(
                     "Approximation failed: ${type.render()}"
                 }
                 return typeProto(approximatedType as ConeKotlinType)
+            }
+            is ConeCapturedType -> {
+                throw IllegalStateException("Captured types should not persist up to the serializer: ${type.render()}")
             }
             else -> {
                 throw AssertionError("Should not be here: ${type::class.java}")
