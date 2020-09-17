@@ -168,7 +168,9 @@ class FunctionCodegen(
         }
 
         val isVararg = valueParameters.lastOrNull()?.varargElementType != null
-        val isBridge = origin == IrDeclarationOrigin.BRIDGE || origin == IrDeclarationOrigin.BRIDGE_SPECIAL
+        val isBridge = origin == IrDeclarationOrigin.BRIDGE
+                || origin == IrDeclarationOrigin.BRIDGE_SPECIAL
+                || origin == IrDeclarationOrigin.DELEGATED_MEMBER
         val modalityFlag = when ((this as? IrSimpleFunction)?.modality) {
             Modality.FINAL -> when {
                 origin == JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER -> 0

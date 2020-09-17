@@ -1,0 +1,12 @@
+@kotlin.Metadata
+public final class JImpl {
+    // source: 'nullabilityAnnotationsOnDelegatedMembers.kt'
+    private synthetic final field $$delegate_0: J
+    public method <init>(@org.jetbrains.annotations.NotNull p0: J): void
+    public bridge @org.jetbrains.annotations.NotNull method returnNotNull(): java.lang.String
+    public bridge @org.jetbrains.annotations.Nullable method returnNullable(): java.lang.String
+    public bridge method returnsFlexible(): java.lang.String
+    public bridge method takeFlexible(p0: java.lang.String): void
+    public bridge method takeNotNull(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public bridge method takeNullable(@org.jetbrains.annotations.Nullable p0: java.lang.String): void
+}

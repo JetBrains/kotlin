@@ -1,0 +1,45 @@
+@kotlin.Metadata
+public abstract class<<K:Ljava/lang/Object;V:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/Map<TK;TV;>;Lkotlin/jvm/internal/markers/KMutableMap;>  AbstractGenericMap {
+    // source: 'genericClass.kt'
+    public bridge @org.jetbrains.annotations.NotNull <()Ljava/util/Collection<TV;>;> method getValues(): java.util.Collection
+    public bridge final <()Ljava/util/Collection<TV;>;> method values(): java.util.Collection
+    public bridge final <()Ljava/util/Set<Ljava/util/Map$Entry<TK;TV;>;>;> method entrySet(): java.util.Set
+    public bridge @org.jetbrains.annotations.NotNull <()Ljava/util/Set<Ljava/util/Map$Entry<TK;TV;>;>;> method getEntries(): java.util.Set
+    public bridge @org.jetbrains.annotations.NotNull <()Ljava/util/Set<TK;>;> method getKeys(): java.util.Set
+    public bridge final <()Ljava/util/Set<TK;>;> method keySet(): java.util.Set
+    public bridge @org.jetbrains.annotations.Nullable <(Ljava/lang/Object;)TV;> method get(p0: java.lang.Object): java.lang.Object
+    public bridge @org.jetbrains.annotations.Nullable <(Ljava/lang/Object;)TV;> method remove(p0: java.lang.Object): java.lang.Object
+    public bridge <(Ljava/util/Map<+TK;+TV;>;)V> method putAll(@org.jetbrains.annotations.NotNull p0: java.util.Map): void
+    public bridge @org.jetbrains.annotations.Nullable <(TK;TV;)TV;> method put(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public <null> method <init>(): void
+    public bridge <null> method clear(): void
+    public bridge <null> method containsKey(p0: java.lang.Object): boolean
+    public bridge <null> method containsValue(p0: java.lang.Object): boolean
+    public bridge <null> method getSize(): int
+    public bridge <null> method isEmpty(): boolean
+    public bridge final <null> method size(): int
+    private synthetic final field <Ljava/util/HashMap<TK;TV;>;> $$delegate_0: java.util.HashMap
+}
+
+@kotlin.Metadata
+public final class<<K:Ljava/lang/Object;V:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/Map<TK;TV;>;Lkotlin/jvm/internal/markers/KMutableMap;>  GenericMap {
+    // source: 'genericClass.kt'
+    public bridge @org.jetbrains.annotations.NotNull <()Ljava/util/Collection<TV;>;> method getValues(): java.util.Collection
+    public bridge final <()Ljava/util/Collection<TV;>;> method values(): java.util.Collection
+    public bridge final <()Ljava/util/Set<Ljava/util/Map$Entry<TK;TV;>;>;> method entrySet(): java.util.Set
+    public bridge @org.jetbrains.annotations.NotNull <()Ljava/util/Set<Ljava/util/Map$Entry<TK;TV;>;>;> method getEntries(): java.util.Set
+    public bridge @org.jetbrains.annotations.NotNull <()Ljava/util/Set<TK;>;> method getKeys(): java.util.Set
+    public bridge final <()Ljava/util/Set<TK;>;> method keySet(): java.util.Set
+    public bridge @org.jetbrains.annotations.Nullable <(Ljava/lang/Object;)TV;> method get(p0: java.lang.Object): java.lang.Object
+    public bridge @org.jetbrains.annotations.Nullable <(Ljava/lang/Object;)TV;> method remove(p0: java.lang.Object): java.lang.Object
+    public bridge <(Ljava/util/Map<+TK;+TV;>;)V> method putAll(@org.jetbrains.annotations.NotNull p0: java.util.Map): void
+    public bridge @org.jetbrains.annotations.Nullable <(TK;TV;)TV;> method put(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public <null> method <init>(): void
+    public bridge <null> method clear(): void
+    public bridge <null> method containsKey(p0: java.lang.Object): boolean
+    public bridge <null> method containsValue(p0: java.lang.Object): boolean
+    public bridge <null> method getSize(): int
+    public bridge <null> method isEmpty(): boolean
+    public bridge final <null> method size(): int
+    private synthetic final field <Ljava/util/HashMap<TK;TV;>;> $$delegate_0: java.util.HashMap
+}
