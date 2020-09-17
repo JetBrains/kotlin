@@ -76,13 +76,12 @@ abstract class Launcher {
         val benchmarkInstance = (benchmark as? BenchmarkEntryWithInit)?.ctor?.invoke()
         logger.log("Warm up iterations for benchmark $name\n")
         runBenchmark(benchmarkInstance, benchmark, numWarmIterations)
+        val expectedDuration = 2000L * 1_000_000 // 2s
         var autoEvaluatedNumberOfMeasureIteration = 1
-        while (benchmark.useAutoEvaluatedNumberOfMeasure) {
-            var j = autoEvaluatedNumberOfMeasureIteration
-            val time = runBenchmark(benchmarkInstance, benchmark, j)
-            if (time >= 2000L * 1_000_000) // 2s
-                break
-            autoEvaluatedNumberOfMeasureIteration *= 2
+        if (benchmark.useAutoEvaluatedNumberOfMeasure) {
+            val time = runBenchmark(benchmarkInstance, benchmark, 1)
+            if (time < expectedDuration)
+                autoEvaluatedNumberOfMeasureIteration = (expectedDuration / time).toInt() / 4 * 4
         }
         logger.log("Running benchmark $name ")
         for (k in 0.until(numberOfAttempts)) {

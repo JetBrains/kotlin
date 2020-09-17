@@ -71,9 +71,20 @@ fun geometricMean(values: Collection<Double>, totalNumber: Int = values.size) =
         }
 
 fun computeMeanVariance(samples: List<Double>): MeanVariance {
+    val removedBroadSamples = 0.2
     val zStar = 1.67    // Critical point for 90% confidence of normal distribution.
-    val mean = samples.sum() / samples.size
-    val variance = samples.indices.sumByDouble { (samples[it] - mean) * (samples[it] - mean) } / samples.size
+    // Skip several minimal and maximum values.
+    val filteredSamples = if (samples.size >= 1/removedBroadSamples) {
+         samples.sorted().subList((samples.size * removedBroadSamples).toInt(),
+                samples.size - (samples.size * removedBroadSamples).toInt())
+    } else {
+        samples
+    }
+
+    val mean = filteredSamples.sum() / filteredSamples.size
+    val variance = samples.indices.sumByDouble {
+        (samples[it] - mean) * (samples[it] - mean)
+    } / samples.size
     val confidenceInterval = sqrt(variance / samples.size) * zStar
     return MeanVariance(mean, confidenceInterval)
 }
