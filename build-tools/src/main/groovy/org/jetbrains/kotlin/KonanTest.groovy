@@ -265,6 +265,7 @@ class RunExternalTestGroup extends JavaExec {
         def packages = new LinkedHashSet<String>()
         def imports = []
         def classes = []
+        def vars = new HashSet<String>()  // variables that has the same name as a package
         TestModule mainModule = null
 
         def testFiles = TestDirectivesKt.buildCompileList(project.file("build/$src").toPath(), "$outputDirectory/$src")
@@ -335,11 +336,10 @@ class RunExternalTestGroup extends JavaExec {
             }
             // now replace all package usages in full qualified names
             def res = ""                      // filesToCompile
-            def vars = new HashSet<String>()  // variables that has the same name as a package
             text.eachLine { line ->
                 packages.each { pkg ->
                     // line contains val or var declaration or function parameter declaration
-                    if ((line =~ ~/va(l|r) *$pkg *\=/) || (line =~ ~/fun .*\(\n?\s*$pkg:.*/)) {
+                    if ((line =~ ~/va(l|r) *$pkg *(get\(\))? *\=/) || (line =~ ~/fun .*\(\n?\s*$pkg:.*/)) {
                         vars.add(pkg)
                     }
                     if (line.contains("$pkg.") && !(line =~ packagePattern || line =~ importRegex)
