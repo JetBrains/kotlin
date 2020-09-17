@@ -247,7 +247,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                     val symbol = it.classifierOrFail as IrClassSymbol
                     val isFunctionType = it.run { isFunctionOrKFunction() || isSuspendFunctionOrKFunction() }
                     // TODO: make sure that there is a test which breaks when isExternal is used here instead of isEffectivelyExternal
-                    if (symbol.isInterface && !isFunctionType && !symbol.isEffectivelyExternal) {
+                    if (/*symbol.isInterface && */!it.isAny() && !isFunctionType && !symbol.isEffectivelyExternal) {
                         JsNameRef(context.getNameForClass(symbol.owner))
                     } else null
                 }
