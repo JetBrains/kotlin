@@ -575,6 +575,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/analysis-tests/testData/resolve/arguments/vararg.kt");
         }
 
+        @TestMetadata("varargOfLambdasWithReceiver.kt")
+        public void testVarargOfLambdasWithReceiver() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/arguments/varargOfLambdasWithReceiver.kt");
+        }
+
         @TestMetadata("varargProjection.kt")
         public void testVarargProjection() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/arguments/varargProjection.kt");

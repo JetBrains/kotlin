@@ -46,7 +46,7 @@ fun ConeKotlinType.isKFunctionType(session: FirSession): Boolean {
 }
 
 fun ConeKotlinType.receiverType(expectedTypeRef: FirTypeRef?, session: FirSession): ConeKotlinType? {
-    if (isBuiltinFunctionalType(session) && expectedTypeRef?.isExtensionFunctionType(session) == true) {
+    if (isBuiltinFunctionalType(session) && isExtensionFunctionType(session)) {
         return (this.fullyExpandedType(session).typeArguments.first() as ConeKotlinTypeProjection).type
     }
     return null
@@ -99,7 +99,7 @@ fun extractLambdaInfoFromFunctionalType(
 
     val receiverType = argument.receiverType ?: expectedType.receiverType(expectedTypeRef, session)
     val returnType = argument.returnType ?: expectedType.returnType(session) ?: return null
-    val parameters = extractLambdaParameters(expectedType, argument, expectedTypeRef?.isExtensionFunctionType(session) ?: false, session)
+    val parameters = extractLambdaParameters(expectedType, argument, expectedType.isExtensionFunctionType(session), session)
 
     return ResolvedLambdaAtom(
         argument,
