@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.parcelize
 
 import com.intellij.psi.PsiElement
-import kotlinx.parcelize.Parceler
-import kotlinx.parcelize.Parcelize
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotated
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
@@ -169,11 +169,44 @@ interface ParcelizeSyntheticComponent {
     }
 }
 
-val PARCELIZE_CLASS_FQNAME: FqName = FqName(Parcelize::class.java.canonicalName)
-internal val PARCELER_FQNAME: FqName = FqName(Parceler::class.java.canonicalName)
+val PARCELIZE_CLASS_FQ_NAMES: List<FqName> = listOf(
+    FqName(kotlinx.parcelize.Parcelize::class.java.canonicalName),
+    FqName(kotlinx.android.parcel.Parcelize::class.java.canonicalName)
+)
+
+internal val PARCELER_FQNAME = FqName(kotlinx.parcelize.Parceler::class.java.canonicalName)
 
 val ClassDescriptor.isParcelize: Boolean
-    get() = this.annotations.hasAnnotation(PARCELIZE_CLASS_FQNAME)
+    get() {
+        for (fqName in PARCELIZE_CLASS_FQ_NAMES) {
+            if (this.annotations.hasAnnotation(fqName)) {
+                return true
+            }
+        }
 
-val KotlinType.isParceler
+        return false
+    }
+
+val KotlinType.isParceler: Boolean
     get() = constructor.declarationDescriptor?.fqNameSafe == PARCELER_FQNAME
+
+fun Annotated.findAnyAnnotation(fqNames: List<FqName>): AnnotationDescriptor? {
+    for (fqName in fqNames) {
+        val annotation = annotations.findAnnotation(fqName)
+        if (annotation != null) {
+            return annotation
+        }
+    }
+
+    return null
+}
+
+fun Annotated.hasAnyAnnotation(fqNames: List<FqName>): Boolean {
+    for (fqName in fqNames) {
+        if (annotations.hasAnnotation(fqName)) {
+            return true
+        }
+    }
+
+    return false
+}

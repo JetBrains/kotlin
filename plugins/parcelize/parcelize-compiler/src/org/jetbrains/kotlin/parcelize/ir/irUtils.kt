@@ -8,12 +8,10 @@ package org.jetbrains.kotlin.parcelize.ir
 import org.jetbrains.kotlin.backend.common.ir.allOverridden
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -23,14 +21,14 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.parcelize.ANDROID_PARCELABLE_CLASS_FQNAME
 import org.jetbrains.kotlin.parcelize.ANDROID_PARCELABLE_CREATOR_CLASS_FQNAME
 import org.jetbrains.kotlin.parcelize.PARCELER_FQNAME
-import org.jetbrains.kotlin.parcelize.PARCELIZE_CLASS_FQNAME
+import org.jetbrains.kotlin.parcelize.PARCELIZE_CLASS_FQ_NAMES
 import org.jetbrains.kotlin.parcelize.serializers.ParcelizeExtensionBase
 import org.jetbrains.kotlin.parcelize.serializers.ParcelizeExtensionBase.Companion.CREATOR_NAME
 import org.jetbrains.kotlin.types.Variance
 
 // true if the class should be processed by the parcelize plugin
 val IrClass.isParcelize: Boolean
-    get() = kind in ParcelizeExtensionBase.ALLOWED_CLASS_KINDS && hasAnnotation(PARCELIZE_CLASS_FQNAME)
+    get() = kind in ParcelizeExtensionBase.ALLOWED_CLASS_KINDS && hasAnyAnnotation(PARCELIZE_CLASS_FQ_NAMES)
 
 // Finds the getter for a pre-existing CREATOR field on the class companion, which is used for manual Parcelable implementations in Kotlin.
 val IrClass.creatorGetter: IrSimpleFunctionSymbol?
@@ -175,3 +173,24 @@ fun IrClass.getMethodWithoutArguments(name: String): IrSimpleFunction =
         function.name.asString() == name && function.dispatchReceiverParameter != null
                 && function.extensionReceiverParameter == null && function.valueParameters.isEmpty()
     }
+
+internal fun IrAnnotationContainer.hasAnyAnnotation(fqNames: List<FqName>): Boolean {
+    for (fqName in fqNames) {
+        if (hasAnnotation(fqName)) {
+            return true
+        }
+    }
+
+    return false
+}
+
+internal fun IrAnnotationContainer.getAnyAnnotation(fqNames: List<FqName>): IrConstructorCall? {
+    for (fqName in fqNames) {
+        val annotation = getAnnotation(fqName)
+        if (annotation != null) {
+            return annotation
+        }
+    }
+
+    return null
+}

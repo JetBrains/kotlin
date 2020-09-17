@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.parcelize
 
 import com.intellij.psi.PsiElement
-import kotlinx.parcelize.TypeParceler
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.FunctionGenerationStrategy.CodegenBased
@@ -17,8 +16,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.parcelize.ParcelizeAnnotationChecker.Companion.TYPE_PARCELER_FQ_NAMES
 import org.jetbrains.kotlin.parcelize.ParcelizeResolveExtension.Companion.createMethod
 import org.jetbrains.kotlin.parcelize.ParcelizeSyntheticComponent.ComponentKind.*
 import org.jetbrains.kotlin.parcelize.serializers.*
@@ -427,10 +426,9 @@ open class ParcelizeCodegenExtension : ParcelizeExtensionBase, ExpressionCodegen
 }
 
 internal fun getTypeParcelers(annotations: Annotations): List<TypeParcelerMapping> {
-    val typeParcelerFqName = FqName(TypeParceler::class.java.name)
     val serializers = mutableListOf<TypeParcelerMapping>()
 
-    for (annotation in annotations.filter { it.fqName == typeParcelerFqName }) {
+    for (annotation in annotations.filter { it.fqName in TYPE_PARCELER_FQ_NAMES }) {
         val (mappedType, parcelerType) = annotation.type.arguments.takeIf { it.size == 2 } ?: continue
         serializers += TypeParcelerMapping(mappedType.type, parcelerType.type)
     }

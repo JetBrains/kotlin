@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.parcelize.serializers.RAW_VALUE_ANNOTATION_FQNAME
+import org.jetbrains.kotlin.parcelize.serializers.RAW_VALUE_ANNOTATION_FQ_NAMES
 
 class IrParcelSerializerFactory(symbols: AndroidSymbols) {
     /**
@@ -28,7 +28,7 @@ class IrParcelSerializerFactory(symbols: AndroidSymbols) {
         strict: Boolean = false,
         toplevel: Boolean = false
     ): IrParcelSerializer {
-        fun strict() = strict && !irType.hasAnnotation(RAW_VALUE_ANNOTATION_FQNAME)
+        fun strict() = strict && !irType.hasAnyAnnotation(RAW_VALUE_ANNOTATION_FQ_NAMES)
 
         scope.getCustomSerializer(irType)?.let { parceler ->
             return IrCustomParcelSerializer(parceler)
