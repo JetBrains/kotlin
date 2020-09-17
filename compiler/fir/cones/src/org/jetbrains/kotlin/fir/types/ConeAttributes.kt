@@ -18,11 +18,15 @@ abstract class ConeAttribute<T : ConeAttribute<T>> {
     abstract fun intersect(other: @UnsafeVariance T?): T?
     abstract fun isSubtypeOf(other: @UnsafeVariance T?): Boolean
 
+    abstract override fun toString(): String
+
     abstract val key: KClass<out T>
 }
 
 @OptIn(Protected::class)
-class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : AttributeArrayOwner<ConeAttribute<*>, ConeAttribute<*>>() {
+class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : AttributeArrayOwner<ConeAttribute<*>, ConeAttribute<*>>(),
+    Iterable<ConeAttribute<*>> {
+
     companion object : TypeRegistry<ConeAttribute<*>, ConeAttribute<*>>() {
         inline fun <reified T : ConeAttribute<T>> attributeAccessor(): ReadOnlyProperty<ConeAttributes, T?> {
             @Suppress("UNCHECKED_CAST")
@@ -52,6 +56,10 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
 
     fun intersect(other: ConeAttributes): ConeAttributes {
         return perform(other) { this.intersect(it) }
+    }
+
+    override fun iterator(): Iterator<ConeAttribute<*>> {
+        return arrayMap.iterator()
     }
 
     private inline fun perform(other: ConeAttributes, op: ConeAttribute<*>.(ConeAttribute<*>?) -> ConeAttribute<*>?): ConeAttributes {

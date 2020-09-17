@@ -19,6 +19,8 @@ object CompilerConeAttributes {
         override fun isSubtypeOf(other: Exact?): Boolean = true
 
         override val key: KClass<out Exact> = Exact::class
+
+        override fun toString(): String = "@Exact"
     }
 
     object NoInfer : ConeAttribute<NoInfer>() {
@@ -29,6 +31,8 @@ object CompilerConeAttributes {
         override fun isSubtypeOf(other: NoInfer?): Boolean = true
 
         override val key: KClass<out NoInfer> = NoInfer::class
+
+        override fun toString(): String = "@NoInfer"
     }
 
     object ExtensionFunctionType : ConeAttribute<ExtensionFunctionType>() {
@@ -39,6 +43,8 @@ object CompilerConeAttributes {
         override fun isSubtypeOf(other: ExtensionFunctionType?): Boolean = true
 
         override val key: KClass<out ExtensionFunctionType> = ExtensionFunctionType::class
+
+        override fun toString(): String = "@ExtensionFunctionType"
     }
 
     object UnsafeVariance : ConeAttribute<UnsafeVariance>() {
@@ -49,6 +55,8 @@ object CompilerConeAttributes {
         override fun isSubtypeOf(other: UnsafeVariance?): Boolean = true
 
         override val key: KClass<out UnsafeVariance> = UnsafeVariance::class
+
+        override fun toString(): String = "@UnsafeVariance"
     }
 }
 
