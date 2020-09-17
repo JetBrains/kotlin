@@ -1,0 +1,5 @@
+package
+
+public fun </*0*/ T, /*1*/ VR : T> foo(/*0*/ x: T, /*1*/ fn: (VR?, T) -> kotlin.Unit): kotlin.Unit
+public fun main(/*0*/ x: kotlin.Int): kotlin.Unit
+public fun takeInt(/*0*/ x: kotlin.Int): kotlin.Unit
