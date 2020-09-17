@@ -418,8 +418,6 @@ fun runTest() {
 
         if (excludeList.contains(fileName.replace(File.separator, "/"))) return false
 
-        if (findLinesWithPrefixesRemoved(text, "// WITH_REFLECT").size() != 0) return false
-
         def languageSettings = findLinesWithPrefixesRemoved(text, '// !LANGUAGE: ')
         if (!languageSettings.empty) {
             def settings = languageSettings.first()
