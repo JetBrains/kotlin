@@ -99,6 +99,7 @@ public final class AllInDirectoryGradleConfigurationProducer extends GradleTestR
       configuration.setName(suggestName(configurationData.module));
       performRunnable.run();
     });
+    super.onFirstRun(fromContext, context, performRunnable);
   }
 
   @Nullable

@@ -101,6 +101,7 @@ public final class AllInPackageGradleConfigurationProducer extends GradleTestRun
       configuration.setName(suggestName(configurationData));
         performRunnable.run();
     });
+    super.onFirstRun(fromContext, context, performRunnable);
   }
 
   @Nullable

@@ -124,6 +124,7 @@ public class TestMethodGradleConfigurationProducer extends GradleTestRunConfigur
     };
     if (inheritorChooser.runMethodInAbstractClass(context, performRunnable, psiMethod, psiClass)) return;
     chooseTestClassConfiguration(fromContext, context, performRunnable, psiMethod, psiClass);
+    super.onFirstRun(fromContext, context, performRunnable);
   }
 
   private void chooseTestClassConfiguration(@NotNull ConfigurationFromContext fromContext,

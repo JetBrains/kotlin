@@ -110,6 +110,7 @@ public final class PatternGradleConfigurationProducer extends GradleTestRunConfi
       configuration.setName(suggestConfigurationName(tests));
       performRunnable.run();
     });
+    super.onFirstRun(fromContext, context, performRunnable);
   }
 
   @NotNull

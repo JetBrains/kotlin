@@ -1,10 +1,12 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.execution.test.runner;
 
+import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.actions.ConfigurationFromContext;
 import com.intellij.execution.actions.RunConfigurationProducer;
 import com.intellij.execution.configurations.ConfigurationType;
+import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.model.DataNode;
 import com.intellij.openapi.externalSystem.model.ExternalProjectInfo;
@@ -91,8 +93,39 @@ public abstract class GradleTestRunConfigurationProducer extends RunConfiguratio
       final GradleRunConfiguration gradleRunConfiguration = (GradleRunConfiguration)configuration;
       gradleRunConfiguration.setScriptDebugEnabled(false);
     }
-    return doSetupConfigurationFromContext(configuration, context, sourceElement);
+    boolean result = doSetupConfigurationFromContext(configuration, context, sourceElement);
+    restoreDefaultScriptParametersIfNeeded(configuration, context);
+    return result;
   }
+
+  @Override
+  public void onFirstRun(@NotNull ConfigurationFromContext configuration,
+                         @NotNull ConfigurationContext context,
+                         @NotNull Runnable startRunnable) {
+    restoreDefaultScriptParametersIfNeeded(configuration.getConfiguration(), context);
+  }
+
+  protected void restoreDefaultScriptParametersIfNeeded(@NotNull RunConfiguration configuration,
+                                                        @NotNull ConfigurationContext context) {
+    RunnerAndConfigurationSettings template = context.getRunManager().getConfigurationTemplate(getConfigurationFactory());
+    final RunConfiguration original = template.getConfiguration();
+    if (original instanceof ExternalSystemRunConfiguration
+        && configuration instanceof ExternalSystemRunConfiguration) {
+      ExternalSystemRunConfiguration originalRC = (ExternalSystemRunConfiguration)original;
+      ExternalSystemRunConfiguration configurationRC = (ExternalSystemRunConfiguration)configuration;
+      String currentParams = configurationRC.getSettings().getScriptParameters();
+      String defaultParams = originalRC.getSettings().getScriptParameters();
+
+      if (!StringUtil.isEmptyOrSpaces(defaultParams)) {
+        if (!StringUtil.isEmptyOrSpaces(currentParams)) {
+          configurationRC.getSettings().setScriptParameters(currentParams + " " + defaultParams);
+        } else {
+          configurationRC.getSettings().setScriptParameters(defaultParams);
+        }
+      }
+    }
+  }
+
 
   protected abstract boolean doSetupConfigurationFromContext(ExternalSystemRunConfiguration configuration,
                                                              ConfigurationContext context,

@@ -159,6 +159,7 @@ public class TestClassGradleConfigurationProducer extends GradleTestRunConfigura
     if (inheritorChooser.runMethodInAbstractClass(context, performRunnable, null, (PsiClass)fromContext.getSourceElement())) return;
     PsiClass psiClass = (PsiClass)fromContext.getSourceElement();
     chooseTestClassConfiguration(fromContext, context, performRunnable, psiClass);
+    super.onFirstRun(fromContext, context, performRunnable);
   }
 
   private void chooseTestClassConfiguration(@NotNull ConfigurationFromContext fromContext,

@@ -1,11 +1,14 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.execution.test.runner
 
+import com.intellij.execution.RunManager
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiMethod
+import org.jetbrains.plugins.gradle.service.execution.GradleExternalTaskConfigurationType
+import org.jetbrains.plugins.gradle.service.execution.GradleRunConfiguration
 import org.jetbrains.plugins.gradle.settings.TestRunner
 import org.jetbrains.plugins.gradle.util.runReadActionAndWait
 import org.junit.Test
@@ -227,6 +230,32 @@ class GradleTestRunConfigurationProducerTest : GradleTestRunConfigurationProduce
       getContextByLocation(abstractTestMethod, abstractTestMethod).let {
         assertFalse(producer.setupConfigurationFromContext(templateConfiguration, it, Ref(it.psiLocation)))
       }
+    }
+  }
+
+  @Test
+  fun `test template-defined arguments are kept`() {
+    val projectData = generateAndImportTemplateProject()
+    val gradleRCTemplate = RunManager.getInstance(myProject).getConfigurationTemplate(
+      GradleExternalTaskConfigurationType.getInstance().factory).configuration as? GradleRunConfiguration
+
+    gradleRCTemplate?.settings?.scriptParameters = "-DmyKey=myVal --debug"
+
+    try {
+      assertConfigurationFromContext<TestMethodGradleConfigurationProducer>(
+        """:test --tests "TestCase.test1" -DmyKey=myVal --debug""",
+        projectData["project"]["TestCase"]["test1"].element
+      )
+      assertConfigurationFromContext<TestClassGradleConfigurationProducer>(
+        """:test --tests "TestCase" -DmyKey=myVal --debug""",
+        projectData["project"]["TestCase"].element
+      )
+      assertConfigurationFromContext<AllInPackageGradleConfigurationProducer>(
+        """:test --tests "pkg.*" -DmyKey=myVal --debug""",
+        runReadActionAndWait { projectData["project"]["pkg.TestCase"].element.containingFile.containingDirectory }
+      )
+    } finally {
+      gradleRCTemplate?.settings?.scriptParameters = ""
     }
   }
 }
