@@ -57,6 +57,10 @@ class DeprecatedDocumentableFilterTransformer(val context: DokkaContext) : PreMe
                     modified = modified || listModified
                     list
                 }
+                val typeAliases = filterTypeAliases(pckg.typealiases).let { (listModified, list) ->
+                    modified = modified || listModified
+                    list
+                }
                 when {
                     !modified -> pckg
                     else -> {
@@ -64,7 +68,8 @@ class DeprecatedDocumentableFilterTransformer(val context: DokkaContext) : PreMe
                         pckg.copy(
                             functions = functions,
                             properties = properties,
-                            classlikes = classlikes
+                            classlikes = classlikes,
+                            typealiases = typeAliases
                         )
                     }
                 }
@@ -93,6 +98,11 @@ class DeprecatedDocumentableFilterTransformer(val context: DokkaContext) : PreMe
                     properties = filterProperties(entry.properties).second,
                     classlikes = filterClasslikes(entry.classlikes).second,
                 )
+            }
+
+        private fun filterTypeAliases(typeAliases: List<DTypeAlias>) =
+            typeAliases.filter { it.isAllowedInPackage() }.let {
+                Pair(typeAliases.size != it.size, it)
             }
 
         private fun filterClasslikes(
