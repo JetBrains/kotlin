@@ -242,7 +242,7 @@ fun IrValueParameter.toIrBasedDescriptor() =
         IrBasedValueParameterDescriptor(this)
 
 open class IrBasedTypeParameterDescriptor(owner: IrTypeParameter) : TypeParameterDescriptor,
-    IrBasedCallableDescriptor<IrTypeParameter>(owner) {
+    IrBasedDeclarationDescriptor<IrTypeParameter>(owner) {
     override fun getName() = owner.name
 
     override fun isReified() = owner.isReified
@@ -272,6 +272,8 @@ open class IrBasedTypeParameterDescriptor(owner: IrTypeParameter) : TypeParamete
     override fun getTypeConstructor() = _typeConstructor
 
     override fun getOriginal() = this
+
+    override fun getSource() = SourceElement.NO_SOURCE
 
     override fun getIndex() = owner.index
 

@@ -236,7 +236,7 @@ open class WrappedReceiverParameterDescriptor : ReceiverParameterDescriptor, Wra
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-open class WrappedTypeParameterDescriptor : TypeParameterDescriptor, WrappedCallableDescriptor<IrTypeParameter>() {
+open class WrappedTypeParameterDescriptor : TypeParameterDescriptor, WrappedDeclarationDescriptor<IrTypeParameter>() {
     override fun getName() = owner.name
 
     override fun isReified() = owner.isReified
@@ -266,6 +266,8 @@ open class WrappedTypeParameterDescriptor : TypeParameterDescriptor, WrappedCall
     override fun getTypeConstructor() = _typeConstructor
 
     override fun getOriginal() = this
+
+    override fun getSource() = SourceElement.NO_SOURCE
 
     override fun getIndex() = owner.index
 
