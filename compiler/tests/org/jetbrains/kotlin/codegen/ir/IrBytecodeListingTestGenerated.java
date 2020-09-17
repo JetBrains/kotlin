@@ -764,6 +764,21 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
         }
 
+        @TestMetadata("abstractLists.kt")
+        public void testAbstractLists() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/specialBridges/abstractLists.kt");
+        }
+
+        @TestMetadata("abstractListsWithJavaBase.kt")
+        public void testAbstractListsWithJavaBase() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/specialBridges/abstractListsWithJavaBase.kt");
+        }
+
+        @TestMetadata("abstractMutableLists.kt")
+        public void testAbstractMutableLists() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/specialBridges/abstractMutableLists.kt");
+        }
+
         public void testAllFilesPresentInSpecialBridges() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/specialBridges"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }

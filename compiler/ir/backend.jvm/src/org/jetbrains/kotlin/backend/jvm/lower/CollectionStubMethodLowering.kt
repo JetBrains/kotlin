@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -54,21 +55,86 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
 
         for (member in methodStubsToGenerate) {
             val signature = member.toJvmSignature()
-            val existingMethod = existingMethodsBySignature[signature] // TODO KT-41915
+            val existingMethod = existingMethodsBySignature[signature]
             if (existingMethod != null && areEquivalentSignatures(existingMethod, member)) {
                 // In the case that we find a defined method that matches the stub signature, we add the overridden symbols to that
                 // defined method, so that bridge lowering can still generate correct bridge for that method
                 existingMethod.overriddenSymbols += member.overriddenSymbols
             } else {
-                irClass.declarations.add(member.hackRemoveMethodIfRequired())
+                // Some stub members require special handling.
+                // In both 'remove' and 'removeAt' cases there are no other member functions with same name in built-in mutable collection
+                // classes, so it's safe to check for the member name itself.
+                when (member.name.asString()) {
+                    "remove" -> {
+                        //  - 'remove' member functions:
+                        //          kotlin.collections.MutableCollection<E>#remove(E): Boolean
+                        //          kotlin.collections.MutableMap<K, V>#remove(K): V?
+                        //      We've checked that corresponding 'remove(T)' member function is not present in the class.
+                        //      We should add a member function that overrides, respectively:
+                        //          java.util.Collection<E>#remove(Object): boolean
+                        //          java.util.Map<K, V>#remove(K): V
+                        //      This corresponds to replacing value parameter types with 'Any?'.
+                        irClass.declarations.add(member.apply {
+                            valueParameters = valueParameters.map {
+                                it.copyWithCustomTypeSubstitution(this) { context.irBuiltIns.anyNType }
+                            }
+                        })
+                    }
+                    "removeAt" -> {
+                        //  - 'removeAt' member function:
+                        //          kotlin.collections.MutableList<E>#removeAt(Int): E
+                        //      We've checked that corresponding 'removeAt(Int)' member function is not present in the class
+                        //      (if it IS present, special bridges for 'remove(I)' would be generated later in BridgeLowering).
+                        //      We can't add 'removeAt' here, because it would be different from what old back-end generates
+                        //      and can break existing Java and/or Kotlin code.
+                        //      We should add a member function that overrides
+                        //          java.util.List<E>#remove(int): E
+                        //      and throws UnsupportedOperationException, just like any other stub.
+                        //      Also, we should generate a bridge for it if required.
+                        val removeIntFun = createRemoveAtStub(member, member.returnType, IrDeclarationOrigin.IR_BUILTINS_STUB)
+                        irClass.declarations.add(removeIntFun)
+                        val removeIntBridgeFun = createRemoveAtStub(member, context.irBuiltIns.anyNType, IrDeclarationOrigin.BRIDGE)
+                        if (removeIntBridgeFun.toJvmSignature() != removeIntFun.toJvmSignature()) {
+                            irClass.declarations.add(removeIntBridgeFun)
+                        }
+                    }
+                    else ->
+                        irClass.declarations.add(member)
+                }
+
             }
+        }
+    }
+
+    private fun createRemoveAtStub(
+        removeAtStub: IrSimpleFunction,
+        stubReturnType: IrType,
+        stubOrigin: IrDeclarationOrigin
+    ): IrSimpleFunction {
+        return context.irFactory.buildFun {
+            name = Name.identifier("remove")
+            returnType = stubReturnType
+            visibility = removeAtStub.visibility
+            origin = stubOrigin
+            modality = Modality.OPEN
+        }.apply {
+            // NB stub method for 'remove(int)' doesn't override any built-in Kotlin declaration
+            parent = removeAtStub.parent
+            dispatchReceiverParameter = removeAtStub.dispatchReceiverParameter?.copyWithCustomTypeSubstitution(this) { it }
+            extensionReceiverParameter = null
+            valueParameters = removeAtStub.valueParameters.map { stubParameter ->
+                stubParameter.copyWithCustomTypeSubstitution(this) { it }
+            }
+            body = createThrowingStubBody(this)
         }
     }
 
     private fun IrSimpleFunction.toJvmSignature(): String = collectionStubComputer.getJvmSignature(this)
 
     private fun createStubMethod(
-        function: IrSimpleFunction, irClass: IrClass, substitutionMap: Map<IrTypeParameterSymbol, IrType>
+        function: IrSimpleFunction,
+        irClass: IrClass,
+        substitutionMap: Map<IrTypeParameterSymbol, IrType>
     ): IrSimpleFunction {
         return context.irFactory.buildFun {
             name = function.name
@@ -84,16 +150,18 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
             dispatchReceiverParameter = function.dispatchReceiverParameter?.copyWithSubstitution(this, substitutionMap)
             extensionReceiverParameter = function.extensionReceiverParameter?.copyWithSubstitution(this, substitutionMap)
             valueParameters = function.valueParameters.map { it.copyWithSubstitution(this, substitutionMap) }
-            // Function body consist only of throwing UnsupportedOperationException statement
-            body = context.createIrBuilder(function.symbol).irBlockBody {
-                +irCall(
-                    this@CollectionStubMethodLowering.context.ir.symbols.throwUnsupportedOperationException
-                ).apply {
-                    putValueArgument(0, irString("Operation is not supported for read-only collection"))
-                }
-            }
+            body = createThrowingStubBody(this)
         }
     }
+
+    private fun createThrowingStubBody(function: IrSimpleFunction) =
+        context.createIrBuilder(function.symbol).irBlockBody {
+            // Function body consist only of throwing UnsupportedOperationException statement
+            +irCall(this@CollectionStubMethodLowering.context.ir.symbols.throwUnsupportedOperationException)
+                .apply {
+                    putValueArgument(0, irString("Operation is not supported for read-only collection"))
+                }
+        }
 
     private fun areEquivalentSignatures(fun1: IrSimpleFunction, fun2: IrSimpleFunction): Boolean {
         if (fun1.typeParameters.size != fun2.typeParameters.size) return false

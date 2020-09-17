@@ -5033,6 +5033,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/collections/readOnlyMap.kt");
         }
 
+        @TestMetadata("removeAtBridgeClashWithJava.kt")
+        public void testRemoveAtBridgeClashWithJava() throws Exception {
+            runTest("compiler/testData/codegen/box/collections/removeAtBridgeClashWithJava.kt");
+        }
+
         @TestMetadata("removeAtInt.kt")
         public void testRemoveAtInt() throws Exception {
             runTest("compiler/testData/codegen/box/collections/removeAtInt.kt");
