@@ -93,7 +93,7 @@ ext.manifestAttributes = { Manifest manifest, Project project, String component 
         attributes \
                 'Implementation-Vendor': 'JetBrains',
                 'Implementation-Title': project.archivesBaseName,
-                'Implementation-Version': project.buildNumber
+                'Implementation-Version': '1.4.10'
 
         if (component != null) {
             attributes \
