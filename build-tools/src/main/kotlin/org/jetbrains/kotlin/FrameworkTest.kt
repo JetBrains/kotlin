@@ -6,6 +6,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Task
 import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 
@@ -39,6 +40,9 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
     var codesign: Boolean = true
 
     val testOutput: String = project.testOutputFramework
+
+    @Input @Optional
+    var expectedExitStatus: Int? = null
 
     /**
      * Framework description.
@@ -229,7 +233,7 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
             |stdout: $stdOut
             |stderr: $stdErr
             """.trimMargin())
-        check(exitCode == 0) { "Execution of $testExecName failed with exit code: $exitCode " }
+        check(exitCode == expectedExitStatus ?: 0) { "Execution of $testExecName failed with exit code: $exitCode " }
     }
 
     private fun validateBitcodeEmbedding(frameworkBinary: String) {
