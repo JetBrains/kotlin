@@ -2,6 +2,9 @@
 <component name="libraryTable">
   <library name="Java Compatibility" type="repository">
     <properties maven-id="org.jetbrains.intellij.deps:java-compatibility:1.0.1" />
+    <ANNOTATIONS>
+      <root url="file://$PROJECT_DIR$/intellij/java/jdkAnnotations" />
+    </ANNOTATIONS>
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/java-compatibility/1.0.1/java-compatibility-1.0.1.jar!/" />
     </CLASSES>

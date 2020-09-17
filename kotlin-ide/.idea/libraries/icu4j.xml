@@ -3,7 +3,7 @@
   <library name="icu4j" type="repository">
     <properties maven-id="com.ibm.icu:icu4j:67.1" />
     <ANNOTATIONS>
-      <root url="file://$PROJECT_DIR$/intellij/community/lib/annotations/icu4j" />
+      <root url="file://$PROJECT_DIR$/intellij/lib/annotations/icu4j" />
     </ANNOTATIONS>
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/com/ibm/icu/icu4j/67.1/icu4j-67.1.jar!/" />
