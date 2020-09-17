@@ -11,17 +11,16 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.DiagnosticsCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirElementBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
-import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.PsiToFirCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
-import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FileStructureCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeProvider
-import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeCurrentModuleSourcesSession
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeDependentModulesSourcesSession
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeLibrariesSession
@@ -45,16 +44,13 @@ abstract class FirModuleResolveState {
     // todo temporary, used only in completion
     abstract fun recordPsiToFirMappingsForCompletionFrom(fir: FirDeclaration, firFile: FirFile, ktFile: KtFile)
 
-    // todo temporary, used only in completion
-    abstract fun getCachedMappingForCompletion(element: KtElement): FirElement?
-
     abstract fun <D : FirDeclaration> resolvedFirToPhase(declaration: D, toPhase: FirResolvePhase): D
 
     // todo temporary, used only in completion
-    internal abstract fun lazyResolveDeclarationForCompletion(
+    abstract fun lazyResolveDeclarationForCompletion(
         firFunction: FirDeclaration,
         containerFirFile: FirFile,
-        firIdeProvider: FirIdeProvider,
+        firIdeProvider: FirProvider,
         toPhase: FirResolvePhase,
         towerDataContextCollector: FirTowerDataContextCollector
     )
@@ -71,22 +67,21 @@ internal class FirModuleResolveStateImpl(
     val firFileBuilder: FirFileBuilder,
     val firLazyDeclarationResolver: FirLazyDeclarationResolver,
 ) : FirModuleResolveState() {
-    val psiToFirCache = PsiToFirCache(currentModuleSourcesSession.cache)
-    val elementBuilder = FirElementBuilder(firFileBuilder, firLazyDeclarationResolver)
-    private val diagnosticsCollector =
-        DiagnosticsCollector(firFileBuilder, elementBuilder, psiToFirCache, currentModuleSourcesSession.cache)
+    val fileStructureCache = FileStructureCache(firFileBuilder, firLazyDeclarationResolver)
+    val elementBuilder = FirElementBuilder()
+    private val diagnosticsCollector = DiagnosticsCollector(fileStructureCache, currentModuleSourcesSession.cache)
 
     override fun getSessionFor(moduleInfo: IdeaModuleInfo): FirSession =
         sessionProvider.getSession(moduleInfo)
 
     override fun getOrBuildFirFor(element: KtElement, toPhase: FirResolvePhase): FirElement =
-        elementBuilder.getOrBuildFirFor(element, currentModuleSourcesSession.cache, psiToFirCache, toPhase)
+        elementBuilder.getOrBuildFirFor(element, currentModuleSourcesSession.cache, fileStructureCache)
 
     override fun getDiagnostics(element: KtElement): List<Diagnostic> =
         diagnosticsCollector.getDiagnosticsFor(element)
 
     override fun recordPsiToFirMappingsForCompletionFrom(fir: FirDeclaration, firFile: FirFile, ktFile: KtFile) {
-        psiToFirCache.recordElementsForCompletionFrom(fir, firFile, ktFile)
+        error("Should be called only from FirModuleResolveStateForCompletion")
     }
 
     override fun <D : FirDeclaration> resolvedFirToPhase(declaration: D, toPhase: FirResolvePhase): D {
@@ -98,13 +93,10 @@ internal class FirModuleResolveStateImpl(
         return declaration
     }
 
-    override fun getCachedMappingForCompletion(element: KtElement): FirElement? =
-        psiToFirCache.getCachedMapping(element)
-
     override fun lazyResolveDeclarationForCompletion(
         firFunction: FirDeclaration,
         containerFirFile: FirFile,
-        firIdeProvider: FirIdeProvider,
+        firIdeProvider: FirProvider,
         toPhase: FirResolvePhase,
         towerDataContextCollector: FirTowerDataContextCollector
     ) {
@@ -113,6 +105,7 @@ internal class FirModuleResolveStateImpl(
             currentModuleSourcesSession.cache,
             containerFirFile,
             firIdeProvider,
+            fromPhase = firFunction.resolvePhase,
             toPhase,
             towerDataContextCollector,
             checkPCE = false

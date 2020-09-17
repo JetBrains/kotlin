@@ -5,31 +5,22 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.element.builder
 
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
+import org.jetbrains.kotlin.psi.KtElement
 
-internal class FirTowerDataContextCollector {
-    private val state: MutableMap<FirElement, FirTowerDataContext> = mutableMapOf()
+class FirTowerDataContextCollector {
+    private val state: MutableMap<KtElement, FirTowerDataContext> = mutableMapOf()
 
     fun addStatementContext(statement: FirStatement, context: FirTowerDataContext) {
-        state[statement] = context
+        (statement.psi as? KtElement)?.let { state[it] = context }
     }
 
     fun addDeclarationContext(declaration: FirDeclaration, context: FirTowerDataContext) {
-        state[declaration] = context
+        (declaration.psi as? KtElement)?.let { state[it] = context }
     }
 
-    fun getContext(statement: FirElement): FirTowerDataContext? {
-        this.state[statement]?.let { return it }
-        for ((key, value) in this.state) {
-            // TODO Rework that
-            if (key.psi == statement.psi) {
-                return value
-            }
-        }
-        return null
-    }
+    fun getContext(psi: KtElement): FirTowerDataContext? = state[psi]
 }

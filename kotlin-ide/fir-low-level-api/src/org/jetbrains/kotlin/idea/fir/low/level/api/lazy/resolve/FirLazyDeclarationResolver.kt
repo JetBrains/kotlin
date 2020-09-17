@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirDesignatedBodyResolveTransformerForIDE
-import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getNonLocalContainingDeclarationWithFqName
+import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
@@ -31,12 +31,14 @@ internal class FirLazyDeclarationResolver(
         moduleFileCache: ModuleFileCache,
         toPhase: FirResolvePhase,
         towerDataContextCollector: FirTowerDataContextCollector? = null,
-        checkPCE: Boolean = false
+        checkPCE: Boolean = false,
+        reresolveFile: Boolean = false,
     ) {
         if (declaration.resolvePhase >= toPhase) return
         val firFile = declaration.getContainingFile()
             ?: error("FirFile was not found for\n${declaration.render()}")
         val provider = firFile.session.firIdeProvider
+        val fromPhase = if (reresolveFile) declaration.resolvePhase else minOf(firFile.resolvePhase, declaration.resolvePhase)
         if (checkPCE) {
             firFileBuilder.runCustomResolveWithPCECheck(firFile, moduleFileCache) {
                 runLazyResolveWithoutLock(
@@ -44,6 +46,7 @@ internal class FirLazyDeclarationResolver(
                     moduleFileCache,
                     firFile,
                     provider,
+                    fromPhase,
                     toPhase,
                     towerDataContextCollector,
                     checkPCE = true
@@ -57,6 +60,7 @@ internal class FirLazyDeclarationResolver(
                         moduleFileCache,
                         firFile,
                         provider,
+                        fromPhase,
                         toPhase,
                         towerDataContextCollector,
                         checkPCE = false
@@ -71,16 +75,17 @@ internal class FirLazyDeclarationResolver(
         moduleFileCache: ModuleFileCache,
         containerFirFile: FirFile,
         provider: FirProvider,
+        fromPhase: FirResolvePhase,
         toPhase: FirResolvePhase,
         towerDataContextCollector: FirTowerDataContextCollector? = null,
-        checkPCE: Boolean
+        checkPCE: Boolean,
     ) {
-        if (firDeclarationToResolve.resolvePhase >= toPhase) return
+        if (fromPhase >= toPhase) return
         val nonLazyPhase = minOf(toPhase, FirResolvePhase.DECLARATIONS)
-        if (firDeclarationToResolve.resolvePhase < nonLazyPhase) {
+        if (fromPhase < nonLazyPhase) {
             firFileBuilder.runResolveWithoutLock(
                 containerFirFile,
-                fromPhase = firDeclarationToResolve.resolvePhase,
+                fromPhase = fromPhase,
                 toPhase = nonLazyPhase,
                 checkPCE = checkPCE
             )
@@ -106,7 +111,7 @@ internal class FirLazyDeclarationResolver(
                 is FirCallableDeclaration<*> -> {
                     nonLocalDeclarationToResolve.symbol.callableId.classId
                 }
-                is FirRegularClass -> {
+                is FirClassLikeDeclaration<*> -> {
                     nonLocalDeclarationToResolve.symbol.classId
                 }
                 else -> error("Unsupported: ${nonLocalDeclarationToResolve.render()}")
@@ -126,7 +131,7 @@ internal class FirLazyDeclarationResolver(
         val transformer = FirDesignatedBodyResolveTransformerForIDE(
             designation.iterator(), containerFirFile.session,
             scopeSession,
-            implicitTypeOnly = toPhase == FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
+            toPhase,
             towerDataContextCollector
         )
         executeWithoutPCE {
@@ -138,7 +143,7 @@ internal class FirLazyDeclarationResolver(
         if (this is FirFile) return this
         val ktDeclaration = psi as? KtDeclaration ?: error("FirDeclaration should have a PSI of type KtDeclaration")
         if (!KtPsiUtil.isLocal(ktDeclaration)) return this
-        val nonLocalPsi = ktDeclaration.getNonLocalContainingDeclarationWithFqName()
+        val nonLocalPsi = ktDeclaration.getNonLocalContainingOrThisDeclaration()
             ?: error("Container for local declaration cannot be null")
         return nonLocalPsi.findNonLocalFirDeclaration(firFileBuilder, provider, moduleFileCache)
     }

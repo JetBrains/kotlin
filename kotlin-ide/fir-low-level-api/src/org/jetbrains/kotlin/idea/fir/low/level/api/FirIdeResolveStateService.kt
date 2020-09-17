@@ -14,6 +14,8 @@ import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
+import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener
+import org.jetbrains.kotlin.idea.caches.trackers.KotlinModuleOutOfCodeBlockModificationTracker
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeDependentModulesSourcesSession
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeLibrariesSession
@@ -25,7 +27,7 @@ import org.jetbrains.kotlin.idea.util.psiModificationTrackerBasedCachedValue
 import java.util.concurrent.ConcurrentHashMap
 
 internal class FirIdeResolveStateService(private val project: Project) {
-    private val stateCache by psiModificationTrackerBasedCachedValue(project) {
+    private val stateCache by cachedValue(project, KotlinCodeBlockModificationListener.getInstance(project).kotlinOutOfCodeBlockTracker) {
         ConcurrentHashMap<IdeaModuleInfo, FirModuleResolveStateImpl>()
     }
 
@@ -34,7 +36,6 @@ internal class FirIdeResolveStateService(private val project: Project) {
     private val librarySessionCache by cachedValue(project, LibraryModificationTracker.getInstance(project)) {
         ConcurrentHashMap<IdeaModuleInfo, FirIdeLibrariesSession>()
     }
-
 
     private fun createResolveStateFor(moduleInfo: IdeaModuleInfo): FirModuleResolveStateImpl {
         require(moduleInfo is ModuleSourceInfo)

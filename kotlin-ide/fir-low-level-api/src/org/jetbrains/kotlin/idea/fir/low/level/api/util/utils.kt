@@ -52,10 +52,6 @@ internal inline fun checkCanceled() {
 internal val FirElement.isErrorElement
     get() = this is FirDiagnosticHolder
 
-@Suppress("NOTHING_TO_INLINE")
-internal inline fun <K, V> MutableMap<K, MutableList<V>>.addValueFor(element: K, value: V) {
-    getOrPut(element) { mutableListOf() } += value
-}
 
 internal fun IdeaModuleInfo.collectTransitiveDependenciesWithSelf(): List<IdeaModuleInfo> {
     val result = mutableSetOf<IdeaModuleInfo>()
