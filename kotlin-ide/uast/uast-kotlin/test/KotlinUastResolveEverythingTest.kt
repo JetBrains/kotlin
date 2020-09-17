@@ -5,9 +5,15 @@
 
 package org.jetbrains.uast.test.kotlin
 
+import org.jetbrains.uast.UFile
 import org.junit.Test
 
-class KotlinUastResolveEverythingTest : AbstractKotlinResolveEverythingTest() {
+
+class KotlinUastResolveEverythingTest : AbstractKotlinUastTest(), ResolveEverythingTestBase {
+
+    override fun check(testName: String, file: UFile) {
+        super.check(testName, file)
+    }
 
     @Test
     fun testClassAnnotation() = doTest("ClassAnnotation")

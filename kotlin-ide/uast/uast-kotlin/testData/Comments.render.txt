@@ -1,0 +1,27 @@
+public abstract interface Pizza {
+    public abstract fun getSize() : int = UastEmptyExpression
+    public abstract fun getName() : java.lang.String = UastEmptyExpression
+    public abstract fun contains(@org.jetbrains.annotations.NotNull ingredient: Pizza.Ingredient) : boolean = UastEmptyExpression
+    public static abstract interface Ingredient {
+    }
+    public static abstract class Builder {
+        @org.jetbrains.annotations.NotNull private final var ingredients: java.util.Set<Pizza.Ingredient> = mutableSetOf()
+        public abstract fun addIngredient(@org.jetbrains.annotations.NotNull ingredient: Pizza.Ingredient) : P = UastEmptyExpression
+        public abstract fun build() : Pizza = UastEmptyExpression
+        protected abstract fun self() : P = UastEmptyExpression
+        public fun Builder() = UastEmptyExpression
+    }
+}
+
+public final class Margherita : Pizza {
+    @org.jetbrains.annotations.NotNull private final var size: int = 42
+    public fun getName() : java.lang.String {
+        return java.lang.<init>("Margherita")
+    }
+    public fun contains(@org.jetbrains.annotations.NotNull ingredient: Pizza.Ingredient) : boolean {
+        return false
+    }
+    public fun getSize() : int = UastEmptyExpression
+    public fun Margherita(@org.jetbrains.annotations.NotNull size: int) = UastEmptyExpression
+    public fun Margherita() = UastEmptyExpression
+}

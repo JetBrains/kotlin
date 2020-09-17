@@ -22,10 +22,12 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UIdentifier
+import org.jetbrains.uast.kotlin.createKDocNameSimpleNameReference
 import org.jetbrains.uast.kotlin.unwrapFakeFileForLightClass
 import org.jetbrains.uast.toUElement
 
@@ -62,7 +64,11 @@ class KotlinUIdentifier constructor(
     override val uastParent: UElement? by lazy {
         if (givenParent != null) return@lazy givenParent
         val parent = sourcePsi?.parent ?: return@lazy null
-        getIdentifierParentForCall(parent) ?: parent.toUElement()
+
+        return@lazy if (parent is KDocName && parent.getQualifier() != null) // e.g. for UElement in org.jetbrains.uast.UElement
+            createKDocNameSimpleNameReference(parentKDocName = parent, givenParent = null)
+        else
+            getIdentifierParentForCall(parent) ?: parent.toUElement()
     }
 
     private fun getIdentifierParentForCall(parent: PsiElement): UElement? {

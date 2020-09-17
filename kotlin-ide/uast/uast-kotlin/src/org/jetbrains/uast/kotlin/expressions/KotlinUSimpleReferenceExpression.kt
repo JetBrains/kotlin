@@ -20,6 +20,7 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -32,6 +33,7 @@ import org.jetbrains.uast.internal.acceptList
 import org.jetbrains.uast.internal.log
 import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 import org.jetbrains.uast.kotlin.internal.DelegatedMultiResolve
+import org.jetbrains.uast.kotlin.internal.multiResolveResults
 import org.jetbrains.uast.visitor.UastVisitor
 
 open class KotlinUSimpleReferenceExpression(
@@ -189,7 +191,7 @@ class KotlinClassViaConstructorUSimpleReferenceExpression(
     override fun resolve(): PsiElement? = resolved
 
     override fun asLogString(): String {
-        val resolveStr = when(val resolved = resolve()){
+        val resolveStr = when (val resolved = resolve()) {
             is PsiClass -> "PsiClass: ${resolved.name}"
             is PsiMethod -> "PsiMethod: ${resolved.name}"
             else -> resolved.toString()
@@ -205,12 +207,24 @@ class KotlinClassViaConstructorUSimpleReferenceExpression(
 
 class KotlinStringUSimpleReferenceExpression(
     override val identifier: String,
-    givenParent: UElement?
-) : KotlinAbstractUExpression(givenParent), USimpleNameReferenceExpression {
+    givenParent: UElement?,
+    override val sourcePsi: PsiElement? = null,
+    private val referenceAnchor: KtElement? = null
+) : KotlinAbstractUExpression(givenParent), USimpleNameReferenceExpression, UMultiResolvable {
     override val psi: PsiElement?
         get() = null
 
-    override fun resolve() = null
-    override val resolvedName: String?
-        get() = identifier
+    private val resolved by lz { referenceAnchor?.references?.singleOrNull()?.resolve() }
+
+    override fun resolve() = resolved
+
+    override val resolvedName: String
+        get() = (resolved as? PsiNamedElement)?.name ?: identifier
+
+    override fun multiResolve(): Iterable<ResolveResult> = referenceAnchor?.multiResolveResults().orEmpty().asIterable()
 }
+
+internal fun createKDocNameSimpleNameReference(parentKDocName: KDocName, givenParent: UElement?): USimpleNameReferenceExpression? =
+    parentKDocName.lastChild?.let { psiIdentifier ->
+        KotlinStringUSimpleReferenceExpression(psiIdentifier.text, givenParent, psiIdentifier, parentKDocName)
+    }

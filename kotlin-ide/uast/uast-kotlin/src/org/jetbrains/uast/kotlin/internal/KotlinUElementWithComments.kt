@@ -20,17 +20,19 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.psi.KtValueArgument
+import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.uast.UComment
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UExpression
+import org.jetbrains.uast.UParameter
 
 interface KotlinUElementWithComments : UElement {
 
     override val comments: List<UComment>
         get() {
             val psi = sourcePsi ?: return emptyList()
-            val childrenComments = psi.children.filterIsInstance<PsiComment>().map { UComment(it, this) }
-            if (this !is UExpression) return childrenComments
+            val childrenComments = psi.allChildren.filterIsInstance<PsiComment>().map { UComment(it, this) }.toList()
+            if (this !is UExpression && this !is UParameter) return childrenComments
             val childrenAndSiblingComments = childrenComments +
                     psi.nearestCommentSibling(forward = true)?.let { listOf(UComment(it, this)) }.orEmpty() +
                     psi.nearestCommentSibling(forward = false)?.let { listOf(UComment(it, this)) }.orEmpty()

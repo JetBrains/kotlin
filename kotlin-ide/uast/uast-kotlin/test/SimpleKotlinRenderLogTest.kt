@@ -153,6 +153,9 @@ class SimpleKotlinRenderLogTest : AbstractKotlinUastTest(), AbstractKotlinRender
 
     @Test
     fun testTypeAliasExpansionWithOtherAliasInArgument() = doTest("TypeAliasExpansionWithOtherAliasInArgument")
+
+    @Test
+    fun testComments() = doTest("Comments")
 }
 
 fun withForceUInjectionHostValue(call: () -> Unit) {

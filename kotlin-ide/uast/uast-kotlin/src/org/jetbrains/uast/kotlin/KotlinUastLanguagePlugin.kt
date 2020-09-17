@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -277,6 +278,15 @@ internal object KotlinConverter {
                 }
             is KtImportDirective -> el<UImportStatement>(build(::KotlinUImportStatement))
             is PsiComment -> el<UComment>(build(::UComment))
+            is KDocName -> {
+                if (element.getQualifier() == null)
+                    el<USimpleNameReferenceExpression> {
+                        element.lastChild?.let { psiIdentifier ->
+                            KotlinStringUSimpleReferenceExpression(psiIdentifier.text, givenParent, element, element)
+                        }
+                    }
+                else el<UQualifiedReferenceExpression>(build(::KotlinDocUQualifiedReferenceExpression))
+            }
             else -> {
                 if (element is LeafPsiElement) {
                     if (element.elementType in identifiersTokens)

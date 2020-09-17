@@ -6,10 +6,12 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.openapi.util.registry.Registry
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.*
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.uast.*
 import org.jetbrains.uast.expressions.UInjectionHost
@@ -247,6 +249,7 @@ private val possibleSourceTypes = mapOf<Class<*>, ClassSet<PsiElement>>(
         KtObjectDeclaration::class.java
     ),
     UComment::class.java to classSetOf<PsiElement>(
+        PsiComment::class.java
     ),
     UContinueExpression::class.java to classSetOf<PsiElement>(
         KtContinueExpression::class.java
@@ -305,6 +308,7 @@ private val possibleSourceTypes = mapOf<Class<*>, ClassSet<PsiElement>>(
     ),
     UElement::class.java to classSetOf<PsiElement>(
         FakeFileForLightClass::class.java,
+        KDocName::class.java,
         KtAnnotatedExpression::class.java,
         KtAnnotationEntry::class.java,
         KtArrayAccessExpression::class.java,
@@ -386,6 +390,7 @@ private val possibleSourceTypes = mapOf<Class<*>, ClassSet<PsiElement>>(
         KtWhenExpression::class.java,
         KtWhileExpression::class.java,
         LeafPsiElement::class.java,
+        PsiComment::class.java,
         UastFakeLightMethod::class.java,
         UastFakeLightPrimaryConstructor::class.java,
         UastKotlinPsiParameter::class.java,
@@ -403,6 +408,7 @@ private val possibleSourceTypes = mapOf<Class<*>, ClassSet<PsiElement>>(
         KtLightField::class.java
     ),
     UExpression::class.java to classSetOf<PsiElement>(
+        KDocName::class.java,
         KtAnnotatedExpression::class.java,
         KtArrayAccessExpression::class.java,
         KtBinaryExpression::class.java,
@@ -602,6 +608,7 @@ private val possibleSourceTypes = mapOf<Class<*>, ClassSet<PsiElement>>(
         UastFakeLightPrimaryConstructor::class.java
     ),
     UMultiResolvable::class.java to classSetOf<PsiElement>(
+        KDocName::class.java,
         KtAnnotatedExpression::class.java,
         KtAnnotationEntry::class.java,
         KtBlockStringTemplateEntry::class.java,
@@ -668,6 +675,7 @@ private val possibleSourceTypes = mapOf<Class<*>, ClassSet<PsiElement>>(
         KtWhenConditionWithExpression::class.java
     ),
     UQualifiedReferenceExpression::class.java to classSetOf<PsiElement>(
+        KDocName::class.java,
         KtAnnotatedExpression::class.java,
         KtBlockStringTemplateEntry::class.java,
         KtDotQualifiedExpression::class.java,
@@ -676,6 +684,7 @@ private val possibleSourceTypes = mapOf<Class<*>, ClassSet<PsiElement>>(
         KtWhenConditionWithExpression::class.java
     ),
     UReferenceExpression::class.java to classSetOf<PsiElement>(
+        KDocName::class.java,
         KtAnnotatedExpression::class.java,
         KtBlockStringTemplateEntry::class.java,
         KtCallableReferenceExpression::class.java,
@@ -690,6 +699,7 @@ private val possibleSourceTypes = mapOf<Class<*>, ClassSet<PsiElement>>(
         KtWhenConditionWithExpression::class.java
     ),
     UResolvable::class.java to classSetOf<PsiElement>(
+        KDocName::class.java,
         KtAnnotatedExpression::class.java,
         KtAnnotationEntry::class.java,
         KtBlockStringTemplateEntry::class.java,
@@ -721,6 +731,7 @@ private val possibleSourceTypes = mapOf<Class<*>, ClassSet<PsiElement>>(
         KtReturnExpression::class.java
     ),
     USimpleNameReferenceExpression::class.java to classSetOf<PsiElement>(
+        KDocName::class.java,
         KtAnnotatedExpression::class.java,
         KtBlockStringTemplateEntry::class.java,
         KtEnumEntrySuperclassReferenceExpression::class.java,

@@ -16,6 +16,9 @@ class KotlinUastIdentifiersTest : AbstractKotlinIdentifiersTest() {
     fun testLocalDeclarations() = doTest("LocalDeclarations")
 
     @Test
+    fun testComments() = doTest("Comments")
+
+    @Test
     fun testConstructors() = doTest("Constructors")
 
     @Test

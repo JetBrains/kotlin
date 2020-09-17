@@ -397,7 +397,7 @@ private fun resolveToPsiClass(uElement: () -> UElement?, declarationDescriptor: 
         else -> null
     }?.toPsiType(uElement.invoke(), context, true).let { PsiTypesUtil.getPsiClass(it) }
 
-private fun DeclarationDescriptor.toSource(): PsiElement? {
+internal fun DeclarationDescriptor.toSource(): PsiElement? {
     return try {
         DescriptorToSourceUtils.getEffectiveReferencedDescriptors(this)
             .asSequence()

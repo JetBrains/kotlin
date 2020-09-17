@@ -6,7 +6,9 @@
 package org.jetbrains.uast.test.kotlin
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtBlockExpression
+import org.jetbrains.kotlin.psi.KtCallElement
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.uast.*
@@ -16,13 +18,12 @@ import org.jetbrains.uast.test.env.kotlin.assertEqualsToFile
 import java.io.File
 
 
-abstract class AbstractKotlinResolveEverythingTest : AbstractKotlinUastTest() {
+interface ResolveEverythingTestBase {
 
-    private fun getTestFile(testName: String, ext: String) =
+    fun getTestFile(testName: String, ext: String) =
         File(File(TEST_KOTLIN_MODEL_DIR, testName).canonicalPath + '.' + ext)
 
-
-    private fun UFile.resolvableWithTargets() = object : IndentedPrintingVisitor(KtBlockExpression::class) {
+    fun UFile.resolvableWithTargets() = object : IndentedPrintingVisitor(KtBlockExpression::class) {
         override fun render(element: PsiElement) =
             UastFacade.convertToAlternatives<UExpression>(element, arrayOf(UReferenceExpression::class.java, UCallExpression::class.java))
                 .filter {
@@ -54,7 +55,7 @@ abstract class AbstractKotlinResolveEverythingTest : AbstractKotlinUastTest() {
         }
     }.visitUFileAndGetResult(this)
 
-    override fun check(testName: String, file: UFile) {
+    fun check(testName: String, file: UFile) {
         assertEqualsToFile("resolved", getTestFile(testName, "resolved.txt"), file.resolvableWithTargets())
     }
 }

@@ -166,4 +166,7 @@ class KotlinIDERenderLogTest : AbstractKotlinUastLightCodeInsightFixtureTest(), 
 
     @Test
     fun testTryCatch() = doTest("TryCatch")
+
+    @Test
+    fun testComments() = doTest("Comments")
 }

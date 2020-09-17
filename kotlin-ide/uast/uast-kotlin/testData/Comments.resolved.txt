@@ -1,0 +1,358 @@
+UComment -> USimpleNameReferenceExpression (identifier = Margherita) -> CLASS: Margherita
+UComment -> USimpleNameReferenceExpression (identifier = Pizza) -> CLASS: Pizza
+UTypeReferenceExpression (name = int) -> USimpleNameReferenceExpression (identifier = Int) -> PsiClass:Integer: Integer
+UComment -> UQualifiedReferenceExpression -> PsiClass:String: String
+UQualifiedReferenceExpression -> UQualifiedReferenceExpression -> PsiPackage:java.lang: lang
+UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = java) -> PsiPackage:java: java
+UComment -> UQualifiedReferenceExpression -> PsiClass:IllegalStateException: IllegalStateException
+UQualifiedReferenceExpression -> UQualifiedReferenceExpression -> PsiPackage:java.lang: lang
+UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = java) -> PsiPackage:java: java
+UComment -> USimpleNameReferenceExpression (identifier = ClassCastException) -> TYPEALIAS: ClassCastException
+UTypeReferenceExpression (name = java.lang.String) -> USimpleNameReferenceExpression (identifier = java) -> PsiPackage:java: java
+UTypeReferenceExpression (name = java.lang.String) -> USimpleNameReferenceExpression (identifier = lang) -> PsiPackage:java.lang: lang
+UTypeReferenceExpression (name = java.lang.String) -> USimpleNameReferenceExpression (identifier = String) -> PsiClass:String: String
+UComment -> UQualifiedReferenceExpression -> CLASS: Ingredient
+UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = Pizza) -> CLASS: Pizza
+UComment -> USimpleNameReferenceExpression (identifier = ingredient) -> VALUE_PARAMETER: ingredient
+UComment -> UQualifiedReferenceExpression -> CLASS: NotImplementedError
+UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = kotlin) -> PsiPackage:kotlin: kotlin
+UComment -> UQualifiedReferenceExpression -> FUN: contains
+UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = Margherita) -> CLASS: Margherita
+UTypeReferenceExpression (name = Pizza.Ingredient) -> USimpleNameReferenceExpression (identifier = Ingredient) -> KtUltraLightClass:/** Ingredient of [Pizza] */
+    interface Ingredient: Ingredient
+UTypeReferenceExpression (name = boolean) -> USimpleNameReferenceExpression (identifier = Boolean) -> PsiClass:Boolean: Boolean
+UComment -> USimpleNameReferenceExpression (identifier = Pizza) -> CLASS: Pizza
+UComment -> USimpleNameReferenceExpression (identifier = Pizza) -> CLASS: Pizza
+UComment -> USimpleNameReferenceExpression (identifier = P) -> TYPE_PARAMETER: P
+UComment -> USimpleNameReferenceExpression (identifier = self) -> FUN: self
+UTypeReferenceExpression (name = Pizza.Builder<P>) -> USimpleNameReferenceExpression (identifier = Pizza) -> KtUltraLightClass:/**
+ * Common Pizza Interface
+ *
+ * @see Margherita
+ */
+interface Pizza {
+    /** The size of [Pizza] */
+    val size: Int
+
+    /**
+     * Human-readable name of type [string_link_alias][java.lang.String]
+     *
+     * @throws java.lang.IllegalStateException
+     * @throws ClassCastException
+     */
+    fun getName(): java.lang.String
+
+    /**
+     * Checks whether pizza contains the specified [Pizza.Ingredient]
+     *
+     * @param ingredient the ingredient to check
+     * @exception kotlin.NotImplementedError
+     * @sample Margherita.contains
+     */
+    fun contains(ingredient: Ingredient): Boolean
+
+    /** Ingredient of [Pizza] */
+    interface Ingredient
+
+    /**
+     * Abstract [Pizza] builder
+     *
+     * @param P well-known hack to solve abstract builder chain problem, see [self]
+     */
+    abstract class Builder<P: Pizza.Builder<P>> {
+        private val ingredients: MutableSet<Pizza.Ingredient> = mutableSetOf()
+
+        /**
+         * Adds [ingredient] to the [ingredients]
+         *
+         * @return value of type [P]
+         */
+        abstract fun addIngredient(ingredient: Pizza.Ingredient): P
+        abstract fun build(): Pizza
+        protected abstract fun self(): P
+    }
+}: Pizza
+UTypeReferenceExpression (name = Pizza.Builder<P>) -> USimpleNameReferenceExpression (identifier = Builder) -> KtUltraLightClass:/**
+     * Abstract [Pizza] builder
+     *
+     * @param P well-known hack to solve abstract builder chain problem, see [self]
+     */
+    abstract class Builder<P: Pizza.Builder<P>> {
+        private val ingredients: MutableSet<Pizza.Ingredient> = mutableSetOf()
+
+        /**
+         * Adds [ingredient] to the [ingredients]
+         *
+         * @return value of type [P]
+         */
+        abstract fun addIngredient(ingredient: Pizza.Ingredient): P
+        abstract fun build(): Pizza
+        protected abstract fun self(): P
+    }: Builder
+UTypeReferenceExpression (name = P) -> USimpleNameReferenceExpression (identifier = P) -> Light PSI class: P: P
+UTypeReferenceExpression (name = java.util.Set<Pizza.Ingredient>) -> USimpleNameReferenceExpression (identifier = MutableSet) -> PsiClass:Set: Set
+UTypeReferenceExpression (name = Pizza.Ingredient) -> USimpleNameReferenceExpression (identifier = Pizza) -> KtUltraLightClass:/**
+ * Common Pizza Interface
+ *
+ * @see Margherita
+ */
+interface Pizza {
+    /** The size of [Pizza] */
+    val size: Int
+
+    /**
+     * Human-readable name of type [string_link_alias][java.lang.String]
+     *
+     * @throws java.lang.IllegalStateException
+     * @throws ClassCastException
+     */
+    fun getName(): java.lang.String
+
+    /**
+     * Checks whether pizza contains the specified [Pizza.Ingredient]
+     *
+     * @param ingredient the ingredient to check
+     * @exception kotlin.NotImplementedError
+     * @sample Margherita.contains
+     */
+    fun contains(ingredient: Ingredient): Boolean
+
+    /** Ingredient of [Pizza] */
+    interface Ingredient
+
+    /**
+     * Abstract [Pizza] builder
+     *
+     * @param P well-known hack to solve abstract builder chain problem, see [self]
+     */
+    abstract class Builder<P: Pizza.Builder<P>> {
+        private val ingredients: MutableSet<Pizza.Ingredient> = mutableSetOf()
+
+        /**
+         * Adds [ingredient] to the [ingredients]
+         *
+         * @return value of type [P]
+         */
+        abstract fun addIngredient(ingredient: Pizza.Ingredient): P
+        abstract fun build(): Pizza
+        protected abstract fun self(): P
+    }
+}: Pizza
+UTypeReferenceExpression (name = Pizza.Ingredient) -> USimpleNameReferenceExpression (identifier = Ingredient) -> KtUltraLightClass:/** Ingredient of [Pizza] */
+    interface Ingredient: Ingredient
+UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))(resolves to KtLightMethodForDecompiledDeclaration of KtLightClassForDecompiledDeclaration of PsiFile:SetsKt__SetsKt.class) -> USimpleNameReferenceExpression (identifier = mutableSetOf) -> KtLightMethodForDecompiledDeclaration of KtLightClassForDecompiledDeclaration of PsiFile:SetsKt__SetsKt.class: mutableSetOf
+UComment -> USimpleNameReferenceExpression (identifier = ingredient) -> VALUE_PARAMETER: ingredient
+UComment -> USimpleNameReferenceExpression (identifier = ingredients) -> PROPERTY: ingredients
+UComment -> USimpleNameReferenceExpression (identifier = P) -> TYPE_PARAMETER: P
+UTypeReferenceExpression (name = Pizza.Ingredient) -> USimpleNameReferenceExpression (identifier = Pizza) -> KtUltraLightClass:/**
+ * Common Pizza Interface
+ *
+ * @see Margherita
+ */
+interface Pizza {
+    /** The size of [Pizza] */
+    val size: Int
+
+    /**
+     * Human-readable name of type [string_link_alias][java.lang.String]
+     *
+     * @throws java.lang.IllegalStateException
+     * @throws ClassCastException
+     */
+    fun getName(): java.lang.String
+
+    /**
+     * Checks whether pizza contains the specified [Pizza.Ingredient]
+     *
+     * @param ingredient the ingredient to check
+     * @exception kotlin.NotImplementedError
+     * @sample Margherita.contains
+     */
+    fun contains(ingredient: Ingredient): Boolean
+
+    /** Ingredient of [Pizza] */
+    interface Ingredient
+
+    /**
+     * Abstract [Pizza] builder
+     *
+     * @param P well-known hack to solve abstract builder chain problem, see [self]
+     */
+    abstract class Builder<P: Pizza.Builder<P>> {
+        private val ingredients: MutableSet<Pizza.Ingredient> = mutableSetOf()
+
+        /**
+         * Adds [ingredient] to the [ingredients]
+         *
+         * @return value of type [P]
+         */
+        abstract fun addIngredient(ingredient: Pizza.Ingredient): P
+        abstract fun build(): Pizza
+        protected abstract fun self(): P
+    }
+}: Pizza
+UTypeReferenceExpression (name = Pizza.Ingredient) -> USimpleNameReferenceExpression (identifier = Ingredient) -> KtUltraLightClass:/** Ingredient of [Pizza] */
+    interface Ingredient: Ingredient
+UTypeReferenceExpression (name = P) -> USimpleNameReferenceExpression (identifier = P) -> Light PSI class: P: P
+UTypeReferenceExpression (name = Pizza) -> USimpleNameReferenceExpression (identifier = Pizza) -> KtUltraLightClass:/**
+ * Common Pizza Interface
+ *
+ * @see Margherita
+ */
+interface Pizza {
+    /** The size of [Pizza] */
+    val size: Int
+
+    /**
+     * Human-readable name of type [string_link_alias][java.lang.String]
+     *
+     * @throws java.lang.IllegalStateException
+     * @throws ClassCastException
+     */
+    fun getName(): java.lang.String
+
+    /**
+     * Checks whether pizza contains the specified [Pizza.Ingredient]
+     *
+     * @param ingredient the ingredient to check
+     * @exception kotlin.NotImplementedError
+     * @sample Margherita.contains
+     */
+    fun contains(ingredient: Ingredient): Boolean
+
+    /** Ingredient of [Pizza] */
+    interface Ingredient
+
+    /**
+     * Abstract [Pizza] builder
+     *
+     * @param P well-known hack to solve abstract builder chain problem, see [self]
+     */
+    abstract class Builder<P: Pizza.Builder<P>> {
+        private val ingredients: MutableSet<Pizza.Ingredient> = mutableSetOf()
+
+        /**
+         * Adds [ingredient] to the [ingredients]
+         *
+         * @return value of type [P]
+         */
+        abstract fun addIngredient(ingredient: Pizza.Ingredient): P
+        abstract fun build(): Pizza
+        protected abstract fun self(): P
+    }
+}: Pizza
+UTypeReferenceExpression (name = P) -> USimpleNameReferenceExpression (identifier = P) -> Light PSI class: P: P
+UComment -> USimpleNameReferenceExpression (identifier = Pizza) -> CLASS: Pizza
+UComment -> USimpleNameReferenceExpression (identifier = size) -> VALUE_PARAMETER: size
+UComment -> USimpleNameReferenceExpression (identifier = Margherita) -> CLASS: Margherita
+UTypeReferenceExpression (name = int) -> USimpleNameReferenceExpression (identifier = Int) -> PsiClass:Integer: Integer
+UTypeReferenceExpression (name = Pizza) -> USimpleNameReferenceExpression (identifier = Pizza) -> KtUltraLightClass:/**
+ * Common Pizza Interface
+ *
+ * @see Margherita
+ */
+interface Pizza {
+    /** The size of [Pizza] */
+    val size: Int
+
+    /**
+     * Human-readable name of type [string_link_alias][java.lang.String]
+     *
+     * @throws java.lang.IllegalStateException
+     * @throws ClassCastException
+     */
+    fun getName(): java.lang.String
+
+    /**
+     * Checks whether pizza contains the specified [Pizza.Ingredient]
+     *
+     * @param ingredient the ingredient to check
+     * @exception kotlin.NotImplementedError
+     * @sample Margherita.contains
+     */
+    fun contains(ingredient: Ingredient): Boolean
+
+    /** Ingredient of [Pizza] */
+    interface Ingredient
+
+    /**
+     * Abstract [Pizza] builder
+     *
+     * @param P well-known hack to solve abstract builder chain problem, see [self]
+     */
+    abstract class Builder<P: Pizza.Builder<P>> {
+        private val ingredients: MutableSet<Pizza.Ingredient> = mutableSetOf()
+
+        /**
+         * Adds [ingredient] to the [ingredients]
+         *
+         * @return value of type [P]
+         */
+        abstract fun addIngredient(ingredient: Pizza.Ingredient): P
+        abstract fun build(): Pizza
+        protected abstract fun self(): P
+    }
+}: Pizza
+UTypeReferenceExpression (name = java.lang.String) -> USimpleNameReferenceExpression (identifier = java) -> PsiPackage:java: java
+UTypeReferenceExpression (name = java.lang.String) -> USimpleNameReferenceExpression (identifier = lang) -> PsiPackage:java.lang: lang
+UTypeReferenceExpression (name = java.lang.String) -> USimpleNameReferenceExpression (identifier = String) -> PsiClass:String: String
+UReturnExpression -> UQualifiedReferenceExpression -> PsiMethod:String: String
+UQualifiedReferenceExpression -> UQualifiedReferenceExpression -> PsiPackage:java.lang: lang
+UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = java) -> PsiPackage:java: java
+UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = lang) -> PsiPackage:java.lang: lang
+UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1))(resolves to PsiMethod:String) -> USimpleNameReferenceExpression (identifier = String) -> PsiMethod:String: String
+UComment -> UQualifiedReferenceExpression -> CLASS: Ingredient
+UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = Pizza) -> CLASS: Pizza
+UComment -> USimpleNameReferenceExpression (identifier = ingredient) -> VALUE_PARAMETER: ingredient
+UComment -> UQualifiedReferenceExpression -> CLASS: Ingredient
+UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = Pizza) -> CLASS: Pizza
+UTypeReferenceExpression (name = Pizza.Ingredient) -> USimpleNameReferenceExpression (identifier = Pizza) -> KtUltraLightClass:/**
+ * Common Pizza Interface
+ *
+ * @see Margherita
+ */
+interface Pizza {
+    /** The size of [Pizza] */
+    val size: Int
+
+    /**
+     * Human-readable name of type [string_link_alias][java.lang.String]
+     *
+     * @throws java.lang.IllegalStateException
+     * @throws ClassCastException
+     */
+    fun getName(): java.lang.String
+
+    /**
+     * Checks whether pizza contains the specified [Pizza.Ingredient]
+     *
+     * @param ingredient the ingredient to check
+     * @exception kotlin.NotImplementedError
+     * @sample Margherita.contains
+     */
+    fun contains(ingredient: Ingredient): Boolean
+
+    /** Ingredient of [Pizza] */
+    interface Ingredient
+
+    /**
+     * Abstract [Pizza] builder
+     *
+     * @param P well-known hack to solve abstract builder chain problem, see [self]
+     */
+    abstract class Builder<P: Pizza.Builder<P>> {
+        private val ingredients: MutableSet<Pizza.Ingredient> = mutableSetOf()
+
+        /**
+         * Adds [ingredient] to the [ingredients]
+         *
+         * @return value of type [P]
+         */
+        abstract fun addIngredient(ingredient: Pizza.Ingredient): P
+        abstract fun build(): Pizza
+        protected abstract fun self(): P
+    }
+}: Pizza
+UTypeReferenceExpression (name = Pizza.Ingredient) -> USimpleNameReferenceExpression (identifier = Ingredient) -> KtUltraLightClass:/** Ingredient of [Pizza] */
+    interface Ingredient: Ingredient
+UTypeReferenceExpression (name = boolean) -> USimpleNameReferenceExpression (identifier = Boolean) -> PsiClass:Boolean: Boolean

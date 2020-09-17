@@ -25,12 +25,13 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kotlin.internal.KotlinUElementWithComments
 import java.util.*
 
 class KotlinUFile(
     override val psi: KtFile,
     override val languagePlugin: UastLanguagePlugin = kotlinUastPlugin
-) : UFile {
+) : UFile, KotlinUElementWithComments {
     override val packageName: String
         get() = psi.packageFqName.asString()
 
