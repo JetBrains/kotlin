@@ -21,13 +21,14 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
+import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.noUnboundLeft
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.DFS
 
 internal fun Context.psiToIr(symbolTable: SymbolTable) {
@@ -61,10 +62,24 @@ internal fun Context.psiToIr(symbolTable: SymbolTable) {
 
     val deserializeFakeOverrides = config.configuration.getBoolean(CommonConfigurationKeys.DESERIALIZE_FAKE_OVERRIDES)
 
+    val translationContext = object : TranslationPluginContext {
+        override val moduleDescriptor: ModuleDescriptor
+            get() = generatorContext.moduleDescriptor
+        override val bindingContext: BindingContext
+            get() = generatorContext.bindingContext
+        override val symbolTable: ReferenceSymbolTable
+            get() = symbolTable
+        override val typeTranslator: TypeTranslator
+            get() = generatorContext.typeTranslator
+        override val irBuiltIns: IrBuiltIns
+            get() = generatorContext.irBuiltIns
+    }
+
     val linker =
             KonanIrLinker(
                     moduleDescriptor,
                     functionIrClassFactory,
+                    translationContext,
                     this as LoggingContext,
                     generatorContext.irBuiltIns,
                     symbolTable,
