@@ -1953,6 +1953,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/ruby/ruby-uml/intellij.ruby.uml.iml" filepath="$PROJECT_DIR$/intellij/ruby/ruby-uml/intellij.ruby.uml.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/ruby/ruby-wsl/intellij.ruby.wsl.iml" filepath="$PROJECT_DIR$/intellij/ruby/ruby-wsl/intellij.ruby.wsl.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/ruby/ruby-yaml/intellij.ruby.yaml.iml" filepath="$PROJECT_DIR$/intellij/ruby/ruby-yaml/intellij.ruby.yaml.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/ruby/ruby-intelliLang/intellij.ruby.intelliLang.iml" filepath="$PROJECT_DIR$/intellij/ruby/ruby-intelliLang/intellij.ruby.intelliLang.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/ruby/intellij.rubymine.iml" filepath="$PROJECT_DIR$/intellij/ruby/intellij.rubymine.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/ruby/intellij.rubymine.customization.iml" filepath="$PROJECT_DIR$/intellij/ruby/intellij.rubymine.customization.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/ruby/intellij.rubymine.main.iml" filepath="$PROJECT_DIR$/intellij/ruby/intellij.rubymine.main.iml" />
