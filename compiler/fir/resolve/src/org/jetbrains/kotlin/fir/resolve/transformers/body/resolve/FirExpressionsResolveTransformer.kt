@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.FirStubInferenceSession
+import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.transformers.InvocationKindTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
 import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
 open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
     private inline val builtinTypes: BuiltinTypes get() = session.builtinTypes
@@ -939,6 +941,11 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     // ------------------------------------------------------------------------------------------------
 
     internal fun <T> storeTypeFromCallee(access: T) where T : FirQualifiedAccess, T : FirExpression {
-        access.resultType = components.typeFromCallee(access)
+        val typeFromCallee = components.typeFromCallee(access)
+        access.resultType = typeFromCallee.withReplacedConeType(
+            session.inferenceComponents.approximator.approximateToSuperType(
+                typeFromCallee.type, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
+            ) as ConeKotlinType?
+        )
     }
 }
