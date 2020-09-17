@@ -475,7 +475,8 @@ fun FunctionDescriptor.originalReturnTypeOfSuspendFunctionReturningUnboxedInline
     // Force boxing if the function overrides function with different type modulo nullability
     if (originalDescriptor.overriddenDescriptors.any {
             (it.original.returnType?.isMarkedNullable == true && it.original.returnType?.isNullableUnderlyingType() == true) ||
-                    it.original.returnType?.makeNotNullable() != originalReturnType.makeNotNullable()
+                    // We do not care about type parameters, just main class type
+                    it.original.returnType?.constructor?.declarationDescriptor != originalReturnType.constructor.declarationDescriptor
         }) return null
     // Don't box other inline classes
     return originalReturnType
