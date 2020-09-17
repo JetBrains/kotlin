@@ -2,7 +2,7 @@ FILE: flowFromInplaceLambda.kt
     public final fun takeInt(x: R|kotlin/Int|): R|kotlin/Unit| {
     }
     public final fun <K> select(vararg x: R|kotlin/Array<out K>|): R|K| {
-        ^select R|<local>/x|.R|FakeOverride<kotlin/Array.get: R|K|>|(Int(0))
+        ^select R|<local>/x|.R|FakeOverride<kotlin/Array.get: R|CapturedType(out K)|>|(Int(0))
     }
     public final fun <T> id(x: R|T|): R|T| {
         ^id R|<local>/x|

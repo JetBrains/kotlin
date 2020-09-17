@@ -191,7 +191,7 @@ digraph complex_kt {
             color=blue
             56 [label="Enter block"];
             57 [label="Access variable this@R|/firstIsInstanceOrNull|"];
-            58 [label="Function call: this@R|/firstIsInstanceOrNull|.R|FakeOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<kotlin/Any?>|>|()"];
+            58 [label="Function call: this@R|/firstIsInstanceOrNull|.R|FakeOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<CapturedType(*)>|>|()"];
             59 [label="Variable declaration: lval <iterator>: R|kotlin/collections/Iterator<kotlin/Any?>|"];
             subgraph cluster_20 {
                 color=blue

@@ -73,12 +73,12 @@ FILE: typeAliasWithTypeArguments.kt
     public final fun test_6(a: R|A|, out1: R|Out1<A>|, out2: R|Out1<in A>|, out3: R|Out1<out A>|): R|kotlin/Unit| {
         R|<local>/out1|.R|FakeOverride</Out.value: R|A|>|().R|/A.foo|()
         R|<local>/out2|.<Unresolved name: value>#().<Unresolved name: foo>#()
-        R|<local>/out3|.R|FakeOverride</Out.value: R|A|>|().R|/A.foo|()
+        R|<local>/out3|.R|FakeOverride</Out.value: R|CapturedType(out A)|>|().R|/A.foo|()
     }
     public final fun test_7(a: R|A|, inv1: R|Invariant1<A>|, inv2: R|Invariant1<in A>|, inv3: R|Invariant1<out A>|): R|kotlin/Unit| {
         R|<local>/inv1|.R|FakeOverride</Invariant.value: R|A|>|().R|/A.foo|()
-        R|<local>/inv2|.R|FakeOverride</Invariant.value: R|kotlin/Any?|>|().<Unresolved name: foo>#()
-        R|<local>/inv3|.R|FakeOverride</Invariant.value: R|A|>|().R|/A.foo|()
+        R|<local>/inv2|.R|FakeOverride</Invariant.value: R|CapturedType(in A)|>|().<Unresolved name: foo>#()
+        R|<local>/inv3|.R|FakeOverride</Invariant.value: R|CapturedType(out A)|>|().R|/A.foo|()
         R|<local>/inv1|.R|FakeOverride</Invariant.take: R|kotlin/Unit|>|(R|<local>/a|)
         R|<local>/inv2|.R|FakeOverride</Invariant.take: R|kotlin/Unit|>|(R|<local>/a|)
         R|<local>/inv3|.<Inapplicable(INAPPLICABLE): /Invariant.take>#(R|<local>/a|)
