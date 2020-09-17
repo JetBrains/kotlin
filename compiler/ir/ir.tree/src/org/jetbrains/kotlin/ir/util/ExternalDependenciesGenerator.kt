@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -27,8 +26,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class ExternalDependenciesGenerator(
     val symbolTable: SymbolTable,
-    private val irProviders: List<IrProvider>,
-    private val languageVersionSettings: LanguageVersionSettings
+    private val irProviders: List<IrProvider>
 ) {
     fun generateUnboundSymbolsAsDependencies() {
         // There should be at most one DeclarationStubGenerator (none in closed world?)

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.scripting.repl.js
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.ir.backend.js.emptyLoggingContext
 import org.jetbrains.kotlin.ir.backend.js.generateJsCode
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
-import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.descriptors.IrFunctionFactory
 import org.jetbrains.kotlin.ir.util.*
@@ -58,7 +56,7 @@ class JsScriptDependencyCompiler(
 
         jsLinker.init(null, emptyList())
 
-        ExternalDependenciesGenerator(symbolTable, irProviders, configuration.languageVersionSettings)
+        ExternalDependenciesGenerator(symbolTable, irProviders)
             .generateUnboundSymbolsAsDependencies()
         moduleFragment.patchDeclarationParents()
 
@@ -72,7 +70,7 @@ class JsScriptDependencyCompiler(
             true
         )
 
-        ExternalDependenciesGenerator(symbolTable, irProviders, configuration.languageVersionSettings)
+        ExternalDependenciesGenerator(symbolTable, irProviders)
             .generateUnboundSymbolsAsDependencies()
         moduleFragment.patchDeclarationParents()
         jsLinker.postProcess()

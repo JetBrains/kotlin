@@ -529,7 +529,7 @@ class GenerateIrRuntime {
         val moduleFragment = jsLinker.deserializeFullModule(moduleDescriptor, moduleDescriptor.kotlinLibrary)
         jsLinker.init(null, emptyList())
         // Create stubs
-        ExternalDependenciesGenerator(symbolTable, listOf(jsLinker), languageVersionSettings)
+        ExternalDependenciesGenerator(symbolTable, listOf(jsLinker))
             .generateUnboundSymbolsAsDependencies()
 
         jsLinker.postProcess()
@@ -560,7 +560,7 @@ class GenerateIrRuntime {
         // Create stubs
         jsLinker.init(null, emptyList())
         // Create stubs
-        ExternalDependenciesGenerator(symbolTable, listOf(jsLinker), languageVersionSettings)
+        ExternalDependenciesGenerator(symbolTable, listOf(jsLinker))
             .generateUnboundSymbolsAsDependencies()
 
         jsLinker.postProcess()
@@ -574,7 +574,7 @@ class GenerateIrRuntime {
     private fun doBackEnd(module: IrModuleFragment, symbolTable: SymbolTable, irBuiltIns: IrBuiltIns, jsLinker: JsIrLinker): CompilerResult {
         val context = JsIrBackendContext(module.descriptor, irBuiltIns, symbolTable, module, emptySet(), configuration)
 
-        ExternalDependenciesGenerator(symbolTable, listOf(jsLinker), languageVersionSettings).generateUnboundSymbolsAsDependencies()
+        ExternalDependenciesGenerator(symbolTable, listOf(jsLinker)).generateUnboundSymbolsAsDependencies()
 
         jsPhases.invokeToplevel(phaseConfig, context, listOf(module))
 

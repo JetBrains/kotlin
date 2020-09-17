@@ -60,12 +60,12 @@ class ModuleGenerator(
             irModule.descriptor, context.irBuiltIns, context.symbolTable, deserializer,
             extensions
         )
-        ExternalDependenciesGenerator(context.symbolTable, fullIrProvidersList, context.languageVersionSettings)
+        ExternalDependenciesGenerator(context.symbolTable, fullIrProvidersList)
             .generateUnboundSymbolsAsDependencies()
     }
 
     fun generateUnboundSymbolsAsDependencies(irProviders: List<IrProvider>) {
-        ExternalDependenciesGenerator(context.symbolTable, irProviders, context.languageVersionSettings)
+        ExternalDependenciesGenerator(context.symbolTable, irProviders)
             .generateUnboundSymbolsAsDependencies()
     }
 

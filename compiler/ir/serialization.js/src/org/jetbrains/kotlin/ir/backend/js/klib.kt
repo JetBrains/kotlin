@@ -289,7 +289,7 @@ fun loadIr(
             val moduleFragment = deserializedModuleFragments.last()
 
             irLinker.init(null, emptyList())
-            ExternalDependenciesGenerator(symbolTable, listOf(irLinker), configuration.languageVersionSettings).generateUnboundSymbolsAsDependencies()
+            ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
             irLinker.postProcess()
 
             return IrModuleInfo(moduleFragment, deserializedModuleFragments, irBuiltIns, symbolTable, irLinker)
