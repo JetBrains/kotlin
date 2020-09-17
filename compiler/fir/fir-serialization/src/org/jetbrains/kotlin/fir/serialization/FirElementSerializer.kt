@@ -550,19 +550,12 @@ class FirElementSerializer private constructor(
     fun typeId(type: ConeKotlinType): Int = typeTable[typeProto(type)]
 
     private fun typeProto(typeRef: FirTypeRef, toSuper: Boolean = false): ProtoBuf.Type.Builder {
-        val approximatedType = when (typeRef.coneType) {
-            is ConeIntegerLiteralType,
-            is ConeDefinitelyNotNullType,
-            is ConeIntersectionType ->
-                typeRef.approximated(typeApproximator, toSuper)
-            else -> typeRef
-        }
-        return typeProto(approximatedType.coneType).also {
+        return typeProto(typeRef.coneType, toSuper).also {
             extension.serializeType(typeRef, it)
         }
     }
 
-    private fun typeProto(type: ConeKotlinType): ProtoBuf.Type.Builder {
+    private fun typeProto(type: ConeKotlinType, toSuper: Boolean = false): ProtoBuf.Type.Builder {
         val builder = ProtoBuf.Type.newBuilder()
 
         when (type) {
@@ -601,7 +594,11 @@ class FirElementSerializer private constructor(
             is ConeDefinitelyNotNullType,
             is ConeIntersectionType,
             is ConeIntegerLiteralType -> {
-                val approximatedType = typeApproximator.approximateToSubType(type, TypeApproximatorConfiguration.PublicDeclaration)
+                val approximatedType = if (toSuper) {
+                    typeApproximator.approximateToSuperType(type, TypeApproximatorConfiguration.PublicDeclaration)
+                } else {
+                    typeApproximator.approximateToSubType(type, TypeApproximatorConfiguration.PublicDeclaration)
+                }
                 assert(approximatedType != type && approximatedType is ConeKotlinType) {
                     "Approximation failed: ${type.render()}"
                 }
