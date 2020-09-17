@@ -42,7 +42,8 @@ class VariableFixationFinder(
         WITH_TRIVIAL_OR_NON_PROPER_CONSTRAINTS, // proper trivial constraint from arguments, Nothing <: T
         RELATED_TO_ANY_OUTPUT_TYPE,
         FROM_INCORPORATION_OF_DECLARED_UPPER_BOUND,
-        READY_FOR_FIXATION,
+        READY_FOR_FIXATION_UPPER,
+        READY_FOR_FIXATION_LOWER,
         READY_FOR_FIXATION_REIFIED,
     }
 
@@ -59,7 +60,8 @@ class VariableFixationFinder(
         variableHasOnlyIncorporatedConstraintsFromDeclaredUpperBound(variable) ->
             TypeVariableFixationReadiness.FROM_INCORPORATION_OF_DECLARED_UPPER_BOUND
         isReified(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_REIFIED
-        else -> TypeVariableFixationReadiness.READY_FOR_FIXATION
+        !variableHasLowerProperConstraint(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_UPPER
+        else -> TypeVariableFixationReadiness.READY_FOR_FIXATION_LOWER
     }
 
     fun isTypeVariableHasProperConstraint(context: Context, typeVariable: TypeConstructorMarker): Boolean {
@@ -135,6 +137,13 @@ class VariableFixationFinder(
 
     private fun Context.isReified(variable: TypeConstructorMarker): Boolean =
         notFixedTypeVariables[variable]?.typeVariable?.let { isReified(it) } ?: false
+
+    private fun Context.variableHasLowerProperConstraint(variable: TypeConstructorMarker): Boolean =
+        notFixedTypeVariables[variable]?.constraints?.let { constraints ->
+            constraints.any {
+                it.kind.isLower() && isProperArgumentConstraint(it)
+            }
+        } ?: false
 }
 
 inline fun TypeSystemInferenceExtensionContext.isProperTypeForFixation(
