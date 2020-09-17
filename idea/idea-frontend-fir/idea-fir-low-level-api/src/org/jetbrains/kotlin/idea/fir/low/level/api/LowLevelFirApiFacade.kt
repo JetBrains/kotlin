@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyAccessorCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyCopy
-import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
@@ -43,16 +42,11 @@ object LowLevelFirApiFacade {
     class FirCompletionContext internal constructor(
         val session: FirSession,
         private val towerDataContextCollector: FirTowerDataContextCollector,
-        private val state: FirModuleResolveState,
     ) {
         fun getTowerDataContext(element: KtElement): FirTowerDataContext {
             var current: PsiElement? = element
             while (current is KtElement) {
-                val mappedFir = state.getCachedMappingForCompletion(current)
-
-                if (mappedFir is FirStatement) {
-                    towerDataContextCollector.getContext(mappedFir)?.let { return it }
-                }
+                towerDataContextCollector.getContext(current)?.let { return it }
                 current = current.parent
             }
 
@@ -78,8 +72,7 @@ object LowLevelFirApiFacade {
 
         return FirCompletionContext(
             copyFunction.session,
-            contextCollector,
-            state
+            contextCollector
         )
     }
 
@@ -101,8 +94,7 @@ object LowLevelFirApiFacade {
 
         return FirCompletionContext(
             copyProperty.session,
-            contextCollector,
-            state
+            contextCollector
         )
     }
 
@@ -145,7 +137,7 @@ object LowLevelFirApiFacade {
                 symbol = builtSetter.symbol
                 resolvePhase = minOf(builtSetter.resolvePhase, FirResolvePhase.DECLARATIONS)
                 source = builtSetter.source
-                session = state.firIdeSourcesSession
+                session = state.currentModuleSourcesSession
             }
         } else {
             builtSetter
@@ -159,7 +151,7 @@ object LowLevelFirApiFacade {
 
             resolvePhase = minOf(originalProperty.resolvePhase, FirResolvePhase.DECLARATIONS)
             source = builtProperty.source
-            session = state.firIdeSourcesSession
+            session = state.currentModuleSourcesSession
         }
     }
 

@@ -5,57 +5,68 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.element.builder
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.ThreadSafe
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.FirElementFinder
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.findNonLocalFirDeclaration
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FileStructureCache
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 /**
  * Maps [KtElement] to [FirElement]
- * Stateless, caches everything into [ModuleFileCache] & [PsiToFirCache] passed into the function
+ * Stateless, caches everything into [ModuleFileCache] & [FileStructureCache] passed into the function
  */
 @ThreadSafe
-internal class FirElementBuilder(
-    private val firFileBuilder: FirFileBuilder,
-    private val firLazyDeclarationResolver: FirLazyDeclarationResolver,
-) {
+internal class FirElementBuilder {
     fun getOrBuildFirFor(
         element: KtElement,
         moduleFileCache: ModuleFileCache,
-        psiToFirCache: PsiToFirCache,
-        toPhase: FirResolvePhase,
+        fileStructureCache: FileStructureCache,
     ): FirElement {
-        val ktFile = element.containingKtFile
-        val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile, moduleFileCache)
+        val fileStructure = fileStructureCache.getFileStructure(element.containingKtFile, moduleFileCache)
+        val mappings = fileStructure.getStructureElementFor(element).mappings
 
-        val containerFir = when (val container = element.getNonLocalContainingDeclarationWithFqName()) {
-            is KtDeclaration -> container.findNonLocalFirDeclaration(firFileBuilder, firFile.session.firProvider, moduleFileCache)
-            null -> firFile
-            else -> error("Unsupported: ${container.text}")
+        val psi = when {
+            element is KtPropertyDelegate -> element.expression ?: element
+            element is KtQualifiedExpression && element.selectorExpression is KtCallExpression -> {
+                /*
+                 KtQualifiedExpression with KtCallExpression in selector transformed in FIR to FirFunctionCall expression
+                 Which will have a receiver as qualifier
+                 */
+                element.selectorExpression ?: error("Incomplete code:\n${element.getElementTextInContext()}")
+            }
+            else -> element
         }
-        firLazyDeclarationResolver.lazyResolveDeclaration(containerFir, moduleFileCache, toPhase, checkPCE = true)
-
-        return psiToFirCache.getFir(element, containerFir, firFile)
+        mappings[psi]?.let { return it }
+        return psi.getFirOfClosestParent(mappings)?.second
+            ?: error("FirElement is not found for:\n${element.getElementTextInContext()}")
     }
 }
 
+private fun KtElement.getFirOfClosestParent(cache: Map<KtElement, FirElement>): Pair<KtElement, FirElement>? {
+    var current: PsiElement? = this
+    while (current is KtElement) {
+        val mappedFir = cache[current]
+        if (mappedFir != null) {
+            return current to mappedFir
+        }
+        current = current.parent
+    }
 
-fun KtElement.getNonLocalContainingDeclarationWithFqName(): KtNamedDeclaration? {
-    var container = parent
+    return null
+}
+
+fun KtElement.getNonLocalContainingOrThisDeclaration(): KtNamedDeclaration? {
+    var container: PsiElement? = this
     while (container != null && container !is KtFile) {
         if (container is KtNamedDeclaration
-            && (container is KtClassOrObject || container is KtDeclarationWithBody)
+            && (container is KtClassOrObject || container is KtDeclarationWithBody || container is KtProperty || container is KtTypeAlias)
             && !KtPsiUtil.isLocal(container)
-            && container.name != null
             && container !is KtEnumEntry
             && container.containingClassOrObject !is KtEnumEntry
         ) {

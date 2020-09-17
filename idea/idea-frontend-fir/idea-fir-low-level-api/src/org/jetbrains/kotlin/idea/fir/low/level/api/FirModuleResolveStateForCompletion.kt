@@ -11,9 +11,11 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
-import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.PsiToFirCache
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FileStructureCache
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FirElementsRecorder
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeCurrentModuleSourcesSession
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeDependentModulesSourcesSession
@@ -29,29 +31,24 @@ internal class FirModuleResolveStateForCompletion(
     override val dependentModulesSourcesSession: FirIdeDependentModulesSourcesSession get() = originalState.dependentModulesSourcesSession
     override val librariesSession: FirIdeLibrariesSession get() = originalState.librariesSession
 
-    private val psiToFirCache = PsiToFirCache(originalState.currentModuleSourcesSession.cache)
+    private val fileStructureCache = originalState.fileStructureCache
+
+    private val completionMapping = mutableMapOf<KtElement, FirElement>()
 
     override fun getSessionFor(moduleInfo: IdeaModuleInfo): FirSession =
         originalState.getSessionFor(moduleInfo)
 
     override fun getOrBuildFirFor(element: KtElement, toPhase: FirResolvePhase): FirElement {
-        getCachedMappingForCompletion(element)?.let { return it }
+        completionMapping[element]?.let { return it }
         return originalState.elementBuilder.getOrBuildFirFor(
             element,
             originalState.currentModuleSourcesSession.cache,
-            psiToFirCache,
-            toPhase
+            fileStructureCache,
         )
     }
 
     override fun recordPsiToFirMappingsForCompletionFrom(fir: FirDeclaration, firFile: FirFile, ktFile: KtFile) {
-        psiToFirCache.recordElementsForCompletionFrom(fir, firFile, ktFile)
-    }
-
-    override fun getCachedMappingForCompletion(element: KtElement): FirElement? {
-        psiToFirCache.getCachedMapping(element)?.let { return it }
-        originalState.psiToFirCache.getCachedMapping(element)?.let { return it }
-        return null
+        fir.accept(FirElementsRecorder(), completionMapping)
     }
 
     override fun <D : FirDeclaration> resolvedFirToPhase(declaration: D, toPhase: FirResolvePhase): D {
@@ -61,7 +58,7 @@ internal class FirModuleResolveStateForCompletion(
     override fun lazyResolveDeclarationForCompletion(
         firFunction: FirDeclaration,
         containerFirFile: FirFile,
-        firIdeProvider: FirIdeProvider,
+        firIdeProvider: FirProvider,
         toPhase: FirResolvePhase,
         towerDataContextCollector: FirTowerDataContextCollector
     ) {

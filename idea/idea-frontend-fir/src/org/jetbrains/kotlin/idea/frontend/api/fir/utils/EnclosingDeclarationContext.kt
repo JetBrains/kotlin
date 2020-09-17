@@ -9,6 +9,7 @@ import com.intellij.psi.util.parentsOfType
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalDeclaration
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -20,7 +21,7 @@ internal sealed class EnclosingDeclarationContext {
             if (fakeFunction != null) {
                 val originalFunction = originalFile.findDeclarationOfTypeAt<KtNamedFunction>(fakeFunction.textOffset)
                     ?: error("Cannot find original function matching to ${fakeFunction.getElementTextInContext()} in $originalFile")
-
+                fakeFunction.originalDeclaration = originalFunction
                 return FunctionContext(fakeFunction, originalFunction)
             }
 
@@ -28,6 +29,7 @@ internal sealed class EnclosingDeclarationContext {
             if (fakeProperty != null) {
                 val originalProperty = originalFile.findDeclarationOfTypeAt<KtProperty>(fakeProperty.textOffset)
                     ?: error("Cannot find original property matching to ${fakeProperty.getElementTextInContext()} in $originalFile")
+                fakeProperty.originalDeclaration = originalProperty
 
                 return PropertyContext(fakeProperty, originalProperty)
             }
