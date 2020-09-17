@@ -38,6 +38,7 @@ class FirTypeDeserializer(
     val session: FirSession,
     val nameResolver: NameResolver,
     val typeTable: TypeTable,
+    val annotationDeserializer: AbstractAnnotationDeserializer,
     typeParameterProtos: List<ProtoBuf.TypeParameter>,
     val parent: FirTypeDeserializer?
 ) {
@@ -78,7 +79,7 @@ class FirTypeDeserializer(
                 val builder = builders[index]
                 builder.apply {
                     proto.upperBoundList.mapTo(bounds) {
-                        buildResolvedTypeRef { type = type(it, ConeAttributes.Empty) }
+                        buildResolvedTypeRef { type = type(it) }
                     }
                     addDefaultBoundIfNecessary()
                 }.build()
@@ -95,6 +96,12 @@ class FirTypeDeserializer(
         } catch (e: Throwable) {
             throw RuntimeException("Looking up for ${nameResolver.getClassId(fqNameIndex)}", e)
         }
+    }
+
+    fun type(proto: ProtoBuf.Type): ConeKotlinType {
+        val annotations = annotationDeserializer.loadTypeAnnotations(proto, nameResolver)
+        val attributes = annotations.computeTypeAttributes()
+        return type(proto, attributes)
     }
 
     fun type(proto: ProtoBuf.Type, attributes: ConeAttributes): ConeKotlinType {
@@ -118,7 +125,6 @@ class FirTypeDeserializer(
             ProtoBuf.TypeParameter.Variance.INV -> Variance.INVARIANT
         }
     }
-
 
     fun FirClassLikeSymbol<*>.typeParameters(): List<FirTypeParameterSymbol> =
         (fir as? FirTypeParameterRefsOwner)?.typeParameters?.map { it.symbol }.orEmpty()
@@ -221,7 +227,7 @@ class FirTypeDeserializer(
         val variance = ProtoEnumFlags.variance(typeArgumentProto.projection)
         val type = typeArgumentProto.type(typeTable)
             ?: return ConeKotlinErrorType(ConeSimpleDiagnostic("No type recorded", DiagnosticKind.DeserializationError))
-        val coneType = type(type, ConeAttributes.Empty)
+        val coneType = type(type)
         return coneType.toTypeProjection(variance)
     }
 }

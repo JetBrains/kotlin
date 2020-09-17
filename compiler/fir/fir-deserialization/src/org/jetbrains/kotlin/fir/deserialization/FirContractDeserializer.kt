@@ -152,7 +152,7 @@ class FirContractDeserializer(private val c: FirDeserializationContext) {
     }
 
     private fun extractType(proto: ProtoBuf.Expression): ConeKotlinType? {
-        return c.typeDeserializer.type(proto.isInstanceType(c.typeTable) ?: return null, ConeAttributes.Empty)
+        return c.typeDeserializer.type(proto.isInstanceType(c.typeTable) ?: return null)
     }
 
     private fun loadConstant(value: ProtoBuf.Expression.ConstantValue): ConeConstantReference? = when (value) {

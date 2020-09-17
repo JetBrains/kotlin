@@ -56,7 +56,7 @@ class FirDeserializationContext(
     ): FirDeserializationContext = FirDeserializationContext(
         nameResolver, typeTable, versionRequirementTable, session, packageFqName, relativeClassName,
         FirTypeDeserializer(
-            session, nameResolver, typeTable, typeParameterProtos, typeDeserializer
+            session, nameResolver, typeTable, annotationDeserializer, typeParameterProtos, typeDeserializer
         ),
         annotationDeserializer, constDeserializer, containerSource,
         if (capturesTypeParameters) allTypeParameters else emptyList()
@@ -129,6 +129,7 @@ class FirDeserializationContext(
                     session,
                     nameResolver,
                     typeTable,
+                    annotationDeserializer,
                     typeParameterProtos,
                     null
                 ),
