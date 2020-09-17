@@ -109,11 +109,7 @@ interface IrBuilderExtension {
     }
 
     fun IrBuilderWithScope.irBinOp(name: Name, lhs: IrExpression, rhs: IrExpression): IrExpression {
-        val symbol = compilerContext.symbols.getBinaryOperator(
-            name,
-            lhs.type.toKotlinType(),
-            rhs.type.toKotlinType()
-        )
+        val symbol = compilerContext.symbols.getBinaryOperator(name, lhs.type, rhs.type)
         return irInvoke(lhs, symbol, rhs)
     }
 
