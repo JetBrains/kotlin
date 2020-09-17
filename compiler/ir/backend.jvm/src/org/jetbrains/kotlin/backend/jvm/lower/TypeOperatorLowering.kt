@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -139,8 +141,13 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
                 irNot(lowerInstanceOf(expression.argument.transformVoid(), expression.typeOperand))
 
             IrTypeOperator.IMPLICIT_NOTNULL -> {
-                val (startOffset, endOffset) = expression.extents()
-                val source = sourceViewFor(parent as IrDeclaration).subSequence(startOffset, endOffset).toString()
+                val owner = scope.scopeOwnerSymbol.owner
+                val source = if (owner is IrFunction && owner.origin == IrDeclarationOrigin.DELEGATED_MEMBER) {
+                    "${owner.name.asString()}(...)"
+                } else {
+                    val (startOffset, endOffset) = expression.extents()
+                    sourceViewFor(parent as IrDeclaration).subSequence(startOffset, endOffset).toString()
+                }
 
                 irLetS(expression.argument.transformVoid(), irType = context.irBuiltIns.anyNType) { valueSymbol ->
                     irComposite(resultType = expression.type) {
