@@ -18,9 +18,6 @@ package org.jetbrains.kotlin.parcelize
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
-import kotlinx.parcelize.IgnoredOnParcel
-import kotlinx.parcelize.TypeParceler
-import kotlinx.parcelize.WriteWith
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -40,10 +37,22 @@ import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 
 class ParcelizeAnnotationChecker : CallChecker {
+    @Suppress("DEPRECATION")
     companion object {
-        val TYPE_PARCELER_FQNAME = FqName(TypeParceler::class.java.name)
-        val WRITE_WITH_FQNAME = FqName(WriteWith::class.java.name)
-        val IGNORED_ON_PARCEL_FQNAME = FqName(IgnoredOnParcel::class.java.name)
+        val TYPE_PARCELER_FQ_NAMES = listOf(
+            FqName(kotlinx.parcelize.TypeParceler::class.java.name),
+            FqName(kotlinx.android.parcel.TypeParceler::class.java.name)
+        )
+
+        val WRITE_WITH_FQ_NAMES = listOf(
+            FqName(kotlinx.parcelize.WriteWith::class.java.name),
+            FqName(kotlinx.android.parcel.WriteWith::class.java.name)
+        )
+
+        val IGNORED_ON_PARCEL_FQ_NAMES = listOf(
+            FqName(kotlinx.parcelize.IgnoredOnParcel::class.java.name),
+            FqName(kotlinx.android.parcel.IgnoredOnParcel::class.java.name)
+        )
     }
 
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
@@ -53,15 +62,15 @@ class ParcelizeAnnotationChecker : CallChecker {
         val annotationEntry = resolvedCall.call.callElement.getNonStrictParentOfType<KtAnnotationEntry>() ?: return
         val annotationOwner = annotationEntry.getStrictParentOfType<KtModifierListOwner>() ?: return
 
-        if (annotationClass.fqNameSafe == TYPE_PARCELER_FQNAME) {
+        if (annotationClass.fqNameSafe in TYPE_PARCELER_FQ_NAMES) {
             checkTypeParcelerUsage(resolvedCall, annotationEntry, context, annotationOwner)
         }
 
-        if (annotationClass.fqNameSafe == WRITE_WITH_FQNAME) {
+        if (annotationClass.fqNameSafe in WRITE_WITH_FQ_NAMES) {
             checkWriteWithUsage(resolvedCall, annotationEntry, context, annotationOwner)
         }
 
-        if (annotationClass.fqNameSafe == IGNORED_ON_PARCEL_FQNAME) {
+        if (annotationClass.fqNameSafe in IGNORED_ON_PARCEL_FQ_NAMES) {
             checkIgnoredOnParcelUsage(annotationEntry, context, annotationOwner)
         }
     }
@@ -84,7 +93,7 @@ class ParcelizeAnnotationChecker : CallChecker {
         val thisMappedType = resolvedCall.typeArguments.values.takeIf { it.size == 2 }?.first() ?: return
 
         val duplicatingAnnotationCount = descriptor.annotations
-            .filter { it.fqName == TYPE_PARCELER_FQNAME }
+            .filter { it.fqName in TYPE_PARCELER_FQ_NAMES }
             .mapNotNull { it.type.arguments.takeIf { args -> args.size == 2 }?.first()?.type }
             .count { it == thisMappedType }
 

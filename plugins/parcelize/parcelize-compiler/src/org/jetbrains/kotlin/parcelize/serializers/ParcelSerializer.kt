@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.parcelize.serializers
 
-import kotlinx.parcelize.WriteWith
 import org.jetbrains.kotlin.codegen.FrameMap
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -27,6 +26,8 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.parcelize.findAnyAnnotation
+import org.jetbrains.kotlin.parcelize.hasAnyAnnotation
 import org.jetbrains.kotlin.parcelize.isParcelize
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -42,7 +43,10 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-val RAW_VALUE_ANNOTATION_FQNAME = FqName("kotlinx.parcelize.RawValue")
+val RAW_VALUE_ANNOTATION_FQ_NAMES = listOf(
+    FqName(kotlinx.parcelize.RawValue::class.java.name),
+    FqName(kotlinx.android.parcel.RawValue::class.java.name)
+)
 
 internal typealias TypeParcelerMapping = Pair<KotlinType, KotlinType>
 
@@ -64,7 +68,10 @@ interface ParcelSerializer {
     }
 
     companion object {
-        private val WRITE_WITH_FQNAME = FqName(WriteWith::class.java.name)
+        private val WRITE_WITH_FQ_NAMES = listOf(
+            FqName(kotlinx.parcelize.WriteWith::class.java.name),
+            FqName(kotlinx.android.parcel.WriteWith::class.java.name),
+        )
 
         private fun KotlinTypeMapper.mapTypeSafe(type: KotlinType, forceBoxed: Boolean) = when {
             type.isError -> Type.getObjectType("java/lang/Object")
@@ -81,10 +88,10 @@ interface ParcelSerializer {
             val typeMapper = context.typeMapper
 
             val className = asmType.className
-            fun strict() = strict && !type.annotations.hasAnnotation(RAW_VALUE_ANNOTATION_FQNAME)
+            fun strict() = strict && !type.hasAnyAnnotation(RAW_VALUE_ANNOTATION_FQ_NAMES)
 
             fun findCustomParcelerType(type: KotlinType): KotlinType? {
-                type.annotations.findAnnotation(WRITE_WITH_FQNAME)?.let { writeWith ->
+                type.findAnyAnnotation(WRITE_WITH_FQ_NAMES)?.let { writeWith ->
                     val parceler = writeWith.type.arguments.singleOrNull()?.type
                     if (parceler != null && !parceler.isError) {
                         return parceler
@@ -371,7 +378,7 @@ interface ParcelSerializer {
                 }
 
                 else -> {
-                    if (strict && !type.annotations.hasAnnotation(RAW_VALUE_ANNOTATION_FQNAME))
+                    if (strict && !type.hasAnyAnnotation(RAW_VALUE_ANNOTATION_FQ_NAMES))
                         throw IllegalArgumentException("Illegal type")
                     else
                         GenericParcelSerializer(asmType)

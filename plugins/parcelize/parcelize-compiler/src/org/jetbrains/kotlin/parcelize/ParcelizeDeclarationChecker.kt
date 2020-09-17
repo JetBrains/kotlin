@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.parcelize
 
-import kotlinx.parcelize.IgnoredOnParcel
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.FrameMap
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
@@ -37,7 +36,10 @@ val ANDROID_PARCEL_CLASS_FQNAME = FqName("android.os.Parcel")
 
 class ParcelizeDeclarationChecker : DeclarationChecker {
     private companion object {
-        private val IGNORED_ON_PARCEL_FQNAME = FqName(IgnoredOnParcel::class.java.canonicalName)
+        private val IGNORED_ON_PARCEL_FQ_NAMES = listOf(
+            FqName(kotlinx.parcelize.IgnoredOnParcel::class.java.canonicalName),
+            FqName(kotlinx.android.parcel.IgnoredOnParcel::class.java.canonicalName)
+        )
     }
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
@@ -91,7 +93,7 @@ class ParcelizeDeclarationChecker : DeclarationChecker {
         bindingContext: BindingContext
     ) {
         fun hasIgnoredOnParcel(): Boolean {
-            fun Annotations.hasIgnoredOnParcel() = any { it.fqName == IGNORED_ON_PARCEL_FQNAME }
+            fun Annotations.hasIgnoredOnParcel() = any { it.fqName in IGNORED_ON_PARCEL_FQ_NAMES }
 
             return property.annotations.hasIgnoredOnParcel() || (property.getter?.annotations?.hasIgnoredOnParcel() ?: false)
         }

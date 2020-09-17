@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.parcelize.ParcelizeAnnotationChecker
 
 // Keep track of all custom parcelers which are currently in scope.
@@ -30,7 +29,7 @@ class IrParcelerScope(private val parent: IrParcelerScope? = null) {
 }
 
 fun IrParcelerScope?.getCustomSerializer(irType: IrType): IrClass? {
-    return irType.getAnnotation(ParcelizeAnnotationChecker.WRITE_WITH_FQNAME)?.let { writeWith ->
+    return irType.getAnyAnnotation(ParcelizeAnnotationChecker.WRITE_WITH_FQ_NAMES)?.let { writeWith ->
         (writeWith.type as IrSimpleType).arguments.single().typeOrNull!!.getClass()!!
     } ?: this?.get(irType)
 }
@@ -41,7 +40,7 @@ fun IrParcelerScope?.hasCustomSerializer(irType: IrType): Boolean {
 
 fun IrAnnotationContainer.getParcelerScope(parent: IrParcelerScope? = null): IrParcelerScope? {
     val typeParcelerAnnotations = annotations.filterTo(mutableListOf()) {
-        it.symbol.owner.constructedClass.fqNameWhenAvailable == ParcelizeAnnotationChecker.TYPE_PARCELER_FQNAME
+        it.symbol.owner.constructedClass.fqNameWhenAvailable in ParcelizeAnnotationChecker.TYPE_PARCELER_FQ_NAMES
     }
 
     if (typeParcelerAnnotations.isEmpty())
