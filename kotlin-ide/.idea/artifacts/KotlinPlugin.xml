@@ -197,35 +197,9 @@
           <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-coroutines-experimental-compat/1.4.0-rc-279/kotlin-coroutines-experimental-compat-1.4.0-rc-279.jar" path-in-jar="/" />
         </element>
         <element id="library" level="project" name="completion-ranking-kotlin" />
-        <element id="archive" name="kotlin-ultimate-common-cidr-native.jar">
-          <element id="module-output" name="kotlin-ultimate.common-cidr-native" />
-        </element>
-        <element id="archive" name="kotlin-ultimate-common-native.jar">
-          <element id="module-output" name="kotlin-ultimate.common-native" />
-        </element>
-        <element id="archive" name="kotlin-ultimate-common-noncidr-native.jar">
-          <element id="module-output" name="kotlin-ultimate.common-noncidr-native" />
-        </element>
-        <element id="archive" name="kotlin-ultimate.jar">
-          <element id="module-output" name="kotlin-ultimate.ultimate" />
-        </element>
-        <element id="archive" name="kotlin-ultimate-native.jar">
-          <element id="module-output" name="kotlin-ultimate.ultimate-native" />
-        </element>
       </element>
       <element id="directory" name="kotlinc">
         <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-dist-for-ide/1.4.0-rc-279/kotlin-dist-for-ide-1.4.0-rc-279.jar" path-in-jar="/" />
-      </element>
-      <element id="directory" name="bin">
-        <element id="directory" name="linux">
-          <element id="file-copy" path="$PROJECT_DIR$/intellij/CIDR/cidr-debugger/bin/lldb/linux/bin/LLDBFrontend" />
-        </element>
-        <element id="directory" name="windows">
-          <element id="file-copy" path="$PROJECT_DIR$/intellij/CIDR/cidr-debugger/bin/lldb/win/x64/bin/LLDBFrontend.exe" />
-        </element>
-        <element id="directory" name="macos">
-          <element id="file-copy" path="$PROJECT_DIR$/intellij/CIDR/cidr-debugger/bin/lldb/mac/LLDBFrontend" />
-        </element>
       </element>
     </root>
   </artifact>
