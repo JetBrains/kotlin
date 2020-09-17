@@ -340,12 +340,13 @@ data class DTypeParameter(
     constructor(
         dri: DRI,
         name: String,
+        presentableName: String?,
         documentation: SourceSetDependent<DocumentationNode>,
         expectPresentInSet: DokkaSourceSet?,
         bounds: List<Bound>,
         sourceSets: Set<DokkaSourceSet>,
         extra: PropertyContainer<DTypeParameter> = PropertyContainer.empty()
-    ) : this(Invariance(TypeParameter(dri, name)), documentation, expectPresentInSet, bounds, sourceSets, extra)
+    ) : this(Invariance(TypeParameter(dri, name, presentableName)), documentation, expectPresentInSet, bounds, sourceSets, extra)
 
     override val dri: DRI by variantTypeParameter.inner::dri
     override val name: String by variantTypeParameter.inner::name
@@ -376,13 +377,28 @@ data class DTypeAlias(
 
 sealed class Projection
 sealed class Bound : Projection()
-data class TypeParameter(val dri: DRI, val name: String) : Bound()
+data class TypeParameter(val dri: DRI, val name: String, val presentableName: String? = null) : Bound()
 object Star : Projection()
-data class TypeConstructor(
-    val dri: DRI,
-    val projections: List<Projection>,
-    val modifier: FunctionModifiers = FunctionModifiers.NONE
-) : Bound()
+
+sealed class TypeConstructor : Bound() {
+    abstract val dri: DRI
+    abstract val projections: List<Projection>
+    abstract val presentableName: String?
+}
+
+data class GenericTypeConstructor(
+    override val dri: DRI,
+    override val projections: List<Projection>,
+    override val presentableName: String? = null
+) : TypeConstructor()
+
+data class FunctionalTypeConstructor(
+    override val dri: DRI,
+    override val projections: List<Projection>,
+    val isExtensionFunction: Boolean = false,
+    val isSuspendable: Boolean = false,
+    override val presentableName: String? = null
+) : TypeConstructor()
 
 data class Nullable(val inner: Bound) : Bound()
 
@@ -406,14 +422,10 @@ object JavaObject : Bound()
 object Dynamic : Bound()
 data class UnresolvedBound(val name: String) : Bound()
 
-enum class FunctionModifiers {
-    NONE, FUNCTION, EXTENSION
-}
-
 fun Variance<TypeParameter>.withDri(dri: DRI) = when(this) {
-    is Contravariance -> Contravariance(TypeParameter(dri, inner.name))
-    is Covariance -> Covariance(TypeParameter(dri, inner.name))
-    is Invariance -> Invariance(TypeParameter(dri, inner.name))
+    is Contravariance -> Contravariance(TypeParameter(dri, inner.name, inner.presentableName))
+    is Covariance -> Covariance(TypeParameter(dri, inner.name, inner.presentableName))
+    is Invariance -> Invariance(TypeParameter(dri, inner.name, inner.presentableName))
 }
 
 private fun String.shorten(maxLength: Int) = lineSequence().first().let {
