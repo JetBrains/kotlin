@@ -8997,6 +8997,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             public void testRefinedIntTypesAnalysis() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/varSpilling/refinedIntTypesAnalysis.kt");
             }
+
+            @TestMetadata("safeCallElvis.kt")
+            public void testSafeCallElvis() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/varSpilling/safeCallElvis.kt");
+            }
         }
     }
 
