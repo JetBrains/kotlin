@@ -64,12 +64,6 @@ open class VariableRemapper(val mapping: Map<IrValueParameter, IrValueDeclaratio
         mapping[value]
 }
 
-@ObsoleteDescriptorBasedAPI
-class VariableRemapperDesc(val mapping: Map<ValueDescriptor, IrValueParameter>) : AbstractVariableRemapper() {
-    override fun remapVariable(value: IrValueDeclaration): IrValueDeclaration? =
-        mapping[value.descriptor]
-}
-
 fun BackendContext.createIrBuilder(
     symbol: IrSymbol,
     startOffset: Int = UNDEFINED_OFFSET,
