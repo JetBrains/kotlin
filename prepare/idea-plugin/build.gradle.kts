@@ -172,22 +172,13 @@ dependencies {
     embedded(protobufFull())
     embedded(kotlinBuiltins(forJvm = true))
 
-    libraries(project(":kotlin-stdlib", "withJvmBuiltins"))
-    libraries(commonDep(kotlinxCollectionsImmutable())) {
-        exclude("org.jetbrains.kotlin", "kotlin-stdlib")
-    }
+    libraries(commonDep(kotlinxCollectionsImmutable()))
     libraries(commonDep("javax.inject"))
-    libraries(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")) {
-        exclude("org.jetbrains.kotlin", "kotlin-stdlib")
-    }
-    libraries(commonDep("org.jetbrains", "markdown")) {
-        exclude("org.jetbrains.kotlin", "kotlin-stdlib")
-    }
+    libraries(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8"))
+    libraries(commonDep("org.jetbrains", "markdown"))
     libraries(commonDep("io.javaslang", "javaslang"))
 
-    libraries(project(":kotlin-stdlib-jdk8")) {
-        exclude("org.jetbrains.kotlin", "kotlin-stdlib")
-    }
+    libraries(kotlinStdlib("jdk8"))
 
     Platform[193].orHigher {
         libraries(commonDep("org.jetbrains.intellij.deps.completion", "completion-ranking-kotlin"))
