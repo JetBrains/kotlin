@@ -898,6 +898,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/analysis-tests/testData/resolve/delegates/extensionGetValueWithTypeVariableAsReceiver.kt");
         }
 
+        @TestMetadata("kt41982.kt")
+        public void testKt41982() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/delegates/kt41982.kt");
+        }
+
         @TestMetadata("provideDelegate.kt")
         public void testProvideDelegate() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/delegates/provideDelegate.kt");

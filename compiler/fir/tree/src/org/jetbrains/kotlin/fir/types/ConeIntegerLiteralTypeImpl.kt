@@ -64,9 +64,11 @@ class ConeIntegerLiteralTypeImpl : ConeIntegerLiteralType {
     }
 
     override fun getApproximatedType(expectedType: ConeKotlinType?): ConeClassLikeType {
-        val approximatedType = when (val expectedTypeForApproximation = expectedType?.lowerBoundIfFlexible()) {
+        val expectedTypeForApproximation = (expectedType?.lowerBoundIfFlexible() as? ConeClassLikeType)
+            ?.withNullability(ConeNullability.NOT_NULL)
+        val approximatedType = when (expectedTypeForApproximation) {
             null, !in possibleTypes -> possibleTypes.first()
-            else -> expectedTypeForApproximation as ConeClassLikeType
+            else -> expectedTypeForApproximation
         }
         return approximatedType.withNullability(nullability)
     }

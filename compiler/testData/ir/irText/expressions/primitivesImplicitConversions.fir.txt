@@ -63,9 +63,9 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
       VAR name:test2 type:kotlin.Long [val]
         CONST Long type=kotlin.Long value=42
       VAR name:test3 type:kotlin.Long? [val]
-        CONST Int type=kotlin.Int value=42
+        CONST Long type=kotlin.Long value=42
       VAR name:test4 type:kotlin.Long? [val]
-        CONST Int type=kotlin.Int value=-1
+        CONST Long type=kotlin.Long value=-1
       VAR name:test5 type:kotlin.Long? [val]
         CONST Int type=kotlin.Int value=-1
       VAR name:test6 type:kotlin.Short? [val]
