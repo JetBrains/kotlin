@@ -74,6 +74,10 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
     internal class CustomForIde(vararg resolutionSequence: ResolutionStage) : CallKind(*resolutionSequence)
 
     val resolutionSequence: List<ResolutionStage> = resolutionSequence.toList()
+
+    final override fun toString(): String {
+        return this::class.simpleName ?: super.toString()
+    }
 }
 
 class ResolutionSequenceBuilder(
