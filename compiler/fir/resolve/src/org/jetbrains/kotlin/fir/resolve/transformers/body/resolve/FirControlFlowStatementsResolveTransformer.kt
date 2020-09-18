@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessTransf
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -191,10 +190,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
         } else {
             ResolutionMode.ContextIndependent
         }
-        var result = transformer.transformExpression(jump, mode).single
-        if (result is FirReturnExpression) {
-            result = result.transformResult(integerLiteralTypeApproximator, expectedTypeRef!!.coneTypeSafe())
-        }
+        val result = transformer.transformExpression(jump, mode).single
         dataFlowAnalyzer.exitJump(jump)
         return result.compose()
     }

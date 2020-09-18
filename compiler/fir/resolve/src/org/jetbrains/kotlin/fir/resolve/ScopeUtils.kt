@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolved
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerLiteralTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScope
 import org.jetbrains.kotlin.fir.scopes.scope
@@ -56,18 +55,7 @@ fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession)
             }
         )
         is ConeDefinitelyNotNullType -> original.scope(useSiteSession, scopeSession)
-        is ConeIntegerLiteralType -> {
-            @Suppress("USELESS_CAST") // TODO: remove once fixed: https://youtrack.jetbrains.com/issue/KT-35635
-            scopeSession.getOrBuild(
-                when {
-                    isUnsigned -> FirIntegerLiteralTypeScope.ILTKey.Unsigned
-                    else -> FirIntegerLiteralTypeScope.ILTKey.Signed
-                },
-                FirIntegerLiteralTypeScope.SCOPE_SESSION_KEY
-            ) {
-                FirIntegerLiteralTypeScope(useSiteSession, isUnsigned)
-            } as FirTypeScope
-        }
+        is ConeIntegerLiteralType -> error("ILT should not be in receiver position")
         else -> null
     }
 }

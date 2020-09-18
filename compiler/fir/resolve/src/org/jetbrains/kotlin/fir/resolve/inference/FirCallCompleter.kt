@@ -72,17 +72,21 @@ class FirCallCompleter(
         return when (completionMode) {
             ConstraintSystemCompletionMode.FULL -> {
                 if (inferenceSession.shouldRunCompletion(call)) {
-                    completer.complete(candidate.system.asConstraintSystemCompleterContext(), completionMode, listOf(call), initialType, transformer.resolutionContext) {
+                    completer.complete(
+                        candidate.system.asConstraintSystemCompleterContext(),
+                        completionMode,
+                        listOf(call),
+                        initialType,
+                        transformer.resolutionContext
+                    ) {
                         analyzer.analyze(candidate.system.asPostponedArgumentsAnalyzerContext(), it, candidate)
                     }
-                    val finalSubstitutor =
-                        candidate.system.asReadOnlyStorage().buildAbstractResultingSubstitutor(session.inferenceComponents.ctx) as ConeSubstitutor
+                    val finalSubstitutor = candidate.system.asReadOnlyStorage()
+                        .buildAbstractResultingSubstitutor(session.inferenceComponents.ctx) as ConeSubstitutor
                     val completedCall = call.transformSingle(
                         FirCallCompletionResultsWriterTransformer(
                             session, finalSubstitutor, components.returnTypeCalculator,
-                            session.inferenceComponents.approximator,
-                            components.integerOperatorsTypeUpdater,
-                            components.integerLiteralTypeApproximator
+                            session.inferenceComponents.approximator
                         ),
                         null
                     )
@@ -104,9 +108,8 @@ class FirCallCompleter(
                 ) {
                     analyzer.analyze(candidate.system.asPostponedArgumentsAnalyzerContext(), it, candidate)
                 }
-                val approximatedCall = call.transformSingle(components.integerOperatorsTypeUpdater, null)
-                inferenceSession.addPartiallyResolvedCall(approximatedCall)
-                CompletionResult(approximatedCall, false)
+                inferenceSession.addPartiallyResolvedCall(call)
+                CompletionResult(call, false)
             }
 
             ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA -> throw IllegalStateException()
@@ -120,8 +123,6 @@ class FirCallCompleter(
         return FirCallCompletionResultsWriterTransformer(
             session, substitutor, components.returnTypeCalculator,
             session.inferenceComponents.approximator,
-            components.integerOperatorsTypeUpdater,
-            components.integerLiteralTypeApproximator,
             mode
         )
     }
@@ -189,9 +190,7 @@ class FirCallCompleter(
                 FirBuilderInferenceSession(transformer.resolutionContext, stubsForPostponedVariables as Map<ConeTypeVariable, ConeStubType>)
             }
 
-            val localContext = components.towerDataContextForAnonymousFunctions.get(lambdaArgument.symbol) ?: error(
-                ""
-            )
+            val localContext = components.towerDataContextForAnonymousFunctions[lambdaArgument.symbol] ?: error("")
             transformer.context.withTowerDataContext(localContext) {
                 if (builderInferenceSession != null) {
                     transformer.context.withInferenceSession(builderInferenceSession) {

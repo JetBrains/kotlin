@@ -138,7 +138,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                             withLocalScopeCleanup {
                                 addLocalScope(context.getPrimaryConstructorParametersScope())
                                 property.transformChildrenWithoutAccessors(returnTypeRef)
-                                property.transformInitializer(integerLiteralTypeApproximator, property.returnTypeRef.coneTypeSafe())
                             }
                             if (property.initializer != null) {
                                 storeVariableReturnType(property)
@@ -253,7 +252,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             (delegateProvider as? FirFunctionCall)?.let { dataFlowAnalyzer.dropSubgraphFromCall(it) }
             return wrappedDelegateExpression.expression
                 .transformSingle(transformer, ResolutionMode.ContextDependent)
-                .transform(integerLiteralTypeApproximator, null)
+                .approximateIfIsIntegerConst()
+                .compose()
         } finally {
             dataFlowAnalyzer.exitDelegateExpression()
         }
@@ -269,7 +269,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 .transformDelegate(transformer, resolutionMode)
                 .transformTypeParameters(transformer, resolutionMode)
                 .transformOtherChildren(transformer, resolutionMode)
-                .transformInitializer(integerLiteralTypeApproximator, null)
             if (variable.initializer != null) {
                 storeVariableReturnType(variable)
             }
@@ -650,12 +649,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
 
         dataFlowAnalyzer.enterValueParameter(valueParameter)
-        val transformedValueParameter =
-            valueParameter.transformInitializer(integerLiteralTypeApproximator, valueParameter.returnTypeRef.coneType)
-
         val result = transformDeclarationContent(
-            transformedValueParameter,
-            withExpectedType(transformedValueParameter.returnTypeRef)
+            valueParameter,
+            withExpectedType(valueParameter.returnTypeRef)
         ).single as FirValueParameter
 
         dataFlowAnalyzer.exitValueParameter(result)?.let { graph ->
@@ -752,8 +748,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                     ConeSubstitutor.Empty,
                     components.returnTypeCalculator,
                     inferenceComponents.approximator,
-                    integerOperatorsTypeUpdater,
-                    integerLiteralTypeApproximator
                 )
                 lambda.transformSingle(writer, expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.toExpectedType())
                 val returnTypes = dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(lambda)

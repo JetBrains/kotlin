@@ -18,8 +18,6 @@ import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
-import org.jetbrains.kotlin.fir.resolve.transformers.IntegerLiteralTypeApproximationTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.IntegerOperatorsTypeUpdater
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
@@ -54,8 +52,6 @@ abstract class BodyResolveComponents : SessionHolder {
     abstract val doubleColonExpressionResolver: FirDoubleColonExpressionResolver
     abstract val syntheticCallGenerator: FirSyntheticCallGenerator
     abstract val dataFlowAnalyzer: FirDataFlowAnalyzer<*>
-    abstract val integerLiteralTypeApproximator: IntegerLiteralTypeApproximationTransformer
-    abstract val integerOperatorsTypeUpdater: IntegerOperatorsTypeUpdater
     abstract val outerClassManager: FirOuterClassManager
 }
 

@@ -309,14 +309,6 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             transformer.onBeforeStatementResolution(block.statements[index])
             TransformData.Data(value)
         }
-        if (data == ResolutionMode.ContextIndependent) {
-            block.transformStatements(integerLiteralTypeApproximator, null)
-        } else {
-            block.transformAllStatementsExceptLast(
-                integerLiteralTypeApproximator,
-                null
-            )
-        }
         block.transformOtherChildren(transformer, data)
         block.writeResultType(session)
 
@@ -336,8 +328,8 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     ): CompositeTransformResult<FirStatement> {
         return (comparisonExpression.transformChildren(transformer, ResolutionMode.ContextIndependent) as FirComparisonExpression).also {
             it.resultType = comparisonExpression.typeRef.resolvedTypeFromPrototype(builtinTypes.booleanType.type)
-        }.transformSingle(integerLiteralTypeApproximator, null)
-            .also(dataFlowAnalyzer::exitComparisonExpressionCall).compose()
+            dataFlowAnalyzer.exitComparisonExpressionCall(it)
+        }.compose()
     }
 
     override fun transformAssignmentOperatorStatement(
@@ -429,7 +421,6 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     ): CompositeTransformResult<FirStatement> {
         val result = (equalityOperatorCall.transformChildren(transformer, ResolutionMode.ContextIndependent) as FirEqualityOperatorCall)
             .also { it.resultType = equalityOperatorCall.typeRef.resolvedTypeFromPrototype(builtinTypes.booleanType.type) }
-            .transformSingle(integerLiteralTypeApproximator, null)
         dataFlowAnalyzer.exitEqualityOperatorCall(result)
         return result.compose()
     }
@@ -481,7 +472,6 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         val resolved = components.typeResolverTransformer.withAllowedBareTypes {
             typeOperatorCall.transformConversionTypeRef(transformer, ResolutionMode.ContextIndependent)
         }.transformOtherChildren(transformer, ResolutionMode.ContextIndependent)
-        resolved.argumentList.transformArguments(integerLiteralTypeApproximator, null)
 
         val conversionTypeRef = resolved.conversionTypeRef.withTypeArgumentsForBareType(resolved.argument)
         resolved.transformChildren(object : FirDefaultTransformer<Nothing?>() {
@@ -520,7 +510,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             else -> error("Unknown type operator: ${resolved.operation}")
         }
         dataFlowAnalyzer.exitTypeOperatorCall(resolved)
-        return resolved.transform(integerLiteralTypeApproximator, null)
+        return resolved.compose()
     }
 
     override fun transformCheckNotNullCall(
@@ -587,7 +577,6 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             val completeAssignment = callCompleter.completeCall(resolvedAssignment, noExpectedType).result // TODO: check
             val expectedType = components.typeFromCallee(completeAssignment)
             completeAssignment.transformRValue(transformer, withExpectedType(expectedType))
-                .transformRValue(integerLiteralTypeApproximator, expectedType.coneTypeSafe())
         } else {
             // This can happen in erroneous code only
             resolvedAssignment

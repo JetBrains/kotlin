@@ -233,13 +233,6 @@ internal open class FirTowerResolveTask(
             explicitReceiverValue.toMemberScopeTowerLevel(), info, parentGroup.Member, ExplicitReceiverKind.DISPATCH_RECEIVER
         )
 
-        val shouldProcessExplicitReceiverScopeOnly =
-            info.callKind == CallKind.Function && info.explicitReceiver?.typeRef?.coneTypeSafe<ConeIntegerLiteralType>() != null
-        if (shouldProcessExplicitReceiverScopeOnly) {
-            // Special case (integer literal type)
-            return
-        }
-
         enumerateTowerLevels(
             parentGroup = parentGroup,
             onScope = { scope, group ->

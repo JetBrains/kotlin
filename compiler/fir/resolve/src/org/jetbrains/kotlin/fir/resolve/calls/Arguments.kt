@@ -18,9 +18,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
 import org.jetbrains.kotlin.fir.returnExpressions
-import org.jetbrains.kotlin.fir.scopes.impl.FirILTTypeRefPlaceHolder
-import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperator
-import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
@@ -185,11 +182,7 @@ fun Candidate.resolveSubCallArgument(
      * It's important to extract type from argument neither from symbol, because of symbol contains
      *   placeholder type with value 0, but argument contains type with proper literal value
      */
-    val type: ConeKotlinType = if (candidate.symbol.fir is FirIntegerOperator) {
-        (argument as FirFunctionCall).resultType.coneType
-    } else {
-        context.returnTypeCalculator.tryCalculateReturnType(candidate.symbol.firUnsafe()).type
-    }
+    val type: ConeKotlinType = context.returnTypeCalculator.tryCalculateReturnType(candidate.symbol.firUnsafe()).type
     val argumentType = candidate.substitutor.substituteOrSelf(type)
     resolvePlainArgumentType(csBuilder, argumentType, expectedType, sink, context, isReceiver, isDispatch, useNullableArgumentType)
 }
@@ -207,14 +200,6 @@ fun Candidate.resolvePlainExpressionArgument(
     if (expectedType == null) return
     val argumentType = argument.typeRef.coneTypeSafe<ConeKotlinType>() ?: return
     resolvePlainArgumentType(csBuilder, argumentType, expectedType, sink, context, isReceiver, isDispatch, useNullableArgumentType)
-    checkApplicabilityForIntegerOperatorCall(sink, argument)
-}
-
-private fun Candidate.checkApplicabilityForIntegerOperatorCall(sink: CheckerSink, argument: FirExpression) {
-    if (symbol.fir !is FirIntegerOperator) return
-    if (argument !is FirConstExpression<*> && argument !is FirIntegerOperatorCall) {
-        sink.reportDiagnostic(InapplicableCandidate)
-    }
 }
 
 fun Candidate.resolvePlainArgumentType(
@@ -346,9 +331,6 @@ private fun Candidate.prepareExpectedType(
     context: ResolutionContext
 ): ConeKotlinType? {
     if (parameter == null) return null
-    val parameterReturnTypeRef = parameter.returnTypeRef
-    if (parameterReturnTypeRef is FirILTTypeRefPlaceHolder && argument.resultType is FirResolvedTypeRef)
-        return argument.resultType.coneType.takeIf { it in parameterReturnTypeRef.type.possibleTypes } ?: session.builtinTypes.intType.type
     val basicExpectedType = argument.getExpectedType(session, parameter/*, LanguageVersionSettings*/)
     val expectedType = getExpectedTypeWithSAMConversion(session, argument, basicExpectedType, context) ?: basicExpectedType
     return this.substitutor.substituteOrSelf(expectedType)

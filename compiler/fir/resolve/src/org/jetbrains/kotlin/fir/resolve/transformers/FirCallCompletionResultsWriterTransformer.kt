@@ -48,8 +48,6 @@ class FirCallCompletionResultsWriterTransformer(
     private val finalSubstitutor: ConeSubstitutor,
     private val typeCalculator: ReturnTypeCalculator,
     private val typeApproximator: AbstractTypeApproximator,
-    private val integerOperatorsTypeUpdater: IntegerOperatorsTypeUpdater,
-    private val integerApproximator: IntegerLiteralTypeApproximationTransformer,
     private val mode: Mode = Mode.Normal
 ) : FirAbstractTreeTransformer<ExpectedArgumentType?>(phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
 
@@ -105,14 +103,8 @@ class FirCallCompletionResultsWriterTransformer(
             }
         }
 
-        val updatedQualifiedAccess = if (qualifiedAccessExpression is FirFunctionCall) {
-            qualifiedAccessExpression.transformSingle(integerOperatorsTypeUpdater, null)
-        } else {
-            qualifiedAccessExpression
-        }
-
         @Suppress("UNCHECKED_CAST")
-        val result = updatedQualifiedAccess
+        val result = qualifiedAccessExpression
             .transformCalleeReference(
                 StoreCalleeReference,
                 calleeReference.toResolvedReference(),
@@ -137,7 +129,6 @@ class FirCallCompletionResultsWriterTransformer(
                 qualifiedAccessExpression.compose()
             }
         val result = prepareQualifiedTransform(qualifiedAccessExpression, calleeReference)
-            .transformExplicitReceiver(integerApproximator, null)
         val typeRef = result.typeRef as FirResolvedTypeRef
         val subCandidate = calleeReference.candidate
 
@@ -154,13 +145,6 @@ class FirCallCompletionResultsWriterTransformer(
         return result.compose()
     }
 
-    override fun transformCheckedSafeCallSubject(
-        checkedSafeCallSubject: FirCheckedSafeCallSubject,
-        data: ExpectedArgumentType?
-    ): CompositeTransformResult<FirStatement> {
-        return checkedSafeCallSubject.transform(integerApproximator, data?.getExpectedType(checkedSafeCallSubject))
-    }
-
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: ExpectedArgumentType?): CompositeTransformResult<FirStatement> {
         val calleeReference = functionCall.calleeReference as? FirNamedReferenceWithCandidate
             ?: return functionCall.compose()
@@ -174,7 +158,7 @@ class FirCallCompletionResultsWriterTransformer(
                 resultType =
                     typeRef.resolvedTypeFromPrototype(typeRef.coneTypeUnsafe<ConeIntegerLiteralType>().getApproximatedType(expectedType))
                 result.argumentList.transformArguments(this, expectedType?.toExpectedType())
-                result.transformSingle(integerApproximator, expectedType)
+                result
             }
             else -> {
                 resultType = typeRef.substituteTypeRef(subCandidate)
@@ -186,7 +170,7 @@ class FirCallCompletionResultsWriterTransformer(
                         result.replaceArgumentList(buildResolvedArgumentList(it))
                     }
                 }
-                result.transformExplicitReceiver(integerApproximator, null)
+                result
             }
         }
 
@@ -325,7 +309,7 @@ class FirCallCompletionResultsWriterTransformer(
         return variableAssignment.transformCalleeReference(
             StoreCalleeReference,
             calleeReference.toResolvedReference(),
-        ).transformExplicitReceiver(integerApproximator, null).apply {
+        ).apply {
             replaceTypeArguments(typeArguments)
         }.compose()
     }
@@ -565,8 +549,7 @@ class FirCallCompletionResultsWriterTransformer(
         data: ExpectedArgumentType?,
     ): CompositeTransformResult<FirStatement> {
         if (data == ExpectedArgumentType.NoApproximation) return constExpression.compose()
-        val expectedType = data?.getExpectedType(constExpression)
-        return constExpression.transform(integerApproximator, expectedType)
+        return constExpression.approximateIfIsIntegerConst(data?.getExpectedType(constExpression)).compose()
     }
 
     override fun transformArrayOfCall(arrayOfCall: FirArrayOfCall, data: ExpectedArgumentType?): CompositeTransformResult<FirStatement> {

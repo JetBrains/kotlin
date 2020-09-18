@@ -157,14 +157,6 @@ class FirCallResolver(
                 bestCandidates, discriminateGenerics = true, discriminateAbstracts = onSuperReference
             )
         }
-        if ((reducedCandidates.isEmpty() || !result.currentApplicability.isSuccess) &&
-            explicitReceiver?.typeRef?.coneTypeSafe<ConeIntegerLiteralType>() != null
-        ) {
-            val approximatedQualifiedAccess = qualifiedAccess.transformExplicitReceiver(components.integerLiteralTypeApproximator, null)
-            if (approximatedQualifiedAccess.explicitReceiver?.typeRef?.coneTypeSafe<ConeIntegerLiteralType>() == null) {
-                return collectCandidates(approximatedQualifiedAccess, name)
-            }
-        }
 
         return ResolutionResult(info, result.currentApplicability, reducedCandidates)
     }
