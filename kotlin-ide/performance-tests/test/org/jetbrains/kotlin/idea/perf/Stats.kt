@@ -261,12 +261,12 @@ class Stats(
         val testData = TestData<SV, TV>(null, null)
 
         try {
+            val phaseProfiler =
+                createPhaseProfiler(phaseData.testName, phaseName, profilerConfig.copy(warmup = warmup))
+
             for (attempt in 0 until phaseData.iterations) {
                 testData.reset()
                 triggerGC(attempt)
-
-                val phaseProfiler =
-                    createPhaseProfiler(phaseData.testName, phaseName, profilerConfig.copy(warmup = warmup))
 
                 val setUpMillis = measureTimeMillis { phaseData.setUp(testData) }
                 val attemptName = "${phaseData.testName} #$attempt"
