@@ -209,20 +209,16 @@ abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheck
                 if (typeVariable.isMarkedNullable()) {
                     val typeVariableTypeConstructor = typeVariable.typeConstructor()
                     val subTypeConstructor = subType.typeConstructor()
-
-                    if (
+                    val resultType = if (
                         !subTypeConstructor.isTypeVariable() &&
                         typeVariableTypeConstructor.isTypeVariable() &&
                         (typeVariableTypeConstructor as TypeVariableTypeConstructorMarker).isContainedInInvariantOrContravariantPositions()
                     ) {
-                        if (subType.isCapturedType()) {
-                            (subType as CapturedTypeMarker).withNotNullProjection()
-                        } else {
-                            subType.withNullability(false)
-                        }
+                        subType.withNullability(false)
                     } else {
                         subType.makeDefinitelyNotNullOrNotNull()
                     }
+                    if (resultType is CapturedTypeMarker) resultType.withNotNullProjection() else resultType
                 } else subType
 
             is FlexibleTypeMarker -> {

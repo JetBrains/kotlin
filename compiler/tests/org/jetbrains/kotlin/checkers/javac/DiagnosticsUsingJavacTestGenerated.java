@@ -10686,6 +10686,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/notApproximateWhenCopyDescriptors.kt");
                 }
 
+                @TestMetadata("nullableCaptruredTypeAgainstNullableVariable.kt")
+                public void testNullableCaptruredTypeAgainstNullableVariable() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/nullableCaptruredTypeAgainstNullableVariable.kt");
+                }
+
                 @TestMetadata("overApproximationForInCaptured.kt")
                 public void testOverApproximationForInCaptured() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/overApproximationForInCaptured.kt");
