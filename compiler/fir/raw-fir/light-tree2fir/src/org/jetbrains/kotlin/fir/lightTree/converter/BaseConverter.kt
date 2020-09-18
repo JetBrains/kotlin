@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.lightTree.converter
 
 import com.intellij.lang.LighterASTNode
 import com.intellij.openapi.util.Ref
+import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes
@@ -81,13 +82,25 @@ open class BaseConverter(
         return this.getChildNodesByType(type).firstOrNull()
     }
 
+    override val LighterASTNode?.receiverExpression: LighterASTNode?
+        get() {
+            var candidate: LighterASTNode? = null
+            this?.forEachChildren {
+                when (it.tokenType) {
+                    DOT, SAFE_ACCESS -> return if (candidate?.elementType != TokenType.ERROR_ELEMENT) candidate else null
+                    else -> candidate = it
+                }
+            }
+            return null
+        }
+
     override val LighterASTNode?.selectorExpression: LighterASTNode?
         get() {
             var isSelector = false
             this?.forEachChildren {
                 when (it.tokenType) {
                     DOT, SAFE_ACCESS -> isSelector = true
-                    else -> if (isSelector) return it
+                    else -> if (isSelector) return if (it.elementType != TokenType.ERROR_ELEMENT) it else null
                 }
             }
             return null

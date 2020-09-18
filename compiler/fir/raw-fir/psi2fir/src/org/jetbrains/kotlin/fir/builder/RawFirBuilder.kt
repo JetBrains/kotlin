@@ -112,6 +112,9 @@ class RawFirBuilder(
         return (this as KtAnnotatedExpression).baseExpression
     }
 
+    override val PsiElement?.receiverExpression: PsiElement?
+        get() = (this as? KtQualifiedExpression)?.receiverExpression
+
     override val PsiElement?.selectorExpression: PsiElement?
         get() = (this as? KtQualifiedExpression)?.selectorExpression
 
