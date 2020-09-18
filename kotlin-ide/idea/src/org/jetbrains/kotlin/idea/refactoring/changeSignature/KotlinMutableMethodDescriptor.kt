@@ -11,7 +11,7 @@ class KotlinMutableMethodDescriptor(override val original: KotlinMethodDescripto
     private val parameters: MutableList<KotlinParameterInfo> = original.parameters
 
     override var receiver: KotlinParameterInfo? = original.receiver
-        set(value: KotlinParameterInfo?) {
+        set(value) {
             if (value != null && value !in parameters) {
                 parameters.add(value)
             }

@@ -23,8 +23,8 @@ import com.intellij.refactoring.ui.StringTableCellEditor;
 import com.intellij.ui.BooleanTableCellRenderer;
 import com.intellij.util.ui.ColumnInfo;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.KotlinBundle;
+import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo;
 
@@ -32,7 +32,11 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 public class KotlinFunctionParameterTableModel extends KotlinCallableParameterTableModel {
-    public KotlinFunctionParameterTableModel(KotlinMethodDescriptor methodDescriptor, PsiElement typeContext, PsiElement defaultValueContext) {
+    public KotlinFunctionParameterTableModel(
+            KotlinMethodDescriptor methodDescriptor,
+            PsiElement typeContext,
+            PsiElement defaultValueContext
+    ) {
         super(methodDescriptor,
               typeContext,
               defaultValueContext,
@@ -54,11 +58,11 @@ public class KotlinFunctionParameterTableModel extends KotlinCallableParameterTa
     @Override
     @Nullable
     public KotlinParameterInfo getReceiver() {
-        return ((ReceiverColumn)getColumnInfos()[getColumnCount() - 1]).receiver;
+        return ((ReceiverColumn) getColumnInfos()[getColumnCount() - 1]).receiver;
     }
 
     public void setReceiver(@Nullable KotlinParameterInfo receiver) {
-        ((ReceiverColumn)getColumnInfos()[getColumnCount() - 1]).receiver = receiver;
+        ((ReceiverColumn) getColumnInfos()[getColumnCount() - 1]).receiver = receiver;
     }
 
     public static boolean isReceiverColumn(ColumnInfo column) {

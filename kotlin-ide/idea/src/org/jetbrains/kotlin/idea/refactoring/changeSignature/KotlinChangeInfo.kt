@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.source.getPsi
@@ -275,11 +274,6 @@ open class KotlinChangeInfo(
         return buffer.toString()
     }
 
-    fun isRefactoringTarget(inheritedCallableDescriptor: CallableDescriptor?): Boolean {
-        return inheritedCallableDescriptor != null
-                && method == DescriptorToSourceUtils.descriptorToDeclaration(inheritedCallableDescriptor)
-    }
-
     fun getNewParametersSignature(inheritedCallable: KotlinCallableDefinitionUsage<*>): String {
         return "(" + getNewParametersSignatureWithoutParentheses(inheritedCallable) + ")"
     }
@@ -357,10 +351,7 @@ open class KotlinChangeInfo(
         }
 
         fun matchOriginalAndCurrentMethods(currentPsiMethods: List<PsiMethod>): Map<PsiMethod, PsiMethod> {
-            if (!(isPrimaryMethodUpdated
-                        && originalBaseFunctionDescriptor is FunctionDescriptor
-                        && originalBaseFunctionDescriptor.findJvmOverloadsAnnotation() != null)
-            ) {
+            if (!(isPrimaryMethodUpdated && originalBaseFunctionDescriptor is FunctionDescriptor && originalBaseFunctionDescriptor.findJvmOverloadsAnnotation() != null)) {
                 return (originalPsiMethods.zip(currentPsiMethods)).toMap()
             }
 
@@ -397,9 +388,11 @@ open class KotlinChangeInfo(
                 VisibilityUtil.getVisibilityModifier(currentPsiMethod.modifierList)
             else
                 PsiModifier.PACKAGE_LOCAL
+
             val propagationTargets = primaryPropagationTargets.asSequence()
                 .mapNotNull { it.getRepresentativeLightMethod() }
                 .toSet()
+
             val javaChangeInfo = ChangeSignatureProcessor(
                 method.project,
                 originalPsiMethod,
@@ -412,8 +405,8 @@ open class KotlinChangeInfo(
                 propagationTargets,
                 emptySet()
             ).changeInfo
-            javaChangeInfo.updateMethod(currentPsiMethod)
 
+            javaChangeInfo.updateMethod(currentPsiMethod)
             return javaChangeInfo
         }
 
@@ -430,36 +423,38 @@ open class KotlinChangeInfo(
             var defaultValuesRemained = defaultValuesToRetain
             for (param in newParameterList) {
                 if (param.isNewParameter || param.defaultValueForParameter == null || defaultValuesRemained-- > 0) continue
-                newParameterList.asSequence().withIndex().filter { it.value.oldIndex >= param.oldIndex }.toList()
+                newParameterList.asSequence()
+                    .withIndex()
+                    .filter { it.value.oldIndex >= param.oldIndex }
+                    .toList()
                     .forEach { oldIndices[it.index]-- }
             }
 
             defaultValuesRemained = defaultValuesToRetain
             val oldParameterCount = originalPsiMethod.parameterList.parametersCount
             var indexInCurrentPsiMethod = 0
-            return newParameterList.asSequence().withIndex()
-                .mapNotNullTo(ArrayList()) map@{ pair ->
-                    val (i, info) = pair
+            return newParameterList.asSequence().withIndex().mapNotNullTo(ArrayList()) map@{ pair ->
+                val (i, info) = pair
 
-                    if (info.defaultValueForParameter != null && defaultValuesRemained-- <= 0) return@map null
+                if (info.defaultValueForParameter != null && defaultValuesRemained-- <= 0) return@map null
 
-                    val oldIndex = oldIndices[i]
-                    val javaOldIndex = when {
-                        methodDescriptor.receiver == null -> oldIndex
-                        info == methodDescriptor.receiver -> 0
-                        oldIndex >= 0 -> oldIndex + 1
-                        else -> -1
-                    }
-                    if (javaOldIndex >= oldParameterCount) return@map null
-
-                    val type = if (isPrimaryMethodUpdated)
-                        currentPsiMethod.parameterList.parameters[indexInCurrentPsiMethod++].type
-                    else
-                        PsiType.VOID
-
-                    val defaultValue = info.defaultValueForCall ?: info.defaultValueForParameter
-                    ParameterInfoImpl(javaOldIndex, info.name, type, defaultValue?.text ?: "")
+                val oldIndex = oldIndices[i]
+                val javaOldIndex = when {
+                    methodDescriptor.receiver == null -> oldIndex
+                    info == methodDescriptor.receiver -> 0
+                    oldIndex >= 0 -> oldIndex + 1
+                    else -> -1
                 }
+                if (javaOldIndex >= oldParameterCount) return@map null
+
+                val type = if (isPrimaryMethodUpdated)
+                    currentPsiMethod.parameterList.parameters[indexInCurrentPsiMethod++].type
+                else
+                    PsiType.VOID
+
+                val defaultValue = info.defaultValueForCall ?: info.defaultValueForParameter
+                ParameterInfoImpl(javaOldIndex, info.name, type, defaultValue?.text ?: "")
+            }
         }
 
         fun createJavaChangeInfoForFunctionOrGetter(
@@ -499,6 +494,7 @@ open class KotlinChangeInfo(
                 when (method) {
                     is KtFunction, is KtClassOrObject ->
                         createJavaChangeInfoForFunctionOrGetter(originalPsiMethod, currentPsiMethod, false)
+
                     is KtProperty, is KtParameter -> {
                         val accessorName = originalPsiMethod.name
                         when {
@@ -509,6 +505,7 @@ open class KotlinChangeInfo(
                             else -> null
                         }
                     }
+
                     else -> null
                 }
             }
@@ -550,10 +547,9 @@ fun ChangeInfo.toJetChangeInfo(
             when {
                 info is KotlinAwareJavaParameterInfoImpl -> info.kotlinDefaultValue
                 language.`is`(JavaLanguage.INSTANCE) && !defaultValueText.isNullOrEmpty() -> {
-                    PsiElementFactory.SERVICE.getInstance(method.project)
-                        .createExpressionFromText(defaultValueText, null)
-                        .j2k()
+                    PsiElementFactory.getInstance(method.project).createExpressionFromText(defaultValueText, null).j2k()
                 }
+
                 else -> null
             }
 

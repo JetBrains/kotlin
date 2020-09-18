@@ -20,8 +20,8 @@ import com.intellij.openapi.ui.ComboBoxTableRenderer;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.changeSignature.ParameterTableModelItemBase;
 import com.intellij.util.ui.ColumnInfo;
-import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.KotlinBundle;
+import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar;
@@ -31,21 +31,27 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 public class KotlinPrimaryConstructorParameterTableModel extends KotlinCallableParameterTableModel {
-    public KotlinPrimaryConstructorParameterTableModel(KotlinMethodDescriptor methodDescriptor, PsiElement typeContext, PsiElement defaultValueContext) {
+    public KotlinPrimaryConstructorParameterTableModel(
+            KotlinMethodDescriptor methodDescriptor,
+            PsiElement typeContext,
+            PsiElement defaultValueContext
+    ) {
         super(methodDescriptor,
               typeContext,
               defaultValueContext,
               new ValVarColumn(),
               new NameColumn(typeContext.getProject()),
               new TypeColumn(typeContext.getProject(), KotlinFileType.INSTANCE),
-              new DefaultValueColumn<KotlinParameterInfo, ParameterTableModelItemBase<KotlinParameterInfo>>(typeContext.getProject(), KotlinFileType.INSTANCE));
+              new DefaultValueColumn<KotlinParameterInfo, ParameterTableModelItemBase<KotlinParameterInfo>>(typeContext.getProject(),
+                                                                                                            KotlinFileType.INSTANCE));
     }
 
     public static boolean isValVarColumn(ColumnInfo column) {
         return column instanceof ValVarColumn;
     }
 
-    protected static class ValVarColumn extends ColumnInfoBase<KotlinParameterInfo, ParameterTableModelItemBase<KotlinParameterInfo>, KotlinValVar> {
+    protected static class ValVarColumn
+            extends ColumnInfoBase<KotlinParameterInfo, ParameterTableModelItemBase<KotlinParameterInfo>, KotlinValVar> {
         public ValVarColumn() {
             super(KotlinBundle.message("column.name.val.var"));
         }

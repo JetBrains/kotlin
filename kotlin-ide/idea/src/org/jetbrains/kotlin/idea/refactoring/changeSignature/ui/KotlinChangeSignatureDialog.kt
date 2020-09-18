@@ -22,6 +22,7 @@ import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.openapi.util.text.StringUtil
@@ -88,7 +89,7 @@ class KotlinChangeSignatureDialog(
         item: ParameterTableModelItemBase<KotlinParameterInfo>,
         selected: Boolean,
         focused: Boolean
-    ): JComponent? {
+    ): JComponent {
         val panel = JPanel(BorderLayout())
 
         val valOrVar = if (myMethod.kind === Kind.PRIMARY_CONSTRUCTOR) {
@@ -119,8 +120,8 @@ class KotlinChangeSignatureDialog(
         field.font = Font(plainFont.fontName, plainFont.style, 12)
 
         if (selected && focused) {
-            panel.background = UIUtil.getTableSelectionBackground()
-            field.setAsRendererWithSelection(UIUtil.getTableSelectionBackground(), UIUtil.getTableSelectionForeground())
+            panel.background = UIUtil.getTableSelectionBackground(true)
+            field.setAsRendererWithSelection(UIUtil.getTableSelectionBackground(true), UIUtil.getTableSelectionForeground(true))
         } else {
             panel.background = UIUtil.getTableBackground()
             if (selected && !focused) {
@@ -161,7 +162,7 @@ class KotlinChangeSignatureDialog(
     override fun mayPropagateParameters() =
         parameters.any { it.isNewParameter && it != parametersTableModel.receiver }
 
-    override fun getTableEditor(table: JTable, item: ParameterTableModelItemBase<KotlinParameterInfo>): JBTableRowEditor? {
+    override fun getTableEditor(table: JTable, item: ParameterTableModelItemBase<KotlinParameterInfo>): JBTableRowEditor {
         return object : JBTableRowEditor() {
             private val components = ArrayList<JComponent>()
             private val nameEditor = EditorTextField(item.parameter.name, project, fileType)
@@ -196,7 +197,7 @@ class KotlinChangeSignatureDialog(
                         editor = EditorTextField(document, project, fileType)
                         component = editor
                     } else if (KotlinPrimaryConstructorParameterTableModel.isValVarColumn(columnInfo)) {
-                        val comboBox = JComboBox(KotlinValVar.values())
+                        val comboBox = ComboBox(KotlinValVar.values())
                         comboBox.selectedItem = item.parameter.valOrVar
                         comboBox.addItemListener {
                             parametersTableModel.setValueAtWithoutUpdate(it.item, row, columnFinal)
@@ -470,9 +471,7 @@ class KotlinChangeSignatureDialog(
             return KotlinChangeSignatureProcessor(project, changeInfo, commandName)
         }
 
-
-        private fun KtTypeCodeFragment.createCopy() =
-            KtPsiFactory(this).createTypeCodeFragment(text, this.context)
+        private fun KtTypeCodeFragment.createCopy() = KtPsiFactory(this).createTypeCodeFragment(text, this.context)
 
         fun PsiCodeFragment?.getTypeInfo(isCovariant: Boolean, forPreview: Boolean, reanalyse: Boolean = false): KotlinTypeInfo {
             if (this !is KtTypeCodeFragment) return KotlinTypeInfo(isCovariant)

@@ -44,8 +44,7 @@ fun KtNamedDeclaration.getDeclarationBody(): KtElement? = when (this) {
 fun PsiElement.isCaller(allUsages: Array<out UsageInfo>): Boolean {
     val primaryConstructor = (this as? KtClass)?.primaryConstructor
     val elementsToSearch = if (primaryConstructor != null) listOf(primaryConstructor, this) else listOf(this)
-    return allUsages
-        .asSequence()
+    return allUsages.asSequence()
         .filter {
             val usage = (it as? JavaMethodKotlinUsageWithDelegate<*>)?.delegateUsage ?: it
             usage is KotlinCallerUsage || usage is DeferredJavaMethodKotlinCallerUsage || usage is CallerUsageInfo || (usage is OverriderUsageInfo && !usage.isOriginalOverrider)
@@ -72,16 +71,19 @@ fun getCallableSubstitutor(
 
 fun KotlinType.renderTypeWithSubstitution(substitutor: TypeSubstitutor?, defaultText: String, inArgumentPosition: Boolean): String {
     val newType = substitutor?.substitute(this, Variance.INVARIANT) ?: return defaultText
-    val renderer =
-        if (inArgumentPosition) IdeDescriptorRenderers.SOURCE_CODE_NOT_NULL_TYPE_APPROXIMATION else IdeDescriptorRenderers.SOURCE_CODE
+    val renderer = if (inArgumentPosition)
+        IdeDescriptorRenderers.SOURCE_CODE_NOT_NULL_TYPE_APPROXIMATION
+    else
+        IdeDescriptorRenderers.SOURCE_CODE
+
     return renderer.renderType(newType)
 }
 
 // This method is used to create full copies of functions (including copies of all types)
 // It's needed to prevent accesses to PSI (e.g. using LazyJavaClassifierType properties) when Change signature invalidates it
 // See KotlinChangeSignatureTest.testSAMChangeMethodReturnType
-fun DeclarationDescriptor.createDeepCopy() =
-    (this as? JavaMethodDescriptor)?.substitute(TypeSubstitutor.create(ForceTypeCopySubstitution)) ?: this
+fun DeclarationDescriptor.createDeepCopy(): DeclarationDescriptor =
+ (this as? JavaMethodDescriptor)?.substitute(TypeSubstitutor.create(ForceTypeCopySubstitution)) ?: this
 
 private object ForceTypeCopySubstitution : TypeSubstitution() {
     override fun get(key: KotlinType) =

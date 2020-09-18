@@ -26,10 +26,10 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.refactoring.CallableRefactoring
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.broadcastRefactoringExit
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.ui.KotlinChangePropertySignatureDialog
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.ui.KotlinChangeSignatureDialog
@@ -89,15 +89,18 @@ class KotlinChangeSignature(
                 descriptor,
                 defaultValueContext
             )
+
             is KtProperty, is KtParameter -> KotlinChangePropertySignatureDialog.createProcessorForSilentRefactoring(
                 project,
                 commandName,
                 descriptor
             )
+
             is PsiMethod -> {
                 if (baseDeclaration.language != JavaLanguage.INSTANCE) {
                     Messages.showErrorDialog(
-                        KotlinBundle.message("error.text.can.t.change.signature.of.method",
+                        KotlinBundle.message(
+                            "error.text.can.t.change.signature.of.method",
                             baseDeclaration.language.displayName
                         ),
                         commandName
@@ -107,6 +110,7 @@ class KotlinChangeSignature(
 
                 ChangeSignatureProcessor(project, getPreviewInfoForJavaMethod(descriptor).second)
             }
+
             else -> throw AssertionError("Unexpected declaration: ${baseDeclaration.getElementTextWithContext()}")
         }
         processor.run()
@@ -125,7 +129,8 @@ class KotlinChangeSignature(
 
                 if (baseDeclaration.language != JavaLanguage.INSTANCE) {
                     Messages.showErrorDialog(
-                        KotlinBundle.message("error.text.can.t.change.signature.of.method",
+                        KotlinBundle.message(
+                            "error.text.can.t.change.signature.of.method",
                             baseDeclaration.language.displayName
                         ), commandName
                     )
@@ -138,7 +143,7 @@ class KotlinChangeSignature(
                     override fun getParameters() = javaChangeInfo.newParameters.toMutableList() as MutableList<ParameterInfoImpl>
                 }
                 object : JavaChangeSignatureDialog(project, javaDescriptor, false, null) {
-                    override fun createRefactoringProcessor(): BaseRefactoringProcessor? {
+                    override fun createRefactoringProcessor(): BaseRefactoringProcessor {
                         val parameters = parameters
                         LOG.assertTrue(myMethod.method.isValid)
                         val newJavaChangeInfo = JavaChangeInfoImpl(
@@ -178,10 +183,10 @@ class KotlinChangeSignature(
             toString()
         }
         val dummyFile = KtPsiFactory(project).createFileWithLightClassSupport("dummy.kt", dummyFileText, originalMethod)
-        val dummyDeclaration = (dummyFile.declarations.first() as KtClass).getBody()!!.declarations.first()
+        val dummyDeclaration = (dummyFile.declarations.first() as KtClass).body!!.declarations.first()
 
         // Convert to PsiMethod which can be used in Change Signature dialog
-        val containingClass = PsiElementFactory.SERVICE.getInstance(project).createClass(previewClassName)
+        val containingClass = PsiElementFactory.getInstance(project).createClass(previewClassName)
         val preview = createJavaMethod(dummyDeclaration.getRepresentativeLightMethod()!!, containingClass)
 
         // Create JavaChangeInfo based on new signature
@@ -191,7 +196,7 @@ class KotlinChangeSignature(
         val params = (preview.parameterList.parameters.zip(ktChangeInfo.newParameters)).map {
             val (param, paramInfo) = it
             // Keep original default value for proper update of Kotlin usages
-            KotlinAwareJavaParameterInfoImpl(paramInfo.oldIndex, param.name!!, param.type, paramInfo.defaultValueForCall)
+            KotlinAwareJavaParameterInfoImpl(paramInfo.oldIndex, param.name, param.type, paramInfo.defaultValueForCall)
         }.toTypedArray()
 
         return preview to JavaChangeInfoImpl(
@@ -263,7 +268,7 @@ fun createChangeInfo(
 
     val processor = KotlinChangeSignatureDialog.createRefactoringProcessorForSilentChangeSignature(
         project,
-        ChangeSignatureHandler.REFACTORING_NAME,
+        RefactoringBundle.message("changeSignature.refactoring.name"),
         adjustedDescriptor,
         defaultValueContext
     ) as KotlinChangeSignatureProcessor

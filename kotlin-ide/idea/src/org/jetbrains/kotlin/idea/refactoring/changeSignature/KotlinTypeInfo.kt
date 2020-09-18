@@ -21,12 +21,10 @@ import org.jetbrains.kotlin.types.KotlinType
 
 data class KotlinTypeInfo(val isCovariant: Boolean, val type: KotlinType? = null, val text: String? = null)
 
-fun KotlinTypeInfo.render(): String {
-    return when {
-        text != null -> text
-        type != null -> renderType()
-        else -> ""
-    }
+fun KotlinTypeInfo.render(): String = when {
+    text != null -> text
+    type != null -> renderType()
+    else -> ""
 }
 
 private fun KotlinTypeInfo.renderType(): String {

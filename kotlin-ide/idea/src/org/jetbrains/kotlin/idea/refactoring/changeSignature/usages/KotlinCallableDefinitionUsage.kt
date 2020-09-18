@@ -51,8 +51,7 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
     val hasExpectedType: Boolean = checkIfHasExpectedType(originalCallableDescriptor, isInherited)
 
     val currentCallableDescriptor: CallableDescriptor? by lazy {
-        val element = declaration
-        when (element) {
+        when (val element = declaration) {
             is KtFunction, is KtProperty, is KtParameter -> (element as KtDeclaration).unsafeResolveToDescriptor() as CallableDescriptor
             is KtClass -> (element.unsafeResolveToDescriptor() as ClassDescriptor).unsubstitutedPrimaryConstructor
             is PsiMethod -> element.getJavaMethodDescriptor()
@@ -76,7 +75,7 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
         if (!(callableDescriptor is AnonymousFunctionDescriptor && isInherited)) return false
 
         val functionLiteral = DescriptorToSourceUtils.descriptorToDeclaration(callableDescriptor) as KtFunctionLiteral?
-        assert(functionLiteral != null) { "No declaration found for " + callableDescriptor }
+        assert(functionLiteral != null) { "No declaration found for $callableDescriptor" }
 
         val parent = functionLiteral!!.parent as? KtLambdaExpression ?: return false
 

@@ -18,6 +18,6 @@ class KotlinUsagesViewDescriptor(private val element: PsiElement, private val el
     override fun getCodeReferencesText(usagesCount: Int, filesCount: Int): String =
         RefactoringBundle.message("references.to.be.changed", UsageViewBundle.getReferencesString(usagesCount, filesCount))
 
-    override fun getCommentReferencesText(usagesCount: Int, filesCount: Int): String? =
+    override fun getCommentReferencesText(usagesCount: Int, filesCount: Int): String =
         RefactoringBundle.message("comments.elements.header", UsageViewBundle.getOccurencesString(usagesCount, filesCount))
 }

@@ -12,13 +12,13 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 
 enum class KotlinValVar(val keywordName: String) {
     None("none") {
-        override fun createKeyword(factory: KtPsiFactory) = null
+        override fun createKeyword(factory: KtPsiFactory): PsiElement? = null
     },
     Val("val") {
-        override fun createKeyword(factory: KtPsiFactory) = factory.createValKeyword()
+        override fun createKeyword(factory: KtPsiFactory): PsiElement = factory.createValKeyword()
     },
     Var("var") {
-        override fun createKeyword(factory: KtPsiFactory) = factory.createVarKeyword()
+        override fun createKeyword(factory: KtPsiFactory): PsiElement = factory.createVarKeyword()
     };
 
     override fun toString(): String = keywordName
@@ -26,13 +26,11 @@ enum class KotlinValVar(val keywordName: String) {
     abstract fun createKeyword(factory: KtPsiFactory): PsiElement?
 }
 
-fun PsiElement?.toValVar(): KotlinValVar {
-    return when {
-        this == null -> KotlinValVar.None
-        node.elementType == KtTokens.VAL_KEYWORD -> KotlinValVar.Val
-        node.elementType == KtTokens.VAR_KEYWORD -> KotlinValVar.Var
-        else -> throw IllegalArgumentException("Unknown val/var token: " + text)
-    }
+fun PsiElement?.toValVar(): KotlinValVar = when {
+    this == null -> KotlinValVar.None
+    node.elementType == KtTokens.VAL_KEYWORD -> KotlinValVar.Val
+    node.elementType == KtTokens.VAR_KEYWORD -> KotlinValVar.Var
+    else -> throw IllegalArgumentException("Unknown val/var token: $text")
 }
 
 fun KtParameter.setValOrVar(valOrVar: KotlinValVar): PsiElement? {
