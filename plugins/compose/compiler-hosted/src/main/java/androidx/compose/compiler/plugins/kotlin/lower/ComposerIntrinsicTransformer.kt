@@ -48,7 +48,7 @@ class ComposerIntrinsicTransformer(val context: IrPluginContext) :
             // to this call is the composer itself. We just replace this expression with the
             // argument expression and we are good.
             val expectedArgumentsCount = 1 + // composer parameter
-                    1 // changed parameter
+                1 // changed parameter
             assert(expression.valueArgumentsCount == expectedArgumentsCount) {
                 expression.dump()
             }

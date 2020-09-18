@@ -46,9 +46,11 @@ open class ComposeDiagnosticSuppressor : DiagnosticSuppressor {
 
     override fun isSuppressed(diagnostic: Diagnostic, bindingContext: BindingContext?): Boolean {
         if (diagnostic.factory == Errors.NON_SOURCE_ANNOTATION_ON_INLINED_LAMBDA_EXPRESSION) {
-            for (entry in (
+            for (
+                entry in (
                     diagnostic.psiElement.parent as KtAnnotatedExpression
-                    ).annotationEntries) {
+                    ).annotationEntries
+            ) {
                 if (bindingContext != null) {
                     val annotation = bindingContext.get(BindingContext.ANNOTATION, entry)
                     if (annotation != null && annotation.isComposableAnnotation) return true

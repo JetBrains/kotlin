@@ -714,7 +714,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
     )
 
     @Test
-fun testStableVarargParams(): Unit = comparisonPropagation(
+    fun testStableVarargParams(): Unit = comparisonPropagation(
         """
             import androidx.compose.runtime.Immutable
             @Immutable class Foo

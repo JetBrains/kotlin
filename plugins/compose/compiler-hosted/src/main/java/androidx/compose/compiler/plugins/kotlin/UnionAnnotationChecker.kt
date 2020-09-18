@@ -62,7 +62,8 @@ open class UnionAnnotationChecker(val moduleDescriptor: ModuleDescriptor) : Addi
         if (TypeUtils.noExpectedType(expectedType)) return
 
         if (!expectedType.annotations.hasAnnotation(UNIONTYPE_ANNOTATION_NAME) &&
-            !expressionTypeWithSmartCast.annotations.hasAnnotation(UNIONTYPE_ANNOTATION_NAME)) {
+            !expressionTypeWithSmartCast.annotations.hasAnnotation(UNIONTYPE_ANNOTATION_NAME)
+        ) {
             return
         }
 

@@ -36,7 +36,8 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
 
     @Test
     fun testInlineGroups(): Unit = ensureSetup {
-        compose("""
+        compose(
+            """
 
             @Composable
             fun App() {
@@ -58,7 +59,8 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
 
     @Test
     fun testMoveFromIssue(): Unit = ensureSetup {
-        compose("""
+        compose(
+            """
         """,
             "Button(id=1, onClick=invalidate)"
         ).then { activity ->
@@ -69,7 +71,8 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
 
     @Test
     fun testSimpleInlining(): Unit = ensureSetup {
-        compose("""
+        compose(
+            """
             @Composable
             inline fun foo(block: @Composable () -> Unit) {
                 block()
@@ -86,7 +89,8 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
 
     @Test
     fun testVarargCall(): Unit = ensureSetup {
-        compose("""
+        compose(
+            """
             @Composable
             fun <T : Any> foo(
                 vararg inputs: Any?,
@@ -232,7 +236,8 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
 
     @Test
     fun testPropertyValues(): Unit = ensureSetup {
-        compose("""
+        compose(
+            """
             @Composable val foo get() = "123"
 
             class A {
@@ -636,7 +641,8 @@ fun <T> B(foo: T, bar: String) { }
 
     @Test
     fun testObservableGenericFunction(): Unit = ensureSetup {
-        compose("""
+        compose(
+            """
             @Composable
             fun <T> SimpleComposable(state: MutableState<Int>, value: T) {
                 Button(
@@ -660,7 +666,8 @@ fun <T> B(foo: T, bar: String) { }
 
     @Test
     fun testObservableExtension(): Unit = ensureSetup {
-        compose("""
+        compose(
+            """
             @Composable
             fun MutableState<Int>.Composable() {
                 Button(
@@ -686,7 +693,8 @@ fun <T> B(foo: T, bar: String) { }
 
     @Test
     fun testObserverableExpressionBody(): Unit = ensureSetup {
-        compose("""
+        compose(
+            """
             @Composable
             fun SimpleComposable(counter: MutableState<Int>) =
                 Button(
@@ -714,7 +722,8 @@ fun <T> B(foo: T, bar: String) { }
 
     @Test
     fun testObservableInlineWrapper(): Unit = ensureSetup {
-        compose("""
+        compose(
+            """
             var inWrapper = false
             val counter = mutableStateOf(0)
 
@@ -752,7 +761,8 @@ fun <T> B(foo: T, bar: String) { }
 
     @Test
     fun testObservableDefaultParameter(): Unit = ensureSetup {
-        compose("""
+        compose(
+            """
             val counter = mutableStateOf(0)
 
             @Composable
@@ -778,7 +788,8 @@ fun <T> B(foo: T, bar: String) { }
 
     @Test
     fun testObservableEarlyReturn(): Unit = ensureSetup {
-        compose("""
+        compose(
+            """
             val counter = mutableStateOf(0)
 
             @Composable
@@ -1010,7 +1021,8 @@ fun <T> B(foo: T, bar: String) { }
 
     @Test
     fun testInline_NonComposable_Identity(): Unit = ensureSetup {
-        compose("""
+        compose(
+            """
             @Composable inline fun InlineWrapper(base: Int, children: @Composable ()->Unit) {
               children()
             }
@@ -1019,25 +1031,29 @@ fun <T> B(foo: T, bar: String) { }
             InlineWrapper(200) {
               TextView(text = "Test", id=101)
             }
-            """).then { activity ->
+            """
+        ).then { activity ->
             assertEquals("Test", activity.findViewById<TextView>(101).text)
         }
     }
 
     @Test
     fun testInline_Composable_Identity(): Unit = ensureSetup {
-        compose("""
+        compose(
+            """
             """,
             """
               TextView(text="Test", id=101)
-            """).then { activity ->
+            """
+        ).then { activity ->
             assertEquals("Test", activity.findViewById<TextView>(101).text)
         }
     }
 
     @Test
     fun testInline_Composable_EmitChildren(): Unit = ensureSetup {
-        compose("""
+        compose(
+            """
             @Composable
             inline fun InlineWrapper(base: Int, crossinline children: @Composable ()->Unit) {
               LinearLayout(id = base + 0) {
@@ -1049,7 +1065,8 @@ fun <T> B(foo: T, bar: String) { }
             InlineWrapper(200) {
               TextView(text = "Test", id=101)
             }
-            """).then { activity ->
+            """
+        ).then { activity ->
             val tv = activity.findViewById<TextView>(101)
             // Assert the TextView was created with the correct text
             assertEquals("Test", tv.text)
@@ -1109,7 +1126,8 @@ fun <T> B(foo: T, bar: String) { }
 
     @Test
     fun testReturnValue(): Unit = ensureSetup {
-        compose("""
+        compose(
+            """
             var a = 0
             var b = 0
 
@@ -1195,7 +1213,8 @@ fun <T> B(foo: T, bar: String) { }
 
     @Test
     fun testTrivialReturnValue(): Unit = ensureSetup {
-        compose("""
+        compose(
+            """
         @Composable
         fun <T> identity(value: T): T = value
 
@@ -1364,7 +1383,8 @@ fun <T> B(foo: T, bar: String) { }
     fun testAmbientConsumedFromDefaultParameter(): Unit = ensureSetup {
         val initialText = "no text"
         val helloWorld = "Hello World!"
-        compose("""
+        compose(
+            """
             val TextAmbient = ambientOf { "$initialText" }
 
             @Composable
@@ -1480,7 +1500,8 @@ fun <T> B(foo: T, bar: String) { }
         ).then { activity ->
             val textView = activity.findViewById(tvId) as TextView
             val composedSet = textView.getComposedSet(tagId) ?: error(
-                "expected a compose set to exist")
+                "expected a compose set to exist"
+            )
 
             fun assertContains(contains: Boolean, key: String) {
                 assertEquals("composedSet contains key '$key'", contains, composedSet.contains(key))
@@ -1570,8 +1591,11 @@ fun <T> B(foo: T, bar: String) { }
             assert(composedSet.contains("ComposedInlineInt(InlineInt(value=0))"))
             assert(composedSet.contains("ComposedInlineInt(InlineInt(value=1))"))
             assert(composedSet.contains("ComposedInlineInt(InlineInt(value=2))"))
-            assert(composedSet.contains(
-                "ComposedInlineInlineInt(InlineInlineInt(value=InlineInt(value=2)))"))
+            assert(
+                composedSet.contains(
+                    "ComposedInlineInlineInt(InlineInlineInt(value=InlineInt(value=2)))"
+                )
+            )
             assert(composedSet.contains("ComposedInlineMutableSet(InlineMutableSet(value=[a]))"))
         }.then { activity ->
             val textView = activity.findViewById(tvId) as TextView
@@ -1582,8 +1606,11 @@ fun <T> B(foo: T, bar: String) { }
             // not run for values equal to previous compositions.
             assert(!composedSet.contains("ComposedInlineInt(InlineInt(value=0))"))
             assert(!composedSet.contains("ComposedInlineInt(InlineInt(value=1))"))
-            assert(!composedSet.contains(
-                "ComposedInlineInlineInt(InlineInlineInt(value=InlineInt(value=2)))"))
+            assert(
+                !composedSet.contains(
+                    "ComposedInlineInlineInt(InlineInlineInt(value=InlineInt(value=2)))"
+                )
+            )
 
             // But if a stable composable is passed a new value, it should re-run.
             assert(composedSet.contains("ComposedInlineInt(InlineInt(value=3))"))
@@ -1712,7 +1739,7 @@ fun <T> B(foo: T, bar: String) { }
              TextView(text=value, id=$tvId)
            }
         """,
-        """
+            """
            Phone(value=phone)
         """,
             { mapOf("phone" to phone) }
@@ -1743,7 +1770,8 @@ fun <T> B(foo: T, bar: String) { }
              TextView(text="${'$'}left + ${'$'}right = ${'$'}{left + right}", id=$tvId)
              TextView(text="${'$'}addCalled", id=$rsId)
            }
-        """, """
+        """,
+            """
            AddView(left=left, right=right)
         """,
             { mapOf("left" to left, "right" to right) }
@@ -2146,7 +2174,8 @@ fun <T> B(foo: T, bar: String) { }
             """,
             """
                Reordering()
-            """, noParameters
+            """,
+            noParameters
         ).then { activity ->
             // Click 5 add
             val button = activity.findViewById(btnIdAdd + 5) as Button
@@ -2200,7 +2229,8 @@ fun <T> B(foo: T, bar: String) { }
             """,
             """
                SimpleComposable()
-            """, noParameters
+            """,
+            noParameters
         ).then { activity ->
             val button = activity.findViewById(41) as Button
             button.performClick()
@@ -2245,7 +2275,8 @@ fun <T> B(foo: T, bar: String) { }
             """,
             """
                Reordering()
-            """, noParameters
+            """,
+            noParameters
         ).then { activity ->
             val layout = activity.findViewById(100) as LinearLayout
             layout.getChildAt(0).performClick()
@@ -2285,7 +2316,8 @@ fun <T> B(foo: T, bar: String) { }
     @Test
     fun testStableParameters_Various(): Unit = ensureSetup {
         val output = ArrayList<String>()
-        compose("""
+        compose(
+            """
             val m = mutableStateOf(0)
 
             @Immutable
@@ -2401,20 +2433,23 @@ fun <T> B(foo: T, bar: String) { }
                 i=stateType
               )
             }
-        """, """
+        """,
+            """
             output = outerOutput
             val v = ValueHolder(0)
             Main(v, NotStable())
-        """, {
-            mapOf(
-                "outerOutput: ArrayList<String>" to output
-            )
-        }).then {
+        """,
+            {
+                mapOf(
+                    "outerOutput: ArrayList<String>" to output
+                )
+            }
+        ).then {
             // Expect that all the methods are called in order
             assertEquals(
                 "TestSkipping a=1 am=1, MemoInt a=1, MemoFloat, " +
-                        "MemoDouble, MemoNotStable, MemoModelHolder, MemoEnum, MemoStable, " +
-                        "MemoMutableState, MemoState",
+                    "MemoDouble, MemoNotStable, MemoModelHolder, MemoEnum, MemoStable, " +
+                    "MemoMutableState, MemoState",
                 output.joinToString()
             )
             output.clear()
@@ -2431,7 +2466,7 @@ fun <T> B(foo: T, bar: String) { }
             // called then expect a second compose which should only MemoNotStable
             assertEquals(
                 "TestSkipping a=1 am=2, MemoInt a=2, MemoNotStable, " +
-                        "TestSkipping a=1 am=2, MemoNotStable",
+                    "TestSkipping a=1 am=2, MemoNotStable",
                 output.joinToString()
             )
         }
@@ -2440,7 +2475,8 @@ fun <T> B(foo: T, bar: String) { }
     @Test
     fun testStableParameters_Lambdas(): Unit = ensureSetup {
         val output = ArrayList<String>()
-        compose("""
+        compose(
+            """
             val m = mutableStateOf(0)
 
             var output = ArrayList<String>()
@@ -2481,18 +2517,21 @@ fun <T> B(foo: T, bar: String) { }
               Button(id=101, text="model ${'$'}{m.value}", onClick={ m.value++ })
               TestSkipping(unchanged = unchanged, changed = forceNewLambda())
             }
-        """, """
+        """,
+            """
             output = outerOutput
             Main(unchanged = unchanged)
-        """, {
-            mapOf(
-                "outerOutput: ArrayList<String>" to output
-            )
-        }).then {
+        """,
+            {
+                mapOf(
+                    "outerOutput: ArrayList<String>" to output
+                )
+            }
+        ).then {
             // Expect that all the methods are called in order
             assertEquals(
                 "TestSkipping, Container, NormalLambda(1), " +
-                        "NormalLambda(2), NormalLambda(3), NormalLambda(4)",
+                    "NormalLambda(2), NormalLambda(3), NormalLambda(4)",
                 output.joinToString()
             )
             output.clear()
@@ -2515,7 +2554,8 @@ fun <T> B(foo: T, bar: String) { }
 
     @Test
     fun testRecomposeScope(): Unit = ensureSetup {
-        compose("""
+        compose(
+            """
             val m = mutableStateOf(0)
 
             @Composable
@@ -2566,7 +2606,8 @@ fun <T> B(foo: T, bar: String) { }
 
     @Test
     fun testRecomposeScope_ReceiverScope(): Unit = ensureSetup {
-        compose("""
+        compose(
+            """
             val m = mutableStateOf(0)
 
             class Receiver { var r: Int = 0 }
@@ -2599,7 +2640,8 @@ fun <T> B(foo: T, bar: String) { }
 
     @Test
     fun testCompose_InlineReceiver(): Unit = ensureSetup {
-        compose("""
+        compose(
+            """
             object Context {
                 fun t() {}
             }
@@ -2619,7 +2661,8 @@ fun <T> B(foo: T, bar: String) { }
 
     @Test
     fun testRecomposeScope_Method(): Unit = ensureSetup {
-        compose("""
+        compose(
+            """
             val m = mutableStateOf(0)
 
             @Composable

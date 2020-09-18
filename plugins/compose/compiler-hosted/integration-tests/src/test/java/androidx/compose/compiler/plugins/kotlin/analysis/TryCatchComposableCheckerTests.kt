@@ -37,7 +37,8 @@ class TryCatchComposableCheckerTests : AbstractComposeDiagnosticsTest() {
                 } catch(e: Exception) {
                 }
             }
-        """)
+        """
+        )
     }
 
     fun testTryCatchReporting002() {
@@ -53,7 +54,8 @@ class TryCatchComposableCheckerTests : AbstractComposeDiagnosticsTest() {
                 } catch(e: Exception) {
                 }
             }
-        """)
+        """
+        )
     }
 
     fun testTryCatchReporting003() {
@@ -71,7 +73,8 @@ class TryCatchComposableCheckerTests : AbstractComposeDiagnosticsTest() {
                     foo()
                 }
             }
-        """)
+        """
+        )
     }
 
     fun testTryCatchReporting004() {
@@ -87,6 +90,7 @@ class TryCatchComposableCheckerTests : AbstractComposeDiagnosticsTest() {
                 } catch(e: Exception) {
                 }
             }
-        """)
+        """
+        )
     }
 }

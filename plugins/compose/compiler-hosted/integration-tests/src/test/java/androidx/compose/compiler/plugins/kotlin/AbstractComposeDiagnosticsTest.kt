@@ -72,9 +72,11 @@ abstract class AbstractComposeDiagnosticsTest : AbstractCompilerTest() {
                         }
                     if (reportedDiagnostic == null) {
                         val firstRange = reportedDiagnostics.first().textRanges.first()
-                        message.append("  Error ${diagnostic.name} reported at ${
+                        message.append(
+                            "  Error ${diagnostic.name} reported at ${
                             firstRange.startOffset
-                        }-${firstRange.endOffset} but expected at ${range.start}-${range.end}\n")
+                            }-${firstRange.endOffset} but expected at ${range.start}-${range.end}\n"
+                        )
                         message.append(
                             sourceInfo(
                                 clearText,
@@ -87,9 +89,11 @@ abstract class AbstractComposeDiagnosticsTest : AbstractCompilerTest() {
                         found.add(reportedDiagnostic)
                     }
                 } else {
-                    message.append("  Diagnostic ${diagnostic.name} not reported, expected at ${
+                    message.append(
+                        "  Diagnostic ${diagnostic.name} not reported, expected at ${
                         range.start
-                    }\n")
+                        }\n"
+                    )
                     message.append(
                         sourceInfo(
                             clearText,
@@ -108,7 +112,7 @@ abstract class AbstractComposeDiagnosticsTest : AbstractCompilerTest() {
                 val range = diagnostic.textRanges.first()
                 message.append(
                     "  Unexpected diagnostic ${diagnostic.factoryName} reported at ${
-                        range.startOffset
+                    range.startOffset
                     }\n"
                 )
                 message.append(
@@ -139,11 +143,15 @@ fun assertExists(file: File): File {
 val Diagnostic.factoryName: String
     inline get() {
         if (factory.name == "PLUGIN_ERROR")
-            return (this as
-                    DiagnosticWithParameters1<*, RenderedDiagnostic<*>>).a.diagnostic.factory.name
+            return (
+                this as
+                    DiagnosticWithParameters1<*, RenderedDiagnostic<*>>
+                ).a.diagnostic.factory.name
         if (factory.name == "PLUGIN_WARNING")
-            return (this as
-                    DiagnosticWithParameters1<*, RenderedDiagnostic<*>>).a.diagnostic.factory.name
+            return (
+                this as
+                    DiagnosticWithParameters1<*, RenderedDiagnostic<*>>
+                ).a.diagnostic.factory.name
         return factory.name
     }
 
@@ -162,5 +170,5 @@ fun sourceInfo(clearText: String, start: Int, end: Int, prefix: String = ""): St
     val lineEnd = clearText.lineEnd(start)
     val displayEnd = if (end > lineEnd) lineEnd else end
     return prefix + clearText.substring(lineStart, lineEnd) + "\n" +
-            prefix + " ".repeat(start - lineStart) + "~".repeat(displayEnd - start) + "\n"
+        prefix + " ".repeat(start - lineStart) + "~".repeat(displayEnd - start) + "\n"
 }

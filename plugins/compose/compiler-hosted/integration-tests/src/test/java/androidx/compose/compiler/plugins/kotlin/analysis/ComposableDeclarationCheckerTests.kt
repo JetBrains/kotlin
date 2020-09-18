@@ -30,7 +30,8 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
 
             @Composable
             val <!COMPOSABLE_PROPERTY_BACKING_FIELD!>foo<!>: Int = 123
-        """)
+        """
+        )
     }
 
     fun testPropertyWithJustGetter() {
@@ -40,7 +41,8 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
 
             @Composable
             val bar: Int get() = 123
-        """)
+        """
+        )
     }
 
     fun testPropertyWithGetterAndSetter() {
@@ -52,7 +54,8 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
             var <!COMPOSABLE_VAR!>bam<!>: Int 
                 get() { return 123 }
                 set(value) { print(value) }
-        """)
+        """
+        )
     }
 
     fun testSuspendComposable() {
@@ -74,6 +77,7 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
                 acceptComposableSuspend(<!UNSUPPORTED_FEATURE!>composableLambda<!>)
                 acceptSuspend(<!COMPOSABLE_SUSPEND_FUN, TYPE_MISMATCH!>@Composable suspend fun() { }<!>)
             }
-        """)
+        """
+        )
     }
 }

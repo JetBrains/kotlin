@@ -228,8 +228,10 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
 
         carets.forEachIndexed { index, (offset, calltype) ->
             val resolvedCall = resolvedCallAtOffset(bindingContext, ktFile, offset)
-                ?: error("No resolved call found at index: $index, offset: $offset. Expected " +
-                    "$calltype.")
+                ?: error(
+                    "No resolved call found at index: $index, offset: $offset. Expected " +
+                        "$calltype."
+                )
 
             when (calltype) {
                 "<normal>" -> assert(!resolvedCall.isComposableInvocation())

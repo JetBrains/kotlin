@@ -447,12 +447,15 @@ class ComposerParamTransformer(
             ctor,
             0, 0, 1
         ).also {
-            it.putValueArgument(0, IrConstImpl.string(
-                UNDEFINED_OFFSET,
-                UNDEFINED_OFFSET,
-                builtIns.stringType,
-                name
-            ))
+            it.putValueArgument(
+                0,
+                IrConstImpl.string(
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    builtIns.stringType,
+                    name
+                )
+            )
         }
     }
 
@@ -460,9 +463,11 @@ class ComposerParamTransformer(
         // we only add a default mask parameter if one of the parameters has a default
         // expression. Note that if this is a "fake override" method, then only the overridden
         // symbols will have the default value expressions
-        return this is IrSimpleFunction && (valueParameters.any {
-            it.defaultValue != null
-        } || overriddenSymbols.any { it.owner.requiresDefaultParameter() })
+        return this is IrSimpleFunction && (
+            valueParameters.any {
+                it.defaultValue != null
+            } || overriddenSymbols.any { it.owner.requiresDefaultParameter() }
+            )
     }
 
     private fun IrFunction.copyWithComposerParam(): IrFunction {
@@ -584,13 +589,15 @@ class ComposerParamTransformer(
                     if (expression.returnTargetSymbol == oldFn.symbol) {
                         // update the return statement to point to the new function, or else
                         // it will be interpreted as a non-local return
-                        return super.visitReturn(IrReturnImpl(
-                            expression.startOffset,
-                            expression.endOffset,
-                            expression.type,
-                            fn.symbol,
-                            expression.value
-                        ))
+                        return super.visitReturn(
+                            IrReturnImpl(
+                                expression.startOffset,
+                                expression.endOffset,
+                                expression.type,
+                                fn.symbol,
+                                expression.value
+                            )
+                        )
                     }
                     generateSymbols(context)
                     return super.visitReturn(expression)

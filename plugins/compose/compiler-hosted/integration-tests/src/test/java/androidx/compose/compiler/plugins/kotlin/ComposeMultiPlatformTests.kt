@@ -41,17 +41,17 @@ class ComposeMultiPlatformTests : AbstractMultiPlatformIntegrationTest() {
     @Test
     fun testBasicComposable() = ensureSetup {
         multiplatform(
-        """
+            """
             import androidx.compose.runtime.Composable
 
             expect @Composable fun Test()
         """,
-        """
+            """
             import androidx.compose.runtime.Composable
 
             actual @Composable fun Test() {}
         """,
-        """
+            """
         final class JvmKt%Test%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
           OUTERCLASS JvmKt Test (Landroidx/compose/runtime/Composer;I)V
           final static INNERCLASS JvmKt%Test%1 null null

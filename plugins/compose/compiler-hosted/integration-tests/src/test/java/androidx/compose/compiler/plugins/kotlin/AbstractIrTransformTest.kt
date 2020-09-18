@@ -132,16 +132,20 @@ abstract class AbstractIrTransformTest : AbstractCompilerTest() {
             }
             // replace source information with source it references
             .replace(
-                Regex("(%composer\\.start(Restart|Movable|Replaceable)Group\\" +
-                        "([^\"\\n]*)\"(.*)\"\\)")
+                Regex(
+                    "(%composer\\.start(Restart|Movable|Replaceable)Group\\" +
+                        "([^\"\\n]*)\"(.*)\"\\)"
+                )
             ) {
                 "${it.groupValues[1]}\"${
-                    generateSourceInfo(it.groupValues[3], source)
+                generateSourceInfo(it.groupValues[3], source)
                 }\")"
             }
             .replace(
-                    Regex("(composableLambda[N]?\\" +
-                            "([^\"\\n]*)\"(.*)\"\\)")
+                Regex(
+                    "(composableLambda[N]?\\" +
+                        "([^\"\\n]*)\"(.*)\"\\)"
+                )
             ) {
                 "${it.groupValues[1]}\"${
                 generateSourceInfo(it.groupValues[2], source)

@@ -166,8 +166,9 @@ abstract class AbstractComposeLowering(
     protected val builtIns = context.irBuiltIns
 
     protected val composerTypeDescriptor = context.moduleDescriptor
-        .findClassAcrossModuleDependencies(ClassId.topLevel(ComposeFqNames.Composer)
-    ) ?: error("Cannot find the Composer class")
+        .findClassAcrossModuleDependencies(
+            ClassId.topLevel(ComposeFqNames.Composer)
+        ) ?: error("Cannot find the Composer class")
 
     private val symbolTable get() = context.symbolTable
 
@@ -335,23 +336,23 @@ abstract class AbstractComposeLowering(
         val calculated = trace.get(ComposeWritableSlices.STABLE_TYPE, this)
         return if (calculated == null) {
             val isStable = !isError &&
-                    !isTypeParameter() &&
-                    !isSpecialType &&
-                    (
-                            KotlinBuiltIns.isPrimitiveType(this) ||
-                                    isFunctionOrKFunctionType ||
-                                    isEnum ||
-                                    KotlinBuiltIns.isString(this) ||
-                                    isMarkedStable() ||
-                                    (
-                                            isNullable() &&
-                                                    makeNotNullable().isStable()
-                                            ) ||
-                                    (
-                                            isInlineClassType() &&
-                                                    unsubstitutedUnderlyingType().isStable()
-                                            )
+                !isTypeParameter() &&
+                !isSpecialType &&
+                (
+                    KotlinBuiltIns.isPrimitiveType(this) ||
+                        isFunctionOrKFunctionType ||
+                        isEnum ||
+                        KotlinBuiltIns.isString(this) ||
+                        isMarkedStable() ||
+                        (
+                            isNullable() &&
+                                makeNotNullable().isStable()
+                            ) ||
+                        (
+                            isInlineClassType() &&
+                                unsubstitutedUnderlyingType().isStable()
                             )
+                    )
             trace.record(ComposeWritableSlices.STABLE_TYPE, this, isStable)
             isStable
         } else calculated
@@ -984,6 +985,6 @@ fun IrValueParameter.isComposerParam(): Boolean =
 
 fun ValueParameterDescriptor.isComposerParam(): Boolean =
     name == KtxNameConventions.COMPOSER_PARAMETER &&
-            type.constructor.declarationDescriptor?.fqNameSafe == ComposeFqNames.Composer
+        type.constructor.declarationDescriptor?.fqNameSafe == ComposeFqNames.Composer
 
 object COMPOSE_STATEMENT_ORIGIN : IrStatementOriginImpl("COMPOSE_STATEMENT_ORIGIN")

@@ -32,7 +32,8 @@ import org.robolectric.annotation.Config
 class LambdaMemoizationTests : AbstractLoweringTests() {
 
     @Test
-    fun nonCapturingEventLambda() = skipping("""
+    fun nonCapturingEventLambda() = skipping(
+        """
             fun eventFired() { }
 
             @Composable
@@ -48,10 +49,12 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
                   ValidateModel(text = model)
                 }
             }
-        """)
+        """
+    )
 
     @Test
-    fun lambdaInClassInitializer() = skipping("""
+    fun lambdaInClassInitializer() = skipping(
+        """
             @Composable
             fun EventHolder(event: () -> Unit) {
               workToBeRepeated()
@@ -71,10 +74,12 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
               ValidateModel(model)
               EventHolder(event = n.lambda)
             }
-        """)
+        """
+    )
 
     @Test
-    fun methodReferenceEvent() = skipping("""
+    fun methodReferenceEvent() = skipping(
+        """
             fun eventFired() { }
 
             @Composable
@@ -91,10 +96,12 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
                 ValidateModel(text = model)
               }
             }
-        """)
+        """
+    )
 
     @Test
-    fun methodReferenceOnValue() = skipping("""
+    fun methodReferenceOnValue() = skipping(
+        """
         fun eventFired(value: String) { }
 
         @Composable
@@ -115,10 +122,12 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
         fun Example(model: String) {
           Test(model, "unchanged")
         }
-    """)
+    """
+    )
 
     @Test
-    fun extensionMethodReferenceOnValue() = skipping("""
+    fun extensionMethodReferenceOnValue() = skipping(
+        """
         fun eventFired(value: String) { }
 
         fun String.self() = this
@@ -141,10 +150,12 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
         fun Example(model: String) {
           Test(model, "unchanged")
         }
-    """)
+    """
+    )
 
     @Test
-    fun doNotMemoizeCallsToInlines() = skipping("""
+    fun doNotMemoizeCallsToInlines() = skipping(
+        """
             fun eventFired(data: String) { }
 
             @Composable
@@ -169,10 +180,12 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
                 ValidateModel(model)
               }
             }
-        """)
+        """
+    )
 
     @Test
-    fun captureParameterDirectEventLambda() = skipping("""
+    fun captureParameterDirectEventLambda() = skipping(
+        """
             fun eventFired(data: String) { }
 
             @Composable
@@ -188,10 +201,12 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
                   ValidateModel(text = model)
                 }
             }
-        """)
+        """
+    )
 
     @Test
-    fun shouldNotRememberDirectLambdaParameter() = skipping("""
+    fun shouldNotRememberDirectLambdaParameter() = skipping(
+        """
         fun eventFired(data: String) {
           // println("Validating ${'$'}data")
           validateModel(data)
@@ -212,10 +227,12 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
         fun Example(model: String) {
           EventWrapper(event = { eventFired(model) })
         }
-    """)
+    """
+    )
 
     @Test
-    fun narrowCaptureValidation() = skipping("""
+    fun narrowCaptureValidation() = skipping(
+        """
         fun eventFired(data: String) { }
 
         @Composable
@@ -238,10 +255,12 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
           ExpectModified(event = { eventFired(modified) })
           ExpectModified(event = { eventFired(model) })
         }
-    """)
+    """
+    )
 
     @Test
-    fun captureInANestedScope() = skipping("""
+    fun captureInANestedScope() = skipping(
+        """
         fun eventFired(data: String) { }
 
         @Composable
@@ -277,10 +296,12 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
             }
           }
         }
-    """)
+    """
+    )
 
     @Test
-    fun twoCaptures() = skipping("""
+    fun twoCaptures() = skipping(
+        """
         fun eventFired(data: String) { }
 
         @Composable
@@ -310,10 +331,12 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
           ExpectModified(event = { eventFired(unmodified2 + modified2) })
           ExpectModified(event = { eventFired(modified1 + modified2) })
         }
-    """)
+    """
+    )
 
     @Test
-    fun threeCaptures() = skipping("""
+    fun threeCaptures() = skipping(
+        """
         fun eventFired(data: String) { }
 
         @Composable
@@ -344,10 +367,12 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
           ExpectModified(event = { eventFired(modified1 + modified2 + unmodified3) })
           ExpectModified(event = { eventFired(modified1 + modified2 + modified3) })
         }
-    """)
+    """
+    )
 
     @Test
-    fun fiveCaptures() = skipping("""
+    fun fiveCaptures() = skipping(
+        """
         fun eventFired(data: String) { }
 
         @Composable
@@ -377,10 +402,12 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
               unmodified1 + unmodified2 + unmodified3 + unmodified4 + unmodified1 + modified
             ) })
         }
-    """)
+    """
+    )
 
     @Test
-    fun doNotMemoizeNonStableCaptures() = skipping("""
+    fun doNotMemoizeNonStableCaptures() = skipping(
+        """
         val unmodifiedUnstable = Any()
         val unmodifiedString = "unmodified"
 
@@ -408,10 +435,12 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
         fun Example(model: String) {
           NonStable(model, unmodifiedUnstable, unmodifiedString)
         }
-    """)
+    """
+    )
 
     @Test
-    fun doNotMemoizeVarCapures() = skipping("""
+    fun doNotMemoizeVarCapures() = skipping(
+        """
         fun eventFired(data: Int) { }
 
         @Composable
@@ -451,10 +480,12 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
         fun Example(model: String) {
           Test(model, 1)
         }
-    """)
+    """
+    )
 
     @Test
-    fun considerNonComposableCaptures() = skipping("""
+    fun considerNonComposableCaptures() = skipping(
+        """
         fun eventFired(data: Int) {}
 
         @Composable
@@ -478,10 +509,12 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
              ExpectUnmodified(event = { eventFired(5) })
            }
         }
-    """)
+    """
+    )
 
     @Test
-    fun wrapLambaExpressions() = skipping("""
+    fun wrapLambaExpressions() = skipping(
+        """
             @Composable
             fun Wrapper(block: @Composable () -> Unit) {
                workToBeAvoided()
@@ -497,10 +530,12 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
                 ValidateModel(model)
               }
             }
-        """)
+        """
+    )
 
     @Test
-    fun nonCapturingComposableLambda() = skipping("""
+    fun nonCapturingComposableLambda() = skipping(
+        """
             @Composable
             fun Wrapper1(block: @Composable () -> Unit) {
               workToBeAvoided("Wrapper1.1")
@@ -535,10 +570,12 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
                 }
               }
             }
-        """)
+        """
+    )
 
     @Test
-    fun wrappingOneParameter() = skipping("""
+    fun wrappingOneParameter() = skipping(
+        """
         @Composable
         fun Wrap(block: @Composable (p1: String) -> Unit) {
           workToBeAvoided()
@@ -556,10 +593,12 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
             ValidateModel(model)
           }
         }
-     """)
+     """
+    )
 
     @Test // Selecting 23 as 22 is the maximum number handled by RestartingFunction
-    fun wrapping23Parameters() = skipping("""
+    fun wrapping23Parameters() = skipping(
+        """
         @Composable
         fun Wrap(block: @Composable (
             p1: String,
@@ -632,10 +671,12 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
             ValidateModel(model)
           }
         }
-     """)
+     """
+    )
 
     @Test
-    fun wrappingReceiverParameter() = skipping("""
+    fun wrappingReceiverParameter() = skipping(
+        """
         class Receiver() { }
 
         @Composable
@@ -654,10 +695,12 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
             ValidateModel(model)
           }
         }
-    """)
+    """
+    )
 
     @Test
-    fun untrackedLambdasShouldNotForceEvaluation() = skipping("""
+    fun untrackedLambdasShouldNotForceEvaluation() = skipping(
+        """
         @Composable
         fun Wrapper(block: @Composable () -> Unit) {
           workToBeAvoided()
@@ -678,10 +721,12 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
           }
           workToBeRepeated()
         }
-    """)
+    """
+    )
 
     @Test
-    fun lambdasWithReturnResultsShouldBeUntracked() = skipping("""
+    fun lambdasWithReturnResultsShouldBeUntracked() = skipping(
+        """
 
         @Composable
         fun Test1(param: @Composable () -> String) {
@@ -703,11 +748,13 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
           s.value = model
           Test1({ s.value })
         }
-    """)
+    """
+    )
 
     private fun skipping(text: String, dumpClasses: Boolean = false) =
         ensureSetup {
-            compose("""
+            compose(
+                """
                 var avoidedWorkCount = 0
                 var repeatedWorkCount = 0
                 var expectedAvoidedWorkCount = 0
@@ -770,9 +817,12 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
                   }
                 }
 
-            """, """
+            """,
+                """
                 TestHost()
-            """, dumpClasses = dumpClasses).then { activity ->
+            """,
+                dumpClasses = dumpClasses
+            ).then { activity ->
                 val button = activity.findViewById(42) as Button
                 button.performClick()
             }.then { activity ->

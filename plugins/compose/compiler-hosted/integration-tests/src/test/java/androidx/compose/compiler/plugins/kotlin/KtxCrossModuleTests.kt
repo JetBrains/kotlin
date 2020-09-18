@@ -42,8 +42,9 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     @Ignore("b/165674304")
     fun testInlineFunctionDefaultArgument(): Unit = ensureSetup {
         compile(
-            mapOf("library module" to mapOf (
-                "x/library.kt" to """
+            mapOf(
+                "library module" to mapOf (
+                    "x/library.kt" to """
                     package x
 
                     import androidx.compose.runtime.Composable
@@ -52,10 +53,10 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     inline fun f(x: () -> Unit = { println("default") }) {
                       x()
                     }
-                """.trimIndent()
-            ),
-            "Main" to mapOf(
-                "y/User.kt" to """
+                    """.trimIndent()
+                ),
+                "Main" to mapOf(
+                    "y/User.kt" to """
                     package y
 
                     import x.f
@@ -67,8 +68,9 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                         println("non-default")
                       }
                     }
-                """.trimIndent()
-            ))
+                    """.trimIndent()
+                )
+            )
         )
     }
 
@@ -76,8 +78,9 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     @Ignore("b/165674304")
     fun testInlineFunctionDefaultArgument2(): Unit = ensureSetup {
         compile(
-            mapOf("library module" to mapOf (
-                "x/library.kt" to """
+            mapOf(
+                "library module" to mapOf (
+                    "x/library.kt" to """
                     package x
 
                     import androidx.compose.runtime.Composable
@@ -86,10 +89,10 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     inline fun f(x: () -> Unit = { println("default") }) {
                       x()
                     }
-                """.trimIndent()
-            ),
-            "Main" to mapOf(
-                "y/User.kt" to """
+                    """.trimIndent()
+                ),
+                "Main" to mapOf(
+                    "y/User.kt" to """
                     package y
 
                     import x.f
@@ -99,15 +102,17 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     fun g() {
                       f()
                     }
-                """.trimIndent()
-            ))
+                    """.trimIndent()
+                )
+            )
         )
     }
 
     @Test
     fun testAccessibilityBridgeGeneration(): Unit = ensureSetup {
         compile(
-            mapOf("library module" to mapOf(
+            mapOf(
+                "library module" to mapOf(
                     "x/I.kt" to """
                       package x
 
@@ -116,7 +121,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                       @Composable fun bar(arg: @Composable () -> Unit) {
                           arg()
                       }
-                  """.trimIndent()
+                    """.trimIndent()
                 ),
                 "Main" to mapOf(
                     "y/User.kt" to """
@@ -131,7 +136,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                           }
                       }
                       @Composable private fun foo() { }
-                  """.trimIndent()
+                    """.trimIndent()
                 )
             )
         ) {
@@ -161,7 +166,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                         val prop
                           get() = i + 1
                       }
-                  """.trimIndent()
+                    """.trimIndent()
                 ),
                 "Main" to mapOf(
                     "y/User.kt" to """
@@ -169,7 +174,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                       import x.I
                       inline class J(val j: Int)
                       fun foo(): Int = I(42).i + J(23).j + I(1).prop
-                  """.trimIndent()
+                    """.trimIndent()
                 )
             )
         ) {
@@ -766,7 +771,8 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
         val tvId = 29
 
         compose(
-            "TestF", mapOf(
+            "TestF",
+            mapOf(
                 "library module" to mapOf(
                     "my/test/lib/InternalComp.kt" to """
                     package my.test.lib
@@ -829,18 +835,20 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
         dumpClasses: Boolean = false,
         validate: ((String) -> Unit)? = null
     ): List<OutputFile> {
-        val libraryClasses = (modules.filter { it.key != "Main" }.map {
-            // Setup for compile
-            this.classFileFactory = null
-            this.myEnvironment = null
-            setUp(it.key.contains("--ktx=false"))
+        val libraryClasses = (
+            modules.filter { it.key != "Main" }.map {
+                // Setup for compile
+                this.classFileFactory = null
+                this.myEnvironment = null
+                setUp(it.key.contains("--ktx=false"))
 
-            classLoader(it.value, dumpClasses).allGeneratedFiles.also {
-                // Write the files to the class directory so they can be used by the next module
-                // and the application
-                it.writeToDir(classesDirectory)
-            }
-        } + emptyList()).reduce { acc, mutableList -> acc + mutableList }
+                classLoader(it.value, dumpClasses).allGeneratedFiles.also {
+                    // Write the files to the class directory so they can be used by the next module
+                    // and the application
+                    it.writeToDir(classesDirectory)
+                }
+            } + emptyList()
+            ).reduce { acc, mutableList -> acc + mutableList }
 
         // Setup for compile
         this.classFileFactory = null
@@ -848,8 +856,11 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
         setUp()
 
         // compile the next one
-        val appClasses = classLoader(modules["Main"]
-            ?: error("No Main module specified"), dumpClasses).allGeneratedFiles
+        val appClasses = classLoader(
+            modules["Main"]
+                ?: error("No Main module specified"),
+            dumpClasses
+        ).allGeneratedFiles
 
         // Load the files looking for mainClassName
         val outputFiles = (libraryClasses + appClasses).filter {

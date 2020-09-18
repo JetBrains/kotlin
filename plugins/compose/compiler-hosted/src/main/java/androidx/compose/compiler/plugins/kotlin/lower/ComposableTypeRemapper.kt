@@ -169,8 +169,10 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
         ) {
             val typeArguments = containingClass.defaultType.arguments
             @Suppress("DEPRECATION")
-            val newFnClass = context.symbolTable.referenceClass(context.builtIns
-                .getFunction(typeArguments.size))
+            val newFnClass = context.symbolTable.referenceClass(
+                context.builtIns
+                    .getFunction(typeArguments.size)
+            )
             @Suppress("DEPRECATION")
             val newDescriptor = newFnClass
                 .descriptor
@@ -360,17 +362,17 @@ class ComposerTypeRemapper(
         }
         val newIrArguments =
             oldIrArguments.subList(0, oldIrArguments.size - 1) +
-                    extraArgs +
-                    oldIrArguments.last()
+                extraArgs +
+                oldIrArguments.last()
 
         return IrSimpleTypeImpl(
             null,
             symbolRemapper.getReferencedClassifier(
                 context.symbolTable.referenceClass(
                     context
-                    .irBuiltIns
-                    .builtIns
-                    .getFunction(oldIrArguments.size - 1 + extraArgs.size)
+                        .irBuiltIns
+                        .builtIns
+                        .getFunction(oldIrArguments.size - 1 + extraArgs.size)
                 )
             ),
             type.hasQuestionMark,

@@ -323,11 +323,13 @@ open class LiveLiteralTransformer(
                 // return b.value
                 +irIf(
                     condition = irNot(irCall(isLiveLiteralsEnabled)),
-                    body = irReturn(irGet(
-                        literalType,
-                        irGet(thisParam),
-                        defaultProp.getter!!.symbol
-                    ))
+                    body = irReturn(
+                        irGet(
+                            literalType,
+                            irGet(thisParam),
+                            defaultProp.getter!!.symbol
+                        )
+                    )
                 )
                 val a = irTemporary(irGet(stateType, irGet(thisParam), stateProp.getter!!.symbol))
                 val b = irIfNull(
@@ -336,11 +338,14 @@ open class LiveLiteralTransformer(
                     thenPart = irBlock(resultType = stateType) {
                         val liveLiteralCall = irCall(liveLiteral).apply {
                             putValueArgument(0, irString(key))
-                            putValueArgument(1, irGet(
-                                literalType,
-                                irGet(thisParam),
-                                defaultProp.getter!!.symbol
-                            ))
+                            putValueArgument(
+                                1,
+                                irGet(
+                                    literalType,
+                                    irGet(thisParam),
+                                    defaultProp.getter!!.symbol
+                                )
+                            )
                             putTypeArgument(0, literalType)
                         }
                         val c = irTemporary(liveLiteralCall)
@@ -394,12 +399,12 @@ open class LiveLiteralTransformer(
 
             error(
                 "Duplicate live literal key found: $key\n" +
-                "Caused by element at: " +
-                        "${src.filePath}:${src.startLineNumber}:${src.startColumnNumber}\n" +
-                "If you encounter this error, please file a bug at " +
-                "https://issuetracker.google.com/issues?q=componentid:610764\n" +
-                "Try adding the `@NoLiveLiterals` annotation around the surrounding code to " +
-                        "avoid this exception."
+                    "Caused by element at: " +
+                    "${src.filePath}:${src.startLineNumber}:${src.startColumnNumber}\n" +
+                    "If you encounter this error, please file a bug at " +
+                    "https://issuetracker.google.com/issues?q=componentid:610764\n" +
+                    "Try adding the `@NoLiveLiterals` annotation around the surrounding code to " +
+                    "avoid this exception."
             )
         }
         // If live literals are enabled, don't do anything

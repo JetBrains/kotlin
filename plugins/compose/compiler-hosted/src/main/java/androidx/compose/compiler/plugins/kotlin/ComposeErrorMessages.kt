@@ -36,7 +36,7 @@ class ComposeErrorMessages : DefaultErrorMessages.Extension {
         MAP.put(
             ComposeErrors.COMPOSABLE_EXPECTED,
             "Functions which invoke @Composable functions must be marked with the @Composable " +
-                    "annotation"
+                "annotation"
         )
 
         MAP.put(
