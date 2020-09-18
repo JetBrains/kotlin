@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.run
 import com.intellij.execution.Location
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.ConfigurationFromContext
+import com.intellij.execution.actions.ConfigurationFromContextImpl
 import com.intellij.execution.junit.InheritorChooser
 import com.intellij.execution.junit2.PsiMemberParameterizedLocation
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration
@@ -18,9 +19,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.idea.caches.project.isNewMPPModule
-import org.jetbrains.kotlin.idea.facet.externalSystemTestRunTasks
 import org.jetbrains.kotlin.idea.project.platform
-import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.plugins.gradle.execution.test.runner.TestMethodGradleConfigurationProducer
 import org.jetbrains.plugins.gradle.execution.test.runner.applyTestConfiguration
@@ -45,12 +44,17 @@ abstract class AbstractKotlinMultiplatformTestMethodGradleConfigurationProducer 
         return isApplicable(module, platform)
     }
 
+    private fun shouldDisgraceConfiguration(other: ConfigurationFromContext): Boolean {
+        return other.isJpsJunitConfiguration() ||
+                (other as? ConfigurationFromContextImpl)?.configurationProducer is TestMethodGradleConfigurationProducer
+    }
+
     override fun isPreferredConfiguration(self: ConfigurationFromContext, other: ConfigurationFromContext): Boolean {
-        return other.isJpsJunitConfiguration()
+        return shouldDisgraceConfiguration(other)
     }
 
     override fun shouldReplace(self: ConfigurationFromContext, other: ConfigurationFromContext): Boolean {
-        return other.isJpsJunitConfiguration()
+        return shouldDisgraceConfiguration(other)
     }
 
     override fun onFirstRun(fromContext: ConfigurationFromContext, context: ConfigurationContext, performRunnable: Runnable) {
