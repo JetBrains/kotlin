@@ -109,6 +109,7 @@ public class TestMethodGradleConfigurationProducer extends GradleTestRunConfigur
 
   @Override
   public void onFirstRun(@NotNull final ConfigurationFromContext fromContext, @NotNull final ConfigurationContext context, @NotNull final Runnable performRunnable) {
+    Runnable runnableWithCheck = addCheckForTemplateParams(fromContext, context, performRunnable);
     final PsiMethod psiMethod = (PsiMethod)fromContext.getSourceElement();
     final PsiClass psiClass = psiMethod.getContainingClass();
     final InheritorChooser inheritorChooser = new InheritorChooser() {
@@ -122,9 +123,8 @@ public class TestMethodGradleConfigurationProducer extends GradleTestRunConfigur
         chooseTestClassConfiguration(fromContext, context, performRunnable, psiMethod, aClass);
       }
     };
-    if (inheritorChooser.runMethodInAbstractClass(context, performRunnable, psiMethod, psiClass)) return;
-    chooseTestClassConfiguration(fromContext, context, performRunnable, psiMethod, psiClass);
-    super.onFirstRun(fromContext, context, performRunnable);
+    if (inheritorChooser.runMethodInAbstractClass(context, runnableWithCheck, psiMethod, psiClass)) return;
+    chooseTestClassConfiguration(fromContext, context, runnableWithCheck, psiMethod, psiClass);
   }
 
   private void chooseTestClassConfiguration(@NotNull ConfigurationFromContext fromContext,

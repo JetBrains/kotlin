@@ -98,11 +98,13 @@ public abstract class GradleTestRunConfigurationProducer extends RunConfiguratio
     return result;
   }
 
-  @Override
-  public void onFirstRun(@NotNull ConfigurationFromContext configuration,
+  protected Runnable addCheckForTemplateParams(@NotNull ConfigurationFromContext configuration,
                          @NotNull ConfigurationContext context,
                          @NotNull Runnable startRunnable) {
-    restoreDefaultScriptParametersIfNeeded(configuration.getConfiguration(), context);
+    return () -> {
+      restoreDefaultScriptParametersIfNeeded(configuration.getConfiguration(), context);
+      startRunnable.run();
+    };
   }
 
   protected void restoreDefaultScriptParametersIfNeeded(@NotNull RunConfiguration configuration,

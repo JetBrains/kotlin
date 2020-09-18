@@ -79,10 +79,11 @@ public final class AllInDirectoryGradleConfigurationProducer extends GradleTestR
   public void onFirstRun(@NotNull ConfigurationFromContext fromContext,
                          @NotNull ConfigurationContext context,
                          @NotNull Runnable performRunnable) {
+    Runnable runnableWithCheck = addCheckForTemplateParams(fromContext, context, performRunnable);
     ConfigurationData configurationData = extractConfigurationData(context);
     if (configurationData == null) {
       LOG.warn("Cannot extract configuration data from context, uses raw run configuration");
-      performRunnable.run();
+      runnableWithCheck.run();
       return;
     }
     String locationName = String.format("'%s'", configurationData.module.getName());
@@ -93,13 +94,12 @@ public final class AllInDirectoryGradleConfigurationProducer extends GradleTestR
       Function1<VirtualFile, String> createFilter = (e) -> createTestWildcardFilter(/*hasSuffix=*/false);
       if (!applyTestConfiguration(settings, context.getModule(), tasks, configurationData.sources, it -> it, createFilter)) {
         LOG.warn("Cannot apply package test configuration, uses raw run configuration");
-        performRunnable.run();
+        runnableWithCheck.run();
         return;
       }
       configuration.setName(suggestName(configurationData.module));
-      performRunnable.run();
+      runnableWithCheck.run();
     });
-    super.onFirstRun(fromContext, context, performRunnable);
   }
 
   @Nullable

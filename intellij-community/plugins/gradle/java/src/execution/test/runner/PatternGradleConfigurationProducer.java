@@ -78,14 +78,15 @@ public final class PatternGradleConfigurationProducer extends GradleTestRunConfi
   public void onFirstRun(@NotNull ConfigurationFromContext fromContext,
                          @NotNull ConfigurationContext context,
                          @NotNull Runnable performRunnable) {
+    Runnable runnableWithCheck = addCheckForTemplateParams(fromContext, context, performRunnable);
     if (!isMultipleElementsSelected(context)) {
-      super.onFirstRun(fromContext, context, performRunnable);
+      super.onFirstRun(fromContext, context, runnableWithCheck);
       return;
     }
     Module module = getModuleFromContext(context);
     if (module == null) {
       LOG.warn("Cannot find module from context, uses raw run configuration");
-      performRunnable.run();
+      runnableWithCheck.run();
       return;
     }
     ExternalSystemRunConfiguration configuration = (ExternalSystemRunConfiguration)fromContext.getConfiguration();
@@ -93,7 +94,7 @@ public final class PatternGradleConfigurationProducer extends GradleTestRunConfi
     List<String> tests = getTestPatterns(context);
     if (tests.isEmpty()) {
       LOG.warn("Cannot find runnable tests from context, uses raw run configuration");
-      performRunnable.run();
+      runnableWithCheck.run();
       return;
     }
     TestMappings testMappings = getTestMappings(project, tests);
@@ -104,13 +105,12 @@ public final class PatternGradleConfigurationProducer extends GradleTestRunConfi
         createTestFilterFrom(testMappings.getClasses().get(test), testMappings.getMethods().get(test), /*hasSuffix=*/true);
       if (!applyTestConfiguration(settings, module, tasks, tests, findTestSource, createFilter)) {
         LOG.warn("Cannot apply pattern test configuration, uses raw run configuration");
-        performRunnable.run();
+        runnableWithCheck.run();
         return;
       }
       configuration.setName(suggestConfigurationName(tests));
-      performRunnable.run();
+      runnableWithCheck.run();
     });
-    super.onFirstRun(fromContext, context, performRunnable);
   }
 
   @NotNull

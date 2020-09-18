@@ -81,9 +81,10 @@ public final class AllInPackageGradleConfigurationProducer extends GradleTestRun
                          @NotNull ConfigurationContext context,
                          @NotNull Runnable performRunnable) {
     ConfigurationData configurationData = extractConfigurationData(context);
+    Runnable runnableWithCheck = addCheckForTemplateParams(fromContext, context, performRunnable);
     if (configurationData == null) {
       LOG.warn("Cannot extract configuration data from context, uses raw run configuration");
-      performRunnable.run();
+      runnableWithCheck.run();
       return;
     }
     String locationName = String.format("'%s'", configurationData.getLocationName());
@@ -95,13 +96,12 @@ public final class AllInPackageGradleConfigurationProducer extends GradleTestRun
         Function1<PsiElement, String> createFilter = (e) -> createTestFilterFrom(configurationData.psiPackage, /*hasSuffix=*/false);
         if (!applyTestConfiguration(settings, context.getModule(), tasks, sourceElements, createFilter)) {
           LOG.warn("Cannot apply package test configuration, uses raw run configuration");
-          performRunnable.run();
+          runnableWithCheck.run();
           return;
         }
       configuration.setName(suggestName(configurationData));
-        performRunnable.run();
+        runnableWithCheck.run();
     });
-    super.onFirstRun(fromContext, context, performRunnable);
   }
 
   @Nullable
