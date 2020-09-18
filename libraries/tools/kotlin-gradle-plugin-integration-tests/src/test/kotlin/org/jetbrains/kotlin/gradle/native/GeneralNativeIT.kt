@@ -21,13 +21,10 @@ import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_SHORT_NAME
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_UNIQUE_NAME
+import org.junit.Assume
 import org.junit.Ignore
 import org.junit.Test
 import java.io.File
-import java.util.*
-import java.util.zip.ZipFile
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -150,7 +147,6 @@ class GeneralNativeIT : BaseGradleIT() {
         val klibSuffix = CompilerOutputKind.LIBRARY.suffix(HostManager.host)
         val klibPath = "${targetClassesDir("host")}${klibPrefix}native-library$klibSuffix"
 
-        val taskSuffix = nativeHostTargetName.capitalize()
         val linkTasks = listOf(
             ":linkDebugSharedHost",
             ":linkReleaseSharedHost",
@@ -192,6 +188,47 @@ class GeneralNativeIT : BaseGradleIT() {
     }
 
     @Test
+    fun testCanProduceNativeFrameworks() = with(transformProjectWithPluginsDsl("frameworks", directoryPrefix = "native-binaries")) {
+        Assume.assumeTrue(HostManager.hostIsMac)
+        configureSingleNativeTarget()
+
+        val baseName = "main"
+        val frameworkPrefix = CompilerOutputKind.FRAMEWORK.prefix(HostManager.host)
+        val frameworkSuffix = CompilerOutputKind.FRAMEWORK.suffix(HostManager.host)
+        val frameworkPaths = listOf(
+            "build/bin/host/mainDebugFramework/$frameworkPrefix$baseName$frameworkSuffix.dSYM",
+            "build/bin/host/mainDebugFramework/$frameworkPrefix$baseName$frameworkSuffix",
+            "build/bin/host/mainReleaseFramework/$frameworkPrefix$baseName$frameworkSuffix"
+        )
+
+        val headerPaths = listOf(
+            "build/bin/host/mainDebugFramework/$frameworkPrefix$baseName$frameworkSuffix/headers/$baseName.h",
+            "build/bin/host/mainReleaseFramework/$frameworkPrefix$baseName$frameworkSuffix/headers/$baseName.h",
+        )
+
+        val frameworkTasks = listOf(":linkMainDebugFrameworkHost", ":linkMainReleaseFrameworkHost")
+
+        // Building
+        build("assemble") {
+            assertSuccessful()
+            headerPaths.forEach { assertFileExists(it) }
+            frameworkPaths.forEach { assertFileExists(it) }
+        }
+
+        build("assemble") {
+            assertSuccessful()
+            assertTasksUpToDate(frameworkTasks)
+        }
+
+        assertTrue(projectDir.resolve(headerPaths[0]).delete())
+        build("assemble") {
+            assertSuccessful()
+            assertTasksUpToDate(frameworkTasks.drop(1))
+            assertTasksExecuted(frameworkTasks[0])
+        }
+    }
+
+    @Test
     fun testExportApiOnlyToLibraries() = with(transformProjectWithPluginsDsl("libraries", directoryPrefix = "native-binaries")) {
         configureSingleNativeTarget()
 
@@ -210,97 +247,6 @@ class GeneralNativeIT : BaseGradleIT() {
         build("linkDebugStaticHost") {
             assertFailed()
             assertContains(failureMsgFor("debugStatic"))
-        }
-    }
-
-
-    /*
-     *  TODO: Why it's slow:
-     *      - 3 targets: linux, mac, win. So we build two targets instead of one on mac and win.
-     *      - build 3 library types (framework, static lib, shared lib) X two build types (debug, release)
-     *      - we partially duplicate binaries test. We need to get rid of duplicated part.
-     *
-     *  TODO:
-     *      - Separate this test into two: framework and libraries. The first one is mac-only, the second one build only libs only for host platform (or only for Linux_x64).
-     */
-    fun testCanProduceNativeLibrariesOLD() = with(Project("native-libraries")) {
-        val baseName = "main"
-
-        val sharedPrefix = CompilerOutputKind.DYNAMIC.prefix(HostManager.host)
-        val sharedSuffix = CompilerOutputKind.DYNAMIC.suffix(HostManager.host)
-        val sharedPaths = listOf(
-            "build/bin/host/mainDebugShared/$sharedPrefix$baseName$sharedSuffix",
-            "build/bin/host/mainReleaseShared/$sharedPrefix$baseName$sharedSuffix"
-        )
-
-        val staticPrefix = CompilerOutputKind.STATIC.prefix(HostManager.host)
-        val staticSuffix = CompilerOutputKind.STATIC.suffix(HostManager.host)
-        val staticPaths = listOf(
-            "build/bin/host/mainDebugStatic/$staticPrefix$baseName$staticSuffix",
-            "build/bin/host/mainReleaseStatic/$staticPrefix$baseName$staticSuffix"
-        )
-
-        val headerPaths = listOf(
-            "build/bin/host/mainDebugShared/$sharedPrefix${baseName}_api.h",
-            "build/bin/host/mainReleaseShared/$sharedPrefix${baseName}_api.h",
-            "build/bin/host/mainDebugStatic/$staticPrefix${baseName}_api.h",
-            "build/bin/host/mainReleaseStatic/$staticPrefix${baseName}_api.h"
-        )
-
-        val klibPrefix = CompilerOutputKind.LIBRARY.prefix(HostManager.host)
-        val klibSuffix = CompilerOutputKind.LIBRARY.suffix(HostManager.host)
-        val klibPath = "${targetClassesDir(nativeHostTargetName)}${klibPrefix}native-lib$klibSuffix"
-
-        val frameworkPrefix = CompilerOutputKind.FRAMEWORK.prefix(HostManager.host)
-        val frameworkSuffix = CompilerOutputKind.FRAMEWORK.suffix(HostManager.host)
-        val frameworkPaths = listOf(
-            "build/bin/host/mainDebugFramework/$frameworkPrefix$baseName$frameworkSuffix.dSYM",
-            "build/bin/host/mainDebugFramework/$frameworkPrefix$baseName$frameworkSuffix",
-            "build/bin/host/mainReleaseFramework/$frameworkPrefix$baseName$frameworkSuffix"
-        )
-            .takeIf { HostManager.hostIsMac }
-            .orEmpty()
-
-        val taskSuffix = nativeHostTargetName.capitalize()
-        val linkTasks = listOf(
-            ":linkMainDebugShared$taskSuffix",
-            ":linkMainReleaseShared$taskSuffix",
-            ":linkMainDebugStatic$taskSuffix",
-            ":linkMainReleaseStatic$taskSuffix"
-        )
-
-        val klibTask = ":compileKotlin$taskSuffix"
-
-        val frameworkTasks = listOf(":linkMainDebugFramework$taskSuffix", ":linkMainReleaseFramework$taskSuffix")
-            .takeIf { HostManager.hostIsMac }
-            .orEmpty()
-
-        // Building
-        build("assemble") {
-            assertSuccessful()
-
-            sharedPaths.forEach { assertFileExists(it) }
-            staticPaths.forEach { assertFileExists(it) }
-            headerPaths.forEach { assertFileExists(it) }
-            frameworkPaths.forEach { assertFileExists(it) }
-            assertFileExists(klibPath)
-        }
-
-        // Test that all up-to date checks are correct
-        build("assemble") {
-            assertSuccessful()
-            assertTasksUpToDate(linkTasks)
-            assertTasksUpToDate(frameworkTasks)
-            assertTasksUpToDate(klibTask)
-        }
-
-        // Remove header of one of libraries and check that it is rebuilt.
-        assertTrue(projectDir.resolve(headerPaths[0]).delete())
-        build("assemble") {
-            assertSuccessful()
-            assertTasksUpToDate(linkTasks.drop(1))
-            assertTasksUpToDate(klibTask)
-            assertTasksExecuted(linkTasks[0])
         }
     }
 
@@ -594,8 +540,8 @@ class GeneralNativeIT : BaseGradleIT() {
 
         val suffix = if (isWindows) "exe" else "kexe"
 
-        val defaultOutputFile = "build/bin/host/debugTest/test.$suffix"
-        val anotherOutputFile = "build/bin/host/anotherDebugTest/another.$suffix"
+        val defaultOutputFile = "build/bin/${nativeHostTargetName}/debugTest/test.$suffix"
+        val anotherOutputFile = "build/bin/${nativeHostTargetName}/anotherDebugTest/another.$suffix"
 
         val hostIsMac = HostManager.hostIsMac
 
