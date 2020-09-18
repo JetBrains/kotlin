@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.inference
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.*
@@ -81,7 +82,13 @@ class CoroutineInferenceSession(
         return !storage.notFixedTypeVariables.keys.any {
             val variable = storage.allTypeVariables[it]
             val isPostponed = variable != null && variable in storage.postponedTypeVariables
-            !isPostponed && !kotlinConstraintSystemCompleter.variableFixationFinder.isTypeVariableHasProperConstraint(system, it)
+            val useInferenceCompatibilityMode =
+                topLevelCallContext.languageVersionSettings.supportsFeature(LanguageFeature.InferenceCompatibility)
+            !isPostponed && !kotlinConstraintSystemCompleter.variableFixationFinder.isTypeVariableHasProperConstraint(
+                system,
+                it,
+                useInferenceCompatibilityMode
+            )
         } || candidate.getSubResolvedAtoms().any { it.hasPostponed() }
     }
 
