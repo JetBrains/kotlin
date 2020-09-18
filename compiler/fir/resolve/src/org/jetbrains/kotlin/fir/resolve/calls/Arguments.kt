@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.createFunctionalType
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isLocalClassOrAnonymousObject
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.inference.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
@@ -22,11 +19,8 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirILTTypeRefPlaceHolder
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperator
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
@@ -243,7 +237,9 @@ fun Candidate.resolvePlainArgumentType(
 
     // If the argument is of functional type and the expected type is a suspend function type, we need to do "suspend conversion."
     if (expectedType != null) {
-        argumentTypeWithSuspendConversion(session, expectedType, argumentTypeForApplicabilityCheck)?.let {
+        argumentTypeWithSuspendConversion(
+            session, context.bodyResolveComponents.scopeSession, expectedType, argumentTypeForApplicabilityCheck
+        )?.let {
             argumentTypeForApplicabilityCheck = it
             substitutor.substituteOrSelf(argumentTypeForApplicabilityCheck)
             usesSuspendConversion = true
@@ -256,44 +252,35 @@ fun Candidate.resolvePlainArgumentType(
 }
 
 private fun argumentTypeWithSuspendConversion(
-    session: FirSession, expectedType: ConeKotlinType, argumentType: ConeKotlinType
+    session: FirSession,
+    scopeSession: ScopeSession,
+    expectedType: ConeKotlinType,
+    argumentType: ConeKotlinType
 ): ConeKotlinType? {
     // TODO: should refer to LanguageVersionSettings.SuspendConversion
-    // Expect the expected type to be a suspend functional type.
-    if (!expectedType.isSuspendFunctionType(session)) {
+
+    // To avoid any remaining exotic types, e.g., intersection type, like it(FunctionN..., SuspendFunctionN...)
+    if (argumentType !is ConeClassLikeType) {
         return null
     }
 
-    // Either the argument type is a non-suspend functional type
-    if (argumentType.isBuiltinFunctionalType(session) && !argumentType.isSuspendFunctionType(session)) {
-        val typeParameters = argumentType.typeArguments.map { it as ConeKotlinType }
-        return createFunctionalType(
-            typeParameters.dropLast(1), null, typeParameters.last(),
-            isSuspend = true,
-            isKFunctionType = argumentType.isKFunctionType(session)
-        )
+    // Expect the expected type to be a suspend functional type, and the argument type is not a suspend functional type.
+    if (!expectedType.isSuspendFunctionType(session) || argumentType.isSuspendFunctionType(session)) {
+        return null
     }
 
-    // Or is a class-like type whose corresponding class is a user-defined and has an overridden `invoke`.
-    if (argumentType is ConeClassLikeType) {
-        val klass =
-            (session.firSymbolProvider.getClassLikeSymbolByFqName(argumentType.lookupTag.classId) as? FirRegularClassSymbol)?.fir
-                ?: return null
-        if (klass.origin != FirDeclarationOrigin.Source) {
-            return null
+    // We want to check the argument type against non-suspend functional type.
+    val expectedFunctionalType = expectedType.suspendFunctionTypeToFunctionType(session)
+    if (argumentType.isSubtypeOfFunctionalType(session, expectedFunctionalType)) {
+        return argumentType.findContributedInvokeSymbol(session, scopeSession, expectedFunctionalType)?.let { invokeSymbol ->
+            createFunctionalType(
+                invokeSymbol.fir.valueParameters.map { it.returnTypeRef.coneType },
+                null,
+                invokeSymbol.fir.returnTypeRef.coneType,
+                isSuspend = true,
+                isKFunctionType = argumentType.isKFunctionType(session)
+            )
         }
-        return klass.declarations
-            .filterIsInstance<FirSimpleFunction>()
-            .singleOrNull { it.name == Name.identifier("invoke") && it.valueParameters.size == expectedType.typeArguments.size - 1 }
-            ?.let { invokeFunction ->
-                createFunctionalType(
-                    invokeFunction.valueParameters.map { it.returnTypeRef.coneType },
-                    null,
-                    invokeFunction.returnTypeRef.coneType,
-                    isSuspend = true,
-                    isKFunctionType = false
-                )
-            }
     }
 
     return null

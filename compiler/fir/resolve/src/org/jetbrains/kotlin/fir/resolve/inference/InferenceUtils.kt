@@ -8,10 +8,20 @@ package org.jetbrains.kotlin.fir.resolve.inference
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -43,6 +53,72 @@ fun ConeKotlinType.isKFunctionType(session: FirSession): Boolean {
     val kind = functionClassKind(session) ?: return false
     return kind == FunctionClassKind.KFunction ||
             kind == FunctionClassKind.KSuspendFunction
+}
+
+fun ConeKotlinType.kFunctionTypeToFunctionType(session: FirSession): ConeClassLikeType {
+    require(this.isKFunctionType(session))
+    val kind =
+        if (isSuspendFunctionType(session)) FunctionClassKind.SuspendFunction
+        else FunctionClassKind.Function
+    val functionalTypeId = ClassId(kind.packageFqName, kind.numberedClassName(typeArguments.size - 1))
+    return ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(functionalTypeId), typeArguments, isNullable = false)
+}
+
+fun ConeKotlinType.suspendFunctionTypeToFunctionType(session: FirSession): ConeClassLikeType {
+    require(this.isSuspendFunctionType(session))
+    val kind =
+        if (isKFunctionType(session)) FunctionClassKind.KFunction
+        else FunctionClassKind.Function
+    val functionalTypeId = ClassId(kind.packageFqName, kind.numberedClassName(typeArguments.size - 1))
+    return ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(functionalTypeId), typeArguments, isNullable = false)
+}
+
+fun ConeKotlinType.isSubtypeOfFunctionalType(session: FirSession, expectedFunctionalType: ConeClassLikeType): Boolean {
+    require(expectedFunctionalType.isBuiltinFunctionalType(session))
+    return AbstractTypeChecker.isSubtypeOf(session.typeContext, this, expectedFunctionalType.replaceArgumentsWithStarProjections())
+}
+
+fun ConeClassLikeType.findBaseInvokeSymbol(session: FirSession, scopeSession: ScopeSession): FirFunctionSymbol<*>? {
+    require(this.isBuiltinFunctionalType(session))
+    val functionN = (lookupTag.toSymbol(session)?.fir as? FirClass<*>) ?: return null
+    var baseInvokeSymbol: FirFunctionSymbol<*>? = null
+    functionN.unsubstitutedScope(session, scopeSession).processFunctionsByName(OperatorNameConventions.INVOKE) { functionSymbol ->
+        baseInvokeSymbol = functionSymbol
+        return@processFunctionsByName
+    }
+    return baseInvokeSymbol
+}
+
+fun ConeKotlinType.findContributedInvokeSymbol(
+    session: FirSession,
+    scopeSession: ScopeSession,
+    expectedFunctionalType: ConeClassLikeType
+): FirFunctionSymbol<*>? {
+    val baseInvokeSymbol = expectedFunctionalType.findBaseInvokeSymbol(session, scopeSession) ?: return null
+
+    val scope = scope(session, scopeSession) ?: return null
+    var declaredInvoke: FirFunctionSymbol<*>? = null
+    scope.processFunctionsByName(OperatorNameConventions.INVOKE) { functionSymbol ->
+        if (functionSymbol.fir.valueParameters.size == baseInvokeSymbol.fir.valueParameters.size) {
+            declaredInvoke = functionSymbol
+            return@processFunctionsByName
+        }
+    }
+
+    var overriddenInvoke: FirFunctionSymbol<*>? = null
+    if (declaredInvoke != null) {
+        // Make sure the user-contributed or type-substituted invoke we just found above is an override of base invoke.
+        scope.processOverriddenFunctions(declaredInvoke!!) { functionSymbol ->
+            if (functionSymbol == baseInvokeSymbol || functionSymbol.overriddenSymbol == baseInvokeSymbol) {
+                overriddenInvoke = functionSymbol
+                ProcessorAction.STOP
+            } else {
+                ProcessorAction.NEXT
+            }
+        }
+    }
+
+    return if (overriddenInvoke != null) declaredInvoke else null
 }
 
 fun ConeKotlinType.receiverType(expectedTypeRef: FirTypeRef?, session: FirSession): ConeKotlinType? {
