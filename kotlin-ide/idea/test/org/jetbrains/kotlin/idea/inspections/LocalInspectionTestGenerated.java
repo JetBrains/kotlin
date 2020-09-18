@@ -7791,27 +7791,27 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
 
             @TestMetadata("returnNullableForLambda.kt")
             public void testReturnNullableForLambda() throws Exception {
-                runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/function/returnNullableForLambda.kt");
+                runTest("testData/inspectionsLocal/redundantNullableReturnType/function/returnNullableForLambda.kt");
             }
 
             @TestMetadata("returnNullableForLocalFunction.kt")
             public void testReturnNullableForLocalFunction() throws Exception {
-                runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/function/returnNullableForLocalFunction.kt");
+                runTest("testData/inspectionsLocal/redundantNullableReturnType/function/returnNullableForLocalFunction.kt");
             }
 
             @TestMetadata("returnNullableFromLambdaInBlockBody.kt")
             public void testReturnNullableFromLambdaInBlockBody() throws Exception {
-                runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/function/returnNullableFromLambdaInBlockBody.kt");
+                runTest("testData/inspectionsLocal/redundantNullableReturnType/function/returnNullableFromLambdaInBlockBody.kt");
             }
 
             @TestMetadata("returnNullableFromLambdaInSingleExpressionBody.kt")
             public void testReturnNullableFromLambdaInSingleExpressionBody() throws Exception {
-                runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/function/returnNullableFromLambdaInSingleExpressionBody.kt");
+                runTest("testData/inspectionsLocal/redundantNullableReturnType/function/returnNullableFromLambdaInSingleExpressionBody.kt");
             }
 
             @TestMetadata("returnNullableInElvis.kt")
             public void testReturnNullableInElvis() throws Exception {
-                runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/function/returnNullableInElvis.kt");
+                runTest("testData/inspectionsLocal/redundantNullableReturnType/function/returnNullableInElvis.kt");
             }
 
             @TestMetadata("singleExpressionBody.kt")
@@ -7849,12 +7849,12 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
 
             @TestMetadata("returnNullableFromLambdaInGetter.kt")
             public void testReturnNullableFromLambdaInGetter() throws Exception {
-                runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/property/returnNullableFromLambdaInGetter.kt");
+                runTest("testData/inspectionsLocal/redundantNullableReturnType/property/returnNullableFromLambdaInGetter.kt");
             }
 
             @TestMetadata("returnNullableInElvis.kt")
             public void testReturnNullableInElvis() throws Exception {
-                runTest("idea/testData/inspectionsLocal/redundantNullableReturnType/property/returnNullableInElvis.kt");
+                runTest("testData/inspectionsLocal/redundantNullableReturnType/property/returnNullableInElvis.kt");
             }
 
             @TestMetadata("var.kt")
@@ -13357,17 +13357,17 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
 
         @TestMetadata("privateProperty.kt")
         public void testPrivateProperty() throws Exception {
-            runTest("idea/testData/inspectionsLocal/unusedSymbol/privateProperty.kt");
+            runTest("testData/inspectionsLocal/unusedSymbol/privateProperty.kt");
         }
 
         @TestMetadata("privatePropertyViaGetter.kt")
         public void testPrivatePropertyViaGetter() throws Exception {
-            runTest("idea/testData/inspectionsLocal/unusedSymbol/privatePropertyViaGetter.kt");
+            runTest("testData/inspectionsLocal/unusedSymbol/privatePropertyViaGetter.kt");
         }
 
         @TestMetadata("privatePropertyViaSetter.kt")
         public void testPrivatePropertyViaSetter() throws Exception {
-            runTest("idea/testData/inspectionsLocal/unusedSymbol/privatePropertyViaSetter.kt");
+            runTest("testData/inspectionsLocal/unusedSymbol/privatePropertyViaSetter.kt");
         }
 
         @TestMetadata("propertyOfInlineClassType.kt")
