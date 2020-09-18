@@ -34,7 +34,7 @@ class CustomModuleInfoTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     fun testModuleInfoForPsiCreatedByJavaPsiFactory() {
-        val dummyClass = PsiElementFactory.SERVICE.getInstance(project).createClass("A")
+        val dummyClass = PsiElementFactory.getInstance(project).createClass("A")
         val moduleInfo = dummyClass.getNullableModuleInfo()
         Assert.assertEquals("Should be null for psi created by factory", null, moduleInfo)
     }

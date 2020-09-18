@@ -31,7 +31,7 @@ class MemberIntoObjectProcessing(private val member: PsiMember, private val obje
         override fun processUsage(reference: PsiReference): Array<PsiReference>? {
             val refExpr = reference.element as? PsiReferenceExpression ?: return null
             val qualifier = refExpr.qualifierExpression
-            val factory = PsiElementFactory.SERVICE.getInstance(member.project)
+            val factory = PsiElementFactory.getInstance(member.project)
             return if (qualifier != null) {
                 val newQualifier = factory.createExpressionFromText(qualifier.text + "." + objectName, null)
                 qualifier.replace(newQualifier)

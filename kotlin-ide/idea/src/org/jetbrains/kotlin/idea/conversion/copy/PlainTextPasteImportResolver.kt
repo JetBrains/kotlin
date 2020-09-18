@@ -47,7 +47,7 @@ class PlainTextPasteImportResolver(private val dataForConversion: DataForConvers
     private val importList = file.importList!!
 
     // keep access to deprecated PsiElementFactory.SERVICE for bwc with <= 191
-    private val psiElementFactory = PsiElementFactory.SERVICE.getInstance(project)
+    private val psiElementFactory = PsiElementFactory.getInstance(project)
 
     private val bindingContext by lazy { targetFile.analyzeWithContent() }
     private val resolutionFacade = targetFile.getResolutionFacade()

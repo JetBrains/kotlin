@@ -104,7 +104,7 @@ fun replaceReferencesToGetterByReferenceToField(property: KtProperty) {
     val backingField = LightClassUtil.getLightClassPropertyMethods(property).backingField
     if (backingField != null) {
         val getterUsages = ReferencesSearch.search(getter, javaScope).findAll()
-        val factory = PsiElementFactory.SERVICE.getInstance(project)
+        val factory = PsiElementFactory.getInstance(project)
         val fieldFQName = backingField.containingClass!!.qualifiedName + "." + backingField.name
 
         runWriteAction {

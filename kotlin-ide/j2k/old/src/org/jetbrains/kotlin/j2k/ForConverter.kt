@@ -247,7 +247,7 @@ class ForConverter(
                 val qualifier = methodExpr.qualifierExpression
                 if (qualifier is PsiReferenceExpression /* we don't convert to .indices if qualifier is method call or something because of possible side effects */) {
                     val collectionType =
-                        PsiElementFactory.SERVICE.getInstance(project).createTypeByFQClassName(CommonClassNames.JAVA_UTIL_COLLECTION)
+                        PsiElementFactory.getInstance(project).createTypeByFQClassName(CommonClassNames.JAVA_UTIL_COLLECTION)
                     val qualifierType = qualifier.type
                     if (qualifierType != null && collectionType.isAssignableFrom(qualifierType)) {
                         indices = QualifiedExpression(
@@ -314,7 +314,7 @@ class ForConverter(
         val names = statement.initialization?.declaredVariableNames() ?: return false
         if (names.isEmpty()) return false
 
-        val factory = PsiElementFactory.SERVICE.getInstance(project)
+        val factory = PsiElementFactory.getInstance(project)
         for (name in names) {
             val refExpr = try {
                 factory.createExpressionFromText(name, statement) as? PsiReferenceExpression ?: return true

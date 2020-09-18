@@ -305,7 +305,7 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
         val names = initializers.flatMap { it.declaredVariableNames() }
         if (names.isEmpty()) return false
 
-        val factory = PsiElementFactory.SERVICE.getInstance(context.project)
+        val factory = PsiElementFactory.getInstance(context.project)
         for (name in names) {
             val refExpr = try {
                 factory.createExpressionFromText(name, psi) as? PsiReferenceExpression ?: return true

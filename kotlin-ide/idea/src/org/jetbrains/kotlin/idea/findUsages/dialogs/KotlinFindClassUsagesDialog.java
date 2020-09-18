@@ -70,7 +70,7 @@ public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
         if (lightClass != null) return lightClass;
 
         // TODO: Remove this code when light classes are generated for builtins
-        PsiElementFactory factory = PsiElementFactory.SERVICE.getInstance(classOrObject.getProject());
+      PsiElementFactory factory = PsiElementFactory.getInstance(classOrObject.getProject());
 
         String name = classOrObject.getName();
         if (name == null || name.isEmpty()) {

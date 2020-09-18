@@ -222,7 +222,7 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
         val kotlinCodeFragment = createCodeFragment(item, context, project)
         if (PsiTreeUtil.hasErrorElements(kotlinCodeFragment) && kotlinCodeFragment is KtCodeFragment) {
             val javaExpression = try {
-                PsiElementFactory.SERVICE.getInstance(project).createExpressionFromText(item.text, context)
+                PsiElementFactory.getInstance(project).createExpressionFromText(item.text, context)
             } catch (e: IncorrectOperationException) {
                 null
             }

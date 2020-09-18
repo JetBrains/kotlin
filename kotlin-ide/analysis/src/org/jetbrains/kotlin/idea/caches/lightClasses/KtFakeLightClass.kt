@@ -103,7 +103,7 @@ private object DummyJavaPsiFactory {
             ?: throw IncorrectOperationException("Method was not created. Method name: $name; return type: $canonicalText")
     }
 
-    fun createDummyClass(project: Project): PsiClass = PsiElementFactory.SERVICE.getInstance(project).createClass("dummy")
+    fun createDummyClass(project: Project): PsiClass = PsiElementFactory.getInstance(project).createClass("dummy")
 
     private fun createDummyJavaFile(project: Project, text: String): PsiJavaFile {
         return PsiFileFactory.getInstance(project).createFileFromText(

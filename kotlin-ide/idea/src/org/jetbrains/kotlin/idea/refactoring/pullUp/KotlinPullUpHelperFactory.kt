@@ -64,7 +64,7 @@ class JavaToKotlinPullUpHelperFactory : PullUpHelperFactory {
             JavaFileType.INSTANCE,
             if (targetPackage.isNotEmpty()) "package $targetPackage;\n" else ""
         )
-        val elementFactory = PsiElementFactory.SERVICE.getInstance(project)
+        val elementFactory = PsiElementFactory.getInstance(project)
 
         val dummyTargetClass = createJavaClass(targetClass, null, forcePlainClass = true)
         val outerClasses = targetClass.parents.filterIsInstance<KtClassOrObject>().toList().asReversed()

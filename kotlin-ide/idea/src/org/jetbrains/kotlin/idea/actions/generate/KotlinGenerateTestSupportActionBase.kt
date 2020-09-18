@@ -158,7 +158,7 @@ abstract class KotlinGenerateTestSupportActionBase(
             project.executeWriteCommand(commandName) {
                 PsiDocumentManager.getInstance(project).commitAllDocuments()
 
-                val factory = PsiElementFactory.SERVICE.getInstance(project)
+                val factory = PsiElementFactory.getInstance(project)
                 val psiMethod = factory.createMethodFromText(templateText, null)
                 psiMethod.throwsList.referenceElements.forEach { it.delete() }
                 var function = psiMethod.j2k() as? KtNamedFunction ?: run {

@@ -63,7 +63,7 @@ class FrameInfo private constructor(val project: Project, thisObject: Value?, va
             val propertyType = if (value is ArrayReference) "$elementType[]" else elementType
             val psiType = PsiType.getTypeByName(propertyType, project, GlobalSearchScope.allScope(project))
 
-            val field = PsiElementFactory.SERVICE.getInstance(project).createField(name, psiType)
+            val field = PsiElementFactory.getInstance(project).createField(name, psiType)
             val ktProperty = field.j2k() as? KtProperty
             ktProperty?.modifierList?.delete()
             return ktProperty

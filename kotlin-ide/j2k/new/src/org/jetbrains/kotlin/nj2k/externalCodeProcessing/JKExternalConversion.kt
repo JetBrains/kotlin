@@ -54,7 +54,7 @@ internal class AccessorToPropertyJavaExternalConversion(
         if (usage !is PsiReferenceExpression) return
         val methodCall = usage.parent as? PsiMethodCallExpression ?: return
 
-        val factory = PsiElementFactory.SERVICE.getInstance(usage.project)
+        val factory = PsiElementFactory.getInstance(usage.project)
         val propertyAccess = factory.createReferenceExpression(usage.qualifierExpression)
         val newExpression = when (accessorKind) {
             AccessorKind.GETTER -> propertyAccess
@@ -95,7 +95,7 @@ internal class PropertyRenamedJavaExternalUsageConversion(
 ) : JKExternalConversion() {
     override fun apply() {
         if (usage !is PsiReferenceExpression) return
-        val factory = PsiElementFactory.SERVICE.getInstance(usage.project)
+        val factory = PsiElementFactory.getInstance(usage.project)
         usage.referenceNameElement?.replace(factory.createExpressionFromText(newName, usage))
     }
 }

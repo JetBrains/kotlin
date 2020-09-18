@@ -28,7 +28,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.popup.*
-import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.Pass
 import com.intellij.openapi.util.TextRange
@@ -480,7 +479,7 @@ private fun <T> copyTypeParameters(
     to: T,
     inserter: (T, PsiTypeParameterList) -> Unit
 ) where T : PsiTypeParameterListOwner, T : PsiNameIdentifierOwner {
-    val factory = PsiElementFactory.SERVICE.getInstance((from as PsiElement).project)
+    val factory = PsiElementFactory.getInstance((from as PsiElement).project)
     val templateTypeParams = from.typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
     if (templateTypeParams.isNotEmpty()) {
         inserter(to, factory.createTypeParameterList())
@@ -504,7 +503,7 @@ fun createJavaMethod(function: KtFunction, targetClass: PsiClass): PsiMethod {
 }
 
 fun createJavaMethod(template: PsiMethod, targetClass: PsiClass): PsiMethod {
-    val factory = PsiElementFactory.SERVICE.getInstance(template.project)
+    val factory = PsiElementFactory.getInstance(template.project)
     val methodToAdd = if (template.isConstructor) {
         factory.createConstructor(template.name)
     } else {
@@ -548,7 +547,7 @@ fun createJavaField(property: KtNamedDeclaration, targetClass: PsiClass): PsiFie
     val template = accessorLightMethods.getter
         ?: throw AssertionError("Can't generate light method: ${property.getElementTextWithContext()}")
 
-    val factory = PsiElementFactory.SERVICE.getInstance(template.project)
+    val factory = PsiElementFactory.getInstance(template.project)
     val field = targetClass.add(factory.createField(property.name!!, template.returnType!!)) as PsiField
 
     with(field.modifierList!!) {
@@ -566,7 +565,7 @@ fun createJavaField(property: KtNamedDeclaration, targetClass: PsiClass): PsiFie
 fun createJavaClass(klass: KtClass, targetClass: PsiClass?, forcePlainClass: Boolean = false): PsiClass {
     val kind = if (forcePlainClass) ClassKind.CLASS else (klass.unsafeResolveToDescriptor() as ClassDescriptor).kind
 
-    val factory = PsiElementFactory.SERVICE.getInstance(klass.project)
+    val factory = PsiElementFactory.getInstance(klass.project)
     val className = klass.name!!
     val javaClassToAdd = when (kind) {
         ClassKind.CLASS -> factory.createClass(className)

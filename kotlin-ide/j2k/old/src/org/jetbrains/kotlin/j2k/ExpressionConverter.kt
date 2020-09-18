@@ -848,7 +848,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                 statement = MethodCallExpression.buildNonNull(null, convertMethodReferenceQualifier(qualifier), argumentList)
             }
             specialMethod != null -> {
-                val factory = PsiElementFactory.SERVICE.getInstance(converter.project)
+                val factory = PsiElementFactory.getInstance(converter.project)
                 val fakeReceiver = receiver?.let {
                     val psiExpression = qualifier as? PsiExpression ?: factory.createExpressionFromText("fakeReceiver", null)
                     psiExpression.convertedExpression = it.first

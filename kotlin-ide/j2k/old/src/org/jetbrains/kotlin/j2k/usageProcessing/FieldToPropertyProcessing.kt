@@ -42,9 +42,9 @@ class FieldToPropertyProcessing(
             field.name != propertyName ->
                 listOf(
                     ElementRenamedCodeProcessor(propertyName),
-                    UseAccessorsJavaCodeProcessor(PsiElementFactory.SERVICE.getInstance(field.project), propertyName)
+                    UseAccessorsJavaCodeProcessor(PsiElementFactory.getInstance(field.project), propertyName)
                 )
-            else -> listOf(UseAccessorsJavaCodeProcessor(PsiElementFactory.SERVICE.getInstance(field.project), propertyName))
+            else -> listOf(UseAccessorsJavaCodeProcessor(PsiElementFactory.getInstance(field.project), propertyName))
         }
 
     override val kotlinCodeProcessors =
@@ -67,7 +67,7 @@ class FieldToPropertyProcessing(
             }
             else {
                 // check if field name is shadowed
-                val elementFactory = PsiElementFactory.SERVICE.getInstance(expression.project)
+                val elementFactory = PsiElementFactory.getInstance(expression.project)
                 val refExpr = try {
                     elementFactory.createExpressionFromText(identifier.name, expression) as? PsiReferenceExpression ?: return identifier
                 }
