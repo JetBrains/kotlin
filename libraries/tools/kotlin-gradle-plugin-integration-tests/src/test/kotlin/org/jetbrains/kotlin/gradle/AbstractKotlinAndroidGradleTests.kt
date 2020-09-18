@@ -668,6 +668,17 @@ fun getSomething() = 10
 
         project.build("assembleDebug", options = options) {
             assertSuccessful()
+            assertContains("'kotlin-android-extensions' plugin is deprecated")
+        }
+    }
+
+    @Test
+    fun testParcelize() {
+        val project = Project("AndroidParcelizeProject")
+        val options = defaultBuildOptions().copy(incremental = false)
+
+        project.build("assembleDebug", options = options) {
+            assertSuccessful()
         }
     }
 
