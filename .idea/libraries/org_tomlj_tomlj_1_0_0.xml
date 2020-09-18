@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="org.tomlj:tomlj:1.0.0" type="repository">
+    <properties maven-id="org.tomlj:tomlj:1.0.0" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/tomlj/tomlj/1.0.0/tomlj-1.0.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/antlr/antlr4-runtime/4.7.2/antlr4-runtime-4.7.2.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/tomlj/tomlj/1.0.0/tomlj-1.0.0-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/antlr/antlr4-runtime/4.7.2/antlr4-runtime-4.7.2-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
