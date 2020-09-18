@@ -66,10 +66,14 @@ class FirTowerResolver(
                 if (receiver is FirQualifiedAccessExpression) {
                     val calleeReference = receiver.calleeReference
                     if (calleeReference is FirSuperReference) {
-                        return manager.enqueueResolverTask { mainTask.runResolverForSuperReceiver(info, receiver.typeRef) }
+                        manager.enqueueResolverTask { mainTask.runResolverForSuperReceiver(info, receiver.typeRef) }
+                        return
                     }
                 }
-
+                if (info.isImplicitInvoke) {
+                    invokeResolveTowerExtension.enqueueResolveTasksForImplicitInvokeCall(info, receiver)
+                    return
+                }
                 manager.enqueueResolverTask { mainTask.runResolverForExpressionReceiver(info, receiver) }
                 invokeResolveTowerExtension.enqueueResolveTasksForExpressionReceiver(info, receiver)
             }

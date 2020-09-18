@@ -184,15 +184,7 @@ internal class FirInvokeResolveTowerExtension(
         receiverGroup: TowerGroup
     ) {
         val invokeOnGivenReceiverCandidateFactory = CandidateFactory(context, invokeFunctionInfo)
-        val task = InvokeFunctionResolveTask(
-            components,
-            manager,
-            TowerDataElementsForName(invokeFunctionInfo.name, components.towerDataContext),
-            receiverGroup,
-            candidateFactoriesAndCollectors.resultCollector,
-            invokeOnGivenReceiverCandidateFactory,
-            candidateFactoriesAndCollectors.stubReceiverCandidateFactory
-        )
+        val task = createInvokeFunctionResolveTask(invokeFunctionInfo, receiverGroup, invokeOnGivenReceiverCandidateFactory)
         if (invokeBuiltinExtensionMode) {
             manager.enqueueResolverTask {
                 task.runResolverForBuiltinInvokeExtensionWithExplicitArgument(
@@ -219,6 +211,42 @@ internal class FirInvokeResolveTowerExtension(
         }
     }
 
+    fun enqueueResolveTasksForImplicitInvokeCall(info: CallInfo, receiverExpression: FirExpression) {
+        val explicitReceiverValue = ExpressionReceiverValue(receiverExpression)
+        val task = createInvokeFunctionResolveTask(info, TowerGroup.EmptyRoot)
+        manager.enqueueResolverTask {
+            task.runResolverForInvoke(
+                info, explicitReceiverValue,
+                TowerGroup.EmptyRoot
+            )
+        }
+        manager.enqueueResolverTask {
+            task.runResolverForBuiltinInvokeExtensionWithExplicitArgument(
+                info, explicitReceiverValue,
+                TowerGroup.EmptyRoot
+            )
+        }
+        manager.enqueueResolverTask {
+            task.runResolverForBuiltinInvokeExtensionWithImplicitArgument(
+                info, explicitReceiverValue,
+                TowerGroup.EmptyRoot
+            )
+        }
+    }
+
+    private fun createInvokeFunctionResolveTask(
+        info: CallInfo,
+        receiverGroup: TowerGroup,
+        candidateFactory: CandidateFactory = candidateFactoriesAndCollectors.candidateFactory
+    ): InvokeFunctionResolveTask = InvokeFunctionResolveTask(
+        components,
+        manager,
+        TowerDataElementsForName(info.name, components.towerDataContext),
+        receiverGroup,
+        candidateFactoriesAndCollectors.resultCollector,
+        candidateFactory,
+        candidateFactoriesAndCollectors.stubReceiverCandidateFactory
+    )
 }
 
 

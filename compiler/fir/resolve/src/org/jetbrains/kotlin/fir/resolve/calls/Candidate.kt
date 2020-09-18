@@ -38,6 +38,7 @@ data class CallInfo(
     val explicitReceiver: FirExpression?,
     val argumentList: FirArgumentList,
     val isPotentialQualifierPart: Boolean,
+    val isImplicitInvoke: Boolean,
 
     val typeArguments: List<FirTypeProjection>,
     val session: FirSession,

@@ -44,6 +44,7 @@ abstract class AbstractCandidateInfoProvider(
             containingDeclarations = emptyList(), // TODO - maybe we should pass declarations from context here (no visible differences atm)
             containingFile = firFile,
             isPotentialQualifierPart = false,
+            isImplicitInvoke = false,
             session = firSession,
         )
     }

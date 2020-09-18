@@ -243,6 +243,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         runTest("compiler/fir/analysis-tests/testData/resolve/javaStaticScopeInheritance.kt");
     }
 
+    @TestMetadata("kt41990.kt")
+    public void testKt41990() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/kt41990.kt");
+    }
+
     @TestMetadata("labelAndReceiverForInfix.kt")
     public void testLabelAndReceiverForInfix() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/labelAndReceiverForInfix.kt");

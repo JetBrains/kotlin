@@ -141,6 +141,7 @@ class FirCallResolver(
             isPotentialQualifierPart = qualifiedAccess !is FirFunctionCall &&
                     qualifiedAccess.explicitReceiver is FirResolvedQualifier &&
                     qualifiedResolver.isPotentialQualifierPartPosition(),
+            isImplicitInvoke = qualifiedAccess is FirImplicitInvokeCall,
             typeArguments,
             session,
             components.file,
@@ -300,6 +301,7 @@ class FirCallResolver(
             explicitReceiver = null,
             delegatedConstructorCall.argumentList,
             isPotentialQualifierPart = false,
+            isImplicitInvoke = false,
             typeArguments = typeArguments,
             session,
             components.file,
@@ -347,6 +349,7 @@ class FirCallResolver(
             explicitReceiver = null,
             annotationCall.argumentList,
             isPotentialQualifierPart = false,
+            isImplicitInvoke = false,
             typeArguments = emptyList(),
             session,
             components.file,
@@ -449,6 +452,7 @@ class FirCallResolver(
             callableReferenceAccess.explicitReceiver,
             FirEmptyArgumentList,
             isPotentialQualifierPart = false,
+            isImplicitInvoke = false,
             emptyList(),
             session,
             components.file,

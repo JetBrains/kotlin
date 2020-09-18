@@ -15,7 +15,7 @@ fun test(a: A) {
         <!INAPPLICABLE_CANDIDATE!>(a.x)()<!>
         if (a.x != null) {
             a.<!INAPPLICABLE_CANDIDATE!>x<!>() // todo
-            <!INAPPLICABLE_CANDIDATE!>(a.x)()<!>
+            (a.x)()
         }
     }
 }
