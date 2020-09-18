@@ -91,5 +91,9 @@ abstract class FirDefaultVisitor<R, D> : FirVisitor<R, D>() {
     override fun visitErrorResolvedQualifier(errorResolvedQualifier: FirErrorResolvedQualifier, data: D): R {
         return visitResolvedQualifier(errorResolvedQualifier, data)
     }
+
+    override fun visitImplicitInvokeCall(implicitInvokeCall: FirImplicitInvokeCall, data: D): R {
+        return visitFunctionCall(implicitInvokeCall, data)
+    }
 }
 

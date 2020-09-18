@@ -102,6 +102,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val errorProperty = element("ErrorProperty", Declaration, variable, diagnosticHolder, typeParametersOwner)
     val qualifiedAccessExpression = element("QualifiedAccessExpression", Expression, expression, qualifiedAccess)
     val functionCall = element("FunctionCall", Expression, qualifiedAccessExpression, call)
+    val implicitInvokeCall = element("ImplicitInvokeCall", Expression, functionCall)
     val delegatedConstructorCall = element("DelegatedConstructorCall", Expression, resolvable, call)
     val componentCall = element("ComponentCall", Expression, functionCall)
     val callableReferenceAccess = element("CallableReferenceAccess", Expression, qualifiedAccessExpression)

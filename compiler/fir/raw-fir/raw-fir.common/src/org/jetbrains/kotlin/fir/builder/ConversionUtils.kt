@@ -494,3 +494,9 @@ fun FirQualifiedAccess.wrapWithSafeCall(receiver: FirExpression): FirSafeCallExp
         this.source = this@wrapWithSafeCall.source?.fakeElement(FirFakeSourceElementKind.DesugaredSafeCallExpression)
     }
 }
+
+data class CalleeAndReceiver(
+    val reference: FirNamedReference,
+    val receiverExpression: FirExpression? = null,
+    val isImplicitInvoke: Boolean = false
+)

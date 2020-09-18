@@ -98,5 +98,9 @@ abstract class FirDefaultTransformer<D> : FirTransformer<D>() {
     ): CompositeTransformResult<FirStatement> {
         return transformResolvedQualifier(errorResolvedQualifier, data)
     }
+
+    override fun transformImplicitInvokeCall(implicitInvokeCall: FirImplicitInvokeCall, data: D): CompositeTransformResult<FirStatement> {
+        return transformFunctionCall(implicitInvokeCall, data)
+    }
 }
 

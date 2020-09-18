@@ -1775,38 +1775,49 @@ class RawFirBuilder(
         private fun splitToCalleeAndReceiver(
             calleeExpression: KtExpression?,
             defaultSource: FirPsiSourceElement<*>,
-        ): Pair<FirNamedReference, FirExpression?> {
+        ): CalleeAndReceiver {
             return when (calleeExpression) {
-                is KtSimpleNameExpression -> buildSimpleNamedReference {
-                    source = calleeExpression.toFirSourceElement()
-                    name = calleeExpression.getReferencedNameAsName()
-                } to null
+                is KtSimpleNameExpression ->
+                    CalleeAndReceiver(
+                        buildSimpleNamedReference {
+                            source = calleeExpression.toFirSourceElement()
+                            name = calleeExpression.getReferencedNameAsName()
+                        }
+                    )
 
                 is KtParenthesizedExpression -> splitToCalleeAndReceiver(calleeExpression.expression, defaultSource)
 
                 null -> {
-                    buildErrorNamedReference { diagnostic = ConeSimpleDiagnostic("Call has no callee", DiagnosticKind.Syntax) } to null
+                    CalleeAndReceiver(
+                        buildErrorNamedReference { diagnostic = ConeSimpleDiagnostic("Call has no callee", DiagnosticKind.Syntax) }
+                    )
                 }
 
                 is KtSuperExpression -> {
-                    buildErrorNamedReference {
-                        source = calleeExpression.toFirSourceElement()
-                        diagnostic = ConeSimpleDiagnostic("Super cannot be a callee", DiagnosticKind.SuperNotAllowed)
-                    } to null
+                    CalleeAndReceiver(
+                        buildErrorNamedReference {
+                            source = calleeExpression.toFirSourceElement()
+                            diagnostic = ConeSimpleDiagnostic("Super cannot be a callee", DiagnosticKind.SuperNotAllowed)
+                        }
+                    )
                 }
 
                 else -> {
-                    buildSimpleNamedReference {
-                        source = defaultSource.fakeElement(FirFakeSourceElementKind.ImplicitInvokeCall)
-                        name = OperatorNameConventions.INVOKE
-                    } to calleeExpression.toFirExpression("Incorrect invoke receiver")
+                    CalleeAndReceiver(
+                        buildSimpleNamedReference {
+                            source = defaultSource.fakeElement(FirFakeSourceElementKind.ImplicitInvokeCall)
+                            name = OperatorNameConventions.INVOKE
+                        },
+                        receiverExpression = calleeExpression.toFirExpression("Incorrect invoke receiver"),
+                        isImplicitInvoke = true
+                    )
                 }
             }
         }
 
         override fun visitCallExpression(expression: KtCallExpression, data: Unit): FirElement {
             val source = expression.toFirSourceElement()
-            val (calleeReference, explicitReceiver) = splitToCalleeAndReceiver(expression.calleeExpression, source)
+            val (calleeReference, explicitReceiver, isImplicitInvoke) = splitToCalleeAndReceiver(expression.calleeExpression, source)
 
             val result: FirQualifiedAccessBuilder = if (expression.valueArgumentList == null && expression.lambdaArguments.isEmpty()) {
                 FirQualifiedAccessExpressionBuilder().apply {
@@ -1814,7 +1825,8 @@ class RawFirBuilder(
                     this.calleeReference = calleeReference
                 }
             } else {
-                FirFunctionCallBuilder().apply {
+                val builder = if (isImplicitInvoke) FirImplicitInvokeCallBuilder() else FirFunctionCallBuilder()
+                builder.apply {
                     this.source = source
                     this.calleeReference = calleeReference
                     context.calleeNamesForLambda += calleeReference.name
