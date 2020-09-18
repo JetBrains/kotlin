@@ -352,6 +352,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var deserializeFakeOverrides: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xinference-compatibility",
+        description = "Enable compatibility changes for generic type inference algorithm"
+    )
+    var inferenceCompatibility: Boolean by FreezableVar(false)
+
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlags.skipMetadataVersionCheck, skipMetadataVersionCheck)
@@ -424,6 +430,10 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
             if (useMixedNamedArguments) {
                 put(LanguageFeature.MixedNamedArgumentsInTheirOwnPosition, LanguageFeature.State.ENABLED)
+            }
+
+            if (inferenceCompatibility) {
+                put(LanguageFeature.InferenceCompatibility, LanguageFeature.State.ENABLED)
             }
 
             if (progressiveMode) {
