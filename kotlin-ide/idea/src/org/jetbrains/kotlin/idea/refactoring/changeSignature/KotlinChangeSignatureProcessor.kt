@@ -50,7 +50,7 @@ class KotlinChangeSignatureProcessor(
         changeInfo.newParameters.forEach { it.defaultValueParameterReferences }
     }
 
-    val ktChangeInfo
+    val ktChangeInfo: KotlinChangeInfo
         get() = changeInfo.delegate!!
 
     override fun setPrepareSuccessfulSwingThreadCallback(callback: Runnable?) {
@@ -71,7 +71,7 @@ class KotlinChangeSignatureProcessor(
         return KotlinUsagesViewDescriptor(myChangeInfo.method, RefactoringBundle.message("0.to.change.signature", subject))
     }
 
-    override fun getChangeInfo() = super.getChangeInfo() as KotlinChangeInfoWrapper
+    override fun getChangeInfo(): KotlinChangeInfoWrapper = super.getChangeInfo() as KotlinChangeInfoWrapper
 
     override fun findUsages(): Array<UsageInfo> {
         val allUsages = ArrayList<UsageInfo>()
