@@ -6,7 +6,6 @@ import com.intellij.openapi.externalSystem.model.ProjectKeys;
 import com.intellij.openapi.externalSystem.model.project.*;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.SmartList;
@@ -27,6 +26,8 @@ import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -91,7 +92,7 @@ public final class GradleBuildSrcProjectsResolver {
       }
     }
 
-    MultiMap<String, DataNode<BuildScriptClasspathData>> buildClasspathNodesMap = new MultiMap<>();
+    MultiMap<Path, DataNode<BuildScriptClasspathData>> buildClasspathNodesMap = new MultiMap<>();
     Map<String, ModuleData> includedModulesPaths = new HashMap<>();
     for (DataNode<ModuleData> moduleDataNode : findAll(mainBuildProjectDataNode, ProjectKeys.MODULE)) {
       String path = moduleDataNode.getData().getLinkedExternalProjectPath();
@@ -99,7 +100,7 @@ public final class GradleBuildSrcProjectsResolver {
       DataNode<BuildScriptClasspathData> scriptClasspathDataNode = find(moduleDataNode, BuildScriptClasspathData.KEY);
       if (scriptClasspathDataNode != null) {
         String rootPath = includedBuildsPaths.get(path);
-        buildClasspathNodesMap.putValue(rootPath != null ? rootPath : projectPath, scriptClasspathDataNode);
+        buildClasspathNodesMap.putValue(Paths.get(rootPath != null ? rootPath : projectPath), scriptClasspathDataNode);
       }
     }
 
@@ -117,7 +118,7 @@ public final class GradleBuildSrcProjectsResolver {
     Stream<Build> builds = new ToolingModelsProviderImpl(myResolverContext.getModels()).builds();
     builds.forEach(build -> {
       String buildPath = build.getBuildIdentifier().getRootDir().getPath();
-      Collection<DataNode<BuildScriptClasspathData>> buildClasspathNodes = buildClasspathNodesMap.getModifiable(buildPath);
+      Collection<DataNode<BuildScriptClasspathData>> buildClasspathNodes = buildClasspathNodesMap.getModifiable(Paths.get(buildPath));
 
       GradleExecutionSettings buildSrcProjectSettings;
       if (gradleHome != null) {

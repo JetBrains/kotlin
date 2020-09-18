@@ -1,7 +1,13 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.importing
 
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import com.intellij.openapi.module.ModuleManager
+import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.vfs.VirtualFile
+import junit.framework.AssertionFailedError
 import org.assertj.core.api.Assertions.assertThat
+import org.jetbrains.plugins.gradle.service.GradleBuildClasspathManager
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
 import org.junit.Test
 
@@ -22,6 +28,7 @@ class GradleBuildSrcImportingTest : GradleImportingTestCase() {
                   "apply plugin: my.pack.TestPlugin")
     assertModules("project", "project.main", "project.test",
                   "project.buildSrc", "project.buildSrc.main", "project.buildSrc.test")
+    assertBuildScriptClassPathContains("project.main", listSourceFoldersOf("project.buildSrc.main"))
   }
 
   @Test
@@ -103,5 +110,19 @@ class GradleBuildSrcImportingTest : GradleImportingTestCase() {
                   "another-build", "another-build.buildSrc", "another-build.buildSrc.main", "another-build.buildSrc.test")
 
     assertModuleLibDep("another-build.buildSrc.main", depJar.presentableUrl, depJar.url)
+  }
+
+
+  private fun assertBuildScriptClassPathContains(moduleName: String, expectedEntries: Collection<VirtualFile>) {
+    val module = ModuleManager.getInstance(myProject).findModuleByName(moduleName);
+    val modulePath = ExternalSystemApiUtil.getExternalProjectPath(module)
+                     ?: throw AssertionFailedError("Could not find external project path for module '$moduleName'")
+    val entries = GradleBuildClasspathManager.getInstance(myProject).getModuleClasspathEntries(modulePath)
+    assertThat(entries).containsAll(expectedEntries)
+  }
+
+  private fun listSourceFoldersOf(moduleName: String): Collection<VirtualFile> {
+    val module = ModuleManager.getInstance(myProject).findModuleByName(moduleName)!!
+    return ModuleRootManager.getInstance(module).sourceRoots.toList()
   }
 }
