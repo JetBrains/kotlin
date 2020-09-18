@@ -1005,7 +1005,7 @@ abstract class AbstractComposeLowering(
                     }
 
                     val getterIsStable = prop.hasStableAnnotation() ||
-                            symbol.owner.hasStableAnnotation()
+                        symbol.owner.hasStableAnnotation()
 
                     if (
                         getterIsStable &&
@@ -1038,7 +1038,7 @@ abstract class AbstractComposeLowering(
                         .descriptor
                         .fqNameSafe
                         .topLevelName() == "kotlin" ||
-                            symbol.owner.hasStableAnnotation()
+                        symbol.owner.hasStableAnnotation()
 
                     val typeIsStable = type.toKotlinType().isStable()
                     if (!typeIsStable) return false
@@ -1054,7 +1054,7 @@ abstract class AbstractComposeLowering(
                         // if it is a call to remember with 0 input arguments, then we can
                         // consider the value static if the result type of the lambda is stable
                         val syntheticRememberParams = 1 + // composer param
-                                1 // changed param
+                            1 // changed param
                         val expectedArgumentsCount = 1 + syntheticRememberParams // 1 for lambda
                         if (
                             valueArgumentsCount == expectedArgumentsCount &&
