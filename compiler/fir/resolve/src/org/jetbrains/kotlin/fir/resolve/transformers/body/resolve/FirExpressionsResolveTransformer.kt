@@ -714,20 +714,9 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             FirConstKind.IntegerLiteral, FirConstKind.UnsignedIntegerLiteral -> {
                 val integerLiteralType =
                     ConeIntegerLiteralTypeImpl(constExpression.value as Long, isUnsigned = kind == FirConstKind.UnsignedIntegerLiteral)
-                val expectedType = data.expectedType?.coneTypeSafe<ConeKotlinType>()
-                if (expectedType != null) {
-                    val approximatedType = integerLiteralType.getApproximatedType(expectedType)
+                if (data.expectedType != null) {
+                    val approximatedType = integerLiteralType.getApproximatedType(data.expectedType?.coneTypeSafe())
                     val newConstKind = approximatedType.toConstKind()
-                    if (newConstKind == null) {
-                        @Suppress("UNCHECKED_CAST")
-                        constExpression.replaceKind(FirConstKind.Int as FirConstKind<T>)
-                        dataFlowAnalyzer.exitConstExpression(constExpression as FirConstExpression<*>)
-                        constExpression.resultType = buildErrorTypeRef {
-                            source = constExpression.source
-                            diagnostic = ConeTypeMismatchError(expectedType, integerLiteralType.getApproximatedType())
-                        }
-                        return constExpression.compose()
-                    }
                     @Suppress("UNCHECKED_CAST")
                     constExpression.replaceKind(newConstKind as FirConstKind<T>)
                     approximatedType

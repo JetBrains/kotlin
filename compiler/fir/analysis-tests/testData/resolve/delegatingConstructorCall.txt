@@ -77,7 +77,7 @@ FILE: delegatingConstructorCall.kt
     }
     public final class B4 : R|A4| {
         public constructor(): R|B4| {
-            super<R|A4|>(Byte(1).R|kotlin/Byte.plus|(Byte(1)))
+            super<R|A4|>(Int(1).R|kotlin/Int.plus|(Int(1)))
         }
 
     }
@@ -93,13 +93,13 @@ FILE: delegatingConstructorCall.kt
     }
     public final class B5_1 : R|A5| {
         public constructor(): R|B5_1| {
-            super<R|A5|>(Short(1).R|kotlin/Short.plus|(Short(1)))
+            super<R|A5|>(Int(1).R|kotlin/Int.plus|(Int(1)))
         }
 
     }
     public final class B5_2 : R|A5| {
         public constructor(): R|B5_2| {
-            super<R|A5|>(Short(100).R|kotlin/Short.times|(Short(2)))
+            super<R|A5|>(Int(100).R|kotlin/Int.times|(Int(2)))
         }
 
     }

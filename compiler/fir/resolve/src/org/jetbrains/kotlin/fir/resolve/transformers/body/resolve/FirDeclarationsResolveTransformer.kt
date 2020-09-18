@@ -251,7 +251,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             }
 
             (delegateProvider as? FirFunctionCall)?.let { dataFlowAnalyzer.dropSubgraphFromCall(it) }
-            return wrappedDelegateExpression.expression.transform(transformer, ResolutionMode.ContextDependent)
+            return wrappedDelegateExpression.expression
+                .transformSingle(transformer, ResolutionMode.ContextDependent)
+                .transform(integerLiteralTypeApproximator, null)
         } finally {
             dataFlowAnalyzer.exitDelegateExpression()
         }
