@@ -454,13 +454,21 @@ class PostponedArgumentInputTypesResolver(
         postponedArguments: List<PostponedResolvedAtom>,
         topLevelType: UnwrappedType,
         topLevelAtoms: List<ResolvedAtom>,
-        dependencyProvider: TypeVariableDependencyInformationProvider
+        dependencyProvider: TypeVariableDependencyInformationProvider,
+        inferenceCompatibilityMode: Boolean = false,
     ): Boolean {
         val expectedType = argument.run { safeAs<PostponedAtomWithRevisableExpectedType>()?.revisedExpectedType ?: expectedType }
 
         if (expectedType != null && expectedType.isFunctionOrKFunctionTypeWithAnySuspendability) {
             val wasFixedSomeVariable =
-                c.fixNextReadyVariableForParameterType(expectedType, postponedArguments, topLevelType, topLevelAtoms, dependencyProvider)
+                c.fixNextReadyVariableForParameterType(
+                    expectedType,
+                    postponedArguments,
+                    topLevelType,
+                    topLevelAtoms,
+                    dependencyProvider,
+                    inferenceCompatibilityMode
+                )
 
             if (wasFixedSomeVariable)
                 return true
@@ -474,12 +482,13 @@ class PostponedArgumentInputTypesResolver(
         postponedArguments: List<PostponedResolvedAtom>,
         topLevelType: UnwrappedType,
         topLevelAtoms: List<ResolvedAtom>,
-        dependencyProvider: TypeVariableDependencyInformationProvider
+        dependencyProvider: TypeVariableDependencyInformationProvider,
+        inferenceCompatibilityMode: Boolean,
     ): Boolean {
         val relatedVariables = type.getPureArgumentsForFunctionalTypeOrSubtype()
             .flatMap { getAllDeeplyRelatedTypeVariables(it, dependencyProvider) }
         val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
-            this, relatedVariables, postponedArguments, ConstraintSystemCompletionMode.FULL, topLevelType
+            this, relatedVariables, postponedArguments, ConstraintSystemCompletionMode.FULL, topLevelType, inferenceCompatibilityMode
         )
 
         if (variableForFixation == null || !variableForFixation.hasProperConstraint)

@@ -32,8 +32,10 @@ class VariableFixationFinder(
         allTypeVariables: List<TypeConstructorMarker>,
         postponedKtPrimitives: List<PostponedResolvedAtomMarker>,
         completionMode: ConstraintSystemCompletionMode,
-        topLevelType: KotlinTypeMarker
-    ): VariableForFixation? = c.findTypeVariableForFixation(allTypeVariables, postponedKtPrimitives, completionMode, topLevelType)
+        topLevelType: KotlinTypeMarker,
+        inferenceCompatibilityMode: Boolean = false,
+    ): VariableForFixation? =
+        c.findTypeVariableForFixation(allTypeVariables, postponedKtPrimitives, completionMode, topLevelType, inferenceCompatibilityMode)
 
     enum class TypeVariableFixationReadiness {
         FORBIDDEN,
@@ -44,12 +46,14 @@ class VariableFixationFinder(
         FROM_INCORPORATION_OF_DECLARED_UPPER_BOUND,
         READY_FOR_FIXATION_UPPER,
         READY_FOR_FIXATION_LOWER,
+        READY_FOR_FIXATION,
         READY_FOR_FIXATION_REIFIED,
     }
 
     private fun Context.getTypeVariableReadiness(
         variable: TypeConstructorMarker,
-        dependencyProvider: TypeVariableDependencyInformationProvider
+        dependencyProvider: TypeVariableDependencyInformationProvider,
+        inferenceCompatibilityMode: Boolean
     ): TypeVariableFixationReadiness = when {
         !notFixedTypeVariables.contains(variable) ||
                 dependencyProvider.isVariableRelatedToTopLevelType(variable) -> TypeVariableFixationReadiness.FORBIDDEN
@@ -60,16 +64,25 @@ class VariableFixationFinder(
         variableHasOnlyIncorporatedConstraintsFromDeclaredUpperBound(variable) ->
             TypeVariableFixationReadiness.FROM_INCORPORATION_OF_DECLARED_UPPER_BOUND
         isReified(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_REIFIED
-        !variableHasLowerProperConstraint(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_UPPER
-        else -> TypeVariableFixationReadiness.READY_FOR_FIXATION_LOWER
+        inferenceCompatibilityMode -> {
+            when {
+                variableHasLowerProperConstraint(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_LOWER
+                else -> TypeVariableFixationReadiness.READY_FOR_FIXATION_UPPER
+            }
+        }
+        else -> TypeVariableFixationReadiness.READY_FOR_FIXATION
     }
 
-    fun isTypeVariableHasProperConstraint(context: Context, typeVariable: TypeConstructorMarker): Boolean {
+    fun isTypeVariableHasProperConstraint(
+        context: Context,
+        typeVariable: TypeConstructorMarker,
+        inferenceCompatibilityMode: Boolean = false
+    ): Boolean {
         return with(context) {
             val dependencyProvider = TypeVariableDependencyInformationProvider(
                 notFixedTypeVariables, emptyList(), topLevelType = null, context
             )
-            when (getTypeVariableReadiness(typeVariable, dependencyProvider)) {
+            when (getTypeVariableReadiness(typeVariable, dependencyProvider, inferenceCompatibilityMode)) {
                 TypeVariableFixationReadiness.FORBIDDEN, TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT -> false
                 else -> true
             }
@@ -93,7 +106,8 @@ class VariableFixationFinder(
         allTypeVariables: List<TypeConstructorMarker>,
         postponedArguments: List<PostponedResolvedAtomMarker>,
         completionMode: ConstraintSystemCompletionMode,
-        topLevelType: KotlinTypeMarker
+        topLevelType: KotlinTypeMarker,
+        inferenceCompatibilityMode: Boolean,
     ): VariableForFixation? {
         if (allTypeVariables.isEmpty()) return null
 
@@ -101,9 +115,10 @@ class VariableFixationFinder(
             notFixedTypeVariables, postponedArguments, topLevelType.takeIf { completionMode == PARTIAL }, this
         )
 
-        val candidate = allTypeVariables.maxByOrNull { getTypeVariableReadiness(it, dependencyProvider) } ?: return null
+        val candidate =
+            allTypeVariables.maxByOrNull { getTypeVariableReadiness(it, dependencyProvider, inferenceCompatibilityMode) } ?: return null
 
-        return when (getTypeVariableReadiness(candidate, dependencyProvider)) {
+        return when (getTypeVariableReadiness(candidate, dependencyProvider, inferenceCompatibilityMode)) {
             TypeVariableFixationReadiness.FORBIDDEN -> null
             TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT -> VariableForFixation(candidate, false)
             TypeVariableFixationReadiness.WITH_TRIVIAL_OR_NON_PROPER_CONSTRAINTS ->

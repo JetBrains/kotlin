@@ -50,7 +50,7 @@ class ConstraintSystemCompleter(private val components: BodyResolveComponents) {
             val postponedAtoms = getOrderedNotAnalyzedPostponedArguments(topLevelAtoms)
             val variableForFixation =
                 variableFixationFinder.findFirstVariableForFixation(
-                    c, allTypeVariables, postponedAtoms, completionMode, candidateReturnType
+                    c, allTypeVariables, postponedAtoms, completionMode, candidateReturnType, inferenceCompatibilityMode = true
                 ) ?: break
 
             if (
