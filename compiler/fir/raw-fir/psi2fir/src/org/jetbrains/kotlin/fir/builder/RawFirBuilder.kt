@@ -1746,13 +1746,26 @@ class RawFirBuilder(
                             prefix = expression is KtPrefixExpression,
                         ) { (this as KtExpression).toFirExpression("Incorrect expression inside inc/dec") }
                     }
+
+                    val receiver = argument.toFirExpression("No operand")
+                    if (operationToken == PLUS || operationToken == MINUS) {
+                        if (receiver is FirConstExpression<*> && receiver.kind == FirConstKind.IntegerLiteral) {
+                            val value = receiver.value as Long
+                            val convertedValue = when (operationToken) {
+                                MINUS -> -value
+                                PLUS -> value
+                                else -> error("Should not be here")
+                            }
+                            return buildConstExpression(expression.toFirPsiSourceElement(), FirConstKind.IntegerLiteral, convertedValue)
+                        }
+                    }
                     buildFunctionCall {
                         source = expression.toFirSourceElement()
                         calleeReference = buildSimpleNamedReference {
                             source = expression.operationReference.toFirSourceElement()
                             name = conventionCallName
                         }
-                        explicitReceiver = argument.toFirExpression("No operand")
+                        explicitReceiver = receiver
                     }
                 }
                 else -> throw IllegalStateException("Unexpected expression: ${expression.text}")

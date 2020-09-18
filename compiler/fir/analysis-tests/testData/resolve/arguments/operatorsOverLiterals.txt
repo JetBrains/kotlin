@@ -32,7 +32,7 @@ FILE: operatorsOverLiterals.kt
         R|/takeByte|(Byte(1).R|kotlin/Byte.plus|(Byte(1)))
         <Inapplicable(INAPPLICABLE): /takeByte>#(Int(1).R|kotlin/Int.plus|(Int(127)))
         R|/takeByte|(Byte(1).R|kotlin/Byte.minus|(Byte(1)))
-        <Inapplicable(INAPPLICABLE): /takeByte>#(Int(100).R|kotlin/Int.unaryMinus|().R|kotlin/Int.minus|(Int(100)))
+        <Inapplicable(INAPPLICABLE): /takeByte>#(Int(-100).R|kotlin/Int.minus|(Int(100)))
         R|/takeByte|(Byte(10).R|kotlin/Byte.times|(Byte(10)))
         <Inapplicable(INAPPLICABLE): /takeByte>#(Int(100).R|kotlin/Int.times|(Int(100)))
         <Unresolved name: taleByte>#(Int(10).R|kotlin/Int.div|(Int(10)))
@@ -46,8 +46,8 @@ FILE: operatorsOverLiterals.kt
         <Inapplicable(INAPPLICABLE): /takeByte>#(Int(512).R|kotlin/Int.xor|(Int(511)))
     }
     public final fun test_5(): R|kotlin/Unit| {
-        R|/takeByte|(Byte(1).R|kotlin/Byte.unaryMinus|())
-        R|/takeByte|(Byte(1).R|kotlin/Byte.unaryPlus|())
+        R|/takeByte|(Byte(-1))
+        R|/takeByte|(Byte(1))
         R|/takeByte|(Byte(1).R|<local>/inv|())
     }
     public final fun test_6(): R|kotlin/Unit| {
