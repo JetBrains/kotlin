@@ -49,6 +49,11 @@ public class ParcelizeBytecodeListingTestGenerated extends AbstractParcelizeByte
         runTest("plugins/parcelize/parcelize-compiler/testData/codegen/customSimple.kt");
     }
 
+    @TestMetadata("customSimpleDeprecated.kt")
+    public void testCustomSimpleDeprecated() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/codegen/customSimpleDeprecated.kt");
+    }
+
     @TestMetadata("customSimpleWithNewArray.kt")
     public void testCustomSimpleWithNewArray() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/codegen/customSimpleWithNewArray.kt");

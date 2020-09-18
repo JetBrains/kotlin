@@ -74,6 +74,11 @@ public class ParcelizeIrBoxTestGenerated extends AbstractParcelizeIrBoxTest {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/customParcelable.kt");
     }
 
+    @TestMetadata("customParcelableDeprecated.kt")
+    public void testCustomParcelableDeprecated() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/customParcelableDeprecated.kt");
+    }
+
     @TestMetadata("customParcelerScoping.kt")
     public void testCustomParcelerScoping() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/customParcelerScoping.kt");
@@ -89,9 +94,19 @@ public class ParcelizeIrBoxTestGenerated extends AbstractParcelizeIrBoxTest {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/customSerializerSimple.kt");
     }
 
+    @TestMetadata("customSerializerSimpleDeprecated.kt")
+    public void testCustomSerializerSimpleDeprecated() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/customSerializerSimpleDeprecated.kt");
+    }
+
     @TestMetadata("customSerializerWriteWith.kt")
     public void testCustomSerializerWriteWith() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/customSerializerWriteWith.kt");
+    }
+
+    @TestMetadata("customSerializerWriteWithDeprecated.kt")
+    public void testCustomSerializerWriteWithDeprecated() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/customSerializerWriteWithDeprecated.kt");
     }
 
     @TestMetadata("customSimple.kt")
@@ -132,6 +147,11 @@ public class ParcelizeIrBoxTestGenerated extends AbstractParcelizeIrBoxTest {
     @TestMetadata("kt19747.kt")
     public void testKt19747() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/kt19747.kt");
+    }
+
+    @TestMetadata("kt19747Deprecated.kt")
+    public void testKt19747Deprecated() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/kt19747Deprecated.kt");
     }
 
     @TestMetadata("kt19747_2.kt")
@@ -277,6 +297,11 @@ public class ParcelizeIrBoxTestGenerated extends AbstractParcelizeIrBoxTest {
     @TestMetadata("simple.kt")
     public void testSimple() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/simple.kt");
+    }
+
+    @TestMetadata("simpleDeprecated.kt")
+    public void testSimpleDeprecated() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/simpleDeprecated.kt");
     }
 
     @TestMetadata("sparseArrays.kt")
