@@ -135,9 +135,6 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                             "Inconsistency between callable reference to suspend lambda and the corresponding continuation"
                         }
                         +irCall(constructor.symbol).apply {
-                            for (typeParameter in constructor.parentAsClass.typeParameters) {
-                                putTypeArgument(typeParameter.index, expression.getTypeArgument(typeParameter.index))
-                            }
                             expressionArguments.forEachIndexed { index, argument ->
                                 putValueArgument(index, argument)
                             }
@@ -166,7 +163,6 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             if (insideInlineFunction) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
         ).apply {
             copyAttributes(info.reference)
-            copyTypeParametersFrom(info.function)
             val functionNClass = context.ir.symbols.getJvmFunctionClass(info.arity + 1)
             superTypes +=
                 IrSimpleTypeImpl(
