@@ -19,10 +19,12 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.builder.*
+import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.builder.*
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.lexer.KtTokens.CLOSING_QUOTE
@@ -50,6 +52,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
     abstract fun T.getExpressionInParentheses(): T?
     abstract fun T.getAnnotatedExpression(): T?
     abstract fun T.getChildNodeByType(type: IElementType): T?
+    abstract val T?.receiverExpression: T?
     abstract val T?.selectorExpression: T?
 
     /**** Class name utils ****/
@@ -383,14 +386,17 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
      *
      * result:
      * {
-     *     val <unary> = argument
-     *     argument = <unary>.inc()
-     *     ^argument
+     *     val <unary-result> = argument.inc()
+     *     argument = <unary-result>
+     *     ^<unary-result>
      * }
      *
      */
 
-    // TODO: Refactor, support receiver capturing in case of a.b
+    // TODO:
+    // 1. Support receiver capturing for `array.b++` (elementType == ARRAY_ACCESS_EXPRESSION).
+    // 2. Support receiver capturing for `a?.b++` (elementType == SAFE_ACCESS_EXPRESSION).
+    // 3. Add box test cases for #1 and #2 where receiver expression has side effects.
     fun generateIncrementOrDecrementBlock(
         baseExpression: T,
         operationReference: T?,
@@ -405,31 +411,67 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 diagnostic = ConeSimpleDiagnostic("Inc/dec without operand", DiagnosticKind.Syntax)
             }
         }
+
+        if (argument.elementType == PARENTHESIZED) {
+            return generateIncrementOrDecrementBlock(
+                baseExpression,
+                operationReference,
+                argument.getExpressionInParentheses(),
+                callName,
+                prefix,
+                convert
+            )
+        }
+
+        if (argument.elementType == DOT_QUALIFIED_EXPRESSION) {
+            return generateIncrementOrDecrementBlockForQualifiedAccess(
+                baseExpression,
+                operationReference,
+                argument,
+                callName,
+                prefix,
+                convert
+            )
+        }
+
         return buildBlock {
             val baseSource = baseExpression?.toFirSourceElement()
             val desugaredSource = baseSource?.fakeElement(FirFakeSourceElementKind.DesugaredIncrementOrDecrement)
             source = desugaredSource
-            val tempName = Name.special("<unary>")
-            val temporaryVariable = generateTemporaryVariable(
+
+            // initialValueVar is only used for postfix increment/decrement (stores the argument value before increment/decrement).
+            val initialValueVar = generateTemporaryVariable(
                 this@BaseFirBuilder.baseSession,
                 desugaredSource,
-                tempName,
+                Name.special("<unary>"),
                 argument.convert()
             )
-            statements += temporaryVariable
-            val resultName = Name.special("<unary-result>")
+
+            // resultInitializer is the expression for `argument.inc()`
             val resultInitializer = buildFunctionCall {
                 source = desugaredSource
                 calleeReference = buildSimpleNamedReference {
                     source = operationReference?.toFirSourceElement()
                     name = callName
                 }
-                explicitReceiver = generateResolvedAccessExpression(desugaredSource, temporaryVariable)
+                explicitReceiver = if (prefix) {
+                    argument.convert()
+                } else {
+                    generateResolvedAccessExpression(desugaredSource, initialValueVar)
+                }
             }
-            val resultVar = generateTemporaryVariable(this@BaseFirBuilder.baseSession, desugaredSource, resultName, resultInitializer)
+
+            // resultVar is only used for prefix increment/decrement.
+            val resultVar = generateTemporaryVariable(
+                this@BaseFirBuilder.baseSession,
+                desugaredSource,
+                Name.special("<unary-result>"),
+                resultInitializer
+            )
+
             val assignment = argument.generateAssignment(
                 desugaredSource,
-                argument,
+                null,
                 if (prefix && argument.elementType != REFERENCE_EXPRESSION)
                     generateResolvedAccessExpression(source, resultVar)
                 else
@@ -455,8 +497,127 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     statements += generateAccessExpression(desugaredSource, argument.getReferencedNameAsName())
                 }
             } else {
+                statements += initialValueVar
                 appendAssignment()
-                statements += generateResolvedAccessExpression(desugaredSource, temporaryVariable)
+                statements += generateResolvedAccessExpression(desugaredSource, initialValueVar)
+            }
+        }
+    }
+
+    /**
+     * given:
+     * a.b++
+     *
+     * result:
+     * {
+     *     val <receiver> = a
+     *     val <unary> = <receiver>.b
+     *     <receiver>.b = <unary>.inc()
+     *     ^<unary>
+     * }
+     *
+     * given:
+     * ++a.b
+     *
+     * result:
+     * {
+     *     val <receiver> = a
+     *     val <unary-result> = <receiver>.b.inc()
+     *     <receiver>.b = <unary-result>
+     *     ^<unary-result>
+     * }
+     *
+     */
+    private fun generateIncrementOrDecrementBlockForQualifiedAccess(
+        baseExpression: T,
+        operationReference: T?,
+        argument: T,
+        callName: Name,
+        prefix: Boolean,
+        convert: T.() -> FirExpression
+    ): FirExpression {
+        return buildBlock {
+            val baseSource = baseExpression?.toFirSourceElement()
+            val desugaredSource = baseSource?.fakeElement(FirFakeSourceElementKind.DesugaredIncrementOrDecrement)
+            source = desugaredSource
+
+            val argumentReceiver = argument.receiverExpression
+            val argumentSelector = argument.selectorExpression
+
+            val argumentReceiverVariable = generateTemporaryVariable(
+                this@BaseFirBuilder.baseSession,
+                argumentReceiver?.toFirSourceElement(),
+                Name.special("<receiver>"),
+                argumentReceiver?.convert() ?: buildErrorExpression {
+                    source = argument.toFirSourceElement()
+                    diagnostic = ConeSimpleDiagnostic("Qualified expression without receiver", DiagnosticKind.Syntax)
+                }
+            ).also { statements += it }
+
+            val firArgument = generateResolvedAccessExpression(argumentReceiverVariable.source, argumentReceiverVariable).let { receiver ->
+                val firArgumentSelector = argumentSelector?.convert() ?: buildErrorExpression {
+                    source = argument.toFirSourceElement()
+                    diagnostic = ConeSimpleDiagnostic("Qualified expression without selector", DiagnosticKind.Syntax)
+                }
+                firArgumentSelector.also { if (it is FirQualifiedAccessExpression) it.replaceExplicitReceiver(receiver) }
+            }
+
+            // initialValueVar is only used for postfix increment/decrement (stores the argument value before increment/decrement).
+            val initialValueVar = generateTemporaryVariable(
+                this@BaseFirBuilder.baseSession,
+                desugaredSource,
+                Name.special("<unary>"),
+                firArgument
+            )
+
+            // resultInitializer is the expression for `argument.inc()`
+            val resultInitializer = buildFunctionCall {
+                source = desugaredSource
+                calleeReference = buildSimpleNamedReference {
+                    source = operationReference?.toFirSourceElement()
+                    name = callName
+                }
+                explicitReceiver = if (prefix) {
+                    firArgument
+                } else {
+                    generateResolvedAccessExpression(desugaredSource, initialValueVar)
+                }
+            }
+
+            // resultVar is only used for prefix increment/decrement.
+            val resultVar = generateTemporaryVariable(
+                this@BaseFirBuilder.baseSession,
+                desugaredSource,
+                Name.special("<unary-result>"),
+                resultInitializer
+            )
+
+            fun appendAssignment() {
+                if (firArgument is FirQualifiedAccessExpression) {
+                    statements += buildVariableAssignment {
+                        source = desugaredSource
+                        rValue = if (prefix) {
+                            generateResolvedAccessExpression(source, resultVar)
+                        } else {
+                            resultInitializer
+                        }
+                        explicitReceiver = generateResolvedAccessExpression(argumentReceiverVariable.source, argumentReceiverVariable)
+                        calleeReference = buildSimpleNamedReference {
+                            source = firArgument.calleeReference.source
+                            name = (firArgument.calleeReference as FirSimpleNamedReference).name
+                        }
+                    }
+                }
+            }
+
+            if (prefix) {
+                statements += resultVar
+                appendAssignment()
+                statements += generateResolvedAccessExpression(desugaredSource, resultVar)
+            } else {
+                statements += initialValueVar
+                appendAssignment()
+                statements += generateResolvedAccessExpression(desugaredSource, initialValueVar)
             }
         }
     }
