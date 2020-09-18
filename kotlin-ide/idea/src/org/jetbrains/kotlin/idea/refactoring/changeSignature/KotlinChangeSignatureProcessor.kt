@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.refactoring.changeSignature
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.Ref
@@ -40,7 +39,6 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinImplic
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinUsageInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinWrapperForJavaUsageInfos
 import org.jetbrains.kotlin.psi.KtCallExpression
-import java.util.*
 
 class KotlinChangeSignatureProcessor(
     project: Project,
@@ -87,8 +85,8 @@ class KotlinChangeSignatureProcessor(
                 KotlinWrapperForJavaUsageInfos(javaChangeInfo, uniqueJavaUsagesForKtChange.toTypedArray(), changeInfo.method)
             }
         }
-        super.findUsages().filterTo(allUsages) { it is KotlinUsageInfo<*> || it is UnresolvableCollisionUsageInfo }
 
+        super.findUsages().filterTo(allUsages) { it is KotlinUsageInfo<*> || it is UnresolvableCollisionUsageInfo }
         return allUsages.toTypedArray()
     }
 
@@ -97,9 +95,7 @@ class KotlinChangeSignatureProcessor(
 
         if (!usageProcessors.all { it.setupDefaultValues(myChangeInfo, refUsages, myProject) }) return false
 
-        val conflictDescriptions = object : MultiMap<PsiElement, String>() {
-            override fun createCollection() = LinkedHashSet<String>()
-        }
+        val conflictDescriptions = MultiMap<PsiElement, String>()
         usageProcessors.forEach { conflictDescriptions.putAllValues(it.findConflicts(myChangeInfo, refUsages)) }
 
         val usages = refUsages.get()
@@ -107,34 +103,19 @@ class KotlinChangeSignatureProcessor(
 
         RenameUtil.addConflictDescriptions(usages, conflictDescriptions)
         RenameUtil.removeConflictUsages(usagesSet)
-        if (!conflictDescriptions.isEmpty) {
-            if (ApplicationManager.getApplication().isUnitTestMode) {
-                throw ConflictsInTestsException(conflictDescriptions.values())
-            }
 
-            val dialog = prepareConflictsDialog(conflictDescriptions, usages)
-            dialog.show()
-            if (!dialog.isOK) {
-                if (dialog.isShowConflicts) prepareSuccessful()
-                return false
-            }
-        }
-
-        val usageArray = usagesSet.toTypedArray()
-        Arrays.sort(usageArray) { u1, u2 ->
-            if (u1 is KotlinImplicitReceiverUsage && u2 is KotlinFunctionCallUsage) return@sort -1
-            if (u2 is KotlinImplicitReceiverUsage && u1 is KotlinFunctionCallUsage) return@sort 1
+        val usageArray = usagesSet.sortedWith(Comparator { u1, u2 ->
+            if (u1 is KotlinImplicitReceiverUsage && u2 is KotlinFunctionCallUsage) return@Comparator -1
+            if (u2 is KotlinImplicitReceiverUsage && u1 is KotlinFunctionCallUsage) return@Comparator 1
             val element1 = u1.element
             val element2 = u2.element
             val rank1 = element1?.textOffset ?: -1
             val rank2 = element2?.textOffset ?: -1
             rank2 - rank1 // Reverse order
-        }
+        }).toTypedArray()
+
         refUsages.set(usageArray)
-
-        prepareSuccessful()
-
-        return true
+        return showConflicts(conflictDescriptions, usageArray)
     }
 
     override fun isPreviewUsages(usages: Array<out UsageInfo>): Boolean = isPreviewUsages
