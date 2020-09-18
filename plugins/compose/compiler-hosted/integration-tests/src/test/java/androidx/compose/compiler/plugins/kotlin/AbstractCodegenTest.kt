@@ -56,9 +56,11 @@ abstract class AbstractCodegenTest : AbstractCompilerTest() {
     protected open fun helperFiles(): List<KtFile> = emptyList()
 
     protected fun dumpClasses(loader: GeneratedClassLoader) {
-        for (file in loader.allGeneratedFiles.filter {
-            it.relativePath.endsWith(".class")
-        }) {
+        for (
+            file in loader.allGeneratedFiles.filter {
+                it.relativePath.endsWith(".class")
+            }
+        ) {
             println("------\nFILE: ${file.relativePath}\n------")
             println(file.asText())
         }
@@ -72,7 +74,8 @@ abstract class AbstractCodegenTest : AbstractCompilerTest() {
         val className = "Test_REPLACEME_${uniqueNumber++}"
         val fileName = "$className.kt"
 
-        val loader = classLoader("""
+        val loader = classLoader(
+            """
            @file:OptIn(
              ExperimentalComposeApi::class,
              InternalComposeApi::class,
@@ -83,7 +86,9 @@ abstract class AbstractCodegenTest : AbstractCompilerTest() {
            import androidx.compose.runtime.*
 
            $src
-        """, fileName, dumpClasses)
+        """,
+            fileName, dumpClasses
+        )
 
         val apiString = loader
             .allGeneratedFiles
@@ -211,15 +216,15 @@ abstract class AbstractCodegenTest : AbstractCompilerTest() {
 
     protected fun testCompileWithViewStubs(source: String, dumpClasses: Boolean = false) =
         testCompile(
-        """
+            """
             $COMPOSE_VIEW_STUBS_IMPORTS
 
             $source
 
             $COMPOSE_VIEW_STUBS
         """,
-        dumpClasses
-    )
+            dumpClasses
+        )
 
     protected fun sourceFile(name: String, source: String): KtFile {
         val result =

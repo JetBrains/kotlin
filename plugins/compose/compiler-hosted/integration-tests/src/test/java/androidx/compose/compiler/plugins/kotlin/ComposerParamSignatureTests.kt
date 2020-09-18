@@ -155,15 +155,21 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
         """
     ) {
         val testClass = it.split("public final class ").single { it.startsWith("test/TestKt") }
-        assert(!testClass.contains(
-            "INVOKEVIRTUAL Bar.unbox-impl ()I"
-        ))
-        assert(!testClass.contains(
-            "INVOKESTATIC java/lang/Integer.valueOf (I)Ljava/lang/Integer;"
-        ))
-        assert(testClass.contains(
-            "INVOKEVIRTUAL androidx/compose/runtime/Composer.changed (Ljava/lang/Object;)Z"
-        ))
+        assert(
+            !testClass.contains(
+                "INVOKEVIRTUAL Bar.unbox-impl ()I"
+            )
+        )
+        assert(
+            !testClass.contains(
+                "INVOKESTATIC java/lang/Integer.valueOf (I)Ljava/lang/Integer;"
+            )
+        )
+        assert(
+            testClass.contains(
+                "INVOKEVIRTUAL androidx/compose/runtime/Composer.changed (Ljava/lang/Object;)Z"
+            )
+        )
     }
 
     @Test
@@ -200,9 +206,11 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
         }
         """
     ) {
-        assert(!it.contains(
-            "INVOKEINTERFACE kotlin/jvm/functions/Function0.invoke ()Ljava/lang/Object; (itf)"
-        ))
+        assert(
+            !it.contains(
+                "INVOKEINTERFACE kotlin/jvm/functions/Function0.invoke ()Ljava/lang/Object; (itf)"
+            )
+        )
     }
 
     @Test
@@ -345,7 +353,8 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
         data class Foo(
             val bar: @Composable () -> Unit
         )
-        """) {
+        """
+    ) {
         assert(!it.contains("CHECKCAST kotlin/jvm/functions/Function0"))
     }
 

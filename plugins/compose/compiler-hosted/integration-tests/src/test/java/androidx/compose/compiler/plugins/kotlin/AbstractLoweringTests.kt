@@ -35,7 +35,9 @@ abstract class AbstractLoweringTests : AbstractCodegenTest() {
 
            $COMPOSE_VIEW_STUBS
 
-        """, dumpClasses)
+        """,
+            dumpClasses
+        )
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -95,7 +97,8 @@ abstract class AbstractLoweringTests : AbstractCodegenTest() {
        }
 
        $COMPOSE_VIEW_STUBS
-    """, fileName, dumpClasses
+    """,
+            fileName, dumpClasses
         )
 
         val allClassFiles = compiledClasses.allGeneratedFiles.filter {

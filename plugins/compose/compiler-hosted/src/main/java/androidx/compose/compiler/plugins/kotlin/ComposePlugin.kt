@@ -47,18 +47,18 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             allowMultipleOccurrences = false
         )
         val SOURCE_INFORMATION_ENABLED_OPTION = CliOption(
-                "sourceInformation",
-                "<true|false>",
-                "Include source information in generated code",
-                required = false,
-                allowMultipleOccurrences = false
+            "sourceInformation",
+            "<true|false>",
+            "Include source information in generated code",
+            required = false,
+            allowMultipleOccurrences = false
         )
     }
 
     override val pluginId = PLUGIN_ID
     override val pluginOptions = listOf(
-            LIVE_LITERALS_ENABLED_OPTION,
-            SOURCE_INFORMATION_ENABLED_OPTION
+        LIVE_LITERALS_ENABLED_OPTION,
+        SOURCE_INFORMATION_ENABLED_OPTION
     )
 
     override fun processOption(
@@ -128,7 +128,8 @@ class ComposeComponentRegistrar : ComponentRegistrar {
                 project,
                 ComposeTypeResolutionInterceptorExtension()
             )
-            IrGenerationExtension.registerExtension(project,
+            IrGenerationExtension.registerExtension(
+                project,
                 ComposeIrGenerationExtension(
                     liveLiteralsEnabled = liveLiteralsEnabled,
                     sourceInformationEnabled = sourceInformationEnabled

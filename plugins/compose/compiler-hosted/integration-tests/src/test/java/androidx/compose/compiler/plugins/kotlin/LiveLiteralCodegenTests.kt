@@ -41,7 +41,8 @@ class LiveLiteralCodegenTests : AbstractLoweringTests() {
     @Ignore
     @Test
     fun testBasicFunctionality(): Unit = ensureSetup {
-        compose("""
+        compose(
+            """
             @Composable
             fun App() {
                 TextView(id=1, text="abc")
@@ -62,7 +63,8 @@ class LiveLiteralCodegenTests : AbstractLoweringTests() {
     @Ignore
     @Test
     fun testObjectFieldsLoweredToStaticFields(): Unit = ensureSetup {
-        validateBytecode("""
+        validateBytecode(
+            """
             fun Test(): Int {
                 return 123
             }

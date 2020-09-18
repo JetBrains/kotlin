@@ -79,11 +79,14 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
         val className = "Test_REPLACEME_${uniqueNumber++}"
         val fileName = "$className.kt"
 
-        val loader = classLoader("""
+        val loader = classLoader(
+            """
            import androidx.compose.runtime.*
 
            $src
-        """, fileName, dumpClasses)
+        """,
+            fileName, dumpClasses
+        )
 
         val apiString = loader
             .allGeneratedFiles
@@ -190,7 +193,9 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
 
            $text
 
-        """, dumpClasses)
+        """,
+            dumpClasses
+        )
     }
 
     fun codegenNoImports(text: String, dumpClasses: Boolean = false): Unit = ensureSetup {

@@ -73,7 +73,8 @@ fun String.trimTrailingWhitespaces(): String =
 // jetTestUtils
 fun String.trimTrailingWhitespacesAndAddNewlineAtEOF(): String =
     this.trimTrailingWhitespaces().let {
-            result -> if (result.endsWith("\n")) result else result + "\n"
+        result ->
+        if (result.endsWith("\n")) result else result + "\n"
     }
 
 abstract class AbstractMultiPlatformIntegrationTest : AbstractCompilerTest() {
@@ -153,10 +154,12 @@ abstract class AbstractMultiPlatformIntegrationTest : AbstractCompilerTest() {
     ): String = buildString {
         val (output, exitCode) = executeCompilerGrabOutput(
             this@compile,
-            listOfNotNull(sources.absolutePath,
+            listOfNotNull(
+                sources.absolutePath,
                 commonSources?.absolutePath,
-                commonSources?.absolutePath?.let("-Xcommon-sources="::plus)) +
-                    "-Xmulti-platform" + mainArguments
+                commonSources?.absolutePath?.let("-Xcommon-sources="::plus)
+            ) +
+                "-Xmulti-platform" + mainArguments
         )
         appendLine("Exit code: $exitCode")
         appendLine("Output:")

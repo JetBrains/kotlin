@@ -65,7 +65,9 @@ import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.upperIfFlexible
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-open class ComposableCallChecker : CallChecker, AdditionalTypeChecker,
+open class ComposableCallChecker :
+    CallChecker,
+    AdditionalTypeChecker,
     StorageComponentContainerContributor {
     override fun registerModuleComponents(
         container: StorageComponentContainer,
@@ -116,9 +118,9 @@ open class ComposableCallChecker : CallChecker, AdditionalTypeChecker,
                     }
                     // TODO(lmr): in future, we should check for CALLS_IN_PLACE contract
                     val inlined = arg != null &&
-                            canBeInlineArgument(node.functionLiteral) &&
-                            isInline(arg.containingDeclaration) &&
-                            isInlineParameter(arg)
+                        canBeInlineArgument(node.functionLiteral) &&
+                        isInline(arg.containingDeclaration) &&
+                        isInlineParameter(arg)
                     if (!inlined) {
                         illegalCall(context, reportOn)
                         return
@@ -232,13 +234,15 @@ open class ComposableCallChecker : CallChecker, AdditionalTypeChecker,
             val anyType = expectedType.builtIns.anyType
 
             if (anyType == expectedType.lowerIfFlexible() &&
-                nullableAnyType == expectedType.upperIfFlexible()) return
+                nullableAnyType == expectedType.upperIfFlexible()
+            ) return
 
             val nullableNothingType = expectedType.builtIns.nullableNothingType
 
             // Handle assigning null to a nullable composable type
             if (expectedType.isMarkedNullable &&
-                expressionTypeWithSmartCast == nullableNothingType) return
+                expressionTypeWithSmartCast == nullableNothingType
+            ) return
             val isComposable = expressionType.hasComposableAnnotation()
 
             if (expectedComposable != isComposable) {
@@ -269,7 +273,8 @@ fun ResolvedCall<*>.isComposableInvocation(): Boolean {
     val candidateDescriptor = candidateDescriptor
     if (candidateDescriptor is FunctionDescriptor) {
         if (candidateDescriptor.isOperator &&
-            candidateDescriptor.name == OperatorNameConventions.INVOKE) {
+            candidateDescriptor.name == OperatorNameConventions.INVOKE
+        ) {
             if (dispatchReceiver?.type?.hasComposableAnnotation() == true) {
                 return true
             }
@@ -339,8 +344,8 @@ fun FunctionDescriptor.allowsComposableCalls(bindingContext: BindingContext): Bo
     // otherwise, this is only true if it is a lambda which can be capable of composer
     // capture
     return bindingContext[
-            ComposeWritableSlices.LAMBDA_CAPABLE_OF_COMPOSER_CAPTURE,
-            this
+        ComposeWritableSlices.LAMBDA_CAPABLE_OF_COMPOSER_CAPTURE,
+        this
     ] == true
 }
 

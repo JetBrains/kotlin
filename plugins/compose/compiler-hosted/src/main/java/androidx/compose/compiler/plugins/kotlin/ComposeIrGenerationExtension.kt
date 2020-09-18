@@ -43,8 +43,11 @@ class ComposeIrGenerationExtension(
 
         // TODO: refactor transformers to work with just BackendContext
         @Suppress("DEPRECATION")
-        val bindingTrace = DelegatingBindingTrace(pluginContext.bindingContext, "trace in " +
-                "ComposeIrGenerationExtension")
+        val bindingTrace = DelegatingBindingTrace(
+            pluginContext.bindingContext,
+            "trace in " +
+                "ComposeIrGenerationExtension"
+        )
 
         // create a symbol remapper to be used across all transforms
         val symbolRemapper = DeepCopySymbolRemapper()

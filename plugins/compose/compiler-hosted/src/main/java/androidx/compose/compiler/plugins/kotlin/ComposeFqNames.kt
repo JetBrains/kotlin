@@ -73,8 +73,9 @@ fun KotlinType.hasComposableAnnotation(): Boolean =
     !isSpecialType && annotations.findAnnotation(ComposeFqNames.Composable) != null
 fun KotlinType.isMarkedStable(): Boolean =
     !isSpecialType && (
-                    annotations.hasStableMarker() ||
-                    (constructor.declarationDescriptor?.annotations?.hasStableMarker() ?: false))
+        annotations.hasStableMarker() ||
+            (constructor.declarationDescriptor?.annotations?.hasStableMarker() ?: false)
+        )
 fun Annotated.hasComposableAnnotation(): Boolean =
     annotations.findAnnotation(ComposeFqNames.Composable) != null
 fun Annotated.composableRestartableContract(): Boolean? {

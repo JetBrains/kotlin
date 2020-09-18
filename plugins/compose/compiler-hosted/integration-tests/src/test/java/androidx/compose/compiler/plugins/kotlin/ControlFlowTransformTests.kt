@@ -1091,7 +1091,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
 
     @Test
     fun testBreakWithCallsAfter(): Unit = controlFlow(
-            """
+        """
             @ComposableContract(restartable = false) @Composable
             fun Example(items: Iterator<Int>) {
                 while (items.hasNext()) {
@@ -1118,7 +1118,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
               %composer.endReplaceableGroup()
             }
         """
-        )
+    )
 
     @Test
     fun testBreakWithCallsBefore(): Unit = controlFlow(

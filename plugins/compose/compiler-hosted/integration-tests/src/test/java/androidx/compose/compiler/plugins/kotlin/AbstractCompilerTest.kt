@@ -55,7 +55,8 @@ abstract class AbstractCompilerTest : TestCase() {
 
     override fun setUp() {
         // Setup the environment for the analysis
-        System.setProperty("user.dir",
+        System.setProperty(
+            "user.dir",
             homeDir
         )
         myEnvironment = createEnvironment()
@@ -112,9 +113,12 @@ abstract class AbstractCompilerTest : TestCase() {
     }
 
     protected fun createClassLoader(): GeneratedClassLoader {
-        val classLoader = URLClassLoader(defaultClassPath.map {
-            it.toURI().toURL()
-        }.toTypedArray(), null)
+        val classLoader = URLClassLoader(
+            defaultClassPath.map {
+                it.toURI().toURL()
+            }.toTypedArray(),
+            null
+        )
         return GeneratedClassLoader(
             generateClassesInFile(),
             classLoader,
@@ -138,17 +142,19 @@ abstract class AbstractCompilerTest : TestCase() {
         e.printStackTrace()
         System.err.println("Generating instructions as text...")
         try {
-            System.err.println(classFileFactory?.createText()
-                ?: "Cannot generate text: exception was thrown during generation")
+            System.err.println(
+                classFileFactory?.createText()
+                    ?: "Cannot generate text: exception was thrown during generation"
+            )
         } catch (e1: Throwable) {
             System.err.println(
                 "Exception thrown while trying to generate text, " +
-                        "the actual exception follows:"
+                    "the actual exception follows:"
             )
             e1.printStackTrace()
             System.err.println(
                 "------------------------------------------------------------------" +
-                        "-----------"
+                    "-----------"
             )
         }
 
@@ -215,7 +221,7 @@ abstract class AbstractCompilerTest : TestCase() {
         override fun toString(): String {
             val testName = this@AbstractCompilerTest.getTestName(false)
             return this@AbstractCompilerTest.javaClass.name +
-                    if (StringUtil.isEmpty(testName)) "" else ".test$testName"
+                if (StringUtil.isEmpty(testName)) "" else ".test$testName"
         }
     }
 
@@ -233,10 +239,12 @@ abstract class AbstractCompilerTest : TestCase() {
         }
 
         fun kotlinRuntimeJar(module: String) = File(
-            kotlinHome, "$module/$KOTLIN_RUNTIME_VERSION/$module-$KOTLIN_RUNTIME_VERSION.jar")
+            kotlinHome, "$module/$KOTLIN_RUNTIME_VERSION/$module-$KOTLIN_RUNTIME_VERSION.jar"
+        )
 
         init {
-            System.setProperty("idea.home",
+            System.setProperty(
+                "idea.home",
                 homeDir
             )
         }
@@ -266,31 +274,35 @@ private const val TEST_MODULE_NAME = "test-module"
 
 fun newConfiguration(): CompilerConfiguration {
     val configuration = CompilerConfiguration()
-    configuration.put(CommonConfigurationKeys.MODULE_NAME,
+    configuration.put(
+        CommonConfigurationKeys.MODULE_NAME,
         TEST_MODULE_NAME
     )
 
-    configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, object : MessageCollector {
-        override fun clear() {}
+    configuration.put(
+        CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY,
+        object : MessageCollector {
+            override fun clear() {}
 
-        override fun report(
-            severity: CompilerMessageSeverity,
-            message: String,
-            location: CompilerMessageSourceLocation?
-        ) {
-            if (severity === CompilerMessageSeverity.ERROR) {
-                val prefix = if (location == null)
-                    ""
-                else
-                    "(" + location.path + ":" + location.line + ":" + location.column + ") "
-                throw AssertionError(prefix + message)
+            override fun report(
+                severity: CompilerMessageSeverity,
+                message: String,
+                location: CompilerMessageSourceLocation?
+            ) {
+                if (severity === CompilerMessageSeverity.ERROR) {
+                    val prefix = if (location == null)
+                        ""
+                    else
+                        "(" + location.path + ":" + location.line + ":" + location.column + ") "
+                    throw AssertionError(prefix + message)
+                }
+            }
+
+            override fun hasErrors(): Boolean {
+                return false
             }
         }
-
-        override fun hasErrors(): Boolean {
-            return false
-        }
-    })
+    )
 
     return configuration
 }

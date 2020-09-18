@@ -207,11 +207,11 @@ class ComposerLambdaMemoization(
         val descriptor = declaration.descriptor
         val composable = descriptor.allowsComposableCalls()
         val canRemember = composable &&
-                // Don't use remember in an inline function
-                !descriptor.isInline &&
-                // Don't use remember if in a composable that returns a value
-                // TODO(b/150390108): Consider allowing remember in effects
-                descriptor.returnType.let { it != null && it.isUnit() }
+            // Don't use remember in an inline function
+            !descriptor.isInline &&
+            // Don't use remember if in a composable that returns a value
+            // TODO(b/150390108): Consider allowing remember in effects
+            descriptor.returnType.let { it != null && it.isUnit() }
 
         declarationContextStack.push(FunctionContext(declaration, composable, canRemember))
         val result = super.visitFunction(declaration)
@@ -248,8 +248,9 @@ class ComposerLambdaMemoization(
             val dispatchReceiver = expression.dispatchReceiver
             val extensionReceiver = expression.extensionReceiver
             if ((dispatchReceiver != null || extensionReceiver != null) &&
-                        dispatchReceiver.isNullOrStable() &&
-                        extensionReceiver.isNullOrStable()) {
+                dispatchReceiver.isNullOrStable() &&
+                extensionReceiver.isNullOrStable()
+            ) {
                 // Save the receivers into a temporaries and memoize the function reference using
                 // the resulting temporaries
                 val builder = DeclarationIrBuilder(
@@ -282,7 +283,8 @@ class ComposerLambdaMemoization(
                             expression.type,
                             expression.symbol,
                             expression.typeArgumentsCount,
-                            expression.reflectionTarget).copyAttributes(expression).apply {
+                            expression.reflectionTarget
+                        ).copyAttributes(expression).apply {
                             this.dispatchReceiver = tempDispatchReceiver?.let { irGet(it) }
                             this.extensionReceiver = tempExtensionReceiver?.let { irGet(it) }
                         },
@@ -308,7 +310,8 @@ class ComposerLambdaMemoization(
             // Don't memoize inlined lambdas
             expression.isInlineArgument() ||
             // Don't memoize untracked function
-            !expression.isTracked()) {
+            !expression.isTracked()
+        ) {
             return super.visitFunctionExpression(expression)
         }
 
@@ -384,10 +387,11 @@ class ComposerLambdaMemoization(
                 else COMPOSABLE_LAMBDA
             else if (useComposableLambdaN)
                 COMPOSABLE_LAMBDA_N_INSTANCE
-                else COMPOSABLE_LAMBDA_INSTANCE
+            else COMPOSABLE_LAMBDA_INSTANCE
         val restartFactorySymbol =
             getTopLevelFunction(ComposeFqNames.internalFqNameFor(restartFunctionFactory))
-        val irBuilder = DeclarationIrBuilder(context,
+        val irBuilder = DeclarationIrBuilder(
+            context,
             symbol = declarationContext.symbol,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset
@@ -407,7 +411,8 @@ class ComposerLambdaMemoization(
 
             // key parameter
             putValueArgument(
-                index++, irBuilder.irInt(
+                index++,
+                irBuilder.irInt(
                     @Suppress("DEPRECATION")
                     symbol.descriptor.fqNameSafe.hashCode() xor expression.startOffset
                 )
@@ -427,9 +432,11 @@ class ComposerLambdaMemoization(
                 putValueArgument(index++, irBuilder.irInt(argumentCount))
             }
             if (index >= valueArgumentsCount) {
-                error("function = ${
+                error(
+                    "function = ${
                     function.name.asString()
-                }, count = $valueArgumentsCount, index = $index")
+                    }, count = $valueArgumentsCount, index = $index"
+                )
             }
 
             // block parameter
@@ -444,7 +451,8 @@ class ComposerLambdaMemoization(
     ): IrExpression {
         if (captures.any {
             !((it as? IrVariable)?.isVar != true && it.type.toKotlinType().isStable())
-        }) return expression
+        }
+        ) return expression
         val rememberParameterCount = captures.size + 1 // One additional parameter for the lambda
         val declaration = functionContext.declaration
         val descriptor = declaration.descriptor
@@ -459,8 +467,8 @@ class ComposerLambdaMemoization(
         val directRememberFunction = // Exclude the varargs version
             rememberFunctions.singleOrNull {
                 it.valueParameters.size == rememberParameterCount &&
-                        // Exclude the varargs version
-                        it.valueParameters.firstOrNull()?.varargElementType == null
+                    // Exclude the varargs version
+                    it.valueParameters.firstOrNull()?.varargElementType == null
             }
         val rememberFunctionDescriptor = directRememberFunction
             ?: rememberFunctions.single {
@@ -499,7 +507,8 @@ class ComposerLambdaMemoization(
             } else {
                 val parameterType = rememberFunctionDescriptor.valueParameters[0].type.toIrType()
                 // Call to the vararg version
-                putValueArgument(0,
+                putValueArgument(
+                    0,
                     IrVarargImpl(
                         startOffset = UNDEFINED_OFFSET,
                         endOffset = UNDEFINED_OFFSET,
@@ -513,15 +522,18 @@ class ComposerLambdaMemoization(
                 1
             }
 
-            putValueArgument(lambdaArgumentIndex, irBuilder.irLambdaExpression(
-                descriptor = irBuilder.createFunctionDescriptor(
-                    rememberFunctionDescriptor.valueParameters.last().type
-                ),
-                type = rememberFunctionDescriptor.valueParameters.last().type.toIrType(),
-                body = {
-                    +irReturn(expression)
-                }
-            ))
+            putValueArgument(
+                lambdaArgumentIndex,
+                irBuilder.irLambdaExpression(
+                    descriptor = irBuilder.createFunctionDescriptor(
+                        rememberFunctionDescriptor.valueParameters.last().type
+                    ),
+                    type = rememberFunctionDescriptor.valueParameters.last().type.toIrType(),
+                    body = {
+                        +irReturn(expression)
+                    }
+                )
+            )
         }.patchDeclarationParents(declaration).markAsSynthetic(mark = true)
     }
 

@@ -116,16 +116,16 @@ fun IrElement.dumpSrc(): String {
     accept(IrSourcePrinterVisitor(sb), null)
     return sb
         .toString()
-            // replace tabs at beginning of line with white space
+        // replace tabs at beginning of line with white space
         .replace(Regex("\\n(%tab%)+", RegexOption.MULTILINE)) {
             val size = it.range.last - it.range.first - 1
             "\n" + (0..(size / 5)).joinToString("") { "  " }
         }
-            // tabs that are inserted in the middle of lines should be replaced with empty strings
+        // tabs that are inserted in the middle of lines should be replaced with empty strings
         .replace(Regex("%tab%", RegexOption.MULTILINE), "")
-            // remove empty lines
+        // remove empty lines
         .replace(Regex("\\n(\\s)*$", RegexOption.MULTILINE), "")
-            // brackets with comma on new line
+        // brackets with comma on new line
         .replace(Regex("}\\n(\\s)*,", RegexOption.MULTILINE), "},")
 }
 
@@ -326,7 +326,7 @@ private class IrSourcePrinterVisitor(
                     expression.dispatchReceiver?.type?.isInt() == true -> true
                     expression.extensionReceiver?.type?.isInt() == true -> true
                     expression.valueArgumentsCount > 0 &&
-                            expression.getValueArgument(0)?.type?.isInt() == true -> true
+                        expression.getValueArgument(0)?.type?.isInt() == true -> true
                     else -> false
                 }
                 else -> false
@@ -460,8 +460,8 @@ private class IrSourcePrinterVisitor(
             if (arg != null) {
                 val param = symbol.owner.valueParameters[i]
                 val isTrailingLambda = i == symbol.owner.valueParameters.size - 1 &&
-                        (
-                            arg is IrFunctionExpression ||
+                    (
+                        arg is IrFunctionExpression ||
                             (arg is IrBlock && arg.origin == IrStatementOrigin.LAMBDA)
                         )
                 if (isTrailingLambda) {
@@ -659,7 +659,7 @@ private class IrSourcePrinterVisitor(
                 }
                 expression.branches.forEachIndexed { index, branch ->
                     val isElse = index == expression.branches.size - 1 &&
-                            (branch.condition as? IrConst<*>)?.value == true
+                        (branch.condition as? IrConst<*>)?.value == true
                     when {
                         index == 0 -> {
                             print("if (")
@@ -1087,7 +1087,7 @@ private class IrSourcePrinterVisitor(
     override fun visitTypeParameter(declaration: IrTypeParameter) {
         print(declaration.name)
         val isNonEmpty = declaration.superTypes.isNotEmpty() &&
-                !declaration.superTypes[0].isNullableAny()
+            !declaration.superTypes[0].isNullableAny()
         if (isNonEmpty) {
             print(": ")
             print(declaration.superTypes.joinToString(", ") { it.renderSrc() })
