@@ -2031,6 +2031,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         public void testNoBackingFieldForExtension() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/properties/noBackingFieldForExtension.kt");
         }
+
+        @TestMetadata("syntheticPropertiesForJavaAnnotations.kt")
+        public void testSyntheticPropertiesForJavaAnnotations() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/properties/syntheticPropertiesForJavaAnnotations.kt");
+        }
     }
 
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/references")
