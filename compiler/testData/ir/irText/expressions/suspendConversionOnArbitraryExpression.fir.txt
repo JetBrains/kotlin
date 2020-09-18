@@ -51,10 +51,10 @@ FILE fqName:<root> fileName:/suspendConversionOnArbitraryExpression.kt
     VALUE_PARAMETER name:fn index:0 type:@[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit>
     BLOCK_BODY
       CALL 'public final fun useSuspendExt (sfn: @[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        sfn: BLOCK type=@[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=SUSPEND_CONVERSION
+        sfn: BLOCK type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=SUSPEND_CONVERSION
           VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:@[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit> [val]
             GET_VAR 'fn: @[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testExtAsExt' type=@[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
-          FUN_EXPR type=@[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=SUSPEND_CONVERSION
+          FUN_EXPR type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=SUSPEND_CONVERSION
             FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> (p0:kotlin.Int) returnType:kotlin.Unit [suspend]
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:p0 index:0 type:kotlin.Int
               BLOCK_BODY
@@ -79,10 +79,10 @@ FILE fqName:<root> fileName:/suspendConversionOnArbitraryExpression.kt
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.Int, kotlin.Unit>
     BLOCK_BODY
       CALL 'public final fun useSuspendExt (sfn: @[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        sfn: BLOCK type=@[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=SUSPEND_CONVERSION
+        sfn: BLOCK type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=SUSPEND_CONVERSION
           VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.Function1<kotlin.Int, kotlin.Unit> [val]
             GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testSimpleAsExt' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
-          FUN_EXPR type=@[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=SUSPEND_CONVERSION
+          FUN_EXPR type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=SUSPEND_CONVERSION
             FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> (p0:kotlin.Int) returnType:kotlin.Unit [suspend]
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:p0 index:0 type:kotlin.Int
               BLOCK_BODY
@@ -109,10 +109,10 @@ FILE fqName:<root> fileName:/suspendConversionOnArbitraryExpression.kt
     BLOCK_BODY
       CALL 'public final fun useSuspendExtT <T> (sfn: @[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         <T>: kotlin.Int
-        sfn: BLOCK type=@[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit> origin=SUSPEND_CONVERSION
+        sfn: BLOCK type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit> origin=SUSPEND_CONVERSION
           VAR IR_TEMPORARY_VARIABLE name:tmp_6 type:kotlin.Function1<kotlin.Int, kotlin.Unit> [val]
             GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testSimpleAsExtT' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
-          FUN_EXPR type=@[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit> origin=SUSPEND_CONVERSION
+          FUN_EXPR type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit> origin=SUSPEND_CONVERSION
             FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> (p0:T of <root>.useSuspendExtT) returnType:kotlin.Unit [suspend]
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:p0 index:0 type:T of <root>.useSuspendExtT
               BLOCK_BODY
@@ -139,10 +139,10 @@ FILE fqName:<root> fileName:/suspendConversionOnArbitraryExpression.kt
     BLOCK_BODY
       CALL 'public final fun useSuspendExtT <T> (sfn: @[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         <T>: kotlin.Int
-        sfn: BLOCK type=@[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit> origin=SUSPEND_CONVERSION
+        sfn: BLOCK type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit> origin=SUSPEND_CONVERSION
           VAR IR_TEMPORARY_VARIABLE name:tmp_8 type:@[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit> [val]
             GET_VAR 'fn: @[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testExtAsExtT' type=@[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
-          FUN_EXPR type=@[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit> origin=SUSPEND_CONVERSION
+          FUN_EXPR type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit> origin=SUSPEND_CONVERSION
             FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> (p0:T of <root>.useSuspendExtT) returnType:kotlin.Unit [suspend]
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:p0 index:0 type:T of <root>.useSuspendExtT
               BLOCK_BODY
@@ -171,10 +171,10 @@ FILE fqName:<root> fileName:/suspendConversionOnArbitraryExpression.kt
     BLOCK_BODY
       CALL 'public final fun useSuspendExtT <T> (sfn: @[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         <T>: S of <root>.testSimpleSAsExtT
-        sfn: BLOCK type=@[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit> origin=SUSPEND_CONVERSION
+        sfn: BLOCK type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit> origin=SUSPEND_CONVERSION
           VAR IR_TEMPORARY_VARIABLE name:tmp_10 type:kotlin.Function1<S of <root>.testSimpleSAsExtT, kotlin.Unit> [val]
             GET_VAR 'fn: kotlin.Function1<S of <root>.testSimpleSAsExtT, kotlin.Unit> declared in <root>.testSimpleSAsExtT' type=kotlin.Function1<S of <root>.testSimpleSAsExtT, kotlin.Unit> origin=null
-          FUN_EXPR type=@[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit> origin=SUSPEND_CONVERSION
+          FUN_EXPR type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit> origin=SUSPEND_CONVERSION
             FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> (p0:T of <root>.useSuspendExtT) returnType:kotlin.Unit [suspend]
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:p0 index:0 type:T of <root>.useSuspendExtT
               BLOCK_BODY
@@ -203,10 +203,10 @@ FILE fqName:<root> fileName:/suspendConversionOnArbitraryExpression.kt
     BLOCK_BODY
       CALL 'public final fun useSuspendExtT <T> (sfn: @[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         <T>: S of <root>.testExtSAsExtT
-        sfn: BLOCK type=@[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit> origin=SUSPEND_CONVERSION
+        sfn: BLOCK type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit> origin=SUSPEND_CONVERSION
           VAR IR_TEMPORARY_VARIABLE name:tmp_12 type:@[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<S of <root>.testExtSAsExtT, kotlin.Unit> [val]
             GET_VAR 'fn: @[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<S of <root>.testExtSAsExtT, kotlin.Unit> declared in <root>.testExtSAsExtT' type=@[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<S of <root>.testExtSAsExtT, kotlin.Unit> origin=null
-          FUN_EXPR type=@[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit> origin=SUSPEND_CONVERSION
+          FUN_EXPR type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<T of <root>.useSuspendExtT, kotlin.Unit> origin=SUSPEND_CONVERSION
             FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> (p0:T of <root>.useSuspendExtT) returnType:kotlin.Unit [suspend]
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:p0 index:0 type:T of <root>.useSuspendExtT
               BLOCK_BODY
