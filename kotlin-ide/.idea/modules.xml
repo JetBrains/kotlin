@@ -614,6 +614,8 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/built-in-server/intellij.platform.builtInServer.impl.iml" filepath="$PROJECT_DIR$/intellij/platform/built-in-server/intellij.platform.builtInServer.impl.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/built-in-server/intellij.platform.builtInServer.tests.iml" filepath="$PROJECT_DIR$/intellij/platform/built-in-server/intellij.platform.builtInServer.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/platform-cds-agent/intellij.platform.cdsAgent.iml" filepath="$PROJECT_DIR$/intellij/platform/platform-cds-agent/intellij.platform.cdsAgent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/platform/code-style-api/intellij.platform.codeStyle.iml" filepath="$PROJECT_DIR$/intellij/platform/code-style-api/intellij.platform.codeStyle.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/platform/code-style-impl/intellij.platform.codeStyle.impl.iml" filepath="$PROJECT_DIR$/intellij/platform/code-style-impl/intellij.platform.codeStyle.impl.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/colorSchemes/intellij.platform.colorSchemes.iml" filepath="$PROJECT_DIR$/intellij/colorSchemes/intellij.platform.colorSchemes.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/util/intellij.platform.concurrency.iml" filepath="$PROJECT_DIR$/intellij/platform/util/intellij.platform.concurrency.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/configuration-store-impl/intellij.platform.configurationStore.impl.iml" filepath="$PROJECT_DIR$/intellij/platform/configuration-store-impl/intellij.platform.configurationStore.impl.iml" />
