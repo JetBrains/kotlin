@@ -62,16 +62,14 @@ open class BaseConverter(
         return null
     }
 
-    override fun LighterASTNode.getExpressionInParentheses(): LighterASTNode? {
-        this.forEachChildren {
-            if (it.isExpression()) return it
-        }
+    override fun LighterASTNode.getExpressionInParentheses() = getFirstChildExpression()
 
-        return null
-    }
+    override fun LighterASTNode.getAnnotatedExpression() = getFirstChildExpression()
 
-    override fun LighterASTNode.getAnnotatedExpression(): LighterASTNode? {
-        this.forEachChildren {
+    override fun LighterASTNode.getLabeledExpression() = getFirstChildExpression()
+
+    private fun LighterASTNode.getFirstChildExpression(): LighterASTNode? {
+        forEachChildren {
             if (it.isExpression()) return it
         }
 

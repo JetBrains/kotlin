@@ -51,6 +51,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
     abstract fun T.getLabelName(): String?
     abstract fun T.getExpressionInParentheses(): T?
     abstract fun T.getAnnotatedExpression(): T?
+    abstract fun T.getLabeledExpression(): T?
     abstract fun T.getChildNodeByType(type: IElementType): T?
     abstract val T?.receiverExpression: T?
     abstract val T?.selectorExpression: T?
@@ -405,29 +406,29 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         prefix: Boolean,
         convert: T.() -> FirExpression
     ): FirExpression {
-        if (argument == null) {
+        // NOTE: By removing surrounding parentheses and labels, FirLabels will NOT be created for those labels.
+        // This should be fine since the label is meaningless and unusable for a ++/-- argument.
+        var unwrappedArgument = argument
+        while (true) {
+            unwrappedArgument = when (unwrappedArgument?.elementType) {
+                PARENTHESIZED -> unwrappedArgument?.getExpressionInParentheses()
+                LABELED_EXPRESSION -> unwrappedArgument?.getLabeledExpression()
+                else -> break
+            }
+        }
+
+        if (unwrappedArgument == null) {
             return buildErrorExpression {
-                source = argument
+                source = unwrappedArgument
                 diagnostic = ConeSimpleDiagnostic("Inc/dec without operand", DiagnosticKind.Syntax)
             }
         }
 
-        if (argument.elementType == PARENTHESIZED) {
-            return generateIncrementOrDecrementBlock(
-                baseExpression,
-                operationReference,
-                argument.getExpressionInParentheses(),
-                callName,
-                prefix,
-                convert
-            )
-        }
-
-        if (argument.elementType == DOT_QUALIFIED_EXPRESSION) {
+        if (unwrappedArgument.elementType == DOT_QUALIFIED_EXPRESSION) {
             return generateIncrementOrDecrementBlockForQualifiedAccess(
                 baseExpression,
                 operationReference,
-                argument,
+                unwrappedArgument,
                 callName,
                 prefix,
                 convert
@@ -444,7 +445,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 this@BaseFirBuilder.baseSession,
                 desugaredSource,
                 Name.special("<unary>"),
-                argument.convert()
+                unwrappedArgument.convert()
             )
 
             // resultInitializer is the expression for `argument.inc()`
@@ -455,7 +456,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     name = callName
                 }
                 explicitReceiver = if (prefix) {
-                    argument.convert()
+                    unwrappedArgument.convert()
                 } else {
                     generateResolvedAccessExpression(desugaredSource, initialValueVar)
                 }
@@ -469,10 +470,10 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 resultInitializer
             )
 
-            val assignment = argument.generateAssignment(
+            val assignment = unwrappedArgument.generateAssignment(
                 desugaredSource,
                 null,
-                if (prefix && argument.elementType != REFERENCE_EXPRESSION)
+                if (prefix && unwrappedArgument.elementType != REFERENCE_EXPRESSION)
                     generateResolvedAccessExpression(source, resultVar)
                 else
                     resultInitializer,
@@ -488,13 +489,13 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             }
 
             if (prefix) {
-                if (argument.elementType != REFERENCE_EXPRESSION) {
+                if (unwrappedArgument.elementType != REFERENCE_EXPRESSION) {
                     statements += resultVar
                     appendAssignment()
                     statements += generateResolvedAccessExpression(desugaredSource, resultVar)
                 } else {
                     appendAssignment()
-                    statements += generateAccessExpression(desugaredSource, argument.getReferencedNameAsName())
+                    statements += generateAccessExpression(desugaredSource, unwrappedArgument.getReferencedNameAsName())
                 }
             } else {
                 statements += initialValueVar
