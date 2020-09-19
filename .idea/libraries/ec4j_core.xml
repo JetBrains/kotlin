@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="ec4j-core" type="repository">
+    <properties maven-id="org.ec4j.core:ec4j-core:0.2.2" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/ec4j/core/ec4j-core/0.2.2/ec4j-core-0.2.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
