@@ -1,5 +1,6 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.KtParameter
 // OPTIONS: usages
+// FIR_IGNORE
 
 data class A(val <caret>x: Int, val y: Int, val z: String)
 data class B(val a: A, val n: Int)
