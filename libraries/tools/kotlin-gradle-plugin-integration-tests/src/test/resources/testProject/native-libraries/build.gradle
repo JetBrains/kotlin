@@ -22,7 +22,7 @@ repositories {
 kotlin {
     targets {
         fromPreset(presets.macosX64, 'macos64') {
-            binaries.framework("main")
+            binaries.framework("main", [DEBUG])
         }
 
         fromPreset(presets.linuxX64, 'linux64')
@@ -30,8 +30,8 @@ kotlin {
 
         configure([linux64, mingw64, macos64]) {
             binaries {
-                sharedLib("main")
-                staticLib("main")
+                sharedLib("main", [DEBUG])
+                staticLib("main", [DEBUG])
             }
         }
     }

@@ -160,11 +160,8 @@ class NewMultiplatformIT : BaseGradleIT() {
 
                 assertFileExists("build/bin/wasm32/mainDebugExecutable/main.wasm.js")
                 assertFileExists("build/bin/wasm32/mainDebugExecutable/main.wasm")
-                assertFileExists("build/bin/wasm32/mainReleaseExecutable/main.wasm.js")
-                assertFileExists("build/bin/wasm32/mainReleaseExecutable/main.wasm")
 
                 val nativeExeName = if (isWindows) "main.exe" else "main.kexe"
-                assertFileExists("build/bin/$nativeHostTargetName/mainReleaseExecutable/$nativeExeName")
                 assertFileExists("build/bin/$nativeHostTargetName/mainDebugExecutable/$nativeExeName")
 
                 // Check that linker options were correctly passed to the K/N compiler.

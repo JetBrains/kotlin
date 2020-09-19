@@ -68,7 +68,7 @@ kotlin {
         fromPreset(presets.macosX64, 'macos64')
 
         configure([wasm32, linux64, mingw64, macos64]) {
-            binaries.executable("main") {
+            binaries.executable("main", [DEBUG]) {
                 entryPoint = "com.example.app.native.main"
             }
             

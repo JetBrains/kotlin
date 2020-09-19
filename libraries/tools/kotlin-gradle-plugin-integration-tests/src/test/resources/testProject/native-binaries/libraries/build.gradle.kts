@@ -17,13 +17,11 @@ kotlin {
 
     <SingleNativeTarget>("host") {
         binaries {
-            binaries {
-                sharedLib {
-                    export(project(":exported"))
-                }
-                staticLib {
-                    export(project(":exported"))
-                }
+            sharedLib(listOf(DEBUG)) {
+                export(project(":exported"))
+            }
+            staticLib(listOf(DEBUG)) {
+                export(project(":exported"))
             }
         }
     }

@@ -102,6 +102,7 @@ class GeneralNativeIT : BaseGradleIT() {
         with(
             transformProjectWithPluginsDsl("native-endorsed")
         ) {
+            configureSingleNativeTarget()
             setupWorkingDir()
 
             build("build") {
@@ -126,21 +127,21 @@ class GeneralNativeIT : BaseGradleIT() {
         val sharedSuffix = CompilerOutputKind.DYNAMIC.suffix(HostManager.host)
         val sharedPaths = listOf(
             "build/bin/host/debugShared/$sharedPrefix$baseName$sharedSuffix",
-            "build/bin/host/releaseShared/$sharedPrefix$baseName$sharedSuffix"
+//            "build/bin/host/releaseShared/$sharedPrefix$baseName$sharedSuffix"
         )
 
         val staticPrefix = CompilerOutputKind.STATIC.prefix(HostManager.host)
         val staticSuffix = CompilerOutputKind.STATIC.suffix(HostManager.host)
         val staticPaths = listOf(
             "build/bin/host/debugStatic/$staticPrefix$baseName$staticSuffix",
-            "build/bin/host/releaseStatic/$staticPrefix$baseName$staticSuffix"
+//            "build/bin/host/releaseStatic/$staticPrefix$baseName$staticSuffix"
         )
 
         val headerPaths = listOf(
             "build/bin/host/debugShared/$sharedPrefix${baseName}_api.h",
-            "build/bin/host/releaseShared/$sharedPrefix${baseName}_api.h",
+//            "build/bin/host/releaseShared/$sharedPrefix${baseName}_api.h",
             "build/bin/host/debugStatic/$staticPrefix${baseName}_api.h",
-            "build/bin/host/releaseStatic/$staticPrefix${baseName}_api.h"
+//            "build/bin/host/releaseStatic/$staticPrefix${baseName}_api.h"
         )
 
         val klibPrefix = CompilerOutputKind.LIBRARY.prefix(HostManager.host)
@@ -149,9 +150,9 @@ class GeneralNativeIT : BaseGradleIT() {
 
         val linkTasks = listOf(
             ":linkDebugSharedHost",
-            ":linkReleaseSharedHost",
+//            ":linkReleaseSharedHost",
             ":linkDebugStaticHost",
-            ":linkReleaseStaticHost"
+//            ":linkReleaseStaticHost"
         )
 
         val klibTask = ":compileKotlinHost"
@@ -198,15 +199,15 @@ class GeneralNativeIT : BaseGradleIT() {
         val frameworkPaths = listOf(
             "build/bin/host/mainDebugFramework/$frameworkPrefix$baseName$frameworkSuffix.dSYM",
             "build/bin/host/mainDebugFramework/$frameworkPrefix$baseName$frameworkSuffix",
-            "build/bin/host/mainReleaseFramework/$frameworkPrefix$baseName$frameworkSuffix"
         )
 
         val headerPaths = listOf(
             "build/bin/host/mainDebugFramework/$frameworkPrefix$baseName$frameworkSuffix/headers/$baseName.h",
-            "build/bin/host/mainReleaseFramework/$frameworkPrefix$baseName$frameworkSuffix/headers/$baseName.h",
         )
 
-        val frameworkTasks = listOf(":linkMainDebugFrameworkHost", ":linkMainReleaseFrameworkHost")
+        val frameworkTasks = listOf(
+            ":linkMainDebugFrameworkHost",
+        )
 
         // Building
         build("assemble") {
@@ -295,9 +296,8 @@ class GeneralNativeIT : BaseGradleIT() {
 
      */
     @Test
-    @Ignore
     fun testNativeBinaryKotlinDSL() = with(
-        transformProjectWithPluginsDsl("kotlin-dsl", directoryPrefix = "native-binaries")
+        transformProjectWithPluginsDsl("kotlin-dsl", directoryPrefix = "native-binaries-old")
     ) {
 
         val hostSuffix = nativeHostTargetName.capitalize()
@@ -319,7 +319,7 @@ class GeneralNativeIT : BaseGradleIT() {
             val prefix = outputKind.prefix(HostManager.host)
             val suffix = outputKind.suffix(HostManager.host)
             val fileName = "$prefix$fileBaseName$suffix"
-            name to "build/bin/host/$name/$fileName"
+            name to "build/bin/${nativeHostTargetName}/$name/$fileName"
         }.toMap()
 
         val runTasks = listOf(

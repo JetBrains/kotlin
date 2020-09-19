@@ -17,7 +17,7 @@ kotlin {
 
     <SingleNativeTarget>("host") {
         binaries {
-            framework("main") {
+            framework("main", listOf(DEBUG)) {
                 export(project(":exported"))
             }
         }

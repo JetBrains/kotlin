@@ -27,7 +27,7 @@ kotlin {
 	val macos64 = macosX64("macos64")
 
     configure(listOf(wasm32, linux64, mingw64, macos64)) {
-        binaries.executable("main") {
+        binaries.executable("main", listOf(DEBUG)) {
             entryPoint = "com.example.app.native.main"
         }
 

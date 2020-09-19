@@ -96,7 +96,7 @@ kotlin {
 
             getByName("integration") {
                 binaries {
-                    test("integration") {
+                    test("integration", [DEBUG]) {
                         compilation = compilations["integrationTest"]
                     }
                 }
