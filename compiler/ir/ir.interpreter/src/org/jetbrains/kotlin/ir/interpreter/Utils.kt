@@ -38,6 +38,8 @@ internal fun IrFunctionAccessExpression.getBody(): IrBody? = this.symbol.owner.b
 
 internal fun IrFunctionAccessExpression.getThisReceiver(): IrValueSymbol = this.symbol.owner.parentAsClass.thisReceiver!!.symbol
 
+internal fun IrCall.isInvokeFun(): Boolean = this.origin == IrStatementOrigin.INVOKE || this.symbol.owner.name.asString() == "invoke"
+
 internal fun State.toIrExpression(expression: IrExpression): IrExpression {
     val start = expression.startOffset
     val end = expression.endOffset

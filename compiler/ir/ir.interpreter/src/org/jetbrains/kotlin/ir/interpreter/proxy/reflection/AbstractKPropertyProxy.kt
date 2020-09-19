@@ -9,14 +9,18 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.state.KPropertyState
-import org.jetbrains.kotlin.ir.interpreter.state.State
+import org.jetbrains.kotlin.ir.types.IrType
 import kotlin.reflect.KProperty
 import kotlin.reflect.KType
 import kotlin.reflect.KVisibility
 
 internal abstract class AbstractKPropertyProxy(
     override val state: KPropertyState, override val interpreter: IrInterpreter
-) : ReflectionProxy, KProperty<State> {
+) : ReflectionProxy, KProperty<Any?> {
+
+    protected val propertyType: IrType
+        get() = state.propertyReference.getter!!.owner.returnType
+
     private val propertyOwner: IrProperty
         get() = state.propertyReference.symbol.owner
 

@@ -94,13 +94,13 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
     }
 
     internal fun IrFunction.interpret(valueArguments: List<Variable>, expectedResultClass: Class<*> = Any::class.java): Any? {
-        val returnLabel = stack.newFrame(initPool = valueArguments) {
+        val returnLabel = stack.newFrame(asSubFrame = this.isLocal, initPool = valueArguments) {
             this@interpret.interpret()
         }
         return when (returnLabel.returnLabel) {
             ReturnLabel.REGULAR -> stack.popReturnValue().wrap(this@IrInterpreter, expectedResultClass)
             ReturnLabel.EXCEPTION -> throw stack.popReturnValue() as ExceptionState
-            else -> TODO("$returnLabel not supported as result of interpretation")
+            else -> TODO("${returnLabel::class} not supported as result of interpretation")
         }
     }
 
@@ -319,10 +319,8 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
             return@newFrame when {
                 dispatchReceiver is Wrapper && !isInlineOnly -> dispatchReceiver.getMethod(irFunction).invokeMethod(irFunction)
                 irFunction.hasAnnotation(evaluateIntrinsicAnnotation) -> Wrapper.getStaticMethod(irFunction).invokeMethod(irFunction)
-                dispatchReceiver is ReflectionState -> {
-                    stack.pushReturnValue((dispatchReceiver.wrap(this) as ReflectionProxy).evaluate(expression, stack.getAll()))
-                    Next
-                }
+                dispatchReceiver is KFunctionState && expression.symbol.owner.name.asString() == "invoke" -> irFunction.interpret()
+                dispatchReceiver is ReflectionState -> Wrapper.getReflectionMethod(irFunction).invokeMethod(irFunction)
                 dispatchReceiver is Primitive<*> -> calculateBuiltIns(irFunction) // 'is Primitive' check for js char and js long
                 irFunction.body == null ->
                     irFunction.trySubstituteFunctionBody() ?: irFunction.tryCalculateLazyConst() ?: calculateBuiltIns(irFunction)
@@ -490,7 +488,6 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
     }
 
     private fun interpretStatements(statements: List<IrStatement>): ExecutionResult {
-        if (statements.isEmpty()) return getOrCreateObjectValue(irBuiltIns.unitClass.owner)
         var executionResult: ExecutionResult = Next
         for (statement in statements) {
             when (statement) {
@@ -507,7 +504,13 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
     }
 
     private fun interpretBody(body: IrBody): ExecutionResult {
-        return stack.newFrame(asSubFrame = true) { interpretStatements(body.statements) }
+        return stack.newFrame(asSubFrame = true) {
+            val executionResult = interpretStatements(body.statements).check { return@newFrame it }
+            when {
+                !stack.hasReturnValue() -> getOrCreateObjectValue(irBuiltIns.unitClass.owner)
+                else -> executionResult
+            }
+        }
     }
 
     private fun interpretReturn(expression: IrReturn): ExecutionResult {
@@ -853,22 +856,21 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
                     toStringFun.body?.let { toStringFun.interpret() } ?: calculateBuiltIns(toStringFun)
                 }
             }
-            is Lambda -> state.toString()
-            else -> throw InterpreterError("${state::class.java} cannot be used in StringConcatenation expression")
+            else -> state.toString()
         }
         stack.pushReturnValue(result.toState(irBuiltIns.stringType))
         return Next
     }
 
     private fun interpretFunctionExpression(expression: IrFunctionExpression): ExecutionResult {
-        val lambda = Lambda(expression.function, expression.type.classOrNull!!.owner)
-        if (expression.function.isLocal) lambda.fields.addAll(stack.getAll()) // TODO save only necessary declarations
-        stack.pushReturnValue(lambda)
+        val function = KFunctionState(expression.function, expression.type.classOrNull!!.owner)
+        if (expression.function.isLocal) function.fields.addAll(stack.getAll()) // TODO save only necessary declarations
+        stack.pushReturnValue(function)
         return Next
     }
 
     private fun interpretFunctionReference(reference: IrFunctionReference): ExecutionResult {
-        stack.pushReturnValue(Lambda(reference.symbol.owner, reference.type.classOrNull!!.owner))
+        stack.pushReturnValue(KFunctionState(reference))
         return Next
     }
 

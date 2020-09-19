@@ -5,27 +5,19 @@
 
 package org.jetbrains.kotlin.ir.interpreter.proxy.reflection
 
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.KPropertyState
 import org.jetbrains.kotlin.ir.interpreter.state.State
 import org.jetbrains.kotlin.ir.interpreter.toState
-import kotlin.reflect.*
+import kotlin.reflect.KMutableProperty0
+import kotlin.reflect.KParameter
+import kotlin.reflect.KProperty0
+import kotlin.reflect.KTypeParameter
 
 internal open class KProperty0Proxy(
     override val state: KPropertyState, override val interpreter: IrInterpreter
-) : AbstractKPropertyProxy(state, interpreter), KProperty0<State> {
-    override fun evaluate(expression: IrCall, args: List<Variable>): State {
-        val result: Any = when (expression.symbol.owner.name.asString()) {
-            "<get-name>" -> name
-            "get" -> get()
-            "invoke" -> invoke()
-            else -> TODO("not supported expression for kProperty0")
-        }
-
-        return result.toState(expression.type)
-    }
+) : AbstractKPropertyProxy(state, interpreter), KProperty0<Any?> {
 
     override val getter: KProperty0.Getter<State>
         get() = TODO("Not yet implemented")
@@ -34,15 +26,15 @@ internal open class KProperty0Proxy(
     override val typeParameters: List<KTypeParameter>
         get() = TODO("Not yet implemented")
 
-    override fun call(vararg args: Any?): State {
+    override fun call(vararg args: Any?): Any? {
         TODO("Not yet implemented")
     }
 
-    override fun callBy(args: Map<KParameter, Any?>): State {
+    override fun callBy(args: Map<KParameter, Any?>): Any? {
         TODO("Not yet implemented")
     }
 
-    override fun get(): State {
+    override fun get(): Any? {
         return state.dispatchReceiver!!.getState(state.propertyReference.symbol)!!
     }
 
@@ -50,25 +42,17 @@ internal open class KProperty0Proxy(
         TODO("Not yet implemented")
     }
 
-    override fun invoke(): State = get()
+    override fun invoke(): Any? = get()
 }
 
 internal class KMutableProperty0Proxy(
     override val state: KPropertyState, override val interpreter: IrInterpreter
-) : KProperty0Proxy(state, interpreter), KMutableProperty0<State> {
-    override fun evaluate(expression: IrCall, args: List<Variable>): State {
-        val result: Any = when (expression.symbol.owner.name.asString()) {
-            "set" -> set(args[1].state)
-            else -> return super.evaluate(expression, args)
-        }
+) : KProperty0Proxy(state, interpreter), KMutableProperty0<Any?> {
 
-        return result.toState(expression.type)
-    }
-
-    override val setter: KMutableProperty0.Setter<State>
+    override val setter: KMutableProperty0.Setter<Any?>
         get() = TODO("Not yet implemented")
 
-    override fun set(value: State) {
-        state.dispatchReceiver!!.setField(Variable(state.propertyReference.symbol, value))
+    override fun set(value: Any?) {
+        state.dispatchReceiver!!.setField(Variable(state.propertyReference.symbol, value.toState(propertyType)))
     }
 }

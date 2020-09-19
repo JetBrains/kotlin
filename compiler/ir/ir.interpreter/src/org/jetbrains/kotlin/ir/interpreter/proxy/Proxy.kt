@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.interpreter.proxy
 
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.proxy.CommonProxy.Companion.asProxy
-import org.jetbrains.kotlin.ir.interpreter.proxy.LambdaProxy.Companion.asProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.ReflectionProxy.Companion.asProxy
 import org.jetbrains.kotlin.ir.interpreter.state.*
 
@@ -29,7 +28,6 @@ internal fun State.wrap(interpreter: IrInterpreter, extendFrom: Class<*>? = null
         is Wrapper -> this.value
         is Primitive<*> -> this.value
         is Common -> this.asProxy(interpreter, extendFrom, calledFromBuiltIns)
-        is Lambda -> this.asProxy(interpreter)
         is ReflectionState -> this.asProxy(interpreter)
         else -> throw AssertionError("${this::class} is unsupported as argument for wrap function")
     }

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.interpreter.exceptions.throwAsUserException
-import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isCharArray
 import org.jetbrains.kotlin.ir.util.*
 
@@ -153,7 +152,7 @@ internal object ArrayConstructor : IntrinsicBase() {
 
         if (irFunction.valueParameters.size == 2) {
             val initDescriptor = irFunction.valueParameters[1].symbol
-            val initLambda = stack.getVariable(initDescriptor).state as Lambda
+            val initLambda = stack.getVariable(initDescriptor).state as KFunctionState
             val index = initLambda.irFunction.valueParameters.single()
             val nonLocalDeclarations = initLambda.extractNonLocalDeclarations()
             for (i in 0 until size) {

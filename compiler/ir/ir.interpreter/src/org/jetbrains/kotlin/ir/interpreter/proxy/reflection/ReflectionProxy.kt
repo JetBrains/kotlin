@@ -5,21 +5,17 @@
 
 package org.jetbrains.kotlin.ir.interpreter.proxy.reflection
 
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
-import org.jetbrains.kotlin.ir.interpreter.stack.Variable
+import org.jetbrains.kotlin.ir.interpreter.state.KFunctionState
 import org.jetbrains.kotlin.ir.interpreter.state.KPropertyState
 import org.jetbrains.kotlin.ir.interpreter.state.ReflectionState
-import org.jetbrains.kotlin.ir.interpreter.state.State
 
 internal interface ReflectionProxy : Proxy {
-    fun evaluate(expression: IrCall, args: List<Variable>): State
-
     companion object {
         internal fun ReflectionState.asProxy(interpreter: IrInterpreter): ReflectionProxy {
-            return when {
-                this is KPropertyState -> when {
+            return when (this) {
+                is KPropertyState -> when {
                     this.isKProperty0() -> KProperty0Proxy(this, interpreter)
                     this.isKMutableProperty0() -> KMutableProperty0Proxy(this, interpreter)
                     this.isKProperty1() -> KProperty1Proxy(this, interpreter)
@@ -28,6 +24,7 @@ internal interface ReflectionProxy : Proxy {
                     this.isKMutableProperty2() -> KMutableProperty2Proxy(this, interpreter)
                     else -> TODO()
                 }
+                is KFunctionState -> KFunctionProxy(this, interpreter)
                 else -> TODO("not supported reference state")
             }
         }

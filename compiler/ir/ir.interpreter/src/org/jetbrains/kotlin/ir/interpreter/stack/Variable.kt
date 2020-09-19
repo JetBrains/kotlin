@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.interpreter.stack
 
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.interpreter.state.State
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
@@ -14,5 +15,9 @@ internal data class Variable(val symbol: IrSymbol) {
 
     constructor(symbol: IrSymbol, state: State) : this(symbol) {
         this.state = state
+    }
+
+    override fun toString(): String {
+        return "Variable(symbol=${(symbol.owner as? IrDeclarationWithName)?.name}, state=$state)"
     }
 }

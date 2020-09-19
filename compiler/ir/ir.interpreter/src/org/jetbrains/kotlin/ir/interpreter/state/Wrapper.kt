@@ -66,6 +66,23 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex 
     companion object {
         private val companionObjectValue = mapOf<String, Any>("kotlin.text.Regex\$Companion" to Regex.Companion)
 
+        fun getReflectionMethod(irFunction: IrFunction): MethodHandle {
+            val receiverClass = irFunction.dispatchReceiverParameter!!.type.getClass(asObject = true)
+            val methodType = irFunction.getMethodType()
+            val methodName = when (irFunction) {
+                is IrSimpleFunction -> {
+                    val property = irFunction.correspondingPropertySymbol?.owner
+                    when {
+                        property?.getter == irFunction -> "get${property.name.asString().capitalizeAsciiOnly()}"
+                        property?.setter == irFunction -> "set${property.name.asString().capitalizeAsciiOnly()}"
+                        else -> irFunction.name.asString()
+                    }
+                }
+                else -> irFunction.name.asString()
+            }
+            return MethodHandles.lookup().findVirtual(receiverClass, methodName, methodType)
+        }
+
         fun getCompanionObject(irClass: IrClass): Wrapper {
             val objectName = irClass.getEvaluateIntrinsicValue()!!
             val objectValue = companionObjectValue[objectName] ?: throw InternalError("Companion object $objectName cannot be interpreted")
