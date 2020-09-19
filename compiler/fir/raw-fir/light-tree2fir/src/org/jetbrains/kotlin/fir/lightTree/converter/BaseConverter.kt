@@ -62,20 +62,29 @@ open class BaseConverter(
         return null
     }
 
-    override fun LighterASTNode.getExpressionInParentheses(): LighterASTNode? {
-        this.forEachChildren {
+    override fun LighterASTNode.getExpressionInParentheses() = getFirstChildExpression()
+
+    override fun LighterASTNode.getAnnotatedExpression() = getFirstChildExpression()
+
+    override fun LighterASTNode.getLabeledExpression() = getLastChildExpression()
+
+    private fun LighterASTNode.getFirstChildExpression(): LighterASTNode? {
+        forEachChildren {
             if (it.isExpression()) return it
         }
 
         return null
     }
 
-    override fun LighterASTNode.getAnnotatedExpression(): LighterASTNode? {
-        this.forEachChildren {
-            if (it.isExpression()) return it
+    private fun LighterASTNode.getLastChildExpression(): LighterASTNode? {
+        var result: LighterASTNode? = null
+        forEachChildren {
+            if (it.isExpression()) {
+                result = it
+            }
         }
 
-        return null
+        return result
     }
 
     override fun LighterASTNode.getChildNodeByType(type: IElementType): LighterASTNode? {
