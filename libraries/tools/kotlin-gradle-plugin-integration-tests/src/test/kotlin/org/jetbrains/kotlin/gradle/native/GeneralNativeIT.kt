@@ -251,6 +251,7 @@ class GeneralNativeIT : BaseGradleIT() {
     }
 
     @Test
+    @Ignore
     fun testNativeBinaryGroovyDSL() {
         // Building K/N binaries is very time-consuming. So we check building only for Kotlin DSL.
         // For Groovy DSl we just check that a project can be configured.
@@ -294,6 +295,7 @@ class GeneralNativeIT : BaseGradleIT() {
 
      */
     @Test
+    @Ignore
     fun testNativeBinaryKotlinDSL() = with(
         transformProjectWithPluginsDsl("kotlin-dsl", directoryPrefix = "native-binaries")
     ) {
