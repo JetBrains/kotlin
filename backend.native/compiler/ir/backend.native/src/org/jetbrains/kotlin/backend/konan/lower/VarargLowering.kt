@@ -147,7 +147,9 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
     }
 
     private val symbols = context.ir.symbols
-    private val intPlusInt = symbols.intPlusInt.owner
+    private val intPlusInt = symbols.getBinaryOperator(
+            OperatorNameConventions.PLUS, context.irBuiltIns.intType, context.irBuiltIns.intType
+    ).owner
 
     private fun arrayType(type: IrType): ArrayHandle {
         val arrayClass = type.classifierOrFail

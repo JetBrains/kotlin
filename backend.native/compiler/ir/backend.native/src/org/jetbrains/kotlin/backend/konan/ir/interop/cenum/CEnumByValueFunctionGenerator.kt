@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /**
  * Generate IR for function that returns appropriate enum entry for the provided integral value.
@@ -58,7 +59,7 @@ internal class CEnumByValueFunctionGenerator(
                     irCall.dispatchReceiver = irGet(values)
                 }
                 val getElementFn = symbols.arrayGet.getValue(arrayClass)
-                val plusFun = symbols.intPlusInt
+                val plusFun = symbols.getBinaryOperator(OperatorNameConventions.PLUS, irBuiltIns.intType, irBuiltIns.intType)
                 val lessFunctionSymbol = irBuiltIns.lessFunByOperandType.getValue(irBuiltIns.intClass)
                 +irWhile().also { loop ->
                     loop.condition = irCall(lessFunctionSymbol, irBuiltIns.booleanType).also { irCall ->
