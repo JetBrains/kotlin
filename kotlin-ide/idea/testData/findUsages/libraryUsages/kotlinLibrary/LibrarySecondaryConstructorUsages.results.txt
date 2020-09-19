@@ -1,5 +1,5 @@
-[LibrarySecondaryConstructorUsages.0.kt] New instance creation 16 val a: A = A()
-[LibrarySecondaryConstructorUsages.0.kt] Supertype 13 class Y(): A()
+[LibrarySecondaryConstructorUsages.0.kt] New instance creation 18 val a: A = A()
+[LibrarySecondaryConstructorUsages.0.kt] Supertype 15 class Y(): A()
 [LibrarySecondaryConstructorUsages.1.java] New instance creation 14 A a = new A();
 [LibrarySecondaryConstructorUsages.1.java] Unclassified 10 super();
 [LibrarySecondaryConstructorUsages.1.java] Unclassified 6 public J() {

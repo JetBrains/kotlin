@@ -5,10 +5,20 @@
 
 package org.jetbrains.kotlin.findUsages
 
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.doTestWithFIRFlagsByPath
 import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.MockLibraryFacility
 import org.jetbrains.kotlin.idea.test.runAll
+
+abstract class AbstractKotlinFindUsagesWithLibraryFirTest : AbstractKotlinFindUsagesWithLibraryTest() {
+    override fun isFirPlugin(): Boolean = true
+
+    override fun <T : PsiElement> doTest(path: String) = doTestWithFIRFlagsByPath(path) {
+        super.doTest<T>(path)
+    }
+}
 
 abstract class AbstractKotlinFindUsagesWithLibraryTest : AbstractFindUsagesTest() {
     private val mockLibraryFacility = MockLibraryFacility(

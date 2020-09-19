@@ -1,6 +1,7 @@
 // IGNORE: see KotlinFindUsagesHandlerFactory: it is ambiguous case: ImportAlias does not have any reference to be resolved
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.KtImportAlias
 // OPTIONS: usages
+// FIR_COMPARISON
 
 package c
 

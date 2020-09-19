@@ -1004,6 +1004,27 @@ private fun assembleWorkspace(): TWorkspace = workspace {
             model("basic/java")
         }
     }
+
+    testGroup("idea/idea-fir/tests", "idea/testData/findUsages") {
+
+        testClass<AbstractFindUsagesFirTest> {
+            model("kotlin", pattern = """^(.+)\.0\.(kt|kts)$""")
+            model("java", pattern = """^(.+)\.0\.java$""")
+            model("propertyFiles", pattern = """^(.+)\.0\.properties$""")
+        }
+
+        testClass<AbstractFindUsagesWithDisableComponentSearchFirTest> {
+            model("kotlin/conventions/components", pattern = """^(.+)\.0\.(kt|kts)$""")
+        }
+
+        testClass<AbstractKotlinFindUsagesWithLibraryFirTest> {
+            model("libraryUsages", pattern = """^(.+)\.0\.kt$""")
+        }
+
+        testClass<AbstractKotlinFindUsagesWithStdlibFirTest> {
+            model("stdlibUsages", pattern = """^(.+)\.0\.kt$""")
+        }
+    }
     */
 
     testGroup("scripting-support") {

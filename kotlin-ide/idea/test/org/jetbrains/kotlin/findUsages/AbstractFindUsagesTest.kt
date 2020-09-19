@@ -37,6 +37,8 @@ import com.intellij.usages.impl.rules.UsageTypeProvider
 import com.intellij.usages.rules.UsageFilteringRule
 import com.intellij.usages.rules.UsageGroupingRule
 import com.intellij.util.CommonProcessors
+import org.jetbrains.kotlin.doTestWithFIRFlagsByPath
+import org.jetbrains.kotlin.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.util.clearDialogsResults
@@ -44,10 +46,7 @@ import org.jetbrains.kotlin.idea.core.util.setDialogsResult
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindMemberUsagesHandler
 import org.jetbrains.kotlin.idea.refactoring.CHECK_SUPER_METHODS_YES_NO_DIALOG
 import org.jetbrains.kotlin.idea.search.usagesSearch.ExpressionsOfTypeProcessor
-import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.TestFixtureExtension
+import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.runReadActionInSmartMode
 import org.jetbrains.kotlin.psi.KtFile
@@ -58,6 +57,22 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import java.util.*
 import kotlin.collections.LinkedHashSet
+
+abstract class AbstractFindUsagesWithDisableComponentSearchFirTest : AbstractFindUsagesWithDisableComponentSearchTest() {
+    override fun isFirPlugin(): Boolean = true
+
+    override fun <T : PsiElement> doTest(path: String) = doTestWithFIRFlagsByPath(path) {
+        super.doTest<T>(path)
+    }
+}
+
+abstract class AbstractFindUsagesFirTest : AbstractFindUsagesTest() {
+    override fun isFirPlugin(): Boolean = true
+
+    override fun <T : PsiElement> doTest(path: String) = doTestWithFIRFlagsByPath(path) {
+        super.doTest<T>(path)
+    }
+}
 
 abstract class AbstractFindUsagesWithDisableComponentSearchTest : AbstractFindUsagesTest() {
 
@@ -85,6 +100,7 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
     protected open val prefixForResults = ""
 
     protected open fun <T : PsiElement> doTest(path: String) {
+
         val mainFile = File(path)
         val mainFileName = mainFile.name
         val mainFileText = FileUtil.loadFile(mainFile, true)
@@ -96,6 +112,12 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
             println("test $mainFileName is ignored")
             return
         }
+
+//        if (isFirPlugin) {
+//            InTextDirectivesUtils.findStringWithPrefixes(mainFileText, "// FIR_IGNORE")?.let {
+//                return
+//            }
+//        }
 
         val isFindFileUsages = InTextDirectivesUtils.isDirectiveDefined(mainFileText, "## FIND_FILE_USAGES")
 
@@ -138,17 +160,23 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
                 ScriptConfigurationManager.updateScriptDependenciesSynchronously(myFixture.file)
             }
 
-            (myFixture.file as? KtFile)?.let { ktFile ->
-                val diagnosticsProvider: (KtFile) -> Diagnostics = { it.analyzeWithAllCompilerChecks().bindingContext.diagnostics }
-                DirectiveBasedActionUtils.checkForUnexpectedWarnings(ktFile, diagnosticsProvider)
-                DirectiveBasedActionUtils.checkForUnexpectedErrors(ktFile, diagnosticsProvider)
+            if (!isFirPlugin) {
+                (myFixture.file as? KtFile)?.let { ktFile ->
+                    val diagnosticsProvider: (KtFile) -> Diagnostics = { it.analyzeWithAllCompilerChecks().bindingContext.diagnostics }
+                    DirectiveBasedActionUtils.checkForUnexpectedWarnings(ktFile, diagnosticsProvider)
+                    DirectiveBasedActionUtils.checkForUnexpectedErrors(ktFile, diagnosticsProvider)
+                }
             }
 
             val caretElement = when {
-                InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// FIND_BY_REF") -> TargetElementUtil.findTargetElement(
-                    myFixture.editor,
-                    TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED or TargetElementUtil.getInstance().referenceSearchFlags
-                )!!
+                InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// FIND_BY_REF") -> {
+                    executeOnPooledThreadInReadAction {
+                        TargetElementUtil.findTargetElement(
+                            myFixture.editor,
+                            TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED or TargetElementUtil.getInstance().referenceSearchFlags
+                        )
+                    }!!
+                }
 
                 isFindFileUsages -> myFixture.file
 
@@ -270,8 +298,11 @@ internal fun <T : PsiElement> findUsagesAndCheckResults(
             groupAsString = "($groupAsString) "
         }
 
-        val usageType = AbstractFindUsagesTest.getUsageType(usageAdapter.element)
-        val usageTypeAsString = usageType?.toString() ?: "null"
+        val usageType = executeOnPooledThreadInReadAction {
+            AbstractFindUsagesTest.getUsageType(usageAdapter.element)
+        }
+
+        val usageTypeAsString = usageType?.toString(AbstractFindUsagesTest.USAGE_VIEW_PRESENTATION) ?: "null"
 
         val usageChunks = ArrayList<TextChunk>()
         usageChunks.addAll(usageAdapter.presentation.text.asList())

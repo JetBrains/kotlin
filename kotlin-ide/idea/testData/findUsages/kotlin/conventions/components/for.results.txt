@@ -1,2 +1,2 @@
-Value read 11 val (x, y) = a
-Value read 7 for ((x, y, z) in arrayOf<A>()) {
+Value read 12 val (x, y) = a
+Value read 8 for ((x, y, z) in arrayOf<A>()) {

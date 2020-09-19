@@ -5,9 +5,19 @@
 
 package org.jetbrains.kotlin.findUsages
 
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.doTestWithFIRFlagsByPath
 import org.jetbrains.kotlin.idea.test.KotlinJdkAndMultiplatformStdlibDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
+
+abstract class AbstractKotlinFindUsagesWithStdlibFirTest : AbstractKotlinFindUsagesWithStdlibTest() {
+    override fun isFirPlugin(): Boolean = true
+
+    override fun <T : PsiElement> doTest(path: String) = doTestWithFIRFlagsByPath(path) {
+        super.doTest<T>(path)
+    }
+}
 
 abstract class AbstractKotlinFindUsagesWithStdlibTest : AbstractFindUsagesTest() {
     override fun getProjectDescriptor() =

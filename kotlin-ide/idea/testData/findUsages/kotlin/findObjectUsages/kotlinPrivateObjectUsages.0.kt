@@ -1,5 +1,7 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.KtObjectDeclaration
 // OPTIONS: usages
+// FIR_IGNORE
+
 package server
 
 public open class Server() {

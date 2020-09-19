@@ -1,5 +1,7 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.KtClass
 // OPTIONS: propertyUsages
+// FIR_COMPARISON
+
 interface <caret>X {
     val a: String
         get() {
