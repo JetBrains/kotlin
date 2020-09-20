@@ -1741,4 +1741,42 @@ ${"    "}
         // Special Casing
         assertEquals("\u0399\u0308\u0301\u0053\u0053", "\u0390\u00DF".uppercase())
     }
+
+    @Test
+    fun contentEquals() = withTwoCharSequenceArgs { arg1, arg2 ->
+        infix fun String?.contentEquals(other: String?): Boolean {
+            return this?.let { arg1(it) } contentEquals other?.let { arg2(it) }
+        }
+
+        assertTrue("" contentEquals "")
+        assertTrue("1" contentEquals "1")
+        assertFalse("12" contentEquals "1")
+        assertFalse("1" contentEquals "12")
+
+        assertTrue("sample" contentEquals "sample")
+        assertFalse("Sample" contentEquals "sample")
+        assertFalse("sample" contentEquals "Sample")
+        assertFalse("sample" contentEquals null)
+        assertFalse(null contentEquals "sample")
+        assertTrue(null contentEquals null)
+    }
+
+    @Test
+    fun contentEqualsIgnoreCase() = withTwoCharSequenceArgs { arg1, arg2 ->
+        fun String.contentEquals(other: String, ignoreCase: Boolean): Boolean {
+            return arg1(this).contentEquals(arg2(other), ignoreCase)
+        }
+
+        assertTrue("".contentEquals("", ignoreCase = false))
+        assertTrue("".contentEquals("", ignoreCase = true))
+        assertTrue("1".contentEquals("1", ignoreCase = false))
+        assertTrue("1".contentEquals("1", ignoreCase = true))
+
+        assertFalse("sample".contentEquals("Sample", ignoreCase = false))
+        assertTrue("sample".contentEquals("Sample", ignoreCase = true))
+        assertFalse("sample".contentEquals(null, ignoreCase = false))
+        assertFalse("sample".contentEquals(null, ignoreCase = true))
+        assertTrue(null.contentEquals(null, ignoreCase = true))
+        assertTrue(null.contentEquals(null, ignoreCase = false))
+    }
 }

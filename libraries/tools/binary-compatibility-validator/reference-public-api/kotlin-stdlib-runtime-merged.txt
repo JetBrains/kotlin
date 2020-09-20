@@ -5261,6 +5261,8 @@ public final class kotlin/text/StringsKt {
 	public static final fun contains (Ljava/lang/CharSequence;Ljava/lang/CharSequence;Z)Z
 	public static synthetic fun contains$default (Ljava/lang/CharSequence;CZILjava/lang/Object;)Z
 	public static synthetic fun contains$default (Ljava/lang/CharSequence;Ljava/lang/CharSequence;ZILjava/lang/Object;)Z
+	public static final fun contentEquals (Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Z
+	public static final fun contentEquals (Ljava/lang/CharSequence;Ljava/lang/CharSequence;Z)Z
 	public static final fun count (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)I
 	public static final fun decapitalize (Ljava/lang/String;)Ljava/lang/String;
 	public static final fun decapitalize (Ljava/lang/String;Ljava/util/Locale;)Ljava/lang/String;

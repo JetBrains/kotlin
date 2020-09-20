@@ -544,8 +544,8 @@ public actual fun String.compareTo(other: String, ignoreCase: Boolean = false): 
 /**
  * Returns `true` if this string is equal to the contents of the specified [CharSequence], `false` otherwise.
  *
- * Unlike the overload that accepts an argument of type [StringBuffer],
- * this function does not compare this string and the specified [CharSequence] in a synchronized block.
+ * Note that if the [CharSequence] argument is a [StringBuffer] then the comparison may be performed in a synchronized block
+ * that acquires that [StringBuffer]'s monitor.
  */
 @kotlin.internal.InlineOnly
 public inline fun String.contentEquals(charSequence: CharSequence): Boolean = (this as java.lang.String).contentEquals(charSequence)
@@ -558,6 +558,41 @@ public inline fun String.contentEquals(charSequence: CharSequence): Boolean = (t
  */
 @kotlin.internal.InlineOnly
 public inline fun String.contentEquals(stringBuilder: StringBuffer): Boolean = (this as java.lang.String).contentEquals(stringBuilder)
+
+/**
+ * Returns `true` if the contents of this char sequence are equal to the contents of the specified [other],
+ * i.e. both char sequences contain the same number of the same characters in the same order.
+ *
+ * If this [CharSequence] is a [String] and [other] is not `null`
+ * then this function behaves the same as [String.contentEquals].
+ *
+ * @sample samples.text.Strings.contentEquals
+ */
+@SinceKotlin("1.5")
+public actual infix fun CharSequence?.contentEquals(other: CharSequence?): Boolean {
+    return if (this is String && other != null)
+        contentEquals(other)
+    else
+        contentEqualsImpl(other)
+}
+
+/**
+ * Returns `true` if the contents of this char sequence are equal to the contents of the specified [other], optionally ignoring case difference.
+ *
+ * If this [CharSequence] is a [String], [other] is not `null` and [ignoreCase] is `false`
+ * then this function behaves the same as [String.contentEquals].
+ *
+ * @param ignoreCase `true` to ignore character case when comparing contents.
+ *
+ * @sample samples.text.Strings.contentEquals
+ */
+@SinceKotlin("1.5")
+public actual fun CharSequence?.contentEquals(other: CharSequence?, ignoreCase: Boolean): Boolean {
+    return if (ignoreCase)
+        contentEqualsIgnoreCaseImpl(other)
+    else
+        contentEquals(other)
+}
 
 /**
  * Returns a canonical representation for this string object.
