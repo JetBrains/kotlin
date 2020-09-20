@@ -109,6 +109,7 @@ val reflectShadowJar by task<ShadowJar> {
     configurations = listOf(embedded)
 
     exclude("**/*.proto")
+    exclude("org/jetbrains/annotations/Nls*.class")
 
     if (kotlinBuildProperties.relocation) {
         mergeServiceFiles()
