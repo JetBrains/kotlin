@@ -259,4 +259,8 @@ class IrCompileTimeChecker(
     override fun visitPropertyReference(expression: IrPropertyReference, data: Nothing?): Boolean {
         return mode.canEvaluateFunction(expression.getter!!.owner)
     }
+
+    override fun visitClassReference(expression: IrClassReference, data: Nothing?): Boolean {
+        return with(mode) { (expression.symbol.owner as IrClass).isMarkedAsCompileTime() }
+    }
 }

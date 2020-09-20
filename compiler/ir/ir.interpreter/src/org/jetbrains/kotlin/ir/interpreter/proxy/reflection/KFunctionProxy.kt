@@ -20,49 +20,25 @@ internal class KFunctionProxy(
 ) : ReflectionProxy, KFunction<Any?>, FunctionWithAllInvokes {
     override val arity: Int = state.getArity() ?: BuiltInFunctionArity.BIG_ARITY
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is ReflectionProxy) return false
-
-        return state == other.state
-    }
-
-    override fun hashCode(): Int {
-        return state.hashCode()
-    }
-
-    override fun toString(): String {
-        return state.toString()
-    }
-
-    override val annotations: List<Annotation>
-        get() = TODO("Not yet implemented")
-    override val isAbstract: Boolean
-        get() = state.irFunction is IrSimpleFunction && state.irFunction.modality == Modality.ABSTRACT
-    override val isExternal: Boolean
-        get() = state.irFunction.isExternal
-    override val isFinal: Boolean
-        get() = state.irFunction is IrSimpleFunction && state.irFunction.modality == Modality.FINAL
-    override val isInfix: Boolean
-        get() = state.irFunction is IrSimpleFunction && state.irFunction.isInfix
     override val isInline: Boolean
         get() = state.irFunction.isInline
-    override val isOpen: Boolean
-        get() = state.irFunction is IrSimpleFunction && state.irFunction.modality == Modality.OPEN
+    override val isExternal: Boolean
+        get() = state.irFunction.isExternal
     override val isOperator: Boolean
         get() = state.irFunction is IrSimpleFunction && state.irFunction.isOperator
-    override val isSuspend: Boolean
-        get() = state.irFunction.isSuspend
+    override val isInfix: Boolean
+        get() = state.irFunction is IrSimpleFunction && state.irFunction.isInfix
     override val name: String
         get() = state.irFunction.name.asString()
 
+
+    override val annotations: List<Annotation>
+        get() = TODO("Not yet implemented")
     override val parameters: List<KParameter>
         get() = TODO("Not yet implemented")
     override val returnType: KType
         get() = TODO("Not yet implemented")
     override val typeParameters: List<KTypeParameter>
-        get() = TODO("Not yet implemented")
-    override val visibility: KVisibility?
         get() = TODO("Not yet implemented")
 
     override fun call(vararg args: Any?): Any? {
@@ -76,6 +52,32 @@ internal class KFunctionProxy(
 
     override fun callBy(args: Map<KParameter, Any?>): Any? {
         TODO("Not yet implemented")
+    }
+
+    override val visibility: KVisibility?
+        get() = TODO("Not yet implemented")
+    override val isFinal: Boolean
+        get() = state.irFunction is IrSimpleFunction && state.irFunction.modality == Modality.FINAL
+    override val isOpen: Boolean
+        get() = state.irFunction is IrSimpleFunction && state.irFunction.modality == Modality.OPEN
+    override val isAbstract: Boolean
+        get() = state.irFunction is IrSimpleFunction && state.irFunction.modality == Modality.ABSTRACT
+    override val isSuspend: Boolean
+        get() = state.irFunction.isSuspend
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ReflectionProxy) return false
+
+        return state == other.state
+    }
+
+    override fun hashCode(): Int {
+        return state.hashCode()
+    }
+
+    override fun toString(): String {
+        return state.toString()
     }
 }
 

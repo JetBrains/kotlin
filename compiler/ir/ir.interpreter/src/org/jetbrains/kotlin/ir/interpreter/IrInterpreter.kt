@@ -34,7 +34,7 @@ import java.lang.invoke.MethodHandle
 private const val MAX_COMMANDS = 500_000
 private const val MAX_STACK = 500
 
-class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSignature, IrBody> = emptyMap()) {
+class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSignature, IrBody> = emptyMap()) {
     private val irExceptions = mutableListOf<IrClass>()
 
     private val stack = StackImpl()
@@ -142,6 +142,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
                 is IrFunctionExpression -> interpretFunctionExpression(this)
                 is IrFunctionReference -> interpretFunctionReference(this)
                 is IrPropertyReference -> interpretPropertyReference(this)
+                is IrClassReference -> interpretClassReference(this)
                 is IrComposite -> interpretComposite(this)
 
                 else -> TODO("${this.javaClass} not supported")
@@ -887,6 +888,11 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
         val extensionReceiver = propertyReference.extensionReceiver?.interpret()?.check { return it }?.let { stack.popReturnValue() }
         val propertyState = KPropertyState(propertyReference, dispatchReceiver, extensionReceiver)
         stack.pushReturnValue(propertyState)
+        return Next
+    }
+
+    private fun interpretClassReference(classReference: IrClassReference): ExecutionResult {
+        stack.pushReturnValue(KClassState(classReference))
         return Next
     }
 }

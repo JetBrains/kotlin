@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.interpreter.proxy.reflection
 
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
+import org.jetbrains.kotlin.ir.interpreter.state.KClassState
 import org.jetbrains.kotlin.ir.interpreter.state.KFunctionState
 import org.jetbrains.kotlin.ir.interpreter.state.KPropertyState
 import org.jetbrains.kotlin.ir.interpreter.state.ReflectionState
@@ -16,15 +17,16 @@ internal interface ReflectionProxy : Proxy {
         internal fun ReflectionState.asProxy(interpreter: IrInterpreter): ReflectionProxy {
             return when (this) {
                 is KPropertyState -> when {
-                    this.isKProperty0() -> KProperty0Proxy(this, interpreter)
                     this.isKMutableProperty0() -> KMutableProperty0Proxy(this, interpreter)
-                    this.isKProperty1() -> KProperty1Proxy(this, interpreter)
+                    this.isKProperty0() -> KProperty0Proxy(this, interpreter)
                     this.isKMutableProperty1() -> KMutableProperty1Proxy(this, interpreter)
-                    this.isKProperty2() -> KProperty2Proxy(this, interpreter)
+                    this.isKProperty1() -> KProperty1Proxy(this, interpreter)
                     this.isKMutableProperty2() -> KMutableProperty2Proxy(this, interpreter)
+                    this.isKProperty2() -> KProperty2Proxy(this, interpreter)
                     else -> TODO()
                 }
                 is KFunctionState -> KFunctionProxy(this, interpreter)
+                is KClassState -> KClassProxy(this, interpreter)
                 else -> TODO("not supported reference state")
             }
         }

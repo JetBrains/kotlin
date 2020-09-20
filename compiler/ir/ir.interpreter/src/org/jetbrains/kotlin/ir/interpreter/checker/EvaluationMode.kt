@@ -29,7 +29,7 @@ enum class EvaluationMode(protected val mustCheckBody: Boolean) {
     WITH_ANNOTATIONS(mustCheckBody = false) {
         override fun canEvaluateFunction(function: IrFunction, expression: IrCall?): Boolean {
             if (function.isCompileTimeProperty()) return true
-            return function.isMarkedWith(compileTimeAnnotation) || function.origin == IrBuiltIns.BUILTIN_OPERATOR ||
+            return function.isMarkedAsCompileTime() || function.origin == IrBuiltIns.BUILTIN_OPERATOR ||
                     (function is IrSimpleFunction && function.isOperator && function.name.asString() == "invoke") ||
                     (function is IrSimpleFunction && function.isFakeOverride && function.overriddenSymbols.any { canEvaluateFunction(it.owner) }) ||
                     function.isCompileTimeTypeAlias()
@@ -38,7 +38,7 @@ enum class EvaluationMode(protected val mustCheckBody: Boolean) {
         private fun IrDeclaration?.isCompileTimeProperty(): Boolean {
             val property = (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner ?: return false
             if (property.isConst) return true
-            if (property.isMarkedWith(compileTimeAnnotation) || property.isCompileTimeTypeAlias()) return true
+            if (property.isMarkedAsCompileTime() || property.isCompileTimeTypeAlias()) return true
 
             val backingField = property.backingField
             val backingFieldExpression = backingField?.initializer?.expression as? IrGetValue
@@ -73,6 +73,7 @@ enum class EvaluationMode(protected val mustCheckBody: Boolean) {
         "java.lang.StringBuilder", "java.lang.IllegalArgumentException", "java.util.NoSuchElementException"
     )
 
+    fun IrDeclaration.isMarkedAsCompileTime() = isMarkedWith(compileTimeAnnotation)
     private fun IrDeclaration.isContract() = isMarkedWith(contractsDslAnnotation)
     private fun IrDeclaration.isMarkedAsEvaluateIntrinsic() = isMarkedWith(evaluateIntrinsicAnnotation)
     protected fun IrDeclaration.isCompileTimeTypeAlias() = this.parentClassOrNull?.fqNameWhenAvailable?.asString() in compileTimeTypeAliases

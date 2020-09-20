@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.interpreter.proxy.reflection
 
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.state.KPropertyState
 import org.jetbrains.kotlin.ir.types.IrType
@@ -19,25 +18,22 @@ internal abstract class AbstractKPropertyProxy(
 ) : ReflectionProxy, KProperty<Any?> {
 
     protected val propertyType: IrType
-        get() = state.propertyReference.getter!!.owner.returnType
-
-    private val propertyOwner: IrProperty
-        get() = state.propertyReference.symbol.owner
+        get() = state.property.getter!!.returnType
 
     override val isAbstract: Boolean
-        get() = propertyOwner.modality == Modality.ABSTRACT
+        get() = state.property.modality == Modality.ABSTRACT
     override val isConst: Boolean
-        get() = propertyOwner.isConst
+        get() = state.property.isConst
     override val isFinal: Boolean
-        get() = propertyOwner.modality == Modality.FINAL
+        get() = state.property.modality == Modality.FINAL
     override val isLateinit: Boolean
-        get() = propertyOwner.isLateinit
+        get() = state.property.isLateinit
     override val isOpen: Boolean
-        get() = propertyOwner.modality == Modality.OPEN
+        get() = state.property.modality == Modality.OPEN
     override val isSuspend: Boolean
-        get() = TODO("Not yet implemented")
+        get() = false
     override val name: String
-        get() = propertyOwner.name.asString()
+        get() = state.property.name.asString()
 
     override val annotations: List<Annotation>
         get() = TODO("Not yet implemented")
@@ -47,14 +43,15 @@ internal abstract class AbstractKPropertyProxy(
         get() = TODO("Not yet implemented")
 
     override fun equals(other: Any?): Boolean {
-        TODO("Not yet implemented")
+        if (other !is AbstractKPropertyProxy) return false
+        return state == other.state
     }
 
     override fun hashCode(): Int {
-        TODO("Not yet implemented")
+        return state.hashCode()
     }
 
     override fun toString(): String {
-        TODO("Not yet implemented")
+        return state.toString()
     }
 }

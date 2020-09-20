@@ -35,7 +35,7 @@ internal open class KProperty0Proxy(
     }
 
     override fun get(): Any? {
-        return state.dispatchReceiver!!.getState(state.propertyReference.symbol)!!
+        return state.dispatchReceiver!!.getState(state.property.symbol)!!
     }
 
     override fun getDelegate(): Any? {
@@ -53,6 +53,6 @@ internal class KMutableProperty0Proxy(
         get() = TODO("Not yet implemented")
 
     override fun set(value: Any?) {
-        state.dispatchReceiver!!.setField(Variable(state.propertyReference.symbol, value.toState(propertyType)))
+        state.dispatchReceiver!!.setField(Variable(state.property.symbol, value.toState(propertyType)))
     }
 }
