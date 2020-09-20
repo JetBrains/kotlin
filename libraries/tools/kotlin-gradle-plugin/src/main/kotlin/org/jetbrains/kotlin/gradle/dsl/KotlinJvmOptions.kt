@@ -30,6 +30,12 @@ interface KotlinJvmOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOption
      var jvmTarget: kotlin.String
 
     /**
+     * Name of the generated .kotlin_module file
+     * Default value: null
+     */
+     var moduleName: kotlin.String?
+
+    /**
      * Don't automatically include the Java runtime into the classpath
      * Default value: false
      */
