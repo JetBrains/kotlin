@@ -49,7 +49,10 @@ dependencies {
 // Aapt2 from Android Gradle Plugin 3.2 and below does not handle long paths on Windows.
 val shortenTempRootName = System.getProperty("os.name")!!.contains("Windows")
 
-val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
+val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild ||
+        try {
+            project.properties["gradle.integration.tests.split.tasks"]?.toString()?.toBoolean() ?: false
+        } catch (_: Exception) { false }
 
 fun Test.includeMppAndAndroid(include: Boolean) {
     if (isTeamcityBuild) {
