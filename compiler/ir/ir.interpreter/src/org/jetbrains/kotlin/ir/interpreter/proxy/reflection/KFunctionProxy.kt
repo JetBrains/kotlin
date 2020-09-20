@@ -55,7 +55,7 @@ internal class KFunctionProxy(
     }
 
     override val visibility: KVisibility?
-        get() = TODO("Not yet implemented")
+        get() = state.irClass.visibility.toKVisibility()
     override val isFinal: Boolean
         get() = state.irFunction is IrSimpleFunction && state.irFunction.modality == Modality.FINAL
     override val isOpen: Boolean

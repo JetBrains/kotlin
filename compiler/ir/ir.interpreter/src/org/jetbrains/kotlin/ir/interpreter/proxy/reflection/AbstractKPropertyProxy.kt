@@ -40,7 +40,7 @@ internal abstract class AbstractKPropertyProxy(
     override val returnType: KType
         get() = TODO("Not yet implemented")
     override val visibility: KVisibility?
-        get() = TODO("Not yet implemented")
+        get() = state.irClass.visibility.toKVisibility()
 
     override fun equals(other: Any?): Boolean {
         if (other !is AbstractKPropertyProxy) return false

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.interpreter.proxy.reflection
 
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.internalName
 import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
@@ -39,7 +40,7 @@ internal class KClassProxy(
         get() = TODO("Not yet implemented")
 
     override val visibility: KVisibility?
-        get() = TODO("Not yet implemented")
+        get() = state.irClass.visibility.toKVisibility()
     override val isFinal: Boolean
         get() = state.irClass.modality == Modality.FINAL
     override val isOpen: Boolean
