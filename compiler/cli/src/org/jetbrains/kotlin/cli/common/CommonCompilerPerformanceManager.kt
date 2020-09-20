@@ -137,8 +137,8 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     }
 
     private fun createPerformanceReport(): ByteArray = buildString {
-        appendln("$presentableName performance report")
-        measurements.map { it.render() }.sorted().forEach { appendln(it) }
+        append("$presentableName performance report\n")
+        measurements.map { it.render() }.sorted().forEach { append("$it\n") }
     }.toByteArray()
 
     open fun notifyRepeat(total: Int, number: Int) {}
