@@ -454,4 +454,17 @@ class Strings {
         assertPrints(inputString0.replace('s', 'z'), "Mizzizzippi")
         assertPrints(inputString1.replace("data", "information"), "Insufficient information for meaningful answer.")
     }
+
+    @Sample
+    fun contentEquals() {
+        val stringBuilder = StringBuilder()
+        stringBuilder.append("Kot").append("lin")
+        assertPrints(stringBuilder, "Kotlin")
+        assertTrue(stringBuilder contentEquals "Kotlin")
+
+        stringBuilder.setCharAt(0, 'k')
+        assertPrints(stringBuilder, "kotlin")
+        assertFalse("Kotlin".contentEquals(stringBuilder))
+        assertTrue("Kotlin".contentEquals(stringBuilder, ignoreCase = true))
+    }
 }

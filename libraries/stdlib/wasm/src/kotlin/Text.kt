@@ -425,6 +425,25 @@ actual fun String?.equals(other: String?, ignoreCase: Boolean): Boolean = TODO("
 @SinceKotlin("1.2")
 actual fun String.compareTo(other: String, ignoreCase: Boolean): Int = TODO("Wasm stdlib: Text")
 
+/**
+ * Returns `true` if the contents of this char sequence are equal to the contents of the specified [other],
+ * i.e. both char sequences contain the same number of the same characters in the same order.
+ *
+ * @sample samples.text.Strings.contentEquals
+ */
+@SinceKotlin("1.5")
+public actual infix fun CharSequence?.contentEquals(other: CharSequence?): Boolean = TODO("Wasm stdlib: Text")
+
+/**
+ * Returns `true` if the contents of this char sequence are equal to the contents of the specified [other], optionally ignoring case difference.
+ *
+ * @param ignoreCase `true` to ignore character case when comparing contents.
+ *
+ * @sample samples.text.Strings.contentEquals
+ */
+@SinceKotlin("1.5")
+public actual fun CharSequence?.contentEquals(other: CharSequence?, ignoreCase: Boolean): Boolean = TODO("Wasm stdlib: Text")
+
 
 public actual fun String.startsWith(prefix: String, ignoreCase: Boolean): Boolean = TODO("Wasm stdlib: Text")
 public actual fun String.startsWith(prefix: String, startIndex: Int, ignoreCase: Boolean): Boolean = TODO("Wasm stdlib: Text")

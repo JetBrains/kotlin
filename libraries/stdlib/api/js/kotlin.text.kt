@@ -162,6 +162,12 @@ public operator fun kotlin.CharSequence.contains(other: kotlin.CharSequence, ign
 @kotlin.internal.InlineOnly
 public inline operator fun kotlin.CharSequence.contains(regex: kotlin.text.Regex): kotlin.Boolean
 
+@kotlin.SinceKotlin(version = "1.5")
+public infix fun kotlin.CharSequence?.contentEquals(other: kotlin.CharSequence?): kotlin.Boolean
+
+@kotlin.SinceKotlin(version = "1.5")
+public fun kotlin.CharSequence?.contentEquals(other: kotlin.CharSequence?, ignoreCase: kotlin.Boolean): kotlin.Boolean
+
 @kotlin.internal.InlineOnly
 public inline fun kotlin.CharSequence.count(): kotlin.Int
 
