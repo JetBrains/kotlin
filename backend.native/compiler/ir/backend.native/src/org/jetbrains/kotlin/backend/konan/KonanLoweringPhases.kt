@@ -268,13 +268,6 @@ internal val testProcessorPhase = makeKonanFileOpPhase(
         description = "Unit test processor"
 )
 
-internal val enumClassPhase = makeKonanFileOpPhase(
-        { context, irFile -> EnumClassLowering(context).run(irFile) },
-        name = "Enums",
-        description = "Enum classes lowering",
-        prerequisite = setOf(enumConstructorsPhase) // TODO: make weak dependency on `testProcessorPhase`
-)
-
 internal val delegationPhase = makeKonanFileLoweringPhase(
         ::PropertyDelegationLowering,
         name = "Delegation",
@@ -286,6 +279,13 @@ internal val functionReferencePhase = makeKonanFileLoweringPhase(
         name = "FunctionReference",
         description = "Function references lowering",
         prerequisite = setOf(delegationPhase, localFunctionsPhase) // TODO: make weak dependency on `testProcessorPhase`
+)
+
+internal val enumClassPhase = makeKonanFileOpPhase(
+        { context, irFile -> EnumClassLowering(context).run(irFile) },
+        name = "Enums",
+        description = "Enum classes lowering",
+        prerequisite = setOf(enumConstructorsPhase, functionReferencePhase) // TODO: make weak dependency on `testProcessorPhase`
 )
 
 internal val singleAbstractMethodPhase = makeKonanFileLoweringPhase(

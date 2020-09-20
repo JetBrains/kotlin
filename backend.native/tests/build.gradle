@@ -1732,6 +1732,10 @@ task ktype1(type: KonanLocalTest) {
     source = "codegen/ktype/ktype1.kt"
 }
 
+task ktype_nonReified(type: KonanLocalTest) {
+    source = "codegen/ktype/nonReified.kt"
+}
+
 task associatedObjects1(type: KonanLocalTest) {
     source = "codegen/associatedObjects/associatedObjects1.kt"
 }

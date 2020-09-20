@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
-import org.jetbrains.kotlin.backend.konan.llvm.functionName
+import org.jetbrains.kotlin.backend.konan.llvm.fullName
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
@@ -48,8 +48,6 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
         fun isLoweredFunctionReference(declaration: IrDeclaration): Boolean =
                 declaration.origin == DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL
     }
-
-    private val kTypeGenerator = KTypeGenerator(context)
 
     override fun lower(irFile: IrFile) {
         var generatedClasses = mutableListOf<IrClass>()
@@ -151,7 +149,7 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
 
             fun transformFunctionReference(expression: IrFunctionReference, samSuperType: IrType? = null): IrExpression {
                 val parent: IrDeclarationContainer = (currentClass?.irElement as? IrClass) ?: irFile
-                val loweredFunctionReference = FunctionReferenceBuilder(parent, expression, samSuperType).build()
+                val loweredFunctionReference = FunctionReferenceBuilder(irFile, parent, expression, samSuperType).build()
                 generatedClasses.add(loweredFunctionReference.functionReferenceClass)
                 val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol,
                         expression.startOffset, expression.endOffset)
@@ -177,10 +175,12 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
     private val getContinuationSymbol = symbols.getContinuation
     private val continuationClassSymbol = getContinuationSymbol.owner.returnType.classifierOrFail as IrClassSymbol
 
-    private inner class FunctionReferenceBuilder(val parent: IrDeclarationParent,
-                                                 val functionReference: IrFunctionReference,
-                                                 val samSuperType: IrType?) {
-
+    private inner class FunctionReferenceBuilder(
+            val irFile: IrFile,
+            val parent: IrDeclarationParent,
+            val functionReference: IrFunctionReference,
+            val samSuperType: IrType?
+    ) {
         private val startOffset = functionReference.startOffset
         private val endOffset = functionReference.endOffset
         private val referencedFunction = functionReference.symbol.owner
@@ -359,6 +359,7 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
                             type = parameter.type.substitute(typeArgumentsMap))
                 }
 
+                val kTypeGenerator = KTypeGenerator(context, irFile, functionReference)
                 body = context.createIrBuilder(symbol, startOffset, endOffset).irBlockBody {
                     val superConstructor = when {
                         isKSuspendFunction -> kSuspendFunctionImplConstructorSymbol.owner
@@ -387,9 +388,6 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
                 }
             }
         }
-
-        private val IrFunction.fullName: String
-            get() = parent.fqNameForIrSerialization.child(Name.identifier(functionName)).asString()
 
         private fun getFlags() =
                 (if (referencedFunction.isSuspend) 1 else 0) + getAdaptedCallableReferenceFlags() shl 1

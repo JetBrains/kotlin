@@ -6,18 +6,16 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
+import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.error
 import org.jetbrains.kotlin.backend.konan.renderCompilerError
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.irCall
-import org.jetbrains.kotlin.ir.util.isTypeOfIntrinsic
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
@@ -29,41 +27,31 @@ internal class PostInlineLowering(val context: Context) : FileLoweringPass {
 
     private val symbols get() = context.ir.symbols
 
-    private val kTypeGenerator = KTypeGenerator(
-            context,
-            eraseTypeParameters = true // Mimic JVM BE behaviour until proper type parameter impl is ready.
-    )
-
     override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
+        irFile.transformChildrenVoid(object : IrBuildingTransformer(context) {
 
             override fun visitClassReference(expression: IrClassReference): IrExpression {
                 expression.transformChildrenVoid()
 
-                val builder = createIrBuilder(expression)
-
-                val symbol = expression.symbol
-                return if (symbol is IrClassSymbol) {
-                    builder.irKClass(context, symbol)
-                } else {
-                    // E.g. for `T::class` in a body of an inline function itself.
-                    builder.irCall(context.ir.symbols.throwNullPointerException.owner)
+                return builder.at(expression).run {
+                    (expression.symbol as? IrClassSymbol)?.let { irKClass(this@PostInlineLowering.context, it) }
+                            ?:
+                            // E.g. for `T::class` in a body of an inline function itself.
+                            irCall(symbols.throwNullPointerException.owner)
                 }
             }
 
             override fun visitGetClass(expression: IrGetClass): IrExpression {
                 expression.transformChildrenVoid()
 
-                val builder = createIrBuilder(expression)
+                return builder.at(expression).run {
+                    irCall(symbols.kClassImplConstructor, listOf(expression.argument.type)).apply {
+                        val typeInfo = irCall(symbols.getObjectTypeInfo).apply {
+                            putValueArgument(0, expression.argument)
+                        }
 
-                val typeArgument = expression.argument.type
-
-                return builder.irCall(symbols.kClassImplConstructor, listOf(typeArgument)).apply {
-                    val typeInfo = builder.irCall(symbols.getObjectTypeInfo).apply {
-                        putValueArgument(0, expression.argument)
+                        putValueArgument(0, typeInfo)
                     }
-
-                    putValueArgument(0, typeInfo)
                 }
             }
 
@@ -94,20 +82,14 @@ internal class PostInlineLowering(val context: Context) : FileLoweringPass {
                             expression.startOffset, expression.endOffset,
                             context.irBuiltIns.stringType,
                             IrConstKind.String, builder.toString()))
-                } else if (expression.symbol.owner.isTypeOfIntrinsic()) {
-                    val type = expression.getTypeArgument(0)
-                            ?: error(irFile, expression, "missing type argument")
-                    return with (kTypeGenerator) { createIrBuilder(expression).irKType(type) }
+                } else if (Symbols.isTypeOfIntrinsic(expression.symbol)) {
+                    return with (KTypeGenerator(context, irFile, expression, needExactTypeParameters = true)) {
+                        builder.at(expression).irKType(expression.getTypeArgument(0)!!, leaveReifiedForLater = false)
+                    }
                 }
 
                 return expression
             }
-
-            private fun createIrBuilder(element: IrElement) = context.createIrBuilder(
-                    currentScope!!.scope.scopeOwnerSymbol,
-                    element.startOffset,
-                    element.endOffset
-            )
         })
     }
 }

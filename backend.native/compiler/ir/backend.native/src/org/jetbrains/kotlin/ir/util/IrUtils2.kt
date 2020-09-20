@@ -387,10 +387,5 @@ fun IrClass.defaultOrNullableType(hasQuestionMark: Boolean) =
 fun IrFunction.isRestrictedSuspendFunction(languageVersionSettings: LanguageVersionSettings): Boolean =
         this.descriptor.extensionReceiverParameter?.type?.isRestrictsSuspensionReceiver(languageVersionSettings) == true
 
-fun IrFunction.isTypeOfIntrinsic(): Boolean =
-        this.name.asString() == "typeOf" &&
-                this.valueParameters.isEmpty() &&
-                (this.parent as? IrPackageFragment)?.fqName == StandardNames.KOTLIN_REFLECT_FQ_NAME
-
 fun IrBuilderWithScope.irByte(value: Byte) =
         IrConstImpl.byte(startOffset, endOffset, context.irBuiltIns.byteType, value)

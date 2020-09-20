@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.name.Name
 
 
 // This file describes the ABI for Kotlin descriptors of exported declarations.
@@ -112,6 +113,7 @@ internal val IrClass.kotlinObjCClassInfoSymbolName: String
     }
 
 val IrFunction.functionName get() = with(KonanBinaryInterface) { functionName }
+val IrFunction.fullName get() = parent.fqNameForIrSerialization.child(Name.identifier(functionName)).asString()
 
 val IrFunction.symbolName get() = with(KonanBinaryInterface) { symbolName }
 

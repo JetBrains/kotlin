@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.allParameters
 import org.jetbrains.kotlin.backend.common.lower.Closure
 import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator
@@ -21,9 +22,11 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.isFinalClass
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -428,11 +431,11 @@ private class BackendChecker(val context: Context, val irFile: IrFile) : IrEleme
                 getUnboundReferencedFunction(expression.getValueArgument(2)!!)
                         ?: reportError(expression, "${callee.fqNameForIrSerialization} must take an unbound, non-capturing function or lambda")
             }
-            else -> when (callee.symbol) {
-                symbols.createCleaner ->
+            else -> when {
+                callee.symbol == symbols.createCleaner ->
                     getUnboundReferencedFunction(expression.getValueArgument(1)!!)
                             ?: reportError(expression, "${callee.fqNameForIrSerialization} must take an unbound, non-capturing function or lambda")
-                symbols.immutableBlobOf -> {
+                callee.symbol == symbols.immutableBlobOf -> {
                     val args = expression.getValueArgument(0)
                             ?: reportError(expression, "expected at least one element")
                     val elements = (args as IrVararg).elements
@@ -446,6 +449,8 @@ private class BackendChecker(val context: Context, val irFile: IrFile) : IrEleme
                             reportError(it, "incorrect value for binary data: $value")
                     }
                 }
+                Symbols.isTypeOfIntrinsic(callee.symbol) ->
+                    checkIrKType(expression, expression.getTypeArgument(0)!!)
             }
         }
     }
@@ -485,6 +490,34 @@ private class BackendChecker(val context: Context, val irFile: IrFile) : IrEleme
     private fun IrCall.getSingleTypeArgument(): IrType {
         val typeParameter = symbol.owner.typeParameters.single()
         return getTypeArgument(typeParameter.index)!!
+    }
+
+    private fun checkIrKType(
+            irElement: IrElement,
+            type: IrType,
+            seenTypeParameters: MutableSet<IrTypeParameter> = mutableSetOf()
+    ) {
+        if (type !is IrSimpleType)
+            return
+        val classifier = type.classifier
+        if (classifier is IrTypeParameterSymbol)
+            checkIrKTypeParameter(irElement, classifier.owner, seenTypeParameters)
+
+        type.arguments.forEach {
+            if (it is IrTypeProjection)
+                checkIrKType(irElement, it.type, seenTypeParameters)
+        }
+    }
+
+    private fun checkIrKTypeParameter(
+            irElement: IrElement,
+            typeParameter: IrTypeParameter,
+            seenTypeParameters: MutableSet<IrTypeParameter>
+    ) {
+        if (!seenTypeParameters.add(typeParameter))
+            reportError(irElement, "Non-reified type parameters with recursive bounds are not supported yet: ${typeParameter.render()}")
+        typeParameter.superTypes.forEach { checkIrKType(irElement, it, seenTypeParameters) }
+        seenTypeParameters.remove(typeParameter)
     }
 }
 
