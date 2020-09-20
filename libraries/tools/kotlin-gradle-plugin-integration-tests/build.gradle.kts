@@ -80,7 +80,7 @@ projectTest("testAdvanceGradleVersion", shortenTempRootName = shortenTempRootNam
 
 if (isTeamcityBuild) {
     projectTest("testMppAndAndroid", shortenTempRootName = shortenTempRootName) {
-        includeMppAndAndroid(false)
+        includeMppAndAndroid(true)
     }
 
     projectTest("testAdvanceGradleVersionMppAndAndroid", shortenTempRootName = shortenTempRootName) {
