@@ -40,5 +40,6 @@
     <orderEntry type="module" module-name="intellij.java.psi" />
     <orderEntry type="module" module-name="intellij.java.compiler" />
     <orderEntry type="module" module-name="intellij.java.execution" />
+    <orderEntry type="module" module-name="intellij.platform.core.ui" />
   </component>
 </module>
