@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 object KonanFakeOverrideClassFilter : PlatformFakeOverrideClassFilter {
@@ -67,6 +68,7 @@ object KonanFakeOverrideClassFilter : PlatformFakeOverrideClassFilter {
 internal class KonanIrLinker(
         private val currentModule: ModuleDescriptor,
         override val functionalInterfaceFactory: IrAbstractFunctionFactory,
+        override val translationPluginContext: TranslationPluginContext?,
         logger: LoggingContext,
         builtIns: IrBuiltIns,
         symbolTable: SymbolTable,
@@ -219,4 +221,11 @@ internal class KonanIrLinker(
                     .filter { !it.key.isForwardDeclarationModule && it.value.moduleDescriptor !== currentModule }
                     .forEach { this.put(it.key.konanLibrary!!.libraryName, it.value.moduleFragment) }
         }
+    class KonanPluginContext(
+            override val moduleDescriptor: ModuleDescriptor,
+            override val bindingContext: BindingContext,
+            override val symbolTable: ReferenceSymbolTable,
+            override val typeTranslator: TypeTranslator,
+            override val irBuiltIns: IrBuiltIns
+    ):TranslationPluginContext
 }
