@@ -15,15 +15,16 @@ import kotlin.reflect.*
 
 internal open class KProperty1Proxy(
     override val state: KPropertyState, override val interpreter: IrInterpreter
-) : AbstractKPropertyProxy(state, interpreter), KProperty1<Proxy, Any?> {
-    override val getter: KProperty1.Getter<Proxy, Any?>
-        get() = object : Getter(state.property.getter!!), KProperty1.Getter<Proxy, Any?> {
-            override fun invoke(p1: Proxy): Any? = call(p1)
+) : AbstractKPropertyProxy(state, interpreter), KProperty1<Any?, Any?> {
+    override val getter: KProperty1.Getter<Any?, Any?>
+        get() = object : Getter(state.property.getter!!), KProperty1.Getter<Any?, Any?> {
+            override fun invoke(p1: Any?): Any? = call(p1)
 
             override fun call(vararg args: Any?): Any? {
                 checkArguments(1, args.size)
-                val receiver = args.single() as Proxy
-                return receiver.state.getState(state.property.symbol)!!.wrap(interpreter)
+                val receiverParameter = getter.dispatchReceiverParameter ?: getter.extensionReceiverParameter
+                val receiver = Variable(receiverParameter!!.symbol, args[0].toState(receiverParameter.type))
+                return with(this@KProperty1Proxy.interpreter) { getter.interpret(listOf(receiver)) }
             }
 
             override fun callBy(args: Map<KParameter, Any?>): Any? {
@@ -31,27 +32,29 @@ internal open class KProperty1Proxy(
             }
         }
 
-    override fun get(receiver: Proxy): Any? = getter.call(receiver)
+    override fun get(receiver: Any?): Any? = getter.call(receiver)
 
-    override fun getDelegate(receiver: Proxy): Any? {
+    override fun getDelegate(receiver: Any?): Any? {
         TODO("Not yet implemented")
     }
 
-    override fun invoke(p1: Proxy): Any? = getter.call(p1)
+    override fun invoke(p1: Any?): Any? = getter.call(p1)
 }
 
 internal class KMutableProperty1Proxy(
     override val state: KPropertyState, override val interpreter: IrInterpreter
-) : KProperty1Proxy(state, interpreter), KMutableProperty1<Proxy, Any?> {
-    override val setter: KMutableProperty1.Setter<Proxy, Any?> =
-        object : Setter(state.property.setter!!), KMutableProperty1.Setter<Proxy, Any?> {
-            override fun invoke(p1: Proxy, p2: Any?) = call(p1, p2)
+) : KProperty1Proxy(state, interpreter), KMutableProperty1<Any?, Any?> {
+    override val setter: KMutableProperty1.Setter<Any?, Any?> =
+        object : Setter(state.property.setter!!), KMutableProperty1.Setter<Any?, Any?> {
+            override fun invoke(p1: Any?, p2: Any?) = call(p1, p2)
 
             override fun call(vararg args: Any?) {
                 checkArguments(2, args.size)
-                val receiver = args[0] as Proxy
-                val value = args[1]
-                receiver.state.setField(Variable(state.property.symbol, value.toState(propertyType)))
+                val receiverParameter = setter.dispatchReceiverParameter ?: setter.extensionReceiverParameter
+                val receiver = Variable(receiverParameter!!.symbol, args[0].toState(receiverParameter.type))
+                val valueParameter = setter.valueParameters.single()
+                val value = Variable(valueParameter.symbol, args[1].toState(valueParameter.type))
+                with(this@KMutableProperty1Proxy.interpreter) { setter.interpret(listOf(receiver, value)) }
             }
 
             override fun callBy(args: Map<KParameter, Any?>) {
@@ -59,5 +62,5 @@ internal class KMutableProperty1Proxy(
             }
         }
 
-    override fun set(receiver: Proxy, value: Any?) = setter.call(receiver, value)
+    override fun set(receiver: Any?, value: Any?) = setter.call(receiver, value)
 }
