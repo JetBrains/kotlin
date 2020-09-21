@@ -6,6 +6,7 @@
       <w>esotericsoftware</w>
       <w>hasher</w>
       <w>quic</w>
+      <w>ssrf</w>
       <w>storable</w>
       <w>subdirs</w>
       <w>textmate</w>

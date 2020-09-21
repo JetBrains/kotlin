@@ -1311,6 +1311,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/tests/lombokIntegrationTests/intellij.idea.tests.lombokIntegrationTests.iml" filepath="$PROJECT_DIR$/intellij/tests/lombokIntegrationTests/intellij.idea.tests.lombokIntegrationTests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/build/launch/intellij.idea.tools.launch.iml" filepath="$PROJECT_DIR$/intellij/community/build/launch/intellij.idea.tools.launch.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/build/scripts/intellij.idea.ultimate.build.iml" filepath="$PROJECT_DIR$/intellij/build/scripts/intellij.idea.ultimate.build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/build/dependencies/intellij.idea.ultimate.build.dependencies.iml" filepath="$PROJECT_DIR$/intellij/build/dependencies/intellij.idea.ultimate.build.dependencies.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/build/intellij.idea.ultimate.build.tests.iml" filepath="$PROJECT_DIR$/intellij/build/intellij.idea.ultimate.build.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/codeInsight/intellij.idea.ultimate.codeInsight.tests.iml" filepath="$PROJECT_DIR$/intellij/codeInsight/intellij.idea.ultimate.codeInsight.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/ultimate/ultimate-guitests/intellij.idea.ultimate.guiTests.iml" filepath="$PROJECT_DIR$/intellij/ultimate/ultimate-guitests/intellij.idea.ultimate.guiTests.iml" />
