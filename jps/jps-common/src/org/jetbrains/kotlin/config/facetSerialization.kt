@@ -111,7 +111,7 @@ fun Element.getFacetPlatformByConfigurationElement(): TargetPlatform {
     if (targetPlatform != null) return targetPlatform
 
     // failed to read list of all platforms. Fallback to legacy algorithm
-    val platformName = getAttributeValue("platform") as String
+    val platformName = getAttributeValue("platform") ?: return DefaultIdeTargetPlatformKindProvider.defaultPlatform
 
     return CommonPlatforms.allSimplePlatforms.firstOrNull {
         // first, look for exact match through all simple platforms
