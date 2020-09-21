@@ -7,6 +7,8 @@ class KotlinSSAnnotationTest : KotlinSSResourceInspectionTest() {
 
     fun testAnnotation() { doTest("@Foo") }
 
+    fun testAnnotationArrayParameter() { doTest("@Foo(['_*])") }
+
     fun testClassAnnotation() { doTest("@A class '_") }
 
     fun testClass2Annotations() { doTest("@'_Annotation{2,100} class '_Name") }
