@@ -944,6 +944,12 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         }
     }
 
+    testGroup("idea/idea-fir-performance-tests/tests", "idea") {
+        testClass<AbstractFirHighlightingPerformanceTest> {
+            model("testData/highlighter")
+        }
+    }
+
     testGroup("idea/idea-fir/tests", "idea/testData") {
         testClass<AbstractFirReferenceResolveTest> {
             model("resolve/references", pattern = KT_WITHOUT_DOTS)
