@@ -65,6 +65,8 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
 
     override fun getDefaultFileType(fileType: LanguageFileType?): LanguageFileType = fileType ?: KotlinFileType.INSTANCE
 
+    override fun supportsShortenFQNames(): Boolean = true
+
     override fun compile(elements: Array<out PsiElement>?, globalVisitor: GlobalCompilingVisitor) {
         KotlinCompilingVisitor(globalVisitor).compile(elements)
     }

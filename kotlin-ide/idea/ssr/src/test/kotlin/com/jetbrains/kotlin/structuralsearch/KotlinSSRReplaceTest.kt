@@ -28,6 +28,7 @@ abstract class KotlinSSRReplaceTest : BasePlatformTestCase() {
         match: String,
         result: String,
         reformat: Boolean = false,
+        shortenFqNames: Boolean = false,
         context: PatternContext = KotlinStructuralSearchProfile.DEFAULT_CONTEXT
     ) {
         myFixture.configureByText(KotlinFileType.INSTANCE, match)
@@ -43,6 +44,7 @@ abstract class KotlinSSRReplaceTest : BasePlatformTestCase() {
         assert(sink.matches.size > 0) { "Amount of matches should be greater than 0." }
         val replaceOptions = ReplaceConfiguration(searchConfiguration).replaceOptions.apply {
             isToReformatAccordingToStyle = reformat
+            isToShortenFQN = shortenFqNames
             StringToConstraintsTransformer.transformCriteria(replacePattern, matchOptions)
             replacement = matchOptions.searchPattern
         }

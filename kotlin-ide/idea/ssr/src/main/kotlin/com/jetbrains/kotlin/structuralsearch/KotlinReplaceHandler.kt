@@ -9,6 +9,7 @@ import com.intellij.structuralsearch.impl.matcher.PatternTreeContext
 import com.intellij.structuralsearch.impl.matcher.compiler.PatternCompiler
 import com.intellij.structuralsearch.plugin.replace.ReplaceOptions
 import com.intellij.structuralsearch.plugin.replace.ReplacementInfo
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.addTypeParameter
 import org.jetbrains.kotlin.idea.core.setDefaultValue
 import org.jetbrains.kotlin.js.translate.declaration.hasCustomGetter
@@ -16,7 +17,9 @@ import org.jetbrains.kotlin.js.translate.declaration.hasCustomSetter
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
+import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
+import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import java.lang.Integer.min
 
@@ -32,6 +35,12 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
         replaceTemplate.structuralReplace(searchTemplate, match)
         (0 until info.matchesCount).mapNotNull(info::getMatch).forEach {
             it.parentIfIdentifier().replace(replaceTemplate)
+        }
+    }
+
+    override fun postProcess(affectedElement: PsiElement, options: ReplaceOptions) {
+        if (options.isToShortenFQN) {
+            ShortenReferences.DEFAULT.process(affectedElement as KtElement)
         }
     }
 
