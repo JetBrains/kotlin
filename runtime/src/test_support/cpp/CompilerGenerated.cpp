@@ -40,7 +40,8 @@ struct KBox {
 
 extern "C" {
 
-extern const int KonanNeedDebugInfo = 0;
+// Set to 1 to enable runtime assertions.
+extern const int KonanNeedDebugInfo = 1;
 
 extern const TypeInfo* theAnyTypeInfo = &theAnyTypeInfoImpl;
 extern const TypeInfo* theArrayTypeInfo = &theArrayTypeInfoImpl;
