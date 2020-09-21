@@ -43,7 +43,7 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
     private val mapOfEnums = mutableMapOf<IrSymbol, Complex>()
     private val mapOfObjects = mutableMapOf<IrSymbol, Complex>()
 
-    constructor(irModule: IrModuleFragment): this(irModule.irBuiltins) {
+    constructor(irModule: IrModuleFragment) : this(irModule.irBuiltins) {
         irExceptions.addAll(
             irModule.files
                 .flatMap { it.declarations }
@@ -73,25 +73,21 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
         if (commandCount >= MAX_COMMANDS) InterpreterTimeOutError().throwAsUserException()
     }
 
-    fun interpret(expression: IrExpression): IrExpression {
+    fun interpret(expression: IrExpression, parentFile: IrFile? = null): IrExpression {
         stack.clean()
-        return try {
-            when (val returnLabel = expression.interpret().returnLabel) {
-                ReturnLabel.REGULAR -> stack.popReturnValue().toIrExpression(expression)
-                ReturnLabel.EXCEPTION -> {
-                    val message = (stack.popReturnValue() as ExceptionState).getFullDescription()
-                    IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, "\n" + message)
-                }
-                else -> TODO("$returnLabel not supported as result of interpretation")
+        val result = stack.withEntryPoint(irFile = parentFile) { expression.interpret() }
+        return when (val returnLabel = result.returnLabel) {
+            ReturnLabel.REGULAR -> stack.popReturnValue().toIrExpression(expression)
+            ReturnLabel.EXCEPTION -> {
+                val message = (stack.popReturnValue() as ExceptionState).getFullDescription()
+                IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, "\n" + message)
             }
-        } catch (e: Throwable) {
-            // TODO don't handle, throw to lowering
-            IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, "\n" + e.message)
+            else -> TODO("$returnLabel not supported as result of interpretation")
         }
     }
 
     internal fun IrFunction.interpret(valueArguments: List<Variable>, expectedResultClass: Class<*> = Any::class.java): Any? {
-        val returnLabel = stack.newFrame(asSubFrame = this.isLocal, initPool = valueArguments) {
+        val returnLabel = stack.newFrame(this, initPool = valueArguments) {
             this@interpret.interpret()
         }
         return when (returnLabel.returnLabel) {
@@ -158,8 +154,6 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
     // this method is used to get stack trace after exception
     private fun interpretFunction(irFunction: IrSimpleFunction): ExecutionResult {
         if (stack.getStackCount() >= MAX_STACK) StackOverflowError().throwAsUserException()
-        if (irFunction.fileOrNull != null) stack.setCurrentFrameName(irFunction)
-
         if (irFunction.body is IrSyntheticBody) return handleIntrinsicMethods(irFunction)
         return irFunction.body?.interpret() ?: throw InterpreterError("Ir function must be with body")
     }
@@ -316,7 +310,8 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
             generateSequence(dispatchReceiver.outerClass) { (it.state as? Complex)?.outerClass }.forEach { valueArguments.add(it) }
         }
 
-        return stack.newFrame(asSubFrame = irFunction.isInline || irFunction.isLocal, initPool = valueArguments) {
+        stack.fixCallEntryPoint(expression)
+        return stack.newFrame(irFunction, initPool = valueArguments) {
             // inline only methods are not presented in lookup table, so must be interpreted instead of execution
             val isInlineOnly = irFunction.hasAnnotation(FqName("kotlin.internal.InlineOnly"))
             return@newFrame when {
@@ -821,6 +816,7 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
 
     private fun interpretThrow(expression: IrThrow): ExecutionResult {
         expression.value.interpret().check { return it }
+        stack.fixCallEntryPoint(expression)
         when (val exception = stack.popReturnValue()) {
             is Common -> stack.pushReturnValue(ExceptionState(exception, stack.getStackTrace()))
             is Wrapper -> stack.pushReturnValue(ExceptionState(exception, stack.getStackTrace()))

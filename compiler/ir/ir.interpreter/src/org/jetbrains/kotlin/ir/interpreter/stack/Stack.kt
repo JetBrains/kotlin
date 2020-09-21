@@ -5,22 +5,25 @@
 
 package org.jetbrains.kotlin.ir.interpreter.stack
 
-import org.jetbrains.kotlin.ir.interpreter.ExecutionResult
-import org.jetbrains.kotlin.ir.interpreter.getCapitalizedFileName
-import org.jetbrains.kotlin.ir.interpreter.state.State
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.name
+import org.jetbrains.kotlin.ir.interpreter.ExecutionResult
+import org.jetbrains.kotlin.ir.interpreter.state.State
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterError
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.util.file
-import org.jetbrains.kotlin.ir.util.fileEntry
+import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.isLocal
 
 internal interface Stack {
     fun newFrame(asSubFrame: Boolean = false, initPool: List<Variable> = listOf(), block: () -> ExecutionResult): ExecutionResult
+    fun newFrame(irFunction: IrFunction, initPool: List<Variable> = listOf(), block: () -> ExecutionResult): ExecutionResult
 
-    fun setCurrentFrameName(irFunction: IrFunction)
+    fun fixCallEntryPoint(irExpression: IrExpression)
+    fun withEntryPoint(irFunction: IrFunction? = null, irFile: IrFile? = null, block: () -> ExecutionResult): ExecutionResult
     fun getStackTrace(): List<String>
     fun getStackCount(): Int
 
@@ -57,22 +60,36 @@ internal class StackImpl : Stack {
         }
     }
 
+    override fun newFrame(irFunction: IrFunction, initPool: List<Variable>, block: () -> ExecutionResult): ExecutionResult {
+        val asSubFrame = irFunction.isInline || irFunction.isLocal
+        return newFrame(asSubFrame, initPool) {
+            withEntryPoint(irFunction, irFunction.fileOrNull) {
+                block()
+            }
+        }
+    }
+
     private fun removeLastFrame() {
         if (frameList.size > 1 && getCurrentFrame().hasReturnValue()) frameList[frameList.lastIndex - 1].pushReturnValue(getCurrentFrame())
         frameList.removeAt(frameList.lastIndex)
     }
 
-    override fun setCurrentFrameName(irFunction: IrFunction) {
-        val fileName = irFunction.file.name
-        val fileNameCapitalized = irFunction.getCapitalizedFileName()
-        val lineNum = irFunction.fileEntry.getLineNumber(irFunction.startOffset) + 1
-        if (getCurrentFrame().frameEntryPoint == null)
-            getCurrentFrame().frameEntryPoint = "at $fileNameCapitalized.${irFunction.fqNameWhenAvailable}($fileName:$lineNum)"
+    override fun fixCallEntryPoint(irExpression: IrExpression) {
+        val fileEntry = getCurrentFrame().entryPoint?.irFile?.fileEntry ?: return
+        val lineNum = fileEntry.getLineNumber(irExpression.startOffset) + 1
+        getCurrentFrame().entryPoint?.lineNumber = lineNum
+    }
+
+    // TODO remove method and create EntryPoint in frame constructor
+    override fun withEntryPoint(irFunction: IrFunction?, irFile: IrFile?, block: () -> ExecutionResult): ExecutionResult {
+        val frame = getCurrentFrame()
+        if (frame.entryPoint == null && irFile != null) frame.entryPoint = FrameContainer.Companion.EntryPoint(irFunction, irFile)
+        return block()
     }
 
     override fun getStackTrace(): List<String> {
         // TODO implement some sort of cache
-        return frameList.mapNotNull { it.frameEntryPoint }
+        return frameList.map { it.toString() }
     }
 
     override fun getStackCount(): Int = stackCount
@@ -121,9 +138,15 @@ internal class StackImpl : Stack {
 }
 
 private class FrameContainer(current: Frame = InterpreterFrame()) {
-    var frameEntryPoint: String? = null
+    var entryPoint: EntryPoint? = null
     private val innerStack = mutableListOf(current)
     private fun getTopFrame() = innerStack.first()
+
+    companion object {
+        class EntryPoint(val irFunction: IrFunction?, val irFile: IrFile) {
+            var lineNumber: Int = -1
+        }
+    }
 
     fun addSubFrame(frame: Frame) {
         innerStack.add(0, frame)
@@ -149,5 +172,10 @@ private class FrameContainer(current: Frame = InterpreterFrame()) {
     fun popReturnValue() = getTopFrame().popReturnValue()
     fun peekReturnValue() = getTopFrame().peekReturnValue()
 
-    override fun toString() = frameEntryPoint ?: "Not defined"
+    override fun toString(): String {
+        entryPoint?.irFile ?: return "Not defined"
+        val fileNameCapitalized = entryPoint!!.irFile.name.replace(".kt", "Kt").capitalize()
+        val lineNum = if (entryPoint?.lineNumber != -1) ":${entryPoint?.lineNumber}" else ""
+        return "at $fileNameCapitalized.${entryPoint?.irFunction?.fqNameWhenAvailable ?: "<clinit>"}(${entryPoint!!.irFile.name}$lineNum)"
+    }
 }
