@@ -294,13 +294,16 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         if (other is KtReferenceExpression && exprHandler is SubstitutionHandler) {
             try {
                 val referenced = other.resolve()
-                if ((referenced is KtClass || referenced is KtTypeAlias)
-                    && exprHandler.findRegExpPredicate()
-                        ?.doMatch(referenced.getKotlinFqName()?.asString(), myMatchingVisitor.matchContext, other) == true
-                ) {
-                    myMatchingVisitor.result = true
-                    exprHandler.addResult(other, myMatchingVisitor.matchContext)
-                    return
+                if (referenced is KtClass || referenced is KtTypeAlias) {
+                    val fqName = referenced.getKotlinFqName()
+                    val predicate = exprHandler.findRegExpPredicate()
+                    if (predicate != null && fqName != null &&
+                        predicate.doMatch(fqName.asString(), myMatchingVisitor.matchContext, other)
+                    ) {
+                        myMatchingVisitor.result = true
+                        exprHandler.addResult(other, myMatchingVisitor.matchContext)
+                        return
+                    }
                 }
             } catch (e: Error) {
             }
