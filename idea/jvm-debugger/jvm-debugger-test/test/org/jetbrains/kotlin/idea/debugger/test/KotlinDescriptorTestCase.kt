@@ -9,8 +9,6 @@ import com.intellij.debugger.impl.DescriptorTestCase
 import com.intellij.debugger.impl.OutputChecker
 import com.intellij.execution.configurations.JavaParameters
 import com.intellij.execution.process.ProcessOutputTypes
-import com.intellij.jarRepository.JarRepositoryManager
-import com.intellij.jarRepository.RemoteRepositoryDescription
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ModuleRootManager
@@ -23,7 +21,6 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.EdtTestUtil
 import com.intellij.xdebugger.XDebugSession
-import org.jetbrains.idea.maven.aether.ArtifactKind
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
@@ -38,7 +35,6 @@ import org.jetbrains.kotlin.test.KotlinBaseTest.TestFile
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.junit.ComparisonFailure
 import java.io.File
-import org.jetbrains.jps.model.library.JpsMavenRepositoryLibraryDescriptor as JpsMavenRepositoryLibraryDescriptor
 
 internal const val KOTLIN_LIBRARY_NAME = "KotlinLibrary"
 internal const val TEST_LIBRARY_NAME = "TestLibrary"
@@ -153,7 +149,7 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
     abstract fun doMultiFileTest(files: TestFiles, preferences: DebuggerPreferences)
 
     override fun initOutputChecker(): OutputChecker {
-        return KotlinOutputChecker(getTestDirectoryPath(), testAppPath, appOutputPath, useIrBackend())
+        return KotlinOutputChecker(getTestDirectoryPath(), testAppPath, appOutputPath, useIrBackend(), getExpectedOutputFile())
     }
 
     override fun setUpModule() {
@@ -220,9 +216,16 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
         try {
             super.checkTestOutput()
         } catch (e: ComparisonFailure) {
-            KotlinTestUtils.assertEqualsToFile(File(getTestDirectoryPath(), getTestName(true) + ".out"), e.actual)
+            KotlinTestUtils.assertEqualsToFile(getExpectedOutputFile(), e.actual)
         }
+    }
 
+    private fun getExpectedOutputFile(): File {
+        if (useIrBackend()) {
+            val irOut = File(getTestDirectoryPath(), getTestName(true) + ".ir.out")
+            if (irOut.exists()) return irOut
+        }
+        return File(getTestDirectoryPath(), getTestName(true) + ".out")
     }
 
     override fun getData(dataId: String): Any? {

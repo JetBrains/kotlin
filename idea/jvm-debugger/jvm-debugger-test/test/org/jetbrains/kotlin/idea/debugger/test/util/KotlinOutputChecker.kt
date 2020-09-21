@@ -24,7 +24,8 @@ internal class KotlinOutputChecker(
     private val testDir: String,
     appPath: String,
     outputPath: String,
-    private val useIrBackend: Boolean
+    private val useIrBackend: Boolean,
+    private val expectedOutputFile: File,
 ) : OutputChecker(appPath, outputPath) {
     companion object {
         @JvmStatic
@@ -58,14 +59,7 @@ internal class KotlinOutputChecker(
         val actual = preprocessBuffer(buildOutputString())
 
         val outDir = File(testDir)
-        var outFile = File(outDir, "$myTestName.out")
-
-        if (useIrBackend) {
-            val irBackendOutFile = File(outDir, "$myTestName.ir.out")
-            if (irBackendOutFile.exists()) {
-                outFile = irBackendOutFile
-            }
-        }
+        var outFile = expectedOutputFile
 
         if (!outFile.exists()) {
             if (SystemInfo.isWindows) {
