@@ -9,19 +9,34 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
+import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KParameterProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeProxy
 import org.jetbrains.kotlin.ir.interpreter.state.State
 import org.jetbrains.kotlin.ir.types.classOrNull
+import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 
 internal class KPropertyState(
-    val property: IrProperty, override val irClass: IrClass, val dispatchReceiver: State? = null, val extensionReceiver: State? = null
+    val property: IrProperty, override val irClass: IrClass, val dispatchReceiver: State? = null
 ) : ReflectionState() {
 
-    constructor(propertyReference: IrPropertyReference, dispatchReceiver: State?, extensionReceiver: State?)
-            : this(propertyReference.symbol.owner, propertyReference.type.classOrNull!!.owner, dispatchReceiver, extensionReceiver)
+    constructor(propertyReference: IrPropertyReference, dispatchReceiver: State?)
+            : this(propertyReference.symbol.owner, propertyReference.type.classOrNull!!.owner, dispatchReceiver)
 
+    private var _parameters: List<KParameter>? = null
     private var _returnType: KType? = null
+
+    fun getParameters(interpreter: IrInterpreter): List<KParameter> {
+        if (_parameters != null) return _parameters!!
+        val kParameterIrClass = irClass.getIrClassOfReflectionFromList("parameters")
+        var index = 0
+        val instanceParameter = property.getter?.dispatchReceiverParameter?.takeIf { dispatchReceiver == null }
+            ?.let { KParameterProxy(KParameterState(kParameterIrClass, it, index++, KParameter.Kind.INSTANCE), interpreter) }
+        val extensionParameter = property.getter?.extensionReceiverParameter
+            ?.let { KParameterProxy(KParameterState(kParameterIrClass, it, index++, KParameter.Kind.EXTENSION_RECEIVER), interpreter) }
+        _parameters = listOfNotNull(instanceParameter, extensionParameter)
+        return _parameters!!
+    }
 
     fun getReturnType(interpreter: IrInterpreter): KType {
         if (_returnType != null) return _returnType!!
@@ -50,7 +65,6 @@ internal class KPropertyState(
 
         if (property != other.property) return false
         if (dispatchReceiver != other.dispatchReceiver) return false
-        if (extensionReceiver != other.extensionReceiver) return false
 
         return true
     }
@@ -58,7 +72,6 @@ internal class KPropertyState(
     override fun hashCode(): Int {
         var result = property.hashCode()
         result = 31 * result + (dispatchReceiver?.hashCode() ?: 0)
-        result = 31 * result + (extensionReceiver?.hashCode() ?: 0)
         return result
     }
 

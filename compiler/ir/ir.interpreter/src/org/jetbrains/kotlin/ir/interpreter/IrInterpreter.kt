@@ -888,8 +888,8 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
 
     private fun interpretPropertyReference(propertyReference: IrPropertyReference): ExecutionResult {
         val dispatchReceiver = propertyReference.dispatchReceiver?.interpret()?.check { return it }?.let { stack.popReturnValue() }
-        val extensionReceiver = propertyReference.extensionReceiver?.interpret()?.check { return it }?.let { stack.popReturnValue() }
-        val propertyState = KPropertyState(propertyReference, dispatchReceiver, extensionReceiver)
+        // it is impossible to get KProperty2 through ::, so extension receiver is always null
+        val propertyState = KPropertyState(propertyReference, dispatchReceiver)
         stack.pushReturnValue(propertyState)
         return Next
     }

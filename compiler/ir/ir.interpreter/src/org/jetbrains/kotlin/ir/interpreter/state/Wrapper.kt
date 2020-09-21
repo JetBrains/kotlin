@@ -144,7 +144,10 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex 
                 notNullType.isPrimitiveType() || notNullType.isString() -> getPrimitiveClass(notNullType, asObject)!!
                 notNullType.isArray() -> {
                     val argumentFqName = (this as IrSimpleType).arguments.single().typeOrNull?.classOrNull?.owner?.fqNameWhenAvailable
-                    argumentFqName?.let { Class.forName("[L$it;") } ?: Array<Any?>::class.java
+                    when {
+                        argumentFqName != null && argumentFqName.asString() != "kotlin.Any" -> argumentFqName.let { Class.forName("[L$it;") }
+                        else -> Array<Any?>::class.java
+                    }
                 }
                 notNullType.isNothing() -> Nothing::class.java
                 notNullType.isAny() -> Any::class.java

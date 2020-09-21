@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.ir.interpreter.state.reflection
 
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeProxy
 import kotlin.reflect.KParameter
@@ -51,6 +48,8 @@ internal class KParameterState(
 
             append(" of ")
             when (val parent = irParameter.parent) {
+                is IrSimpleFunction -> parent.correspondingPropertySymbol?.owner?.let { append(renderProperty(it)) }
+                    ?: append(renderFunction(parent))
                 is IrFunction -> append(renderFunction(parent))
                 is IrProperty -> append(renderProperty(parent))
                 else -> TODO()
