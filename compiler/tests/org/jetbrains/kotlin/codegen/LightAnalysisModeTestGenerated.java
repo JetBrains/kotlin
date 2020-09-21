@@ -5058,6 +5058,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/collections/removeClashKotlin.kt");
         }
 
+        @TestMetadata("removeClashWithGenerics.kt")
+        public void testRemoveClashWithGenerics() throws Exception {
+            runTest("compiler/testData/codegen/box/collections/removeClashWithGenerics.kt");
+        }
+
         @TestMetadata("removeOverriddenInJava.kt")
         public void testRemoveOverriddenInJava() throws Exception {
             runTest("compiler/testData/codegen/box/collections/removeOverriddenInJava.kt");

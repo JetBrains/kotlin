@@ -82,7 +82,9 @@ fun IrType.substitute(params: List<IrTypeParameter>, arguments: List<IrType>): I
 fun IrType.substitute(substitutionMap: Map<IrTypeParameterSymbol, IrType>): IrType {
     if (this !is IrSimpleType) return this
 
-    substitutionMap[classifier]?.let { return it }
+    substitutionMap[classifier]?.let {
+        return it.withHasQuestionMark(hasQuestionMark || it is IrSimpleType && it.hasQuestionMark)
+    }
 
     val newArguments = arguments.map {
         if (it is IrTypeProjection) {
@@ -101,27 +103,39 @@ fun IrType.substitute(substitutionMap: Map<IrTypeParameterSymbol, IrType>): IrTy
     )
 }
 
-private fun getImmediateSupertypes(irClass: IrClass): List<IrSimpleType> {
+private fun getImmediateSupertypes(irType: IrSimpleType): List<IrSimpleType> {
+    val irClass = irType.getClass()
+        ?: throw AssertionError("Not a class type: ${irType.render()}")
     val originalSupertypes = irClass.superTypes
-    val args = irClass.defaultType.arguments.mapNotNull { (it as? IrTypeProjection)?.type }
+    val arguments =
+        irType.arguments.map {
+            it.typeOrNull
+                ?: throw AssertionError("*-projection in supertype arguments: ${irType.render()}")
+        }
     return originalSupertypes
         .filter { it.classOrNull != null }
         .map { superType ->
-            superType.substitute(superType.classOrNull!!.owner.typeParameters, args) as IrSimpleType
+            superType.substitute(irClass.typeParameters, arguments) as IrSimpleType
         }
 }
 
-private fun collectAllSupertypes(irClass: IrClass, result: MutableSet<IrSimpleType>) {
-    val immediateSupertypes = getImmediateSupertypes(irClass)
+private fun collectAllSupertypes(irType: IrSimpleType, result: MutableSet<IrSimpleType>) {
+    val immediateSupertypes = getImmediateSupertypes(irType)
     result.addAll(immediateSupertypes)
     for (supertype in immediateSupertypes) {
-        collectAllSupertypes(supertype.classOrNull!!.owner, result)
+        collectAllSupertypes(supertype, result)
     }
 }
 
-fun getAllSupertypes(irClass: IrClass): MutableSet<IrSimpleType> {
+// Given the following classes:
+//      open class A<X>
+//      open class B<Y> : A<List<Y>>
+//      class C<Z> : B<List<Z>>
+// for the class C, this function constructs:
+//      { B<List<Z>>, A<List<List<Z>>, Any }
+// where Z is a type parameter of class C.
+fun getAllSubstitutedSupertypes(irClass: IrClass): MutableSet<IrSimpleType> {
     val result = HashSet<IrSimpleType>()
-
-    collectAllSupertypes(irClass, result)
+    collectAllSupertypes(irClass.defaultType, result)
     return result
 }

@@ -38,6 +38,15 @@ internal val collectionStubMethodLowering = makeIrFilePhase(
 internal class CollectionStubMethodLowering(val context: JvmBackendContext) : ClassLoweringPass {
     private val collectionStubComputer = context.collectionStubComputer
 
+    private data class NameAndArity(
+        val name: Name,
+        val typeParametersCount: Int,
+        val valueParametersCount: Int
+    )
+
+    private val IrSimpleFunction.nameAndArity
+        get() = NameAndArity(name, typeParameters.size, valueParameters.size)
+
     override fun lower(irClass: IrClass) {
         if (irClass.isInterface) {
             return
@@ -49,60 +58,64 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
         // We don't need to generate stub for existing methods, but for FAKE_OVERRIDE methods with ABSTRACT modality,
         // it means an abstract function in superclass that is not implemented yet,
         // stub generation is still needed to avoid invocation error.
-        val existingMethodsBySignature = irClass.functions.filterNot {
-            it.modality == Modality.ABSTRACT && it.isFakeOverride
-        }.associateBy { it.toJvmSignature() }
+        val existingMethodsByNameAndArity = irClass.functions
+            .filterNot { it.modality == Modality.ABSTRACT && it.isFakeOverride }
+            .groupBy { it.nameAndArity }
 
-        for (member in methodStubsToGenerate) {
-            val signature = member.toJvmSignature()
-            val existingMethod = existingMethodsBySignature[signature]
-            if (existingMethod != null && areEquivalentSignatures(existingMethod, member)) {
-                // In the case that we find a defined method that matches the stub signature, we add the overridden symbols to that
-                // defined method, so that bridge lowering can still generate correct bridge for that method
-                existingMethod.overriddenSymbols += member.overriddenSymbols
-            } else {
-                // Some stub members require special handling.
-                // In both 'remove' and 'removeAt' cases there are no other member functions with same name in built-in mutable collection
-                // classes, so it's safe to check for the member name itself.
-                when (member.name.asString()) {
-                    "remove" -> {
-                        //  - 'remove' member functions:
-                        //          kotlin.collections.MutableCollection<E>#remove(E): Boolean
-                        //          kotlin.collections.MutableMap<K, V>#remove(K): V?
-                        //      We've checked that corresponding 'remove(T)' member function is not present in the class.
-                        //      We should add a member function that overrides, respectively:
-                        //          java.util.Collection<E>#remove(Object): boolean
-                        //          java.util.Map<K, V>#remove(K): V
-                        //      This corresponds to replacing value parameter types with 'Any?'.
-                        irClass.declarations.add(member.apply {
-                            valueParameters = valueParameters.map {
-                                it.copyWithCustomTypeSubstitution(this) { context.irBuiltIns.anyNType }
-                            }
-                        })
-                    }
-                    "removeAt" -> {
-                        //  - 'removeAt' member function:
-                        //          kotlin.collections.MutableList<E>#removeAt(Int): E
-                        //      We've checked that corresponding 'removeAt(Int)' member function is not present in the class
-                        //      (if it IS present, special bridges for 'remove(I)' would be generated later in BridgeLowering).
-                        //      We can't add 'removeAt' here, because it would be different from what old back-end generates
-                        //      and can break existing Java and/or Kotlin code.
-                        //      We should add a member function that overrides
-                        //          java.util.List<E>#remove(int): E
-                        //      and throws UnsupportedOperationException, just like any other stub.
-                        //      Also, we should generate a bridge for it if required.
-                        val removeIntFun = createRemoveAtStub(member, member.returnType, IrDeclarationOrigin.IR_BUILTINS_STUB)
-                        irClass.declarations.add(removeIntFun)
-                        val removeIntBridgeFun = createRemoveAtStub(member, context.irBuiltIns.anyNType, IrDeclarationOrigin.BRIDGE)
-                        if (removeIntBridgeFun.toJvmSignature() != removeIntFun.toJvmSignature()) {
-                            irClass.declarations.add(removeIntBridgeFun)
-                        }
-                    }
-                    else ->
-                        irClass.declarations.add(member)
-                }
+        for (stub in methodStubsToGenerate) {
+            val relevantMembers = existingMethodsByNameAndArity[stub.nameAndArity].orEmpty()
+            val existingOverrides = relevantMembers.filter { isStubOverriddenByExistingFun(stub, it) }
 
+            if (existingOverrides.isNotEmpty()) {
+                // In the case that we find a defined method that matches the stub signature,
+                // we add the overridden symbols to that defined method,
+                // so that bridge lowering can still generate correct bridge for that method.
+                existingOverrides.forEach { it.overriddenSymbols += stub.overriddenSymbols }
+                continue
             }
+
+            // Some stub members require special handling.
+            // In both 'remove' and 'removeAt' cases there are no other member functions with same name in built-in mutable collection
+            // classes, so it's safe to check for the member name itself.
+            when (stub.name.asString()) {
+                "remove" -> {
+                    //  - 'remove' member functions:
+                    //          kotlin.collections.MutableCollection<E>#remove(E): Boolean
+                    //          kotlin.collections.MutableMap<K, V>#remove(K): V?
+                    //      We've checked that corresponding 'remove(T)' member function is not present in the class.
+                    //      We should add a member function that overrides, respectively:
+                    //          java.util.Collection<E>#remove(Object): boolean
+                    //          java.util.Map<K, V>#remove(K): V
+                    //      This corresponds to replacing value parameter types with 'Any?'.
+                    irClass.declarations.add(stub.apply {
+                        valueParameters = valueParameters.map {
+                            it.copyWithCustomTypeSubstitution(this) { context.irBuiltIns.anyNType }
+                        }
+                    })
+                }
+                "removeAt" -> {
+                    //  - 'removeAt' member function:
+                    //          kotlin.collections.MutableList<E>#removeAt(Int): E
+                    //      We've checked that corresponding 'removeAt(Int)' member function is not present in the class
+                    //      (if it IS present, special bridges for 'remove(I)' would be generated later in BridgeLowering).
+                    //      We can't add 'removeAt' here, because it would be different from what old back-end generates
+                    //      and can break existing Java and/or Kotlin code.
+                    //      We should add a member function that overrides
+                    //          java.util.List<E>#remove(int): E
+                    //      and throws UnsupportedOperationException, just like any other stub.
+                    //      Also, we should generate a bridge for it if required.
+                    val removeIntFun = createRemoveAtStub(stub, stub.returnType, IrDeclarationOrigin.IR_BUILTINS_STUB)
+                    irClass.declarations.add(removeIntFun)
+                    val removeIntBridgeFun = createRemoveAtStub(stub, context.irBuiltIns.anyNType, IrDeclarationOrigin.BRIDGE)
+                    if (removeIntBridgeFun.toJvmSignature() != removeIntFun.toJvmSignature()) {
+                        irClass.declarations.add(removeIntBridgeFun)
+                    }
+                }
+                else ->
+                    irClass.declarations.add(stub)
+            }
+
+
         }
     }
 
@@ -138,7 +151,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
     ): IrSimpleFunction {
         return context.irFactory.buildFun {
             name = function.name
-            returnType = function.returnType.substitute(substitutionMap)
+            returnType = liftStubMethodReturnType(function).substitute(substitutionMap)
             visibility = function.visibility
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
             modality = Modality.OPEN
@@ -154,6 +167,18 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
         }
     }
 
+    private fun liftStubMethodReturnType(function: IrSimpleFunction) =
+        when (function.name.asString()) {
+            "iterator" ->
+                context.ir.symbols.iterator.typeWithArguments(function.returnType.cast<IrSimpleType>().arguments)
+            "listIterator" ->
+                context.ir.symbols.listIterator.typeWithArguments(function.returnType.cast<IrSimpleType>().arguments)
+            "subList" ->
+                context.ir.symbols.list.typeWithArguments(function.returnType.cast<IrSimpleType>().arguments)
+            else ->
+                function.returnType
+        }
+
     private fun createThrowingStubBody(function: IrSimpleFunction) =
         context.createIrBuilder(function.symbol).irBlockBody {
             // Function body consist only of throwing UnsupportedOperationException statement
@@ -163,33 +188,66 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
                 }
         }
 
-    private fun areEquivalentSignatures(fun1: IrSimpleFunction, fun2: IrSimpleFunction): Boolean {
-        if (fun1.typeParameters.size != fun2.typeParameters.size) return false
-        if (fun1.valueParameters.size != fun2.valueParameters.size) return false
-        val typeChecker = IrTypeCheckerContextWithAdditionalAxioms(context.irBuiltIns, fun1.typeParameters, fun2.typeParameters)
-            .cast<AbstractTypeCheckerContext>()
-        return fun1.valueParameters.zip(fun2.valueParameters)
+    private fun isStubOverriddenByExistingFun(stubFun: IrSimpleFunction, existingFun: IrSimpleFunction): Boolean {
+        // We don't add a throwing stub if it's effectively overridden by an existing function.
+        // This is true if all of the following conditions are met,
+        // assuming type parameter Ti of the existing function is "equal" to type parameter Si of the generated stub:
+        //  - names are same;
+        //  - existing function has the same number of type parameters,
+        //    and upper bounds for type parameters are equivalent;
+        //  - existing function has the same number of value parameters,
+        //    and types for value parameters are equivalent;
+        //  - return type of the existing function is a subtype of return type of the generated stub.
+
+        if (stubFun.name != existingFun.name) return false
+        if (stubFun.typeParameters.size != existingFun.typeParameters.size) return false
+        if (stubFun.valueParameters.size != existingFun.valueParameters.size) return false
+
+        val typeChecker = createTypeChecker(stubFun, existingFun)
+
+        // Note that type parameters equivalence check doesn't really happen on collection stubs
+        // (because members of Kotlin built-in collection classes don't have type parameters of their own),
+        // but we keep it here for the sake of consistency.
+        if (!areTypeParametersEquivalent(existingFun, stubFun, typeChecker)) return false
+
+        if (!areValueParametersEquivalent(existingFun, stubFun, typeChecker)) return false
+        if (!isReturnTypeOverrideCompliant(existingFun, stubFun, typeChecker)) return false
+
+        return true
+    }
+
+    private fun createTypeChecker(overrideFun: IrSimpleFunction, parentFun: IrSimpleFunction): AbstractTypeCheckerContext =
+        IrTypeCheckerContextWithAdditionalAxioms(context.irBuiltIns, overrideFun.typeParameters, parentFun.typeParameters)
+
+    private fun areTypeParametersEquivalent(
+        overrideFun: IrSimpleFunction,
+        parentFun: IrSimpleFunction,
+        typeChecker: AbstractTypeCheckerContext
+    ): Boolean =
+        overrideFun.typeParameters.zip(parentFun.typeParameters)
+            .all { (typeParameter1, typeParameter2) ->
+                typeParameter1.superTypes.zip(typeParameter2.superTypes)
+                    .all { (supertype1, supertype2) ->
+                        AbstractTypeChecker.equalTypes(typeChecker, supertype1, supertype2)
+                    }
+            }
+
+    private fun areValueParametersEquivalent(
+        overrideFun: IrSimpleFunction,
+        parentFun: IrSimpleFunction,
+        typeChecker: AbstractTypeCheckerContext
+    ): Boolean =
+        overrideFun.valueParameters.zip(parentFun.valueParameters)
             .all { (valueParameter1, valueParameter2) ->
                 AbstractTypeChecker.equalTypes(typeChecker, valueParameter1.type, valueParameter2.type)
             }
-    }
 
-    private fun IrSimpleFunction.hackRemoveMethodIfRequired(): IrSimpleFunction {
-        // NB 'remove' method requires some special handling:
-        // - we check that 'remove(T)' is present in the class, where 'T' is a type argument of the collection type
-        //   (this matches the signature of the method created above);
-        // - if it is absent, we add 'remove(Any?)' member function,
-        //   which corresponds to method 'remove' in java.util.Collection and java.util.Map.
-        if (name.asString() == "remove") {
-            // Note that replacing value parameter types with 'Any?' handles both MutableCollection and MutableMap case:
-            // java.util.Collection<E>#remove has signature 'boolean remove(Object)', and
-            // java.util.Map<K, V>#remove has signature 'V remove(Object)'.
-            valueParameters = valueParameters.map {
-                it.copyWithCustomTypeSubstitution(this) { context.irBuiltIns.anyNType }
-            }
-        }
-        return this
-    }
+    internal fun isReturnTypeOverrideCompliant(
+        overrideFun: IrSimpleFunction,
+        parentFun: IrSimpleFunction,
+        typeChecker: AbstractTypeCheckerContext
+    ): Boolean =
+        AbstractTypeChecker.isSubtypeOf(typeChecker, overrideFun.returnType, parentFun.returnType)
 
     // Copy value parameter with type substitution
     private fun IrValueParameter.copyWithSubstitution(
@@ -221,7 +279,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
         // We find the most specific type for the immutable collection class from the inheritance chain of target class
         // Perform type substitution along searching, then use the type arguments obtained from the most specific type
         // for type substitution.
-        val readOnlyClassType = getAllSupertypes(targetClass).findMostSpecificTypeForClass(readOnlyClass.symbol)
+        val readOnlyClassType = getAllSubstitutedSupertypes(targetClass).findMostSpecificTypeForClass(readOnlyClass.symbol)
         val readOnlyClassTypeArguments = (readOnlyClassType as IrSimpleType).arguments.mapNotNull { (it as? IrTypeProjection)?.type }
 
         if (readOnlyClassTypeArguments.isEmpty() || readOnlyClassTypeArguments.size != mutableClass.typeParameters.size) {
@@ -281,20 +339,13 @@ internal class CollectionStubComputer(val context: JvmBackendContext) {
         val readOnlyClass: IrClassSymbol,
         val mutableClass: IrClassSymbol
     ) {
-        // Preserve old backend's logic to generate stubs for special cases where a mutable method
-        // has the same JVM signature as the immutable method. See KT-36724 for more details.
-        private val specialCaseStubSignaturesForOldBackend = setOf(
-            "listIterator()Ljava/util/ListIterator;",
-            "listIterator(I)Ljava/util/ListIterator;",
-            "subList(II)Ljava/util/List;"
-        )
 
         val mutableOnlyMethods: Collection<IrSimpleFunction> by lazy {
-            val readOnlyMethodSignatures = readOnlyClass
-                .functions
-                .map { getJvmSignature(it.owner) }
-                .filter { it !in specialCaseStubSignaturesForOldBackend }
-                .toHashSet()
+            val readOnlyMethodSignatures =
+                readOnlyClass.functions
+                    .filter { !it.owner.isSpecialCaseStubForOldBackend() }
+                    .map { getJvmSignature(it.owner) }
+                    .toHashSet()
             mutableClass.functions
                 .map { it.owner }
                 .filter { getJvmSignature(it) !in readOnlyMethodSignatures }
@@ -304,6 +355,32 @@ internal class CollectionStubComputer(val context: JvmBackendContext) {
         operator fun component1() = readOnlyClass
         operator fun component2() = mutableClass
         operator fun component3() = mutableOnlyMethods
+    }
+
+    // Preserve old backend's logic to generate stubs for special cases where a mutable method
+    // has the same JVM signature as the immutable method. See KT-36724 for more details.
+    private fun IrSimpleFunction.isSpecialCaseStubForOldBackend(): Boolean {
+        return when (name.asString()) {
+            "iterator" -> {
+                val parentClassSymbol = parentAsClass.symbol
+                // Due to the specific way Kotlin built-in collection classes are written,
+                // old JVM back-end generates throwing method stubs for the following abstract member functions:
+                //      Iterable<T>#iterator(): Iterator<T>
+                //      Collection<E>#iterator(): Iterator<E>
+                //      Set<E>#iterator(): Iterator<E>
+                // This happens because MutableIterable, MutableCollection, and MutableSet contain explicit override
+                //      override fun iterator(): MutableIterator<E>
+                // and MutableList doesn't, which makes corresponding member of MutableList a FAKE_OVERRIDE.
+                with(context.ir.symbols) {
+                    // Note that here we are looking at a read-only collection member.
+                    parentClassSymbol == iterable || parentClassSymbol == collection || parentClassSymbol == set
+                }
+            }
+            "listIterator", "subList" ->
+                true
+            else ->
+                false
+        }
     }
 
     private val preComputedStubs: Collection<StubsForCollectionClass> by lazy {

@@ -229,9 +229,54 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/collectionStubs"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("customListIterator.kt")
+        public void testCustomListIterator() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/customListIterator.kt");
+        }
+
+        @TestMetadata("customMutableListIterator.kt")
+        public void testCustomMutableListIterator() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/customMutableListIterator.kt");
+        }
+
+        @TestMetadata("noStubsForCollection.kt")
+        public void testNoStubsForCollection() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/noStubsForCollection.kt");
+        }
+
+        @TestMetadata("noStubsForMapImplementations.kt")
+        public void testNoStubsForMapImplementations() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/noStubsForMapImplementations.kt");
+        }
+
+        @TestMetadata("noStubsForMutableSetIterators.kt")
+        public void testNoStubsForMutableSetIterators() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/noStubsForMutableSetIterators.kt");
+        }
+
+        @TestMetadata("noStubsForSetIterators.kt")
+        public void testNoStubsForSetIterators() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/noStubsForSetIterators.kt");
+        }
+
+        @TestMetadata("noStubsInIterable.kt")
+        public void testNoStubsInIterable() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/noStubsInIterable.kt");
+        }
+
         @TestMetadata("noStubsInJavaSuperClass.kt")
         public void testNoStubsInJavaSuperClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/noStubsInJavaSuperClass.kt");
+        }
+
+        @TestMetadata("noStubsInMutableIterable.kt")
+        public void testNoStubsInMutableIterable() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/noStubsInMutableIterable.kt");
+        }
+
+        @TestMetadata("observableMutableMap.kt")
+        public void testObservableMutableMap() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/observableMutableMap.kt");
         }
 
         @TestMetadata("stubsFromSuperclass.kt")
@@ -764,6 +809,16 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
         }
 
+        @TestMetadata("abstractCollections.kt")
+        public void testAbstractCollections() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/specialBridges/abstractCollections.kt");
+        }
+
+        @TestMetadata("abstractIterables.kt")
+        public void testAbstractIterables() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/specialBridges/abstractIterables.kt");
+        }
+
         @TestMetadata("abstractLists.kt")
         public void testAbstractLists() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/specialBridges/abstractLists.kt");
@@ -777,6 +832,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         @TestMetadata("abstractMutableLists.kt")
         public void testAbstractMutableLists() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/specialBridges/abstractMutableLists.kt");
+        }
+
+        @TestMetadata("abstractSets.kt")
+        public void testAbstractSets() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/specialBridges/abstractSets.kt");
         }
 
         public void testAllFilesPresentInSpecialBridges() throws Exception {
