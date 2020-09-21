@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// TARGET_BACKEND: JVM_OLD
 
 interface Foo<T> {
     fun foo(l: List<T>)
