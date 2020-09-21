@@ -434,6 +434,12 @@ public class IrSteppingTestGenerated extends AbstractIrSteppingTest {
     }
 
     @Test
+    @TestMetadata("whenConstant.kt")
+    public void testWhenConstant() throws Exception {
+        runTest("compiler/testData/debug/stepping/whenConstant.kt");
+    }
+
+    @Test
     @TestMetadata("whenIsChecks.kt")
     public void testWhenIsChecks() throws Exception {
         runTest("compiler/testData/debug/stepping/whenIsChecks.kt");

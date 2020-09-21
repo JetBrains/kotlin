@@ -21,6 +21,7 @@ abstract class IrConst<T> : IrExpression(), IrExpressionWithCopy {
     abstract val value: T
 
     abstract override fun copy(): IrConst<T>
+    abstract fun copyWithOffsets(startOffset: Int, endOffset: Int): IrConst<T>
 }
 
 sealed class IrConstKind<T>(val asString: kotlin.String) {

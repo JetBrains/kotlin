@@ -347,7 +347,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                 // initializer with the constant initializer.
                 val variable = expression.symbol.owner
                 return if (isImmutableTemporaryVariableWithConstantValue(variable))
-                    ((variable as IrVariable).initializer!! as IrConst<*>).copy()
+                    ((variable as IrVariable).initializer!! as IrConst<*>).copyWithOffsets(expression.startOffset, expression.endOffset)
                 else
                     expression
             }
