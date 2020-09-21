@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinImplic
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinUsageInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinWrapperForJavaUsageInfos
 import org.jetbrains.kotlin.psi.KtCallExpression
+import java.util.LinkedHashSet
 
 class KotlinChangeSignatureProcessor(
     project: Project,
@@ -95,7 +96,10 @@ class KotlinChangeSignatureProcessor(
 
         if (!usageProcessors.all { it.setupDefaultValues(myChangeInfo, refUsages, myProject) }) return false
 
-        val conflictDescriptions = MultiMap<PsiElement, String>()
+        val conflictDescriptions =  object : MultiMap<PsiElement, String>() {
+            override fun createCollection() = LinkedHashSet<String>()
+        }
+
         usageProcessors.forEach { conflictDescriptions.putAllValues(it.findConflicts(myChangeInfo, refUsages)) }
 
         val usages = refUsages.get()
