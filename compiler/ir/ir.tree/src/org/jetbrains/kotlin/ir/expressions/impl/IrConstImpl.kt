@@ -34,6 +34,9 @@ class IrConstImpl<T>(
     override fun copy(): IrConst<T> =
         IrConstImpl(startOffset, endOffset, type, kind, value)
 
+    override fun copyWithOffsets(startOffset: Int, endOffset: Int) =
+        IrConstImpl(startOffset, endOffset, type, kind, value)
+
     companion object {
         fun string(startOffset: Int, endOffset: Int, type: IrType, value: String): IrConstImpl<String> =
             IrConstImpl(startOffset, endOffset, type, IrConstKind.String, value)
