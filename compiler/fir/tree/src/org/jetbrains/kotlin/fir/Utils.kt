@@ -17,8 +17,6 @@ fun ModuleInfo.dependenciesWithoutSelf(): Sequence<ModuleInfo> = dependencies().
 // TODO: rewrite
 fun FirBlock.returnExpressions(): List<FirExpression> = listOfNotNull(statements.lastOrNull() as? FirExpression)
 
-private val PUBLIC_METHOD_NAMES_IN_OBJECT = setOf("equals", "hashCode", "getClass", "wait", "notify", "notifyAll", "toString")
-
 // do we need a deep copy here ?
 fun <R : FirTypeRef> R.copyWithNewSourceKind(newKind: FirFakeSourceElementKind): R {
     if (source == null) return this
