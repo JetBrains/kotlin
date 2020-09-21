@@ -5,17 +5,19 @@
 
 package org.jetbrains.kotlin.ir.interpreter.state.reflection
 
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeProxy
 import kotlin.reflect.KType
 
-internal class KTypeParameterState(val irTypeParameter: IrTypeParameter) : ReflectionState(irTypeParameter) {
+internal class KTypeParameterState(val irTypeParameter: IrTypeParameter, override val irClass: IrClass) : ReflectionState() {
     private var _upperBounds: List<KType>? = null
 
     fun getUpperBounds(interpreter: IrInterpreter): List<KType> {
         if (_upperBounds != null) return _upperBounds!!
-        _upperBounds = irTypeParameter.superTypes.map { KTypeProxy(KTypeState(it), interpreter) }
+        val kTypeIrClass = irClass.getIrClassOfReflectionFromList("upperBounds")
+        _upperBounds = irTypeParameter.superTypes.map { KTypeProxy(KTypeState(it, kTypeIrClass), interpreter) }
         return _upperBounds!!
     }
 

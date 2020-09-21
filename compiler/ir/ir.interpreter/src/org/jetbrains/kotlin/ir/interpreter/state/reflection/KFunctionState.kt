@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.interpreter.state.reflection
 
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.descriptors.IrAbstractFunctionFactory
@@ -14,29 +13,53 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.getLastOverridden
+import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KParameterProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeParameterProxy
-import org.jetbrains.kotlin.ir.interpreter.renderType
+import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeProxy
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.nameForIrSerialization
-import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.cast
+import kotlin.reflect.KParameter
+import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
 
-internal class KFunctionState(val irFunction: IrFunction, override val irClass: IrClass) : ReflectionState(irClass.symbol) {
+internal class KFunctionState(val irFunction: IrFunction, override val irClass: IrClass) : ReflectionState() {
     override val fields: MutableList<Variable> = mutableListOf()
     override val typeArguments: MutableList<Variable> = mutableListOf()
+    private var _parameters: List<KParameter>? = null
+    private var _returnType: KType? = null
     private var _typeParameters: List<KTypeParameter>? = null
 
     constructor(functionReference: IrFunctionReference) : this(functionReference.symbol.owner, functionReference.type.classOrNull!!.owner)
     constructor(irFunction: IrFunction, functionFactory: IrAbstractFunctionFactory) :
             this(irFunction, functionFactory.kFunctionN(irFunction.valueParameters.size))
 
+    fun getParameters(interpreter: IrInterpreter): List<KParameter> {
+        if (_parameters != null) return _parameters!!
+        val kParameterIrClass = irClass.getIrClassOfReflectionFromList("parameters")
+        var index = 0
+        val instanceParameter = irFunction.dispatchReceiverParameter
+            ?.let { KParameterProxy(KParameterState(kParameterIrClass, it, index++, KParameter.Kind.INSTANCE), interpreter) }
+        val extensionParameter = irFunction.extensionReceiverParameter
+            ?.let { KParameterProxy(KParameterState(kParameterIrClass, it, index++, KParameter.Kind.EXTENSION_RECEIVER), interpreter) }
+        _parameters = listOfNotNull(instanceParameter, extensionParameter) +
+                irFunction.valueParameters.map { KParameterProxy(KParameterState(kParameterIrClass, it, index++), interpreter) }
+        return _parameters!!
+    }
+
+    fun getReturnType(interpreter: IrInterpreter): KType {
+        if (_returnType != null) return _returnType!!
+        val kTypeIrClass = irClass.getIrClassOfReflection("returnType")
+        _returnType = KTypeProxy(KTypeState(irFunction.returnType, kTypeIrClass), interpreter)
+        return _returnType!!
+    }
+
     fun getTypeParameters(interpreter: IrInterpreter): List<KTypeParameter> {
         if (_typeParameters != null) return _typeParameters!!
-        _typeParameters = irClass.typeParameters.map { KTypeParameterProxy(KTypeParameterState(it), interpreter) }
+        val kTypeParametersIrClass = irClass.getIrClassOfReflectionFromList("typeParameters")
+        _typeParameters = irClass.typeParameters.map { KTypeParameterProxy(KTypeParameterState(it, kTypeParametersIrClass), interpreter) }
         return _typeParameters!!
     }
 
@@ -56,18 +79,6 @@ internal class KFunctionState(val irFunction: IrFunction, override val irClass: 
     private fun isLambda(): Boolean = irFunction.name.let { it == Name.special("<anonymous>") || it == Name.special("<no name provided>") }
 
     override fun toString(): String {
-        return if (isLambda()) {
-            val receiver = (irFunction.dispatchReceiverParameter?.type ?: irFunction.extensionReceiverParameter?.type)?.renderType()
-            val arguments = irFunction.valueParameters.joinToString(prefix = "(", postfix = ")") { it.type.renderType() }
-            val returnType = irFunction.returnType.renderType()
-            ("$arguments -> $returnType").let { if (receiver != null) "$receiver.$it" else it }
-        } else {
-            val dispatchReceiver = irFunction.parentAsClass.defaultType // = instanceReceiverParameter
-            val extensionReceiver = irFunction.extensionReceiverParameter?.type
-            val receivers = if (irFunction is IrConstructor) "" else renderReceivers(dispatchReceiver, extensionReceiver)
-            val arguments = irFunction.valueParameters.joinToString(prefix = "(", postfix = ")") { it.type.renderType() }
-            val returnType = irFunction.returnType.renderType()
-            "fun $receivers${irFunction.name}$arguments: $returnType"
-        }
+        return if (isLambda()) renderLambda(irFunction) else renderFunction(irFunction)
     }
 }

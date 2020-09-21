@@ -19,11 +19,7 @@ import kotlin.reflect.KTypeProjection
 
 internal class KTypeProxy(override val state: KTypeState, override val interpreter: IrInterpreter) : ReflectionProxy, KType {
     override val classifier: KClassifier?
-        get() = when (val classifier = state.irType.classifierOrFail.owner) {
-            is IrClass -> KClassProxy(KClassState(classifier), interpreter)
-            is IrTypeParameter -> KTypeParameterProxy(KTypeParameterState(classifier), interpreter)
-            else -> TODO()
-        }
+        get() = state.getClassifier(interpreter)
     override val arguments: List<KTypeProjection>
         get() = state.getArguments(interpreter)
     override val isMarkedNullable: Boolean

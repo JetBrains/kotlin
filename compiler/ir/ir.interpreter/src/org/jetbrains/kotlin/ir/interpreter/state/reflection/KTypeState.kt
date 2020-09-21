@@ -5,24 +5,43 @@
 
 package org.jetbrains.kotlin.ir.interpreter.state.reflection
 
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
+import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KClassProxy
+import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeParameterProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeProxy
 import org.jetbrains.kotlin.ir.interpreter.renderType
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.types.Variance
+import kotlin.reflect.KClassifier
 import kotlin.reflect.KTypeProjection
 
-internal class KTypeState(val irType: IrType) : ReflectionState(irType.classifierOrFail) {
+internal class KTypeState(val irType: IrType, override val irClass: IrClass) : ReflectionState() {
+    private var _classifier: KClassifier? = null
     private var _arguments: List<KTypeProjection>? = null
+
+    fun getClassifier(interpreter: IrInterpreter): KClassifier? {
+        if (_classifier != null) return _classifier!!
+        _classifier = when (val classifier = irType.classifierOrFail.owner) {
+            is IrClass -> KClassProxy(KClassState(classifier, interpreter.irBuiltIns.kClassClass.owner), interpreter)
+            is IrTypeParameter -> {
+                val kTypeParameterIrClass = interpreter.irBuiltIns.kClassClass.owner.getIrClassOfReflectionFromList("typeParameters")
+                KTypeParameterProxy(KTypeParameterState(classifier, kTypeParameterIrClass), interpreter)
+            }
+            else -> TODO()
+        }
+        return _classifier!!
+    }
 
     fun getArguments(interpreter: IrInterpreter): List<KTypeProjection> {
         if (_arguments != null) return _arguments!!
         _arguments = (irType as IrSimpleType).arguments
             .map {
                 when (it.getVariance()) {
-                    Variance.INVARIANT -> KTypeProjection.invariant(KTypeProxy(KTypeState(it.typeOrNull!!), interpreter))
-                    Variance.IN_VARIANCE -> KTypeProjection.contravariant(KTypeProxy(KTypeState(it.typeOrNull!!), interpreter))
-                    Variance.OUT_VARIANCE -> KTypeProjection.covariant(KTypeProxy(KTypeState(it.typeOrNull!!), interpreter))
+                    Variance.INVARIANT -> KTypeProjection.invariant(KTypeProxy(KTypeState(it.typeOrNull!!, irClass), interpreter))
+                    Variance.IN_VARIANCE -> KTypeProjection.contravariant(KTypeProxy(KTypeState(it.typeOrNull!!, irClass), interpreter))
+                    Variance.OUT_VARIANCE -> KTypeProjection.covariant(KTypeProxy(KTypeState(it.typeOrNull!!, irClass), interpreter))
                     null -> KTypeProjection.STAR
                 }
             }

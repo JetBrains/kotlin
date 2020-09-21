@@ -39,6 +39,7 @@ internal interface ReflectionProxy : Proxy {
                 is KClassState -> KClassProxy(this, interpreter)
                 is KTypeState -> KTypeProxy(this, interpreter)
                 is KTypeParameterState -> KTypeParameterProxy(this, interpreter)
+                is KParameterState -> KParameterProxy(this, interpreter)
                 else -> TODO("not supported reference state")
             }
         }

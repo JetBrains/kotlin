@@ -16,9 +16,9 @@ internal class KClassProxy(
     override val state: KClassState, override val interpreter: IrInterpreter
 ) : ReflectionProxy, KClass<Proxy> {
     override val simpleName: String?
-        get() = state.irClass.name.takeIf { !it.isSpecial }?.asString()
+        get() = state.classReference.name.takeIf { !it.isSpecial }?.asString()
     override val qualifiedName: String?
-        get() = if (!state.irClass.name.isSpecial) state.irClass.internalName() else null
+        get() = if (!state.classReference.name.isSpecial) state.classReference.internalName() else null
 
     @Suppress("UNCHECKED_CAST")
     override val constructors: Collection<KFunction<Proxy>>
@@ -39,25 +39,25 @@ internal class KClassProxy(
         get() = TODO("Not yet implemented")
 
     override val visibility: KVisibility?
-        get() = state.irClass.visibility.toKVisibility()
+        get() = state.classReference.visibility.toKVisibility()
     override val isFinal: Boolean
-        get() = state.irClass.modality == Modality.FINAL
+        get() = state.classReference.modality == Modality.FINAL
     override val isOpen: Boolean
-        get() = state.irClass.modality == Modality.OPEN
+        get() = state.classReference.modality == Modality.OPEN
     override val isAbstract: Boolean
-        get() = state.irClass.modality == Modality.ABSTRACT
+        get() = state.classReference.modality == Modality.ABSTRACT
     override val isSealed: Boolean
-        get() = state.irClass.modality == Modality.SEALED
+        get() = state.classReference.modality == Modality.SEALED
     override val isData: Boolean
-        get() = state.irClass.isData
+        get() = state.classReference.isData
     override val isInner: Boolean
-        get() = state.irClass.isInner
+        get() = state.classReference.isInner
     override val isCompanion: Boolean
-        get() = state.irClass.isCompanion
+        get() = state.classReference.isCompanion
     override val isFun: Boolean
-        get() = state.irClass.isFun
+        get() = state.classReference.isFun
     override val isValue: Boolean
-        get() = state.irClass.isInline
+        get() = state.classReference.isInline
 
     override fun isInstance(value: Any?): Boolean {
         TODO("Not yet implemented")

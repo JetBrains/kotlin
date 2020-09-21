@@ -6,28 +6,40 @@
 package org.jetbrains.kotlin.ir.interpreter.state.reflection
 
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.interpreter.renderType
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.State
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.classifierOrNull
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
+import org.jetbrains.kotlin.ir.types.typeOrNull
+import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.nameForIrSerialization
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
 
-internal abstract class ReflectionState(val irClassifierSymbol: IrClassifierSymbol) : State {
-    override val irClass: IrClass = irClassifierSymbol.extractClass()
+internal abstract class ReflectionState : State {
     override val fields: MutableList<Variable> = mutableListOf()
     override val typeArguments: MutableList<Variable> = mutableListOf()
 
-    constructor(irTypeParameter: IrTypeParameter) : this(irTypeParameter.superTypes.firstNotNullResult { it.classifierOrNull }!!)
-
     override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? = null
 
-    protected fun renderReceivers(dispatchReceiver: IrType?, extensionReceiver: IrType?): String {
+    protected fun IrClass.getIrClassOfReflectionFromList(name: String): IrClass {
+        val property = this.declarations.single { it.nameForIrSerialization.asString() == name } as IrProperty
+        val list = property.getter!!.returnType as IrSimpleType
+        return list.arguments.single().typeOrNull!!.classOrNull!!.owner
+    }
+
+    protected fun IrClass.getIrClassOfReflection(name: String): IrClass {
+        val property = this.declarations.single { it.nameForIrSerialization.asString() == name } as IrProperty
+        val type = property.getter!!.returnType as IrSimpleType
+        return type.classOrNull!!.owner
+    }
+
+    private fun renderReceivers(dispatchReceiver: IrType?, extensionReceiver: IrType?): String {
         return buildString {
             if (dispatchReceiver != null) {
                 append(dispatchReceiver.renderType())
@@ -43,14 +55,26 @@ internal abstract class ReflectionState(val irClassifierSymbol: IrClassifierSymb
         }
     }
 
-    companion object {
-        private fun IrClassifierSymbol.extractClass(): IrClass {
-            return (owner as? IrClass) ?: (owner as IrTypeParameter).extractAnyClass()
-        }
+    protected fun renderLambda(irFunction: IrFunction): String {
+        val receiver = (irFunction.dispatchReceiverParameter?.type ?: irFunction.extensionReceiverParameter?.type)?.renderType()
+        val arguments = irFunction.valueParameters.joinToString(prefix = "(", postfix = ")") { it.type.renderType() }
+        val returnType = irFunction.returnType.renderType()
+        return ("$arguments -> $returnType").let { if (receiver != null) "$receiver.$it" else it }
+    }
 
-        private fun IrTypeParameter.extractAnyClass(): IrClass {
-            return this.superTypes
-                .firstNotNullResult { it.classOrNull?.owner ?: (it.classifierOrNull?.owner as? IrTypeParameter)?.extractAnyClass() }!!
-        }
+    protected fun renderFunction(irFunction: IrFunction): String {
+        val dispatchReceiver = irFunction.parentClassOrNull?.defaultType // = instanceReceiverParameter
+        val extensionReceiver = irFunction.extensionReceiverParameter?.type
+        val receivers = if (irFunction is IrConstructor) "" else renderReceivers(dispatchReceiver, extensionReceiver)
+        val arguments = irFunction.valueParameters.joinToString(prefix = "(", postfix = ")") { it.type.renderType() }
+        val returnType = irFunction.returnType.renderType()
+        return "fun $receivers${irFunction.name}$arguments: $returnType"
+    }
+
+    protected fun renderProperty(property: IrProperty): String {
+        val prefix = if (property.isVar) "var" else "val"
+        val receivers = renderReceivers(property.getter?.dispatchReceiverParameter?.type, property.getter?.extensionReceiverParameter?.type)
+        val returnType = property.getter!!.returnType.renderType()
+        return "$prefix $receivers${property.name}: $returnType"
     }
 }

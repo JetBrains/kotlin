@@ -36,9 +36,9 @@ internal class KFunctionProxy(
     override val annotations: List<Annotation>
         get() = TODO("Not yet implemented")
     override val parameters: List<KParameter>
-        get() = TODO("Not yet implemented")
+        get() = state.getParameters(interpreter)
     override val returnType: KType
-        get() = KTypeProxy(KTypeState(state.irFunction.returnType), interpreter)
+        get() = state.getReturnType(interpreter)
     override val typeParameters: List<KTypeParameter>
         get() = state.getTypeParameters(interpreter)
 
@@ -56,7 +56,7 @@ internal class KFunctionProxy(
     }
 
     override val visibility: KVisibility?
-        get() = state.irClass.visibility.toKVisibility()
+        get() = state.irFunction.visibility.toKVisibility()
     override val isFinal: Boolean
         get() = state.irFunction is IrSimpleFunction && state.irFunction.modality == Modality.FINAL
     override val isOpen: Boolean
