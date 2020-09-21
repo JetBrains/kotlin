@@ -3,6 +3,6 @@
 // SKIP_TXT
 
 fun test() {
-    suspend {} is SuspendFunction0<*>
+    suspend {} is <!UNRESOLVED_REFERENCE!>SuspendFunction0<*><!>
     suspend {} is kotlin.coroutines.SuspendFunction0<*>
 }

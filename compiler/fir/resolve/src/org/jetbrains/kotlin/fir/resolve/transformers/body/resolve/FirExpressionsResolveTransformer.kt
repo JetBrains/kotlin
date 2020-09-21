@@ -448,19 +448,27 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
 
     private fun FirTypeRef.withTypeArgumentsForBareType(argument: FirExpression): FirTypeRef {
         // TODO: Everything should also work for case of checked-type itself is a type alias
+        val type = coneTypeSafe<ConeKotlinType>()
+        if (type !is ConeClassLikeType || type.typeArguments.isNotEmpty()) {
+            return this
+        }
         val baseTypeArguments =
             argument.typeRef.coneTypeSafe<ConeKotlinType>()?.fullyExpandedType(session)?.typeArguments
-        val type = coneTypeSafe<ConeKotlinType>()
-        return if (
-            type?.typeArguments?.isEmpty() != true ||
-            type is ConeTypeParameterType ||
-            baseTypeArguments?.isEmpty() != false ||
-            (type is ConeClassLikeType &&
-                    (type.lookupTag.toSymbol(session)?.fir as? FirTypeParameterRefsOwner)?.typeParameters?.isEmpty() == true)
-        ) {
+
+        return if (baseTypeArguments?.isEmpty() != false) {
             this
         } else {
-            withReplacedConeType(type.withArguments(baseTypeArguments))
+            val typeParameters = (type.lookupTag.toSymbol(session)?.fir as? FirTypeParameterRefsOwner)?.typeParameters.orEmpty()
+            if (typeParameters.isEmpty()) {
+                this
+            } else {
+                withReplacedConeType(
+                    type.withArguments(
+                        if (baseTypeArguments.size > typeParameters.size) baseTypeArguments.take(typeParameters.size).toTypedArray()
+                        else baseTypeArguments
+                    )
+                )
+            }
         }
     }
 
