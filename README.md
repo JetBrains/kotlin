@@ -12,7 +12,7 @@ without the need to ship an additional execution runtime.
 
 Prerequisites:
 *   install JDK for your platform, instead of JRE. The build requires ```tools.jar```, which is not included in JRE;
-*   on macOS install Xcode 11 (Xcode 11.5 is required to compile Kotlin/Native from sources)
+*   on macOS install Xcode 11 (Xcode 12.0 is required to compile Kotlin/Native from sources)
 *   on Fedora 26+ ```yum install ncurses-compat-libs``` may be needed
 *   on recent Ubuntu ```apt install libncurses5``` is needed
 
