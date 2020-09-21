@@ -310,6 +310,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/argumentOrder/argumentOrderInObjectSuperCall.kt");
         }
 
+        @TestMetadata("argumentOrderInObjectSuperCallWithPlatformType.kt")
+        public void testArgumentOrderInObjectSuperCallWithPlatformType() throws Exception {
+            runTest("compiler/testData/codegen/box/argumentOrder/argumentOrderInObjectSuperCallWithPlatformType.kt");
+        }
+
         @TestMetadata("argumentOrderInSuperCall.kt")
         public void testArgumentOrderInSuperCall() throws Exception {
             runTest("compiler/testData/codegen/box/argumentOrder/argumentOrderInSuperCall.kt");
