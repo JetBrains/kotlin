@@ -22,11 +22,10 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DataClassMembersGenerator
+import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
@@ -93,9 +92,7 @@ class DataClassMembersGenerator(
                 ?: throw AssertionError("No definition for data class constructor parameter $parameter")
 
             val backingField = irDataClassMembersGenerator.getBackingField(parameter, null) ?: return
-            irDataClassMembersGenerator.generateComponentFunction(
-                function, backingField, ktParameter.startOffset, ktParameter.endOffset
-            )
+            irDataClassMembersGenerator.generateComponentFunction(function, backingField)
         }
 
         override fun generateCopyFunction(function: FunctionDescriptor, constructorParameters: List<KtParameter>) {
