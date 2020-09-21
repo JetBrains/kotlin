@@ -1033,7 +1033,7 @@ public interface Errors {
     DiagnosticFactory0<KtTypeParameterList> LOCAL_VARIABLE_WITH_TYPE_PARAMETERS_WARNING = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<KtTypeParameterList> LOCAL_VARIABLE_WITH_TYPE_PARAMETERS = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory3<KtExpression, DeclarationDescriptor, DescriptorVisibility, DeclarationDescriptor> INVISIBLE_SETTER = DiagnosticFactory3.create(ERROR);
+    DiagnosticFactory3<PsiElement, DeclarationDescriptor, DescriptorVisibility, DeclarationDescriptor> INVISIBLE_SETTER = DiagnosticFactory3.create(ERROR);
 
     DiagnosticFactory1<PsiElement, KtKeywordToken> VAL_OR_VAR_ON_LOOP_PARAMETER = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, KtKeywordToken> VAL_OR_VAR_ON_FUN_PARAMETER = DiagnosticFactory1.create(ERROR);
