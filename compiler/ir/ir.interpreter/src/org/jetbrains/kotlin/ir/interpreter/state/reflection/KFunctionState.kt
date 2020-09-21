@@ -63,17 +63,12 @@ internal class KFunctionState(val irFunction: IrFunction, override val irClass: 
         return _typeParameters!!
     }
 
-    private val invokeSymbol = irClass.declarations
-        .single { it.nameForIrSerialization.asString() == "invoke" }
-        .cast<IrSimpleFunction>()
-        .getLastOverridden().symbol
-
     fun getArity(): Int? {
         return irClass.name.asString().removePrefix("Function").removePrefix("KFunction").toIntOrNull()
     }
 
     override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? {
-        return if (invokeSymbol == expression.symbol) irFunction else null
+        return if (expression.symbol.owner.name.asString() == "invoke") irFunction else null
     }
 
     private fun isLambda(): Boolean = irFunction.name.let { it == Name.special("<anonymous>") || it == Name.special("<no name provided>") }
