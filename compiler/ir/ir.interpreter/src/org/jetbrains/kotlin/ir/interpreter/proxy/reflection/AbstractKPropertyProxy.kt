@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.interpreter.proxy.reflection
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.state.KPropertyState
+import org.jetbrains.kotlin.ir.interpreter.state.KTypeState
 import org.jetbrains.kotlin.ir.types.IrType
 import kotlin.reflect.KProperty
 import kotlin.reflect.KType
@@ -38,7 +39,7 @@ internal abstract class AbstractKPropertyProxy(
     override val annotations: List<Annotation>
         get() = TODO("Not yet implemented")
     override val returnType: KType
-        get() = TODO("Not yet implemented")
+        get() = KTypeProxy(KTypeState(propertyType), interpreter)
     override val visibility: KVisibility?
         get() = state.irClass.visibility.toKVisibility()
 

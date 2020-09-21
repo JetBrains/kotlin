@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.interpreter.proxy.reflection
 
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.internalName
 import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
@@ -17,9 +16,9 @@ internal class KClassProxy(
     override val state: KClassState, override val interpreter: IrInterpreter
 ) : ReflectionProxy, KClass<Proxy> {
     override val simpleName: String?
-        get() = state.irClass.name.asString() // TODO return null if class has no name
+        get() = state.irClass.name.takeIf { !it.isSpecial }?.asString()
     override val qualifiedName: String?
-        get() = state.irClass.internalName()
+        get() = if (!state.irClass.name.isSpecial) state.irClass.internalName() else null
 
     @Suppress("UNCHECKED_CAST")
     override val constructors: Collection<KFunction<Proxy>>
@@ -31,9 +30,9 @@ internal class KClassProxy(
     override val objectInstance: Proxy?
         get() = TODO("Not yet implemented")
     override val typeParameters: List<KTypeParameter>
-        get() = TODO("Not yet implemented")
+        get() = state.getTypeParameters(interpreter)
     override val supertypes: List<KType>
-        get() = TODO("Not yet implemented")
+        get() = state.getSupertypes(interpreter)
     override val sealedSubclasses: List<KClass<out Proxy>>
         get() = TODO("Not yet implemented")
     override val annotations: List<Annotation>
@@ -65,14 +64,17 @@ internal class KClassProxy(
     }
 
     override fun equals(other: Any?): Boolean {
-        TODO("Not yet implemented")
+        if (this === other) return true
+        if (other !is KClassProxy) return false
+
+        return state == other.state
     }
 
     override fun hashCode(): Int {
-        TODO("Not yet implemented")
+        return state.hashCode()
     }
 
     override fun toString(): String {
-        TODO("Not yet implemented")
+        return state.toString()
     }
 }

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.lang.invoke.MethodType
+import kotlin.math.min
 
 internal fun IrFunction.getDispatchReceiver(): IrValueParameterSymbol? = this.dispatchReceiverParameter?.symbol
 
@@ -224,6 +225,24 @@ internal fun IrType.isTypeParameter() = classifierOrNull is IrTypeParameterSymbo
 internal fun IrType.isInterface() = classOrNull?.owner?.kind == ClassKind.INTERFACE
 
 internal fun IrType.isThrowable() = this.getClass()?.fqNameWhenAvailable?.asString() == "kotlin.Throwable"
+
+internal fun IrType.renderType(): String {
+    var renderedType = this.render()
+    do {
+        val index = renderedType.indexOf(" of ")
+        if (index == -1) break
+        val replaceUntilComma = renderedType.indexOf(',', index)
+        val replaceUntilTriangle = renderedType.indexOf('>', index)
+        val replaceUntil = when {
+            replaceUntilComma == -1 && replaceUntilTriangle == -1 -> renderedType.length
+            replaceUntilComma == -1 -> replaceUntilTriangle
+            replaceUntilTriangle == -1 -> replaceUntilComma
+            else -> min(replaceUntilComma, replaceUntilTriangle)
+        }
+        renderedType = renderedType.replaceRange(index, replaceUntil, "")
+    } while (true)
+    return renderedType
+}
 
 fun IrClass.internalName(): String {
     val internalName = StringBuilder(this.name.asString())

@@ -9,9 +9,11 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
+import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.interpreter.state.KClassState
 import org.jetbrains.kotlin.ir.interpreter.state.KFunctionState
 import org.jetbrains.kotlin.ir.interpreter.state.KPropertyState
+import org.jetbrains.kotlin.ir.interpreter.state.KTypeState
 import org.jetbrains.kotlin.ir.interpreter.state.ReflectionState
 import kotlin.reflect.KVisibility
 
@@ -40,6 +42,8 @@ internal interface ReflectionProxy : Proxy {
                 }
                 is KFunctionState -> KFunctionProxy(this, interpreter)
                 is KClassState -> KClassProxy(this, interpreter)
+                is KTypeState -> KTypeProxy(this, interpreter)
+                is KTypeParameterState -> KTypeParameterProxy(this, interpreter)
                 else -> TODO("not supported reference state")
             }
         }

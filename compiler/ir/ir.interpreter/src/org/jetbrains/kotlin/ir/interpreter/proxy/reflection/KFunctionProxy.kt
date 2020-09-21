@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.KFunctionState
+import org.jetbrains.kotlin.ir.interpreter.state.KTypeState
 import org.jetbrains.kotlin.ir.interpreter.toState
 import org.jetbrains.kotlin.ir.util.isSuspend
 import kotlin.reflect.*
@@ -37,9 +38,9 @@ internal class KFunctionProxy(
     override val parameters: List<KParameter>
         get() = TODO("Not yet implemented")
     override val returnType: KType
-        get() = TODO("Not yet implemented")
+        get() = KTypeProxy(KTypeState(state.irFunction.returnType), interpreter)
     override val typeParameters: List<KTypeParameter>
-        get() = TODO("Not yet implemented")
+        get() = state.getTypeParameters(interpreter)
 
     override fun call(vararg args: Any?): Any? {
         var index = 0

@@ -188,9 +188,14 @@ class IrCompileTimeChecker(
     }
 
     override fun visitFunctionReference(expression: IrFunctionReference, data: Nothing?): Boolean {
-        return expression.asVisited {
-            mode.canEvaluateFunction(expression.symbol.owner) && expression.symbol.owner.body?.accept(this, data) == true
-        }
+        val owner = expression.symbol.owner
+        if (!mode.canEvaluateFunction(owner)) return false
+
+        val dispatchReceiverComputable = expression.dispatchReceiver?.accept(this, null) ?: true
+        val extensionReceiverComputable = expression.extensionReceiver?.accept(this, null) ?: true
+        val bodyComputable = owner.asVisited { if (mode.canEvaluateBody(owner)) owner.body?.accept(this, null) ?: true else true }
+
+        return dispatchReceiverComputable && extensionReceiverComputable && bodyComputable
     }
 
     override fun visitFunctionExpression(expression: IrFunctionExpression, data: Nothing?): Boolean {
@@ -261,6 +266,12 @@ class IrCompileTimeChecker(
     }
 
     override fun visitClassReference(expression: IrClassReference, data: Nothing?): Boolean {
-        return with(mode) { (expression.symbol.owner as IrClass).isMarkedAsCompileTime() }
+        return with(mode) {
+            when (this) {
+                EvaluationMode.FULL -> true
+                EvaluationMode.WITH_ANNOTATIONS -> (expression.symbol.owner as IrClass).isMarkedAsCompileTime()
+                EvaluationMode.ONLY_BUILTINS -> false
+            }
+        }
     }
 }
