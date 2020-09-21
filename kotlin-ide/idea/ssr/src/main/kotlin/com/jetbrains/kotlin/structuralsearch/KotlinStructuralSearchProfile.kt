@@ -279,6 +279,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
             family[1] is KtUserType && family[3] is KtTypeProjection && family[5] !is KtNamedFunction -> true
             // Annotations
             family[1] is KtUserType && family[4] is KtAnnotationEntry -> true
+            family[1] is KtCollectionLiteralExpression -> true
             // Strings
             family[1] is KtSimpleNameStringTemplateEntry -> true
             // KDoc
