@@ -41,9 +41,14 @@ class FirStandardOverrideChecker(session: FirSession) : FirAbstractOverrideCheck
     }
 
     private fun isEqualTypes(candidateType: ConeKotlinType, baseType: ConeKotlinType, substitutor: ConeSubstitutor): Boolean {
-        val substitutedCandidateType = substitutor.substituteOrSelf(candidateType)
-        val substitutedBaseType = substitutor.substituteOrSelf(baseType)
+        val substitutedCandidateType = substitutor.substituteOrSelf(candidateType).unwrapDefinitelyNotNullType()
+        val substitutedBaseType = substitutor.substituteOrSelf(baseType).unwrapDefinitelyNotNullType()
         return isEqualTypes(substitutedCandidateType, substitutedBaseType)
+    }
+
+    private fun ConeKotlinType.unwrapDefinitelyNotNullType(): ConeKotlinType = when (this) {
+        is ConeDefinitelyNotNullType -> original
+        else -> this
     }
 
     override fun isEqualTypes(candidateTypeRef: FirTypeRef, baseTypeRef: FirTypeRef, substitutor: ConeSubstitutor) =
