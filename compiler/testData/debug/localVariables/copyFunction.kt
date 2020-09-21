@@ -7,7 +7,6 @@ fun box() {
     val b = a.copy(b = 3.0)
 }
 
-// IGNORE_BACKEND: JVM_IR
 // LOCAL VARIABLES
 // TestKt:6:
 // someClass:3: a:double, b:double

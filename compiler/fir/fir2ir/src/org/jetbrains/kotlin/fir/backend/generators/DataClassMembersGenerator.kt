@@ -206,8 +206,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
             val index = getComponentIndex(irFunction)!!
             val valueParameter = irClass.primaryConstructor!!.valueParameters[index - 1]
             val backingField = irDataClassMembersGenerator.getBackingField(null, valueParameter)!!
-            irDataClassMembersGenerator
-                .generateComponentFunction(irFunction, backingField, valueParameter.startOffset, valueParameter.endOffset)
+            irDataClassMembersGenerator.generateComponentFunction(irFunction, backingField)
         }
 
         fun generateCopyBody(irFunction: IrFunction) =
