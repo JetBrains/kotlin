@@ -284,10 +284,6 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     override fun visitConstantExpression(expression: KtConstantExpression) {
         val other = getTreeElementDepar<KtExpression>() ?: return
         myMatchingVisitor.result = matchTextOrVariable(expression, other)
-        val handler = getHandler(expression)
-        if (myMatchingVisitor.result && handler is SubstitutionHandler) {
-            handler.handle(other, myMatchingVisitor.matchContext)
-        }
     }
 
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
