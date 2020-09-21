@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.ir.interpreter.proxy.reflection
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
-import org.jetbrains.kotlin.ir.interpreter.state.KClassState
-import org.jetbrains.kotlin.ir.interpreter.state.KTypeParameterState
-import org.jetbrains.kotlin.ir.interpreter.state.KTypeState
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.KClassState
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeParameterState
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import kotlin.reflect.KClassifier

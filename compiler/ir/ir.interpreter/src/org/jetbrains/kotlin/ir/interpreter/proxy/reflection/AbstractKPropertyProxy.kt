@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.ir.interpreter.proxy.reflection
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
-import org.jetbrains.kotlin.ir.interpreter.state.KPropertyState
-import org.jetbrains.kotlin.ir.interpreter.state.KTypeState
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.KPropertyState
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
 import org.jetbrains.kotlin.ir.types.IrType
 import kotlin.reflect.KProperty
 import kotlin.reflect.KType

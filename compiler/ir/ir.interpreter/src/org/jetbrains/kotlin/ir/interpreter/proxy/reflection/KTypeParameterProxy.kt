@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.interpreter.proxy.reflection
 
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
-import org.jetbrains.kotlin.ir.interpreter.state.KTypeParameterState
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeParameterState
 import org.jetbrains.kotlin.types.Variance
 import kotlin.reflect.*
 

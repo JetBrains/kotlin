@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.internalName
 import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
-import org.jetbrains.kotlin.ir.interpreter.state.KClassState
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.KClassState
 import kotlin.reflect.*
 
 internal class KClassProxy(

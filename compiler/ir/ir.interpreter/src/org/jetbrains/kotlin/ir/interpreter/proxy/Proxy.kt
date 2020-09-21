@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.proxy.CommonProxy.Companion.asProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.ReflectionProxy.Companion.asProxy
 import org.jetbrains.kotlin.ir.interpreter.state.*
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.ReflectionState
 
 internal interface Proxy {
     val state: State

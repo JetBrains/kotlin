@@ -9,12 +9,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
-import org.jetbrains.kotlin.ir.interpreter.state.*
-import org.jetbrains.kotlin.ir.interpreter.state.KClassState
-import org.jetbrains.kotlin.ir.interpreter.state.KFunctionState
-import org.jetbrains.kotlin.ir.interpreter.state.KPropertyState
-import org.jetbrains.kotlin.ir.interpreter.state.KTypeState
-import org.jetbrains.kotlin.ir.interpreter.state.ReflectionState
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.*
 import kotlin.reflect.KVisibility
 
 internal interface ReflectionProxy : Proxy {

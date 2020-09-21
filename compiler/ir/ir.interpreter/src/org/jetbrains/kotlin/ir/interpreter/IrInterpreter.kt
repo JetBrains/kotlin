@@ -18,11 +18,14 @@ import org.jetbrains.kotlin.ir.interpreter.exceptions.*
 import org.jetbrains.kotlin.ir.interpreter.intrinsics.IntrinsicEvaluator
 import org.jetbrains.kotlin.ir.interpreter.proxy.CommonProxy.Companion.asProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
-import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.ReflectionProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.wrap
 import org.jetbrains.kotlin.ir.interpreter.stack.StackImpl
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.*
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.KClassState
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.KFunctionState
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.KPropertyState
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.ReflectionState
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType

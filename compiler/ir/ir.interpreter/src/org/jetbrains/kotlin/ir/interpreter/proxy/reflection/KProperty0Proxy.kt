@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.interpreter.proxy.reflection
 
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
-import org.jetbrains.kotlin.ir.interpreter.state.KPropertyState
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.KPropertyState
 import org.jetbrains.kotlin.ir.interpreter.state.State
 import org.jetbrains.kotlin.ir.interpreter.toState
 import kotlin.reflect.KMutableProperty0

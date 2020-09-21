@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
-import org.jetbrains.kotlin.ir.interpreter.state.KFunctionState
-import org.jetbrains.kotlin.ir.interpreter.state.KTypeState
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.KFunctionState
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
 import org.jetbrains.kotlin.ir.interpreter.toState
 import org.jetbrains.kotlin.ir.util.isSuspend
 import kotlin.reflect.*
