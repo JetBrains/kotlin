@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="libraryTable">
   <library name="batik-codec" type="repository">
-    <properties include-transitive-deps="false" maven-id="org.jetbrains.intellij.deps.batik:batik-codec:1.12.0-8" />
+    <properties include-transitive-deps="false" maven-id="org.jetbrains.intellij.deps.batik:batik-codec:1.13.0-21" />
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/batik/batik-codec/1.12.0-8/batik-codec-1.12.0-8.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/batik/batik-codec/1.13.0-21/batik-codec-1.13.0-21.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

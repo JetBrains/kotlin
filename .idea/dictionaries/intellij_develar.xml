@@ -46,6 +46,7 @@
       <w>canonicalizer</w>
       <w>cfml</w>
       <w>cheatsheet</w>
+      <w>checksummed</w>
       <w>chunked</w>
       <w>classname</w>
       <w>classpathentry</w>
@@ -78,6 +79,7 @@
       <w>debuggerword</w>
       <w>deexternalize</w>
       <w>deflater</w>
+      <w>defragment</w>
       <w>deiconified</w>
       <w>deinit</w>
       <w>deinstall</w>
@@ -105,6 +107,7 @@
       <w>envs</w>
       <w>epoll</w>
       <w>escodegen</w>
+      <w>evacuatable</w>
       <w>eval'd</w>
       <w>expirable</w>
       <w>externalizers</w>
@@ -212,6 +215,7 @@
       <w>layoutlib</w>
       <w>libsecret</w>
       <w>likhodedov</w>
+      <w>lirs</w>
       <w>liveedit</w>
       <w>loopback</w>
       <w>lowercased</w>
@@ -222,6 +226,7 @@
       <w>modificator</w>
       <w>mouseenter</w>
       <w>multicasting</w>
+      <w>mvstore</w>
       <w>nashorn</w>
       <w>nbsp</w>
       <w>neko</w>
@@ -285,6 +290,7 @@
       <w>pycache</w>
       <w>quantile</w>
       <w>quicklists</w>
+      <w>rasterized</w>
       <w>rbenv</w>
       <w>recache</w>
       <w>recents</w>
@@ -406,6 +412,7 @@
       <w>uuidgen</w>
       <w>valign</w>
       <w>variable's</w>
+      <w>varint</w>
       <w>vassiliy</w>
       <w>vcses</w>
       <w>vcss</w>
