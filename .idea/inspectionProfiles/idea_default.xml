@@ -1793,6 +1793,7 @@
         </modules-set>
       </option>
     </inspection_tool>
+    <inspection_tool class="SuspiciousTernaryOperatorInVarargsCall" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="SwitchStatementWithConfusingDeclaration" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="SynchronizationOnGetClass" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="SynchronizeOnThis" enabled="true" level="WARNING" enabled_by_default="true" />
