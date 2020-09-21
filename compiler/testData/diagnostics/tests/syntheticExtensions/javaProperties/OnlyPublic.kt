@@ -8,7 +8,7 @@ fun foo(javaClass: JavaClass) {
     javaClass.<!INVISIBLE_MEMBER!>somethingProtected<!>
     javaClass.<!UNRESOLVED_REFERENCE!>somethingPrivate<!>
     javaClass.<!INVISIBLE_MEMBER!>somethingPackage<!>
-    <!INVISIBLE_SETTER!>javaClass.somethingPublic<!> = 1
+    <!INVISIBLE_SETTER!>javaClass.<!INVISIBLE_SETTER!>somethingPublic<!><!> = 1
 }
 
 // FILE: JavaClass.java

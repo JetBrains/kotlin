@@ -25205,6 +25205,21 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             public void testAllFilesPresentInVisibility() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/visibility"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
             }
+
+            @TestMetadata("invisibleSetterOfJavaClass.kt")
+            public void testInvisibleSetterOfJavaClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/invisibleSetterOfJavaClass.kt");
+            }
+
+            @TestMetadata("invisibleSetterOfJavaClassWithDisabledFeature.kt")
+            public void testInvisibleSetterOfJavaClassWithDisabledFeature() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/invisibleSetterOfJavaClassWithDisabledFeature.kt");
+            }
+
+            @TestMetadata("lackOfInvisibleSetterOfJavaClassInSamePackage.kt")
+            public void testLackOfInvisibleSetterOfJavaClassInSamePackage() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/lackOfInvisibleSetterOfJavaClassInSamePackage.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/when")
