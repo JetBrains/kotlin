@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.idea.fir.getOrBuildFirSafe
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.frontend.api.ImplicitReceiverSmartCast
 import org.jetbrains.kotlin.idea.frontend.api.ImplicitReceiverSmartcastKind
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
