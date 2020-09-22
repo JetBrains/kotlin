@@ -276,6 +276,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/annotations/typeAnnotations/implicitReturn.kt");
             }
 
+            @TestMetadata("kt41484.kt")
+            public void testKt41484() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/typeAnnotations/kt41484.kt");
+            }
+
             @TestMetadata("methodParameters.kt")
             public void testMethodParameters() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/typeAnnotations/methodParameters.kt");
