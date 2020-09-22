@@ -1,15 +1,17 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.load.kotlin
 
-import org.jetbrains.kotlin.resolve.isInlineClassType
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 
-class TypeMappingMode private constructor(
+@RequiresOptIn
+annotation class TypeMappingModeInternals
+
+@OptIn(TypeMappingModeInternals::class)
+class TypeMappingMode @TypeMappingModeInternals constructor(
     val needPrimitiveBoxing: Boolean = true,
     val needInlineClassWrapping: Boolean = true,
     val isForAnnotationParameter: Boolean = false,
@@ -107,55 +109,13 @@ class TypeMappingMode private constructor(
         ) = if (isAnnotationMethod) VALUE_FOR_ANNOTATION else DEFAULT
 
         @JvmStatic
-        fun getOptimalModeForValueParameter(
-            type: KotlinType
-        ) = getOptimalModeForSignaturePart(type, canBeUsedInSupertypePosition = true)
-
-        @JvmStatic
-        fun getOptimalModeForReturnType(
-            type: KotlinType,
-            isAnnotationMethod: Boolean
-        ) = if (isAnnotationMethod) VALUE_FOR_ANNOTATION else getOptimalModeForSignaturePart(type, canBeUsedInSupertypePosition = false)
-
-        private fun getOptimalModeForSignaturePart(type: KotlinType, canBeUsedInSupertypePosition: Boolean): TypeMappingMode {
-            if (type.arguments.isEmpty()) return DEFAULT
-
-            if (type.isInlineClassType() && shouldUseUnderlyingType(type)) {
-                val underlyingType = computeUnderlyingType(type)
-                if (underlyingType != null) {
-                    return getOptimalModeForSignaturePart(underlyingType, canBeUsedInSupertypePosition).dontWrapInlineClassesMode()
-                }
-            }
-
-            val contravariantArgumentMode =
-                if (!canBeUsedInSupertypePosition)
-                    TypeMappingMode(skipDeclarationSiteWildcards = false, skipDeclarationSiteWildcardsIfPossible = true)
-                else
-                    null
-
-            val invariantArgumentMode =
-                if (canBeUsedInSupertypePosition)
-                    getOptimalModeForSignaturePart(type, canBeUsedInSupertypePosition = false)
-                else
-                    null
-
-            return TypeMappingMode(
-                skipDeclarationSiteWildcards = !canBeUsedInSupertypePosition,
-                skipDeclarationSiteWildcardsIfPossible = true,
-                genericContravariantArgumentMode = contravariantArgumentMode,
-                genericInvariantArgumentMode = invariantArgumentMode,
-                needInlineClassWrapping = !type.isInlineClassType()
-            )
-        }
-
-        @JvmStatic
         fun createWithConstantDeclarationSiteWildcardsMode(
             skipDeclarationSiteWildcards: Boolean,
             isForAnnotationParameter: Boolean,
             needInlineClassWrapping: Boolean,
             mapTypeAliases: Boolean,
             fallbackMode: TypeMappingMode? = null
-        ) = TypeMappingMode(
+        ): TypeMappingMode = TypeMappingMode(
             isForAnnotationParameter = isForAnnotationParameter,
             skipDeclarationSiteWildcards = skipDeclarationSiteWildcards,
             genericArgumentMode = fallbackMode,
