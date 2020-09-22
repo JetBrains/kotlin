@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import androidx.compose.compiler.plugins.kotlin.lower.ClassStabilityTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.ComposableFunctionBodyTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.ComposerIntrinsicTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.ComposableFunInterfaceLowering
@@ -55,6 +56,12 @@ class ComposeIrGenerationExtension(
 
         // create a symbol remapper to be used across all transforms
         val symbolRemapper = DeepCopySymbolRemapper()
+
+        ClassStabilityTransformer(
+            pluginContext,
+            symbolRemapper,
+            bindingTrace
+        ).lower(moduleFragment)
 
         LiveLiteralTransformer(
             liveLiteralsEnabled,

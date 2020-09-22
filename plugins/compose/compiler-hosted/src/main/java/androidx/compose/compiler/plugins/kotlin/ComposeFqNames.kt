@@ -51,6 +51,7 @@ object ComposeFqNames {
     val Composer = fqNameFor("Composer")
     val ComposeVersion = fqNameFor("ComposeVersion")
     val Package = FqName(root)
+    val StabilityInferred = internalFqNameFor("StabilityInferred")
     fun makeComposableAnnotation(module: ModuleDescriptor): AnnotationDescriptor =
         object : AnnotationDescriptor {
             override val type: KotlinType

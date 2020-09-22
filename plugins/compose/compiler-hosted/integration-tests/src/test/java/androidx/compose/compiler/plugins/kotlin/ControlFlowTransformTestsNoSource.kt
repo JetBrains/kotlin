@@ -89,7 +89,7 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
               %composer.startRestartGroup(<>, "C(Test)")
               if (%changed !== 0 || !%composer.skipping) {
                 W(composableLambda(%composer, <>, true, null) { %composer: Composer<*>?, %changed: Int ->
-                  if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+                  if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                     A(%composer, 0)
                   } else {
                     %composer.skipToGroupEnd()
@@ -121,7 +121,7 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
               %composer.startRestartGroup(<>, "C(Test)")
               if (%changed !== 0 || !%composer.skipping) {
                 IW({ %composer: Composer<*>?, %changed: Int ->
-                  if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+                  if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                     A(%composer, 0)
                   } else {
                     %composer.skipToGroupEnd()
