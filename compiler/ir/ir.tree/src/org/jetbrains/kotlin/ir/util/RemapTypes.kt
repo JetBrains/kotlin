@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
-import org.jetbrains.kotlin.ir.expressions.IrVararg
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -87,5 +84,10 @@ private class RemapTypesHelper(private val typeRemapper: TypeRemapper) : IrEleme
     override fun visitVararg(expression: IrVararg) {
         expression.varargElementType = typeRemapper.remapType(expression.varargElementType)
         super.visitVararg(expression)
+    }
+
+    override fun visitClassReference(expression: IrClassReference) {
+        expression.classType = typeRemapper.remapType(expression.classType)
+        super.visitClassReference(expression)
     }
 }

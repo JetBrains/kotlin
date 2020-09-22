@@ -21,5 +21,5 @@ import org.jetbrains.kotlin.ir.types.IrType
 
 abstract class IrClassReference : IrDeclarationReference() {
     abstract override val symbol: IrClassifierSymbol
-    abstract val classType: IrType
+    abstract var classType: IrType
 }
