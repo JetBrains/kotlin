@@ -64,6 +64,11 @@ object LowLevelFirApiFacade {
         return action(firDeclaration)
     }
 
+    inline fun <F : FirElement, R> withFir(fir: F, action: (F) -> R): R {
+        // TODO locking
+        return action(fir)
+    }
+
     fun getDiagnosticsFor(element: KtElement, resolveState: FirModuleResolveState): Collection<Diagnostic> =
         resolveState.getDiagnostics(element)
 
