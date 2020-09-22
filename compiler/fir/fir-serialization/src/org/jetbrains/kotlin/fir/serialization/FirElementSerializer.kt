@@ -592,8 +592,7 @@ class FirElementSerializer private constructor(
                 }
             }
             is ConeDefinitelyNotNullType,
-            is ConeIntersectionType,
-            is ConeIntegerLiteralType -> {
+            is ConeIntersectionType -> {
                 val approximatedType = if (toSuper) {
                     typeApproximator.approximateToSuperType(type, TypeApproximatorConfiguration.PublicDeclaration)
                 } else {
@@ -603,6 +602,9 @@ class FirElementSerializer private constructor(
                     "Approximation failed: ${type.render()}"
                 }
                 return typeProto(approximatedType as ConeKotlinType)
+            }
+            is ConeIntegerLiteralType -> {
+                throw IllegalStateException("Integer literal types should not persist up to the serializer: ${type.render()}")
             }
             is ConeCapturedType -> {
                 throw IllegalStateException("Captured types should not persist up to the serializer: ${type.render()}")
