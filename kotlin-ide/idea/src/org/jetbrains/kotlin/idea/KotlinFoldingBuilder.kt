@@ -117,13 +117,9 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
         if (call.startLine(document) == call.endLine(document)) return false
 
         val reference = call.referenceExpression() ?: return false
-        if (reference.mainReference.resolvesByNames.any { name -> name.isSpecial || name.identifier !in collectionFactoryFunctionsNames }) {
-            return false
+        return !reference.mainReference.resolvesByNames.any {
+                name -> name.isSpecial || name.identifier !in collectionFactoryFunctionsNames
         }
-
-        // Do all possible psi checks before actual resolve
-        val functionDescriptor = reference.resolveMainReferenceToDescriptors().singleOrNull() as? FunctionDescriptor ?: return false
-        return functionDescriptor.valueParameters.size == 1 && functionDescriptor.valueParameters.first().isVararg
     }
 
     private fun getRangeToFold(node: ASTNode): TextRange {
