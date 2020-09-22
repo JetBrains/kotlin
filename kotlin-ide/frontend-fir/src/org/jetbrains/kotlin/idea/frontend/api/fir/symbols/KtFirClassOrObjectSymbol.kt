@@ -60,6 +60,9 @@ internal class KtFirClassOrObjectSymbol(
             builder.buildKtType(it)
         }
     }
+    override val primaryConstructor: KtConstructorSymbol? by firRef.withFirAndCache(FirResolvePhase.RAW_FIR) { fir ->
+        fir.getPrimaryConstructorIfAny()?.let { builder.buildConstructorSymbol(it) }
+    }
 
     override val typeParameters by firRef.withFirAndCache {
         fir.typeParameters.map { typeParameter ->

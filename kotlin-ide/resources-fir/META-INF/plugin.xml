@@ -98,6 +98,9 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
     <projectService serviceInterface="org.jetbrains.kotlin.idea.asJava.LightClassProvider"
                     serviceImplementation="org.jetbrains.kotlin.idea.asJava.LightClassProviderFirImpl"/>
 
+    <projectService serviceInterface="org.jetbrains.kotlin.psi.KtFileClassProvider"
+                    serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.KtFileClassProviderImpl"/>
+
     <completion.contributor language="kotlin"
                             id="KotlinCompletionContributor"
                             order="first"
@@ -201,6 +204,14 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.project.KotlinLibraryToSourceAnalysisStateComponent"/>
 
     <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.highlighter.KotlinBeforeResolveHighlightingPass$Registrar"/>
+
+    <java.elementFinder implementation="org.jetbrains.kotlin.asJava.finder.JavaElementFinder"/>
+
+    <projectService serviceInterface="org.jetbrains.kotlin.asJava.KotlinAsJavaSupport"
+                    serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.IDEKotlinAsJavaFirSupport"/>
+
+    <projectService serviceInterface="org.jetbrains.kotlin.asJava.LightClassGenerationSupport"
+                    serviceImplementation="org.jetbrains.kotlin.idea.asJava.FirLightClassGenerationSupport"/>
 
     <elementDescriptionProvider
         implementation="org.jetbrains.kotlin.idea.findUsages.KotlinElementDescriptionProviderBase"
