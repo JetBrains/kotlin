@@ -442,12 +442,17 @@ interface IrBuilderExtension {
 
     fun IrBuilderWithScope.classReference(classType: KotlinType): IrClassReference = createClassReference(classType, startOffset, endOffset)
 
-    fun buildInitializersRemapping(irClass: IrClass): (IrField) -> IrExpression? {
+    private fun extractDefaultValuesFromConstructor(irClass: IrClass?): Map<ParameterDescriptor, IrExpression?> {
+        if (irClass == null) return emptyMap()
         val original = irClass.constructors.singleOrNull { it.isPrimary }
-            ?: throw IllegalStateException("Serializable class must have single primary constructor")
         // default arguments of original constructor
         val defaultsMap: Map<ParameterDescriptor, IrExpression?> =
-            original.valueParameters.associate { it.descriptor to it.defaultValue?.expression }
+            original?.valueParameters?.associate { it.descriptor to it.defaultValue?.expression } ?: emptyMap()
+        return defaultsMap + extractDefaultValuesFromConstructor(irClass.getSuperClassNotAny())
+    }
+
+    fun buildInitializersRemapping(irClass: IrClass): (IrField) -> IrExpression? {
+        val defaultsMap = extractDefaultValuesFromConstructor(irClass)
         return fun(f: IrField): IrExpression? {
             val i = f.initializer?.expression ?: return null
             val irExpression =
@@ -744,10 +749,12 @@ interface IrBuilderExtension {
         return forClass.declarations.filterIsInstance<IrConstructor>().single { it.isSerializationCtor() }.symbol
     }
 
-    fun IrClass.getSuperClassOrAny(): IrClass {
+    fun IrClass.getSuperClassOrAny(): IrClass = getSuperClassNotAny() ?: compilerContext.irBuiltIns.anyClass.owner
+
+    fun IrClass.getSuperClassNotAny(): IrClass? {
         val superClasses = superTypes.mapNotNull { it.classOrNull }.map { it.owner }
 
-        return superClasses.singleOrNull { it.kind == ClassKind.CLASS } ?: compilerContext.irBuiltIns.anyClass.owner
+        return superClasses.singleOrNull { it.kind == ClassKind.CLASS }
     }
 
 }
