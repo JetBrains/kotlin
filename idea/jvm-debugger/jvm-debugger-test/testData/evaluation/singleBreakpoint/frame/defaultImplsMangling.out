@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 LineBreakpoint created at defaultImplsMangling.kt:8
 Run Java
 Connected to the target VM
