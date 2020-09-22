@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.isLibraryClasses
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.Immutable
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.ThreadSafe
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 
 @Immutable
 class FirIdeSessionProvider internal constructor(
@@ -23,4 +24,7 @@ class FirIdeSessionProvider internal constructor(
 ) : FirSessionProvider {
     override fun getSession(moduleInfo: ModuleInfo): FirSession? =
         sessions[moduleInfo]
+
+    internal fun getModuleCache(moduleSourceInfo: ModuleSourceInfo): ModuleFileCache =
+        (sessions.getValue(moduleSourceInfo) as FirIdeSourcesSession).cache
 }

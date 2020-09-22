@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FirElementsRecorder
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -23,6 +24,7 @@ internal class FirModuleResolveStateForCompletion(
     private val originalState: FirModuleResolveStateImpl
 ) : FirModuleResolveState() {
     override val moduleInfo: IdeaModuleInfo get() = originalState.moduleInfo
+
     override val rootModuleSession get() = originalState.rootModuleSession
     override val firTransformerProvider: FirTransformerProvider get() = originalState.firTransformerProvider
     private val fileStructureCache = originalState.fileStructureCache
@@ -68,5 +70,9 @@ internal class FirModuleResolveStateForCompletion(
 
     override fun collectDiagnosticsForFile(ktFile: KtFile): Collection<Diagnostic> {
         error("Diagnostics should not be retrieved in completion")
+    }
+
+    override fun findNonLocalSourceFirDeclaration(ktDeclaration: KtDeclaration): FirDeclaration {
+        error("Should not be used in completion")
     }
 }

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.util.classIdIfNonLocal
@@ -17,18 +17,18 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
-internal fun KtDeclaration.findNonLocalFirDeclaration(
+internal fun KtDeclaration.findSourceNonLocalFirDeclaration(
     firFileBuilder: FirFileBuilder,
-    provider: FirProvider,
+    firSymbolProvider: FirSymbolProvider,
     moduleFileCache: ModuleFileCache
 ): FirDeclaration {
     require(!KtPsiUtil.isLocal(this))
     return when {
-        this is KtClassOrObject -> findFir(provider)
+        this is KtClassOrObject -> findFir(firSymbolProvider)
         this is KtNamedDeclaration && (this is KtProperty || this is KtNamedFunction) -> {
             val containerClass = containingClassOrObject
             val declarations = if (containerClass != null) {
-                val containerClassFir = containerClass.findFir(provider)
+                val containerClassFir = containerClass.findFir(firSymbolProvider)
                 containerClassFir.declarations
             } else {
                 val ktFile = containingKtFile
@@ -39,11 +39,11 @@ internal fun KtDeclaration.findNonLocalFirDeclaration(
             declarations.first { it.psi === this || it.psi == original }
         }
         this is KtConstructor<*> -> {
-            val containerClassFir = containingClassOrObject?.findFir(provider)
+            val containerClassFir = containingClassOrObject?.findFir(firSymbolProvider)
                 ?: error("Container class should be not null for KtConstructor")
             containerClassFir.declarations.first { it.psi === this }
         }
-        this is KtTypeAlias -> findFir(provider)
+        this is KtTypeAlias -> findFir(firSymbolProvider)
         else -> error("Invalid container $this::class")
     }
 }
@@ -53,19 +53,19 @@ val ORIGINAL_DECLARATION_KEY = com.intellij.openapi.util.Key<KtDeclaration>("ORI
 var KtDeclaration.originalDeclaration by UserDataProperty(ORIGINAL_DECLARATION_KEY)
 
 
-private fun KtClassOrObject.findFir(provider: FirProvider): FirRegularClass {
+private fun KtClassOrObject.findFir(firSymbolProvider: FirSymbolProvider): FirRegularClass {
     val classId = classIdIfNonLocal()
         ?: error("Container classId should not be null for non-local declaration")
     return executeWithoutPCE {
-        provider.getFirClassifierByFqName(classId) as? FirRegularClass
+        firSymbolProvider.getClassLikeSymbolByFqName(classId)?.fir as? FirRegularClass
             ?: error("Could not find class $classId")
     }
 }
 
-private fun KtTypeAlias.findFir(provider: FirProvider): FirTypeAlias {
+private fun KtTypeAlias.findFir(firSymbolProvider: FirSymbolProvider): FirTypeAlias {
     val typeAlias = ClassId(containingKtFile.packageFqName, nameAsSafeName)
     return executeWithoutPCE {
-        provider.getFirClassifierByFqName(typeAlias) as? FirTypeAlias
+        firSymbolProvider.getClassLikeSymbolByFqName(typeAlias)?.fir as? FirTypeAlias
             ?: error("Could not find type alias $typeAlias")
     }
 }

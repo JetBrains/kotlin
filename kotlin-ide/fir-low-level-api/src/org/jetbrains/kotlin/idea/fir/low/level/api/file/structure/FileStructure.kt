@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.findNonLocalFirDeclaration
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.hasExplicitTypeOrUnit
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.replaceFirst
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
@@ -111,7 +111,7 @@ internal class FileStructure(
     }
 
     private fun createDeclarationStructure(declaration: KtDeclaration): FileStructureElement {
-        val firDeclaration = declaration.findNonLocalFirDeclaration(firFileBuilder, firIdeProvider, moduleFileCache)
+        val firDeclaration = declaration.findSourceNonLocalFirDeclaration(firFileBuilder, firIdeProvider, moduleFileCache)
         firLazyDeclarationResolver.lazyResolveDeclaration(
             firDeclaration,
             moduleFileCache,
