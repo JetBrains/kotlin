@@ -53,7 +53,7 @@ interface TypeSystemCommonBackendContext : TypeSystemContext {
 
 interface TypeSystemCommonBackendContextForTypeMapping : TypeSystemCommonBackendContext {
     fun TypeConstructorMarker.isTypeParameter(): Boolean
-    fun TypeConstructorMarker.defaultType(): SimpleTypeMarker
+    fun TypeConstructorMarker.defaultType(): KotlinTypeMarker
 
     fun SimpleTypeMarker.isSuspendFunction(): Boolean
     fun SimpleTypeMarker.isKClass(): Boolean
@@ -70,7 +70,7 @@ interface TypeSystemCommonBackendContextForTypeMapping : TypeSystemCommonBackend
         return getType()
     }
 
-    fun TypeParameterMarker.representativeUpperBound(): SimpleTypeMarker
+    fun TypeParameterMarker.representativeUpperBound(): KotlinTypeMarker
 
     fun continuationTypeConstructor(): TypeConstructorMarker
     fun functionNTypeConstructor(n: Int): TypeConstructorMarker

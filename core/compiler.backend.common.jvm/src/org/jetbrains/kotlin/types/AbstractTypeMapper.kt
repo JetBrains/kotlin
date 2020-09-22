@@ -14,15 +14,15 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.org.objectweb.asm.Type
 
-interface TypeMappingContext {
+interface TypeMappingContext<Writer : JvmDescriptorTypeWriter<Type>> {
     val typeContext: TypeSystemCommonBackendContextForTypeMapping
 
     fun getClassInternalName(typeConstructor: TypeConstructorMarker): String
-    fun JvmDescriptorTypeWriter<Type>.writeGenericType(type: SimpleTypeMarker, asmType: Type, mode: TypeMappingMode)
+    fun Writer.writeGenericType(type: SimpleTypeMarker, asmType: Type, mode: TypeMappingMode)
 }
 
 object AbstractTypeMapper {
-    fun mapClass(context: TypeMappingContext, typeConstructor: TypeConstructorMarker): Type {
+    fun <Writer : JvmDescriptorTypeWriter<Type>> mapClass(context: TypeMappingContext<Writer>, typeConstructor: TypeConstructorMarker): Type {
         return with(context.typeContext) {
             when {
                 typeConstructor.isClassTypeConstructor() -> {
@@ -36,13 +36,23 @@ object AbstractTypeMapper {
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
-    fun TypeSystemCommonBackendContextForTypeMapping.mapType(
-        context: TypeMappingContext,
-        type: SimpleTypeMarker,
+    fun <Writer : JvmDescriptorTypeWriter<Type>> mapType(
+        context: TypeMappingContext<Writer>,
+        type: KotlinTypeMarker,
         mode: TypeMappingMode = TypeMappingMode.DEFAULT,
-        sw: JvmDescriptorTypeWriter<Type>? = null
+        sw: Writer? = null
+    ): Type = context.typeContext.mapType(context, type, mode, sw)
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun <Writer : JvmDescriptorTypeWriter<Type>> TypeSystemCommonBackendContextForTypeMapping.mapType(
+        context: TypeMappingContext<Writer>,
+        type: KotlinTypeMarker,
+        mode: TypeMappingMode = TypeMappingMode.DEFAULT,
+        sw: Writer? = null
     ): Type {
+        if (type !is SimpleTypeMarker) {
+            error("Unexpected type: $type (original Kotlin type=$type of ${type.let { it::class }})")
+        }
         if (type.isSuspendFunction()) {
             val argumentsCount = type.argumentsCount()
             val argumentsList = type.asArgumentList()
