@@ -44,8 +44,8 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.List;
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.getDeprecatedAccessFlag;
-import static org.jetbrains.kotlin.codegen.AsmUtil.getVisibilityForBackingField;
+import static org.jetbrains.kotlin.codegen.DescriptorAsmUtil.getDeprecatedAccessFlag;
+import static org.jetbrains.kotlin.codegen.DescriptorAsmUtil.getVisibilityForBackingField;
 import static org.jetbrains.kotlin.codegen.FunctionCodegen.processInterfaceMethod;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConstOrHasJvmFieldAnnotation;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
@@ -408,7 +408,7 @@ public class PropertyCodegen {
         ClassBuilder builder = v;
 
         FieldOwnerContext backingFieldContext = context;
-        if (AsmUtil.isInstancePropertyWithStaticBackingField(propertyDescriptor) ) {
+        if (DescriptorAsmUtil.isInstancePropertyWithStaticBackingField(propertyDescriptor) ) {
             modifiers |= ACC_STATIC;
 
             if (DescriptorsJvmAbiUtil.isPropertyWithBackingFieldInOuterClass(propertyDescriptor)) {
@@ -419,7 +419,7 @@ public class PropertyCodegen {
         }
         modifiers |= getVisibilityForBackingField(propertyDescriptor, isDelegate);
 
-        if (AsmUtil.isPropertyWithBackingFieldCopyInOuterClass(propertyDescriptor)) {
+        if (DescriptorAsmUtil.isPropertyWithBackingFieldCopyInOuterClass(propertyDescriptor)) {
             ImplementationBodyCodegen parentBodyCodegen = (ImplementationBodyCodegen) memberCodegen.getParentCodegen();
             parentBodyCodegen.addCompanionObjectPropertyToCopy(propertyDescriptor, defaultValue);
         }
@@ -513,7 +513,7 @@ public class PropertyCodegen {
     private void generateAccessor(@Nullable KtPropertyAccessor accessor, @NotNull PropertyAccessorDescriptor descriptor) {
         if (context instanceof MultifileClassFacadeContext &&
             (DescriptorVisibilities.isPrivate(descriptor.getVisibility()) ||
-             AsmUtil.getVisibilityAccessFlag(descriptor) == Opcodes.ACC_PRIVATE)) {
+             DescriptorAsmUtil.getVisibilityAccessFlag(descriptor) == Opcodes.ACC_PRIVATE)) {
             return;
         }
 

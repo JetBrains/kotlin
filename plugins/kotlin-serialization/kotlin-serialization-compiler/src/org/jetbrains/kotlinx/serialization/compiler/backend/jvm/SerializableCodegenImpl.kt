@@ -159,7 +159,7 @@ class SerializableCodegenImpl(
                 exprCodegen.gen(expr, propAsmType)
                 val rhs = StackValue.onStack(propAsmType)
                 // INVOKESTATIC kotlin/jvm/internal/Intrinsics.areEqual (Ljava/lang/Object;Ljava/lang/Object;)Z
-                AsmUtil.genEqualsForExpressionsOnStack(KtTokens.EXCLEQ, lhs, rhs).put(Type.BOOLEAN_TYPE, null, this)
+                DescriptorAsmUtil.genEqualsForExpressionsOnStack(KtTokens.EXCLEQ, lhs, rhs).put(Type.BOOLEAN_TYPE, null, this)
                 ifne(writeLabel)
 
                 // output.shouldEncodeElementDefault(descriptor, i)

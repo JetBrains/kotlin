@@ -127,8 +127,8 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
         substituteCount: Int
     ) {
         val typeMapper = state.typeMapper
-        val isStatic = AsmUtil.isStaticMethod(contextKind, functionDescriptor)
-        val baseMethodFlags = AsmUtil.getCommonCallableFlags(functionDescriptor, state) and Opcodes.ACC_VARARGS.inv()
+        val isStatic = DescriptorAsmUtil.isStaticMethod(contextKind, functionDescriptor)
+        val baseMethodFlags = DescriptorAsmUtil.getCommonCallableFlags(functionDescriptor, state) and Opcodes.ACC_VARARGS.inv()
         val remainingParameters = getRemainingParameters(functionDescriptor.original, substituteCount)
         val remainingParametersDeclarations =
             remainingParameters.map { DescriptorToSourceUtils.descriptorToDeclaration(it) as? KtParameter }

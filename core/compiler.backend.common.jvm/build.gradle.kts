@@ -5,7 +5,8 @@ plugins {
 
 dependencies {
     api(project(":core:compiler.common.jvm"))
-    api(intellijCoreDep()) { includeJars("asm-all", rootProject = rootProject) }
+    api(project(":compiler:config.jvm"))
+    api(intellijCoreDep()) { includeJars("asm-all", "guava", rootProject = rootProject) }
 }
 
 sourceSets {

@@ -311,7 +311,7 @@ class CoroutineCodegenForLambda private constructor(
         val untypedAsmMethod = typeMapper.mapAsmMethod(untypedDescriptor)
         val jvmMethodSignature = typeMapper.mapSignatureSkipGeneric(untypedDescriptor)
         val mv = v.newMethod(
-            OtherOrigin(element, funDescriptor), AsmUtil.getVisibilityAccessFlag(untypedDescriptor) or Opcodes.ACC_FINAL,
+            OtherOrigin(element, funDescriptor), DescriptorAsmUtil.getVisibilityAccessFlag(untypedDescriptor) or Opcodes.ACC_FINAL,
             untypedAsmMethod.name, untypedAsmMethod.descriptor, null, ArrayUtil.EMPTY_STRING_ARRAY
         )
         mv.visitCode()
@@ -448,7 +448,7 @@ class CoroutineCodegenForLambda private constructor(
                         } else {
                             load(index, fieldInfoForCoroutineLambdaParameter.fieldType)
                         }
-                        AsmUtil.genAssignInstanceFieldFromParam(
+                        DescriptorAsmUtil.genAssignInstanceFieldFromParam(
                             fieldInfoForCoroutineLambdaParameter,
                             index,
                             this,
@@ -486,7 +486,7 @@ class CoroutineCodegenForLambda private constructor(
 
             val name =
                 if (parameter is ReceiverParameterDescriptor)
-                    AsmUtil.getNameForReceiverParameter(originalSuspendFunctionDescriptor, bindingContext, languageVersionSettings)
+                    DescriptorAsmUtil.getNameForReceiverParameter(originalSuspendFunctionDescriptor, bindingContext, languageVersionSettings)
                 else
                     (getNameForDestructuredParameterOrNull(parameter as ValueParameterDescriptor) ?: parameter.name.asString())
             val label = Label()
@@ -778,7 +778,7 @@ class CoroutineCodegenForNamedFunction private constructor(
                 serializer.functionProto(
                     createFreeFakeLambdaDescriptor(suspendFunctionJvmView, state.typeApproximator)
                 )?.build() ?: return@writeKotlinMetadata
-            AsmUtil.writeAnnotationData(av, serializer, functionProto)
+            DescriptorAsmUtil.writeAnnotationData(av, serializer, functionProto)
         }
     }
 

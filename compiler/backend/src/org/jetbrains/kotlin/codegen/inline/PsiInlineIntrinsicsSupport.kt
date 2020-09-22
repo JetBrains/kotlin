@@ -21,7 +21,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class PsiInlineIntrinsicsSupport(private val state: GenerationState) : ReifiedTypeInliner.IntrinsicsSupport<KotlinType> {
     override fun putClassInstance(v: InstructionAdapter, type: KotlinType) {
-        AsmUtil.putJavaLangClassInstance(v, state.typeMapper.mapType(type), type, state.typeMapper)
+        DescriptorAsmUtil.putJavaLangClassInstance(v, state.typeMapper.mapType(type), type, state.typeMapper)
     }
 
     override fun generateTypeParameterContainer(v: InstructionAdapter, typeParameter: TypeParameterMarker) {

@@ -64,14 +64,16 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.builtins.StandardNames.ENUM_VALUES;
 import static org.jetbrains.kotlin.builtins.StandardNames.ENUM_VALUE_OF;
-import static org.jetbrains.kotlin.codegen.AsmUtil.*;
+import static org.jetbrains.kotlin.codegen.AsmUtil.CAPTURED_THIS_FIELD;
 import static org.jetbrains.kotlin.codegen.CodegenUtilKt.isGenericToArray;
 import static org.jetbrains.kotlin.codegen.CodegenUtilKt.isNonGenericToArray;
+import static org.jetbrains.kotlin.codegen.DescriptorAsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.getDelegatedLocalVariableMetadata;
 import static org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil.*;
-import static org.jetbrains.kotlin.load.java.JvmAbi.*;
+import static org.jetbrains.kotlin.load.java.JvmAbi.HIDDEN_INSTANCE_FIELD;
+import static org.jetbrains.kotlin.load.java.JvmAbi.INSTANCE_FIELD;
 import static org.jetbrains.kotlin.resolve.BindingContext.INDEXED_LVALUE_GET;
 import static org.jetbrains.kotlin.resolve.BindingContext.INDEXED_LVALUE_SET;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.getNotNull;

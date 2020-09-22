@@ -57,8 +57,8 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.calculateInnerClassAccessFlags;
 import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
+import static org.jetbrains.kotlin.codegen.DescriptorAsmUtil.calculateInnerClassAccessFlags;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isNonDefaultInterfaceMember;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.getInlineName;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
@@ -258,7 +258,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
             @NotNull Method syntheticMethod,
             @NotNull Annotations annotations
     ) {
-        int flags = ACC_DEPRECATED | ACC_STATIC | ACC_SYNTHETIC | AsmUtil.getVisibilityAccessFlag(descriptor);
+        int flags = ACC_DEPRECATED | ACC_STATIC | ACC_SYNTHETIC | DescriptorAsmUtil.getVisibilityAccessFlag(descriptor);
         MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(descriptor), flags, syntheticMethod.getName(),
                                        syntheticMethod.getDescriptor(), null, null);
         AnnotationCodegen.forMethod(mv, this, state).genAnnotations(new AnnotatedImpl(annotations), Type.VOID_TYPE, null);

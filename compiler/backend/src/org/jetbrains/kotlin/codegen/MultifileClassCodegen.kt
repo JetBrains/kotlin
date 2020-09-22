@@ -225,7 +225,7 @@ class MultifileClassCodegenImpl(
 
     private fun shouldGenerateInFacade(descriptor: MemberDescriptor): Boolean {
         if (DescriptorVisibilities.isPrivate(descriptor.visibility)) return false
-        if (AsmUtil.getVisibilityAccessFlag(descriptor) == Opcodes.ACC_PRIVATE) return false
+        if (DescriptorAsmUtil.getVisibilityAccessFlag(descriptor) == Opcodes.ACC_PRIVATE) return false
 
         if (!state.classBuilderMode.generateBodies) return true
 

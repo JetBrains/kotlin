@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.codegen.intrinsics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.AsmUtil.genInvokeAppendMethod
 import org.jetbrains.kotlin.codegen.AsmUtil.genStringBuilderConstructor
+import org.jetbrains.kotlin.codegen.DescriptorAsmUtil.genInvokeAppendMethod
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
@@ -92,7 +92,7 @@ class Concat : IntrinsicMethod() {
                     // in case of callable reference passed to a generic function, e.g.:
                     //      charArrayOf('O', 'K').fold("", String::plus)
                     // TODO Make String::plus generic, and invoke proper StringBuilder#append.
-                    AsmUtil.genInvokeAppendMethod(v, AsmTypes.OBJECT_TYPE, null)
+                    genInvokeAppendMethod(v, AsmTypes.OBJECT_TYPE, null)
                     v.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)
                 }
             }

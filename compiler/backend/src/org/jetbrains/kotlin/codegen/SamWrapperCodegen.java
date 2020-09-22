@@ -46,7 +46,9 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 import java.util.Collections;
 import java.util.Map;
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.*;
+import static org.jetbrains.kotlin.codegen.AsmUtil.NO_FLAG_PACKAGE_PRIVATE;
+import static org.jetbrains.kotlin.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClasses;
+import static org.jetbrains.kotlin.codegen.DescriptorAsmUtil.genAreEqualCall;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 

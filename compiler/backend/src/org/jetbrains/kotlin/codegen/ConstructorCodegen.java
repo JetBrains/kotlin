@@ -298,7 +298,7 @@ public class ConstructorCodegen {
 
             int k = 1;
             for (FieldInfo info : argsFromClosure) {
-                k = AsmUtil.genAssignInstanceFieldFromParam(info, k, iv);
+                k = DescriptorAsmUtil.genAssignInstanceFieldFromParam(info, k, iv);
             }
         }
     }

@@ -97,7 +97,7 @@ class MultifileClassPartCodegen(
         val extraFlags = if (shouldGeneratePartHierarchy) JvmAnnotationNames.METADATA_MULTIFILE_PARTS_INHERIT_FLAG else 0
 
         writeKotlinMetadata(v, state, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART, extraFlags) { av ->
-            AsmUtil.writeAnnotationData(av, serializer, packageProto)
+            DescriptorAsmUtil.writeAnnotationData(av, serializer, packageProto)
             av.visit(JvmAnnotationNames.METADATA_MULTIFILE_CLASS_NAME_FIELD_NAME, facadeClassType.internalName)
 
             val kotlinPackageFqName = element.packageFqName

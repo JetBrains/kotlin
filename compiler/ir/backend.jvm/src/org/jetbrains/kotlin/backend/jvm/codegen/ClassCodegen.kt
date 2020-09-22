@@ -252,7 +252,7 @@ class ClassCodegen private constructor(
         writeKotlinMetadata(visitor, state, kind, extraFlags) {
             if (metadata != null) {
                 metadataSerializer.serialize(metadata)?.let { (proto, stringTable) ->
-                    AsmUtil.writeAnnotationData(it, proto, stringTable)
+                    DescriptorAsmUtil.writeAnnotationData(it, proto, stringTable)
                 }
             }
 
@@ -514,7 +514,7 @@ private val Modality.flags: Int
     }
 
 private val DescriptorVisibility.flags: Int
-    get() = AsmUtil.getVisibilityAccessFlag(this) ?: throw AssertionError("Unsupported visibility $this")
+    get() = DescriptorAsmUtil.getVisibilityAccessFlag(this) ?: throw AssertionError("Unsupported visibility $this")
 
 internal val IrDeclaration.OtherOrigin: JvmDeclarationOrigin
     get() {

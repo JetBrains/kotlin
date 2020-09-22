@@ -50,8 +50,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.*;
+import static org.jetbrains.kotlin.codegen.AsmUtil.CAPTURED_THIS_FIELD;
 import static org.jetbrains.kotlin.codegen.CallableReferenceUtilKt.*;
+import static org.jetbrains.kotlin.codegen.DescriptorAsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConst;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLOSURE;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION;
@@ -139,7 +140,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
         this.asmType = typeMapper.mapClass(classDescriptor);
 
-        visibilityFlag = AsmUtil.getVisibilityAccessFlagForClass(classDescriptor);
+        visibilityFlag = DescriptorAsmUtil.getVisibilityAccessFlagForClass(classDescriptor);
     }
 
     @Override

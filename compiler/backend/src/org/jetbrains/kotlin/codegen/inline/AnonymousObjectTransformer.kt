@@ -235,7 +235,7 @@ class AnonymousObjectTransformer(
                 }
                 return@action
             }
-            AsmUtil.writeAnnotationData(av, newProto, newStringTable)
+            DescriptorAsmUtil.writeAnnotationData(av, newProto, newStringTable)
         }
     }
 
@@ -376,7 +376,7 @@ class AnonymousObjectTransformer(
         val capturedFieldInitializer = InstructionAdapter(constructorVisitor)
         fieldInfoWithSkipped.forEachIndexed { paramIndex, fieldInfo ->
             if (!newFieldsWithSkipped[paramIndex].skip) {
-                AsmUtil.genAssignInstanceFieldFromParam(fieldInfo, capturedIndexes[paramIndex], capturedFieldInitializer)
+                DescriptorAsmUtil.genAssignInstanceFieldFromParam(fieldInfo, capturedIndexes[paramIndex], capturedFieldInitializer)
             }
         }
 
@@ -419,7 +419,7 @@ class AnonymousObjectTransformer(
             }
         })
         constructorVisitor.visitEnd()
-        AsmUtil.genClosureFields(
+        DescriptorAsmUtil.genClosureFields(
             toNameTypePair(filterSkipped(newFieldsWithSkipped)), classBuilder
         )
     }
