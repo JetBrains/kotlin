@@ -2,26 +2,9 @@ plugins {
     id("org.jetbrains.kotlin.multiplatform").version("<pluginMarkerVersion>")
 }
 
-/**
- * Tests:
- *
- *  - libraries - static and shared libraries: building, export, UTD.
- *
- *  - frameworks - building, export, UTD.
- *          + bitcode embedding?
- *          + statics
- *  - executables - building, running, UTD.
- *          + flags, basename and entry points.
- *  - DSL - all ways to create binaries, getters, Groovy + Kotlin.
- *
- *
- */
-
-
 repositories {
     mavenLocal()
     jcenter()
-    maven { setUrl("https://dl.bintray.com/kotlin/kotlinx.html/") }
 }
 
 kotlin {

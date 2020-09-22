@@ -14,5 +14,6 @@ kotlin {
         }
     }
 
-    <SingleNativeTarget>("host")
+    iosArm64("ios")
+    iosX64("iosSim")
 }

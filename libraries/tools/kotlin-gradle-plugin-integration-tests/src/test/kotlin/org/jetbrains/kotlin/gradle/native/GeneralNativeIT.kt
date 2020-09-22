@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.gradle.internals.NO_NATIVE_STDLIB_PROPERTY_WARNING
 import org.jetbrains.kotlin.gradle.internals.NO_NATIVE_STDLIB_WARNING
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
-import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.isWindows
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
@@ -127,21 +126,17 @@ class GeneralNativeIT : BaseGradleIT() {
         val sharedSuffix = CompilerOutputKind.DYNAMIC.suffix(HostManager.host)
         val sharedPaths = listOf(
             "build/bin/host/debugShared/$sharedPrefix$baseName$sharedSuffix",
-//            "build/bin/host/releaseShared/$sharedPrefix$baseName$sharedSuffix"
         )
 
         val staticPrefix = CompilerOutputKind.STATIC.prefix(HostManager.host)
         val staticSuffix = CompilerOutputKind.STATIC.suffix(HostManager.host)
         val staticPaths = listOf(
             "build/bin/host/debugStatic/$staticPrefix$baseName$staticSuffix",
-//            "build/bin/host/releaseStatic/$staticPrefix$baseName$staticSuffix"
         )
 
         val headerPaths = listOf(
             "build/bin/host/debugShared/$sharedPrefix${baseName}_api.h",
-//            "build/bin/host/releaseShared/$sharedPrefix${baseName}_api.h",
             "build/bin/host/debugStatic/$staticPrefix${baseName}_api.h",
-//            "build/bin/host/releaseStatic/$staticPrefix${baseName}_api.h"
         )
 
         val klibPrefix = CompilerOutputKind.LIBRARY.prefix(HostManager.host)
@@ -150,9 +145,7 @@ class GeneralNativeIT : BaseGradleIT() {
 
         val linkTasks = listOf(
             ":linkDebugSharedHost",
-//            ":linkReleaseSharedHost",
             ":linkDebugStaticHost",
-//            ":linkReleaseStaticHost"
         )
 
         val klibTask = ":compileKotlinHost"
@@ -186,34 +179,81 @@ class GeneralNativeIT : BaseGradleIT() {
             assertTasksUpToDate(klibTask)
             assertTasksExecuted(linkTasks[0])
         }
+
+        // Check that plugin doesn't allow exporting dependencies not added in the API configuration.
+        gradleBuildScript().modify {
+            it.replace("api(project(\":exported\"))", "")
+        }
+        build(":assemble") {
+            assertFailed()
+            val failureMsg = "Following dependencies exported in the debugShared binary " +
+                    "are not specified as API-dependencies of a corresponding source set"
+            assertTrue(output.contains(failureMsg))
+        }
     }
 
     @Test
     fun testCanProduceNativeFrameworks() = with(transformProjectWithPluginsDsl("frameworks", directoryPrefix = "native-binaries")) {
         Assume.assumeTrue(HostManager.hostIsMac)
-        configureSingleNativeTarget()
 
         val baseName = "main"
         val frameworkPrefix = CompilerOutputKind.FRAMEWORK.prefix(HostManager.host)
         val frameworkSuffix = CompilerOutputKind.FRAMEWORK.suffix(HostManager.host)
         val frameworkPaths = listOf(
-            "build/bin/host/mainDebugFramework/$frameworkPrefix$baseName$frameworkSuffix.dSYM",
-            "build/bin/host/mainDebugFramework/$frameworkPrefix$baseName$frameworkSuffix",
+            "build/bin/ios/mainDebugFramework/$frameworkPrefix$baseName$frameworkSuffix.dSYM",
+            "build/bin/ios/mainDebugFramework/$frameworkPrefix$baseName$frameworkSuffix",
+            "build/bin/ios/mainReleaseFramework/$frameworkPrefix$baseName$frameworkSuffix",
+            "build/bin/iosSim/mainDebugFramework/$frameworkPrefix$baseName$frameworkSuffix.dSYM",
+            "build/bin/iosSim/mainDebugFramework/$frameworkPrefix$baseName$frameworkSuffix",
+            "build/bin/iosSim/mainReleaseFramework/$frameworkPrefix$baseName$frameworkSuffix",
         )
 
         val headerPaths = listOf(
-            "build/bin/host/mainDebugFramework/$frameworkPrefix$baseName$frameworkSuffix/headers/$baseName.h",
+            "build/bin/ios/mainDebugFramework/$frameworkPrefix$baseName$frameworkSuffix/headers/$baseName.h",
+            "build/bin/ios/mainReleaseFramework/$frameworkPrefix$baseName$frameworkSuffix/headers/$baseName.h",
+            "build/bin/iosSim/mainDebugFramework/$frameworkPrefix$baseName$frameworkSuffix/headers/$baseName.h",
+            "build/bin/iosSim/mainReleaseFramework/$frameworkPrefix$baseName$frameworkSuffix/headers/$baseName.h",
         )
 
         val frameworkTasks = listOf(
-            ":linkMainDebugFrameworkHost",
+            ":linkMainDebugFrameworkIos",
+            ":linkMainReleaseFrameworkIos",
+            ":linkCustomDebugFrameworkIos",
+            ":linkMainDebugFrameworkIosSim",
+            ":linkMainReleaseFrameworkIosSim",
         )
 
-        // Building
+        // Check building
+        // Check dependency exporting and bitcode embedding in frameworks.
         build("assemble") {
             assertSuccessful()
             headerPaths.forEach { assertFileExists(it) }
             frameworkPaths.forEach { assertFileExists(it) }
+
+            fileInWorkingDir(headerPaths[0]).readText().contains("+ (int32_t)exported")
+
+            // Check that by default release frameworks have bitcode embedded.
+            checkNativeCommandLineFor(":linkMainReleaseFrameworkIos") {
+                assertTrue(it.contains("-Xembed-bitcode"))
+                assertTrue(it.contains("-opt"))
+            }
+            // Check that by default debug frameworks have bitcode marker embedded.
+            checkNativeCommandLineFor(":linkMainDebugFrameworkIos") {
+                assertTrue(it.contains("-Xembed-bitcode-marker"))
+                assertTrue(it.contains("-g"))
+            }
+            checkNativeCommandLineFor(":linkCustomDebugFrameworkIos") {
+                assertTrue(it.contains("-linker-option -L."))
+                assertTrue(it.contains("-Xtime"))
+                assertTrue(it.contains("-Xstatic-framework"))
+                assertFalse(it.contains("-Xembed-bitcode-marker"))
+                assertFalse(it.contains("-Xembed-bitcode"))
+            }
+            // Check that bitcode is disabled for iOS simulator.
+            checkNativeCommandLineFor(":linkMainReleaseFrameworkIosSim", ":linkMainDebugFrameworkIosSim") {
+                assertFalse(it.contains("-Xembed-bitcode"))
+                assertFalse(it.contains("-Xembed-bitcode-marker"))
+            }
         }
 
         build("assemble") {
@@ -251,25 +291,6 @@ class GeneralNativeIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    @Ignore
-    fun testNativeBinaryGroovyDSL() {
-        // Building K/N binaries is very time-consuming. So we check building only for Kotlin DSL.
-        // For Groovy DSl we just check that a project can be configured.
-        val project = transformProjectWithPluginsDsl(
-            "groovy-dsl", directoryPrefix = "native-binaries"
-        )
-        project.build("tasks") {
-            assertSuccessful()
-
-            // Check that getters work fine.
-            val hostSuffix = nativeHostTargetName.capitalize()
-            assertTrue(output.contains("Check link task: linkReleaseShared$hostSuffix"))
-            assertTrue(output.contains("Check run task: runFooReleaseExecutable$hostSuffix"))
-        }
-
-    }
-
     private fun CompiledProject.checkNativeCommandLineFor(vararg taskPaths: String, check: (String) -> Unit) =
         taskPaths.forEach { taskPath ->
             val commandLine = output.lineSequence().dropWhile {
@@ -280,27 +301,10 @@ class GeneralNativeIT : BaseGradleIT() {
             check(commandLine)
         }
 
-    /*
-        TODO: Why it's slow:
-            - A lot of targets
-            - Test exporting, so we also have a lot of targets in the exported project.
-
-        TODO:
-            - Move to separate tests:
-                exporting (probably move to the libraries test)
-                checking run tasks: exist and work (probably we need a separate test for executables).
-                DSL, getters and setters (duplicate this test for Groovy).
-                options
-            - drop test check
-            - Get rid of redundant targets
-
-     */
     @Test
-    fun testNativeBinaryKotlinDSL() = with(
-        transformProjectWithPluginsDsl("kotlin-dsl", directoryPrefix = "native-binaries-old")
-    ) {
+    fun testNativeExecutables() = with(transformProjectWithPluginsDsl("executables", directoryPrefix = "native-binaries")) {
+        configureSingleNativeTarget()
 
-        val hostSuffix = nativeHostTargetName.capitalize()
         val binaries = mutableListOf(
             "debugExecutable" to "native-binary",
             "releaseExecutable" to "native-binary",
@@ -308,20 +312,15 @@ class GeneralNativeIT : BaseGradleIT() {
             "fooReleaseExecutable" to "foo",
             "barReleaseExecutable" to "bar",
             "bazReleaseExecutable" to "my-baz",
-            "test2ReleaseExecutable" to "test2",
-            "releaseStatic" to "native_binary",
-            "releaseShared" to "native_binary"
         )
-
-        val linkTasks = binaries.map { (name, _) -> "link${name.capitalize()}$hostSuffix" }
+        val linkTasks = binaries.map { (name, _) -> "link${name.capitalize()}Host" }
         val outputFiles = binaries.map { (name, fileBaseName) ->
             val outputKind = NativeOutputKind.values().single { name.endsWith(it.taskNameClassifier, true) }.compilerOutputKind
             val prefix = outputKind.prefix(HostManager.host)
             val suffix = outputKind.suffix(HostManager.host)
             val fileName = "$prefix$fileBaseName$suffix"
-            name to "build/bin/${nativeHostTargetName}/$name/$fileName"
+            name to "build/bin/host/$name/$fileName"
         }.toMap()
-
         val runTasks = listOf(
             "runDebugExecutable",
             "runReleaseExecutable",
@@ -329,35 +328,16 @@ class GeneralNativeIT : BaseGradleIT() {
             "runFooReleaseExecutable",
             "runBarReleaseExecutable",
             "runBazReleaseExecutable",
-            "runTest2ReleaseExecutable"
-        ).map { "$it$hostSuffix" }.toMutableList()
+        ).map { it + "Host" }.toMutableList()
 
-        val binariesTasks = arrayOf("${nativeHostTargetName}MainBinaries", "${nativeHostTargetName}TestBinaries")
-
-        val compileTask = "compileKotlin$hostSuffix"
-        val compileTestTask = "compileTestKotlin$hostSuffix"
-
-        // Check building.
-        build(*binariesTasks) {
+        // Check building
+        build("hostMainBinaries") {
             assertSuccessful()
             assertTasksExecuted(linkTasks.map { ":$it" })
-            assertTasksExecuted(":$compileTask", ":$compileTestTask")
+            assertTasksExecuted(":compileKotlinHost")
             outputFiles.forEach { (_, file) ->
                 assertFileExists(file)
             }
-            // Check that getters work fine.
-            assertTrue(output.contains("Check link task: linkReleaseShared$hostSuffix"))
-            assertTrue(output.contains("Check run task: runFooReleaseExecutable$hostSuffix"))
-
-            // Check that dependency export works for static and shared libs.
-            val staticSuffix = CompilerOutputKind.STATIC.suffix(HostManager.host)
-            val sharedSuffix = CompilerOutputKind.DYNAMIC.suffix(HostManager.host)
-            val staticPrefix = CompilerOutputKind.STATIC.prefix(HostManager.host)
-            val sharedPrefix = CompilerOutputKind.DYNAMIC.prefix(HostManager.host)
-            val staticHeader = outputFiles.getValue("releaseStatic").removeSuffix(staticSuffix) + "_api.h"
-            val sharedHeader = outputFiles.getValue("releaseShared").removeSuffix(sharedSuffix) + "_api.h"
-            assertTrue(fileInWorkingDir(staticHeader).readText().contains("${staticPrefix}native_binary_KInt (*exported)();"))
-            assertTrue(fileInWorkingDir(sharedHeader).readText().contains("${sharedPrefix}native_binary_KInt (*exported)();"))
         }
 
         // Check run tasks are generated.
@@ -368,120 +348,62 @@ class GeneralNativeIT : BaseGradleIT() {
             }
         }
 
-        // Clean the build to check that run tasks build corresponding binaries.
-        build("clean") {
-            assertSuccessful()
-        }
-
-        // Check that kotlinOptions work fine for a compilation.
-        build(compileTask) {
-            assertSuccessful()
-            checkNativeCommandLineFor(":$compileTask") {
-                assertTrue(it.contains("-verbose"))
-            }
-        }
-
         // Check that run tasks work fine and an entry point can be specified.
-        build("runDebugExecutable$hostSuffix") {
+        build("runDebugExecutableHost") {
             assertSuccessful()
             assertTrue(output.contains("<root>.main"))
         }
 
-        build("runBazReleaseExecutable$hostSuffix") {
+        build("runBazReleaseExecutableHost") {
             assertSuccessful()
             assertTrue(output.contains("foo.main"))
         }
+    }
 
-        build("runTest2ReleaseExecutable$hostSuffix") {
+    private fun testNativeBinaryDsl(project: String) = with(
+        transformProjectWithPluginsDsl(project, directoryPrefix = "native-binaries")
+    ) {
+        val hostSuffix = nativeHostTargetName.capitalize()
+
+        build("tasks") {
             assertSuccessful()
-            assertTasksExecuted(":$compileTestTask")
-            checkNativeCommandLineFor(":linkTest2ReleaseExecutable$hostSuffix") {
-                assertTrue(it.contains("-tr"))
-                assertTrue(it.contains("-Xtime"))
-                // Check that kotlinOptions of the compilation don't affect the binary.
+
+            // Check that getters work fine.
+            assertTrue(output.contains("Check link task: linkReleaseShared$hostSuffix"))
+            assertTrue(output.contains("Check run task: runFooReleaseExecutable$hostSuffix"))
+        }
+    }
+
+    @Test
+    fun testNativeBinaryKotlinDSL() = testNativeBinaryDsl("kotlin-dsl")
+
+    @Test
+    fun testNativeBinaryGroovyDSL() = testNativeBinaryDsl("groovy-dsl")
+
+    @Test
+    fun testKotlinOptions() = with(
+        transformProjectWithPluginsDsl("native-kotlin-options")
+    ) {
+        configureSingleNativeTarget()
+
+        build(":compileKotlinHost") {
+            assertSuccessful()
+            checkNativeCommandLineFor(":compileKotlinHost") {
                 assertFalse(it.contains("-verbose"))
-                // Check that free args are still propagated to the binary (unlike other kotlinOptions, see KT-33717).
-                // TODO: Reverse this check when the args are fully separated.
-                assertTrue(it.contains("-nowarn"))
             }
-            assertTrue(output.contains("tests.foo"))
         }
 
-        // Check that we still have a default test task and it can be executed properly.
-        build("${nativeHostTargetName}Test") {
+        build("clean") {
             assertSuccessful()
-            assertTrue(output.contains("tests.foo"))
         }
 
-        if (HostManager.hostIsMac) {
-
-            // Check dependency exporting and bitcode embedding in frameworks.
-            // For release builds.
-            build("linkReleaseFrameworkIos") {
-                assertSuccessful()
-                assertFileExists("build/bin/ios/releaseFramework/native_binary.framework")
-                fileInWorkingDir("build/bin/ios/releaseFramework/native_binary.framework/Headers/native_binary.h")
-                    .readText().contains("+ (int32_t)exported")
-                // Check that by default release frameworks have bitcode embedded.
-                checkNativeCommandLineFor(":linkReleaseFrameworkIos") {
-                    assertTrue(it.contains("-Xembed-bitcode"))
-                    assertTrue(it.contains("-opt"))
-                }
-            }
-
-            // For debug builds.
-            build("linkDebugFrameworkIos") {
-                assertSuccessful()
-                assertFileExists("build/bin/ios/debugFramework/native_binary.framework")
-                assertTrue(
-                    fileInWorkingDir("build/bin/ios/debugFramework/native_binary.framework/Headers/native_binary.h")
-                        .readText()
-                        .contains("+ (int32_t)exported")
-                )
-                // Check that by default debug frameworks have bitcode marker embedded.
-                checkNativeCommandLineFor(":linkDebugFrameworkIos") {
-                    assertTrue(it.contains("-Xembed-bitcode-marker"))
-                    assertTrue(it.contains("-g"))
-                }
-            }
-
-            // Check manual disabling bitcode embedding, custom command line args and building a static framework.
-            build("linkCustomReleaseFrameworkIos") {
-                assertSuccessful()
-                checkNativeCommandLineFor(":linkCustomReleaseFrameworkIos") {
-                    assertTrue(it.contains("-linker-option -L."))
-                    assertTrue(it.contains("-Xtime"))
-                    assertTrue(it.contains("-Xstatic-framework"))
-                    assertFalse(it.contains("-Xembed-bitcode-marker"))
-                    assertFalse(it.contains("-Xembed-bitcode"))
-                }
-            }
-
-            // Check that bitcode is disabled for iOS simulator.
-            build("linkReleaseFrameworkIosSim", "linkDebugFrameworkIosSim") {
-                assertSuccessful()
-                assertFileExists("build/bin/iosSim/releaseFramework/native_binary.framework")
-                assertFileExists("build/bin/iosSim/debugFramework/native_binary.framework")
-                checkNativeCommandLineFor(":linkReleaseFrameworkIosSim", ":linkDebugFrameworkIosSim") {
-                    assertFalse(it.contains("-Xembed-bitcode"))
-                    assertFalse(it.contains("-Xembed-bitcode-marker"))
-                }
-            }
-
-            // Check that plugin doesn't allow exporting dependencies not added in the API configuration.
-            val buildFile = listOf("build.gradle", "build.gradle.kts").map { projectDir.resolve(it) }.single { it.exists() }
-            buildFile.modify {
-                it.replace("api(project(\":exported\"))", "")
-            }
-            projectDir.resolve("src/commonMain/kotlin/PackageMain.kt").modify {
-                // Remove usages of the ":exported" dependency to be able to compile the sources.
-                it.checkedReplace("import com.example.exported", "").checkedReplace("val exp = exported()", "val exp = 42")
-            }
-            build("linkReleaseFrameworkIos") {
-                assertFailed()
-                val failureMsg = "Following dependencies exported in the releaseFramework binary " +
-                        "are not specified as API-dependencies of a corresponding source set"
-                assertTrue(output.contains(failureMsg))
+        gradleBuildScript().appendText(
+            """kotlin.targets["host"].compilations["main"].kotlinOptions.verbose = true"""
+        )
+        build(":compileKotlinHost") {
+            assertSuccessful()
+            checkNativeCommandLineFor(":compileKotlinHost") {
+                assertTrue(it.contains("-verbose"))
             }
         }
     }
