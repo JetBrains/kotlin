@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun foo1(x: Int): Boolean {
     when(x) {
         0 -> return true

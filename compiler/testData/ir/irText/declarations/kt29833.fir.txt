@@ -8,7 +8,7 @@ FILE fqName:interop fileName:/Definitions.kt
     PROPERTY name:KT_CONSTANT visibility:public modality:FINAL [const,val]
       FIELD PROPERTY_BACKING_FIELD name:KT_CONSTANT type:kotlin.String? visibility:public [final]
         EXPRESSION_BODY
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:CONSTANT type:kotlin.String? visibility:public [final,static]' type=kotlin.String? origin=GET_PROPERTY
+          CONST String type=kotlin.String value="constant"
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-KT_CONSTANT> visibility:public modality:FINAL <> ($this:interop.Definitions) returnType:kotlin.String?
         correspondingProperty: PROPERTY name:KT_CONSTANT visibility:public modality:FINAL [const,val]
         $this: VALUE_PARAMETER name:<this> type:interop.Definitions

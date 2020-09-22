@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.types.classifierOrNull
-import org.jetbrains.kotlin.ir.types.isAny
-import org.jetbrains.kotlin.ir.types.isPrimitiveType
-import org.jetbrains.kotlin.ir.types.isString
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.FqName
@@ -173,17 +170,8 @@ class IrCompileTimeChecker(
         val owner = expression.symbol.owner
         val parent = owner.parent as IrSymbolOwner
         val isJavaPrimitiveStatic = owner.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && owner.isStatic &&
-                owner.parentAsClass.fqNameWhenAvailable.isJavaPrimitive()
+                (owner.type.isPrimitiveType() || owner.type.isStringClassType())
         return visitedStack.contains(parent) || isJavaPrimitiveStatic
-    }
-
-    // TODO find similar method in utils
-    private fun FqName?.isJavaPrimitive(): Boolean {
-        this ?: return false
-        return this.toString() in setOf(
-            "java.lang.Byte", "java.lang.Short", "java.lang.Integer", "java.lang.Long",
-            "java.lang.Float", "java.lang.Double", "java.lang.Boolean", "java.lang.Character"
-        )
     }
 
     override fun visitSetField(expression: IrSetField, data: Nothing?): Boolean {
