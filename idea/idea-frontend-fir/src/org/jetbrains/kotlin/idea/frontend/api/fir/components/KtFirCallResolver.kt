@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.idea.fir.getOrBuildFir
-import org.jetbrains.kotlin.idea.fir.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.fir.isImplicitFunctionCall
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.frontend.api.*
 import org.jetbrains.kotlin.idea.frontend.api.components.KtCallResolver
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession

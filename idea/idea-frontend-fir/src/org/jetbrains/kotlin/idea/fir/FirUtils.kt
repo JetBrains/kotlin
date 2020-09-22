@@ -24,29 +24,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import kotlin.reflect.KClass
 
-fun KtElement.getOrBuildFir(
-    resolveState: FirModuleResolveState,
-) = LowLevelFirApiFacade.getOrBuildFirFor(this, resolveState)
 
-
-inline fun <reified E : FirElement> KtElement.getOrBuildFirSafe(
-    resolveState: FirModuleResolveState,
-) = LowLevelFirApiFacade.getOrBuildFirFor(this, resolveState) as? E
-
-inline fun <reified E : FirElement> KtElement.getOrBuildFirOfType(
-    resolveState: FirModuleResolveState,
-): E {
-    val fir = LowLevelFirApiFacade.getOrBuildFirFor(this, resolveState)
-    if (fir is E) return fir
-    throw InvalidFirElementTypeException(this, E::class, fir::class)
-}
-
-
-class InvalidFirElementTypeException(
-    ktElement: KtElement,
-    expectedFirClass: KClass<out FirElement>,
-    actualFirClass: KClass<out FirElement>
-) : IllegalStateException("For $ktElement with text `${ktElement.text}` the $expectedFirClass expected, but $actualFirClass found")
 
 
 fun FirFunctionCall.isImplicitFunctionCall(): Boolean {

@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.idea.references
 
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
-import org.jetbrains.kotlin.idea.fir.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.fir.getResolvedKtSymbolOfNameReference
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
