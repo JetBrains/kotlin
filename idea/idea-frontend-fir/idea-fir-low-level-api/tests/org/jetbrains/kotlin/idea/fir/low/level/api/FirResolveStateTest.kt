@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import org.jetbrains.kotlin.idea.AbstractResolveElementCacheTest
-import org.jetbrains.kotlin.idea.fir.low.level.api.firResolveState
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.firResolveState
 
 class FirResolveStateTest : AbstractResolveElementCacheTest() {
     override fun isFirPlugin(): Boolean = true

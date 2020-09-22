@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.fir
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.rt.execution.junit.FileComparisonFailure
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacade
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction

@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir
 
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
-import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
-import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacade
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.ReadActionConfinementValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken

@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.utils
 
 import com.intellij.psi.util.parentsOfType
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
-import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacade
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalDeclaration
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.*

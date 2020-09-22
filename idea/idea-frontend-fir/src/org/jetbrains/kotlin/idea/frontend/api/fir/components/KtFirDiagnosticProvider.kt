@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacade
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.components.KtDiagnosticProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
