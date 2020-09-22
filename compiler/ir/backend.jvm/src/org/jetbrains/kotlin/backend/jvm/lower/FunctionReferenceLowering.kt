@@ -41,14 +41,20 @@ internal val functionReferencePhase = makeIrFilePhase(
 )
 
 internal class FunctionReferenceLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
-    // This pass ignores suspend function references and function references used in inline arguments to inline functions.
+    // This pass ignores function references used as inline arguments. `InlineCallableReferenceToLambdaPhase`
+    // converts them into lambdas instead, so that after inlining there is only a direct call left, with no
+    // function reference classes needed.
     private val ignoredFunctionReferences = mutableSetOf<IrCallableReference<*>>()
 
     private val IrFunctionReference.isIgnored: Boolean
-        get() = (!type.isFunctionOrKFunction() || ignoredFunctionReferences.contains(this)) && !isSuspendFunctionReference()
+        get() = (!type.isFunctionOrKFunction() && !isSuspendFunctionReference()) || ignoredFunctionReferences.contains(this)
 
-    // TODO: Currently, origin of callable references is null. Do we need to create one?
-    private fun IrFunctionReference.isSuspendFunctionReference(): Boolean = isSuspend && origin == null
+    // `suspend` function references are the same as non-`suspend` ones, just with a `suspend` invoke;
+    // however, suspending lambdas require different generation implemented in AddContinuationLowering
+    // because they are also their own continuation classes.
+    // TODO: Currently, origin of callable references explicitly written in source code is null. Do we need to create one?
+    private fun IrFunctionReference.isSuspendFunctionReference(): Boolean = isSuspend &&
+            (origin == null || origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE)
 
     override fun lower(irFile: IrFile) {
         ignoredFunctionReferences.addAll(IrInlineReferenceLocator.scan(context, irFile))

@@ -2227,6 +2227,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/bound.kt");
                 }
 
+                @TestMetadata("boundExtension.kt")
+                public void testBoundExtension() throws Exception {
+                    runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/boundExtension.kt");
+                }
+
                 @TestMetadata("crossInline.kt")
                 public void testCrossInline() throws Exception {
                     runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/crossInline.kt");
