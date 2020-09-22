@@ -28,24 +28,49 @@ class WizardStatsService : CounterUsagesCollector() {
         private const val eventProjectCreated = "project_created"
         private const val eventProjectOpenedByHyperlink = "wizard_opened_by_hyperlink"
 
-        private const val contextGroup = "group"
-        private const val contextProjectTemplate = "project_template"
-        private const val contextBuildSystem = "build_system"
-        private const val contextModulesCreated = "modules_created"
-        private const val contextModulesRemoved = "modules_removed"
-        private const val contextModuleTemplateChanged = "module_template_changed"
+        private val allowedTemplates = listOf( // Modules
+            "JVM_|_IDEA",
+            "JS_|_IDEA",
+            // Java and Gradle groups
+            "Kotlin/JVM",
+            // Gradle group
+            "Kotlin/JS",
+            "Kotlin/JS_for_browser",
+            "Kotlin/JS_for_Node.js",
+            "Kotlin/Multiplatform_as_framework",
+            "Kotlin/Multiplatform",
+            // Kotlin group
+            "backendApplication",
+            "consoleApplication",
+            "multiplatformMobileApplication",
+            "multiplatformMobileLibrary",
+            "multiplatformApplication",
+            "multiplatformLibrary",
+            "nativeApplication",
+            "frontendApplication",
+            "fullStackWebApplication",
+            "nodejsApplication",
+            "none"
+        )
+        private val allowedGroups = listOf("Java", "Kotlin", "Gradle")
+        private val allowedBuildSystems = listOf(
+            "gradleKotlin",
+            "gradleGroovy",
+            "jps",
+            "maven"
+        )
 
-        val groupField = EventFields.StringValidatedByCustomRule(contextGroup, "kotlin_wizard_groups")
-        val projectTemplateField = EventFields.StringValidatedByCustomRule(contextProjectTemplate, "kotlin_wizard_templates")
-        val buildSystemField = EventFields.StringValidatedByCustomRule(contextBuildSystem, "kotlin_wizard_build_systems")
+        val groupField = EventFields.String("group", allowedGroups)
+        val projectTemplateField = EventFields.String("project_template", allowedTemplates)
+        val buildSystemField = EventFields.String("build_system", allowedBuildSystems)
 
-        val modulesCreatedField = EventFields.Int(contextModulesCreated)
-        val modulesRemovedField = EventFields.Int(contextModulesRemoved)
-        val moduleTemplateChangedField = EventFields.Int(contextModuleTemplateChanged)
+        val modulesCreatedField = EventFields.Int("modules_created")
+        val modulesRemovedField = EventFields.Int("modules_removed")
+        val moduleTemplateChangedField = EventFields.Int("module_template_changed")
 
         private val pluginInfo = EventFields.PluginInfo.with(getPluginInfoById(KotlinPluginUtil.KOTLIN_PLUGIN_ID))
 
-        val projectCreatedEvent = GROUP.registerVarargEvent(
+        private val projectCreatedEvent = GROUP.registerVarargEvent(
             eventProjectCreated,
             groupField,
             projectTemplateField,
@@ -56,36 +81,39 @@ class WizardStatsService : CounterUsagesCollector() {
             EventFields.PluginInfo
         )
 
-        val projectOpenedByHyperlink = GROUP.registerVarargEvent(
+        private val projectOpenedByHyperlink = GROUP.registerVarargEvent(
             eventProjectOpenedByHyperlink,
             projectTemplateField,
             EventFields.PluginInfo
         )
 
         fun logDataOnProjectGenerated(projectCreationStats: ProjectCreationStats) {
-            projectCreatedEvent.log(*projectCreationStats.toPairs().toTypedArray(),
-                                    pluginInfo
+            projectCreatedEvent.log(
+                *projectCreationStats.toPairs().toTypedArray(),
+                pluginInfo
             )
         }
 
         fun logDataOnProjectGenerated(projectCreationStats: ProjectCreationStats, uiEditorUsageStats: UiEditorUsageStats) {
-            projectCreatedEvent.log(*projectCreationStats.toPairs().toTypedArray(),
-                                    *uiEditorUsageStats.toPairs().toTypedArray(),
-                                    pluginInfo
+            projectCreatedEvent.log(
+                *projectCreationStats.toPairs().toTypedArray(),
+                *uiEditorUsageStats.toPairs().toTypedArray(),
+                pluginInfo
             )
         }
 
         fun logWizardOpenByHyperlink(templateId: String?) {
-            projectOpenedByHyperlink.log(projectTemplateField.with(templateId ?: "none"),
-                                         pluginInfo
+            projectOpenedByHyperlink.log(
+                projectTemplateField.with(templateId ?: "none"),
+                pluginInfo
             )
         }
     }
 
     data class ProjectCreationStats(
-            val group: String,
-            val projectTemplateId: String,
-            val buildSystemType: String
+        val group: String,
+        val projectTemplateId: String,
+        val buildSystemType: String
     ) : WizardStats {
         override fun toPairs(): ArrayList<EventPair<*>> = arrayListOf(
             groupField.with(group),
@@ -95,9 +123,9 @@ class WizardStatsService : CounterUsagesCollector() {
     }
 
     data class UiEditorUsageStats(
-            var modulesCreated: Int = 0,
-            var modulesRemoved: Int = 0,
-            var moduleTemplateChanged: Int = 0
+        var modulesCreated: Int = 0,
+        var modulesRemoved: Int = 0,
+        var moduleTemplateChanged: Int = 0
     ) : WizardStats {
         override fun toPairs(): ArrayList<EventPair<*>> = arrayListOf(
             modulesCreatedField.with(modulesCreated),
@@ -105,70 +133,5 @@ class WizardStatsService : CounterUsagesCollector() {
             moduleTemplateChangedField.with(moduleTemplateChanged)
         )
     }
-}
-
-
-abstract class WizardValidationRule : CustomValidationRule() {
-    protected abstract val values: Set<String>
-
-    override fun doValidate(data: String, context: EventContext): ValidationResultType {
-        try {
-            return if (values.contains(data)) {
-                ValidationResultType.ACCEPTED
-            }
-            else {
-                ValidationResultType.REJECTED
-            }
-        }
-        catch (e: Exception) {
-            return ValidationResultType.REJECTED
-        }
-    }
-}
-
-class WizardGroupValidationRule : WizardValidationRule() {
-
-    override fun acceptRuleId(ruleId: String?) = ruleId == "kotlin_wizard_groups"
-
-    override val values = setOf("Java", "Kotlin", "Gradle")
-}
-
-class WizardTemplateValidationRule : WizardValidationRule() {
-
-    override fun acceptRuleId(ruleId: String?) = ruleId == "kotlin_wizard_templates"
-
-    override val values = setOf(// Modules
-                                   "JVM_|_IDEA",
-                                   "JS_|_IDEA",
-                                   // Java and Gradle groups
-                                   "Kotlin/JVM",
-                                   // Gradle group
-                                   "Kotlin/JS",
-                                   "Kotlin/JS_for_browser",
-                                   "Kotlin/JS_for_Node.js",
-                                   "Kotlin/Multiplatform_as_framework",
-                                   "Kotlin/Multiplatform",
-                                   // Kotlin group
-                                   "backendApplication",
-                                   "consoleApplication",
-                                   "multiplatformMobileApplication",
-                                   "multiplatformMobileLibrary",
-                                   "multiplatformApplication",
-                                   "multiplatformLibrary",
-                                   "nativeApplication",
-                                   "frontendApplication",
-                                   "fullStackWebApplication",
-                                   "nodejsApplication",
-                                   "none")
-}
-
-class WizardBuildSystemValidationRule : WizardValidationRule() {
-
-    override fun acceptRuleId(ruleId: String?) = ruleId == "kotlin_wizard_groups"
-
-    override val values = setOf("gradleKotlin",
-                                "gradleGroovy",
-                                "jps",
-                                "maven")
 }
 
