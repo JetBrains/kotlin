@@ -34,6 +34,6 @@ class KotlinCreateFileFUSCollector : CounterUsagesCollector() {
             EventFields.PluginInfo
         )
 
-        fun logFileTemplate(template: String) = newFileEvent.log(template, pluginInfo)
+        fun logFileTemplate(template: String) = newFileEvent.log(template.replace(' ', '_'), pluginInfo)
     }
 }
