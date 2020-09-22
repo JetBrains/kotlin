@@ -29,6 +29,10 @@ private fun mainImpl(args: Array<String>, konancMain: (Array<String>) -> Unit) {
             defFileDependencies(utilityArgs)
         "generatePlatformLibraries" ->
             generatePlatformLibraries(utilityArgs)
+
+        "llvm" -> runLlvmTool(utilityArgs)
+        "clang" -> runLlvmClangToolWithTarget(utilityArgs)
+
         else ->
             error("Unexpected utility name")
     }

@@ -267,3 +267,22 @@ konanc main.kt -Xtemporary-files-dir=<PATH> -o <OUTPUT_NAME>
 ```shell script
 konanc main.kt -Xdisable-phases=BitcodeOptimization -Xoverride-clang-options=-c,-O2
 ```
+
+## Running Clang the same way Kotlin/Native compiler does
+
+Kotlin/Native compiler (including `cinterop` tool) has machinery that manages LLVM, Clang and native SDKs for supported targets
+and runs bundled Clang with proper arguments.
+To utilize this machinery, use `$dist/bin/run_konan clang $tool $target $arguments`, e.g.
+```
+$dist/bin/run_konan clang clang ios_arm64 1.c
+```
+will print and run the following command:
+```
+~/.konan/dependencies/clang-llvm-apple-8.0.0-darwin-macos/bin/clang \
+    -B/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin \
+    -fno-stack-protector -stdlib=libc++ -arch arm64 \
+    -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.5.sdk \
+    -miphoneos-version-min=9.0 1.c
+```
+
+The similar helper is available for LLVM tools, `$dist/bin/run_konan llvm $tool $arguments`.
