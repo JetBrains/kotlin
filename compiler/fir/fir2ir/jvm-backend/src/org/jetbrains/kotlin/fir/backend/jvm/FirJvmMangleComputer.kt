@@ -238,6 +238,9 @@ open class FirJvmMangleComputer(
                 // E.g. not-null type parameter in Java
                 mangleType(tBuilder, type.original)
             }
+            is ConeCapturedType -> {
+                mangleType(tBuilder, type.lowerType ?: type.constructor.supertypes!!.first())
+            }
             else -> error("Unexpected type $type")
         }
     }
