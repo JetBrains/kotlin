@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FirElementsRecorder
 import org.jetbrains.kotlin.psi.KtElement
@@ -31,7 +32,7 @@ internal class FirModuleResolveStateForCompletion(
     override fun getSessionFor(moduleInfo: IdeaModuleInfo): FirSession =
         originalState.getSessionFor(moduleInfo)
 
-    override fun getOrBuildFirFor(element: KtElement, toPhase: FirResolvePhase): FirElement {
+    override fun getOrBuildFirFor(element: KtElement): FirElement {
         completionMapping[originalState.elementBuilder.getPsiAsFirElementSource(element)]?.let { return it }
         return originalState.elementBuilder.getOrBuildFirFor(
             element,

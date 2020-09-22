@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.fir.low.level.api
+package org.jetbrains.kotlin.idea.fir.low.level.api.api
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveStateForCompletion
+import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveStateImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeProvider
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
@@ -36,8 +38,8 @@ object LowLevelFirApiFacade {
     fun getSessionFor(element: KtElement): FirSession =
         getResolveStateFor(element).getSessionFor(element.getModuleInfo())
 
-    fun getOrBuildFirFor(element: KtElement, resolveState: FirModuleResolveState, phase: FirResolvePhase): FirElement =
-        resolveState.getOrBuildFirFor(element, phase)
+    fun getOrBuildFirFor(element: KtElement, resolveState: FirModuleResolveState): FirElement =
+        resolveState.getOrBuildFirFor(element)
 
     class FirCompletionContext internal constructor(
         val session: FirSession,
@@ -59,15 +61,14 @@ object LowLevelFirApiFacade {
         fakeElement: KtNamedFunction,
         originalElement: KtNamedFunction,
         state: FirModuleResolveState,
-        phase: FirResolvePhase = FirResolvePhase.BODY_RESOLVE
     ): FirCompletionContext {
         val firIdeProvider = firFile.session.firIdeProvider
 
-        val originalFunction = state.getOrBuildFirFor(originalElement, phase) as FirSimpleFunction
+        val originalFunction = state.getOrBuildFirFor(originalElement) as FirSimpleFunction
         val copyFunction = buildFunctionCopyForCompletion(firIdeProvider, fakeElement, originalFunction, state)
 
         val contextCollector = FirTowerDataContextCollector()
-        state.lazyResolveDeclarationForCompletion(copyFunction, firFile, firIdeProvider, phase, contextCollector)
+        state.lazyResolveDeclarationForCompletion(copyFunction, firFile, firIdeProvider, FirResolvePhase.BODY_RESOLVE, contextCollector)
         state.recordPsiToFirMappingsForCompletionFrom(copyFunction, firFile, fakeElement.containingKtFile)
 
         return FirCompletionContext(
@@ -81,15 +82,14 @@ object LowLevelFirApiFacade {
         fakeElement: KtProperty,
         originalElement: KtProperty,
         state: FirModuleResolveState,
-        phase: FirResolvePhase = FirResolvePhase.BODY_RESOLVE
     ): FirCompletionContext {
         val firIdeProvider = firFile.session.firIdeProvider
 
-        val originalProperty = state.getOrBuildFirFor(originalElement, phase) as FirProperty
+        val originalProperty = state.getOrBuildFirFor(originalElement) as FirProperty
         val copyProperty = buildPropertyCopyForCompletion(firIdeProvider, fakeElement, originalProperty, state)
 
         val contextCollector = FirTowerDataContextCollector()
-        state.lazyResolveDeclarationForCompletion(copyProperty, firFile, firIdeProvider, phase, contextCollector)
+        state.lazyResolveDeclarationForCompletion(copyProperty, firFile, firIdeProvider, FirResolvePhase.BODY_RESOLVE, contextCollector)
         state.recordPsiToFirMappingsForCompletionFrom(copyProperty, firFile, fakeElement.containingKtFile)
 
         return FirCompletionContext(
