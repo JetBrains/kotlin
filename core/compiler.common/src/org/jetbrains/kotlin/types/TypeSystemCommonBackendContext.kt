@@ -50,3 +50,28 @@ interface TypeSystemCommonBackendContext : TypeSystemContext {
 
     fun KotlinTypeMarker.isInterfaceOrAnnotationClass(): Boolean
 }
+
+interface TypeSystemCommonBackendContextForTypeMapping : TypeSystemCommonBackendContext {
+    fun TypeConstructorMarker.isTypeParameter(): Boolean
+    fun TypeConstructorMarker.defaultType(): SimpleTypeMarker
+
+    fun SimpleTypeMarker.isSuspendFunction(): Boolean
+    fun SimpleTypeMarker.isKClass(): Boolean
+
+    fun KotlinTypeMarker.isRawType(): Boolean
+
+    fun TypeConstructorMarker.typeWithArguments(arguments: List<KotlinTypeMarker>): SimpleTypeMarker
+    fun TypeConstructorMarker.typeWithArguments(vararg arguments: KotlinTypeMarker): SimpleTypeMarker {
+        return typeWithArguments(arguments.toList())
+    }
+
+    fun TypeArgumentMarker.adjustedType(): KotlinTypeMarker {
+        if (this.isStarProjection()) return nullableAnyType()
+        return getType()
+    }
+
+    fun TypeParameterMarker.representativeUpperBound(): SimpleTypeMarker
+
+    fun continuationTypeConstructor(): TypeConstructorMarker
+    fun functionNTypeConstructor(n: Int): TypeConstructorMarker
+}

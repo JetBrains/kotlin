@@ -26,11 +26,11 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
-import org.jetbrains.kotlin.load.kotlin.computeExpandedTypeForInlineClass
 import org.jetbrains.kotlin.load.kotlin.mapBuiltInType
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.computeExpandedTypeForInlineClass
 import org.jetbrains.org.objectweb.asm.Type
 
 class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBase() {
