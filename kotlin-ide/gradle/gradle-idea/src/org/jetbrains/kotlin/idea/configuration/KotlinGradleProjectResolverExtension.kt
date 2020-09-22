@@ -28,13 +28,12 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.tooling.model.idea.IdeaModule
 import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.idea.inspections.gradle.getDependencyModules
+import org.jetbrains.kotlin.idea.statistics.KotlinGradleFUSLogger
+import org.jetbrains.kotlin.idea.statistics.KotlinIDEGradleActionsFUSCollector
 import org.jetbrains.kotlin.idea.util.CopyableDataNodeUserDataProperty
 import org.jetbrains.kotlin.idea.util.DataNodeUserDataProperty
 import org.jetbrains.kotlin.idea.util.NotNullableCopyableDataNodeUserDataProperty
 import org.jetbrains.kotlin.idea.util.PsiPrecedences
-import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
-import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
-import org.jetbrains.kotlin.idea.statistics.KotlinGradleFUSLogger
 import org.jetbrains.plugins.gradle.model.ExternalProjectDependency
 import org.jetbrains.plugins.gradle.model.ExternalSourceSet
 import org.jetbrains.plugins.gradle.model.FileCollectionDependency
@@ -62,6 +61,7 @@ var DataNode<ModuleData>.kotlinNativeHome
         by CopyableDataNodeUserDataProperty(Key.create<String>("KOTLIN_NATIVE_HOME"))
 var DataNode<out ModuleData>.implementedModuleNames
         by NotNullableCopyableDataNodeUserDataProperty(Key.create<List<String>>("IMPLEMENTED_MODULE_NAME"), emptyList())
+
 // Project is usually the same during all import, thus keeping Map Project->Dependencies makes model a bit more complicated but allows to avoid future problems
 var DataNode<out ModuleData>.dependenciesCache
         by DataNodeUserDataProperty(
@@ -209,10 +209,8 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         val mppModel = resolverCtx.getMppModel(gradleModule)
         if (mppModel != null) {
             mppModel.targets.forEach { target ->
-                KotlinFUSLogger.log(
-                    FUSEventGroups.GradleTarget,
-                    "MPP.${target.platform.id + (target.presetName?.let { ".$it" } ?: "")}"
-                )
+                KotlinIDEGradleActionsFUSCollector.logImport(
+                    "MPP.${target.platform.id + (target.presetName?.let { ".$it" } ?: "")}")
             }
             return super.populateModuleDependencies(gradleModule, ideModule, ideProject)
         }
@@ -234,7 +232,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         ideModule.platformPluginId = gradleModel.platformPluginId
 
         if (gradleModel.hasKotlinPlugin) {
-            KotlinFUSLogger.log(FUSEventGroups.GradleTarget, gradleModel.kotlinTarget ?: "unknown")
+            KotlinIDEGradleActionsFUSCollector.logImport(gradleModel.kotlinTarget ?: "unknown")
         }
 
         addImplementedModuleNames(gradleModule, ideModule, ideProject, gradleModel)
@@ -310,7 +308,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
                     gradleModel.kotlinTaskProperties.filter { (k, v) -> gradleSourceSetNode.data.id == "$moduleNamePrefix:$k" }
                         .toList().singleOrNull()
                 gradleSourceSetNode.children.forEach { dataNode ->
-                    val data = dataNode.data as?  ContentRootData
+                    val data = dataNode.data as? ContentRootData
                     if (data != null) {
                         /*
                         Code snippet for setting in content root properties
