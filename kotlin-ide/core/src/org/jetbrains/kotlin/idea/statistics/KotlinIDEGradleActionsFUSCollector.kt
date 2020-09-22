@@ -14,7 +14,7 @@ class KotlinIDEGradleActionsFUSCollector : CounterUsagesCollector() {
 
         private val pluginInfo = getPluginInfoById(KotlinPluginUtil.KOTLIN_PLUGIN_ID)
 
-        private val allowedPlatforms = listOf(
+        private val allowedTargets = listOf(
             "kotlin-android",
             "kotlin-platform-common",
             "kotlin-platform-js",
@@ -49,10 +49,10 @@ class KotlinIDEGradleActionsFUSCollector : CounterUsagesCollector() {
 
         private val importEvent = GROUP.registerEvent(
             "Import",
-            EventFields.String("platform", allowedPlatforms),
+            EventFields.String("target", allowedTargets),
             EventFields.PluginInfo
         )
 
-        fun logImport(platform: String) = importEvent.log(platform, pluginInfo)
+        fun logImport(target: String) = importEvent.log(target, pluginInfo)
     }
 }
