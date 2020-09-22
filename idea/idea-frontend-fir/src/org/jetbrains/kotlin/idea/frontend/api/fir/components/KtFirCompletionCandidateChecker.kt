@@ -38,7 +38,8 @@ internal class KtFirCompletionCandidateChecker(
 ) : KtCompletionCandidateChecker(), KtFirAnalysisSessionComponent {
     override val analysisSession: KtFirAnalysisSession by weakRef(analysisSession)
 
-    private val completionContextCache = HashMap<Pair<FirFile, KtCallableDeclaration>, LowLevelFirApiFacade.FirCompletionContext>()
+    private val completionContextCache =
+        HashMap<Pair<FirFile, KtCallableDeclaration>, LowLevelFirApiFacadeForCompletion.FirCompletionContext>()
 
     override fun checkExtensionFitsCandidate(
         firSymbolForCandidate: KtCallableSymbol,

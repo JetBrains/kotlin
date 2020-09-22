@@ -9,6 +9,7 @@ import com.intellij.psi.util.parentsOfType
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacade
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacadeForCompletion
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalDeclaration
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.*
@@ -57,14 +58,14 @@ internal val EnclosingDeclarationContext.fakeEnclosingDeclaration: KtCallableDec
 
 internal fun EnclosingDeclarationContext.buildCompletionContext(originalFirFile: FirFile, firResolveState: FirModuleResolveState) =
     when (this) {
-        is FunctionContext -> LowLevelFirApiFacade.buildCompletionContextForFunction(
+        is FunctionContext -> LowLevelFirApiFacadeForCompletion.buildCompletionContextForFunction(
             originalFirFile,
             fakeEnclosingFunction,
             originalEnclosingFunction,
             state = firResolveState
         )
 
-        is PropertyContext -> LowLevelFirApiFacade.buildCompletionContextForProperty(
+        is PropertyContext -> LowLevelFirApiFacadeForCompletion.buildCompletionContextForProperty(
             originalFirFile,
             fakeEnclosingProperty,
             originalEnclosingProperty,

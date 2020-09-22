@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacade
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacadeForCompletion
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
@@ -126,7 +127,7 @@ internal class KtFirScopeProvider(
     private fun buildCompletionContextForEnclosingDeclaration(
         originalFile: KtFile,
         positionInFakeFile: KtElement
-    ): LowLevelFirApiFacade.FirCompletionContext {
+    ): LowLevelFirApiFacadeForCompletion.FirCompletionContext {
         val originalFirFile = firResolveState.getFirFile(originalFile)
         val declarationContext = EnclosingDeclarationContext.detect(originalFile, positionInFakeFile)
 

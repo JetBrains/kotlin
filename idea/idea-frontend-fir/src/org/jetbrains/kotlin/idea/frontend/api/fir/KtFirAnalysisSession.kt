@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacade
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacadeForCompletion
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.ReadActionConfinementValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
@@ -47,7 +48,7 @@ private constructor(
 
     override fun createContextDependentCopy(): KtAnalysisSession {
         check(!isContextSession) { "Cannot create context-dependent copy of KtAnalysis session from a context dependent one" }
-        val contextResolveState = LowLevelFirApiFacade.getResolveStateForCompletion(element, firResolveState)
+        val contextResolveState = LowLevelFirApiFacadeForCompletion.getResolveStateForCompletion(element, firResolveState)
         return KtFirAnalysisSession(
             element,
             contextResolveState,
