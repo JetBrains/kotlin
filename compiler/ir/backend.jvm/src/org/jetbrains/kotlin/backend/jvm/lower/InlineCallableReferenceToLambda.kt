@@ -42,20 +42,32 @@ internal val inlineCallableReferenceToLambdaPhase = makeIrFilePhase(
 //
 //      foo(::smth) -> foo { a -> smth(a) }
 //
-internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendContext) : FileLoweringPass,
-    IrElementTransformerVoidWithContext() {
-
-    private var inlinableReferences = mutableSetOf<IrCallableReference<*>>()
-
+internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        inlinableReferences.addAll(IrInlineReferenceLocator.scan(context, irFile))
-        irFile.transformChildrenVoid(this)
-    }
+        val inlinableReferences = mutableSetOf<IrCallableReference<*>>()
+        irFile.accept(object : IrInlineReferenceLocator(context) {
+            override fun visitInlineReference(argument: IrCallableReference<*>) {
+                inlinableReferences.add(argument)
+            }
 
+            override fun visitInlineLambda(
+                argument: IrFunctionReference, callee: IrFunction, parameter: IrValueParameter, scope: IrDeclaration
+            ) {
+                // Obviously needs no extra wrapping.
+            }
+        }, null)
+        irFile.transformChildrenVoid(InlineCallableReferenceToLambdaTransformer(context, inlinableReferences))
+    }
+}
+
+private class InlineCallableReferenceToLambdaTransformer(
+    val context: JvmBackendContext,
+    val inlinableReferences: Set<IrCallableReference<*>>
+) : IrElementTransformerVoidWithContext() {
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
         expression.transformChildrenVoid(this)
-        if (expression !in inlinableReferences || expression.origin.isLambda) return expression
-        return context.expandInlineFunctionReferenceToLambda(expression, expression.symbol.owner)
+        if (expression !in inlinableReferences) return expression
+        return expandInlineFunctionReferenceToLambda(expression, expression.symbol.owner)
     }
 
     override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
@@ -64,19 +76,17 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
 
         return if (expression.field?.owner == null) {
             // Use getter if field is absent ...
-            context.expandInlineFunctionReferenceToLambda(expression, expression.getter!!.owner)
+            expandInlineFunctionReferenceToLambda(expression, expression.getter!!.owner)
         } else {
             // ... else use field itself
-            context.expandInlineFieldReferenceToLambda(expression, expression.field!!.owner)
+            expandInlineFieldReferenceToLambda(expression, expression.field!!.owner)
         }
     }
 
-    private fun JvmBackendContext.expandInlineFieldReferenceToLambda(
-        expression: IrPropertyReference, field: IrField
-    ): IrExpression {
-        val irBuilder = createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
+    private fun expandInlineFieldReferenceToLambda(expression: IrPropertyReference, field: IrField): IrExpression {
+        val irBuilder = context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
         return irBuilder.irBlock(expression, IrStatementOrigin.LAMBDA) {
-            val function = irFactory.buildFun {
+            val function = context.irFactory.buildFun {
                 setSourceRange(expression)
                 origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
                 name = Name.identifier("stub_for_inline")
@@ -94,7 +104,7 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
                         else -> irGet(addValueParameter("receiver", field.parentAsClass.defaultType))
                     }
 
-                body = createIrBuilder(symbol).run {
+                body = this@InlineCallableReferenceToLambdaTransformer.context.createIrBuilder(symbol).run {
                     irExprBody(irGetField(receiver, field))
                 }
             }
@@ -114,13 +124,9 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
         }
     }
 
-    private fun JvmBackendContext.expandInlineFunctionReferenceToLambda(
-        expression: IrCallableReference<*>, referencedFunction: IrFunction
-    ): IrExpression {
-        val irBuilder =
-            createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
+    private fun expandInlineFunctionReferenceToLambda(expression: IrCallableReference<*>, referencedFunction: IrFunction): IrExpression {
+        val irBuilder = context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
         return irBuilder.irBlock(expression, IrStatementOrigin.LAMBDA) {
-
             // We find the number of parameters for constructed lambda from the type of the function reference,
             // but the actual types have to be copied from referencedFunction; function reference argument type may be too
             // specific because of approximation. See compiler/testData/codegen/box/callableReference/function/argumentTypes.kt
@@ -136,7 +142,7 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
                 )
             }
 
-            val function = irFactory.buildFun {
+            val function = context.irFactory.buildFun {
                 setSourceRange(expression)
                 origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
                 name = Name.identifier("stub_for_inlining")
@@ -152,7 +158,7 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
                     }
                 }
 
-                body = this@InlineCallableReferenceToLambdaPhase.context.createJvmIrBuilder(
+                body = this@InlineCallableReferenceToLambdaTransformer.context.createJvmIrBuilder(
                     symbol,
                     expression.startOffset,
                     expression.endOffset
