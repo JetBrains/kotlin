@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="ArtifactManager">
-  <artifact name="KotlinPlugin">
-    <output-path>$PROJECT_DIR$/out/artifacts/KotlinPlugin</output-path>
+  <artifact name="KotlinPluginCommunity">
+    <output-path>$PROJECT_DIR$/out/artifacts/KotlinPluginCommunity</output-path>
     <root id="root">
       <element id="directory" name="lib">
         <element id="archive" name="android-extensions-compiler-plugin-for-ide.jar">
