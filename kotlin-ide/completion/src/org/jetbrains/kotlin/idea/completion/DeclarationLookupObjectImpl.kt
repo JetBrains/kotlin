@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.deprecation.computeLevelForDeprecatedSinceKotlin
+import org.jetbrains.kotlin.resolve.deprecation.getSinceVersion
 import org.jetbrains.kotlin.util.descriptorsEqualWithSubstitution
 
 /**
@@ -59,7 +59,7 @@ abstract class DeclarationLookupObjectImpl(
     override val isDeprecated: Boolean
         get() {
             return if (descriptor != null)
-                isDeprecatedAtCallSite(descriptor, psiElement?.languageVersionSettings)
+                isDeprecatedAtCallSite(descriptor) { psiElement?.languageVersionSettings }
             else
                 (psiElement as? PsiDocCommentOwner)?.isDeprecated == true
         }
@@ -67,14 +67,23 @@ abstract class DeclarationLookupObjectImpl(
 }
 
 // This function is kind of a hack to avoid using DeprecationResolver as it's hard to preserve same resolutionFacade for descriptor
-fun isDeprecatedAtCallSite(descriptor: DeclarationDescriptor, languageVersionSettings: LanguageVersionSettings?): Boolean {
-    val isDeprecatedAtDeclarationSite = KotlinBuiltIns.isDeprecated(descriptor)
-    if (languageVersionSettings == null) return isDeprecatedAtDeclarationSite
+fun isDeprecatedAtCallSite(descriptor: DeclarationDescriptor, languageVersionSettings: () -> LanguageVersionSettings?): Boolean {
+    if (!KotlinBuiltIns.isDeprecated(descriptor)) return false
 
-    if (!isDeprecatedAtDeclarationSite) return false
+    val annotation = descriptor.original.annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.deprecatedSinceKotlin) ?: return true
 
-    return computeLevelForDeprecatedSinceKotlin(
-        descriptor.original.annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.deprecatedSinceKotlin) ?: return true,
-        languageVersionSettings.apiVersion
-    ) != null
+    //only from here we probably need languageVersionSettings, which evaluation could be costly
+    val hiddenSince = annotation.getSinceVersion("hiddenSince")
+    val errorSince = annotation.getSinceVersion("errorSince")
+    val warningSince = annotation.getSinceVersion("warningSince")
+
+    if (hiddenSince == null && errorSince == null && warningSince == null) {
+        return false //actually shouldn't happen, was false before refactoring
+    }
+    val apiVersion = languageVersionSettings()?.apiVersion ?: return true
+    if (hiddenSince != null && apiVersion >= hiddenSince) return true
+    if (errorSince != null && apiVersion >= errorSince) return true
+    if (warningSince != null && apiVersion >= warningSince) return true
+
+    return false
 }

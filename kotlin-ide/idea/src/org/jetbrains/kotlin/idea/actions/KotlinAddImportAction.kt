@@ -276,7 +276,7 @@ private class Prioritizer(private val file: KtFile, private val compareNames: Bo
     private val proximityComparator = PsiProximityComparator(file)
 
     inner class Priority(descriptor: DeclarationDescriptor, languageVersionSettings: LanguageVersionSettings) : Comparable<Priority> {
-        private val isDeprecated = isDeprecatedAtCallSite(descriptor, languageVersionSettings)
+        private val isDeprecated = isDeprecatedAtCallSite(descriptor) { languageVersionSettings }
         private val fqName = descriptor.importableFqName!!
         private val classification = classifier.classify(fqName, false)
         private val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(file.project, descriptor)
