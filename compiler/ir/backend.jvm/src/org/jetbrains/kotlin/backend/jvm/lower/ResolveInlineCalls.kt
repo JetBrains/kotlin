@@ -43,7 +43,15 @@ class ResolveInlineCalls(val context: JvmBackendContext) : IrElementTransformerV
             maybeFakeOverrideOfMultiFileBridge.resolveMultiFileFacades() ?: maybeFakeOverrideOfMultiFileBridge.resolveFakeOverride()
             ?: return super.visitCall(expression)
         return super.visitCall(with(expression) {
-            IrCallImpl(startOffset, endOffset, type, resolved.symbol, expression.typeArgumentsCount, null, superQualifierSymbol).apply {
+            IrCallImpl(
+                startOffset,
+                endOffset,
+                type,
+                resolved.symbol,
+                expression.typeArgumentsCount,
+                expression.origin,
+                superQualifierSymbol
+            ).apply {
                 copyTypeAndValueArgumentsFrom(expression)
                 dispatchReceiver?.let { receiver ->
                     val receiverType = resolved.parentAsClass.defaultType

@@ -178,12 +178,14 @@ open class DefaultArgumentStubGenerator(
         return createTmpVariable(value, nameHint = parameter.name.asString())
     }
 
+    protected open fun getOriginForCallToImplementation(): IrStatementOrigin? = null
+
     private fun IrBlockBodyBuilder.dispatchToImplementation(
         irFunction: IrSimpleFunction,
         newIrFunction: IrFunction,
         params: MutableList<IrValueDeclaration>
     ): IrExpression {
-        val dispatchCall = irCall(irFunction.symbol).apply {
+        val dispatchCall = irCall(irFunction, origin = getOriginForCallToImplementation()).apply {
             passTypeArgumentsFrom(newIrFunction)
             dispatchReceiver = newIrFunction.dispatchReceiverParameter?.let { irGet(it) }
             extensionReceiver = newIrFunction.extensionReceiverParameter?.let { irGet(it) }

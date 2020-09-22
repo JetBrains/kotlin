@@ -9450,6 +9450,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             runTest("compiler/testData/codegen/box/defaultArguments/protected.kt");
         }
 
+        @TestMetadata("recursiveDefaultArguments.kt")
+        public void testRecursiveDefaultArguments() throws Exception {
+            runTest("compiler/testData/codegen/box/defaultArguments/recursiveDefaultArguments.kt");
+        }
+
         @TestMetadata("referenceAsArg.kt")
         public void testReferenceAsArg() throws Exception {
             runTest("compiler/testData/codegen/box/defaultArguments/referenceAsArg.kt");
