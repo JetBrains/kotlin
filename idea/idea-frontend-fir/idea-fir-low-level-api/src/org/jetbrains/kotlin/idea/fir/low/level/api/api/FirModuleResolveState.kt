@@ -21,39 +21,34 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
 abstract class FirModuleResolveState {
-    abstract val moduleInfo: IdeaModuleInfo
     abstract val rootModuleSession: FirSession
+
+    internal abstract val moduleInfo: IdeaModuleInfo
 
     abstract val firTransformerProvider: FirTransformerProvider
 
-    abstract fun getSessionFor(moduleInfo: IdeaModuleInfo): FirSession
+    internal abstract fun getSessionFor(moduleInfo: IdeaModuleInfo): FirSession
 
-    abstract fun getOrBuildFirFor(element: KtElement): FirElement
+    internal abstract fun getOrBuildFirFor(element: KtElement): FirElement
 
-    abstract fun getFirFile(ktFile: KtFile): FirFile
+    internal abstract fun getFirFile(ktFile: KtFile): FirFile
 
-    abstract fun getDiagnostics(element: KtElement): List<Diagnostic>
+    internal abstract fun getDiagnostics(element: KtElement): List<Diagnostic>
 
-    abstract fun collectDiagnosticsForFile(ktFile: KtFile): Collection<Diagnostic>
-
-    // todo temporary, used only in completion
-    abstract fun recordPsiToFirMappingsForCompletionFrom(fir: FirDeclaration, firFile: FirFile, ktFile: KtFile)
-
-    abstract fun <D : FirDeclaration> resolvedFirToPhase(declaration: D, toPhase: FirResolvePhase): D
+    internal abstract fun collectDiagnosticsForFile(ktFile: KtFile): Collection<Diagnostic>
 
     // todo temporary, used only in completion
-    abstract fun lazyResolveDeclarationForCompletion(
+    internal abstract fun recordPsiToFirMappingsForCompletionFrom(fir: FirDeclaration, firFile: FirFile, ktFile: KtFile)
+
+    internal abstract fun <D : FirDeclaration> resolvedFirToPhase(declaration: D, toPhase: FirResolvePhase): D
+
+    // todo temporary, used only in completion
+    internal abstract fun lazyResolveDeclarationForCompletion(
         firFunction: FirDeclaration,
         containerFirFile: FirFile,
         firIdeProvider: FirProvider,
         toPhase: FirResolvePhase,
         towerDataContextCollector: FirTowerDataContextCollector
     )
-
 }
-
-
-internal fun KtElement.firResolveState(): FirModuleResolveState =
-    FirIdeResolveStateService.getInstance(project).getResolveState(getModuleInfo())
-
 

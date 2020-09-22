@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.utils
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacade
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.assertIsValid
@@ -22,7 +23,7 @@ internal class FirRef<D : FirDeclaration>(fir: D, resolveState: FirModuleResolve
         val fir = firWeakRef.get() ?: error("FirElement was garbage collected while analysis session is still valid")
         val resolveState =
             resolveStateWeakRef.get() ?: error("FirModuleResolveState was garbage collected while analysis session is still valid")
-        return action(resolveState.resolvedFirToPhase(fir, phase))
+        return action(LowLevelFirApiFacade.resolvedFirToPhase(fir, phase, resolveState))
     }
 
     inline fun <R> withFirAndCache(phase: FirResolvePhase = FirResolvePhase.RAW_FIR, crossinline createValue: (fir: D) -> R) =
