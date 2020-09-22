@@ -140,7 +140,7 @@ class FirMetadataSerializer(
     } ?: emptyList()
 
     private val serializerExtension =
-        FirJvmSerializerExtension(session, serializationBindings, context.state, irClass, localDelegatedProperties)
+        FirJvmSerializerExtension(session, serializationBindings, context.state, irClass, localDelegatedProperties, approximator)
 
     private val serializer: FirElementSerializer? =
         when (val metadata = irClass.metadata) {

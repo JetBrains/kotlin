@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_DEFAULT_FQ_NAME
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
+import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
@@ -43,7 +44,8 @@ class FirJvmSerializerExtension(
     private val bindings: JvmSerializationBindings,
     state: GenerationState,
     private val irClass: IrClass,
-    private val localDelegatedProperties: List<FirProperty>
+    private val localDelegatedProperties: List<FirProperty>,
+    private val approximator: AbstractTypeApproximator
 ) : FirSerializerExtension() {
     private val globalBindings = state.globalSerializationBindings
     override val stringTable = FirJvmElementAwareStringTable()
@@ -151,7 +153,7 @@ class FirJvmSerializerExtension(
         extension: GeneratedMessageLite.GeneratedExtension<MessageType, List<ProtoBuf.Property>>
     ) {
         for (localVariable in localDelegatedProperties) {
-            val serializer = FirElementSerializer.createForLambda(session, this)
+            val serializer = FirElementSerializer.createForLambda(session, this, approximator)
             proto.addExtension(extension, serializer.propertyProto(localVariable)?.build() ?: continue)
         }
     }
