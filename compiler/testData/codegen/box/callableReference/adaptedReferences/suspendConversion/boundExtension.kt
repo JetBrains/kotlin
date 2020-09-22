@@ -9,20 +9,16 @@ fun runSuspend(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
 }
 
-inline suspend fun invokeSuspend(fn: suspend () -> Unit) = fn()
-
 class C {
     var test = "failed"
+}
 
-    fun foo() {
-        test = "OK"
-    }
+fun C.foo() {
+    test = "OK"
 }
 
 fun box(): String {
     val c = C()
-    runSuspend {
-        invokeSuspend(c::foo)
-    }
+    runSuspend(c::foo)
     return c.test
 }
