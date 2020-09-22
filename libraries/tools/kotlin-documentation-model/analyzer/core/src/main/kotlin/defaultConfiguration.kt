@@ -52,6 +52,7 @@ data class DokkaModuleDescriptionImpl(
     override val name: String,
     override val relativePathToOutputDirectory: File,
     override val includes: Set<File>,
+    override val sourceOutputDirectory: File
 ) : DokkaConfiguration.DokkaModuleDescription
 
 data class SourceLinkDefinitionImpl(
