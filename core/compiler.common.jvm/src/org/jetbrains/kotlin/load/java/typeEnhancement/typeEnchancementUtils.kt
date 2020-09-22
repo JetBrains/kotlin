@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.load.java.typeEnhancement
 
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+
 fun createJavaTypeQualifiers(
     nullability: NullabilityQualifier?,
     mutability: MutabilityQualifier?,
@@ -36,3 +40,6 @@ fun Set<NullabilityQualifier>.select(own: NullabilityQualifier?, isCovariant: Bo
         NullabilityQualifier.FORCE_FLEXIBILITY
     else
         select(NullabilityQualifier.NOT_NULL, NullabilityQualifier.NULLABLE, own, isCovariant)
+
+fun TypeSystemCommonBackendContext.hasEnhancedNullability(type: KotlinTypeMarker): Boolean =
+    type.hasAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION)
