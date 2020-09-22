@@ -5,5 +5,5 @@ import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.plugability.DokkaContext
 
 interface SourceToDocumentableTranslator {
-    fun invoke(sourceSet: DokkaSourceSet, context: DokkaContext): DModule
+    suspend fun invoke(sourceSet: DokkaSourceSet, context: DokkaContext): DModule
 }

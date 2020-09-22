@@ -9,6 +9,8 @@ import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.plugability.DokkaPlugin
 import org.jetbrains.dokka.utilities.DokkaLogger
 import org.jetbrains.dokka.utilities.report
+import kotlinx.coroutines.*
+import org.jetbrains.dokka.utilities.parallelMap
 
 
 /**
@@ -73,9 +75,10 @@ class DokkaGenerator(
 
     fun createDocumentationModels(
         context: DokkaContext
-    ) = context.configuration.sourceSets
-        .flatMap { sourceSet -> translateSources(sourceSet, context) }
-        .also { modules -> if (modules.isEmpty()) exitGenerationGracefully("Nothing to document") }
+    ) = runBlocking(Dispatchers.Default) {
+        context.configuration.sourceSets.parallelMap { sourceSet -> translateSources(sourceSet, context) }.flatten()
+            .also { modules -> if (modules.isEmpty()) exitGenerationGracefully("Nothing to document") }
+    }
 
     fun transformDocumentationModelBeforeMerge(
         modulesFromPlatforms: List<DModule>,
@@ -133,8 +136,8 @@ class DokkaGenerator(
         }
     }
 
-    private fun translateSources(sourceSet: DokkaSourceSet, context: DokkaContext) =
-        context[CoreExtensions.sourceToDocumentableTranslator].map {
+    private suspend fun translateSources(sourceSet: DokkaSourceSet, context: DokkaContext) =
+        context[CoreExtensions.sourceToDocumentableTranslator].parallelMap {
             it.invoke(sourceSet, context)
         }
 }

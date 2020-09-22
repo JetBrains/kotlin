@@ -2,6 +2,7 @@ package org.jetbrains.dokka.plugability
 
 internal class LazyEvaluated<T : Any> private constructor(private val recipe: ((DokkaContext) -> T)? = null, private var value: T? = null) {
 
+    @Synchronized
     internal fun get(context: DokkaContext): T {
         if(value == null) {
             value = recipe?.invoke(context)
