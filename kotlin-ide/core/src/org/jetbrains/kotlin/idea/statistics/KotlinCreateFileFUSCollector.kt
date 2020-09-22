@@ -12,38 +12,28 @@ class KotlinCreateFileFUSCollector : CounterUsagesCollector() {
     companion object {
         private val GROUP = EventLogGroup("kotlin.ide.new.file", 1)
 
-        val newFileEvent = GROUP.registerEvent(
+        private val pluginInfo = getPluginInfoById(KotlinPluginUtil.KOTLIN_PLUGIN_ID)
+
+        private val allowedTemplates = listOf(
+            "Kotlin_Class",
+            "Kotlin_File",
+            "Kotlin_Interface",
+            "Kotlin_Data_Class",
+            "Kotlin_Enum",
+            "Kotlin_Sealed_Class",
+            "Kotlin_Annotation",
+            "Kotlin_Object",
+            "Kotlin_Scratch",
+            "Kotlin_Script",
+            "Kotlin_Worksheet"
+        )
+
+        private val newFileEvent = GROUP.registerEvent(
             "Created",
-            EventFields.Enum("FileTemplate", NewFileTemplates::class.java),
+            EventFields.String("file_template", allowedTemplates),
             EventFields.PluginInfo
         )
 
-        fun logFileTemplate(template: String) {
-            newFileEvent.log(
-                NewFileTemplates.getFullName(template),
-                getPluginInfoById(KotlinPluginUtil.KOTLIN_PLUGIN_ID)
-            )
-        }
-    }
-
-    enum class NewFileTemplates(val templateName: String) {
-        CLASS("Kotlin Class"),
-        FILE("Kotlin File"),
-        INTERFACE("Kotlin Interface"),
-        DATACLASS("Kotlin Data Class"),
-        ENUM("Kotlin Enum"),
-        SEALEDCLASS("Kotlin Sealed Class"),
-        ANNOTATION("Kotlin Annotation"),
-        OBJECT("Kotlin Object"),
-        SCRATCH("Kotlin Scratch"),
-        SCRIPT("Kotlin Script"),
-        WORKSHEET("Kotlin Worksheet"),
-        UNKNOWN("unknown");
-
-        companion object {
-            fun getFullName(templateName: String): NewFileTemplates {
-                return values().firstOrNull { it.templateName == templateName } ?: UNKNOWN
-            }
-        }
+        fun logFileTemplate(template: String) = newFileEvent.log(template, pluginInfo)
     }
 }
