@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirIdeResolveStateService
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import kotlin.reflect.KClass
@@ -43,6 +44,25 @@ object LowLevelFirApiFacade {
     @Suppress("DEPRECATION")
     inline fun <R> withFirFile(ktFile: KtFile, resolveState: FirModuleResolveState, action: (FirFile) -> R): R =
         action(getFirFile(ktFile, resolveState))
+
+    /**
+     * Creates [FirDeclaration] by [KtDeclaration] and runs an [action] with it
+     * [FirDeclaration] passed to [action] should not be leaked outside [action] lambda
+     * [FirDeclaration] passed to [action] will be resolved at least to [phase]
+     * Otherwise, some threading problems may arise,
+     *
+     * [ktDeclaration] should be non-local declaration (should have fully qualified name)
+     */
+    inline fun <R> withFirDeclaration(
+        ktDeclaration: KtDeclaration,
+        resolveState: FirModuleResolveState,
+        phase: FirResolvePhase = FirResolvePhase.RAW_FIR,
+        action: (FirDeclaration) -> R
+    ): R {
+        val firDeclaration = resolveState.findNonLocalSourceFirDeclaration(ktDeclaration)
+        resolvedFirToPhase(firDeclaration, phase, resolveState)
+        return action(firDeclaration)
+    }
 
     fun getDiagnosticsFor(element: KtElement, resolveState: FirModuleResolveState): Collection<Diagnostic> =
         resolveState.getDiagnostics(element)

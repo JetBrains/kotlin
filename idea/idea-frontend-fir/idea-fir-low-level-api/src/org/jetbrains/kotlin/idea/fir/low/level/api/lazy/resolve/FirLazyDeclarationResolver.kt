@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirDesignatedBodyResolveTransformerForIDE
@@ -19,7 +18,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.checkCanceled
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.executeWithoutPCE
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.findNonLocalFirDeclaration
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.getContainingFile
 import org.jetbrains.kotlin.psi.*
 
@@ -145,7 +144,7 @@ internal class FirLazyDeclarationResolver(
         if (!KtPsiUtil.isLocal(ktDeclaration)) return this
         val nonLocalPsi = ktDeclaration.getNonLocalContainingOrThisDeclaration()
             ?: error("Container for local declaration cannot be null")
-        return nonLocalPsi.findNonLocalFirDeclaration(firFileBuilder, provider, moduleFileCache)
+        return nonLocalPsi.findSourceNonLocalFirDeclaration(firFileBuilder, provider.symbolProvider, moduleFileCache)
     }
 }
 
