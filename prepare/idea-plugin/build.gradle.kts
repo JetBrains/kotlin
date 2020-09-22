@@ -16,6 +16,7 @@ val projectsToShadow by extra(listOf(
         ":compiler:backend",
         ":compiler:resolution.common.jvm",
         ":core:compiler.common.jvm",
+        ":core:compiler.backend.common.jvm",
         ":compiler:backend-common",
         ":compiler:backend.jvm",
         ":compiler:ir.backend.common",
