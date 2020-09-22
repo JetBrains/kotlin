@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.assertIsValid
 import java.lang.ref.WeakReference
 
-internal class FirRef<D : FirDeclaration>(fir: D, resolveState: FirModuleResolveState, val token: ValidityToken) {
+internal class FirRefWithValidityCheck<D : FirDeclaration>(fir: D, resolveState: FirModuleResolveState, val token: ValidityToken) {
     private val firWeakRef = WeakReference(fir)
     private val resolveStateWeakRef = WeakReference(resolveState)
 
@@ -34,4 +34,4 @@ internal class FirRef<D : FirDeclaration>(fir: D, resolveState: FirModuleResolve
 
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun <D : FirDeclaration> ValidityTokenOwner.firRef(fir: D, resolveState: FirModuleResolveState) =
-    FirRef(fir, resolveState, token)
+    FirRefWithValidityCheck(fir, resolveState, token)

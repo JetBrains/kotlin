@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.FirRef
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.FirRefWithValidityCheck
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.overriddenDeclaration
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolOrigin
 
 internal interface KtFirSymbol<F : FirDeclaration> : KtSymbol, ValidityTokenOwner {
-    val firRef: FirRef<F>
+    val firRef: FirRefWithValidityCheck<F>
 
     override val origin: KtSymbolOrigin get() = firRef.withFir { it.ktSymbolOrigin() }
 }
