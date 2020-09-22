@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.jvm.ir
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineFunctionCall
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineIrExpression
-import org.jetbrains.kotlin.ir.util.isLambda
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
@@ -40,9 +39,8 @@ internal open class IrInlineReferenceLocator(private val context: JvmBackendCont
                 if (!isInlineIrExpression(valueArgument))
                     continue
 
-                if (valueArgument is IrBlock && valueArgument.origin.isLambda) {
-                    val reference = valueArgument.statements.last() as IrFunctionReference
-                    visitInlineLambda(reference, function, parameter, data!!)
+                if (valueArgument is IrBlock) {
+                    visitInlineLambda(valueArgument.statements.last() as IrFunctionReference, function, parameter, data!!)
                 } else if (valueArgument is IrCallableReference<*>) {
                     visitInlineReference(valueArgument)
                 }

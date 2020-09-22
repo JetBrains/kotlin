@@ -271,7 +271,7 @@ fun isInlineIrExpression(argumentExpression: IrExpression) =
         else -> false
     }
 
-fun IrBlock.isInlineIrBlock(): Boolean = origin.isLambda
+fun IrBlock.isInlineIrBlock(): Boolean = origin.isLambda || origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
 
 fun IrFunction.isInlineFunctionCall(context: JvmBackendContext) =
     (!context.state.isInlineDisabled || typeParameters.any { it.isReified }) && isInline
