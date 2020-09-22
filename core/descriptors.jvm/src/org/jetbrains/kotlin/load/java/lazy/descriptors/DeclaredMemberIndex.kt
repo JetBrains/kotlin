@@ -16,11 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
-import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
-import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.kotlin.load.java.structure.JavaField
-import org.jetbrains.kotlin.load.java.structure.JavaMember
-import org.jetbrains.kotlin.load.java.structure.JavaMethod
+import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.Name
 
 interface DeclaredMemberIndex {
@@ -44,7 +40,7 @@ open class ClassDeclaredMemberIndex(
     private val memberFilter: (JavaMember) -> Boolean
 ) : DeclaredMemberIndex {
     private val methodFilter = { m: JavaMethod ->
-        memberFilter(m) && !DescriptorResolverUtils.isObjectMethodInInterface(m)
+        memberFilter(m) && !m.isObjectMethodInInterface()
     }
 
     private val methods = jClass.methods.asSequence().filter(methodFilter).groupBy { m -> m.name }

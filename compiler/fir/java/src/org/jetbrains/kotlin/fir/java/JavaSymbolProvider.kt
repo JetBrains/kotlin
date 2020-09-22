@@ -205,6 +205,7 @@ class JavaSymbolProvider(
             val classIsAnnotation = classKind == ClassKind.ANNOTATION_CLASS
 
             for (javaMethod in javaClass.methods) {
+                if (javaMethod.isObjectMethodInInterface()) continue
                 declarations += convertJavaMethodToFir(
                     javaMethod,
                     classId,
