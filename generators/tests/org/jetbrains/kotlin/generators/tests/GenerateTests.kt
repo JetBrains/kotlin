@@ -253,6 +253,11 @@ fun main(args: Array<String>) {
                 model("evaluation/multipleBreakpoints", testMethod = "doMultipleBreakpointsTest")
             }
 
+            testClass<AbstractIrKotlinEvaluateExpressionTest> {
+                model("evaluation/singleBreakpoint", testMethod = "doSingleBreakpointTest", targetBackend = TargetBackend.JVM_IR)
+                model("evaluation/multipleBreakpoints", testMethod = "doMultipleBreakpointsTest", targetBackend = TargetBackend.JVM_IR)
+            }
+
             testClass<AbstractSelectExpressionForDebuggerTest> {
                 model("selectExpression", recursive = false)
                 model("selectExpression/disallowMethodCalls", testMethod = "doTestWoMethodCalls")

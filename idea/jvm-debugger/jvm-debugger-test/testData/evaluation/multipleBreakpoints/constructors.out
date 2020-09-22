@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 FunctionBreakpoint created at constructors.kt:9
 LineBreakpoint created at constructors.kt:13
 FunctionBreakpoint created at constructors.kt:20

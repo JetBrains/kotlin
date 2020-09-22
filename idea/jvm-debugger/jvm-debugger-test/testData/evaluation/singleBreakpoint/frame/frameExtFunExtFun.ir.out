@@ -1,0 +1,33 @@
+LineBreakpoint created at frameExtFunExtFun.kt:24
+Run Java
+Connected to the target VM
+frameExtFunExtFun.kt:24
+Compile bytecode for valFoo
+Compile bytecode for valTest
+Compile bytecode for aProp
+Compile bytecode for outerProp
+Compile bytecode for bProp
+Compile bytecode for aMyFun()
+Compile bytecode for outerMyFun()
+Compile bytecode for bMyFun()
+ frame    = invoke:24, Outer$foo$LocalClass$test$1 {frameExtFunExtFun}
+   this     = this = {frameExtFunExtFun.Outer$foo$LocalClass$test$1@uniqueID}Function0<kotlin.Unit>
+     field    = this$0: frameExtFunExtFun.Outer = {frameExtFunExtFun.Outer@uniqueID} (sp = null)
+       field    = outerProp: int = 1 (sp = frameExtFunExtFun.kt, 13)
+     field    = $this_foo: frameExtFunExtFun.A = {frameExtFunExtFun.A@uniqueID} (sp = null)
+       field    = aProp: int = 1 (sp = frameExtFunExtFun.kt, 8)
+     field    = this$1: frameExtFunExtFun.Outer$foo$LocalClass = {frameExtFunExtFun.Outer$foo$LocalClass@uniqueID} (sp = null)
+       field    = lcProp: int = 1 (sp = frameExtFunExtFun.kt, 19)
+       field    = this$0: frameExtFunExtFun.Outer = {frameExtFunExtFun.Outer@uniqueID} (sp = null)
+         field    = outerProp: int = 1 (sp = frameExtFunExtFun.kt, 13)
+       field    = $this_foo: frameExtFunExtFun.A = {frameExtFunExtFun.A@uniqueID} (sp = null)
+         field    = aProp: int = 1 (sp = frameExtFunExtFun.kt, 8)
+       field    = $valFoo: int = 1 (sp = null)
+     field    = $this_test: frameExtFunExtFun.B = {frameExtFunExtFun.B@uniqueID} (sp = null)
+       field    = bProp: int = 1 (sp = frameExtFunExtFun.kt, 41)
+     field    = $valFoo: int = 1 (sp = null)
+     field    = $valTest: int = 1 (sp = null)
+     field    = arity: int = 0 (sp = Lambda.!EXT!)
+Disconnected from the target VM
+
+Process finished with exit code 0
