@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui
 
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.refactoring.BaseRefactoringProcessor
-import org.jetbrains.kotlin.idea.statistics.MoveRefactoringFUSCollector.MovedEntity
-import org.jetbrains.kotlin.idea.statistics.MoveRefactoringFUSCollector.MoveRefactoringDestination
+import org.jetbrains.kotlin.idea.statistics.KotlinMoveRefactoringFUSCollector.MovedEntity
+import org.jetbrains.kotlin.idea.statistics.KotlinMoveRefactoringFUSCollector.MoveRefactoringDestination
 
 internal class ModelResultWithFUSData(
-    val processor: BaseRefactoringProcessor,
-    val elementsCount: Int,
-    val entityToMove: MovedEntity,
-    val destination: MoveRefactoringDestination
+  val processor: BaseRefactoringProcessor,
+  val elementsCount: Int,
+  val entityToMove: MovedEntity,
+  val destination: MoveRefactoringDestination
 )
 
 internal interface Model {

@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.move.getTargetPackageFqName
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
 import org.jetbrains.kotlin.idea.roots.getSuitableDestinationSourceRoots
-import org.jetbrains.kotlin.idea.statistics.MoveRefactoringFUSCollector.MoveRefactoringDestination
-import org.jetbrains.kotlin.idea.statistics.MoveRefactoringFUSCollector.MovedEntity
+import org.jetbrains.kotlin.idea.statistics.KotlinMoveRefactoringFUSCollector.MoveRefactoringDestination
+import org.jetbrains.kotlin.idea.statistics.KotlinMoveRefactoringFUSCollector.MovedEntity
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -210,10 +210,10 @@ internal abstract class MoveKotlinNestedClassesToUpperLevelModel(
         val processor = MoveKotlinDeclarationsProcessor(moveDescriptor, Mover.Default, throwOnConflicts)
 
         return ModelResultWithFUSData(
-            processor = processor,
-            elementsCount = 1,
-            entityToMove = MovedEntity.CLASSES,
-            destination = moveTarget.second
+          processor = processor,
+          elementsCount = 1,
+          entityToMove = MovedEntity.CLASSES,
+          destination = moveTarget.second
         )
     }
 }

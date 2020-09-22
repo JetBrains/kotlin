@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.idea.refactoring.isInKotlinAwareSourceRoot
 import org.jetbrains.kotlin.idea.refactoring.move.getOrCreateDirectory
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.KotlinAwareMoveFilesOrDirectoriesProcessor
 import org.jetbrains.kotlin.idea.refactoring.move.updatePackageDirective
-import org.jetbrains.kotlin.idea.statistics.MoveRefactoringFUSCollector
+import org.jetbrains.kotlin.idea.statistics.KotlinMoveRefactoringFUSCollector
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import java.nio.file.InvalidPathException
@@ -114,10 +114,10 @@ internal class KotlinAwareMoveFilesOrDirectoriesModel(
         )
 
         return ModelResultWithFUSData(
-            processor,
-            elementsToMove.size,
-            MoveRefactoringFUSCollector.MovedEntity.FILES,
-            MoveRefactoringFUSCollector.MoveRefactoringDestination.PACKAGE
+          processor,
+          elementsToMove.size,
+          KotlinMoveRefactoringFUSCollector.MovedEntity.FILES,
+          KotlinMoveRefactoringFUSCollector.MoveRefactoringDestination.PACKAGE
         )
     }
 }

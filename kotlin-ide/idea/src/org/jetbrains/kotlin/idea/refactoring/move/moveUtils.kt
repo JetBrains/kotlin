@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.statistics.MoveRefactoringFUSCollector
+import org.jetbrains.kotlin.idea.statistics.KotlinMoveRefactoringFUSCollector
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -690,8 +690,8 @@ internal fun getTargetPackageFqName(targetContainer: PsiElement): FqName? {
 
 internal fun logFusForMoveRefactoring(
     numberOfEntities: Int,
-    entity: MoveRefactoringFUSCollector.MovedEntity,
-    destination: MoveRefactoringFUSCollector.MoveRefactoringDestination,
+    entity: KotlinMoveRefactoringFUSCollector.MovedEntity,
+    destination: KotlinMoveRefactoringFUSCollector.MoveRefactoringDestination,
     isDefault: Boolean,
     body: Runnable
 ) {
@@ -702,7 +702,7 @@ internal fun logFusForMoveRefactoring(
         body.run()
         succeeded = true
     } finally {
-        MoveRefactoringFUSCollector.log(
+        KotlinMoveRefactoringFUSCollector.log(
             timeStarted = timeStarted,
             timeFinished = currentTimeMillis(),
             numberOfEntities = numberOfEntities,

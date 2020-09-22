@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.inline
 
-import com.intellij.internal.statistic.eventLog.EventLogGroup
 import com.intellij.internal.statistic.eventLog.events.EventFields
-import com.intellij.internal.statistic.service.fus.collectors.CounterUsagesCollector
 import com.intellij.internal.statistic.utils.getPluginInfoById
 import com.intellij.lang.Language
 import com.intellij.lang.java.JavaLanguage
@@ -15,14 +13,13 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
+import org.jetbrains.kotlin.idea.statistics.KotlinRefactoringFUSCollector
 import org.jetbrains.kotlin.idea.util.isAnonymousFunction
 import org.jetbrains.kotlin.psi.*
 
-class KotlinInlineRefactoringFUSCollector : CounterUsagesCollector() {
-    override fun getGroup(): EventLogGroup = GROUP
+class KotlinInlineRefactoringFUSCollector : KotlinRefactoringFUSCollector() {
 
     companion object {
-        private val GROUP = EventLogGroup("kotlin.ide.refactoring", 2)
         private val elementType = EventFields.Enum("element_type", ElementType::class.java)
         private val languageFrom = EventFields.String("language_from", listOf("{util#lang}"))
         private val languageTo = EventFields.String("language_to", listOf("{util#lang}"))
