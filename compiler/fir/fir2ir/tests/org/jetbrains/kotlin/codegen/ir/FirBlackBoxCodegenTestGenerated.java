@@ -13532,6 +13532,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             runTest("compiler/testData/codegen/box/inlineClasses/genericInlineClassSynthMembers.kt");
         }
 
+        @TestMetadata("genericVararg2ndConstructor.kt")
+        public void testGenericVararg2ndConstructor() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/genericVararg2ndConstructor.kt");
+        }
+
         @TestMetadata("inlineClassAsLastExpressionInInLambda.kt")
         public void testInlineClassAsLastExpressionInInLambda() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassAsLastExpressionInInLambda.kt");

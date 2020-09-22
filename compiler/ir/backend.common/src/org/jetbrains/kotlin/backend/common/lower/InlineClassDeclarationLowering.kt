@@ -255,8 +255,24 @@ class InlineClassLowering(val context: CommonBackendContext) {
         else -> Name.identifier(asString() + INLINE_CLASS_IMPL_SUFFIX)
     }
 
+    private fun collectTypeParameters(declaration: IrTypeParametersContainer): List<IrTypeParameter> {
+        val result = mutableListOf<IrTypeParameter>()
+
+        fun collectImpl(declaration: IrDeclaration) {
+            if (declaration is IrTypeParametersContainer) result.addAll(declaration.typeParameters)
+            if (declaration is IrClass && declaration.isInner) collectImpl(declaration.parent as IrDeclaration)
+        }
+
+        collectImpl(declaration)
+
+        return result
+    }
+
     private fun createStaticBodilessMethod(function: IrFunction): IrSimpleFunction =
         context.irFactory.createStaticFunctionWithReceivers(
-            function.parent, function.name.toInlineClassImplementationName(), function
+            function.parent,
+            function.name.toInlineClassImplementationName(),
+            function,
+            typeParametersFromContext = collectTypeParameters(function.parentAsClass)
         )
 }
