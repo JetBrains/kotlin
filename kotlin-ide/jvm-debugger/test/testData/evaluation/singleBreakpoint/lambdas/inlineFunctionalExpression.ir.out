@@ -1,9 +1,7 @@
-// IGNORE_BACKEND: JVM_IR
-LineBreakpoint created at kt15259.kt:7
+LineBreakpoint created at inlineFunctionalExpression.kt:9
 Run Java
 Connected to the target VM
-kt15259.kt:7
-kt15259.kt:8
+inlineFunctionalExpression.kt:9
 Disconnected from the target VM
 
 Process finished with exit code 0

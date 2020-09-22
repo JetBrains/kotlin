@@ -30,12 +30,16 @@ import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferenceKeys
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferences
 import org.jetbrains.kotlin.idea.debugger.test.util.FramePrinter
 import org.jetbrains.kotlin.idea.debugger.test.util.FramePrinterDelegate
+import org.jetbrains.kotlin.idea.debugger.test.util.KotlinOutputChecker
 import org.jetbrains.kotlin.idea.debugger.test.util.SteppingInstruction
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.findLinesWithPrefixesRemoved
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.findStringWithPrefixes
 import org.jetbrains.kotlin.test.KotlinBaseTest
+import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
+import java.util.concurrent.ConcurrentHashMap
 import javax.swing.tree.TreeNode
 
 private data class CodeFragment(val text: String, val result: String, val kind: CodeFragmentKind)
@@ -58,6 +62,8 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDescriptorTestCaseWi
 
     private var isMultipleBreakpointsTest = false
     private var isFrameTest = false
+
+    private val exceptions = ConcurrentHashMap<String, Throwable>()
 
     fun doSingleBreakpointTest(path: String) {
         isMultipleBreakpointsTest = false
@@ -88,6 +94,11 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDescriptorTestCaseWi
         }
     }
 
+    override fun tearDown() {
+        exceptions.clear()
+        super.tearDown()
+    }
+
     private fun performSingleBreakpointTest(data: EvaluationTestData) {
         process(data.instructions)
 
@@ -97,14 +108,13 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDescriptorTestCaseWi
             val exceptions = linkedMapOf<String, Throwable>()
 
             for ((expression, expected, kind) in data.fragments) {
-                mayThrow(exceptions, expression) {
+                mayThrow(expression) {
                     evaluate(this, expression, kind, expected)
                 }
             }
 
             printFrame {
                 resume(this)
-                checkExceptions(exceptions)
             }
         }
 
@@ -112,11 +122,9 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDescriptorTestCaseWi
     }
 
     private fun performMultipleBreakpointTest(data: EvaluationTestData) {
-        val exceptions = linkedMapOf<String, Throwable>()
-
         for ((expression, expected) in data.fragments) {
-            mayThrow(exceptions, expression) {
-                doOnBreakpoint {
+            doOnBreakpoint {
+                mayThrow(expression) {
                     try {
                         evaluate(this, expression, CodeFragmentKind.EXPRESSION, expected)
                     } finally {
@@ -125,8 +133,6 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDescriptorTestCaseWi
                 }
             }
         }
-
-        checkExceptions(exceptions)
         finish()
     }
 
@@ -229,24 +235,30 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDescriptorTestCaseWi
         super.expandAll(tree, runnable, HashSet(), filter, suspendContext)
     }
 
-    private fun mayThrow(collector: MutableMap<String, Throwable>, expression: String, f: () -> Unit) {
+    private fun mayThrow(expression: String, f: () -> Unit) {
         try {
             f()
         } catch (e: Throwable) {
-            collector[expression] = e
+            exceptions[expression] = e
         }
     }
 
-    private fun checkExceptions(exceptions: MutableMap<String, Throwable>) {
+    override fun throwExceptionsIfAny() {
         if (exceptions.isNotEmpty()) {
-            for (exc in exceptions.values) {
-                exc.printStackTrace()
+            val isIgnored = InTextDirectivesUtils.isIgnoredTarget(
+                if (useIrBackend()) TargetBackend.JVM_IR else TargetBackend.JVM,
+                getExpectedOutputFile()
+            )
+
+            if (!isIgnored) {
+                for (exc in exceptions.values) {
+                    exc.printStackTrace()
+                }
+                val expressionsText = exceptions.entries.joinToString("\n") { (k, v) -> "expression: $k, exception: ${v.message}" }
+                throw AssertionError("Test failed:\n$expressionsText")
+            } else {
+                (checker as KotlinOutputChecker).threwException = true
             }
-
-            val expressionsText = exceptions.entries.joinToString("\n") { (k, v) -> "expression: $k, exception: ${v.message}" }
-
-            @Suppress("ConvertToStringTemplate")
-            throw AssertionError("Test failed:\n" + expressionsText)
         }
     }
 

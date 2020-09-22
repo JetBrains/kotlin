@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 LineBreakpoint created at localFun.kt:9
 LineBreakpoint created at localFun.kt:15
 LineBreakpoint created at localFun.kt:21

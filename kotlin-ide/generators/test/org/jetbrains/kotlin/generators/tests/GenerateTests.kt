@@ -203,6 +203,11 @@ private fun assembleWorkspace(): TWorkspace = workspace {
             model("evaluation/multipleBreakpoints", testMethodName = "doMultipleBreakpointsTest")
         }
 
+        testClass<AbstractIrKotlinEvaluateExpressionTest> {
+            model("evaluation/singleBreakpoint", testMethodName = "doSingleBreakpointTest", targetBackend = TargetBackend.JVM_IR)
+            model("evaluation/multipleBreakpoints", testMethodName = "doMultipleBreakpointsTest", targetBackend = TargetBackend.JVM_IR)
+        }
+
         testClass<AbstractSelectExpressionForDebuggerTest> {
             model("selectExpression", isRecursive = false)
             model("selectExpression/disallowMethodCalls", testMethodName = "doTestWoMethodCalls")

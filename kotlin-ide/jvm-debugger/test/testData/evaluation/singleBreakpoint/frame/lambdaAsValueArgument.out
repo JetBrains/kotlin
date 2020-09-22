@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 LineBreakpoint created at lambdaAsValueArgument.kt:19
 Run Java
 Connected to the target VM
