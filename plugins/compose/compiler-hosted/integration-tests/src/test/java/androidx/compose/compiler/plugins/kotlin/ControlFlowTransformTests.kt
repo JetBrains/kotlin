@@ -502,7 +502,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 }
                 else -> {
                   %composer.startReplaceableGroup(<>, "<A()>")
-                  tmp0_safe_receiver.A(%composer, 0b0110 and %changed)
+                  tmp0_safe_receiver.A(%composer, 0b1110 and %changed)
                   %composer.endReplaceableGroup()
                 }
               }
@@ -2147,10 +2147,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Example(x: Int?, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Example)<A(c)>:Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                 val tmp0_safe_receiver = x
                 when {
                   tmp0_safe_receiver == null -> {
@@ -2204,10 +2204,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Example(x: Int?, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Example)<A()>:Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                 x?.let { it: Int ->
                   if (it > 0) {
                     NA()
@@ -2303,7 +2303,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
               %composer.startRestartGroup(<>, "C(Test)<W>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
                 W(composableLambda(%composer, <>, true, "C<A()>:Test.kt") { %composer: Composer<*>?, %changed: Int ->
-                  if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+                  if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                     A(%composer, 0)
                   } else {
                     %composer.skipToGroupEnd()
@@ -2336,7 +2336,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
               if (%changed !== 0 || !%composer.skipping) {
                 IW({ %composer: Composer<*>?, %changed: Int ->
                   %composer.startReplaceableGroup(<>, "C<A()>:Test.kt")
-                  if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+                  if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                     A(%composer, 0)
                   } else {
                     %composer.skipToGroupEnd()
@@ -2374,7 +2374,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
               %composer.startRestartGroup(<>, "C(Test)<Wrap>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
                 Wrap(composableLambda(%composer, <>, true, "C<{>,<effect>:Test.kt") { %composer: Composer<*>?, %changed: Int ->
-                  if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+                  if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                     %composer.startReplaceableGroup(<>, "*<{>,<effect>")
                     repeat(number) { it: Int ->
                       effects[it] = effect(remember({
@@ -2427,10 +2427,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Test(value: InlineClass, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test)P(0:InlineClass)<A()>:Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(value.value)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                 A(%composer, 0)
               } else {
                 %composer.skipToGroupEnd()
@@ -2475,19 +2475,19 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Test01(p0: Int, p1: Int, p2: Int, p3: Int, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test01):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p1)) 0b00010000 else 0b1000
+              if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p1)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b01100000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p2)) 0b01000000 else 0b00100000
+              if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p2)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b000110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p3)) 0b000100000000 else 0b10000000
+              if (%changed and 0b0001110000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b10101011 xor 0b10101010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2499,19 +2499,19 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Test02(p0: Int, p1: Int, p3: Int, p2: Int, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test02)P(!2,3):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p1)) 0b00010000 else 0b1000
+              if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p1)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b01100000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p3)) 0b01000000 else 0b00100000
+              if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p3)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b000110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p2)) 0b000100000000 else 0b10000000
+              if (%changed and 0b0001110000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b10101011 xor 0b10101010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2523,19 +2523,19 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Test03(p0: Int, p2: Int, p1: Int, p3: Int, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test03)P(!1,2):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p2)) 0b00010000 else 0b1000
+              if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p2)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b01100000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p1)) 0b01000000 else 0b00100000
+              if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p1)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b000110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p3)) 0b000100000000 else 0b10000000
+              if (%changed and 0b0001110000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b10101011 xor 0b10101010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2547,19 +2547,19 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Test04(p0: Int, p2: Int, p3: Int, p1: Int, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test04)P(!1,2,3):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p2)) 0b00010000 else 0b1000
+              if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p2)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b01100000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p3)) 0b01000000 else 0b00100000
+              if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p3)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b000110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p1)) 0b000100000000 else 0b10000000
+              if (%changed and 0b0001110000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b10101011 xor 0b10101010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2571,19 +2571,19 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Test05(p0: Int, p3: Int, p1: Int, p2: Int, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test05)P(!1,3):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p3)) 0b00010000 else 0b1000
+              if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p3)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b01100000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p1)) 0b01000000 else 0b00100000
+              if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p1)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b000110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p2)) 0b000100000000 else 0b10000000
+              if (%changed and 0b0001110000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b10101011 xor 0b10101010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2595,19 +2595,19 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Test06(p0: Int, p3: Int, p2: Int, p1: Int, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test06)P(!1,3,2):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p3)) 0b00010000 else 0b1000
+              if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p3)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b01100000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p2)) 0b01000000 else 0b00100000
+              if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p2)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b000110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p1)) 0b000100000000 else 0b10000000
+              if (%changed and 0b0001110000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b10101011 xor 0b10101010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2619,19 +2619,19 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Test07(p1: Int, p0: Int, p2: Int, p3: Int, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test07)P(1):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p0)) 0b00010000 else 0b1000
+              if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p0)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b01100000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p2)) 0b01000000 else 0b00100000
+              if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p2)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b000110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p3)) 0b000100000000 else 0b10000000
+              if (%changed and 0b0001110000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b10101011 xor 0b10101010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2643,19 +2643,19 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Test08(p1: Int, p0: Int, p3: Int, p2: Int, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test08)P(1!1,3):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p0)) 0b00010000 else 0b1000
+              if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p0)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b01100000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p3)) 0b01000000 else 0b00100000
+              if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p3)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b000110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p2)) 0b000100000000 else 0b10000000
+              if (%changed and 0b0001110000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b10101011 xor 0b10101010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2667,19 +2667,19 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Test09(p1: Int, p2: Int, p0: Int, p3: Int, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test09)P(1,2):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p2)) 0b00010000 else 0b1000
+              if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p2)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b01100000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p0)) 0b01000000 else 0b00100000
+              if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p0)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b000110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p3)) 0b000100000000 else 0b10000000
+              if (%changed and 0b0001110000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b10101011 xor 0b10101010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2691,19 +2691,19 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Test00(p1: Int, p2: Int, p3: Int, p0: Int, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test00)P(1,2,3):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p2)) 0b00010000 else 0b1000
+              if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p2)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b01100000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p3)) 0b01000000 else 0b00100000
+              if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p3)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b000110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p0)) 0b000100000000 else 0b10000000
+              if (%changed and 0b0001110000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b10101011 xor 0b10101010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2715,19 +2715,19 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Test11(p1: Int, p3: Int, p0: Int, p2: Int, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test11)P(1,3):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p3)) 0b00010000 else 0b1000
+              if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p3)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b01100000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p0)) 0b01000000 else 0b00100000
+              if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p0)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b000110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p2)) 0b000100000000 else 0b10000000
+              if (%changed and 0b0001110000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b10101011 xor 0b10101010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2739,19 +2739,19 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Test12(p1: Int, p3: Int, p2: Int, p0: Int, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test12)P(1,3,2):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p3)) 0b00010000 else 0b1000
+              if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p3)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b01100000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p2)) 0b01000000 else 0b00100000
+              if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p2)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b000110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p0)) 0b000100000000 else 0b10000000
+              if (%changed and 0b0001110000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b10101011 xor 0b10101010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2763,19 +2763,19 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Test13(p2: Int, p0: Int, p1: Int, p3: Int, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test13)P(2):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p0)) 0b00010000 else 0b1000
+              if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p0)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b01100000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p1)) 0b01000000 else 0b00100000
+              if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p1)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b000110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p3)) 0b000100000000 else 0b10000000
+              if (%changed and 0b0001110000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b10101011 xor 0b10101010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2787,19 +2787,19 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Test14(p2: Int, p0: Int, p3: Int, p1: Int, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test14)P(2!1,3):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p0)) 0b00010000 else 0b1000
+              if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p0)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b01100000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p3)) 0b01000000 else 0b00100000
+              if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p3)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b000110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p1)) 0b000100000000 else 0b10000000
+              if (%changed and 0b0001110000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b10101011 xor 0b10101010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2811,19 +2811,19 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Test15(p2: Int, p1: Int, p0: Int, p3: Int, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test15)P(2,1):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p1)) 0b00010000 else 0b1000
+              if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p1)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b01100000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p0)) 0b01000000 else 0b00100000
+              if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p0)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b000110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p3)) 0b000100000000 else 0b10000000
+              if (%changed and 0b0001110000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b10101011 xor 0b10101010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2835,19 +2835,19 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Test16(p2: Int, p1: Int, p3: Int, p0: Int, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test16)P(2,1,3):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p1)) 0b00010000 else 0b1000
+              if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p1)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b01100000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p3)) 0b01000000 else 0b00100000
+              if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p3)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b000110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p0)) 0b000100000000 else 0b10000000
+              if (%changed and 0b0001110000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b10101011 xor 0b10101010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2859,19 +2859,19 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Test17(p2: Int, p3: Int, p0: Int, p1: Int, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test17)P(2,3):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p3)) 0b00010000 else 0b1000
+              if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p3)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b01100000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p0)) 0b01000000 else 0b00100000
+              if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p0)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b000110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p1)) 0b000100000000 else 0b10000000
+              if (%changed and 0b0001110000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b10101011 xor 0b10101010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2883,19 +2883,19 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Test18(p2: Int, p3: Int, p1: Int, p0: Int, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test18)P(2,3,1):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p3)) 0b00010000 else 0b1000
+              if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p3)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b01100000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p1)) 0b01000000 else 0b00100000
+              if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p1)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b000110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p0)) 0b000100000000 else 0b10000000
+              if (%changed and 0b0001110000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b10101011 xor 0b10101010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2907,19 +2907,19 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Test19(p3: Int, p0: Int, p1: Int, p2: Int, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test19)P(3):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p0)) 0b00010000 else 0b1000
+              if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p0)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b01100000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p1)) 0b01000000 else 0b00100000
+              if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p1)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b000110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p2)) 0b000100000000 else 0b10000000
+              if (%changed and 0b0001110000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b10101011 xor 0b10101010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2931,19 +2931,19 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Test20(p3: Int, p0: Int, p2: Int, p1: Int, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test20)P(3!1,2):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p0)) 0b00010000 else 0b1000
+              if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p0)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b01100000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p2)) 0b01000000 else 0b00100000
+              if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p2)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b000110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p1)) 0b000100000000 else 0b10000000
+              if (%changed and 0b0001110000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b10101011 xor 0b10101010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2955,19 +2955,19 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Test21(p3: Int, p1: Int, p0: Int, p2: Int, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test21)P(3,1):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p1)) 0b00010000 else 0b1000
+              if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p1)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b01100000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p0)) 0b01000000 else 0b00100000
+              if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p0)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b000110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p2)) 0b000100000000 else 0b10000000
+              if (%changed and 0b0001110000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b10101011 xor 0b10101010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2979,19 +2979,19 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Test22(p3: Int, p1: Int, p2: Int, p0: Int, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test22)P(3,1,2):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p1)) 0b00010000 else 0b1000
+              if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p1)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b01100000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p2)) 0b01000000 else 0b00100000
+              if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p2)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b000110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p0)) 0b000100000000 else 0b10000000
+              if (%changed and 0b0001110000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b10101011 xor 0b10101010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -3003,19 +3003,19 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Test23(p3: Int, p2: Int, p0: Int, p1: Int, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test23)P(3,2):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p2)) 0b00010000 else 0b1000
+              if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p2)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b01100000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p0)) 0b01000000 else 0b00100000
+              if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p0)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b000110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p1)) 0b000100000000 else 0b10000000
+              if (%changed and 0b0001110000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b10101011 xor 0b10101010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -3027,19 +3027,19 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Test24(p3: Int, p2: Int, p1: Int, p0: Int, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test24)P(3,2,1):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p2)) 0b00010000 else 0b1000
+              if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p2)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b01100000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p1)) 0b01000000 else 0b00100000
+              if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p1)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b000110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(p0)) 0b000100000000 else 0b10000000
+              if (%changed and 0b0001110000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b10101011 xor 0b10101010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -3072,10 +3072,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Test(value: LocalInlineClass, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test)P(0:c#runtime.tests.LocalInlineClass):Test.kt#992ot2")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(value.value)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -3154,10 +3154,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
               %composer.startRestartGroup(<>, "C(Test)<W>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
                 W(composableLambda(%composer, <>, true, "C<IW>:Test.kt") { %composer: Composer<*>?, %changed: Int ->
-                  if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+                  if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                     IW({ %composer: Composer<*>?, %changed: Int ->
                       %composer.startReplaceableGroup(<>, "C<T(2)>,<T(4)>:Test.kt")
-                      if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+                      if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                         T(2, %composer, 0b0110)
                         %composer.startReplaceableGroup(<>, "*<T(3)>")
                         repeat(3) { it: Int ->

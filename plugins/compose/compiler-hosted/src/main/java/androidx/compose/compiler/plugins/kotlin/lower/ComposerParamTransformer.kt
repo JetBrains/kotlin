@@ -376,7 +376,10 @@ class ComposerParamTransformer(
                 fn.correspondingPropertySymbol = correspondingPropertySymbol
             }
             fn.parent = parent
-            fn.copyTypeParametersFrom(this)
+            fn.typeParameters = this.typeParameters.map {
+                it.parent = fn
+                it
+            }
             fn.dispatchReceiverParameter = dispatchReceiverParameter?.copyTo(fn)
             fn.extensionReceiverParameter = extensionReceiverParameter?.copyTo(fn)
             fn.valueParameters = valueParameters.map { p ->

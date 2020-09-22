@@ -314,7 +314,7 @@ private class IrSourcePrinterVisitor(
                 "EQEQEQ" -> if (isInNotCall) "!==" else "==="
                 // no names for
                 "invoke", "get", "set" -> ""
-                "iterator", "hasNext", "next" -> name
+                "iterator", "hasNext", "next", "getValue", "setValue" -> name
                 "CHECK_NOT_NULL" -> "!!"
                 else -> error("Unhandled operator $name")
             }
@@ -377,7 +377,7 @@ private class IrSourcePrinterVisitor(
                     print(" $opSymbol ")
                     expression.getValueArgument(1)?.print()
                 }
-                "iterator", "hasNext", "next" -> {
+                "iterator", "hasNext", "next", "getValue", "setValue" -> {
                     (expression.dispatchReceiver ?: expression.extensionReceiver)?.print()
                     print(".")
                     print(opSymbol)
@@ -829,6 +829,9 @@ private class IrSourcePrinterVisitor(
             print(declaration.visibility.toString().toLowerCase(Locale.ROOT))
             print(" ")
         }
+        if (declaration.isStatic) {
+            print("static ")
+        }
         if (declaration.isFinal) {
             print("val ")
         } else {
@@ -845,11 +848,17 @@ private class IrSourcePrinterVisitor(
     }
 
     override fun visitGetField(expression: IrGetField) {
-        expression.receiver?.print()
+        val receiver = expression.receiver
+        val owner = expression.symbol.owner
+        val parent = owner.parent
+        if (receiver != null) {
+            expression.receiver?.print()
+        } else if (owner.isStatic && parent is IrClass) {
+            print(parent.name)
+        }
         print(".")
-        print(expression.symbol.owner.name)
+        print(owner.name)
     }
-
     override fun visitSetField(expression: IrSetField) {
         expression.receiver?.print()
         print(".")

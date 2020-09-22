@@ -18,6 +18,7 @@ package androidx.compose.compiler.plugins.kotlin.lower
 
 import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
 import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
+import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
 import androidx.compose.compiler.plugins.kotlin.composableTrackedContract
 import androidx.compose.compiler.plugins.kotlin.irTrace
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
@@ -53,7 +54,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
@@ -445,7 +445,7 @@ class ComposerLambdaMemoization(
         captures: List<IrValueDeclaration>
     ): IrExpression {
         if (captures.any {
-            !((it as? IrVariable)?.isVar != true && it.type.toKotlinType().isStable())
+            !((it as? IrVariable)?.isVar != true && stabilityOf(it.type).knownStable())
         }
         ) return expression
         val rememberParameterCount = captures.size + 1 // One additional parameter for the lambda
@@ -554,7 +554,7 @@ class ComposerLambdaMemoization(
         return false
     }
 
-    private fun IrExpression?.isNullOrStable() = this == null || type.toKotlinType().isStable()
+    private fun IrExpression?.isNullOrStable() = this == null || stabilityOf(this).knownStable()
     private fun IrFunctionExpression.isTracked() =
         function.descriptor.composableTrackedContract() != false
 }

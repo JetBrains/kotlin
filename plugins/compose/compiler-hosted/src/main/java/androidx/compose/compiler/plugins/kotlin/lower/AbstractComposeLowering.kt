@@ -20,15 +20,14 @@ import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
 import androidx.compose.compiler.plugins.kotlin.KtxNameConventions
 import androidx.compose.compiler.plugins.kotlin.allowsComposableCalls
 import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
+import androidx.compose.compiler.plugins.kotlin.analysis.Stability
+import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
+import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
 import androidx.compose.compiler.plugins.kotlin.irTrace
 import androidx.compose.compiler.plugins.kotlin.isComposableCallable
-import androidx.compose.compiler.plugins.kotlin.isMarkedStable
-import androidx.compose.compiler.plugins.kotlin.isSpecialType
-import org.jetbrains.kotlin.backend.common.descriptors.isFunctionOrKFunctionType
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.extractParameterNameFromFunctionTypeArgument
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
@@ -54,13 +53,16 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
 import org.jetbrains.kotlin.ir.builders.IrBlockBodyBuilder
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
+import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
@@ -88,6 +90,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrElseBranchImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrIfThenElseImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
@@ -135,13 +138,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
-import org.jetbrains.kotlin.resolve.isInlineClassType
-import org.jetbrains.kotlin.resolve.unsubstitutedUnderlyingType
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.isError
-import org.jetbrains.kotlin.types.isNullable
-import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.DFS
 
 @Suppress("DEPRECATION")
@@ -165,6 +162,19 @@ abstract class AbstractComposeLowering(
         }
 
     protected val builtIns = context.irBuiltIns
+
+    protected val stabilityInferencer = StabilityInferencer(context)
+
+    fun stabilityOf(expr: IrExpression) = stabilityInferencer.stabilityOf(expr)
+    fun stabilityOf(type: IrType) = stabilityInferencer.stabilityOf(type)
+
+    fun IrAnnotationContainer.hasStableMarker(): Boolean = with(stabilityInferencer) {
+        hasStableMarker()
+    }
+
+    fun IrAnnotationContainer.hasStableAnnotation(): Boolean = with(stabilityInferencer) {
+        hasStableAnnotation()
+    }
 
     protected val composerIrClass = context.referenceClass(ComposeFqNames.Composer)?.owner
         ?: error("Cannot find the Composer class in the classpath")
@@ -284,10 +294,6 @@ abstract class AbstractComposeLowering(
         return annotations.hasAnnotation(ComposeFqNames.Composable)
     }
 
-    fun IrAnnotationContainer.hasStableAnnotation(): Boolean {
-        return annotations.hasAnnotation(ComposeFqNames.Stable)
-    }
-
     fun List<IrConstructorCall>.hasAnnotation(fqName: FqName): Boolean =
         any { it.symbol.descriptor.constructedClass.fqNameSafe == fqName }
 
@@ -322,34 +328,42 @@ abstract class AbstractComposeLowering(
         get() =
             (constructor.declarationDescriptor as? ClassDescriptor)?.kind == ClassKind.ENUM_CLASS
 
-    protected fun KotlinType?.isStable(): Boolean {
-        if (this == null) return false
+    fun Stability.irStableExpression(
+        resolve: (IrTypeParameter) -> IrExpression? = { null }
+    ): IrExpression? = when (this) {
+        is Stability.Combined -> {
+            val exprs = elements.mapNotNull { it.irStableExpression(resolve) }
+            when {
+                exprs.size != elements.size -> null
+                exprs.isEmpty() -> irConst(StabilityBits.STABLE.bitsForSlot(0))
+                exprs.size == 1 -> exprs.first()
+                else -> exprs.reduce { a, b ->
+                    irOr(a, b)
+                }
+            }
+        }
 
-        val trace = bindingTrace
-        val calculated = trace.get(ComposeWritableSlices.STABLE_TYPE, this)
-        return if (calculated == null) {
-            val isStable = !isError &&
-                !isTypeParameter() &&
-                !isSpecialType &&
-                (
-                    KotlinBuiltIns.isPrimitiveType(this) ||
-                        isFunctionOrKFunctionType ||
-                        isEnum ||
-                        KotlinBuiltIns.isString(this) ||
-                        isMarkedStable() ||
-                        (
-                            isNullable() &&
-                                makeNotNullable().isStable()
-                            ) ||
-                        (
-                            isInlineClassType() &&
-                                unsubstitutedUnderlyingType().isStable()
-                            )
-                    )
-            trace.record(ComposeWritableSlices.STABLE_TYPE, this, isStable)
-            isStable
-        } else calculated
+        is Stability.Certain ->
+            if (stable)
+                irConst(StabilityBits.STABLE.bitsForSlot(0))
+            else
+                null
+
+        is Stability.Parameter -> resolve(parameter)
+        is Stability.Runtime -> {
+            val stableField = makeStabilityField().also { it.parent = declaration }
+            IrGetFieldImpl(
+                UNDEFINED_OFFSET,
+                UNDEFINED_OFFSET,
+                stableField.symbol,
+                stableField.type
+            )
+        }
+        is Stability.Unknown -> null
     }
+
+    fun KotlinType.isFinal(): Boolean = (constructor.declarationDescriptor as? ClassDescriptor)
+        ?.modality == Modality.FINAL
 
     fun FunctionDescriptor.isComposableCallable(): Boolean {
         return isComposableCallable(context.bindingContext)
@@ -958,6 +972,16 @@ abstract class AbstractComposeLowering(
         )
     }
 
+    fun makeStabilityField(): IrField {
+        return buildField {
+            name = KtxNameConventions.STABILITY_FLAG
+            isStatic = true
+            isFinal = true
+            type = context.irBuiltIns.intType
+            visibility = Visibilities.PUBLIC
+        }
+    }
+
     fun IrExpression.isStatic(): Boolean {
         return when (this) {
             // A constant by definition is static
@@ -966,123 +990,9 @@ abstract class AbstractComposeLowering(
             is IrGetEnumValue -> true
             // Getting a companion object or top level object can be considered static if the
             // type of that object is Stable. (`Modifier` for instance is a common example)
-            is IrGetObjectValue -> symbol.owner.superTypes.any { it.toKotlinType().isStable() }
-            is IrConstructorCall -> {
-                // special case constructors of inline classes as static if their underlying
-                // value is static.
-                if (
-                    type.isInlined() &&
-                    type.unboxInlineClass().toKotlinType().isStable() &&
-                    getValueArgument(0)?.isStatic() == true
-                ) {
-                    return true
-                }
-                false
-            }
-            is IrCall -> when (origin) {
-                is IrStatementOrigin.GET_PROPERTY -> {
-                    // If we are in a GET_PROPERTY call, then this should usually resolve to
-                    // non-null, but in case it doesn't, just return false
-                    val prop = (symbol.owner as? IrSimpleFunction)
-                        ?.correspondingPropertySymbol?.owner ?: return false
-
-                    // if the property is a top level constant, then it is static.
-                    if (prop.isConst) return true
-
-                    val typeIsStable = type.toKotlinType().isStable()
-                    val dispatchReceiverIsStatic = dispatchReceiver?.isStatic() != false
-                    val extensionReceiverIsStatic = extensionReceiver?.isStatic() != false
-
-                    // if we see that the property is read-only with a default getter and a
-                    // stable return type , then reading the property can also be considered
-                    // static if this is a top level property or the subject is also static.
-                    if (!prop.isVar &&
-                        prop.getter?.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR &&
-                        typeIsStable &&
-                        dispatchReceiverIsStatic && extensionReceiverIsStatic
-                    ) {
-                        return true
-                    }
-
-                    val getterIsStable = prop.hasStableAnnotation() ||
-                        symbol.owner.hasStableAnnotation()
-
-                    if (
-                        getterIsStable &&
-                        typeIsStable &&
-                        dispatchReceiverIsStatic &&
-                        extensionReceiverIsStatic
-                    ) {
-                        return true
-                    }
-
-                    false
-                }
-                is IrStatementOrigin.PLUS,
-                is IrStatementOrigin.MUL,
-                is IrStatementOrigin.MINUS,
-                is IrStatementOrigin.ANDAND,
-                is IrStatementOrigin.OROR,
-                is IrStatementOrigin.DIV,
-                is IrStatementOrigin.EQ,
-                is IrStatementOrigin.EQEQ,
-                is IrStatementOrigin.EQEQEQ,
-                is IrStatementOrigin.GT,
-                is IrStatementOrigin.GTEQ,
-                is IrStatementOrigin.LT,
-                is IrStatementOrigin.LTEQ -> {
-                    // special case mathematical operators that are in the stdlib. These are
-                    // immutable operations so the overall result is static if the operands are
-                    // also static
-                    val isStableOperator = symbol
-                        .descriptor
-                        .fqNameSafe
-                        .topLevelName() == "kotlin" ||
-                        symbol.owner.hasStableAnnotation()
-
-                    val typeIsStable = type.toKotlinType().isStable()
-                    if (!typeIsStable) return false
-
-                    if (!isStableOperator) {
-                        return false
-                    }
-
-                    getArguments().all { it.second.isStatic() }
-                }
-                null -> {
-                    if (symbol.descriptor.fqNameSafe == ComposeFqNames.remember) {
-                        // if it is a call to remember with 0 input arguments, then we can
-                        // consider the value static if the result type of the lambda is stable
-                        val syntheticRememberParams = 1 + // composer param
-                            1 // changed param
-                        val expectedArgumentsCount = 1 + syntheticRememberParams // 1 for lambda
-                        if (
-                            valueArgumentsCount == expectedArgumentsCount &&
-                            type.toKotlinType().isStable()
-                        ) {
-                            return true
-                        }
-                    }
-                    if (symbol.descriptor.fqNameSafe == ComposeFqNames.composableLambda) {
-                        // calls to this function are generated by the compiler, and this
-                        // function behaves similar to a remember call in that the result will
-                        // _always_ be the same and the resulting type is _always_ stable, so
-                        // thus it is static.
-                        return true
-                    }
-                    // normal function call. If the function is marked as Stable and the result
-                    // is Stable, then the static-ness of it is the static-ness of its arguments
-                    val isStable = symbol.owner.hasStableAnnotation()
-                    if (!isStable) return false
-
-                    val typeIsStable = type.toKotlinType().isStable()
-                    if (!typeIsStable) return false
-
-                    // getArguments includes the receivers!
-                    getArguments().all { it.second.isStatic() }
-                }
-                else -> false
-            }
+            is IrGetObjectValue -> symbol.owner.superTypes.any { stabilityOf(it).knownStable() }
+            is IrConstructorCall -> isStatic()
+            is IrCall -> isStatic()
             is IrGetValue -> {
                 val owner = symbol.owner
                 when (owner) {
@@ -1093,6 +1003,123 @@ abstract class AbstractComposeLowering(
                     }
                     else -> false
                 }
+            }
+            else -> false
+        }
+    }
+
+    fun IrConstructorCall.isStatic(): Boolean {
+        // special case constructors of inline classes as static if their underlying
+        // value is static.
+        if (type.isInlined()) {
+            return stabilityOf(type.unboxInlineClass()).knownStable() &&
+                getValueArgument(0)?.isStatic() == true
+        }
+        return false
+    }
+
+    fun IrCall.isStatic(): Boolean {
+        val function = symbol.owner
+        val fqName = function.descriptor.fqNameSafe
+        // todo: special case, for instance, listOf(...statics...)
+        return when (origin) {
+            is IrStatementOrigin.GET_PROPERTY -> {
+                // If we are in a GET_PROPERTY call, then this should usually resolve to
+                // non-null, but in case it doesn't, just return false
+                val prop = (function as? IrSimpleFunction)
+                    ?.correspondingPropertySymbol?.owner ?: return false
+
+                // if the property is a top level constant, then it is static.
+                if (prop.isConst) return true
+
+                val typeIsStable = stabilityOf(type).knownStable()
+                val dispatchReceiverIsStatic = dispatchReceiver?.isStatic() != false
+                val extensionReceiverIsStatic = extensionReceiver?.isStatic() != false
+
+                // if we see that the property is read-only with a default getter and a
+                // stable return type , then reading the property can also be considered
+                // static if this is a top level property or the subject is also static.
+                if (!prop.isVar &&
+                    prop.getter?.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR &&
+                    typeIsStable &&
+                    dispatchReceiverIsStatic && extensionReceiverIsStatic
+                ) {
+                    return true
+                }
+
+                val getterIsStable = prop.hasStableAnnotation() ||
+                    function.hasStableAnnotation()
+
+                if (
+                    getterIsStable &&
+                    typeIsStable &&
+                    dispatchReceiverIsStatic &&
+                    extensionReceiverIsStatic
+                ) {
+                    return true
+                }
+
+                false
+            }
+            is IrStatementOrigin.PLUS,
+            is IrStatementOrigin.MUL,
+            is IrStatementOrigin.MINUS,
+            is IrStatementOrigin.ANDAND,
+            is IrStatementOrigin.OROR,
+            is IrStatementOrigin.DIV,
+            is IrStatementOrigin.EQ,
+            is IrStatementOrigin.EQEQ,
+            is IrStatementOrigin.EQEQEQ,
+            is IrStatementOrigin.GT,
+            is IrStatementOrigin.GTEQ,
+            is IrStatementOrigin.LT,
+            is IrStatementOrigin.LTEQ -> {
+                // special case mathematical operators that are in the stdlib. These are
+                // immutable operations so the overall result is static if the operands are
+                // also static
+                val isStableOperator = fqName.topLevelName() == "kotlin" ||
+                    function.hasStableAnnotation()
+
+                val typeIsStable = stabilityOf(type).knownStable()
+                if (!typeIsStable) return false
+
+                if (!isStableOperator) {
+                    return false
+                }
+
+                getArguments().all { it.second.isStatic() }
+            }
+            null -> {
+                if (fqName == ComposeFqNames.remember) {
+                    // if it is a call to remember with 0 input arguments, then we can
+                    // consider the value static if the result type of the lambda is stable
+                    val syntheticRememberParams = 1 + // composer param
+                        1 // changed param
+                    val expectedArgumentsCount = 1 + syntheticRememberParams // 1 for lambda
+                    if (
+                        valueArgumentsCount == expectedArgumentsCount &&
+                        stabilityOf(type).knownStable()
+                    ) {
+                        return true
+                    }
+                }
+                if (fqName == ComposeFqNames.composableLambda) {
+                    // calls to this function are generated by the compiler, and this
+                    // function behaves similar to a remember call in that the result will
+                    // _always_ be the same and the resulting type is _always_ stable, so
+                    // thus it is static.
+                    return true
+                }
+                // normal function call. If the function is marked as Stable and the result
+                // is Stable, then the static-ness of it is the static-ness of its arguments
+                val isStable = symbol.owner.hasStableAnnotation()
+                if (!isStable) return false
+
+                val typeIsStable = stabilityOf(type).knownStable()
+                if (!typeIsStable) return false
+
+                // getArguments includes the receivers!
+                getArguments().all { it.second.isStatic() }
             }
             else -> false
         }
