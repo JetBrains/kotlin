@@ -1018,7 +1018,7 @@ fun main() {
 the generated `create` will look like
 ```kotlin
 public fun create(value: Any?, completion: Continuation): Continuation {
-    val resutl = main$lambda$1(this.$i, completion)
+    val result = main$lambda$1(this.$i, completion)
     result.I$0 = value as Int
 }
 ```
@@ -1027,13 +1027,13 @@ note that the constructor, in addition to captured parameters, accepts a complet
 In Old JVM BE, `create` is generated for every suspend lambda even when we do not need it. I.e., even for suspending lambdas with
 more than one parameter. There are only two versions of `createCoroutineUnintercepted`, and there are no other places where we call
 `create` (apart from compiler-generated `invoke`s). Thus, in JVM_IR BE, we fixed the slip-up, and it generates the `create` function only
-for functions with zero on one parameter.
+for functions with zero or one parameter.
 
 ##### Lambda Parameters
 We need to put the suspend lambda arguments into fields since there can be only one argument of `invokeSuspend` - `$result`. The compiler
 moves the lambda body into `invokeSuspend`. Thus, `invokeSuspend` does all the computation. We reuse fields for spilled variables for
-parameters as well. For example, if we have a lambda with type `suspend Int.(Long, Any) -> Unit`, then `I$0` hold value of extension
-receiver,' `J$0` - the first argument, `L$1` - the second one.
+parameters as well. For example, if we have a lambda with type `suspend Int.(Long, Any) -> Unit`, then `I$0` holds value of extension
+receiver, `J$0` - the first argument, `L$1` - the second one.
 
 This way, we can reuse spilled variables cleanup logic for parameters. If we used separate fields for parameters, we would need to manually
 push `null` to them as we do for spilled variable fields if we do not need them anymore.
