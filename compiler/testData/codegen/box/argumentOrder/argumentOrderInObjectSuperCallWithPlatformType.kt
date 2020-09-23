@@ -1,4 +1,4 @@
-// TARGET_PLATFORM: JVM
+// TARGET_BACKEND: JVM
 // FILE: A.java
 public class A {
     public static String f() {
