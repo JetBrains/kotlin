@@ -51,6 +51,7 @@ data class Callable(
     companion object
 }
 
+@JsonTypeInfo(use = CLASS)
 sealed class TypeReference {
     companion object
 }
