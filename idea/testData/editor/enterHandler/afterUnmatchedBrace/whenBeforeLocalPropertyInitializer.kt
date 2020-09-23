@@ -1,13 +1,9 @@
 fun test() {
-    val test = when {<caret>1
-
-    fun foo() = 42
+    val test = when { <caret>1
 }
 //-----
 fun test() {
-    val test = when {
+    val test = when { 
         <caret>1
-
-            fun foo() = 42
     }
 }

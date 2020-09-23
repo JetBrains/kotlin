@@ -28,19 +28,29 @@ public class EnterAfterUnmatchedBraceHandlerTestGenerated extends AbstractEnterA
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/editor/enterHandler/afterUnmatchedBrace"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @TestMetadata("runBeforeLocalPropertyInitializer.kt")
-    public void testRunBeforeLocalPropertyInitializer() throws Exception {
-        runTest("idea/testData/editor/enterHandler/afterUnmatchedBrace/runBeforeLocalPropertyInitializer.kt");
+    @TestMetadata("lambdaArgumentBeforeFunctionInitializer.kt")
+    public void testLambdaArgumentBeforeFunctionInitializer() throws Exception {
+        runTest("idea/testData/editor/enterHandler/afterUnmatchedBrace/lambdaArgumentBeforeFunctionInitializer.kt");
     }
 
-    @TestMetadata("runBeforeMemberPropertyInitializer.kt")
-    public void testRunBeforeMemberPropertyInitializer() throws Exception {
-        runTest("idea/testData/editor/enterHandler/afterUnmatchedBrace/runBeforeMemberPropertyInitializer.kt");
+    @TestMetadata("lambdaArgumentBeforeLocalPropertyInitializer.kt")
+    public void testLambdaArgumentBeforeLocalPropertyInitializer() throws Exception {
+        runTest("idea/testData/editor/enterHandler/afterUnmatchedBrace/lambdaArgumentBeforeLocalPropertyInitializer.kt");
     }
 
-    @TestMetadata("runBeforeTopLevelPropertyInitializer.kt")
-    public void testRunBeforeTopLevelPropertyInitializer() throws Exception {
-        runTest("idea/testData/editor/enterHandler/afterUnmatchedBrace/runBeforeTopLevelPropertyInitializer.kt");
+    @TestMetadata("lambdaArgumentBeforeMemberPropertyInitializer.kt")
+    public void testLambdaArgumentBeforeMemberPropertyInitializer() throws Exception {
+        runTest("idea/testData/editor/enterHandler/afterUnmatchedBrace/lambdaArgumentBeforeMemberPropertyInitializer.kt");
+    }
+
+    @TestMetadata("lambdaArgumentBeforeTopLevelPropertyInitializer.kt")
+    public void testLambdaArgumentBeforeTopLevelPropertyInitializer() throws Exception {
+        runTest("idea/testData/editor/enterHandler/afterUnmatchedBrace/lambdaArgumentBeforeTopLevelPropertyInitializer.kt");
+    }
+
+    @TestMetadata("notApplicableOnInitializer.kt")
+    public void testNotApplicableOnInitializer() throws Exception {
+        runTest("idea/testData/editor/enterHandler/afterUnmatchedBrace/notApplicableOnInitializer.kt");
     }
 
     @TestMetadata("whenBeforeLocalPropertyInitializer.kt")
