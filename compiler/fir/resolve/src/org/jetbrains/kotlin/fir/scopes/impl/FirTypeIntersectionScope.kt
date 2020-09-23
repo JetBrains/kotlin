@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
@@ -38,7 +40,8 @@ class FirTypeIntersectionScope private constructor(
 
     private val typeContext = ConeTypeCheckerContext(isErrorTypeEqualsToAnything = false, isStubTypeEqualsToAnything = false, session)
 
-    private val overriddenSymbols: MutableMap<FirCallableSymbol<*>, Collection<MemberWithBaseScope<out FirCallableSymbol<*>>>> = mutableMapOf()
+    private val overriddenSymbols: MutableMap<FirCallableSymbol<*>, Collection<MemberWithBaseScope<out FirCallableSymbol<*>>>> =
+        mutableMapOf()
 
     private val intersectionOverrides: MutableMap<FirCallableSymbol<*>, MemberWithBaseScope<out FirCallableSymbol<*>>> = mutableMapOf()
 
@@ -97,21 +100,23 @@ class FirTypeIntersectionScope private constructor(
 
         while (allMembersWithScope.isNotEmpty()) {
             val maxByVisibility = findMemberWithMaxVisibility(allMembersWithScope)
-            val extractedOverrides = extractBothWaysOverridable(maxByVisibility, allMembersWithScope)
+            val extractBothWaysWithPrivate = extractBothWaysOverridable(maxByVisibility, allMembersWithScope)
+            val extractedOverrides = extractBothWaysWithPrivate.filterNot {
+                Visibilities.isPrivate((it.member.fir as FirMemberDeclaration).visibility)
+            }.takeIf { it.isNotEmpty() } ?: extractBothWaysWithPrivate
 
             val (mostSpecific, scopeForMostSpecific) = selectMostSpecificMember(extractedOverrides)
             if (extractedOverrides.size > 1) {
                 val intersectionOverride = intersectionOverrides.getOrPut(mostSpecific) {
+                    val newModality = chooseIntersectionOverrideModality(extractedOverrides)
+                    val newVisibility = chooseIntersectionVisibility(extractedOverrides)
                     @Suppress("UNCHECKED_CAST")
                     when (mostSpecific) {
                         is FirNamedFunctionSymbol -> {
-                            createIntersectionOverride(
-                                mostSpecific,
-                                extractedOverrides as Collection<MemberWithBaseScope<FirNamedFunctionSymbol>>
-                            )
+                            createIntersectionOverride(mostSpecific, newModality, newVisibility)
                         }
                         is FirPropertySymbol -> {
-                            createIntersectionOverride(mostSpecific)
+                            createIntersectionOverride(mostSpecific, newModality, newVisibility)
                         }
                         else -> {
                             throw IllegalStateException("Should not be here")
@@ -130,9 +135,32 @@ class FirTypeIntersectionScope private constructor(
         return true
     }
 
+    private fun <D : FirCallableSymbol<*>> chooseIntersectionOverrideModality(
+        extractedOverrides: Collection<MemberWithBaseScope<D>>
+    ): Modality {
+        return extractedOverrides.minOf { (it.member.fir as FirMemberDeclaration).modality ?: Modality.ABSTRACT }
+    }
+
+    private fun <D : FirCallableSymbol<*>> chooseIntersectionVisibility(
+        extractedOverrides: Collection<MemberWithBaseScope<D>>
+    ): Visibility {
+        var maxVisibility: Visibility = Visibilities.Private
+        for ((override) in extractedOverrides) {
+            val visibility = (override.fir as FirMemberDeclaration).visibility
+            // TODO: There is more complex logic at org.jetbrains.kotlin.resolve.OverridingUtil.resolveUnknownVisibilityForMember
+            // TODO: and org.jetbrains.kotlin.resolve.OverridingUtil.findMaxVisibility
+            val compare = Visibilities.compare(visibility, maxVisibility) ?: return Visibilities.DEFAULT_VISIBILITY
+            if (compare > 0) {
+                maxVisibility = visibility
+            }
+        }
+        return maxVisibility
+    }
+
     private fun createIntersectionOverride(
         mostSpecific: FirNamedFunctionSymbol,
-        extractedOverrides: Collection<MemberWithBaseScope<FirNamedFunctionSymbol>>
+        newModality: Modality,
+        newVisibility: Visibility,
     ): FirNamedFunctionSymbol {
         val newSymbol =
             FirNamedFunctionSymbol(
@@ -146,15 +174,23 @@ class FirTypeIntersectionScope private constructor(
             newSymbol,
             mostSpecificFunction, session, FirDeclarationOrigin.IntersectionOverride,
             mostSpecificFunction.isExpect,
+            newModality = newModality,
+            newVisibility = newVisibility,
         )
         return newSymbol
     }
 
-    private fun createIntersectionOverride(mostSpecific: FirPropertySymbol): FirPropertySymbol {
+    private fun createIntersectionOverride(
+        mostSpecific: FirPropertySymbol,
+        newModality: Modality,
+        newVisibility: Visibility,
+    ): FirPropertySymbol {
         val newSymbol = FirPropertySymbol(mostSpecific.callableId, mostSpecific.isFakeOverride, mostSpecific, isIntersectionOverride = true)
         val mostSpecificProperty = mostSpecific.fir
         FirClassSubstitutionScope.createCopyForFirProperty(
-            newSymbol, mostSpecificProperty, mostSpecificProperty.session
+            newSymbol, mostSpecificProperty, mostSpecificProperty.session,
+            newModality = newModality,
+            newVisibility = newVisibility,
         )
         return newSymbol
     }
