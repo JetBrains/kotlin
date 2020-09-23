@@ -103,7 +103,7 @@ abstract class KonanTest : DefaultTask(), KonanTestExecutable {
     open fun run() = project.executeAndCheck(project.file(executable).toPath(), arguments)
 
     // Converts to runner's pattern
-    private fun String.convertToPattern() = this.replace('/', '.').replace(".kt", "") + (".*")
+    private fun String.convertToPattern() = this.removeSuffix(".kt").replace("/", ".") + ".*"
 
     internal fun ProcessOutput.print(prepend: String = "") {
         if (project.verboseTest)
