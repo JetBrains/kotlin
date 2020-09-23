@@ -39,6 +39,8 @@ class ComposeIrGenerationExtension(
         moduleFragment: IrModuleFragment,
         pluginContext: IrPluginContext
     ) {
+        generateSymbols(pluginContext)
+
         VersionChecker(pluginContext).check()
 
         // TODO: refactor transformers to work with just BackendContext
@@ -63,8 +65,6 @@ class ComposeIrGenerationExtension(
         // Memoize normal lambdas and wrap composable lambdas
         ComposerLambdaMemoization(pluginContext, symbolRemapper, bindingTrace).lower(moduleFragment)
 
-        generateSymbols(pluginContext)
-
         // transform all composable functions to have an extra synthetic composer
         // parameter. this will also transform all types and calls to include the extra
         // parameter.
@@ -73,6 +73,8 @@ class ComposeIrGenerationExtension(
             symbolRemapper,
             bindingTrace
         ).lower(moduleFragment)
+
+        generateSymbols(pluginContext)
 
         // transform calls to the currentComposer to just use the local parameter from the
         // previous transform

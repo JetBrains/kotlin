@@ -19,6 +19,7 @@ package androidx.compose.compiler.plugins.kotlin
 import androidx.compose.compiler.plugins.kotlin.lower.dumpSrc
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
+import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
@@ -63,18 +64,20 @@ abstract class ComposeIrTransformTest : AbstractIrTransformTest() {
     override fun postProcessingStep(
         module: IrModuleFragment,
         generatorContext: GeneratorContext,
-        irLinker: IrDeserializer
+        irLinker: IrDeserializer,
+        symbols: BuiltinSymbolsBase
     ) {
         extension.generate(
             module,
             IrPluginContextImpl(
-                generatorContext.moduleDescriptor,
-                generatorContext.bindingContext,
-                generatorContext.languageVersionSettings,
-                generatorContext.symbolTable,
-                generatorContext.typeTranslator,
-                generatorContext.irBuiltIns,
-                irLinker
+                module = generatorContext.moduleDescriptor,
+                bindingContext = generatorContext.bindingContext,
+                languageVersionSettings = generatorContext.languageVersionSettings,
+                st = generatorContext.symbolTable,
+                typeTranslator = generatorContext.typeTranslator,
+                irBuiltIns = generatorContext.irBuiltIns,
+                linker = irLinker,
+                symbols = symbols
             )
         )
     }
@@ -93,7 +96,8 @@ abstract class AbstractIrTransformTest : AbstractCompilerTest() {
     abstract fun postProcessingStep(
         module: IrModuleFragment,
         generatorContext: GeneratorContext,
-        irLinker: IrDeserializer
+        irLinker: IrDeserializer,
+        symbols: BuiltinSymbolsBase
     )
 
     fun verifyComposeIrTransform(
@@ -338,6 +342,12 @@ abstract class AbstractIrTransformTest : AbstractCompilerTest() {
 
         stubGenerator.setIrProviders(irProviders)
 
+        val symbols = BuiltinSymbolsBase(
+            generatorContext.irBuiltIns,
+            generatorContext.moduleDescriptor.builtIns,
+            generatorContext.symbolTable.lazyWrapper
+        )
+
         ExternalDependenciesGenerator(
             generatorContext.symbolTable,
             irProviders,
@@ -348,7 +358,7 @@ abstract class AbstractIrTransformTest : AbstractCompilerTest() {
             val old = stubGenerator.unboundSymbolGeneration
             try {
                 stubGenerator.unboundSymbolGeneration = true
-                postProcessingStep(module, generatorContext, irLinker)
+                postProcessingStep(module, generatorContext, irLinker, symbols)
             } finally {
                 stubGenerator.unboundSymbolGeneration = old
             }

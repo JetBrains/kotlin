@@ -174,22 +174,22 @@ open class LiveLiteralTransformer(
     }
 
     private val liveLiteral =
-        getInternalFunction("liveLiteral").bindIfNecessary()
+        getInternalFunction("liveLiteral")
     private val derivedStateOf =
-        getTopLevelFunction(ComposeFqNames.fqNameFor("derivedStateOf")).bindIfNecessary()
+        getTopLevelFunction(ComposeFqNames.fqNameFor("derivedStateOf"))
     private val isLiveLiteralsEnabled =
-        getInternalProperty("isLiveLiteralsEnabled").bindIfNecessary()
+        getInternalProperty("isLiveLiteralsEnabled")
     private val liveLiteralInfoAnnotation =
-        getInternalClass("LiveLiteralInfo").bindIfNecessary()
+        getInternalClass("LiveLiteralInfo")
     private val liveLiteralFileInfoAnnotation =
-        getInternalClass("LiveLiteralFileInfo").bindIfNecessary()
+        getInternalClass("LiveLiteralFileInfo")
     private val stateInterface =
-        getTopLevelClass(ComposeFqNames.fqNameFor("State")).bindIfNecessary()
+        getTopLevelClass(ComposeFqNames.fqNameFor("State"))
     private val NoLiveLiteralsAnnotation =
-        getTopLevelClass(ComposeFqNames.fqNameFor("NoLiveLiterals")).bindIfNecessary()
+        getTopLevelClass(ComposeFqNames.fqNameFor("NoLiveLiterals"))
 
     private fun IrAnnotationContainer.hasNoLiveLiteralsAnnotation(): Boolean = annotations.any {
-        it.symbol.bindIfNecessary().owner == NoLiveLiteralsAnnotation.owner.primaryConstructor
+        it.symbol.owner == NoLiveLiteralsAnnotation.owner.primaryConstructor
     }
 
     private fun <T> enter(key: String, block: () -> T) = keyVisitor.enter(key, block)
@@ -664,7 +664,6 @@ open class LiveLiteralTransformer(
                             context
                                 .irBuiltIns
                                 .anyClass
-                                .bindIfNecessary()
                                 .owner
                                 .primaryConstructor!!
                         )
@@ -705,7 +704,7 @@ open class LiveLiteralTransformer(
     override fun visitDelegatingConstructorCall(
         expression: IrDelegatingConstructorCall
     ): IrExpression {
-        val owner = expression.symbol.bindIfNecessary().owner
+        val owner = expression.symbol.owner
 
         // annotations are represented as constructor calls in IR, but the parameters need to be
         // compile-time values only, so we can't transform them at all.
@@ -734,7 +733,7 @@ open class LiveLiteralTransformer(
     }
 
     override fun visitEnumConstructorCall(expression: IrEnumConstructorCall): IrExpression {
-        val owner = expression.symbol.bindIfNecessary().owner
+        val owner = expression.symbol.owner
         val name = owner.name.asJvmFriendlyString()
 
         return enter("call-$name") {
@@ -758,7 +757,7 @@ open class LiveLiteralTransformer(
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
-        val owner = expression.symbol.bindIfNecessary().owner
+        val owner = expression.symbol.owner
 
         // annotations are represented as constructor calls in IR, but the parameters need to be
         // compile-time values only, so we can't transform them at all.
@@ -787,7 +786,7 @@ open class LiveLiteralTransformer(
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
-        val owner = expression.symbol.bindIfNecessary().owner
+        val owner = expression.symbol.owner
         val name = owner.name.asJvmFriendlyString()
 
         return enter("call-$name") {
@@ -953,7 +952,7 @@ open class LiveLiteralTransformer(
     }
 
     override fun visitSetVariable(expression: IrSetVariable): IrExpression {
-        val owner = expression.symbol.bindIfNecessary().owner
+        val owner = expression.symbol.owner
         val name = owner.name
         return when (owner.origin) {
             // for these synthetic variable declarations we want to avoid transforming them since
@@ -966,7 +965,7 @@ open class LiveLiteralTransformer(
     }
 
     override fun visitSetField(expression: IrSetField): IrExpression {
-        val name = expression.symbol.bindIfNecessary().owner.name
+        val name = expression.symbol.owner.name
         return enter("set-$name") { super.visitSetField(expression) }
     }
 

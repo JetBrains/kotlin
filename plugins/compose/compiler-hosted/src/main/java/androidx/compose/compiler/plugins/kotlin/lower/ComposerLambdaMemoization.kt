@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.irBlock
@@ -56,17 +55,15 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.types.typeUtil.isUnit
-import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 
 private class CaptureCollector {
     val captures = mutableSetOf<IrValueDeclaration>()
@@ -192,12 +189,10 @@ class ComposerLambdaMemoization(
             ComposeFqNames.fqNameFor("currentComposer")
         )
 
-        currentComposerSymbol.bindIfNecessary()
-
         return IrCallImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
-            composerTypeDescriptor.defaultType.replaceArgumentsWithStarProjections().toIrType(),
+            composerIrClass.defaultType.replaceArgumentsWithStarProjections(),
             currentComposerSymbol,
             IrStatementOrigin.FOR_LOOP_ITERATOR
         )
@@ -455,28 +450,23 @@ class ComposerLambdaMemoization(
         ) return expression
         val rememberParameterCount = captures.size + 1 // One additional parameter for the lambda
         val declaration = functionContext.declaration
-        val descriptor = declaration.descriptor
-        val module = descriptor.module
-        val rememberFunctions = module
-            .getPackage(ComposeFqNames.Package)
-            .memberScope
-            .getContributedFunctions(
-                Name.identifier("remember"),
-                NoLookupLocation.FROM_BACKEND
-            )
+        val rememberFunctions = getTopLevelFunctions(
+            ComposeFqNames.fqNameFor("remember")
+        ).map { it.owner }
+
         val directRememberFunction = // Exclude the varargs version
             rememberFunctions.singleOrNull {
                 it.valueParameters.size == rememberParameterCount &&
                     // Exclude the varargs version
                     it.valueParameters.firstOrNull()?.varargElementType == null
             }
-        val rememberFunctionDescriptor = directRememberFunction
+        val rememberFunction = directRememberFunction
             ?: rememberFunctions.single {
                 // Use the varargs version
                 it.valueParameters.firstOrNull()?.varargElementType != null
             }
 
-        val rememberFunctionSymbol = referenceSimpleFunction(rememberFunctionDescriptor)
+        val rememberFunctionSymbol = referenceSimpleFunction(rememberFunction.symbol)
 
         val irBuilder = DeclarationIrBuilder(
             generatorContext = context,
@@ -487,7 +477,6 @@ class ComposerLambdaMemoization(
 
         return irBuilder.irCall(
             callee = rememberFunctionSymbol,
-            descriptor = rememberFunctionDescriptor,
             type = expression.type
         ).apply {
             // The result type type parameter is first, followed by the argument types
@@ -505,7 +494,7 @@ class ComposerLambdaMemoization(
                 // The lambda is the last parameter
                 captures.size
             } else {
-                val parameterType = rememberFunctionDescriptor.valueParameters[0].type.toIrType()
+                val parameterType = rememberFunction.valueParameters[0].type
                 // Call to the vararg version
                 putValueArgument(
                     0,
@@ -526,9 +515,9 @@ class ComposerLambdaMemoization(
                 lambdaArgumentIndex,
                 irBuilder.irLambdaExpression(
                     descriptor = irBuilder.createFunctionDescriptor(
-                        rememberFunctionDescriptor.valueParameters.last().type
+                        rememberFunction.valueParameters.last().type
                     ),
-                    type = rememberFunctionDescriptor.valueParameters.last().type.toIrType(),
+                    type = rememberFunction.valueParameters.last().type,
                     body = {
                         +irReturn(expression)
                     }
