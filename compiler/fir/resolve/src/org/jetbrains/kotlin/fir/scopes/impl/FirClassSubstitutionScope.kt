@@ -404,7 +404,8 @@ class FirClassSubstitutionScope(
             newReturnType: ConeKotlinType? = null
         ) {
             annotations += baseFunction.annotations
-            returnTypeRef = baseFunction.returnTypeRef.withReplacedConeType(newReturnType)
+            returnTypeRef = replaceReturnTypeIfResolved(baseFunction, newReturnType)
+
             if (this is FirSimpleFunctionBuilder) {
                 receiverTypeRef = baseFunction.receiverTypeRef?.withReplacedConeType(newReceiverType)
             }
@@ -418,6 +419,14 @@ class FirClassSubstitutionScope(
                 }
             }
         }
+
+        private fun replaceReturnTypeIfResolved(
+            base: FirCallableDeclaration<*>,
+            newReturnType: ConeKotlinType?
+        ) = if (base.returnTypeRef is FirResolvedTypeRef)
+            base.returnTypeRef.withReplacedConeType(newReturnType)
+        else
+            base.returnTypeRef
 
         fun createFakeOverrideProperty(
             session: FirSession,
@@ -524,7 +533,7 @@ class FirClassSubstitutionScope(
             newReturnType: ConeKotlinType? = null
         ) {
             annotations += baseProperty.annotations
-            returnTypeRef = baseProperty.returnTypeRef.withReplacedConeType(newReturnType)
+            returnTypeRef = replaceReturnTypeIfResolved(baseProperty, newReturnType)
             receiverTypeRef = baseProperty.receiverTypeRef?.withReplacedConeType(newReceiverType)
         }
 
