@@ -3588,6 +3588,8 @@
           <module name="intellij.platform.util.ui" />
           <module name="intellij.platform.ide.util.io" />
           <module name="intellij.platform.configurationStore.impl" />
+          <module name="intellij.platform.codeStyle" />
+          <module name="intellij.platform.codeStyle.impl" />
         </modules-set>
         <modules-set>
           <module name="intellij.xslt.debugger.impl.rt" />
