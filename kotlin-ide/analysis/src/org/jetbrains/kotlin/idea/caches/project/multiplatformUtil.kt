@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.platform.isCommon
 
 val Module.isNewMPPModule: Boolean
     get() = facetSettings?.mppVersion.isNewMPP ||
-            facetSettings?.mppVersion.isHmpp // TODO: review clients, correct them to use precise checks for MPP version
+        facetSettings?.mppVersion.isHmpp // TODO: review clients, correct them to use precise checks for MPP version
 
 val Module.externalProjectId: String
     get() = facetSettings?.externalProjectId ?: ""
@@ -117,16 +117,13 @@ val Module.implementedModules: List<Module>
             null -> emptyList()
 
             KotlinMultiplatformVersion.M3 -> {
-                if (isAndroidModule()) {
+                facetSettings.dependsOnModuleNames
+                    .mapNotNull { project.modulesByLinkedKey[it] }
                     // HACK: we do not import proper dependsOn for android source-sets in M3, so fallback to M2-impl
                     // to at least not make things worse.
                     // See KT-33809 for details
-                    implementedModulesM2()
-                } else {
-                    facetSettings.dependsOnModuleNames.mapNotNull {
-                        project.modulesByLinkedKey[it]
-                    }
-                }
+                    .plus(if (isAndroidModule()) implementedModulesM2() else emptyList())
+                    .distinct()
             }
 
             KotlinMultiplatformVersion.M2 -> {
