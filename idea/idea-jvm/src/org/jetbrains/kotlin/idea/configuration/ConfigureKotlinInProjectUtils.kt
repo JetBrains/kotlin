@@ -133,7 +133,8 @@ fun getModulesWithKotlinFiles(project: Project): Collection<Module> {
     if (!isUnitTestMode() && ApplicationManager.getApplication().isDispatchThread) {
         LOG.error("getModulesWithKotlinFiles could be a heavy operation and should not be call on AWT thread")
     }
-    if (!runReadAction {
+
+    if (!project.runReadActionInSmartMode {
             !project.isDisposed &&
                     FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, GlobalSearchScope.projectScope(project))
         }) {
@@ -142,7 +143,7 @@ fun getModulesWithKotlinFiles(project: Project): Collection<Module> {
 
     return project.allModules()
         .filter { module ->
-            runReadAction {
+            project.runReadActionInSmartMode {
                 !project.isDisposed && !module.isDisposed
                         && FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(true))
             }
