@@ -6,14 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.backend.Fir2IrSignatureComposer
-import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
-import org.jetbrains.kotlin.fir.backend.jvm.FirJvmMangleComputer
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
-import org.jetbrains.kotlin.fir.signaturer.FirMangler
 import org.jetbrains.kotlin.idea.fir.low.level.api.ideSessionComponents
 import org.jetbrains.kotlin.ir.util.IdSignature
 
