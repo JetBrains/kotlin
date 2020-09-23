@@ -105,7 +105,6 @@
       <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-sam-with-receiver-compiler-plugin/1.4.10-release-411/kotlin-sam-with-receiver-compiler-plugin-1.4.10-release-411.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlinx-serialization-compiler-plugin-ij202/1.4.10-release-411/kotlinx-serialization-compiler-plugin-ij202-1.4.10-release-411.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/ide-common-ij202/1.4.10-release-411/ide-common-ij202-1.4.10-release-411.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-gradle-tooling-ij202/1.4.10-release-411/kotlin-gradle-tooling-ij202-1.4.10-release-411.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/sam-with-receiver-ide-plugin-ij202/1.4.10-release-411/sam-with-receiver-ide-plugin-ij202-1.4.10-release-411.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kapt3-idea-ij202/1.4.10-release-411/kapt3-idea-ij202-1.4.10-release-411.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/android-extensions-ide-ij202/1.4.10-release-411/android-extensions-ide-ij202-1.4.10-release-411.jar!/" />
