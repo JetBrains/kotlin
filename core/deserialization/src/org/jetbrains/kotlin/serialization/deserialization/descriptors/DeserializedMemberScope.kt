@@ -39,9 +39,9 @@ import kotlin.collections.ArrayList
 
 abstract class DeserializedMemberScope protected constructor(
     protected val c: DeserializationContext,
-    functionList: Collection<ProtoBuf.Function>,
-    propertyList: Collection<ProtoBuf.Property>,
-    typeAliasList: Collection<ProtoBuf.TypeAlias>,
+    functionList: List<ProtoBuf.Function>,
+    propertyList: List<ProtoBuf.Property>,
+    typeAliasList: List<ProtoBuf.TypeAlias>,
     classNames: () -> Collection<Name>
 ) : MemberScopeImpl() {
 
@@ -68,14 +68,26 @@ abstract class DeserializedMemberScope protected constructor(
      */
     protected open fun isDeclaredFunctionAvailable(function: SimpleFunctionDescriptor): Boolean = true
 
-    protected open fun computeNonDeclaredFunctions(name: Name, functions: MutableCollection<SimpleFunctionDescriptor>) {
+    /**
+     * This function has the next contract:
+     *
+     * * It can only add to the end of the [functions] list and shall not modify it otherwise (e.g. remove from it).
+     * * Before the call, [functions] should already contain all declared functions with the [name] name.
+     */
+    protected open fun computeNonDeclaredFunctions(name: Name, functions: MutableList<SimpleFunctionDescriptor>) {
     }
 
     override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
         return impl.getContributedFunctions(name, location)
     }
 
-    protected open fun computeNonDeclaredProperties(name: Name, descriptors: MutableCollection<PropertyDescriptor>) {
+    /**
+     * This function has the next contract:
+     *
+     * * It can only add to the end of the [descriptors] list and shall not modify it otherwise (e.g. remove from it).
+     * * Before the call, [descriptors] should already contain all declared properties with the [name] name.
+     */
+    protected open fun computeNonDeclaredProperties(name: Name, descriptors: MutableList<PropertyDescriptor>) {
     }
 
     private fun getTypeAliasByName(name: Name): TypeAliasDescriptor? {
@@ -169,9 +181,9 @@ abstract class DeserializedMemberScope protected constructor(
     }
 
     private inner class OptimizedImplementation(
-        functionList: Collection<ProtoBuf.Function>,
-        propertyList: Collection<ProtoBuf.Property>,
-        typeAliasList: Collection<ProtoBuf.TypeAlias>
+        functionList: List<ProtoBuf.Function>,
+        propertyList: List<ProtoBuf.Property>,
+        typeAliasList: List<ProtoBuf.TypeAlias>
     ) : Implementation {
         private val functionProtosBytes = functionList.groupByName { it.name }.packToByteArray()
 
@@ -225,7 +237,7 @@ abstract class DeserializedMemberScope protected constructor(
             bytesByName: Map<Name, ByteArray>,
             parser: Parser<M>,
             factory: (M) -> D?,
-            computeNonDeclared: (MutableCollection<D>) -> Unit
+            computeNonDeclared: (MutableList<D>) -> Unit
         ): Collection<D> =
             computeDescriptors(
                 bytesByName[name]?.let {
@@ -241,7 +253,7 @@ abstract class DeserializedMemberScope protected constructor(
         private inline fun <M : MessageLite, D : DeclarationDescriptor> computeDescriptors(
             protos: Collection<M>,
             factory: (M) -> D?,
-            computeNonDeclared: (MutableCollection<D>) -> Unit
+            computeNonDeclared: (MutableList<D>) -> Unit
         ): Collection<D> {
             val descriptors = protos.mapNotNullTo(ArrayList(protos.size), factory)
 
