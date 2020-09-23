@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
@@ -165,6 +166,14 @@ class FirCallCompletionResultsWriterTransformer(
                 val expectedArgumentsTypeMapping = runIf(!calleeReference.isError) { subCandidate.createArgumentsMapping() }
                 result.argumentList.transformArguments(this, expectedArgumentsTypeMapping)
                 if (!calleeReference.isError) {
+                    subCandidate.oldToNewArgumentMapping?.let {
+                        result.replaceArgumentList(buildArgumentList {
+                            source = result.argumentList.source
+                            for (oldArgument in result.argumentList.arguments) {
+                                arguments += it[oldArgument] ?: oldArgument
+                            }
+                        })
+                    }
                     subCandidate.handleVarargs(result.argumentList)
                     subCandidate.argumentMapping?.let {
                         result.replaceArgumentList(buildResolvedArgumentList(it))

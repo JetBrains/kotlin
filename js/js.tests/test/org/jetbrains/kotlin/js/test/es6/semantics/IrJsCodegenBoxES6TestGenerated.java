@@ -11156,6 +11156,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             runTest("compiler/testData/codegen/box/increment/classNaryGetSet.kt");
         }
 
+        @TestMetadata("classVarargGetSet.kt")
+        public void testClassVarargGetSet() throws Exception {
+            runTest("compiler/testData/codegen/box/increment/classVarargGetSet.kt");
+        }
+
         @TestMetadata("classWithGetSet.kt")
         public void testClassWithGetSet() throws Exception {
             runTest("compiler/testData/codegen/box/increment/classWithGetSet.kt");

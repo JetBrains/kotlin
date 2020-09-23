@@ -30,6 +30,7 @@ data class ArgumentMapping(
     //      foo(b = bar(), a = qux())
     // parameterToCallArgumentMap.values() should be [ 'bar()', 'foo()' ]
     val parameterToCallArgumentMap: Map<FirValueParameter, ResolvedCallArgument>,
+    val oldToNewArgumentMap: Map<FirExpression, FirExpression>,
     val diagnostics: List<ResolutionDiagnostic>
 ) {
     fun toArgumentToParameterMapping(): Map<FirExpression, FirValueParameter> {
@@ -50,7 +51,7 @@ data class ArgumentMapping(
     }
 }
 
-private val EmptyArgumentMapping = ArgumentMapping(emptyMap(), emptyList())
+private val EmptyArgumentMapping = ArgumentMapping(emptyMap(), emptyMap(), emptyList())
 
 fun BodyResolveComponents.mapArguments(
     arguments: List<FirExpression>,
@@ -67,11 +68,12 @@ fun BodyResolveComponents.mapArguments(
         arguments.subList(0, arguments.size - 1)
     }
 
-    // If this is an overloading indexed access operator, it could have default values in the middle.
+    // If this is an overloading indexed access operator, it could have default values or a vararg parameter in the middle.
     // For proper argument mapping, wrap the last one, which is supposed to be the updated value, as a named argument.
+    val oldToNewArgumentMap = mutableMapOf<FirExpression, FirExpression>()
     if ((function as? FirSimpleFunction)?.isOperator == true &&
         function.name == Name.identifier("set") &&
-        function.valueParameters.any { it.defaultValue != null }
+        function.valueParameters.any { it.defaultValue != null || it.isVararg }
     ) {
         val v = argumentsInParenthesis.last()
         if (v !is FirNamedArgumentExpression) {
@@ -82,6 +84,7 @@ fun BodyResolveComponents.mapArguments(
                 name = function.valueParameters.last().name
             }
             argumentsInParenthesis = argumentsInParenthesis.dropLast(1) + listOf(namedV)
+            oldToNewArgumentMap[v] = namedV
         }
     }
 
@@ -92,7 +95,7 @@ fun BodyResolveComponents.mapArguments(
     }
     processor.processDefaultsAndRunChecks()
 
-    return ArgumentMapping(processor.result, processor.diagnostics ?: emptyList())
+    return ArgumentMapping(processor.result, oldToNewArgumentMap, processor.diagnostics ?: emptyList())
 }
 
 private class FirCallArgumentsProcessor(
