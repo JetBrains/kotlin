@@ -111,7 +111,7 @@ internal class FileStructure(
     }
 
     private fun createDeclarationStructure(declaration: KtDeclaration): FileStructureElement {
-        val firDeclaration = declaration.findSourceNonLocalFirDeclaration(firFileBuilder, firIdeProvider, moduleFileCache)
+        val firDeclaration = declaration.findSourceNonLocalFirDeclaration(firFileBuilder, firIdeProvider.symbolProvider, moduleFileCache)
         firLazyDeclarationResolver.lazyResolveDeclaration(
             firDeclaration,
             moduleFileCache,

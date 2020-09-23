@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.productionSourceInfo
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.firResolveState
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacade
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.idea.jsonUtils.getString
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
@@ -66,8 +66,8 @@ abstract class AbstractFirLazyResolveTest : KotlinLightCodeInsightFixtureTestCas
             else -> elementToResolve
         } as KtExpression
 
-        val resolveState = expressionToResolve.firResolveState()
-        val resultsDump = when (val firElement = resolveState.getOrBuildFirFor(expressionToResolve, FirResolvePhase.BODY_RESOLVE)) {
+        val resolveState = LowLevelFirApiFacade.getResolveStateFor(expressionToResolve)
+        val resultsDump = when (val firElement = resolveState.getOrBuildFirFor(expressionToResolve)) {
             is FirResolvedImport -> buildString {
                 append("import ")
                 append(firElement.packageFqName)

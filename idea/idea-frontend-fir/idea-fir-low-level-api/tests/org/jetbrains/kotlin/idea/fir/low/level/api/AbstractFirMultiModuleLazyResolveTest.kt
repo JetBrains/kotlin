@@ -43,7 +43,7 @@ abstract class AbstractFirMultiModuleLazyResolveTest : AbstractMultiModuleTest()
         val fails = testStructure.fails
 
         try {
-            val fir = LowLevelFirApiFacade.getOrBuildFirFor(ktFileToAnalyse, resolveState, FirResolvePhase.BODY_RESOLVE)
+            val fir = LowLevelFirApiFacade.getOrBuildFirFor(ktFileToAnalyse, resolveState)
             KotlinTestUtils.assertEqualsToFile(File("$path/expected.txt"), fir.render())
         } catch (e: Throwable) {
             if (!fails) throw e

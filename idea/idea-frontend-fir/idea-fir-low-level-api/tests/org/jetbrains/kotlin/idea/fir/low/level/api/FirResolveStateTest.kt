@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import org.jetbrains.kotlin.idea.AbstractResolveElementCacheTest
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.firResolveState
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacade
 
 class FirResolveStateTest : AbstractResolveElementCacheTest() {
     override fun isFirPlugin(): Boolean = true
@@ -15,7 +15,7 @@ class FirResolveStateTest : AbstractResolveElementCacheTest() {
         doTest {
             val firstStatement = statements[0]
             val secondStatement = statements[1]
-            assertSame(firstStatement.firResolveState(), secondStatement.firResolveState())
+            assertSame(LowLevelFirApiFacade.getResolveStateFor(firstStatement), LowLevelFirApiFacade.getResolveStateFor(secondStatement))
         }
     }
 }
