@@ -21,6 +21,8 @@ abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheck
     override val isStubTypeEqualsToAnything: Boolean
         get() = true
 
+    abstract val isInferenceCompatibilityEnabled: Boolean
+
     abstract fun isMyTypeVariable(type: SimpleTypeMarker): Boolean
 
     // super and sub type isSingleClassifierType
@@ -209,16 +211,20 @@ abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheck
                 if (typeVariable.isMarkedNullable()) {
                     val typeVariableTypeConstructor = typeVariable.typeConstructor()
                     val subTypeConstructor = subType.typeConstructor()
-                    val resultType = if (
-                        !subTypeConstructor.isTypeVariable() &&
-                        typeVariableTypeConstructor.isTypeVariable() &&
-                        (typeVariableTypeConstructor as TypeVariableTypeConstructorMarker).isContainedInInvariantOrContravariantPositions()
-                    ) {
-                        subType.withNullability(false)
-                    } else {
+                    val needToMakeDefNotNull = subTypeConstructor.isTypeVariable() ||
+                            typeVariableTypeConstructor !is TypeVariableTypeConstructorMarker ||
+                            !typeVariableTypeConstructor.isContainedInInvariantOrContravariantPositions()
+
+                    val resultType = if (needToMakeDefNotNull) {
                         subType.makeDefinitelyNotNullOrNotNull()
+                    } else {
+                        if (!isInferenceCompatibilityEnabled && subType is CapturedTypeMarker) {
+                            subType.withNotNullProjection()
+                        } else {
+                            subType.withNullability(false)
+                        }
                     }
-                    if (resultType is CapturedTypeMarker) resultType.withNotNullProjection() else resultType
+                    if (isInferenceCompatibilityEnabled && resultType is CapturedTypeMarker) resultType.withNotNullProjection() else resultType
                 } else subType
 
             is FlexibleTypeMarker -> {

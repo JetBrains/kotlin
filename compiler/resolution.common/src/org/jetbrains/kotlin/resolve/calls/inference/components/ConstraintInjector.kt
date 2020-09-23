@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 
 
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
+import org.jetbrains.kotlin.resolve.calls.inference.InferenceCompatibilityChecker
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind.*
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
@@ -19,7 +20,8 @@ import kotlin.math.max
 
 class ConstraintInjector(
     val constraintIncorporator: ConstraintIncorporator,
-    val typeApproximator: AbstractTypeApproximator
+    val typeApproximator: AbstractTypeApproximator,
+    val inferenceCompatibilityChecker: InferenceCompatibilityChecker
 ) {
     private val ALLOWED_DEPTH_DELTA_FOR_INCORPORATION = 1
 
@@ -128,6 +130,8 @@ class ConstraintInjector(
         AbstractTypeCheckerContextForConstraintSystem(), ConstraintIncorporator.Context, TypeSystemInferenceExtensionContext by c {
         // We use `var` intentionally to avoid extra allocations as this property is quite "hot"
         private var possibleNewConstraints: MutableList<Pair<TypeVariableMarker, Constraint>>? = null
+
+        override val isInferenceCompatibilityEnabled = inferenceCompatibilityChecker.isCompatibilityModeEnabled
 
         private var baseLowerType = position.initialConstraint.a
         private var baseUpperType = position.initialConstraint.b
