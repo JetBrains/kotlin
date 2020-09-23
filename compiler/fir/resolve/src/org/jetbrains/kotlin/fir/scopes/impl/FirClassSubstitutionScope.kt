@@ -411,18 +411,10 @@ class FirClassSubstitutionScope(
             valueParameters += baseFunction.valueParameters.zip(
                 newParameterTypes ?: List(baseFunction.valueParameters.size) { null }
             ) { valueParameter, newType ->
-                buildValueParameter {
-                    source = valueParameter.source
-                    this.session = session
-                    resolvePhase = valueParameter.resolvePhase
+                buildValueParameterCopy(valueParameter) {
                     origin = FirDeclarationOrigin.FakeOverride
                     returnTypeRef = valueParameter.returnTypeRef.withReplacedConeType(newType)
-                    name = valueParameter.name
                     symbol = FirVariableSymbol(valueParameter.symbol.callableId)
-                    defaultValue = valueParameter.defaultValue
-                    isCrossinline = valueParameter.isCrossinline
-                    isNoinline = valueParameter.isNoinline
-                    isVararg = valueParameter.isVararg
                 }
             }
         }
