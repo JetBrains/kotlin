@@ -1061,6 +1061,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/intellij-client/plugins/terminal/intellij.client.terminal.iml" filepath="$PROJECT_DIR$/intellij/platform/intellij-client/plugins/terminal/intellij.client.terminal.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/intellij-client-testFramework/intellij.client.testFramework.iml" filepath="$PROJECT_DIR$/intellij/platform/intellij-client-testFramework/intellij.client.testFramework.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/intellij-client-tests/intellij.client.tests.iml" filepath="$PROJECT_DIR$/intellij/platform/intellij-client-tests/intellij.client.tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/platform/intellij-client-tests-java/intellij.client.tests.java.iml" filepath="$PROJECT_DIR$/intellij/platform/intellij-client-tests-java/intellij.client.tests.java.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion/intellij.clion.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion/intellij.clion.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-build/intellij.clion.build.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-build/intellij.clion.build.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-cmake/intellij.clion.cmake.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-cmake/intellij.clion.cmake.iml" />

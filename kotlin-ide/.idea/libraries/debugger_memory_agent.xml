@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="libraryTable">
   <library name="debugger-memory-agent" type="repository">
-    <properties maven-id="org.jetbrains.intellij.deps:debugger-memory-agent:0.0.12" />
+    <properties maven-id="org.jetbrains.intellij.deps:debugger-memory-agent:0.0.13" />
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/debugger-memory-agent/0.0.12/debugger-memory-agent-0.0.12.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/debugger-memory-agent/0.0.13/debugger-memory-agent-0.0.13.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/debugger-memory-agent/0.0.12/debugger-memory-agent-0.0.12-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/debugger-memory-agent/0.0.13/debugger-memory-agent-0.0.13-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
