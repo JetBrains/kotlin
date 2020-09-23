@@ -394,7 +394,8 @@ class Fir2IrDeclarationStorage(
         irParent: IrDeclarationParent?,
         thisReceiverOwner: IrClass? = irParent as? IrClass,
         origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED,
-        isLocal: Boolean = false
+        isLocal: Boolean = false,
+        containingClass: ConeClassLikeLookupTag? = null,
     ): IrSimpleFunction {
         val simpleFunction = function as? FirSimpleFunction
         val isLambda = function.source?.elementType == KtNodeTypes.FUNCTION_LITERAL
@@ -411,7 +412,7 @@ class Fir2IrDeclarationStorage(
         val isSuspend =
             if (isLambda) ((function as FirAnonymousFunction).typeRef as? FirResolvedTypeRef)?.type?.isSuspendFunctionType(session) == true
             else simpleFunction?.isSuspend == true
-        val signature = if (isLocal) null else signatureComposer.composeSignature(function)
+        val signature = if (isLocal) null else signatureComposer.composeSignature(function, containingClass)
         val created = function.convertWithOffsets { startOffset, endOffset ->
             val result = declareIrSimpleFunction(signature, simpleFunction?.containerSource) { symbol ->
                 irFactory.createFunction(
@@ -534,10 +535,11 @@ class Fir2IrDeclarationStorage(
         origin: IrDeclarationOrigin,
         startOffset: Int,
         endOffset: Int,
-        isLocal: Boolean = false
+        isLocal: Boolean = false,
+        containingClass: ConeClassLikeLookupTag? = null,
     ): IrSimpleFunction {
         val prefix = if (isSetter) "set" else "get"
-        val signature = if (isLocal) null else signatureComposer.composeAccessorSignature(property, isSetter)
+        val signature = if (isLocal) null else signatureComposer.composeAccessorSignature(property, isSetter, containingClass)
         val containerSource = (correspondingProperty as? IrProperty)?.containerSource
         return declareIrAccessor(
             signature,
@@ -655,10 +657,11 @@ class Fir2IrDeclarationStorage(
         irParent: IrDeclarationParent?,
         thisReceiverOwner: IrClass? = irParent as? IrClass,
         origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED,
-        isLocal: Boolean = false
+        isLocal: Boolean = false,
+        containingClass: ConeClassLikeLookupTag? = null,
     ): IrProperty {
         classifierStorage.preCacheTypeParameters(property)
-        val signature = if (isLocal) null else signatureComposer.composeSignature(property)
+        val signature = if (isLocal) null else signatureComposer.composeSignature(property, containingClass)
         return property.convertWithOffsets { startOffset, endOffset ->
             val result = declareIrProperty(signature, property.containerSource) { symbol ->
                 irFactory.createProperty(
@@ -719,7 +722,7 @@ class Fir2IrDeclarationStorage(
                             getter is FirDefaultPropertyGetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                             else -> origin
                         },
-                        startOffset, endOffset, isLocal
+                        startOffset, endOffset, isLocal, containingClass
                     )
                     if (property.isVar) {
                         this.setter = createIrPropertyAccessor(
@@ -729,7 +732,7 @@ class Fir2IrDeclarationStorage(
                                 setter is FirDefaultPropertySetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                                 else -> origin
                             },
-                            startOffset, endOffset, isLocal
+                            startOffset, endOffset, isLocal, containingClass
                         )
                     }
                     leaveScope(this)
