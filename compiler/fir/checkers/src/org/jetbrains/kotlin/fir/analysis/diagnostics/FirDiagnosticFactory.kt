@@ -83,3 +83,28 @@ class FirDiagnosticFactory3<E : FirSourceElement, P : PsiElement, A : Any, B : A
 private fun incorrectElement(element: FirSourceElement): Nothing {
     throw IllegalArgumentException("Unknown element type: ${element::class}")
 }
+
+fun <E : FirSourceElement, P : PsiElement> FirDiagnosticFactory0<E, P>.on(element: E?): FirSimpleDiagnostic<E>? {
+    return element?.let { on(it) }
+}
+
+fun <E : FirSourceElement, P : PsiElement, A : Any> FirDiagnosticFactory1<E, P, A>.on(element: E?, a: A): FirDiagnosticWithParameters1<E, A>? {
+    return element?.let { on(it, a) }
+}
+
+fun <E : FirSourceElement, P : PsiElement, A : Any, B : Any> FirDiagnosticFactory2<E, P, A, B>.on(
+    element: E?,
+    a: A,
+    b: B
+): FirDiagnosticWithParameters2<E, A, B>? {
+    return element?.let { on(it, a, b) }
+}
+
+fun <E : FirSourceElement, P : PsiElement, A : Any, B : Any, C : Any> FirDiagnosticFactory3<E, P, A, B, C>.on(
+    element: E?,
+    a: A,
+    b: B,
+    c: C
+): FirDiagnosticWithParameters3<E, A, B, C>? {
+    return element?.let { on(it, a, b, c) }
+}
