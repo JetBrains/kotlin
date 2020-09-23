@@ -892,6 +892,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/plugins/python/fleet.language.python.iml" filepath="$PROJECT_DIR$/intellij/fleet/plugins/python/fleet.language.python.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/plugins/rust/fleet.language.rust.iml" filepath="$PROJECT_DIR$/intellij/fleet/plugins/rust/fleet.language.rust.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/plugins/shell/fleet.language.shell.iml" filepath="$PROJECT_DIR$/intellij/fleet/plugins/shell/fleet.language.shell.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/fleet/plugins/xml/fleet.language.xml.iml" filepath="$PROJECT_DIR$/intellij/fleet/plugins/xml/fleet.language.xml.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/noria/fleet.noria.iml" filepath="$PROJECT_DIR$/intellij/fleet/noria/fleet.noria.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/noria/engine/fleet.noria.engine.iml" filepath="$PROJECT_DIR$/intellij/fleet/noria/engine/fleet.noria.engine.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/noria/engine.tests/fleet.noria.engine.tests.iml" filepath="$PROJECT_DIR$/intellij/fleet/noria/engine.tests/fleet.noria.engine.tests.iml" />
