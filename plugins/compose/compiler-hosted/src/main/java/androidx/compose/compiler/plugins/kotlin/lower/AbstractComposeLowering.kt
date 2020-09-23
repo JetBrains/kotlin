@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.fir.java.topLevelName
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -93,6 +94,9 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrSetVariableImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrWhenImpl
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
+import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrWhileLoopImpl
@@ -119,8 +123,10 @@ import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.endOffset
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.util.getPrimitiveArrayElementType
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
+import org.jetbrains.kotlin.ir.util.isInlined
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.ir.util.startOffset
@@ -968,6 +974,146 @@ abstract class AbstractComposeLowering(
                 )
             )
         )
+    }
+
+    fun IrExpression.isStatic(): Boolean {
+        return when (this) {
+            // A constant by definition is static
+            is IrConst<*> -> true
+            // We want to consider all enum values as static
+            is IrGetEnumValue -> true
+            // Getting a companion object or top level object can be considered static if the
+            // type of that object is Stable. (`Modifier` for instance is a common example)
+            is IrGetObjectValue -> symbol.owner.superTypes.any { it.toKotlinType().isStable() }
+            is IrConstructorCall -> {
+                // special case constructors of inline classes as static if their underlying
+                // value is static.
+                if (
+                    type.isInlined() &&
+                    type.unboxInlineClass().toKotlinType().isStable() &&
+                    getValueArgument(0)?.isStatic() == true
+                ) {
+                    return true
+                }
+                false
+            }
+            is IrCall -> when (origin) {
+                is IrStatementOrigin.GET_PROPERTY -> {
+                    // If we are in a GET_PROPERTY call, then this should usually resolve to
+                    // non-null, but in case it doesn't, just return false
+                    val prop = (symbol.owner as? IrSimpleFunction)
+                        ?.correspondingPropertySymbol?.owner ?: return false
+
+                    // if the property is a top level constant, then it is static.
+                    if (prop.isConst) return true
+
+                    val typeIsStable = type.toKotlinType().isStable()
+                    val dispatchReceiverIsStatic = dispatchReceiver?.isStatic() != false
+                    val extensionReceiverIsStatic = extensionReceiver?.isStatic() != false
+
+                    // if we see that the property is read-only with a default getter and a
+                    // stable return type , then reading the property can also be considered
+                    // static if this is a top level property or the subject is also static.
+                    if (!prop.isVar &&
+                        prop.getter?.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR &&
+                        typeIsStable &&
+                        dispatchReceiverIsStatic && extensionReceiverIsStatic
+                    ) {
+                        return true
+                    }
+
+                    val getterIsStable = prop.hasStableAnnotation() ||
+                            symbol.owner.hasStableAnnotation()
+
+                    if (
+                        getterIsStable &&
+                        typeIsStable &&
+                        dispatchReceiverIsStatic &&
+                        extensionReceiverIsStatic
+                    ) {
+                        return true
+                    }
+
+                    false
+                }
+                is IrStatementOrigin.PLUS,
+                is IrStatementOrigin.MUL,
+                is IrStatementOrigin.MINUS,
+                is IrStatementOrigin.ANDAND,
+                is IrStatementOrigin.OROR,
+                is IrStatementOrigin.DIV,
+                is IrStatementOrigin.EQ,
+                is IrStatementOrigin.EQEQ,
+                is IrStatementOrigin.EQEQEQ,
+                is IrStatementOrigin.GT,
+                is IrStatementOrigin.GTEQ,
+                is IrStatementOrigin.LT,
+                is IrStatementOrigin.LTEQ -> {
+                    // special case mathematical operators that are in the stdlib. These are
+                    // immutable operations so the overall result is static if the operands are
+                    // also static
+                    val isStableOperator = symbol
+                        .descriptor
+                        .fqNameSafe
+                        .topLevelName() == "kotlin" ||
+                            symbol.owner.hasStableAnnotation()
+
+                    val typeIsStable = type.toKotlinType().isStable()
+                    if (!typeIsStable) return false
+
+                    if (!isStableOperator) {
+                        return false
+                    }
+
+                    getArguments().all { it.second.isStatic() }
+                }
+                null -> {
+                    if (symbol.descriptor.fqNameSafe == ComposeFqNames.remember) {
+                        // if it is a call to remember with 0 input arguments, then we can
+                        // consider the value static if the result type of the lambda is stable
+                        val syntheticRememberParams = 1 + // composer param
+                                1 // changed param
+                        val expectedArgumentsCount = 1 + syntheticRememberParams // 1 for lambda
+                        if (
+                            valueArgumentsCount == expectedArgumentsCount &&
+                            type.toKotlinType().isStable()
+                        ) {
+                            return true
+                        }
+                    }
+                    if (symbol.descriptor.fqNameSafe == ComposeFqNames.composableLambda) {
+                        // calls to this function are generated by the compiler, and this
+                        // function behaves similar to a remember call in that the result will
+                        // _always_ be the same and the resulting type is _always_ stable, so
+                        // thus it is static.
+                        return true
+                    }
+                    // normal function call. If the function is marked as Stable and the result
+                    // is Stable, then the static-ness of it is the static-ness of its arguments
+                    val isStable = symbol.bindIfNecessary().owner.hasStableAnnotation()
+                    if (!isStable) return false
+
+                    val typeIsStable = type.toKotlinType().isStable()
+                    if (!typeIsStable) return false
+
+                    // getArguments includes the receivers!
+                    getArguments().all { it.second.isStatic() }
+                }
+                else -> false
+            }
+            is IrGetValue -> {
+                val owner = symbol.owner
+                when (owner) {
+                    is IrVariable -> {
+                        // If we have an immutable variable whose initializer is also static,
+                        // then we can determine that the variable reference is also static.
+                        !owner.isVar && owner.initializer?.isStatic() == true
+                    }
+                    else -> false
+                }
+            }
+            else -> false
+        }
     }
 }
 
