@@ -10689,6 +10689,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
                 runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/nullableCaptruredTypeAgainstNullableVariable.kt");
             }
 
+            @TestMetadata("nullableCaptruredTypeAgainstNullableVariableWithDisabledComplatibilityFlag.kt")
+            public void testNullableCaptruredTypeAgainstNullableVariableWithDisabledComplatibilityFlag() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/nullableCaptruredTypeAgainstNullableVariableWithDisabledComplatibilityFlag.kt");
+            }
+
             @TestMetadata("overApproximationForInCaptured.kt")
             public void testOverApproximationForInCaptured() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/overApproximationForInCaptured.kt");

@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -CAST_NEVER_SUCCEEDS -REDUNDANT_PROJECTION
-// !LANGUAGE: +InferenceCompatibility
+// !LANGUAGE: -InferenceCompatibility
 
 // FILE: Foo.java
 public class Foo<L> extends Bar<L> {
@@ -18,7 +18,7 @@ open class Bar<out K>(val x: K)
 
 fun main(x: Foo<out Number?>, y: Bar<out Number?>, z1: Foo<out Number>, z2: Bar<out Number>) {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x.foo()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>x.bar()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x.bar()<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>x.boo1()<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown")!>x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>boo2<!>()<!>
 
