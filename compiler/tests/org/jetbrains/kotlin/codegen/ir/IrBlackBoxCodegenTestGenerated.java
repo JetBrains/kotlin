@@ -5043,6 +5043,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/collections/removeClashWithGenerics.kt");
         }
 
+        @TestMetadata("removeNullFromList.kt")
+        public void testRemoveNullFromList() throws Exception {
+            runTest("compiler/testData/codegen/box/collections/removeNullFromList.kt");
+        }
+
         @TestMetadata("removeOverriddenInJava.kt")
         public void testRemoveOverriddenInJava() throws Exception {
             runTest("compiler/testData/codegen/box/collections/removeOverriddenInJava.kt");
