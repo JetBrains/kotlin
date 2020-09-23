@@ -122,7 +122,7 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
 
                 private var __context: Context? = null
 
-                @OptIn(ExperimentalComposeApi::class)
+                @OptIn(ExperimentalComposeApi::class, InternalComposeApi::class)
                 fun makeComposer(): Composer<*> {
                     val container = LinearLayout(__context!!)
                     return Composer(
