@@ -24,8 +24,10 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.scopes.getNestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirNestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstitutionForSuperType
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -44,7 +46,7 @@ class FirSupertypeResolverTransformer(
     private val supertypeComputationSession = SupertypeComputationSession()
 
     private val supertypeResolverVisitor = FirSupertypeResolverVisitor(session, supertypeComputationSession, scopeSession)
-    private val applySupertypesTransformer = FirApplySupertypesTransformer(supertypeComputationSession)
+    private val applySupertypesTransformer = FirApplySupertypesTransformer(session, scopeSession, supertypeComputationSession)
 
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
         return element.compose()
@@ -74,11 +76,13 @@ fun <F : FirClass<F>> F.runSupertypeResolvePhaseForLocalClass(
     this.accept(supertypeResolverVisitor)
     supertypeComputationSession.breakLoops(session)
 
-    val applySupertypesTransformer = FirApplySupertypesTransformer(supertypeComputationSession)
+    val applySupertypesTransformer = FirApplySupertypesTransformer(session, scopeSession, supertypeComputationSession)
     return this.transform<F, Nothing?>(applySupertypesTransformer, null).single
 }
 
 private class FirApplySupertypesTransformer(
+    private val session: FirSession,
+    private val scopeSession: ScopeSession,
     private val supertypeComputationSession: SupertypeComputationSession
 ) : FirDefaultTransformer<Nothing?>() {
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
@@ -129,8 +133,42 @@ private class FirApplySupertypesTransformer(
             "Expected single supertypeRefs, but found ${supertypeRefs.size} in ${typeAlias.symbol.classId}"
         }
 
+        val supertypeRef = supertypeRefs.single()
+        val coneSuperType = (supertypeRef.coneType.fullyExpandedType(session) as? ConeClassLikeType)
+        val classId = coneSuperType?.lookupTag?.classId
+        // Suppose this type alias points to a nested class, and is used as a constructor call.
+        //
+        //   class Outer {
+        //     inner class Inner { ... }
+        //   }
+        //   typealias OI = Outer.Inner
+        //   fun foo() { Outer().OI() }
+        //
+        // This type alias actually exposes that nested class to outer scopes, e.g., top-level where this type alias is defined. As a nested
+        // class, though, it still needs its outer class as a dispatch receiver when being instantiated. From the viewpoint of the outer
+        // class's member scope, this type alias is simply _unknown_, and thus the resolution, along with the outer class's member scope,
+        // would fail, resulting in, e.g., unresolved constructor call. As a 2nd chance, the call resolver will search for candidates with
+        // the scope tower, which could resolve the type alias with the package scope, yet discards it, since the explicit receiver---the
+        // instance of the outer class---would be treated as an extension receiver, not a dispatch receiver.
+        //
+        // Instead of revoking the resolution with the scope tower and retrying it with the member scope _and_ resolved type alias, we can
+        // record here---when type alias's super type is first resolved---that which nested classes could be exposed via type alias. With
+        // that, the outer class's member scope can resolve the type alias, just as if:
+        //
+        //   fun foo() { Outer().Inner() }
+        //
+        // where the explicit receiver will be treated as a dispatch receiver correctly as well.
+        if (classId?.isNestedClass == true) {
+            val outerClassFir = session.firProvider.getFirClassifierByFqName(classId.outerClassId!!) as? FirClass<*>
+            if (outerClassFir != null) {
+                val klass = coneSuperType.lookupTag.toSymbol(session)?.fir as? FirRegularClass
+                (klass?.scopeProvider?.getNestedClassifierScope(outerClassFir, session, scopeSession) as? FirNestedClassifierScope)
+                    ?.addTypeAliasedNestedClass(typeAlias, klass)
+            }
+        }
+
         // TODO: Replace with an immutable version or transformer
-        typeAlias.replaceExpandedTypeRef(supertypeRefs[0])
+        typeAlias.replaceExpandedTypeRef(supertypeRef)
         typeAlias.replaceResolvePhase(FirResolvePhase.SUPER_TYPES)
 
         return typeAlias.compose()

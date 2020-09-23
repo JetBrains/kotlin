@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
@@ -20,7 +18,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.Name
 
 class FirNestedClassifierScope(val klass: FirClass<*>) : FirScope(), FirContainingNamesAwareScope {
-    private val classIndex: Map<Name, FirRegularClassSymbol> = run {
+    private val classIndex: MutableMap<Name, FirRegularClassSymbol> = run {
         val result = mutableMapOf<Name, FirRegularClassSymbol>()
         for (declaration in klass.declarations) {
             if (declaration is FirRegularClass) {
@@ -31,6 +29,11 @@ class FirNestedClassifierScope(val klass: FirClass<*>) : FirScope(), FirContaini
     }
 
     fun isEmpty() = classIndex.isEmpty()
+
+    fun addTypeAliasedNestedClass(typeAlias: FirTypeAlias, nestedClass: FirRegularClass) {
+        require(nestedClass.classId.isNestedClass)
+        classIndex[typeAlias.name] = nestedClass.symbol
+    }
 
     override fun processClassifiersByNameWithSubstitution(
         name: Name,

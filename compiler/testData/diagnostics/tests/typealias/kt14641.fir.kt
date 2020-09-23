@@ -7,5 +7,5 @@ class A {
 
 fun f() {
     val a = A()
-    a.<!UNRESOLVED_REFERENCE!>BAlias<!>
+    a.BAlias
 }
