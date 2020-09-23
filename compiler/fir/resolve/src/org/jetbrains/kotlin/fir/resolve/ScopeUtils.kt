@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolved
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScope
-import org.jetbrains.kotlin.fir.scopes.scope
+import org.jetbrains.kotlin.fir.scopes.scopeForClass
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
@@ -39,7 +39,7 @@ private fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: Scope
 
             val substitution = createSubstitution(fir.typeParameters, fullyExpandedType, useSiteSession)
 
-            fir.scope(substitutorByMap(substitution), useSiteSession, scopeSession, skipPrivateMembers = false)
+            fir.scopeForClass(substitutorByMap(substitution), useSiteSession, scopeSession)
         }
         is ConeTypeParameterType -> {
             val symbol = lookupTag.toSymbol()

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolved
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
-import org.jetbrains.kotlin.fir.scopes.scope
+import org.jetbrains.kotlin.fir.scopes.scopeForClass
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
@@ -153,8 +153,8 @@ private fun processConstructors(
                     } else basicScope
                 }
                 is FirClassSymbol ->
-                    (matchedSymbol.fir as FirClass<*>).scope(
-                        substitutor, session, scopeSession, skipPrivateMembers = false,
+                    (matchedSymbol.fir as FirClass<*>).scopeForClass(
+                        substitutor, session, scopeSession
                     )
             }
 
