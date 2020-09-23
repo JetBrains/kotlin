@@ -353,7 +353,8 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
 private class ErrorGradleScriptDefinition(project: Project, message: String? = null) :
     ScriptDefinition.FromLegacy(
         ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration),
-        LegacyDefinition(project, message)
+        LegacyDefinition(project, message),
+        emptyList()
     ) {
 
     private class LegacyDefinition(project: Project, message: String?) : KotlinScriptDefinitionAdapterFromNewAPIBase() {
