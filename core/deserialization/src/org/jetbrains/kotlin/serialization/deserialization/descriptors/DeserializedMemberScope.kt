@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.compact
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
-import java.util.*
+import kotlin.collections.ArrayList
 
 abstract class DeserializedMemberScope protected constructor(
     protected val c: DeserializationContext,
@@ -104,7 +104,7 @@ abstract class DeserializedMemberScope protected constructor(
             name,
             functionProtosBytes,
             ProtoBuf.Function.PARSER,
-            { c.memberDeserializer.loadFunction(it) },
+            { c.memberDeserializer.loadFunction(it).takeIf(::isDeclaredFunctionAvailable) },
             { computeNonDeclaredFunctions(name, it) }
         )
 
@@ -112,7 +112,7 @@ abstract class DeserializedMemberScope protected constructor(
         name: Name,
         bytesByName: Map<Name, ByteArray>,
         parser: Parser<M>,
-        factory: (M) -> D,
+        factory: (M) -> D?,
         computeNonDeclared: (MutableCollection<D>) -> Unit
     ): Collection<D> =
         computeDescriptors(
@@ -128,14 +128,19 @@ abstract class DeserializedMemberScope protected constructor(
 
     private inline fun <M : MessageLite, D : DeclarationDescriptor> computeDescriptors(
         protos: Collection<M>,
-        factory: (M) -> D,
+        factory: (M) -> D?,
         computeNonDeclared: (MutableCollection<D>) -> Unit
     ): Collection<D> {
-        val descriptors = protos.mapTo(arrayListOf(), factory)
+        val descriptors = protos.mapNotNullTo(ArrayList(protos.size), factory)
 
         computeNonDeclared(descriptors)
         return descriptors.compact()
     }
+
+    /**
+     * Can be overridden to filter specific declared functions. Not called on non-declared functions.
+     */
+    protected open fun isDeclaredFunctionAvailable(function: SimpleFunctionDescriptor): Boolean = true
 
     protected open fun computeNonDeclaredFunctions(name: Name, functions: MutableCollection<SimpleFunctionDescriptor>) {
     }

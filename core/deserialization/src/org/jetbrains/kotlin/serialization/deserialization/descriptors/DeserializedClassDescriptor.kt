@@ -246,14 +246,14 @@ class DeserializedClassDescriptor(
             return super.getContributedVariables(name, location)
         }
 
+        override fun isDeclaredFunctionAvailable(function: SimpleFunctionDescriptor): Boolean {
+            return c.components.platformDependentDeclarationFilter.isFunctionAvailable(this@DeserializedClassDescriptor, function)
+        }
+
         override fun computeNonDeclaredFunctions(name: Name, functions: MutableCollection<SimpleFunctionDescriptor>) {
             val fromSupertypes = ArrayList<SimpleFunctionDescriptor>()
             for (supertype in refinedSupertypes()) {
                 fromSupertypes.addAll(supertype.memberScope.getContributedFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED))
-            }
-
-            functions.retainAll {
-                c.components.platformDependentDeclarationFilter.isFunctionAvailable(this@DeserializedClassDescriptor, it)
             }
 
             functions.addAll(c.components.additionalClassPartsProvider.getFunctions(name, this@DeserializedClassDescriptor))
