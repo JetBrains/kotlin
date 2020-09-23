@@ -1746,6 +1746,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         public void testPutIfAbsent() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/putIfAbsent.kt");
         }
+
+        @TestMetadata("V8ArrayToList.kt")
+        public void testV8ArrayToList() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/V8ArrayToList.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/ir/irText/lambdas")
