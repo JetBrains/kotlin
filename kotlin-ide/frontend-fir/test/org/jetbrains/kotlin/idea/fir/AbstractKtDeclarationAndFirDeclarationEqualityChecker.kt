@@ -21,7 +21,7 @@ abstract class AbstractKtDeclarationAndFirDeclarationEqualityChecker : KotlinLig
         val ktFile = myFixture.configureByText(file.name, FileUtil.loadFile(file)) as KtFile
         val resolveState = LowLevelFirApiFacade.getResolveStateFor(ktFile)
         ktFile.forEachDescendantOfType<KtFunction> { ktFunction ->
-            val firFunction = ktFunction.getOrBuildFir(resolveState) as FirFunction<*>
+            val firFunction = LowLevelFirApiFacade.getOrBuildFirFor(ktFunction, resolveState) as FirFunction<*>
             if (!KtDeclarationAndFirDeclarationEqualityChecker.representsTheSameDeclaration(ktFunction, firFunction)) {
                 throw FileComparisonFailure(
                     /* message= */          null,
