@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.symbols
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -74,6 +75,14 @@ object StandardClassIds {
     val unsignedTypes = listOf(UByte, UShort, UInt, ULong)
     val unsignedArrayTypeByElementType = unsignedTypes.associate { id -> id to id.shortClassName.primitiveArrayId() }
     val elementTypeByUnsignedArrayType = unsignedArrayTypeByElementType.inverseMap()
+
+    val Continuation =
+        ClassId(StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE, StandardNames.CONTINUATION_INTERFACE_FQ_NAME_RELEASE.shortName())
+
+    @Suppress("FunctionName")
+    fun FunctionN(n: Int): ClassId {
+        return "Function$n".baseId()
+    }
 }
 
 private fun <K, V> Map<K, V>.inverseMap() = entries.associate { (k, v) -> v to k }
