@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionBase
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -63,7 +62,7 @@ import org.jetbrains.kotlin.ir.util.SymbolRemapper
 import org.jetbrains.kotlin.ir.util.SymbolRenamer
 import org.jetbrains.kotlin.ir.util.TypeRemapper
 import org.jetbrains.kotlin.ir.util.TypeTranslator
-import org.jetbrains.kotlin.ir.util.findFirstFunction
+import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -72,7 +71,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 
 class DeepCopyIrTreeWithSymbolsPreservingMetadata(
     private val context: IrPluginContext,
@@ -168,32 +166,20 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
             expression.dispatchReceiver?.type?.isComposable() == true
         ) {
             val typeArguments = containingClass.defaultType.arguments
-            @Suppress("DEPRECATION")
-            val newFnClass = context.symbolTable.referenceClass(
-                context.builtIns
-                    .getFunction(typeArguments.size)
-            )
-            @Suppress("DEPRECATION")
-            val newDescriptor = newFnClass
-                .descriptor
-                .unsubstitutedMemberScope
-                .findFirstFunction(ownerFn.name.identifier) { true }
+            val newFnClass = context.function(typeArguments.size).owner
 
-            var newFn: IrSimpleFunction = IrFunctionImpl(
-                ownerFn.startOffset,
-                ownerFn.endOffset,
-                ownerFn.origin,
-                newDescriptor,
-                expression.type
-            )
+            var newFn = newFnClass
+                .functions
+                .first { it.name == ownerFn.name }
+
             symbolRemapper.visitSimpleFunction(newFn)
             newFn = super.visitSimpleFunction(newFn).also { fn ->
-                fn.parent = newFnClass.owner
+                fn.parent = newFnClass
                 fn.overriddenSymbols = ownerFn.overriddenSymbols.map { it }
                 fn.dispatchReceiverParameter = ownerFn.dispatchReceiverParameter
                 fn.extensionReceiverParameter = ownerFn.extensionReceiverParameter
-                newDescriptor.valueParameters.forEach { p ->
-                    fn.addValueParameter(p.name.identifier, p.type.toIrType())
+                newFn.valueParameters.forEach { p ->
+                    fn.addValueParameter(p.name.identifier, p.type)
                 }
                 fn.patchDeclarationParents(fn.parent)
                 assert(fn.body == null) { "expected body to be null" }
@@ -308,7 +294,7 @@ class ComposerTypeRemapper(
     private val context: IrPluginContext,
     private val symbolRemapper: SymbolRemapper,
     private val typeTranslator: TypeTranslator,
-    private val composerTypeDescriptor: ClassDescriptor
+    private val composerType: IrType
 ) : TypeRemapper {
 
     lateinit var deepCopy: IrElementTransformerVoid
@@ -352,7 +338,7 @@ class ComposerTypeRemapper(
         var extraArgs = listOf(
             // composer param
             makeTypeProjection(
-                composerTypeDescriptor.defaultType.replaceArgumentsWithStarProjections().toIrType(),
+                composerType,
                 Variance.INVARIANT
             )
         )
@@ -365,16 +351,12 @@ class ComposerTypeRemapper(
                 extraArgs +
                 oldIrArguments.last()
 
+        val newArgSize = oldIrArguments.size - 1 + extraArgs.size
+        val functionCls = context.function(newArgSize)
+
         return IrSimpleTypeImpl(
             null,
-            symbolRemapper.getReferencedClassifier(
-                context.symbolTable.referenceClass(
-                    context
-                        .irBuiltIns
-                        .builtIns
-                        .getFunction(oldIrArguments.size - 1 + extraArgs.size)
-                )
-            ),
+            functionCls,
             type.hasQuestionMark,
             newIrArguments.map { remapTypeArgument(it) },
             type.annotations.filter { !it.isComposableAnnotation() }.map {

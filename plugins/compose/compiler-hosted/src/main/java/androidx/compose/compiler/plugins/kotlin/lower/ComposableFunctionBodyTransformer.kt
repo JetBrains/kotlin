@@ -28,16 +28,13 @@ import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -47,7 +44,6 @@ import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irReturn
-import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -103,27 +99,39 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSpreadElementImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrWhenImpl
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.types.isBoolean
+import org.jetbrains.kotlin.ir.types.isByte
+import org.jetbrains.kotlin.ir.types.isChar
+import org.jetbrains.kotlin.ir.types.isDouble
+import org.jetbrains.kotlin.ir.types.isFloat
+import org.jetbrains.kotlin.ir.types.isInt
+import org.jetbrains.kotlin.ir.types.isLong
 import org.jetbrains.kotlin.ir.types.isNothing
+import org.jetbrains.kotlin.ir.types.isNullableAny
+import org.jetbrains.kotlin.ir.types.isShort
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.types.isUnitOrNullableUnit
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
-import org.jetbrains.kotlin.ir.util.findFirstFunction
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.ir.util.isInlined
 import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
@@ -132,26 +140,12 @@ import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.isBoolean
-import org.jetbrains.kotlin.types.typeUtil.isByte
-import org.jetbrains.kotlin.types.typeUtil.isChar
-import org.jetbrains.kotlin.types.typeUtil.isDouble
-import org.jetbrains.kotlin.types.typeUtil.isFloat
-import org.jetbrains.kotlin.types.typeUtil.isInt
-import org.jetbrains.kotlin.types.typeUtil.isLong
-import org.jetbrains.kotlin.types.typeUtil.isNullableAny
-import org.jetbrains.kotlin.types.typeUtil.isShort
 import org.jetbrains.kotlin.types.typeUtil.isUnit
-import org.jetbrains.kotlin.types.typeUtil.makeNullable
-import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.ifEmpty
 import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.math.ceil
 import kotlin.math.min
-import kotlin.text.StringBuilder
 
 /**
  * An enum of the different "states" a parameter of a composable function can have relating to
@@ -451,13 +445,12 @@ class ComposableFunctionBodyTransformer(
         applySourceFixups()
     }
 
-    private val changedDescriptor = composerTypeDescriptor
-        .unsubstitutedMemberScope
-        .findFirstFunction("changed") {
-            it.valueParameters.first().type.isNullableAny()
+    private val changedFunction = composerIrClass.functions
+        .first {
+            it.name.identifier == "changed" && it.valueParameters.first().type.isNullableAny()
         }
 
-    fun KotlinType.toPrimitiveType(): PrimitiveType? = when {
+    private fun IrType.toPrimitiveType(): PrimitiveType? = when {
         isInt() -> PrimitiveType.INT
         isBoolean() -> PrimitiveType.BOOLEAN
         isFloat() -> PrimitiveType.FLOAT
@@ -469,106 +462,114 @@ class ComposableFunctionBodyTransformer(
         else -> null
     }
 
-    private val changedDescriptors = composerTypeDescriptor
-        .unsubstitutedMemberScope
-        .getContributedFunctions(Name.identifier("changed"), NoLookupLocation.FROM_BACKEND)
+    private val changedPrimitiveFunctions = composerIrClass.functions
         .filter { it.name.identifier == "changed" }
-        .mapNotNull { desc ->
-            desc.valueParameters.first().type.toPrimitiveType()?.let { primitive ->
-                primitive to desc
+        .mapNotNull { f ->
+            f.valueParameters.first().type.toPrimitiveType()?.let { primitive ->
+                primitive to f
             }
         }
         .toMap()
 
-    private val skipToGroupEndDescriptor = composerTypeDescriptor
-        .unsubstitutedMemberScope
-        .findFirstFunction("skipToGroupEnd") { it.valueParameters.size == 0 }
-
-    private val skipCurrentGroupDescriptor = composerTypeDescriptor
-        .unsubstitutedMemberScope
-        .findFirstFunction("skipCurrentGroup") { it.valueParameters.size == 0 }
-
-    private val startReplaceableDescriptor = composerTypeDescriptor
-        .unsubstitutedMemberScope
-        .findFirstFunction("startReplaceableGroup") { it.valueParameters.size == 1 }
-
-    private val startReplaceableSourceDescriptor = composerTypeDescriptor
-        .unsubstitutedMemberScope
-        .findFirstFunction("startReplaceableGroup") { it.valueParameters.size == 2 }
-
-    private val endReplaceableDescriptor = composerTypeDescriptor
-        .unsubstitutedMemberScope
-        .findFirstFunction("endReplaceableGroup") { it.valueParameters.size == 0 }
-
-    private val startDefaultsDescriptor = composerTypeDescriptor
-        .unsubstitutedMemberScope
-        .findFirstFunction("startDefaults") { it.valueParameters.size == 0 }
-
-    private val endDefaultsDescriptor = composerTypeDescriptor
-        .unsubstitutedMemberScope
-        .findFirstFunction("endDefaults") { it.valueParameters.size == 0 }
-
-    private val startMovableDescriptor = composerTypeDescriptor
-        .unsubstitutedMemberScope
-        .findFirstFunction("startMovableGroup") { it.valueParameters.size == 2 }
-
-    private val startMovableSourceDescriptor = composerTypeDescriptor
-        .unsubstitutedMemberScope
-        .findFirstFunction("startMovableGroup") { it.valueParameters.size == 3 }
-
-    private val endMovableDescriptor = composerTypeDescriptor
-        .unsubstitutedMemberScope
-        .findFirstFunction("endMovableGroup") { it.valueParameters.size == 0 }
-
-    private val startRestartGroupDescriptor = composerTypeDescriptor
-        .unsubstitutedMemberScope
-        .findFirstFunction(KtxNameConventions.STARTRESTARTGROUP.identifier) {
-            it.valueParameters.size == 1
+    private val skipToGroupEndFunction = composerIrClass.functions
+        .first {
+            it.name.identifier == "skipToGroupEnd" && it.valueParameters.size == 0
         }
 
-    private val startRestartGroupSourceDescriptor = composerTypeDescriptor
-        .unsubstitutedMemberScope
-        .findFirstFunction(KtxNameConventions.STARTRESTARTGROUP.identifier) {
-            it.valueParameters.size == 2
+    private val skipCurrentGroupFunction = composerIrClass.functions
+        .first {
+            it.name.identifier == "skipCurrentGroup" && it.valueParameters.size == 0
         }
 
-    private val endRestartGroupDescriptor = composerTypeDescriptor
-        .unsubstitutedMemberScope
-        .findFirstFunction(KtxNameConventions.ENDRESTARTGROUP.identifier) {
-            it.valueParameters.size == 0
+    private val startReplaceableFunction = composerIrClass.functions
+        .first {
+            it.name.identifier == "startReplaceableGroup" && it.valueParameters.size == 1
         }
 
-    private val updateScopeDescriptor =
-        endRestartGroupDescriptor.returnType?.memberScope?.getContributedFunctions(
-            KtxNameConventions.UPDATE_SCOPE,
-            NoLookupLocation.FROM_BACKEND
-        )?.singleOrNull { it.valueParameters.first().type.arguments.size == 3 }
+    private val startReplaceableSourceFunction = composerIrClass.functions
+        .first {
+            it.name.identifier == "startReplaceableGroup" && it.valueParameters.size == 2
+        }
+
+    private val endReplaceableFunction = composerIrClass.functions
+        .first {
+            it.name.identifier == "endReplaceableGroup" && it.valueParameters.size == 0
+        }
+
+    private val startDefaultsFunction = composerIrClass.functions
+        .first {
+            it.name.identifier == "startDefaults" && it.valueParameters.size == 0
+        }
+
+    private val endDefaultsFunction = composerIrClass.functions
+        .first {
+            it.name.identifier == "endDefaults" && it.valueParameters.size == 0
+        }
+
+    private val startMovableFunction = composerIrClass.functions
+        .first {
+            it.name.identifier == "startMovableGroup" && it.valueParameters.size == 2
+        }
+
+    private val startMovableSourceFunction = composerIrClass.functions
+        .first {
+            it.name.identifier == "startMovableGroup" && it.valueParameters.size == 3
+        }
+
+    private val endMovableFunction = composerIrClass.functions
+        .first {
+            it.name.identifier == "endMovableGroup" && it.valueParameters.size == 0
+        }
+
+    private val startRestartGroupFunction = composerIrClass.functions
+        .first {
+            it.name == KtxNameConventions.STARTRESTARTGROUP && it.valueParameters.size == 1
+        }
+
+    private val startRestartGroupSourceFunction = composerIrClass.functions
+        .first {
+            it.name == KtxNameConventions.STARTRESTARTGROUP && it.valueParameters.size == 2
+        }
+
+    private val endRestartGroupFunction = composerIrClass.functions
+        .first {
+            it.name == KtxNameConventions.ENDRESTARTGROUP && it.valueParameters.size == 0
+        }
+
+    private val IrType.arguments: List<IrTypeArgument>
+        get() = (this as? IrSimpleType)?.arguments.orEmpty()
+
+    private val updateScopeFunction =
+        endRestartGroupFunction.returnType
+            .classOrNull
+            ?.owner
+            ?.functions
+            ?.singleOrNull {
+                it.name == KtxNameConventions.UPDATE_SCOPE &&
+                    it.valueParameters.first().type.arguments.size == 3
+            }
             ?: error("new updateScope not found in result type of endRestartGroup")
 
-    private val updateScopeBlockType = updateScopeDescriptor.valueParameters.single().type
+    private val updateScopeBlockType = updateScopeFunction.valueParameters.single().type
 
-    private val isSkippingDescriptor = composerTypeDescriptor
-        .unsubstitutedMemberScope
-        .getContributedDescriptors { it.asString() == "skipping" }
-        .first { it is PropertyDescriptor && it.name.asString() == "skipping" }
-        .cast<PropertyDescriptor>()
-
-    private val defaultsInvalidDescriptor = composerTypeDescriptor
-        .unsubstitutedMemberScope
-        .getContributedDescriptors { it.asString() == "defaultsInvalid" }
-        .first { it is PropertyDescriptor && it.name.asString() == "defaultsInvalid" }
-        .cast<PropertyDescriptor>()
-
-    private val joinKeyDescriptor = composerTypeDescriptor
-        .unsubstitutedMemberScope
-        .findFirstFunction(KtxNameConventions.JOINKEY.identifier) {
-            it.valueParameters.size == 2
+    private val isSkippingFunction = composerIrClass.properties
+        .first {
+            it.name.asString() == "skipping"
         }
 
-    private val cacheDescriptor = composerTypeDescriptor
-        .unsubstitutedMemberScope
-        .findFirstFunction("cache") {
-            it.valueParameters.size == 2
+    private val defaultsInvalidFunction = composerIrClass.properties
+        .first {
+            it.name.asString() == "defaultsInvalid"
+        }
+
+    private val joinKeyFunction = composerIrClass.functions
+        .first {
+            it.name == KtxNameConventions.JOINKEY && it.valueParameters.size == 2
+        }
+
+    private val cacheFunction = composerIrClass.functions
+        .first {
+            it.name.identifier == "cache" && it.valueParameters.size == 2
         }
 
     private var currentScope: Scope = Scope.RootScope()
@@ -699,18 +700,11 @@ class ComposableFunctionBodyTransformer(
         return false
     }
 
-    private fun <T : IrAnnotationContainer> T.bindAnnotationsIfNecessary(): T {
-        annotations.forEach { it.symbol.bindIfNecessary() }
-        return this
-    }
-
     private fun IrFunction.shouldElideGroups(): Boolean {
-        bindAnnotationsIfNecessary()
         var readOnly = descriptor.composableReadonlyContract()
         if (readOnly == null && this is IrSimpleFunction) {
             readOnly = correspondingPropertySymbol
                 ?.owner
-                ?.bindAnnotationsIfNecessary()
                 ?.descriptor
                 ?.composableReadonlyContract()
         }
@@ -1400,7 +1394,7 @@ class ComposableFunctionBodyTransformer(
                 // composer.startReplaceableGroup(values.size)
                 val irGetParamSize = irMethodCall(
                     irGet(param),
-                    param.type.classOrNull!!.getPropertyGetter("size")!!.descriptor
+                    param.type.classOrNull!!.getPropertyGetter("size")!!.owner
                 )
                 // TODO(lmr): verify this works with default vararg expressions!
                 skipPreamble.statements.add(
@@ -1525,7 +1519,7 @@ class ComposableFunctionBodyTransformer(
             index = 0,
             annotations = Annotations.EMPTY,
             name = KtxNameConventions.COMPOSER_PARAMETER,
-            outType = composerTypeDescriptor.defaultType.makeNullable(),
+            outType = composerIrClass.defaultType.makeNullable().toKotlinType(),
             declaresDefaultValue = false,
             isCrossinline = false,
             isNoinline = false,
@@ -1553,7 +1547,7 @@ class ComposableFunctionBodyTransformer(
                 null,
                 emptyList(),
                 listOf(passedInComposerParameter, ignoredChangedParameter),
-                updateScopeBlockType,
+                updateScopeBlockType.toKotlinType(),
                 Modality.FINAL,
                 Visibilities.LOCAL
             )
@@ -1591,10 +1585,8 @@ class ComposableFunctionBodyTransformer(
             val localIrBuilder = DeclarationIrBuilder(context, fn.symbol)
             fn.addValueParameter(
                 KtxNameConventions.COMPOSER_PARAMETER.identifier,
-                composerTypeDescriptor
-                    .defaultType
+                composerIrClass.defaultType
                     .replaceArgumentsWithStarProjections()
-                    .toIrType()
                     .makeNullable()
             )
             fn.addValueParameter(
@@ -1669,17 +1661,17 @@ class ComposableFunctionBodyTransformer(
                 outerReceiver,
                 irSafeCall(
                     irEndRestartGroup(),
-                    updateScopeDescriptor,
-                    irLambda(lambda, updateScopeBlockType.toIrType())
+                    updateScopeFunction.symbol,
+                    irLambda(lambda, updateScopeBlockType)
                 )
             )
         )
     }
 
     private fun irIsSkipping() =
-        irMethodCall(irCurrentComposer(), isSkippingDescriptor.getter!!)
+        irMethodCall(irCurrentComposer(), isSkippingFunction.getter!!)
     private fun irDefaultsInvalid() =
-        irMethodCall(irCurrentComposer(), defaultsInvalidDescriptor.getter!!)
+        irMethodCall(irCurrentComposer(), defaultsInvalidFunction.getter!!)
 
     private fun irIsProvided(default: IrDefaultBitMaskValue, slot: Int) =
         irEqual(default.irIsolateBitAtIndex(slot), irConst(0))
@@ -1817,12 +1809,10 @@ class ComposableFunctionBodyTransformer(
         key: IrExpression = element.irSourceKey()
     ): IrExpression {
         val startDescriptor = if (scope.hasSourceInformation)
-            startReplaceableSourceDescriptor else startReplaceableDescriptor
+            startReplaceableSourceFunction else startReplaceableFunction
         return irMethodCall(
             irCurrentComposer(),
-            startDescriptor,
-            element.startOffset,
-            element.endOffset
+            startDescriptor
         ).also {
             it.putValueArgument(0, key)
             if (scope.hasSourceInformation) {
@@ -1834,7 +1824,7 @@ class ComposableFunctionBodyTransformer(
     private fun irStartDefaults(element: IrElement): IrExpression {
         return irMethodCall(
             irCurrentComposer(),
-            startDefaultsDescriptor,
+            startDefaultsFunction,
             element.startOffset,
             element.endOffset
         )
@@ -1846,7 +1836,7 @@ class ComposableFunctionBodyTransformer(
         key: IrExpression = element.irSourceKey()
     ): IrExpression {
         val startDescriptor = if (scope.hasSourceInformation)
-            startRestartGroupSourceDescriptor else startRestartGroupDescriptor
+            startRestartGroupSourceFunction else startRestartGroupFunction
         return irMethodCall(
             irCurrentComposer(),
             startDescriptor,
@@ -1861,7 +1851,7 @@ class ComposableFunctionBodyTransformer(
     }
 
     private fun irEndRestartGroup(): IrExpression {
-        return irMethodCall(irCurrentComposer(), endRestartGroupDescriptor)
+        return irMethodCall(irCurrentComposer(), endRestartGroupFunction)
     }
 
     private fun irCache(
@@ -1871,7 +1861,7 @@ class ComposableFunctionBodyTransformer(
         invalid: IrExpression,
         calculation: IrExpression
     ): IrExpression {
-        val symbol = referenceFunction(cacheDescriptor)
+        val symbol = referenceFunction(cacheFunction.symbol)
         return IrCallImpl(
             startOffset,
             endOffset,
@@ -1898,28 +1888,27 @@ class ComposableFunctionBodyTransformer(
         val type = value.type.unboxInlineClass()
         val expr = value.unboxValueIfInline()
         val descriptor = type
-            .toKotlinType()
             .toPrimitiveType()
-            .let { changedDescriptors[it] } ?: changedDescriptor
+            .let { changedPrimitiveFunctions[it] } ?: changedFunction
         return irMethodCall(irCurrentComposer(), descriptor).also {
             it.putValueArgument(0, expr)
         }
     }
 
     private fun irSkipToGroupEnd(): IrExpression {
-        return irMethodCall(irCurrentComposer(), skipToGroupEndDescriptor)
+        return irMethodCall(irCurrentComposer(), skipToGroupEndFunction)
     }
 
     private fun irSkipCurrentGroup(): IrExpression {
-        return irMethodCall(irCurrentComposer(), skipCurrentGroupDescriptor)
+        return irMethodCall(irCurrentComposer(), skipCurrentGroupFunction)
     }
 
     private fun irEndReplaceableGroup(): IrExpression {
-        return irMethodCall(irCurrentComposer(), endReplaceableDescriptor)
+        return irMethodCall(irCurrentComposer(), endReplaceableFunction)
     }
 
     private fun irEndDefaults(): IrExpression {
-        return irMethodCall(irCurrentComposer(), endDefaultsDescriptor)
+        return irMethodCall(irCurrentComposer(), endDefaultsFunction)
     }
 
     private fun irStartMovableGroup(
@@ -1927,11 +1916,14 @@ class ComposableFunctionBodyTransformer(
         joinedData: IrExpression,
         scope: Scope.BlockScope
     ): IrExpression {
-        val startDescriptor = if (scope.hasSourceInformation)
-            startMovableSourceDescriptor else startMovableDescriptor
+        val startFunction = if (scope.hasSourceInformation) {
+            startMovableSourceFunction
+        } else {
+            startMovableFunction
+        }
         return irMethodCall(
             irCurrentComposer(),
-            startDescriptor,
+            startFunction,
             element.startOffset,
             element.endOffset
         ).also {
@@ -1944,12 +1936,12 @@ class ComposableFunctionBodyTransformer(
     }
 
     private fun irEndMovableGroup(): IrExpression {
-        return irMethodCall(irCurrentComposer(), endMovableDescriptor)
+        return irMethodCall(irCurrentComposer(), endMovableFunction)
     }
 
     private fun irJoinKeyChain(keyExprs: List<IrExpression>): IrExpression {
         return keyExprs.reduce { accumulator, value ->
-            irMethodCall(irCurrentComposer(), joinKeyDescriptor).apply {
+            irMethodCall(irCurrentComposer(), joinKeyFunction).apply {
                 putValueArgument(0, accumulator)
                 putValueArgument(1, value)
             }
@@ -1958,7 +1950,7 @@ class ComposableFunctionBodyTransformer(
 
     private fun irSafeCall(
         target: IrExpression,
-        descriptor: FunctionDescriptor,
+        symbol: IrFunctionSymbol,
         vararg args: IrExpression
     ): IrExpression {
         val tmpVal = irTemporary(target, nameHint = "safe_receiver")
@@ -1969,7 +1961,7 @@ class ComposableFunctionBodyTransformer(
                 irIfThenElse(
                     condition = irEqual(irGet(tmpVal), irNull()),
                     thenPart = irNull(),
-                    elsePart = irCall(descriptor).apply {
+                    elsePart = irCall(symbol).apply {
                         dispatchReceiver = irGet(tmpVal)
                         args.forEachIndexed { i, arg ->
                             putValueArgument(i, arg)
@@ -1981,12 +1973,12 @@ class ComposableFunctionBodyTransformer(
     }
 
     private fun irCall(
-        descriptor: FunctionDescriptor,
+        function: IrFunction,
         startOffset: Int = UNDEFINED_OFFSET,
         endOffset: Int = UNDEFINED_OFFSET
     ): IrCall {
-        val type = descriptor.returnType?.toIrType() ?: error("Expected a return type")
-        val symbol = referenceFunction(descriptor)
+        val type = function.returnType
+        val symbol = referenceFunction(function.symbol)
         return IrCallImpl(
             startOffset,
             endOffset,
@@ -1997,11 +1989,11 @@ class ComposableFunctionBodyTransformer(
 
     private fun irMethodCall(
         target: IrExpression,
-        descriptor: FunctionDescriptor,
+        function: IrFunction,
         startOffset: Int = UNDEFINED_OFFSET,
         endOffset: Int = UNDEFINED_OFFSET
     ): IrCall {
-        return irCall(descriptor, startOffset, endOffset).apply {
+        return irCall(function, startOffset, endOffset).apply {
             dispatchReceiver = target
         }
     }
@@ -2871,7 +2863,7 @@ class ComposableFunctionBodyTransformer(
         val endBlock = mutableStatementContainer()
         encounteredReturn(expression.returnTargetSymbol) { endBlock.statements.add(it) }
         return if (expression.value.type
-            .also { if (it is IrSimpleType) it.classifier.bindIfNecessary() }
+            .also { if (it is IrSimpleType) it.classifier }
             .isUnitOrNullableUnit()
         ) {
             expression.wrap(listOf(endBlock))
@@ -3175,9 +3167,6 @@ class ComposableFunctionBodyTransformer(
                 }
 
                 parameters.forEachIndexed { originalIndex, parameter ->
-                    with(transformer) {
-                        parameter.type.classifierOrNull?.bindIfNecessary()
-                    }
                     if (expectedIndexes.first() == sortIndex[originalIndex] &&
                         !parameter.type.isInlined()
                     ) {
@@ -3650,15 +3639,13 @@ class ComposableFunctionBodyTransformer(
             val value = irGet(params[paramIndexForSlot(fromSlot)])
 
             if (bitsToShiftLeft == 0) return value
-            val int = context.builtIns.intType
-            val shiftLeft = context.symbols.getBinaryOperator(
+            val int = context.irBuiltIns.intType
+            val shiftLeft = int.binaryOperator(
                 OperatorNames.SHL,
-                int,
                 int
             )
-            val shiftRight = context.symbols.getBinaryOperator(
+            val shiftRight = int.binaryOperator(
                 OperatorNames.SHR,
-                int,
                 int
             )
 

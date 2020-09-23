@@ -19,6 +19,7 @@ package androidx.compose.compiler.plugins.kotlin
 import androidx.compose.compiler.plugins.kotlin.lower.DurableKeyVisitor
 import androidx.compose.compiler.plugins.kotlin.lower.LiveLiteralTransformer
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
+import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
@@ -655,16 +656,18 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
     override fun postProcessingStep(
         module: IrModuleFragment,
         generatorContext: GeneratorContext,
-        irLinker: IrDeserializer
+        irLinker: IrDeserializer,
+        symbols: BuiltinSymbolsBase
     ) {
         val pluginContext = IrPluginContextImpl(
-            generatorContext.moduleDescriptor,
-            generatorContext.bindingContext,
-            generatorContext.languageVersionSettings,
-            generatorContext.symbolTable,
-            generatorContext.typeTranslator,
-            generatorContext.irBuiltIns,
-            linker = irLinker
+            module = generatorContext.moduleDescriptor,
+            bindingContext = generatorContext.bindingContext,
+            languageVersionSettings = generatorContext.languageVersionSettings,
+            st = generatorContext.symbolTable,
+            typeTranslator = generatorContext.typeTranslator,
+            irBuiltIns = generatorContext.irBuiltIns,
+            linker = irLinker,
+            symbols = symbols
         )
         @Suppress("DEPRECATION")
         val bindingTrace = DelegatingBindingTrace(pluginContext.bindingContext, "test trace")
