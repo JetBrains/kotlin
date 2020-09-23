@@ -1,5 +1,5 @@
 // WITH_RUNTIME
-fun foo(s: String): Int {
+fun test(): Int = <caret>with("") {
     println()
     return 42
 }

@@ -38,9 +38,7 @@ class RedundantWithInspection : AbstractKotlinInspection() {
             val lambdaBody = lambda.bodyExpression ?: return
 
             val context = callExpression.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
-            if (lambdaBody.statements.size > 1 &&
-                (callExpression.isDeclarationInitializer() || callExpression.isUsedAsExpression(context))
-            ) return
+            if (lambdaBody.statements.size > 1 && callExpression.isUsedAsExpression(context)) return
             if (callExpression.getResolvedCall(context)?.resultingDescriptor?.fqNameSafe != FqName("kotlin.with")) return
 
             val lambdaDescriptor = context[BindingContext.FUNCTION, lambda.functionLiteral] ?: return
@@ -82,9 +80,6 @@ class RedundantWithInspection : AbstractKotlinInspection() {
 private fun KtValueArgument.lambdaExpression(): KtLambdaExpression? =
     (this as? KtLambdaArgument)?.getLambdaExpression() ?: this.getArgumentExpression() as? KtLambdaExpression
 
-private fun KtCallExpression.isDeclarationInitializer(): Boolean =
-    KtPsiUtil.deparenthesize(this.getStrictParentOfType<KtDeclarationWithInitializer>()?.initializer) == this
-
 private class RemoveRedundantWithFix : LocalQuickFix {
     override fun getName() = KotlinBundle.message("remove.redundant.with.fix.text")
 
@@ -92,14 +87,22 @@ private class RemoveRedundantWithFix : LocalQuickFix {
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val callExpression = descriptor.psiElement.parent as? KtCallExpression ?: return
-        val lambdaBody = callExpression.valueArguments.getOrNull(1)?.lambdaExpression()?.bodyExpression ?: return
-        val singleReturnedExpression = (lambdaBody.statements.singleOrNull() as? KtReturnExpression)?.returnedExpression
-        val newElement = if (singleReturnedExpression != null && callExpression.isDeclarationInitializer()) {
-            singleReturnedExpression
+        val lambdaExpression = callExpression.valueArguments.getOrNull(1)?.lambdaExpression() ?: return
+        val lambdaBody = lambdaExpression.bodyExpression ?: return
+        val declaration = callExpression.getStrictParentOfType<KtDeclarationWithBody>()
+        val replaced = if (declaration?.equalsToken != null && KtPsiUtil.deparenthesize(declaration.bodyExpression) == callExpression) {
+            val singleReturnedExpression = (lambdaBody.statements.singleOrNull() as? KtReturnExpression)?.returnedExpression
+            if (singleReturnedExpression != null) {
+                callExpression.replaced(singleReturnedExpression)
+            } else {
+                declaration.equalsToken?.delete()
+                declaration.bodyExpression?.replaced(KtPsiFactory(project).createSingleStatementBlock(lambdaBody))
+            }
         } else {
-            lambdaBody
+            callExpression.replaced(lambdaBody)
         }
-        val replaced = callExpression.replaced(newElement)
-        replaced.findExistingEditor()?.moveCaret(replaced.startOffset)
+        if (replaced != null) {
+            replaced.findExistingEditor()?.moveCaret(replaced.startOffset)
+        }
     }
 }

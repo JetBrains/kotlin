@@ -9206,19 +9206,19 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/redundantWith"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
         }
 
+        @TestMetadata("asInitializer.kt")
+        public void testAsInitializer() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantWith/asInitializer.kt");
+        }
+
+        @TestMetadata("asInitializerWithSingleReturn.kt")
+        public void testAsInitializerWithSingleReturn() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantWith/asInitializerWithSingleReturn.kt");
+        }
+
         @TestMetadata("emptyExpressionInReturn.kt")
         public void testEmptyExpressionInReturn() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantWith/emptyExpressionInReturn.kt");
-        }
-
-        @TestMetadata("inFunctionBlockBodyWithReturn.kt")
-        public void testInFunctionBlockBodyWithReturn() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantWith/inFunctionBlockBodyWithReturn.kt");
-        }
-
-        @TestMetadata("inFunctionBodyWithReturn.kt")
-        public void testInFunctionBodyWithReturn() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantWith/inFunctionBodyWithReturn.kt");
         }
 
         @TestMetadata("nested.kt")
@@ -9254,11 +9254,6 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("notApplicable_inFunctionBody.kt")
         public void testNotApplicable_inFunctionBody() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantWith/notApplicable_inFunctionBody.kt");
-        }
-
-        @TestMetadata("notApplicable_inFunctionBodyWithReturn.kt")
-        public void testNotApplicable_inFunctionBodyWithReturn() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantWith/notApplicable_inFunctionBodyWithReturn.kt");
         }
 
         @TestMetadata("notApplicable_inProperty.kt")
