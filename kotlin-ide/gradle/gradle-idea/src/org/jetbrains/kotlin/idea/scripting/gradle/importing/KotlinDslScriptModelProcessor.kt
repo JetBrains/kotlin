@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.idea.scripting.gradle.importing
 
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
+import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.JdkUtil
 import com.intellij.openapi.util.io.FileUtil.toSystemIndependentName
 import com.intellij.openapi.vfs.VfsUtil
 import org.gradle.tooling.model.kotlin.dsl.EditorReportSeverity
@@ -18,6 +20,7 @@ import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 import org.jetbrains.plugins.gradle.model.BuildScriptClasspathModel
 import org.jetbrains.plugins.gradle.service.project.DefaultProjectResolverContext
 import org.jetbrains.plugins.gradle.service.project.ProjectResolverContext
+import org.jetbrains.plugins.gradle.settings.GradleSettings
 import java.io.File
 
 fun saveGradleBuildEnvironment(resolverCtx: ProjectResolverContext) {
@@ -29,6 +32,7 @@ fun saveGradleBuildEnvironment(resolverCtx: ProjectResolverContext) {
             ?: resolverCtx.settings?.gradleHome
         synchronized(sync) {
             sync.gradleVersion = resolverCtx.projectGradleVersion
+
             sync.javaHome = (resolverCtx as? DefaultProjectResolverContext)
                 ?.buildEnvironment
                 ?.java?.javaHome?.canonicalPath
