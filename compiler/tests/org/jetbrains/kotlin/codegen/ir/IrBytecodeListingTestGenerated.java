@@ -229,6 +229,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/collectionStubs"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("collectionsWithFullJdk.kt")
+        public void testCollectionsWithFullJdk() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/collectionsWithFullJdk.kt");
+        }
+
         @TestMetadata("customListIterator.kt")
         public void testCustomListIterator() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/customListIterator.kt");

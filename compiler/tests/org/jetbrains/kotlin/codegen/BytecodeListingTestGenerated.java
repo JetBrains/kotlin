@@ -229,6 +229,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/collectionStubs"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
+        @TestMetadata("collectionsWithFullJdk.kt")
+        public void testCollectionsWithFullJdk() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/collectionsWithFullJdk.kt");
+        }
+
         @TestMetadata("customListIterator.kt")
         public void testCustomListIterator() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/customListIterator.kt");
