@@ -249,6 +249,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/customMutableListIterator.kt");
         }
 
+        @TestMetadata("emptyList.kt")
+        public void testEmptyList() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/emptyList.kt");
+        }
+
         @TestMetadata("noStubsForCollection.kt")
         public void testNoStubsForCollection() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/noStubsForCollection.kt");
