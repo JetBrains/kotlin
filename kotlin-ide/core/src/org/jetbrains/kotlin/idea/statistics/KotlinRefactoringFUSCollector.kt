@@ -6,16 +6,12 @@ import com.intellij.internal.statistic.service.fus.collectors.CounterUsagesColle
 import com.intellij.internal.statistic.utils.getPluginInfoById
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 
-open class KotlinRefactoringFUSCollector : CounterUsagesCollector() {
+class KotlinMoveRefactoringFUSCollector : CounterUsagesCollector() {
     override fun getGroup(): EventLogGroup = GROUP
 
     companion object {
-        val GROUP = EventLogGroup("kotlin.ide.refactoring", 2)
-    }
-}
+        private val GROUP = EventLogGroup("kotlin.ide.refactoring.move", 1)
 
-class KotlinMoveRefactoringFUSCollector : KotlinRefactoringFUSCollector() {
-    companion object {
         private val lagging = EventFields.Long("lagging")
         private val entity = EventFields.Enum("entity", MovedEntity::class.java)
         private val destination = EventFields.Enum("destination", MoveRefactoringDestination::class.java)
@@ -25,7 +21,7 @@ class KotlinMoveRefactoringFUSCollector : KotlinRefactoringFUSCollector() {
         private val pluginInfo = EventFields.PluginInfo
 
         private val event = GROUP.registerVarargEvent(
-            "Move",
+            "Finished",
             lagging,
             entity,
             destination,
