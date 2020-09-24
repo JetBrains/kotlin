@@ -139,6 +139,11 @@
         </element>
         <element id="archive" name="kotlin-idea.jar">
           <element id="module-output" name="kotlin.idea" />
+          <element id="directory" name="META-INF">
+            <element id="directory" name="extensions">
+              <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler-for-ide/1.4.10-202-1/kotlin-compiler-for-ide-1.4.10-202-1.jar" path-in-jar="/META-INF/extensions/" />
+            </element>
+          </element>
         </element>
         <element id="archive" name="kotlin-jps-common.jar">
           <element id="module-output" name="kotlin.jps-common" />
