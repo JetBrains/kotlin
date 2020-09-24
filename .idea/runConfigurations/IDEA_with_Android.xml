@@ -1,0 +1,42 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="IDEA with Android" type="Application" factoryName="Application" singleton="true">
+    <log_file alias="idea.log" path="$PROJECT_DIR$/system/idea/log/idea.log" />
+    <log_file alias="build.log" path="$PROJECT_DIR$/system/idea/log/build-log/build.log" />
+    <option name="MAIN_CLASS_NAME" value="com.intellij.idea.Main" />
+    <module name="intellij.idea.ultimate.main.android" />
+    <selectedOptions>
+      <option name="before.launch.openToolWindow" />
+      <option name="beforeRunTasks" />
+      <option name="commandLineParameters" />
+      <option name="environmentVariables" />
+      <option name="jrePath" />
+      <option name="log.monitor" />
+      <option name="mainClass" />
+      <option name="module.classpath" />
+      <option name="shorten.command.line" />
+      <option name="vmParameters" />
+      <option name="workingDirectory" />
+    </selectedOptions>
+    <shortenClasspath name="ARGS_FILE" />
+    <option name="VM_PARAMETERS" value="-Xmx2g -XX:ReservedCodeCacheSize=240m -XX:+UseConcMarkSweepGC -XX:SoftRefLRUPolicyMSPerMB=50 -XX:MaxJavaStackTraceDepth=10000 -ea -Dsun.io.useCanonCaches=false -Djava.net.preferIPv4Stack=true -Dapple.laf.useScreenMenuBar=true -Dsun.awt.disablegrab=true -Didea.jre.check=true -Didea.is.internal=true -Didea.debug.mode=true -Didea.config.path=../config/idea -Didea.system.path=../system/idea -Djdk.attach.allowAttachSelf -Dfus.internal.test.mode=true -XX:CICompilerCount=2 -Dkotlinx.coroutines.debug=off -Djdk.module.illegalAccess.silent=true -Didea.initially.ask.config=true" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/intellij/bin" />
+    <RunnerSettings RunnerId="Debug">
+      <option name="DEBUG_PORT" value="62740" />
+      <option name="TRANSPORT" value="0" />
+      <option name="LOCAL" value="true" />
+    </RunnerSettings>
+    <RunnerSettings RunnerId="Profile " />
+    <RunnerSettings RunnerId="Run" />
+    <ConfigurationWrapper RunnerId="Debug" />
+    <ConfigurationWrapper RunnerId="Profile " />
+    <ConfigurationWrapper RunnerId="Run" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+      <option name="Gradle.BeforeRunTask" enabled="true" tasks="setupAndroidPluginRuntimeForIdea" externalProjectPath="$PROJECT_DIR$/intellij/community/build/dependencies" vmOptions="" scriptParameters="" />
+      <option name="BuildArtifacts" enabled="true">
+        <artifact name="debugger-agent" />
+        <artifact name="KotlinPlugin" />
+      </option>
+    </method>
+  </configuration>
+</component>
