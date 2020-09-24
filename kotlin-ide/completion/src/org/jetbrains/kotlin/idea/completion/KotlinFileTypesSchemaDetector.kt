@@ -10,5 +10,5 @@ class KotlinFileTypeSchemaDetector : FileTypeUsageSchemaDescriptor {
 
 class KotlinScriptFileTypeSchemaDetector : FileTypeUsageSchemaDescriptor {
     override fun describes(file: VirtualFile): Boolean =
-        !file.name.endsWith("gradle.kts") && file.name.endsWith(".kts")
+        file.name.endsWith(".kts") && !file.name.endsWith(".gradle.kts")
 }
