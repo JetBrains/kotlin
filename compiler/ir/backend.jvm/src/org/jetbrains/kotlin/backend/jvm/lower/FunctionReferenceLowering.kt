@@ -273,12 +273,8 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             }.apply {
                 // Add receiver parameter for bound function references
                 if (samSuperType == null) {
-                    boundReceiver?.first?.let { param ->
-                        valueParameters += param.copyTo(
-                            irFunction = this,
-                            index = 0,
-                            type = param.type.substitute(typeArgumentsMap)
-                        )
+                    boundReceiver?.let { (param, arg) ->
+                        valueParameters += param.copyTo(irFunction = this, index = 0, type = arg.type)
                     }
                 }
 
