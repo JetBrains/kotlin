@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 import static androidx.build.dependencies.DependenciesKt.*
-import androidx.build.CompilationTarget
 import androidx.build.LibraryGroups
+import androidx.build.LibraryType
 import androidx.build.LibraryVersions
-import androidx.build.Publish
 
 plugins {
     id("AndroidXPlugin")
@@ -42,12 +40,11 @@ tasks.withType(KotlinCompile).configureEach {
 
 androidx {
     name = "AndroidX Compose Hosted Compiler Plugin"
+    // This is only published because that is required when exporting it to g3.
     // Nobody should ever get this artifact from maven; just from studio or from source
-    publish = Publish.SNAPSHOT_AND_RELEASE
-    toolingProject = true
+    type = LibraryType.COMPILER_PLUGIN
     mavenVersion = LibraryVersions.COMPOSE
     mavenGroup = LibraryGroups.Compose.COMPILER
     inceptionYear = "2019"
     description = "Contains the Kotlin compiler plugin for Compose used in Android Studio and IDEA"
-    compilationTarget = CompilationTarget.HOST
 }
