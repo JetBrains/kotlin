@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.isJvmFieldAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -48,7 +49,8 @@ internal class AnnotationGenerator(private val components: Fir2IrComponents) : F
         irProperty.annotations +=
             property.annotations
                 .filter {
-                    it.useSiteTarget == null || it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY
+                    !it.isJvmFieldAnnotation &&
+                            (it.useSiteTarget == null || it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY)
                 }
                 .toIrAnnotations()
     }
@@ -60,7 +62,8 @@ internal class AnnotationGenerator(private val components: Fir2IrComponents) : F
         irField.annotations +=
             property.annotations
                 .filter {
-                    it.useSiteTarget == AnnotationUseSiteTarget.FIELD ||
+                    it.isJvmFieldAnnotation ||
+                            it.useSiteTarget == AnnotationUseSiteTarget.FIELD ||
                             it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
                 }
                 .toIrAnnotations()
