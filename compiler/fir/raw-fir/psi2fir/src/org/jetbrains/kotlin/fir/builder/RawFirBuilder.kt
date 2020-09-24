@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -558,7 +559,7 @@ class RawFirBuilder(
                             }
                         )
                         container.declarations.add(delegateField)
-                        delegateNumber ++
+                        delegateNumber++
                     }
                 }
             }
@@ -816,7 +817,7 @@ class RawFirBuilder(
                         )
 
                         val primaryConstructor = classOrObject.primaryConstructor
-                        val firPrimaryConstructor = declarations.firstOrNull {it is FirConstructor} as? FirConstructor
+                        val firPrimaryConstructor = declarations.firstOrNull { it is FirConstructor } as? FirConstructor
                         if (primaryConstructor != null && firPrimaryConstructor != null) {
                             primaryConstructor.valueParameters.zip(
                                 firPrimaryConstructor.valueParameters
@@ -1006,7 +1007,7 @@ class RawFirBuilder(
         }
 
         private fun KtDeclarationWithBody.obtainContractDescription(): FirContractDescription? {
-            return when(val description = contractDescription) {
+            return when (val description = contractDescription) {
                 null -> null
                 else -> buildRawContractDescription {
                     source = description.toFirSourceElement()
@@ -1386,6 +1387,10 @@ class RawFirBuilder(
             }
         }
 
+        // TODO introduce placeholder projection type
+        private fun KtTypeProjection.isPlaceholderProjection() =
+            projectionKind == KtProjectionKind.NONE && (typeReference?.typeElement as? KtUserType)?.referencedName == "_"
+
         override fun visitTypeProjection(typeProjection: KtTypeProjection, data: Unit): FirElement {
             val projectionKind = typeProjection.projectionKind
             val projectionSource = typeProjection.toFirSourceElement()
@@ -1394,7 +1399,7 @@ class RawFirBuilder(
                     source = projectionSource
                 }
             }
-            if (projectionKind == KtProjectionKind.NONE && !stubMode && typeProjection.text == "_") {
+            if (typeProjection.isPlaceholderProjection()) {
                 return FirTypePlaceholderProjection
             }
             val typeReference = typeProjection.typeReference
