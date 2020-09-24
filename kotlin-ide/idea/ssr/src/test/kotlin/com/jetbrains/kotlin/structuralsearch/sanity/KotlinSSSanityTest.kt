@@ -32,9 +32,13 @@ class KotlinSSSanityTest : HeavyPlatformTestCase() {
 
     private fun doTest(psiFile: PsiFile): Boolean {
         val subtree = SanityTestElementPicker.pickFrom(psiFile.children)
+        if (subtree == null) {
+            println("No element picked.")
+            return true
+        }
 
         println(
-            "- File:\n\t${psiFile.name}\n- Search pattern from ${subtree::class.toString().split('.').last()} element:\n\t${
+            "- Search pattern from ${subtree::class.toString().split('.').last()} element:\n\t${
                 subtree.text.trimMargin().replace("\n", "\n\t")
             }"
         )
@@ -61,7 +65,9 @@ class KotlinSSSanityTest : HeavyPlatformTestCase() {
         }
         check(allFiles.isNotEmpty()) { "No Kotlin files in the project" }
 
-        return PsiManager.getInstance(project).findFile(allFiles.random())
+        val file = allFiles.random()
+        println("- File:\n\t${file.presentableUrl}")
+        return PsiManager.getInstance(project).findFile(file)
     }
 
     fun testLocalSSS() {
