@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.native
 
+import com.intellij.testFramework.TestDataFile
 import org.jdom.input.SAXBuilder
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.GradleVersionRequired
@@ -552,12 +553,28 @@ class GeneralNativeIT : BaseGradleIT() {
                 assertTrue(stacktrace.contains("""at org\.foo\.test#fail\(.*test\.kt:24\)""".toRegex()))
             }
 
+            fun assertTestResultsAnyOf(
+                @TestDataFile assertionFile1Name: String,
+                @TestDataFile assertionFile2Name: String,
+                vararg testReportNames: String
+            ) {
+                try {
+                    assertTestResults(assertionFile1Name, *testReportNames)
+                } catch (e: AssertionError) {
+                    assertTestResults(assertionFile2Name, *testReportNames)
+                }
+            }
+
             assertTestResults("testProject/native-tests/TEST-TestKt.xml", hostTestTask)
             // K/N doesn't report line numbers correctly on Linux (see KT-35408).
             // TODO: Uncomment when this is fixed.
             //assertStacktrace(hostTestTask)
             if (hostIsMac) {
-                assertTestResults("testProject/native-tests/TEST-TestKt.xml", "iosTest")
+                assertTestResultsAnyOf(
+                    "testProject/native-tests/TEST-TestKt.xml",
+                    "testProject/native-tests/TEST-TestKt-IOSsim.xml",
+                    "iosTest"
+                )
                 assertStacktrace("iosTest")
             }
         }
@@ -776,7 +793,7 @@ class GeneralNativeIT : BaseGradleIT() {
     }
 
     @Test
-    fun testIgnoreDisabledNativeTargets() = with(Project("sample-lib",  directoryPrefix = "new-mpp-lib-and-app")) {
+    fun testIgnoreDisabledNativeTargets() = with(Project("sample-lib", directoryPrefix = "new-mpp-lib-and-app")) {
         build {
             assertSuccessful()
             assertEquals(1, output.lines().count { DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX in it })
