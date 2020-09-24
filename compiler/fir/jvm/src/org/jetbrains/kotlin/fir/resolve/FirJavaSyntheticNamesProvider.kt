@@ -32,14 +32,23 @@ object FirJavaSyntheticNamesProvider : FirSyntheticNamesProvider() {
         }
     }
 
-    override fun setterNameByGetterName(name: Name): Name {
+    override fun setterNameByGetterName(name: Name): Name? {
         val identifier = name.identifier
         val prefix = when {
             identifier.startsWith(GETTER_PREFIX) -> GETTER_PREFIX
             identifier.startsWith(IS_PREFIX) -> IS_PREFIX
-            else -> throw IllegalArgumentException()
+            else -> return null
         }
         return Name.identifier(SETTER_PREFIX + identifier.removePrefix(prefix))
+    }
+
+    override fun getterNameBySetterName(name: Name): Name? {
+        val identifier = name.identifier
+        val prefix = when {
+            identifier.startsWith(SETTER_PREFIX) -> SETTER_PREFIX
+            else -> return null
+        }
+        return Name.identifier(GETTER_PREFIX + identifier.removePrefix(prefix))
     }
 
     override fun propertyNameByAccessorName(name: Name): Name? {
