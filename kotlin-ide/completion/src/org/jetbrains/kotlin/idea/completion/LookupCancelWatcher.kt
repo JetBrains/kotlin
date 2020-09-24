@@ -16,39 +16,17 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import com.intellij.application.subscribe
-import com.intellij.codeInsight.completion.CompletionPhaseListener
 import com.intellij.codeInsight.lookup.Lookup
-import com.intellij.codeInsight.lookup.LookupEvent
-import com.intellij.codeInsight.lookup.LookupListener
 import com.intellij.codeInsight.lookup.LookupManager
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.event.EditorFactoryEvent
 import com.intellij.openapi.editor.event.EditorFactoryListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
-import org.jetbrains.kotlin.idea.statistics.CompletionFUSCollector
-import org.jetbrains.kotlin.idea.statistics.CompletionFUSCollector.completionStatsData
-import org.jetbrains.kotlin.idea.statistics.FinishReasonStats
 
 class LookupCancelWatcher : StartupActivity {
 
     override fun runActivity(project: Project) {
-        CompletionPhaseListener.TOPIC.subscribe(project, CompletionPhaseListener { isCompletionRunning ->
-            if (isCompletionRunning) {
-                if (completionStatsData != null) {
-                    completionStatsData = completionStatsData?.copy(finishReason = FinishReasonStats.INTERRUPTED)
-                    CompletionFUSCollector.log(completionStatsData)
-                    completionStatsData = null
-                }
-                completionStatsData = CompletionFUSCollector.CompletionStatsData(System.currentTimeMillis())
-            }
-
-            if (!isCompletionRunning) {
-                completionStatsData = completionStatsData?.copy(finishTime = System.currentTimeMillis())
-            }
-        })
-
         EditorFactory.getInstance().addEditorFactoryListener(
             object : EditorFactoryListener {
                 override fun editorReleased(event: EditorFactoryEvent) {
@@ -62,29 +40,6 @@ class LookupCancelWatcher : StartupActivity {
             if (event.propertyName == LookupManager.PROP_ACTIVE_LOOKUP) {
                 val lookup = event.newValue as Lookup?
                 lookup?.addLookupListener(LookupCancelService.getInstance(project).lookupCancelListener)
-                lookup?.addLookupListener(object : LookupListener {
-                    override fun lookupShown(event: LookupEvent) {
-                        completionStatsData = completionStatsData?.copy(shownTime = System.currentTimeMillis())
-                    }
-
-                    override fun lookupCanceled(event: LookupEvent) {
-                        completionStatsData = completionStatsData?.copy(
-                            finishReason = if (event.isCanceledExplicitly) FinishReasonStats.CANCELLED else FinishReasonStats.HIDDEN
-                        )
-                        CompletionFUSCollector.log(completionStatsData)
-                        completionStatsData = null
-                    }
-
-                    override fun itemSelected(event: LookupEvent) {
-                        val eventLookup = event.lookup
-                        val lookupIndex = eventLookup.items.indexOf(eventLookup.currentItem)
-                        if (lookupIndex >= 0) completionStatsData = completionStatsData?.copy(selectedItem = lookupIndex)
-
-                        completionStatsData = completionStatsData?.copy(finishReason = FinishReasonStats.DONE)
-                        CompletionFUSCollector.log(completionStatsData)
-                        completionStatsData = null
-                    }
-                })
             }
         }
     }

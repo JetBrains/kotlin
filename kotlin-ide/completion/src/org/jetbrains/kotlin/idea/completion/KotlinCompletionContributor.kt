@@ -26,9 +26,6 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletionSession
-import org.jetbrains.kotlin.idea.statistics.CompletionFUSCollector.completionStatsData
-import org.jetbrains.kotlin.idea.statistics.CompletionTypeStats
-import org.jetbrains.kotlin.idea.statistics.FileTypeStats
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -276,16 +273,6 @@ class KotlinCompletionContributor : CompletionContributor() {
         result: CompletionResultSet,
         lookupElementPostProcessor: ((LookupElement) -> LookupElement)? = null
     ) {
-        val name = parameters.originalFile.virtualFile?.name ?: "default.kts"
-        completionStatsData = completionStatsData?.copy(
-            completionType = when (parameters.completionType) {
-                CompletionType.BASIC -> CompletionTypeStats.BASIC
-                CompletionType.CLASS_NAME -> CompletionTypeStats.BASIC //there is no class name anymore actually
-                CompletionType.SMART -> CompletionTypeStats.SMART
-            },
-            fileType = FileTypeStats.parseFromFileName(name),
-            invocationCount = parameters.invocationCount
-        )
         val position = parameters.position
         if (position.getNonStrictParentOfType<PsiComment>() != null) {
             // don't stop here, allow other contributors to run

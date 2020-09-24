@@ -9,7 +9,6 @@ import com.intellij.codeInsight.completion.ml.CompletionEnvironment
 import com.intellij.codeInsight.completion.ml.ContextFeatureProvider
 import com.intellij.codeInsight.completion.ml.MLFeatureValue
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
-import org.jetbrains.kotlin.idea.statistics.FileTypeStats
 
 class KotlinContextFeatureProvider : ContextFeatureProvider {
     override fun getName(): String = "kotlin"
@@ -38,4 +37,17 @@ private enum class KotlinVersionFakeEnum {
     VERSION;
 
     override fun toString(): String = KotlinPluginUtil.getPluginVersion()
+}
+
+enum class FileTypeStats {
+    KT, GRADLEKTS, KTS;
+
+    companion object {
+        fun parseFromFileName(fileName: String): FileTypeStats? = when {
+            fileName.endsWith(".kt") -> KT
+            fileName.endsWith(".gradle.kts") -> GRADLEKTS
+            fileName.endsWith(".kts") -> KTS
+            else -> null
+        }
+    }
 }
