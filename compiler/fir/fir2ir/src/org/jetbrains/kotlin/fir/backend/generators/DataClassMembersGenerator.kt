@@ -7,11 +7,15 @@ package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.backend.FirMetadataSource
+import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
+import org.jetbrains.kotlin.fir.backend.toIrType
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
@@ -44,10 +48,10 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class DataClassMembersGenerator(val components: Fir2IrComponents) {
 
-    fun generateInlineClassMembers(klass: FirClass<*>, irClass: IrClass): List<Name> =
+    fun generateInlineClassMembers(klass: FirClass<*>, irClass: IrClass): List<FirDeclaration> =
         MyDataClassMethodsGenerator(irClass, klass.symbol.classId, IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER).generate(klass)
 
-    fun generateDataClassMembers(klass: FirClass<*>, irClass: IrClass): List<Name> =
+    fun generateDataClassMembers(klass: FirClass<*>, irClass: IrClass): List<FirDeclaration> =
         MyDataClassMethodsGenerator(irClass, klass.symbol.classId, IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER).generate(klass)
 
     fun generateDataClassComponentBody(irFunction: IrFunction, classId: ClassId) =
@@ -120,7 +124,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                     (this.name == hashCodeName && matchesHashCodeSignature) ||
                     (this.name == toStringName && matchesToStringSignature)
 
-        fun generate(klass: FirClass<*>): List<Name> {
+        fun generate(klass: FirClass<*>): List<FirDeclaration> {
             val propertyParametersCount = irClass.primaryConstructor?.explicitParameters?.size ?: 0
             val properties = irClass.declarations
                 .filterIsInstance<IrProperty>()
@@ -130,7 +134,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                 return emptyList()
             }
 
-            val result = mutableListOf<Name>()
+            val result = mutableListOf<FirDeclaration>()
 
             val contributedFunctionsInThisType = klass.declarations.mapNotNull {
                 if (it is FirSimpleFunction && it.matchesDataClassSyntheticMemberSignatures) {
@@ -138,22 +142,30 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                 } else
                     null
             }
-            val nonOverridableContributedFunctionsInSupertypes =
-                klass.collectContributedFunctionsFromSupertypes(components.session) { declaration, map ->
-                    if (declaration is FirSimpleFunction &&
-                        declaration.body != null &&
-                        !Visibilities.isPrivate(declaration.visibility) &&
-                        declaration.modality == Modality.FINAL &&
-                        declaration.matchesDataClassSyntheticMemberSignatures
-                    ) {
-                        map.putIfAbsent(declaration.name, declaration)
+            val contributedFunctionsInSupertypes =
+                @OptIn(ExperimentalStdlibApi::class)
+                buildMap<Name, FirSimpleFunction> {
+                    for (name in listOf(equalsName, hashCodeName, toStringName)) {
+                        klass.unsubstitutedScope(components.session, components.scopeSession).processFunctionsByName(name) {
+                            val declaration = it.fir
+                            if (declaration is FirSimpleFunction &&
+                                declaration.matchesDataClassSyntheticMemberSignatures
+                            ) {
+                                putIfAbsent(declaration.name, declaration)
+                            }
+                        }
                     }
                 }
 
+            fun isOverridableDeclaration(name: Name): Boolean {
+                val declaration = contributedFunctionsInSupertypes[name] ?: return false
+                return declaration.modality != Modality.FINAL
+            }
+
             if (!contributedFunctionsInThisType.contains(equalsName) &&
-                !nonOverridableContributedFunctionsInSupertypes.containsKey(equalsName)
+                isOverridableDeclaration(equalsName)
             ) {
-                result.add(equalsName)
+                result.add(contributedFunctionsInSupertypes.getValue(equalsName))
                 val equalsFunction = createSyntheticIrFunction(
                     equalsName,
                     components.irBuiltIns.booleanType,
@@ -164,9 +176,9 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
             }
 
             if (!contributedFunctionsInThisType.contains(hashCodeName) &&
-                !nonOverridableContributedFunctionsInSupertypes.containsKey(hashCodeName)
+                isOverridableDeclaration(hashCodeName)
             ) {
-                result.add(hashCodeName)
+                result.add(contributedFunctionsInSupertypes.getValue(hashCodeName))
                 val hashCodeFunction = createSyntheticIrFunction(
                     hashCodeName,
                     components.irBuiltIns.intType,
@@ -176,9 +188,9 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
             }
 
             if (!contributedFunctionsInThisType.contains(toStringName) &&
-                !nonOverridableContributedFunctionsInSupertypes.containsKey(toStringName)
+                isOverridableDeclaration(toStringName)
             ) {
-                result.add(toStringName)
+                result.add(contributedFunctionsInSupertypes.getValue(toStringName))
                 val toStringFunction = createSyntheticIrFunction(
                     toStringName,
                     components.irBuiltIns.stringType,

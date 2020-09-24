@@ -31,11 +31,11 @@ FILE fqName:<root> fileName:/FirBuilder.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.BaseConverter'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DeclarationsConverter modality:FINAL visibility:public superTypes:[<root>.BaseConverter]'
-    FUN FAKE_OVERRIDE name:withCapturedTypeParameters visibility:public modality:FINAL <T> ($this:<root>.BaseConverter, block:kotlin.Function0<T of <root>.DeclarationsConverter.withCapturedTypeParameters>) returnType:T of <root>.DeclarationsConverter.withCapturedTypeParameters [inline,fake_override]
+    FUN FAKE_OVERRIDE name:withCapturedTypeParameters visibility:public modality:FINAL <T> ($this:<root>.BaseFirBuilder<T of <root>.BaseFirBuilder>, block:kotlin.Function0<T of <root>.DeclarationsConverter.withCapturedTypeParameters>) returnType:T of <root>.DeclarationsConverter.withCapturedTypeParameters [inline,fake_override]
       overridden:
         public final fun withCapturedTypeParameters <T> (block: kotlin.Function0<T of <root>.BaseFirBuilder.withCapturedTypeParameters>): T of <root>.BaseFirBuilder.withCapturedTypeParameters [inline] declared in <root>.BaseFirBuilder
       TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-      $this: VALUE_PARAMETER name:<this> type:<root>.BaseConverter
+      $this: VALUE_PARAMETER name:<this> type:<root>.BaseFirBuilder<T of <root>.BaseFirBuilder>
       VALUE_PARAMETER name:block index:0 type:kotlin.Function0<T of <root>.DeclarationsConverter.withCapturedTypeParameters>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:

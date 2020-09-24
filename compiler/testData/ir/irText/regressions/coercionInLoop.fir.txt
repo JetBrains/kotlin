@@ -25,7 +25,7 @@ FILE fqName:<root> fileName:/coercionInLoop.kt
               then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
                 STRING_CONCATENATION type=kotlin.String
                   CONST String type=kotlin.String value="Fail "
-                  CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
+                  CALL 'public open fun toString (): kotlin.String [fake_override] declared in kotlin.Int' type=kotlin.String origin=null
                     $this: GET_VAR 'var i: kotlin.Int [var] declared in <root>.box' type=kotlin.Int origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
             GET_VAR 'var i: kotlin.Int [var] declared in <root>.box' type=kotlin.Int origin=null

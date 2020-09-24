@@ -106,9 +106,9 @@ class Fir2IrConverter(
         }
         // Add delegated members *before* fake override generations.
         // Otherwise, fake overrides for delegated members, which are redundant, will be added.
-        processedCallableNames += delegatedMemberNames(irClass)
+        val realDeclarations = delegatedMembers(irClass) + anonymousObject.declarations
         with(fakeOverrideGenerator) {
-            irClass.addFakeOverrides(anonymousObject, processedCallableNames)
+            irClass.addFakeOverrides(anonymousObject, realDeclarations)
         }
 
         return irClass
@@ -124,47 +124,39 @@ class Fir2IrConverter(
         if (irConstructor != null) {
             irClass.declarations += irConstructor
         }
-        val processedCallableNames = mutableSetOf<Name>()
+        val allDeclarations = regularClass.declarations.toMutableList()
         for (declaration in sortBySynthetic(regularClass.declarations)) {
             val irDeclaration = processMemberDeclaration(declaration, regularClass, irClass) ?: continue
-            when (declaration) {
-                is FirSimpleFunction -> processedCallableNames += declaration.name
-                is FirProperty -> processedCallableNames += declaration.name
-            }
             irClass.declarations += irDeclaration
         }
         // Add delegated members *before* fake override generations.
         // Otherwise, fake overrides for delegated members, which are redundant, will be added.
-        processedCallableNames += delegatedMemberNames(irClass)
+        allDeclarations += delegatedMembers(irClass)
         // Add synthetic members *before* fake override generations.
         // Otherwise, redundant members, e.g., synthetic toString _and_ fake override toString, will be added.
         if (irConstructor != null && (irClass.isInline || irClass.isData)) {
             declarationStorage.enterScope(irConstructor)
             val dataClassMembersGenerator = DataClassMembersGenerator(components)
             if (irClass.isInline) {
-                processedCallableNames += dataClassMembersGenerator.generateInlineClassMembers(regularClass, irClass)
+                allDeclarations += dataClassMembersGenerator.generateInlineClassMembers(regularClass, irClass)
             }
             if (irClass.isData) {
-                processedCallableNames += dataClassMembersGenerator.generateDataClassMembers(regularClass, irClass)
+                allDeclarations += dataClassMembersGenerator.generateDataClassMembers(regularClass, irClass)
             }
             declarationStorage.leaveScope(irConstructor)
         }
         with(fakeOverrideGenerator) {
-            irClass.addFakeOverrides(regularClass, processedCallableNames)
+            irClass.addFakeOverrides(regularClass, allDeclarations)
         }
 
         return irClass
     }
 
-    private fun delegatedMemberNames(irClass: IrClass): List<Name> {
+    private fun delegatedMembers(irClass: IrClass): List<FirDeclaration> {
         return irClass.declarations.filter {
             it.origin == IrDeclarationOrigin.DELEGATED_MEMBER
         }.mapNotNull {
-            when (it) {
-                is IrSimpleFunction -> it.name
-                is IrProperty -> it.name
-                else -> null
-            }
+            components.declarationStorage.originalDeclarationForDelegated(it)
         }
     }
 

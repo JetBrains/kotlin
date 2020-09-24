@@ -21,7 +21,7 @@ FILE fqName:<root> fileName:/objectReferenceInFieldInitializer.kt
         EXPRESSION_BODY
           STRING_CONCATENATION type=kotlin.String
             CONST String type=kotlin.String value="1234"
-            CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
+            CALL 'public open fun toString (): kotlin.String [fake_override] declared in kotlin.String' type=kotlin.String origin=null
               $this: CALL 'private final fun <get-a> (): kotlin.String declared in <root>.A' type=kotlin.String origin=GET_PROPERTY
                 $this: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-b> visibility:private modality:FINAL <> ($this:<root>.A) returnType:kotlin.String

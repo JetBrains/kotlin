@@ -2,7 +2,7 @@ FILE fqName:<root> fileName:/expectedSealedClass.kt
   CLASS CLASS name:Ops modality:SEALED visibility:public [expect] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Ops
     CONSTRUCTOR visibility:private <> () returnType:<root>.Ops [primary,expect]
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [expect,fake_override]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [expect,fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
@@ -18,7 +18,7 @@ FILE fqName:<root> fileName:/expectedSealedClass.kt
   CLASS CLASS name:Add modality:FINAL visibility:public [expect] superTypes:[<root>.Ops]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Add
     CONSTRUCTOR visibility:public <> () returnType:<root>.Add [primary,expect]
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [expect,fake_override]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [expect,fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
