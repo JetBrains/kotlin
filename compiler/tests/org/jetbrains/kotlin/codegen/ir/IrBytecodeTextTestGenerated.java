@@ -3277,9 +3277,14 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/suspendFunctionMangling.kt");
         }
 
-        @TestMetadata("toStringIsCalledByInlineClass.kt")
-        public void testToStringIsCalledByInlineClass() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/toStringIsCalledByInlineClass.kt");
+        @TestMetadata("toStringOfInlineClassValue.kt")
+        public void testToStringOfInlineClassValue() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/toStringOfInlineClassValue.kt");
+        }
+
+        @TestMetadata("toStringOfReferenceInlineClassValue.kt")
+        public void testToStringOfReferenceInlineClassValue() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/toStringOfReferenceInlineClassValue.kt");
         }
 
         @TestMetadata("uIntArrayIteratorWithoutBoxing.kt")
