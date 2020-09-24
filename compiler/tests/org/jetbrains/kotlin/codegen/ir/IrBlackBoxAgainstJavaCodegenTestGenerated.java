@@ -1153,6 +1153,11 @@ public class IrBlackBoxAgainstJavaCodegenTestGenerated extends AbstractIrBlackBo
                 runTest("compiler/testData/codegen/boxAgainstJava/visibility/protectedAndPackage/protectedStaticClass.kt");
             }
 
+            @TestMetadata("protectedSuperField.kt")
+            public void testProtectedSuperField() throws Exception {
+                runTest("compiler/testData/codegen/boxAgainstJava/visibility/protectedAndPackage/protectedSuperField.kt");
+            }
+
             @TestMetadata("protectedSuperMethod.kt")
             public void testProtectedSuperMethod() throws Exception {
                 runTest("compiler/testData/codegen/boxAgainstJava/visibility/protectedAndPackage/protectedSuperMethod.kt");
