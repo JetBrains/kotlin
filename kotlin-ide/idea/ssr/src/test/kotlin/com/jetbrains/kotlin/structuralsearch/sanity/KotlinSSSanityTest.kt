@@ -33,6 +33,12 @@ class KotlinSSSanityTest : HeavyPlatformTestCase() {
     private fun doTest(psiFile: PsiFile): Boolean {
         val subtree = SanityTestElementPicker.pickFrom(psiFile.children)
 
+        println(
+            "- File:\n\t${psiFile.name}\n- Search pattern from ${subtree::class.toString().split('.').last()} element:\n\t${
+                subtree.text.trimMargin().replace("\n", "\n\t")
+            }"
+        )
+
         val matchOptions = myConfiguration.matchOptions.apply {
             fillSearchCriteria(subtree.text)
             fileType = KotlinFileType.INSTANCE
@@ -42,33 +48,26 @@ class KotlinSSSanityTest : HeavyPlatformTestCase() {
         val sink = CollectingMatchResultSink()
         matcher.findMatches(sink)
 
-        UsefulTestCase.LOG.trace(
-            "Search pattern (${subtree::class.toString().split('.').last()}):\n\t${
-                subtree.text.trimMargin().replace("\n", "\n\t")
-            }"
-        )
-
-        if (sink.matches.size == 0) {
-            UsefulTestCase.LOG.warn("\nNo results in ${psiFile.name}")
-            return false
-        }
-
-        return true
+        return sink.matches.size > 0
     }
 
     /** Picks a random .kt file from this project and returns its content and PSI tree. */
     private fun randomLocalKotlinSource(): PsiFile? {
         val projectScope = GlobalSearchScope.projectScope(project)
-        val allFiles: List<VirtualFile> =
-            ArrayList(FilenameIndex.getAllFilesByExt(project, "kt", projectScope)).filter { "test" !in it.path }
+
+        // List searchable files
+        val allFiles: List<VirtualFile> = ArrayList(FilenameIndex.getAllFilesByExt(project, "kt", projectScope)).filter {
+                "test" !in it.path && "PredefinedConfigurations" !in it.path // Exclude templates because they contain '_ syntax
+        }
         check(allFiles.isNotEmpty()) { "No Kotlin files in the project" }
+
         return PsiManager.getInstance(project).findFile(allFiles.random())
     }
 
     fun testLocalSSS() {
         val psiFile = randomLocalKotlinSource()
         TestCase.assertNotNull("Couldn't find Kotlin source code", psiFile)
-        assert(doTest(psiFile!!))
+        assert(doTest(psiFile!!)) { "No match found." }
     }
 
 }
