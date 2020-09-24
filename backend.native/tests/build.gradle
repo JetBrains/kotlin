@@ -2917,6 +2917,14 @@ task unit4(type: KonanLocalTest) {
     source = "codegen/basics/unit4.kt"
 }
 
+task kt42000_1(type: KonanLocalTest) {
+    source = "codegen/basics/k42000_1.kt"
+}
+
+task kt42000_2(type: KonanLocalTest) {
+    source = "codegen/basics/k42000_2.kt"
+}
+
 task inline0(type: KonanLocalTest) {
     goldValue = "84\n"
     source = "codegen/inline/inline0.kt"

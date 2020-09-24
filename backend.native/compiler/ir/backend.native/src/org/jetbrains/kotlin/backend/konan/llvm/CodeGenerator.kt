@@ -1337,7 +1337,8 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
 
         fun getBuilder(): LLVMBuilderRef {
             if (isAfterTerminator) {
-                positionAtEnd(basicBlock("unreachable", null))
+                val position = position()
+                positionAtEnd(basicBlock("unreachable", position?.start, position?.end))
             }
 
             return builder
