@@ -334,6 +334,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
         if (!isIncrementalCompilationEnabled()) {
             clearLocalState("IC is disabled")
+        } else if (!inputs.isIncremental) {
+            clearLocalState("Task cannot run incrementally")
         }
 
         try {

@@ -1053,4 +1053,31 @@ class KotlinGradleIT : BaseGradleIT() {
             assertTasksExecuted(":lib1:compileDebugKotlin")
         }
     }
+
+    /** Regression test for KT-38692. */
+    @Test
+    fun testIncrementalWhenNoKotlinSources() = with(
+        Project("kotlinProject")
+    ) {
+        setupWorkingDir()
+        assertTrue(this.allKotlinFiles.toList().isNotEmpty())
+        build(":compileKotlin") {
+            assertSuccessful()
+            assertTasksExecuted(":compileKotlin")
+        }
+
+        // Remove all Kotlin sources and force non-incremental run
+        allKotlinFiles.forEach { assertTrue(it.delete()) }
+        projectDir.resolve("src/main/java/Sample.java").also {
+            it.parentFile.mkdirs()
+            it.writeText("public class Sample {}")
+        }
+        build("compileKotlin", "--rerun-tasks") {
+            assertSuccessful()
+            assertTasksExecuted(":compileKotlin")
+            val compiledKotlinClasses = fileInWorkingDir(classesDir()).allFilesWithExtension("class").toList()
+
+            assertTrue(compiledKotlinClasses.isEmpty())
+        }
+    }
 }
