@@ -271,7 +271,7 @@ extra["compilerModules"] = arrayOf(
     ":core:deserialization.common.jvm",
     ":core:compiler.common",
     ":core:compiler.common.jvm",
-    ":core:compiler.backend.common.jvm",
+    ":compiler:backend.common.jvm",
     ":core:descriptors",
     ":core:descriptors.jvm",
     ":core:descriptors.runtime",
