@@ -8,20 +8,17 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
-import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
 class FirDelegatedMemberScope(
     private val useSiteScope: FirTypeScope,
-    private val session: FirSession
+    private val session: FirSession,
+    private val containingClass: ConeClassLikeLookupTag,
+    private val delegateField: FirField,
 ) : FirTypeScope() {
     private val delegatedFunctionCache = mutableMapOf<FirNamedFunctionSymbol, FirNamedFunctionSymbol>()
     private val delegatedPropertyCache = mutableMapOf<FirPropertySymbol, FirPropertySymbol>()
@@ -38,25 +35,18 @@ class FirDelegatedMemberScope(
                 return@processor
             }
             val delegatedSymbol = delegatedFunctionCache.getOrPut(functionSymbol) {
-                val delegatedFunction = buildSimpleFunction {
-                    origin = FirDeclarationOrigin.Delegated
-                    session = this@FirDelegatedMemberScope.session
-                    this.name = name
-                    symbol = FirNamedFunctionSymbol(
-                        functionSymbol.callableId,
-                        overriddenSymbol = functionSymbol
-                    )
-                    status = FirDeclarationStatusImpl(original.visibility, Modality.OPEN).apply {
-                        isOperator = original.isOperator
-                    }
-                    resolvePhase = FirResolvePhase.BODY_RESOLVE
-                    returnTypeRef = original.returnTypeRef
-                    receiverTypeRef = original.receiverTypeRef
-                    valueParameters.addAll(original.valueParameters)
-                    typeParameters.addAll(original.typeParameters)
-                    annotations.addAll(original.annotations)
-                }
-                delegatedFunction.symbol as FirNamedFunctionSymbol
+                val newSymbol = FirNamedFunctionSymbol(
+                    functionSymbol.callableId,
+                )
+                FirClassSubstitutionScope.createCopyForFirFunction(
+                    newSymbol,
+                    original,
+                    session,
+                    FirDeclarationOrigin.Delegated,
+                    newModality = Modality.OPEN,
+                ).apply {
+                    delegatedWrapperData = DelegatedWrapperData(functionSymbol.fir, containingClass, delegateField)
+                }.symbol as FirNamedFunctionSymbol
             }
             processor(delegatedSymbol)
         }
@@ -74,24 +64,17 @@ class FirDelegatedMemberScope(
                 return@processor
             }
             val delegatedSymbol = delegatedPropertyCache.getOrPut(propertySymbol) {
-                val delegatedProperty = buildProperty {
-                    origin = FirDeclarationOrigin.Delegated
-                    session = this@FirDelegatedMemberScope.session
-                    this.name = name
-                    symbol = FirPropertySymbol(
+                FirClassSubstitutionScope.createCopyForFirProperty(
+                    FirPropertySymbol(
                         propertySymbol.callableId,
                         overriddenSymbol = propertySymbol
-                    )
-                    isVar = original.isVar
-                    isLocal = false
-                    status = FirDeclarationStatusImpl(original.visibility, Modality.OPEN)
-                    resolvePhase = FirResolvePhase.BODY_RESOLVE
-                    returnTypeRef = original.returnTypeRef
-                    receiverTypeRef = original.receiverTypeRef
-                    typeParameters.addAll(original.typeParameters)
-                    annotations.addAll(original.annotations)
-                }
-                delegatedProperty.symbol
+                    ),
+                    original,
+                    session,
+                    newModality = Modality.OPEN,
+                ).apply {
+                    delegatedWrapperData = DelegatedWrapperData(propertySymbol.fir, containingClass, delegateField)
+                }.symbol
             }
             processor(delegatedSymbol)
         }
@@ -101,14 +84,32 @@ class FirDelegatedMemberScope(
         functionSymbol: FirFunctionSymbol<*>,
         processor: (FirFunctionSymbol<*>, FirTypeScope) -> ProcessorAction
     ): ProcessorAction {
-        return useSiteScope.processDirectOverriddenFunctionsWithBaseScope(functionSymbol, processor)
+        return processDirectOverriddenWithBaseScope(
+            functionSymbol, processor, FirTypeScope::processDirectOverriddenFunctionsWithBaseScope
+        )
     }
 
     override fun processDirectOverriddenPropertiesWithBaseScope(
         propertySymbol: FirPropertySymbol,
         processor: (FirPropertySymbol, FirTypeScope) -> ProcessorAction
     ): ProcessorAction {
-        return useSiteScope.processDirectOverriddenPropertiesWithBaseScope(propertySymbol, processor)
+        return processDirectOverriddenWithBaseScope(
+            propertySymbol, processor, FirTypeScope::processDirectOverriddenPropertiesWithBaseScope
+        )
+    }
+
+    private inline fun <reified D : FirCallableSymbol<*>> processDirectOverriddenWithBaseScope(
+        symbol: D,
+        noinline processor: (D, FirTypeScope) -> ProcessorAction,
+        processDirectOverriddenCallablesWithBaseScope: FirTypeScope.(D, ((D, FirTypeScope) -> ProcessorAction)) -> ProcessorAction,
+    ): ProcessorAction {
+        val wrappedData = (symbol.fir as? FirCallableMemberDeclaration<*>)?.delegatedWrapperData
+        return when {
+            wrappedData == null || wrappedData.containingClass != containingClass -> {
+                useSiteScope.processDirectOverriddenCallablesWithBaseScope(symbol, processor)
+            }
+            else -> processor(wrappedData.wrapped.symbol as D, useSiteScope)
+        }
     }
 
     override fun getCallableNames(): Set<Name> {
@@ -119,3 +120,12 @@ class FirDelegatedMemberScope(
         return useSiteScope.getClassifierNames()
     }
 }
+
+private object DelegatedWrapperDataKey : FirDeclarationDataKey()
+class DelegatedWrapperData<D : FirCallableDeclaration<*>>(
+    val wrapped: D,
+    val containingClass: ConeClassLikeLookupTag,
+    val delegateField: FirField,
+)
+var <D : FirCallableDeclaration<*>>
+        D.delegatedWrapperData: DelegatedWrapperData<D>? by FirDeclarationDataRegistry.data(DelegatedWrapperDataKey)
