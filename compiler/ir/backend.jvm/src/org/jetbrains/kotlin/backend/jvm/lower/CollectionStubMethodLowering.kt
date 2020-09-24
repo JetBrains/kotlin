@@ -294,25 +294,32 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
 
     // Compute stubs that should be generated, compare based on signature
     private fun generateRelevantStubMethods(irClass: IrClass): List<IrSimpleFunction> {
-        val ourStubsForCollectionClasses = collectionStubComputer.stubsForCollectionClasses(irClass)
-        val superStubClasses = irClass.superClass?.superClassChain?.map { superClass ->
-            collectionStubComputer.stubsForCollectionClasses(superClass).map { it.readOnlyClass }
-        }?.fold(emptySet<IrClassSymbol>(), { a, b -> a union b }) ?: emptySet()
-
-        // do a second filtering to ensure only most relevant classes are included.
-        val redundantClasses = ourStubsForCollectionClasses.filter { (readOnlyClass) ->
-            ourStubsForCollectionClasses.any { readOnlyClass != it.readOnlyClass && it.readOnlyClass.isSubtypeOfClass(readOnlyClass) }
-        }.map { it.readOnlyClass }
-
-        // perform type substitution and type erasure here
-        return ourStubsForCollectionClasses.filter { (readOnlyClass) ->
-            readOnlyClass !in redundantClasses && readOnlyClass !in superStubClasses
-        }.flatMap { (readOnlyClass, mutableClass, mutableOnlyMethods) ->
+        fun createStubFuns(stubs: CollectionStubComputer.StubsForCollectionClass): List<IrSimpleFunction> {
+            val (readOnlyClass, mutableClass, mutableOnlyMethods) = stubs
             val substitutionMap = computeSubstitutionMap(readOnlyClass.owner, mutableClass.owner, irClass)
-            mutableOnlyMethods.map { function ->
+            return mutableOnlyMethods.map { function ->
                 createStubMethod(function, irClass, substitutionMap)
             }
         }
+
+        val classStubs = collectionStubComputer.stubsForCollectionClasses(irClass)
+
+        val superClassesStubs = irClass.superClass?.run {
+            superClassChain.flatMap { superClass ->
+                collectionStubComputer.stubsForCollectionClasses(superClass)
+            }.toList()
+        } ?: emptyList()
+
+        val relevantStubs =
+            classStubs.filter { (readOnlyClass) ->
+                classStubs.none { readOnlyClass != it.readOnlyClass && it.readOnlyClass.isSubtypeOfClass(readOnlyClass) } &&
+                        superClassesStubs.none { it.readOnlyClass == readOnlyClass }
+            }
+
+        val classStubFuns = relevantStubs.flatMap { createStubFuns(it) }
+        val superClassStubSignatures = superClassesStubs.flatMap { createStubFuns(it) }.mapTo(HashSet()) { it.toJvmSignature() }
+
+        return classStubFuns.filter { it.toJvmSignature() !in superClassStubSignatures }
     }
 
     private fun Collection<IrType>.findMostSpecificTypeForClass(classifier: IrClassSymbol): IrType {

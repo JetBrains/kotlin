@@ -254,6 +254,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/emptyList.kt");
         }
 
+        @TestMetadata("extendingAbstractCollection.kt")
+        public void testExtendingAbstractCollection() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/extendingAbstractCollection.kt");
+        }
+
         @TestMetadata("noStubsForCollection.kt")
         public void testNoStubsForCollection() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/noStubsForCollection.kt");
@@ -282,6 +287,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         @TestMetadata("noStubsInJavaSuperClass.kt")
         public void testNoStubsInJavaSuperClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/noStubsInJavaSuperClass.kt");
+        }
+
+        @TestMetadata("noStubsInJavaSuperClass2.kt")
+        public void testNoStubsInJavaSuperClass2() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/noStubsInJavaSuperClass2.kt");
         }
 
         @TestMetadata("noStubsInMutableIterable.kt")
