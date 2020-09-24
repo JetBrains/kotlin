@@ -450,7 +450,13 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
                 }
             }
 
-            kaptTask.kaptClasspathConfigurations = kaptClasspathConfigurations
+            val kaptClasspathConfiguration =
+                project.configurations.create("_kaptClasspath_" + kaptTask.name).setExtendsFrom(kaptClasspathConfigurations).also {
+                    it.isVisible = false
+                    it.isCanBeConsumed = false
+                }
+            kaptTask.kaptClasspath.from(kaptClasspathConfiguration)
+            kaptTask.kaptClasspathConfigurationNames.set(kaptClasspathConfigurations.map { it.name })
 
             KaptWithAndroid.androidVariantData(this)?.annotationProcessorOptionProviders?.let {
                 kaptTask.annotationProcessorOptionProviders.add(it)
