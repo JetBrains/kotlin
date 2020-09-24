@@ -5,72 +5,36 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
-import org.jetbrains.kotlin.backend.jvm.ir.propertyIfAccessor
 import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
-import org.jetbrains.kotlin.backend.konan.cgen.isCEnumType
-import org.jetbrains.kotlin.backend.konan.cgen.isVector
+import org.jetbrains.kotlin.backend.konan.cgen.*
 import org.jetbrains.kotlin.backend.konan.descriptors.getAnnotationStringValue
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
-import org.jetbrains.kotlin.backend.konan.ir.isAny
-import org.jetbrains.kotlin.backend.konan.ir.isObjCObjectType
-import org.jetbrains.kotlin.backend.konan.ir.superClasses
 import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.isPropertyAccessor
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.utils.addToStdlib.cast
-
-/**
- * Check given function is a getter or setter
- * for `value` property of CEnumVar subclass.
- */
-private fun isEnumVarValueAccessor(function: IrFunction, symbols: KonanSymbols): Boolean {
-    val parent = function.parent as? IrClass ?: return false
-    return if (symbols.interopCEnumVar in parent.superClasses && function.isPropertyAccessor) {
-        (function.propertyIfAccessor as IrProperty).name.asString() == "value"
-    } else {
-        false
-    }
-}
-
-private fun isMemberAtAccessor(function: IrFunction): Boolean =
-        function.hasAnnotation(RuntimeNames.cStructMemberAt)
-
-private fun isArrayMemberAtAccessor(function: IrFunction): Boolean =
-        function.hasAnnotation(RuntimeNames.cStructArrayMemberAt)
-
-private fun isBitFieldAccessor(function: IrFunction): Boolean =
-        function.hasAnnotation(RuntimeNames.cStructBitField)
 
 private class InteropCallContext(
         val symbols: KonanSymbols,
         val builder: IrBuilderWithScope,
         val failCompilation: (String) -> Nothing
 ) {
-    fun IrType.isCPointer(): Boolean = this.classOrNull == symbols.interopCPointer
+    fun IrType.isCPointer() = this.isCPointer(symbols)
 
-    fun IrType.isNativePointed(): Boolean = isSubtypeOfClass(symbols.nativePointed)
+    fun IrType.isNativePointed() = this.isNativePointed(symbols)
 
-    fun IrType.isStoredInMemoryDirectly(): Boolean =
-            isPrimitiveType() || isUnsigned() || isVector()
-
-    fun IrType.isSupportedReference(): Boolean = isObjCObjectType()
-            || getClass()?.isAny() == true
-            || isStringClassType()
-            || classOrNull == symbols.list
-            || classOrNull == symbols.mutableList
-            || classOrNull == symbols.set
-            || classOrNull == symbols.map
+    fun IrType.isSupportedReference() = this.isCStructFieldSupportedReferenceType(symbols)
 
     val irBuiltIns: IrBuiltIns = builder.context.irBuiltIns
 }
@@ -337,13 +301,13 @@ internal fun tryGenerateInteropMemberAccess(
         builder: IrBuilderWithScope,
         failCompilation: (String) -> Nothing
 ): IrExpression? = when {
-    isEnumVarValueAccessor(callSite.symbol.owner, symbols) ->
+    callSite.symbol.owner.isCEnumVarValueAccessor(symbols) ->
         generateInteropCall(symbols, builder, failCompilation) { generateEnumVarValueAccess(callSite) }
-    isMemberAtAccessor(callSite.symbol.owner) ->
+    callSite.symbol.owner.isCStructMemberAtAccessor() ->
         generateInteropCall(symbols, builder, failCompilation) { generateMemberAtAccess(callSite) }
-    isBitFieldAccessor(callSite.symbol.owner) ->
+    callSite.symbol.owner.isCStructBitFieldAccessor() ->
         generateInteropCall(symbols, builder, failCompilation) { generateBitFieldAccess(callSite) }
-    isArrayMemberAtAccessor(callSite.symbol.owner) ->
+    callSite.symbol.owner.isCStructArrayMemberAtAccessor() ->
         generateInteropCall(symbols, builder, failCompilation) { generateArrayMemberAtAccess(callSite) }
     else -> null
 }
@@ -373,7 +337,7 @@ private fun InteropCallContext.generateMemberAtAccess(callSite: IrCall): IrExpre
             val type = accessor.returnType
             when {
                 type.isCEnumType() -> readEnumValueFromMemory(fieldPointer, type)
-                type.isStoredInMemoryDirectly() -> readValueFromMemory(fieldPointer, type)
+                type.isCStructFieldTypeStoredInMemoryDirectly() -> readValueFromMemory(fieldPointer, type)
                 type.isCPointer() -> readPointerFromMemory(fieldPointer)
                 type.isNativePointed() -> readPointed(fieldPointer)
                 type.isSupportedReference() -> readObjectiveCReferenceFromMemory(fieldPointer, type)
@@ -385,7 +349,7 @@ private fun InteropCallContext.generateMemberAtAccess(callSite: IrCall): IrExpre
             val type = accessor.valueParameters[0].type
             when {
                 type.isCEnumType() -> writeEnumValueToMemory(fieldPointer, value, type)
-                type.isStoredInMemoryDirectly() -> writeValueToMemory(fieldPointer, value, type)
+                type.isCStructFieldTypeStoredInMemoryDirectly() -> writeValueToMemory(fieldPointer, value, type)
                 type.isCPointer() -> writePointerToMemory(fieldPointer, value, type)
                 type.isSupportedReference() -> writeObjCReferenceToMemory(fieldPointer, value)
                 else -> failCompilation("Unsupported struct field type: ${type.getClass()?.name}")

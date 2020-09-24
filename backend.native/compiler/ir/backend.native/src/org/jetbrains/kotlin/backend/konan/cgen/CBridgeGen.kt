@@ -6,17 +6,19 @@ import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
 import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.irNot
-import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.descriptors.konanLibrary
-import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.getObjCMethodInfo
+import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
+import org.jetbrains.kotlin.backend.konan.ir.getAnnotationArgumentValue
+import org.jetbrains.kotlin.backend.konan.ir.typeWithStarProjections
 import org.jetbrains.kotlin.backend.konan.isObjCMetaClass
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.UnsignedType
+import org.jetbrains.kotlin.backend.konan.lower.FunctionReferenceLowering
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -26,6 +28,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
+import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
@@ -36,17 +39,12 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.backend.konan.getObjCMethodInfo
-import org.jetbrains.kotlin.backend.konan.lower.FunctionReferenceLowering
-import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.ir.descriptors.*
-import org.jetbrains.kotlin.konan.ForeignExceptionMode
 
 internal interface KotlinStubs {
     val irBuiltIns: IrBuiltIns
@@ -167,7 +165,7 @@ internal fun KotlinStubs.generateCCall(expression: IrCall, builder: IrBuilderWit
     if (isInvoke) {
         callBuilder.cBridgeBodyLines.add(0, "$targetFunctionVariable = ${targetPtrParameter!!};")
     } else {
-        val cCallSymbolName = callee.getAnnotationArgumentValue<String>(cCall, "id")!!
+        val cCallSymbolName = callee.getAnnotationArgumentValue<String>(RuntimeNames.cCall, "id")!!
         this.addC(listOf("extern const $targetFunctionVariable __asm(\"$cCallSymbolName\");")) // Exported from cinterop stubs.
     }
 
@@ -339,7 +337,7 @@ internal fun KotlinStubs.generateObjCCall(
     ).name
     val targetFunctionName = "targetPtr"
 
-    val preparedReceiver = if (method.consumesReceiver()) {
+    val preparedReceiver = if (method.objCConsumesReceiver()) {
         when (receiver) {
             is ObjCCallReceiver.Regular -> irCall(symbols.interopObjCRetain.owner).apply {
                 putValueArgument(0, receiver.rawPtr)
@@ -455,7 +453,7 @@ private fun CCallbackBuilder.addParameter(it: IrValueParameter, functionParamete
 
     val valuePassing = stubs.mapFunctionParameterType(
             it.type,
-            retained = it.isConsumed(),
+            retained = it.isObjCConsumed(),
             variadic = false,
             location = typeLocation
     )
@@ -514,8 +512,8 @@ private fun KotlinStubs.generateCFunction(
 
     if (isObjCMethod) {
         val receiver = signature.dispatchReceiverParameter!!
-        assert(isObjCReferenceType(receiver.type))
-        val valuePassing = ObjCReferenceValuePassing(symbols, receiver.type, retained = signature.consumesReceiver())
+        require(receiver.type.isObjCReferenceType(target, irBuiltIns))
+        val valuePassing = ObjCReferenceValuePassing(symbols, receiver.type, retained = signature.objCConsumesReceiver())
         val kotlinArgument = with(valuePassing) { callbackBuilder.receiveValue() }
         callbackBuilder.kotlinCallBuilder.arguments += kotlinArgument
 
@@ -606,48 +604,8 @@ private fun KotlinStubs.createFakeKotlinExternalFunction(
     return bridge
 }
 
-private val cCall = RuntimeNames.cCall
-
-private fun IrType.isUnsigned(unsignedType: UnsignedType) = this is IrSimpleType && !this.hasQuestionMark &&
-        (this.classifier.owner as? IrClass)?.classId == unsignedType.classId
-
-private fun IrType.isUByte() = this.isUnsigned(UnsignedType.UBYTE)
-private fun IrType.isUShort() = this.isUnsigned(UnsignedType.USHORT)
-private fun IrType.isUInt() = this.isUnsigned(UnsignedType.UINT)
-private fun IrType.isULong() = this.isUnsigned(UnsignedType.ULONG)
-
-internal fun IrType.isCEnumType(): Boolean {
-    val simpleType = this as? IrSimpleType ?: return false
-    if (simpleType.hasQuestionMark) return false
-    val enumClass = simpleType.classifier.owner as? IrClass ?: return false
-    if (!enumClass.isEnumClass) return false
-
-    return enumClass.superTypes
-            .any { (it.classifierOrNull?.owner as? IrClass)?.fqNameForIrSerialization == FqName("kotlinx.cinterop.CEnum") }
-}
-
-// Make sure external stubs always get proper annotaions.
-private fun IrDeclaration.hasCCallAnnotation(name: String): Boolean =
-        this.annotations.hasAnnotation(cCall.child(Name.identifier(name)))
-                // LazyIr doesn't pass annotations from descriptor to IrValueParameter.
-                || this.descriptor.annotations.hasAnnotation(cCall.child(Name.identifier(name)))
-
-
-private fun IrValueParameter.isWCStringParameter() = hasCCallAnnotation("WCString")
-
-private fun IrValueParameter.isCStringParameter() = hasCCallAnnotation("CString")
-
-private fun IrValueParameter.isConsumed() = hasCCallAnnotation("Consumed")
-
-private fun IrSimpleFunction.consumesReceiver() = hasCCallAnnotation("ConsumesReceiver")
-
-private fun IrSimpleFunction.returnsRetained() = hasCCallAnnotation("ReturnsRetained")
-
-private fun getStructSpelling(kotlinClass: IrClass): String? =
-        kotlinClass.getAnnotationArgumentValue(FqName("kotlinx.cinterop.internal.CStruct"), "spelling")
-
 private fun getCStructType(kotlinClass: IrClass): CType? =
-        getStructSpelling(kotlinClass)?.let { CTypes.simple(it) }
+        kotlinClass.getCStructSpelling()?.let { CTypes.simple(it) }
 
 private fun KotlinStubs.getNamedCStructType(kotlinClass: IrClass): CType? {
     val cStructType = getCStructType(kotlinClass) ?: return null
@@ -658,7 +616,7 @@ private fun KotlinStubs.getNamedCStructType(kotlinClass: IrClass): CType? {
 
 // TODO: rework Boolean support.
 // TODO: What should be used on watchOS?
-private fun cBoolType(target: KonanTarget): CType? = when (target.family) {
+internal fun cBoolType(target: KonanTarget): CType? = when (target.family) {
     Family.IOS, Family.TVOS, Family.WATCHOS -> CTypes.C99Bool
     else -> CTypes.signedChar
 }
@@ -688,7 +646,7 @@ private fun KotlinToCCallBuilder.mapCalleeFunctionParameter(
 
         else -> stubs.mapFunctionParameterType(
                 type,
-                retained = parameter?.isConsumed() ?: false,
+                retained = parameter?.isObjCConsumed() ?: false,
                 variadic = variadic,
                 location = TypeLocation.FunctionArgument(argument)
         )
@@ -725,7 +683,7 @@ private fun KotlinStubs.mapReturnType(
         signature: IrSimpleFunction?
 ): ValueReturning = when {
     type.isUnit() -> VoidReturning
-    else -> mapType(type, retained = signature?.returnsRetained() ?: false, variadic = false, location = location)
+    else -> mapType(type, retained = signature?.objCReturnsRetained() ?: false, variadic = false, location = location)
 }
 
 private fun KotlinStubs.mapBlockType(
@@ -773,16 +731,6 @@ private fun KotlinStubs.mapBlockType(
 
 private fun KotlinStubs.mapType(type: IrType, retained: Boolean, variadic: Boolean, location: TypeLocation): ValuePassing =
         mapType(type, retained, variadic, location, { reportUnsupportedType(it, type, location) })
-
-private fun IrType.isTypeOfNullLiteral(): Boolean = this is IrSimpleType && hasQuestionMark
-        && classifier.isClassWithFqName(StandardNames.FqNames.nothing)
-
-internal fun IrType.isVector(): Boolean {
-    if (this is IrSimpleType && !this.hasQuestionMark) {
-        return classifier.isClassWithFqName(KonanFqNames.Vector128.toUnsafe())
-    }
-    return false
-}
 
 private fun KotlinStubs.mapType(
         type: IrType,
@@ -844,29 +792,9 @@ private fun KotlinStubs.mapType(
         mapBlockType(type, retained = retained, location = typeLocation)
     }
 
-    isObjCReferenceType(type) -> ObjCReferenceValuePassing(symbols, type, retained = retained)
+    type.isObjCReferenceType(target, irBuiltIns) -> ObjCReferenceValuePassing(symbols, type, retained = retained)
 
     else -> reportUnsupportedType("doesn't correspond to any C type")
-}
-
-private fun KotlinStubs.isObjCReferenceType(type: IrType): Boolean {
-    if (!target.family.isAppleFamily) return false
-
-    // Handle the same types as produced by [objCPointerMirror] in Interop/StubGenerator/.../Mappings.kt.
-
-    if (type.isObjCObjectType()) return true
-
-    val descriptor = type.classifierOrNull?.descriptor ?: return false
-    val builtIns = irBuiltIns.builtIns
-
-    return when (descriptor) {
-        builtIns.any,
-        builtIns.string,
-        builtIns.list, builtIns.mutableList,
-        builtIns.set,
-        builtIns.map -> true
-        else -> false
-    }
 }
 
 private class CExpression(val expression: String, val type: CType)

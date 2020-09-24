@@ -66,6 +66,12 @@ internal fun makeKonanModuleOpPhase(
         actions = modulePhaseActions
 )
 
+internal val specialBackendChecksPhase = konanUnitPhase(
+        op = { irModule!!.files.forEach { SpecialBackendChecksTraversal(this).lower(it) } },
+        name = "SpecialBackendChecks",
+        description = "Special backend checks"
+)
+
 internal val removeExpectDeclarationsPhase = makeKonanModuleLoweringPhase(
         ::ExpectDeclarationsRemoving,
         name = "RemoveExpectDeclarations",
