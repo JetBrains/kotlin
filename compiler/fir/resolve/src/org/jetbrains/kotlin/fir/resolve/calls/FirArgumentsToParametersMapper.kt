@@ -29,6 +29,8 @@ data class ArgumentMapping(
     //      fun foo(a: Int, b: Int) {}
     //      foo(b = bar(), a = qux())
     // parameterToCallArgumentMap.values() should be [ 'bar()', 'foo()' ]
+    // TODO: Consider changing this (and other similar declarations like Candidate.argumentMapping) to LinkedHashMap to signify that
+    // order is important. Right now we're assuming that mutableMapOf() will always return a LinkedHashMap.
     val parameterToCallArgumentMap: Map<FirValueParameter, ResolvedCallArgument>,
     val oldToNewArgumentMap: Map<FirExpression, FirExpression>,
     val diagnostics: List<ResolutionDiagnostic>

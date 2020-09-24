@@ -40,10 +40,12 @@ internal fun remapArgumentsWithVararg(
     argumentList: FirArgumentList,
     argumentMapping: Map<FirExpression, FirValueParameter>
 ): Map<FirExpression, FirValueParameter> {
-    // Create a FirVarargArgumentExpression for the vararg arguments
+    // Create a FirVarargArgumentExpression for the vararg arguments.
+    // The order of arguments in the mapping must be preserved for FIR2IR, hence we have to find where the vararg arguments end.
+    // FIR2IR uses the mapping order to determine if arguments need to be reordered.
     val varargParameterTypeRef = varargParameter.returnTypeRef
     val varargElementType = varargArrayType.arrayElementType()
-    var firstIndex = argumentList.arguments.size
+    var indexAfterVarargs = argumentList.arguments.size
     val newArgumentMapping = mutableMapOf<FirExpression, FirValueParameter>()
     val varargArgument = buildVarargArgumentsExpression {
         this.varargElementType = varargParameterTypeRef.withReplacedConeType(varargElementType)
@@ -51,14 +53,26 @@ internal fun remapArgumentsWithVararg(
         for ((i, arg) in argumentList.arguments.withIndex()) {
             val valueParameter = argumentMapping[arg] ?: continue
             if (valueParameter.isVararg) {
-                firstIndex = min(firstIndex, i)
+                // `arg` is a vararg argument.
                 arguments += arg
-            } else {
+            } else if (arguments.isEmpty()) {
+                // `arg` is BEFORE the vararg arguments.
                 newArgumentMapping[arg] = valueParameter
+            } else {
+                // `arg` is AFTER the vararg arguments.
+                indexAfterVarargs = i
+                break
             }
         }
     }
     newArgumentMapping[varargArgument] = varargParameter
+
+    // Add mapping for arguments after the vararg arguments, if any.
+    for (i in indexAfterVarargs until argumentList.arguments.size) {
+        val arg = argumentList.arguments[i]
+        val valueParameter = argumentMapping[arg] ?: continue
+        newArgumentMapping[arg] = valueParameter
+    }
     return newArgumentMapping
 }
 
