@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.serialization.FirSerializerExtension
@@ -260,34 +261,42 @@ class FirJvmSerializerExtension(
             proto.setExtension(JvmProtoBuf.propertySignature, signature)
         }
 
-        // TODO
-//        if (property.isJvmFieldPropertyInInterfaceCompanion() && versionRequirementTable != null) {
-//            proto.setExtension(JvmProtoBuf.flags, JvmFlags.getPropertyFlags(true))
-//
-//            proto.addVersionRequirement(
-//                DescriptorSerializer.writeVersionRequirement(
-//                    1,
-//                    2,
-//                    70,
-//                    ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION,
-//                    versionRequirementTable
-//                )
-//            )
-//        }
+        if (property.isJvmFieldPropertyInInterfaceCompanion() && versionRequirementTable != null) {
+            proto.setExtension(JvmProtoBuf.flags, JvmFlags.getPropertyFlags(true))
+
+            proto.addVersionRequirement(
+                DescriptorSerializer.writeVersionRequirement(
+                    1,
+                    2,
+                    70,
+                    ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION,
+                    versionRequirementTable
+                )
+            )
+        }
 
         if (getter?.needsInlineParameterNullCheckRequirement() == true || setter?.needsInlineParameterNullCheckRequirement() == true) {
             versionRequirementTable?.writeInlineParameterNullCheckRequirement(proto::addVersionRequirement)
         }
     }
 
-    private fun PropertyDescriptor.isJvmFieldPropertyInInterfaceCompanion(): Boolean {
-        if (!DescriptorsJvmAbiUtil.hasJvmFieldAnnotation(this)) return false
+    private fun FirProperty.isJvmFieldPropertyInInterfaceCompanion(): Boolean {
+        if (!hasJvmFieldAnnotation) return false
 
-        val container = containingDeclaration
-        if (!DescriptorUtils.isCompanionObject(container)) return false
+        val container =
+            symbol.callableId.classId?.let {
+                session.firProvider.getFirClassifierByFqName(it) as? FirRegularClass
+            }
+        if (container == null || !container.isCompanion) {
+            return false
+        }
 
-        val grandParent = (container as ClassDescriptor).containingDeclaration
-        return DescriptorUtils.isInterface(grandParent) || DescriptorUtils.isAnnotationClass(grandParent)
+        val grandParent =
+            container.classId.outerClassId?.let {
+                session.firProvider.getFirClassifierByFqName(it) as? FirRegularClass
+            }
+        return grandParent != null &&
+                (grandParent.classKind == ClassKind.INTERFACE || grandParent.classKind == ClassKind.ANNOTATION_CLASS)
     }
 
     override fun serializeErrorType(type: ConeKotlinErrorType, builder: ProtoBuf.Type.Builder) {
