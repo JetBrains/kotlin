@@ -620,30 +620,20 @@ class ExpressionCodegen(
             assert(callee.constantValue() == null) { "access of const val: ${expression.dump()}" }
         }
 
-        val fieldType = typeMapper.mapType(callee.type)
-        val fieldName = callee.name.asString()
         val isStatic = expression.receiver == null
         expression.markLineNumber(startOffset = true)
 
-        val ownerType = when {
-            expression.superQualifierSymbol != null -> {
-                typeMapper.mapClass(expression.superQualifierSymbol!!.owner)
-            }
-            expression.receiver != null -> {
-                typeMapper.mapTypeAsDeclaration(expression.receiver!!.type)
-            }
-            else -> typeMapper.mapClass(callee.parentAsClass)
+        val receiverType = expression.receiver?.let { receiver ->
+            receiver.accept(this, data).materializedAt(typeMapper.mapTypeAsDeclaration(receiver.type), receiver.type).type
         }
 
+        val ownerType = expression.superQualifierSymbol?.let { typeMapper.mapClass(it.owner) }
+            ?: receiverType ?: typeMapper.mapClass(callee.parentAsClass)
         val ownerName = ownerType.internalName
-
-        expression.receiver?.let { receiver ->
-            receiver.accept(this, data).materializeAt(ownerType, receiver.type)
-        }
-
+        val fieldName = callee.name.asString()
+        val fieldType = callee.type.asmType
         return if (expression is IrSetField) {
             val value = expression.value.accept(this, data)
-
             // We only initialize enum entries with a subtype of `fieldType` and can avoid the CHECKCAST.
             // This is important for some tools which analyze bytecode for enum classes by looking at the
             // initializer of the $VALUES field.
@@ -654,17 +644,11 @@ class ExpressionCodegen(
             }
 
             expression.markLineNumber(startOffset = true)
-            when {
-                isStatic -> mv.putstatic(ownerName, fieldName, fieldType.descriptor)
-                else -> mv.putfield(ownerName, fieldName, fieldType.descriptor)
-            }
+            mv.visitFieldInsn(if (isStatic) Opcodes.PUTSTATIC else Opcodes.PUTFIELD, ownerName, fieldName, fieldType.descriptor)
             assert(expression.type.isUnit())
             unitValue
         } else {
-            when {
-                isStatic -> mv.getstatic(ownerName, fieldName, fieldType.descriptor)
-                else -> mv.getfield(ownerName, fieldName, fieldType.descriptor)
-            }
+            mv.visitFieldInsn(if (isStatic) Opcodes.GETSTATIC else Opcodes.GETFIELD, ownerName, fieldName, fieldType.descriptor)
             MaterialValue(this, fieldType, callee.type)
         }
     }
