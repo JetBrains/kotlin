@@ -201,6 +201,9 @@ class RawFirBuilder(
         private fun KtExpression.toFirStatement(errorReason: String): FirStatement =
             convertSafe() ?: buildErrorExpression(this.toFirSourceElement(), ConeSimpleDiagnostic(errorReason, DiagnosticKind.Syntax))
 
+        private inline fun KtExpression.toFirStatement(errorReasonLazy: () -> String): FirStatement =
+            convertSafe() ?: buildErrorExpression(this.toFirSourceElement(), ConeSimpleDiagnostic(errorReasonLazy(), DiagnosticKind.Syntax))
+
         private fun KtExpression.toFirStatement(): FirStatement =
             convert()
 
@@ -1419,7 +1422,7 @@ class RawFirBuilder(
             return FirBlockBuilder().apply {
                 source = expression.toFirSourceElement()
                 for (statement in expression.statements) {
-                    val firStatement = statement.toFirStatement("Statement expected: ${statement.text}")
+                    val firStatement = statement.toFirStatement { "Statement expected: ${statement.text}" }
                     if (firStatement !is FirBlock || firStatement.annotations.isNotEmpty()) {
                         statements += firStatement
                     } else {
