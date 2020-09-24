@@ -97,7 +97,9 @@ object ImplicitNothingAsTypeParameterCallChecker : CallChecker {
 
             val resolvedCallAtom = resolvedAtom.getResolvedCallAtom(context.trace.bindingContext) ?: continue
             val candidateDescriptor = resolvedCallAtom.candidateDescriptor
-            val isReturnTypeOwnTypeParameter = candidateDescriptor.typeParameters.any { it.defaultType == candidateDescriptor.returnType }
+            val isReturnTypeOwnTypeParameter = candidateDescriptor.typeParameters.any {
+                it.typeConstructor == candidateDescriptor.returnType?.constructor
+            }
             val isSpecialCall = candidateDescriptor.name in SPECIAL_FUNCTION_NAMES
             val hasExplicitTypeArguments = resolvedCallAtom.atom.psiKotlinCall.typeArguments.isNotEmpty() // not required
 
