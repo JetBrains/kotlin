@@ -60,10 +60,12 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
+import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
+import org.jetbrains.kotlin.types.typeUtil.isEnum
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -668,6 +670,18 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         }
 
         val propertyType = (origin?.descriptor as? PropertyDescriptor)?.returnType
+
+        /*
+            Work-around for enum classes in companions.
+            In expressions "Foo.Companion.EnumClass", Java prefers static field over a type name, making the reference invalid.
+        */
+        if (propertyType != null && propertyType.isEnum()) {
+            val enumClass = propertyType.constructor.declarationDescriptor
+            if (enumClass is ClassDescriptor && enumClass.isInsideCompanionObject()) {
+                return null
+            }
+        }
+
         if (propertyInitializer != null && propertyType != null) {
             val constValue = getConstantValue(propertyInitializer, propertyType)
             if (constValue != null) {
@@ -684,6 +698,15 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         }
 
         return null
+    }
+
+    private fun DeclarationDescriptor.isInsideCompanionObject(): Boolean {
+        val parent = containingDeclaration ?: return false
+        if (parent.isCompanionObject()) {
+            return true
+        }
+
+        return parent.isInsideCompanionObject()
     }
 
     private object UnknownConstantValue
