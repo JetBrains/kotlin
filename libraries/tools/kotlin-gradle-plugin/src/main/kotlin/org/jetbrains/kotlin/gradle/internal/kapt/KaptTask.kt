@@ -1,8 +1,9 @@
 package org.jetbrains.kotlin.gradle.internal
 
-import org.gradle.api.artifacts.Configuration
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.ConventionTask
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.ClasspathSnapshot
@@ -41,8 +42,7 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
 
     @get:Classpath
     @get:InputFiles
-    val kaptClasspath: FileCollection
-        get() = objects.fileCollection().from(kaptClasspathConfigurations)
+    abstract val kaptClasspath: ConfigurableFileCollection
 
     @get:Classpath
     @get:InputFiles
@@ -51,7 +51,7 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
     }
 
     @get:Internal
-    internal lateinit var kaptClasspathConfigurations: List<Configuration>
+    internal abstract val kaptClasspathConfigurationNames: ListProperty<String>
 
 
     @get:PathSensitive(PathSensitivity.NONE)
@@ -189,7 +189,7 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
                             + "\nThe following files, containing annotation processors, are not present in KAPT classpath:\n"
                             + processorsAbsentInKaptClasspath.joinToString("\n") { "  '$it'" }
                             + "\nAdd corresponding dependencies to any of the following configurations:\n"
-                            + kaptClasspathConfigurations.joinToString("\n") { " '${it.name}'" }
+                            + kaptClasspathConfigurationNames.get().joinToString("\n") { " '$it'" }
                 )
             } else {
                 logger.warn(
