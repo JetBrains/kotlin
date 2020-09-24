@@ -152,7 +152,7 @@ class DokkaBase : DokkaPlugin() {
 
 
     val defaultKotlinAnalysis by extending {
-        kotlinAnalysis providing { ctx -> KotlinAnalysis(ctx) }
+        kotlinAnalysis providing { ctx -> KotlinAnalysis(ctx.configuration.sourceSets, ctx.logger) }
     }
 
     val locationProvider by extending {
