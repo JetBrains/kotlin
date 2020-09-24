@@ -3,11 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.serialization
+package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -22,10 +21,10 @@ import org.jetbrains.kotlin.name.Name
 private fun FirAnnotationCall.toAnnotationLookupTag(): ConeClassLikeLookupTag =
     (annotationTypeRef.coneType as ConeClassLikeType).lookupTag
 
-internal fun FirAnnotationCall.toAnnotationClassId(): ClassId =
+fun FirAnnotationCall.toAnnotationClassId(): ClassId =
     toAnnotationLookupTag().classId
 
-internal fun FirAnnotationCall.toAnnotationClass(session: FirSession): FirRegularClass? =
+private fun FirAnnotationCall.toAnnotationClass(session: FirSession): FirRegularClass? =
     toAnnotationLookupTag().toSymbol(session)?.fir as? FirRegularClass
 
 fun FirAnnotationContainer.nonSourceAnnotations(session: FirSession): List<FirAnnotationCall> =
@@ -42,3 +41,15 @@ fun FirAnnotationContainer.nonSourceAnnotations(session: FirSession): List<FirAn
         }
     }
 
+inline val FirProperty.hasJvmFieldAnnotation: Boolean
+    get() = annotations.any { it.isJvmFieldAnnotation }
+
+inline val FirAnnotationCall.isJvmFieldAnnotation: Boolean
+    get() {
+        val classId = toAnnotationClassId()
+        return classId.packageFqName.asString() == "kotlin.jvm" && classId.relativeClassName.asString() == "JvmField"
+    }
+
+fun FirAnnotatedDeclaration.hasAnnotation(classId: ClassId): Boolean {
+    return annotations.any { it.toAnnotationClassId() == classId }
+}
