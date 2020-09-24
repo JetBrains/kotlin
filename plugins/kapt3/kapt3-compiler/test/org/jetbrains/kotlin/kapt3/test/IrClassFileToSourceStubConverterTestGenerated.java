@@ -109,6 +109,11 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/enumImports.kt");
     }
 
+    @TestMetadata("enumInCompanion.kt")
+    public void testEnumInCompanion() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/enumInCompanion.kt");
+    }
+
     @TestMetadata("enums.kt")
     public void testEnums() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/enums.kt");
