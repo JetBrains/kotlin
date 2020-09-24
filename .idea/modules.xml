@@ -1247,6 +1247,9 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go-tools/intellij.goland.tools.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go-tools/intellij.goland.tools.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/gradle/intellij.gradle.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/gradle/intellij.gradle.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/gradle/intellij.gradle.common.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/gradle/intellij.gradle.common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/gradle-dsl/intellij.gradle.dsl.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/gradle-dsl/intellij.gradle.dsl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/gradle-dsl-impl/intellij.gradle.dsl.impl.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/gradle-dsl-impl/intellij.gradle.dsl.impl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/gradle-dsl-impl/intellij.gradle.dsl.impl.tests.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/gradle-dsl-impl/intellij.gradle.dsl.impl.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/gradle-ext/intellij.gradle.ext.iml" filepath="$PROJECT_DIR$/intellij/plugins/gradle-ext/intellij.gradle.ext.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/gradle-ext/profiler-tooling/intellij.gradle.ext.profiler.tooling.iml" filepath="$PROJECT_DIR$/intellij/plugins/gradle-ext/profiler-tooling/intellij.gradle.ext.profiler.tooling.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/gradle/java/intellij.gradle.java.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/gradle/java/intellij.gradle.java.iml" />
