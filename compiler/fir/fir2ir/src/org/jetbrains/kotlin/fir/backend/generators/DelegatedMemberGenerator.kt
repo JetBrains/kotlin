@@ -5,40 +5,21 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
-import org.jetbrains.kotlin.backend.common.ir.isFinalClass
-import org.jetbrains.kotlin.backend.common.ir.isOverridable
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
-import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameterCopy
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
-import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.PossiblyFirFakeOverrideSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.WrappedPropertyDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedTypeParameterDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.utils.DFS
 
 /**
  * A generator for delegated members from implementation by delegation.
@@ -52,239 +33,119 @@ internal class DelegatedMemberGenerator(
 ) : Fir2IrComponents by components {
 
     // Generate delegated members for [subClass]. The synthetic field [irField] has the super interface type.
-    fun generate(irField: IrField, firSubClass: FirClass<*>, subClass: IrClass) {
-        val delegateClass = (irField.type as IrSimpleTypeImpl).classOrNull?.owner ?: return
-        val subClasses = mutableMapOf(delegateClass to mutableListOf(subClass))
-        DFS.dfs(
-            listOf(delegateClass), { node -> node.superTypes.mapNotNull { it.classOrNull?.owner } },
-            object : DFS.NodeHandler<IrClass, Unit> {
-                override fun beforeChildren(current: IrClass): Boolean {
-                    for (superType in current.superTypes) {
-                        superType.classOrNull?.owner?.let { subClasses.getOrPut(it) { mutableListOf() }.add(current) }
-                    }
-                    return true
-                }
+    fun generate(irField: IrField, firField: FirField, firSubClass: FirClass<*>, subClass: IrClass) {
+        val subClassLookupTag = firSubClass.symbol.toLookupTag()
 
-                override fun afterChildren(current: IrClass) = Unit
-                override fun result() = Unit
-            }
-        )
+        val subClassScope = firSubClass.unsubstitutedScope(session, scopeSession)
+        subClassScope.processAllFunctions { functionSymbol ->
+            if (functionSymbol !is FirNamedFunctionSymbol) return@processAllFunctions
 
-        for ((superClass, mayOverride) in subClasses) {
-            val superClassId = superClass.classId ?: continue
-            if (superClassId == irBuiltIns.anyClass.owner.classId) continue
-            for (member in superClass.declarations) {
-                val delegatable = member.isDelegatable() && !DFS.ifAny(mayOverride, { subClasses[it] ?: emptyList() }) {
-                    // Delegate to the most specific version of each member.
-                    it.declarations.any { !it.isFakeOverride && it.overrides(member) }
-                }
-                if (!delegatable) continue
-                val scope = firSubClass.unsubstitutedScope(session, scopeSession)
-                if (member is IrSimpleFunction) {
-                    val firSuperFunction = declarationStorage.findOverriddenFirFunction(member, superClassId) ?: return
-                    var firSubFunction: FirSimpleFunction? = null
-                    scope.processFunctionsByName(member.name) {
-                        if (it.callableId.classId == firSubClass.classId) {
-                            var overriddenFunctionSymbol = it.overriddenSymbol
-                            while (overriddenFunctionSymbol != null) {
-                                if (overriddenFunctionSymbol.fir == firSuperFunction) {
-                                    firSubFunction = it.fir as FirSimpleFunction
-                                    break
-                                }
-                                overriddenFunctionSymbol = overriddenFunctionSymbol.overriddenSymbol
-                            }
-                        }
-                    }
-                    val irSubFunction = generateDelegatedFunction(subClass, irField, member, firSuperFunction)
-                    firSubFunction?.let { declarationStorage.cacheIrSimpleFunction(it, irSubFunction) }
-                    subClass.addMember(irSubFunction)
-                } else if (member is IrProperty) {
-                    val firSuperProperty = declarationStorage.findOverriddenFirProperty(member, superClassId) ?: return
-                    var firSubProperty: FirProperty? = null
-                    scope.processPropertiesByName(member.name) {
-                        if (it.callableId.classId == firSubClass.classId) {
-                            var overriddenPropertySymbol = it.overriddenSymbol
-                            while (overriddenPropertySymbol != null) {
-                                if (overriddenPropertySymbol.fir == firSuperProperty) {
-                                    firSubProperty = it.fir as FirProperty
-                                    break
-                                }
-                                overriddenPropertySymbol = overriddenPropertySymbol.overriddenSymbol
-                            }
-                        }
-                    }
-                    val irSubProperty = generateDelegatedProperty(subClass, irField, member, firSuperProperty)
-                    firSubProperty?.let { declarationStorage.cacheIrProperty(it, irSubProperty) }
-                }
-            }
+            val unwrapped =
+                functionSymbol
+                    .unwrapDelegateTarget(subClassLookupTag, subClassScope::getDirectOverriddenFunctions, firField, firSubClass)
+                    ?: return@processAllFunctions
+
+            val member =
+                declarationStorage.getIrFunctionSymbol(unwrapped.symbol).owner as? IrSimpleFunction
+                    ?: return@processAllFunctions
+
+            if (isJavaDefault(unwrapped)) return@processAllFunctions
+
+            val irSubFunction = generateDelegatedFunction(
+                subClass, firSubClass, irField, member, functionSymbol.fir
+            )
+
+            declarationStorage.cacheDelegationFunction(functionSymbol.fir, irSubFunction)
+            subClass.addMember(irSubFunction)
+        }
+
+        subClassScope.processAllProperties { propertySymbol ->
+            if (propertySymbol !is FirPropertySymbol) return@processAllProperties
+
+            val unwrapped =
+                propertySymbol
+                    .unwrapDelegateTarget(subClassLookupTag, subClassScope::getDirectOverriddenProperties, firField, firSubClass)
+                    ?: return@processAllProperties
+
+            val member = declarationStorage.getIrPropertySymbol(unwrapped.symbol).owner as? IrProperty
+                ?: return@processAllProperties
+
+            val irSubFunction =
+                generateDelegatedProperty(subClass, firSubClass, irField, member, propertySymbol.fir)
+
+            declarationStorage.cacheDelegatedProperty(propertySymbol.fir, irSubFunction)
+            subClass.addMember(irSubFunction)
         }
     }
 
-    private fun IrDeclaration.overrides(other: IrDeclaration) = when {
-        // Imported declarations have overridden symbols, so check that first.
-        this is IrProperty && other is IrProperty ->
-            getter?.let { getter -> other.getter?.symbol in getter.overriddenSymbols }
-                ?: setter?.let { setter -> other.setter?.symbol in setter.overriddenSymbols }
-                ?: false
-        this is IrSimpleFunction && other is IrSimpleFunction ->
-            other.symbol in overriddenSymbols
-        else ->
-            false
-    } || isOverriding(irBuiltIns, this, other) // TODO check if this behaves correctly with generic arguments
+    private inline fun <reified S, reified D : FirCallableDeclaration<D>> S.unwrapDelegateTarget(
+        subClassLookupTag: ConeClassLikeLookupTag,
+        noinline directOverridden: S.() -> List<S>,
+        firField: FirField,
+        firSubClass: FirClass<*>,
+    ): D? where S : FirCallableSymbol<D>, S : PossiblyFirFakeOverrideSymbol<D, S> {
+        val unwrappedIntersectionSymbol =
+            this.unwrapIntersectionOverride(directOverridden) ?: return null
 
-    private fun IrDeclaration.isDelegatable(): Boolean {
-        return isOverridable()
-                && !isFakeOverride
-                && !(this is IrSimpleFunction && hasDefaultImplementation())
-    }
+        val callable = unwrappedIntersectionSymbol.fir as? D ?: return null
 
-    private fun IrDeclaration.isOverridable(): Boolean {
-        return when (this) {
-            is IrSimpleFunction -> this.isOverridable
-            is IrProperty -> visibility != org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE && modality != Modality.FINAL && (parent as? IrClass)?.isFinalClass != true
-            else -> false
+        val delegatedWrapperData = callable.delegatedWrapperData ?: return null
+        if (delegatedWrapperData.containingClass != subClassLookupTag) return null
+        if (delegatedWrapperData.delegateField != firField) return null
+
+        val wrapped = delegatedWrapperData.wrapped as? D ?: return null
+        val wrappedSymbol = wrapped.symbol as? S ?: return null
+
+        return when {
+            wrappedSymbol.isFakeOverride && wrappedSymbol.callableId.classId == firSubClass.classId ->
+                wrapped.symbol.overriddenSymbol!!.fir
+            else -> wrapped
         }
     }
 
-    private fun IrSimpleFunction.hasDefaultImplementation(): Boolean {
-        var realFunction: IrSimpleFunction? = this
-        while (realFunction != null && realFunction.isFakeOverride) {
-            realFunction = realFunction.overriddenSymbols.firstOrNull()?.owner
-        }
-        return realFunction != null
-                && (realFunction.modality != Modality.ABSTRACT && realFunction.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
-                || realFunction.annotations.hasAnnotation(FqName("kotlin.jvm.JvmDefault")))
+    private fun isJavaDefault(function: FirSimpleFunction): Boolean {
+        if (function.symbol.isIntersectionOverride) return isJavaDefault(function.symbol.overriddenSymbol!!.fir)
+        return function.origin == FirDeclarationOrigin.Enhancement && function.modality == Modality.OPEN
+    }
+
+    private fun <S : FirCallableSymbol<*>> S.unwrapIntersectionOverride(directOverridden: S.() -> List<S>): S? {
+        if (this !is PossiblyFirFakeOverrideSymbol<*, *>) return this
+        if (this.isIntersectionOverride) return directOverridden().firstOrNull { it.fir.delegatedWrapperData != null }
+        return this
     }
 
     private fun generateDelegatedFunction(
         subClass: IrClass,
+        firSubClass: FirClass<*>,
         irField: IrField,
         superFunction: IrSimpleFunction,
-        firSuperFunction: FirFunction<*>
+        delegateOverride: FirSimpleFunction
     ): IrSimpleFunction {
+        val delegateFunction =
+            declarationStorage.createIrFunction(
+                delegateOverride, subClass, origin = IrDeclarationOrigin.DELEGATED_MEMBER,
+                containingClass = firSubClass.symbol.toLookupTag()
+            )
+        delegateFunction.overriddenSymbols =
+            delegateOverride.generateOverriddenFunctionSymbols(firSubClass, session, scopeSession, declarationStorage)
+
+        val body = createDelegateBody(irField, delegateFunction, superFunction)
+        delegateFunction.body = body
+        return delegateFunction
+    }
+
+    private fun createDelegateBody(
+        irField: IrField,
+        delegateFunction: IrSimpleFunction,
+        superFunction: IrSimpleFunction
+    ): IrBlockBody {
         val startOffset = irField.startOffset
         val endOffset = irField.endOffset
-        val descriptor = WrappedSimpleFunctionDescriptor()
-        val origin = IrDeclarationOrigin.DELEGATED_MEMBER
-        val modality = if (superFunction.modality == Modality.ABSTRACT) Modality.OPEN else superFunction.modality
-        // TODO: external classes, as the type parameters are converted using deserialized descriptors when used inside the classes.
-        val addTypeSubstitution = irField.type.classOrNull?.owner?.origin?.let {
-            it != IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
-                    && it != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
-        } == true
-        lateinit var irTypeSubstitutor: IrTypeSubstitutor
-        val delegateFunction = symbolTable.declareSimpleFunction(descriptor) { symbol ->
-            irFactory.createFunction(
-                startOffset,
-                endOffset,
-                origin,
-                symbol,
-                superFunction.name,
-                superFunction.visibility,
-                modality,
-                superFunction.returnType,
-                superFunction.isInline,
-                superFunction.isExternal,
-                superFunction.isTailrec,
-                superFunction.isSuspend,
-                superFunction.isOperator,
-                superFunction.isInfix,
-                superFunction.isExpect
-            ).apply {
-                descriptor.bind(this)
-                declarationStorage.enterScope(this)
-                this.parent = subClass
-                overriddenSymbols = listOf(superFunction.symbol)
-                dispatchReceiverParameter = declareThisReceiverParameter(symbolTable, subClass.defaultType, origin)
-                if (addTypeSubstitution) {
-                    val substParameters = mutableListOf<IrTypeParameterSymbol>()
-                    val substArguments = mutableListOf<IrTypeArgument>()
-                    initializeTypeSubstitution(substParameters, substArguments, irField.type)
-                    typeParameters = superFunction.typeParameters.map { typeParameter ->
-                        val parameterDescriptor = WrappedTypeParameterDescriptor()
-                        symbolTable.declareScopedTypeParameter(
-                            startOffset, endOffset, origin, parameterDescriptor
-                        ) { symbol ->
-                            irFactory.createTypeParameter(
-                                startOffset,
-                                endOffset,
-                                origin,
-                                symbol,
-                                typeParameter.name,
-                                typeParameter.index,
-                                typeParameter.isReified,
-                                typeParameter.variance
-                            ).also {
-                                parameterDescriptor.bind(it)
-                                it.parent = this
-                                substParameters.add(typeParameter.symbol)
-                                substArguments.add(
-                                    makeTypeProjection(
-                                        variance = Variance.INVARIANT,
-                                        type = IrSimpleTypeImpl(it.symbol, false, emptyList(), emptyList())
-                                    )
-                                )
-                                it.superTypes += typeParameter.superTypes
-                            }
-                        }
-                    }
-                    irTypeSubstitutor = IrTypeSubstitutor(substParameters, substArguments, irBuiltIns)
-                }
-                superFunction.extensionReceiverParameter?.let {
-                    val substitutedType = if (addTypeSubstitution) irTypeSubstitutor.substitute(it.type) else it.type
-                    extensionReceiverParameter = declareThisReceiverParameter(symbolTable, substitutedType, origin)
-                }
-                valueParameters = superFunction.valueParameters.map { valueParameter ->
-                    val parameterDescriptor = WrappedValueParameterDescriptor()
-                    val substedType = if (addTypeSubstitution) irTypeSubstitutor.substitute(valueParameter.type) else valueParameter.type
-                    symbolTable.declareValueParameter(
-                        startOffset, endOffset, origin, parameterDescriptor, substedType
-                    ) { symbol ->
-                        irFactory.createValueParameter(
-                            startOffset, endOffset, origin, symbol,
-                            valueParameter.name, valueParameter.index, substedType,
-                            null, valueParameter.isCrossinline, valueParameter.isNoinline
-                        ).also {
-                            parameterDescriptor.bind(it)
-                            it.parent = this
-                        }
-                    }
-                }
-
-                val visibility = when (firSuperFunction) {
-                    is FirSimpleFunction -> firSuperFunction.status.visibility
-                    is FirPropertyAccessor -> firSuperFunction.status.visibility
-                    else -> Visibilities.Public
-                }
-                metadata = FirMetadataSource.Function(
-                    buildSimpleFunction {
-                        this.origin = FirDeclarationOrigin.Synthetic
-                        this.name = superFunction.name
-                        this.symbol = FirNamedFunctionSymbol(getCallableId(subClass, superFunction.name))
-                        this.status = FirDeclarationStatusImpl(visibility, modality)
-                        this.session = components.session
-                        this.returnTypeRef = firSuperFunction.returnTypeRef
-                        firSuperFunction.valueParameters.map { superParameter ->
-                            this.valueParameters.add(
-                                buildValueParameterCopy(superParameter) {
-                                    this.origin = FirDeclarationOrigin.Synthetic
-                                    this.session = components.session
-                                    this.symbol = FirVariableSymbol(superParameter.name)
-                                }
-                            )
-                        }
-                    }
-                )
-
-                declarationStorage.leaveScope(this)
-            }
-        }
-
         val body = irFactory.createBlockBody(startOffset, endOffset)
         val irCall = IrCallImpl(
             startOffset,
             endOffset,
-            if (addTypeSubstitution) irTypeSubstitutor.substitute(superFunction.returnType) else superFunction.returnType,
+            delegateFunction.returnType,
             superFunction.symbol,
             superFunction.typeParameters.size,
             superFunction.valueParameters.size
@@ -314,79 +175,34 @@ internal class DelegatedMemberGenerator(
             val irReturn = IrReturnImpl(startOffset, endOffset, irBuiltIns.nothingType, delegateFunction.symbol, irCall)
             body.statements.add(irReturn)
         }
-        delegateFunction.body = body
-        return delegateFunction
-    }
-
-    private fun initializeTypeSubstitution(
-        typeParameters: MutableList<IrTypeParameterSymbol>,
-        typeArguments: MutableList<IrTypeArgument>,
-        type: IrType
-    ) {
-        if (type is IrSimpleTypeImpl && type.arguments.isNotEmpty()) {
-            val classTypeParameters = type.classOrNull?.owner?.typeParameters
-            if (classTypeParameters?.size == type.arguments.size) {
-                typeParameters.addAll(classTypeParameters.map { it.symbol })
-                typeArguments.addAll(type.arguments)
-            }
-        }
+        return body
     }
 
     private fun generateDelegatedProperty(
         subClass: IrClass,
+        firSubClass: FirClass<*>,
         irField: IrField,
         superProperty: IrProperty,
-        firSuperProperty: FirProperty
+        firDelegateProperty: FirProperty
     ): IrProperty {
-        val startOffset = irField.startOffset
-        val endOffset = irField.endOffset
-        val descriptor = WrappedPropertyDescriptor()
-        val modality = if (superProperty.modality == Modality.ABSTRACT) Modality.OPEN else superProperty.modality
-        return symbolTable.declareProperty(
-            startOffset, endOffset,
-            IrDeclarationOrigin.DELEGATED_MEMBER, descriptor, superProperty.isDelegated
-        ) { symbol ->
-            irFactory.createProperty(
-                startOffset, endOffset, IrDeclarationOrigin.DELEGATED_MEMBER, symbol,
-                superProperty.name, superProperty.visibility,
-                modality,
-                isVar = superProperty.isVar,
-                isConst = superProperty.isConst,
-                isLateinit = superProperty.isLateinit,
-                isDelegated = superProperty.isDelegated,
-                isExternal = false,
-                isExpect = superProperty.isExpect,
-                isFakeOverride = false
-            ).apply {
-                descriptor.bind(this)
-                this.parent = subClass
-                getter = generateDelegatedFunction(subClass, irField, superProperty.getter!!, firSuperProperty.getter!!).apply {
-                    this.correspondingPropertySymbol = symbol
-                }
-                if (superProperty.isVar) {
-                    setter = generateDelegatedFunction(subClass, irField, superProperty.setter!!, firSuperProperty.setter!!).apply {
-                        this.correspondingPropertySymbol = symbol
-                    }
-                }
-                this.metadata = FirMetadataSource.Property(
-                    buildProperty {
-                        this.name = superProperty.name
-                        this.origin = FirDeclarationOrigin.Synthetic
-                        this.session = components.session
-                        this.status = FirDeclarationStatusImpl(firSuperProperty.status.visibility, modality)
-                        this.isLocal = firSuperProperty.isLocal
-                        this.returnTypeRef = firSuperProperty.returnTypeRef
-                        this.symbol = FirPropertySymbol(getCallableId(subClass, superProperty.name))
-                        this.isVar = firSuperProperty.isVar
-                    }
+        val delegateProperty =
+            declarationStorage.createIrProperty(
+                firDelegateProperty, subClass, origin = IrDeclarationOrigin.DELEGATED_MEMBER,
+                containingClass = firSubClass.symbol.toLookupTag()
+            )
+
+        delegateProperty.getter!!.body = createDelegateBody(irField, delegateProperty.getter!!, superProperty.getter!!)
+        delegateProperty.getter!!.overriddenSymbols =
+            firDelegateProperty.generateOverriddenAccessorSymbols(firSubClass, isGetter = true, session, scopeSession, declarationStorage)
+        if (delegateProperty.isVar) {
+            delegateProperty.setter!!.body = createDelegateBody(irField, delegateProperty.setter!!, superProperty.setter!!)
+            delegateProperty.setter!!.overriddenSymbols =
+                firDelegateProperty.generateOverriddenAccessorSymbols(
+                    firSubClass, isGetter = false, session, scopeSession, declarationStorage
                 )
-                subClass.addMember(this)
-            }
         }
+
+        return delegateProperty
     }
 
-    private fun getCallableId(irClass: IrClass, name: Name): CallableId {
-        val classId = irClass.classId
-        return if (classId != null) CallableId(classId, name) else CallableId(name)
-    }
 }

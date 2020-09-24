@@ -31,10 +31,7 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.isKFunctionInvoke
-import org.jetbrains.kotlin.fir.symbols.Fir2IrConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.Fir2IrPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.Fir2IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -82,6 +79,7 @@ class Fir2IrDeclarationStorage(
     private val initializerCache = mutableMapOf<FirAnonymousInitializer, IrAnonymousInitializer>()
 
     private val propertyCache = mutableMapOf<FirProperty, IrProperty>()
+    private val delegatedReverseCache = mutableMapOf<IrDeclaration, FirDeclaration>()
 
     private val fieldCache = mutableMapOf<FirField, IrField>()
 
@@ -371,9 +369,12 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    internal fun cacheIrSimpleFunction(function: FirSimpleFunction, irFunction: IrSimpleFunction) {
+    internal fun cacheDelegationFunction(function: FirSimpleFunction, irFunction: IrSimpleFunction) {
         functionCache[function] = irFunction
+        delegatedReverseCache[irFunction] = function
     }
+
+    fun originalDeclarationForDelegated(irDeclaration: IrDeclaration): FirDeclaration? = delegatedReverseCache[irDeclaration]
 
     internal fun declareIrSimpleFunction(
         signature: IdSignature?,
@@ -745,8 +746,9 @@ class Fir2IrDeclarationStorage(
 
     fun getCachedIrProperty(property: FirProperty): IrProperty? = propertyCache[property]
 
-    internal fun cacheIrProperty(property: FirProperty, irProperty: IrProperty) {
+    internal fun cacheDelegatedProperty(property: FirProperty, irProperty: IrProperty) {
         propertyCache[property] = irProperty
+        delegatedReverseCache[irProperty] = property
     }
 
     fun getCachedIrField(field: FirField): IrField? = fieldCache[field]
@@ -754,7 +756,7 @@ class Fir2IrDeclarationStorage(
     fun createIrFieldAndDelegatedMembers(field: FirField, owner: FirClass<*>, irClass: IrClass): IrField {
         val irField = createIrField(field, origin = IrDeclarationOrigin.DELEGATE)
         irField.setAndModifyParent(irClass)
-        delegatedMemberGenerator.generate(irField, owner, irClass)
+        delegatedMemberGenerator.generate(irField, field, owner, irClass)
         return irField
     }
 

@@ -52,10 +52,10 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <B> ($this:<root>.Test1<E of <root>.Test1>, a:E of <root>.Test1, b:B of <root>.Test1.foo) returnType:kotlin.Unit
       overridden:
         public abstract fun foo <B> (a: A of <root>.IBase, b: B of <root>.IBase.foo): kotlin.Unit declared in <root>.IBase
-      TYPE_PARAMETER DELEGATED_MEMBER name:B index:0 variance: superTypes:[kotlin.Any?]
-      $this: VALUE_PARAMETER DELEGATED_MEMBER name:<this> type:<root>.Test1<E of <root>.Test1>
-      VALUE_PARAMETER DELEGATED_MEMBER name:a index:0 type:E of <root>.Test1
-      VALUE_PARAMETER DELEGATED_MEMBER name:b index:1 type:B of <root>.Test1.foo
+      TYPE_PARAMETER name:B index:0 variance: superTypes:[kotlin.Any?]
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test1<E of <root>.Test1>
+      VALUE_PARAMETER name:a index:0 type:E of <root>.Test1
+      VALUE_PARAMETER name:b index:1 type:B of <root>.Test1.foo
       BLOCK_BODY
         CALL 'public abstract fun foo <B> (a: A of <root>.IBase, b: B of <root>.IBase.foo): kotlin.Unit declared in <root>.IBase' type=kotlin.Unit origin=null
           <B>: <none>
@@ -63,65 +63,81 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
             receiver: GET_VAR '<this>: <root>.Test1<E of <root>.Test1> declared in <root>.Test1.foo' type=<root>.Test1<E of <root>.Test1> origin=null
           a: GET_VAR 'a: E of <root>.Test1 declared in <root>.Test1.foo' type=E of <root>.Test1 origin=null
           b: GET_VAR 'b: B of <root>.Test1.foo declared in <root>.Test1.foo' type=B of <root>.Test1.foo origin=null
+    FUN DELEGATED_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Test1<E of <root>.Test1>, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test1<E of <root>.Test1>
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.Test1'
+          CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any' type=kotlin.Boolean origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase<E of <root>.Test1> visibility:local [final]' type=<root>.IBase<E of <root>.Test1> origin=null
+              receiver: GET_VAR '<this>: <root>.Test1<E of <root>.Test1> declared in <root>.Test1.equals' type=<root>.Test1<E of <root>.Test1> origin=null
+            other: GET_VAR 'other: kotlin.Any? declared in <root>.Test1.equals' type=kotlin.Any? origin=null
+    FUN DELEGATED_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.Test1<E of <root>.Test1>) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test1<E of <root>.Test1>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Test1'
+          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase<E of <root>.Test1> visibility:local [final]' type=<root>.IBase<E of <root>.Test1> origin=null
+              receiver: GET_VAR '<this>: <root>.Test1<E of <root>.Test1> declared in <root>.Test1.hashCode' type=<root>.Test1<E of <root>.Test1> origin=null
+    FUN DELEGATED_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.Test1<E of <root>.Test1>) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test1<E of <root>.Test1>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Test1'
+          CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase<E of <root>.Test1> visibility:local [final]' type=<root>.IBase<E of <root>.Test1> origin=null
+              receiver: GET_VAR '<this>: <root>.Test1<E of <root>.Test1> declared in <root>.Test1.toString' type=<root>.Test1<E of <root>.Test1> origin=null
     PROPERTY DELEGATED_MEMBER name:id visibility:public modality:OPEN [val]
-      FUN DELEGATED_MEMBER name:<get-id> visibility:public modality:OPEN <C> ($this:<root>.Test1<E of <root>.Test1>, $receiver:C of <root>.Test1.<get-id>) returnType:kotlin.collections.Map<A of <root>.IBase, C of <root>.IBase.<get-id>>?
+      FUN DELEGATED_MEMBER name:<get-id> visibility:public modality:OPEN <C> ($this:<root>.Test1<E of <root>.Test1>, $receiver:C of <root>.Test1.<get-id>) returnType:kotlin.collections.Map<E of <root>.Test1, C of <root>.Test1.<get-id>>?
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:id visibility:public modality:OPEN [val]
         overridden:
           public abstract fun <get-id> <C> (): kotlin.collections.Map<A of <root>.IBase, C of <root>.IBase.<get-id>>? declared in <root>.IBase
-        TYPE_PARAMETER DELEGATED_MEMBER name:C index:0 variance: superTypes:[kotlin.Any?]
-        $this: VALUE_PARAMETER DELEGATED_MEMBER name:<this> type:<root>.Test1<E of <root>.Test1>
-        $receiver: VALUE_PARAMETER DELEGATED_MEMBER name:<this> type:C of <root>.Test1.<get-id>
+        TYPE_PARAMETER name:C index:0 variance: superTypes:[kotlin.Any?]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test1<E of <root>.Test1>
+        $receiver: VALUE_PARAMETER name:<this> type:C of <root>.Test1.<get-id>
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public open fun <get-id> <C> (): kotlin.collections.Map<A of <root>.IBase, C of <root>.IBase.<get-id>>? declared in <root>.Test1'
+          RETURN type=kotlin.Nothing from='public open fun <get-id> <C> (): kotlin.collections.Map<E of <root>.Test1, C of <root>.Test1.<get-id>>? declared in <root>.Test1'
             CALL 'public abstract fun <get-id> <C> (): kotlin.collections.Map<A of <root>.IBase, C of <root>.IBase.<get-id>>? declared in <root>.IBase' type=kotlin.collections.Map<E of <root>.Test1, C of <root>.Test1.<get-id>>? origin=null
               <C>: <none>
               $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase<E of <root>.Test1> visibility:local [final]' type=<root>.IBase<E of <root>.Test1> origin=null
                 receiver: GET_VAR '<this>: <root>.Test1<E of <root>.Test1> declared in <root>.Test1.<get-id>' type=<root>.Test1<E of <root>.Test1> origin=null
               $receiver: GET_VAR '<this>: C of <root>.Test1.<get-id> declared in <root>.Test1.<get-id>' type=C of <root>.Test1.<get-id> origin=null
     PROPERTY DELEGATED_MEMBER name:x visibility:public modality:OPEN [var]
-      FUN DELEGATED_MEMBER name:<get-x> visibility:public modality:OPEN <D> ($this:<root>.Test1<E of <root>.Test1>, $receiver:kotlin.collections.List<D of <root>.Test1.<get-x>>) returnType:D of <root>.IBase.<get-x>?
+      FUN DELEGATED_MEMBER name:<get-x> visibility:public modality:OPEN <D> ($this:<root>.Test1<E of <root>.Test1>, $receiver:kotlin.collections.List<D of <root>.Test1.<get-x>>) returnType:D of <root>.Test1.<get-x>?
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:x visibility:public modality:OPEN [var]
         overridden:
           public abstract fun <get-x> <D> (): D of <root>.IBase.<get-x>? declared in <root>.IBase
-        TYPE_PARAMETER DELEGATED_MEMBER name:D index:0 variance: superTypes:[kotlin.Any?]
-        $this: VALUE_PARAMETER DELEGATED_MEMBER name:<this> type:<root>.Test1<E of <root>.Test1>
-        $receiver: VALUE_PARAMETER DELEGATED_MEMBER name:<this> type:kotlin.collections.List<D of <root>.Test1.<get-x>>
+        TYPE_PARAMETER name:D index:0 variance: superTypes:[kotlin.Any?]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test1<E of <root>.Test1>
+        $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.List<D of <root>.Test1.<get-x>>
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public open fun <get-x> <D> (): D of <root>.IBase.<get-x>? declared in <root>.Test1'
+          RETURN type=kotlin.Nothing from='public open fun <get-x> <D> (): D of <root>.Test1.<get-x>? declared in <root>.Test1'
             CALL 'public abstract fun <get-x> <D> (): D of <root>.IBase.<get-x>? declared in <root>.IBase' type=D of <root>.Test1.<get-x>? origin=null
               <D>: <none>
               $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase<E of <root>.Test1> visibility:local [final]' type=<root>.IBase<E of <root>.Test1> origin=null
                 receiver: GET_VAR '<this>: <root>.Test1<E of <root>.Test1> declared in <root>.Test1.<get-x>' type=<root>.Test1<E of <root>.Test1> origin=null
               $receiver: GET_VAR '<this>: kotlin.collections.List<D of <root>.Test1.<get-x>> declared in <root>.Test1.<get-x>' type=kotlin.collections.List<D of <root>.Test1.<get-x>> origin=null
-      FUN DELEGATED_MEMBER name:<set-x> visibility:public modality:OPEN <D> ($this:<root>.Test1<E of <root>.Test1>, $receiver:kotlin.collections.List<D of <root>.Test1.<set-x>>, <set-?>:D of <root>.Test1.<set-x>?) returnType:kotlin.Unit
+      FUN DELEGATED_MEMBER name:<set-x> visibility:public modality:OPEN <D> ($this:<root>.Test1<E of <root>.Test1>, $receiver:kotlin.collections.List<D of <root>.Test1.<get-x>>, <set-?>:D of <root>.Test1.<set-x>?) returnType:kotlin.Unit
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:x visibility:public modality:OPEN [var]
         overridden:
           public abstract fun <set-x> <D> (<set-?>: D of <root>.IBase.<set-x>?): kotlin.Unit declared in <root>.IBase
-        TYPE_PARAMETER DELEGATED_MEMBER name:D index:0 variance: superTypes:[kotlin.Any?]
-        $this: VALUE_PARAMETER DELEGATED_MEMBER name:<this> type:<root>.Test1<E of <root>.Test1>
-        $receiver: VALUE_PARAMETER DELEGATED_MEMBER name:<this> type:kotlin.collections.List<D of <root>.Test1.<set-x>>
-        VALUE_PARAMETER DELEGATED_MEMBER name:<set-?> index:0 type:D of <root>.Test1.<set-x>?
+        TYPE_PARAMETER name:D index:0 variance: superTypes:[kotlin.Any?]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test1<E of <root>.Test1>
+        $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.List<D of <root>.Test1.<get-x>>
+        VALUE_PARAMETER name:<set-?> index:0 type:D of <root>.Test1.<set-x>?
         BLOCK_BODY
           CALL 'public abstract fun <set-x> <D> (<set-?>: D of <root>.IBase.<set-x>?): kotlin.Unit declared in <root>.IBase' type=kotlin.Unit origin=null
             <D>: <none>
             $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase<E of <root>.Test1> visibility:local [final]' type=<root>.IBase<E of <root>.Test1> origin=null
               receiver: GET_VAR '<this>: <root>.Test1<E of <root>.Test1> declared in <root>.Test1.<set-x>' type=<root>.Test1<E of <root>.Test1> origin=null
-            $receiver: GET_VAR '<this>: kotlin.collections.List<D of <root>.Test1.<set-x>> declared in <root>.Test1.<set-x>' type=kotlin.collections.List<D of <root>.Test1.<set-x>> origin=null
+            $receiver: GET_VAR '<this>: kotlin.collections.List<D of <root>.Test1.<get-x>> declared in <root>.Test1.<set-x>' type=kotlin.collections.List<D of <root>.Test1.<get-x>> origin=null
             <set-?>: GET_VAR '<set-?>: D of <root>.Test1.<set-x>? declared in <root>.Test1.<set-x>' type=D of <root>.Test1.<set-x>? origin=null
     FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase<E of <root>.Test1> visibility:local [final]
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:Test2 modality:FINAL visibility:public superTypes:[<root>.IBase<kotlin.String>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2
     CONSTRUCTOR visibility:public <> (j:<root>.IBase<kotlin.String>) returnType:<root>.Test2 [primary]
@@ -154,10 +170,10 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <B> ($this:<root>.Test2, a:kotlin.String, b:B of <root>.Test2.foo) returnType:kotlin.Unit
       overridden:
         public abstract fun foo <B> (a: A of <root>.IBase, b: B of <root>.IBase.foo): kotlin.Unit declared in <root>.IBase
-      TYPE_PARAMETER DELEGATED_MEMBER name:B index:0 variance: superTypes:[kotlin.Any?]
-      $this: VALUE_PARAMETER DELEGATED_MEMBER name:<this> type:<root>.Test2
-      VALUE_PARAMETER DELEGATED_MEMBER name:a index:0 type:kotlin.String
-      VALUE_PARAMETER DELEGATED_MEMBER name:b index:1 type:B of <root>.Test2.foo
+      TYPE_PARAMETER name:B index:0 variance: superTypes:[kotlin.Any?]
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+      VALUE_PARAMETER name:a index:0 type:kotlin.String
+      VALUE_PARAMETER name:b index:1 type:B of <root>.Test2.foo
       BLOCK_BODY
         CALL 'public abstract fun foo <B> (a: A of <root>.IBase, b: B of <root>.IBase.foo): kotlin.Unit declared in <root>.IBase' type=kotlin.Unit origin=null
           <B>: <none>
@@ -165,62 +181,78 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
             receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.foo' type=<root>.Test2 origin=null
           a: GET_VAR 'a: kotlin.String declared in <root>.Test2.foo' type=kotlin.String origin=null
           b: GET_VAR 'b: B of <root>.Test2.foo declared in <root>.Test2.foo' type=B of <root>.Test2.foo origin=null
+    FUN DELEGATED_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Test2, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.Test2'
+          CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any' type=kotlin.Boolean origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase<kotlin.String> visibility:local [final]' type=<root>.IBase<kotlin.String> origin=null
+              receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.equals' type=<root>.Test2 origin=null
+            other: GET_VAR 'other: kotlin.Any? declared in <root>.Test2.equals' type=kotlin.Any? origin=null
+    FUN DELEGATED_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.Test2) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Test2'
+          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase<kotlin.String> visibility:local [final]' type=<root>.IBase<kotlin.String> origin=null
+              receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.hashCode' type=<root>.Test2 origin=null
+    FUN DELEGATED_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.Test2) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Test2'
+          CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase<kotlin.String> visibility:local [final]' type=<root>.IBase<kotlin.String> origin=null
+              receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.toString' type=<root>.Test2 origin=null
     PROPERTY DELEGATED_MEMBER name:id visibility:public modality:OPEN [val]
-      FUN DELEGATED_MEMBER name:<get-id> visibility:public modality:OPEN <C> ($this:<root>.Test2, $receiver:C of <root>.Test2.<get-id>) returnType:kotlin.collections.Map<A of <root>.IBase, C of <root>.IBase.<get-id>>?
+      FUN DELEGATED_MEMBER name:<get-id> visibility:public modality:OPEN <C> ($this:<root>.Test2, $receiver:C of <root>.Test2.<get-id>) returnType:kotlin.collections.Map<kotlin.String, C of <root>.Test2.<get-id>>?
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:id visibility:public modality:OPEN [val]
         overridden:
           public abstract fun <get-id> <C> (): kotlin.collections.Map<A of <root>.IBase, C of <root>.IBase.<get-id>>? declared in <root>.IBase
-        TYPE_PARAMETER DELEGATED_MEMBER name:C index:0 variance: superTypes:[kotlin.Any?]
-        $this: VALUE_PARAMETER DELEGATED_MEMBER name:<this> type:<root>.Test2
-        $receiver: VALUE_PARAMETER DELEGATED_MEMBER name:<this> type:C of <root>.Test2.<get-id>
+        TYPE_PARAMETER name:C index:0 variance: superTypes:[kotlin.Any?]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+        $receiver: VALUE_PARAMETER name:<this> type:C of <root>.Test2.<get-id>
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public open fun <get-id> <C> (): kotlin.collections.Map<A of <root>.IBase, C of <root>.IBase.<get-id>>? declared in <root>.Test2'
+          RETURN type=kotlin.Nothing from='public open fun <get-id> <C> (): kotlin.collections.Map<kotlin.String, C of <root>.Test2.<get-id>>? declared in <root>.Test2'
             CALL 'public abstract fun <get-id> <C> (): kotlin.collections.Map<A of <root>.IBase, C of <root>.IBase.<get-id>>? declared in <root>.IBase' type=kotlin.collections.Map<kotlin.String, C of <root>.Test2.<get-id>>? origin=null
               <C>: <none>
               $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase<kotlin.String> visibility:local [final]' type=<root>.IBase<kotlin.String> origin=null
                 receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<get-id>' type=<root>.Test2 origin=null
               $receiver: GET_VAR '<this>: C of <root>.Test2.<get-id> declared in <root>.Test2.<get-id>' type=C of <root>.Test2.<get-id> origin=null
     PROPERTY DELEGATED_MEMBER name:x visibility:public modality:OPEN [var]
-      FUN DELEGATED_MEMBER name:<get-x> visibility:public modality:OPEN <D> ($this:<root>.Test2, $receiver:kotlin.collections.List<D of <root>.Test2.<get-x>>) returnType:D of <root>.IBase.<get-x>?
+      FUN DELEGATED_MEMBER name:<get-x> visibility:public modality:OPEN <D> ($this:<root>.Test2, $receiver:kotlin.collections.List<D of <root>.Test2.<get-x>>) returnType:D of <root>.Test2.<get-x>?
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:x visibility:public modality:OPEN [var]
         overridden:
           public abstract fun <get-x> <D> (): D of <root>.IBase.<get-x>? declared in <root>.IBase
-        TYPE_PARAMETER DELEGATED_MEMBER name:D index:0 variance: superTypes:[kotlin.Any?]
-        $this: VALUE_PARAMETER DELEGATED_MEMBER name:<this> type:<root>.Test2
-        $receiver: VALUE_PARAMETER DELEGATED_MEMBER name:<this> type:kotlin.collections.List<D of <root>.Test2.<get-x>>
+        TYPE_PARAMETER name:D index:0 variance: superTypes:[kotlin.Any?]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+        $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.List<D of <root>.Test2.<get-x>>
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public open fun <get-x> <D> (): D of <root>.IBase.<get-x>? declared in <root>.Test2'
+          RETURN type=kotlin.Nothing from='public open fun <get-x> <D> (): D of <root>.Test2.<get-x>? declared in <root>.Test2'
             CALL 'public abstract fun <get-x> <D> (): D of <root>.IBase.<get-x>? declared in <root>.IBase' type=D of <root>.Test2.<get-x>? origin=null
               <D>: <none>
               $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase<kotlin.String> visibility:local [final]' type=<root>.IBase<kotlin.String> origin=null
                 receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<get-x>' type=<root>.Test2 origin=null
               $receiver: GET_VAR '<this>: kotlin.collections.List<D of <root>.Test2.<get-x>> declared in <root>.Test2.<get-x>' type=kotlin.collections.List<D of <root>.Test2.<get-x>> origin=null
-      FUN DELEGATED_MEMBER name:<set-x> visibility:public modality:OPEN <D> ($this:<root>.Test2, $receiver:kotlin.collections.List<D of <root>.Test2.<set-x>>, <set-?>:D of <root>.Test2.<set-x>?) returnType:kotlin.Unit
+      FUN DELEGATED_MEMBER name:<set-x> visibility:public modality:OPEN <D> ($this:<root>.Test2, $receiver:kotlin.collections.List<D of <root>.Test2.<get-x>>, <set-?>:D of <root>.Test2.<set-x>?) returnType:kotlin.Unit
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:x visibility:public modality:OPEN [var]
         overridden:
           public abstract fun <set-x> <D> (<set-?>: D of <root>.IBase.<set-x>?): kotlin.Unit declared in <root>.IBase
-        TYPE_PARAMETER DELEGATED_MEMBER name:D index:0 variance: superTypes:[kotlin.Any?]
-        $this: VALUE_PARAMETER DELEGATED_MEMBER name:<this> type:<root>.Test2
-        $receiver: VALUE_PARAMETER DELEGATED_MEMBER name:<this> type:kotlin.collections.List<D of <root>.Test2.<set-x>>
-        VALUE_PARAMETER DELEGATED_MEMBER name:<set-?> index:0 type:D of <root>.Test2.<set-x>?
+        TYPE_PARAMETER name:D index:0 variance: superTypes:[kotlin.Any?]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+        $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.List<D of <root>.Test2.<get-x>>
+        VALUE_PARAMETER name:<set-?> index:0 type:D of <root>.Test2.<set-x>?
         BLOCK_BODY
           CALL 'public abstract fun <set-x> <D> (<set-?>: D of <root>.IBase.<set-x>?): kotlin.Unit declared in <root>.IBase' type=kotlin.Unit origin=null
             <D>: <none>
             $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase<kotlin.String> visibility:local [final]' type=<root>.IBase<kotlin.String> origin=null
               receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<set-x>' type=<root>.Test2 origin=null
-            $receiver: GET_VAR '<this>: kotlin.collections.List<D of <root>.Test2.<set-x>> declared in <root>.Test2.<set-x>' type=kotlin.collections.List<D of <root>.Test2.<set-x>> origin=null
+            $receiver: GET_VAR '<this>: kotlin.collections.List<D of <root>.Test2.<get-x>> declared in <root>.Test2.<set-x>' type=kotlin.collections.List<D of <root>.Test2.<get-x>> origin=null
             <set-?>: GET_VAR '<set-?>: D of <root>.Test2.<set-x>? declared in <root>.Test2.<set-x>' type=D of <root>.Test2.<set-x>? origin=null
     FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase<kotlin.String> visibility:local [final]
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
