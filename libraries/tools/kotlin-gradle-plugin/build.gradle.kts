@@ -53,7 +53,7 @@ dependencies {
     compile("com.google.code.gson:gson:${rootProject.extra["versions.jar.gson"]}")
     compile("de.undercouch:gradle-download-task:4.0.2")
     implementation("com.github.gundy:semver4j:0.16.4")
-    
+
     compileOnly("com.android.tools.build:gradle:2.0.0")
     compileOnly("com.android.tools.build:gradle-core:2.0.0")
     compileOnly("com.android.tools.build:builder:2.0.0")
@@ -79,8 +79,9 @@ dependencies {
     compileOnly("com.android.tools.build:gradle:3.0.0") { isTransitive = false }
     compileOnly("com.android.tools.build:gradle-core:3.0.0") { isTransitive = false }
     compileOnly("com.android.tools.build:builder-model:3.0.0") { isTransitive = false }
+    testImplementation("com.android.tools.build:gradle:4.0.1")
 
-    testCompile(intellijDep()) { includeJars( "junit", "serviceMessages", rootProject = rootProject) }
+    testCompile(intellijDep()) { includeJars("junit", "serviceMessages", rootProject = rootProject) }
 
     testCompileOnly(project(":compiler"))
     testCompile(projectTests(":kotlin-build-common"))
@@ -103,7 +104,7 @@ runtimeJar(rewriteDefaultJarDepsToShadedCompiler()).configure {
 
     from {
         jarContents.asFileTree.map {
-            if (it.endsWith(".jar")) zipTree(it) 
+            if (it.endsWith(".jar")) zipTree(it)
             else it
         }
     }
