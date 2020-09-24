@@ -128,6 +128,8 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
     <statistics.projectUsagesCollector implementation="org.jetbrains.kotlin.idea.IDESettingsFUSCollector"/>
     <statistics.projectUsagesCollector implementation="org.jetbrains.kotlin.idea.formatter.KotlinFormatterUsageCollector"/>
     <statistics.projectUsagesCollector implementation="org.jetbrains.kotlin.idea.statistics.ProjectConfigurationCollector"/>
+    <fileTypeUsageSchemaDescriptor schema="Kotlin" implementationClass="org.jetbrains.kotlin.idea.completion.KotlinFileTypeSchemaDetector"/>
+    <fileTypeUsageSchemaDescriptor schema="Kotlin Script" implementationClass="org.jetbrains.kotlin.idea.completion.KotlinScriptFileTypeSchemaDetector"/>
     <fileTypeUsageSchemaDescriptor schema="Gradle Script" implementationClass="org.jetbrains.kotlin.idea.core.script.KotlinGradleScriptFileTypeSchemaDetector"/>
 
     <completion.ml.model implementation="org.jetbrains.kotlin.idea.completion.ml.KotlinMLRankingProvider"/>
