@@ -18,6 +18,7 @@ final class User$Companion : java/lang/Object, kotlinx/parcelize/Parceler {
 
     public java.lang.Object[] newArray(int size) {
         LABEL (L0)
+        LINENUMBER (10)
           ALOAD (0)
           ILOAD (1)
           INVOKEVIRTUAL (User$Companion, newArray, (I)[LUser;)
