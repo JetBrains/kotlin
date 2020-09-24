@@ -53,11 +53,15 @@ class ProjectConfigurationCollector : ProjectUsagesCollector() {
     }
 
     private fun getPlatform(it: Module): String {
+
         return when {
-            it.platform.isJvm() -> "jvm"
+            it.platform.isJvm() -> {
+                if (it.name.contains("android")) "jvm.android"
+                else "jvm"
+            }
             it.platform.isJs() -> "js"
             it.platform.isCommon() -> "common"
-            it.platform.isNative() -> "native"
+            it.platform.isNative() -> "native." + (it.platform?.componentPlatforms?.first()?.targetName ?: "unknown")
             else -> "unknown"
         }
     }
