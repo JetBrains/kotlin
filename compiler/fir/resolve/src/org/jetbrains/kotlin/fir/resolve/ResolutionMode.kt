@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 
 sealed class ResolutionMode {
     object ContextDependent : ResolutionMode()
@@ -22,6 +24,13 @@ sealed class ResolutionMode {
 
 fun withExpectedType(expectedTypeRef: FirTypeRef?): ResolutionMode =
     expectedTypeRef?.let { ResolutionMode.WithExpectedType(it) } ?: ResolutionMode.ContextDependent
+
+fun withExpectedType(coneType: ConeKotlinType): ResolutionMode {
+    val typeRef = buildResolvedTypeRef {
+        type = coneType
+    }
+    return ResolutionMode.WithExpectedType(typeRef)
+}
 
 fun FirDeclarationStatus.mode(): ResolutionMode =
     ResolutionMode.WithStatus(this)

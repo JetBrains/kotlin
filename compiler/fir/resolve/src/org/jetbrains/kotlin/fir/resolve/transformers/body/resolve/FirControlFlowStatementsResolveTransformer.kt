@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
 import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessTransformer
+import org.jetbrains.kotlin.fir.resolve.withExpectedType
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -114,8 +115,10 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
 
     override fun transformWhenBranch(whenBranch: FirWhenBranch, data: ResolutionMode): CompositeTransformResult<FirWhenBranch> {
         return whenBranch.also { dataFlowAnalyzer.enterWhenBranchCondition(whenBranch) }
-            .transformCondition(transformer, data).also { dataFlowAnalyzer.exitWhenBranchCondition(it) }
-            .transformResult(transformer, data).also { dataFlowAnalyzer.exitWhenBranchResult(it) }
+            .transformCondition(transformer, withExpectedType(session.builtinTypes.booleanType))
+            .also { dataFlowAnalyzer.exitWhenBranchCondition(it) }
+            .transformResult(transformer, data)
+            .also { dataFlowAnalyzer.exitWhenBranchResult(it) }
             .compose()
     }
 

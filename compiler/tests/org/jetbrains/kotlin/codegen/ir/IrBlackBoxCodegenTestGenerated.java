@@ -13179,6 +13179,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/inference/kt39824.kt");
         }
 
+        @TestMetadata("kt42130.kt")
+        public void testKt42130() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/kt42130.kt");
+        }
+
         @TestMetadata("lambdasWithExtensionFunctionType.kt")
         public void testLambdasWithExtensionFunctionType() throws Exception {
             runTest("compiler/testData/codegen/box/inference/lambdasWithExtensionFunctionType.kt");
