@@ -10,7 +10,7 @@ class KotlinMoveRefactoringFUSCollector : CounterUsagesCollector() {
     override fun getGroup(): EventLogGroup = GROUP
 
     companion object {
-        private val GROUP = EventLogGroup("kotlin.ide.refactoring.move", 1)
+        private val GROUP = EventLogGroup("kotlin.ide.refactoring.move", 2)
 
         private val lagging = EventFields.Long("lagging")
         private val entity = EventFields.Enum("entity", MovedEntity::class.java)

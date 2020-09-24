@@ -23,7 +23,7 @@ class WizardStatsService : CounterUsagesCollector() {
     override fun getGroup(): EventLogGroup = GROUP
 
     companion object {
-        private val GROUP = EventLogGroup("kotlin.ide.new.project", 1)
+        private val GROUP = EventLogGroup("kotlin.ide.new.project", 2)
 
         private const val eventProjectCreated = "project_created"
         private const val eventProjectOpenedByHyperlink = "wizard_opened_by_hyperlink"

@@ -10,7 +10,7 @@ class KotlinCreateFileFUSCollector : CounterUsagesCollector() {
     override fun getGroup(): EventLogGroup = GROUP
 
     companion object {
-        private val GROUP = EventLogGroup("kotlin.ide.new.file", 1)
+        private val GROUP = EventLogGroup("kotlin.ide.new.file", 2)
 
         private val pluginInfo = getPluginInfoById(KotlinPluginUtil.KOTLIN_PLUGIN_ID)
 
