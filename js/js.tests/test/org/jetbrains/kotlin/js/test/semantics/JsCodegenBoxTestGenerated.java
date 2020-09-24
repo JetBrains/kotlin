@@ -41,11 +41,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
         }
 
-        @TestMetadata("annotationTargets.kt")
-        public void testAnnotationTargets() throws Exception {
-            runTest("compiler/testData/codegen/box/annotations/annotationTargets.kt");
-        }
-
         @TestMetadata("nestedAnnotation.kt")
         public void testNestedAnnotation() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/nestedAnnotation.kt");
@@ -108,11 +103,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("argumentOrderInObjectSuperCall.kt")
         public void testArgumentOrderInObjectSuperCall() throws Exception {
             runTest("compiler/testData/codegen/box/argumentOrder/argumentOrderInObjectSuperCall.kt");
-        }
-
-        @TestMetadata("argumentOrderInObjectSuperCallWithPlatformType.kt")
-        public void testArgumentOrderInObjectSuperCallWithPlatformType() throws Exception {
-            runTest("compiler/testData/codegen/box/argumentOrder/argumentOrderInObjectSuperCallWithPlatformType.kt");
         }
 
         @TestMetadata("argumentOrderInSuperCall.kt")
@@ -12085,6 +12075,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("toStringCallingPrivateFun.kt")
         public void testToStringCallingPrivateFun() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/toStringCallingPrivateFun.kt");
+        }
+
+        @TestMetadata("toStringOfUnboxedNullable.kt")
+        public void testToStringOfUnboxedNullable() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/toStringOfUnboxedNullable.kt");
         }
 
         @TestMetadata("typeChecksForInlineClasses.kt")

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.JvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -102,19 +103,23 @@ private class JvmStringConcatenationLowering(val context: JvmBackendContext) : F
         }
     }
 
-    private fun JvmIrBuilder.lowerInlineClassArgument(expression: IrExpression): IrExpression {
-        if (expression.type.unboxInlineClass() == expression.type)
-            return expression
-
+    private fun JvmIrBuilder.lowerInlineClassArgument(expression: IrExpression): IrExpression? {
+        if (InlineClassAbi.unboxType(expression.type) == null)
+            return null
         val toStringFunction = expression.type.classOrNull?.owner?.toStringFunction
-            ?: return expression
-
+            ?: return null
         val toStringReplacement = backendContext.inlineClassReplacements.getReplacementFunction(toStringFunction)
-            ?: return expression
-
-        return irCall(toStringReplacement).apply {
-            putValueArgument(0, expression)
-        }
+            ?: return null
+        // `C?` can only be unboxed if it wraps a reference type `T!!`, in which case the unboxed type
+        // is `T?`. We can't pass that to `C.toString-impl` without checking for `null`.
+        return if (expression.type.isNullable())
+            irLetS(expression) {
+                irIfNull(context.irBuiltIns.stringType, irGet(it.owner), irString(null.toString()), irCall(toStringReplacement).apply {
+                    putValueArgument(0, irGet(it.owner))
+                })
+            }
+        else
+            irCall(toStringReplacement).apply { putValueArgument(0, expression) }
     }
 
     override fun visitStringConcatenation(expression: IrStringConcatenation): IrExpression {
@@ -131,22 +136,19 @@ private class JvmStringConcatenationLowering(val context: JvmBackendContext) : F
                 else
                     this
 
-
-            val arguments = expression.arguments.map { lowerInlineClassArgument(it) }
-
+            val arguments = expression.arguments
             when {
                 arguments.isEmpty() ->
                     irString("")
 
                 arguments.size == 1 ->
-                    callToString(arguments.single().unwrapImplicitNotNull())
+                    lowerInlineClassArgument(arguments[0]) ?: callToString(arguments[0].unwrapImplicitNotNull())
 
                 arguments.size == 2 && arguments[0].type.isStringClassType() ->
                     irCall(backendContext.ir.symbols.intrinsicStringPlus).apply {
-                        putValueArgument(0, arguments[0].unwrapImplicitNotNull())
-
+                        putValueArgument(0, lowerInlineClassArgument(arguments[0]) ?: arguments[0].unwrapImplicitNotNull())
                         // Unwrapping IMPLICIT_NOTNULL is not strictly necessary on 2nd argument (parameter type is `Any?`)
-                        putValueArgument(1, arguments[1])
+                        putValueArgument(1, lowerInlineClassArgument(arguments[1]) ?: arguments[1])
                     }
 
                 else -> {
@@ -156,10 +158,9 @@ private class JvmStringConcatenationLowering(val context: JvmBackendContext) : F
                         val appendFunction = typeToAppendFunction(argument.type)
                         stringBuilder = irCall(appendFunction).apply {
                             dispatchReceiver = stringBuilder
-
                             // Unwrapping IMPLICIT_NOTNULL is necessary for ALL arguments. There could be a call to `String.plus(Any?)`
                             // anywhere in the flattened IrStringConcatenation expression, e.g., `"foo" + (Java.platformString() + 123)`.
-                            putValueArgument(0, argument.unwrapImplicitNotNull())
+                            putValueArgument(0, lowerInlineClassArgument(argument) ?: argument.unwrapImplicitNotNull())
                         }
                     }
                     irCall(toStringFunction).apply {
