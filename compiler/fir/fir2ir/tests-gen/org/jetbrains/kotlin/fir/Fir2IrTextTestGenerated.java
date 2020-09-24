@@ -2210,6 +2210,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/types/starProjection_OI.kt");
         }
 
+        @TestMetadata("typeAliasWithUnsafeVariance.kt")
+        public void testTypeAliasWithUnsafeVariance() throws Exception {
+            runTest("compiler/testData/ir/irText/types/typeAliasWithUnsafeVariance.kt");
+        }
+
         @TestMetadata("compiler/testData/ir/irText/types/nullChecks")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
