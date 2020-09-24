@@ -24222,6 +24222,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/typeParameters/implicitNothingInReturnPosition.kt");
             }
 
+            @TestMetadata("implicitNothingOfJavaCallAgainstNotNothingExpectedType.kt")
+            public void testImplicitNothingOfJavaCallAgainstNotNothingExpectedType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typeParameters/implicitNothingOfJavaCallAgainstNotNothingExpectedType.kt");
+            }
+
             @TestMetadata("implicitNothingOnDelegates.kt")
             public void testImplicitNothingOnDelegates() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/typeParameters/implicitNothingOnDelegates.kt");
