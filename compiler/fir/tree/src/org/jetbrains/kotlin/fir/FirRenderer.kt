@@ -955,8 +955,8 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         if (isFakeOverride) {
             print("FakeOverride<")
         }
-        print(symbol.render())
 
+        print(symbol.unwrapIntersectionOverrides().render())
 
         if (resolvedNamedReference is FirResolvedCallableReference) {
             if (resolvedNamedReference.inferredTypeArguments.isNotEmpty()) {
@@ -982,6 +982,11 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
             print(">")
         }
         print("|")
+    }
+
+    private fun AbstractFirBasedSymbol<*>.unwrapIntersectionOverrides(): AbstractFirBasedSymbol<*> {
+        if (this is FirCallableSymbol<*> && isIntersectionOverride) return overriddenSymbol!!.unwrapIntersectionOverrides()
+        return this
     }
 
     override fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference) {
