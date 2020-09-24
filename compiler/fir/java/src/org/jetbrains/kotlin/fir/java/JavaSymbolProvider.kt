@@ -196,7 +196,6 @@ class JavaSymbolProvider(
                 isInline = false
                 isFun = classKind == ClassKind.INTERFACE
             }
-            addAnnotationsFrom(this@JavaSymbolProvider.session, javaClass, javaTypeParameterStack)
             // TODO: may be we can process fields & methods later.
             // However, they should be built up to override resolve stage
             for (javaField in javaClass.fields) {
@@ -257,6 +256,7 @@ class JavaSymbolProvider(
                 )
             }
         )
+        firJavaClass.addAnnotationsFrom(this@JavaSymbolProvider.session, javaClass, javaTypeParameterStack)
         return firJavaClass
     }
 

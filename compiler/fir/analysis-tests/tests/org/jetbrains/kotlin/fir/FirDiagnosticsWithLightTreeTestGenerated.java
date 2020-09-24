@@ -520,6 +520,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/analysis-tests/testData/resolve/arguments/javaArrayVariance.kt");
         }
 
+        @TestMetadata("kt41940.kt")
+        public void testKt41940() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/arguments/kt41940.kt");
+        }
+
         @TestMetadata("lambda.kt")
         public void testLambda() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/arguments/lambda.kt");

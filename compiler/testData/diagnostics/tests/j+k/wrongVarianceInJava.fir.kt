@@ -19,6 +19,6 @@ class In<in F> {
 }
 
 fun test() {
-    A.foo().<!UNRESOLVED_REFERENCE!>x<!>() <!INAPPLICABLE_CANDIDATE!>checkType<!> { _<Any?>() }
-    A.bar().<!UNRESOLVED_REFERENCE!>y<!>(null)
+    A.foo().x() checkType { _<Any?>() }
+    A.bar().<!INAPPLICABLE_CANDIDATE!>y<!>(null)
 }
