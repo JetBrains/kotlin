@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.name.Name
 abstract class FirSyntheticNamesProvider : FirSessionComponent {
     abstract fun possibleGetterNamesByPropertyName(name: Name): List<Name>
     abstract fun setterNameByGetterName(name: Name): Name
+    abstract fun propertyNameByAccessorName(name: Name): Name?
 }
 
 val FirSession.syntheticNamesProvider: FirSyntheticNamesProvider by FirSession.sessionComponentAccessor()
