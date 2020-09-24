@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirFileImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirRegularClassImpl
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -129,9 +130,12 @@ val FirProperty.hasBackingField: Boolean
             isReferredViaField == true
 
 inline val FirProperty.hasJvmFieldAnnotation: Boolean
-    get() = annotations.any {
-        val classId = it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.classId
-        classId?.packageFqName?.asString() == "kotlin.jvm" && classId.relativeClassName.asString() == "JvmField"
+    get() = annotations.any { it.isJvmFieldAnnotation }
+
+inline val FirAnnotationCall.isJvmFieldAnnotation: Boolean
+    get() {
+        val classId = annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.classId
+        return classId?.packageFqName?.asString() == "kotlin.jvm" && classId.relativeClassName.asString() == "JvmField"
     }
 
 fun FirAnnotatedDeclaration.hasAnnotation(classId: ClassId): Boolean {
