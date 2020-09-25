@@ -6,4 +6,8 @@ interface Base {
     fun expectInArgument(e: Expect)
 
     fun Expect.expectInReceiver()
+
+    val expectVal: Expect
+
+    var expectVar: Expect
 }
