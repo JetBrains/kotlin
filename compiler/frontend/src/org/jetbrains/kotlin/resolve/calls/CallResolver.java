@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.*;
@@ -334,8 +335,12 @@ public class CallResolver {
             KtConstructorDelegationCall delegationCall = (KtConstructorDelegationCall) context.call.getCallElement();
             DeclarationDescriptor container = context.scope.getOwnerDescriptor();
             assert container instanceof ConstructorDescriptor : "Trying to resolve JetConstructorDelegationCall not in constructor. scope.ownerDescriptor = " + container;
-            return (OverloadResolutionResults) resolveConstructorDelegationCall(context, delegationCall, (KtConstructorDelegationReferenceExpression) calleeExpression,
-                                                    (ClassConstructorDescriptor) container);
+            return (OverloadResolutionResults) resolveConstructorDelegationCall(
+                    context,
+                    delegationCall,
+                    (KtConstructorDelegationReferenceExpression) calleeExpression,
+                    (ClassDescriptor) container.getContainingDeclaration()
+            );
         }
         else if (calleeExpression == null) {
             return checkArgumentTypesAndFail(context);
@@ -433,18 +438,28 @@ public class CallResolver {
                 dataFlowValueFactory,
                 InferenceSession.Companion.getDefault());
 
-        if (call.getCalleeExpression() == null) return checkArgumentTypesAndFail(context);
+        KtConstructorDelegationReferenceExpression calleeExpression = call.getCalleeExpression();
+
+        if (calleeExpression == null) return checkArgumentTypesAndFail(context);
+
+        ClassDescriptor currentClassDescriptor = constructorDescriptor.getContainingDeclaration();
 
         if (constructorDescriptor.getConstructedClass().getKind() == ClassKind.ENUM_CLASS && call.isImplicit()) {
+            if (currentClassDescriptor.getUnsubstitutedPrimaryConstructor() != null) {
+                DiagnosticFactory0<KtConstructorDelegationCall> warningOrError;
+
+                if (languageVersionSettings.supportsFeature(LanguageFeature.RequiredPrimaryConstructorDelegationCallInEnums)) {
+                    warningOrError = PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED; // error
+                } else {
+                    warningOrError = PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED_IN_ENUM; // warning
+                }
+
+                context.trace.report(warningOrError.on((KtConstructorDelegationCall) calleeExpression.getParent()));
+            }
             return null;
         }
 
-        return resolveConstructorDelegationCall(
-                context,
-                call,
-                call.getCalleeExpression(),
-                constructorDescriptor
-        );
+        return resolveConstructorDelegationCall(context, call, call.getCalleeExpression(), currentClassDescriptor);
     }
 
     @NotNull
@@ -452,11 +467,9 @@ public class CallResolver {
             @NotNull BasicCallResolutionContext context,
             @NotNull KtConstructorDelegationCall call,
             @NotNull KtConstructorDelegationReferenceExpression calleeExpression,
-            @NotNull ClassConstructorDescriptor calleeConstructor
+            @NotNull ClassDescriptor currentClassDescriptor
     ) {
         context.trace.record(BindingContext.LEXICAL_SCOPE, call, context.scope);
-
-        ClassDescriptor currentClassDescriptor = calleeConstructor.getContainingDeclaration();
 
         boolean isThisCall = calleeExpression.isThis();
         if (currentClassDescriptor.getKind() == ClassKind.ENUM_CLASS && !isThisCall) {
@@ -484,9 +497,8 @@ public class CallResolver {
         }
 
 
-        KotlinType superType = isThisCall ?
-                                  calleeConstructor.getContainingDeclaration().getDefaultType() :
-                                  DescriptorUtils.getSuperClassType(currentClassDescriptor);
+        KotlinType superType =
+                isThisCall ? currentClassDescriptor.getDefaultType() : DescriptorUtils.getSuperClassType(currentClassDescriptor);
 
         Pair<Collection<ResolutionCandidate<ConstructorDescriptor>>, BasicCallResolutionContext> candidatesAndContext =
                 prepareCandidatesAndContextForConstructorCall(superType, context, syntheticScopes);
