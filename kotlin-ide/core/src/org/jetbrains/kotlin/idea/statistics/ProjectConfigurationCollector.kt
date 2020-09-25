@@ -7,8 +7,11 @@ package org.jetbrains.kotlin.idea.statistics
 
 import com.intellij.facet.ProjectFacetManager
 import com.intellij.internal.statistic.beans.MetricEvent
-import com.intellij.internal.statistic.eventLog.FeatureUsageData
+import com.intellij.internal.statistic.eventLog.EventLogGroup
+import com.intellij.internal.statistic.eventLog.events.EventFields
+import com.intellij.internal.statistic.eventLog.events.EventPair
 import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesCollector
+import com.intellij.internal.statistic.utils.getPluginInfoById
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
@@ -16,14 +19,16 @@ import org.jetbrains.kotlin.idea.PlatformVersion
 import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
-import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 
 class ProjectConfigurationCollector : ProjectUsagesCollector() {
+
+    override fun getGroup() = GROUP
 
     override fun getMetrics(project: Project): Set<MetricEvent> {
         if (PlatformVersion.isAndroidStudio()) {
@@ -33,22 +38,16 @@ class ProjectConfigurationCollector : ProjectUsagesCollector() {
         val modulesWithFacet = ProjectFacetManager.getInstance(project).getModulesWithFacet(KotlinFacetType.TYPE_ID)
 
         if (modulesWithFacet.isNotEmpty()) {
-            val pluginVersion = KotlinPluginUtil.getPluginVersion()
             modulesWithFacet.forEach {
-
                 val buildSystem = getBuildSystemType(it)
                 val platform = getPlatform(it)
-                val languageVersion = it.languageVersionSettings.languageVersion.versionString
-
-                val data = FeatureUsageData()
-                    .addData("pluginVersion", pluginVersion)
-                    .addData("system", buildSystem)
-                    .addData("platform", platform)
-                    .addData("languageVersion", languageVersion)
-                val usageDescriptor = MetricEvent("Build", data)
-                metrics.add(usageDescriptor)
+                metrics.add(buildEvent.metric(EventPair(systemField, buildSystem)))
+                metrics.add(buildEvent.metric(EventPair(platformField, platform)))
             }
         }
+
+        val pluginInfo = getPluginInfoById(KotlinPluginUtil.KOTLIN_PLUGIN_ID)
+        metrics.add(buildEvent.metric(EventPair(pluginInfoField, pluginInfo)))
         return metrics
     }
 
@@ -76,6 +75,26 @@ class ProjectConfigurationCollector : ProjectUsagesCollector() {
         }
     }
 
-    override fun getGroupId() = "kotlin.project.configuration"
-    override fun getVersion(): Int = 1
+    companion object {
+        private val GROUP = EventLogGroup("kotlin.project.configuration", 2)
+
+        private val systemField = EventFields.String("system", listOf("JPS", "Maven", "Gradle", "unknown"))
+        private val platformField = EventFields.String("platform", composePlatformFields())
+        private val pluginInfoField = EventFields.PluginInfo
+
+        private fun composePlatformFields(): List<String> {
+            return listOf(
+                listOf("jvm", "jvm.android", "js", "common", "native.unknown", "unknown"),
+                KonanTarget.predefinedTargets.keys
+            ).flatten()
+        }
+
+        private val buildEvent = GROUP.registerVarargEvent(
+            "Build",
+            systemField,
+            platformField,
+            pluginInfoField
+        )
+
+    }
 }
