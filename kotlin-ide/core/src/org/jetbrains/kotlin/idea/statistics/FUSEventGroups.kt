@@ -16,7 +16,6 @@ enum class FUSEventGroups(groupIdSuffix: String, val events: Set<String> = setOf
 
     Debug("ide.debugger"),
     J2K("ide.j2k"),
-    Editor("ide.editor"),
     MigrationTool("ide.migrationTool"),
     GradlePerformance("gradle.performance");
 
