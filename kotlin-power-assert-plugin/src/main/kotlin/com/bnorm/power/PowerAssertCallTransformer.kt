@@ -16,6 +16,7 @@
 
 package com.bnorm.power
 
+import com.bnorm.power.internal.ReturnableBlockTransformer
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
@@ -120,7 +121,7 @@ class PowerAssertCallTransformer(
           val title = when {
             messageArgument is IrConst<*> -> messageArgument
             messageArgument is IrStringConcatenation -> messageArgument
-            lambda != null -> lambda.inline(parent)
+            lambda != null -> lambda.inline(parent).transform(ReturnableBlockTransformer(context, symbol), null)
             messageArgument != null -> {
               val invoke = messageArgument.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INVOKE }
               irCallOp(invoke.symbol, invoke.returnType, messageArgument)
