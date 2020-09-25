@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.*;
+import java.util.*;
 import java.util.jar.*;
 
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR;
@@ -64,13 +65,14 @@ public class CompileEnvironmentUtil {
 
             JarOutputStream stream = new JarOutputStream(fos);
             JarEntry manifestEntry = new JarEntry(JarFile.MANIFEST_NAME);
-            manifestEntry.setTime(0L);
+            long dosEpoch = new GregorianCalendar(1980, Calendar.JANUARY, 1, 0, 0, 0).getTimeInMillis();
+            manifestEntry.setTime(dosEpoch);
             stream.putNextEntry(manifestEntry);
             manifest.write(new BufferedOutputStream(stream));
 
             for (OutputFile outputFile : outputFiles.asList()) {
                 JarEntry entry = new JarEntry(outputFile.getRelativePath());
-                entry.setTime(0L);
+                entry.setTime(dosEpoch);
                 stream.putNextEntry(entry);
                 stream.write(outputFile.asByteArray());
             }
