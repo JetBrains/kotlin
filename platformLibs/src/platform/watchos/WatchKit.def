@@ -1,4 +1,4 @@
-depends = ClockKit CoreFoundation CoreGraphics CoreLocation CoreText Foundation HomeKit MapKit SceneKit Security UIKit darwin posix
+depends = CoreFoundation CoreGraphics CoreLocation CoreText Foundation HomeKit MapKit SceneKit Security UIKit darwin posix
 language = Objective-C
 package = platform.WatchKit
 modules = WatchKit

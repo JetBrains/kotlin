@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform._SceneKit_SwiftUI
+modules = _SceneKit_SwiftUI
+compilerOpts = -framework _SceneKit_SwiftUI
+linkerOpts = -framework _SceneKit_SwiftUI
+#Disabled: Unavailable

@@ -1,4 +1,4 @@
-depends = CoreAudio CoreAudioTypes CoreFoundation CoreGraphics CoreMedia CoreVideo Foundation ImageIO Security darwin posix
+depends = CoreAudio CoreAudioTypes CoreFoundation CoreGraphics CoreMedia CoreVideo Foundation ImageIO Security UniformTypeIdentifiers darwin posix
 language = Objective-C
 package = platform.AVFoundation
 modules = AVFoundation

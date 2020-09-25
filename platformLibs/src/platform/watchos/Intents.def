@@ -1,4 +1,4 @@
-depends = CoreFoundation CoreLocation Foundation Security darwin posix
+depends = CoreFoundation CoreGraphics CoreLocation Foundation Security darwin posix
 language = Objective-C
 package = platform.Intents
 modules = Intents

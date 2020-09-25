@@ -17,9 +17,11 @@ compilerOpts = -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE
 linkerOpts = -ldl -lresolv
 
 excludedFunctions = acl_valid_link_np pfctlinput profil unwhiteout zopen getdirentries \
-                    uuid_generate_early_random setgrfile
+                    uuid_generate_early_random setgrfile \
+                    getcontext makecontext setcontext swapcontext
 excludedFunctions.watchos_arm32 = longjmperror
 excludedFunctions.watchos_arm64 = longjmperror
+excludedFunctions.watchos_x86 = pthread_jit_write_protect_np pthread_jit_write_protect_supported_np
 
 ---
 // Wrapper to access errno variable.

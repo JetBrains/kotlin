@@ -1,4 +1,4 @@
-depends = AVFoundation CoreAudio CoreAudioTypes CoreFoundation CoreGraphics CoreML CoreMedia CoreVideo Foundation ImageIO Security darwin posix
+depends = AVFoundation CoreAudio CoreAudioTypes CoreFoundation CoreGraphics CoreML CoreMedia CoreVideo Foundation ImageIO Security UniformTypeIdentifiers darwin posix
 language = Objective-C
 package = platform.SoundAnalysis
 modules = SoundAnalysis

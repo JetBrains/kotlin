@@ -1,4 +1,4 @@
-depends = AVFoundation CoreFoundation CoreGraphics CoreMedia CoreText Foundation Security UIKit darwin posix
+depends = AVFoundation CoreFoundation CoreGraphics CoreMedia Foundation Security darwin posix
 language = Objective-C
 package = platform.MediaPlayer
 modules = MediaPlayer
