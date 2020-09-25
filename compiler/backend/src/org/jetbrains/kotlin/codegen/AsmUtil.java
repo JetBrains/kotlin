@@ -72,12 +72,6 @@ import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class AsmUtil {
 
-    private static final Set<Type> STRING_BUILDER_OBJECT_APPEND_ARG_TYPES = Sets.newHashSet(
-            getType(String.class),
-            getType(StringBuffer.class),
-            getType(CharSequence.class)
-    );
-
     private static final int NO_FLAG_LOCAL = 0;
     public static final int NO_FLAG_PACKAGE_PRIVATE = 0;
 
@@ -598,20 +592,6 @@ public class AsmUtil {
                : sort == Type.BYTE || sort == Type.SHORT ? Type.INT_TYPE : type;
     }
 
-    private static Type stringBuilderAppendType(Type type) {
-        switch (type.getSort()) {
-            case Type.OBJECT:
-                return STRING_BUILDER_OBJECT_APPEND_ARG_TYPES.contains(type) ? type : OBJECT_TYPE;
-            case Type.ARRAY:
-                return OBJECT_TYPE;
-            case Type.BYTE:
-            case Type.SHORT:
-                return Type.INT_TYPE;
-            default:
-                return type;
-        }
-    }
-
     public static void genThrow(@NotNull InstructionAdapter v, @NotNull String exception, @Nullable String message) {
         v.anew(Type.getObjectType(exception));
         v.dup();
@@ -694,12 +674,12 @@ public class AsmUtil {
         v.invokespecial("java/lang/StringBuilder", "<init>", "()V", false);
     }
 
-    public static void genInvokeAppendMethod(@NotNull InstructionAdapter v, @NotNull Type type, @Nullable KotlinType kotlinType) {
-        genInvokeAppendMethod(v, type, kotlinType, null);
+    public static void genInvokeAppendMethod(@NotNull StringAppendGenerator generator, @NotNull Type type, @Nullable KotlinType kotlinType) {
+        genInvokeAppendMethod(generator, type, kotlinType, null);
     }
 
     public static void genInvokeAppendMethod(
-            @NotNull InstructionAdapter v,
+            @NotNull StringAppendGenerator generator,
             @NotNull Type type,
             @Nullable KotlinType kotlinType,
             @Nullable KotlinTypeMapper typeMapper
@@ -708,19 +688,19 @@ public class AsmUtil {
 
         CallableMethod specializedToString = getSpecializedToStringCallableMethodOrNull(kotlinType, typeMapper);
         if (specializedToString != null) {
-            specializedToString.genInvokeInstruction(v);
+            specializedToString.genInvokeInstruction(generator.getMv());
             appendParameterType = AsmTypes.JAVA_STRING_TYPE;
         }
         else if (kotlinType != null && InlineClassesUtilsKt.isInlineClassType(kotlinType)) {
             appendParameterType = OBJECT_TYPE;
             SimpleType nullableAnyType = kotlinType.getConstructor().getBuiltIns().getNullableAnyType();
-            StackValue.coerce(type, kotlinType, appendParameterType, nullableAnyType, v);
+            StackValue.coerce(type, kotlinType, appendParameterType, nullableAnyType, generator.getMv());
         }
         else {
-            appendParameterType = stringBuilderAppendType(type);
+            appendParameterType = type;
         }
 
-        v.invokevirtual("java/lang/StringBuilder", "append", "(" + appendParameterType.getDescriptor() + ")Ljava/lang/StringBuilder;", false);
+        generator.invokeAppend(appendParameterType);
     }
 
     public static StackValue genToString(

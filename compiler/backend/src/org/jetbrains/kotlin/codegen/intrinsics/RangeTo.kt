@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.kotlin.codegen.FrameMap
 import org.jetbrains.kotlin.codegen.generateNewInstanceDupAndPlaceBeforeStackTop
+import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.Type.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -48,7 +49,7 @@ class RangeTo : IntrinsicMethod() {
                 nullOr(method.dispatchReceiverType, argType),
                 nullOr(method.extensionReceiverType, argType)
         ) {
-            override fun afterReceiverGeneration(v: InstructionAdapter, frameMap: FrameMap) {
+            override fun afterReceiverGeneration(v: InstructionAdapter, frameMap: FrameMap, state: GenerationState) {
                 v.generateNewInstanceDupAndPlaceBeforeStackTop(frameMap, argType, returnType.internalName)
             }
 
