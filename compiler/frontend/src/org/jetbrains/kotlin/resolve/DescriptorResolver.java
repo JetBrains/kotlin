@@ -1024,7 +1024,8 @@ public class DescriptorResolver {
             @NotNull KtDeclaration declaration,
             @NotNull KotlinType type,
             @NotNull BindingTrace trace,
-            @NotNull Iterable<DeclarationSignatureAnonymousTypeTransformer> anonymousTypeTransformers
+            @NotNull Iterable<DeclarationSignatureAnonymousTypeTransformer> anonymousTypeTransformers,
+            @NotNull LanguageVersionSettings languageVersionSettings
     ) {
         for (DeclarationSignatureAnonymousTypeTransformer transformer : anonymousTypeTransformers) {
             KotlinType transformedType = transformer.transformAnonymousType(descriptor, type);
@@ -1038,7 +1039,12 @@ public class DescriptorResolver {
             return type;
         }
 
-        if (!DescriptorVisibilities.isPrivate(descriptor.getVisibility())) {
+        boolean isPrivate = DescriptorVisibilities.isPrivate(descriptor.getVisibility());
+        boolean isInlineFunction = descriptor instanceof SimpleFunctionDescriptor && ((SimpleFunctionDescriptor) descriptor).isInline();
+        boolean isAnonymousReturnTypesInPrivateInlineFunctionsForbidden =
+                languageVersionSettings.supportsFeature(LanguageFeature.ApproximateAnonymousReturnTypesInPrivateInlineFunctions);
+
+        if (!isPrivate || (isInlineFunction && isAnonymousReturnTypesInPrivateInlineFunctionsForbidden)) {
             if (type.getConstructor().getSupertypes().size() == 1) {
                 return type.getConstructor().getSupertypes().iterator().next();
             }
@@ -1221,7 +1227,9 @@ public class DescriptorResolver {
         return wrappedTypeFactory.createRecursionIntolerantDeferredType(trace, () -> {
             PreliminaryDeclarationVisitor.Companion.createForDeclaration(function, trace, languageVersionSettings);
             KotlinType type = expressionTypingServices.getBodyExpressionType(trace, scope, dataFlowInfo, function, functionDescriptor);
-            KotlinType publicType = transformAnonymousTypeIfNeeded(functionDescriptor, function, type, trace, anonymousTypeTransformers);
+            KotlinType publicType = transformAnonymousTypeIfNeeded(
+                    functionDescriptor, function, type, trace, anonymousTypeTransformers, languageVersionSettings
+            );
             UnwrappedType approximatedType = typeApproximator.approximateDeclarationType(publicType, false, languageVersionSettings);
             KotlinType sanitizedType = declarationReturnTypeSanitizer.sanitizeReturnType(approximatedType, wrappedTypeFactory, trace, languageVersionSettings);
             functionsTypingVisitor.checkTypesForReturnStatements(function, trace, sanitizedType);

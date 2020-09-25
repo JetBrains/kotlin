@@ -137,7 +137,7 @@ enum class LanguageFeature(
     AdaptedCallableReferenceAgainstReflectiveType(KOTLIN_1_5, defaultState = LanguageFeature.State.DISABLED),
     InferenceCompatibility(KOTLIN_1_5, kind = BUG_FIX),
     RequiredPrimaryConstructorDelegationCallInEnums(KOTLIN_1_5, kind = BUG_FIX),
-    ForbidAnonymousReturnTypesInPrivateInlineFunctions(KOTLIN_1_5, kind = BUG_FIX),
+    ApproximateAnonymousReturnTypesInPrivateInlineFunctions(KOTLIN_1_5, kind = BUG_FIX),
     ForbidReferencingToUnderscoreNamedParameterOfCatchBlock(KOTLIN_1_5, kind = BUG_FIX),
     UseCorrectExecutionOrderForVarargArguments(KOTLIN_1_5, kind = BUG_FIX),
     JvmRecordSupport(KOTLIN_1_5),
