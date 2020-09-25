@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.AndroidCon
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.AndroidPlugin
+import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle.GradlePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
@@ -181,6 +182,8 @@ object AndroidTargetConfigurator : TargetConfigurator,
                 FileTemplate(getAndroidManifestForLibraryXml(module), modulePath, settings)
             )
         )
+
+        GradlePlugin.gradleProperties.addValues("android.useAndroidX" to true)
     }
 
     override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JUNIT4
