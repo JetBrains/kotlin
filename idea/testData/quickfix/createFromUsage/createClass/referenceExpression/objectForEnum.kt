@@ -1,9 +1,6 @@
-// "Create object 'RED'" "false"
-// ACTION: Rename reference
-// ERROR: Unresolved reference: RED
+// "Create object 'RED'" "true"
 enum class SampleEnum {}
 
-fun usage(sample: SampleEnum) {
-    if (sample == SampleEnum.RED<caret>) {
-    }
+fun usage() {
+    SampleEnum.RED<caret>
 }

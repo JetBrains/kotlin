@@ -93,7 +93,7 @@ object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFac
         return allKinds.filter { classKind ->
             targetParents.any { targetParent ->
                 (expectedType == null || getClassKindFilter(expectedType, targetParent)(classKind)) && when (classKind) {
-                    ClassKind.OBJECT -> !isEnum(targetParent)
+                    ClassKind.OBJECT -> expectedType == null || !isEnum(targetParent)
                     ClassKind.ENUM_ENTRY -> isEnum(targetParent)
                     else -> false
                 }
