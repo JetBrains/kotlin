@@ -155,6 +155,7 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
 
     public java.lang.Object deserialize(kotlinx.serialization.encoding.Decoder decoder) {
         LABEL (L0)
+        LINENUMBER (12)
           ALOAD (0)
           ALOAD (1)
           INVOKEVIRTUAL (ListOfUsers$$serializer, deserialize, (Lkotlinx/serialization/encoding/Decoder;)LListOfUsers;)
@@ -206,6 +207,7 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
 
     public void serialize(kotlinx.serialization.encoding.Encoder encoder, java.lang.Object value) {
         LABEL (L0)
+        LINENUMBER (12)
           ALOAD (0)
           ALOAD (1)
           ALOAD (2)
@@ -441,6 +443,7 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
 
     public java.lang.Object deserialize(kotlinx.serialization.encoding.Decoder decoder) {
         LABEL (L0)
+        LINENUMBER (9)
           ALOAD (0)
           ALOAD (1)
           INVOKEVIRTUAL (OptionalUser$$serializer, deserialize, (Lkotlinx/serialization/encoding/Decoder;)LOptionalUser;)
@@ -511,6 +514,7 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
 
     public void serialize(kotlinx.serialization.encoding.Encoder encoder, java.lang.Object value) {
         LABEL (L0)
+        LINENUMBER (9)
           ALOAD (0)
           ALOAD (1)
           ALOAD (2)
@@ -810,6 +814,7 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
 
     public java.lang.Object deserialize(kotlinx.serialization.encoding.Decoder decoder) {
         LABEL (L0)
+        LINENUMBER (6)
           ALOAD (0)
           ALOAD (1)
           INVOKEVIRTUAL (User$$serializer, deserialize, (Lkotlinx/serialization/encoding/Decoder;)LUser;)
@@ -861,6 +866,7 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
 
     public void serialize(kotlinx.serialization.encoding.Encoder encoder, java.lang.Object value) {
         LABEL (L0)
+        LINENUMBER (6)
           ALOAD (0)
           ALOAD (1)
           ALOAD (2)
