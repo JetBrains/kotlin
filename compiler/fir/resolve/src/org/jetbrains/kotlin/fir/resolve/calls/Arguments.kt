@@ -15,9 +15,12 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
 import org.jetbrains.kotlin.fir.returnExpressions
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.typeCheckerContext
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
@@ -407,4 +410,50 @@ internal fun FirExpression.getExpectedType(
 
 fun ConeKotlinType.varargElementType(): ConeKotlinType {
     return this.arrayElementType() ?: this
+}
+
+/**
+ * interface Inv<T>
+ * fun <Y> bar(l: Inv<Y>): Y = ...
+ *
+ * fun <X : Inv<out Int>> foo(x: X) {
+ *      val xr = bar(x)
+ * }
+ * Here we try to capture from upper bound from type parameter.
+ * We replace type of `x` to `Inv<out Int>`(we chose supertype which contains supertype with expectedTypeConstructor) and capture from this type.
+ * It is correct, because it is like this code:
+ * fun <X : Inv<out Int>> foo(x: X) {
+ *      val inv: Inv<out Int> = x
+ *      val xr = bar(inv)
+ * }
+ *
+ */
+internal fun captureFromTypeParameterUpperBoundIfNeeded(
+    argumentType: ConeKotlinType,
+    expectedType: ConeKotlinType,
+    session: FirSession
+): ConeKotlinType {
+    val expectedTypeClassId = expectedType.upperBoundIfFlexible().classId ?: return argumentType
+    val simplifiedArgumentType = argumentType.lowerBoundIfFlexible() as? ConeTypeParameterType ?: return argumentType
+    val typeParameter = simplifiedArgumentType.lookupTag.typeParameterSymbol.fir
+
+    val context = session.typeCheckerContext
+
+    val chosenSupertype = typeParameter.bounds.map { it.coneType }
+        .singleOrNull { it.hasSupertypeWithGivenClassId(expectedTypeClassId, context) } ?: return argumentType
+
+    val capturedType = context.captureFromExpression(chosenSupertype) as ConeKotlinType? ?: return argumentType
+    return if (argumentType is ConeDefinitelyNotNullType) {
+        ConeDefinitelyNotNullType.create(capturedType) ?: capturedType
+    } else {
+        capturedType
+    }
+}
+
+private fun ConeKotlinType.hasSupertypeWithGivenClassId(classId: ClassId, context: ConeTypeCheckerContext): Boolean {
+    return with(context) {
+        anySuperTypeConstructor {
+            it is ConeClassLikeLookupTag && it.classId == classId
+        }
+    }
 }

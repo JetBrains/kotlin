@@ -130,10 +130,16 @@ internal sealed class CheckReceivers : ResolutionStage() {
             } else {
                 val argumentExtensionReceiverValue = candidate.implicitExtensionReceiverValue
                 if (argumentExtensionReceiverValue != null && explicitReceiverKind.shouldBeCheckedAgainstImplicit()) {
+                    val expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverType.type)
+                    val argumentType = captureFromTypeParameterUpperBoundIfNeeded(
+                        argumentType = argumentExtensionReceiverValue.type,
+                        expectedType = expectedType,
+                        session = context.session
+                    )
                     candidate.resolvePlainArgumentType(
                         candidate.csBuilder,
-                        argumentType = argumentExtensionReceiverValue.type,
-                        expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverType.type),
+                        argumentType = argumentType,
+                        expectedType = expectedType,
                         sink = sink,
                         context = context,
                         isReceiver = true,

@@ -1744,6 +1744,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/analysis-tests/testData/resolve/inference/intersectionTypesInConstraints.kt");
         }
 
+        @TestMetadata("kt40131.kt")
+        public void testKt40131() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/inference/kt40131.kt");
+        }
+
         @TestMetadata("kt41989.kt")
         public void testKt41989() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/inference/kt41989.kt");
