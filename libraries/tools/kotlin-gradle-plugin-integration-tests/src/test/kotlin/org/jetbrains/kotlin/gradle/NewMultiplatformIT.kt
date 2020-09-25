@@ -59,7 +59,7 @@ class NewMultiplatformIT : BaseGradleIT() {
         val oldStyleAppProject = Project("sample-old-style-app", directoryPrefix = "new-mpp-lib-and-app")
 
         val compileTasksNames =
-            listOf("Jvm6", "NodeJs", "Metadata", "Wasm32", nativeHostTargetName.capitalize()).map { ":compileKotlin$it" }
+            listOf("Jvm6", "NodeJs", "Metadata", nativeHostTargetName.capitalize()).map { ":compileKotlin$it" }
 
         with(libProject) {
             build(
