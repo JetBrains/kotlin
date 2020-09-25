@@ -61,9 +61,17 @@ public class CompileEnvironmentUtil {
             if (mainClass != null) {
                 mainAttributes.putValue("Main-Class", mainClass.asString());
             }
-            JarOutputStream stream = new JarOutputStream(fos, manifest);
+
+            JarOutputStream stream = new JarOutputStream(fos);
+            JarEntry manifestEntry = new JarEntry(JarFile.MANIFEST_NAME);
+            manifestEntry.setTime(0L);
+            stream.putNextEntry(manifestEntry);
+            manifest.write(new BufferedOutputStream(stream));
+
             for (OutputFile outputFile : outputFiles.asList()) {
-                stream.putNextEntry(new JarEntry(outputFile.getRelativePath()));
+                JarEntry entry = new JarEntry(outputFile.getRelativePath());
+                entry.setTime(0L);
+                stream.putNextEntry(entry);
                 stream.write(outputFile.asByteArray());
             }
             if (includeRuntime) {
