@@ -46,14 +46,14 @@ class FunctionCodegen(
 ) {
     private val context = classCodegen.context
 
-    fun generate(delegatedPropertyOptimizer: DelegatedPropertyOptimizer?): SMAPAndMethodNode =
+    fun generate(): SMAPAndMethodNode =
         try {
-            doGenerate(delegatedPropertyOptimizer)
+            doGenerate()
         } catch (e: Throwable) {
             throw RuntimeException("Exception while generating code for:\n${irFunction.dump()}", e)
         }
 
-    private fun doGenerate(delegatedPropertyOptimizer: DelegatedPropertyOptimizer?): SMAPAndMethodNode {
+    private fun doGenerate(): SMAPAndMethodNode {
         val signature = context.methodSignatureMapper.mapSignatureWithGeneric(irFunction)
         val flags = irFunction.calculateMethodFlags()
         val methodNode = MethodNode(
@@ -104,7 +104,7 @@ class FunctionCodegen(
             generateAnnotationDefaultValueIfNeeded(methodVisitor)
             SMAP(listOf())
         } else if (notForInline != null) {
-            val (originalNode, smap) = classCodegen.generateMethodNode(notForInline, delegatedPropertyOptimizer)
+            val (originalNode, smap) = classCodegen.generateMethodNode(notForInline)
             originalNode.accept(MethodBodyVisitor(methodVisitor))
             smap
         } else {
@@ -113,16 +113,7 @@ class FunctionCodegen(
             context.state.globalInlineContext.enterDeclaration(irFunction.suspendFunctionOriginal().toIrBasedDescriptor())
             try {
                 val adapter = InstructionAdapter(methodVisitor)
-                ExpressionCodegen(
-                    irFunction,
-                    signature,
-                    frameMap,
-                    adapter,
-                    classCodegen,
-                    inlinedInto,
-                    sourceMapper,
-                    delegatedPropertyOptimizer,
-                ).generate()
+                ExpressionCodegen(irFunction, signature, frameMap, adapter, classCodegen, inlinedInto, sourceMapper).generate()
             } finally {
                 context.state.globalInlineContext.exitDeclaration()
             }

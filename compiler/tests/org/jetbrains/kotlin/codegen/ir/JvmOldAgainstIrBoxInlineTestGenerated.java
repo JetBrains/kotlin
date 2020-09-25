@@ -1739,6 +1739,11 @@ public class JvmOldAgainstIrBoxInlineTestGenerated extends AbstractJvmOldAgainst
             runTest("compiler/testData/codegen/boxInline/delegatedProperty/local.kt");
         }
 
+        @TestMetadata("localDeclaredInLambda.kt")
+        public void testLocalDeclaredInLambda() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/delegatedProperty/localDeclaredInLambda.kt");
+        }
+
         @TestMetadata("localInAnonymousObject.kt")
         public void testLocalInAnonymousObject() throws Exception {
             runTest("compiler/testData/codegen/boxInline/delegatedProperty/localInAnonymousObject.kt");

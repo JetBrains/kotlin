@@ -41,7 +41,7 @@ object IrInlineDefaultCodegen : IrInlineCallGenerator {
         isInsideIfCondition: Boolean
     ) {
         val function = expression.symbol.owner
-        val nodeAndSmap = codegen.classCodegen.generateMethodNode(function, codegen.delegatedPropertyOptimizer)
+        val nodeAndSmap = codegen.classCodegen.generateMethodNode(function)
         val childSourceMapper = SourceMapCopier(codegen.smap, nodeAndSmap.classSMAP)
 
         val argsSize =
