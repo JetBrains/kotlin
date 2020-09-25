@@ -105,6 +105,10 @@ class PowerAssertCallTransformer(
     val assertionArgument = expression.getValueArgument(0)!!
     val messageArgument = if (function.valueParameters.size == 2) expression.getValueArgument(1) else null
 
+    // If the tree does not contain any children, the expression is not transformable
+    val tree = buildAssertTree(assertionArgument)
+    val root = tree.children.singleOrNull() ?: return super.visitCall(expression)
+
     val symbol = currentScope!!.scope.scopeOwnerSymbol
     DeclarationIrBuilder(context, symbol).run {
       at(expression)
@@ -128,9 +132,6 @@ class PowerAssertCallTransformer(
           return delegate.buildCall(this, buildMessage(file, fileSource, title, expression, subStack))
         }
       }
-
-      val tree = buildAssertTree(assertionArgument)
-      val root = tree.children.single()
 
 //      println(assertionArgument.dump())
 //      println(tree.dump())
