@@ -322,7 +322,11 @@ public class OverridingUtil {
         }
 
         for (int i = 0; i < superValueParameters.size(); i++) {
-            if (!areTypesEquivalent(superValueParameters.get(i), subValueParameters.get(i), typeChecker)) {
+            if (!areTypesEquivalent(
+                    kotlinTypeRefiner.refineType(superValueParameters.get(i)),
+                    kotlinTypeRefiner.refineType(subValueParameters.get(i)),
+                    typeChecker)
+            ) {
                 return OverrideCompatibilityInfo.incompatible("Value parameter type mismatch");
             }
         }
