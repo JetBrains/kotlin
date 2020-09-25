@@ -1059,6 +1059,11 @@ standaloneTest("lazy3") {
     source = "runtime/workers/lazy3.kt"
 }
 
+task mutableData1(type: KonanLocalTest) {
+    enabled = (project.testTarget != 'wasm32') // Workers need pthreads. Need exceptions
+    source = "runtime/workers/mutableData1.kt"
+}
+
 task enumIdentity(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
     goldValue = "true\n"
