@@ -12,7 +12,6 @@ class J2KFusCollector : CounterUsagesCollector() {
     companion object {
         private val GROUP = EventLogGroup("kotlin.ide.j2k", 2)
 
-        //private val sourceType = EventFields.String("source_type", listOf("Files", "PSI_expression", "Text_expression"))
         private val sourceType = EventFields.String("source_type", ConversionType.values().map { it.text })
         private val isNewJ2K = EventFields.Boolean("is_new_j2k")
         private val conversionTime = EventFields.Long("conversion_time")
