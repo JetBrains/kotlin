@@ -129,6 +129,9 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> NO_KOTLIN_NOTHING_VALUE_EXCEPTION =
             CompilerConfigurationKey.create("Do not use KotlinNothingValueException available since 1.4");
 
+    public static final CompilerConfigurationKey<Boolean> NO_RESET_JAR_TIMESTAMPS =
+            CompilerConfigurationKey.create("Do not reset timestamps in jar entries");
+
     public static final CompilerConfigurationKey<Boolean> NO_UNIFIED_NULL_CHECKS =
             CompilerConfigurationKey.create("Use pre-1.4 exception types in null checks instead of java.lang.NPE");
 
