@@ -335,6 +335,7 @@ private val jvmFilePhases = listOf(
     interfaceObjectCallsPhase,
 
     tailCallOptimizationPhase,
+    suspendLambdaPhase,
     addContinuationPhase,
 
     innerClassesPhase,
