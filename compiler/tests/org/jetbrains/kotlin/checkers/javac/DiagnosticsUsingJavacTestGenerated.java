@@ -12433,6 +12433,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/inline/recursion.kt");
             }
 
+            @TestMetadata("returnedAnonymousObjects.kt")
+            public void testReturnedAnonymousObjects() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inline/returnedAnonymousObjects.kt");
+            }
+
             @TestMetadata("returns.kt")
             public void testReturns() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inline/returns.kt");
