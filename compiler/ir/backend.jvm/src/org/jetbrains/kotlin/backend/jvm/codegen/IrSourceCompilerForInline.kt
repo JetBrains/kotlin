@@ -94,16 +94,15 @@ class IrSourceCompilerForInline(
         get() = codegen.smap
 
     override fun generateLambdaBody(lambdaInfo: ExpressionLambda): SMAPAndMethodNode =
-        FunctionCodegen((lambdaInfo as IrExpressionLambdaImpl).function, codegen.classCodegen, codegen).generate(codegen.delegatedPropertyOptimizer)
+        FunctionCodegen((lambdaInfo as IrExpressionLambdaImpl).function, codegen.classCodegen, codegen).generate()
 
     override fun doCreateMethodNodeFromSource(
         callableDescriptor: FunctionDescriptor,
         jvmSignature: JvmMethodSignature,
         callDefault: Boolean,
         asmMethod: Method
-    ): SMAPAndMethodNode {
-        return ClassCodegen.getOrCreate(callee.parentAsClass, codegen.context).generateMethodNode(callee, null)
-    }
+    ): SMAPAndMethodNode =
+        ClassCodegen.getOrCreate(callee.parentAsClass, codegen.context).generateMethodNode(callee)
 
     override fun hasFinallyBlocks() = data.hasFinallyBlocks()
 
@@ -115,7 +114,7 @@ class IrSourceCompilerForInline(
     override fun createCodegenForExternalFinallyBlockGenerationOnNonLocalReturn(finallyNode: MethodNode, curFinallyDepth: Int) =
         ExpressionCodegen(
             codegen.irFunction, codegen.signature, codegen.frameMap, InstructionAdapter(finallyNode), codegen.classCodegen,
-            codegen.inlinedInto, codegen.smap, codegen.delegatedPropertyOptimizer
+            codegen.inlinedInto, codegen.smap
         ).also {
             it.finallyDepth = curFinallyDepth
         }
