@@ -110,6 +110,8 @@ private val possibleSourceTypes = mapOf<Class<*>, ClassSet<PsiElement>>(
         KtLightField::class.java,
         KtLightFieldForSourceDeclarationSupport::class.java,
         KtLightParameter::class.java,
+        KtLightPsiArrayInitializerMemberValue::class.java,
+        KtLightPsiLiteral::class.java,
         KtLiteralStringTemplateEntry::class.java,
         KtNameReferenceExpression::class.java,
         KtNamedFunction::class.java,
@@ -206,7 +208,8 @@ private val possibleSourceTypes = mapOf<Class<*>, ClassSet<PsiElement>>(
         KtObjectLiteralExpression::class.java,
         KtStringTemplateExpression::class.java,
         KtSuperTypeCallEntry::class.java,
-        KtWhenConditionWithExpression::class.java
+        KtWhenConditionWithExpression::class.java,
+        KtLightPsiArrayInitializerMemberValue::class.java
     ),
     UCallExpressionEx::class.java to classSetOf<PsiElement>(
         KtAnnotatedExpression::class.java,
@@ -220,7 +223,8 @@ private val possibleSourceTypes = mapOf<Class<*>, ClassSet<PsiElement>>(
         KtObjectLiteralExpression::class.java,
         KtStringTemplateExpression::class.java,
         KtSuperTypeCallEntry::class.java,
-        KtWhenConditionWithExpression::class.java
+        KtWhenConditionWithExpression::class.java,
+        KtLightPsiArrayInitializerMemberValue::class.java
     ),
     UCallableReferenceExpression::class.java to classSetOf<PsiElement>(
         KtCallableReferenceExpression::class.java
@@ -354,6 +358,8 @@ private val possibleSourceTypes = mapOf<Class<*>, ClassSet<PsiElement>>(
         KtLightField::class.java,
         KtLightFieldForSourceDeclarationSupport::class.java,
         KtLightParameter::class.java,
+        KtLightPsiArrayInitializerMemberValue::class.java,
+        KtLightPsiLiteral::class.java,
         KtLiteralStringTemplateEntry::class.java,
         KtNameReferenceExpression::class.java,
         KtNamedFunction::class.java,
@@ -446,6 +452,8 @@ private val possibleSourceTypes = mapOf<Class<*>, ClassSet<PsiElement>>(
         KtLightAnnotationForSourceEntry::class.java,
         KtLightDeclaration::class.java,
         KtLightField::class.java,
+        KtLightPsiArrayInitializerMemberValue::class.java,
+        KtLightPsiLiteral::class.java,
         KtLiteralStringTemplateEntry::class.java,
         KtNameReferenceExpression::class.java,
         KtNamedFunction::class.java,
@@ -525,6 +533,7 @@ private val possibleSourceTypes = mapOf<Class<*>, ClassSet<PsiElement>>(
     UInjectionHost::class.java to classSetOf<PsiElement>(
         KtAnnotatedExpression::class.java,
         KtBlockStringTemplateEntry::class.java,
+        KtLightPsiLiteral::class.java,
         KtStringTemplateExpression::class.java,
         KtWhenConditionWithExpression::class.java
     ),
@@ -563,6 +572,7 @@ private val possibleSourceTypes = mapOf<Class<*>, ClassSet<PsiElement>>(
         KtBlockStringTemplateEntry::class.java,
         KtConstantExpression::class.java,
         KtEscapeStringTemplateEntry::class.java,
+        KtLightPsiLiteral::class.java,
         KtLiteralStringTemplateEntry::class.java,
         KtStringTemplateExpression::class.java,
         KtWhenConditionWithExpression::class.java
@@ -660,6 +670,7 @@ private val possibleSourceTypes = mapOf<Class<*>, ClassSet<PsiElement>>(
         KtAnnotatedExpression::class.java,
         KtBinaryExpression::class.java,
         KtBlockStringTemplateEntry::class.java,
+        KtLightPsiLiteral::class.java,
         KtStringTemplateExpression::class.java,
         KtWhenConditionInRange::class.java,
         KtWhenConditionWithExpression::class.java

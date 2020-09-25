@@ -416,6 +416,21 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
         file.annotationAndParam("[sar]1") { annotation, paramname ->
             assertEquals("Annotation", annotation.qualifiedName)
             assertEquals("strings", paramname)
+            val attributeValue = annotation.findAttributeValue(paramname)!!
+            val uastAnnotationParamValue = annotation.toUElementOfType<UAnnotation>()!!.findAttributeValue(paramname)!!
+
+            fun assertEqualUast(expected: UElement, psiElement: PsiElement, converter: (PsiElement) -> UElement? = { it.toUElement() }) {
+                assertEquals("${psiElement.javaClass} should have been conveted to ${expected}", expected, converter(psiElement))
+            }
+            assertEqualUast(uastAnnotationParamValue, attributeValue)
+            assertEqualUast(
+                uastAnnotationParamValue.cast<UCallExpression>().valueArguments[0],
+                attributeValue.cast<PsiArrayInitializerMemberValue>().initializers[0]
+            )
+            assertEqualUast(
+                wrapULiteral(uastAnnotationParamValue.cast<UCallExpression>().valueArguments[0]),
+                attributeValue.cast<PsiArrayInitializerMemberValue>().initializers[0]
+            ) { it.toUElementOfType<UInjectionHost>() }
         }
         file.annotationAndParam("[sar]2") { annotation, paramname ->
             assertEquals("Annotation", annotation.qualifiedName)
