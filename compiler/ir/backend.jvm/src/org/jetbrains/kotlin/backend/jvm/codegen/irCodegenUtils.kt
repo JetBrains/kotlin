@@ -28,12 +28,14 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -108,17 +110,6 @@ fun JvmBackendContext.getSourceMapper(declaration: IrClass): SourceMapper {
 val IrType.isExtensionFunctionType: Boolean
     get() = isFunctionTypeOrSubtype() && hasAnnotation(FqNames.extensionFunctionType)
 
-
-/* Borrowed with modifications from MemberCodegen.java */
-
-fun writeInnerClass(innerClass: IrClass, typeMapper: IrTypeMapper, context: JvmBackendContext, v: ClassBuilder) {
-    val outerClassInternalName =
-        if (innerClass.attributeOwnerId in context.isEnclosedInConstructor) null
-        else innerClass.parent.safeAs<IrClass>()?.let(typeMapper::classInternalName)
-    val innerName = innerClass.name.takeUnless { it.isSpecial }?.asString()
-    val innerClassInternalName = typeMapper.classInternalName(innerClass)
-    v.visitInnerClass(innerClassInternalName, outerClassInternalName, innerName, innerClass.calculateInnerClassAccessFlags(context))
-}
 
 /* Borrowed with modifications from AsmUtil.java */
 
@@ -328,42 +319,30 @@ private val KOTLIN_MARKER_INTERFACES: Map<FqName, String> = run {
     kotlinMarkerInterfaces
 }
 
-internal class IrSuperClassInfo(val type: Type, val irType: IrType?)
-
-internal fun getSignature(
-    irClass: IrClass,
-    classAsmType: Type,
-    superClassInfo: IrSuperClassInfo,
-    typeMapper: IrTypeMapper
-): JvmClassSignature {
+internal fun IrTypeMapper.mapClassSignature(irClass: IrClass, type: Type): JvmClassSignature {
     val sw = BothSignatureWriter(BothSignatureWriter.Mode.CLASS)
-
-    typeMapper.writeFormalTypeParameters(irClass.typeParameters, sw)
+    writeFormalTypeParameters(irClass.typeParameters, sw)
 
     sw.writeSuperclass()
-    val irType = superClassInfo.irType
-    if (irType == null) {
-        sw.writeClassBegin(superClassInfo.type)
+    val superClassType = irClass.superTypes.find { it.getClass()?.isJvmInterface == false }
+    val superClassAsmType = if (superClassType == null) {
+        sw.writeClassBegin(AsmTypes.OBJECT_TYPE)
         sw.writeClassEnd()
+        AsmTypes.OBJECT_TYPE
     } else {
-        typeMapper.mapSupertype(irType, sw)
+        mapSupertype(superClassType, sw)
     }
     sw.writeSuperclassEnd()
 
     val superInterfaces = LinkedHashSet<String>()
     val kotlinMarkerInterfaces = LinkedHashSet<String>()
-
     for (superType in irClass.superTypes) {
         val superClass = superType.safeAs<IrSimpleType>()?.classifier?.safeAs<IrClassSymbol>()?.owner ?: continue
         if (superClass.isJvmInterface) {
-            val kotlinInterfaceName = superClass.fqNameWhenAvailable!!
-
             sw.writeInterface()
-            val jvmInterfaceType = typeMapper.mapSupertype(superType, sw)
+            superInterfaces.add(mapSupertype(superType, sw).internalName)
             sw.writeInterfaceEnd()
-
-            superInterfaces.add(jvmInterfaceType.internalName)
-            kotlinMarkerInterfaces.addIfNotNull(KOTLIN_MARKER_INTERFACES[kotlinInterfaceName])
+            kotlinMarkerInterfaces.addIfNotNull(KOTLIN_MARKER_INTERFACES[superClass.fqNameWhenAvailable!!])
         }
     }
 
@@ -376,7 +355,7 @@ internal fun getSignature(
     superInterfaces.addAll(kotlinMarkerInterfaces)
 
     return JvmClassSignature(
-        classAsmType.internalName, superClassInfo.type.internalName,
+        type.internalName, superClassAsmType.internalName,
         ArrayList(superInterfaces), sw.makeJavaGenericSignature()
     )
 }

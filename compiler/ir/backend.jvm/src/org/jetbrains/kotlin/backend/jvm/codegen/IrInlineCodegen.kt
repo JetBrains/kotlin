@@ -49,7 +49,8 @@ class IrInlineCodegen(
         if (info.generateAssertField) {
             // May be inlining code into `<clinit>`, in which case it's too late to modify the IR and
             // `generateAssertFieldIfNeeded` will return a statement for which we need to emit bytecode.
-            codegen.classCodegen.generateAssertFieldIfNeeded()?.accept(codegen, BlockInfo())?.discard()
+            val isClInit = info.callSiteInfo.functionName == "<clinit>"
+            codegen.classCodegen.generateAssertFieldIfNeeded(isClInit)?.accept(codegen, BlockInfo())?.discard()
         }
     }
 
