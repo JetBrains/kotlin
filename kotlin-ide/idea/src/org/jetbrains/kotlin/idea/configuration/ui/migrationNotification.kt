@@ -12,7 +12,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.configuration.MigrationInfo
 import org.jetbrains.kotlin.idea.migration.CodeMigrationAction
-import org.jetbrains.kotlin.idea.statistics.MigrationToolFUSCollector
+import org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectFUSCollector
 
 internal fun showMigrationNotification(project: Project, migrationInfo: MigrationInfo) {
     val detectedChangeMessage = buildString {
@@ -48,7 +48,7 @@ internal fun showMigrationNotification(project: Project, migrationInfo: Migratio
         }
     }
 
-    MigrationToolFUSCollector.logNotification(migrationInfo.oldVersionsToMap())
+    KotlinMigrationProjectFUSCollector.logNotification(migrationInfo)
     KOTLIN_MIGRATION_NOTIFICATION_GROUP
         .createNotification(
             KotlinBundle.message("configuration.migration.title.kotlin.migration"),
@@ -61,7 +61,7 @@ internal fun showMigrationNotification(project: Project, migrationInfo: Migratio
                 val projectContext = SimpleDataContext.getProjectContext(project)
                 val action = ActionManager.getInstance().getAction(CodeMigrationAction.ACTION_ID)
                 Notification.fire(notification, action, projectContext)
-                MigrationToolFUSCollector.logRun()
+                KotlinMigrationProjectFUSCollector.logRun()
 
                 notification.expire()
             })

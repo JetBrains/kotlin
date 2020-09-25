@@ -204,11 +204,6 @@ data class MigrationInfo(
     val oldLanguageVersion: LanguageVersion,
     val newLanguageVersion: LanguageVersion
 ) {
-    fun oldVersionsToMap(): Map<String, String> = mapOf(
-        "old_stdlib_version" to oldStdlibVersion,
-        "old_api_version" to oldApiVersion.versionString,
-        "old_language_version" to oldLanguageVersion.versionString
-    )
 
     companion object {
         fun create(
