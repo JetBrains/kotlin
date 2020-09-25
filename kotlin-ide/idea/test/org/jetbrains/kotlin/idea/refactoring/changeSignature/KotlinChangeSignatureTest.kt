@@ -118,7 +118,7 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     private fun doTest(configure: KotlinChangeInfo.() -> Unit = {}) {
-        KotlinChangeSignatureProcessor(project, createChangeInfo().apply { configure() }, "Change signature").run()
+        KotlinChangeSignatureProcessor(project, createChangeInfo().apply { configure() }, "Change Signature").run()
 
         compareEditorsWithExpectedData()
     }
@@ -366,8 +366,29 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
         }
     }
 
-    fun testFunctionsAddRemoveArguments() {
-        doTest {
+    fun testFunctionsAddRemoveArgumentsConflict() {
+        doTestConflict {
+            newVisibility = Visibilities.INTERNAL
+
+            val defaultValueForCall = KtPsiFactory(project).createExpression("null")
+            val newParameters = newParameters
+            setNewParameter(2, newParameters[1])
+            setNewParameter(1, newParameters[0])
+            setNewParameter(
+                0, KotlinParameterInfo(
+                    originalBaseFunctionDescriptor,
+                    -1,
+                    "x0",
+                    KotlinTypeInfo(false, BUILT_INS.nullableAnyType),
+                    null,
+                    defaultValueForCall
+                )
+            )
+        }
+    }
+
+    fun testFunctionsAddRemoveArgumentsConflict2() {
+        doTestConflict {
             newVisibility = Visibilities.INTERNAL
 
             val defaultValueForCall = KtPsiFactory(project).createExpression("null")
@@ -418,6 +439,18 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
         doTestConflict {
             newName = "inner2"
             newParameters[0].name = "y"
+        }
+    }
+
+    fun testParameterConflict() {
+        doTestConflict {
+            clearParameters()
+        }
+    }
+
+    fun testParameterConflict2() {
+        doTestConflict {
+            clearParameters()
         }
     }
 
@@ -934,6 +967,10 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun testRemoveLambdaParameter() {
         doTest { removeParameter(2) }
+    }
+
+    fun testRemoveLambdaParameterConflict() {
+        doTestConflict { removeParameter(2) }
     }
 
     fun testRemoveEnumConstructorParameter() {

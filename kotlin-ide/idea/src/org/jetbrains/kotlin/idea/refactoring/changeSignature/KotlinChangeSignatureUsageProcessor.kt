@@ -11,6 +11,7 @@ import com.intellij.openapi.util.Ref
 import com.intellij.psi.*
 import com.intellij.psi.codeStyle.JavaCodeStyleManager
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.search.searches.OverridingMethodsSearch
 import com.intellij.psi.search.searches.ReferencesSearch
@@ -593,6 +594,10 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             }
         }
 
+        if (ktChangeInfo.checkUnusedParameter) {
+            checkParametersToDelete(ktChangeInfo, result)
+        }
+
         for (parameter in ktChangeInfo.getNonReceiverParameters()) {
             val valOrVar = parameter.valOrVar
             val parameterName = parameter.name
@@ -639,6 +644,30 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         }
 
         return result
+    }
+
+    private fun checkParametersToDelete(info: KotlinChangeInfo, result: MultiMap<PsiElement, String>) {
+        val callableDeclaration = info.method as? KtCallableDeclaration ?: return
+        val methodDescriptor = info.methodDescriptor
+        val toRemove = BooleanArray(methodDescriptor.parametersCount) { true }
+        for (parameter in info.newParameters) {
+            parameter.oldIndex.takeIf { it >= 0 }?.let { oldIndex ->
+                toRemove[oldIndex] = false
+            }
+        }
+
+        val scope = LocalSearchScope(callableDeclaration)
+        for ((i, parameter) in callableDeclaration.valueParameters.withIndex()) {
+            if (toRemove[i]) {
+                registerConflictIfUsed(parameter, scope, result)
+            }
+        }
+    }
+
+    private fun registerConflictIfUsed(element: PsiNamedElement, scope: LocalSearchScope, result: MultiMap<PsiElement, String>) {
+        if (ReferencesSearch.search(element, scope).findFirst() != null) {
+            result.putValue(element, KotlinBundle.message("parameter.used.in.declaration.body.warning", element.name.toString()))
+        }
     }
 
     private fun findParameterDuplicationInCaller(

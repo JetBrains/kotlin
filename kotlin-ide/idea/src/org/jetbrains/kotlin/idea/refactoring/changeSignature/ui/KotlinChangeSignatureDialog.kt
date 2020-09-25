@@ -411,6 +411,7 @@ class KotlinChangeSignatureDialog(
             false
         )
         changeInfo.primaryPropagationTargets = myMethodsToPropagateParameters ?: emptyList()
+        changeInfo.checkUnusedParameter = true
         return KotlinChangeSignatureProcessor(myProject, changeInfo, commandName ?: title)
     }
 

@@ -151,7 +151,8 @@ class KotlinChangePropertySignatureDialog(
             visibilityCombo.selectedItem as Visibility,
             emptyList(),
             receiver,
-            originalDescriptor.method
+            originalDescriptor.method,
+            checkUnusedParameter = true,
         )
 
         invokeRefactoring(KotlinChangeSignatureProcessor(myProject, changeInfo, commandName ?: title))

@@ -9,6 +9,7 @@ import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.NlsContexts
 import com.intellij.psi.PsiElement
@@ -166,7 +167,12 @@ class KotlinChangeSignature(
             else -> throw AssertionError("Unexpected declaration: ${baseDeclaration.getElementTextWithContext()}")
         }
 
-        dialog.show()
+        if (ApplicationManager.getApplication().isUnitTestMode) {
+            dialog.performOKAction()
+            dialog.close(DialogWrapper.OK_EXIT_CODE)
+        } else {
+            dialog.show()
+        }
     }
 
     private fun getPreviewInfoForJavaMethod(descriptor: KotlinMethodDescriptor): Pair<PsiMethod, JavaChangeInfo> {
@@ -218,7 +224,7 @@ class KotlinChangeSignature(
         val affectedFunctions = adjustedDescriptor.affectedCallables.mapNotNull { it.element }
         if (affectedFunctions.any { !checkModifiable(it) }) return
 
-        if (configuration.performSilently(affectedFunctions) || ApplicationManager.getApplication()!!.isUnitTestMode) {
+        if (configuration.performSilently(affectedFunctions)) {
             runSilentRefactoring(adjustedDescriptor)
         } else {
             runInteractiveRefactoring(adjustedDescriptor)
@@ -272,5 +278,5 @@ fun createChangeInfo(
         adjustedDescriptor,
         defaultValueContext
     ) as KotlinChangeSignatureProcessor
-    return processor.ktChangeInfo
+    return processor.ktChangeInfo.also { it.checkUnusedParameter = true }
 }

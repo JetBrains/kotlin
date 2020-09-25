@@ -2209,6 +2209,16 @@ public abstract class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("testData/quickfix/changeSignature/changeFunctionLiteralParameters2.kt");
         }
 
+        @TestMetadata("changeFunctionLiteralParameters3.kt")
+        public void testChangeFunctionLiteralParameters3() throws Exception {
+            runTest("testData/quickfix/changeSignature/changeFunctionLiteralParameters3.kt");
+        }
+
+        @TestMetadata("changeFunctionLiteralParameters4.kt")
+        public void testChangeFunctionLiteralParameters4() throws Exception {
+            runTest("testData/quickfix/changeSignature/changeFunctionLiteralParameters4.kt");
+        }
+
         @TestMetadata("complexHierarchy.kt")
         public void testComplexHierarchy() throws Exception {
             runTest("testData/quickfix/changeSignature/complexHierarchy.kt");

@@ -1,5 +1,5 @@
 fun foo(x: Int, y: Int): Int {
-    return x + cl()
+    return x
 }
 
 fun bar() {

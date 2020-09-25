@@ -132,7 +132,8 @@ class KotlinSuggestedRefactoringExecution(
             name = data.newSignature.name,
             newReturnTypeInfo = returnTypeInfo,
             parameterInfos = parameters,
-            receiver = receiver
+            receiver = receiver,
+            checkUnusedParameter = true,
         )
         val processor = KotlinChangeSignatureProcessor(project, changeInfo, "")
         processor.run()

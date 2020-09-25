@@ -1,5 +1,5 @@
 fun <caret>foo(x: Int, y: Int, cl: () -> Int): Int {
-    return x
+    return x + cl()
 }
 
 fun bar() {
