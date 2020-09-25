@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.DVDPlayback
+modules = DVDPlayback
+compilerOpts = -framework DVDPlayback
+linkerOpts = -framework DVDPlayback
+#Disabled: Unavailable

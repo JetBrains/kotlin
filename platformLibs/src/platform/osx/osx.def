@@ -42,7 +42,9 @@ excludedFunctions = KERNEL_AUDIT_TOKEN KERNEL_SECURITY_TOKEN vm_map_64 vm_mapped
 		    initialize_kdb5_error_table initialize_krb5_error_table initialize_kv5m_error_table initialize_prof_error_table \
 		    krb5_c_keylengths krb5_c_prf krb5_c_prf_length krb5_c_random_to_key krb5_cc_get_flags krb5_get_fallback_host_realm \
 		    ldif_debug libcharset_set_relocation_prefix locale_charset mach_vm_region_info mach_vm_region_info_64 map_fd \
-		    nlist os_trace_info_with_payload safe_gets task_wire trace
+		    nlist os_trace_info_with_payload safe_gets task_wire trace \
+            pcap_createsrcstr pcap_findalldevs_ex pcap_open pcap_parsesrcstr pcap_remoteact_accept pcap_remoteact_cleanup \
+            pcap_remoteact_close pcap_remoteact_list pcap_setsampling
 
 linkerOpts = -late -lbsm -lbz2 -lcompression -ledit -lexpat -lform -lkrb5 -llber -lldap -lncurses -lpanel -lpcap -ldtrace
 ---

@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.OpenCL
+modules = OpenCL
+compilerOpts = -framework OpenCL
+linkerOpts = -framework OpenCL
+#Disabled: Unavailable

@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.LDAP
+modules = LDAP
+compilerOpts = -framework LDAP
+linkerOpts = -framework LDAP
+#Disabled: Unavailable

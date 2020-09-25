@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.QTKit
+modules = QTKit
+compilerOpts = -framework QTKit
+linkerOpts = -framework QTKit
+#Disabled: Unavailable

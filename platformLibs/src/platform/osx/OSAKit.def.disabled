@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.OSAKit
+modules = OSAKit
+compilerOpts = -framework OSAKit
+linkerOpts = -framework OSAKit
+#Disabled: Unavailable

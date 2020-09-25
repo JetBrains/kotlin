@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.MorphunAssetsUpdater
+modules = MorphunAssetsUpdater
+compilerOpts = -framework MorphunAssetsUpdater
+linkerOpts = -framework MorphunAssetsUpdater
+#Disabled: Unavailable

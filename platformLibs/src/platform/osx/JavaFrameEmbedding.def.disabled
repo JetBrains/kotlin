@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.JavaFrameEmbedding
+modules = JavaFrameEmbedding
+compilerOpts = -framework JavaFrameEmbedding
+linkerOpts = -framework JavaFrameEmbedding
+#Disabled: Unavailable
