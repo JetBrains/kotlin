@@ -1449,9 +1449,21 @@ class RawFirBuilder(
             generateConstantExpressionByLiteral(expression)
 
         override fun visitStringTemplateExpression(expression: KtStringTemplateExpression, data: Unit): FirElement {
-            return expression.entries.toInterpolatingCall(expression) {
-                (this as KtStringTemplateEntryWithExpression).expression.toFirExpression(it)
-            }
+            return expression.entries.toInterpolatingCall(
+                expression,
+                getElementType = { element ->
+                    when (element) {
+                        is KtLiteralStringTemplateEntry -> KtNodeTypes.LITERAL_STRING_TEMPLATE_ENTRY
+                        is KtEscapeStringTemplateEntry -> KtNodeTypes.ESCAPE_STRING_TEMPLATE_ENTRY
+                        is KtSimpleNameStringTemplateEntry -> KtNodeTypes.SHORT_STRING_TEMPLATE_ENTRY
+                        is KtBlockStringTemplateEntry -> KtNodeTypes.LONG_STRING_TEMPLATE_ENTRY
+                        else -> error("invalid node type $element")
+                    }
+                },
+                convertTemplateEntry = {
+                    (this as KtStringTemplateEntryWithExpression).expression.toFirExpression(it)
+                },
+            )
         }
 
         override fun visitReturnExpression(expression: KtReturnExpression, data: Unit): FirElement {
