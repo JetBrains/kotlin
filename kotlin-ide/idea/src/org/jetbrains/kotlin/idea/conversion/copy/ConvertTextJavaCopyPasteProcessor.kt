@@ -38,9 +38,9 @@ import org.jetbrains.kotlin.idea.core.util.range
 import org.jetbrains.kotlin.idea.editor.KotlinEditorOptions
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.projectStructure.module
-import org.jetbrains.kotlin.j2k.ConversionType
+import org.jetbrains.kotlin.idea.statistics.ConversionType
+import org.jetbrains.kotlin.idea.statistics.J2KFusCollector
 import org.jetbrains.kotlin.j2k.J2kConverterExtension
-import org.jetbrains.kotlin.j2k.logJ2kConversionStatistics
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
@@ -162,7 +162,7 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
         }
 
         val conversionTime = measureTimeMillis { convert() }
-        logJ2kConversionStatistics(
+        J2KFusCollector.log(
             ConversionType.TEXT_EXPRESSION,
             checkUseNewJ2k(targetFile),
             conversionTime,
