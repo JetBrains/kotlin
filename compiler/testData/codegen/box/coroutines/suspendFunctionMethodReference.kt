@@ -1,11 +1,19 @@
-// IGNORE_BACKEND: JVM
+// WITH_RUNTIME
+// WITH_COROUTINES
 // IGNORE_BACKEND_FIR: JVM_IR
 
-fun f(a: suspend () -> Unit): String {
+import kotlin.coroutines.*
+import helpers.*
+
+fun f(a: suspend () -> Unit) {
     val f = a::invoke
-    return "OK"
+    f.startCoroutine(EmptyContinuation())
 }
 
 fun box(): String {
-    return f {}
+    var result = ""
+    f {
+        result = "OK"
+    }
+    return result
 }
