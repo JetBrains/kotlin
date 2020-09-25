@@ -7619,6 +7619,16 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 runTest("compiler/testData/diagnostics/tests/enum/SecondaryConstructorCall.kt");
             }
 
+            @TestMetadata("secondaryConstructorWithoutDelegatingToPrimaryOne.kt")
+            public void testSecondaryConstructorWithoutDelegatingToPrimaryOne() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/enum/secondaryConstructorWithoutDelegatingToPrimaryOne.kt");
+            }
+
+            @TestMetadata("secondaryConstructorWithoutDelegatingToPrimaryOneWithEnabledFeature.kt")
+            public void testSecondaryConstructorWithoutDelegatingToPrimaryOneWithEnabledFeature() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/enum/secondaryConstructorWithoutDelegatingToPrimaryOneWithEnabledFeature.kt");
+            }
+
             @TestMetadata("starImportNestedClassAndEntries.kt")
             public void testStarImportNestedClassAndEntries() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/enum/starImportNestedClassAndEntries.kt");
