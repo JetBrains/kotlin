@@ -9,7 +9,6 @@ import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.ui.Messages
 import com.intellij.util.PlatformUtils
 import com.intellij.util.text.nullize
-import org.intellij.lang.annotations.RegExp
 
 object KotlinPluginCompatibilityVerifier {
     @JvmStatic
@@ -29,7 +28,7 @@ object KotlinPluginCompatibilityVerifier {
 data class KotlinPluginVersion(
     val kotlinVersion: String, // 1.2.3
     val milestone: String?, // M1
-    val status: String, // release, eap, rc
+    val status: String?, // release, eap, rc
     val buildNumber: String?, // 53
     val platformVersion: PlatformVersion,
     val patchNumber: String // usually '1'
@@ -38,7 +37,7 @@ data class KotlinPluginVersion(
         private const val KOTLIN_VERSION_REGEX_STRING =
             "^([\\d.]+)" +                // Version number, like 1.3.50
                     "(?:-(M\\d+))?" +     // (Optional) M-release, like M2
-                    "-([A-Za-z]+)" +      // status, like 'eap/dev/release'
+                    "(?:-([A-Za-z]+))?" + // (Optional) status, like 'eap/dev/release'
                     "(?:-(\\d+))?" +      // (Optional) buildNumber (absent for 'release')
                     "-([A-Za-z0-9.]+)" +  // Platform version, like Studio4.0.1
                     "-(\\d+)$"            // Tooling update, like '-1'
