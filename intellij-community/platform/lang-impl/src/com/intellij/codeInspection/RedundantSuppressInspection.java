@@ -108,10 +108,11 @@ public class RedundantSuppressInspection extends GlobalSimpleInspectionTool {
     // have to visit all file from scratch since inspections can be written in any pervasive way including checkFile() overriding
     Map<InspectionToolWrapper<?, ?>, String> suppressedTools = new THashMap<>();
     List<InspectionToolWrapper<?, ?>> toolWrappers = getInspectionTools(psiElement, profile);
+    Language language = psiElement.getLanguage();
     for (Collection<String> ids : suppressedScopes.values()) {
       for (Iterator<String> iterator = ids.iterator(); iterator.hasNext(); ) {
         String suppressId = iterator.next().trim();
-        List<InspectionToolWrapper<?, ?>> reportingWrappers = findReportingTools(toolWrappers, suppressId);
+        List<InspectionToolWrapper<?, ?>> reportingWrappers = findReportingTools(toolWrappers, suppressId, language);
         if (reportingWrappers.isEmpty()) {
           iterator.remove();
         }
@@ -202,7 +203,9 @@ public class RedundantSuppressInspection extends GlobalSimpleInspectionTool {
     return result.toArray(ProblemDescriptor.EMPTY_ARRAY);
   }
 
-  private static List<InspectionToolWrapper<?, ?>> findReportingTools(@NotNull List<InspectionToolWrapper<?, ?>> toolWrappers, String suppressedId) {
+  private static List<InspectionToolWrapper<?, ?>> findReportingTools(@NotNull List<InspectionToolWrapper<?, ?>> toolWrappers,
+                                                                      String suppressedId,
+                                                                      Language language) {
     List<InspectionToolWrapper<?, ?>> wrappers = Collections.emptyList();
     String mergedToolName = InspectionElementsMerger.getMergedToolName(suppressedId);
     for (InspectionToolWrapper<?, ?> toolWrapper : toolWrappers) {
@@ -212,7 +215,7 @@ public class RedundantSuppressInspection extends GlobalSimpleInspectionTool {
           (((LocalInspectionToolWrapper)toolWrapper).getTool().getID().equals(suppressedId) ||
            suppressedId.equals(alternativeID) ||
            toolWrapperShortName.equals(mergedToolName))) {
-        if (!((LocalInspectionToolWrapper)toolWrapper).isUnfair()) {
+        if (!((LocalInspectionToolWrapper)toolWrapper).isUnfair() && toolWrapper.isApplicable(language)) {
           if (wrappers.isEmpty()) wrappers = new ArrayList<>();
           wrappers.add(toolWrapper);
         }
