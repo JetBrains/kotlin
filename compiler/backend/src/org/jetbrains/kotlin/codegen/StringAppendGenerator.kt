@@ -7,13 +7,19 @@ package org.jetbrains.kotlin.codegen
 
 import com.google.common.collect.Sets
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
+import org.jetbrains.org.objectweb.asm.Handle
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
+import java.lang.StringBuilder
 
 class StringAppendGenerator(val useInvokeDynamic: Boolean, val mv: InstructionAdapter) {
+
+    private val template = StringBuilder("")
+    private val paramTypes = arrayListOf<Type>()
 
     @JvmOverloads
     fun genStringBuilderConstructorIfNeded(swap: Boolean = false) {
@@ -26,18 +32,22 @@ class StringAppendGenerator(val useInvokeDynamic: Boolean, val mv: InstructionAd
         }
     }
 
-    fun addArgOnStack(type: Type) {
-
-    }
-
-    fun addCharConstant(value: Int) {
-        mv.iconst(value)
-        invokeAppend(Type.CHAR_TYPE)
+    fun addCharConstant(value: Char) {
+        if (!useInvokeDynamic) {
+            mv.iconst(value.toInt())
+            invokeAppend(Type.CHAR_TYPE)
+        } else {
+            template.append(value)
+        }
     }
 
     fun addStringConstant(value: String) {
-        mv.aconst(value)
-        invokeAppend(JAVA_STRING_TYPE)
+        if (!useInvokeDynamic) {
+            mv.aconst(value)
+            invokeAppend(JAVA_STRING_TYPE)
+        } else {
+            template.append(value)
+        }
     }
 
     fun invokeAppend(type: Type) {
@@ -48,12 +58,42 @@ class StringAppendGenerator(val useInvokeDynamic: Boolean, val mv: InstructionAd
                 "(" + stringBuilderAppendType(type) + ")Ljava/lang/StringBuilder;",
                 false
             )
+        } else {
+            paramTypes.add(type)
+            template.append("\u0001")
+            if (paramTypes.size == 200) {
+                // Concatenate current arguments into string
+                // because of `StringConcatFactory` limitation add use it as new argument for further processing:
+                // "The number of parameter slots in {@code concatType} is less than or equal to 200"
+                genToString()
+            }
         }
     }
 
     fun genToString() {
         if (!useInvokeDynamic) {
             mv.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)
+        } else {
+            //if state was flushed in `invokeAppend` do nothing
+            if (template.isEmpty() && paramTypes.size == 1 && paramTypes[0] == JAVA_STRING_TYPE) return
+            val bootstrap = Handle(
+                Opcodes.H_INVOKESTATIC,
+                "java/lang/invoke/StringConcatFactory",
+                "makeConcatWithConstants",
+                "(Ljava/lang/invoke/MethodHandles\$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/invoke/CallSite;",
+                false
+            )
+
+            mv.invokedynamic(
+                "makeConcatWithConstants",
+                Type.getMethodDescriptor(JAVA_STRING_TYPE, *paramTypes.toTypedArray()),
+                bootstrap,
+                arrayOf(template.toString())
+            )
+            template.clear()
+            paramTypes.clear()
+            paramTypes.add(JAVA_STRING_TYPE)
+            template.append("\u0001")
         }
     }
 
@@ -73,7 +113,8 @@ class StringAppendGenerator(val useInvokeDynamic: Boolean, val mv: InstructionAd
             }
         }
 
-        fun create(state: GenerationState, mv: InstructionAdapter) = StringAppendGenerator(false, mv)
+        fun create(state: GenerationState, mv: InstructionAdapter) =
+            StringAppendGenerator(/*TODO: add flag*/state.target.bytecodeVersion >= JvmTarget.JVM_9.bytecodeVersion, mv)
 
     }
 }
