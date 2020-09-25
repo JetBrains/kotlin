@@ -495,7 +495,7 @@ class Fir2IrVisitor(
 
     override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: Any?): IrElement {
         val explicitReceiverExpression = convertToIrReceiverExpression(
-            callableReferenceAccess.explicitReceiver, callableReferenceAccess.calleeReference, callableReferenceMode = true
+            callableReferenceAccess.explicitReceiver, callableReferenceAccess.calleeReference, callableReferenceAccess
         )
         return callGenerator.convertToIrCallableReference(callableReferenceAccess, explicitReceiverExpression)
     }
@@ -547,11 +547,11 @@ class Fir2IrVisitor(
     private fun convertToIrReceiverExpression(
         expression: FirExpression?,
         calleeReference: FirReference,
-        callableReferenceMode: Boolean = false
+        callableReferenceAccess: FirCallableReferenceAccess? = null
     ): IrExpression? {
         return when (expression) {
             null -> null
-            is FirResolvedQualifier -> callGenerator.convertToGetObject(expression, callableReferenceMode)
+            is FirResolvedQualifier -> callGenerator.convertToGetObject(expression, callableReferenceAccess)
             is FirExpressionWithSmartcast -> convertToImplicitCastExpression(expression, calleeReference)
             is FirFunctionCall, is FirThisReceiverExpression, is FirCallableReferenceAccess -> convertToIrExpression(expression)
             else -> if (expression is FirQualifiedAccessExpression && expression.explicitReceiver == null) {
