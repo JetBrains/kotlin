@@ -4476,6 +4476,31 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/concat.kt");
         }
 
+        @TestMetadata("concatDynamic.kt")
+        public void testConcatDynamic() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamic.kt");
+        }
+
+        @TestMetadata("concatDynamic200.kt")
+        public void testConcatDynamic200() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamic200.kt");
+        }
+
+        @TestMetadata("concatDynamic201.kt")
+        public void testConcatDynamic201() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamic201.kt");
+        }
+
+        @TestMetadata("concatDynamicConstants.kt")
+        public void testConcatDynamicConstants() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamicConstants.kt");
+        }
+
+        @TestMetadata("concatNotDynamic.kt")
+        public void testConcatNotDynamic() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatNotDynamic.kt");
+        }
+
         @TestMetadata("constConcat.kt")
         public void testConstConcat() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/constConcat.kt");

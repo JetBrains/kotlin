@@ -51,4 +51,14 @@ class Java9CodegenTest : AbstractBlackBoxCodegenTest() {
         loadFile()
         blackBox(true)
     }
+
+    fun testConcatDynamic200() {
+        loadFile()
+        blackBox(true)
+    }
+
+    fun testConcatDynamic201() {
+        loadFile()
+        blackBox(true)
+    }
 }

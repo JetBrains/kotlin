@@ -16,13 +16,37 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
-import org.jetbrains.kotlin.codegen.Callable
-import org.jetbrains.kotlin.codegen.CallableMethod
+import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class StringPlus : IntrinsicMethod() {
     override fun toCallable(method: CallableMethod): Callable =
-            createIntrinsicCallable(method) {
-                it.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "stringPlus",
-                                "(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;", false)
+        object : IntrinsicCallable(method) {
+            private lateinit var generator: StringAppendGenerator
+
+            override fun invokeMethodWithArguments(
+                resolvedCall: ResolvedCall<*>,
+                receiver: StackValue,
+                codegen: ExpressionCodegen
+            ): StackValue {
+                generator = StringAppendGenerator.create(codegen.state, codegen.v)
+                return super.invokeMethodWithArguments(resolvedCall, receiver, codegen)
             }
+
+            override fun genInvokeInstruction(v: InstructionAdapter) {
+                if (!generator.useInvokeDynamic) {
+                    v.invokestatic(
+                        IntrinsicMethods.INTRINSICS_CLASS_NAME, "stringPlus",
+                        "(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;", false
+                    )
+                } else {
+                    generator.invokeAppend(AsmTypes.JAVA_STRING_TYPE)
+                    generator.invokeAppend(AsmTypes.OBJECT_TYPE)
+                    generator.genToString()
+                }
+            }
+        }
 }
