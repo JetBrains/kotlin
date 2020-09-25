@@ -289,6 +289,7 @@ private val jvmFilePhases = listOf(
 
     moveOrCopyCompanionObjectFieldsPhase,
     inlineCallableReferenceToLambdaPhase,
+    functionReferencePhase,
     propertyReferencePhase,
     constPhase,
     propertiesPhase,
@@ -309,7 +310,6 @@ private val jvmFilePhases = listOf(
     enumWhenPhase,
     singletonReferencesPhase,
 
-    functionReferencePhase,
     singleAbstractMethodPhase,
     assertionPhase,
     returnableBlocksPhase,
