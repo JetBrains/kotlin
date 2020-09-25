@@ -429,14 +429,13 @@ interface IrBuilderExtension {
 
     fun createClassReference(classType: KotlinType, startOffset: Int, endOffset: Int): IrClassReference {
         val clazz = classType.toClassDescriptor!!
-        val returnType =
-            kClassTypeFor(TypeProjectionImpl(Variance.INVARIANT, classType))
+        val classSymbol = compilerContext.referenceClass(clazz.fqNameSafe) ?: error("Couldn't load class $clazz")
         return IrClassReferenceImpl(
             startOffset,
             endOffset,
-            returnType.toIrType(),
-            compilerContext.referenceClass(clazz.fqNameSafe) ?: error("Couldn't load class $clazz"),
-            classType.toIrType()
+            compilerContext.irBuiltIns.kClassClass.starProjectedType,
+            classSymbol,
+            classSymbol.starProjectedType
         )
     }
 
