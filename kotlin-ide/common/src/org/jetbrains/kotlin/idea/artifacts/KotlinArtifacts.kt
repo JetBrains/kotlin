@@ -10,7 +10,8 @@ abstract class KotlinArtifacts {
         @get:JvmStatic
         val instance: KotlinArtifacts by lazy {
             // ApplicationManager may absent in JPS process so we need to check it presence firstly
-            if (doesClassExist("com.intellij.openapi.application.ApplicationManager")) {
+            if (System.getProperty("kotlin.tests.artifacts.check", "true").toBoolean() &&
+                doesClassExist("com.intellij.openapi.application.ApplicationManager")) {
                 // This isUnitTestMode is for reliability in case when Application is already initialized. This check isn't mandatory
                 if (ApplicationManager.getApplication()?.isUnitTestMode == true) {
                     return@lazy getTestKotlinArtifacts() ?: error("""
