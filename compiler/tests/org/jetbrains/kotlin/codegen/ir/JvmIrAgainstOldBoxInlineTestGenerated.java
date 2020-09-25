@@ -795,6 +795,11 @@ public class JvmIrAgainstOldBoxInlineTestGenerated extends AbstractJvmIrAgainstO
             KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, testDataFilePath, "// IGNORE_BACKEND_MULTI_MODULE: ");
         }
 
+        @TestMetadata("adapted.kt")
+        public void testAdapted() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/callableReference/adapted.kt");
+        }
+
         public void testAllFilesPresentInCallableReference() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
         }
