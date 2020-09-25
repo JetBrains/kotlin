@@ -58,7 +58,7 @@ data class KidKotlinPluginVersion(
 data class OldKotlinPluginVersion(
     val kotlinVersion: String, // 1.2.3
     val milestone: String?, // M1
-    val status: String, // release, eap, rc
+    val status: String?, // release, eap, rc
     override val buildNumber: String?, // 53
     override val platformVersion: PlatformVersion,
     val patchNumber: String // usually '1'
@@ -67,7 +67,7 @@ data class OldKotlinPluginVersion(
         private const val KOTLIN_VERSION_REGEX_STRING =
             "^([\\d.]+)" +                // Version number, like 1.3.50
                     "(?:-(M\\d+))?" +     // (Optional) M-release, like M2
-                    "-([A-Za-z]+)" +      // status, like 'eap/dev/release'
+                    "(?:-([A-Za-z]+))?" + // (Optional) status, like 'eap/dev/release'
                     "(?:-(\\d+))?" +      // (Optional) buildNumber (absent for 'release')
                     "-([A-Za-z0-9.]+)" +  // Platform version, like Studio4.0.1
                     "-(\\d+)$"            // Tooling update, like '-1'
