@@ -82,6 +82,7 @@ import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractCommonDecompiled
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractCommonDecompiledTextTest
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractJsDecompiledTextFromJsMetadataTest
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractJvmDecompiledTextTest
+import org.jetbrains.kotlin.idea.editor.AbstractEnterAfterUnmatchedBraceHandlerTest
 import org.jetbrains.kotlin.idea.editor.AbstractMultiLineStringIndentTest
 import org.jetbrains.kotlin.idea.editor.backspaceHandler.AbstractBackspaceHandlerTest
 import org.jetbrains.kotlin.idea.editor.quickDoc.AbstractQuickDocProviderTest
@@ -545,6 +546,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractBackspaceHandlerTest> {
                 model("editor/backspaceHandler")
+            }
+
+            testClass<AbstractEnterAfterUnmatchedBraceHandlerTest> {
+                model("editor/enterHandler/afterUnmatchedBrace")
             }
 
             testClass<AbstractMultiLineStringIndentTest> {

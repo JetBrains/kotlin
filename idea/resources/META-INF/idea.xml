@@ -79,6 +79,8 @@
                           id="KotlinEnterHandler" order="before EnterBetweenBracesHandler"/>
     <enterHandlerDelegate implementation="org.jetbrains.kotlin.idea.editor.KotlinMultilineStringEnterHandler"
                           id="KotlinMultilineStringEnterHandler" order="before EnterBetweenBracesHandler"/>
+    <enterHandlerDelegate implementation="org.jetbrains.kotlin.idea.editor.KotlinEnterAfterUnmatchedBraceHandler"
+                          id="KotlinEnterAfterUnmatchedBraceHandler" order="before afterUnmatchedBrace"/>
     <enterBetweenBracesDelegate language="kotlin"
                                 implementationClass="org.jetbrains.kotlin.idea.editor.EnterBetweenBracesAndBracketsNoCommitDelegate"/>
     <lang.smartEnterProcessor language="kotlin" implementationClass="org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler"/>
