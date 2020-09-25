@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.backend.common.ir.asSimpleLambda
 import org.jetbrains.kotlin.backend.common.ir.inline
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.at
+import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
@@ -78,6 +79,7 @@ fun FileLoweringPass.runOnFileInOrder(irFile: IrFile) {
 
 class PowerAssertCallTransformer(
   private val context: IrPluginContext,
+  private val messageCollector: MessageCollector,
   private val functions: Set<FqName>
 ) : IrElementTransformerVoidWithContext(), FileLoweringPass {
   private lateinit var file: IrFile
@@ -96,9 +98,15 @@ class PowerAssertCallTransformer(
     if (functions.none { fqName == it })
       return super.visitCall(expression)
 
+    // Find a valid delegate function or do not translate
     val delegate = findDelegate(fqName) ?: run {
-      // Find a valid delegate function or do not translate
-      // TODO log a warning
+      val line = fileSource.substring(expression.startOffset).count { it == '\n' } + 1
+      val location = CompilerMessageLocation.create(file.path, line, -1, null)
+      messageCollector.report(
+        CompilerMessageSeverity.WARNING,
+        "Unable to find overload for function $fqName callable as $fqName(Boolean, String) or $fqName(Boolean, () -> String) for power-assertion transformation",
+        location
+      )
       return super.visitCall(expression)
     }
 
@@ -108,7 +116,16 @@ class PowerAssertCallTransformer(
 
     // If the tree does not contain any children, the expression is not transformable
     val tree = buildAssertTree(assertionArgument)
-    val root = tree.children.singleOrNull() ?: return super.visitCall(expression)
+    val root = tree.children.singleOrNull() ?: run {
+      val line = fileSource.substring(expression.startOffset).count { it == '\n' } + 1
+      val location = CompilerMessageLocation.create(file.path, line, -1, null)
+      messageCollector.report(
+        CompilerMessageSeverity.INFO,
+        "Expression is constant and will not be power-assertion transformed",
+        location
+      )
+      return super.visitCall(expression)
+    }
 
     val symbol = currentScope!!.scope.scopeOwnerSymbol
     DeclarationIrBuilder(context, symbol).run {
@@ -149,7 +166,7 @@ class PowerAssertCallTransformer(
   private fun findDelegate(fqName: FqName): FunctionDelegate? {
     return context.findOverloads(fqName)
       .mapNotNull { overload ->
-        // TODO allow other signatures than (Boolean, String) and (Boolean, () -> String))
+        // TODO allow other signatures than (Boolean, String) and (Boolean, () -> String)
         val parameters = overload.owner.valueParameters
         if (parameters.size != 2) return@mapNotNull null
         if (!parameters[0].type.isBoolean()) return@mapNotNull null

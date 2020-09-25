@@ -18,6 +18,8 @@ package com.bnorm.power
 
 import com.google.auto.service.AutoService
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.com.intellij.mock.MockProject
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -38,7 +40,9 @@ class PowerAssertComponentRegistrar(
   ) {
     val functions = configuration[KEY_FUNCTIONS]?.map { FqName(it) } ?: functions
     if (functions.isEmpty()) return
-    IrGenerationExtension.registerExtension(project, PowerAssertIrGenerationExtension(functions.toSet()))
+
+    val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
+    IrGenerationExtension.registerExtension(project, PowerAssertIrGenerationExtension(messageCollector, functions.toSet()))
   }
 }
 
