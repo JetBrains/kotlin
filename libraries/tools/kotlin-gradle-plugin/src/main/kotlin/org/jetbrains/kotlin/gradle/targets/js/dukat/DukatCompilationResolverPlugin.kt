@@ -25,7 +25,15 @@ internal class DukatCompilationResolverPlugin(
     val separateTaskName = npmProject.compilation.disambiguateName("generateExternals")
 
     init {
-        compilation.defaultSourceSet.kotlin.srcDir(npmProject.externalsDir)
+        when (compilation.dukatMode) {
+            DukatMode.SOURCE -> compilation.defaultSourceSet.kotlin.srcDir(npmProject.externalsDir)
+            DukatMode.BINARY -> {
+                project.dependencies.add(
+                    compilation.compileDependencyConfigurationName,
+                    project.file(npmProject.externalsDir)
+                )
+            }
+        }
 
         val integratedTask = project.registerTask<IntegratedDukatTask>(
             integratedTaskName,
