@@ -1,7 +1,16 @@
 Change Log
 ==========
 
-## Version 0.5.
+## Version 0.5.2
+
+_2020-09-25_
+
+Bug Fixes:
+ * Skip transformation if entire expression is constant (`true` or `false`).
+ * Fix inlining of lambda parameter to transformed function call on Kotlin/JS
+ and Kotlin/Native.
+
+## Version 0.5.1
 
 _2020-09-14_
 
