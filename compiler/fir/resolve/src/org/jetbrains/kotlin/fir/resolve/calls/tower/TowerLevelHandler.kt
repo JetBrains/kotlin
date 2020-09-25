@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.Name
@@ -160,7 +161,7 @@ private class TowerScopeLevelProcessor(
                 val declarationReceiverType = (symbol as? FirCallableSymbol<*>)?.fir?.receiverTypeRef?.coneType
                 if (declarationReceiverType is ConeClassLikeType) {
                     if (!AbstractTypeChecker.isSubtypeOf(
-                            candidateFactory.context.inferenceComponents.ctx,
+                            candidateFactory.context.session.typeContext,
                             extensionReceiverType,
                             declarationReceiverType.lookupTag.constructClassType(
                                 declarationReceiverType.typeArguments.map { ConeStarProjection }.toTypedArray(),
