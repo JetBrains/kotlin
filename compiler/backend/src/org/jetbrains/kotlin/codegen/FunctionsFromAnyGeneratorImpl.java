@@ -101,18 +101,19 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
         InstructionAdapter iv = new InstructionAdapter(mv);
 
         mv.visitCode();
-        genStringBuilderConstructor(iv);
 
+        StringAppendGenerator generator = StringAppendGenerator.Companion.create(generationState, iv);
+        generator.genStringBuilderConstructorIfNeded();
         boolean first = true;
+
         for (PropertyDescriptor propertyDescriptor : properties) {
             if (first) {
-                iv.aconst(classDescriptor.getName() + "(" + propertyDescriptor.getName().asString() + "=");
+                generator.addStringConstant(classDescriptor.getName() + "(" + propertyDescriptor.getName().asString() + "=");
                 first = false;
             }
             else {
-                iv.aconst(", " + propertyDescriptor.getName().asString() + "=");
+                generator.addStringConstant(", " + propertyDescriptor.getName().asString() + "=");
             }
-            genInvokeAppendMethod(iv, JAVA_STRING_TYPE, null);
 
             JvmKotlinType type = genOrLoadOnStack(iv, context, propertyDescriptor, 0);
             Type asmType = type.getType();
@@ -131,13 +132,12 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
                     kotlinType = DescriptorUtilsKt.getBuiltIns(function).getStringType();
                 }
             }
-            genInvokeAppendMethod(iv, asmType, kotlinType, typeMapper);
+            genInvokeAppendMethod(generator, asmType, kotlinType, typeMapper);
         }
 
-        iv.aconst(")");
-        genInvokeAppendMethod(iv, JAVA_STRING_TYPE, null);
+        generator.addStringConstant(")");
 
-        iv.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
+        generator.genToString();
         iv.areturn(JAVA_STRING_TYPE);
 
         FunctionCodegen.endVisit(mv, toStringMethodName, getDeclaration());
