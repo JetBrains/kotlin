@@ -143,11 +143,13 @@ class FakeOverrideGenerator(
         scope: FirTypeScope,
     ) where S : FirCallableSymbol<D>, S : PossiblyFirFakeOverrideSymbol<D, S> {
         if (originalSymbol !is S || originalSymbol in realDeclarationSymbols) return
-
+        val classId = klass.symbol.classId
         val originalDeclaration = originalSymbol.fir
+        if (originalSymbol.callableId.classId == classId && !originalDeclaration.origin.fromSupertypes) return
+
         val origin = IrDeclarationOrigin.FAKE_OVERRIDE
         val baseSymbol = originalSymbol.deepestOverriddenSymbol() as S
-        val classId = klass.symbol.classId
+
         if ((originalSymbol.isFakeOverride || originalSymbol.isIntersectionOverride) &&
             originalSymbol.callableId.classId == classId
         ) {
