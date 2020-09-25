@@ -57,5 +57,5 @@ kotlin {
 }
 
 configure<com.bnorm.power.PowerAssertGradleExtension> {
-  functions = listOf("kotlin.test.assertTrue", "kotlin.require")
+  functions = listOf("kotlin.assert", "kotlin.test.assertTrue", "kotlin.require")
 }

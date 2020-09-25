@@ -399,6 +399,20 @@ assert(a == 42)
        0
 """.trimIndent())
   }
+
+  @Test
+  fun constantExpression() {
+    assertMessage(
+      """
+fun main() {
+  assert(true)
+  assert(false)
+}""",
+      """
+Assertion failed
+""".trimIndent()
+    )
+  }
 }
 
 fun assertMessage(

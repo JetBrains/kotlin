@@ -18,9 +18,9 @@ package com.bnorm.power
 
 import kotlin.test.Test
 
-class JvmPowerAssertTest {
+class JsPowerAssertTest {
   @Test
   fun assert() {
-    assert(Person.UNKNOWN.size == 1) { "unknown persons: ${Person.UNKNOWN}" }
+    require(Person.UNKNOWN.size == 1) { "unknown persons: ${Person.UNKNOWN}" }
   }
 }
