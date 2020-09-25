@@ -1,0 +1,6 @@
+depends = AudioToolbox CFNetwork CoreAudioTypes CoreFoundation Foundation Security darwin posix
+language = Objective-C
+package = platform.AudioUnit
+modules = AudioUnit
+compilerOpts = -framework AudioUnit
+linkerOpts = -framework AudioUnit

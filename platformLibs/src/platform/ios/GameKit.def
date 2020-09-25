@@ -1,4 +1,4 @@
-depends = AVFoundation AudioToolbox CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreGraphics CoreImage CoreMIDI CoreMedia CoreText CoreVideo EAGL FileProvider Foundation GLKit GameController GameplayKit IOSurface ImageIO MediaToolbox Metal MetalKit ModelIO OpenGLESCommon QuartzCore ReplayKit SceneKit Security SpriteKit UIKit UserNotifications darwin posix
+depends = AVFoundation AudioToolbox CFNetwork Contacts CoreAudio CoreAudioTypes CoreFoundation CoreGraphics CoreImage CoreMIDI CoreMedia CoreText CoreVideo EAGL FileProvider Foundation GLKit GameController GameplayKit IOSurface ImageIO MediaToolbox Metal MetalKit ModelIO OpenGLESCommon QuartzCore ReplayKit SceneKit Security SpriteKit UIKit UniformTypeIdentifiers UserNotifications darwin posix
 language = Objective-C
 package = platform.GameKit
 modules = GameKit

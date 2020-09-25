@@ -1,4 +1,4 @@
-depends = CFNetwork CoreFoundation CoreGraphics Foundation Security darwin posix
+depends = CFNetwork CoreFoundation CoreGraphics Foundation Security UniformTypeIdentifiers darwin posix
 language = Objective-C
 package = platform.QuickLookThumbnailing
 modules = QuickLookThumbnailing

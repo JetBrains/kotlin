@@ -1,4 +1,4 @@
-depends = AVFoundation AudioToolbox CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreGraphics CoreImage CoreMIDI CoreMedia CoreText CoreVideo EAGL FileProvider Foundation GLKit IOSurface ImageIO MediaToolbox Metal OpenGLESCommon QuartzCore QuickLook SceneKit Security SpriteKit UIKit UserNotifications darwin posix
+depends = AVFoundation AudioToolbox CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreGraphics CoreImage CoreLocation CoreMIDI CoreML CoreMedia CoreText CoreVideo EAGL FileProvider Foundation GLKit IOSurface ImageIO MediaToolbox Metal OpenGLESCommon QuartzCore QuickLook SceneKit Security SpriteKit UIKit UniformTypeIdentifiers UserNotifications Vision darwin posix
 language = Objective-C
 package = platform.ARKit
 modules = ARKit

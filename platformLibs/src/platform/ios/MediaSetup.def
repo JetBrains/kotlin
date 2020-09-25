@@ -1,0 +1,11 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO Metal OpenGLESCommon QuartzCore Security UIKit UserNotifications darwin posix
+language = Objective-C
+package = platform.MediaSetup
+
+modules.ios_arm32 = MediaSetup
+compilerOpts.ios_arm32 = -framework MediaSetup
+linkerOpts.ios_arm32 = -framework MediaSetup
+
+modules.ios_arm64 = MediaSetup
+compilerOpts.ios_arm64 = -framework MediaSetup
+linkerOpts.ios_arm64 = -framework MediaSetup

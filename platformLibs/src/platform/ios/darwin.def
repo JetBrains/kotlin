@@ -31,7 +31,8 @@ headerFilter = **
 
 excludedFunctions = __tg_promote KERNEL_AUDIT_TOKEN KERNEL_SECURITY_TOKEN \
                     asl_decode_buffer asl_encode_buffer asl_remove_index \
-                    averunnable dbm_forder pidlock ttyaction ttylock ttymsg ttyunlock uuid_generate_early_random
+                    averunnable dbm_forder pidlock ttyaction ttylock ttymsg ttyunlock uuid_generate_early_random \
+                    vm_stats
 
 excludedFunctions.ios_arm32 = _Unwind_Backtrace _Unwind_FindEnclosingFunction _Unwind_Find_FDE \
                               _Unwind_SjLj_ForcedUnwind __deregister_frame __register_frame

@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform._StoreKit_SwiftUI
+modules = _StoreKit_SwiftUI
+compilerOpts = -framework _StoreKit_SwiftUI
+linkerOpts = -framework _StoreKit_SwiftUI
+#Disabled: Unavailable

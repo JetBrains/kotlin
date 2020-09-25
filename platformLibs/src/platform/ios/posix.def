@@ -20,6 +20,7 @@ excludedFunctions = acl_valid_link_np add_profil pfctlinput profil unwhiteout zo
                     in6addr_linklocal_allv2routers
 excludedFunctions.ios_arm32 = longjmperror
 excludedFunctions.ios_arm64 = longjmperror
+excludedFunctions.ios_x64 = pthread_jit_write_protect_np pthread_jit_write_protect_supported_np
 
 ---
 // Wrapper to access errno variable.
