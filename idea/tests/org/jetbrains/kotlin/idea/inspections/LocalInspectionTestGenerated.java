@@ -9221,6 +9221,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/redundantWith"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
         }
 
+        @TestMetadata("asInitializer.kt")
+        public void testAsInitializer() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantWith/asInitializer.kt");
+        }
+
+        @TestMetadata("asInitializerWithSingleReturn.kt")
+        public void testAsInitializerWithSingleReturn() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantWith/asInitializerWithSingleReturn.kt");
+        }
+
         @TestMetadata("emptyExpressionInReturn.kt")
         public void testEmptyExpressionInReturn() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantWith/emptyExpressionInReturn.kt");
