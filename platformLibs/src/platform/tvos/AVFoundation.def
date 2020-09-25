@@ -1,4 +1,4 @@
-depends = AudioToolbox CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreGraphics CoreMedia CoreVideo EAGL Foundation IOSurface ImageIO MediaToolbox Metal OpenGLESCommon QuartzCore Security darwin posix
+depends = AudioToolbox CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreGraphics CoreMedia CoreVideo EAGL Foundation IOSurface ImageIO MediaToolbox Metal OpenGLESCommon QuartzCore Security UniformTypeIdentifiers darwin posix
 language = Objective-C
 package = platform.AVFoundation
 headers = AVFoundation/AVFoundation.h AVFoundation/AVFAudio.h AVFoundation/AVAudioBuffer.h

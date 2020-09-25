@@ -31,7 +31,8 @@ headerFilter = **
 
 excludedFunctions = __tg_promote KERNEL_AUDIT_TOKEN KERNEL_SECURITY_TOKEN \
                     asl_decode_buffer asl_encode_buffer asl_remove_index \
-                    averunnable dbm_forder pidlock ttyaction ttylock ttymsg ttyunlock uuid_generate_early_random
+                    averunnable dbm_forder pidlock ttyaction ttylock ttymsg ttyunlock uuid_generate_early_random \
+                    vm_stats
 
 compilerOpts = -D_XOPEN_SOURCE -DSYSCTL_DEF_ENABLED
 linkerOpts = -ldl -lz -lbz2 -lcompression -late

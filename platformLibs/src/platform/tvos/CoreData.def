@@ -1,4 +1,4 @@
-depends = CFNetwork CoreFoundation Foundation Security darwin posix
+depends = CFNetwork CloudKit CoreFoundation CoreLocation Foundation Security darwin posix
 language = Objective-C
 package = platform.CoreData
 modules = CoreData

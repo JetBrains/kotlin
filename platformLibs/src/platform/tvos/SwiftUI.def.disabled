@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.SwiftUI
+modules = SwiftUI
+compilerOpts = -framework SwiftUI
+linkerOpts = -framework SwiftUI
+#Disabled: Swift-only framework

@@ -1,4 +1,4 @@
-depends = AVFoundation AudioToolbox CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreGraphics CoreImage CoreMedia CoreText CoreVideo EAGL Foundation IOSurface ImageIO MediaToolbox Metal OpenGLESCommon QuartzCore Security UIKit UserNotifications darwin posix
+depends = AVFoundation AudioToolbox CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreGraphics CoreImage CoreMedia CoreText CoreVideo EAGL Foundation IOSurface ImageIO MediaToolbox Metal OpenGLESCommon QuartzCore Security UIKit UniformTypeIdentifiers UserNotifications darwin posix
 language = Objective-C
 package = platform.AVKit
 modules = AVKit
