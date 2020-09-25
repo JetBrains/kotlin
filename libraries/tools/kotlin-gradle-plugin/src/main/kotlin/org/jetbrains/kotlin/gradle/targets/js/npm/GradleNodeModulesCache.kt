@@ -14,10 +14,11 @@ import java.io.File
  */
 internal class GradleNodeModulesCache(nodeJs: NodeJsRootExtension) : AbstractNodeModulesCache(nodeJs) {
     override fun buildImportedPackage(
-        dependency: ResolvedDependency,
+        name: String,
+        version: String,
         file: File
     ): File? {
-        val module = GradleNodeModuleBuilder(project, dependency, listOf(file), this)
+        val module = GradleNodeModuleBuilder(project, name, version, listOf(file), this)
         module.visitArtifacts()
         return module.rebuild()
     }

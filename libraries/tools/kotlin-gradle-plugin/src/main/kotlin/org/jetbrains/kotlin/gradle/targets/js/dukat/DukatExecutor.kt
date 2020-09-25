@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 class DukatExecutor(
     val nodeJs: NodeJsRootExtension,
     val typeDefinitions: List<DtsResolver.Dts>,
+    val externalsOutputFormat: ExternalsOutputFormat,
     val npmProject: NpmProject,
     val packageJsonIsUpdated: Boolean,
     val operation: String = OPERATION,
@@ -49,6 +50,7 @@ class DukatExecutor(
             DukatRunner(
                 npmProject.compilation,
                 typeDefinitions.map { it.file },
+                externalsOutputFormat,
                 npmProject.externalsDir,
                 operation = operation
             ).execute()
@@ -57,5 +59,7 @@ class DukatExecutor(
         }
 
         versionFile.writeText(version)
+
+        gradleModelPostProcess(externalsOutputFormat, npmProject)
     }
 }

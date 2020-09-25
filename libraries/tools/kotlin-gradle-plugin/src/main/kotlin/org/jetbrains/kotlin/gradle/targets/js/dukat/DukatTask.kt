@@ -30,6 +30,12 @@ abstract class DukatTask(
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         get() = setOf(nodeJs.versions.dukat)
 
+    /**
+     * [ExternalsOutputFormat] what to generate, sources or binaries
+     */
+    @Input
+    var externalsOutputFormat: ExternalsOutputFormat = ExternalsOutputFormat.SOURCE
+
     @get:Internal
     @delegate:Transient
     val dts by lazy {
@@ -84,6 +90,7 @@ abstract class DukatTask(
         DukatRunner(
             compilation,
             dTsFiles,
+            externalsOutputFormat,
             destinationDir,
             qualifiedPackageName,
             null,
