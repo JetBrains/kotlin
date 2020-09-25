@@ -1,5 +1,6 @@
 // !LANGUAGE: +InlineClasses
 // IGNORE_BACKEND: JVM
+// IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_LIGHT_ANALYSIS
 inline class IC(val x: String)
 
