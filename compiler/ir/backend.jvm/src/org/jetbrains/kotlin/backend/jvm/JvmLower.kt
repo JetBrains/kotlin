@@ -113,6 +113,7 @@ internal val localDeclarationsPhase = makeIrFilePhase(
             object : VisibilityPolicy {
                 override fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): DescriptorVisibility =
                     if (declaration.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL ||
+                        declaration.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA ||
                         declaration.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL ||
                         declaration.origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
                     ) {
@@ -290,6 +291,7 @@ private val jvmFilePhases = listOf(
     moveOrCopyCompanionObjectFieldsPhase,
     inlineCallableReferenceToLambdaPhase,
     functionReferencePhase,
+    suspendLambdaPhase,
     propertyReferencePhase,
     constPhase,
     propertiesPhase,
@@ -336,7 +338,6 @@ private val jvmFilePhases = listOf(
     interfaceObjectCallsPhase,
 
     tailCallOptimizationPhase,
-    suspendLambdaPhase,
     addContinuationPhase,
 
     innerClassesPhase,
