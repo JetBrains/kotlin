@@ -361,14 +361,35 @@ class CallAndReferenceGenerator(
         }.applyCallArguments(annotationCall, annotationMode = true)
     }
 
-    fun convertToGetObject(qualifier: FirResolvedQualifier): IrExpression {
-        return convertToGetObject(qualifier, callableReferenceMode = false)!!
+    internal fun convertToGetObject(qualifier: FirResolvedQualifier): IrExpression {
+        return convertToGetObject(qualifier, null)!!
     }
 
-    internal fun convertToGetObject(qualifier: FirResolvedQualifier, callableReferenceMode: Boolean): IrExpression? {
+    internal fun convertToGetObject(
+        qualifier: FirResolvedQualifier,
+        callableReferenceAccess: FirCallableReferenceAccess? = null
+    ): IrExpression? {
         val classSymbol = (qualifier.typeRef.coneType as? ConeClassLikeType)?.lookupTag?.toSymbol(session)
-        if (callableReferenceMode && classSymbol is FirRegularClassSymbol) {
-            if (classSymbol.classId != qualifier.classId) {
+        if (callableReferenceAccess != null && classSymbol is FirRegularClassSymbol) {
+            val classIdMatched = classSymbol.classId == qualifier.classId
+            val companionClassIdMatched = classSymbol.fir.isCompanion && classSymbol.classId.outerClassId == qualifier.classId
+            val lastClassIfCompanion = conversionScope.lastClass()?.takeIf { it.isCompanion }
+            val callable =
+                ((callableReferenceAccess.calleeReference as FirResolvedNamedReference).resolvedSymbol as FirCallableSymbol<*>)
+            val companionMemberReferenceThatNeedsDispatchReceiver = companionClassIdMatched &&
+                    // TODO: this can't cover delegated members. See bb test kt38664.kt
+                    // Make sure the reference indeed refers to a member of that companion
+                    classSymbol.fir.declarations.contains(callable.fir) &&
+                    // Built-in extensions are stored in the companion, e.g., String.Companion.
+                    // Make sure this is not a reference to an extension function.
+                    !callable.isExtension &&
+                    // Dispatch receiver is not needed if we're converting a callable reference inside that companion, e.g.,
+                    // class Foo {
+                    //   companion object {
+                    //      val cp = Foo::member
+                    // } }
+                    lastClassIfCompanion?.classId != classSymbol.classId
+            if (!classIdMatched && !companionMemberReferenceThatNeedsDispatchReceiver) {
                 return null
             }
         }
@@ -612,7 +633,7 @@ class CallAndReferenceGenerator(
             return explicitReceiverExpression
         }
         if (firReceiver is FirResolvedQualifier) {
-            return convertToGetObject(firReceiver, callableReferenceMode = this is FirCallableReferenceAccess)
+            return convertToGetObject(firReceiver, this as? FirCallableReferenceAccess)
         }
         return firReceiver.takeIf { it !is FirNoReceiverExpression }?.let { visitor.convertToIrExpression(it) }
             ?: explicitReceiverExpression
