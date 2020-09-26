@@ -146,6 +146,7 @@ internal class ResolvedMppVariantsProvider private constructor(private val proje
         return artifactsConfiguration.incoming.artifactView { view ->
             view.componentFilter { it in mppComponentIds }
             view.attributes { attrs -> attrs.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA)) }
+            view.lenient(true)
         }.artifacts.associateBy { it.id.componentIdentifier }
     }
 

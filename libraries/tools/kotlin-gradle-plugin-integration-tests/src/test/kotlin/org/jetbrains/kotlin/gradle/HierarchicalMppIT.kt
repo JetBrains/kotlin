@@ -58,8 +58,41 @@ class HierarchicalMppIT : BaseGradleIT() {
     }
 
     @Test
-    fun testDependenciesInTests() {
+    fun testNoSourceSetsVisibleIfNoVariantMatched() {
         publishThirdPartyLib(withGranularMetadata = true)
+
+        Project("my-lib-foo", gradleVersion, "hierarchical-mpp-published-modules").run {
+            setupWorkingDir()
+            gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+            // --- Move the dependency from jvmAndJsMain to commonMain, where there's a linuxX64 target missing in the lib
+            gradleBuildScript().modify {
+                it.checkedReplace("api(\"com.example.thirdparty:third-party-lib:1.0\")", "//") + "\n" + """
+                dependencies {
+                    "commonMainApi"("com.example.thirdparty:third-party-lib:1.0")
+                }
+                """.trimIndent()
+            }
+
+            testDependencyTransformations { reports ->
+                val thirdPartyLibApiVisibility = reports.filter { report ->
+                    report.groupAndModule.startsWith("com.example.thirdparty:third-party-lib") && report.scope == "api"
+                }
+                val jvmJsSourceSets = setOf("jvmMain", "jsMain", "jvmTest", "jsTest", "jvmAndJsMain", "jvmAndJsTest")
+                thirdPartyLibApiVisibility.forEach {
+                    if (it.sourceSetName in jvmJsSourceSets)
+                        assertTrue("$it") { it.allVisibleSourceSets == setOf("commonMain") }
+                }
+            }
+        }
+    }
+
+    @Test
+    fun testDependenciesInTests() {
+        publishThirdPartyLib(withGranularMetadata = true) {
+            projectDir.resolve("src/jvmMain").copyRecursively(projectDir.resolve("src/linuxX64Main"))
+            gradleBuildScript().appendText("\nkotlin.linuxX64()")
+        }
 
         Project("my-lib-foo", gradleVersion, "hierarchical-mpp-published-modules").run {
             setupWorkingDir()
@@ -68,12 +101,18 @@ class HierarchicalMppIT : BaseGradleIT() {
             testDependencyTransformations { reports ->
                 val testApiTransformationReports =
                     reports.filter { report ->
-                        report.groupAndModule.startsWith("com.example.thirdparty") &&
-                                report.sourceSetName.let { it == "commonTest" || it == "jvmAndJsTest" }
+                        report.groupAndModule.startsWith("com.example.thirdparty:third-party-lib") &&
+                                report.sourceSetName.let { it == "commonTest" || it == "jvmAndJsTest" } &&
+                                report.scope == "api"
                     }
 
                 testApiTransformationReports.forEach {
-                    assertTrue("$it") { it.isExcluded } // should not be visible in test source sets
+                    if (it.sourceSetName == "commonTest")
+                        assertTrue("$it") { it.isExcluded } // should not be visible in commonTest
+                    else {
+                        assertTrue("$it") { it.allVisibleSourceSets == setOf("commonMain") }
+                        assertTrue("$it") { it.newVisibleSourceSets == emptySet<String>() }
+                    }
                 }
             }
 
@@ -187,11 +226,14 @@ class HierarchicalMppIT : BaseGradleIT() {
         projectName: String = "third-party-lib",
         directoryPrefix: String = "hierarchical-mpp-published-modules",
         withGranularMetadata: Boolean,
-        jsCompilerType: KotlinJsCompilerType = KotlinJsCompilerType.LEGACY
+        jsCompilerType: KotlinJsCompilerType = KotlinJsCompilerType.LEGACY,
+        beforePublishing: Project.() -> Unit = { }
     ): Project =
         Project(projectName, gradleVersion, directoryPrefix).apply {
             setupWorkingDir()
             gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+            beforePublishing()
 
             if (withGranularMetadata) {
                 projectDir.resolve("gradle.properties").appendText("kotlin.mpp.enableGranularSourceSetsMetadata=true")

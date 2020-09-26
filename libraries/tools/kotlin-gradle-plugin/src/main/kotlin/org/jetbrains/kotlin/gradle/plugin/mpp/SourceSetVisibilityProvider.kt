@@ -71,7 +71,7 @@ internal class SourceSetVisibilityProvider(
 
         val firstConfigurationByVariant = mutableMapOf<String, Configuration>()
 
-        val visiblePlatformVariantNames: Set<String> =
+        val visiblePlatformVariantNames: Set<String?> =
             compilations
                 .filter { it.target.platformType != KotlinPlatformType.common }
                 .flatMapTo(mutableSetOf()) { compilation ->
@@ -79,10 +79,10 @@ internal class SourceSetVisibilityProvider(
                     // that we have in the compilations:
                     dependencyScopes.mapNotNull { scope -> project.resolvableConfigurationFromCompilationByScope(compilation, scope) }
                 }
-                .mapNotNullTo(mutableSetOf()) { configuration ->
+                .mapTo(mutableSetOf()) { configuration ->
                     val resolvedVariant = resolvedVariantsProvider.getResolvedVariantName(mppModuleIdentifier, configuration)
                         ?.let { platformVariantName(it) }
-                        ?: return@mapNotNullTo null
+                        ?: return@mapTo null
 
                     firstConfigurationByVariant.putIfAbsent(resolvedVariant, configuration)
                     resolvedVariant
@@ -121,11 +121,11 @@ internal class SourceSetVisibilityProvider(
                             .keys.first()
                     }
 
-                someVariantByHostSpecificSourceSet.mapValues { (_, variantName) ->
+                someVariantByHostSpecificSourceSet.entries.mapNotNull { (sourceSetName, variantName) ->
                     val configuration = firstConfigurationByVariant.getValue(variantName)
                     resolvedVariantsProvider.getMetadataArtifactByRootModule(mppModuleIdentifier, configuration)
-                        ?: error("Couldn't resolve metadata artifact for $mppModuleIdentifier in $configuration")
-                }
+                        ?.let { sourceSetName to it }
+                }.toMap()
             }
 
         return SourceSetVisibilityResult(
