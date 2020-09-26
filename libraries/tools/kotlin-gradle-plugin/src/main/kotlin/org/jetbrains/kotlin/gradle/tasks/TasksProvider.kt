@@ -21,6 +21,7 @@ import org.gradle.api.Task
 import org.gradle.api.UnknownTaskException
 import org.gradle.api.tasks.TaskCollection
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mapKotlinTaskProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
@@ -83,7 +84,7 @@ internal open class KotlinTasksProvider(val targetName: String) {
     open fun registerKotlinJVMTask(
         project: Project,
         name: String,
-        compilation: AbstractKotlinCompilation<*>,
+        compilation: KotlinCompilation<*>,
         configureAction: (KotlinCompile) -> (Unit)
     ): TaskProvider<out KotlinCompile> {
         val properties = PropertiesProvider(project)
@@ -98,7 +99,7 @@ internal open class KotlinTasksProvider(val targetName: String) {
     fun registerKotlinJSTask(
         project: Project,
         name: String,
-        compilation: AbstractKotlinCompilation<*>,
+        compilation: KotlinCompilation<*>,
         configureAction: (Kotlin2JsCompile) -> Unit
     ): TaskProvider<out Kotlin2JsCompile> {
         val properties = PropertiesProvider(project)
@@ -113,7 +114,7 @@ internal open class KotlinTasksProvider(val targetName: String) {
     fun registerKotlinJsIrTask(
         project: Project,
         name: String,
-        compilation: AbstractKotlinCompilation<*>,
+        compilation: KotlinCompilation<*>,
         configureAction: (KotlinJsIrLink) -> Unit
     ): TaskProvider<out KotlinJsIrLink> {
         val properties = PropertiesProvider(project)
@@ -128,7 +129,7 @@ internal open class KotlinTasksProvider(val targetName: String) {
     fun registerKotlinCommonTask(
         project: Project,
         name: String,
-        compilation: AbstractKotlinCompilation<*>,
+        compilation: KotlinCompilation<*>,
         configureAction: (KotlinCompileCommon) -> (Unit)
     ): TaskProvider<out KotlinCompileCommon> {
         val properties = PropertiesProvider(project)
@@ -144,7 +145,7 @@ internal open class KotlinTasksProvider(val targetName: String) {
         kotlinTaskHolder: TaskProvider<out AbstractKotlinCompile<*>>,
         project: Project,
         propertiesProvider: PropertiesProvider,
-        compilation: AbstractKotlinCompilation<*>
+        compilation: KotlinCompilation<*>
     ) {
         project.runOnceAfterEvaluated("apply properties and language settings to ${kotlinTaskHolder.name}", kotlinTaskHolder) {
             propertiesProvider.mapKotlinTaskProperties(kotlinTaskHolder.get())
@@ -165,7 +166,7 @@ internal class AndroidTasksProvider(targetName: String) : KotlinTasksProvider(ta
         kotlinTaskHolder: TaskProvider<out AbstractKotlinCompile<*>>,
         project: Project,
         propertiesProvider: PropertiesProvider,
-        compilation: AbstractKotlinCompilation<*>
+        compilation: KotlinCompilation<*>
     ) {
         super.configure(kotlinTaskHolder, project, propertiesProvider, compilation)
         kotlinTaskHolder.configure {

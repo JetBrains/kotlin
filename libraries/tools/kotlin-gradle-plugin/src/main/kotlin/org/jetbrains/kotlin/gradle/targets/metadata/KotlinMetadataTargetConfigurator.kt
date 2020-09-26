@@ -51,12 +51,9 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
         internal fun transformGranularMetadataTaskName(sourceSetName: String) =
             lowerCamelCaseName("transform", sourceSetName, "DependenciesMetadata")
 
-        // TODO generalize once a general production-test and other kinds of inter-compilation visibility are supported
-        // Currently, this is a temporary ad-hoc mechanism for exposing the commonMain dependencies to the test source sets
         internal fun dependsOnWithInterCompilationDependencies(project: Project, sourceSet: KotlinSourceSet): Set<KotlinSourceSet> =
             sourceSet.dependsOn.toMutableSet().apply {
-                if (sourceSet.name == KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME)
-                    add(project.kotlinExtension.sourceSets.getByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME))
+                addAll(getVisibleSourceSetsFromAssociateCompilations(project, sourceSet))
             }
     }
 

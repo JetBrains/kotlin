@@ -62,7 +62,7 @@ val KOTLIN_JS_DSL_NAME = "kotlin2js"
 val KOTLIN_OPTIONS_DSL_NAME = "kotlinOptions"
 
 abstract class KotlinCompilationProcessor<out T : AbstractCompile>(
-    open val kotlinCompilation: AbstractKotlinCompilation<*>
+    open val kotlinCompilation: KotlinCompilation<*>
 ) {
     abstract val kotlinTask: TaskProvider<out T>
     abstract fun run()
