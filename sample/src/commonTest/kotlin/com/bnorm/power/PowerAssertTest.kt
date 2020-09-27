@@ -29,4 +29,22 @@ class PowerAssertTest {
   fun require() {
     require(Person.UNKNOWN.size == 1)
   }
+
+  @Test
+  fun softAssert() {
+    val unknown: List<Person>? = Person.UNKNOWN
+    assert(unknown != null)
+    assert(unknown.size == 2)
+
+    val jane: Person
+    val john: Person
+    assertSoftly {
+      jane = unknown[0]
+      assert(jane.firstName == "Jane")
+      assert(jane.lastName == "Doe") { "bad jane last name" }
+
+      john = unknown[1]
+      assert(john.lastName == "Doe" && john.firstName == "John") { "bad john" }
+    }
+  }
 }
