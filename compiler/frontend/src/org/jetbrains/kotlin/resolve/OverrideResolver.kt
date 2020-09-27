@@ -203,17 +203,13 @@ class OverrideResolver(
             overriding: CallableMemberDescriptor,
             overridden: CallableMemberDescriptor
         ) {
-            reportDelegationProblemIfRequired(
-                RETURN_TYPE_MISMATCH_BY_DELEGATION, RETURN_TYPE_MISMATCH_ON_INHERITANCE, overriding, overridden
-            )
-        }
+            val (diagnosticFactory, relevantDiagnosticFromInheritance) = if (overridden is PropertyDescriptor)
+                PROPERTY_TYPE_MISMATCH_BY_DELEGATION to PROPERTY_TYPE_MISMATCH_ON_INHERITANCE
+            else
+                RETURN_TYPE_MISMATCH_BY_DELEGATION to RETURN_TYPE_MISMATCH_ON_INHERITANCE
 
-        override fun propertyTypeMismatchOnOverride(
-            overriding: PropertyDescriptor,
-            overridden: PropertyDescriptor
-        ) {
             reportDelegationProblemIfRequired(
-                PROPERTY_TYPE_MISMATCH_BY_DELEGATION, PROPERTY_TYPE_MISMATCH_ON_INHERITANCE, overriding, overridden
+                diagnosticFactory, relevantDiagnosticFromInheritance, overriding, overridden
             )
         }
 
@@ -266,7 +262,6 @@ class OverrideResolver(
     private interface CheckOverrideReportStrategy {
         fun overridingFinalMember(overriding: CallableMemberDescriptor, overridden: CallableMemberDescriptor)
         fun returnTypeMismatchOnOverride(overriding: CallableMemberDescriptor, overridden: CallableMemberDescriptor)
-        fun propertyTypeMismatchOnOverride(overriding: PropertyDescriptor, overridden: PropertyDescriptor)
         fun varOverriddenByVal(overriding: CallableMemberDescriptor, overridden: CallableMemberDescriptor)
     }
 
@@ -313,19 +308,17 @@ class OverrideResolver(
                 override fun returnTypeMismatchOnOverride(overriding: CallableMemberDescriptor, overridden: CallableMemberDescriptor) {
                     if (!typeMismatchError) {
                         typeMismatchError = true
-                        trace.report(RETURN_TYPE_MISMATCH_ON_OVERRIDE.on(
-                            member, declared, DeclarationWithDiagnosticComponents(overridden, platformSpecificDiagnosticComponents)
-                        ))
-                    }
-                }
 
-                override fun propertyTypeMismatchOnOverride(overriding: PropertyDescriptor, overridden: PropertyDescriptor) {
-                    if (!typeMismatchError) {
-                        typeMismatchError = true
-                        if (overridden.isVar) {
-                            trace.report(VAR_TYPE_MISMATCH_ON_OVERRIDE.on(member, declared, overridden))
-                        } else {
-                            trace.report(PROPERTY_TYPE_MISMATCH_ON_OVERRIDE.on(member, declared, overridden))
+                        when {
+                            overridden is PropertyDescriptor && overridden.isVar ->
+                                trace.report(VAR_TYPE_MISMATCH_ON_OVERRIDE.on(member, declared, overridden))
+
+                            overridden is PropertyDescriptor && !overridden.isVar ->
+                                trace.report(PROPERTY_TYPE_MISMATCH_ON_OVERRIDE.on(member, declared, overridden))
+
+                            else -> trace.report(RETURN_TYPE_MISMATCH_ON_OVERRIDE.on(
+                                member, declared, DeclarationWithDiagnosticComponents(overridden, platformSpecificDiagnosticComponents)
+                            ))
                         }
                     }
                 }
@@ -372,10 +365,6 @@ class OverrideResolver(
                     overrideConflict = true
                     trace.report(DATA_CLASS_OVERRIDE_CONFLICT.on(dataModifier, componentFunction, overridden.containingDeclaration))
                 }
-            }
-
-            override fun propertyTypeMismatchOnOverride(overriding: PropertyDescriptor, overridden: PropertyDescriptor) {
-                throw IllegalStateException("Component functions are not properties")
             }
 
             override fun varOverriddenByVal(overriding: CallableMemberDescriptor, overridden: CallableMemberDescriptor) {
@@ -839,20 +828,16 @@ class OverrideResolver(
             reportError: CheckOverrideReportStrategy,
             kotlinTypeRefiner: KotlinTypeRefiner
         ) {
-            val propertyMemberDescriptor = if (memberDescriptor is PropertyDescriptor) memberDescriptor else null
-
             for (overridden in overriddenDescriptors) {
                 if (overridden.modality == Modality.FINAL) {
                     reportError.overridingFinalMember(memberDescriptor, overridden)
                 }
 
                 if (!isReturnTypeOkForOverride(overridden, memberDescriptor, kotlinTypeRefiner)) {
-                    if (memberDescriptor is PropertyDescriptor) {
-                        require(overridden is PropertyDescriptor) { "$overridden is overridden by property $propertyMemberDescriptor" }
-                        reportError.propertyTypeMismatchOnOverride(memberDescriptor, overridden)
-                    } else {
-                        reportError.returnTypeMismatchOnOverride(memberDescriptor, overridden)
+                    require(memberDescriptor !is PropertyDescriptor || overridden is PropertyDescriptor) {
+                        "$overridden is overridden by property $memberDescriptor"
                     }
+                    reportError.returnTypeMismatchOnOverride(memberDescriptor, overridden)
                 }
 
                 if (checkPropertyKind(overridden, true) && checkPropertyKind(memberDescriptor, false)) {
