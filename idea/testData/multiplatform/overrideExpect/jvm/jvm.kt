@@ -7,7 +7,7 @@ interface Derived : Base {
 
     override fun Expect.expectInReceiver()
 
-    override val expectVal: <!PROPERTY_TYPE_MISMATCH_ON_OVERRIDE!>Expect<!>
+    override val expectVal: Expect
 
-    override var expectVar: <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>Expect<!>
+    override var expectVar: Expect
 }

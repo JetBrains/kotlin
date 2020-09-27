@@ -795,19 +795,13 @@ class OverrideResolver(
         ) {
             if (overriddenDescriptors.size <= 1) return
 
-            val propertyDescriptor = descriptor as? PropertyDescriptor
-
             for (overriddenDescriptor in overriddenDescriptors) {
-                if (propertyDescriptor != null) {
-                    val overriddenPropertyDescriptor =
-                        overriddenDescriptor.assertedCast<PropertyDescriptor> { "$overriddenDescriptor is not a property" }
-                    if (!isPropertyTypeOkForOverride(overriddenPropertyDescriptor, propertyDescriptor)) {
-                        reportingStrategy.typeMismatchOnInheritance(propertyDescriptor, overriddenPropertyDescriptor)
-                    }
-                } else {
-                    if (!isReturnTypeOkForOverride(overriddenDescriptor, descriptor, kotlinTypeRefiner)) {
-                        reportingStrategy.typeMismatchOnInheritance(descriptor, overriddenDescriptor)
-                    }
+                require(descriptor !is PropertyDescriptor || overriddenDescriptor is PropertyDescriptor) {
+                    "$overriddenDescriptor is not a property"
+                }
+
+                if (!isReturnTypeOkForOverride(overriddenDescriptor, descriptor, kotlinTypeRefiner)) {
+                    reportingStrategy.typeMismatchOnInheritance(descriptor, overriddenDescriptor)
                 }
             }
         }
@@ -852,15 +846,13 @@ class OverrideResolver(
                     reportError.overridingFinalMember(memberDescriptor, overridden)
                 }
 
-                if (propertyMemberDescriptor != null) {
-                    val overriddenProperty = overridden.assertedCast<PropertyDescriptor> {
-                        "$overridden is overridden by property $propertyMemberDescriptor"
+                if (!isReturnTypeOkForOverride(overridden, memberDescriptor, kotlinTypeRefiner)) {
+                    if (memberDescriptor is PropertyDescriptor) {
+                        require(overridden is PropertyDescriptor) { "$overridden is overridden by property $propertyMemberDescriptor" }
+                        reportError.propertyTypeMismatchOnOverride(memberDescriptor, overridden)
+                    } else {
+                        reportError.returnTypeMismatchOnOverride(memberDescriptor, overridden)
                     }
-                    if (!isPropertyTypeOkForOverride(overriddenProperty, propertyMemberDescriptor, kotlinTypeRefiner)) {
-                        reportError.propertyTypeMismatchOnOverride(propertyMemberDescriptor, overriddenProperty)
-                    }
-                } else if (!isReturnTypeOkForOverride(overridden, memberDescriptor, kotlinTypeRefiner)) {
-                    reportError.returnTypeMismatchOnOverride(memberDescriptor, overridden)
                 }
 
                 if (checkPropertyKind(overridden, true) && checkPropertyKind(memberDescriptor, false)) {
@@ -872,7 +864,7 @@ class OverrideResolver(
         private fun isReturnTypeOkForOverride(
             superDescriptor: CallableDescriptor,
             subDescriptor: CallableDescriptor,
-            kotlinTypeRefiner: KotlinTypeRefiner
+            kotlinTypeRefiner: KotlinTypeRefiner,
         ): Boolean {
             val typeSubstitutor = prepareTypeSubstitutor(superDescriptor, subDescriptor) ?: return false
 
@@ -882,7 +874,11 @@ class OverrideResolver(
 
             val substitutedSuperReturnType = typeSubstitutor.substitute(superReturnType, Variance.OUT_VARIANCE)!!
 
-            return NewKotlinTypeCheckerImpl(kotlinTypeRefiner).isSubtypeOf(subReturnType, substitutedSuperReturnType)
+            val typeChecker = NewKotlinTypeCheckerImpl(kotlinTypeRefiner)
+            return if (superDescriptor is PropertyDescriptor && superDescriptor.isVar)
+                typeChecker.equalTypes(subReturnType, substitutedSuperReturnType)
+            else
+                typeChecker.isSubtypeOf(subReturnType, substitutedSuperReturnType)
         }
 
         private fun prepareTypeSubstitutor(
@@ -899,21 +895,6 @@ class OverrideResolver(
             }
 
             return IndexedParametersSubstitution(superTypeParameters, arguments).buildSubstitutor()
-        }
-
-        private fun isPropertyTypeOkForOverride(
-            superDescriptor: PropertyDescriptor,
-            subDescriptor: PropertyDescriptor
-        ): Boolean {
-            val typeSubstitutor = prepareTypeSubstitutor(superDescriptor, subDescriptor) ?: return false
-
-            val substitutedSuperReturnType = typeSubstitutor.substitute(superDescriptor.type, Variance.OUT_VARIANCE)!!
-
-            return if (superDescriptor.isVar) {
-                KotlinTypeChecker.DEFAULT.equalTypes(subDescriptor.type, substitutedSuperReturnType)
-            } else {
-                KotlinTypeChecker.DEFAULT.isSubtypeOf(subDescriptor.type, substitutedSuperReturnType)
-            }
         }
 
         private fun findDataModifierForDataClass(dataClass: DeclarationDescriptor): PsiElement {
