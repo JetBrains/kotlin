@@ -17,8 +17,7 @@
 package com.bnorm.power
 
 import com.bnorm.power.internal.ReturnableBlockTransformer
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.asSimpleLambda
 import org.jetbrains.kotlin.backend.common.ir.inline
@@ -39,22 +38,11 @@ import org.jetbrains.kotlin.ir.builders.parent
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.path
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.IrTypeArgument
-import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.types.isBoolean
-import org.jetbrains.kotlin.ir.types.isSubtypeOf
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -138,7 +126,7 @@ class PowerAssertCallTransformer(
           val title = when {
             messageArgument is IrConst<*> -> messageArgument
             messageArgument is IrStringConcatenation -> messageArgument
-            lambda != null -> lambda.inline(parent).transform(ReturnableBlockTransformer(context, symbol), null)
+            lambda != null -> lambda.deepCopyWithSymbols(parent).inline(parent).transform(ReturnableBlockTransformer(context, symbol), null)
             messageArgument != null -> {
               val invoke = messageArgument.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INVOKE }
               irCallOp(invoke.symbol, invoke.returnType, messageArgument)
@@ -147,20 +135,20 @@ class PowerAssertCallTransformer(
             else -> irString("Assertion failed")
           }
 
-          return delegate.buildCall(this, buildMessage(file, fileSource, title, expression, subStack))
+          return delegate.buildCall(this, expression, buildMessage(file, fileSource, title.deepCopyWithSymbols(parent), expression, subStack))
         }
       }
 
-//      println(assertionArgument.dump())
+//      println(expression.dump())
 //      println(tree.dump())
 
       return generator.buildAssert(this, root)
-//        .also { println(it.dump())}
+//        .also { println(it.dump()) }
     }
   }
 
   private interface FunctionDelegate {
-    fun buildCall(builder: IrBuilderWithScope, message: IrExpression): IrExpression
+    fun buildCall(builder: IrBuilderWithScope, original: IrCall, message: IrExpression): IrExpression
   }
 
   private fun findDelegate(fqName: FqName): FunctionDelegate? {
@@ -174,8 +162,13 @@ class PowerAssertCallTransformer(
         return@mapNotNull when {
           isStringSupertype(parameters[1].type) -> {
             object : FunctionDelegate {
-              override fun buildCall(builder: IrBuilderWithScope, message: IrExpression): IrExpression = with(builder) {
+              override fun buildCall(builder: IrBuilderWithScope, original: IrCall, message: IrExpression): IrExpression = with(builder) {
                 irCall(overload, type = overload.owner.returnType).apply {
+                  dispatchReceiver = original.dispatchReceiver?.deepCopyWithSymbols(parent)
+                  extensionReceiver = original.extensionReceiver?.deepCopyWithSymbols(parent)
+                  for (i in 0 until original.typeArgumentsCount) {
+                    putTypeArgument(i, original.getTypeArgument(i))
+                  }
                   putValueArgument(0, irFalse())
                   putValueArgument(1, message)
                 }
@@ -184,7 +177,7 @@ class PowerAssertCallTransformer(
           }
           isStringFunction(parameters[1].type) -> {
             object : FunctionDelegate {
-              override fun buildCall(builder: IrBuilderWithScope, message: IrExpression): IrExpression = with(builder) {
+              override fun buildCall(builder: IrBuilderWithScope, original: IrCall, message: IrExpression): IrExpression = with(builder) {
                 val scope = this
                 val lambda = buildFun {
                   name = Name.special("<anonymous>")
@@ -198,8 +191,13 @@ class PowerAssertCallTransformer(
                   }
                   parent = scope.parent
                 }
-                val expression = IrFunctionExpressionImpl(-1, -1, context.irBuiltIns.stringType, lambda, IrStatementOrigin.LAMBDA)
+                val expression = IrFunctionExpressionImpl(-1, -1, parameters[1].type, lambda, IrStatementOrigin.LAMBDA)
                 irCall(overload, type = overload.owner.returnType).apply {
+                  dispatchReceiver = original.dispatchReceiver?.deepCopyWithSymbols(parent)
+                  extensionReceiver = original.extensionReceiver?.deepCopyWithSymbols(parent)
+                  for (i in 0 until original.typeArgumentsCount) {
+                    putTypeArgument(i, original.getTypeArgument(i))
+                  }
                   putValueArgument(0, irFalse())
                   putValueArgument(1, expression)
                 }
