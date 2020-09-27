@@ -24,30 +24,40 @@ import java.util.stream.*
 
 /**
  * Creates a [Sequence] instance that wraps the original stream iterating through its elements.
+ *
+ * @sample samples.streams.Streams.streamAsSequence
  */
 @SinceKotlin("1.2")
 public fun <T> Stream<T>.asSequence(): Sequence<T> = Sequence { iterator() }
 
 /**
  * Creates a [Sequence] instance that wraps the original stream iterating through its elements.
+ *
+ * @sample samples.streams.Streams.intStreamAsSequence
  */
 @SinceKotlin("1.2")
 public fun IntStream.asSequence(): Sequence<Int> = Sequence { iterator() }
 
 /**
  * Creates a [Sequence] instance that wraps the original stream iterating through its elements.
+ *
+ * @sample samples.streams.Streams.longStreamAsSequence
  */
 @SinceKotlin("1.2")
 public fun LongStream.asSequence(): Sequence<Long> = Sequence { iterator() }
 
 /**
  * Creates a [Sequence] instance that wraps the original stream iterating through its elements.
+ *
+ * @sample samples.streams.Streams.doubleStreamAsSequence
  */
 @SinceKotlin("1.2")
 public fun DoubleStream.asSequence(): Sequence<Double> = Sequence { iterator() }
 
 /**
  * Creates a sequential [Stream] instance that produces elements from the original sequence.
+ *
+ * @sample samples.streams.Streams.sequenceAsStream
  */
 @SinceKotlin("1.2")
 public fun <T> Sequence<T>.asStream(): Stream<T> =
@@ -55,24 +65,32 @@ public fun <T> Sequence<T>.asStream(): Stream<T> =
 
 /**
  * Returns a [List] containing all elements produced by this stream.
+ *
+ * @sample samples.streams.Streams.streamToList
  */
 @SinceKotlin("1.2")
 public fun <T> Stream<T>.toList(): List<T> = collect(Collectors.toList<T>())
 
 /**
  * Returns a [List] containing all elements produced by this stream.
+ *
+ * @sample samples.streams.Streams.intStreamToList
  */
 @SinceKotlin("1.2")
 public fun IntStream.toList(): List<Int> = toArray().asList()
 
 /**
  * Returns a [List] containing all elements produced by this stream.
+ *
+ * @sample samples.streams.Streams.longStreamToList
  */
 @SinceKotlin("1.2")
 public fun LongStream.toList(): List<Long> = toArray().asList()
 
 /**
  * Returns a [List] containing all elements produced by this stream.
+ *
+ * @sample samples.streams.Streams.doubleStreamToList
  */
 @SinceKotlin("1.2")
 public fun DoubleStream.toList(): List<Double> = toArray().asList()
