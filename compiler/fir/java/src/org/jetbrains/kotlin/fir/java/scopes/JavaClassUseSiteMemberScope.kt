@@ -9,11 +9,13 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirSimpleFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirValueParameterBuilder
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.resolve.FirJavaSyntheticNamesProvider
+import org.jetbrains.kotlin.fir.resolve.calls.syntheticNamesProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.getContainingCallableNamesIfPresent
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.fir.scopes.getContainingClassifierNamesIfPresent
 import org.jetbrains.kotlin.fir.scopes.impl.AbstractFirUseSiteMemberScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.name.Name
 
@@ -56,35 +59,19 @@ class JavaClassUseSiteMemberScope(
     }
 
     private fun generateAccessorSymbol(
-        functionSymbol: FirFunctionSymbol<*>,
+        getterSymbol: FirNamedFunctionSymbol,
+        setterSymbol: FirNamedFunctionSymbol?,
         syntheticPropertyName: Name,
-        overrideCandidates: MutableSet<FirCallableSymbol<*>>,
-        isGetter: Boolean
     ): FirAccessorSymbol? {
-        if (functionSymbol !is FirNamedFunctionSymbol) {
-            return null
-        }
-        val fir = functionSymbol.fir
-        if (fir.isStatic) {
-            return null
-        }
-        when (isGetter) {
-            true -> if (fir.valueParameters.isNotEmpty()) {
-                return null
-            }
-            false -> if (fir.valueParameters.size != 1) {
-                return null
-            }
-        }
-        overrideCandidates += functionSymbol
         return buildSyntheticProperty {
             session = this@JavaClassUseSiteMemberScope.session
             name = syntheticPropertyName
             symbol = FirAccessorSymbol(
-                accessorId = functionSymbol.callableId,
-                callableId = CallableId(functionSymbol.callableId.packageName, functionSymbol.callableId.className, syntheticPropertyName)
+                accessorId = getterSymbol.callableId,
+                callableId = CallableId(getterSymbol.callableId.packageName, getterSymbol.callableId.className, syntheticPropertyName)
             )
-            delegateGetter = fir
+            delegateGetter = getterSymbol.fir
+            delegateSetter = setterSymbol?.fir
         }.symbol
     }
 
@@ -103,9 +90,28 @@ class JavaClassUseSiteMemberScope(
 
         if (klass is FirJavaClass) {
             for (getterName in getterNames) {
+                var getterSymbol: FirNamedFunctionSymbol? = null
+                var setterSymbol: FirNamedFunctionSymbol? = null
                 declaredMemberScope.processFunctionsByName(getterName) { functionSymbol ->
+                    if (getterSymbol == null && functionSymbol is FirNamedFunctionSymbol) {
+                        val function = functionSymbol.fir
+                        if (!function.isStatic && function.valueParameters.isEmpty()) {
+                            getterSymbol = functionSymbol
+                        }
+                    }
+                }
+                val setterName = session.syntheticNamesProvider.setterNameByGetterName(getterName)
+                if (getterSymbol != null && setterName != null) {
+                    declaredMemberScope.processFunctionsByName(setterName) { functionSymbol ->
+                        if (setterSymbol == null && functionSymbol is FirNamedFunctionSymbol) {
+                            val function = functionSymbol.fir
+                            if (!function.isStatic && function.returnTypeRef.isUnit && function.valueParameters.size == 1) {
+                                setterSymbol = functionSymbol
+                            }
+                        }
+                    }
                     val accessorSymbol = generateAccessorSymbol(
-                        functionSymbol, propertyName, overrideCandidates, isGetter = true
+                        getterSymbol!!, setterSymbol, propertyName
                     )
                     if (accessorSymbol != null) {
                         // NB: accessor should not be processed directly unless we find matching property symbol in supertype
@@ -158,11 +164,34 @@ class JavaClassUseSiteMemberScope(
             return processAccessorFunctionsAndPropertiesByName(name, emptyList(), processor)
         }
         val getterNames = FirJavaSyntheticNamesProvider.possibleGetterNamesByPropertyName(name)
-        val setterName = Name.identifier(SETTER_PREFIX + name.identifier.capitalize())
         return processAccessorFunctionsAndPropertiesByName(name, getterNames, processor)
     }
 
-    companion object {
-        private const val SETTER_PREFIX = "set"
+    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
+        if (symbol.fir !is FirJavaClass) {
+            return super.processFunctionsByName(name, processor)
+        }
+        val potentialPropertyName = session.syntheticNamesProvider.propertyNameByAccessorName(name)
+            ?: return super.processFunctionsByName(name, processor)
+        val accessors = mutableListOf<FirAccessorSymbol>()
+        val getterName = session.syntheticNamesProvider.getterNameBySetterName(name) ?: name
+        processAccessorFunctionsAndPropertiesByName(potentialPropertyName, listOf(getterName)) {
+            if (it is FirAccessorSymbol) {
+                accessors += it
+            }
+        }
+        if (accessors.isEmpty()) {
+            return super.processFunctionsByName(name, processor)
+        }
+        super.processFunctionsByName(name) { functionSymbol ->
+            if (accessors.none { accessorSymbol ->
+                    val syntheticProperty = accessorSymbol.fir as FirSyntheticProperty
+                    syntheticProperty.getter.delegate === functionSymbol.fir ||
+                            syntheticProperty.setter?.delegate === functionSymbol.fir
+                }
+            ) {
+                processor(functionSymbol)
+            }
+        }
     }
 }

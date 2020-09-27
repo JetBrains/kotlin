@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeNullability.NOT_NULL
 import org.jetbrains.kotlin.name.Name
 
 class SyntheticPropertySymbol(
@@ -64,15 +65,19 @@ class FirSyntheticPropertiesScope(
         var matchingSetter: FirSimpleFunction? = null
         if (getterReturnType != null) {
             val setterName = syntheticNamesProvider.setterNameByGetterName(getterName)
-            baseScope.processFunctionsByName(setterName, fun(setterSymbol: FirFunctionSymbol<*>) {
-                if (matchingSetter != null) return
-                val setter = setterSymbol.fir as? FirSimpleFunction ?: return
-                val parameter = setter.valueParameters.singleOrNull() ?: return
-                if (setter.typeParameters.isNotEmpty() || setter.isStatic) return
-                val parameterType = (parameter.returnTypeRef as? FirResolvedTypeRef)?.type ?: return
-                if (getterReturnType.withNullability(ConeNullability.NOT_NULL) != parameterType.withNullability(ConeNullability.NOT_NULL)) return
-                matchingSetter = setter
-            })
+            if (setterName != null) {
+                baseScope.processFunctionsByName(setterName, fun(setterSymbol: FirFunctionSymbol<*>) {
+                    if (matchingSetter != null) return
+                    val setter = setterSymbol.fir as? FirSimpleFunction ?: return
+                    val parameter = setter.valueParameters.singleOrNull() ?: return
+                    if (setter.typeParameters.isNotEmpty() || setter.isStatic) return
+                    val parameterType = (parameter.returnTypeRef as? FirResolvedTypeRef)?.type ?: return
+                    if (getterReturnType.withNullability(NOT_NULL) != parameterType.withNullability(NOT_NULL)) {
+                        return
+                    }
+                    matchingSetter = setter
+                })
+            }
         }
 
         val property = buildSyntheticProperty {

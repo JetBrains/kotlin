@@ -1989,6 +1989,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/flexibleTypeVarAgainstNull.kt");
         }
 
+        @TestMetadata("inaccessibleJavaGetter.kt")
+        public void testInaccessibleJavaGetter() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/problems/inaccessibleJavaGetter.kt");
+        }
+
         @TestMetadata("innerClassHierarchy.kt")
         public void testInnerClassHierarchy() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/innerClassHierarchy.kt");

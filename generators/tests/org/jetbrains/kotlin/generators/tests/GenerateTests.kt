@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightFacadeClassTest
 import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightScriptLoadingTest
 import org.jetbrains.kotlin.checkers.*
 import org.jetbrains.kotlin.copyright.AbstractUpdateKotlinCopyrightTest
-import org.jetbrains.kotlin.findUsages.AbstractFindUsagesTest
-import org.jetbrains.kotlin.findUsages.AbstractFindUsagesWithDisableComponentSearchTest
-import org.jetbrains.kotlin.findUsages.AbstractKotlinFindUsagesWithLibraryTest
-import org.jetbrains.kotlin.findUsages.AbstractKotlinFindUsagesWithStdlibTest
+import org.jetbrains.kotlin.findUsages.*
 import org.jetbrains.kotlin.fir.plugin.AbstractFirAllOpenDiagnosticTest
 import org.jetbrains.kotlin.formatter.AbstractFormatterTest
 import org.jetbrains.kotlin.formatter.AbstractTypingIndentationTestBase
@@ -82,6 +79,7 @@ import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractCommonDecompiled
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractCommonDecompiledTextTest
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractJsDecompiledTextFromJsMetadataTest
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractJvmDecompiledTextTest
+import org.jetbrains.kotlin.idea.editor.AbstractEnterAfterUnmatchedBraceHandlerTest
 import org.jetbrains.kotlin.idea.editor.AbstractMultiLineStringIndentTest
 import org.jetbrains.kotlin.idea.editor.backspaceHandler.AbstractBackspaceHandlerTest
 import org.jetbrains.kotlin.idea.editor.quickDoc.AbstractQuickDocProviderTest
@@ -545,6 +543,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractBackspaceHandlerTest> {
                 model("editor/backspaceHandler")
+            }
+
+            testClass<AbstractEnterAfterUnmatchedBraceHandlerTest> {
+                model("editor/enterHandler/afterUnmatchedBrace")
             }
 
             testClass<AbstractMultiLineStringIndentTest> {
@@ -1059,6 +1061,27 @@ fun main(args: Array<String>) {
             testClass<AbstractHighLevelJvmBasicCompletionTest> {
                 model("basic/common")
                 model("basic/java")
+            }
+        }
+
+        testGroup("idea/idea-fir/tests", "idea/testData/findUsages") {
+
+            testClass<AbstractFindUsagesFirTest> {
+                model("kotlin", pattern = """^(.+)\.0\.(kt|kts)$""")
+                model("java", pattern = """^(.+)\.0\.java$""")
+                model("propertyFiles", pattern = """^(.+)\.0\.properties$""")
+            }
+
+            testClass<AbstractFindUsagesWithDisableComponentSearchFirTest> {
+                model("kotlin/conventions/components", pattern = """^(.+)\.0\.(kt|kts)$""")
+            }
+
+            testClass<AbstractKotlinFindUsagesWithLibraryFirTest> {
+                model("libraryUsages", pattern = """^(.+)\.0\.kt$""")
+            }
+
+            testClass<AbstractKotlinFindUsagesWithStdlibFirTest> {
+                model("stdlibUsages", pattern = """^(.+)\.0\.kt$""")
             }
         }
 

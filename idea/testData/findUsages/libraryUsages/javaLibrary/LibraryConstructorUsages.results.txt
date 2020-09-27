@@ -1,1 +1,1 @@
-New instance creation 9 Foo(1)
+New instance creation 11 Foo(1)

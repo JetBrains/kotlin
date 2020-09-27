@@ -6466,6 +6466,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Coroutines extends AbstractLightAnalysisModeTest {
+        @TestMetadata("suspendFunctionMethodReference.kt")
+        public void ignoreSuspendFunctionMethodReference() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendFunctionMethodReference.kt");
+        }
+
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }
@@ -14662,6 +14667,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("simpleSecondaryConstructor.kt")
         public void ignoreSimpleSecondaryConstructor() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/simpleSecondaryConstructor.kt");
+        }
+
+        @TestMetadata("toStringOfUnboxedNullable.kt")
+        public void ignoreToStringOfUnboxedNullable() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/toStringOfUnboxedNullable.kt");
         }
 
         private void runTest(String testDataFilePath) throws Exception {

@@ -6903,6 +6903,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunImportedFromObject.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("suspendFunctionMethodReference.kt")
+        public void testSuspendFunctionMethodReference() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendFunctionMethodReference.kt");
+        }
+
         @TestMetadata("suspendImplBridge.kt")
         public void testSuspendImplBridge() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/suspendImplBridge.kt");
@@ -13970,6 +13975,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("toStringCallingPrivateFun.kt")
         public void testToStringCallingPrivateFun() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/toStringCallingPrivateFun.kt");
+        }
+
+        @TestMetadata("toStringOfUnboxedNullable.kt")
+        public void testToStringOfUnboxedNullable() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/toStringOfUnboxedNullable.kt");
         }
 
         @TestMetadata("typeChecksForInlineClasses.kt")

@@ -9,20 +9,17 @@ import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.JvmDefaultMode
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.serialization.FirSerializerExtension
-import org.jetbrains.kotlin.fir.serialization.nonSourceAnnotations
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
@@ -32,7 +29,6 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_DEFAULT_FQ_NAME
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
@@ -260,34 +256,42 @@ class FirJvmSerializerExtension(
             proto.setExtension(JvmProtoBuf.propertySignature, signature)
         }
 
-        // TODO
-//        if (property.isJvmFieldPropertyInInterfaceCompanion() && versionRequirementTable != null) {
-//            proto.setExtension(JvmProtoBuf.flags, JvmFlags.getPropertyFlags(true))
-//
-//            proto.addVersionRequirement(
-//                DescriptorSerializer.writeVersionRequirement(
-//                    1,
-//                    2,
-//                    70,
-//                    ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION,
-//                    versionRequirementTable
-//                )
-//            )
-//        }
+        if (property.isJvmFieldPropertyInInterfaceCompanion() && versionRequirementTable != null) {
+            proto.setExtension(JvmProtoBuf.flags, JvmFlags.getPropertyFlags(true))
+
+            proto.addVersionRequirement(
+                DescriptorSerializer.writeVersionRequirement(
+                    1,
+                    2,
+                    70,
+                    ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION,
+                    versionRequirementTable
+                )
+            )
+        }
 
         if (getter?.needsInlineParameterNullCheckRequirement() == true || setter?.needsInlineParameterNullCheckRequirement() == true) {
             versionRequirementTable?.writeInlineParameterNullCheckRequirement(proto::addVersionRequirement)
         }
     }
 
-    private fun PropertyDescriptor.isJvmFieldPropertyInInterfaceCompanion(): Boolean {
-        if (!DescriptorsJvmAbiUtil.hasJvmFieldAnnotation(this)) return false
+    private fun FirProperty.isJvmFieldPropertyInInterfaceCompanion(): Boolean {
+        if (!hasJvmFieldAnnotation) return false
 
-        val container = containingDeclaration
-        if (!DescriptorUtils.isCompanionObject(container)) return false
+        val container =
+            symbol.callableId.classId?.let {
+                session.firProvider.getFirClassifierByFqName(it) as? FirRegularClass
+            }
+        if (container == null || !container.isCompanion) {
+            return false
+        }
 
-        val grandParent = (container as ClassDescriptor).containingDeclaration
-        return DescriptorUtils.isInterface(grandParent) || DescriptorUtils.isAnnotationClass(grandParent)
+        val grandParent =
+            container.classId.outerClassId?.let {
+                session.firProvider.getFirClassifierByFqName(it) as? FirRegularClass
+            }
+        return grandParent != null &&
+                (grandParent.classKind == ClassKind.INTERFACE || grandParent.classKind == ClassKind.ANNOTATION_CLASS)
     }
 
     override fun serializeErrorType(type: ConeKotlinErrorType, builder: ProtoBuf.Type.Builder) {

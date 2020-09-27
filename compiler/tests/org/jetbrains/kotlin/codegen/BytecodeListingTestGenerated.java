@@ -289,11 +289,6 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/noStubsInJavaSuperClass.kt");
         }
 
-        @TestMetadata("noStubsInJavaSuperClass2.kt")
-        public void testNoStubsInJavaSuperClass2() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/noStubsInJavaSuperClass2.kt");
-        }
-
         @TestMetadata("noStubsInMutableIterable.kt")
         public void testNoStubsInMutableIterable() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/noStubsInMutableIterable.kt");

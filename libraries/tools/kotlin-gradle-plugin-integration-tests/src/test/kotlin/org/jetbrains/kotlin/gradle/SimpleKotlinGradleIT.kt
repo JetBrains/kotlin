@@ -74,6 +74,16 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
     }
 
     @Test
+    fun testModuleName() {
+        Project("moduleName").build("build") {
+            assertSuccessful()
+            assertFileExists("build/classes/kotlin/main/META-INF/FLAG.kotlin_module")
+            assertNoSuchFile("build/classes/kotlin/main/META-INF/moduleName.kotlin_module")
+            assertNotContains("Argument -module-name is passed multiple times")
+        }
+    }
+
+    @Test
     fun testCustomJdk() {
         Project("customJdk").build("build") {
             assertFailed()

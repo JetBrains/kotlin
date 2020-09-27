@@ -107,9 +107,14 @@ class FirSignatureEnhancement(
             }
             is FirSyntheticProperty -> {
                 val accessorSymbol = firElement.symbol
-                val enhancedFunctionSymbol = enhanceMethod(
-                    firElement.getter.delegate, accessorSymbol.accessorId, accessorSymbol.accessorId.callableName
-                )
+                val getterDelegate = firElement.getter.delegate
+                val enhancedFunctionSymbol = if (getterDelegate is FirJavaMethod) {
+                    enhanceMethod(
+                        getterDelegate, accessorSymbol.accessorId, accessorSymbol.accessorId.callableName
+                    )
+                } else {
+                    getterDelegate.symbol
+                }
                 return buildSyntheticProperty {
                     session = this@FirSignatureEnhancement.session
                     this.name = name
@@ -323,8 +328,6 @@ class FirSignatureEnhancement(
         ).enhance(session, jsr305State, predefinedEnhancementInfo?.returnTypeInfo)
         return signatureParts.type
     }
-
-    private val overrideBindCache = mutableMapOf<Name, Map<FirCallableSymbol<*>?, List<FirCallableSymbol<*>>>>()
 
     private sealed class TypeInSignature {
         abstract fun getTypeRef(member: FirCallableMemberDeclaration<*>): FirTypeRef

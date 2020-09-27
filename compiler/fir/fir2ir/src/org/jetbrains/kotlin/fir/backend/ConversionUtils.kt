@@ -318,7 +318,7 @@ internal fun FirProperty.generateOverriddenAccessorSymbols(
     scope.processPropertiesByName(name) {}
     val overriddenSet = mutableSetOf<IrSimpleFunctionSymbol>()
     scope.processDirectlyOverriddenProperties(symbol) {
-        if (it.fir.visibility == Visibilities.Private) {
+        if (it is FirAccessorSymbol || it.fir.visibility == Visibilities.Private) {
             return@processDirectlyOverriddenProperties ProcessorAction.NEXT
         }
         val overriddenProperty = declarationStorage.getIrPropertySymbol(it.unwrapSubstitutionOverrides()) as IrPropertySymbol

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeFirstWord
 @NoMutableState
 object FirJavaSyntheticNamesProvider : FirSyntheticNamesProvider() {
     private const val GETTER_PREFIX = "get"
+    private const val SETTER_PREFIX = "set"
     private const val IS_PREFIX = "is"
 
     override fun possibleGetterNamesByPropertyName(name: Name): List<Name> {
@@ -31,14 +32,35 @@ object FirJavaSyntheticNamesProvider : FirSyntheticNamesProvider() {
         }
     }
 
-    override fun setterNameByGetterName(name: Name): Name {
+    override fun setterNameByGetterName(name: Name): Name? {
         val identifier = name.identifier
         val prefix = when {
-            identifier.startsWith("get") -> "get"
-            identifier.startsWith("is") -> "is"
-            else -> throw IllegalArgumentException()
+            identifier.startsWith(GETTER_PREFIX) -> GETTER_PREFIX
+            identifier.startsWith(IS_PREFIX) -> IS_PREFIX
+            else -> return null
         }
-        return Name.identifier("set" + identifier.removePrefix(prefix))
+        return Name.identifier(SETTER_PREFIX + identifier.removePrefix(prefix))
+    }
+
+    override fun getterNameBySetterName(name: Name): Name? {
+        val identifier = name.identifier
+        val prefix = when {
+            identifier.startsWith(SETTER_PREFIX) -> SETTER_PREFIX
+            else -> return null
+        }
+        return Name.identifier(GETTER_PREFIX + identifier.removePrefix(prefix))
+    }
+
+    override fun propertyNameByAccessorName(name: Name): Name? {
+        if (name.isSpecial) return null
+        val identifier = name.identifier
+        val prefix = when {
+            identifier.startsWith(GETTER_PREFIX) -> GETTER_PREFIX
+            identifier.startsWith(IS_PREFIX) -> ""
+            identifier.startsWith(SETTER_PREFIX) -> SETTER_PREFIX
+            else -> return null
+        }
+        return Name.identifier(identifier.removePrefix(prefix).decapitalize())
     }
 }
 

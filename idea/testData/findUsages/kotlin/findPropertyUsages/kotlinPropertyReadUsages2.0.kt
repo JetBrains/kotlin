@@ -1,5 +1,7 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.KtParameter
 // OPTIONS: usages, skipWrite
+// FIR_IGNORE
+
 package server
 
 open class A<T>(open var <caret>foo: T)

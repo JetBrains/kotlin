@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.hasMetaAnnotationUseSiteTargets
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -39,16 +40,24 @@ internal class AnnotationGenerator(private val components: Fir2IrComponents) : F
         irValueParameter.annotations +=
             firValueParameter.annotations
                 .filter {
+                    // TODO: for `null` use-site, refer to targets on the meta annotation
                     it.useSiteTarget == null || !isInConstructor || it.useSiteTarget == AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
                 }
                 .toIrAnnotations()
     }
 
+    private fun FirAnnotationCall.targetsField(): Boolean =
+        // Check if the annotation has a field-targeting meta annotation, e.g., @Target(FIELD)
+        hasMetaAnnotationUseSiteTargets(session, AnnotationUseSiteTarget.FIELD, AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD)
+
     fun generate(irProperty: IrProperty, property: FirProperty) {
         irProperty.annotations +=
             property.annotations
                 .filter {
-                    it.useSiteTarget == null || it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY
+                    it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY ||
+                            // NB: annotation with null use-site should be landed on the property (ahead of field),
+                            //   unless it has FIELD target on the meta annotation, like @Target(FIELD)
+                            (it.useSiteTarget == null && !it.targetsField())
                 }
                 .toIrAnnotations()
     }
@@ -61,7 +70,8 @@ internal class AnnotationGenerator(private val components: Fir2IrComponents) : F
             property.annotations
                 .filter {
                     it.useSiteTarget == AnnotationUseSiteTarget.FIELD ||
-                            it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
+                            it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD ||
+                            (it.useSiteTarget == null && it.targetsField())
                 }
                 .toIrAnnotations()
     }

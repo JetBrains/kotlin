@@ -3764,6 +3764,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     runTest("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/enumEntryWithSuperclass.kt");
                 }
 
+                @TestMetadata("enumInBinaryExpression.kt")
+                public void testEnumInBinaryExpression() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/enumInBinaryExpression.kt");
+                }
+
                 @TestMetadata("enumNoReceiver.kt")
                 public void testEnumNoReceiver() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/enumNoReceiver.kt");

@@ -5753,6 +5753,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunImportedFromObject.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("suspendFunctionMethodReference.kt")
+        public void testSuspendFunctionMethodReference() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendFunctionMethodReference.kt");
+        }
+
         @TestMetadata("suspendInCycle.kt")
         public void testSuspendInCycle_1_3() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendInCycle.kt", "kotlin.coroutines");
@@ -12075,6 +12080,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("toStringCallingPrivateFun.kt")
         public void testToStringCallingPrivateFun() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/toStringCallingPrivateFun.kt");
+        }
+
+        @TestMetadata("toStringOfUnboxedNullable.kt")
+        public void testToStringOfUnboxedNullable() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/toStringOfUnboxedNullable.kt");
         }
 
         @TestMetadata("typeChecksForInlineClasses.kt")

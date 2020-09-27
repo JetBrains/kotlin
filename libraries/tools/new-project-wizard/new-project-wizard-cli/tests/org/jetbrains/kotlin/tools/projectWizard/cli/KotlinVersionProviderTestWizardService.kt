@@ -42,7 +42,7 @@ class KotlinVersionProviderTestWizardService() : KotlinVersionProviderService(),
 
 
         val TEST_KOTLIN_VERSION by lazy {
-            EapVersionDownloader.getLatestDevVersion()!!
+            EapVersionDownloader.getLatestEapVersion()!!
         }
     }
 }
