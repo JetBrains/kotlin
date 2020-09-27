@@ -109,12 +109,26 @@ open class CocoapodsExtension(private val project: Project) {
     fun pod(name: String, version: String? = null, path: File? = null, moduleName: String = name.asModuleName()) {
         // Empty string will lead to an attempt to create two podDownload tasks.
         // One is original podDownload and second is podDownload + pod.name
+        require(name.isNotEmpty()) { "Please provide not empty pod name to avoid ambiguity" }
         var podSource = path
         if (path != null && !path.isDirectory) {
-            project.logger.warn("Please use directory with podspec file, not podspec file itself")
+            val pattern = "\\W*pod(.*\"${name}\".*)".toRegex()
+            val buildScript = project.buildFile
+            val lines = buildScript.readLines()
+            val lineNumber = lines.indexOfFirst { pattern.matches(it) }
+            val lineContent = lines[lineNumber].trimIndent()
+            val newContent = lineContent.replace(path.name, "")
+            project.logger.warn(
+                """
+                |Deprecated DSL used on ${buildScript.absolutePath}${File.pathSeparator}${lineNumber + 1}:
+                |Found: "${lineContent}"
+                |Expected: "${newContent}"
+                |Please, change the path to avoid this warning.
+                |
+            """.trimMargin()
+            )
             podSource = path.parentFile
         }
-        require(name.isNotEmpty()) { "Please provide not empty pod name to avoid ambiguity" }
         addToPods(CocoapodsDependency(name, moduleName, version, podSource?.let { Path(it) }))
     }
 
