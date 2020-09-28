@@ -66,6 +66,9 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrField as ProtoF
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction as ProtoFunction
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionBase as ProtoFunctionBase
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionExpression as ProtoFunctionExpression
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorExpression as ProtoErrorExpression
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorCallExpression as ProtoErrorCallExpression
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorDeclaration as ProtoErrorDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionReference as ProtoFunctionReference
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetClass as ProtoGetClass
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetEnumValue as ProtoGetEnumValue
@@ -460,6 +463,28 @@ abstract class IrFileDeserializer(
             deserializeIrFunction(functionExpression.function),
             deserializeIrStatementOrigin(functionExpression.originName)
         )
+
+    private fun deserializeErrorExpression(
+        proto: ProtoErrorExpression,
+        start: Int, end: Int, type: IrType
+    ): IrErrorExpression {
+        return IrErrorExpressionImpl(start, end, type, deserializeString(proto.description))
+    }
+
+    private fun deserializeErrorCallExpression(
+        proto: ProtoErrorCallExpression,
+        start: Int, end: Int, type: IrType
+    ): IrErrorCallExpression {
+        return IrErrorCallExpressionImpl(start, end, type, deserializeString(proto.description)).apply {
+            if (proto.hasReceiver()) {
+                explicitReceiver = deserializeExpression(proto.receiver)
+            }
+            proto.valueArgumentList.forEach {
+                addArgument(deserializeExpression(it))
+            }
+        }
+
+    }
 
     private fun deserializeFunctionReference(
         proto: ProtoFunctionReference,
@@ -891,6 +916,8 @@ abstract class IrFileDeserializer(
             DYNAMIC_OPERATOR -> deserializeDynamicOperatorExpression(proto.dynamicOperator, start, end, type)
             CONSTRUCTOR_CALL -> deserializeConstructorCall(proto.constructorCall, start, end, type)
             FUNCTION_EXPRESSION -> deserializeFunctionExpression(proto.functionExpression, start, end, type)
+            ERROR_EXPRESSION -> deserializeErrorExpression(proto.errorExpression, start, end, type)
+            ERROR_CALL_EXPRESSION -> deserializeErrorCallExpression(proto.errorCallExpression, start, end, type)
             OPERATION_NOT_SET -> error("Expression deserialization not implemented: ${proto.operationCase}")
         }
 
@@ -1081,6 +1108,15 @@ abstract class IrFileDeserializer(
                 (descriptor as? WrappedTypeAliasDescriptor)?.bind(this)
             }
         }
+
+    private fun deserializeErrorDeclaration(proto: ProtoErrorDeclaration): IrErrorDeclaration {
+        val coordinates = BinaryCoordinates.decode(proto.coordinates)
+        val descriptor = WrappedErrorDescriptor()
+        return irFactory.createErrorDeclaration(coordinates.startOffset, coordinates.endOffset, descriptor).also {
+            descriptor.bind(it)
+            it.parent = parentsStack.peek()!!
+        }
+    }
 
     private fun deserializeTypeParameters(protos: List<ProtoTypeParameter>, isGlobal: Boolean): List<IrTypeParameter> {
         // NOTE: fun <C : MutableCollection<in T>, T : Any> Array<out T?>.filterNotNullTo(destination: C): C
@@ -1412,6 +1448,7 @@ abstract class IrFileDeserializer(
             IR_ENUM_ENTRY -> deserializeIrEnumEntry(proto.irEnumEntry)
             IR_LOCAL_DELEGATED_PROPERTY -> deserializeIrLocalDelegatedProperty(proto.irLocalDelegatedProperty)
             IR_TYPE_ALIAS -> deserializeIrTypeAlias(proto.irTypeAlias)
+            IR_ERROR_DECLARATION -> deserializeErrorDeclaration(proto.irErrorDeclaration)
             DECLARATOR_NOT_SET -> error("Declaration deserialization not implemented: ${proto.declaratorCase}")
         }
 
