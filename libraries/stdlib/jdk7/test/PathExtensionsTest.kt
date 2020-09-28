@@ -5,17 +5,10 @@
 
 package kotlin.jdk7.test
 
-import java.io.File
-import java.io.IOException
 import java.nio.file.*
-import java.nio.file.attribute.PosixFilePermission
-import java.nio.file.attribute.PosixFilePermission.*
 import kotlin.test.*
 
 class PathExtensionsTest {
-
-    private val isCaseInsensitiveFileSystem = Paths.get("C:/") == Paths.get("c:/")
-    private val isBackslashSeparator = File.separatorChar == '\\'
 
     @Test
     fun extension() {
@@ -96,8 +89,8 @@ class PathExtensionsTest {
                 srcFile.copyTo(dstFile, overwrite = true)
             }
         } finally {
-            srcFile.deleteRecursively()
-            dstFile.deleteRecursively()
+            srcFile.toFile().deleteRecursively()
+            dstFile.toFile().deleteRecursively()
         }
     }
 
@@ -121,156 +114,11 @@ class PathExtensionsTest {
         }
     }
 
-    @Test
-    fun deleteRecursively() {
-        val dir = Files.createTempDirectory(null)
-        val subDir = dir.resolve("subdir")
-        Files.createDirectory(subDir)
-        Files.createFile(dir.resolve("test1.txt"))
-        Files.createFile(subDir.resolve("test2.txt"))
-
-        assertTrue(dir.deleteRecursively())
-        assertFalse(dir.exists())
-        assertTrue(dir.deleteRecursively())
-    }
-
-    @Test
-    fun deleteRecursivelyWithFail() {
-        val basedir = PathTreeWalkTest.createTestFiles()
-        val restricted = basedir.resolve("1")
-        val restrictedPermissions = restricted.setNotReadable() ?: return
-        val seven = basedir.resolve("7.txt")
-        val sevenPermissions = seven.setNotReadable() ?: return
-        try {
-            assertFalse(basedir.deleteRecursively(), "Expected incomplete recursive deletion.")
-            restricted.restorePermission(restrictedPermissions)
-            seven.restorePermission(sevenPermissions)
-            var i = 0
-            for (file in basedir.walkTopDown()) {
-                i++
-            }
-            assertEquals(6, i)
-        } finally {
-            restricted.restorePermission(restrictedPermissions)
-            seven.restorePermission(sevenPermissions)
-            basedir.deleteRecursively()
-        }
-    }
-
     private fun compareFiles(src: Path, dst: Path, message: String? = null) {
         assertTrue(dst.exists())
         assertEquals(src.isFile(), dst.isFile(), message)
         if (dst.isFile()) {
             assertTrue(src.readBytes().contentEquals(dst.readBytes()), message)
-        }
-    }
-
-    private fun compareDirectories(src: Path, dst: Path) {
-        for (srcFile in src.walkTopDown()) {
-            val dstFile = dst.resolve(src.relativize(srcFile))
-            compareFiles(srcFile, dstFile)
-        }
-    }
-
-    @Test
-    fun copyRecursively() {
-        val src = Files.createTempDirectory(null)
-        val dst = Files.createTempDirectory(null)
-        Files.delete(dst)
-        fun check() = compareDirectories(src, dst)
-
-        try {
-            val subDir1 = Files.createTempDirectory(src, "d1")
-            val subDir2 = Files.createTempDirectory(src, "d2")
-            Files.createTempDirectory(subDir1, "d1_")
-            val file1 = Files.createTempFile(src, "f1", null)
-            val file2 = Files.createTempFile(subDir1, "f2_", null)
-            file1.writeText("hello")
-            file2.writeText("wazzup")
-            Files.createTempDirectory(subDir2, "d1_")
-
-            assertTrue(src.copyRecursively(dst))
-            check()
-
-            assertFailsWith(FileAlreadyExistsException::class) {
-                src.copyRecursively(dst)
-            }
-
-            var conflicts = 0
-            src.copyRecursively(dst) { _: Path, e: IOException ->
-                if (e is FileAlreadyExistsException) {
-                    conflicts++
-                    OnErrorAction.SKIP
-                } else {
-                    throw e
-                }
-            }
-            assertEquals(2, conflicts)
-
-            val oldPermissions = subDir1.setNotReadable()
-            if (oldPermissions != null) {
-                try {
-                    dst.deleteRecursively()
-                    var caught = false
-                    assertTrue(src.copyRecursively(dst) { _: Path, e: IOException ->
-                        if (e is AccessDeniedException) {
-                            caught = true
-                            OnErrorAction.SKIP
-                        } else {
-                            throw e
-                        }
-                    })
-                    assertTrue(caught)
-                    check()
-                } finally {
-                    subDir1.restorePermission(oldPermissions)
-                }
-            }
-
-            src.deleteRecursively()
-            dst.deleteRecursively()
-            assertFailsWith(NoSuchFileException::class) {
-                src.copyRecursively(dst)
-            }
-
-            assertFalse(src.copyRecursively(dst) { _, _ -> OnErrorAction.TERMINATE })
-        } finally {
-            src.deleteRecursively()
-            dst.deleteRecursively()
-        }
-    }
-
-    @Test
-    fun copyRecursivelyWithOverwrite() {
-        val src = Files.createTempDirectory(null)
-        val dst = Files.createTempDirectory(null)
-        fun check() = compareDirectories(src, dst)
-
-        try {
-            val srcFile = src.resolve("test")
-            val dstFile = dst.resolve("test")
-            srcFile.writeText("text1")
-
-            src.copyRecursively(dst)
-
-            srcFile.writeText("text1 modified")
-            src.copyRecursively(dst, overwrite = true)
-            check()
-
-            Files.delete(dstFile)
-            Files.createDirectory(dstFile)
-            dstFile.resolve("subFile").writeText("subfile")
-            src.copyRecursively(dst, overwrite = true)
-            check()
-
-            Files.delete(srcFile)
-            Files.createDirectory(srcFile)
-            srcFile.resolve("subFile").writeText("text2")
-            src.copyRecursively(dst, overwrite = true)
-            check()
-        } finally {
-            src.deleteRecursively()
-            dst.deleteRecursively()
         }
     }
 
@@ -363,26 +211,5 @@ class PathExtensionsTest {
         assertEquals(dir.listFiles().size, 1)
 
         assertFailsWith<NotDirectoryException> { file.listFiles() }
-    }
-}
-
-fun Path.setNotReadable(): Set<PosixFilePermission>? {
-    val oldPermissions = try {
-        Files.getPosixFilePermissions(this)
-    } catch (_: UnsupportedOperationException) {
-        return null
-    }
-    Files.setPosixFilePermissions(
-        this,
-        oldPermissions - setOf(GROUP_READ, OTHERS_READ, OWNER_READ)
-    )
-    return oldPermissions
-}
-
-fun Path.restorePermission(permissions: Set<PosixFilePermission>?) {
-    if (permissions == null || !this.exists()) return
-    try {
-        Files.setPosixFilePermissions(this, permissions)
-    } catch (_: UnsupportedOperationException) {
     }
 }
