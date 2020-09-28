@@ -12,7 +12,6 @@ package kotlin.io
 
 import java.io.File
 import java.io.IOException
-import java.nio.channels.FileChannel
 import java.nio.file.*
 import java.nio.file.FileAlreadyExistsException
 import java.nio.file.NoSuchFileException
@@ -218,13 +217,38 @@ public inline fun Path.isWritable(): Boolean = Files.isWritable(this)
 public inline fun Path.isSameFile(other: Path): Boolean = Files.isSameFile(this, other)
 
 /**
- * Return a list of the files and directories in this directory.
+ * Return a list of the entries in this directory.
  *
  * @throws NotDirectoryException If this path does not refer to a directory
  * @throws IOException If an I/O error occurs
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
-public fun Path.listFiles(): List<Path> {
+public fun Path.listDirectoryEntries(): List<Path> {
     return Files.newDirectoryStream(this).use { it.toList() }
+}
+
+/**
+ * Call the [block] callback with a sequence of all entries in this directory.
+ *
+ * @throws NotDirectoryException If this path does not refer to a directory
+ * @throws IOException If an I/O error occurs
+ * @return the value returned by [block]
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+public fun <T> Path.useDirectoryEntries(block: (Sequence<Path>) -> T): T {
+    return Files.newDirectoryStream(this).use { block(it.asSequence()) }
+}
+
+/**
+ * Perform the given [action] on each entry in this directory.
+ *
+ * @throws NotDirectoryException If this path does not refer to a directory
+ * @throws IOException If an I/O error occurs
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+public fun Path.forEachDirectoryEntry(action: (Path) -> Unit) {
+    return Files.newDirectoryStream(this).use { it.forEach(action) }
 }

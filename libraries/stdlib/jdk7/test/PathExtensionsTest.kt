@@ -74,7 +74,7 @@ class PathExtensionsTest {
             }
             srcFile.copyTo(dstFile, overwrite = true)
             assertTrue(dstFile.isDirectory())
-            assertTrue(dstFile.listFiles().isEmpty(), "only directory is copied, but not its content")
+            assertTrue(dstFile.listDirectoryEntries().isEmpty(), "only directory is copied, but not its content")
 
             assertFailsWith(FileAlreadyExistsException::class, "copy dir do not overwrite dir") {
                 srcFile.copyTo(dstFile)
@@ -82,7 +82,7 @@ class PathExtensionsTest {
 
             srcFile.copyTo(dstFile, overwrite = true)
             assertTrue(dstFile.isDirectory())
-            assertTrue(dstFile.listFiles().isEmpty(), "only directory is copied, but not its content")
+            assertTrue(dstFile.listDirectoryEntries().isEmpty(), "only directory is copied, but not its content")
 
             dstFile.resolve("somefile2").writeText("some content2")
             assertFailsWith(FileAlreadyExistsException::class, "copy dir do not overwrite non-empty dir") {
@@ -202,14 +202,42 @@ class PathExtensionsTest {
     }
 
     @Test
-    fun testListFiles() {
+    fun testListDirectoryEntries() {
         val dir = Files.createTempDirectory(null)
-        assertEquals(dir.listFiles().size, 0)
+        assertEquals(dir.listDirectoryEntries().size, 0)
 
         val file = dir.resolve("f1")
         Files.createFile(file)
-        assertEquals(dir.listFiles().size, 1)
+        assertEquals(dir.listDirectoryEntries().size, 1)
 
-        assertFailsWith<NotDirectoryException> { file.listFiles() }
+        assertFailsWith<NotDirectoryException> { file.listDirectoryEntries() }
+    }
+
+    @Test
+    fun testUseDirectoryEntries() {
+        val dir = Files.createTempDirectory(null)
+        assertEquals(dir.useDirectoryEntries { it.toList() }.size, 0)
+
+        val file = dir.resolve("f1")
+        Files.createFile(file)
+        assertEquals(dir.useDirectoryEntries { it.toList() }.size, 1)
+
+        assertFailsWith<NotDirectoryException> { file.useDirectoryEntries { it.toList() } }
+    }
+
+    @Test
+    fun testForEachDirectoryEntry() {
+        val dir = Files.createTempDirectory(null)
+        var size = 0
+        dir.forEachDirectoryEntry { size++ }
+        assertEquals(size, 0)
+
+        val file = dir.resolve("f1")
+        Files.createFile(file)
+        size = 0
+        dir.forEachDirectoryEntry { size++ }
+        assertEquals(size, 1)
+
+        assertFailsWith<NotDirectoryException> { file.forEachDirectoryEntry { } }
     }
 }
