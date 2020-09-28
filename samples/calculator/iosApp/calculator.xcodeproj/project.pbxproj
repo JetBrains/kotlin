@@ -16,6 +16,16 @@
 		7FF94AE32058483900590D0D /* arithmeticParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FF94AD92058464C00590D0D /* arithmeticParser.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		2C10D2172521E5AA001EB717 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2C3F38391FD1738300151601 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7FF94AD82058464C00590D0D;
+			remoteInfo = arithmeticParser;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		7FE128BE2058549E0064CE74 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -141,6 +151,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2C10D2182521E5AA001EB717 /* PBXTargetDependency */,
 			);
 			name = KotlinCalculator;
 			productName = calculator;
@@ -242,6 +253,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		2C10D2182521E5AA001EB717 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7FF94AD82058464C00590D0D /* arithmeticParser */;
+			targetProxy = 2C10D2172521E5AA001EB717 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		2C3F38481FD1738300151601 /* Main.storyboard */ = {
