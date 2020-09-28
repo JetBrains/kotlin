@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class FirSyntheticPropertyAccessor(
     val delegate: FirSimpleFunction,
@@ -69,6 +70,8 @@ class FirSyntheticPropertyAccessor(
     override val controlFlowGraphReference: FirControlFlowGraphReference? = null
 
     override val contractDescription: FirContractDescription = FirEmptyContractDescription
+
+    override val containerSource: DeserializedContainerSource? get() = null
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         delegate.accept(visitor, data)

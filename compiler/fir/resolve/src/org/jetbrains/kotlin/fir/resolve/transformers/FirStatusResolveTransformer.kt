@@ -109,10 +109,10 @@ class FirStatusResolveTransformer(
     override fun transformPropertyAccessor(
         propertyAccessor: FirPropertyAccessor,
         data: FirDeclarationStatus?
-    ): CompositeTransformResult<FirStatement> {
+    ): CompositeTransformResult<FirDeclaration> {
         propertyAccessor.transformStatus(this, propertyAccessor.resolveStatus(propertyAccessor.status, containingClass, isLocal = false))
         @Suppress("UNCHECKED_CAST")
-        return transformDeclaration(propertyAccessor, data) as CompositeTransformResult<FirStatement>
+        return transformDeclaration(propertyAccessor, data)
     }
 
     override fun transformConstructor(

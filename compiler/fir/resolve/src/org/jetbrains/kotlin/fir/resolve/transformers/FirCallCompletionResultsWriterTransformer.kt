@@ -620,7 +620,7 @@ class FirDeclarationCompletionResultsWriter(private val finalSubstitutor: ConeSu
     override fun transformPropertyAccessor(
         propertyAccessor: FirPropertyAccessor,
         data: Nothing?
-    ): CompositeTransformResult<FirStatement> {
+    ): CompositeTransformResult<FirDeclaration> {
         propertyAccessor.transformReturnTypeRef(this, data)
         propertyAccessor.transformValueParameters(this, data)
         return propertyAccessor.compose()
