@@ -240,7 +240,7 @@ private fun deprecatedInit(className: String, initParameterNames: List<String>, 
     val replacement = if (factory) "$className.create" else className
     val replacementKind = if (factory) "factory method" else "constructor"
     val replaceWith = "$replacement(${initParameterNames.joinToString { it.asSimpleName() }})"
-    return AnnotationStub.Deprecated("Use $replacementKind instead", replaceWith)
+    return AnnotationStub.Deprecated("Use $replacementKind instead", replaceWith, DeprecationLevel.ERROR)
 }
 
 internal val ObjCMethod.kotlinName: String

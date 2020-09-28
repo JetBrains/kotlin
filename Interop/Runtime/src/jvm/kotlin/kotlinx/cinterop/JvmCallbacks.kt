@@ -98,6 +98,7 @@ private fun getStructCType(structClass: KClass<*>): CType<*> = structTypeCache.c
         }
     }
 
+    @Suppress("DEPRECATION")
     val structType = structClass.companionObjectInstance as CVariable.Type
 
     Struct(structType.size, structType.align, fieldCTypes)
@@ -138,7 +139,7 @@ private fun getArgOrRetValCType(type: KType): CType<*> {
         CPointer::class -> Pointer
         // TODO: floats
         CValue::class -> getStructValueCType(type)
-        else -> if (classifier.isSubclassOf(CEnum::class)) {
+        else -> if (classifier.isSubclassOf(@Suppress("DEPRECATION") CEnum::class)) {
             getEnumCType(classifier)
         } else {
             null
@@ -357,6 +358,7 @@ private class Struct(val size: Long, val align: Int, elementTypes: List<CType<*>
     override fun write(location: NativePtr, value: CValue<*>) = value.write(location)
 }
 
+@Suppress("DEPRECATION")
 private class CEnumType(private val rawValueCType: CType<Any>) : CType<CEnum>(rawValueCType.ffiType) {
 
     override fun read(location: NativePtr): CEnum {

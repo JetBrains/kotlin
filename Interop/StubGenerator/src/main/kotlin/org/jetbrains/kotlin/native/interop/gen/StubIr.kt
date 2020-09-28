@@ -215,10 +215,26 @@ sealed class AnnotationStub(val classifier: Classifier) {
     class CLength(val length: Long) :
             AnnotationStub(Classifier.topLevel(cinteropPackage, "CLength"))
 
-    class Deprecated(val message: String, val replaceWith: String) :
+    class Deprecated(val message: String, val replaceWith: String, val level: DeprecationLevel) :
             AnnotationStub(Classifier.topLevel("kotlin", "Deprecated")) {
         companion object {
-            val unableToImport = Deprecated("Unable to import this declaration", "")
+            val unableToImport = Deprecated(
+                    "Unable to import this declaration",
+                    "",
+                    DeprecationLevel.ERROR
+            )
+
+            val deprecatedCVariableCompanion = Deprecated(
+                    "Use sizeOf<T>() or alignOf<T>() instead.",
+                    "",
+                    DeprecationLevel.WARNING
+            )
+
+            val deprecatedCEnumByValue = Deprecated(
+                    "Will be removed.",
+                    "",
+                    DeprecationLevel.WARNING
+            )
         }
     }
 

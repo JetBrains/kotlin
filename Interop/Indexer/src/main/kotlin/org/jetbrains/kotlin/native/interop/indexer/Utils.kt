@@ -439,7 +439,7 @@ internal fun indexTranslationUnit(index: CXIndex, translationUnit: CXTranslation
             val indexAction = clang_IndexAction_create(index)
             try {
                 val result = clang_indexTranslationUnit(indexAction, clientData,
-                        indexerCallbacks.ptr, IndexerCallbacks.size.toInt(), options, translationUnit)
+                        indexerCallbacks.ptr, sizeOf<IndexerCallbacks>().toInt(), options, translationUnit)
 
                 if (result != 0) {
                     throw Error("clang_indexTranslationUnit returned $result")

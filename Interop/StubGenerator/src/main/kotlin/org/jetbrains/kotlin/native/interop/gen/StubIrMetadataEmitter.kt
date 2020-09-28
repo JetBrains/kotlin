@@ -418,7 +418,7 @@ private class MappingExtensions(
             is AnnotationStub.Deprecated -> mapOfNotNull(
                     ("message" to message).asAnnotationArgument(),
                     ("replaceWith" to replaceWith(replaceWith)),
-                    ("level" to deprecationLevel(DeprecationLevel.ERROR))
+                    ("level" to deprecationLevel(level))
             )
             is AnnotationStub.CEnumEntryAlias -> mapOfNotNull(
                     ("entryName" to entryName).asAnnotationArgument()

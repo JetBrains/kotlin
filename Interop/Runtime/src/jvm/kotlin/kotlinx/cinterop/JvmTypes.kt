@@ -28,10 +28,13 @@ public val nativeNullPtr: NativePtr = 0L
 
 // TODO: the functions below should eventually be intrinsified
 
+@Suppress("DEPRECATION")
 private val typeOfCache = ConcurrentHashMap<Class<*>, CVariable.Type>()
 
+@Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
 @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
 inline fun <reified T : CVariable> typeOf() =
+        @Suppress("DEPRECATION")
         typeOfCache.computeIfAbsent(T::class.java) { T::class.companionObjectInstance as CVariable.Type }
 
 /**

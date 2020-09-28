@@ -85,10 +85,14 @@ inline fun <reified T : Any> unwrapKotlinObjectHolder(holder: Any?): T {
 external internal fun unwrapKotlinObjectHolderImpl(ptr: NativePtr): Any
 
 class ObjCObjectVar<T>(rawPtr: NativePtr) : CVariable(rawPtr) {
+    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
+    @Suppress("DEPRECATION")
     companion object : CVariable.Type(pointerSize.toLong(), pointerSize)
 }
 
 class ObjCNotImplementedVar<T : Any?>(rawPtr: NativePtr) : CVariable(rawPtr) {
+    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
+    @Suppress("DEPRECATION")
     companion object : CVariable.Type(pointerSize.toLong(), pointerSize)
 }
 

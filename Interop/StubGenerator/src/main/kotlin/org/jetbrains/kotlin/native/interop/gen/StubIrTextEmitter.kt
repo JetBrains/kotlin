@@ -94,6 +94,7 @@ class StubIrTextEmitter(
         }
 
         val suppress = mutableListOf("UNUSED_VARIABLE", "UNUSED_EXPRESSION").apply {
+            add("DEPRECATION") // CVariable.Type and CEnum companion deprecations.
             if (context.configuration.library.language == Language.OBJECTIVE_C) {
                 add("CONFLICTING_OVERLOADS")
                 add("RETURN_TYPE_MISMATCH_ON_INHERITANCE")
@@ -272,7 +273,8 @@ class StubIrTextEmitter(
         val typeMirror = builderResult.bridgeGenerationComponents.enumToTypeMirror.getValue(enum)
         val basePointedTypeName = typeMirror.pointedType.render(kotlinFile)
         block("class Var(rawPtr: NativePtr) : CEnumVar(rawPtr)") {
-            out("companion object : Type($basePointedTypeName.size.toInt())")
+            out("@Deprecated(\"Use sizeOf<T>() or alignOf<T>() instead.\")")
+            out("companion object : Type(sizeOf<$basePointedTypeName>().toInt())")
             out("var value: $simpleKotlinName")
             out("    get() = byValue(this.reinterpret<$basePointedTypeName>().value)")
             out("    set(value) { this.reinterpret<$basePointedTypeName>().value = value.value }")
@@ -491,7 +493,7 @@ class StubIrTextEmitter(
         is AnnotationStub.Deprecated ->
             "@Deprecated(${annotationStub.message.quoteAsKotlinLiteral()}, " +
                     "ReplaceWith(${annotationStub.replaceWith.quoteAsKotlinLiteral()}), " +
-                    "DeprecationLevel.ERROR)"
+                    "DeprecationLevel.${annotationStub.level.name})"
         is AnnotationStub.CEnumEntryAlias,
         is AnnotationStub.CEnumVarTypeSize,
         is AnnotationStub.CStruct.MemberAt,

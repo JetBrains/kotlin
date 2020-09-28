@@ -107,9 +107,11 @@ public class Arena(parent: NativeFreeablePlacement = nativeHeap) : ArenaBase(par
  * @param T must not be abstract
  */
 public inline fun <reified T : CVariable> NativePlacement.alloc(): T =
+        @Suppress("DEPRECATION")
         alloc(typeOf<T>()).reinterpret()
 
 @PublishedApi
+@Suppress("DEPRECATION")
 internal fun NativePlacement.alloc(type: CVariable.Type): NativePointed =
         alloc(type.size, type.align)
 
@@ -284,11 +286,13 @@ public fun <T : CVariable> CPointed.readValue(size: Long, align: Int): CValue<T>
     }
 }
 
+@Suppress("DEPRECATION")
 @PublishedApi internal fun <T : CVariable> CPointed.readValue(type: CVariable.Type): CValue<T> =
     readValue(type.size, type.align)
 
 // Note: can't be declared as property due to possible clash with a struct field.
 // TODO: find better name.
+@Suppress("DEPRECATION")
 public inline fun <reified T : CStructVar> T.readValue(): CValue<T> = this.readValue(typeOf<T>())
 
 public fun <T: CVariable> CValue<T>.write(location: NativePtr) {

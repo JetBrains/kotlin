@@ -1,5 +1,5 @@
 @file:JvmName("clang")
-@file:Suppress("UNUSED_VARIABLE", "UNUSED_EXPRESSION")
+@file:Suppress("UNUSED_VARIABLE", "UNUSED_EXPRESSION", "DEPRECATION")
 package clang
 
 import kotlinx.cinterop.*

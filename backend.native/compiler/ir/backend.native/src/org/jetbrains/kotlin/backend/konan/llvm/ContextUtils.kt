@@ -220,6 +220,7 @@ internal interface ContextUtils : RuntimeAware {
      * It must be declared identically with [Runtime.globalHashType].
      */
     fun GlobalHash.getBytes(): ByteArray {
+        @Suppress("DEPRECATION")
         val size = GlobalHash.size
         assert(size == LLVMStoreSizeOfType(llvmTargetData, runtime.globalHashType))
 
