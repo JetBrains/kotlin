@@ -452,3 +452,6 @@ fun ModuleDescriptor.getKotlinTypeRefiner(): KotlinTypeRefiner = getCapability(R
 
 @OptIn(TypeRefinement::class)
 fun ModuleDescriptor.isTypeRefinementEnabled(): Boolean = getCapability(REFINER_CAPABILITY)?.value != null
+
+val VariableDescriptor.isUnderscoreNamed
+    get() = name.identifier == "_"
