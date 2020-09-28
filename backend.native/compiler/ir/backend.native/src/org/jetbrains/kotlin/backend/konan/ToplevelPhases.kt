@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import java.util.Collections.emptySet
 
 internal fun moduleValidationCallback(state: ActionState, module: IrModuleFragment, context: Context) {
     if (!context.config.needCompilerVerification) return
