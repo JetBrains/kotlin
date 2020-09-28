@@ -674,6 +674,38 @@ class CocoaPodsIT : BaseGradleIT() {
         project.testImportWithAsserts()
     }
 
+    @Test
+    fun testCustomPackageName() {
+        with(project.gradleBuildScript()) {
+            addPod("AFNetworking", "packageName = \"AFNetworking\"")
+        }
+        with(project) {
+            File(projectDir, "src/iosMain/kotlin/A.kt").modify {
+                it.replace(
+                    "fun foo() {", """
+                import AFNetworking
+                fun foo() {
+            """.trimIndent()
+                )
+                it.replace("println(\"hi!\")", "println(AFNetworking.AFNetworkingReachabilityNotificationStatusItem)")
+            }
+
+            testWithWrapper("assemble")
+        }
+    }
+
+    @Test
+    fun testCinteropExtraOpts() {
+        with(project.gradleBuildScript()) {
+            addPod("AFNetworking", "extraOpts = listOf(\"-help\")")
+        }
+
+        project.build("wrapper", "cinteropAFNetworkingIOS") {
+            assertSuccessful()
+            assertContains("Usage: cinterop options_list")
+        }
+    }
+
     // paths
 
     private fun CompiledProject.url() = externalSources().resolve("url")

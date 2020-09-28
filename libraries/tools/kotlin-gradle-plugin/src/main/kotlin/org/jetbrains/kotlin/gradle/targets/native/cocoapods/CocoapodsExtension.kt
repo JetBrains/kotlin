@@ -186,7 +186,9 @@ open class CocoapodsExtension(private val project: Project) {
         private val name: String,
         @get:Input var moduleName: String,
         @get:Optional @get:Input var version: String? = null,
-        @get:Optional @get:Nested var source: PodLocation? = null
+        @get:Optional @get:Nested var source: PodLocation? = null,
+        @get:Internal var extraOpts: List<String> = listOf(),
+        @get:Internal var packageName: String = "cocoapods.$moduleName"
     ) : Named {
         @Input
         override fun getName(): String = name
