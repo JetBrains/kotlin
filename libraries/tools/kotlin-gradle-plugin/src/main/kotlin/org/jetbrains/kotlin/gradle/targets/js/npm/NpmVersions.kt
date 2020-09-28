@@ -19,12 +19,11 @@ fun versionToNpmRanges(version: String): Set<NpmRange> {
         .visit(parser.rangeSet())!!
 }
 
-fun buildNpmVersion(
+fun includedRange(
     includedVersions: List<String>,
-    excludedVersions: List<String>,
     includedWithCaret: Boolean = false
-): String {
-    val includedRange: NpmRange? = try {
+): NpmRange =
+    try {
         includedVersions
             .flatMap { versionToNpmRanges(it) }
             .map { if (includedWithCaret) it.caretizeSingleVersion() else it }
@@ -33,13 +32,18 @@ fun buildNpmVersion(
                 requireNotNull(intersection) {
                     "Included versions have no intersection $includedVersions"
                 }
-                intersection!!
+                intersection
             }
     } catch (e: UnsupportedOperationException) {
         throw InvalidUserDataException("No ranges for included versions $includedVersions")
     }
 
-    includedRange!!
+fun buildNpmVersion(
+    includedVersions: List<String>,
+    excludedVersions: List<String>,
+    includedWithCaret: Boolean = false
+): String {
+    val includedRange: NpmRange = includedRange(includedVersions, includedWithCaret)
 
     if (excludedVersions.isEmpty()) return includedRange.toString()
 
