@@ -9,6 +9,7 @@ import com.google.gson.ExclusionStrategy
 import com.google.gson.FieldAttributes
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import org.gradle.api.GradleException
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import java.io.File
 
@@ -126,7 +127,7 @@ fun packageJson(
 
     npmDependencies.forEach {
         val module = it.key
-        dependencies[it.key] = chooseVersion(dependencies[module], it.version)
+        dependencies[module] = chooseVersion(module, dependencies[module], it.version)
     }
 
     npmDependencies.forEach {
@@ -146,12 +147,19 @@ fun packageJson(
     return packageJson
 }
 
-// TODO: real versions conflict resolution
-private fun chooseVersion(oldVersion: String?, newVersion: String): String {
-    // https://yarnpkg.com/lang/en/docs/dependency-versions/#toc-x-ranges
-    if (oldVersion == "*") {
+private fun chooseVersion(
+    module: String,
+    oldVersion: String?,
+    newVersion: String
+): String {
+    if (oldVersion == null) {
         return newVersion
     }
 
-    return oldVersion ?: newVersion
+    return (includedRange(listOf(oldVersion)) intersect includedRange(listOf(newVersion)))?.toString()
+        ?: throw GradleException(
+            """
+                There is already declared version of '$module' with version '$oldVersion' which does not intersects with another declared version '${newVersion}'
+            """.trimIndent()
+        )
 }
