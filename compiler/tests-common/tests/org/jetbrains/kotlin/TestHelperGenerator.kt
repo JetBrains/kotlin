@@ -146,12 +146,12 @@ fun createTextForCoroutineHelpers(isReleaseCoroutines: Boolean, checkStateMachin
             }
 
             fun checkNoStateMachineIn(method: String) {
-                stackTrace.find { it?.methodName == method }?.let { error("tail-call optimization miss: method at " + it + " has state-machine " +
+                stackTrace.find { it?.methodName?.startsWith(method) == true }?.let { error("tail-call optimization miss: method at " + it + " has state-machine " +
                     stackTrace.joinToString(separator = "\n")) }
             }
 
             fun checkStateMachineIn(method: String) {
-                stackTrace.find { it?.methodName == method } ?: error("tail-call optimization hit: method " + method + " has not state-machine " +
+                stackTrace.find { it?.methodName?.startsWith(method) == true } ?: error("tail-call optimization hit: method " + method + " has no state-machine " +
                     stackTrace.joinToString(separator = "\n"))
             }
         }
