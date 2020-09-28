@@ -3596,6 +3596,14 @@ createInterop("auxiliaryCppSources") {
     it.extraOpts "-Xsource-compiler-option", "-std=c++17"
 }
 
+createInterop("concurrentTerminate") {
+    it.defFile 'interop/concurrentTerminate/concurrentTerminate.def'
+    it.headers "$projectDir/interop/concurrentTerminate/async.h"
+    // TODO: Using `-Xcompile-source` does not imply dependency on that source, so the task will no re-run when the source is updated.
+    it.extraOpts "-Xcompile-source", "$projectDir/interop/concurrentTerminate/async.cpp"
+    it.extraOpts "-Xsource-compiler-option", "-std=c++11"
+}
+
 createInterop("incomplete_types") {
     it.defFile 'interop/incomplete_types/library.def'
     it.headers "$projectDir/interop/incomplete_types/library.h"
@@ -3857,13 +3865,20 @@ interopTest("interop_auxiliarySources") {
     interop = 'auxiliaryCppSources'
 }
 
+interopTest("interop_concurrentTerminate") {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    source = "interop/concurrentTerminate/main.kt"
+    interop = 'concurrentTerminate'
+    goldValue = "Reporting error!\n"
+    outputChecker = { str -> str.endsWith(goldValue) }
+    expectedExitStatus = 99
+}
+
 interopTest("interop_incompleteTypes") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     source = "interop/incomplete_types/main.kt"
     interop = 'incomplete_types'
 }
-
-
 
 interopTest("interop_embedStaticLibraries") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
@@ -4173,6 +4188,16 @@ dynamicTest("produce_dynamic") {
                 "IsInstance2 = PASS\n" +
                 "getVector128 = (1, 2, 3, 4)\n" +
                 "Error handler: kotlin.Error: Expected error\n"
+}
+
+dynamicTest("interop_concurrentRuntime") {
+    disabled = (project.testTarget != null && project.testTarget != project.hostName)
+    source = "interop/concurrentTerminate/reverseInterop.kt"
+    cSource = "$projectDir/interop/concurrentTerminate/main.cpp"
+    clangTool = "clang++"
+    goldValue = "Uncaught Kotlin exception: kotlin.RuntimeException: Example"
+    outputChecker = { str -> str.startsWith(goldValue) }
+    expectedExitStatus = 99
 }
 
 task library_mismatch(type: KonanDriverTest) {

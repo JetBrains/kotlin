@@ -418,6 +418,8 @@ open class KonanDynamicTest : KonanStandaloneTest() {
     @Input
     lateinit var cSource: String
 
+    var clangTool = "clang"
+
     // Replace testlib_api.h and all occurrences of the testlib with the actual name of the test
     private fun processCSource(): String {
         val sourceFile = File(cSource)
@@ -439,7 +441,7 @@ open class KonanDynamicTest : KonanStandaloneTest() {
         val plugin = project.convention.getPlugin(ExecClang::class.java)
         val execResult = plugin.execKonanClang(project.testTarget, Action<ExecSpec> {
             it.workingDir = File(outputDirectory)
-            it.executable = "clang"
+            it.executable = clangTool
             val artifactsDir = "$outputDirectory/${project.testTarget}"
             it.args = listOf(processCSource(),
                     "-o", executable,
