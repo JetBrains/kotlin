@@ -20,6 +20,14 @@ internal const val COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME = "commonMainMetadata
 open class KotlinMetadataTarget @Inject constructor(project: Project) :
     KotlinOnlyTarget<AbstractKotlinCompilation<*>>(project, KotlinPlatformType.common) {
 
+    override val artifactsTaskName: String
+        // The IDE import looks at this task name to determine the artifact and register the path to the artifact;
+        // in HMPP, since the project resolves to the all-metadata JAR, the IDE import needs to work with that JAR, too
+        get() = if (project.isKotlinGranularMetadataEnabled) KotlinMetadataTargetConfigurator.ALL_METADATA_JAR_NAME else super.artifactsTaskName
+
+    internal val legacyArtifactsTaskName: String
+        get() = super.artifactsTaskName
+
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
         if (!project.isKotlinGranularMetadataEnabled)
             super.kotlinComponents

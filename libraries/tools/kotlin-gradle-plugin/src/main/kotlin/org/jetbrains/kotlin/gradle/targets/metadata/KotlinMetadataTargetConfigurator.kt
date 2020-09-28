@@ -83,8 +83,13 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
 
             setupDependencyTransformationForCommonSourceSets(target)
 
-            target.project.configurations.getByName(target.apiElementsConfigurationName).attributes
-                .attribute(USAGE_ATTRIBUTE, target.project.usageByName(KotlinUsages.KOTLIN_METADATA))
+            target.project.configurations.getByName(target.apiElementsConfigurationName).run {
+                attributes.attribute(USAGE_ATTRIBUTE, target.project.usageByName(KotlinUsages.KOTLIN_METADATA))
+                /** Note: to add this artifact here is enough to avoid duplicate artifacts in this configuration: the default artifact
+                 * won't be added (later) if there's already an artifact in the configuration, see
+                 * [KotlinOnlyTargetConfigurator.configureArchivesAndComponent] */
+                target.project.artifacts.add(target.apiElementsConfigurationName, allMetadataJar)
+            }
 
             if (target.project.isCompatibilityMetadataVariantEnabled) {
                 createCommonMainElementsConfiguration(target)
@@ -126,30 +131,33 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
     }
 
     override fun createArchiveTasks(target: KotlinMetadataTarget): TaskProvider<out Zip> {
-        val result = super.createArchiveTasks(target)
+        if (!target.project.isKotlinGranularMetadataEnabled)
+            return super.createArchiveTasks(target)
 
-        if (target.project.isKotlinGranularMetadataEnabled) {
-            target.project.locateTask<Jar>(target.artifactsTaskName)!!.configure {
-                if (!target.project.isCompatibilityMetadataVariantEnabled) {
-                    it.archiveClassifier.set("commonMain")
-                }
-                it.onlyIf { target.project.isCompatibilityMetadataVariantEnabled }
+        val result = target.project.registerTask<Jar>(target.artifactsTaskName) {
+            it.group = BasePlugin.BUILD_GROUP
+            /** The content is added to this JAR in [KotlinMetadataTargetConfigurator.configureTarget]. */
+        }
+
+        result.configure { allMetadataJar ->
+            allMetadataJar.description = "Assembles a jar archive containing the metadata for all Kotlin source sets."
+            allMetadataJar.group = BasePlugin.BUILD_GROUP
+
+            allMetadataJar.archiveAppendix.set(target.name.toLowerCase())
+
+            if (target.project.isCompatibilityMetadataVariantEnabled) {
+                allMetadataJar.archiveClassifier.set("all")
             }
+        }
 
-            /** This JAR is created in addition to the main one, published with a classifier, but is by default used
-             * for project dependencies (as the Kotlin Granular metadata is enabled across all projects in a build, this is OK).
-             * See also [KotlinMetadataTarget.kotlinComponents]
-             */
-            target.project.registerTask<Jar>(ALL_METADATA_JAR_NAME) { allMetadataJar ->
-                allMetadataJar.description = "Assembles a jar archive containing the metadata for all Kotlin source sets."
-                allMetadataJar.group = BasePlugin.BUILD_GROUP
-
-                allMetadataJar.archiveAppendix.set(target.name.toLowerCase())
-
-                if (target.project.isCompatibilityMetadataVariantEnabled) {
-                    allMetadataJar.archiveClassifier.set("all")
-                }
+        val legacyJar = target.project.registerTask<Jar>(target.legacyArtifactsTaskName)
+        legacyJar.configure {
+            it.description = "Assembles an archive containing the Kotin metadata of the commonMain source set."
+            if (!target.project.isCompatibilityMetadataVariantEnabled) {
+                it.archiveClassifier.set("commonMain")
             }
+            it.onlyIf { target.project.isCompatibilityMetadataVariantEnabled }
+            it.from(target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).output.allOutputs)
         }
 
         return result
@@ -499,7 +507,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
             )
             extendsFrom(commonMainApiConfiguration)
 
-            project.artifacts.add(name, project.tasks.getByName(target.artifactsTaskName))
+            project.artifacts.add(name, project.tasks.getByName(target.legacyArtifactsTaskName))
         }
     }
 

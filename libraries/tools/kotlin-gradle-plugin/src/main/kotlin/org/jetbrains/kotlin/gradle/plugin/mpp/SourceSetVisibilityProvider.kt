@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
-import org.jetbrains.kotlin.gradle.targets.metadata.getPublishedPlatformCompilations
 import java.io.File
 
 internal data class SourceSetVisibilityResult(
@@ -59,16 +58,6 @@ internal class SourceSetVisibilityProvider(
 
         val mppModuleIdentifier = ModuleIds.fromComponent(project, resolvedRootMppDependency ?: resolvedMetadataDependency)
 
-        /**
-         * When Gradle resolves a project dependency, as opposed to an external dependency, the variant name it returns in the resolution
-         * results is the name of the configuration that is chosen during variant-aware resolution, not the actual name of the variant that
-         * is written to the Gradle module metadata and the Kotlin project structure metadata. To fix this, get the published Kotlin
-         * variants of the dependency project and find among them the one that owns the configuration by the given name.
-         */
-        val projectPublishedCompilations = resolvedToOtherProject?.let(::getPublishedPlatformCompilations)?.keys
-        fun platformVariantName(resolvedToVariantName: String): String =
-            projectPublishedCompilations?.first { it.dependencyConfigurationName == resolvedToVariantName }?.name ?: resolvedToVariantName
-
         val firstConfigurationByVariant = mutableMapOf<String, Configuration>()
 
         val visiblePlatformVariantNames: Set<String?> =
@@ -81,7 +70,7 @@ internal class SourceSetVisibilityProvider(
                 }
                 .mapTo(mutableSetOf()) { configuration ->
                     val resolvedVariant = resolvedVariantsProvider.getResolvedVariantName(mppModuleIdentifier, configuration)
-                        ?.let { platformVariantName(it) }
+                        ?.let { kotlinVariantNameFromPublishedVariantName(it) }
                         ?: return@mapTo null
 
                     firstConfigurationByVariant.putIfAbsent(resolvedVariant, configuration)
@@ -134,6 +123,9 @@ internal class SourceSetVisibilityProvider(
         )
     }
 }
+
+private fun kotlinVariantNameFromPublishedVariantName(resolvedToVariantName: String): String =
+    originalVariantNameFromPublished(resolvedToVariantName) ?: resolvedToVariantName
 
 private fun Project.resolvableConfigurationFromCompilationByScope(
     compilation: KotlinCompilation<*>,
