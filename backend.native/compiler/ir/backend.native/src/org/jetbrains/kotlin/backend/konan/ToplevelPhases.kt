@@ -353,6 +353,11 @@ internal val useInternalAbiPhase = makeKonanModuleOpPhase(
                     if (!irClass.isCompanion || context.llvmModuleSpecification.containsDeclaration(irClass)) {
                         return expression
                     }
+                    val parent = irClass.parentAsClass
+                    if (parent.isObjCClass()) {
+                        // Access to Obj-C metaclass is done via intrinsic.
+                        return expression
+                    }
                     val accessor = accessors.getOrPut(irClass) {
                         context.irFactory.buildFun {
                             name = InternalAbi.getCompanionObjectAccessorName(irClass)
