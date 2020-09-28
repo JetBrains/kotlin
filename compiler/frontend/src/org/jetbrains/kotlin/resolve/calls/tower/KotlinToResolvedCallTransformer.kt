@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
@@ -227,7 +229,13 @@ class KotlinToResolvedCallTransformer(
                 return storedResolvedCall
             }
         }
-        return NewResolvedCallImpl(completedSimpleAtom, resultSubstitutor, diagnostics, typeApproximator)
+        return NewResolvedCallImpl(
+            completedSimpleAtom,
+            resultSubstitutor,
+            diagnostics,
+            typeApproximator,
+            expressionTypingServices.languageVersionSettings
+        )
     }
 
     fun runCallCheckers(resolvedCall: ResolvedCall<*>, callCheckerContext: CallCheckerContext) {
@@ -551,6 +559,7 @@ class TrackingBindingTrace(val trace: BindingTrace) : BindingTrace by trace {
 sealed class NewAbstractResolvedCall<D : CallableDescriptor>() : ResolvedCall<D> {
     abstract val argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument>
     abstract val kotlinCall: KotlinCall
+    protected abstract val languageVersionSettings: LanguageVersionSettings
 
     protected var argumentToParameterMap: Map<ValueArgument, ArgumentMatchImpl>? = null
     protected var _valueArguments: Map<ValueParameterDescriptor, ResolvedValueArgument>? = null
@@ -620,6 +629,8 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor>() : ResolvedCall<D>
 
     private fun createValueArguments(): Map<ValueParameterDescriptor, ResolvedValueArgument> =
         LinkedHashMap<ValueParameterDescriptor, ResolvedValueArgument>().also { result ->
+            val needToUseCorrectExecutionOrderForVarargArguments =
+                languageVersionSettings.getFeatureSupport(LanguageFeature.UseCorrectExecutionOrderForVarargArguments) == LanguageFeature.State.ENABLED
             var varargMappings: MutableList<Pair<ValueParameterDescriptor, VarargValueArgument>>? = null
             for ((originalParameter, resolvedCallArgument) in argumentMappingByOriginal) {
                 val resultingParameter = resultingDescriptor.valueParameters[originalParameter.index]
@@ -630,12 +641,17 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor>() : ResolvedCall<D>
                     is ResolvedCallArgument.SimpleArgument -> {
                         val valueArgument = resolvedCallArgument.callArgument.psiCallArgument.valueArgument
                         if (resultingParameter.isVararg) {
-                            val vararg = VarargValueArgument().apply { addArgument(valueArgument) }
-                            if (varargMappings == null) varargMappings = SmartList()
-                            varargMappings.add(resultingParameter to vararg)
-                            continue
-                        } else
+                            if (needToUseCorrectExecutionOrderForVarargArguments) {
+                                VarargValueArgument().apply { addArgument(valueArgument) }
+                            } else {
+                                val vararg = VarargValueArgument().apply { addArgument(valueArgument) }
+                                if (varargMappings == null) varargMappings = SmartList()
+                                varargMappings.add(resultingParameter to vararg)
+                                continue
+                            }
+                        } else {
                             ExpressionValueArgument(valueArgument)
+                        }
                     }
                     is ResolvedCallArgument.VarargArgument ->
                         VarargValueArgument().apply {
@@ -644,9 +660,11 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor>() : ResolvedCall<D>
                 }
             }
 
-            if (varargMappings != null) {
-                for ((parameter, argument) in varargMappings) {
-                    result[parameter] = argument
+            if (varargMappings != null && !needToUseCorrectExecutionOrderForVarargArguments) {
+                if (varargMappings != null) {
+                    for ((parameter, argument) in varargMappings) {
+                        result[parameter] = argument
+                    }
                 }
             }
         }
@@ -658,6 +676,7 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
     substitutor: NewTypeSubstitutor?,
     private var diagnostics: Collection<KotlinCallDiagnostic>,
     private val typeApproximator: TypeApproximator,
+    override val languageVersionSettings: LanguageVersionSettings,
 ) : NewAbstractResolvedCall<D>() {
     var isCompleted = false
         private set

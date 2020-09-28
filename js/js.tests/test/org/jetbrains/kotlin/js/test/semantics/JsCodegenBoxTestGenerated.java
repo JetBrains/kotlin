@@ -140,6 +140,16 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/argumentOrder/extensionInClass.kt");
         }
 
+        @TestMetadata("kt17691.kt")
+        public void testKt17691() throws Exception {
+            runTest("compiler/testData/codegen/box/argumentOrder/kt17691.kt");
+        }
+
+        @TestMetadata("kt17691WithEnabledFeature.kt")
+        public void testKt17691WithEnabledFeature() throws Exception {
+            runTest("compiler/testData/codegen/box/argumentOrder/kt17691WithEnabledFeature.kt");
+        }
+
         @TestMetadata("kt9277.kt")
         public void testKt9277() throws Exception {
             runTest("compiler/testData/codegen/box/argumentOrder/kt9277.kt");
