@@ -14,7 +14,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.testFramework.LightProjectDescriptor
 import java.io.File
 
-class KotlinLightProjectDescriptor : LightProjectDescriptor() {
+open class KotlinLightProjectDescriptor : LightProjectDescriptor() {
     override fun getSdk(): Sdk? {
         val javaHome = System.getProperty("java.home")
         assert(File(javaHome).isDirectory)
@@ -23,14 +23,15 @@ class KotlinLightProjectDescriptor : LightProjectDescriptor() {
         return existing ?: JavaSdk.getInstance().createJdk("Full JDK", javaHome, true)
     }
 
-    override fun configureModule(module: Module, model: ModifiableRootModel, contentEntry: ContentEntry) {
+    protected fun addLibrary(clazz: Class<*>, orderRootType: OrderRootType, model: ModifiableRootModel) {
         val editor = NewLibraryEditor()
-        editor.name = "LIBRARY"
-        val file = File(PathManager.getJarPathForClass(AccessDeniedException::class.java) ?: "")
+        editor.name = clazz.canonicalName
+
+        val file = File(PathManager.getJarPathForClass(clazz) ?: "")
         assert(file.exists())
         editor.addRoot(
             VfsUtil.getUrlForLibraryRoot(file),
-            OrderRootType.CLASSES
+            orderRootType
         )
 
         val libraryTableModifiableModel = model.moduleLibraryTable.modifiableModel
@@ -41,5 +42,9 @@ class KotlinLightProjectDescriptor : LightProjectDescriptor() {
 
         libModel.commit()
         libraryTableModifiableModel.commit()
+    }
+
+    override fun configureModule(module: Module, model: ModifiableRootModel, contentEntry: ContentEntry) {
+        addLibrary(AccessDeniedException::class.java, OrderRootType.CLASSES, model)
     }
 }

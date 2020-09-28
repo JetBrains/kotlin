@@ -10,7 +10,7 @@ import kotlin.random.Random
 object SanityTestElementPicker {
 
     private val random = Random(System.currentTimeMillis())
-    private const val KEEP_RATIO = 0.6
+    private const val KEEP_RATIO = 0.7
 
     /** Tells which Kotlin [PsiElement]-s can be used directly or not (i.e. some child) as a SSR pattern. */
     private val PsiElement.isSearchable: Boolean
