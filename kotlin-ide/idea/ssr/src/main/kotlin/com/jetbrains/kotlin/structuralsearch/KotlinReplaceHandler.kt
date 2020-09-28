@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.util.elementType
 import com.intellij.structuralsearch.StructuralReplaceHandler
 import com.intellij.structuralsearch.StructuralSearchUtil
 import com.intellij.structuralsearch.impl.matcher.MatcherImplUtil
@@ -68,6 +69,14 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
                 if(subjectExpression == null) {
                     leftParenthesis?.delete()
                     rightParenthesis?.delete()
+                }
+            }
+            if(this is KtLambdaExpression) {
+                if(valueParameters.isEmpty()) {
+                    findDescendantOfType<PsiElement> { it.elementType == KtTokens.ARROW }?.let {
+                        it.deleteSurroundingWhitespace()
+                        it.delete()
+                    }
                 }
             }
             fixWhiteSpace(match)
