@@ -116,17 +116,23 @@ open class CocoapodsExtension(private val project: Project) {
             val buildScript = project.buildFile
             val lines = buildScript.readLines()
             val lineNumber = lines.indexOfFirst { pattern.matches(it) }
-            val lineContent = lines[lineNumber].trimIndent()
-            val newContent = lineContent.replace(path.name, "")
-            project.logger.warn(
+            val warnMessage = if (lineNumber != -1) run {
+                val lineContent = lines[lineNumber].trimIndent()
+                val newContent = lineContent.replace(path.name, "")
                 """
-                |Deprecated DSL used on ${buildScript.absolutePath}${File.pathSeparator}${lineNumber + 1}:
+                |Deprecated DSL found on ${buildScript.absolutePath}${File.pathSeparator}${lineNumber + 1}:
                 |Found: "${lineContent}"
                 |Expected: "${newContent}"
                 |Please, change the path to avoid this warning.
                 |
             """.trimMargin()
-            )
+            } else
+                """
+                |Deprecated DSL is used for pod "$name".
+                |Please, change its path from ${path.path} to ${path.parentFile.path} 
+                |
+            """.trimMargin()
+            project.logger.warn(warnMessage)
             podSource = path.parentFile
         }
         addToPods(CocoapodsDependency(name, moduleName, version, podSource?.let { Path(it) }))
