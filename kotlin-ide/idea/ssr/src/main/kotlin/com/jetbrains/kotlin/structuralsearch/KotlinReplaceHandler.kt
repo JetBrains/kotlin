@@ -2,6 +2,7 @@ package com.jetbrains.kotlin.structuralsearch
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.structuralsearch.StructuralReplaceHandler
 import com.intellij.structuralsearch.StructuralSearchUtil
@@ -109,6 +110,12 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
     }
 
     private fun KtDeclaration.replaceDeclaration(searchTemplate: KtDeclaration, match: KtDeclaration): KtDeclaration {
+        if(modifierList?.annotationEntries?.size == 0) {
+            // remove @ symbol for when annotation count filter is equal to 0
+            val atElement = modifierList?.children?.find { it is PsiErrorElement }
+            atElement?.delete()
+        }
+
         fun KtDeclaration.replaceVisibilityModifiers(searchTemplate: KtDeclaration, match: KtDeclaration): PsiElement {
             if (visibilityModifierType() == null && searchTemplate.visibilityModifierType() == null) {
                 match.visibilityModifierType()?.let {
