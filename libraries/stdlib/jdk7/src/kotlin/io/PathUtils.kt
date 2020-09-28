@@ -20,7 +20,7 @@ import java.nio.file.NoSuchFileException
 /**
  * Returns the extension of this file (not including the dot), or an empty string if it doesn't have one.
  */
-@SinceKotlin("1.3")
+@SinceKotlin("1.4")
 @ExperimentalStdlibApi
 public val Path.extension: String
     get() = fileName.toString().substringAfterLast('.', "")
@@ -29,7 +29,7 @@ public val Path.extension: String
  * Returns [path][File.path] of this File using the invariant separator '/' to
  * separate the names in the name sequence.
  */
-@SinceKotlin("1.3")
+@SinceKotlin("1.4")
 @ExperimentalStdlibApi
 public val Path.invariantSeparatorsPath: String
     get() {
@@ -40,7 +40,7 @@ public val Path.invariantSeparatorsPath: String
 /**
  * Returns file's name without an extension.
  */
-@SinceKotlin("1.3")
+@SinceKotlin("1.4")
 @ExperimentalStdlibApi
 public val Path.nameWithoutExtension: String
     get() = fileName.toString().substringBeforeLast(".")
@@ -65,7 +65,7 @@ public val Path.nameWithoutExtension: String
  * @throws FileAlreadyExistsException if the destination file already exists and [overwrite] argument is set to `false`.
  * @throws IOException if any errors occur while copying.
  */
-@SinceKotlin("1.3")
+@SinceKotlin("1.4")
 @ExperimentalStdlibApi
 public fun Path.copyTo(target: Path, overwrite: Boolean = false): Path {
     val options = if (overwrite) arrayOf(StandardCopyOption.REPLACE_EXISTING) else emptyArray()
@@ -94,7 +94,7 @@ public fun Path.copyTo(target: Path, overwrite: Boolean = false): Path {
  * @throws FileAlreadyExistsException if the destination file already exists and [REPLACE_EXISTING][StandardCopyOption.REPLACE_EXISTING] is not used.
  * @throws IOException if any errors occur while copying.
  */
-@SinceKotlin("1.3")
+@SinceKotlin("1.4")
 @ExperimentalStdlibApi
 public fun Path.copyTo(target: Path, vararg options: CopyOption): Path {
     if (!this.exists()) {
@@ -129,7 +129,7 @@ public fun Path.copyTo(target: Path, vararg options: CopyOption): Path {
  *
  * @param options Options to control how symbolic links are handled.
  */
-@SinceKotlin("1.3")
+@SinceKotlin("1.4")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 public inline fun Path.exists(vararg options: LinkOption): Boolean = Files.exists(this, *options)
@@ -139,7 +139,7 @@ public inline fun Path.exists(vararg options: LinkOption): Boolean = Files.exist
  *
  * @param options Options to control how symbolic links are handled.
  */
-@SinceKotlin("1.3")
+@SinceKotlin("1.4")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 public inline fun Path.isFile(vararg options: LinkOption): Boolean = Files.isRegularFile(this, *options)
@@ -151,7 +151,7 @@ public inline fun Path.isFile(vararg options: LinkOption): Boolean = Files.isReg
  *
  * @param options Options to control how symbolic links are handled.
  */
-@SinceKotlin("1.3")
+@SinceKotlin("1.4")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 public inline fun Path.isDirectory(vararg options: LinkOption): Boolean = Files.isDirectory(this, *options)
@@ -159,7 +159,7 @@ public inline fun Path.isDirectory(vararg options: LinkOption): Boolean = Files.
 /**
  * Check if this path exists and is a symbolic link.
  */
-@SinceKotlin("1.3")
+@SinceKotlin("1.4")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 public inline fun Path.isSymbolicLink(): Boolean = Files.isSymbolicLink(this)
@@ -167,7 +167,7 @@ public inline fun Path.isSymbolicLink(): Boolean = Files.isSymbolicLink(this)
 /**
  * Check if this path exists and is executable.
  */
-@SinceKotlin("1.3")
+@SinceKotlin("1.4")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 public inline fun Path.isExecutable(): Boolean = Files.isExecutable(this)
@@ -178,7 +178,7 @@ public inline fun Path.isExecutable(): Boolean = Files.isExecutable(this)
  * This check is dependant on the current filesystem. For example, on UNIX-like operating systems, a
  * path is considered hidden if its name begins with a dot. On Windows, file attributes are checked.
  */
-@SinceKotlin("1.3")
+@SinceKotlin("1.4")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 public inline fun Path.isHidden(): Boolean = Files.isHidden(this)
@@ -186,7 +186,7 @@ public inline fun Path.isHidden(): Boolean = Files.isHidden(this)
 /**
  * Check if this path exists and is readable.
  */
-@SinceKotlin("1.3")
+@SinceKotlin("1.4")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 public inline fun Path.isReadable(): Boolean = Files.isReadable(this)
@@ -194,7 +194,7 @@ public inline fun Path.isReadable(): Boolean = Files.isReadable(this)
 /**
  * Check that this path exists and is writable.
  */
-@SinceKotlin("1.3")
+@SinceKotlin("1.4")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 public inline fun Path.isWritable(): Boolean = Files.isWritable(this)
@@ -202,7 +202,7 @@ public inline fun Path.isWritable(): Boolean = Files.isWritable(this)
 /**
  * Check if this path points to the same file or directory as [other].
  */
-@SinceKotlin("1.3")
+@SinceKotlin("1.4")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 public inline fun Path.isSameFile(other: Path): Boolean = Files.isSameFile(this, other)
@@ -213,7 +213,7 @@ public inline fun Path.isSameFile(other: Path): Boolean = Files.isSameFile(this,
  * @throws NotDirectoryException If this path does not refer to a directory
  * @throws IOException If an I/O error occurs
  */
-@SinceKotlin("1.3")
+@SinceKotlin("1.4")
 @ExperimentalStdlibApi
 public fun Path.listFiles(): List<Path> {
     return Files.newDirectoryStream(this).use { it.toList() }
