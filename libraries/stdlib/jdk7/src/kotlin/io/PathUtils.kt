@@ -97,7 +97,7 @@ public fun Path.copyTo(target: Path, overwrite: Boolean = false): Path {
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
 public fun Path.copyTo(target: Path, vararg options: CopyOption): Path {
-    if (!this.exists()) {
+    if (this.notExists()) {
         throw NoSuchFileException(toString(), null, "The source file doesn't exist.")
     }
 
@@ -133,6 +133,16 @@ public fun Path.copyTo(target: Path, vararg options: CopyOption): Path {
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 public inline fun Path.exists(vararg options: LinkOption): Boolean = Files.exists(this, *options)
+
+/**
+ * Check if this file exists.
+ *
+ * @param options Options to control how symbolic links are handled.
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun Path.notExists(vararg options: LinkOption): Boolean = Files.notExists(this, *options)
 
 /**
  * Check if this path is a file.
