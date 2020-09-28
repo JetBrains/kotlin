@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.frontend.di.configureStandardResolveComponents
 import org.jetbrains.kotlin.frontend.java.di.configureJavaSpecificComponents
 import org.jetbrains.kotlin.frontend.java.di.initializeJavaSpecificComponents
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
-import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolverImpl
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
@@ -36,7 +35,6 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.platform.konan.NativePlatform
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.calls.inference.InferenceCompatibilityCheckerImpl
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalMarkerDeclarationAnnotationChecker
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
@@ -254,6 +252,5 @@ class CompositePlatformConigurator(private val componentConfigurators: List<Plat
         // Unfortunately, it is declared in base class, so repeating call to 'configureModuleDependentCheckers' will lead
         // to multiple registrrations.
         container.useImpl<ExperimentalMarkerDeclarationAnnotationChecker>()
-        container.useImpl<InferenceCompatibilityCheckerImpl>()
     }
 }
