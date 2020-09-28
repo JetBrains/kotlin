@@ -35,10 +35,6 @@ class PathReadWriteTest {
         writer.write("World")
         writer.close()
 
-        file.forEachBlock { arr: ByteArray, size: Int ->
-            assertTrue(size in 11..12, size.toString())
-            assertTrue(arr.contains('W'.toByte()))
-        }
         val list = ArrayList<String>()
         file.forEachLine(StandardOpenOption.READ, charset = Charsets.UTF_8) {
             list.add(it)

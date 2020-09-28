@@ -358,45 +358,6 @@ public fun Path.appendText(text: String, charset: Charset = Charsets.UTF_8): Uni
 }
 
 /**
- * Reads file by byte blocks and calls [action] for each block read.
- * Block has default size which is implementation-dependent.
- * This function passes the byte array and amount of bytes in the array to the [action] function.
- *
- * You can use this function for huge files.
- *
- * @param action function to process file blocks.
- */
-@SinceKotlin("1.4")
-@ExperimentalStdlibApi
-public fun Path.forEachBlock(action: (buffer: ByteArray, bytesRead: Int) -> Unit): Unit = forEachBlock(DEFAULT_BLOCK_SIZE, action)
-
-/**
- * Reads file by byte blocks and calls [action] for each block read.
- * This functions passes the byte array and amount of bytes in the array to the [action] function.
- *
- * You can use this function for huge files.
- *
- * @param action function to process file blocks.
- * @param blockSize size of a block, replaced by 512 if it's less, 4096 by default.
- */
-@SinceKotlin("1.4")
-@ExperimentalStdlibApi
-public fun Path.forEachBlock(blockSize: Int, action: (buffer: ByteArray, bytesRead: Int) -> Unit): Unit {
-    val arr = ByteArray(blockSize.coerceAtLeast(MINIMUM_BLOCK_SIZE))
-
-    inputStream().use { input ->
-        do {
-            val size = input.read(arr)
-            if (size <= 0) {
-                break
-            } else {
-                action(arr, size)
-            }
-        } while (true)
-    }
-}
-
-/**
  * Reads this file line by line using the specified [charset] and calls [action] for each line.
  * Default charset is UTF-8.
  *
