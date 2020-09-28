@@ -3416,6 +3416,21 @@ public abstract class QuickFixTestGenerated extends AbstractQuickFixTest {
                     runTest("testData/quickfix/createFromUsage/createClass/referenceExpression/objectByQualifier.kt");
                 }
 
+                @TestMetadata("objectForEnum.kt")
+                public void testObjectForEnum() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/objectForEnum.kt");
+                }
+
+                @TestMetadata("objectForEnumInArgument.kt")
+                public void testObjectForEnumInArgument() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/objectForEnumInArgument.kt");
+                }
+
+                @TestMetadata("objectForEnumInEquals.kt")
+                public void testObjectForEnumInEquals() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/objectForEnumInEquals.kt");
+                }
+
                 @TestMetadata("objectInPackage.kt")
                 public void testObjectInPackage() throws Exception {
                     runTest("testData/quickfix/createFromUsage/createClass/referenceExpression/objectInPackage.kt");
