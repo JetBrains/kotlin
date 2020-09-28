@@ -1,0 +1,12 @@
+// "Create object 'RED'" "true"
+enum class SampleEnum {
+    ;
+
+    object RED {
+
+    }
+}
+
+fun usage() {
+    SampleEnum.RED
+}
