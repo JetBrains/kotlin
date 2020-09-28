@@ -180,6 +180,10 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
     }
 
     private fun KtProperty.replaceProperty(searchTemplate: KtProperty, match: KtProperty): KtProperty {
+        if(initializer == null) equalsToken?.let {  // when count filter = 0 on the initializer
+            it.deleteSurroundingWhitespace()
+            it.delete()
+        }
         PROPERTY_MODIFIERS.forEach { replaceModifier(searchTemplate, match, it) }
         fixModifierListFormatting(match)
         if (!hasDelegate() && !hasInitializer()) {
@@ -234,6 +238,13 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
             if (nextAnchor is PsiWhiteSpace) nextAnchor.replace(nextElement)
             else addAfter(nextElement, anchor)
         }
+    }
+
+    private fun PsiElement.deleteSurroundingWhitespace() {
+        val nextAnchor = nextSibling
+        val prevAnchor = prevSibling
+        if(nextAnchor is PsiWhiteSpace) nextAnchor.delete()
+        if(prevAnchor is PsiWhiteSpace) prevAnchor.delete()
     }
 
     companion object {

@@ -20,4 +20,13 @@ class KotlinSSRPropertyReplaceTest : KotlinSSRReplaceTest() {
             result = "val foo :  String  = \"foo\""
         )
     }
+
+    fun testPropertyNoInitializer() {
+        doTest(
+            searchPattern = "var '_ID : '_TYPE = '_INIT{0,1}",
+            replacePattern = "var '_ID : '_TYPE = '_INIT",
+            match = "var foo: String",
+            result = "var foo : String"
+        )
+    }
 }
