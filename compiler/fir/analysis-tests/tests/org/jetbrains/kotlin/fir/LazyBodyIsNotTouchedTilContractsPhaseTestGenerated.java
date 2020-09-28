@@ -373,6 +373,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         runTest("compiler/fir/analysis-tests/testData/resolve/spreadOperator.kt");
     }
 
+    @TestMetadata("statusResolveForTypealiasAsSuperClass.kt")
+    public void testStatusResolveForTypealiasAsSuperClass() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/statusResolveForTypealiasAsSuperClass.kt");
+    }
+
     @TestMetadata("syntheticsVsNormalProperties.kt")
     public void testSyntheticsVsNormalProperties() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/syntheticsVsNormalProperties.kt");
@@ -2661,6 +2666,16 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/visibility/exposedTypeParameters.kt");
         }
 
+        @TestMetadata("intersectionOverrideWithImplicitTypes.kt")
+        public void testIntersectionOverrideWithImplicitTypes() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/visibility/intersectionOverrideWithImplicitTypes.kt");
+        }
+
+        @TestMetadata("kotlinJavaKotlinHierarchy.kt")
+        public void testKotlinJavaKotlinHierarchy() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/visibility/kotlinJavaKotlinHierarchy.kt");
+        }
+
         @TestMetadata("protectedInCompanion.kt")
         public void testProtectedInCompanion() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/visibility/protectedInCompanion.kt");
@@ -2669,6 +2684,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("singletonConstructors.kt")
         public void testSingletonConstructors() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/visibility/singletonConstructors.kt");
+        }
+
+        @TestMetadata("visibilityWithOverrides.kt")
+        public void testVisibilityWithOverrides() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/visibility/visibilityWithOverrides.kt");
         }
     }
 }

@@ -11,11 +11,11 @@ FILE: delegates.kt
             super<R|kotlin/Any|>()
         }
 
-        public final override [BODY_RESOLVE] fun getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|kotlin/Int| {
+        public final override operator [BODY_RESOLVE] fun getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|kotlin/Int| {
             ^getValue Int(1)
         }
 
-        public final override [BODY_RESOLVE] fun setValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|, value: R|kotlin/Int|): R|kotlin/Unit| {
+        public final override operator [BODY_RESOLVE] fun setValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|, value: R|kotlin/Int|): R|kotlin/Unit| {
         }
 
     }

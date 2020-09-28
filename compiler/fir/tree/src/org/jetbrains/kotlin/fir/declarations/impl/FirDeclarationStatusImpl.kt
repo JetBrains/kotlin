@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl.Modifier.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -21,9 +22,9 @@ open class FirDeclarationStatusImpl(
     override val source: FirSourceElement? get() = null
     protected var flags: Int = 0
 
-    private operator fun get(modifier: Modifier): Boolean = (flags and modifier.mask) != 0
+    operator fun get(modifier: Modifier): Boolean = (flags and modifier.mask) != 0
 
-    private operator fun set(modifier: Modifier, value: Boolean) {
+    operator fun set(modifier: Modifier, value: Boolean) {
         flags = if (value) {
             flags or modifier.mask
         } else {
@@ -139,7 +140,7 @@ open class FirDeclarationStatusImpl(
             this[FUN] = value
         }
 
-    private enum class Modifier(val mask: Int) {
+    enum class Modifier(val mask: Int) {
         EXPECT(0x1),
         ACTUAL(0x2),
         OVERRIDE(0x4),

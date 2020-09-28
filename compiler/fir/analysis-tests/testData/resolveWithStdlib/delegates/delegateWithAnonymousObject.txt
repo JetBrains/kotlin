@@ -28,11 +28,11 @@ FILE: delegateWithAnonymousObject.kt
                     super<R|kotlin/Any|>()
                 }
 
-                public final override fun getValue(thisRef: R|IssuesListUserProfile|, property: R|kotlin/reflect/KProperty<*>|): R|IssueListView| {
+                public final override operator fun getValue(thisRef: R|IssuesListUserProfile|, property: R|kotlin/reflect/KProperty<*>|): R|IssueListView| {
                     ^getValue R|/IssueListView.IssueListView|()
                 }
 
-                public final override fun setValue(thisRef: R|IssuesListUserProfile|, property: R|kotlin/reflect/KProperty<*>|, value: R|IssueListView|): R|kotlin/Unit| {
+                public final override operator fun setValue(thisRef: R|IssuesListUserProfile|, property: R|kotlin/reflect/KProperty<*>|, value: R|IssueListView|): R|kotlin/Unit| {
                     ^setValue R|/IssueListView.IssueListView|().R|/IssueListView.updateFrom|(R|<local>/value|)
                 }
 

@@ -35,7 +35,7 @@ class G : F() {
 }
 
 fun test_fun_stays_protected(g: G) {
-    g.protected_fun()
+    g.<!HIDDEN!>protected_fun<!>()
 }
 
 //------------

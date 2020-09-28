@@ -40,7 +40,7 @@ class KotlinClass2 : JavaClass() {
 
 fun test(a: KotlinClass, b: KotlinClass2) {
     a.<!HIDDEN!>foo<!>() // Error, protected_and_package declared in different package
-    b.foo() // Error, protected visibility in same package (but could be protected_and_package)
+    b.<!HIDDEN!>foo<!>() // Error, protected visibility in same package (but could be protected_and_package)
 
     a.<!HIDDEN!>field<!>
 

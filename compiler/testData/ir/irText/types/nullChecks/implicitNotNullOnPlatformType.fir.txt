@@ -17,13 +17,13 @@ FILE fqName:<root> fileName:/implicitNotNullOnPlatformType.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-size> (): kotlin.Int declared in <root>.MySet'
             CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin' type=kotlin.Nothing origin=null
-    FUN name:contains visibility:public modality:FINAL <> ($this:<root>.MySet, element:kotlin.String) returnType:kotlin.Boolean
+    FUN name:contains visibility:public modality:FINAL <> ($this:<root>.MySet, element:kotlin.String) returnType:kotlin.Boolean [operator]
       overridden:
         public abstract fun contains (element: E of kotlin.collections.Set): kotlin.Boolean [operator] declared in kotlin.collections.Set
       $this: VALUE_PARAMETER name:<this> type:<root>.MySet
       VALUE_PARAMETER name:element index:0 type:kotlin.String
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun contains (element: kotlin.String): kotlin.Boolean declared in <root>.MySet'
+        RETURN type=kotlin.Nothing from='public final fun contains (element: kotlin.String): kotlin.Boolean [operator] declared in <root>.MySet'
           CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin' type=kotlin.Nothing origin=null
     FUN name:containsAll visibility:public modality:FINAL <> ($this:<root>.MySet, elements:kotlin.collections.Collection<kotlin.String>) returnType:kotlin.Boolean
       overridden:
@@ -40,12 +40,12 @@ FILE fqName:<root> fileName:/implicitNotNullOnPlatformType.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun isEmpty (): kotlin.Boolean declared in <root>.MySet'
           CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin' type=kotlin.Nothing origin=null
-    FUN name:iterator visibility:public modality:FINAL <> ($this:<root>.MySet) returnType:kotlin.collections.Iterator<kotlin.String>
+    FUN name:iterator visibility:public modality:FINAL <> ($this:<root>.MySet) returnType:kotlin.collections.Iterator<kotlin.String> [operator]
       overridden:
         public abstract fun iterator (): kotlin.collections.Iterator<E of kotlin.collections.Set> [operator] declared in kotlin.collections.Set
       $this: VALUE_PARAMETER name:<this> type:<root>.MySet
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun iterator (): kotlin.collections.Iterator<kotlin.String> declared in <root>.MySet'
+        RETURN type=kotlin.Nothing from='public final fun iterator (): kotlin.collections.Iterator<kotlin.String> [operator] declared in <root>.MySet'
           CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin' type=kotlin.Nothing origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
@@ -70,10 +70,10 @@ FILE fqName:<root> fileName:/implicitNotNullOnPlatformType.kt
     VALUE_PARAMETER name:m index:0 type:<root>.MySet
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public final fun contains (element: kotlin.String): kotlin.Boolean declared in <root>.MySet' type=kotlin.Boolean origin=null
+        CALL 'public final fun contains (element: kotlin.String): kotlin.Boolean [operator] declared in <root>.MySet' type=kotlin.Boolean origin=null
           $this: GET_VAR 'm: <root>.MySet declared in <root>.testContains' type=<root>.MySet origin=null
           element: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:STRING type:kotlin.String? visibility:public [static]' type=kotlin.String? origin=GET_PROPERTY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public final fun contains (element: kotlin.String): kotlin.Boolean declared in <root>.MySet' type=kotlin.Boolean origin=null
+        CALL 'public final fun contains (element: kotlin.String): kotlin.Boolean [operator] declared in <root>.MySet' type=kotlin.Boolean origin=null
           $this: GET_VAR 'm: <root>.MySet declared in <root>.testContains' type=<root>.MySet origin=null
           element: CONST String type=kotlin.String value="abc"

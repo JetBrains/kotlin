@@ -1,0 +1,27 @@
+FILE: intersectionOverrideWithImplicitTypes.kt
+    public abstract interface Common : R|kotlin/Any| {
+        public abstract fun <T, R> foo(value: R|T|, producer: R|(T) -> R|): R|R|
+
+    }
+    public final class C : R|B|, R|A| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final override fun <T, R> foo(value: R|T|, producer: R|(T) -> R|): R|R| {
+            ^foo Null(null)!!
+        }
+
+    }
+    public abstract interface A : R|Common| {
+        public open override fun <T, R> foo(value: R|T|, producer: R|(T) -> R|): R|R| {
+            ^foo Null(null)!!
+        }
+
+    }
+    public abstract interface B : R|Common| {
+        public open override fun <T, R> foo(value: R|T|, producer: R|(T) -> R|): R|R| {
+            ^foo R|<local>/producer|.R|FakeOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/value|)
+        }
+
+    }

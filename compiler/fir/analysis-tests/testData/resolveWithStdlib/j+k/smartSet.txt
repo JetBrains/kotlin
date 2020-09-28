@@ -8,7 +8,7 @@ FILE: smartSet.kt
             public get(): R|kotlin/Int|
             public set(value: R|kotlin/Int|): R|kotlin/Unit|
 
-        public final override fun iterator(): R|kotlin/collections/MutableIterator<T>| {
+        public final override operator fun iterator(): R|kotlin/collections/MutableIterator<T>| {
             ^iterator R|kotlin/TODO|()
         }
 
