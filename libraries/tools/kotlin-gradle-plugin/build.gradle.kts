@@ -10,6 +10,9 @@ plugins {
     id("jps-compatible")
 }
 
+apply(from = "functionalTest.gradle.kts")
+val functionalTestImplementation by configurations
+
 configure<GradlePluginDevelopmentExtension> {
     isAutomatedPublishing = false
 }
@@ -79,7 +82,9 @@ dependencies {
     compileOnly("com.android.tools.build:gradle:3.0.0") { isTransitive = false }
     compileOnly("com.android.tools.build:gradle-core:3.0.0") { isTransitive = false }
     compileOnly("com.android.tools.build:builder-model:3.0.0") { isTransitive = false }
-    testImplementation("com.android.tools.build:gradle:4.0.1")
+    functionalTestImplementation("com.android.tools.build:gradle:4.0.1") {
+        because("Functional tests are using APIs from Android. Latest Version is used to avoid NoClassDefFoundError")
+    }
 
     testCompile(intellijDep()) { includeJars("junit", "serviceMessages", rootProject = rootProject) }
 
