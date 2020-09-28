@@ -44,7 +44,10 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
         }
     }
 
-    private fun PsiElement.parentIfIdentifier(): PsiElement = if (node.elementType == KtTokens.IDENTIFIER) parent else this
+    private fun PsiElement.parentIfIdentifier(): PsiElement {
+        if(this is KtReferenceExpression) return parent
+        return if (node.elementType == KtTokens.IDENTIFIER) parent.parentIfIdentifier() else this
+    }
 
     private fun PsiElement.structuralReplace(searchTemplate: PsiElement, match: PsiElement): PsiElement {
         if (searchTemplate is KtDeclaration && this is KtDeclaration && match is KtDeclaration) {

@@ -48,4 +48,25 @@ class KotlinSSRTargetedReplaceTest : KotlinSSRReplaceTest() {
             """.trimIndent()
         )
     }
+
+    fun testNestedFunction() {
+        doTest(
+            searchPattern = "'Fun('_Arg)",
+            replacePattern = "'_Fun(\"foo\")",
+            match = """
+                fun foo(bar: String) {}
+
+                fun main() {
+                    foo("bar")
+                }
+            """.trimIndent(),
+            result = """
+                fun foo(bar: String) {}
+
+                fun main() {
+                    foo("foo")
+                }
+            """.trimIndent()
+        )
+    }
 }
