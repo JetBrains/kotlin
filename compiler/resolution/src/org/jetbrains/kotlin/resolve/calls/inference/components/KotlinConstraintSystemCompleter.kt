@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.components.transformToResolvedLambda
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -21,7 +19,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 class KotlinConstraintSystemCompleter(
     private val resultTypeResolver: ResultTypeResolver,
     val variableFixationFinder: VariableFixationFinder,
-    val languageVersionSettings: LanguageVersionSettings,
 ) {
     private val postponedArgumentInputTypesResolver = PostponedArgumentInputTypesResolver(resultTypeResolver, variableFixationFinder)
 
@@ -108,7 +105,6 @@ class KotlinConstraintSystemCompleter(
                         topLevelType,
                         topLevelAtoms,
                         dependencyProvider,
-                        inferenceCompatibilityMode = isInferenceCompatibilityModeEnabled(),
                     )
 
                     if (wasFixedSomeVariable)
@@ -262,7 +258,6 @@ class KotlinConstraintSystemCompleter(
                 postponedArguments,
                 completionMode,
                 topLevelType,
-                inferenceCompatibilityMode = isInferenceCompatibilityModeEnabled(),
             ) ?: break
 
             if (!variableForFixation.hasProperConstraint && completionMode == ConstraintSystemCompletionMode.PARTIAL)
@@ -373,11 +368,7 @@ class KotlinConstraintSystemCompleter(
         postponedArguments,
         completionMode,
         topLevelType,
-        inferenceCompatibilityMode = isInferenceCompatibilityModeEnabled(),
     ) != null
-
-    private fun isInferenceCompatibilityModeEnabled(): Boolean =
-        languageVersionSettings.supportsFeature(LanguageFeature.InferenceCompatibility)
 
     companion object {
         fun getOrderedNotAnalyzedPostponedArguments(topLevelAtoms: List<ResolvedAtom>): List<PostponedResolvedAtom> {

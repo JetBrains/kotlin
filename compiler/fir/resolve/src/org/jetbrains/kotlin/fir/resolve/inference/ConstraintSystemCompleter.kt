@@ -30,8 +30,10 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ConstraintSystemCompleter(private val components: BodyResolveComponents) {
-    val inferenceComponents = components.session.inferenceComponents
-    val variableFixationFinder = VariableFixationFinder(inferenceComponents.trivialConstraintTypeInferenceOracle)
+    private val inferenceComponents
+        get() = components.session.inferenceComponents
+    val variableFixationFinder
+        get() = inferenceComponents.variableFixationFinder
 
     fun complete(
         c: ConstraintSystemCompletionContext,
@@ -50,7 +52,7 @@ class ConstraintSystemCompleter(private val components: BodyResolveComponents) {
             val postponedAtoms = getOrderedNotAnalyzedPostponedArguments(topLevelAtoms)
             val variableForFixation =
                 variableFixationFinder.findFirstVariableForFixation(
-                    c, allTypeVariables, postponedAtoms, completionMode, candidateReturnType, inferenceCompatibilityMode = true
+                    c, allTypeVariables, postponedAtoms, completionMode, candidateReturnType
                 ) ?: break
 
             if (

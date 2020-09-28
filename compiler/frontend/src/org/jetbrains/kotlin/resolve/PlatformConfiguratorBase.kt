@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.resolve
 import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMapper
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.resolve.calls.checkers.*
-import org.jetbrains.kotlin.resolve.calls.inference.InferenceCompatibilityCheckerImpl
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.checkers.*
 import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
@@ -110,7 +109,6 @@ abstract class PlatformConfiguratorBase(
 
     override fun configureModuleDependentCheckers(container: StorageComponentContainer) {
         container.useImpl<ExperimentalMarkerDeclarationAnnotationChecker>()
-        container.useImpl<InferenceCompatibilityCheckerImpl>()
     }
 
     fun configureExtensionsAndCheckers(container: StorageComponentContainer) {

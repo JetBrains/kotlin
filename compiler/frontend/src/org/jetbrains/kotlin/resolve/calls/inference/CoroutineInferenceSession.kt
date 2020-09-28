@@ -82,12 +82,9 @@ class CoroutineInferenceSession(
         return !storage.notFixedTypeVariables.keys.any {
             val variable = storage.allTypeVariables[it]
             val isPostponed = variable != null && variable in storage.postponedTypeVariables
-            val useInferenceCompatibilityMode =
-                topLevelCallContext.languageVersionSettings.supportsFeature(LanguageFeature.InferenceCompatibility)
             !isPostponed && !kotlinConstraintSystemCompleter.variableFixationFinder.isTypeVariableHasProperConstraint(
                 system,
                 it,
-                useInferenceCompatibilityMode
             )
         } || candidate.getSubResolvedAtoms().any { it.hasPostponed() }
     }

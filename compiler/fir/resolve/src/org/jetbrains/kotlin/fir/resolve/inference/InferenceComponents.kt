@@ -5,22 +5,21 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.types.ConeInferenceContext
 import org.jetbrains.kotlin.fir.types.ConeTypeCheckerContext
-import org.jetbrains.kotlin.resolve.calls.inference.InferenceCompatibilityChecker
-import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintIncorporator
-import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
-import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
-import org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle
+import org.jetbrains.kotlin.resolve.calls.inference.components.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 
 @NoMutableState
 class InferenceComponents(val session: FirSession) : FirSessionComponent {
     val ctx: ConeTypeCheckerContext = ConeTypeCheckerContext(isErrorTypeEqualsToAnything = false, isStubTypeEqualsToAnything = false, session)
+    val languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT // TODO
 
     val approximator: AbstractTypeApproximator = object : AbstractTypeApproximator(ctx) {}
     val trivialConstraintTypeInferenceOracle = TrivialConstraintTypeInferenceOracle.create(ctx)
@@ -28,13 +27,13 @@ class InferenceComponents(val session: FirSession) : FirSessionComponent {
     private val injector = ConstraintInjector(
         incorporator,
         approximator,
-        object : InferenceCompatibilityChecker {
-            override val isCompatibilityModeEnabled = true
-        }
+        languageVersionSettings,
     )
     val resultTypeResolver = ResultTypeResolver(approximator, trivialConstraintTypeInferenceOracle)
 
     val constraintSystemFactory = ConstraintSystemFactory()
+
+    val variableFixationFinder = VariableFixationFinder(trivialConstraintTypeInferenceOracle, languageVersionSettings)
 
     fun createConstraintSystem(): NewConstraintSystemImpl {
         return NewConstraintSystemImpl(injector, ctx)
