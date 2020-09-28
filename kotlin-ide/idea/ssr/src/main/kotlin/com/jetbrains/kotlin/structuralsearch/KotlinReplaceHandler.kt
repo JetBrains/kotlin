@@ -66,6 +66,12 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
                     replaceProperty(searchTemplate, match)
             }
         } else { // KtExpression
+            if(this is KtWhenExpression) {
+                if(subjectExpression == null) {
+                    leftParenthesis?.delete()
+                    rightParenthesis?.delete()
+                }
+            }
             fixWhiteSpace(match)
         }
         return this
@@ -110,12 +116,11 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
     }
 
     private fun KtDeclaration.replaceDeclaration(searchTemplate: KtDeclaration, match: KtDeclaration): KtDeclaration {
-        if(modifierList?.annotationEntries?.size == 0) {
+        if(modifierList?.annotationEntries?.isEmpty() == true) {
             // remove @ symbol for when annotation count filter is equal to 0
             val atElement = modifierList?.children?.find { it is PsiErrorElement }
             atElement?.delete()
         }
-
         fun KtDeclaration.replaceVisibilityModifiers(searchTemplate: KtDeclaration, match: KtDeclaration): PsiElement {
             if (visibilityModifierType() == null && searchTemplate.visibilityModifierType() == null) {
                 match.visibilityModifierType()?.let {
@@ -153,6 +158,9 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
     }
 
     private fun KtClassOrObject.replaceClassOrObject(searchTemplate: KtClassOrObject, match: KtClassOrObject): KtClassOrObject {
+        if(match.superTypeListEntries.isEmpty()) {
+            //TODO remove simicolon requires KT PSI change
+        }
         CLASS_MODIFIERS.forEach { replaceModifier(searchTemplate, match, it) }
         fixModifierListFormatting(match)
         val constr = primaryConstructor

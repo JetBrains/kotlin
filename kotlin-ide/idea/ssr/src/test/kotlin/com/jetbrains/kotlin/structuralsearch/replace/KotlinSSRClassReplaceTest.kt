@@ -56,4 +56,22 @@ class KotlinSSRClassReplaceTest : KotlinSSRReplaceTest() {
             result = "class Foo(bar : Int  =  0)  {}"
         )
     }
+
+    fun testAnnotatedClassCountFilter() {
+        doTest(
+            searchPattern = "@'_ANN* class '_ID('_PARAM : '_TYPE)",
+            replacePattern = "@'_ANN class '_ID('_PARAM : '_TYPE)",
+            match = "class Foo(bar : Int) {}",
+            result = "class Foo(bar : Int) {}"
+        )
+    }
+
+    fun testClassExtensionCountFilter() {
+        doTest(
+            searchPattern = "class '_ID('_PARAM : '_TYPE) : '_INTFACE*",
+            replacePattern = "class '_ID('_PARAM : '_TYPE) : '_INTFACE",
+            match = "class Foo(bar : Int) {}",
+            result = "class Foo(bar : Int) {}"
+        )
+    }
 }
