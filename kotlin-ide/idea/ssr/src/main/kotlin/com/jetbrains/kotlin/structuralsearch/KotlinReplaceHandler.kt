@@ -19,9 +19,7 @@ import org.jetbrains.kotlin.js.translate.declaration.hasCustomSetter
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
-import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
-import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import java.lang.Integer.min
 
@@ -158,8 +156,11 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
     }
 
     private fun KtClassOrObject.replaceClassOrObject(searchTemplate: KtClassOrObject, match: KtClassOrObject): KtClassOrObject {
-        if(match.superTypeListEntries.isEmpty()) {
-            //TODO remove simicolon requires KT PSI change
+        if(getSuperTypeList()?.findDescendantOfType<PsiErrorElement>() != null) {
+            getSuperTypeList()?.delete()
+        }
+        if(typeParameters.isEmpty()) {
+            typeParameterList?.delete()
         }
         CLASS_MODIFIERS.forEach { replaceModifier(searchTemplate, match, it) }
         fixModifierListFormatting(match)

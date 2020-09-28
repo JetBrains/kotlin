@@ -74,4 +74,13 @@ class KotlinSSRClassReplaceTest : KotlinSSRReplaceTest() {
             result = "class Foo(bar : Int) {}"
         )
     }
+
+    fun testClassTypeParamCountFilter() {
+        doTest(
+            searchPattern = "class '_ID<'_TYPE*>()",
+            replacePattern = "class '_ID<'_TYPE>()",
+            match = "class Foo() {}",
+            result = "class Foo() {}"
+        )
+    }
 }
