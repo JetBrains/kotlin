@@ -2781,9 +2781,9 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/inline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }
 
-        @TestMetadata("deleteClassOnTransfromation.kt")
-        public void testDeleteClassOnTransfromation() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/inline/deleteClassOnTransfromation.kt");
+        @TestMetadata("deleteClassOnTransformation.kt")
+        public void testDeleteClassOnTransformation() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inline/deleteClassOnTransformation.kt");
         }
 
         @TestMetadata("finallyMarkers.kt")

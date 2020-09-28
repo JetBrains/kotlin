@@ -2876,9 +2876,9 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/inline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
-        @TestMetadata("deleteClassOnTransfromation.kt")
-        public void testDeleteClassOnTransfromation() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/inline/deleteClassOnTransfromation.kt");
+        @TestMetadata("deleteClassOnTransformation.kt")
+        public void testDeleteClassOnTransformation() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inline/deleteClassOnTransformation.kt");
         }
 
         @TestMetadata("finallyMarkers.kt")
