@@ -218,6 +218,26 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/javadoc.kt");
     }
 
+    @TestMetadata("jvmDefaultAll.kt")
+    public void testJvmDefaultAll() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/jvmDefaultAll.kt");
+    }
+
+    @TestMetadata("jvmDefaultAllCompatibility.kt")
+    public void testJvmDefaultAllCompatibility() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/jvmDefaultAllCompatibility.kt");
+    }
+
+    @TestMetadata("jvmDefaultDisable.kt")
+    public void testJvmDefaultDisable() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/jvmDefaultDisable.kt");
+    }
+
+    @TestMetadata("jvmDefaultEnable.kt")
+    public void testJvmDefaultEnable() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/jvmDefaultEnable.kt");
+    }
+
     @TestMetadata("jvmOverloads.kt")
     public void testJvmOverloads() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/jvmOverloads.kt");
