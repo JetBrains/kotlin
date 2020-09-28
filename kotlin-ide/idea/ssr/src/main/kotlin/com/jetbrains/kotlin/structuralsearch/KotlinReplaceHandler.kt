@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.structuralsearch.StructuralReplaceHandler
+import com.intellij.structuralsearch.StructuralSearchUtil
 import com.intellij.structuralsearch.impl.matcher.MatcherImplUtil
 import com.intellij.structuralsearch.impl.matcher.PatternTreeContext
 import com.intellij.structuralsearch.impl.matcher.compiler.PatternCompiler
@@ -25,16 +26,16 @@ import java.lang.Integer.min
 
 class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHandler() {
     override fun replace(info: ReplacementInfo, options: ReplaceOptions) {
-        val searchTemplate = PatternCompiler.compilePattern(
-            project, options.matchOptions, true, true
-        ).let { it.targetNode ?: it.nodes.current() }.parentIfIdentifier()
+        val searchTemplate = StructuralSearchUtil.getPresentableElement(
+            PatternCompiler.compilePattern(project, options.matchOptions, true, true).let { it.targetNode ?: it.nodes.current() }
+        )
         val replaceTemplate = MatcherImplUtil.createTreeFromText(
-            info.replacement, PatternTreeContext.Block, options.matchOptions.fileType, project
+            info.replacement.fixPattern(), PatternTreeContext.Block, options.matchOptions.fileType, project
         ).first()
-        val match = info.matchResult.match.parentIfIdentifier()
+        val match = StructuralSearchUtil.getPresentableElement(info.matchResult.match)
         replaceTemplate.structuralReplace(searchTemplate, match)
         (0 until info.matchesCount).mapNotNull(info::getMatch).forEach {
-            it.parentIfIdentifier().replace(replaceTemplate)
+            StructuralSearchUtil.getPresentableElement(it).replace(replaceTemplate)
         }
     }
 
@@ -44,9 +45,9 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
         }
     }
 
-    private fun PsiElement.parentIfIdentifier(): PsiElement {
-        if(this is KtReferenceExpression) return parent
-        return if (node.elementType == KtTokens.IDENTIFIER) parent.parentIfIdentifier() else this
+    private fun String.fixPattern(): String {
+        if(startsWith(".")) return substring(startIndex = 1) // dot qualified expressions without receiver matching normal call
+        return this
     }
 
     private fun PsiElement.structuralReplace(searchTemplate: PsiElement, match: PsiElement): PsiElement {

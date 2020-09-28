@@ -74,7 +74,11 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
     override fun getPresentableElement(element: PsiElement?): PsiElement {
         val pElement = super.getPresentableElement(element)
         val parent = pElement.parent
-        return if (parent is KtProperty || parent is KtNamedFunction || parent is KtClass) parent else pElement
+        return if (parent is KtProperty
+            || parent is KtNamedFunction
+            || parent is KtClass
+            || parent is KtCallExpression
+        ) parent else pElement
     }
 
     override fun createPatternTree(
