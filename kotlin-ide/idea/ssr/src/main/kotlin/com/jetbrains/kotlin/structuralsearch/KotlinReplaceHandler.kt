@@ -129,8 +129,11 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
             match.receiverTypeReference?.let(this::setReceiverTypeReference)
         }
         if (typeReference == null || searchTemplate.typeReference == null) {
-            match.colon?.let { addFormatted(it) }
-            match.typeReference?.let { addFormatted(it) }
+            match.typeReference?.let { matchTr ->
+                typeReference = matchTr
+                addSurroundingWhiteSpace(typeReference!!, matchTr)
+                addSurroundingWhiteSpace(colon!!, match.colon!!)
+            }
         }
         val searchParam = searchTemplate.valueParameterList
         val matchParam = match.valueParameterList
