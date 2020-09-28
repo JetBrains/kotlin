@@ -673,3 +673,6 @@ fun getTrailingCommaByElementsList(elementList: PsiElement?): PsiElement? {
     val lastChild = elementList?.lastChild?.let { if (it !is PsiComment) it else it.getPrevSiblingIgnoringWhitespaceAndComments() }
     return lastChild?.takeIf { it.node.elementType == KtTokens.COMMA }
 }
+
+val KtNameReferenceExpression.isUnderscoreInBackticks
+    get() = getReferencedName() == "`_`"

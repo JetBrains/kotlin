@@ -19197,6 +19197,16 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/resolve/typeParameterInDefaultValueInLocalFunction.kt");
         }
 
+        @TestMetadata("underscoreInCatchBlock.kt")
+        public void testUnderscoreInCatchBlock() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/resolve/underscoreInCatchBlock.kt");
+        }
+
+        @TestMetadata("underscoreInCatchBlockWithEnabledFeature.kt")
+        public void testUnderscoreInCatchBlockWithEnabledFeature() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/resolve/underscoreInCatchBlockWithEnabledFeature.kt");
+        }
+
         @TestMetadata("wrongNumberOfTypeArguments.kt")
         public void testWrongNumberOfTypeArguments() throws Exception {
             runTest("compiler/testData/diagnostics/tests/resolve/wrongNumberOfTypeArguments.kt");

@@ -509,6 +509,7 @@ public class DefaultErrorMessages {
 
         MAP.put(UNDERSCORE_IS_RESERVED, "Names _, __, ___, ..., are reserved in Kotlin");
         MAP.put(UNDERSCORE_USAGE_WITHOUT_BACKTICKS, "Names _, __, ___, ... can be used only in back-ticks (`_`, `__`, `___`, ...)");
+        MAP.put(RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER, "Referencing to an underscore-named parameter is deprecated. It will be an error in a future release.");
         MAP.put(YIELD_IS_RESERVED, "{0}", STRING);
         MAP.put(INVALID_CHARACTERS, "Name {0}", STRING);
 
