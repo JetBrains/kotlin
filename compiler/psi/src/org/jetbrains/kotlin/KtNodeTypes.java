@@ -160,7 +160,7 @@ public interface KtNodeTypes {
 
     IElementType SCRIPT = KtStubElementTypes.SCRIPT;
 
-    IFileElementType TYPE_CODE_FRAGMENT = new KtTypeCodeFragmentType();
+    IFileElementType TYPE_CODE_FRAGMENT = KtStubElementTypes.TYPE_CODE_FRAGMENT;
     IFileElementType EXPRESSION_CODE_FRAGMENT = new KtExpressionCodeFragmentType();
     IFileElementType BLOCK_CODE_FRAGMENT = new KtBlockCodeFragmentType();
 }
