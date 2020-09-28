@@ -814,6 +814,10 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             ElementKind.METHOD, packageFqName, visibleAnnotations, method.invisibleAnnotations, descriptor.annotations
         )
 
+        if (containingClass.isInterface() && !method.isAbstract()) {
+            modifiers.flags = modifiers.flags or Flags.DEFAULT
+        }
+
         val asmReturnType = Type.getReturnType(method.desc)
         val jcReturnType = if (isConstructor) null else treeMaker.Type(asmReturnType)
 
