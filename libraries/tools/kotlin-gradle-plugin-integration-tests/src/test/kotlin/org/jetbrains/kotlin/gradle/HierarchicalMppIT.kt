@@ -452,11 +452,11 @@ class HierarchicalMppIT : BaseGradleIT() {
         val jsSourceSets = setOf("commonMain", "jvmAndJsMain", "linuxAndJsMain")
         return KotlinProjectStructureMetadata(
             sourceSetNamesByVariantName = mapOf(
-                "js-api" to jsSourceSets,
-                "js-runtime" to jsSourceSets,
-                "jvm-api" to jvmSourceSets,
-                "jvm-runtime" to jvmSourceSets,
-                "linuxX64-api" to setOf("commonMain", "linuxAndJsMain")
+                "jsApiElements" to jsSourceSets,
+                "jsRuntimeElements" to jsSourceSets,
+                "jvmApiElements" to jvmSourceSets,
+                "jvmRuntimeElements" to jvmSourceSets,
+                "linuxX64ApiElements" to setOf("commonMain", "linuxAndJsMain")
             ),
             sourceSetsDependsOnRelation = mapOf(
                 "jvmAndJsMain" to setOf("commonMain"),

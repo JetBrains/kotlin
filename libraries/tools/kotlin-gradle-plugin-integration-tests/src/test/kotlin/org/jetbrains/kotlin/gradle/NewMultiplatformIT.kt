@@ -978,9 +978,9 @@ class NewMultiplatformIT : BaseGradleIT() {
 
             // but check that the module metadata contains all variants:
             val gradleModuleMetadata = projectDir.resolve("repo/com/example/sample-lib/1.0/sample-lib-1.0.module").readText()
-            assertTrue(""""name": "linux64-api"""" in gradleModuleMetadata)
-            assertTrue(""""name": "mingw64-api"""" in gradleModuleMetadata)
-            assertTrue(""""name": "macos64-api"""" in gradleModuleMetadata)
+            assertTrue(""""name": "linux64ApiElements-published"""" in gradleModuleMetadata)
+            assertTrue(""""name": "mingw64ApiElements-published"""" in gradleModuleMetadata)
+            assertTrue(""""name": "macos64ApiElements-published"""" in gradleModuleMetadata)
         }
     }
 
