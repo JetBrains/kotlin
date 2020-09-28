@@ -5,7 +5,7 @@ buildscript {
     val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
     extra["defaultSnapshotVersion"] = kotlinBuildProperties.defaultSnapshotVersion
-    kotlinBootstrapFrom(BootstrapOption.BintrayBootstrap(kotlinBuildProperties.kotlinBootstrapVersion!!, cacheRedirectorEnabled))
+    kotlinBootstrapFrom(BootstrapOption.SpaceBootstrap(kotlinBuildProperties.kotlinBootstrapVersion!!, cacheRedirectorEnabled))
 
     repositories {
         if (cacheRedirectorEnabled) {
