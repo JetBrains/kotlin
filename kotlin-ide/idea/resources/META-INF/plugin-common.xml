@@ -180,6 +180,8 @@
     <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.resolve.ResolutionAnchorCacheService"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.ResolutionAnchorCacheServiceImpl"/>
 
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.DaemonCodeAnalyzerStatusService"/>
+
     <projectService serviceInterface="org.jetbrains.kotlin.resolve.ResolutionAnchorProvider"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.KotlinIdeResolutionAnchorService"/>
 
@@ -293,11 +295,15 @@
 
     <errorHandler implementation="org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter"/>
 
-    <registryKey
-        key="kotlin.dispatch.thread.resolve.check"
-        description="Whether to enable the check for resolve activated from the write action"
-        defaultValue="false"
-        restartRequired="false"/>
+    <registryKey key="kotlin.dispatch.thread.resolve.check"
+                 description="Whether to enable the check for resolve activated from the write action"
+                 defaultValue="false"
+                 restartRequired="false"/>
+
+    <registryKey key="kotlin.resolve.force.full.resolve.on.highlighting"
+                 description="Force to perform full resolve on highlighting"
+                 defaultValue="true"
+                 restartRequired="false"/>
 
     <iconProvider implementation="org.jetbrains.kotlin.idea.KotlinIconProvider"/>
     <gotoSymbolContributor implementation="org.jetbrains.kotlin.idea.goto.KotlinGotoSymbolContributor"/>
