@@ -116,8 +116,8 @@ class PathExtensionsTest {
 
     private fun compareFiles(src: Path, dst: Path, message: String? = null) {
         assertTrue(dst.exists())
-        assertEquals(src.isFile(), dst.isFile(), message)
-        if (dst.isFile()) {
+        assertEquals(src.isRegularFile(), dst.isRegularFile(), message)
+        if (dst.isRegularFile()) {
             assertTrue(src.readBytes().contentEquals(dst.readBytes()), message)
         }
     }
@@ -188,7 +188,7 @@ class PathExtensionsTest {
     fun testAttributeGetters() {
         val file = Files.createTempFile(null, null)
         assertTrue(file.exists())
-        assertTrue(file.isFile())
+        assertTrue(file.isRegularFile())
         assertFalse(file.isDirectory())
         assertFalse(file.isSymbolicLink())
         assertTrue(file.isReadable())

@@ -152,7 +152,7 @@ public inline fun Path.notExists(vararg options: LinkOption): Boolean = Files.no
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
-public inline fun Path.isFile(vararg options: LinkOption): Boolean = Files.isRegularFile(this, *options)
+public inline fun Path.isRegularFile(vararg options: LinkOption): Boolean = Files.isRegularFile(this, *options)
 
 /**
  * Check if this path is a directory.
