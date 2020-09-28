@@ -372,6 +372,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
     delegate = delegateBuilder.build()
     if (stubMode) return
     if (getter == null || getter is FirDefaultPropertyAccessor) {
+        val annotations = getter?.annotations
         val returnTarget = FirFunctionTarget(null, isLambda = false)
         getter = buildPropertyAccessor {
             this.session = session
@@ -395,11 +396,15 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
                     target = returnTarget
                 }
             )
+            if (annotations != null) {
+                this.annotations.addAll(annotations)
+            }
         }.also {
             returnTarget.bind(it)
         }
     }
     if (isVar && (setter == null || setter is FirDefaultPropertyAccessor)) {
+        val annotations = setter?.annotations
         setter = buildPropertyAccessor {
             this.session = session
             origin = FirDeclarationOrigin.Source
@@ -436,6 +441,9 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
                     }
                 }
             )
+            if (annotations != null) {
+                this.annotations.addAll(annotations)
+            }
         }
     }
 }
