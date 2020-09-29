@@ -53,6 +53,9 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicOperator
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType as ProtoDynamicType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumConstructorCall as ProtoEnumConstructorCall
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumEntry as ProtoEnumEntry
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorDeclaration as ProtoErrorDeclaration
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorExpression as ProtoErrorExpression
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorCallExpression as ProtoErrorCallExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType as ProtoErrorType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression as ProtoExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrField as ProtoField
@@ -832,6 +835,22 @@ open class IrFileSerializer(
         return proto.build()
     }
 
+    private fun serializeErrorExpression(expression: IrErrorExpression): ProtoErrorExpression {
+        val proto = ProtoErrorExpression.newBuilder().setDescription(serializeString(expression.description))
+        return proto.build()
+    }
+
+    private fun serializeErrorCallExpression(callExpression: IrErrorCallExpression): ProtoErrorCallExpression {
+        val proto = ProtoErrorCallExpression.newBuilder().setDescription(serializeString(callExpression.description))
+        callExpression.explicitReceiver?.let {
+            proto.setReceiver(serializeExpression(it))
+        }
+        callExpression.arguments.forEach {
+            proto.addValueArgument(serializeExpression(it))
+        }
+        return proto.build()
+    }
+
     private fun serializeDynamicOperator(operator: IrDynamicOperator) = when (operator) {
         IrDynamicOperator.UNARY_PLUS -> ProtoDynamicOperatorExpression.IrDynamicOperator.UNARY_PLUS
         IrDynamicOperator.UNARY_MINUS -> ProtoDynamicOperatorExpression.IrDynamicOperator.UNARY_MINUS
@@ -943,6 +962,8 @@ open class IrFileSerializer(
             is IrWhileLoop -> operationProto.`while` = serializeWhile(expression)
             is IrDynamicMemberExpression -> operationProto.dynamicMember = serializeDynamicMemberExpression(expression)
             is IrDynamicOperatorExpression -> operationProto.dynamicOperator = serializeDynamicOperatorExpression(expression)
+            is IrErrorCallExpression -> operationProto.errorCallExpression = serializeErrorCallExpression(expression)
+            is IrErrorExpression -> operationProto.errorExpression = serializeErrorExpression(expression)
             else -> {
                 TODO("Expression serialization not implemented yet: ${ir2string(expression)}.")
             }
@@ -1150,6 +1171,12 @@ open class IrFileSerializer(
         return proto.build()
     }
 
+    private fun serializeIrErrorDeclaration(errorDeclaration: IrErrorDeclaration): ProtoErrorDeclaration {
+        val proto = ProtoErrorDeclaration.newBuilder()
+            .setCoordinates(serializeCoordinates(errorDeclaration.startOffset, errorDeclaration.endOffset))
+        return proto.build()
+    }
+
     private fun serializeIrEnumEntry(enumEntry: IrEnumEntry): ProtoEnumEntry {
         val proto = ProtoEnumEntry.newBuilder()
             .setBase(serializeIrDeclarationBase(enumEntry, null))
@@ -1194,6 +1221,8 @@ open class IrFileSerializer(
                 proto.irLocalDelegatedProperty = serializeIrLocalDelegatedProperty(declaration)
             is IrTypeAlias ->
                 proto.irTypeAlias = serializeIrTypeAlias(declaration)
+            is IrErrorDeclaration ->
+                proto.irErrorDeclaration = serializeIrErrorDeclaration(declaration)
             else ->
                 TODO("Declaration serialization not supported yet: $declaration")
         }
@@ -1281,7 +1310,8 @@ open class IrFileSerializer(
             require(!idSig.isPackageSignature()) { "IsSig: $idSig\nDeclaration: ${it.render()}" }
 
             // TODO: keep order similar
-            val sigIndex = protoIdSignatureMap[idSig] ?: error("Not found ID for $idSig (${it.render()})")
+            val sigIndex = protoIdSignatureMap[idSig]
+                ?: if (it is IrErrorDeclaration) protoIdSignature(idSig) else error("Not found ID for $idSig (${it.render()})")
             topLevelDeclarations.add(TopLevelDeclaration(sigIndex, idSig.toString(), byteArray))
             proto.addDeclarationId(sigIndex)
         }
