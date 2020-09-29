@@ -146,45 +146,37 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, pr
     private fun createMethodReplacement(function: IrFunction): IrSimpleFunction =
         buildReplacement(function, function.origin) {
             require(function.dispatchReceiverParameter != null && function is IrSimpleFunction)
-            val newValueParameters = ArrayList<IrValueParameter>()
-            for ((index, parameter) in function.explicitParameters.withIndex()) {
-                val name = if (parameter == function.extensionReceiverParameter) Name.identifier("\$receiver") else parameter.name
-                val newParameter: IrValueParameter
-                if (parameter == function.dispatchReceiverParameter) {
-                    newParameter = parameter.copyTo(this, index = -1, name = name, defaultValue = null)
-                    dispatchReceiverParameter = newParameter
-                } else {
-                    newParameter = parameter.copyTo(this, index = index - 1, name = name, defaultValue = null)
-                    newValueParameters += newParameter
+            dispatchReceiverParameter = function.dispatchReceiverParameter?.copyTo(this, index = -1)
+            extensionReceiverParameter = function.extensionReceiverParameter?.copyTo(this, index = -1, name = Name.identifier("\$receiver"))
+            valueParameters = function.valueParameters.mapIndexed { index, parameter ->
+                parameter.copyTo(this, index = index, defaultValue = null).also {
+                    // Assuming that constructors and non-override functions are always replaced with the unboxed
+                    // equivalent, deep-copying the value here is unnecessary. See `JvmInlineClassLowering`.
+                    it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
                 }
-                // Assuming that constructors and non-override functions are always replaced with the unboxed
-                // equivalent, deep-copying the value here is unnecessary. See `JvmInlineClassLowering`.
-                newParameter.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
             }
-            valueParameters = newValueParameters
         }
 
     private fun createStaticReplacement(function: IrFunction): IrSimpleFunction =
         buildReplacement(function, JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT, noFakeOverride = true) {
-            val newValueParameters = ArrayList<IrValueParameter>()
-            for ((index, parameter) in function.explicitParameters.withIndex()) {
-                newValueParameters += when (parameter) {
-                    // FAKE_OVERRIDEs have broken dispatch receivers
-                    function.dispatchReceiverParameter ->
-                        function.parentAsClass.thisReceiver!!.copyTo(
-                            this, index = index, name = Name.identifier("arg$index"),
-                            type = function.parentAsClass.defaultType, origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
-                        )
-                    function.extensionReceiverParameter ->
-                        parameter.copyTo(
-                            this, index = index, name = Name.identifier("\$this\$${function.name}"),
-                            origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER
-                        )
-                    else ->
-                        parameter.copyTo(this, index = index, defaultValue = null).also {
-                            // See comment next to a similar line above.
-                            it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
-                        }
+            val newValueParameters = mutableListOf<IrValueParameter>()
+            if (function.dispatchReceiverParameter != null) {
+                // FAKE_OVERRIDEs have broken dispatch receivers
+                newValueParameters += function.parentAsClass.thisReceiver!!.copyTo(
+                    this, index = newValueParameters.size, name = Name.identifier("arg${newValueParameters.size}"),
+                    type = function.parentAsClass.defaultType, origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
+                )
+            }
+            function.extensionReceiverParameter?.let {
+                newValueParameters += it.copyTo(
+                    this, index = newValueParameters.size, name = Name.identifier("\$this\$${function.name}"),
+                    origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER
+                )
+            }
+            for (parameter in function.valueParameters) {
+                newValueParameters += parameter.copyTo(this, index = newValueParameters.size, defaultValue = null).also {
+                    // See comment next to a similar line above.
+                    it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
                 }
             }
             valueParameters = newValueParameters

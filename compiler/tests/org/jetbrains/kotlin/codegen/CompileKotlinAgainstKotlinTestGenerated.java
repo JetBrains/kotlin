@@ -123,6 +123,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         runTest("compiler/testData/compileKotlinAgainstKotlin/defaultLambdaRegeneration2.kt");
     }
 
+    @TestMetadata("defaultWithInlineClassAndReceivers.kt")
+    public void testDefaultWithInlineClassAndReceivers() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/defaultWithInlineClassAndReceivers.kt");
+    }
+
     @TestMetadata("delegatedDefault.kt")
     public void testDelegatedDefault() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/delegatedDefault.kt");
