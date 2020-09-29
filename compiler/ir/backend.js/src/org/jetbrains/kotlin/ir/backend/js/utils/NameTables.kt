@@ -286,7 +286,7 @@ class NameTables(
                 return
 
             // TODO: Handle JsQualifier
-            declaration.isEffectivelyExternal() && (declaration.getJsModule() == null || declaration.isJsNonModule()) -> {
+            declaration.isEffectivelyExternal() && !declaration.isImportedFromModuleOnly() -> {
                 if (declaration.file.getJsModule() != null) {
                     globalNames.declareFreshName(declaration, declaration.name.asString())
                 } else {
