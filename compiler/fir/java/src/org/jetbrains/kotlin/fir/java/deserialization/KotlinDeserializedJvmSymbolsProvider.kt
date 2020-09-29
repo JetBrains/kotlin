@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
-import org.jetbrains.kotlin.fir.java.createConstant
+import org.jetbrains.kotlin.fir.java.createConstantOrError
 import org.jetbrains.kotlin.fir.java.topLevelName
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
@@ -288,7 +288,7 @@ class KotlinDeserializedJvmSymbolsProvider(
             }
 
             private fun createConstant(value: Any?): FirExpression {
-                return value.createConstant(session)
+                return value.createConstantOrError(session)
             }
         }
     }

@@ -451,7 +451,7 @@ private fun JavaAnnotationArgument.toFirExpression(
     // TODO: this.name
     return when (this) {
         is JavaLiteralAnnotationArgument -> {
-            value.createConstant(session)
+            value.createConstantOrError(session)
         }
         is JavaArrayAnnotationArgument -> buildArrayOfCall {
             argumentList = buildArgumentList {
@@ -503,13 +503,19 @@ private fun <T> List<T>.createArrayOfCall(session: FirSession, @Suppress("UNUSED
     return buildArrayOfCall {
         argumentList = buildArgumentList {
             for (element in this@createArrayOfCall) {
-                arguments += element.createConstant(session)
+                arguments += element.createConstantOrError(session)
             }
         }
     }
 }
 
-internal fun Any?.createConstant(session: FirSession): FirExpression {
+internal fun Any?.createConstantOrError(session: FirSession): FirExpression {
+    return createConstantIfAny(session) ?: buildErrorExpression {
+        diagnostic = ConeSimpleDiagnostic("Unknown value in JavaLiteralAnnotationArgument: $this", DiagnosticKind.Java)
+    }
+}
+
+internal fun Any?.createConstantIfAny(session: FirSession): FirExpression? {
     return when (this) {
         is Byte -> buildConstExpression(null, FirConstKind.Byte, this)
         is Short -> buildConstExpression(null, FirConstKind.Short, this)
@@ -530,9 +536,7 @@ internal fun Any?.createConstant(session: FirSession): FirExpression {
         is BooleanArray -> toList().createArrayOfCall(session, FirConstKind.Boolean)
         null -> buildConstExpression(null, FirConstKind.Null, null)
 
-        else -> buildErrorExpression {
-            diagnostic = ConeSimpleDiagnostic("Unknown value in JavaLiteralAnnotationArgument: $this", DiagnosticKind.Java)
-        }
+        else -> null
     }
 }
 

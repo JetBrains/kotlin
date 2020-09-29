@@ -102,6 +102,7 @@ class FirSignatureEnhancement(
                     isStatic = firElement.isStatic
                     annotations += firElement.annotations
                     status = firElement.status
+                    initializer = firElement.initializer
                 }
                 return symbol
             }

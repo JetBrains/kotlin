@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.resolve.constructType
@@ -309,8 +310,14 @@ class JavaSymbolProvider(
                 isVar = !javaField.isFinal
                 isStatic = javaField.isStatic
                 addAnnotationsFrom(this@JavaSymbolProvider.session, javaField, javaTypeParameterStack)
+                initializer = convertJavaInitializerToFir(javaField.initializerValue)
             }
         }
+    }
+
+    private fun convertJavaInitializerToFir(value: Any?): FirExpression? {
+        // NB: null should be converted to null
+        return value?.createConstantIfAny(session)
     }
 
     private fun convertJavaMethodToFir(
