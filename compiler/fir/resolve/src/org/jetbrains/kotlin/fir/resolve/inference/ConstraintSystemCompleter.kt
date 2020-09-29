@@ -30,10 +30,8 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ConstraintSystemCompleter(private val components: BodyResolveComponents) {
-    private val inferenceComponents
-        get() = components.session.inferenceComponents
-    val variableFixationFinder
-        get() = inferenceComponents.variableFixationFinder
+    private val inferenceComponents = components.session.inferenceComponents
+    val variableFixationFinder = inferenceComponents.variableFixationFinder
 
     fun complete(
         c: ConstraintSystemCompletionContext,
