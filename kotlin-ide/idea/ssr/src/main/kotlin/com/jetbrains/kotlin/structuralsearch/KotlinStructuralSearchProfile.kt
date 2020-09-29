@@ -91,18 +91,20 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         physical: Boolean
     ): Array<PsiElement> {
         var elements: List<PsiElement>
+        val factory = KtPsiFactory(project, false)
+
         if (PROPERTY_CONTEXT.id == contextId) {
             try {
-                val fragment = KtPsiFactory(project, false).createProperty(text)
+                val fragment = factory.createProperty(text)
                 elements = listOf(getNonWhitespaceChildren(fragment).first().parent)
                 if (elements.first() !is KtProperty) return PsiElement.EMPTY_ARRAY
             } catch (e: Exception) {
-                return arrayOf(KtPsiFactory(project, false).createComment("//").apply {
+                return arrayOf(factory.createComment("//").apply {
                     putUserData(PATTERN_ERROR, KSSRBundle.message("error.context.getter.or.setter"))
                 })
             }
         } else {
-            val fragment = KtPsiFactory(project, false).createBlockCodeFragment("Unit\n$text", null)
+            val fragment = factory.createBlockCodeFragment("Unit\n$text", null)
             elements = when (fragment.lastChild) {
                 is PsiComment -> getNonWhitespaceChildren(fragment).drop(1)
                 else -> getNonWhitespaceChildren(fragment.firstChild).drop(1)
@@ -114,6 +116,14 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         // Standalone KtAnnotationEntry support
         if (elements.first() is KtAnnotatedExpression && elements.first().lastChild is PsiErrorElement)
             elements = getNonWhitespaceChildren(elements.first()).dropLast(1)
+
+        // Standalone KtNullableType support
+        if (elements.last() is PsiErrorElement && elements.last().firstChild.elementType == KtTokens.QUEST) {
+            try {
+                val fragment = factory.createType(text)
+                elements = listOf(getNonWhitespaceChildren(fragment).first().parent)
+            } catch (e: Exception) {}
+        }
 
 //        for (element in elements) print(DebugUtil.psiToString(element, false))
 
