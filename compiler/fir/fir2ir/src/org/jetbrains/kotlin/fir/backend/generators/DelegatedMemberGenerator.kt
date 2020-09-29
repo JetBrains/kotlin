@@ -128,6 +128,7 @@ internal class DelegatedMemberGenerator(
             )
         delegateFunction.overriddenSymbols =
             delegateOverride.generateOverriddenFunctionSymbols(firSubClass, session, scopeSession, declarationStorage)
+                .filter { it.owner != delegateFunction }
 
         val body = createDelegateBody(irField, delegateFunction, superFunction)
         delegateFunction.body = body
