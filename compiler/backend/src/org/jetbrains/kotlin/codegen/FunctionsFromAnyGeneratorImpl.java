@@ -101,7 +101,7 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
 
         mv.visitCode();
 
-        StringAppendGenerator generator = StringAppendGenerator.Companion.create(generationState, iv);
+        StringConcatGenerator generator = StringConcatGenerator.Companion.create(generationState, iv);
         generator.genStringBuilderConstructorIfNeded();
         boolean first = true;
 

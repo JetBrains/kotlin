@@ -922,7 +922,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
         else {
             return StackValue.operation(type, v -> {
-                StringAppendGenerator generator = StringAppendGenerator.Companion.create(state, v);
+                StringConcatGenerator generator = StringConcatGenerator.Companion.create(state, v);
                 generator.genStringBuilderConstructorIfNeded();
                 invokeAppendForEntries(generator, entries);
                 generator.genToString();
@@ -931,7 +931,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
     }
 
-    private void invokeAppendForEntries(StringAppendGenerator generator, List<StringTemplateEntry> entries) {
+    private void invokeAppendForEntries(StringConcatGenerator generator, List<StringTemplateEntry> entries) {
         for (StringTemplateEntry entry : entries) {
             if (entry instanceof StringTemplateEntry.Expression) {
                 invokeAppend(generator, ((StringTemplateEntry.Expression) entry).expression);
@@ -4296,7 +4296,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
     }
 
-    public void invokeAppend(StringAppendGenerator generator, KtExpression expr) {
+    public void invokeAppend(StringConcatGenerator generator, KtExpression expr) {
         expr = KtPsiUtil.safeDeparenthesize(expr);
 
         ConstantValue<?> compileTimeConstant = getPrimitiveOrStringCompileTimeConstant(expr);

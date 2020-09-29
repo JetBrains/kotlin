@@ -191,6 +191,10 @@ class GenerationState private constructor(
     val languageVersionSettings = configuration.languageVersionSettings
 
     val target = configuration.get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
+    val runtimeStringConcat =
+        if (target.bytecodeVersion >= JvmTarget.JVM_9.bytecodeVersion)
+            configuration.get(JVMConfigurationKeys.RUNTIME_STRING_CONCAT) ?: JvmRuntimeStringConcat.DISABLE
+        else JvmRuntimeStringConcat.DISABLE
 
     val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)
     val classBuilderMode: ClassBuilderMode = builderFactory.classBuilderMode

@@ -39,7 +39,7 @@ class Concat : IntrinsicMethod() {
         arguments: List<KtExpression>,
         receiver: StackValue
     ): Type {
-        val generator = StringAppendGenerator.create(codegen.state, v)
+        val generator = StringConcatGenerator.create(codegen.state, v)
         if (element is KtBinaryExpression && element.operationReference.getReferencedNameElementType() == KtTokens.PLUS) {
             // LHS + RHS            
             generator.genStringBuilderConstructorIfNeded()
@@ -59,7 +59,7 @@ class Concat : IntrinsicMethod() {
 
     override fun toCallable(method: CallableMethod): Callable =
         object : IntrinsicCallable(method) {
-            lateinit var generator: StringAppendGenerator
+            lateinit var generator: StringConcatGenerator
             override fun invokeMethodWithArguments(
                 resolvedCall: ResolvedCall<*>,
                 receiver: StackValue,
@@ -83,8 +83,8 @@ class Concat : IntrinsicMethod() {
             }
 
             override fun afterReceiverGeneration(v: InstructionAdapter, frameMap: FrameMap, state: GenerationState) {
-                generator = StringAppendGenerator.create(state, v)
-                if (!generator.useInvokeDynamic) {
+                generator = StringConcatGenerator.create(state, v)
+                if (!generator.mode.isDynamic) {
                     v.generateNewInstanceDupAndPlaceBeforeStackTop(frameMap, JAVA_STRING_TYPE, "java/lang/StringBuilder")
                     v.invokespecial("java/lang/StringBuilder", "<init>", "(Ljava/lang/String;)V", false)
                 } else {

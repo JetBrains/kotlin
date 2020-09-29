@@ -81,6 +81,11 @@ where advanced options include:
                              profilerPath is a path to libasyncProfiler.so
                              Example: -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfiler.so:event=cpu,interval=1ms,threads,start,framebuf=50000000:<SNAPSHOT_DIR_PATH>
   -Xrepeat=<number>          Debug option: Repeats modules compilation <number> times
+  -Xruntime-string-concat={disable|enable|indy}
+                             Switch a way in which string concatenation is performed.
+                             -Xruntime-string-concat=enable          Performs string concatenation via `invokedynamic` 'makeConcatWithConstants'. Works only with `-jvm-target 9` or greater
+                             -Xruntime-string-concat=indy            Performs string concatenation via `invokedynamic` 'makeConcat'. Works only with `-jvm-target 9` or greater
+                             -Xruntime-string-concat=disable         Performs string concatenation via `StringBuilder`
   -Xsanitize-parentheses     Transform '(' and ')' in method names to some other character sequence.
                              This mode can BREAK BINARY COMPATIBILITY and is only supposed to be used to workaround
                              problems with parentheses in identifiers on certain platforms

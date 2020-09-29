@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.codegen;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ArrayUtil;
@@ -55,7 +54,6 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isBoolean;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isPrimitiveClass;
@@ -668,18 +666,12 @@ public class AsmUtil {
         return index;
     }
 
-    public static void genStringBuilderConstructor(InstructionAdapter v) {
-        v.visitTypeInsn(NEW, "java/lang/StringBuilder");
-        v.dup();
-        v.invokespecial("java/lang/StringBuilder", "<init>", "()V", false);
-    }
-
-    public static void genInvokeAppendMethod(@NotNull StringAppendGenerator generator, @NotNull Type type, @Nullable KotlinType kotlinType) {
+    public static void genInvokeAppendMethod(@NotNull StringConcatGenerator generator, @NotNull Type type, @Nullable KotlinType kotlinType) {
         genInvokeAppendMethod(generator, type, kotlinType, null);
     }
 
     public static void genInvokeAppendMethod(
-            @NotNull StringAppendGenerator generator,
+            @NotNull StringConcatGenerator generator,
             @NotNull Type type,
             @Nullable KotlinType kotlinType,
             @Nullable KotlinTypeMapper typeMapper
