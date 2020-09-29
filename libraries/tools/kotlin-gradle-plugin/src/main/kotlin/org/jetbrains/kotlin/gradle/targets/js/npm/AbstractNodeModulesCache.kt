@@ -60,6 +60,7 @@ fun makeNodeModule(
 
     val gson = GsonBuilder()
         .setPrettyPrinting()
+        .disableHtmlEscaping()
         .create()
 
     files(dir)
