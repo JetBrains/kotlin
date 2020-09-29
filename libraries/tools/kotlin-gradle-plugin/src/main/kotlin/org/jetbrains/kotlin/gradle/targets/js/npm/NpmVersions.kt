@@ -20,6 +20,15 @@ fun versionToNpmRanges(version: String): Set<NpmRange> {
 }
 
 fun includedRange(
+    includedVersion: String,
+    includedWithCaret: Boolean = false
+): NpmRange =
+    includedRange(
+        listOf(includedVersion),
+        includedWithCaret
+    )
+
+fun includedRange(
     includedVersions: List<String>,
     includedWithCaret: Boolean = false
 ): NpmRange =
