@@ -68,8 +68,11 @@ data class KotlinProjectStructureMetadata(
     @Input
     val hostSpecificSourceSets: Set<String>,
 
+    @get:Input
+    val isPublishedAsRoot: Boolean,
+
     @Input
-    val formatVersion: String = FORMAT_VERSION_0_3
+    val formatVersion: String = FORMAT_VERSION_0_3_1
 ) {
     @Suppress("UNUSED") // Gradle input
     @get:Input
@@ -84,6 +87,9 @@ data class KotlinProjectStructureMetadata(
 
         // + 'hostSpecific' flag for source sets
         internal const val FORMAT_VERSION_0_3 = "0.3"
+
+        // + 'isPublishedInRootModule' top-level flag
+        internal const val FORMAT_VERSION_0_3_1 = "0.3.1"
     }
 }
 
@@ -122,7 +128,8 @@ internal fun buildKotlinProjectStructureMetadata(project: Project): KotlinProjec
         hostSpecificSourceSets = getHostSpecificSourceSets(project).map { it.name }.toSet(),
         sourceSetBinaryLayout = sourceSetsWithMetadataCompilations.keys.associate { sourceSet ->
             sourceSet.name to SourceSetMetadataLayout.chooseForProducingProject(project)
-        }
+        },
+        isPublishedAsRoot = true
     )
 }
 
@@ -136,6 +143,8 @@ internal fun <Serializer> KotlinProjectStructureMetadata.serialize(
 ) = with(serializer) {
     node(ROOT_NODE_NAME) {
         value(FORMAT_VERSION_NODE_NAME, formatVersion)
+
+        value(PUBLISHED_AS_ROOT_NAME, isPublishedAsRoot.toString())
 
         multiNodes(VARIANTS_NODE_NAME) {
             sourceSetNamesByVariantName.forEach { (variantName, sourceSets) ->
@@ -232,6 +241,7 @@ internal fun <ParsingContext> parseKotlinSourceSetMetadata(
     val formatVersion = checkNotNull(projectStructureNode.valueNamed(FORMAT_VERSION_NODE_NAME))
     val variantsNode = projectStructureNode.multiObjects(VARIANTS_NODE_NAME)
 
+    val isPublishedAsRoot = projectStructureNode.valueNamed(PUBLISHED_AS_ROOT_NAME)?.toBoolean() ?: false
     val sourceSetsByVariant = mutableMapOf<String, Set<String>>()
 
     variantsNode.forEach { variantNode ->
@@ -274,11 +284,13 @@ internal fun <ParsingContext> parseKotlinSourceSetMetadata(
         sourceSetBinaryLayout,
         sourceSetModuleDependencies,
         hostSpecificSourceSets,
+        isPublishedAsRoot,
         formatVersion
     )
 }
 
 private const val ROOT_NODE_NAME = "projectStructure"
+private const val PUBLISHED_AS_ROOT_NAME = "isPublishedAsRoot"
 private const val FORMAT_VERSION_NODE_NAME = "formatVersion"
 private const val VARIANTS_NODE_NAME = "variants"
 private const val VARIANT_NODE_NAME = "variant"

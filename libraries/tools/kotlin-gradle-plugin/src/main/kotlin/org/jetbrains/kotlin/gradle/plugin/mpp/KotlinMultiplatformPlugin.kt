@@ -195,10 +195,13 @@ class KotlinMultiplatformPlugin(
         project.extensions.configure(PublishingExtension::class.java) { publishing ->
 
             // The root publication that references the platform specific publications as its variants:
-            val rootPublication = publishing.publications.create("kotlinMultiplatform", MavenPublication::class.java).apply {
+            publishing.publications.create("kotlinMultiplatform", MavenPublication::class.java).apply {
                 from(kotlinSoftwareComponent)
                 (this as MavenPublicationInternal).publishWithOriginalFileName()
                 kotlinSoftwareComponent.publicationDelegate = this@apply
+
+                project.multiplatformExtension.metadata {}.kotlinComponents.filterIsInstance<KotlinTargetComponentWithPublication>()
+                    .single().publicationDelegate = this@apply
             }
 
             // Enforce the order of creating the publications, since the metadata publication is used in the other publications:

@@ -93,10 +93,10 @@ class KlibBasedMppIT : BaseGradleIT() {
         checkTaskCompileClasspath(
             "compile${hostSpecificSourceSet.capitalize()}KotlinMetadata",
             listOf(
-                "published-producer-metadata-$hostSpecificSourceSet.klib",
-                "published-producer-metadata-commonMain.klib",
-                "published-dependency-metadata-$hostSpecificSourceSet.klib",
-                "published-dependency-metadata-commonMain.klib"
+                "published-producer-$hostSpecificSourceSet.klib",
+                "published-producer-commonMain.klib",
+                "published-dependency-$hostSpecificSourceSet.klib",
+                "published-dependency-commonMain.klib"
             )
         )
     }
@@ -209,7 +209,7 @@ class KlibBasedMppIT : BaseGradleIT() {
         // Check that the metadata JAR doesn't contain the host-specific source set entries, but contains the shared-Native source set
         // that can be built on every host:
 
-        ZipFile(groupDir.resolve("$dependencyModuleName-metadata/1.0/$dependencyModuleName-metadata-1.0-all.jar")).use { metadataJar ->
+        ZipFile(groupDir.resolve("$dependencyModuleName/1.0/$dependencyModuleName-1.0-all.jar")).use { metadataJar ->
             assertTrue { metadataJar.entries().asSequence().none { it.name.startsWith(hostSpecificSourceSet) } }
             assertTrue { metadataJar.entries().asSequence().any { it.name.startsWith("linuxMain") } }
         }

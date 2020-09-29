@@ -65,7 +65,9 @@ open class KotlinMetadataTarget @Inject constructor(project: Project) :
             }
 
             val component =
-                createKotlinVariant(targetName, compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME), usageContexts)
+                createKotlinVariant(targetName, compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME), usageContexts).apply {
+                    publishable = false // this component is not published on its own, its variants are included in the 'root' module
+                }
 
             val sourcesJarTask =
                 sourcesJarTask(project, lazy { project.kotlinExtension.sourceSets.toSet() }, null, targetName.toLowerCase())

@@ -105,7 +105,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 val jvmJarName = "sample-lib-jvm6/1.0/sample-lib-jvm6-1.0.jar"
                 val jsExtension = "jar"
                 val jsJarName = "sample-lib-nodejs/1.0/sample-lib-nodejs-1.0.$jsExtension"
-                val metadataJarName = "sample-lib-metadata/1.0/sample-lib-metadata-1.0.jar"
+                val metadataJarName = "sample-lib/1.0/sample-lib-1.0.jar"
                 val wasmKlibName = "sample-lib-wasm32/1.0/sample-lib-wasm32-1.0.klib"
                 val nativeKlibName = "sample-lib-$nativeHostTargetName/1.0/sample-lib-$nativeHostTargetName-1.0.klib"
 
@@ -116,7 +116,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 val gradleMetadata = groupDir.resolve("sample-lib/1.0/sample-lib-1.0.module").readText()
                 assertFalse(gradleMetadata.contains(ProjectLocalConfigurations.ATTRIBUTE.name))
 
-                listOf(jvmJarName, jsJarName, metadataJarName, wasmKlibName, nativeKlibName).forEach {
+                listOf(jvmJarName, jsJarName, wasmKlibName, nativeKlibName).forEach {
                     val pom = groupDir.resolve(it.replaceAfterLast('.', "pom"))
                     Assert.assertTrue(
                         "$pom should contain a name section.",
@@ -325,7 +325,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 val groupDir = projectDir.resolve("repo/com/example")
                 val jsExtension = if (jsCompilerType == LEGACY) "jar" else "klib"
                 val jsJarName = "sample-lib-nodejs/1.0/sample-lib-nodejs-1.0.$jsExtension"
-                val metadataJarName = "sample-lib-metadata/1.0/sample-lib-metadata-1.0.jar"
+                val metadataJarName = "sample-lib/1.0/sample-lib-1.0.jar"
 
                 listOf(jsJarName, metadataJarName, "sample-lib/1.0/sample-lib-1.0.module").forEach {
                     Assert.assertTrue("$it should exist", groupDir.resolve(it).exists())
@@ -334,7 +334,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 val gradleMetadata = groupDir.resolve("sample-lib/1.0/sample-lib-1.0.module").readText()
                 assertFalse(gradleMetadata.contains(ProjectLocalConfigurations.ATTRIBUTE.name))
 
-                listOf(jsJarName, metadataJarName).forEach {
+                jsJarName.let {
                     val pom = groupDir.resolve(it.replaceAfterLast('.', "pom"))
                     Assert.assertTrue(
                         "$pom should contain a name section.",
@@ -998,7 +998,6 @@ class NewMultiplatformIT : BaseGradleIT() {
         with(Project("sample-old-style-app", gradleVersion, "new-mpp-lib-and-app")) {
             setupWorkingDir()
             gradleBuildScript().appendText("\nallprojects { repositories { maven { url '${repoDir.toURI()}' } } }")
-            gradleBuildScript("app-common").modify { it.replace("com.example:sample-lib:", "com.example:sample-lib-metadata:") }
             gradleBuildScript("app-jvm").modify { it.replace("com.example:sample-lib:", "com.example:sample-lib-jvm6:") }
             gradleBuildScript("app-js").modify { it.replace("com.example:sample-lib:", "com.example:sample-lib-nodejs:") }
 

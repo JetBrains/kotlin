@@ -253,7 +253,7 @@ class HierarchicalMppIT : BaseGradleIT() {
 
         ZipFile(
             project.projectDir.parentFile.resolve(
-                "repo/com/example/foo/my-lib-foo-metadata/1.0/my-lib-foo-metadata-1.0-all.jar"
+                "repo/com/example/foo/my-lib-foo/1.0/my-lib-foo-1.0-all.jar"
             )
         ).use { publishedMetadataJar ->
             publishedMetadataJar.checkAllEntryNamesArePresent(
@@ -291,7 +291,7 @@ class HierarchicalMppIT : BaseGradleIT() {
 
         ZipFile(
             project.projectDir.parentFile.resolve(
-                "repo/com/example/bar/my-lib-bar-metadata/1.0/my-lib-bar-metadata-1.0-all.jar"
+                "repo/com/example/bar/my-lib-bar/1.0/my-lib-bar-1.0-all.jar"
             )
         ).use { publishedMetadataJar ->
             publishedMetadataJar.checkAllEntryNamesArePresent(
@@ -420,14 +420,21 @@ class HierarchicalMppIT : BaseGradleIT() {
         val compilerArgsLine = taskOutput.lines().single { "Kotlin compiler args:" in it }
         val classpathItems = compilerArgsLine.substringAfter("-classpath").substringBefore(" -").split(File.pathSeparator)
 
+        val actualClasspath = classpathItems.joinToString("\n")
+
         shouldInclude.forEach { (module, sourceSet) ->
-            assertTrue("expected module '$module' source set '$sourceSet' on the classpath of task $taskPath") {
+            assertTrue(
+                "expected module '$module' source set '$sourceSet' on the classpath of task $taskPath. Actual classpath:\n$actualClasspath"
+            ) {
                 classpathItems.any { module in it && it.contains(sourceSet, ignoreCase = true) }
             }
         }
 
         shouldNotInclude.forEach { (module, sourceSet) ->
-            assertTrue("not expected module '$module' source set '$sourceSet' on the compile classpath of task $taskPath") {
+            assertTrue(
+                "not expected module '$module' source set '$sourceSet' on the compile classpath of task $taskPath. " +
+                        "Actual classpath:\n$actualClasspath"
+            ) {
                 classpathItems.none { module in it && it.contains(sourceSet, ignoreCase = true) }
             }
         }
@@ -469,7 +476,8 @@ class HierarchicalMppIT : BaseGradleIT() {
                 }.toSet()
             },
             hostSpecificSourceSets = emptySet(),
-            sourceSetBinaryLayout = sourceSetModuleDependencies.mapValues { SourceSetMetadataLayout.KLIB }
+            sourceSetBinaryLayout = sourceSetModuleDependencies.mapValues { SourceSetMetadataLayout.KLIB },
+            isPublishedAsRoot = true
         )
     }
 

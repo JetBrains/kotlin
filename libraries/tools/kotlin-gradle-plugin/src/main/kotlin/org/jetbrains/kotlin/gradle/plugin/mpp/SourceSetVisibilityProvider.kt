@@ -37,8 +37,7 @@ internal class SourceSetVisibilityProvider(
      * Determine which source sets of the [resolvedRootMppDependency] are visible in the [visibleFrom] source set.
      *
      * This requires resolving dependencies of the compilations which [visibleFrom] takes part in, in order to find which variants the
-     * [resolvedRootMppDependency] got resolved to for those compilations. The [resolvedRootMppDependency] should therefore be the dependency
-     * on the 'root' module of the MPP (such as 'com.example:lib-foo', not 'com.example:lib-foo-metadata').
+     * [resolvedRootMppDependency] got resolved to for those compilations.
      *
      * Once the variants are known, they are checked against the [dependencyProjectStructureMetadata], and the
      * source sets of the dependency are determined that are compiled for all those variants and thus should be visible here.
