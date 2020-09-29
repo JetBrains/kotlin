@@ -35,11 +35,11 @@ class KotlinSSSanityTest : BasePlatformTestCase() {
             return true
         }
 
-        println(
-            "Search pattern [${subtree::class.toString().split('.').last()}]:\n\t${
-                subtree.text.trimMargin().replace("\n", "\n\t")
-            }"
-        )
+        println("Search pattern [${subtree::class.toString().split('.').last()}]:")
+        println()
+        println(subtree.text.lines().first())
+        if (subtree.text.lines().size > 1) println(subtree.text.lines().drop(1).joinToString("\n").trimIndent())
+        println()
 
         val matchOptions = myConfiguration.matchOptions.apply {
             fillSearchCriteria(subtree.text)
@@ -55,7 +55,7 @@ class KotlinSSSanityTest : BasePlatformTestCase() {
 
     /** Picks a random .kt file from this project and returns its content and PSI tree. */
     private fun randomLocalKotlinSource(): File {
-        val kotlinFiles = File(".").walkTopDown().toList().filter { it.extension == "kt" && "Predefined" !in it.name }
+        val kotlinFiles = File("src/main/kotlin/").walk().toList().filter { it.extension == "kt" && "Predefined" !in it.name }
         assert(kotlinFiles.any()) { "No .kt source found." }
         return kotlinFiles.random()
     }
