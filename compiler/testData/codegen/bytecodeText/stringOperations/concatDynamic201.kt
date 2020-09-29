@@ -1,3 +1,4 @@
+// KOTLIN_CONFIGURATION_FLAGS: RUNTIME_STRING_CONCAT=enable
 // JVM_TARGET: 9
 fun box() {
     val z = "0"

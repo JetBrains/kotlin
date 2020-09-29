@@ -111,6 +111,9 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> EMIT_JVM_TYPE_ANNOTATIONS =
             CompilerConfigurationKey.create("Emit JVM type annotations in bytecode");
 
+    public static final CompilerConfigurationKey<JvmRuntimeStringConcat> RUNTIME_STRING_CONCAT =
+            CompilerConfigurationKey.create("Specifies string concatenation scheme");
+
     public static final CompilerConfigurationKey<List<String>> KLIB_PATHS =
             CompilerConfigurationKey.create("Paths to .klib libraries");
 

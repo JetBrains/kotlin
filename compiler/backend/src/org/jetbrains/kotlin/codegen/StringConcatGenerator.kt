@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.codegen
 
 import com.google.common.collect.Sets
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.JvmRuntimeStringConcat
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
 import org.jetbrains.org.objectweb.asm.Handle
@@ -16,14 +16,14 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import java.lang.StringBuilder
 
-class StringAppendGenerator(val useInvokeDynamic: Boolean, val mv: InstructionAdapter) {
+class StringConcatGenerator(val mode: JvmRuntimeStringConcat, val mv: InstructionAdapter) {
 
     private val template = StringBuilder("")
     private val paramTypes = arrayListOf<Type>()
 
     @JvmOverloads
     fun genStringBuilderConstructorIfNeded(swap: Boolean = false) {
-        if (useInvokeDynamic) return
+        if (mode.isDynamic) return
         mv.visitTypeInsn(Opcodes.NEW, "java/lang/StringBuilder")
         mv.dup()
         mv.invokespecial("java/lang/StringBuilder", "<init>", "()V", false)
@@ -33,7 +33,7 @@ class StringAppendGenerator(val useInvokeDynamic: Boolean, val mv: InstructionAd
     }
 
     fun addCharConstant(value: Char) {
-        if (!useInvokeDynamic) {
+        if (!mode.isDynamic) {
             mv.iconst(value.toInt())
             invokeAppend(Type.CHAR_TYPE)
         } else {
@@ -42,7 +42,7 @@ class StringAppendGenerator(val useInvokeDynamic: Boolean, val mv: InstructionAd
     }
 
     fun addStringConstant(value: String) {
-        if (!useInvokeDynamic) {
+        if (!mode.isDynamic) {
             mv.aconst(value)
             invokeAppend(JAVA_STRING_TYPE)
         } else {
@@ -51,7 +51,7 @@ class StringAppendGenerator(val useInvokeDynamic: Boolean, val mv: InstructionAd
     }
 
     fun invokeAppend(type: Type) {
-        if (!useInvokeDynamic) {
+        if (!mode.isDynamic) {
             mv.invokevirtual(
                 "java/lang/StringBuilder",
                 "append",
@@ -71,7 +71,7 @@ class StringAppendGenerator(val useInvokeDynamic: Boolean, val mv: InstructionAd
     }
 
     fun genToString() {
-        if (!useInvokeDynamic) {
+        if (!mode.isDynamic) {
             mv.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)
         } else {
             //if state was flushed in `invokeAppend` do nothing
@@ -114,7 +114,7 @@ class StringAppendGenerator(val useInvokeDynamic: Boolean, val mv: InstructionAd
         }
 
         fun create(state: GenerationState, mv: InstructionAdapter) =
-            StringAppendGenerator(/*TODO: add flag*/state.target.bytecodeVersion >= JvmTarget.JVM_9.bytecodeVersion, mv)
+            StringConcatGenerator(state.runtimeStringConcat, mv)
 
     }
 }
