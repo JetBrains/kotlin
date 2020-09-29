@@ -170,7 +170,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         }
     }
 
-    override fun isIdentifier(element: PsiElement?): Boolean = element != null && element.node.elementType == KtTokens.IDENTIFIER
+    override fun isIdentifier(element: PsiElement?): Boolean = element != null && element.node?.elementType == KtTokens.IDENTIFIER
 
     private fun ancestors(node: PsiElement?): List<PsiElement?> {
         val family = mutableListOf(node)
