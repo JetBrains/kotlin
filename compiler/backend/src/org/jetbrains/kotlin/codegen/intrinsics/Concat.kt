@@ -49,7 +49,7 @@ class Concat : IntrinsicMethod() {
             // Explicit plus call LHS?.plus(RHS) or LHS.plus(RHS)
             receiver.put(AsmTypes.JAVA_STRING_TYPE, v)
             generator.genStringBuilderConstructorIfNeded(true)
-            genInvokeAppendMethod(generator, returnType, null)
+            genInvokeAppendMethod(generator, returnType, null, null, StackValue.onStack(JAVA_STRING_TYPE))
             codegen.invokeAppend(generator, arguments[0])
         }
         generator.genToString()
