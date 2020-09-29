@@ -1,48 +1,20 @@
-buildscript {
-    repositories {
-        mavenLocal()
-        jcenter()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
+plugins {
+    id("org.jetbrains.kotlin.multiplatform").version("<pluginMarkerVersion>")
 }
-
-
-apply plugin: 'kotlin-multiplatform'
 
 repositories {
     mavenLocal()
     jcenter()
-    maven { url 'repo' }
 }
 
 kotlin {
-    sourceSets {
-        allNative {
-            dependencies {
-                implementation project(':projectLibrary')
-                implementation 'org.example:publishedLibrary:1.0'
+    <SingleNativeTarget>("host") {
+        compilations.main.cinterops {
+            number {
+                packageName 'example.cinterop.project'
+                extraOpts '-nodefaultlibs'
+                compilerOpts '-DEVEN_NUMBER'
             }
         }
-        nativeTest
-
-        macos64Main { dependsOn sourceSets.allNative }
-        linux64Main { dependsOn sourceSets.allNative }
-        mingw64Main { dependsOn sourceSets.allNative }
-        mingw86Main { dependsOn sourceSets.allNative }
-
-        macos64Test { dependsOn sourceSets.nativeTest }
-        linux64Test { dependsOn sourceSets.nativeTest }
-        mingw64Test { dependsOn sourceSets.nativeTest }
-        mingw86Test { dependsOn sourceSets.nativeTest }
-    }
-
-    targets {
-        fromPreset(presets.macosX64, 'macos64')
-        fromPreset(presets.linuxX64, 'linux64')
-        fromPreset(presets.mingwX64, 'mingw64')
-        // Test building a 32-bit Windows binary.
-        fromPreset(presets.mingwX86, 'mingw86')
     }
 }

@@ -5,8 +5,8 @@
 
 package example.cinterop.project
 
-import example.cinterop.project.stdio.*
+import example.cinterop.project.*
 
-fun projectPrint(str: String) {
-    printf(str + '\n')
+fun answer(): Int {
+    return getNumber() * 2
 }

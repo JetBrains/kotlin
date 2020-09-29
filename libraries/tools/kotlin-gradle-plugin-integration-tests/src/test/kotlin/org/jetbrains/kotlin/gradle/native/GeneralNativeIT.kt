@@ -646,68 +646,22 @@ class GeneralNativeIT : BaseGradleIT() {
 
     @Test
     fun testCinterop() {
-        val libProject = Project("sample-lib", directoryPrefix = "new-mpp-lib-and-app")
-        libProject.build("publish") {
-            assertSuccessful()
-        }
-        val repo = libProject.projectDir.resolve("repo").absolutePath.replace('\\', '/')
-
-        with(Project("native-cinterop")) {
-
-            setupWorkingDir()
-            listOf(gradleBuildScript(), gradleBuildScript("publishedLibrary")).forEach {
-                it.appendText(
-                    """
-                    repositories {
-                        maven { url '$repo' }
-                    }
-                """.trimIndent()
-                )
-            }
-
-            val targetsToBuild = if (HostManager.hostIsMingw) {
-                listOf(nativeHostTargetName, "mingw86")
-            } else {
-                listOf(nativeHostTargetName)
-            }
-
-            val libraryCinteropTasks = targetsToBuild.map { ":projectLibrary:cinteropStdio${it.capitalize()}" }
-            val libraryCompileTasks = targetsToBuild.map { ":projectLibrary:compileKotlin${it.capitalize()}" }
-
-            build(":projectLibrary:build") {
-                assertSuccessful()
-                assertTasksExecuted(libraryCinteropTasks)
-                assertTrue(output.contains("Project test"), "No test output found")
-                targetsToBuild.forEach {
-                    assertFileExists("projectLibrary/build/classes/kotlin/$it/main/projectLibrary-cinterop-stdio.klib")
-                }
-            }
-
-            build(":publishedLibrary:build", ":publishedLibrary:publish") {
-                assertSuccessful()
-                assertTasksExecuted(
-                    targetsToBuild.map { ":publishedLibrary:cinteropStdio${it.capitalize()}" }
-                )
-                assertTrue(output.contains("Published test"), "No test output found")
-                targetsToBuild.forEach {
-                    assertFileExists("publishedLibrary/build/classes/kotlin/$it/main/publishedLibrary-cinterop-stdio.klib")
-                    assertFileExists("publishedLibrary/build/classes/kotlin/$it/test/test-cinterop-stdio.klib")
-                    assertFileExists("repo/org/example/publishedLibrary-$it/1.0/publishedLibrary-$it-1.0-cinterop-stdio.klib")
-                }
-            }
+        with(transformProjectWithPluginsDsl("native-cinterop")) {
+            configureSingleNativeTarget()
 
             build(":build") {
                 assertSuccessful()
-                assertTrue(output.contains("Dependent: Project print"), "No test output found")
-                assertTrue(output.contains("Dependent: Published print"), "No test output found")
+                assertFileExists("build/libs/host/main/native-cinterop-cinterop-number.klib")
+                assertFileExists("build/classes/kotlin/host/main/native-cinterop-cinterop-number.klib")
+                assertFileExists("build/classes/kotlin/host/test/native-cinterop_test.klib")
             }
 
             // Check that changing the compiler version in properties causes interop reprocessing and source recompilation.
             val hostLibraryTasks = listOf(
-                ":projectLibrary:cinteropStdio${nativeHostTargetName.capitalize()}",
-                ":projectLibrary:compileKotlin${nativeHostTargetName.capitalize()}"
+                ":cinteropNumberHost",
+                ":compileKotlinHost"
             )
-            build(":projectLibrary:build") {
+            build(":build") {
                 assertSuccessful()
                 assertTasksUpToDate(hostLibraryTasks)
             }
