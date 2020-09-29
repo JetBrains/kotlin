@@ -1,6 +1,14 @@
 Change Log
 ==========
 
+## Version 0.5.3
+
+_2020-09-28_
+
+Bug Fixes:
+ * Fix member and extension function transformation.
+ * Fix generation of message lambda for non-inline functions.
+
 ## Version 0.5.2
 
 _2020-09-25_
