@@ -57,7 +57,6 @@ public abstract class AbstractList {
     public method remove(p0: int): java.lang.String
     public method remove(p0: java.lang.Object): boolean
     public method removeAll(p0: java.util.Collection): boolean
-    public method removeIf(p0: java.util.function.Predicate): boolean
     public method replaceAll(p0: java.util.function.UnaryOperator): void
     public method retainAll(p0: java.util.Collection): boolean
     public synthetic bridge method set(p0: int, p1: java.lang.Object): java.lang.Object
@@ -75,6 +74,9 @@ public abstract class AbstractListIterator {
     public method <init>(): void
     public synthetic bridge method add(p0: java.lang.Object): void
     public method add(p0: java.lang.String): void
+    public method hasNext(): boolean
+    public synthetic bridge method next(): java.lang.Object
+    public method next(): java.lang.String
     public method remove(): void
     public synthetic bridge method set(p0: java.lang.Object): void
     public method set(p0: java.lang.String): void
@@ -145,7 +147,6 @@ public abstract class AbstractSet {
     public method iterator(): java.util.Iterator
     public method remove(p0: java.lang.Object): boolean
     public method removeAll(p0: java.util.Collection): boolean
-    public method removeIf(p0: java.util.function.Predicate): boolean
     public method retainAll(p0: java.util.Collection): boolean
     public bridge final method size(): int
     public method toArray(): java.lang.Object[]
