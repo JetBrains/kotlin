@@ -604,15 +604,14 @@ public final class GradleProjectResolverUtil {
         final ExternalProjectDependency projectDependency = (ExternalProjectDependency)mergedDependency;
 
         Collection<ProjectDependencyInfo> projectDependencyInfos = new ArrayList<>();
-        String selectionReason = projectDependency.getSelectionReason();
-        if ("composite build substitution".equals(selectionReason) && resolverCtx.getSettings() != null) {
+        if (resolverCtx.getSettings() != null) {
           GradleExecutionWorkspace executionWorkspace = resolverCtx.getSettings().getExecutionWorkspace();
           ModuleData moduleData = executionWorkspace.findModuleDataByArtifacts(projectDependency.getProjectDependencyArtifacts());
           if (moduleData != null) {
             projectDependencyInfos.add(new ProjectDependencyInfo(moduleData, null, projectDependency.getProjectDependencyArtifacts()));
           }
         }
-        else {
+        if (projectDependencyInfos.isEmpty()) {
           String moduleId;
           Pair<DataNode<GradleSourceSetData>, ExternalSourceSet> projectPair;
           MultiMap<Pair<DataNode<GradleSourceSetData>, ExternalSourceSet>, File> projectPairs = new MultiMap<>(new Reference2ObjectLinkedOpenHashMap<>());
@@ -641,7 +640,6 @@ public final class GradleProjectResolverUtil {
                                                                    artifacts));
             }
           }
-
         }
 
         if (projectDependencyInfos.isEmpty()) {

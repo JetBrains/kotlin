@@ -265,8 +265,9 @@ public class DependencyResolverImpl implements DependencyResolver {
           }
 
           ProjectComponentIdentifier projectComponentIdentifier = (ProjectComponentIdentifier)artifact.getId().getComponentIdentifier();
+          String buildName = projectComponentIdentifier.getBuild().getName();
           String projectPath = projectComponentIdentifier.getProjectPath();
-          String key = projectPath + "_" + resolvedDependency.getConfiguration();
+          String key = buildName + "_" + projectPath + "_" + resolvedDependency.getConfiguration();
           DefaultExternalProjectDependency projectDependency = resolvedProjectDependencies.get(key);
           if (projectDependency != null) {
             Set<File> projectDependencyArtifacts = new LinkedHashSet<File>(projectDependency.getProjectDependencyArtifacts());
