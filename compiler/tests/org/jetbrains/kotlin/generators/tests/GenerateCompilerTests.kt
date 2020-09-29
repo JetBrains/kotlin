@@ -538,6 +538,10 @@ fun main(args: Array<String>) {
             testClass<AbstractFirBlackBoxInlineCodegenTest> {
                 model("codegen/boxInline", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
             }
+
+            testClass<AbstractFirBlackBoxAgainstJavaCodegenTest> {
+                model("codegen/boxAgainstJava", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
+            }
         }
 
         testGroup(
