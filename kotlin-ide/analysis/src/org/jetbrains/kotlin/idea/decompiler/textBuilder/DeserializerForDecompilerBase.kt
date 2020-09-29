@@ -33,6 +33,10 @@ abstract class DeserializerForDecompilerBase(val directoryPackageFqName: FqName)
             packageFragments.add(createDummyPackageFragment(fqName))
         }
 
+        override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> {
+            return listOf(createDummyPackageFragment(fqName))
+        }
+
         override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
             throw UnsupportedOperationException("This method is not supposed to be called.")
         }
