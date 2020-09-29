@@ -44,6 +44,10 @@ data class ArgumentMapping(
         }
         return argumentToParameterMapping
     }
+
+    fun numDefaults(): Int {
+        return parameterToCallArgumentMap.values.count { it == ResolvedCallArgument.DefaultArgument }
+    }
 }
 
 private val EmptyArgumentMapping = ArgumentMapping(emptyMap(), emptyList())
