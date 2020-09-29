@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.ir.declarations.persistent
 
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
+import org.jetbrains.kotlin.ir.types.impl.ReturnTypeIsNotInitializedException
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
@@ -63,7 +64,7 @@ internal abstract class PersistentIrFunctionCommon(
 
     final override var returnType: IrType
         get() = returnTypeField.let {
-            if (it !== IrUninitializedType) it else error("Return type is not initialized")
+            if (it !== IrUninitializedType) it else throw ReturnTypeIsNotInitializedException(this)
         }
         set(c) {
             returnTypeField = c

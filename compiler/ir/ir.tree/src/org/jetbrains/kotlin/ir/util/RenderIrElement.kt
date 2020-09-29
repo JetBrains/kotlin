@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
+import org.jetbrains.kotlin.ir.types.impl.ReturnTypeIsNotInitializedException
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.Variance
@@ -108,8 +108,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
         run(fn).trimEnd()
 
     private fun IrType.render(): String =
-        if (this === IrUninitializedType) "<Uninitialized>"
-        else "${renderTypeAnnotations(annotations)}${renderTypeInner()}"
+        "${renderTypeAnnotations(annotations)}${renderTypeInner()}"
 
     private fun IrType.renderTypeInner() =
         when (this) {
@@ -252,7 +251,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
 
                 if (declaration is IrSimpleFunction) {
                     append(": ")
-                    append(declaration.returnType.render())
+                    append(declaration.renderReturnType())
                 }
                 append(' ')
 
@@ -282,8 +281,11 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
 
                 append(declaration.name.asString())
 
-                val type = declaration.getter?.returnType ?: declaration.backingField?.type
-                if (type != null) {
+                val getter = declaration.getter
+                if (getter != null) {
+                    append(": ")
+                    append(getter.renderReturnType())
+                } else declaration.backingField?.type?.let { type ->
                     append(": ")
                     append(type.render())
                 }
@@ -367,8 +369,18 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
                     "name:$name visibility:$visibility modality:$modality " +
                     renderTypeParameters() + " " +
                     renderValueParameterTypes() + " " +
-                    "returnType:${returnType.render()} " +
+                    "returnType:${renderReturnType()} " +
                     renderSimpleFunctionFlags()
+        }
+
+    private fun IrFunction.renderReturnType(): String =
+        safeReturnType?.render() ?: "<Uninitialized>"
+
+    private val IrFunction.safeReturnType: IrType?
+        get() = try {
+            returnType
+        } catch (e: ReturnTypeIsNotInitializedException) {
+            null
         }
 
     private fun renderFlagsList(vararg flags: String?) =
@@ -407,7 +419,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
                     "visibility:$visibility " +
                     renderTypeParameters() + " " +
                     renderValueParameterTypes() + " " +
-                    "returnType:${returnType.render()} " +
+                    "returnType:${renderReturnType()} " +
                     renderConstructorFlags()
         }
 

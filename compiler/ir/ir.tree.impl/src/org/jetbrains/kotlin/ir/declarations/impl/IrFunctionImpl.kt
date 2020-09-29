@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.ir.declarations.impl
 
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
+import org.jetbrains.kotlin.ir.types.impl.ReturnTypeIsNotInitializedException
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
@@ -44,7 +45,7 @@ abstract class IrFunctionCommonImpl(
 
     override var returnType: IrType = returnType
         get() = if (field === IrUninitializedType) {
-            error("Return type is not initialized")
+            throw ReturnTypeIsNotInitializedException(this)
         } else {
             field
         }
