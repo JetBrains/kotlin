@@ -32,7 +32,7 @@ dependencies {
 }
 
 val runCommonizer by tasks.registering(NoDebugJavaExec::class) {
-    classpath(sourceSets.main.get().runtimeClasspath)
+    classpath(configurations.compileOnly, sourceSets.main.get().runtimeClasspath)
     main = "org.jetbrains.kotlin.descriptors.commonizer.cli.CommonizerCLI"
 }
 
