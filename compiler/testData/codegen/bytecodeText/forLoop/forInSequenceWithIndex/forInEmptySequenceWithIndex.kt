@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 val xs = listOf<Any>().asSequence()
 
 fun box(): String {

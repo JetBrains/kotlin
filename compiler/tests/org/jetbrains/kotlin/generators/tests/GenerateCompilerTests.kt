@@ -542,6 +542,10 @@ fun main(args: Array<String>) {
             testClass<AbstractFirBlackBoxAgainstJavaCodegenTest> {
                 model("codegen/boxAgainstJava", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
             }
+
+            testClass<AbstractFirBytecodeTextTest> {
+                model("codegen/bytecodeText", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
+            }
         }
 
         testGroup(

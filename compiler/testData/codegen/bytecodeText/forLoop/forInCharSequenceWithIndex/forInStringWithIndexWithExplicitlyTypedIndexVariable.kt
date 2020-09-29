@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 val xs = "abcd"
 
 fun useAny(x: Any) {}

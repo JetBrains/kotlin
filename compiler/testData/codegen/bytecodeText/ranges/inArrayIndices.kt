@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun testPrimitiveArray(i: Int, ints: IntArray) = i in ints.indices
 
 fun testObjectArray(i: Int, xs: Array<Any>) = i in xs.indices

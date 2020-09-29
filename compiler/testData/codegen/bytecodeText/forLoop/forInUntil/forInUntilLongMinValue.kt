@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 const val M = Long.MIN_VALUE
 
 fun f(a: Long): Int {

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun box(): String {
     for ((outer, iv) in (4..7).withIndex().withIndex()) {
     }
