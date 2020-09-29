@@ -157,7 +157,7 @@ private fun chooseVersion(
         return newVersion
     }
 
-    return (includedRange(listOf(oldVersion)) intersect includedRange(listOf(newVersion)))?.toString()
+    return (includedRange(oldVersion) intersect includedRange(newVersion))?.toString()
         ?: throw GradleException(
             """
                 There is already declared version of '$module' with version '$oldVersion' which does not intersects with another declared version '${newVersion}'

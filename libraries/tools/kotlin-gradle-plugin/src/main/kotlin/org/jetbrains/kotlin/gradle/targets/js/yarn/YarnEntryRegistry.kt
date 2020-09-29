@@ -24,14 +24,12 @@ internal class YarnEntryRegistry(private val lockFile: File) {
             return entry
         }
 
-        val versionRange = includedRange(listOf(version))
-
         entryMap.entries
             .firstOrNull { (_, entry) ->
                 if (entry.version == null) {
                     false
                 } else {
-                    (versionRange intersect includedRange(listOf(entry.version))) != null
+                    (includedRange(version) intersect includedRange(entry.version)) != null
                 }
             }
             ?.let { return it.value }
