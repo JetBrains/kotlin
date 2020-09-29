@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun Byte.inByte(left: Byte, right: Byte) = this in left..right
 
 fun Short.inInt(left: Int, right: Int) = this in left .. right

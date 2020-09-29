@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 val arr = arrayOf("a", "b", "c", "d")
 
 fun box(): String {

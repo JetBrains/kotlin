@@ -1,4 +1,5 @@
 // !LANGUAGE: +ProperIeee754Comparisons
+// IGNORE_BACKEND_FIR: JVM_IR
 fun equals5(a: Any?, b: Any?) = if (a is Double && b is Double?) a == b else null!!
 
 fun equals6(a: Any?, b: Any?) = if (a is Double? && b is Double) a == b else null!!
