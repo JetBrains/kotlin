@@ -2086,6 +2086,11 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
                 runTest("testData/intentions/branched/elvisToIfThen/assignmentAndContinue.kt");
             }
 
+            @TestMetadata("assignmentAndError.kt")
+            public void testAssignmentAndError() throws Exception {
+                runTest("idea/testData/intentions/branched/elvisToIfThen/assignmentAndError.kt");
+            }
+
             @TestMetadata("assignmentAndReturn.kt")
             public void testAssignmentAndReturn() throws Exception {
                 runTest("testData/intentions/branched/elvisToIfThen/assignmentAndReturn.kt");
