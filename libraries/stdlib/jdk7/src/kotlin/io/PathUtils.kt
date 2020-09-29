@@ -10,14 +10,13 @@
 
 package kotlin.io
 
-import java.io.File
 import java.io.IOException
 import java.nio.file.*
 import java.nio.file.FileAlreadyExistsException
 import java.nio.file.NoSuchFileException
 
 /**
- * Returns the extension of this file (not including the dot), or an empty string if it doesn't have one.
+ * Returns the extension of this path (not including the dot), or an empty string if it doesn't have one.
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
@@ -25,7 +24,7 @@ public val Path.extension: String
     get() = fileName.toString().substringAfterLast('.', "")
 
 /**
- * Returns [path][File.path] of this File using the invariant separator '/' to
+ * Returns this path as a [String] using the invariant separator '/' to
  * separate the names in the name sequence.
  */
 @SinceKotlin("1.4")
@@ -37,7 +36,7 @@ public val Path.invariantSeparatorsPath: String
     }
 
 /**
- * Returns file's name without an extension.
+ * Returns this path's [fileName][Path.getFileName] without an extension.
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
@@ -45,11 +44,11 @@ public val Path.nameWithoutExtension: String
     get() = fileName.toString().substringBeforeLast(".")
 
 /**
- * Calculates the relative path for this file from [base] file.
- * Note that the [base] file is treated as a directory.
- * If this file matches the [base] file, then a [File] with empty path will be returned.
+ * Calculates the relative path for this path from a [base] path.
+ * Note that the [base] path is treated as a directory.
+ * If this path matches the [base] path, then a [Path] with an empty path will be returned.
  *
- * @return File with relative path from [base] to this.
+ * @return Path with relative path from [base] to this.
  *
  * @throws IllegalArgumentException if this and base paths have different roots.
  */
@@ -58,9 +57,9 @@ public val Path.nameWithoutExtension: String
 public fun Path.relativeTo(base: Path): Path = base.relativize(this)
 
 /**
- * Calculates the relative path for this file from [base] file.
- * Note that the [base] file is treated as a directory.
- * If this file matches the [base] file, then a [Path] with empty path will be returned.
+ * Calculates the relative path for this path from a [base] path.
+ * Note that the [base] path is treated as a directory.
+ * If this path matches the [base] path, then a [Path] with an empty path will be returned.
  *
  * @return Path with relative path from [base] to this, or `this` if this and base paths have different roots.
  */
@@ -70,9 +69,9 @@ public fun Path.relativeToOrSelf(base: Path): Path =
     relativeToOrNull(base) ?: this
 
 /**
- * Calculates the relative path for this file from [base] path.
+ * Calculates the relative path for this path from a [base] path.
  * Note that the [base] path is treated as a directory.
- * If this file matches the [base] file, then a [Path] with empty path will be returned.
+ * If this path matches the [base] path, then a [Path] with an empty path will be returned.
  *
  * @return Path with relative path from [base] to this, or `null` if this and base paths have different roots.
  */
@@ -94,15 +93,15 @@ public fun Path.relativeToOrNull(base: Path): Path? {
  *
  * When [overwrite] is `true` and [target] is a directory, it is replaced only if it is empty.
  *
- * If this file is a directory, it is copied without its content, i.e. an empty [target] directory is created.
+ * If this path is a directory, it is copied without its content, i.e. an empty [target] directory is created.
  * If you want to copy directory including its contents, use [copyRecursively].
  *
  * The operation doesn't preserve copied file attributes such as creation/modification date, permissions, etc.
  *
  * @param overwrite `true` if destination overwrite is allowed.
- * @return the [target] file.
- * @throws NoSuchFileException if the source file doesn't exist.
- * @throws FileAlreadyExistsException if the destination file already exists and [overwrite] argument is set to `false`.
+ * @return the [target] path.
+ * @throws NoSuchFileException if the source path doesn't exist.
+ * @throws FileAlreadyExistsException if the destination path already exists and [overwrite] argument is set to `false`.
  * @throws IOException if any errors occur while copying.
  */
 @SinceKotlin("1.4")
@@ -122,32 +121,32 @@ public fun Path.copyTo(target: Path, overwrite: Boolean = false): Path {
  * When [REPLACE_EXISTING][StandardCopyOption.REPLACE_EXISTING] is used and [target] is a directory,
  * it is replaced only if it is empty.
  *
- * If this file is a directory, it is copied without its content, i.e. an empty [target] directory is created.
+ * If this path is a directory, it is copied without its content, i.e. an empty [target] directory is created.
  * If you want to copy directory including its contents, use [copyRecursively].
  *
  * The operation doesn't preserve copied file attributes such as creation/modification date,
  * permissions, etc. unless [COPY_ATTRIBUTES][StandardCopyOption.COPY_ATTRIBUTES] is used.
  *
  * @param options options to control how the path is copied.
- * @return the [target] file.
- * @throws NoSuchFileException if the source file doesn't exist.
- * @throws FileAlreadyExistsException if the destination file already exists and [REPLACE_EXISTING][StandardCopyOption.REPLACE_EXISTING] is not used.
+ * @return the [target] path.
+ * @throws NoSuchFileException if the source path doesn't exist.
+ * @throws FileAlreadyExistsException if the destination path already exists and [REPLACE_EXISTING][StandardCopyOption.REPLACE_EXISTING] is not used.
  * @throws IOException if any errors occur while copying.
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
 public fun Path.copyTo(target: Path, vararg options: CopyOption): Path {
     if (this.notExists()) {
-        throw NoSuchFileException(toString(), null, "The source file doesn't exist.")
+        throw NoSuchFileException(toString(), null, "The source path doesn't exist.")
     }
 
     if (target.exists() && StandardCopyOption.REPLACE_EXISTING !in options) {
-        throw FileAlreadyExistsException(toString(), null, "The destination file already exists.")
+        throw FileAlreadyExistsException(toString(), null, "The destination path already exists.")
     }
 
     if (this.isDirectory()) {
         if (target.isDirectory() && Files.newDirectoryStream(target).use { it.firstOrNull() } != null) {
-            throw FileAlreadyExistsException(toString(), null, "The destination file already exists.")
+            throw FileAlreadyExistsException(toString(), null, "The destination path already exists.")
         }
         try {
             Files.createDirectories(target)
@@ -165,7 +164,7 @@ public fun Path.copyTo(target: Path, vararg options: CopyOption): Path {
 }
 
 /**
- * Check if this file exists.
+ * Check if this path exists.
  *
  * @param options Options to control how symbolic links are handled.
  */
@@ -175,7 +174,7 @@ public fun Path.copyTo(target: Path, vararg options: CopyOption): Path {
 public inline fun Path.exists(vararg options: LinkOption): Boolean = Files.exists(this, *options)
 
 /**
- * Check if this file exists.
+ * Check if this path does not exist.
  *
  * @param options Options to control how symbolic links are handled.
  */

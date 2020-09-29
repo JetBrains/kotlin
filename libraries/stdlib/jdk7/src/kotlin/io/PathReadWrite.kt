@@ -198,7 +198,7 @@ public fun Path.forEachLine(charset: Charset = Charsets.UTF_8, action: (line: St
 }
 
 /**
- * Constructs a new InputStream of this path and returns it as a result.
+ * Constructs a new InputStream of this file and returns it as a result.
  *
  * The [options] parameter determines how the file is opened. If no options are present then it is
  * equivalent to opening the file with the [READ][StandardOpenOption.READ] option.
