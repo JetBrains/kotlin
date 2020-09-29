@@ -13,6 +13,7 @@
       <name>io.netty.util.concurrent.Promise</name>
       <name>io.netty.util.internal</name>
       <name>java.awt.List</name>
+      <name>jdk.internal</name>
       <name>kotlin.reflect.jvm.internal</name>
       <name>org.jetbrains.concurrency.InternalPromiseUtil</name>
       <name>sun.reflect.generics.reflectiveObjects.NotImplementedException</name>
