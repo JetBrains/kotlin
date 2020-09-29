@@ -198,12 +198,12 @@ class Fir2IrConverter(
                 processClassMembers(declaration)
             }
             is FirSimpleFunction -> {
-                declarationStorage.createIrFunction(
+                declarationStorage.getOrCreateIrFunction(
                     declaration, parent, isLocal = isLocal
                 )
             }
             is FirProperty -> {
-                declarationStorage.createIrProperty(
+                declarationStorage.getOrCreateProperty(
                     declaration, parent, isLocal = isLocal
                 )
             }

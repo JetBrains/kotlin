@@ -7,11 +7,8 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAMES
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.backend.generators.AnnotationGenerator
 import org.jetbrains.kotlin.fir.backend.generators.DelegatedMemberGenerator
 import org.jetbrains.kotlin.fir.declarations.*
@@ -30,6 +27,7 @@ import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.isKFunctionInvoke
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -51,8 +49,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class Fir2IrDeclarationStorage(
@@ -390,6 +386,15 @@ class Fir2IrDeclarationStorage(
         return symbolTable.declareSimpleFunction(signature, { Fir2IrSimpleFunctionSymbol(signature, containerSource) }, factory)
     }
 
+    fun getOrCreateIrFunction(
+        function: FirFunction<*>,
+        irParent: IrDeclarationParent?,
+        isLocal: Boolean = false,
+    ): IrSimpleFunction {
+        getCachedIrFunction(function)?.let { return it }
+        return createIrFunction(function, irParent, isLocal = isLocal)
+    }
+
     fun createIrFunction(
         function: FirFunction<*>,
         irParent: IrDeclarationParent?,
@@ -651,6 +656,15 @@ class Fir2IrDeclarationStorage(
             }
         }
         return symbolTable.declareProperty(signature, { Fir2IrPropertySymbol(signature, containerSource) }, factory)
+    }
+
+    fun getOrCreateProperty(
+        property: FirProperty,
+        irParent: IrDeclarationParent?,
+        isLocal: Boolean = false,
+    ): IrProperty {
+        getCachedIrProperty(property)?.let { return it }
+        return createIrProperty(property, irParent, isLocal = isLocal)
     }
 
     fun createIrProperty(
