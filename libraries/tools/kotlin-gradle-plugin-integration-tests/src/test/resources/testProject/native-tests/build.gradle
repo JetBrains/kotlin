@@ -20,16 +20,11 @@ repositories {
 
 kotlin {
     targets {
-        fromPreset(presets.macosX64, 'macos64')
-        fromPreset(presets.linuxX64, 'linux64')
-        fromPreset(presets.mingwX64, 'mingw64')
+        fromPreset(presets.<SingleNativeTarget>, 'host')
 
         fromPreset(presets.iosX64, 'ios')
 
-        // Test creating and accessing test binaries for cross-targets
-        fromPreset(presets.wasm32, 'wasm')
-
-        configure([macos64, linux64, mingw64, wasm]) {
+        configure([host]) {
             compilations.create("anotherTest")
             binaries {
                 test("another", [DEBUG]) {
@@ -41,14 +36,12 @@ kotlin {
 
     sourceSets {
         anotherTest
-        macos64AnotherTest.dependsOn(anotherTest)
-        linux64AnotherTest.dependsOn(anotherTest)
-        mingw64AnotherTest.dependsOn(anotherTest)
+        hostAnotherTest.dependsOn(anotherTest)
     }
 }
 
 // Check that test events are correctly reported in CLI.
-configure([macos64Test, linux64Test, mingw64Test, iosTest]){
+configure([hostTest, iosTest]){
     testLogging {
         events "passed", "skipped", "failed"
     }
@@ -58,7 +51,7 @@ configure([macos64Test, linux64Test, mingw64Test, iosTest]){
 task checkOldGet {
     doLast {
         kotlin.targets {
-            configure([macos64, linux64, mingw64]) {
+            configure([host]) {
                 println("Get test: ${binaries.getExecutable("test", DEBUG)}")
             }
         }
@@ -69,7 +62,7 @@ task checkOldGet {
 task checkOldFind {
     doLast {
         kotlin.targets {
-            configure([macos64, linux64, mingw64]) {
+            configure([host]) {
                 println("Find test: ${binaries.findExecutable("test", DEBUG)}")
             }
         }
@@ -79,7 +72,7 @@ task checkOldFind {
 task checkNewGetters {
     doLast {
         kotlin.targets {
-            configure([macos64, linux64, mingw64, wasm]) {
+            configure([host]) {
                 println("Get test: ${binaries.getTest(DEBUG).outputFile.name}")
                 println("Find test: ${binaries.findTest(DEBUG).outputFile.name}")
                 println("Get test: ${binaries.getTest("another", DEBUG).outputFile.name}")

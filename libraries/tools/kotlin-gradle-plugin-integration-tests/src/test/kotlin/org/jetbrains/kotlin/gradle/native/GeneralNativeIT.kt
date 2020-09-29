@@ -460,13 +460,15 @@ class GeneralNativeIT : BaseGradleIT() {
 
     @Test
     fun testNativeTests() = with(Project("native-tests")) {
-        val testTasks = listOf("macos64Test", "linux64Test", "mingw64Test", "iosTest")
-        val hostTestTask = "${nativeHostTargetName}Test"
+        setupWorkingDir()
+        configureSingleNativeTarget()
+        val testTasks = listOf("hostTest", "iosTest")
+        val hostTestTask = "hostTest"
 
         val suffix = if (isWindows) "exe" else "kexe"
 
-        val defaultOutputFile = "build/bin/${nativeHostTargetName}/debugTest/test.$suffix"
-        val anotherOutputFile = "build/bin/${nativeHostTargetName}/anotherDebugTest/another.$suffix"
+        val defaultOutputFile = "build/bin/host/debugTest/test.$suffix"
+        val anotherOutputFile = "build/bin/host/anotherDebugTest/another.$suffix"
 
         val hostIsMac = HostManager.hostIsMac
 
@@ -579,7 +581,7 @@ class GeneralNativeIT : BaseGradleIT() {
             }
         }
 
-        build("linkAnotherDebugTest${nativeHostTargetName}") {
+        build("linkAnotherDebugTestHost") {
             assertSuccessful()
             assertFileExists(anotherOutputFile)
         }
@@ -590,7 +592,7 @@ class GeneralNativeIT : BaseGradleIT() {
         // Check that test binaries can be accessed in a buildscript.
         build("checkNewGetters") {
             assertSuccessful()
-            val suffixes = listOf("exe", "kexe", "wasm")
+            val suffixes = listOf("kexe")
             val names = listOf("test", "another")
             val files = names.flatMap { name ->
                 suffixes.map { suffix ->
