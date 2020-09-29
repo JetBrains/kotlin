@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_REFLECT
 // FILE: test/J.java
 
