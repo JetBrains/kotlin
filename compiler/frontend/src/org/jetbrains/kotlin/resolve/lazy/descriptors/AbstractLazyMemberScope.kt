@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.declarations.AbstractPsiBasedDeclarationProvider
@@ -45,11 +46,11 @@ protected constructor(
     protected val storageManager: StorageManager = c.storageManager
     private val classDescriptors: MemoizedFunctionToNotNull<Name, List<ClassDescriptor>> =
         storageManager.createMemoizedFunction { doGetClasses(it) }
-    private val functionDescriptors: MemoizedFunctionToNotNull<Name, Collection<SimpleFunctionDescriptor>> =
+    private val functionDescriptors: MemoizedFunctionToNotNull<Name, List<SimpleFunctionDescriptor>> =
         storageManager.createMemoizedFunction { doGetFunctions(it) }
-    private val propertyDescriptors: MemoizedFunctionToNotNull<Name, Collection<PropertyDescriptor>> =
+    private val propertyDescriptors: MemoizedFunctionToNotNull<Name, List<PropertyDescriptor>> =
         storageManager.createMemoizedFunction { doGetProperties(it) }
-    private val typeAliasDescriptors: MemoizedFunctionToNotNull<Name, Collection<TypeAliasDescriptor>> =
+    private val typeAliasDescriptors: MemoizedFunctionToNotNull<Name, List<TypeAliasDescriptor>> =
         storageManager.createMemoizedFunction { doGetTypeAliases(it) }
 
     private val declaredFunctionDescriptors: MemoizedFunctionToNotNull<Name, Collection<SimpleFunctionDescriptor>> =
@@ -92,12 +93,12 @@ protected constructor(
         return functionDescriptors(name)
     }
 
-    private fun doGetFunctions(name: Name): Collection<SimpleFunctionDescriptor> {
+    private fun doGetFunctions(name: Name): List<SimpleFunctionDescriptor> {
         val result = LinkedHashSet(declaredFunctionDescriptors.invoke(name))
 
         getNonDeclaredFunctions(name, result)
 
-        return result.toList()
+        return sort(result.toList())
     }
 
     private fun getDeclaredFunctions(
@@ -138,12 +139,12 @@ protected constructor(
         return propertyDescriptors(name)
     }
 
-    private fun doGetProperties(name: Name): Collection<PropertyDescriptor> {
+    private fun doGetProperties(name: Name): List<PropertyDescriptor> {
         val result = LinkedHashSet(declaredPropertyDescriptors(name))
 
         getNonDeclaredProperties(name, result)
 
-        return result.toList()
+        return sort(result.toList())
     }
 
     private fun getDeclaredProperties(
@@ -193,17 +194,19 @@ protected constructor(
         return typeAliasDescriptors(name)
     }
 
-    private fun doGetTypeAliases(name: Name): Collection<TypeAliasDescriptor> {
+    private fun doGetTypeAliases(name: Name): List<TypeAliasDescriptor> {
         mainScope?.typeAliasDescriptors?.invoke(name)?.let { return it }
 
-        return declarationProvider.getTypeAliasDeclarations(name).map { ktTypeAlias ->
+        val typeAliases = declarationProvider.getTypeAliasDeclarations(name).map { ktTypeAlias ->
             c.descriptorResolver.resolveTypeAliasDescriptor(
                 thisDescriptor,
                 getScopeForMemberDeclarationResolution(ktTypeAlias),
                 ktTypeAlias,
                 trace
             )
-        }.toList()
+        }
+
+        return sort(typeAliases.toList())
     }
 
     protected fun computeDescriptorsFromDeclaredElements(
@@ -276,5 +279,19 @@ protected constructor(
 
         p.popIndent()
         p.println("}")
+    }
+
+    private fun <T : DeclarationDescriptor> sort(descriptors: List<T>): List<T> {
+        //   The original order of the descriptors is the order that they appear in the source files, so ideally we should preserve this
+        // order.
+        //   However, when serializing the descriptors, we currently sort them (see DescriptorSerializer.sort). At deserialization of
+        // incremental builds, some but not all of the descriptors are sorted again (see DeserializedMemberScope.addMembers), and the
+        // current sorting algorithm ensures that the order at serialization is preserved (see commit
+        // 2d7fe98e557aa6c2f43d3c433d1704230e460c73).
+        //   Therefore, to ensure the order of the descriptors in the output of clean builds is consistent with their serialized data and
+        // the output of incremental builds (KT-40882), we need to sort them here, using the same comparator used at serialization.
+        //   Once the sorting at deserialization is removed (KT-20980), and the sorting at serialization is removed, the sorting here can be
+        // removed too.
+        return descriptors.sortedWith(MemberComparator.INSTANCE)
     }
 }
