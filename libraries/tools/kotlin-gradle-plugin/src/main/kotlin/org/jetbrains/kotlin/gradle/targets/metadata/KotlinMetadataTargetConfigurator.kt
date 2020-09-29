@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.metadata
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.component.SoftwareComponentInternal
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
-import java.util.concurrent.Callable
 
 internal const val ALL_COMPILE_METADATA_CONFIGURATION_NAME = "allSourceSetsCompileDependenciesMetadata"
 internal const val ALL_RUNTIME_METADATA_CONFIGURATION_NAME = "allSourceSetsRuntimeDependenciesMetadata"
@@ -408,12 +408,12 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
                     project.locateTask<TransformKotlinGranularMetadata>(transformGranularMetadataTaskName(hierarchySourceSet.name))
                 }
 
-                val allResolutionsByModule: Map<ModuleDependencyIdentifier, List<MetadataDependencyResolution>> =
-                    mutableMapOf<ModuleDependencyIdentifier, MutableList<MetadataDependencyResolution>>().apply {
+                val allResolutionsByComponentId: Map<ComponentIdentifier, List<MetadataDependencyResolution>> =
+                    mutableMapOf<ComponentIdentifier, MutableList<MetadataDependencyResolution>>().apply {
                         transformationTaskHolders.forEach {
                             val resolutions = it.get().metadataDependencyResolutions
                             resolutions.forEach { resolution ->
-                                getOrPut(ModuleIds.fromComponent(project, resolution.dependency)) { mutableListOf() }.add(resolution)
+                                getOrPut(resolution.dependency.id) { mutableListOf() }.add(resolution)
                             }
                         }
                     }
@@ -428,8 +428,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
 
                 val artifactView = fromFiles.incoming.artifactView { view ->
                     view.componentFilter { id ->
-                        val moduleId = ModuleIds.fromComponentId(project, id)
-                        allResolutionsByModule[moduleId].let { resolutions ->
+                        allResolutionsByComponentId[id].let { resolutions ->
                             resolutions == null || resolutions.any { it !is MetadataDependencyResolution.ExcludeAsUnrequested }
                         }
                     }
@@ -438,8 +437,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
                 mutableSetOf<Any /* File | FileCollection */>().apply {
                     addAll(dependsOnCompilationOutputs)
                     artifactView.artifacts.forEach { artifact ->
-                        val resolutions =
-                            allResolutionsByModule[ModuleIds.fromComponentId(project, artifact.id.componentIdentifier)]
+                        val resolutions = allResolutionsByComponentId[artifact.id.componentIdentifier]
                         if (resolutions == null) {
                             add(artifact.file)
                         } else {

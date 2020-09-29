@@ -101,7 +101,9 @@ open class TransformKotlinGranularMetadata
 
     @get:Internal
     internal val filesByResolution: Map<out MetadataDependencyResolution, FileCollection>
-        get() = extractableFilesByResolution.mapValues { (_, value) -> project.files(value.getMetadataFilesPerSourceSet(false).values) }
+        get() = extractableFilesByResolution.mapValues { (_, value) ->
+            project.files(value.getMetadataFilesPerSourceSet(false).values)
+        }
 
     private val extractableFiles by project.provider { extractableFilesByResolution.values }
 

@@ -177,6 +177,7 @@ class DefaultKotlinSourceSet(
                         baseDir,
                         doProcessFiles = true
                     )
+
                     MetadataDependencyTransformation(
                         group, name, projectPath,
                         resolution.projectStructureMetadata,

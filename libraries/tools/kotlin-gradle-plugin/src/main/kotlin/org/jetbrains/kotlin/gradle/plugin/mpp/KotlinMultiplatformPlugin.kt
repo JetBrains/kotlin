@@ -110,6 +110,16 @@ class KotlinMultiplatformPlugin(
         project.setupGeneralKotlinExtensionParameters()
 
         project.pluginManager.apply(ScriptingGradleSubplugin::class.java)
+
+        exportProjectStructureMetadataForOtherBuilds(project)
+    }
+
+    private fun exportProjectStructureMetadataForOtherBuilds(
+        project: Project
+    ) {
+        GlobalProjectStructureMetadataStorage.registerProjectStructureMetadata(project) {
+            checkNotNull(buildKotlinProjectStructureMetadata(project))
+        }
     }
 
     private fun setupAdditionalCompilerArguments(project: Project) {
