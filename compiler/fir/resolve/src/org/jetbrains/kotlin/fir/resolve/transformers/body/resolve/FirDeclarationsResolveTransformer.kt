@@ -99,17 +99,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     }
 
     override fun transformProperty(property: FirProperty, data: ResolutionMode): CompositeTransformResult<FirProperty> {
-        if (property is FirSyntheticProperty) {
-            val delegate = property.getter.delegate
-            if (delegate.origin == FirDeclarationOrigin.IntersectionOverride) {
-                val unwrapped = delegate.symbol.overriddenSymbol!!.fir
-                transformSimpleFunction(unwrapped, data)
-                delegate.replaceReturnTypeRef(unwrapped.returnTypeRef)
-            } else {
-                transformSimpleFunction(delegate, data)
-            }
-            return property.compose()
-        }
+        require(property !is FirSyntheticProperty) { "Synthetic properties should not be processed by body transfromers" }
 
         if (property.isLocal) {
             prepareSignatureForBodyResolve(property)
