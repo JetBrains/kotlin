@@ -143,7 +143,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                                 storeVariableReturnType(property)
                             }
                             withLocalScopeCleanup {
-                                if (property.receiverTypeRef == null) {
+                                if (property.receiverTypeRef == null && property.returnTypeRef !is FirImplicitTypeRef) {
                                     addLocalScope(FirLocalScope().storeBackingField(property))
                                 }
                                 property.transformAccessors()
