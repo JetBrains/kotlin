@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.symbols.PossiblyFirFakeOverrideSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -228,12 +229,13 @@ class FakeOverrideGenerator(
 
     private fun IrProperty.discardAccessorsAccordingToBaseVisibility(baseSymbols: List<FirPropertySymbol>) {
         for (baseSymbol in baseSymbols) {
+            val unwrapped = baseSymbol.unwrapSubstitutionOverrides()
             // Do not create fake overrides for accessors if not allowed to do so, e.g., private lateinit var.
-            if (baseSymbol.fir.getter?.allowsToHaveFakeOverride != true) {
+            if (unwrapped.fir.getter?.allowsToHaveFakeOverride != true) {
                 getter = null
             }
             // or private setter
-            if (baseSymbol.fir.setter?.allowsToHaveFakeOverride != true) {
+            if (unwrapped.fir.setter?.allowsToHaveFakeOverride != true) {
                 setter = null
             }
         }
