@@ -1,6 +1,8 @@
 // !LANGUAGE: -UseCorrectExecutionOrderForVarargArguments
 // WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
+// TARGET_BACKEND: JVM
+// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND_FIR: JVM_IR
 
 fun foo(vararg x: Unit, y: Any) {}
 

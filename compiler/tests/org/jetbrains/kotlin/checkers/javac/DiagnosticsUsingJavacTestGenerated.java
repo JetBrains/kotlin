@@ -3371,6 +3371,16 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/checkArguments/booleanExpressions.kt");
             }
 
+            @TestMetadata("kt17691.kt")
+            public void testKt17691() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/checkArguments/kt17691.kt");
+            }
+
+            @TestMetadata("kt17691WithEnabledFeature.kt")
+            public void testKt17691WithEnabledFeature() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/checkArguments/kt17691WithEnabledFeature.kt");
+            }
+
             @TestMetadata("kt1897_diagnostic_part.kt")
             public void testKt1897_diagnostic_part() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/checkArguments/kt1897_diagnostic_part.kt");

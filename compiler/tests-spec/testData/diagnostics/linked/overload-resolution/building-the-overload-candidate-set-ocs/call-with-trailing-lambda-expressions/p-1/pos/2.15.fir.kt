@@ -2,16 +2,6 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION -NOTHING_TO_INLINE
 // SKIP_TXT
 
-/*
- * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
- *
- * SPEC VERSION: 0.1-300
- * MAIN LINK: overload-resolution, building-the-overload-candidate-set-ocs, call-with-trailing-lambda-expressions -> paragraph 1 -> sentence 2
- * PRIMARY LINKS: overload-resolution, building-the-overload-candidate-set-ocs, call-with-named-parameters -> paragraph 2 -> sentence 1
- * overload-resolution, building-the-overload-candidate-set-ocs, call-with-specified-type-parameters -> paragraph 1 -> sentence 2
- * NUMBER: 15
- * DESCRIPTION: call-with-trailing-lambda-expressions,Explicit receiver: The overload candidate sets for each pair of implicit receivers: declared in the package scope extension callables
- */
 
 // FILE: TestCase.kt
 // TESTCASE NUMBER: 1
@@ -23,7 +13,7 @@ import libPackageCase1Explicit.listOf
 class Case1() {
 
     fun case1() {
-        <!DEBUG_INFO_CALL("fqName: testsCase1.listOf; typeCall: extension function")!>listOf(<!CHANGING_ARGUMENTS_EXECUTION_ORDER_FOR_NAMED_VARARGS!>elements1 = arrayOf(1)<!>, body = { "" })<!>
+        <!DEBUG_INFO_CALL("fqName: testsCase1.listOf; typeCall: extension function")!>listOf(elements1 = arrayOf(1), body = { "" })<!>
     }
 }
 
@@ -55,7 +45,7 @@ import libPackageCase2Explicit.listOf
 class Case2() {
 
     fun case1() {
-        <!DEBUG_INFO_CALL("fqName: testsCase2.listOf; typeCall: extension function")!>listOf(<!CHANGING_ARGUMENTS_EXECUTION_ORDER_FOR_NAMED_VARARGS!>elements1 = arrayOf(1)<!>, body = { "" })<!>
+        <!DEBUG_INFO_CALL("fqName: testsCase2.listOf; typeCall: extension function")!>listOf(elements1 = arrayOf(1), body = { "" })<!>
     }
 }
 
@@ -95,7 +85,7 @@ import libPackageCase3Explicit.listOf
 class Case3() {
 
     fun case1() {
-        <!DEBUG_INFO_CALL("fqName: testsCase3.A.invoke; typeCall: variable&invoke")!>listOf(<!CHANGING_ARGUMENTS_EXECUTION_ORDER_FOR_NAMED_VARARGS!>elements1 = arrayOf(1)<!>, body = { "" })<!>
+        <!DEBUG_INFO_CALL("fqName: testsCase3.A.invoke; typeCall: variable&invoke")!>listOf(elements1 = arrayOf(1), body = { "" })<!>
     }
 }
 
@@ -124,5 +114,3 @@ val Case3.listOf: A
 private fun <T> Case3.listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
 public fun <T> listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
-
-

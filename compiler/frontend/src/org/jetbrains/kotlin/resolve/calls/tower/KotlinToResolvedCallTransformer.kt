@@ -630,7 +630,7 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor>() : ResolvedCall<D>
     private fun createValueArguments(): Map<ValueParameterDescriptor, ResolvedValueArgument> =
         LinkedHashMap<ValueParameterDescriptor, ResolvedValueArgument>().also { result ->
             val needToUseCorrectExecutionOrderForVarargArguments =
-                languageVersionSettings.getFeatureSupport(LanguageFeature.UseCorrectExecutionOrderForVarargArguments) == LanguageFeature.State.ENABLED
+                languageVersionSettings.supportsFeature(LanguageFeature.UseCorrectExecutionOrderForVarargArguments)
             var varargMappings: MutableList<Pair<ValueParameterDescriptor, VarargValueArgument>>? = null
             for ((originalParameter, resolvedCallArgument) in argumentMappingByOriginal) {
                 val resultingParameter = resultingDescriptor.valueParameters[originalParameter.index]
