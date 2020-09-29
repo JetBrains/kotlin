@@ -937,6 +937,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/abstractSuperCall.kt");
         }
 
+        @TestMetadata("abstractSuperCallInPresenseOfNonAbstractMethodInParent.kt")
+        public void testAbstractSuperCallInPresenseOfNonAbstractMethodInParent() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/abstractSuperCallInPresenseOfNonAbstractMethodInParent.kt");
+        }
+
         public void testAllFilesPresentInDiagnostics() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/diagnostics"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
