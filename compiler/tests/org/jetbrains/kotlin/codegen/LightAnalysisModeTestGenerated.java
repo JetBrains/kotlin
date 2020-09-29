@@ -6466,11 +6466,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Coroutines extends AbstractLightAnalysisModeTest {
-        @TestMetadata("suspendFunctionMethodReference.kt")
-        public void ignoreSuspendFunctionMethodReference() throws Exception {
-            runTest("compiler/testData/codegen/box/coroutines/suspendFunctionMethodReference.kt");
-        }
-
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }
@@ -7306,6 +7301,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("suspendFunImportedFromObject.kt")
         public void testSuspendFunImportedFromObject_1_3() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunImportedFromObject.kt", "kotlin.coroutines");
+        }
+
+        @TestMetadata("suspendFunctionMethodReference.kt")
+        public void testSuspendFunctionMethodReference() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendFunctionMethodReference.kt");
         }
 
         @TestMetadata("suspendImplBridge.kt")
