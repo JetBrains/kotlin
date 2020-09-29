@@ -23,6 +23,7 @@ class StringConcatGenerator(val mode: JvmRuntimeStringConcat, val mv: Instructio
 
     private val template = StringBuilder("")
     private val paramTypes = arrayListOf<Type>()
+    private var justFlushed = false
 
     @JvmOverloads
     fun genStringBuilderConstructorIfNeded(swap: Boolean = false) {
@@ -37,6 +38,7 @@ class StringConcatGenerator(val mode: JvmRuntimeStringConcat, val mv: Instructio
 
     @JvmOverloads
     fun putValueOrProcessConstant(stackValue: StackValue, type: Type = stackValue.type, kotlinType: KotlinType? = stackValue.kotlinType) {
+        justFlushed = false
         if (mode == JvmRuntimeStringConcat.ENABLE) {
             when (stackValue) {
                 is StackValue.Constant -> {
@@ -70,6 +72,7 @@ class StringConcatGenerator(val mode: JvmRuntimeStringConcat, val mv: Instructio
                 false
             )
         } else {
+            justFlushed = false
             paramTypes.add(type)
             template.append("\u0001")
             if (paramTypes.size == 200) {
@@ -77,6 +80,7 @@ class StringConcatGenerator(val mode: JvmRuntimeStringConcat, val mv: Instructio
                 // because of `StringConcatFactory` limitation add use it as new argument for further processing:
                 // "The number of parameter slots in {@code concatType} is less than or equal to 200"
                 genToString()
+                justFlushed = true
             }
         }
     }
@@ -86,21 +90,38 @@ class StringConcatGenerator(val mode: JvmRuntimeStringConcat, val mv: Instructio
             mv.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)
         } else {
             //if state was flushed in `invokeAppend` do nothing
-            if (template.isEmpty() && paramTypes.size == 1 && paramTypes[0] == JAVA_STRING_TYPE) return
-            val bootstrap = Handle(
-                Opcodes.H_INVOKESTATIC,
-                "java/lang/invoke/StringConcatFactory",
-                "makeConcatWithConstants",
-                "(Ljava/lang/invoke/MethodHandles\$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/invoke/CallSite;",
-                false
-            )
+            if (justFlushed) return
+            if (mode == JvmRuntimeStringConcat.ENABLE) {
+                val bootstrap = Handle(
+                    Opcodes.H_INVOKESTATIC,
+                    "java/lang/invoke/StringConcatFactory",
+                    "makeConcatWithConstants",
+                    "(Ljava/lang/invoke/MethodHandles\$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/invoke/CallSite;",
+                    false
+                )
 
-            mv.invokedynamic(
-                "makeConcatWithConstants",
-                Type.getMethodDescriptor(JAVA_STRING_TYPE, *paramTypes.toTypedArray()),
-                bootstrap,
-                arrayOf(template.toString())
-            )
+                mv.invokedynamic(
+                    "makeConcatWithConstants",
+                    Type.getMethodDescriptor(JAVA_STRING_TYPE, *paramTypes.toTypedArray()),
+                    bootstrap,
+                    arrayOf(template.toString())
+                )
+            } else {
+                val bootstrap = Handle(
+                    Opcodes.H_INVOKESTATIC,
+                    "java/lang/invoke/StringConcatFactory",
+                    "makeConcat",
+                    "(Ljava/lang/invoke/MethodHandles\$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;",
+                    false
+                )
+
+                mv.invokedynamic(
+                    "makeConcat",
+                    Type.getMethodDescriptor(JAVA_STRING_TYPE, *paramTypes.toTypedArray()),
+                    bootstrap,
+                    arrayOf()
+                )
+            }
             template.clear()
             paramTypes.clear()
             paramTypes.add(JAVA_STRING_TYPE)
