@@ -38,6 +38,7 @@ object SanityTestElementPicker {
         is KtSimpleNameStringTemplateEntry, is KtBlockStringTemplateEntry, is KtSuperTypeCallEntry -> true
         is KtClassOrObject -> element.body?.children?.size ?: 0 > 4
         is KtContainerNode -> true
+        is KtWhenEntry -> true
         else -> false
     }
 
