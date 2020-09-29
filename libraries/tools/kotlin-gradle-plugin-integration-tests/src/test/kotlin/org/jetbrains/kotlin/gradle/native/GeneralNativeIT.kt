@@ -47,6 +47,44 @@ internal object MPPNativeTargets {
     val supported = listOf("linux64", "macos64", "mingw64").filter { !unsupported.contains(it) }
 }
 
+private fun BaseGradleIT.transformNativeTestProject(projectName: String, directoryPrefix: String? = null): BaseGradleIT.Project {
+    val project = Project(projectName, directoryPrefix = directoryPrefix)
+    project.setupWorkingDir()
+    project.configureSingleNativeTarget()
+    project.configureMemoryInGradleProperties()
+    return project
+}
+
+fun BaseGradleIT.transformNativeTestProjectWithPluginDsl(projectName: String, wrapperVersion: GradleVersionRequired = defaultGradleVersion, directoryPrefix: String? = null): BaseGradleIT.Project {
+    val project = transformProjectWithPluginsDsl(projectName, wrapperVersion, directoryPrefix = directoryPrefix)
+    project.configureSingleNativeTarget()
+    project.configureMemoryInGradleProperties()
+    return project
+}
+
+internal fun BaseGradleIT.Project.configureMemoryInGradleProperties() {
+    val files = projectDir.walk()
+        .filter { it.isFile && (it.name == "gradle.properties") }.toMutableList()
+    if (files.isEmpty()) {
+        files.add(projectDir.resolve("gradle.properties").also { it.createNewFile() })
+    }
+    files.forEach { file ->
+        file.appendText("\norg.gradle.jvmargs=-Xmx1g\n")
+    }
+}
+
+private const val SINGLE_NATIVE_TARGET_PLACEHOLDER = "<SingleNativeTarget>"
+
+private fun BaseGradleIT.Project.configureSingleNativeTarget(preset: String = HostManager.host.presetName) {
+    projectDir.walk()
+        .filter { it.isFile && (it.name == "build.gradle.kts" || it.name == "build.gradle") }
+        .forEach { file ->
+            file.modify {
+                it.replace(SINGLE_NATIVE_TARGET_PLACEHOLDER, preset)
+            }
+        }
+}
+
 class GeneralNativeIT : BaseGradleIT() {
 
     val nativeHostTargetName = MPPNativeTargets.current
@@ -57,20 +95,8 @@ class GeneralNativeIT : BaseGradleIT() {
     override val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.FOR_MPP_SUPPORT
 
-    private val SINGLE_NATIVE_TARGET_PLACHOLDER = "<SingleNativeTarget>"
-
-    private fun Project.configureSingleNativeTarget(preset: String = HostManager.host.presetName) {
-        projectDir.walk()
-            .filter { it.isFile && (it.name == "build.gradle.kts" || it.name == "build.gradle") }
-            .forEach { file ->
-                file.modify {
-                    it.replace(SINGLE_NATIVE_TARGET_PLACHOLDER, preset)
-                }
-            }
-    }
-
     @Test
-    fun testParallelExecutionSmoke(): Unit = with(transformProjectWithPluginsDsl("native-parallel")) {
+    fun testParallelExecutionSmoke(): Unit = with(transformNativeTestProjectWithPluginDsl("native-parallel")) {
         // Check that the K/N compiler can be started in-process in parallel.
         build(":one:compileKotlinLinux", ":two:compileKotlinLinux") {
             assertSuccessful()
@@ -78,8 +104,7 @@ class GeneralNativeIT : BaseGradleIT() {
     }
 
     @Test
-    fun testIncorrectDependenciesWarning() = with(Project("sample-lib", directoryPrefix = "new-mpp-lib-and-app")) {
-        setupWorkingDir()
+    fun testIncorrectDependenciesWarning() = with(transformNativeTestProject("sample-lib", directoryPrefix = "new-mpp-lib-and-app")) {
         gradleBuildScript().modify {
             it.replace(
                 "api 'org.jetbrains.kotlin:kotlin-stdlib-common'",
@@ -100,11 +125,8 @@ class GeneralNativeIT : BaseGradleIT() {
     @Test
     fun testEndorsedLibsController() {
         with(
-            transformProjectWithPluginsDsl("native-endorsed")
+            transformNativeTestProjectWithPluginDsl("native-endorsed")
         ) {
-            configureSingleNativeTarget()
-            setupWorkingDir()
-
             build("build") {
                 assertSuccessful()
             }
@@ -118,9 +140,7 @@ class GeneralNativeIT : BaseGradleIT() {
     }
 
     @Test
-    fun testCanProduceNativeLibraries() = with(transformProjectWithPluginsDsl("libraries", directoryPrefix = "native-binaries")) {
-        configureSingleNativeTarget()
-
+    fun testCanProduceNativeLibraries() = with(transformNativeTestProjectWithPluginDsl("libraries", directoryPrefix = "native-binaries")) {
         val baseName = "native_library"
 
         val sharedPrefix = CompilerOutputKind.DYNAMIC.prefix(HostManager.host)
@@ -194,7 +214,7 @@ class GeneralNativeIT : BaseGradleIT() {
     }
 
     @Test
-    fun testCanProduceNativeFrameworks() = with(transformProjectWithPluginsDsl("frameworks", directoryPrefix = "native-binaries")) {
+    fun testCanProduceNativeFrameworks() = with(transformNativeTestProjectWithPluginDsl("frameworks", directoryPrefix = "native-binaries")) {
         Assume.assumeTrue(HostManager.hostIsMac)
 
         val baseName = "main"
@@ -271,9 +291,7 @@ class GeneralNativeIT : BaseGradleIT() {
     }
 
     @Test
-    fun testExportApiOnlyToLibraries() = with(transformProjectWithPluginsDsl("libraries", directoryPrefix = "native-binaries")) {
-        configureSingleNativeTarget()
-
+    fun testExportApiOnlyToLibraries() = with(transformNativeTestProjectWithPluginDsl("libraries", directoryPrefix = "native-binaries")) {
         // Check that plugin doesn't allow exporting dependencies not added in the API configuration.
         gradleBuildScript().modify {
             it.replace("api(project(\":exported\"))", "")
@@ -303,9 +321,7 @@ class GeneralNativeIT : BaseGradleIT() {
         }
 
     @Test
-    fun testNativeExecutables() = with(transformProjectWithPluginsDsl("executables", directoryPrefix = "native-binaries")) {
-        configureSingleNativeTarget()
-
+    fun testNativeExecutables() = with(transformNativeTestProjectWithPluginDsl("executables", directoryPrefix = "native-binaries")) {
         val binaries = mutableListOf(
             "debugExecutable" to "native-binary",
             "releaseExecutable" to "native-binary",
@@ -362,7 +378,7 @@ class GeneralNativeIT : BaseGradleIT() {
     }
 
     private fun testNativeBinaryDsl(project: String) = with(
-        transformProjectWithPluginsDsl(project, directoryPrefix = "native-binaries")
+        transformNativeTestProjectWithPluginDsl(project, directoryPrefix = "native-binaries")
     ) {
         val hostSuffix = nativeHostTargetName.capitalize()
 
@@ -383,10 +399,8 @@ class GeneralNativeIT : BaseGradleIT() {
 
     @Test
     fun testKotlinOptions() = with(
-        transformProjectWithPluginsDsl("native-kotlin-options")
+        transformNativeTestProjectWithPluginDsl("native-kotlin-options")
     ) {
-        configureSingleNativeTarget()
-
         build(":compileKotlinHost") {
             assertSuccessful()
             checkNativeCommandLineFor(":compileKotlinHost") {
@@ -413,7 +427,7 @@ class GeneralNativeIT : BaseGradleIT() {
     // TODO: Reenable the test when the args are separated.
     @Ignore
     @Test
-    fun testNativeFreeArgsWarning() = with(transformProjectWithPluginsDsl("kotlin-dsl", directoryPrefix = "native-binaries")) {
+    fun testNativeFreeArgsWarning() = with(transformNativeTestProjectWithPluginDsl("kotlin-dsl", directoryPrefix = "native-binaries")) {
         gradleBuildScript().appendText(
             """kotlin.targets["macos64"].compilations["main"].kotlinOptions.freeCompilerArgs += "-opt""""
         )
@@ -459,9 +473,7 @@ class GeneralNativeIT : BaseGradleIT() {
         }
 
     @Test
-    fun testNativeTests() = with(Project("native-tests")) {
-        setupWorkingDir()
-        configureSingleNativeTarget()
+    fun testNativeTests() = with(transformNativeTestProject("native-tests")) {
         val testTasks = listOf("hostTest", "iosTest")
         val hostTestTask = "hostTest"
 
@@ -588,7 +600,7 @@ class GeneralNativeIT : BaseGradleIT() {
     }
 
     @Test
-    fun testNativeTestGetters() = with(Project("native-tests")) {
+    fun testNativeTestGetters() = with(transformNativeTestProject("native-tests")) {
         // Check that test binaries can be accessed in a buildscript.
         build("checkNewGetters") {
             assertSuccessful()
@@ -636,8 +648,7 @@ class GeneralNativeIT : BaseGradleIT() {
     @Test
     fun kt33750() {
         // Check that build fails if a test executable crashes.
-        with(Project("native-tests")) {
-            setupWorkingDir()
+        with(transformNativeTestProject("native-tests")) {
             projectDir.resolve("src/commonTest/kotlin/test.kt").appendText("\nval fail: Int = error(\"\")\n")
             build("check") {
                 assertFailed()
@@ -648,9 +659,7 @@ class GeneralNativeIT : BaseGradleIT() {
 
     @Test
     fun testCinterop() {
-        with(transformProjectWithPluginsDsl("native-cinterop")) {
-            configureSingleNativeTarget()
-
+        with(transformNativeTestProjectWithPluginDsl("native-cinterop")) {
             build(":build") {
                 assertSuccessful()
                 assertFileExists("build/libs/host/main/native-cinterop-cinterop-number.klib")
@@ -761,8 +770,7 @@ class GeneralNativeIT : BaseGradleIT() {
     }
 
     @Test
-    fun testNativeArgsWithSpaces() = with(Project("sample-lib", directoryPrefix = "new-mpp-lib-and-app")) {
-        setupWorkingDir()
+    fun testNativeArgsWithSpaces() = with(transformNativeTestProject("sample-lib", directoryPrefix = "new-mpp-lib-and-app")) {
         val compilcatedDirectoryName = if (HostManager.hostIsMingw) {
             // Windows doesn't allow creating a file with " in its name.
             "path with spaces"

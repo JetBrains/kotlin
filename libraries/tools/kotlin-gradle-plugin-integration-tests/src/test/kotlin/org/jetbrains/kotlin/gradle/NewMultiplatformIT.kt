@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.native.MPPNativeTargets
+import org.jetbrains.kotlin.gradle.native.transformNativeTestProjectWithPluginDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.*
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
@@ -54,8 +55,8 @@ class NewMultiplatformIT : BaseGradleIT() {
         libProjectName: String,
         appProjectName: String
     ) {
-        val libProject = transformProjectWithPluginsDsl(libProjectName, directoryPrefix = "new-mpp-lib-and-app")
-        val appProject = transformProjectWithPluginsDsl(appProjectName, directoryPrefix = "new-mpp-lib-and-app")
+        val libProject = transformNativeTestProjectWithPluginDsl(libProjectName, directoryPrefix = "new-mpp-lib-and-app")
+        val appProject = transformNativeTestProjectWithPluginDsl(appProjectName, directoryPrefix = "new-mpp-lib-and-app")
         val oldStyleAppProject = Project("sample-old-style-app", directoryPrefix = "new-mpp-lib-and-app")
 
         val compileTasksNames =

@@ -44,6 +44,7 @@ class NativePlatformLibsIT : BaseGradleIT() {
                     "kotlin.$it()"
                 }
             )
+            configureMemoryInGradleProperties()
         }
 
     private fun deleteInstalledCompilers() {
@@ -92,6 +93,7 @@ class NativePlatformLibsIT : BaseGradleIT() {
 
         val rootProject = Project("native-platform-libraries").apply {
             embedProject(Project("native-platform-libraries"), renameTo = "subproject")
+            configureMemoryInGradleProperties()
             gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
 
             gradleBuildScript().appendText("\nkotlin.linuxX64()\n")
