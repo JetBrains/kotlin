@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.konan.optimizations
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
 import org.jetbrains.kotlin.backend.konan.descriptors.isBuiltInOperator
-import org.jetbrains.kotlin.backend.konan.ir.allParameters
+import org.jetbrains.kotlin.backend.common.ir.allParameters
 import org.jetbrains.kotlin.backend.konan.ir.isOverridableOrOverrides
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.isExported

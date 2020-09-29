@@ -26,18 +26,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val IrField.fqNameForIrSerialization: FqName get() = this.parent.fqNameForIrSerialization.child(this.name)
 
-/**
- * @return naturally-ordered list of all parameters available inside the function body.
- */
-val IrFunction.allParameters: List<IrValueParameter>
-    get() = if (this is IrConstructor) {
-        listOf(this.constructedClass.thisReceiver
-                ?: error(this.descriptor)
-        ) + explicitParameters
-    } else {
-        explicitParameters
-    }
-
 fun IrClass.isUnit() = this.fqNameForIrSerialization == StandardNames.FqNames.unit.toSafe()
 
 fun IrClass.isKotlinArray() = this.fqNameForIrSerialization == StandardNames.FqNames.array.toSafe()

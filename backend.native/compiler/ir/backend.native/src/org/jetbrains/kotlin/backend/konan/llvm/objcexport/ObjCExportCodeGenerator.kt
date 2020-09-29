@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.llvm.objcexport
 
 import llvm.*
+import org.jetbrains.kotlin.backend.common.ir.allParameters
 import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*

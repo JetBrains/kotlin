@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.common.descriptors.allParameters
-import org.jetbrains.kotlin.backend.konan.ir.allParameters
+import org.jetbrains.kotlin.backend.common.ir.allParameters
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFunction

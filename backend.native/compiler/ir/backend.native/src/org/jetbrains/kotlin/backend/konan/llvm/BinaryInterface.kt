@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.LLVMTypeRef
+import org.jetbrains.kotlin.backend.common.ir.allParameters
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.backend.common.serialization.mangle.SpecialDeclarationType
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.descriptors.externalSymbolOrThrow
 import org.jetbrains.kotlin.backend.konan.descriptors.getAnnotationStringValue
 import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
-import org.jetbrains.kotlin.backend.konan.ir.allParameters
 import org.jetbrains.kotlin.backend.konan.ir.isUnit
 import org.jetbrains.kotlin.backend.konan.isExternalObjCClass
 import org.jetbrains.kotlin.backend.konan.isKotlinObjCClass
