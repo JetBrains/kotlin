@@ -609,7 +609,10 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
                     val packageJson = Gson().fromJson(it, PackageJson::class.java)
                     val devDep = "42"
                     val devDepVersion = "0.0.1"
-                    assertTrue("There is expected dev dependency \"$devDep\": \"$devDepVersion\" in package.json") {
+                    assertTrue(
+                        "Dev dependency \"$devDep\": \"$devDepVersion\" in package.json expected, but actual:\n" +
+                                "${packageJson.devDependencies}"
+                    ) {
                         val devDependencies = packageJson.devDependencies
                         devDependencies
                             .containsKey(devDep) &&
@@ -618,7 +621,10 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
 
                     val dep = "@yworks/optimizer"
                     val depVersion = "1.0.6"
-                    assertTrue("There is expected dependency \"$dep\": \"$depVersion\" in package.json") {
+                    assertTrue(
+                        "Dependency \"$dep\": \"$depVersion\" in package.json expected, but actual:\n" +
+                                "${packageJson.dependencies}"
+                    ) {
                         val dependencies = packageJson.dependencies
                         dependencies
                             .containsKey(dep) &&
@@ -627,7 +633,10 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
 
                     val peerDep = "date-arithmetic"
                     val peerDepVersion = "4.1.0"
-                    assertTrue("There is expected peer dependency \"$peerDep\": \"$peerDepVersion\" in package.json") {
+                    assertTrue(
+                        "Peer dependency \"$peerDep\": \"$peerDepVersion\" in package.json expected, but actual:\n" +
+                                "${packageJson.peerDependencies}"
+                    ) {
                         val peerDependencies = packageJson.peerDependencies
                         peerDependencies
                             .containsKey(peerDep) &&
