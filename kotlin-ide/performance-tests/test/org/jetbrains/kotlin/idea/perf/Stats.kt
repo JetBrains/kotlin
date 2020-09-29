@@ -195,7 +195,7 @@ class Stats(
                         if (k == TEST_KEY) continue
                         (v as? Number)?.let {
                             childrenMetrics.add(Metric(k, v))
-                            TeamCity.metadata(n, k, it)
+                            //TeamCity.metadata(n, k, it)
                         }
                     }
                 }
@@ -263,7 +263,7 @@ class Stats(
                 triggerGC(attempt)
 
                 val setUpMillis = measureTimeMillis {
-                    phaseData.setUp(testData)
+                    //phaseData.setUp(testData)
                 }
                 val attemptName = "${phaseData.testName} #$attempt"
                 logMessage { "$attemptName setup took $setUpMillis ms" }
@@ -273,7 +273,7 @@ class Stats(
                 try {
                     phaseProfiler.start()
                     valueMap[TEST_KEY] = measureNanoTime {
-                        phaseData.test(testData)
+                        //phaseData.test(testData)
                     }
 
                     PerformanceCounter.report { name, counter, nanos ->
@@ -289,7 +289,7 @@ class Stats(
                     phaseProfiler.stop()
                     try {
                         val tearDownMillis = measureTimeMillis {
-                            phaseData.tearDown(testData)
+                            //phaseData.tearDown(testData)
                         }
                         logMessage { "$attemptName tearDown took $tearDownMillis ms" }
                     } catch (t: Throwable) {
