@@ -1,5 +1,4 @@
 // !LANGUAGE: +SuspendConversion
-// IGNORE_BACKEND_FIR: JVM_IR
 // FILE: suspendCovnersion.kt
 
 fun checkNotEqual(x: Any, y: Any) {

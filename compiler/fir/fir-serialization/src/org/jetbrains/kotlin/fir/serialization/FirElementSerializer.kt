@@ -649,10 +649,19 @@ class FirElementSerializer private constructor(
     }
 
     private fun fillFromPossiblyInnerType(builder: ProtoBuf.Type.Builder, type: ConeClassLikeType) {
-        val classifierSymbol = type.lookupTag.toSymbol(session) ?: error("Can't lookup $type")
-        val classifier = classifierSymbol.fir
-        val classifierId = getClassifierId(classifier)
-        builder.className = classifierId
+        val classifierSymbol = type.lookupTag.toSymbol(session)
+        when {
+            classifierSymbol != null -> {
+                val classifier = classifierSymbol.fir
+                val classifierId = getClassifierId(classifier)
+                builder.className = classifierId
+            }
+            // Special case: `Continuation` can be added via [transformSuspendFunctionToRuntimeFunctionType]
+            type.lookupTag.classId == CONTINUATION_INTERFACE_CLASS_ID -> {
+                builder.className = stringTable.getQualifiedClassNameIndex(type.lookupTag.classId.asString(), isLocal = false)
+            }
+            else -> error("Can't lookup $type")
+        }
 
         for (projection in type.typeArguments) {
             builder.addArgument(typeArgument(projection))
