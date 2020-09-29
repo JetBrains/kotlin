@@ -43,6 +43,7 @@ class StringPlus : IntrinsicMethod() {
                     )
                 } else {
                     generator.invokeAppend(AsmTypes.JAVA_STRING_TYPE)
+                    //TODO: process constants properly, do not upcast to object
                     generator.invokeAppend(AsmTypes.OBJECT_TYPE)
                     generator.genToString()
                 }
