@@ -21,8 +21,30 @@ data class NpmRange(
     val endVersion: SemVer? = null,
     val endInclusive: Boolean = false
 ) {
-    override fun toString(): String =
-        "${if (startVersion != null) "${if (startInclusive) GTEQ else GT}$startVersion" else ""} ${if (endVersion != null) "${if (endInclusive) LTEQ else LT}$endVersion" else ""}"
+    override fun toString(): String {
+        if (startVersion == endVersion && startInclusive && endInclusive) {
+            return startVersion.toString()
+        }
+
+        val start = if (startVersion != null)
+            "${if (startInclusive) GTEQ else GT}$startVersion"
+        else
+            ""
+
+        val end = if (endVersion != null)
+            "${if (endInclusive) LTEQ else LT}$endVersion"
+        else
+            ""
+
+        return if (start.isEmpty())
+            end
+        else {
+            if (end.isEmpty())
+                start
+            else
+                "$start $end"
+        }
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
