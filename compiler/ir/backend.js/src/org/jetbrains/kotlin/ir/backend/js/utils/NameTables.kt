@@ -351,7 +351,7 @@ class NameTables(
             declaration !is IrDeclarationWithName ->
                 return
 
-            declaration.isEffectivelyExternal() && (declaration.getJsModule() == null || declaration.isJsNonModule()) ->
+            declaration.isEffectivelyExternal() && !declaration.isImportedFromModuleOnly() ->
                 globalNames.declareStableName(declaration, declaration.getJsNameOrKotlinName().identifier)
 
             else ->

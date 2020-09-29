@@ -73,8 +73,7 @@ class StableNamesCollector : IrElementVisitorVoid {
             return null
         }
 
-        val importedFromModuleOnly =
-            declaration.getJsModule() != null && !declaration.isJsNonModule()
+        val importedFromModuleOnly = declaration.isImportedFromModuleOnly()
 
         val jsName = declaration.getJsName()
         val jsQualifier = declaration.getJsQualifier()

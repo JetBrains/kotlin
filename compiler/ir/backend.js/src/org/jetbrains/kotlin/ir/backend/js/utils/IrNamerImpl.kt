@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
+import org.jetbrains.kotlin.backend.common.ir.isTopLevel
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -54,14 +55,14 @@ class IrNamerImpl(private val newNameTables: NameTables) : IrNamer {
         getNameForStaticDeclaration(function)
 
     override fun getNameForProperty(property: IrProperty): JsName =
-        property.getJsNameOrKotlinName().asString().toJsName()
+        if (property.isTopLevel) getNameForStaticDeclaration(property) else property.getJsNameOrKotlinName().asString().toJsName()
 
     override fun getRefForExternalClass(klass: IrClass): JsNameRef {
         val parent = klass.parent
         if (klass.isCompanion)
             return getRefForExternalClass(parent as IrClass)
 
-        val currentClassName = klass.getJsNameOrKotlinName().identifier
+        val currentClassName = if (klass.isTopLevel) getNameForStaticDeclaration(klass).ident else klass.getJsNameOrKotlinName().identifier
         return when (parent) {
             is IrClass ->
                 JsNameRef(currentClassName, getRefForExternalClass(parent))
