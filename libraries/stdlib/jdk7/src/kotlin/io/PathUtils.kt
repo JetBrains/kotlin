@@ -44,6 +44,47 @@ public val Path.invariantSeparatorsPath: String
 public val Path.nameWithoutExtension: String
     get() = fileName.toString().substringBeforeLast(".")
 
+/**
+ * Calculates the relative path for this file from [base] file.
+ * Note that the [base] file is treated as a directory.
+ * If this file matches the [base] file, then a [File] with empty path will be returned.
+ *
+ * @return File with relative path from [base] to this.
+ *
+ * @throws IllegalArgumentException if this and base paths have different roots.
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+public fun Path.relativeTo(base: Path): Path = base.relativize(this)
+
+/**
+ * Calculates the relative path for this file from [base] file.
+ * Note that the [base] file is treated as a directory.
+ * If this file matches the [base] file, then a [Path] with empty path will be returned.
+ *
+ * @return Path with relative path from [base] to this, or `this` if this and base paths have different roots.
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+public fun Path.relativeToOrSelf(base: Path): Path =
+    relativeToOrNull(base) ?: this
+
+/**
+ * Calculates the relative path for this file from [base] path.
+ * Note that the [base] path is treated as a directory.
+ * If this file matches the [base] file, then a [Path] with empty path will be returned.
+ *
+ * @return Path with relative path from [base] to this, or `null` if this and base paths have different roots.
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+public fun Path.relativeToOrNull(base: Path): Path? {
+    return try {
+        base.relativize(this)
+    } catch (e: IllegalArgumentException) {
+        null
+    }
+}
 
 /**
  * Copies this path to the given [target] path.

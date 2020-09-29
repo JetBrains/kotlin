@@ -5,10 +5,13 @@
 
 package kotlin.jdk7.test
 
+import java.io.File
 import java.nio.file.*
 import kotlin.test.*
 
 class PathExtensionsTest {
+    private val isCaseInsensitiveFileSystem = Paths.get("C:/") == Paths.get("c:/")
+    private val isBackslashSeparator = File.separatorChar == '\\'
 
     @Test
     fun extension() {
@@ -239,5 +242,117 @@ class PathExtensionsTest {
         assertEquals(size, 1)
 
         assertFailsWith<NotDirectoryException> { file.forEachDirectoryEntry { } }
+    }
+
+    @Test
+    fun relativeToRooted() {
+        val file1 = Paths.get("/foo/bar/baz")
+        val file2 = Paths.get("/foo/baa/ghoo")
+
+        assertEquals("../../bar/baz", file1.relativeTo(file2).invariantSeparatorsPath)
+
+        val file3 = Paths.get("/foo/bar")
+
+        assertEquals("baz", file1.relativeTo(file3).toString())
+        assertEquals("..", file3.relativeTo(file1).toString())
+
+        val file4 = Paths.get("/foo/bar/")
+
+        assertEquals("baz", file1.relativeTo(file4).toString())
+        assertEquals("..", file4.relativeTo(file1).toString())
+        assertEquals("", file3.relativeTo(file4).toString())
+        assertEquals("", file4.relativeTo(file3).toString())
+
+        val file5 = Paths.get("/foo/baran")
+
+        assertEquals("../bar", file3.relativeTo(file5).invariantSeparatorsPath)
+        assertEquals("../baran", file5.relativeTo(file3).invariantSeparatorsPath)
+        assertEquals("../bar", file4.relativeTo(file5).invariantSeparatorsPath)
+        assertEquals("../baran", file5.relativeTo(file4).invariantSeparatorsPath)
+
+        if (isBackslashSeparator) {
+            val file6 = Paths.get("C:\\Users\\Me")
+            val file7 = Paths.get("C:\\Users\\Me\\Documents")
+
+            assertEquals("..", file6.relativeTo(file7).toString())
+            assertEquals("Documents", file7.relativeTo(file6).toString())
+
+            val file8 = Paths.get("""\\my.host\home/user/documents/vip""")
+            val file9 = Paths.get("""\\my.host\home/other/images/nice""")
+
+            assertEquals("../../../user/documents/vip", file8.relativeTo(file9).invariantSeparatorsPath)
+            assertEquals("../../../other/images/nice", file9.relativeTo(file8).invariantSeparatorsPath)
+        }
+
+        if (isCaseInsensitiveFileSystem) {
+            assertEquals("bar", Paths.get("C:/bar").relativeTo(Paths.get("c:/")).toString())
+        }
+    }
+
+    @Test
+    fun relativeToRelative() {
+        val nested = Paths.get("foo/bar")
+        val base = Paths.get("foo")
+
+        assertEquals("bar", nested.relativeTo(base).toString())
+        assertEquals("..", base.relativeTo(nested).toString())
+
+        val current = Paths.get(".")
+        val parent = Paths.get("..")
+        val outOfRoot = Paths.get("../bar")
+
+        assertEquals(Paths.get("../../bar"), outOfRoot.relativeTo(base))
+        assertEquals("bar", outOfRoot.relativeTo(parent).toString())
+        assertEquals("..", parent.relativeTo(outOfRoot).toString())
+
+        val root = Paths.get("/root")
+        val files = listOf(nested, base, outOfRoot, current, parent)
+        val bases = listOf(nested, base, current)
+
+        for (file in files)
+            assertEquals("", file.relativeTo(file).toString(), "file should have empty path relative to itself: $file")
+
+        for (file in files) {
+            @Suppress("NAME_SHADOWING")
+            for (base in bases) {
+                val rootedFile = root.resolve(file)
+                val rootedBase = root.resolve(base)
+                assertEquals(file.relativeTo(base), rootedFile.relativeTo(rootedBase), "nested: $file, base: $base")
+            }
+        }
+    }
+
+    @Test
+    fun relativeToFails() {
+        val absolute = Paths.get("/foo/bar/baz")
+        val relative = Paths.get("foo/bar")
+        val networkShare1 = Paths.get("""\\my.host\share1/folder""")
+        val networkShare2 = Paths.get("""\\my.host\share2\folder""")
+
+        fun assertFailsRelativeTo(file: Path, base: Path) {
+            val e = assertFailsWith<IllegalArgumentException>("file: $file, base: $base") { file.relativeTo(base) }
+            assertNotNull(e.message)
+        }
+
+        val allFiles = listOf(absolute, relative) + if (isBackslashSeparator) listOf(networkShare1, networkShare2) else emptyList()
+        for (file in allFiles) {
+            for (base in allFiles) {
+                if (file != base) assertFailsRelativeTo(file, base)
+            }
+        }
+
+        if (isBackslashSeparator) {
+            val fileOnC = Paths.get("C:/dir1")
+            val fileOnD = Paths.get("D:/dir2")
+            assertFailsRelativeTo(fileOnC, fileOnD)
+        }
+    }
+
+    @Test
+    fun relativeTo() {
+        assertEquals("kotlin", Paths.get("src/kotlin").relativeTo(Paths.get("src")).toString())
+        assertEquals("", Paths.get("dir").relativeTo(Paths.get("dir")).toString())
+        assertEquals("..", Paths.get("dir").relativeTo(Paths.get("dir/subdir")).toString())
+        assertEquals(Paths.get("../../test"), Paths.get("test").relativeTo(Paths.get("dir/dir")))
     }
 }
