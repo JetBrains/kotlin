@@ -81,6 +81,7 @@ class PackageJson(
     fun saveTo(packageJsonFile: File) {
         val gson = GsonBuilder()
             .setPrettyPrinting()
+            .disableHtmlEscaping()
             .addSerializationExclusionStrategy(
                 object : ExclusionStrategy {
                     override fun shouldSkipField(f: FieldAttributes?): Boolean =
