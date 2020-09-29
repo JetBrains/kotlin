@@ -27,8 +27,8 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting
-        val commonTest by getting
+        val coverageMain by getting
+        val coverageTest by getting
     }
 }
 
