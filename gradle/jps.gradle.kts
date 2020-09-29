@@ -207,6 +207,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                             pluginDir: File,
                             disableProcessCanceledException: Boolean = false
                         ) {
+                            val useAndroidStudio = rootProject.extra.has("versions.androidStudioRelease")
                             application(title) {
                                 moduleName = "kotlin.idea-runner.main"
                                 workingDirectory = File(intellijRootDir(), "bin").toString()
@@ -227,7 +228,8 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                                     "-Dapple.awt.graphics.UseQuartz=true",
                                     "-Dsun.io.useCanonCaches=false",
                                     "-Dplugin.path=${pluginDir.absolutePath}",
-                                    "-Didea.ProcessCanceledException=${if (disableProcessCanceledException) "disabled" else "enabled"}"
+                                    "-Didea.ProcessCanceledException=${if (disableProcessCanceledException) "disabled" else "enabled"}",
+                                    if (useAndroidStudio) "-Didea.platform.prefix=AndroidStudio" else ""
                                 ).joinToString(" ")
                             }
                         }
