@@ -125,7 +125,9 @@ internal fun buildKotlinProjectStructureMetadata(project: Project): KotlinProjec
             }
             sourceSet.name to sourceSetExportedDependencies.map { ModuleIds.fromDependency(it) }.toSet()
         },
-        hostSpecificSourceSets = getHostSpecificSourceSets(project).map { it.name }.toSet(),
+        hostSpecificSourceSets = getHostSpecificSourceSets(project)
+            .filter { it in sourceSetsWithMetadataCompilations }.map { it.name }
+            .toSet(),
         sourceSetBinaryLayout = sourceSetsWithMetadataCompilations.keys.associate { sourceSet ->
             sourceSet.name to SourceSetMetadataLayout.chooseForProducingProject(project)
         },
@@ -287,6 +289,31 @@ internal fun <ParsingContext> parseKotlinSourceSetMetadata(
         isPublishedAsRoot,
         formatVersion
     )
+}
+
+object GlobalProjectStructureMetadataStorage {
+
+    fun propertyName(buildName: String, projectPath: String) = "kotlin.projectStructureMetadata.build.$buildName.path.$projectPath"
+
+    fun registerProjectStructureMetadata(project: Project, metadataProvider: () -> KotlinProjectStructureMetadata) {
+        val compositeBuildRoot = generateSequence(project.gradle) { it.parent }.last().rootProject
+        compositeBuildRoot.extensions.extraProperties.set(
+            propertyName(project.rootProject.name, project.path),
+            { metadataProvider().toJson() }
+        )
+    }
+
+    fun getProjectStructureMetadata(project: Project, otherBuildName: String, otherProjectPath: String): KotlinProjectStructureMetadata? {
+        val compositeBuildRoot = generateSequence(project.gradle) { it.parent }.last().rootProject
+        val property = propertyName(otherBuildName, otherProjectPath)
+        return with(compositeBuildRoot.extensions.extraProperties) {
+            if (has(property)) {
+                val jsonStringProvider = get(property) as? Function0<*> ?: return null
+                val jsonString = jsonStringProvider.invoke() as? String ?: return null
+                parseKotlinSourceSetMetadataFromJson(jsonString)
+            } else null
+        }
+    }
 }
 
 private const val ROOT_NODE_NAME = "projectStructure"

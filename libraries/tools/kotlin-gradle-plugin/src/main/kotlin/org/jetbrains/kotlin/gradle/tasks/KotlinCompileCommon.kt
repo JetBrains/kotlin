@@ -64,7 +64,7 @@ open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArgumen
 
         if (defaultsOnly) return
 
-        val classpathList = classpath.files.toMutableList()
+        val classpathList = classpath.files.filter { it.exists() }.toMutableList()
 
         with(args) {
             classpath = classpathList.joinToString(File.pathSeparator)
