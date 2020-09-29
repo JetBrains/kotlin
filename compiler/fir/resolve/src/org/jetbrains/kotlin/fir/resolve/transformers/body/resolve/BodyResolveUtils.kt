@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.expressions.FirArgumentList
-import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -52,8 +49,11 @@ internal fun remapArgumentsWithVararg(
         this.typeRef = varargParameterTypeRef.withReplacedConeType(varargArrayType)
         for ((i, arg) in argumentList.withIndex()) {
             val valueParameter = argumentMapping.getValue(arg)
-            if (valueParameter.isVararg) {
-                // `arg` is a vararg argument.
+            // Collect arguments if `arg` is a vararg argument of interest or other vararg arguments.
+            if (valueParameter == varargParameter ||
+                // NB: don't pull out of named arguments.
+                (valueParameter.isVararg && arg !is FirNamedArgumentExpression)
+            ) {
                 arguments += arg
             } else if (arguments.isEmpty()) {
                 // `arg` is BEFORE the vararg arguments.
