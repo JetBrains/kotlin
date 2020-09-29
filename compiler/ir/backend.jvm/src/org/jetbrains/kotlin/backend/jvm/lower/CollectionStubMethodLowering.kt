@@ -58,21 +58,27 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
         // We don't need to generate stub for existing methods, but for FAKE_OVERRIDE methods with ABSTRACT modality,
         // it means an abstract function in superclass that is not implemented yet,
         // stub generation is still needed to avoid invocation error.
-        val existingMethodsByNameAndArity = irClass.functions
-            .filterNot { it.modality == Modality.ABSTRACT && it.isFakeOverride }
-            .groupBy { it.nameAndArity }
+        val (abstractMethods, nonAbstractMethods) = irClass.functions.partition { it.modality == Modality.ABSTRACT && it.isFakeOverride }
+        val nonAbstractMethodsByNameAndArity = nonAbstractMethods.groupBy { it.nameAndArity }
+        val abstractMethodsByNameAndArity = abstractMethods.groupBy { it.nameAndArity }
 
         for (stub in methodStubsToGenerate) {
-            val relevantMembers = existingMethodsByNameAndArity[stub.nameAndArity].orEmpty()
-            val existingOverrides = relevantMembers.filter { isStubOverriddenByExistingFun(stub, it) }
+            val stubNameAndArity = stub.nameAndArity
+            val relevantMembers = nonAbstractMethodsByNameAndArity[stubNameAndArity].orEmpty()
+            val existingOverrides = relevantMembers.filter { isOverriddenBy(stub, it) }
 
             if (existingOverrides.isNotEmpty()) {
                 // In the case that we find a defined method that matches the stub signature,
                 // we add the overridden symbols to that defined method,
                 // so that bridge lowering can still generate correct bridge for that method.
                 existingOverrides.forEach { it.overriddenSymbols += stub.overriddenSymbols }
+                // We don't add a throwing stub if it's effectively overridden by an existing function.
                 continue
             }
+
+            // Generated stub might still override some abstract member(s), which affects resulting method signature.
+            val overriddenAbstractMethods = abstractMethodsByNameAndArity[stubNameAndArity].orEmpty().filter { isOverriddenBy(it, stub) }
+            stub.overriddenSymbols += overriddenAbstractMethods.map { it.symbol }
 
             // Some stub members require special handling.
             // In both 'remove' and 'removeAt' cases there are no other member functions with same name in built-in mutable collection
@@ -188,30 +194,29 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
                 }
         }
 
-    private fun isStubOverriddenByExistingFun(stubFun: IrSimpleFunction, existingFun: IrSimpleFunction): Boolean {
-        // We don't add a throwing stub if it's effectively overridden by an existing function.
-        // This is true if all of the following conditions are met,
-        // assuming type parameter Ti of the existing function is "equal" to type parameter Si of the generated stub:
+    private fun isOverriddenBy(superFun: IrSimpleFunction, overridingFun: IrSimpleFunction): Boolean {
+        // Function 'f0' is overridden by function 'f1' if all of the following conditions are met,
+        // assuming type parameter Ti of 'f1' is "equal" to type parameter Si of 'f0':
         //  - names are same;
-        //  - existing function has the same number of type parameters,
+        //  - 'f1' has the same number of type parameters,
         //    and upper bounds for type parameters are equivalent;
-        //  - existing function has the same number of value parameters,
+        //  - 'f1' has the same number of value parameters,
         //    and types for value parameters are equivalent;
-        //  - return type of the existing function is a subtype of return type of the generated stub.
+        //  - 'f1' return type is a subtype of 'f0' return type.
 
-        if (stubFun.name != existingFun.name) return false
-        if (stubFun.typeParameters.size != existingFun.typeParameters.size) return false
-        if (stubFun.valueParameters.size != existingFun.valueParameters.size) return false
+        if (superFun.name != overridingFun.name) return false
+        if (superFun.typeParameters.size != overridingFun.typeParameters.size) return false
+        if (superFun.valueParameters.size != overridingFun.valueParameters.size) return false
 
-        val typeChecker = createTypeChecker(stubFun, existingFun)
+        val typeChecker = createTypeChecker(superFun, overridingFun)
 
         // Note that type parameters equivalence check doesn't really happen on collection stubs
         // (because members of Kotlin built-in collection classes don't have type parameters of their own),
         // but we keep it here for the sake of consistency.
-        if (!areTypeParametersEquivalent(existingFun, stubFun, typeChecker)) return false
+        if (!areTypeParametersEquivalent(overridingFun, superFun, typeChecker)) return false
 
-        if (!areValueParametersEquivalent(existingFun, stubFun, typeChecker)) return false
-        if (!isReturnTypeOverrideCompliant(existingFun, stubFun, typeChecker)) return false
+        if (!areValueParametersEquivalent(overridingFun, superFun, typeChecker)) return false
+        if (!isReturnTypeOverrideCompliant(overridingFun, superFun, typeChecker)) return false
 
         return true
     }

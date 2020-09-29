@@ -299,6 +299,26 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/observableMutableMap.kt");
         }
 
+        @TestMetadata("stubForAbstractFun.kt")
+        public void testStubForAbstractFun() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/stubForAbstractFun.kt");
+        }
+
+        @TestMetadata("stubForAbstractFunInAbstractClass.kt")
+        public void testStubForAbstractFunInAbstractClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/stubForAbstractFunInAbstractClass.kt");
+        }
+
+        @TestMetadata("stubForAbstractFunInAbstractClassWithCovariantOverride.kt")
+        public void testStubForAbstractFunInAbstractClassWithCovariantOverride() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/stubForAbstractFunInAbstractClassWithCovariantOverride.kt");
+        }
+
+        @TestMetadata("stubForAbstractFunWithCovariantOverride.kt")
+        public void testStubForAbstractFunWithCovariantOverride() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/stubForAbstractFunWithCovariantOverride.kt");
+        }
+
         @TestMetadata("stubsFromSuperclass.kt")
         public void testStubsFromSuperclass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/stubsFromSuperclass.kt");
