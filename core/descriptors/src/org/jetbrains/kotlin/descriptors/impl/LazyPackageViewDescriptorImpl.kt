@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptorVisitor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.packageFragments
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
 import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter
@@ -34,7 +35,7 @@ class LazyPackageViewDescriptorImpl(
 ) : DeclarationDescriptorImpl(Annotations.EMPTY, fqName.shortNameOrSpecial()), PackageViewDescriptor {
 
     override val fragments: List<PackageFragmentDescriptor> by storageManager.createLazyValue {
-        module.packageFragmentProvider.getPackageFragments(fqName)
+        module.packageFragmentProvider.packageFragments(fqName)
     }
 
     override val memberScope: MemberScope = LazyScopeAdapter(storageManager) {

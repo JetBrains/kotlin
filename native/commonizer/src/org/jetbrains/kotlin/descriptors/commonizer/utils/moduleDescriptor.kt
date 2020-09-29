@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.descriptors.packageFragments
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.NativeTypeTransformer
@@ -103,7 +104,7 @@ internal val ModuleDescriptor.hasSomethingUnderStandardKotlinPackages: Boolean
     get() {
         val packageFragmentProvider = packageFragmentProvider
         return STANDARD_KOTLIN_PACKAGE_FQNS.any { fqName ->
-            packageFragmentProvider.getPackageFragments(fqName).any { packageFragment ->
+            packageFragmentProvider.packageFragments(fqName).any { packageFragment ->
                 packageFragment !is ExportedForwardDeclarationsPackageFragmentDescriptor
                         && packageFragment.getMemberScope() != MemberScope.Empty
             }

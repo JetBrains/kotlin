@@ -136,6 +136,8 @@ class AndroidSyntheticPackageFragmentProvider(
     override fun collectPackageFragments(fqName: FqName, packageFragments: MutableCollection<PackageFragmentDescriptor>) =
         packageFragments.addIfNotNull(packages[fqName]?.invoke())
 
+    override fun getPackageFragments(fqName: FqName) = listOfNotNull(packages[fqName]?.invoke())
+
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): List<FqName> {
         return packages.asSequence()
             .filter { (k, _) -> !k.isRoot && k.parent() == fqName }

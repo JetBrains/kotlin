@@ -83,7 +83,7 @@ class DescriptorByIdSignatureFinder(
             LookupMode.MODULE_ONLY -> {
                 (moduleDescriptor as ModuleDescriptorImpl)
                     .packageFragmentProviderForModuleContentWithoutDependencies
-                    .getPackageFragments(packageFqName)
+                    .packageFragments(packageFqName)
                     .flatMap { it.getMemberScope().loadDescriptors(declarationName, isLeaf) }
             }
         }
