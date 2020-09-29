@@ -114,7 +114,8 @@ abstract class IrFileDeserializer(
     val symbolTable: SymbolTable,
     protected var deserializeBodies: Boolean,
     private val deserializeFakeOverrides: Boolean,
-    private val fakeOverrideQueue: MutableList<IrClass>
+    private val fakeOverrideQueue: MutableList<IrClass>,
+    private val allowErrorNodes: Boolean
 ) {
     protected val irFactory: IrFactory get() = symbolTable.irFactory
 
@@ -202,6 +203,7 @@ abstract class IrFileDeserializer(
     }
 
     private fun deserializeErrorType(proto: ProtoErrorType): IrErrorType {
+        require(allowErrorNodes) { "IrErrorType found but error code is not allowed" }
         val annotations = deserializeAnnotations(proto.annotationList)
         return IrErrorTypeImpl(null, annotations, Variance.INVARIANT)
     }
@@ -468,6 +470,9 @@ abstract class IrFileDeserializer(
         proto: ProtoErrorExpression,
         start: Int, end: Int, type: IrType
     ): IrErrorExpression {
+        require(allowErrorNodes) {
+            "IrErrorExpression($start, $end, \"${deserializeString(proto.description)}\") found but error code is not allowed"
+        }
         return IrErrorExpressionImpl(start, end, type, deserializeString(proto.description))
     }
 
@@ -475,6 +480,9 @@ abstract class IrFileDeserializer(
         proto: ProtoErrorCallExpression,
         start: Int, end: Int, type: IrType
     ): IrErrorCallExpression {
+        require(allowErrorNodes) {
+            "IrErrorCallExpressionImpl($start, $end, \"${deserializeString(proto.description)}\") found but error code is not allowed"
+        }
         return IrErrorCallExpressionImpl(start, end, type, deserializeString(proto.description)).apply {
             if (proto.hasReceiver()) {
                 explicitReceiver = deserializeExpression(proto.receiver)
@@ -1110,6 +1118,7 @@ abstract class IrFileDeserializer(
         }
 
     private fun deserializeErrorDeclaration(proto: ProtoErrorDeclaration): IrErrorDeclaration {
+        require(allowErrorNodes) { "IrErrorDeclaration found but error code is not allowed" }
         val coordinates = BinaryCoordinates.decode(proto.coordinates)
         val descriptor = WrappedErrorDescriptor()
         return irFactory.createErrorDeclaration(coordinates.startOffset, coordinates.endOffset, descriptor).also {

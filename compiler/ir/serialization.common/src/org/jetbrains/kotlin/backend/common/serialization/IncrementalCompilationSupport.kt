@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.impl.*
 
+class ICData(val icData: List<SerializedIrFile>, val containsErrorCode: Boolean)
 
 class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
     override val dataFlowGraph: ByteArray? = null

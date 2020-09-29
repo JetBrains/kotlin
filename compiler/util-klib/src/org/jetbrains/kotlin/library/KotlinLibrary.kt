@@ -78,3 +78,6 @@ val KotlinLibrary.exportForwardDeclarations: List<String>
 
 val BaseKotlinLibrary.nativeTargets: List<String>
     get() = manifestProperties.propertyList(KLIB_PROPERTY_NATIVE_TARGETS)
+
+val KotlinLibrary.containsErrorCode: Boolean
+    get() = manifestProperties.getProperty(KLIB_PROPERTY_CONTAINS_ERROR_CODE) == "true"
