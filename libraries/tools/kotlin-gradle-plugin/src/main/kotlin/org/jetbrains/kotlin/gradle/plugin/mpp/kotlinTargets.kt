@@ -125,19 +125,14 @@ abstract class AbstractKotlinTarget(
 
             adhocVariant as SoftwareComponent
 
-            if (kotlinVariant is KotlinVariantWithMetadataVariant) {
-                object : ComponentWithVariants, ComponentWithCoordinates, SoftwareComponentInternal {
-                    override fun getCoordinates() = kotlinVariant.coordinates
-                    override fun getVariants(): Set<out SoftwareComponent> = kotlinVariant.variants
-                    override fun getName(): String = adhocVariant.name
-                    override fun getUsages(): MutableSet<out UsageContext> = (adhocVariant as SoftwareComponentInternal).usages
-                }
-            } else {
-                object : ComponentWithCoordinates, SoftwareComponentInternal {
-                    override fun getCoordinates() = (kotlinVariant as? ComponentWithCoordinates)?.coordinates
-                    override fun getName(): String = adhocVariant.name
-                    override fun getUsages(): MutableSet<out UsageContext> = (adhocVariant as SoftwareComponentInternal).usages
-                }
+            object : ComponentWithVariants, ComponentWithCoordinates, SoftwareComponentInternal {
+                override fun getCoordinates() = (kotlinVariant as? ComponentWithCoordinates)?.coordinates
+
+                override fun getVariants(): Set<out SoftwareComponent> =
+                    (kotlinVariant as? KotlinVariantWithMetadataVariant)?.variants.orEmpty()
+
+                override fun getName(): String = adhocVariant.name
+                override fun getUsages(): MutableSet<out UsageContext> = (adhocVariant as SoftwareComponentInternal).usages
             }
         }.toSet()
     }

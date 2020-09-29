@@ -246,7 +246,7 @@ internal class GranularMetadataTransformation(
             SourceSetVisibilityProvider(project).getVisibleSourceSets(
                 kotlinSourceSet,
                 sourceSetRequestedScopes,
-                parent, module,
+                if (projectStructureMetadata.isPublishedAsRoot) module else parent, module,
                 projectStructureMetadata,
                 resolvedToProject
             )

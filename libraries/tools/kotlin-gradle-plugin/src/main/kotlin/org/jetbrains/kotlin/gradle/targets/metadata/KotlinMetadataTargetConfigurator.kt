@@ -143,8 +143,6 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
             allMetadataJar.description = "Assembles a jar archive containing the metadata for all Kotlin source sets."
             allMetadataJar.group = BasePlugin.BUILD_GROUP
 
-            allMetadataJar.archiveAppendix.set(target.name.toLowerCase())
-
             if (target.project.isCompatibilityMetadataVariantEnabled) {
                 allMetadataJar.archiveClassifier.set("all")
             }
