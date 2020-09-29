@@ -23,7 +23,7 @@ class ParcelizeProjectResolverExtension : AbstractProjectResolverExtension() {
     override fun populateModuleExtraModels(gradleModule: IdeaModule, ideModule: DataNode<ModuleData>) {
         val parcelizeModel = resolverCtx.getExtraProject(gradleModule, ParcelizeGradleModel::class.java)
 
-        if (parcelizeModel != null) {
+        if (parcelizeModel != null && parcelizeModel.isEnabled) {
             ideModule.putCopyableUserData(KEY, ParcelizeGradleModelImpl(isEnabled = parcelizeModel.isEnabled))
         }
 
