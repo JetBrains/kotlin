@@ -62,7 +62,8 @@
                         interface="org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AdditionalExtractableAnalyser"/>
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.experimentalFeature"
-                        interface="org.jetbrains.kotlin.idea.configuration.ExperimentalFeature"/>
+                        interface="org.jetbrains.kotlin.idea.configuration.ExperimentalFeature"
+                        dynamic="true"/>
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.foreignUsagesRenameProcessor"
                         interface="org.jetbrains.kotlin.idea.refactoring.rename.ForeignUsagesRenameProcessor" dynamic="true"/>
