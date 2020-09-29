@@ -36,7 +36,7 @@ class PathReadWriteTest {
         writer.close()
 
         val list = ArrayList<String>()
-        file.forEachLine(StandardOpenOption.READ, charset = Charsets.UTF_8) {
+        file.forEachLine(charset = Charsets.UTF_8, options = arrayOf(StandardOpenOption.READ)) {
             list.add(it)
         }
         assertEquals(arrayListOf("Hello", "World"), list)
