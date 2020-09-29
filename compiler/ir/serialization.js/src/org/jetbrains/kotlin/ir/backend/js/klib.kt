@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.*
@@ -142,7 +143,7 @@ fun generateKLib(
     val depsDescriptors =
         ModulesStructure(project, MainModule.SourceFiles(files), analyzer, configuration, allDependencies, friendDependencies)
 
-    val psi2IrContext = runAnalysisAndPreparePsi2Ir(depsDescriptors, irFactory, errorPolicy)
+    val (psi2IrContext, hasErrors) = runAnalysisAndPreparePsi2Ir(depsDescriptors, irFactory, errorPolicy)
     val irBuiltIns = psi2IrContext.irBuiltIns
     val functionFactory = IrFunctionFactory(irBuiltIns, psi2IrContext.symbolTable)
     irBuiltIns.functionFactory = functionFactory
@@ -192,7 +193,7 @@ fun generateKLib(
         expectDescriptorToSymbol,
         icData,
         nopack,
-        false
+        hasErrors
     )
 }
 
@@ -228,7 +229,7 @@ fun loadIr(
 
     when (mainModule) {
         is MainModule.SourceFiles -> {
-            val psi2IrContext: GeneratorContext = runAnalysisAndPreparePsi2Ir(depsDescriptors, irFactory, errorPolicy)
+            val (psi2IrContext, _) = runAnalysisAndPreparePsi2Ir(depsDescriptors, irFactory, errorPolicy)
             val irBuiltIns = psi2IrContext.irBuiltIns
             val symbolTable = psi2IrContext.symbolTable
             val functionFactory = IrFunctionFactory(irBuiltIns, symbolTable)
@@ -297,11 +298,18 @@ fun loadIr(
     }
 }
 
-private fun runAnalysisAndPreparePsi2Ir(depsDescriptors: ModulesStructure, irFactory: IrFactory, errorIgnorancePolicy: ErrorTolerancePolicy): GeneratorContext {
-    val (bindingContext, moduleDescriptor) = depsDescriptors.runAnalysis(errorIgnorancePolicy)
-    val psi2Ir = Psi2IrTranslator(depsDescriptors.compilerConfiguration.languageVersionSettings, Psi2IrConfiguration(errorIgnorancePolicy.allowErrors))
+private fun runAnalysisAndPreparePsi2Ir(
+    depsDescriptors: ModulesStructure,
+    irFactory: IrFactory,
+    errorIgnorancePolicy: ErrorTolerancePolicy
+): Pair<GeneratorContext, Boolean> {
+    val analysisResult = depsDescriptors.runAnalysis(errorIgnorancePolicy)
+    val psi2Ir = Psi2IrTranslator(
+        depsDescriptors.compilerConfiguration.languageVersionSettings,
+        Psi2IrConfiguration(errorIgnorancePolicy.allowErrors)
+    )
     val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), irFactory)
-    return psi2Ir.createGeneratorContext(moduleDescriptor, bindingContext, symbolTable)
+    return psi2Ir.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext, symbolTable) to analysisResult.hasErrors
 }
 
 fun GeneratorContext.generateModuleFragmentWithPlugins(
@@ -385,7 +393,9 @@ private class ModulesStructure(
 
     val builtInsDep = allDependencies.getFullList().find { it.isBuiltIns }
 
-    fun runAnalysis(errorPolicy: ErrorTolerancePolicy): JsAnalysisResult {
+    class JsFrontEndResult(val moduleDescriptor: ModuleDescriptor, val bindingContext: BindingContext, val hasErrors: Boolean)
+
+    fun runAnalysis(errorPolicy: ErrorTolerancePolicy): JsFrontEndResult {
         require(mainModule is MainModule.SourceFiles)
         val files = mainModule.files
 
@@ -409,12 +419,16 @@ private class ModulesStructure(
             compareMetadataAndGoToNextICRoundIfNeeded(analysisResult, compilerConfiguration, files)
         }
 
-        if (!errorPolicy.allowErrors && analyzer.hasErrors() || analysisResult !is JsAnalysisResult)
-            throw JsIrCompilationError
+        var hasErrors = false
+        if (analyzer.hasErrors() || analysisResult !is JsAnalysisResult) {
+            if (!errorPolicy.allowErrors)
+                throw JsIrCompilationError
+            else hasErrors = true
+        }
 
-        TopDownAnalyzerFacadeForJSIR.checkForErrors(files, analysisResult.bindingContext, errorPolicy)
+        hasErrors = TopDownAnalyzerFacadeForJSIR.checkForErrors(files, analysisResult.bindingContext, errorPolicy) || hasErrors
 
-        return analysisResult
+        return JsFrontEndResult(analysisResult.moduleDescriptor, analysisResult.bindingContext, hasErrors)
     }
 
     private val languageVersionSettings: LanguageVersionSettings = compilerConfiguration.languageVersionSettings
@@ -467,7 +481,8 @@ fun serializeModuleIntoKlib(
     expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     cleanFiles: List<KotlinFileSerializedData>,
     nopack: Boolean,
-    perFile: Boolean
+    perFile: Boolean,
+    containsErrorCode: Boolean = false
 ) {
     assert(files.size == moduleFragment.files.size)
 
@@ -537,12 +552,18 @@ fun serializeModuleIntoKlib(
         irVersion = KlibIrVersion.INSTANCE.toString()
     )
 
+    val properties = if (containsErrorCode) {
+        Properties().also {
+            it.setProperty(KLIB_PROPERTY_CONTAINS_ERROR_CODE, "true")
+        }
+    } else null
+
     buildKotlinLibrary(
         linkDependencies = dependencies,
         ir = fullSerializedIr,
         metadata = serializedMetadata,
         dataFlowGraph = null,
-        manifestProperties = null,
+        manifestProperties = properties,
         moduleName = moduleName,
         nopack = nopack,
         perFile = perFile,

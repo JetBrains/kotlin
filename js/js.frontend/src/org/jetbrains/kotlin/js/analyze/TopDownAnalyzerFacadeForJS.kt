@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.serialization.js.PackagesWithHeaderMetadata
 import org.jetbrains.kotlin.utils.JsMetadataVersion
+import java.lang.Exception
 
 abstract class AbstractTopDownAnalyzerFacadeForJS {
 
@@ -115,15 +116,31 @@ abstract class AbstractTopDownAnalyzerFacadeForJS {
         return JsAnalysisResult.success(trace, moduleContext.module)
     }
 
-    fun checkForErrors(allFiles: Collection<KtFile>, bindingContext: BindingContext, errorPolicy: ErrorTolerancePolicy) {
-        if (!errorPolicy.allowSemanticErrors) {
+    fun checkForErrors(allFiles: Collection<KtFile>, bindingContext: BindingContext, errorPolicy: ErrorTolerancePolicy): Boolean {
+        var hasErrors = false
+        try {
             AnalyzingUtils.throwExceptionOnErrors(bindingContext)
+        } catch (ex: Exception) {
+            if (!errorPolicy.allowSemanticErrors) {
+                throw ex
+            } else {
+                hasErrors = true
+            }
         }
-        if (!errorPolicy.allowSyntaxErrors) {
+
+        try {
             for (file in allFiles) {
                 AnalyzingUtils.checkForSyntacticErrors(file)
             }
+        } catch (ex: Exception) {
+            if (!errorPolicy.allowSyntaxErrors) {
+                throw ex
+            } else {
+                hasErrors = true
+            }
         }
+
+        return hasErrors
     }
 }
 
