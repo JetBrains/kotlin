@@ -25,12 +25,13 @@ internal class DukatCompilationResolverPlugin(
     val separateTaskName = npmProject.compilation.disambiguateName("generateExternals")
 
     init {
-        when (compilation.dukatMode) {
+        val dukatMode = compilation.dukatMode
+        when (dukatMode) {
             DukatMode.SOURCE -> compilation.defaultSourceSet.kotlin.srcDir(npmProject.externalsDir)
             DukatMode.BINARY -> {
                 project.dependencies.add(
                     compilation.compileDependencyConfigurationName,
-                    project.file(npmProject.externalsDir)
+                    project.files(npmProject.externalsDir)
                 )
             }
         }
@@ -41,6 +42,7 @@ internal class DukatCompilationResolverPlugin(
         ) {
             it.group = DUKAT_TASK_GROUP
             it.description = "Integrated generation Kotlin/JS external declarations for .d.ts files in ${compilation}"
+            it.dukatMode = dukatMode
             it.dependsOn(nodeJs.npmInstallTaskProvider, npmProject.packageJsonTask)
         }
 
@@ -83,6 +85,7 @@ internal class DukatCompilationResolverPlugin(
         DukatExecutor(
             nodeJs,
             DtsResolver(npmProject).getAllDts(externalNpmDependencies),
+            compilation.dukatMode,
             npmProject,
             packageJsonIsUpdated,
             operation = compilation.name + " > " + DukatExecutor.OPERATION,

@@ -28,6 +28,12 @@ abstract class DukatTask(
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         get() = setOf(nodeJs.versions.dukat)
 
+    /**
+     * [DukatMode] what to generate, sources or binaries
+     */
+    @Input
+    var dukatMode: DukatMode = DukatMode.SOURCE
+
     @get:Internal
     val dts by lazy {
         val resolvedCompilation = nodeJs.npmResolutionManager.requireInstalled()[project][compilation]
@@ -81,6 +87,7 @@ abstract class DukatTask(
         DukatRunner(
             compilation,
             dTsFiles,
+            dukatMode,
             destinationDir,
             qualifiedPackageName,
             null,

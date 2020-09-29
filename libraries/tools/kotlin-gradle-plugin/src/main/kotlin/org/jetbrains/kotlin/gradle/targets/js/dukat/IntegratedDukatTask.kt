@@ -24,7 +24,14 @@ constructor(
         get() = compilation.npmProject.externalsDir
 
     private val executor by lazy {
-        DukatExecutor(nodeJs, dts, compilation.npmProject, true, compareInputs = false)
+        DukatExecutor(
+            nodeJs,
+            dts,
+            dukatMode,
+            compilation.npmProject,
+            true,
+            compareInputs = false
+        )
     }
 
     override fun run() {
