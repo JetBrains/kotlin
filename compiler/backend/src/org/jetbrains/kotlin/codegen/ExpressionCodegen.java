@@ -939,7 +939,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             else {
                 String value = ((StringTemplateEntry.Constant) entry).value;
                 if (value.length() == 1) {
-                    generator.addCharConstant(value.charAt(0));
+                    generator.putValueOrProcessConstant(StackValue.constant(value.charAt(0), Type.CHAR_TYPE, null));
                 }
                 else {
                     generator.addStringConstant(value);
@@ -4325,13 +4325,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         Type exprType = expressionType(expr);
         KotlinType exprKotlinType = kotlinType(expr);
+        StackValue value;
         if (compileTimeConstant != null) {
-            StackValue.constant(compileTimeConstant.getValue(), exprType, exprKotlinType).put(exprType, exprKotlinType, v);
+            value = StackValue.constant(compileTimeConstant.getValue(), exprType, exprKotlinType);
         } else {
-            gen(expr, exprType, exprKotlinType);
+            value = gen(expr);
         }
 
-        genInvokeAppendMethod(generator, exprType, exprKotlinType, typeMapper);
+        genInvokeAppendMethod(generator, exprType, exprKotlinType, typeMapper, value);
     }
 
     @Nullable

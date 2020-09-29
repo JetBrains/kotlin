@@ -131,7 +131,7 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
                     kotlinType = DescriptorUtilsKt.getBuiltIns(function).getStringType();
                 }
             }
-            genInvokeAppendMethod(generator, asmType, kotlinType, typeMapper);
+            genInvokeAppendMethod(generator, asmType, kotlinType, typeMapper, StackValue.onStack(asmType));
         }
 
         generator.addStringConstant(")");

@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.codegen
 
 import com.google.common.collect.Sets
+import org.jetbrains.kotlin.codegen.BranchedValue.Companion.FALSE
+import org.jetbrains.kotlin.codegen.BranchedValue.Companion.TRUE
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.JvmRuntimeStringConcat
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Handle
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -32,22 +35,30 @@ class StringConcatGenerator(val mode: JvmRuntimeStringConcat, val mv: Instructio
         }
     }
 
-    fun addCharConstant(value: Char) {
-        if (!mode.isDynamic) {
-            mv.iconst(value.toInt())
-            invokeAppend(Type.CHAR_TYPE)
-        } else {
-            template.append(value)
+    @JvmOverloads
+    fun putValueOrProcessConstant(stackValue: StackValue, type: Type = stackValue.type, kotlinType: KotlinType? = stackValue.kotlinType) {
+        if (mode == JvmRuntimeStringConcat.ENABLE) {
+            when (stackValue) {
+                is StackValue.Constant -> {
+                    template.append(stackValue.value)
+                    return
+                }
+                TRUE -> {
+                    template.append(true)
+                    return
+                }
+                FALSE -> {
+                    template.append(false)
+                    return
+                }
+            }
         }
+        stackValue.put(type, kotlinType, mv)
+        invokeAppend(type)
     }
 
     fun addStringConstant(value: String) {
-        if (!mode.isDynamic) {
-            mv.aconst(value)
-            invokeAppend(JAVA_STRING_TYPE)
-        } else {
-            template.append(value)
-        }
+        putValueOrProcessConstant(StackValue.constant(value, JAVA_STRING_TYPE, null))
     }
 
     fun invokeAppend(type: Type) {

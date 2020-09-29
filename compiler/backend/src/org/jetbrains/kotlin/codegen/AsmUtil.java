@@ -666,33 +666,28 @@ public class AsmUtil {
         return index;
     }
 
-    public static void genInvokeAppendMethod(@NotNull StringConcatGenerator generator, @NotNull Type type, @Nullable KotlinType kotlinType) {
-        genInvokeAppendMethod(generator, type, kotlinType, null);
-    }
-
     public static void genInvokeAppendMethod(
             @NotNull StringConcatGenerator generator,
             @NotNull Type type,
             @Nullable KotlinType kotlinType,
-            @Nullable KotlinTypeMapper typeMapper
+            @Nullable KotlinTypeMapper typeMapper,
+            @NotNull StackValue stackValue
     ) {
-        Type appendParameterType;
-
         CallableMethod specializedToString = getSpecializedToStringCallableMethodOrNull(kotlinType, typeMapper);
         if (specializedToString != null) {
+            stackValue.put(type, kotlinType, generator.getMv());
             specializedToString.genInvokeInstruction(generator.getMv());
-            appendParameterType = AsmTypes.JAVA_STRING_TYPE;
+            generator.invokeAppend(AsmTypes.JAVA_STRING_TYPE);
         }
         else if (kotlinType != null && InlineClassesUtilsKt.isInlineClassType(kotlinType)) {
-            appendParameterType = OBJECT_TYPE;
             SimpleType nullableAnyType = kotlinType.getConstructor().getBuiltIns().getNullableAnyType();
-            StackValue.coerce(type, kotlinType, appendParameterType, nullableAnyType, generator.getMv());
+            stackValue.put(type, kotlinType, generator.getMv());
+            StackValue.coerce(type, kotlinType, OBJECT_TYPE, nullableAnyType, generator.getMv());
+            generator.invokeAppend(OBJECT_TYPE);
         }
         else {
-            appendParameterType = type;
+            generator.putValueOrProcessConstant(stackValue, type, kotlinType);
         }
-
-        generator.invokeAppend(appendParameterType);
     }
 
     public static StackValue genToString(
