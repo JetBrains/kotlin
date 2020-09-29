@@ -8,7 +8,7 @@ abstract class Parser {
 
     abstract fun preparse(text: String): String
 
-    open fun parse(text: String): DocumentationNode {
+    fun parse(text: String): DocumentationNode {
 
         val list = jkdocToListOfPairs(preparse(text))
 

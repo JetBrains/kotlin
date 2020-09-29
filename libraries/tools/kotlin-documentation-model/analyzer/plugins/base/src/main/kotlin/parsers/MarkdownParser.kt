@@ -25,23 +25,18 @@ open class MarkdownParser(
     private val externalDri: (String) -> DRI?
 ) : Parser() {
 
+    private lateinit var destinationLinksMap: Map<String, String>
+    private lateinit var text: String
+
     override fun parseStringToDocNode(extractedString: String): DocTag {
         val gfmFlavourDescriptor = GFMFlavourDescriptor()
-        val markdownAstRoot: ASTNode =
-            IntellijMarkdownParser(gfmFlavourDescriptor).buildMarkdownTreeFromString(extractedString)
+        val markdownAstRoot = IntellijMarkdownParser(gfmFlavourDescriptor).buildMarkdownTreeFromString(extractedString)
         destinationLinksMap = getAllDestinationLinks(extractedString, markdownAstRoot).toMap()
         text = extractedString
         return visitNode(markdownAstRoot)
     }
 
     override fun preparse(text: String) = text
-
-    private lateinit var destinationLinksMap: Map<String, String>
-    private lateinit var text: String
-
-    override fun parse(text: String): DocumentationNode {
-        return DocumentationNode(listOf(Description(parseStringToDocNode(text))))
-    }
 
     private fun headersHandler(node: ASTNode) =
         DocTagsFromIElementFactory.getInstance(
