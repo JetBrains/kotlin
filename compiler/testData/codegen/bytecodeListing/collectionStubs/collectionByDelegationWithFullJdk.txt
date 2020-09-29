@@ -1,6 +1,6 @@
 @kotlin.Metadata
 public final class DGenericCollection {
-    // source: 'collectionByDelegation.kt'
+    // source: 'collectionByDelegationWithFullJdk.kt'
     private synthetic final field $$delegate_0: java.util.Collection
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.Collection): void
     public method add(p0: java.lang.Object): boolean
@@ -13,6 +13,7 @@ public final class DGenericCollection {
     public @org.jetbrains.annotations.NotNull method iterator(): java.util.Iterator
     public method remove(p0: java.lang.Object): boolean
     public method removeAll(p0: java.util.Collection): boolean
+    public method removeIf(p0: java.util.function.Predicate): boolean
     public method retainAll(p0: java.util.Collection): boolean
     public bridge final method size(): int
     public method toArray(): java.lang.Object[]
@@ -21,7 +22,7 @@ public final class DGenericCollection {
 
 @kotlin.Metadata
 public final class DGenericCollectionByList {
-    // source: 'collectionByDelegation.kt'
+    // source: 'collectionByDelegationWithFullJdk.kt'
     private synthetic final field $$delegate_0: java.util.List
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.List): void
     public method add(p0: java.lang.Object): boolean
@@ -34,6 +35,7 @@ public final class DGenericCollectionByList {
     public @org.jetbrains.annotations.NotNull method iterator(): java.util.Iterator
     public method remove(p0: java.lang.Object): boolean
     public method removeAll(p0: java.util.Collection): boolean
+    public method removeIf(p0: java.util.function.Predicate): boolean
     public method retainAll(p0: java.util.Collection): boolean
     public bridge final method size(): int
     public method toArray(): java.lang.Object[]
@@ -42,7 +44,7 @@ public final class DGenericCollectionByList {
 
 @kotlin.Metadata
 public final class DGenericCollectionBySet {
-    // source: 'collectionByDelegation.kt'
+    // source: 'collectionByDelegationWithFullJdk.kt'
     private synthetic final field $$delegate_0: java.util.Set
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.Set): void
     public method add(p0: java.lang.Object): boolean
@@ -55,6 +57,7 @@ public final class DGenericCollectionBySet {
     public @org.jetbrains.annotations.NotNull method iterator(): java.util.Iterator
     public method remove(p0: java.lang.Object): boolean
     public method removeAll(p0: java.util.Collection): boolean
+    public method removeIf(p0: java.util.function.Predicate): boolean
     public method retainAll(p0: java.util.Collection): boolean
     public bridge final method size(): int
     public method toArray(): java.lang.Object[]
@@ -63,7 +66,7 @@ public final class DGenericCollectionBySet {
 
 @kotlin.Metadata
 public final class DGenericIterable {
-    // source: 'collectionByDelegation.kt'
+    // source: 'collectionByDelegationWithFullJdk.kt'
     private synthetic final field $$delegate_0: java.lang.Iterable
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.Iterable): void
     public @org.jetbrains.annotations.NotNull method iterator(): java.util.Iterator
@@ -71,7 +74,7 @@ public final class DGenericIterable {
 
 @kotlin.Metadata
 public final class DGenericIterator {
-    // source: 'collectionByDelegation.kt'
+    // source: 'collectionByDelegationWithFullJdk.kt'
     private synthetic final field $$delegate_0: java.util.Iterator
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.Iterator): void
     public method hasNext(): boolean
@@ -81,7 +84,7 @@ public final class DGenericIterator {
 
 @kotlin.Metadata
 public final class DGenericList {
-    // source: 'collectionByDelegation.kt'
+    // source: 'collectionByDelegationWithFullJdk.kt'
     private synthetic final field $$delegate_0: java.util.List
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.List): void
     public method add(p0: int, p1: java.lang.Object): void
@@ -102,9 +105,11 @@ public final class DGenericList {
     public method remove(p0: int): java.lang.Object
     public method remove(p0: java.lang.Object): boolean
     public method removeAll(p0: java.util.Collection): boolean
+    public method replaceAll(p0: java.util.function.UnaryOperator): void
     public method retainAll(p0: java.util.Collection): boolean
     public method set(p0: int, p1: java.lang.Object): java.lang.Object
     public bridge final method size(): int
+    public method sort(p0: java.util.Comparator): void
     public @org.jetbrains.annotations.NotNull method subList(p0: int, p1: int): java.util.List
     public method toArray(): java.lang.Object[]
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
@@ -112,7 +117,7 @@ public final class DGenericList {
 
 @kotlin.Metadata
 public final class DGenericListIterator {
-    // source: 'collectionByDelegation.kt'
+    // source: 'collectionByDelegationWithFullJdk.kt'
     private synthetic final field $$delegate_0: java.util.ListIterator
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.ListIterator): void
     public method add(p0: java.lang.Object): void
@@ -128,10 +133,13 @@ public final class DGenericListIterator {
 
 @kotlin.Metadata
 public final class DGenericMap {
-    // source: 'collectionByDelegation.kt'
+    // source: 'collectionByDelegationWithFullJdk.kt'
     private synthetic final field $$delegate_0: java.util.Map
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.Map): void
     public method clear(): void
+    public method compute(p0: java.lang.Object, p1: java.util.function.BiFunction): java.lang.Object
+    public method computeIfAbsent(p0: java.lang.Object, p1: java.util.function.Function): java.lang.Object
+    public method computeIfPresent(p0: java.lang.Object, p1: java.util.function.BiFunction): java.lang.Object
     public method containsKey(p0: java.lang.Object): boolean
     public method containsValue(p0: java.lang.Object): boolean
     public bridge final method entrySet(): java.util.Set
@@ -142,16 +150,22 @@ public final class DGenericMap {
     public @org.jetbrains.annotations.NotNull method getValues(): java.util.Collection
     public method isEmpty(): boolean
     public bridge final method keySet(): java.util.Set
+    public method merge(p0: java.lang.Object, p1: java.lang.Object, p2: java.util.function.BiFunction): java.lang.Object
     public method put(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public method putAll(p0: java.util.Map): void
+    public method putIfAbsent(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public method remove(p0: java.lang.Object): java.lang.Object
+    public method remove(p0: java.lang.Object, p1: java.lang.Object): boolean
+    public method replace(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public method replace(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): boolean
+    public method replaceAll(p0: java.util.function.BiFunction): void
     public bridge final method size(): int
     public bridge final method values(): java.util.Collection
 }
 
 @kotlin.Metadata
 public final class DGenericMapEntry {
-    // source: 'collectionByDelegation.kt'
+    // source: 'collectionByDelegationWithFullJdk.kt'
     private synthetic final field $$delegate_0: java.util.Map$Entry
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.Map$Entry): void
     public method getKey(): java.lang.Object
@@ -161,7 +175,7 @@ public final class DGenericMapEntry {
 
 @kotlin.Metadata
 public final class DGenericSet {
-    // source: 'collectionByDelegation.kt'
+    // source: 'collectionByDelegationWithFullJdk.kt'
     private synthetic final field $$delegate_0: java.util.Set
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.Set): void
     public method add(p0: java.lang.Object): boolean

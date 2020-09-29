@@ -1,3 +1,4 @@
+// FULL_JDK
 class DGenericIterator<T>(d: Iterator<T>) : Iterator<T> by d
 
 class DGenericListIterator<T>(d: ListIterator<T>) : ListIterator<T> by d

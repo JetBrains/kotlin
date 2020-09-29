@@ -234,6 +234,31 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/collectionByDelegation.kt");
         }
 
+        @TestMetadata("collectionByDelegation2.kt")
+        public void testCollectionByDelegation2() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/collectionByDelegation2.kt");
+        }
+
+        @TestMetadata("collectionByDelegation2WithFullJdk.kt")
+        public void testCollectionByDelegation2WithFullJdk() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/collectionByDelegation2WithFullJdk.kt");
+        }
+
+        @TestMetadata("collectionByDelegation3.kt")
+        public void testCollectionByDelegation3() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/collectionByDelegation3.kt");
+        }
+
+        @TestMetadata("collectionByDelegation3WithFullJdk.kt")
+        public void testCollectionByDelegation3WithFullJdk() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/collectionByDelegation3WithFullJdk.kt");
+        }
+
+        @TestMetadata("collectionByDelegationWithFullJdk.kt")
+        public void testCollectionByDelegationWithFullJdk() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/collectionByDelegationWithFullJdk.kt");
+        }
+
         @TestMetadata("collectionsWithFullJdk.kt")
         public void testCollectionsWithFullJdk() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/collectionsWithFullJdk.kt");
