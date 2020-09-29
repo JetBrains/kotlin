@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 const val M = Int.MIN_VALUE
 
 fun f(a: Int): Int {
