@@ -56,7 +56,7 @@ fun compile(
 ): CompilerResult {
     stageController = StageController()
 
-    val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
+    val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer, moduleToName) =
         loadIr(project, mainModule, analyzer, configuration, allDependencies, friendDependencies, PersistentIrFactory, forceAllJs)
 
     val moduleDescriptor = moduleFragment.descriptor
@@ -99,7 +99,8 @@ fun compile(
             fullJs = true,
             dceJs = false,
             multiModule = multiModule,
-            relativeRequirePath = relativeRequirePath
+            relativeRequirePath = relativeRequirePath,
+            moduleToName = moduleToName,
         )
         return transformer.generateModule(allModules)
     } else {
@@ -112,6 +113,7 @@ fun compile(
             multiModule = multiModule,
             relativeRequirePath = relativeRequirePath,
             traceMethods = traceMethods,
+            moduleToName = moduleToName,
         )
         return transformer.generateModule(allModules)
     }

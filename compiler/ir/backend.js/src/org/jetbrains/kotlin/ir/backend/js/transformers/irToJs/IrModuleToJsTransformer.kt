@@ -33,6 +33,7 @@ class IrModuleToJsTransformer(
     private val multiModule: Boolean = false,
     private val relativeRequirePath: Boolean = false,
     private val traceMethods: Boolean = false,
+    private val moduleToName: Map<IrModuleFragment, String> = emptyMap()
 ) {
     private val generateRegionComments = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_REGION_COMMENTS)
 
@@ -92,7 +93,7 @@ class IrModuleToJsTransformer(
             )
 
             val dependencies = others.mapIndexed { index, module ->
-                val moduleName = sanitizeName(module.safeName)
+                val moduleName = moduleToName[module] ?: sanitizeName(module.safeName)
 
                 val exportedDeclarations = ExportModelGenerator(backendContext).let { module.files.flatMap { file -> it.generateExport(file) } }
 
@@ -206,7 +207,7 @@ class IrModuleToJsTransformer(
             }
 
             val moduleName = declareFreshGlobal(module.safeName)
-            modules += JsImportedModule(moduleName.ident, moduleName, moduleName.makeRef(), relativeRequirePath)
+            modules += JsImportedModule(moduleToName[module] ?: moduleName.ident, moduleName, moduleName.makeRef(), relativeRequirePath)
 
             names.forEach {
                 imports += JsVars(JsVars.JsVar(JsName(it), JsNameRef(it, JsNameRef("\$crossModule\$", moduleName.makeRef()))))
