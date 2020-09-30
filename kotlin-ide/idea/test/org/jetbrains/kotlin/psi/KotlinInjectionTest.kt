@@ -103,7 +103,9 @@ class KotlinInjectionTest : AbstractInjectionTest() {
             val test = "<caret>simple"
             """,
         """
-            //language=file-reference
+            import org.intellij.lang.annotations.Language
+            
+            @Language("file-reference")
             val test = "simple"
             """
     )
@@ -114,8 +116,10 @@ class KotlinInjectionTest : AbstractInjectionTest() {
             val test = "<caret>simple"
             """,
         """
+            import org.intellij.lang.annotations.Language
+            
             // Hello
-            //language=file-reference
+            @Language("file-reference")
             val test = "simple"
             """
     )
@@ -128,10 +132,12 @@ class KotlinInjectionTest : AbstractInjectionTest() {
             val test = "<caret>simple"
             """,
         """
+            import org.intellij.lang.annotations.Language
+            
             /**
              * Hi
              */
-            //language=file-reference
+            @Language("file-reference")
             val test = "<caret>simple"
             """
     )
