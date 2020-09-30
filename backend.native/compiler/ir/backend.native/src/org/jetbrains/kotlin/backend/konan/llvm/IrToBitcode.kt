@@ -73,21 +73,6 @@ val IrField.isMainOnlyNonPrimitive get() = when  {
         else -> storageKind == FieldStorageKind.MAIN_THREAD
     }
 
-internal fun verifyModule(llvmModule: LLVMModuleRef, current: String = "") {
-    memScoped {
-        val errorRef = allocPointerTo<ByteVar>()
-        val verificationResult = LLVMVerifyModule(
-                llvmModule, LLVMVerifierFailureAction.LLVMPrintMessageAction, errorRef.ptr)
-        LLVMDisposeMessage(errorRef.value)
-        if (verificationResult == 1) {
-            if (current.isNotEmpty())
-                println("Error in $current")
-            LLVMDumpModule(llvmModule)
-            throw Error("Invalid module")
-        }
-    }
-}
-
 internal class RTTIGeneratorVisitor(context: Context) : IrElementVisitorVoid {
     val generator = RTTIGenerator(context)
 
