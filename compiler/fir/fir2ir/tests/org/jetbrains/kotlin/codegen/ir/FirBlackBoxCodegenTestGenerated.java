@@ -6523,9 +6523,19 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             runTest("compiler/testData/codegen/box/coroutines/builderInferenceAndGenericArrayAcessCall.kt");
         }
 
+        @TestMetadata("captureInfixFun.kt")
+        public void testCaptureInfixFun() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/captureInfixFun.kt");
+        }
+
         @TestMetadata("captureMutableLocalVariableInsideCoroutineBlock.kt")
         public void testCaptureMutableLocalVariableInsideCoroutineBlock() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/captureMutableLocalVariableInsideCoroutineBlock.kt");
+        }
+
+        @TestMetadata("captureUnaryOperator.kt")
+        public void testCaptureUnaryOperator() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/captureUnaryOperator.kt");
         }
 
         @TestMetadata("capturedVarInSuspendLambda.kt")
