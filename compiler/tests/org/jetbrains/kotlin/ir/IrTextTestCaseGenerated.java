@@ -1717,6 +1717,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
+        @TestMetadata("AllCandidates.kt")
+        public void testAllCandidates() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/AllCandidates.kt");
+        }
+
         public void testAllFilesPresentInFirProblems() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/firProblems"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
