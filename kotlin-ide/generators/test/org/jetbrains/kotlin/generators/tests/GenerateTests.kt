@@ -1100,13 +1100,13 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         }
     }
 
-    testGroup("plugins/parcelize/parcelize-ide/tests", "plugins/parcelize/parcelize-ide/testData") {
+    testGroup("compiler-plugins/parcelize") {
         testClass<AbstractParcelizeQuickFixTest> {
-            model("quickfix", pattern = "^([\\w\\-_]+)\\.kt$", filenameStartsLowerCase = true)
+            model("quickfix", pattern = "^([\\w\\-_]+)\\.kt$".toRegex())
         }
 
         testClass<AbstractParcelizeCheckerTest> {
-            model("checker", extension = "kt")
+            model("checker", pattern = KT)
         }
     }
 
