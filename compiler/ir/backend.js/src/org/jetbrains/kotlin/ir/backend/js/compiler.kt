@@ -53,6 +53,7 @@ fun compile(
     focusOnTest: String? = null,
     forceAllJs: Boolean = false,
     legacyPropertyAccess: Boolean = false,
+    irPerModulePrefix: String? = null,
 ): CompilerResult {
     stageController = StageController()
 
@@ -101,6 +102,7 @@ fun compile(
             multiModule = multiModule,
             relativeRequirePath = relativeRequirePath,
             moduleToName = moduleToName,
+            irPerModulePrefix = irPerModulePrefix,
         )
         return transformer.generateModule(allModules)
     } else {
@@ -114,6 +116,7 @@ fun compile(
             relativeRequirePath = relativeRequirePath,
             traceMethods = traceMethods,
             moduleToName = moduleToName,
+            irPerModulePrefix = irPerModulePrefix,
         )
         return transformer.generateModule(allModules)
     }
