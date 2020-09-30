@@ -1,5 +1,6 @@
 // ERROR_POLICY: SEMANTIC
 
+// MODULE: lib
 // FILE: t.kt
 
 fun bar<T>(a: T): T = a
@@ -11,6 +12,7 @@ fun foo() {
     storage += bar<Any, String, Number>("K")
 }
 
+// MODULE: main(lib)
 // FILE: b.kt
 
 fun box(): String {
