@@ -16,4 +16,6 @@ class KotlinSSTypeReferenceTest : KotlinSSResourceInspectionTest() {
     fun testFqTextFilter() { doTest("""fun '_('_ : '_:[regex( kotlin\.Int )])""") }
 
     fun testStandaloneNullable() { doTest("Int?") }
+
+    fun testStandaloneParameter() { doTest("Array<Int>") }
 }

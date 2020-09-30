@@ -117,8 +117,9 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         if (elements.first() is KtAnnotatedExpression && elements.first().lastChild is PsiErrorElement)
             elements = getNonWhitespaceChildren(elements.first()).dropLast(1)
 
-        // Standalone KtNullableType support
-        if (elements.last() is PsiErrorElement && elements.last().firstChild.elementType == KtTokens.QUEST) {
+        // Standalone KtNullableType || KtUserType w/ type parameter support
+        if (elements.last() is PsiErrorElement && elements.last().firstChild.elementType == KtTokens.QUEST
+            || elements.first() is KtCallExpression && (elements.first() as KtCallExpression).valueArgumentList == null) {
             try {
                 val fragment = factory.createType(text)
                 elements = listOf(getNonWhitespaceChildren(fragment).first().parent)
