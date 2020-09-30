@@ -2022,15 +2022,15 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
      * exactly correspond to a tail of LLVM parameters.
      */
     private fun evaluateExplicitArgs(expression: IrFunctionAccessExpression): List<LLVMValueRef> {
-        val evaluatedArgs = expression.getArgumentsWithIr().map { (param, argExpr) ->
-            param to evaluateExpression(argExpr)
-        }.toMap()
-
-        val allValueParameters = expression.symbol.owner.allParameters
-
-        return allValueParameters.dropWhile { it !in evaluatedArgs }.map {
-            evaluatedArgs[it]!!
+        val result = expression.getArgumentsWithIr().map { (_, argExpr) ->
+            evaluateExpression(argExpr)
         }
+        val explicitParametersSize = expression.symbol.owner.explicitParameters.size
+        if (result.size != explicitParametersSize) {
+            error("Number of arguments explicitly represented in the IR ${result.size} differs from expected " +
+                    "$explicitParametersSize in ${ir2string(expression)}")
+        }
+        return result
     }
 
     //-------------------------------------------------------------------------//
