@@ -43,7 +43,6 @@ abstract class AbstractEnterAfterUnmatchedBraceHandlerTest : KotlinLightCodeInsi
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
-        if (isAllFilesPresentInTest()) return KotlinLightProjectDescriptor.INSTANCE
         return try {
             val fileText = FileUtil.loadFile(File(testDataPath, fileName()), true)
             if (InTextDirectivesUtils.isDirectiveDefined(fileText, "WITH_RUNTIME")) {
