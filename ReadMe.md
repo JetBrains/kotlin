@@ -1,3 +1,6 @@
+
+This is an good notes!!
+
 [![official project](https://jb.gg/badges/official.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
 [![TeamCity (simple build status)](https://img.shields.io/teamcity/http/teamcity.jetbrains.com/s/Kotlin_KotlinPublic_Compiler.svg)](https://teamcity.jetbrains.com/buildConfiguration/Kotlin_KotlinPublic_Compiler?branch=%3Cdefault%3E&buildTypeTab=overview&mode=builds)
 [![Maven Central](https://img.shields.io/maven-central/v/org.jetbrains.kotlin/kotlin-maven-plugin.svg)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.jetbrains.kotlin%22)
@@ -169,3 +172,5 @@ Kotlin is distributed under the terms of the Apache License (Version 2.0). See [
 # Contributing
 
 Please be sure to review Kotlin's [contributing guidelines](docs/contributing.md) to learn how to help the project.
+
+#Thanks!!
