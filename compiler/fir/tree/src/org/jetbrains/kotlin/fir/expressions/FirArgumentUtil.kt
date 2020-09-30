@@ -22,7 +22,7 @@ fun buildBinaryArgumentList(left: FirExpression, right: FirExpression): FirArgum
 fun buildArraySetArgumentList(rValue: FirExpression, indexes: List<FirExpression>): FirArgumentList =
     FirArraySetArgumentList(rValue, indexes)
 
-fun buildResolvedArgumentList(mapping: Map<FirExpression, FirValueParameter>): FirArgumentList =
+fun buildResolvedArgumentList(mapping: LinkedHashMap<FirExpression, FirValueParameter>): FirArgumentList =
     FirResolvedArgumentList(mapping)
 
 object FirEmptyArgumentList : FirAbstractArgumentList() {

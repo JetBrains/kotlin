@@ -37,8 +37,8 @@ internal inline var FirExpression.resultType: FirTypeRef
 internal fun remapArgumentsWithVararg(
     varargParameter: FirValueParameter,
     varargArrayType: ConeKotlinType,
-    argumentMapping: Map<FirExpression, FirValueParameter>
-): Map<FirExpression, FirValueParameter> {
+    argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>
+): LinkedHashMap<FirExpression, FirValueParameter> {
     // Create a FirVarargArgumentExpression for the vararg arguments.
     // The order of arguments in the mapping must be preserved for FIR2IR, hence we have to find where the vararg arguments end.
     // FIR2IR uses the mapping order to determine if arguments need to be reordered.
@@ -46,7 +46,7 @@ internal fun remapArgumentsWithVararg(
     val varargElementType = varargArrayType.arrayElementType()
     val argumentList = argumentMapping.keys.toList()
     var indexAfterVarargs = argumentList.size
-    val newArgumentMapping = mutableMapOf<FirExpression, FirValueParameter>()
+    val newArgumentMapping = linkedMapOf<FirExpression, FirValueParameter>()
     val varargArgument = buildVarargArgumentsExpression {
         this.varargElementType = varargParameterTypeRef.withReplacedConeType(varargElementType)
         this.typeRef = varargParameterTypeRef.withReplacedConeType(varargArrayType)
