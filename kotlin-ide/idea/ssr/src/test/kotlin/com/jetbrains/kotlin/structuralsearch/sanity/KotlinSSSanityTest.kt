@@ -5,6 +5,7 @@ import com.intellij.structuralsearch.Matcher
 import com.intellij.structuralsearch.plugin.ui.SearchConfiguration
 import com.intellij.structuralsearch.plugin.util.CollectingMatchResultSink
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.jetbrains.kotlin.structuralsearch.KotlinStructuralSearchProfile
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -32,6 +33,10 @@ class KotlinSSSanityTest : BasePlatformTestCase() {
         val subtree = SanityTestElementPicker.pickFrom(tree)
         if (subtree == null) {
             println("No element picked.")
+            return true
+        }
+        if (KotlinStructuralSearchProfile.TYPED_VAR_PREFIX in subtree.text) {
+            println("The search pattern contains the typed var prefix. Aborting.")
             return true
         }
 
