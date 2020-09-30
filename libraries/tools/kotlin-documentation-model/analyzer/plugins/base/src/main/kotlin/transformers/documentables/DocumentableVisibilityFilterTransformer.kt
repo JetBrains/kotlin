@@ -57,6 +57,10 @@ class DocumentableVisibilityFilterTransformer(val context: DokkaContext) : PreMe
                     modified = modified || listModified
                     list
                 }
+                val typeAliases = filterTypeAliases(it.typealiases).let { (listModified, list) ->
+                    modified = modified || listModified
+                    list
+                }
                 when {
                     !modified -> it
                     else -> {
@@ -66,7 +70,7 @@ class DocumentableVisibilityFilterTransformer(val context: DokkaContext) : PreMe
                             functions,
                             properties,
                             classlikes,
-                            it.typealiases,
+                            typeAliases,
                             it.documentation,
                             it.expectPresentInSet,
                             it.sourceSets,
@@ -290,5 +294,22 @@ class DocumentableVisibilityFilterTransformer(val context: DokkaContext) : PreMe
             }
             return Pair(classlikesListChanged, filteredClasslikes)
         }
+
+        private fun filterTypeAliases(
+            typeAliases: List<DTypeAlias>,
+            additionalCondition: (DTypeAlias, DokkaSourceSet) -> Boolean = ::alwaysTrue
+        ) =
+            typeAliases.transform(additionalCondition) { original, filteredPlatforms ->
+                with(original) {
+                    copy(
+                        documentation = documentation.filtered(filteredPlatforms),
+                        expectPresentInSet = expectPresentInSet.filtered(filteredPlatforms),
+                        underlyingType = underlyingType.filtered(filteredPlatforms),
+                        visibility = visibility.filtered(filteredPlatforms),
+                        generics = generics.mapNotNull { it.filter(filteredPlatforms) },
+                        sourceSets = filteredPlatforms,
+                    )
+                }
+            }
     }
 }
