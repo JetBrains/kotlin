@@ -132,6 +132,12 @@ class RawFirBuilder(
     override val PsiElement?.selectorExpression: PsiElement?
         get() = (this as? KtQualifiedExpression)?.selectorExpression
 
+    override val PsiElement?.arrayExpression: PsiElement?
+        get() = (this as? KtArrayAccessExpression)?.arrayExpression
+
+    override val PsiElement?.indexExpressions: List<PsiElement>?
+        get() = (this as? KtArrayAccessExpression)?.indexExpressions
+
     private val KtModifierListOwner.visibility: Visibility
         get() = with(modifierList) {
             when {

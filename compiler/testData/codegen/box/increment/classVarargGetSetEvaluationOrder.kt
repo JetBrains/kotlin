@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-// Currently fails as the indices (`va`) are evaluated twice (on get and set).
 var log = ""
 
 fun logged(value: String) =
