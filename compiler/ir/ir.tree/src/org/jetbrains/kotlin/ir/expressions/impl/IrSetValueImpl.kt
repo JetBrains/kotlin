@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSetValue
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -32,6 +33,24 @@ class IrSetValueImpl(
     override var value: IrExpression,
     override val origin: IrStatementOrigin?
 ) : IrSetValue() {
+
+    companion object {
+        private fun isVariableOrAssignable(symbol: IrValueSymbol): Boolean {
+            val declaration = symbol.owner
+            return if (declaration is IrValueParameter) {
+                declaration.isAssignable
+            } else {
+                true
+            }
+        }
+    }
+
+    init {
+        assert(isVariableOrAssignable(symbol)) {
+            "Only IrVariables and assignable IrValueParameters can be set"
+        }
+    }
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitSetValue(this, data)
     }

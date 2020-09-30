@@ -1010,7 +1010,7 @@ abstract class IrFileDeserializer(
                 flags.isCrossInline,
                 flags.isNoInline,
                 flags.isHidden,
-                false
+                flags.isAssignable
             ).apply {
                 if (proto.hasDefaultValue())
                     defaultValue = irFactory.createExpressionBody(deserializeExpressionBody(proto.defaultValue))
