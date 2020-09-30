@@ -226,5 +226,7 @@ class KotlinStringUSimpleReferenceExpression(
 
 internal fun createKDocNameSimpleNameReference(parentKDocName: KDocName, givenParent: UElement?): USimpleNameReferenceExpression? =
     parentKDocName.lastChild?.let { psiIdentifier ->
-        KotlinStringUSimpleReferenceExpression(psiIdentifier.text, givenParent, psiIdentifier, parentKDocName)
+        parentKDocName.getQualifiedName().lastOrNull()?.let { qualifierText ->
+            KotlinStringUSimpleReferenceExpression(qualifierText, givenParent, psiIdentifier, parentKDocName)
+        }
     }

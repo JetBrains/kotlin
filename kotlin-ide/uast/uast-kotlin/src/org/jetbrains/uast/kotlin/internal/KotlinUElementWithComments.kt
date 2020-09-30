@@ -32,7 +32,10 @@ interface KotlinUElementWithComments : UElement {
         get() {
             val psi = sourcePsi ?: return emptyList()
             val childrenComments = psi.allChildren.filterIsInstance<PsiComment>().map { UComment(it, this) }.toList()
-            if (this !is UExpression && this !is UParameter) return childrenComments
+            if (this !is UExpression &&
+                this !is UParameter     // fun (/* prior */ a: Int) <-- /* prior */ is on the level of VALUE_PARAM_LIST
+            )
+                return childrenComments
             val childrenAndSiblingComments = childrenComments +
                     psi.nearestCommentSibling(forward = true)?.let { listOf(UComment(it, this)) }.orEmpty() +
                     psi.nearestCommentSibling(forward = false)?.let { listOf(UComment(it, this)) }.orEmpty()

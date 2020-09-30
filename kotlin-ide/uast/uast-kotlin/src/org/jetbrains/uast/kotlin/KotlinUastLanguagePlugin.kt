@@ -38,7 +38,10 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -210,6 +213,9 @@ internal object KotlinConverter {
         is KtFinallySection -> unwrapElements(element.parent)
         is KtAnnotatedExpression -> unwrapElements(element.parent)
         is KtWhenConditionWithExpression -> unwrapElements(element.parent)
+        is KDocLink -> unwrapElements(element.parent)
+        is KDocSection -> unwrapElements(element.parent)
+        is KDocTag -> unwrapElements(element.parent)
         else -> element
     }
 

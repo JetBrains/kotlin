@@ -135,10 +135,6 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : Kotl
             parent = parent.parent
         }
 
-        while (parent is KDocLink || parent is KDocSection || parent is KDocTag) {
-            parent = parent.parent
-        }
-
         val result = doConvertParent(this, parent)
         if (result == this) {
             throw IllegalStateException("Loop in parent structure when converting a $psi of type ${psi?.javaClass} with parent $parent of type ${parent?.javaClass} text: [${parent?.text}], result = $result")
