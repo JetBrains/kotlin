@@ -70,9 +70,8 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
         """
     }
 
-    fun testInsidePropertyInitializer() = assertKeys(
-        "Int%val-foo"
-    ) {
+    // NOTE(lmr): For static initializer expressions we can/should do more.
+    fun testInsidePropertyInitializer() = assertKeys {
         """
         val foo: Int = 1
         """
@@ -144,9 +143,8 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
         """
     }
 
-    fun testConstantProperty() = assertKeys(
-        "Int%val-foo"
-    ) {
+    // NOTE(lmr): we should deal with this in some cases, but leaving untouched for now
+    fun testConstantProperty() = assertKeys {
         """
         const val foo = 1
         """
@@ -378,98 +376,6 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
                 return if (tmp0 == null) {
                   val tmp1 = liveLiteral("Int%fun-bar%class-%no-name-provided%%fun-a", Int%fun-bar%class-%no-name-provided%%fun-a)
                   <set-State%Int%fun-bar%class-%no-name-provided%%fun-a>(tmp1)
-                  tmp1
-                } else {
-                  tmp0
-                }
-                .value
-              }
-            }
-        """
-    )
-
-    @Test
-    fun testTopLevelProp(): Unit = assertTransform(
-        """
-        """,
-        """
-            val a = 1
-            val b = 1 + 2
-        """,
-        """
-            val a: Int
-              get() {
-                return LiveLiterals%TestKt.Int%val-a()
-              }
-            val b: Int
-              get() {
-                return LiveLiterals%TestKt.Expr%val-b()
-              }
-            @LiveLiteralFileInfo(file = "/Test.kt")
-            internal class LiveLiterals%TestKt {
-              val Int%val-a: Int = 1
-              var State%Int%val-a: State<Int>?
-              @LiveLiteralInfo(key = "Int%val-a", offset = 52)
-              fun Int%val-a(): Int {
-                if (!isLiveLiteralsEnabled) {
-                  return Int%val-a
-                }
-                val tmp0 = State%Int%val-a
-                return if (tmp0 == null) {
-                  val tmp1 = liveLiteral("Int%val-a", Int%val-a)
-                  <set-State%Int%val-a>(tmp1)
-                  tmp1
-                } else {
-                  tmp0
-                }
-                .value
-              }
-              val Int%%this%call-plus%val-b: Int = 1
-              var State%Int%%this%call-plus%val-b: State<Int>?
-              @LiveLiteralInfo(key = "Int%%this%call-plus%val-b", offset = 62)
-              fun Int%%this%call-plus%val-b(): Int {
-                if (!isLiveLiteralsEnabled) {
-                  return Int%%this%call-plus%val-b
-                }
-                val tmp0 = State%Int%%this%call-plus%val-b
-                return if (tmp0 == null) {
-                  val tmp1 = liveLiteral("Int%%this%call-plus%val-b", Int%%this%call-plus%val-b)
-                  <set-State%Int%%this%call-plus%val-b>(tmp1)
-                  tmp1
-                } else {
-                  tmp0
-                }
-                .value
-              }
-              val Int%arg-0%call-plus%val-b: Int = 2
-              var State%Int%arg-0%call-plus%val-b: State<Int>?
-              @LiveLiteralInfo(key = "Int%arg-0%call-plus%val-b", offset = 66)
-              fun Int%arg-0%call-plus%val-b(): Int {
-                if (!isLiveLiteralsEnabled) {
-                  return Int%arg-0%call-plus%val-b
-                }
-                val tmp0 = State%Int%arg-0%call-plus%val-b
-                return if (tmp0 == null) {
-                  val tmp1 = liveLiteral("Int%arg-0%call-plus%val-b", Int%arg-0%call-plus%val-b)
-                  <set-State%Int%arg-0%call-plus%val-b>(tmp1)
-                  tmp1
-                } else {
-                  tmp0
-                }
-                .value
-              }
-              val Expr%val-b: Int = LiveLiterals%TestKt.Int%%this%call-plus%val-b() + LiveLiterals%TestKt.Int%arg-0%call-plus%val-b()
-              var State%Expr%val-b: State<Int>?
-              fun Expr%val-b(): Int {
-                if (!isLiveLiteralsEnabled) {
-                  return Expr%val-b
-                }
-                val tmp0 = State%Expr%val-b
-                return if (tmp0 == null) {
-                  val tmp1 = derivedStateOf {
-                    LiveLiterals%TestKt.Int%%this%call-plus%val-b() + LiveLiterals%TestKt.Int%arg-0%call-plus%val-b()
-                  }
-                  <set-State%Expr%val-b>(tmp1)
                   tmp1
                 } else {
                   tmp0
