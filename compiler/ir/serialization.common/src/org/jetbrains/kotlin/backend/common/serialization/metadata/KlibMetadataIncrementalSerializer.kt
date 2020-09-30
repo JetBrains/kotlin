@@ -3,9 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata
+package org.jetbrains.kotlin.backend.common.serialization.metadata
 
-import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataSerializer
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor

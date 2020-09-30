@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSerializer
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.KlibMetadataIncrementalSerializer
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataIncrementalSerializer
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
