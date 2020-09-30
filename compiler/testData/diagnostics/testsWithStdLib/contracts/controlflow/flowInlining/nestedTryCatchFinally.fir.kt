@@ -45,7 +45,7 @@ fun outerFinallyInitializes() {
     }
 
     // Properly initialized
-    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
+    x.inc()
 }
 
 fun innerFinallyInitializes() {

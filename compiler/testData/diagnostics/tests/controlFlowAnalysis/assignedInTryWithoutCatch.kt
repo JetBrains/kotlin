@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun foo() {
     val a: Int
     try {
