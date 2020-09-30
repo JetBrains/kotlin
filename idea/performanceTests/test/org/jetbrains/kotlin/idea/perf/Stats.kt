@@ -186,7 +186,7 @@ class Stats(
                 TeamCity.test(n, errors = listOf(t)) {}
             } else if (!printOnlyErrors) {
                 val durationMs = (statInfo[TEST_KEY] as Long).nsToMs
-                TeamCity.test(n, durationMs = durationMs) {
+                TeamCity.test(n, durationMs = durationMs, includeStats = false) {
                     for ((k, v) in statInfo) {
                         if (k == TEST_KEY) continue
                         (v as? Number)?.let {
@@ -262,7 +262,7 @@ class Stats(
                     phaseData.setUp(testData)
                 }
                 val attemptName = "${phaseData.testName} #$attempt"
-                logMessage { "$attemptName setup took $setUpMillis ms" }
+                //logMessage { "$attemptName setup took $setUpMillis ms" }
 
                 val valueMap = HashMap<String, Any>(2 * PerformanceCounter.numberOfCounters + 1)
                 statInfosArray[attempt] = valueMap
@@ -287,7 +287,7 @@ class Stats(
                         val tearDownMillis = measureTimeMillis {
                             phaseData.tearDown(testData)
                         }
-                        logMessage { "$attemptName tearDown took $tearDownMillis ms" }
+                        //logMessage { "$attemptName tearDown took $tearDownMillis ms" }
                     } catch (t: Throwable) {
                         logMessage(t) { "error at tearDown of $attemptName" }
                         valueMap[ERROR_KEY] = t
