@@ -194,6 +194,7 @@ fun generateKLib(
         expectDescriptorToSymbol,
         icData,
         nopack,
+        perFile = false,
         hasErrors
     )
 }
