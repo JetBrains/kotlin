@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 class AnnotateWithParcelizeQuickFix(clazz: KtClassOrObject) : AbstractParcelizeQuickFix<KtClassOrObject>(clazz) {
     object Factory : AbstractFactory(
         {
-            val targetClass = ErrorsParcelize.CLASS_SHOULD_BE_PARCELIZE.cast(this).a
+            val targetClass = ErrorsParcelize.CLASS_SHOULD_BE_PARCELIZE.cast(this).getA()
             AnnotateWithParcelizeQuickFix(targetClass)
         }
     )
