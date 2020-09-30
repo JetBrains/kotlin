@@ -7,7 +7,7 @@ inline fun test(s: (String) -> Unit) {
 }
 
 fun box(a: String, b: String?) {
-    val s = a + "1" + "2" + 3 + 4L + b + 5.0 + 6F + '7' + A() + true + false + 1u
+    val s = a + "1" + "2" + 3 + 4L + b + 5.0 + 6F + '7' + A() + true + false + 3147483647u
 
     a.plus(b)
     b?.plus(a)
