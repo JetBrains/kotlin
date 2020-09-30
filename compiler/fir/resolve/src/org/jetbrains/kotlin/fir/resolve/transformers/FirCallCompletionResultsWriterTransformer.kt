@@ -207,8 +207,12 @@ class FirCallCompletionResultsWriterTransformer(
         withFirArrayOfCallTransformer {
             annotationCall.argumentList.transformArguments(this, expectedArgumentsTypeMapping)
             var index = 0
-            subCandidate.argumentMapping = subCandidate.argumentMapping?.mapKeys { (_, _) ->
-                annotationCall.argumentList.arguments[index++]
+            subCandidate.argumentMapping = subCandidate.argumentMapping?.let {
+                LinkedHashMap<FirExpression, FirValueParameter>(it.size).let { newMapping ->
+                    subCandidate.argumentMapping?.mapKeysTo(newMapping) { (_, _) ->
+                        annotationCall.argumentList.arguments[index++]
+                    }
+                }
             }
         }
         if (!calleeReference.isError) {

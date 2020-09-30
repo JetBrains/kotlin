@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.name.Name
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.LinkedHashMap
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
@@ -29,13 +30,11 @@ data class ArgumentMapping(
     //      fun foo(a: Int, b: Int) {}
     //      foo(b = bar(), a = qux())
     // parameterToCallArgumentMap.values() should be [ 'bar()', 'foo()' ]
-    // TODO: Consider changing this (and other similar declarations like Candidate.argumentMapping) to LinkedHashMap to signify that
-    // order is important. Right now we're assuming that mutableMapOf() will always return a LinkedHashMap.
-    val parameterToCallArgumentMap: Map<FirValueParameter, ResolvedCallArgument>,
+    val parameterToCallArgumentMap: LinkedHashMap<FirValueParameter, ResolvedCallArgument>,
     val diagnostics: List<ResolutionDiagnostic>
 ) {
-    fun toArgumentToParameterMapping(): Map<FirExpression, FirValueParameter> {
-        val argumentToParameterMapping = mutableMapOf<FirExpression, FirValueParameter>()
+    fun toArgumentToParameterMapping(): LinkedHashMap<FirExpression, FirValueParameter> {
+        val argumentToParameterMapping = linkedMapOf<FirExpression, FirValueParameter>()
         parameterToCallArgumentMap.forEach { (valueParameter, resolvedArgument) ->
             when (resolvedArgument) {
                 is ResolvedCallArgument.SimpleArgument -> argumentToParameterMapping[resolvedArgument.callArgument] = valueParameter
@@ -52,7 +51,7 @@ data class ArgumentMapping(
     }
 }
 
-private val EmptyArgumentMapping = ArgumentMapping(emptyMap(), emptyList())
+private val EmptyArgumentMapping = ArgumentMapping(linkedMapOf(), emptyList())
 
 fun BodyResolveComponents.mapArguments(
     arguments: List<FirExpression>,
@@ -108,7 +107,7 @@ private class FirCallArgumentsProcessor(
     private var nameToParameter: Map<Name, FirValueParameter>? = null
     var diagnostics: MutableList<ResolutionDiagnostic>? = null
         private set
-    val result: MutableMap<FirValueParameter, ResolvedCallArgument> = LinkedHashMap()
+    val result: LinkedHashMap<FirValueParameter, ResolvedCallArgument> = LinkedHashMap(function.valueParameters.size)
 
     private enum class State {
         POSITION_ARGUMENTS,

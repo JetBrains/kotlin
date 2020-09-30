@@ -102,7 +102,7 @@ class Candidate(
     var usesSAM: Boolean = false
     var usesSuspendConversion: Boolean = false
 
-    var argumentMapping: Map<FirExpression, FirValueParameter>? = null
+    var argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>? = null
     var numDefaults: Int = 0
     lateinit var typeArgumentMapping: TypeArgumentMapping
     val postponedAtoms = mutableListOf<PostponedResolvedAtom>()
