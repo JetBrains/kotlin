@@ -3408,17 +3408,17 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
 
             @TestMetadata("leftParOnSameLine.kt")
             public void testLeftParOnSameLine() throws Exception {
-                runTest("idea/testData/intentions/chop/argumentList/leftParOnSameLine.kt");
+                runTest("testData/intentions/chop/argumentList/leftParOnSameLine.kt");
             }
 
             @TestMetadata("parOnSameLine.kt")
             public void testParOnSameLine() throws Exception {
-                runTest("idea/testData/intentions/chop/argumentList/parOnSameLine.kt");
+                runTest("testData/intentions/chop/argumentList/parOnSameLine.kt");
             }
 
             @TestMetadata("rightParOnSameLine.kt")
             public void testRightParOnSameLine() throws Exception {
-                runTest("idea/testData/intentions/chop/argumentList/rightParOnSameLine.kt");
+                runTest("testData/intentions/chop/argumentList/rightParOnSameLine.kt");
             }
 
             @TestMetadata("threeArgs.kt")
@@ -3461,7 +3461,7 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
 
             @TestMetadata("leftParOnSameLine.kt")
             public void testLeftParOnSameLine() throws Exception {
-                runTest("idea/testData/intentions/chop/parameterList/leftParOnSameLine.kt");
+                runTest("testData/intentions/chop/parameterList/leftParOnSameLine.kt");
             }
 
             @TestMetadata("oneParameter.kt")
@@ -3471,12 +3471,12 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
 
             @TestMetadata("parOnSameLine.kt")
             public void testParOnSameLine() throws Exception {
-                runTest("idea/testData/intentions/chop/parameterList/parOnSameLine.kt");
+                runTest("testData/intentions/chop/parameterList/parOnSameLine.kt");
             }
 
             @TestMetadata("rightParOnSameLine.kt")
             public void testRightParOnSameLine() throws Exception {
-                runTest("idea/testData/intentions/chop/parameterList/rightParOnSameLine.kt");
+                runTest("testData/intentions/chop/parameterList/rightParOnSameLine.kt");
             }
 
             @TestMetadata("threeParameters.kt")
@@ -8199,9 +8199,8 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
-    @TestMetadata("idea/testData/intentions/evaluateCompileTimeExpression")
-    @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
+    @TestMetadata("testData/intentions/evaluateCompileTimeExpression")
     public static class EvaluateCompileTimeExpression extends AbstractIntentionTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
@@ -8209,82 +8208,82 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("boolean.kt")
         public void testBoolean() throws Exception {
-            runTest("idea/testData/intentions/evaluateCompileTimeExpression/boolean.kt");
+            runTest("testData/intentions/evaluateCompileTimeExpression/boolean.kt");
         }
 
         @TestMetadata("char.kt")
         public void testChar() throws Exception {
-            runTest("idea/testData/intentions/evaluateCompileTimeExpression/char.kt");
+            runTest("testData/intentions/evaluateCompileTimeExpression/char.kt");
         }
 
         @TestMetadata("char2.kt")
         public void testChar2() throws Exception {
-            runTest("idea/testData/intentions/evaluateCompileTimeExpression/char2.kt");
+            runTest("testData/intentions/evaluateCompileTimeExpression/char2.kt");
         }
 
         @TestMetadata("double.kt")
         public void testDouble() throws Exception {
-            runTest("idea/testData/intentions/evaluateCompileTimeExpression/double.kt");
+            runTest("testData/intentions/evaluateCompileTimeExpression/double.kt");
         }
 
         @TestMetadata("doubleNaN.kt")
         public void testDoubleNaN() throws Exception {
-            runTest("idea/testData/intentions/evaluateCompileTimeExpression/doubleNaN.kt");
+            runTest("testData/intentions/evaluateCompileTimeExpression/doubleNaN.kt");
         }
 
         @TestMetadata("doubleNegativeInfinity.kt")
         public void testDoubleNegativeInfinity() throws Exception {
-            runTest("idea/testData/intentions/evaluateCompileTimeExpression/doubleNegativeInfinity.kt");
+            runTest("testData/intentions/evaluateCompileTimeExpression/doubleNegativeInfinity.kt");
         }
 
         @TestMetadata("doublePositiveInfinity.kt")
         public void testDoublePositiveInfinity() throws Exception {
-            runTest("idea/testData/intentions/evaluateCompileTimeExpression/doublePositiveInfinity.kt");
+            runTest("testData/intentions/evaluateCompileTimeExpression/doublePositiveInfinity.kt");
         }
 
         @TestMetadata("float.kt")
         public void testFloat() throws Exception {
-            runTest("idea/testData/intentions/evaluateCompileTimeExpression/float.kt");
+            runTest("testData/intentions/evaluateCompileTimeExpression/float.kt");
         }
 
         @TestMetadata("floatNaN.kt")
         public void testFloatNaN() throws Exception {
-            runTest("idea/testData/intentions/evaluateCompileTimeExpression/floatNaN.kt");
+            runTest("testData/intentions/evaluateCompileTimeExpression/floatNaN.kt");
         }
 
         @TestMetadata("floatNegativeInfinity.kt")
         public void testFloatNegativeInfinity() throws Exception {
-            runTest("idea/testData/intentions/evaluateCompileTimeExpression/floatNegativeInfinity.kt");
+            runTest("testData/intentions/evaluateCompileTimeExpression/floatNegativeInfinity.kt");
         }
 
         @TestMetadata("floatPositiveInfinity.kt")
         public void testFloatPositiveInfinity() throws Exception {
-            runTest("idea/testData/intentions/evaluateCompileTimeExpression/floatPositiveInfinity.kt");
+            runTest("testData/intentions/evaluateCompileTimeExpression/floatPositiveInfinity.kt");
         }
 
         @TestMetadata("int.kt")
         public void testInt() throws Exception {
-            runTest("idea/testData/intentions/evaluateCompileTimeExpression/int.kt");
+            runTest("testData/intentions/evaluateCompileTimeExpression/int.kt");
         }
 
         @TestMetadata("long.kt")
         public void testLong() throws Exception {
-            runTest("idea/testData/intentions/evaluateCompileTimeExpression/long.kt");
+            runTest("testData/intentions/evaluateCompileTimeExpression/long.kt");
         }
 
         @TestMetadata("parens.kt")
         public void testParens() throws Exception {
-            runTest("idea/testData/intentions/evaluateCompileTimeExpression/parens.kt");
+            runTest("testData/intentions/evaluateCompileTimeExpression/parens.kt");
         }
 
         @TestMetadata("string.kt")
         public void testString() throws Exception {
-            runTest("idea/testData/intentions/evaluateCompileTimeExpression/string.kt");
+            runTest("testData/intentions/evaluateCompileTimeExpression/string.kt");
         }
 
         @TestMetadata("variable.kt")
         public void testVariable() throws Exception {
-            runTest("idea/testData/intentions/evaluateCompileTimeExpression/variable.kt");
+            runTest("testData/intentions/evaluateCompileTimeExpression/variable.kt");
         }
     }
 
@@ -10042,12 +10041,12 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("usedLocal3.kt")
         public void testUsedLocal3() throws Exception {
-            runTest("idea/testData/intentions/joinDeclarationAndAssignment/usedLocal3.kt");
+            runTest("testData/intentions/joinDeclarationAndAssignment/usedLocal3.kt");
         }
 
         @TestMetadata("usedLocal4.kt")
         public void testUsedLocal4() throws Exception {
-            runTest("idea/testData/intentions/joinDeclarationAndAssignment/usedLocal4.kt");
+            runTest("testData/intentions/joinDeclarationAndAssignment/usedLocal4.kt");
         }
 
         @TestMetadata("varReassignment.kt")
@@ -14637,22 +14636,22 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("positiveZeroNegativeZero1.kt")
         public void testPositiveZeroNegativeZero1() throws Exception {
-            runTest("idea/testData/intentions/simplifyBooleanWithConstants/positiveZeroNegativeZero1.kt");
+            runTest("testData/intentions/simplifyBooleanWithConstants/positiveZeroNegativeZero1.kt");
         }
 
         @TestMetadata("positiveZeroNegativeZero2.kt")
         public void testPositiveZeroNegativeZero2() throws Exception {
-            runTest("idea/testData/intentions/simplifyBooleanWithConstants/positiveZeroNegativeZero2.kt");
+            runTest("testData/intentions/simplifyBooleanWithConstants/positiveZeroNegativeZero2.kt");
         }
 
         @TestMetadata("positiveZeroNegativeZero3.kt")
         public void testPositiveZeroNegativeZero3() throws Exception {
-            runTest("idea/testData/intentions/simplifyBooleanWithConstants/positiveZeroNegativeZero3.kt");
+            runTest("testData/intentions/simplifyBooleanWithConstants/positiveZeroNegativeZero3.kt");
         }
 
         @TestMetadata("positiveZeroNegativeZero4.kt")
         public void testPositiveZeroNegativeZero4() throws Exception {
-            runTest("idea/testData/intentions/simplifyBooleanWithConstants/positiveZeroNegativeZero4.kt");
+            runTest("testData/intentions/simplifyBooleanWithConstants/positiveZeroNegativeZero4.kt");
         }
 
         @TestMetadata("reduceableBinary.kt")

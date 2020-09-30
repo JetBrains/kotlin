@@ -1784,7 +1784,7 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
 
             @TestMetadata("joinToStringWithSuspendFunctionCall.kt")
             public void testJoinToStringWithSuspendFunctionCall() throws Exception {
-                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/joinToStringWithSuspendFunctionCall.kt");
+                runTest("testData/inspectionsLocal/collections/simplifiableCallChain/joinToStringWithSuspendFunctionCall.kt");
             }
 
             @TestMetadata("joinToWithComment.kt")
@@ -1794,7 +1794,7 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
 
             @TestMetadata("joinToWithSuspendFunctionCall.kt")
             public void testJoinToWithSuspendFunctionCall() throws Exception {
-                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/joinToWithSuspendFunctionCall.kt");
+                runTest("testData/inspectionsLocal/collections/simplifiableCallChain/joinToWithSuspendFunctionCall.kt");
             }
 
             @TestMetadata("listOfNotNull.kt")
@@ -1814,7 +1814,7 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
 
             @TestMetadata("mapNotNullWithSuspendFunctionCall.kt")
             public void testMapNotNullWithSuspendFunctionCall() throws Exception {
-                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/mapNotNullWithSuspendFunctionCall.kt");
+                runTest("testData/inspectionsLocal/collections/simplifiableCallChain/mapNotNullWithSuspendFunctionCall.kt");
             }
 
             @TestMetadata("mapWithReturn.kt")
@@ -4483,7 +4483,7 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
 
         @TestMetadata("ComplexExpression.kt")
         public void testComplexExpression() throws Exception {
-            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/ComplexExpression.kt");
+            runTest("testData/inspectionsLocal/foldInitializerAndIfToElvis/ComplexExpression.kt");
         }
 
         @TestMetadata("Continue.kt")
@@ -4603,22 +4603,22 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
 
         @TestMetadata("VarUsedAsNotNullable.kt")
         public void testVarUsedAsNotNullable() throws Exception {
-            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/VarUsedAsNotNullable.kt");
+            runTest("testData/inspectionsLocal/foldInitializerAndIfToElvis/VarUsedAsNotNullable.kt");
         }
 
         @TestMetadata("VarUsedAsNotNullable2.kt")
         public void testVarUsedAsNotNullable2() throws Exception {
-            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/VarUsedAsNotNullable2.kt");
+            runTest("testData/inspectionsLocal/foldInitializerAndIfToElvis/VarUsedAsNotNullable2.kt");
         }
 
         @TestMetadata("VarUsedAsNullable.kt")
         public void testVarUsedAsNullable() throws Exception {
-            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/VarUsedAsNullable.kt");
+            runTest("testData/inspectionsLocal/foldInitializerAndIfToElvis/VarUsedAsNullable.kt");
         }
 
         @TestMetadata("VarUsedAsNullable2.kt")
         public void testVarUsedAsNullable2() throws Exception {
-            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/VarUsedAsNullable2.kt");
+            runTest("testData/inspectionsLocal/foldInitializerAndIfToElvis/VarUsedAsNullable2.kt");
         }
     }
 
@@ -5041,7 +5041,7 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
 
         @TestMetadata("implicitReceiver.kt")
         public void testImplicitReceiver() throws Exception {
-            runTest("idea/testData/inspectionsLocal/javaMapForEach/implicitReceiver.kt");
+            runTest("testData/inspectionsLocal/javaMapForEach/implicitReceiver.kt");
         }
 
         @TestMetadata("java.kt")
@@ -6118,12 +6118,12 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
 
         @TestMetadata("hasComments.kt")
         public void testHasComments() throws Exception {
-            runTest("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses/hasComments.kt");
+            runTest("testData/inspectionsLocal/moveLambdaOutsideParentheses/hasComments.kt");
         }
 
         @TestMetadata("hasComments2.kt")
         public void testHasComments2() throws Exception {
-            runTest("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses/hasComments2.kt");
+            runTest("testData/inspectionsLocal/moveLambdaOutsideParentheses/hasComments2.kt");
         }
 
         @TestMetadata("inapplicable1.kt")
@@ -8001,7 +8001,7 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
 
         @TestMetadata("callDifferentSuperMethod2.kt")
         public void testCallDifferentSuperMethod2() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantOverride/callDifferentSuperMethod2.kt");
+            runTest("testData/inspectionsLocal/redundantOverride/callDifferentSuperMethod2.kt");
         }
 
         @TestMetadata("classAndInterface.kt")
@@ -8748,12 +8748,12 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
 
         @TestMetadata("asInitializer.kt")
         public void testAsInitializer() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantWith/asInitializer.kt");
+            runTest("testData/inspectionsLocal/redundantWith/asInitializer.kt");
         }
 
         @TestMetadata("asInitializerWithSingleReturn.kt")
         public void testAsInitializerWithSingleReturn() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantWith/asInitializerWithSingleReturn.kt");
+            runTest("testData/inspectionsLocal/redundantWith/asInitializerWithSingleReturn.kt");
         }
 
         @TestMetadata("emptyExpressionInReturn.kt")
@@ -9012,17 +9012,17 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
 
         @TestMetadata("inStringTemplate.kt")
         public void testInStringTemplate() throws Exception {
-            runTest("idea/testData/inspectionsLocal/removeRedundantBackticks/inStringTemplate.kt");
+            runTest("testData/inspectionsLocal/removeRedundantBackticks/inStringTemplate.kt");
         }
 
         @TestMetadata("inStringTemplate2.kt")
         public void testInStringTemplate2() throws Exception {
-            runTest("idea/testData/inspectionsLocal/removeRedundantBackticks/inStringTemplate2.kt");
+            runTest("testData/inspectionsLocal/removeRedundantBackticks/inStringTemplate2.kt");
         }
 
         @TestMetadata("inStringTemplate3.kt")
         public void testInStringTemplate3() throws Exception {
-            runTest("idea/testData/inspectionsLocal/removeRedundantBackticks/inStringTemplate3.kt");
+            runTest("testData/inspectionsLocal/removeRedundantBackticks/inStringTemplate3.kt");
         }
 
         @TestMetadata("keyword.kt")
@@ -10648,7 +10648,7 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
 
             @TestMetadata("charToStringWithInt.kt")
             public void testCharToStringWithInt() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/toString/charToStringWithInt.kt");
+                runTest("testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/toString/charToStringWithInt.kt");
             }
 
             @TestMetadata("doubleToString.kt")
@@ -10901,12 +10901,12 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
 
         @TestMetadata("hasSet.kt")
         public void testHasSet() throws Exception {
-            runTest("idea/testData/inspectionsLocal/replacePutWithAssignment/hasSet.kt");
+            runTest("testData/inspectionsLocal/replacePutWithAssignment/hasSet.kt");
         }
 
         @TestMetadata("hasSet2.kt")
         public void testHasSet2() throws Exception {
-            runTest("idea/testData/inspectionsLocal/replacePutWithAssignment/hasSet2.kt");
+            runTest("testData/inspectionsLocal/replacePutWithAssignment/hasSet2.kt");
         }
 
         @TestMetadata("nonMap.kt")
@@ -13196,9 +13196,8 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
         }
     }
 
-    @TestMetadata("idea/testData/inspectionsLocal/unusedDataClassCopyResult")
-    @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
+    @TestMetadata("testData/inspectionsLocal/unusedDataClassCopyResult")
     public static class UnusedDataClassCopyResult extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
@@ -13206,22 +13205,22 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
 
         @TestMetadata("basic.kt")
         public void testBasic() throws Exception {
-            runTest("idea/testData/inspectionsLocal/unusedDataClassCopyResult/basic.kt");
+            runTest("testData/inspectionsLocal/unusedDataClassCopyResult/basic.kt");
         }
 
         @TestMetadata("basic2.kt")
         public void testBasic2() throws Exception {
-            runTest("idea/testData/inspectionsLocal/unusedDataClassCopyResult/basic2.kt");
+            runTest("testData/inspectionsLocal/unusedDataClassCopyResult/basic2.kt");
         }
 
         @TestMetadata("used.kt")
         public void testUsed() throws Exception {
-            runTest("idea/testData/inspectionsLocal/unusedDataClassCopyResult/used.kt");
+            runTest("testData/inspectionsLocal/unusedDataClassCopyResult/used.kt");
         }
 
         @TestMetadata("used2.kt")
         public void testUsed2() throws Exception {
-            runTest("idea/testData/inspectionsLocal/unusedDataClassCopyResult/used2.kt");
+            runTest("testData/inspectionsLocal/unusedDataClassCopyResult/used2.kt");
         }
     }
 

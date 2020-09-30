@@ -3393,7 +3393,7 @@ public abstract class QuickFixTestGenerated extends AbstractQuickFixTest {
 
                 @TestMetadata("enumInBinaryExpression.kt")
                 public void testEnumInBinaryExpression() throws Exception {
-                    runTest("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/enumInBinaryExpression.kt");
+                    runTest("testData/quickfix/createFromUsage/createClass/referenceExpression/enumInBinaryExpression.kt");
                 }
 
                 @TestMetadata("enumNoReceiver.kt")
@@ -3418,17 +3418,17 @@ public abstract class QuickFixTestGenerated extends AbstractQuickFixTest {
 
                 @TestMetadata("objectForEnum.kt")
                 public void testObjectForEnum() throws Exception {
-                    runTest("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/objectForEnum.kt");
+                    runTest("testData/quickfix/createFromUsage/createClass/referenceExpression/objectForEnum.kt");
                 }
 
                 @TestMetadata("objectForEnumInArgument.kt")
                 public void testObjectForEnumInArgument() throws Exception {
-                    runTest("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/objectForEnumInArgument.kt");
+                    runTest("testData/quickfix/createFromUsage/createClass/referenceExpression/objectForEnumInArgument.kt");
                 }
 
                 @TestMetadata("objectForEnumInEquals.kt")
                 public void testObjectForEnumInEquals() throws Exception {
-                    runTest("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/objectForEnumInEquals.kt");
+                    runTest("testData/quickfix/createFromUsage/createClass/referenceExpression/objectForEnumInEquals.kt");
                 }
 
                 @TestMetadata("objectInPackage.kt")
@@ -9254,7 +9254,7 @@ public abstract class QuickFixTestGenerated extends AbstractQuickFixTest {
 
             @TestMetadata("addFunctionReciever.kt")
             public void testAddFunctionReciever() throws Exception {
-                runTest("idea/testData/quickfix/override/nothingToOverride/addFunctionReciever.kt");
+                runTest("testData/quickfix/override/nothingToOverride/addFunctionReciever.kt");
             }
 
             @TestMetadata("addFunctionSealedClass.kt")
@@ -9319,7 +9319,7 @@ public abstract class QuickFixTestGenerated extends AbstractQuickFixTest {
 
             @TestMetadata("changeFunctionReciever.kt")
             public void testChangeFunctionReciever() throws Exception {
-                runTest("idea/testData/quickfix/override/nothingToOverride/changeFunctionReciever.kt");
+                runTest("testData/quickfix/override/nothingToOverride/changeFunctionReciever.kt");
             }
 
             @TestMetadata("changeParameterType.kt")
@@ -9671,9 +9671,8 @@ public abstract class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
-    @TestMetadata("idea/testData/quickfix/redundantConst")
-    @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
+    @TestMetadata("testData/quickfix/redundantConst")
     public static class RedundantConst extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
@@ -9681,7 +9680,7 @@ public abstract class QuickFixTestGenerated extends AbstractQuickFixTest {
 
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
-            runTest("idea/testData/quickfix/redundantConst/simple.kt");
+            runTest("testData/quickfix/redundantConst/simple.kt");
         }
     }
 
@@ -14044,7 +14043,7 @@ public abstract class QuickFixTestGenerated extends AbstractQuickFixTest {
 
         @TestMetadata("removeRedundantBranch.kt")
         public void testRemoveRedundantBranch() throws Exception {
-            runTest("idea/testData/quickfix/when/removeRedundantBranch.kt");
+            runTest("testData/quickfix/when/removeRedundantBranch.kt");
         }
 
         @TestMetadata("removeRedundantElse.kt")
