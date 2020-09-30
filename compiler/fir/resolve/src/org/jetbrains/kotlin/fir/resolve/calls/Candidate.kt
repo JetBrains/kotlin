@@ -104,7 +104,6 @@ class Candidate(
 
     var argumentMapping: Map<FirExpression, FirValueParameter>? = null
     var numDefaults: Int = 0
-    var oldToNewArgumentMapping: Map<FirExpression, FirExpression>? = null
     lateinit var typeArgumentMapping: TypeArgumentMapping
     val postponedAtoms = mutableListOf<PostponedResolvedAtom>()
 
