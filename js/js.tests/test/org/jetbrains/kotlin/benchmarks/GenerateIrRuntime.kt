@@ -491,7 +491,8 @@ class GenerateIrRuntime {
             mutableMapOf(),
             emptyList(),
             true,
-            perFile
+            perFile,
+            null
         )
 
         return tmpKlibDir

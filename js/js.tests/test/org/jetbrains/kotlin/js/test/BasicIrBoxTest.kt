@@ -188,7 +188,8 @@ abstract class BasicIrBoxTest(
                 friendDependencies = emptyList(),
                 irFactory = IrFactoryImpl,
                 outputKlibPath = actualOutputFile,
-                nopack = true
+                nopack = true,
+                null
             )
 
             logger.logFile("Output klib", File(actualOutputFile))
