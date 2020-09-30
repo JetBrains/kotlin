@@ -2691,6 +2691,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
             @StabilityInferred(parameters = 0)
             open class Foo {
               val current: Int
+                @Composable @ReadOnlyComposable @JvmName(name = "getCurrent")
                 get() {
                   val tmp0 = %composer.hashCode()
                   return tmp0

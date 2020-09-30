@@ -17,6 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin.lower
 
 import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
+import androidx.compose.compiler.plugins.kotlin.lower.decoys.DecoyFqNames
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -27,12 +28,26 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
-class ComposerIntrinsicTransformer(val context: IrPluginContext) :
+class ComposerIntrinsicTransformer(
+    val context: IrPluginContext,
+    private val decoysEnabled: Boolean
+) :
     IrElementTransformerVoid(),
     FileLoweringPass,
     ModuleLoweringPass {
+
+    private val currentComposerIntrinsic = currentComposerFqName()
+
+    // get-currentComposer gets transformed as decoy, as the getter now has additional params
+    private fun currentComposerFqName(): FqName =
+        if (decoysEnabled) {
+            DecoyFqNames.CurrentComposerIntrinsic
+        } else {
+            ComposeFqNames.CurrentComposerIntrinsic
+        }
 
     override fun lower(module: IrModuleFragment) {
         module.transformChildrenVoid(this)
@@ -45,14 +60,20 @@ class ComposerIntrinsicTransformer(val context: IrPluginContext) :
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun visitCall(expression: IrCall): IrExpression {
         @Suppress("DEPRECATION")
-        if (expression.symbol.descriptor.fqNameSafe == ComposeFqNames.CurrentComposerIntrinsic) {
+        val calleeFqName = expression.symbol.descriptor.fqNameSafe
+        if (calleeFqName == currentComposerIntrinsic) {
             // since this call was transformed by the ComposerParamTransformer, the first argument
             // to this call is the composer itself. We just replace this expression with the
             // argument expression and we are good.
             val expectedArgumentsCount = 1 + // composer parameter
                 1 // changed parameter
             assert(expression.valueArgumentsCount == expectedArgumentsCount) {
-                expression.dump()
+                """
+                    Composer call doesn't match expected argument count:
+                        expected: $expectedArgumentsCount,
+                        actual: ${expression.valueArgumentsCount},
+                        expression: ${expression.dump()}
+                """.trimIndent()
             }
             val composerExpr = expression.getValueArgument(0)
             if (composerExpr == null) error("Expected non-null composer argument")

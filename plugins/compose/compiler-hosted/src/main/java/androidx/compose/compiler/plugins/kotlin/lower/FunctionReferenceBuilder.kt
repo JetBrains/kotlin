@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.copyAttributes
-import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
@@ -76,7 +75,7 @@ class FunctionReferenceBuilder(
         superTypes = listOfNotNull(superType)
         createImplicitParameterDeclarationWithWrappedDescriptor()
         copyAttributes(irFunctionExpression)
-        (this as IrClassImpl).metadata = irFunctionExpression.function.metadata
+        metadata = irFunctionExpression.function.metadata
     }
 
     fun build(): IrExpression = DeclarationIrBuilder(

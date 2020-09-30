@@ -17,6 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin.analysis
 
 import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
+import androidx.compose.compiler.plugins.kotlin.lower.annotationClass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -199,7 +200,7 @@ class StabilityInferencer(val context: IrPluginContext) {
     private val stable = context.referenceClass(ComposeFqNames.Stable)
 
     fun IrAnnotationContainer.hasStableAnnotation(): Boolean {
-        return annotations.any { it.type.classOrNull == stable }
+        return annotations.any { it.annotationClass == stable }
     }
 
     fun IrAnnotationContainer.hasStableMarker(): Boolean {
@@ -207,9 +208,9 @@ class StabilityInferencer(val context: IrPluginContext) {
     }
 
     fun IrConstructorCall.isStableMarker(): Boolean {
-        val symbol = type.classOrNull ?: return false
+        val symbol = annotationClass ?: return false
         val owner = if (symbol.isBound) symbol.owner else return false
-        return owner.annotations.any { it.type.classOrNull == stableMarker }
+        return owner.annotations.any { it.annotationClass == stableMarker }
     }
 
     fun IrClass.hasStableMarkedDescendant(): Boolean {
