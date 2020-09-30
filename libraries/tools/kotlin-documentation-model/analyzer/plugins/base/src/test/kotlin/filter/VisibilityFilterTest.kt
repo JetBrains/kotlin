@@ -4,8 +4,10 @@ import org.jetbrains.dokka.PackageOptionsImpl
 import org.jetbrains.dokka.testApi.testRunner.AbstractCoreTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
 
 class VisibilityFilterTest : AbstractCoreTest() {
+
     @Test
     fun `public function with false global includeNonPublic`() {
         val configuration = dokkaConfiguration {
@@ -36,6 +38,7 @@ class VisibilityFilterTest : AbstractCoreTest() {
             }
         }
     }
+
     @Test
     fun `private function with false global includeNonPublic`() {
         val configuration = dokkaConfiguration {
@@ -66,6 +69,7 @@ class VisibilityFilterTest : AbstractCoreTest() {
             }
         }
     }
+
     @Test
     fun `private function with true global includeNonPublic`() {
         val configuration = dokkaConfiguration {
@@ -96,6 +100,7 @@ class VisibilityFilterTest : AbstractCoreTest() {
             }
         }
     }
+
     @Test
     fun `private function with false global true package includeNonPublic`() {
         val configuration = dokkaConfiguration {
@@ -104,11 +109,13 @@ class VisibilityFilterTest : AbstractCoreTest() {
                     sourceRoots = listOf("src/main/kotlin/basic/Test.kt")
                     includeNonPublic = false
                     perPackageOptions = mutableListOf(
-                        PackageOptionsImpl("example",
+                        PackageOptionsImpl(
+                            "example",
                             true,
                             false,
                             false,
-                            false)
+                            false
+                        )
                     )
                 }
             }
@@ -133,6 +140,7 @@ class VisibilityFilterTest : AbstractCoreTest() {
             }
         }
     }
+
     @Test
     fun `private function with true global false package includeNonPublic`() {
         val configuration = dokkaConfiguration {
@@ -141,11 +149,13 @@ class VisibilityFilterTest : AbstractCoreTest() {
                     sourceRoots = listOf("src/main/kotlin/basic/Test.kt")
                     includeNonPublic = true
                     perPackageOptions = mutableListOf(
-                        PackageOptionsImpl("example",
+                        PackageOptionsImpl(
+                            "example",
                             false,
                             false,
                             false,
-                            false)
+                            false
+                        )
                     )
                 }
             }
@@ -164,10 +174,36 @@ class VisibilityFilterTest : AbstractCoreTest() {
             configuration
         ) {
             documentablesFirstTransformationStep = {
-                 Assertions.assertTrue(
-                     it.component2().packages.first().functions.size == 0
-                 )
-             }
+                Assertions.assertTrue(
+                    it.component2().packages.first().functions.size == 0
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `private typealias should be skipped`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    includeNonPublic = false
+                    sourceRoots = listOf("src/main/kotlin/basic/Test.kt")
+                }
+            }
+        }
+
+        testInline(
+            """
+            |/src/main/kotlin/basic/Test.kt
+            |package example
+            |
+            |private typealias ABC = Int
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesFirstTransformationStep = {
+                assertEquals(0, it.component2().packages.first().typealiases.size)
+            }
         }
     }
 }
