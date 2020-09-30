@@ -91,7 +91,7 @@ open class CocoapodsExtension(private val project: Project) {
 
     // For some reason Gradle doesn't consume the @Nested annotation on NamedDomainObjectContainer.
     @get:Nested
-    protected val podsAsTaskInput: List<CocoapodsDependency>
+    val podsAsTaskInput: List<CocoapodsDependency>
         get() = _pods.toList()
 
     /**
@@ -273,7 +273,7 @@ open class CocoapodsExtension(private val project: Project) {
 
     class SpecRepos {
         @get:Internal
-        internal val specRepos = mutableSetOf<URI>()
+        internal val specRepos = mutableSetOf(URI("https://cdn.cocoapods.org"))
 
         fun url(url: String) {
             specRepos.add(URI(url))

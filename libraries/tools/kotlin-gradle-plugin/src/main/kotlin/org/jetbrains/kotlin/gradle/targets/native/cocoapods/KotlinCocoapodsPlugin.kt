@@ -89,7 +89,6 @@ private val CocoapodsDependency.toPodDownloadTaskName: String
     )
 
 open class KotlinCocoapodsPlugin : Plugin<Project> {
-
     private fun KotlinMultiplatformExtension.supportedTargets() = targets
         .withType(KotlinNativeTarget::class.java)
         .matching { it.konanTarget.family.isAppleFamily }
@@ -354,6 +353,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             it.group = TASK_GROUP
             it.description = "Invokes `pod install` call within Podfile location directory"
             it.podfile.set(cocoapodsExtension.podfile)
+            it.frameworkName = project.provider { cocoapodsExtension.frameworkName }
             it.onlyIf { isAvailableToProduceSynthetic }
 
             //TODO avoid subproject task management here
