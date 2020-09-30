@@ -141,11 +141,19 @@ inline class ValueParameterFlags(val flags: Long) {
     val isCrossInline: Boolean get() = IrFlags.IS_CROSSINLINE.get(flags.toInt())
     val isNoInline: Boolean get() = IrFlags.IS_NOINLINE.get(flags.toInt())
     val isHidden: Boolean get() = IrFlags.IS_HIDDEN.get(flags.toInt())
+    val isAssignable: Boolean get() = IrFlags.IS_ASSIGNABLE.get(flags.toInt())
 
     companion object {
         fun encode(param: IrValueParameter): Long {
             return param.run {
-                IrFlags.getValueParameterFlags(annotations.isNotEmpty(), defaultValue != null, isCrossinline, isNoinline, isHidden).toLong()
+                IrFlags.getValueParameterFlags(
+                    annotations.isNotEmpty(),
+                    defaultValue != null,
+                    isCrossinline,
+                    isNoinline,
+                    isHidden,
+                    isAssignable
+                ).toLong()
             }
         }
 

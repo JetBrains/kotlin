@@ -171,7 +171,7 @@ fun IrFunction.copyReceiverParametersFrom(from: IrFunction) {
             startOffset, endOffset, origin,
             IrValueParameterSymbolImpl(newDescriptor),
             name,
-            index, type, varargElementType, isCrossinline, isNoinline, false
+            index, type, varargElementType, isCrossinline, isNoinline
         ).also { parameter ->
             parameter.parent = this@copyReceiverParametersFrom
             newDescriptor.bind(this)
@@ -421,9 +421,8 @@ fun IrFunction.createDispatchReceiverParameter(origin: IrDeclarationOrigin? = nu
         -1,
         parentAsClass.defaultType,
         null,
-        false,
-        false,
-        false
+        isCrossinline = false,
+        isNoinline = false
     ).apply {
         parent = this@createDispatchReceiverParameter
         newDescriptor.bind(this)

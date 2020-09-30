@@ -815,7 +815,7 @@ class Fir2IrDeclarationStorage(
                     valueParameter.name, index, type,
                     if (!valueParameter.isVararg) null
                     else valueParameter.returnTypeRef.coneType.arrayElementType()?.toIrType(typeContext),
-                    valueParameter.isCrossinline, valueParameter.isNoinline, false
+                    valueParameter.isCrossinline, valueParameter.isNoinline
                 ).apply {
                     descriptor.bind(this)
                     if (valueParameter.defaultValue.let {

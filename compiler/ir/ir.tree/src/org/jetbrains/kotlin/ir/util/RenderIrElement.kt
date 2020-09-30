@@ -511,6 +511,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
             "vararg".takeIf { varargElementType != null },
             "crossinline".takeIf { isCrossinline },
             "noinline".takeIf { isNoinline },
+            "assignable".takeIf { isAssignable }
         )
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?): String =
