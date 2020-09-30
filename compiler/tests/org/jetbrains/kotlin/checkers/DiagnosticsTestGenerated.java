@@ -10454,6 +10454,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 runTest("compiler/testData/diagnostics/tests/inference/lambdaInValInitializerWithAnonymousFunctions.kt");
             }
 
+            @TestMetadata("lambdaParameterTypeInElvis.kt")
+            public void testLambdaParameterTypeInElvis() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/lambdaParameterTypeInElvis.kt");
+            }
+
             @TestMetadata("listConstructor.kt")
             public void testListConstructor() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/listConstructor.kt");

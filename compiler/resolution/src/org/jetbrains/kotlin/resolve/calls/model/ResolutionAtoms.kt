@@ -212,8 +212,7 @@ class CallableReferenceWithRevisedExpectedTypeAtom(
 class PostponedCallableReferenceAtom(
     eagerCallableReferenceAtom: EagerCallableReferenceAtom
 ) : AbstractPostponedCallableReferenceAtom(eagerCallableReferenceAtom.atom, eagerCallableReferenceAtom.expectedType),
-    PostponedCallableReferenceMarker,
-    PostponedAtomWithRevisableExpectedType
+    PostponedCallableReferenceMarker
 {
     override var revisedExpectedType: UnwrappedType? = null
         private set

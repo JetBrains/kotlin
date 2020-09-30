@@ -51,26 +51,6 @@ class ClassicConstraintSystemUtilContext(
         return kotlinTypeRefiner.refineType(this)
     }
 
-    override fun extractFunctionalTypeFromSupertypes(type: KotlinTypeMarker): KotlinTypeMarker {
-        require(type is KotlinType)
-        return type.extractFunctionalTypeFromSupertypes()
-    }
-
-    override fun KotlinTypeMarker.extractArgumentsForFunctionalTypeOrSubtype(): List<KotlinTypeMarker> {
-        require(this is KotlinType)
-        return this.getPureArgumentsForFunctionalTypeOrSubtype()
-    }
-
-    override fun KotlinTypeMarker.isFunctionOrKFunctionTypeWithAnySuspendability(): Boolean {
-        require(this is KotlinType)
-        return this.isFunctionOrKFunctionTypeWithAnySuspendability
-    }
-
-    override fun KotlinTypeMarker.isSuspendFunctionTypeOrSubtype(): Boolean {
-        require(this is KotlinType)
-        return this.isSuspendFunctionTypeOrSubtype
-    }
-
     override fun <T> createArgumentConstraintPosition(argument: T): ArgumentConstraintPosition<T> {
         require(argument is ResolvedAtom)
         @Suppress("UNCHECKED_CAST")
@@ -95,22 +75,9 @@ class ClassicConstraintSystemUtilContext(
         }
     }
 
-    override fun KotlinTypeMarker.isExtensionFunctionType(): Boolean {
-        require(this is KotlinType)
-        return this.isExtensionFunctionType
-    }
-
-    override fun getFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker {
-        return getFunctionDescriptor(builtIns, parametersNumber, isSuspend).typeConstructor
-    }
-
-    override fun getKFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker {
-        return getKFunctionDescriptor(builtIns, parametersNumber, isSuspend).typeConstructor
-    }
-
-    override fun isAnonymousFunction(argument: PostponedAtomWithRevisableExpectedType): Boolean {
-        require(argument is ResolvedAtom)
-        return argument.atom is FunctionExpression
+    override fun PostponedAtomWithRevisableExpectedType.isAnonymousFunction(): Boolean {
+        require(this is ResolvedAtom)
+        return this.atom is FunctionExpression
     }
 
     override fun PostponedAtomWithRevisableExpectedType.isFunctionExpressionWithReceiver(): Boolean {

@@ -193,6 +193,20 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
     fun TypeVariableTypeConstructorMarker.isContainedInInvariantOrContravariantPositions(): Boolean
 
     fun KotlinTypeMarker.isSignedOrUnsignedNumberType(): Boolean
+
+    fun KotlinTypeMarker.isFunctionOrKFunctionWithAnySuspendability(): Boolean
+
+    fun KotlinTypeMarker.isSuspendFunctionTypeOrSubtype(): Boolean
+
+    fun KotlinTypeMarker.isExtensionFunctionType(): Boolean
+
+    fun KotlinTypeMarker.extractArgumentsForFunctionalTypeOrSubtype(): List<KotlinTypeMarker>
+
+    fun KotlinTypeMarker.getFunctionalTypeFromSupertypes(): KotlinTypeMarker
+
+    fun getFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker
+
+    fun getKFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker
 }
 
 

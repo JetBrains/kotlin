@@ -25,23 +25,16 @@ interface ConstraintSystemUtilContext {
     fun KotlinTypeMarker.refineType(): KotlinTypeMarker
 
     // PostponedArgumentInputTypesResolver
-    fun extractFunctionalTypeFromSupertypes(type: KotlinTypeMarker): KotlinTypeMarker
-    fun KotlinTypeMarker.extractArgumentsForFunctionalTypeOrSubtype(): List<KotlinTypeMarker>
-    fun KotlinTypeMarker.isFunctionOrKFunctionTypeWithAnySuspendability(): Boolean
-    fun KotlinTypeMarker.isSuspendFunctionTypeOrSubtype(): Boolean
     fun <T> createArgumentConstraintPosition(argument: T): ArgumentConstraintPosition<T>
     fun <T> createFixVariableConstraintPosition(variable: TypeVariableMarker, atom: T): FixVariableConstraintPosition<T>
     fun extractParameterTypesFromDeclaration(declaration: PostponedAtomWithRevisableExpectedType): List<KotlinTypeMarker?>?
-    fun KotlinTypeMarker.isExtensionFunctionType(): Boolean
-    fun getFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker
-    fun getKFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker
-    fun isAnonymousFunction(argument: PostponedAtomWithRevisableExpectedType): Boolean
+    fun PostponedAtomWithRevisableExpectedType.isAnonymousFunction(): Boolean
     fun PostponedAtomWithRevisableExpectedType.isFunctionExpressionWithReceiver(): Boolean
     fun createTypeVariableForLambdaReturnType(): TypeVariableMarker
     fun createTypeVariableForLambdaParameterType(argument: PostponedAtomWithRevisableExpectedType, index: Int): TypeVariableMarker
+    fun createTypeVariableForCallableReferenceReturnType(): TypeVariableMarker
     fun createTypeVariableForCallableReferenceParameterType(
         argument: PostponedAtomWithRevisableExpectedType,
         index: Int
     ): TypeVariableMarker
-    fun createTypeVariableForCallableReferenceReturnType(): TypeVariableMarker
 }

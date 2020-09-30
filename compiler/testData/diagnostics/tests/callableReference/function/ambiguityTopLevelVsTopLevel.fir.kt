@@ -5,5 +5,5 @@ fun foo(x: Any, y: Int) = y
 fun main() {
     <!UNRESOLVED_REFERENCE!>::foo<!>
     
-    val fooRef: (Int, Any) -> Unit = ::foo
+    val fooRef: (Int, Any) -> Unit = <!UNRESOLVED_REFERENCE!>::foo<!>
 }

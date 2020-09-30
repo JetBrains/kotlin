@@ -1,0 +1,12 @@
+package
+
+public fun </*0*/ S> elvis(/*0*/ nullable: S?, /*1*/ notNullable: S): S
+public fun test(/*0*/ derived: Some): kotlin.Unit
+public fun </*0*/ R : Some> Some.doWithPredicate(/*0*/ predicate: (R) -> kotlin.Unit): R?
+
+public interface Some {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun method(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

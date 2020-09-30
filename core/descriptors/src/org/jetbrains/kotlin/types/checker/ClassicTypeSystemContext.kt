@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.types.checker
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
-import org.jetbrains.kotlin.builtins.isBuiltinFunctionalTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -673,6 +671,39 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
             else intersectionTypeWithAlternative
 
         } ?: error("Expected intersection type, found $firstCandidate")
+    }
+
+    override fun KotlinTypeMarker.isFunctionOrKFunctionWithAnySuspendability(): Boolean {
+        require(this is KotlinType, this::errorMessage)
+        return this.isFunctionOrKFunctionTypeWithAnySuspendability
+    }
+
+    override fun KotlinTypeMarker.isSuspendFunctionTypeOrSubtype(): Boolean {
+        require(this is KotlinType, this::errorMessage)
+        return this.isSuspendFunctionTypeOrSubtype
+    }
+
+    override fun KotlinTypeMarker.isExtensionFunctionType(): Boolean {
+        require(this is KotlinType, this::errorMessage)
+        return this.isExtensionFunctionType
+    }
+
+    override fun KotlinTypeMarker.extractArgumentsForFunctionalTypeOrSubtype(): List<KotlinTypeMarker> {
+        require(this is KotlinType, this::errorMessage)
+        return this.getPureArgumentsForFunctionalTypeOrSubtype()
+    }
+
+    override fun KotlinTypeMarker.getFunctionalTypeFromSupertypes(): KotlinTypeMarker {
+        require(this is KotlinType)
+        return this.extractFunctionalTypeFromSupertypes()
+    }
+
+    override fun getFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker {
+        return getFunctionDescriptor(builtIns, parametersNumber, isSuspend).typeConstructor
+    }
+
+    override fun getKFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker {
+        return getKFunctionDescriptor(builtIns, parametersNumber, isSuspend).typeConstructor
     }
 }
 

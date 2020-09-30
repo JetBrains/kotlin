@@ -38,7 +38,7 @@ class PostponedArgumentInputTypesResolver(
         variableDependencyProvider: TypeVariableDependencyInformationProvider
     ): List<TypeWithKind>? {
         fun List<Constraint>.extractFunctionalTypes() = mapNotNull { constraint ->
-            TypeWithKind(resolutionTypeSystemContext.extractFunctionalTypeFromSupertypes(constraint.type), constraint.kind)
+            TypeWithKind(constraint.type.getFunctionalTypeFromSupertypes(), constraint.kind)
         }
 
         val typeVariableTypeConstructor = variable.typeVariable.freshTypeConstructor()
@@ -216,7 +216,7 @@ class PostponedArgumentInputTypesResolver(
         parametersNumber: Int,
         isSuspend: Boolean,
         resultTypeResolver: ResultTypeResolver
-    ): TypeConstructorMarker = with(resolutionTypeSystemContext) {
+    ): TypeConstructorMarker {
         val expectedType = argument.expectedType
             ?: throw IllegalStateException("Postponed argument's expected type must not be null")
 
@@ -263,7 +263,7 @@ class PostponedArgumentInputTypesResolver(
          *
          * TODO: regarding anonymous functions: see info about need for analysis in partial mode in `collectParameterTypesAndBuildNewExpectedTypes`
          */
-        if (areAllParameterTypesSpecified && !isExtensionFunction && !isAnonymousFunction(argument))
+        if (areAllParameterTypesSpecified && !isExtensionFunction && !argument.isAnonymousFunction())
             return null
 
         val allParameterTypes =
@@ -283,7 +283,6 @@ class PostponedArgumentInputTypesResolver(
             resultTypeResolver
         )
 
-        val isExtensionFunctionType = parameterTypesInfo.isExtensionFunction
         val areParametersNumberInDeclarationAndConstraintsEqual =
             !parametersFromDeclaration.isNullOrEmpty() && !parametersFromConstraints.isNullOrEmpty()
                     && parametersFromDeclaration.size == parametersFromConstraints.first().size
@@ -295,7 +294,7 @@ class PostponedArgumentInputTypesResolver(
          * Example: `val x: String.() -> Int = id { x: String -> 42 }`
          */
         val shouldDiscriminateExtensionFunctionAnnotation =
-            isExtensionFunctionType && areAllParameterTypesSpecified && areParametersNumberInDeclarationAndConstraintsEqual
+            isExtensionFunction && areAllParameterTypesSpecified && areParametersNumberInDeclarationAndConstraintsEqual
 
         /*
          * We need to add an extension function annotation for anonymous functions with an explicitly specified receiver
@@ -344,7 +343,7 @@ class PostponedArgumentInputTypesResolver(
              *
              * TODO: investigate why we can't do it for anonymous functions in full mode always (see `diagnostics/tests/resolve/resolveWithSpecifiedFunctionLiteralWithId.kt`)
              */
-            if (completionMode == ConstraintSystemCompletionMode.PARTIAL && !isAnonymousFunction(argument))
+            if (completionMode == ConstraintSystemCompletionMode.PARTIAL && !argument.isAnonymousFunction())
                 return@any false
             if (argument.revisedExpectedType != null) return@any false
             val parameterTypesInfo =
@@ -402,10 +401,10 @@ class PostponedArgumentInputTypesResolver(
         topLevelType: KotlinTypeMarker,
         dependencyProvider: TypeVariableDependencyInformationProvider,
         resolvedAtomProvider: ResolvedAtomProvider
-    ): Boolean = with(resolutionTypeSystemContext) {
+    ): Boolean = with(c) {
         val expectedType = argument.run { safeAs<PostponedAtomWithRevisableExpectedType>()?.revisedExpectedType ?: expectedType }
 
-        if (expectedType != null && expectedType.isFunctionOrKFunctionTypeWithAnySuspendability()) {
+        if (expectedType != null && expectedType.isFunctionOrKFunctionWithAnySuspendability()) {
             val wasFixedSomeVariable = c.fixNextReadyVariableForParameterType(
                 expectedType,
                 postponedArguments,

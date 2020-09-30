@@ -19,6 +19,6 @@ fun testFunctions() {
 
 fun testNestedCalls() {
     id<String>(inferFromLambda { materialize() })
-    id<String>(inferFromLambda(fun() = materialize()))
-    id<String>(inferFromLambda2(fun() = materialize()))
+    <!INAPPLICABLE_CANDIDATE!>id<!><String>(inferFromLambda(fun() = materialize()))
+    <!INAPPLICABLE_CANDIDATE!>id<!><String>(inferFromLambda2(fun() = materialize()))
 }

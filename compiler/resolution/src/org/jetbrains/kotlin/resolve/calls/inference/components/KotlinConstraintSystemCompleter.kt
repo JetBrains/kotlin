@@ -150,9 +150,9 @@ class KotlinConstraintSystemCompleter(
         c: ConstraintSystemCompletionContext,
         argument: PostponedAtomWithRevisableExpectedType,
         diagnosticsHolder: KotlinDiagnosticsHolder
-    ): Boolean = with(ctx) {
+    ): Boolean = with(c) {
         val revisedExpectedType: UnwrappedType =
-            argument.revisedExpectedType?.takeIf { it.isFunctionOrKFunctionTypeWithAnySuspendability() }?.cast() ?: return false
+            argument.revisedExpectedType?.takeIf { it.isFunctionOrKFunctionWithAnySuspendability() }?.cast() ?: return false
 
         when (argument) {
             is PostponedCallableReferenceAtom ->

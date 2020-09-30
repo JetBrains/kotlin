@@ -5,14 +5,18 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemUtilContext
+import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.FixVariableConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.model.LambdaWithTypeVariableAsExpectedTypeMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
@@ -41,67 +45,77 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
         return this
     }
 
-    override fun KotlinTypeMarker.isFunctionOrKFunctionTypeWithAnySuspendability(): Boolean {
-        TODO()
-    }
-
-    override fun KotlinTypeMarker.isSuspendFunctionTypeOrSubtype(): Boolean {
-        TODO()
-    }
-
-    override fun extractFunctionalTypeFromSupertypes(type: KotlinTypeMarker): KotlinTypeMarker {
-        TODO()
-    }
-
-    override fun KotlinTypeMarker.extractArgumentsForFunctionalTypeOrSubtype(): List<KotlinTypeMarker> {
-        TODO()
-    }
-
     override fun <T> createArgumentConstraintPosition(argument: T): ArgumentConstraintPosition<T> {
-        TODO()
+        @Suppress("UNCHECKED_CAST")
+        return ConeArgumentConstraintPosition() as ArgumentConstraintPosition<T>
     }
 
     override fun <T> createFixVariableConstraintPosition(variable: TypeVariableMarker, atom: T): FixVariableConstraintPosition<T> {
-        TODO()
+        require(atom == null)
+        @Suppress("UNCHECKED_CAST")
+        return ConeFixVariableConstraintPosition(variable) as FixVariableConstraintPosition<T>
     }
 
     override fun extractParameterTypesFromDeclaration(declaration: PostponedAtomWithRevisableExpectedType): List<ConeKotlinType?>? {
-        TODO()
+        require(declaration is PostponedResolvedAtom)
+        return when (declaration) {
+            is LambdaWithTypeVariableAsExpectedTypeAtom -> {
+                val atom = declaration.atom
+                return if (atom.isLambda) { // lambda - must return null in case of absent parameters
+                    if (atom.valueParameters.isNotEmpty())
+                        atom.collectDeclaredValueParameterTypes()
+                    else null
+                } else { // function expression - all types are explicit, shouldn't return null
+                    mutableListOf<ConeKotlinType?>().apply {
+                        atom.receiverTypeRef?.coneType?.let { add(it) }
+                        addAll(atom.collectDeclaredValueParameterTypes())
+                    }
+                }
+            }
+            else -> null
+        }
     }
 
-    override fun KotlinTypeMarker.isExtensionFunctionType(): Boolean {
-        TODO()
-    }
+    private fun FirAnonymousFunction.collectDeclaredValueParameterTypes(): List<ConeKotlinType?> =
+        valueParameters.map {
+            if (it.returnTypeRef !is FirImplicitTypeRef)
+                it.returnTypeRef.coneType
+            else null
+        }
 
-    override fun getFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker {
-        TODO()
-    }
-
-    override fun getKFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker {
-        TODO()
-    }
-
-    override fun isAnonymousFunction(argument: PostponedAtomWithRevisableExpectedType): Boolean {
-        TODO()
+    override fun PostponedAtomWithRevisableExpectedType.isAnonymousFunction(): Boolean {
+        require(this is PostponedResolvedAtom)
+        return this is LambdaWithTypeVariableAsExpectedTypeAtom && !this.atom.isLambda
     }
 
     override fun PostponedAtomWithRevisableExpectedType.isFunctionExpressionWithReceiver(): Boolean {
-        TODO()
+        require(this is PostponedResolvedAtom)
+        return this is LambdaWithTypeVariableAsExpectedTypeAtom && !this.atom.isLambda && this.atom.receiverTypeRef?.coneType != null
     }
 
     override fun createTypeVariableForLambdaReturnType(): TypeVariableMarker {
-        TODO()
+        return ConeTypeVariableForPostponedAtom(PostponedArgumentInputTypesResolver.TYPE_VARIABLE_NAME_FOR_LAMBDA_RETURN_TYPE)
     }
 
-    override fun createTypeVariableForLambdaParameterType(argument: PostponedAtomWithRevisableExpectedType, index: Int): TypeVariableMarker {
-        TODO()
+    override fun createTypeVariableForLambdaParameterType(
+        argument: PostponedAtomWithRevisableExpectedType,
+        index: Int
+    ): TypeVariableMarker {
+        return ConeTypeVariableForPostponedAtom(
+            "${PostponedArgumentInputTypesResolver.TYPE_VARIABLE_NAME_PREFIX_FOR_LAMBDA_PARAMETER_TYPE}$index"
+        )
     }
 
-    override fun createTypeVariableForCallableReferenceParameterType(argument: PostponedAtomWithRevisableExpectedType, index: Int): TypeVariableMarker {
-        TODO()
+    override fun createTypeVariableForCallableReferenceParameterType(
+        argument: PostponedAtomWithRevisableExpectedType,
+        index: Int
+    ): TypeVariableMarker {
+        return ConeTypeVariableForPostponedAtom(
+            "${PostponedArgumentInputTypesResolver.TYPE_VARIABLE_NAME_PREFIX_FOR_CR_PARAMETER_TYPE}$index"
+        )
     }
 
     override fun createTypeVariableForCallableReferenceReturnType(): TypeVariableMarker {
-        TODO()
+        return ConeTypeVariableForPostponedAtom(PostponedArgumentInputTypesResolver.TYPE_VARIABLE_NAME_FOR_LAMBDA_RETURN_TYPE)
     }
 }
