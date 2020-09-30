@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.core
 
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.ControlFlowException
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
@@ -56,6 +57,8 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
     }
 
     companion object {
+        private val LOG = Logger.getInstance(ShortenReferences::class.java)
+
         @JvmField
         val DEFAULT = ShortenReferences()
 
@@ -178,9 +181,35 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         elements: Iterable<KtElement>,
         elementFilter: (PsiElement) -> FilterResult = { FilterResult.PROCESS },
         actionRunningMode: ActionRunningMode = ActionRunningMode.RUN_IN_CURRENT_THREAD
-    ): Collection<KtElement> {
-        return runReadAction { elements.groupBy(KtElement::getContainingKtFile) }
-            .flatMap { shortenReferencesInFile(it.key, it.value, elementFilter, actionRunningMode) }
+    ): Collection<KtElement> = runReadAction { elements.groupBy(KtElement::getContainingKtFile) }.flatMap { (file, elements) ->
+        try {
+            shortenReferencesInFile(file, elements, elementFilter, actionRunningMode)
+        } catch (e: Throwable) {
+            if (e is ControlFlowException) throw e
+
+            LOG.warn(e)
+            val processors: List<ShorteningProcessor<*>> = runReadAction {
+                listOf(
+                    ShortenTypesProcessor(file, elementFilter, emptySet()),
+                    ShortenQualifiedExpressionsProcessor(file, elementFilter, emptySet()),
+                )
+            }
+
+            val resultElements = elements.toMutableSet()
+            runReadAction {
+                for (processor in processors) {
+                    for (element in resultElements) {
+                        element.accept(processor.collectElementsVisitor)
+                    }
+                }
+            }
+
+            for (processor in processors) {
+                processor.removeRootPrefixes(resultElements)
+            }
+
+            resultElements
+        }
     }
 
     private fun shortenReferencesInFile(
