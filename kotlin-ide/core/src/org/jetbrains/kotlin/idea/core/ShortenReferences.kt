@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.idea.core
 
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.diagnostic.ControlFlowException
+import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
@@ -257,7 +259,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
                 }
 
                 if (!anyChange) {
-                    processors.forEach { it.removeRootPrefixes() }
+                    processors.forEach { it.removeRootPrefixes(elementSetToUpdate = elementsToUse) }
                 }
             }
 
@@ -386,24 +388,26 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             for (elementPointer in elementsToShorten) {
                 val element = elementPointer.element ?: continue
                 if (!element.isValid) continue
-
-                var newElement: KtElement? = null
-                // we never want any reformatting to happen because sometimes it causes strange effects (see KT-11633)
-                PostprocessReformattingAspect.getInstance(element.project).disablePostprocessFormattingInside {
-                    newElement = shortenElement(element, options(element))
-                }
-
-                if (element in elementSetToUpdate && newElement != element) {
-                    elementSetToUpdate.remove(element)
-                    elementSetToUpdate.add(newElement!!)
-                }
+                shortenAndReplace(element, elementSetToUpdate, options(element))
             }
         }
 
-        fun removeRootPrefixes() {
+        fun removeRootPrefixes(elementSetToUpdate: MutableSet<KtElement>) {
             for (pointer in collectElementsVisitor.getElementsWithRootPrefix()) {
                 val element = pointer.element ?: continue
-                shortenElement(element, Options.DEFAULT)
+                shortenAndReplace(element, elementSetToUpdate, Options.DEFAULT)
+            }
+        }
+
+        fun shortenAndReplace(element: TElement, elementSetToUpdate: MutableSet<KtElement>, options: Options) {
+            // we never want any reformatting to happen because sometimes it causes strange effects (see KT-11633)
+            val newElement = PostprocessReformattingAspect.getInstance(element.project).disablePostprocessFormattingInside(Computable {
+                shortenElement(element, options)
+            })
+
+            if (element in elementSetToUpdate && newElement != element) {
+                elementSetToUpdate.remove(element)
+                elementSetToUpdate.add(newElement)
             }
         }
 
