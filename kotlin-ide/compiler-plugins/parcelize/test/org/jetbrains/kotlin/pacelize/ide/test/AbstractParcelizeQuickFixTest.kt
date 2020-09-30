@@ -16,17 +16,24 @@
 
 package org.jetbrains.kotlin.pacelize.ide.test
 
+import com.intellij.openapi.application.PathManager
+import com.intellij.openapi.roots.OrderRootType
+import org.jetbrains.kotlin.idea.artifacts.AdditionalKotlinArtifacts
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixTest
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.idea.test.addRoot
+import java.io.File
 
 abstract class AbstractParcelizeQuickFixTest : AbstractQuickFixTest() {
     override fun setUp() {
         super.setUp()
 
-        val androidJar = KotlinTestUtils.findAndroidApiJar()
-        ConfigLibraryUtil.addLibrary(module, "androidJar", androidJar.parentFile.absolutePath, arrayOf(androidJar.name))
-        ConfigLibraryUtil.addLibrary(module, "androidExtensionsRuntime", "dist/kotlinc/lib", arrayOf("parcelize-runtime.jar"))
+        ConfigLibraryUtil.addLibrary(module, "androidJar") {
+            addRoot(File(PathManager.getHomePath(), "community/android/android/testData/android.jar"), OrderRootType.CLASSES)
+        }
+        ConfigLibraryUtil.addLibrary(module, "androidExtensionsRuntime") {
+            addRoot(AdditionalKotlinArtifacts.parcelizeRuntime, OrderRootType.CLASSES)
+        }
     }
 
     override fun tearDown() {

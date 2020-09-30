@@ -24,20 +24,12 @@ public class ParcelizeQuickFixTestGenerated extends AbstractParcelizeQuickFixTes
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    public void testAllFilesPresentInQuickfix() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-ide/testData/quickfix"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
-    }
-
     @TestMetadata("plugins/parcelize/parcelize-ide/testData/quickfix/addPrimaryConstructor")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddPrimaryConstructor extends AbstractParcelizeQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInAddPrimaryConstructor() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-ide/testData/quickfix/addPrimaryConstructor"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("constructorWithDelegate.kt")
@@ -64,10 +56,6 @@ public class ParcelizeQuickFixTestGenerated extends AbstractParcelizeQuickFixTes
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
-        public void testAllFilesPresentInCantBeInnerClass() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-ide/testData/quickfix/cantBeInnerClass"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
-        }
-
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("plugins/parcelize/parcelize-ide/testData/quickfix/cantBeInnerClass/simple.kt");
@@ -82,10 +70,6 @@ public class ParcelizeQuickFixTestGenerated extends AbstractParcelizeQuickFixTes
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
-        public void testAllFilesPresentInClassShouldBeAnnotated() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-ide/testData/quickfix/classShouldBeAnnotated"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
-        }
-
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("plugins/parcelize/parcelize-ide/testData/quickfix/classShouldBeAnnotated/simple.kt");
@@ -98,10 +82,6 @@ public class ParcelizeQuickFixTestGenerated extends AbstractParcelizeQuickFixTes
     public static class DeleteIncompatible extends AbstractParcelizeQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInDeleteIncompatible() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-ide/testData/quickfix/deleteIncompatible"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("creatorField.kt")
@@ -121,10 +101,6 @@ public class ParcelizeQuickFixTestGenerated extends AbstractParcelizeQuickFixTes
     public static class Migrations extends AbstractParcelizeQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInMigrations() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-ide/testData/quickfix/migrations"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("basic.kt")
@@ -171,10 +147,6 @@ public class ParcelizeQuickFixTestGenerated extends AbstractParcelizeQuickFixTes
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
-        public void testAllFilesPresentInNoParcelableSupertype() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-ide/testData/quickfix/noParcelableSupertype"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
-        }
-
         @TestMetadata("alreadyHasSupertype.kt")
         public void testAlreadyHasSupertype() throws Exception {
             runTest("plugins/parcelize/parcelize-ide/testData/quickfix/noParcelableSupertype/alreadyHasSupertype.kt");
@@ -194,10 +166,6 @@ public class ParcelizeQuickFixTestGenerated extends AbstractParcelizeQuickFixTes
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
-        public void testAllFilesPresentInPropertyWontBeSerialized() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-ide/testData/quickfix/propertyWontBeSerialized"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
-        }
-
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("plugins/parcelize/parcelize-ide/testData/quickfix/propertyWontBeSerialized/simple.kt");
@@ -210,10 +178,6 @@ public class ParcelizeQuickFixTestGenerated extends AbstractParcelizeQuickFixTes
     public static class RemoveDuplicatingTypeParcelerAnnotation extends AbstractParcelizeQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInRemoveDuplicatingTypeParcelerAnnotation() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-ide/testData/quickfix/removeDuplicatingTypeParcelerAnnotation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("simple.kt")
