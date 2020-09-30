@@ -26,7 +26,12 @@ private val checkCanConvert = Registry.`is`("kotlin.uast.use.psi.type.precheck",
 internal fun canConvert(element: PsiElement, targets: Array<out Class<out UElement>>): Boolean {
     if (!checkCanConvert) return true
     val originalCls = element.originalElement.javaClass
-    return targets.any { getPossibleSourceTypes(it).let { originalCls in it } }
+
+    if (targets.any { getPossibleSourceTypes(it).let { originalCls in it } })
+        return true
+
+    val ktOriginalCls = (element as? KtLightElementBase)?.kotlinOrigin?.javaClass ?: return false
+    return targets.any { getPossibleSourceTypes(it).let { ktOriginalCls in it } }
 }
 
 internal fun getPossibleSourceTypes(uastType: Class<out UElement>) =
@@ -533,6 +538,7 @@ private val possibleSourceTypes = mapOf<Class<*>, ClassSet<PsiElement>>(
     UInjectionHost::class.java to classSetOf<PsiElement>(
         KtAnnotatedExpression::class.java,
         KtBlockStringTemplateEntry::class.java,
+        KtLightPsiArrayInitializerMemberValue::class.java,
         KtLightPsiLiteral::class.java,
         KtStringTemplateExpression::class.java,
         KtWhenConditionWithExpression::class.java
@@ -572,6 +578,7 @@ private val possibleSourceTypes = mapOf<Class<*>, ClassSet<PsiElement>>(
         KtBlockStringTemplateEntry::class.java,
         KtConstantExpression::class.java,
         KtEscapeStringTemplateEntry::class.java,
+        KtLightPsiArrayInitializerMemberValue::class.java,
         KtLightPsiLiteral::class.java,
         KtLiteralStringTemplateEntry::class.java,
         KtStringTemplateExpression::class.java,
@@ -670,6 +677,7 @@ private val possibleSourceTypes = mapOf<Class<*>, ClassSet<PsiElement>>(
         KtAnnotatedExpression::class.java,
         KtBinaryExpression::class.java,
         KtBlockStringTemplateEntry::class.java,
+        KtLightPsiArrayInitializerMemberValue::class.java,
         KtLightPsiLiteral::class.java,
         KtStringTemplateExpression::class.java,
         KtWhenConditionInRange::class.java,
