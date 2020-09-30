@@ -431,13 +431,17 @@ fun IrFunction.createDispatchReceiverParameter(origin: IrDeclarationOrigin? = nu
 }
 
 val IrFunction.allParameters: List<IrValueParameter>
-    get() = explicitParameters.also {
-        if (this is IrConstructor) {
-            it.add(0, this.constructedClass.thisReceiver
-                ?: error(this.render()))
+    get() = if (this is IrConstructor) {
+        ArrayList<IrValueParameter>(valueParameters.size + 3).also {
+            it.add(
+                this.constructedClass.thisReceiver
+                    ?: error(this.render())
+            )
+            addExplicitParametersTo(it)
         }
+    } else {
+        explicitParameters
     }
-    
 
 private object FakeOverrideBuilder : FakeOverrideBuilderStrategy() {
     override fun linkFakeOverride(fakeOverride: IrOverridableMember) {

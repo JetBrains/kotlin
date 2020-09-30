@@ -199,12 +199,16 @@ val IrClass.primaryConstructor: IrConstructor?
 val IrDeclarationContainer.properties: Sequence<IrProperty>
     get() = declarations.asSequence().filterIsInstance<IrProperty>()
 
-val IrFunction.explicitParameters: MutableList<IrValueParameter>
-    get() = mutableListOf<IrValueParameter>().apply {
-                dispatchReceiverParameter?.let { add(it) }
-                extensionReceiverParameter?.let { add(it) }
-                addAll(valueParameters)
-            }
+fun IrFunction.addExplicitParametersTo(parametersList: MutableList<IrValueParameter>) {
+    dispatchReceiverParameter?.let { parametersList.add(it) }
+    extensionReceiverParameter?.let { parametersList.add(it) }
+    parametersList.addAll(valueParameters)
+}
+
+val IrFunction.explicitParameters: List<IrValueParameter>
+    get() = ArrayList<IrValueParameter>(valueParameters.size + 2).also {
+        addExplicitParametersTo(it)
+    }
 
 val IrBody.statements: List<IrStatement>
     get() = when (this) {
