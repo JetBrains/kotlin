@@ -9,6 +9,7 @@
       <w>celko</w>
       <w>clrdblink</w>
       <w>columniation</w>
+      <w>corretto</w>
       <w>ctxsys</w>
       <w>deduplicates</w>
       <w>dekaf</w>
@@ -35,6 +36,7 @@
       <w>rownum</w>
       <w>rowversion</w>
       <w>sakila</w>
+      <w>sapmachine</w>
       <w>scriptable</w>
       <w>scriptum</w>
       <w>spliterator</w>
