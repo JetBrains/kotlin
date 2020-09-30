@@ -31,7 +31,8 @@ dependencies {
     testImplementation(JUNIT)
     testImplementation(ROBOLECTRIC)
 
-    testImplementation(
+    testCompileOnly("org.jetbrains.kotlin:kotlin-compiler:$KOTLIN_VERSION")
+    testRuntimeOnly(
         project(
            ":compose:compiler:compiler-hosted:integration-tests:kotlin-compiler-repackaged"
         )
