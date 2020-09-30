@@ -3,7 +3,7 @@ Run Java
 Connected to the target VM
 evSkipAnonymousObject.kt:12
 KotlinStackFrame (evSkipAnonymousObject.kt:12)
-    JavaValue[local] args: java.lang.String[] (evSkipAnonymousObject.kt:7)
+    JavaValue[local] args: java.lang.String[] = [] (evSkipAnonymousObject.kt:7)
     JavaValue[local] a1: evSkipAnonymousObject.A (evSkipAnonymousObject.kt:8)
         JavaValue[field] prop: int = 1 (evSkipAnonymousObject.kt:4)
     JavaValue[local] a2: evSkipAnonymousObject.A (evSkipAnonymousObject.kt:9)

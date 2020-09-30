@@ -6,10 +6,11 @@ Compile bytecode for this
 Compile bytecode for this@Foo
 KotlinStackFrame (lambdaFun4.kt:8)
     JavaValue[local] this: java.lang.String = abc
-        JavaValue[field] value: char[] (String.!EXT!)
-            JavaValue[element] 0 = 'a' 97
-            JavaValue[element] 1 = 'b' 98
-            JavaValue[element] 2 = 'c' 99
+        JavaValue[field] value: byte[] (String.!EXT!)
+            JavaValue[element] 0 = 97
+            JavaValue[element] 1 = 98
+            JavaValue[element] 2 = 99
+        JavaValue[field] coder: byte = 0 (String.!EXT!)
         JavaValue[field] hash: int = 0 (String.!EXT!)
 Disconnected from the target VM
 

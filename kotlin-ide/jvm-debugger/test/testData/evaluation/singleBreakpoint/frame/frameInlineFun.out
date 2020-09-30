@@ -5,7 +5,7 @@ frameInlineFun.kt:14
 Compile bytecode for element
 Compile bytecode for this.prop
 KotlinStackFrame (frameInlineFun.kt:14)
-    JavaValue[local] args: java.lang.String[]
+    JavaValue[local] args: java.lang.String[] = []
     JavaValue[local] element: int = 1 (frameInlineFun.kt:12)
     JavaValue[local] this_$iv: frameInlineFun.A
         JavaValue[field] prop: int = 1 (frameInlineFun.kt:17)

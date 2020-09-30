@@ -5,8 +5,9 @@ lambdaParameterMangling.kt:12
 Compile bytecode for a.length + b
 KotlinStackFrame (lambdaParameterMangling.kt:12)
     JavaValue[local] a: java.lang.String = a (lambdaParameterMangling.kt:10)
-        JavaValue[field] value: char[] (String.!EXT!)
-            JavaValue[element] 0 = 'a' 97
+        JavaValue[field] value: byte[] (String.!EXT!)
+            JavaValue[element] 0 = 97
+        JavaValue[field] coder: byte = 0 (String.!EXT!)
         JavaValue[field] hash: int = 0 (String.!EXT!)
     JavaValue[local] b: int = 5 (lambdaParameterMangling.kt:10)
 Disconnected from the target VM

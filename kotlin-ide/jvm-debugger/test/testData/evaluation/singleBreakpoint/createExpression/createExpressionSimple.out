@@ -3,7 +3,7 @@ Run Java
 Connected to the target VM
 createExpressionSimple.kt:15
 KotlinStackFrame (createExpressionSimple.kt:15)
-    JavaValue[local] args: java.lang.String[] (createExpressionSimple.kt:11)
+    JavaValue[local] args: java.lang.String[] = [] (createExpressionSimple.kt:11)
     JavaValue[local] myClass: createExpressionSimple.Base (createExpressionSimple.kt:12)
         JavaValue[field] i: int = 1 (createExpressionSimple.kt:4)
         JavaValue[field] baseI: int = 2 (createExpressionSimple.kt:8)

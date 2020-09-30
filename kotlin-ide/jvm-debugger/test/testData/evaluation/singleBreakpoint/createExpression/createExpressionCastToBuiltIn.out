@@ -3,13 +3,14 @@ Run Java
 Connected to the target VM
 createExpressionCastToBuiltIn.kt:7
 KotlinStackFrame (createExpressionCastToBuiltIn.kt:7)
-    JavaValue[local] args: java.lang.String[] (createExpressionCastToBuiltIn.kt:3)
+    JavaValue[local] args: java.lang.String[] = [] (createExpressionCastToBuiltIn.kt:3)
     JavaValue[local] primitiveArray: int[] (createExpressionCastToBuiltIn.kt:4)
         JavaValue[element] 0 = 1
     JavaValue[local] stringArray: java.lang.String[] (createExpressionCastToBuiltIn.kt:5)
         JavaValue[element] 0 = a
-            JavaValue[field] value: char[] (String.!EXT!)
-                JavaValue[element] 0 = 'a' 97
+            JavaValue[field] value: byte[] (String.!EXT!)
+                JavaValue[element] 0 = 97
+            JavaValue[field] coder: byte = 0 (String.!EXT!)
             JavaValue[field] hash: int = 0 (String.!EXT!)
 Disconnected from the target VM
 

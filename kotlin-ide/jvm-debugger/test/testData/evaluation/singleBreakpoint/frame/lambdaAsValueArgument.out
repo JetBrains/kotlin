@@ -5,22 +5,26 @@ lambdaAsValueArgument.kt:19
 KotlinStackFrame (lambdaAsValueArgument.kt:19)
     JavaValue[local] this: lambdaAsValueArgument.User = User(firstName=a, lastName=b, age=10)
         JavaValue[field] firstName: java.lang.String = a (lambdaAsValueArgument.kt:9)
-            JavaValue[field] value: char[] (String.!EXT!)
-                JavaValue[element] 0 = 'a' 97
+            JavaValue[field] value: byte[] (String.!EXT!)
+                JavaValue[element] 0 = 97
+            JavaValue[field] coder: byte = 0 (String.!EXT!)
             JavaValue[field] hash: int = 0 (String.!EXT!)
         JavaValue[field] lastName: java.lang.String = b (lambdaAsValueArgument.kt:9)
-            JavaValue[field] value: char[] (String.!EXT!)
-                JavaValue[element] 0 = 'b' 98
+            JavaValue[field] value: byte[] (String.!EXT!)
+                JavaValue[element] 0 = 98
+            JavaValue[field] coder: byte = 0 (String.!EXT!)
             JavaValue[field] hash: int = 0 (String.!EXT!)
         JavaValue[field] age: int = 10 (lambdaAsValueArgument.kt:9)
     JavaValue[local] i: lambdaAsValueArgument.User = User(firstName=a, lastName=b, age=10) (lambdaAsValueArgument.kt:17)
         JavaValue[field] firstName: java.lang.String = a (lambdaAsValueArgument.kt:9)
-            JavaValue[field] value: char[] (String.!EXT!)
-                JavaValue[element] 0 = 'a' 97
+            JavaValue[field] value: byte[] (String.!EXT!)
+                JavaValue[element] 0 = 97
+            JavaValue[field] coder: byte = 0 (String.!EXT!)
             JavaValue[field] hash: int = 0 (String.!EXT!)
         JavaValue[field] lastName: java.lang.String = b (lambdaAsValueArgument.kt:9)
-            JavaValue[field] value: char[] (String.!EXT!)
-                JavaValue[element] 0 = 'b' 98
+            JavaValue[field] value: byte[] (String.!EXT!)
+                JavaValue[element] 0 = 98
+            JavaValue[field] coder: byte = 0 (String.!EXT!)
             JavaValue[field] hash: int = 0 (String.!EXT!)
         JavaValue[field] age: int = 10 (lambdaAsValueArgument.kt:9)
 Disconnected from the target VM

@@ -3,7 +3,7 @@ Run Java
 Connected to the target VM
 delegatedPropertyInClassWithToString.kt:8
 KotlinStackFrame (delegatedPropertyInClassWithToString.kt:8)
-    JavaValue[local] args: java.lang.String[] (delegatedPropertyInClassWithToString.kt:5)
+    JavaValue[local] args: java.lang.String[] = [] (delegatedPropertyInClassWithToString.kt:5)
     JavaValue[local] a: delegatedPropertyInClassWithToString.A = KotlinTest (delegatedPropertyInClassWithToString.kt:6)
         JavaValue[field] prop$delegate: delegatedPropertyInClassWithToString.MyDelegate (delegatedPropertyInClassWithToString.kt:12)
             DummyMessageValueNode = Class has no fields

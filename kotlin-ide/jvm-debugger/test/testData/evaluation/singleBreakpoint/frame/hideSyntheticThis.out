@@ -4,10 +4,11 @@ Connected to the target VM
 hideSyntheticThis.kt:6
 KotlinStackFrame (hideSyntheticThis.kt:6)
     JavaValue[local] this: java.lang.String = foo
-        JavaValue[field] value: char[] (String.!EXT!)
-            JavaValue[element] 0 = 'f' 102
-            JavaValue[element] 1 = 'o' 111
-            JavaValue[element] 2 = 'o' 111
+        JavaValue[field] value: byte[] (String.!EXT!)
+            JavaValue[element] 0 = 102
+            JavaValue[element] 1 = 111
+            JavaValue[element] 2 = 111
+        JavaValue[field] coder: byte = 0 (String.!EXT!)
         JavaValue[field] hash: int = 0 (String.!EXT!)
 Disconnected from the target VM
 

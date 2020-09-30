@@ -3,7 +3,7 @@ Run Java
 Connected to the target VM
 evDuplicateItems.kt:10
 KotlinStackFrame (evDuplicateItems.kt:10)
-    JavaValue[local] args: java.lang.String[] (evDuplicateItems.kt:7)
+    JavaValue[local] args: java.lang.String[] = [] (evDuplicateItems.kt:7)
     JavaValue[local] a: evDuplicateItems.A (evDuplicateItems.kt:8)
         JavaValue[field] prop: int = 1 (evDuplicateItems.kt:4)
 Disconnected from the target VM

@@ -4,7 +4,7 @@ Connected to the target VM
 frameSharedVarLocalVar.kt:7
 Compile bytecode for var1
 KotlinStackFrame (frameSharedVarLocalVar.kt:7)
-    JavaValue[local] args: java.lang.String[] (frameSharedVarLocalVar.kt:3)
+    JavaValue[local] args: java.lang.String[] = [] (frameSharedVarLocalVar.kt:3)
     JavaValue[local] var1: int = 1 (frameSharedVarLocalVar.kt:4)
     JavaValue[local] $i$f$foo: int = undefined
     JavaValue[local] $i$a$-foo-FrameSharedVarLocalVarKt$main$1: int = undefined

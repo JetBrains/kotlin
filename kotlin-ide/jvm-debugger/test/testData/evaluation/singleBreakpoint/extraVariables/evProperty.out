@@ -3,7 +3,7 @@ Run Java
 Connected to the target VM
 evProperty.kt:10
 KotlinStackFrame (evProperty.kt:10)
-    JavaValue[local] args: java.lang.String[] (evProperty.kt:7)
+    JavaValue[local] args: java.lang.String[] = [] (evProperty.kt:7)
     JavaValue[local] a: evProperty.A (evProperty.kt:8)
         JavaValue[field] prop: int = 1 (evProperty.kt:4)
 Disconnected from the target VM

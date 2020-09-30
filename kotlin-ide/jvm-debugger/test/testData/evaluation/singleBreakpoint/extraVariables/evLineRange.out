@@ -3,7 +3,7 @@ Run Java
 Connected to the target VM
 evLineRange.kt:15
 KotlinStackFrame (evLineRange.kt:15)
-    JavaValue[local] args: java.lang.String[] (evLineRange.kt:7)
+    JavaValue[local] args: java.lang.String[] = [] (evLineRange.kt:7)
     JavaValue[local] a1: evLineRange.A (evLineRange.kt:8)
         JavaValue[field] prop: int = 1 (evLineRange.kt:4)
     JavaValue[local] a2: evLineRange.A (evLineRange.kt:9)

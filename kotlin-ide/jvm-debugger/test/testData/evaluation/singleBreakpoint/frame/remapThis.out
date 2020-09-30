@@ -6,8 +6,9 @@ KotlinStackFrame (remapThis.kt:14)
     JavaValue[this] this: Bar@uniqueID
         DummyMessageValueNode = Class has no fields
     JavaValue[local] this: java.lang.String = a
-        JavaValue[field] value: char[] (String.!EXT!)
-            JavaValue[element] 0 = 'a' 97
+        JavaValue[field] value: byte[] (String.!EXT!)
+            JavaValue[element] 0 = 97
+        JavaValue[field] coder: byte = 0 (String.!EXT!)
         JavaValue[field] hash: int = 0 (String.!EXT!)
 Disconnected from the target VM
 

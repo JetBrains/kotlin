@@ -3,7 +3,7 @@ Run Java
 Connected to the target VM
 createExpressionWithArray.kt:12
 KotlinStackFrame (createExpressionWithArray.kt:12)
-    JavaValue[local] args: java.lang.String[] (createExpressionWithArray.kt:8)
+    JavaValue[local] args: java.lang.String[] = [] (createExpressionWithArray.kt:8)
     JavaValue[local] baseArray: forTests.MyJavaClass$BaseClass[] (createExpressionWithArray.kt:9)
         JavaValue[element] 0: MyJavaClass$BaseClass@uniqueID
             JavaValue[field] i2: int = 1 (MyJavaClass.java:9)

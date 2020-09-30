@@ -4,16 +4,18 @@ Connected to the target VM
 capturedValues1.kt:17
 KotlinStackFrame (capturedValues1.kt:17)
     JavaValue this (@place1) = x
-        JavaValue[field] value: char[] (String.!EXT!)
-            JavaValue[element] 0 = 'x' 120
+        JavaValue[field] value: byte[] (String.!EXT!)
+            JavaValue[element] 0 = 120
+        JavaValue[field] coder: byte = 0 (String.!EXT!)
         JavaValue[field] hash: int = 0 (String.!EXT!)
     JavaValue c2 = 3
     JavaValue b = 2
     JavaValue this (@foo) = 1000
-    JavaValue args: String[0]@uniqueID
+    JavaValue args: String[0]@uniqueID = []
     JavaValue[local] this: java.lang.String = y
-        JavaValue[field] value: char[] (String.!EXT!)
-            JavaValue[element] 0 = 'y' 121
+        JavaValue[field] value: byte[] (String.!EXT!)
+            JavaValue[element] 0 = 121
+        JavaValue[field] coder: byte = 0 (String.!EXT!)
         JavaValue[field] hash: int = 0 (String.!EXT!)
 Disconnected from the target VM
 

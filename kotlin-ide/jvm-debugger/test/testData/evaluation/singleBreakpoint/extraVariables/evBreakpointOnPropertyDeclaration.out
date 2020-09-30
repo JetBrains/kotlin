@@ -3,7 +3,7 @@ Run Java
 Connected to the target VM
 evBreakpointOnPropertyDeclaration.kt:14
 KotlinStackFrame (evBreakpointOnPropertyDeclaration.kt:14)
-    JavaValue[local] args: java.lang.String[] (evBreakpointOnPropertyDeclaration.kt:7)
+    JavaValue[local] args: java.lang.String[] = [] (evBreakpointOnPropertyDeclaration.kt:7)
     JavaValue[local] a1: evBreakpointOnPropertyDeclaration.A (evBreakpointOnPropertyDeclaration.kt:8)
         JavaValue[field] prop: int = 1 (evBreakpointOnPropertyDeclaration.kt:4)
     JavaValue[local] a2: evBreakpointOnPropertyDeclaration.A (evBreakpointOnPropertyDeclaration.kt:9)

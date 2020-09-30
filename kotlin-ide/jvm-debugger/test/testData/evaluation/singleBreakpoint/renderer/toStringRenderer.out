@@ -3,7 +3,7 @@ Run Java
 Connected to the target VM
 toStringRenderer.kt:6
 KotlinStackFrame (toStringRenderer.kt:6)
-    JavaValue[local] args: java.lang.String[] (toStringRenderer.kt:3)
+    JavaValue[local] args: java.lang.String[] = [] (toStringRenderer.kt:3)
     JavaValue[local] a: toStringRenderer.A = myA (toStringRenderer.kt:4)
         DummyMessageValueNode = Class has no fields
 Disconnected from the target VM

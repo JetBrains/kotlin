@@ -3,7 +3,7 @@ Run Java
 Connected to the target VM
 frameLocalVariable.kt:6
 KotlinStackFrame (frameLocalVariable.kt:6)
-    JavaValue[local] args: java.lang.String[] (frameLocalVariable.kt:3)
+    JavaValue[local] args: java.lang.String[] = [] (frameLocalVariable.kt:3)
     JavaValue[local] val1: int = 1 (frameLocalVariable.kt:4)
 Disconnected from the target VM
 
