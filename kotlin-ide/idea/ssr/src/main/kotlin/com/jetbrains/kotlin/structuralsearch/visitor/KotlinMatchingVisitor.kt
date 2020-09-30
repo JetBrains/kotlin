@@ -442,10 +442,12 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         if (other is KtDotQualifiedExpression) {
             // Regular matching
             myMatchingVisitor.result = myMatchingVisitor.matchOptionally(expression.receiverExpression, other.receiverExpression)
+                    && other.selectorExpression is KtCallExpression == expression.selectorExpression is KtCallExpression
                     && myMatchingVisitor.match(expression.selectorExpression, other.selectorExpression)
         } else {
-            // Match '_?.'_
-            myMatchingVisitor.result = handler is SubstitutionHandler
+            // Match '_?.'_()
+            myMatchingVisitor.result = expression.selectorExpression is KtCallExpression == other is KtCallExpression
+                    && handler is SubstitutionHandler
                     && handler.minOccurs == 0
                     && other.parent !is KtDotQualifiedExpression
                     && other.parent !is KtReferenceExpression
@@ -603,7 +605,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                     expression.lambdaArguments, other.lambdaArguments
                 )
             }
-            is KtDotQualifiedExpression -> myMatchingVisitor.match(expression.calleeExpression, other.receiverExpression)
+            is KtDotQualifiedExpression -> other.callExpression is KtCallExpression
+                && myMatchingVisitor.match(expression.calleeExpression, other.receiverExpression)
                     && other.calleeName == "${OperatorNameConventions.INVOKE}"
                     && matchValueArguments(
                 parameters,

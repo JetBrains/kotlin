@@ -6,6 +6,6 @@ class A {
 
 fun main() {
     val a = <warning descr="SSR">A.FOO</warning>
-    print(<warning descr="SSR">Int.hashCode()</warning>)
+    print(Int.hashCode())
     print(a)
 }
