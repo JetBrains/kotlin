@@ -76,7 +76,7 @@ class KtSimpleNameReferenceDescriptorsImpl(
     override fun isReferenceTo(element: PsiElement): Boolean {
         if (!canBeReferenceTo(element)) return false
 
-        for (extension in Extensions.getArea(element.project).getExtensionPoint(SimpleNameReferenceExtension.EP_NAME).extensions) {
+        for (extension in element.project.extensionArea.getExtensionPoint(SimpleNameReferenceExtension.EP_NAME).extensions) {
             if (extension.isReferenceTo(this, element)) return true
         }
 
@@ -125,7 +125,7 @@ class KtSimpleNameReferenceDescriptorsImpl(
         }
 
         val psiFactory = KtPsiFactory(expression)
-        val element = Extensions.getArea(expression.project).getExtensionPoint(SimpleNameReferenceExtension.EP_NAME).extensions
+        val element = expression.project.extensionArea.getExtensionPoint(SimpleNameReferenceExtension.EP_NAME).extensions
             .asSequence()
             .map { it.handleElementRename(this, psiFactory, newElementName) }
             .firstOrNull { it != null } ?: psiFactory.createNameIdentifier(newElementName.quoteIfNeeded())
