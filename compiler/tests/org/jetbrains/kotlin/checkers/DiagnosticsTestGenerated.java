@@ -3851,6 +3851,16 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/assignedInIfElse.kt");
             }
 
+            @TestMetadata("assignedInTryWithCatch.kt")
+            public void testAssignedInTryWithCatch() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/assignedInTryWithCatch.kt");
+            }
+
+            @TestMetadata("assignedInTryWithoutCatch.kt")
+            public void testAssignedInTryWithoutCatch() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/assignedInTryWithoutCatch.kt");
+            }
+
             @TestMetadata("assignmentInLocalsInConstructor.kt")
             public void testAssignmentInLocalsInConstructor() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/assignmentInLocalsInConstructor.kt");
