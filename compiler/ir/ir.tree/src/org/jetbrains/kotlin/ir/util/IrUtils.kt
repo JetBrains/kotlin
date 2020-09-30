@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 /**
@@ -200,8 +201,8 @@ val IrDeclarationContainer.properties: Sequence<IrProperty>
     get() = declarations.asSequence().filterIsInstance<IrProperty>()
 
 fun IrFunction.addExplicitParametersTo(parametersList: MutableList<IrValueParameter>) {
-    dispatchReceiverParameter?.let { parametersList.add(it) }
-    extensionReceiverParameter?.let { parametersList.add(it) }
+    parametersList.addIfNotNull(dispatchReceiverParameter)
+    parametersList.addIfNotNull(extensionReceiverParameter)
     parametersList.addAll(valueParameters)
 }
 
