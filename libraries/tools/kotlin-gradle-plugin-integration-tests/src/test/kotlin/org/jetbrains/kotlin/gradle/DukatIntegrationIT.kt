@@ -277,6 +277,36 @@ class DukatIntegrationIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testCompilationLegacyBinariesGroovyDsl() {
+        testCompilationLegacyBinaries(
+            DslType.GROOVY
+        )
+    }
+
+    @Test
+    fun testCompilationLegacyBinariesKotlinDsl() {
+        testCompilationLegacyBinaries(
+            DslType.KOTLIN
+        )
+    }
+
+    private fun testCompilationLegacyBinaries(
+        dslType: DslType
+    ) {
+        val projectName = projectName(dslType, DependenciesLocation.EXTENSION)
+        val project = Project(
+            projectName = projectName,
+            directoryPrefix = "dukat-integration"
+        )
+        project.setupWorkingDir()
+        project.gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        project.build("compileKotlinJs") {
+            assertSuccessful()
+        }
+    }
+
     private fun projectName(
         dslType: DslType,
         dependenciesLocation: DependenciesLocation
