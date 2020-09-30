@@ -26,7 +26,7 @@ class UnusedUnaryOperatorInspection : AbstractKotlinInspection() {
         val operationToken = prefix.operationToken
         if (operationToken != KtTokens.PLUS && operationToken != KtTokens.MINUS) return
 
-        val context = prefix.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
+        val context = prefix.analyze()
         if (prefix.isUsedAsExpression(context)) return
         val operatorDescriptor = prefix.operationReference.getResolvedCall(context)?.resultingDescriptor as? DeclarationDescriptor ?: return
         if (!KotlinBuiltIns.isUnderKotlinPackage(operatorDescriptor)) return

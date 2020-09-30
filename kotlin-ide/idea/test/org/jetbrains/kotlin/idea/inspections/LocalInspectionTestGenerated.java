@@ -13463,6 +13463,16 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
             runTest("testData/inspectionsLocal/unusedUnaryOperator/annotation3.kt");
         }
 
+        @TestMetadata("annotation4.kt")
+        public void testAnnotation4() throws Exception {
+            runTest("testData/inspectionsLocal/unusedUnaryOperator/annotation4.kt");
+        }
+
+        @TestMetadata("annotation5.kt")
+        public void testAnnotation5() throws Exception {
+            runTest("testData/inspectionsLocal/unusedUnaryOperator/annotation5.kt");
+        }
+
         @TestMetadata("basic.kt")
         public void testBasic() throws Exception {
             runTest("testData/inspectionsLocal/unusedUnaryOperator/basic.kt");
