@@ -226,7 +226,7 @@ internal fun IrFactory.buildValueParameter(builder: IrValueParameterBuilder, par
         return createValueParameter(
             startOffset, endOffset, origin,
             IrValueParameterSymbolImpl(wrappedDescriptor),
-            name, index, type, varargElementType, isCrossInline, isNoinline, isHidden, false
+            name, index, type, varargElementType, isCrossInline, isNoinline, isHidden, isAssignable
         ).also {
             wrappedDescriptor.bind(it)
             it.parent = parent
