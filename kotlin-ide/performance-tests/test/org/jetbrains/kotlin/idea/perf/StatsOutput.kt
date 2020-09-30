@@ -34,8 +34,10 @@ internal fun Metric.writeTeamCityStats(name: String, rawMeasurementName: String 
         } else {
             if (depth == 0 && this.name != Stats.GEOM_MEAN) "$prefix: ${this.name}" else "$prefix ${this.name}"
         }.trim()
-        value?.let {
-            TeamCity.statValue(s, it)
+        if (s != prefix) {
+            value?.let {
+                TeamCity.statValue(s, it)
+            }
         }
         for (childIndex in children.withIndex()) {
             if (!rawMetrics && childrenName == rawMeasurementName && childIndex.index > 0) break
