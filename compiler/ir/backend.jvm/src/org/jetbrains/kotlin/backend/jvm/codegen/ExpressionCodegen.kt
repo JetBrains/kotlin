@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
@@ -1120,6 +1120,36 @@ class ExpressionCodegen(
             exception.materialize()
         mv.athrow()
         return unitValue
+    }
+
+    override fun visitStringConcatenation(expression: IrStringConcatenation, data: BlockInfo): PromisedValue {
+        assert(context.state.runtimeStringConcat.isDynamic) {
+            "IrStringConcatenation expression should be presented only with dynamic concatenation: ${expression.dump()}"
+        }
+        val generator = StringConcatGenerator(context.state.runtimeStringConcat, mv)
+        expression.arguments.forEach { arg ->
+            if (arg is IrConst<*>) {
+                val type = when (arg.kind) {
+                    IrConstKind.Boolean -> Type.BOOLEAN_TYPE
+                    IrConstKind.Char -> Type.CHAR_TYPE
+                    IrConstKind.Int -> Type.INT_TYPE
+                    IrConstKind.Long -> Type.LONG_TYPE
+                    IrConstKind.Float -> Type.FLOAT_TYPE
+                    IrConstKind.Double -> Type.DOUBLE_TYPE
+                    IrConstKind.Byte -> Type.BYTE_TYPE
+                    IrConstKind.Short -> Type.SHORT_TYPE
+                    IrConstKind.String -> JAVA_STRING_TYPE
+                    IrConstKind.Null -> OBJECT_TYPE
+                }
+                generator.putValueOrProcessConstant(StackValue.constant(arg.value, type, null))
+            } else {
+                val value = arg.accept(this, data)
+                value.materializeAt(value.type, value.irType)
+                generator.invokeAppend(value.type)
+            }
+        }
+        generator.genToString()
+        return MaterialValue(this@ExpressionCodegen, JAVA_STRING_TYPE, context.irBuiltIns.stringType)
     }
 
     override fun visitGetClass(expression: IrGetClass, data: BlockInfo) =
