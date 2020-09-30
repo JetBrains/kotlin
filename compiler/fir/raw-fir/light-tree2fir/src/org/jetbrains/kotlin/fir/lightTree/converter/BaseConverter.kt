@@ -115,6 +115,12 @@ open class BaseConverter(
             return null
         }
 
+    override val LighterASTNode?.arrayExpression: LighterASTNode?
+        get() = this?.getFirstChildExpression()
+
+    override val LighterASTNode?.indexExpressions: List<LighterASTNode>?
+        get() = this?.getLastChildExpression()?.getChildrenAsArray()?.filterNotNull()?.filter { it.isExpression() }
+
     fun LighterASTNode.getParent(): LighterASTNode? {
         return tree.getParent(this)
     }
