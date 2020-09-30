@@ -226,7 +226,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             ExpectActualTracker.DoNothing,
             chunk,
             messageCollector
-        ) ?: return
+        )
 
         val removedClasses = HashSet<String>()
         for (target in kotlinChunk.targets) {
@@ -274,12 +274,12 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         context: CompileContext,
         chunk: ModuleChunk,
         dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
-        outputConsumer: ModuleLevelBuilder.OutputConsumer
-    ): ModuleLevelBuilder.ExitCode {
+        outputConsumer: OutputConsumer
+    ): ExitCode {
         if (chunk.isDummy(context))
             return NOTHING_DONE
 
-        val kotlinTarget = context.kotlinBuildTargets[chunk.representativeTarget()] ?: return OK
+        val kotlinTarget = context.kotlin.targetsBinding[chunk.representativeTarget()] ?: return OK
         val messageCollector = MessageCollectorAdapter(context, kotlinTarget)
 
         // New mpp project model: modules which is imported from sources sets of the compilations shouldn't be compiled for now.
@@ -287,7 +287,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         if (chunk.modules.any { it.kotlinKind == KotlinModuleKind.SOURCE_SET_HOLDER }) {
             if (chunk.modules.size > 1) {
                 messageCollector.report(
-                    CompilerMessageSeverity.ERROR,
+                    ERROR,
                     "Cyclically dependent modules are not supported in multiplatform projects"
                 )
                 return ABORT
@@ -331,7 +331,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         messageCollector: MessageCollectorAdapter,
         outputConsumer: OutputConsumer,
         fsOperations: FSOperationsHelper
-    ): ModuleLevelBuilder.ExitCode {
+    ): ExitCode {
         // Workaround for Android Studio
         if (representativeTarget is KotlinJvmModuleBuildTarget && !JavaBuilder.IS_ENABLED[context, true]) {
             messageCollector.report(INFO, "Kotlin JPS plugin is disabled")
@@ -354,7 +354,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         }
 
         val projectDescriptor = context.projectDescriptor
-        val dataManager = projectDescriptor.dataManager
         val targets = chunk.targets
 
         val isChunkRebuilding = JavaBuilderUtil.isForcedRecompilationAllJavaModules(context)
@@ -399,7 +398,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             exceptActualTracer,
             chunk,
             messageCollector
-        ) ?: return ABORT
+        )
 
         context.testingContext?.buildLogger?.compilingFiles(
             kotlinDirtyFilesHolder.allDirtyFiles,
@@ -575,7 +574,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         exceptActualTracer: ExpectActualTracker,
         chunk: ModuleChunk,
         messageCollector: MessageCollectorAdapter
-    ): JpsCompilerEnvironment? {
+    ): JpsCompilerEnvironment {
         val compilerServices = with(Services.Builder()) {
             kotlinModuleBuilderTarget.makeServices(this, incrementalCaches, lookupTracker, exceptActualTracer)
             build()
@@ -599,7 +598,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val sourceToTarget = HashMap<File, ModuleBuildTarget>()
         if (chunk.targets.size > 1) {
             for (target in chunk.targets) {
-                context.kotlinBuildTargets[target]?.sourceFiles?.forEach {
+                context.kotlin.targetsBinding[target]?.sourceFiles?.forEach {
                     sourceToTarget[it] = target
                 }
             }
