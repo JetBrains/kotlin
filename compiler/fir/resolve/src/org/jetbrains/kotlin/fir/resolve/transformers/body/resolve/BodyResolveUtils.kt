@@ -37,7 +37,6 @@ internal inline var FirExpression.resultType: FirTypeRef
 internal fun remapArgumentsWithVararg(
     varargParameter: FirValueParameter,
     varargArrayType: ConeKotlinType,
-    argumentList: FirArgumentList,
     argumentMapping: Map<FirExpression, FirValueParameter>
 ): Map<FirExpression, FirValueParameter> {
     // Create a FirVarargArgumentExpression for the vararg arguments.
@@ -45,13 +44,14 @@ internal fun remapArgumentsWithVararg(
     // FIR2IR uses the mapping order to determine if arguments need to be reordered.
     val varargParameterTypeRef = varargParameter.returnTypeRef
     val varargElementType = varargArrayType.arrayElementType()
-    var indexAfterVarargs = argumentList.arguments.size
+    val argumentList = argumentMapping.keys.toList()
+    var indexAfterVarargs = argumentList.size
     val newArgumentMapping = mutableMapOf<FirExpression, FirValueParameter>()
     val varargArgument = buildVarargArgumentsExpression {
         this.varargElementType = varargParameterTypeRef.withReplacedConeType(varargElementType)
         this.typeRef = varargParameterTypeRef.withReplacedConeType(varargArrayType)
-        for ((i, arg) in argumentList.arguments.withIndex()) {
-            val valueParameter = argumentMapping[arg] ?: continue
+        for ((i, arg) in argumentList.withIndex()) {
+            val valueParameter = argumentMapping.getValue(arg)
             if (valueParameter.isVararg) {
                 // `arg` is a vararg argument.
                 arguments += arg
@@ -68,10 +68,9 @@ internal fun remapArgumentsWithVararg(
     newArgumentMapping[varargArgument] = varargParameter
 
     // Add mapping for arguments after the vararg arguments, if any.
-    for (i in indexAfterVarargs until argumentList.arguments.size) {
-        val arg = argumentList.arguments[i]
-        val valueParameter = argumentMapping[arg] ?: continue
-        newArgumentMapping[arg] = valueParameter
+    for (i in indexAfterVarargs until argumentList.size) {
+        val arg = argumentList[i]
+        newArgumentMapping[arg] = argumentMapping.getValue(arg)
     }
     return newArgumentMapping
 }

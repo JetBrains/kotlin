@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
@@ -166,15 +165,7 @@ class FirCallCompletionResultsWriterTransformer(
                 val expectedArgumentsTypeMapping = runIf(!calleeReference.isError) { subCandidate.createArgumentsMapping() }
                 result.argumentList.transformArguments(this, expectedArgumentsTypeMapping)
                 if (!calleeReference.isError) {
-                    subCandidate.oldToNewArgumentMapping?.let {
-                        result.replaceArgumentList(buildArgumentList {
-                            source = result.argumentList.source
-                            for (oldArgument in result.argumentList.arguments) {
-                                arguments += it[oldArgument] ?: oldArgument
-                            }
-                        })
-                    }
-                    subCandidate.handleVarargs(result.argumentList)
+                    subCandidate.handleVarargs()
                     subCandidate.argumentMapping?.let {
                         result.replaceArgumentList(buildResolvedArgumentList(it))
                     }
@@ -221,7 +212,7 @@ class FirCallCompletionResultsWriterTransformer(
             }
         }
         if (!calleeReference.isError) {
-            subCandidate.handleVarargs(annotationCall.argumentList)
+            subCandidate.handleVarargs()
             subCandidate.argumentMapping?.let {
                 annotationCall.replaceArgumentList(buildResolvedArgumentList(it))
             }
@@ -229,14 +220,14 @@ class FirCallCompletionResultsWriterTransformer(
         return annotationCall.compose()
     }
 
-    private fun Candidate.handleVarargs(argumentList: FirArgumentList) {
+    private fun Candidate.handleVarargs() {
         val argumentMapping = this.argumentMapping
         val varargParameter = argumentMapping?.values?.firstOrNull { it.isVararg }
         if (varargParameter != null) {
             // Create a FirVarargArgumentExpression for the vararg arguments
             val varargParameterTypeRef = varargParameter.returnTypeRef
             val resolvedArrayType = varargParameterTypeRef.substitute(this)
-            this.argumentMapping = remapArgumentsWithVararg(varargParameter, resolvedArrayType, argumentList, argumentMapping)
+            this.argumentMapping = remapArgumentsWithVararg(varargParameter, resolvedArrayType, argumentMapping)
         }
     }
 
@@ -367,7 +358,7 @@ class FirCallCompletionResultsWriterTransformer(
         val argumentsMapping = runIf(!calleeReference.isError) { calleeReference.candidate.createArgumentsMapping() }
         delegatedConstructorCall.argumentList.transformArguments(this, argumentsMapping)
         if (!calleeReference.isError) {
-            subCandidate.handleVarargs(delegatedConstructorCall.argumentList)
+            subCandidate.handleVarargs()
             subCandidate.argumentMapping?.let {
                 delegatedConstructorCall.replaceArgumentList(buildResolvedArgumentList(it))
             }
