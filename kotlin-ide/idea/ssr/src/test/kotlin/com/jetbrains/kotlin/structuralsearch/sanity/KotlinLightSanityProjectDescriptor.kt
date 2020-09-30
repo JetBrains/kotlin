@@ -5,6 +5,7 @@ import com.intellij.openapi.roots.ContentEntry
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.psi.PsiElement
+import com.intellij.structuralsearch.PatternContext
 import com.jetbrains.kotlin.structuralsearch.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtElement
 
@@ -13,5 +14,6 @@ class KotlinLightSanityProjectDescriptor : KotlinLightProjectDescriptor() {
         addLibrary(AccessDeniedException::class.java, OrderRootType.CLASSES, model)
         addLibrary(PsiElement::class.java, OrderRootType.CLASSES, model)
         addLibrary(KtElement::class.java, OrderRootType.CLASSES, model)
+        addLibrary(PatternContext::class.java, OrderRootType.CLASSES, model)
     }
 }
