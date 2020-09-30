@@ -16,6 +16,10 @@ import org.gradle.api.tasks.Optional
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency.PodLocation.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
+import org.jetbrains.kotlin.gradle.targets.native.cocoapods.MissingCocoapodsMessage
+import org.jetbrains.kotlin.gradle.targets.native.cocoapods.MissingSpecReposMessage
+import org.jetbrains.kotlin.gradle.tasks.PodspecTask.Companion.retrievePods
+import org.jetbrains.kotlin.gradle.tasks.PodspecTask.Companion.retrieveSpecRepos
 import org.jetbrains.kotlin.konan.target.Family
 import java.io.File
 import java.io.FileInputStream
@@ -46,6 +50,9 @@ open class PodInstallTask : DefaultTask() {
         onlyIf { podfile.isPresent }
     }
 
+    @get:Internal
+    internal lateinit var frameworkName: Provider<String>
+
     @get:Optional
     @get:Input
     internal val podfile = project.objects.property(File::class.java)
@@ -68,10 +75,28 @@ open class PodInstallTask : DefaultTask() {
             val podInstallOutput = podInstallProcess.inputStream.use { it.reader().readText() }
 
             check(podInstallRetCode == 0) {
-                listOf(
+                val specReposMessages = retrieveSpecRepos(project)?.let { MissingSpecReposMessage(it).missingMessage }
+                val cocoapodsMessages = retrievePods(project)?.map { MissingCocoapodsMessage(it, project).missingMessage }
+
+                listOfNotNull(
                     "Executing of 'pod install' failed with code $podInstallRetCode.",
                     "Error message:",
-                    podInstallOutput
+                    podInstallOutput,
+                    specReposMessages?.let {
+                        """
+                            |Please, check that file "${podfile.get().path}" contains following lines in header:
+                            |$it
+                            |
+                        """.trimMargin()
+                    },
+                    cocoapodsMessages?.let {
+                        """
+                            |Please, check that each target depended on ${frameworkName.get()} contains following dependencies:
+                            |${it.joinToString("\n")}
+                            |
+                        """.trimMargin()
+                    }
+
                 ).joinToString("\n")
             }
             with(podsXcodeProjDirProvider) {
@@ -350,8 +375,7 @@ open class PodGenTask : DefaultTask() {
         val syntheticDir = project.cocoapodsBuildDirs.synthetic(family).apply { mkdirs() }
         val localPodspecPaths = pods.get().mapNotNull { it.source?.getLocalPath(project, it.name) }
 
-        val specRepos = specRepos.get().getAll().toMutableList()
-        specRepos += URI("https://cdn.cocoapods.org")
+        val specRepos = specRepos.get().getAll()
 
         val podGenProcessArgs = listOfNotNull(
             "pod", "gen",
