@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
@@ -991,6 +992,7 @@ class Fir2IrDeclarationStorage(
                 val signature = signatureComposer.composeSignature(firDeclaration)
                 val irParent = findIrParent(firDeclaration)
                 val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
+
                 if (signature != null) {
                     symbolTable.referenceSimpleFunctionIfAny(signature)?.let { irFunctionSymbol ->
                         val irFunction = irFunctionSymbol.owner
@@ -1021,7 +1023,8 @@ class Fir2IrDeclarationStorage(
                         return symbol
                     }
                 }
-                createIrFunction(firDeclaration, irParent, origin = parentOrigin).apply {
+                val declarationOrigin = computeDeclarationOrigin(firFunctionSymbol, parentOrigin, irParent)
+                createIrFunction(firDeclaration, irParent, origin = declarationOrigin).apply {
                     setAndModifyParent(irParent)
                 }.symbol
             }
@@ -1032,6 +1035,19 @@ class Fir2IrDeclarationStorage(
         }
     }
 
+    private fun computeDeclarationOrigin(
+        symbol: FirCallableSymbol<*>,
+        parentOrigin: IrDeclarationOrigin,
+        irParent: IrDeclarationParent?
+    ): IrDeclarationOrigin {
+        return if (irParent.isSourceClass() && symbol.isIntersectionOverride || (symbol.fir.origin as? PossiblyFirFakeOverrideSymbol<*, *>)?.isFakeOverride == true)
+            IrDeclarationOrigin.FAKE_OVERRIDE
+        else
+            parentOrigin
+    }
+
+    private fun IrDeclarationParent?.isSourceClass() = this is IrClass && this !is Fir2IrLazyClass && this !is IrLazyClass
+
     fun getIrPropertySymbol(firPropertySymbol: FirPropertySymbol): IrSymbol {
         val fir = firPropertySymbol.fir
         if (fir.isLocal) {
@@ -1041,6 +1057,9 @@ class Fir2IrDeclarationStorage(
         val signature = signatureComposer.composeSignature(fir)
         val irParent = findIrParent(fir)
         val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
+        // TODO: Use computeDeclarationOrigin(firPropertySymbol, parentOrigin)
+        // Currently many backend tests are failing
+        val declarationOrigin = parentOrigin
         if (signature != null) {
             symbolTable.referencePropertyIfAny(signature)?.let { irPropertySymbol ->
                 val irProperty = irPropertySymbol.owner
@@ -1059,7 +1078,7 @@ class Fir2IrDeclarationStorage(
                             firPropertySymbol.isFakeOverride &&
                                     firPropertySymbol.callableId != firPropertySymbol.overriddenSymbol?.callableId
                         Fir2IrLazyProperty(
-                            components, startOffset, endOffset, parentOrigin, fir, irParent.fir, symbol, isFakeOverride
+                            components, startOffset, endOffset, declarationOrigin, fir, irParent.fir, symbol, isFakeOverride
                         ).apply {
                             parent = irParent
                         }
@@ -1069,7 +1088,7 @@ class Fir2IrDeclarationStorage(
                 return symbol
             }
         }
-        return createIrProperty(fir, irParent, origin = parentOrigin).apply {
+        return createIrProperty(fir, irParent, origin = declarationOrigin).apply {
             setAndModifyParent(irParent)
         }.symbol
     }
