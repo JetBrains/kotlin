@@ -32,7 +32,8 @@ abstract class KlibMetadataSerializer(
     val languageVersionSettings: LanguageVersionSettings,
     val metadataVersion: BinaryVersion,
     val skipExpects: Boolean = false,
-    val includeOnlyModuleContent: Boolean = false
+    val includeOnlyModuleContent: Boolean = false,
+    private val allowErrorTypes: Boolean
 ) {
 
     lateinit var serializerContext: SerializerContext
@@ -48,7 +49,8 @@ abstract class KlibMetadataSerializer(
         val extension = KlibMetadataSerializerExtension(
             languageVersionSettings,
             metadataVersion,
-            KlibMetadataStringTable()
+            KlibMetadataStringTable(),
+            allowErrorTypes
         )
         return SerializerContext(
             extension,

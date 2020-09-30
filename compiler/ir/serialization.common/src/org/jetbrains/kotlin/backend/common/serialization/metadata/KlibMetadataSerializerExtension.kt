@@ -17,11 +17,13 @@ import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
 import org.jetbrains.kotlin.serialization.StringTableImpl
 import org.jetbrains.kotlin.types.FlexibleType
+import org.jetbrains.kotlin.types.KotlinType
 
 class KlibMetadataSerializerExtension(
     private val languageVersionSettings: LanguageVersionSettings,
     override val metadataVersion: BinaryVersion,
-    override val stringTable: StringTableImpl
+    override val stringTable: StringTableImpl,
+    private val allowErrorTypes: Boolean
 ) : KotlinSerializerExtensionBase(KlibMetadataSerializerProtocol) {
     override fun shouldUseTypeTable(): Boolean = true
 
@@ -32,6 +34,10 @@ class KlibMetadataSerializerExtension(
 
     override fun serializeFlexibleType(flexibleType: FlexibleType, lowerProto: ProtoBuf.Type.Builder, upperProto: ProtoBuf.Type.Builder) {
         lowerProto.flexibleTypeCapabilitiesId = stringTable.getStringIndex(DynamicTypeDeserializer.id)
+    }
+
+    override fun serializeErrorType(type: KotlinType, builder: ProtoBuf.Type.Builder) {
+        if (!allowErrorTypes) super.serializeErrorType(type, builder)
     }
 
     override fun serializeClass(
