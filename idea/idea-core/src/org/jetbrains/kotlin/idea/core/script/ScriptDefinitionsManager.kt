@@ -56,6 +56,7 @@ import kotlin.script.experimental.host.configurationDependencies
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.script.experimental.jvm.util.ClasspathExtractionException
 import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrStdlib
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
@@ -252,8 +253,14 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
         } catch (t: Throwable) {
             if (t is ControlFlowException) throw t
             // reporting failed loading only once
-            scriptingErrorLog("[kts] cannot load script definitions using $this", t)
             failedContributorsHashes.add(this@safeGetDefinitions.hashCode())
+            // Assuming that direct ClasspathExtractionException is the result of versions mismatch and missing subsystems, e.g. kotlin plugin
+            // so, it only results in warning, while other errors are severe misconfigurations, resulting it user-visible error
+            if (t.cause is ClasspathExtractionException || t is ClasspathExtractionException) {
+                scriptingWarnLog("Cannot load script definitions from $this: ${t.cause?.message ?: t.message}")
+            } else {
+                scriptingErrorLog("[kts] cannot load script definitions using $this", t)
+            }
         }
         return emptyList()
     }

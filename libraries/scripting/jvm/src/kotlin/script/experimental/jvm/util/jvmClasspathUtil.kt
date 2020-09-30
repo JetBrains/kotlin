@@ -54,6 +54,8 @@ internal const val KOTLIN_SCRIPT_RUNTIME_JAR_PROPERTY = "kotlin.script.runtime.j
 private val validClasspathFilesExtensions = setOf("jar", "zip", "java")
 private val validJarCollectionFilesExtensions = setOf("jar", "war", "zip")
 
+class ClasspathExtractionException(message: String) : Exception(message)
+
 fun classpathFromClassloader(currentClassLoader: ClassLoader, unpackJarCollections: Boolean = false): List<File>? {
     val processedJars = hashSetOf<File>()
     val unpackJarCollectionsDir by lazy {
@@ -299,7 +301,7 @@ fun scriptCompilationClasspathFromContext(
         wholeClasspath = wholeClasspath,
         unpackJarCollections = unpackJarCollections
     )
-        ?: throw Exception("Unable to get script compilation classpath from context, please specify explicit classpath via \"$KOTLIN_SCRIPT_CLASSPATH_PROPERTY\" property")
+        ?: throw ClasspathExtractionException("Unable to get script compilation classpath from context, please specify explicit classpath via \"$KOTLIN_SCRIPT_CLASSPATH_PROPERTY\" property")
 
 object KotlinJars {
 
