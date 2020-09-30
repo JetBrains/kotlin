@@ -17,7 +17,7 @@ class B : A() {
         b.foo { }
 
         if (a is B) {
-            <!OI;DEBUG_INFO_SMARTCAST!>a<!>.<!NI;INVISIBLE_MEMBER!>foo<!> {}
+            <!DEBUG_INFO_SMARTCAST!>a<!>.foo {}
         }
 
         if (d.x is B) {
