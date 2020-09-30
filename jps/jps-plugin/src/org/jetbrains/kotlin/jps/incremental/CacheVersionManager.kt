@@ -49,7 +49,7 @@ class CacheVersionManager(
 }
 
 fun CacheVersion(own: Int, bytecode: JvmBytecodeBinaryVersion, metadata: JvmMetadataVersion): CacheVersion {
-    require(own in 0..(Int.MAX_VALUE / 1000000 - 1))
+    require(own in 0 until Int.MAX_VALUE / 1000000)
     require(bytecode.major in 0..9)
     require(bytecode.minor in 0..9)
     require(metadata.major in 0..9)
