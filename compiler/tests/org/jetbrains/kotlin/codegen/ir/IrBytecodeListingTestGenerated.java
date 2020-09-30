@@ -284,6 +284,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/extendingAbstractCollection.kt");
         }
 
+        @TestMetadata("mapOfPrimitivesFullJdk.kt")
+        public void testMapOfPrimitivesFullJdk() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/mapOfPrimitivesFullJdk.kt");
+        }
+
         @TestMetadata("noStubsForCollection.kt")
         public void testNoStubsForCollection() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/noStubsForCollection.kt");

@@ -82,8 +82,16 @@ fun IrType.substitute(params: List<IrTypeParameter>, arguments: List<IrType>): I
 fun IrType.substitute(substitutionMap: Map<IrTypeParameterSymbol, IrType>): IrType {
     if (this !is IrSimpleType) return this
 
-    substitutionMap[classifier]?.let {
-        return it.withHasQuestionMark(hasQuestionMark || it is IrSimpleType && it.hasQuestionMark)
+    val newAnnotations = annotations.map { it.deepCopyWithSymbols() }
+
+    substitutionMap[classifier]?.let { substitutedType ->
+        // Add nullability and annotations from original type
+        return substitutedType
+            .withHasQuestionMark(
+                hasQuestionMark ||
+                        substitutedType is IrSimpleType && substitutedType.hasQuestionMark
+            )
+            .addAnnotations(newAnnotations)
     }
 
     val newArguments = arguments.map {
@@ -94,7 +102,6 @@ fun IrType.substitute(substitutionMap: Map<IrTypeParameterSymbol, IrType>): IrTy
         }
     }
 
-    val newAnnotations = annotations.map { it.deepCopyWithSymbols() }
     return IrSimpleTypeImpl(
         classifier,
         hasQuestionMark,

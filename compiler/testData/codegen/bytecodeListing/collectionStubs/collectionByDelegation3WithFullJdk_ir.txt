@@ -156,11 +156,11 @@ public final class DIntMap {
     private synthetic final field $$delegate_0: java.util.Map
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.Map): void
     public method clear(): void
-    public method compute(p0: int, p1: java.util.function.BiFunction): java.lang.Double
+    public method compute(p0: java.lang.Integer, p1: java.util.function.BiFunction): java.lang.Double
     public synthetic bridge method compute(p0: java.lang.Object, p1: java.util.function.BiFunction): java.lang.Object
-    public method computeIfAbsent(p0: int, p1: java.util.function.Function): java.lang.Double
+    public method computeIfAbsent(p0: java.lang.Integer, p1: java.util.function.Function): java.lang.Double
     public synthetic bridge method computeIfAbsent(p0: java.lang.Object, p1: java.util.function.Function): java.lang.Object
-    public method computeIfPresent(p0: int, p1: java.util.function.BiFunction): java.lang.Double
+    public method computeIfPresent(p0: java.lang.Integer, p1: java.util.function.BiFunction): java.lang.Double
     public synthetic bridge method computeIfPresent(p0: java.lang.Object, p1: java.util.function.BiFunction): java.lang.Object
     public method containsKey(p0: int): boolean
     public bridge final method containsKey(p0: java.lang.Object): boolean
@@ -176,18 +176,18 @@ public final class DIntMap {
     public @org.jetbrains.annotations.NotNull method getValues(): java.util.Collection
     public method isEmpty(): boolean
     public bridge final method keySet(): java.util.Set
-    public method merge(p0: int, p1: double, p2: java.util.function.BiFunction): java.lang.Double
+    public method merge(p0: java.lang.Integer, p1: java.lang.Double, p2: java.util.function.BiFunction): java.lang.Double
     public synthetic bridge method merge(p0: java.lang.Object, p1: java.lang.Object, p2: java.util.function.BiFunction): java.lang.Object
     public method put(p0: int, p1: double): java.lang.Double
     public synthetic bridge method put(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public method putAll(p0: java.util.Map): void
-    public method putIfAbsent(p0: int, p1: double): java.lang.Double
+    public method putIfAbsent(p0: java.lang.Integer, p1: java.lang.Double): java.lang.Double
     public synthetic bridge method putIfAbsent(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public method remove(p0: java.lang.Object): java.lang.Double
     public synthetic bridge method remove(p0: java.lang.Object): java.lang.Object
     public method remove(p0: java.lang.Object, p1: java.lang.Object): boolean
-    public method replace(p0: int, p1: double): java.lang.Double
-    public method replace(p0: int, p1: double, p2: double): boolean
+    public method replace(p0: java.lang.Integer, p1: java.lang.Double): java.lang.Double
+    public method replace(p0: java.lang.Integer, p1: java.lang.Double, p2: java.lang.Double): boolean
     public synthetic bridge method replace(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public synthetic bridge method replace(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): boolean
     public method replaceAll(p0: java.util.function.BiFunction): void
