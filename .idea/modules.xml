@@ -877,6 +877,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/backend/plugins/fleet.backend.plugins.iml" filepath="$PROJECT_DIR$/intellij/fleet/backend/plugins/fleet.backend.plugins.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/backend/plugins/go/fleet.backend.plugins.go.iml" filepath="$PROJECT_DIR$/intellij/fleet/backend/plugins/go/fleet.backend.plugins.go.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/controller/fleet.controller.iml" filepath="$PROJECT_DIR$/intellij/fleet/controller/fleet.controller.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/fleet/plugins/docker/fleet.docker.iml" filepath="$PROJECT_DIR$/intellij/fleet/plugins/docker/fleet.docker.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/frontend/fleet.frontend.iml" filepath="$PROJECT_DIR$/intellij/fleet/frontend/fleet.frontend.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/frontend.ui/fleet.frontend.ui.iml" filepath="$PROJECT_DIR$/intellij/fleet/frontend.ui/fleet.frontend.ui.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/ij.connector/fleet.ij.connector.iml" filepath="$PROJECT_DIR$/intellij/fleet/ij.connector/fleet.ij.connector.iml" />
