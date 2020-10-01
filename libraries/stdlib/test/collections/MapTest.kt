@@ -515,5 +515,25 @@ class MapTest {
 
     @Test fun plusAssignEmptySet() = testIdempotentAssign { it += setOf() }
 
+    @Test
+    fun mergeMaps() {
+
+        val map1 = mapOf("a" to 1, "b" to 2)
+        val map2 = mapOf("b" to 4, "c" to 5)
+
+        val expected = mapOf(
+            "a" to 1,
+            "b" to 6,
+            "c" to 5
+        )
+
+        assertEquals(
+            expected, map1.merge(map2) { a, b ->
+                assertEquals(a, 2)
+                assertEquals(b, 4)
+                a + b
+            }
+        )
+    }
 
 }
