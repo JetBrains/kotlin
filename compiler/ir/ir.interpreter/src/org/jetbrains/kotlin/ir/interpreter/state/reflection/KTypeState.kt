@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KClassProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeParameterProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeProxy
 import org.jetbrains.kotlin.ir.interpreter.renderType
+import org.jetbrains.kotlin.ir.interpreter.state.Wrapper
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.types.Variance
 import kotlin.reflect.KClassifier
@@ -36,6 +37,7 @@ internal class KTypeState(val irType: IrType, override val irClass: IrClass) : R
 
     fun getArguments(interpreter: IrInterpreter): List<KTypeProjection> {
         if (_arguments != null) return _arguments!!
+        Wrapper.associateJavaClassWithIrClass(KTypeProjection::class.java, irClass.getIrClassOfReflectionFromList("arguments"))
         _arguments = (irType as IrSimpleType).arguments
             .map {
                 when (it.getVariance()) {

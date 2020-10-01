@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.name.Name
 
 internal interface Complex: State {
     var superWrapperClass: Wrapper?
-    override val typeArguments: MutableList<Variable>
     var outerClass: Variable?
 
     fun irClassFqName(): String {

@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.util.parentClassOrNull
 
 internal abstract class ReflectionState : State {
     override val fields: MutableList<Variable> = mutableListOf()
-    override val typeArguments: MutableList<Variable> = mutableListOf()
 
     override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? = null
 

@@ -27,7 +27,6 @@ import kotlin.reflect.KTypeParameter
 
 internal class KFunctionState(val irFunction: IrFunction, override val irClass: IrClass) : ReflectionState() {
     override val fields: MutableList<Variable> = mutableListOf()
-    override val typeArguments: MutableList<Variable> = mutableListOf()
     private var _parameters: List<KParameter>? = null
     private var _returnType: KType? = null
     private var _typeParameters: List<KTypeParameter>? = null

@@ -20,7 +20,6 @@ internal class ExceptionState private constructor(
 ) : Complex, Throwable() {
 
     override var superWrapperClass: Wrapper? = null
-    override val typeArguments: MutableList<Variable> = mutableListOf()
     override var outerClass: Variable? = null
 
     override val message: String?

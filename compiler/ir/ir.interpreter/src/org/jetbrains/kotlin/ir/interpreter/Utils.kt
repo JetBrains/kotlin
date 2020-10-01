@@ -21,9 +21,12 @@ import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.wrap
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
+import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.lang.invoke.MethodType
@@ -71,7 +74,7 @@ internal fun Any?.toState(irType: IrType): State {
         is Boolean, is Char, is Byte, is Short, is Int, is Long, is String, is Float, is Double, is Array<*>, is ByteArray,
         is CharArray, is ShortArray, is IntArray, is LongArray, is FloatArray, is DoubleArray, is BooleanArray -> Primitive(this, irType)
         null -> Primitive(this, irType)
-        else -> Wrapper(this, irType.classOrNull!!.owner)
+        else -> irType.classOrNull?.owner?.let { Wrapper(this, it) } ?: Wrapper(this)
     }
 }
 
@@ -163,38 +166,11 @@ internal fun List<Any?>.toPrimitiveStateArray(type: IrType): Primitive<*> {
 fun IrFunctionAccessExpression.getVarargType(index: Int): IrType? {
     val varargType = this.symbol.owner.valueParameters[index].varargElementType ?: return null
     varargType.classOrNull?.let { return this.symbol.owner.valueParameters[index].type }
-    val typeParameter = varargType.classifierOrFail.owner as IrTypeParameter
-    return this.getTypeArgument(typeParameter.index)
-}
-
-internal fun getTypeArguments(
-    container: IrTypeParametersContainer, expression: IrFunctionAccessExpression, mapper: (IrTypeParameterSymbol) -> State
-): List<Variable> {
-    fun IrType.getState(): State {
-        return this.classOrNull?.owner?.let { Common(it) } ?: mapper(this.classifierOrFail as IrTypeParameterSymbol)
+    val type = this.symbol.owner.valueParameters[index].type as? IrSimpleType ?: return null
+    return type.buildSimpleType {
+        val typeParameter = varargType.classifierOrFail.owner as IrTypeParameter
+        arguments = listOf(makeTypeProjection(this@getVarargType.getTypeArgument(typeParameter.index)!!, Variance.OUT_VARIANCE))
     }
-
-    val typeArguments = container.typeParameters.mapIndexed { index, typeParameter ->
-        val typeArgument = expression.getTypeArgument(index)!!
-        Variable(typeParameter.symbol, typeArgument.getState())
-    }.toMutableList()
-
-    if (container is IrSimpleFunction) {
-        container.returnType.classifierOrFail.owner.safeAs<IrTypeParameter>()
-            ?.let { typeArguments.add(Variable(it.symbol, expression.type.getState())) }
-    }
-
-    fun IrSimpleType.getArgumentsRecursive() {
-        val typeParameters = this.classOrNull?.owner?.typeParameters ?: return
-        typeParameters.zip(this.arguments).forEach {
-            it.second.typeOrNull?.classOrNull?.owner?.let { owner -> typeArguments.add(Variable(it.first.symbol, Common(owner))) }
-        }
-        this.classOrNull!!.superTypes().forEach { (it as? IrSimpleType)?.getArgumentsRecursive() }
-    }
-
-    (container as? IrClass)?.superTypes?.forEach { (it as? IrSimpleType)?.getArgumentsRecursive() }
-
-    return typeArguments
 }
 
 internal fun State?.extractNonLocalDeclarations(): List<Variable> {

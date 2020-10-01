@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.util.defaultType
 internal interface State {
     val fields: MutableList<Variable>
     val irClass: IrClass
-    val typeArguments: MutableList<Variable>
 
     fun getState(symbol: IrSymbol): State? {
         return fields.firstOrNull { it.symbol == symbol }?.state
@@ -28,10 +27,6 @@ internal interface State {
             null -> fields.add(newVar)                                      // newVar isn't present in value list
             else -> fields[fields.indexOf(oldState)].state = newVar.state   // newVar already present
         }
-    }
-
-    fun addTypeArguments(typeArguments: List<Variable>) {
-        this.typeArguments.addAll(typeArguments)
     }
 
     fun getIrFunctionByIrCall(expression: IrCall): IrFunction?
@@ -51,10 +46,15 @@ internal fun State.isSubtypeOf(other: IrType): Boolean {
     if (this is ExceptionState) return this.isSubtypeOf(other.classOrNull!!.owner)
 
     if (this is Primitive<*> && this.type.isArray() && other.isArray()) {
-        val thisClass = this.typeArguments.single().state.irClass.symbol
-        val otherArgument = (other as IrSimpleType).arguments.single()
-        if (otherArgument is IrStarProjection) return true
-        return otherArgument.typeOrNull?.classOrNull?.let { thisClass.isSubtypeOfClass(it) } ?: true
+        fun IrType.arraySubtypeCheck(other: IrType): Boolean {
+            if (other !is IrSimpleType || this !is IrSimpleType) return false
+            val thisArgument = this.arguments.single().typeOrNull ?: return false
+            val otherArgument = other.arguments.single().typeOrNull ?: return other.arguments.single() is IrStarProjection
+            if (thisArgument.isArray() && otherArgument.isArray()) return thisArgument.arraySubtypeCheck(otherArgument)
+            if (otherArgument.classOrNull == null) return false
+            return thisArgument.classOrNull?.isSubtypeOfClass(otherArgument.classOrNull!!) ?: false
+        }
+        return this.type.arraySubtypeCheck(other)
     }
 
     return this.irClass.defaultType.isSubtypeOfClass(other.classOrNull!!)

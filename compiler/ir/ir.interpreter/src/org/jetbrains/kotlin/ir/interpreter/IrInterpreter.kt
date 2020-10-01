@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.ir.interpreter.proxy.wrap
 import org.jetbrains.kotlin.ir.interpreter.stack.StackImpl
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.*
-import org.jetbrains.kotlin.ir.interpreter.state.reflection.KClassState
-import org.jetbrains.kotlin.ir.interpreter.state.reflection.KFunctionState
-import org.jetbrains.kotlin.ir.interpreter.state.reflection.KPropertyState
-import org.jetbrains.kotlin.ir.interpreter.state.reflection.ReflectionState
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
@@ -67,10 +64,7 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
             is Float -> irBuiltIns.floatType
             is Double -> irBuiltIns.doubleType
             null -> irBuiltIns.nothingNType
-            else -> when (defaultType.classifierOrNull?.owner) {
-                is IrTypeParameter -> stack.getVariable(defaultType.classifierOrFail).state.irClass.defaultType
-                else -> defaultType
-            }
+            else -> defaultType
         }
     }
 
@@ -228,8 +222,7 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
                 else -> throw InterpreterError("Unsupported number of arguments for invocation as builtin functions")
             }
         }
-        val typeArguments = if (methodName == "CHECK_NOT_NULL") args.single().typeArguments else listOf()
-        stack.pushReturnValue(result.toState(result.getType(irFunction.returnType)).apply { addTypeArguments(typeArguments) })
+        stack.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
         return Next
     }
 
@@ -305,9 +298,15 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
 
         interpretValueParameters(expression, irFunction, valueArguments).check { return it }
 
-        valueArguments.addAll(getTypeArguments(irFunction, expression) { stack.getVariable(it).state })
-        if (dispatchReceiver is Complex) valueArguments.addAll(dispatchReceiver.typeArguments)
-        if (extensionReceiver is Complex) valueArguments.addAll(extensionReceiver.typeArguments)
+        irFunction.typeParameters
+            .filter {
+                it.isReified || irFunction.fqNameWhenAvailable.toString().let { it == "kotlin.emptyArray" || it == "kotlin.ArrayIntrinsicsKt.emptyArray" }
+            }
+            .forEach {
+                // TODO: emptyArray check is a hack for js, because in js-ir its type parameter isn't marked as reified
+                // TODO: if using KTypeState then it's class must be corresponding
+                valueArguments.add(Variable(it.symbol, KTypeState(expression.getTypeArgument(it.index)!!, irBuiltIns.anyClass.owner)))
+            }
 
         if (dispatchReceiver?.irClass?.isLocal == true || irFunction.isLocal) {
             valueArguments.addAll(dispatchReceiver.extractNonLocalDeclarations())
@@ -382,16 +381,17 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
         interpretValueParameters(constructorCall, owner, valueArguments).check { return it }
 
         val irClass = owner.parent as IrClass
-        val typeArguments = getTypeArguments(irClass, constructorCall) { stack.getVariable(it).state }
         if (irClass.hasAnnotation(evaluateIntrinsicAnnotation) || irClass.fqNameWhenAvailable!!.startsWith(Name.identifier("java"))) {
             return stack.newFrame(initPool = valueArguments) { Wrapper.getConstructorMethod(owner).invokeMethod(owner) }
-                .apply { stack.peekReturnValue().addTypeArguments(typeArguments) }
         }
 
         if (irClass.defaultType.isArray() || irClass.defaultType.isPrimitiveArray()) {
             // array constructor doesn't have body so must be treated separately
             return stack.newFrame(initPool = valueArguments) { handleIntrinsicMethods(owner) }
-                .apply { stack.peekReturnValue().addTypeArguments(typeArguments) }
+                .apply {
+                    val array = stack.popReturnValue() as Primitive<*>
+                    stack.pushReturnValue(Primitive(array.value, constructorCall.type))
+                }
         }
 
         if (irClass.defaultType.isUnsignedType() && valueArguments.size == 1 && owner.valueParameters.size == 1) {
@@ -402,7 +402,6 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
         }
 
         val state = stack.getVariable(constructorCall.getThisReceiver()).state as Common
-        state.addTypeArguments(typeArguments)
 
         if (irClass.isLocal) {
             state.fields.addAll(stack.getAll()) // TODO save only necessary declarations
@@ -419,7 +418,7 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
         }
 
         valueArguments.add(Variable(constructorCall.getThisReceiver(), state)) //used to set up fields in body
-        return stack.newFrame(initPool = valueArguments + state.typeArguments) {
+        return stack.newFrame(initPool = valueArguments) {
             val statements = constructorCall.getBody()!!.statements
             when (val irStatement = statements[0]) {
                 is IrTypeOperatorCall -> {
@@ -709,7 +708,7 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
         val typeClassifier = expression.typeOperand.classifierOrFail
         val isReified = (typeClassifier.owner as? IrTypeParameter)?.isReified == true
         val isErased = typeClassifier.owner is IrTypeParameter && !isReified
-        val typeOperand = if (isReified) stack.getVariable(typeClassifier).state.irClass.defaultType else expression.typeOperand
+        val typeOperand = if (isReified) (stack.getVariable(typeClassifier).state as KTypeState).irType else expression.typeOperand
 
         when (expression.operator) {
             // coercion to unit means that return value isn't used
@@ -758,18 +757,17 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
             }
         }
 
-        val elementIrClass = expression.varargElementType.classOrNull
         val args = expression.elements.flatMap {
             it.interpret().check { executionResult -> return executionResult }
             return@flatMap when (val result = stack.popReturnValue()) {
                 is Wrapper -> listOf(result.value)
                 is Primitive<*> -> when {
-                    expression.varargElementType.isArray() -> listOf(result.value)
+                    expression.varargElementType.isArray() -> listOf(result)
                     else -> arrayToList(result.value)
                 }
                 is Common -> when {
                     result.irClass.defaultType.isUnsignedArray() -> arrayToList((result.fields.single().state as Primitive<*>).value)
-                    else -> listOf(result.asProxy(this, elementIrClass?.owner))
+                    else -> listOf(result.asProxy(this))
                 }
                 else -> listOf(result)
             }
@@ -788,13 +786,7 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
                 val unsignedArray = primitiveArray.toPrimitiveStateArray(storageProperty.backingField!!.type)
                 Common(owner).apply { fields.add(Variable(storageProperty.symbol, unsignedArray)) }
             }
-            else -> args.toPrimitiveStateArray(expression.type).apply {
-                if (expression.type.isArray()) {
-                    val arrayTypeArgument = elementIrClass?.let { Common(it.owner) }
-                        ?: stack.getVariable(expression.varargElementType.classifierOrFail).state
-                    this.addTypeArguments(listOf(Variable(irBuiltIns.arrayClass.owner.typeParameters.single().symbol, arrayTypeArgument)))
-                }
-            }
+            else -> args.toPrimitiveStateArray(expression.type)
         }
         stack.pushReturnValue(array)
         return Next

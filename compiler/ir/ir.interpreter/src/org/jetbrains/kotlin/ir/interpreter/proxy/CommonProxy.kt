@@ -5,20 +5,13 @@
 
 package org.jetbrains.kotlin.ir.interpreter.proxy
 
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.getDispatchReceiver
 import org.jetbrains.kotlin.ir.interpreter.internalName
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.Common
 import org.jetbrains.kotlin.ir.interpreter.toState
-import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.isAny
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.isFakeOverriddenFromAny
-import org.jetbrains.kotlin.ir.util.nameForIrSerialization
 
 /**
  * calledFromBuiltIns - used to avoid cyclic calls. For example:
@@ -64,25 +57,6 @@ internal class CommonProxy private constructor(
     }
 
     companion object {
-        internal fun Common.asProxy(interpreter: IrInterpreter, extendFrom: IrClass?): Any {
-            val elementType = when {
-                extendFrom?.defaultType?.isAny() == false -> {
-                    val fqName = extendFrom.fqNameForIrSerialization.asString()
-                    if (fqName.startsWith("kotlin")) Class.forName(fqName) else null
-                }
-                else -> null
-            }
-
-            return when (elementType) {
-                Pair::class.java -> {
-                    val first = this.irClass.declarations.single { it.nameForIrSerialization.asString() == "first" } as IrSymbolOwner
-                    val second = this.irClass.declarations.single { it.nameForIrSerialization.asString() == "second" } as IrSymbolOwner
-                    Pair(this.getState(first.symbol), this.getState(second.symbol))
-                }
-                else -> this.asProxy(interpreter)
-            }
-        }
-
         internal fun Common.asProxy(interpreter: IrInterpreter, extendFrom: Class<*>? = null, calledFromBuiltIns: Boolean = false): Any {
             val commonProxy = CommonProxy(this, interpreter, calledFromBuiltIns)
 

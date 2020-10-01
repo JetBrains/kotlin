@@ -18,20 +18,46 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.lang.invoke.MethodHandle
 import java.lang.invoke.MethodHandles
 import java.lang.invoke.MethodType
+import java.util.*
+import kotlin.collections.HashMap
+import kotlin.collections.LinkedHashMap
 
 internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex {
     override val fields: MutableList<Variable> = mutableListOf()
 
     override var superWrapperClass: Wrapper? = null
-    override val typeArguments: MutableList<Variable> = mutableListOf()
     override var outerClass: Variable? = null
 
     private val receiverClass = irClass.defaultType.getClass(true)
+
+    init {
+        val javaClass = value::class.java
+        when {
+            javaClass == HashMap::class.java -> {
+                val nodeClass = javaClass.declaredClasses.single { it.name.contains("\$Node") }
+                val mutableMap = irClass.superTypes.mapNotNull { it.classOrNull?.owner }.single { it.isInterface }
+                javaClassToIrClass += nodeClass to mutableMap.declarations.filterIsInstance<IrClass>().single()
+            }
+            javaClass == LinkedHashMap::class.java -> {
+                val entryClass = javaClass.declaredClasses.single { it.name.contains("\$Entry") }
+                val mutableMap = irClass.superTypes.mapNotNull { it.classOrNull?.owner }.single { it.isInterface }
+                javaClassToIrClass += entryClass to mutableMap.declarations.filterIsInstance<IrClass>().single()
+            }
+            javaClass.canonicalName == "java.util.Collections.SingletonMap" -> {
+                javaClassToIrClass += AbstractMap.SimpleEntry::class.java to irClass.declarations.filterIsInstance<IrClass>().single()
+                javaClassToIrClass += AbstractMap.SimpleImmutableEntry::class.java to irClass.declarations.filterIsInstance<IrClass>().single()
+            }
+        }
+        javaClassToIrClass += value::class.java to irClass
+    }
+
+    constructor(value: Any) : this(value, javaClassToIrClass[value::class.java]!!)
 
     override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? = null
 
@@ -65,6 +91,11 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex 
 
     companion object {
         private val companionObjectValue = mapOf<String, Any>("kotlin.text.Regex\$Companion" to Regex.Companion)
+        private val javaClassToIrClass = mutableMapOf<Class<*>, IrClass>()
+
+        fun associateJavaClassWithIrClass(javaClass: Class<*>, irClass: IrClass) {
+            javaClassToIrClass += javaClass to irClass
+        }
 
         fun getReflectionMethod(irFunction: IrFunction): MethodHandle {
             val receiverClass = irFunction.dispatchReceiverParameter!!.type.getClass(asObject = true)

@@ -15,8 +15,15 @@ import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.interpreter.exceptions.throwAsUserException
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KFunctionState
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
+import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.types.isCharArray
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.types.Variance
 
 internal sealed class IntrinsicBase {
     abstract fun equalTo(irFunction: IrFunction): Boolean
@@ -30,8 +37,11 @@ internal object EmptyArray : IntrinsicBase() {
     }
 
     override fun evaluate(irFunction: IrFunction, stack: Stack, interpret: IrElement.() -> ExecutionResult): ExecutionResult {
-        val typeArguments = irFunction.typeParameters.map { stack.getVariable(it.symbol) }
-        stack.pushReturnValue(emptyArray<Any?>().toState(irFunction.returnType).apply { addTypeArguments(typeArguments) })
+        val typeArgument = irFunction.typeParameters.map { stack.getVariable(it.symbol) }.single().state as KTypeState
+        val returnType = (irFunction.returnType as IrSimpleType).buildSimpleType {
+            arguments = listOf(makeTypeProjection(typeArgument.irType, Variance.INVARIANT))
+        }
+        stack.pushReturnValue(emptyArray<Any?>().toState(returnType))
         return Next
     }
 }
@@ -44,9 +54,7 @@ internal object ArrayOf : IntrinsicBase() {
 
     override fun evaluate(irFunction: IrFunction, stack: Stack, interpret: IrElement.() -> ExecutionResult): ExecutionResult {
         val elementsVariable = irFunction.valueParameters.single().symbol
-        val array = (stack.getVariable(elementsVariable).state as Primitive<*>).value as Array<out Any?>
-        val typeArguments = irFunction.typeParameters.map { stack.getVariable(it.symbol) }
-        stack.pushReturnValue(array.toState(irFunction.returnType).apply { addTypeArguments(typeArguments) })
+        stack.pushReturnValue(stack.getVariable(elementsVariable).state)
         return Next
     }
 }
@@ -60,8 +68,11 @@ internal object ArrayOfNulls : IntrinsicBase() {
     override fun evaluate(irFunction: IrFunction, stack: Stack, interpret: IrElement.() -> ExecutionResult): ExecutionResult {
         val size = stack.getVariable(irFunction.valueParameters.first().symbol).state.asInt()
         val array = arrayOfNulls<Any?>(size)
-        val typeArguments = irFunction.typeParameters.map { stack.getVariable(it.symbol) }
-        stack.pushReturnValue(array.toState(irFunction.returnType).apply { addTypeArguments(typeArguments) })
+        val typeArgument = irFunction.typeParameters.map { stack.getVariable(it.symbol) }.single().state as KTypeState
+        val returnType = (irFunction.returnType as IrSimpleType).buildSimpleType {
+            arguments = listOf(makeTypeProjection(typeArgument.irType, Variance.INVARIANT))
+        }
+        stack.pushReturnValue(array.toState(returnType))
         return Next
     }
 }
@@ -74,7 +85,10 @@ internal object EnumValues : IntrinsicBase() {
 
     override fun evaluate(irFunction: IrFunction, stack: Stack, interpret: IrElement.() -> ExecutionResult): ExecutionResult {
         val enumClass = when (irFunction.fqNameWhenAvailable.toString()) {
-            "kotlin.enumValues" -> stack.getVariable(irFunction.typeParameters.first().symbol).state.irClass
+            "kotlin.enumValues" -> {
+                val kType = stack.getVariable(irFunction.typeParameters.first().symbol).state as KTypeState
+                kType.irType.classOrNull!!.owner
+            }
             else -> irFunction.parent as IrClass
         }
 
@@ -93,7 +107,10 @@ internal object EnumValueOf : IntrinsicBase() {
 
     override fun evaluate(irFunction: IrFunction, stack: Stack, interpret: IrElement.() -> ExecutionResult): ExecutionResult {
         val enumClass = when (irFunction.fqNameWhenAvailable.toString()) {
-            "kotlin.enumValueOf" -> stack.getVariable(irFunction.typeParameters.first().symbol).state.irClass
+            "kotlin.enumValueOf" -> {
+                val kType = stack.getVariable(irFunction.typeParameters.first().symbol).state as KTypeState
+                kType.irType.classOrNull!!.owner
+            }
             else -> irFunction.parent as IrClass
         }
         val enumEntryName = stack.getVariable(irFunction.valueParameters.first().symbol).state.asString()
@@ -149,7 +166,7 @@ internal object ArrayConstructor : IntrinsicBase() {
     override fun evaluate(irFunction: IrFunction, stack: Stack, interpret: IrElement.() -> ExecutionResult): ExecutionResult {
         val sizeDescriptor = irFunction.valueParameters[0].symbol
         val size = stack.getVariable(sizeDescriptor).state.asInt()
-        val arrayValue = MutableList<Any>(size) { if (irFunction.returnType.isCharArray()) 0.toChar() else 0 }
+        val arrayValue = MutableList<Any?>(size) { if (irFunction.returnType.isCharArray()) 0.toChar() else 0 }
 
         if (irFunction.valueParameters.size == 2) {
             val initDescriptor = irFunction.valueParameters[1].symbol
@@ -163,7 +180,13 @@ internal object ArrayConstructor : IntrinsicBase() {
                     asSubFrame = initLambda.irFunction.isLocal || initLambda.irFunction.isInline,
                     initPool = nonLocalDeclarations + indexVar
                 ) { initLambda.irFunction.body!!.interpret() }.check(ReturnLabel.RETURN) { return it }
-                arrayValue[i] = stack.popReturnValue().let { (it as? Wrapper)?.value ?: (it as? Primitive<*>)?.value ?: it }
+                arrayValue[i] = stack.popReturnValue().let {
+                    when (it) {
+                        is Wrapper -> it.value
+                        is Primitive<*> -> if (it.type.isArray() || it.type.isPrimitiveArray()) it else it.value
+                        else -> it
+                    }
+                }
             }
         }
 
