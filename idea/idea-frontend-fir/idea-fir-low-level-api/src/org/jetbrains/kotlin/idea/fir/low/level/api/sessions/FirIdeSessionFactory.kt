@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.checkers.registerCommonCheckers
 import org.jetbrains.kotlin.fir.dependenciesWithoutSelf
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCacheI
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeProvider
+import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSessionFactory.registerIdeComponents
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.ModuleLibrariesSearchScope
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.checkCanceled
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
@@ -111,6 +113,8 @@ internal object FirIdeSessionFactory {
                     }
                 )
             )
+
+            register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
 
             registerJavaSpecificResolveComponents()
             FirSessionFactory.FirSessionConfigurator(this).apply {
