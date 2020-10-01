@@ -383,6 +383,24 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
         runTest("compiler/testData/compileKotlinAgainstKotlin/useDeserializedFunInterface.kt");
     }
 
+    @TestMetadata("compiler/testData/compileKotlinAgainstKotlin/fir")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Fir extends AbstractJvmIrAgainstOldBoxTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInFir() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin/fir"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
+        }
+
+        @TestMetadata("LibraryProperty.kt")
+        public void testLibraryProperty() throws Exception {
+            runTest("compiler/testData/compileKotlinAgainstKotlin/fir/LibraryProperty.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/compileKotlinAgainstKotlin/jvm8")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

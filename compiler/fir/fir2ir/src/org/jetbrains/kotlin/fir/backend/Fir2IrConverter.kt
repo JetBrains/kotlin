@@ -316,7 +316,11 @@ class Fir2IrConverter(
             val stubGenerator = irProviders.filterIsInstance<DeclarationStubGenerator>().first()
             for (descriptor in symbolTable.wrappedTopLevelCallableDescriptors()) {
                 val parentClass = stubGenerator.generateOrGetFacadeClass(descriptor as WrappedDeclarationDescriptor<*>)
-                descriptor.owner.parent = parentClass ?: continue
+                val owner = descriptor.owner
+                owner.parent = parentClass ?: continue
+                if (owner is IrProperty) {
+                    owner.backingField?.parent = parentClass
+                }
             }
 
             evaluateConstants(irModuleFragment)
