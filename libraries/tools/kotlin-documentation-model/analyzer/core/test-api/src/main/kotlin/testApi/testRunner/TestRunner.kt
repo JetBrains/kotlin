@@ -187,7 +187,7 @@ abstract class AbstractCoreTest(
     )
 
     companion object {
-        private val filePathRegex = Regex("""[\n^](/\w+)+(\.\w+)?\s*\n""")
+        private val filePathRegex = Regex("""[\n^](\/[\w|\-]+)+(\.\w+)?\s*\n""")
     }
 }
 
