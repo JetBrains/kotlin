@@ -14,6 +14,7 @@ object Versions {
     val KTOR = version("1.4.0")
     val JUNIT = version("4.13")
     val JUNIT5 = version("5.6.0")
+    val JETBRAINS_COMPOSE = version("0.1.0-build63")
 
     object ANDROID {
         val ANDROID_MATERIAL = version("1.2.1")

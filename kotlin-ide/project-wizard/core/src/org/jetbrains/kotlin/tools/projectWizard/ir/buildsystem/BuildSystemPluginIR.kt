@@ -32,9 +32,17 @@ data class ApplicationPluginIR(val mainClass: String) : DefaultBuildSystemPlugin
     }
 }
 
-data class GradleOnlyPluginByNameIR(@NonNls val pluginId: String, override val priority: Int? = null) : BuildSystemPluginIR, GradleIR {
+data class GradleOnlyPluginByNameIR(
+    @NonNls val pluginId: String,
+    val version: Version? = null,
+    override val priority: Int? = null,
+) : BuildSystemPluginIR, GradleIR {
     override fun GradlePrinter.renderGradle() {
         call("id") { +pluginId.quotified }
+        version?.let { version ->
+            +" version "
+            +version.text.quotified
+        }
     }
 }
 

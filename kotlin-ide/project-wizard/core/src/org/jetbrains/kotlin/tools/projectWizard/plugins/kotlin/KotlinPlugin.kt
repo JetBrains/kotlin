@@ -198,7 +198,8 @@ enum class ProjectKind(override val text: String) : DisplayableSettingItem {
     Singleplatform(KotlinNewProjectWizardBundle.message("project.kind.singleplatform")),
     Multiplatform(KotlinNewProjectWizardBundle.message("project.kind.multiplatform")),
     Android(KotlinNewProjectWizardBundle.message("project.kind.android")),
-    Js(KotlinNewProjectWizardBundle.message("project.kind.kotlin.js"))
+    Js(KotlinNewProjectWizardBundle.message("project.kind.kotlin.js")),
+    COMPOSE(KotlinNewProjectWizardBundle.message("project.kind.compose"))
 }
 
 fun List<Module>.withAllSubModules(includeSourcesets: Boolean = false): List<Module> = buildList {
