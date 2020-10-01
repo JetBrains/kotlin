@@ -30,6 +30,7 @@ buildscript {
         classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.20")
         classpath(kotlin("gradle-plugin", bootstrapKotlinVersion))
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.9.17")
+        classpath("org.jfrog.buildinfo:build-info-extractor-gradle:4.17.2")
     }
 }
 
