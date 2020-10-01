@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.dfa.*
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode.Companion.removeEdge
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -793,6 +794,7 @@ class ControlFlowGraphBuilder {
 
         if (tryExpression.finallyBlock != null) {
             val finallyEnterNode = createFinallyBlockEnterNode(tryExpression)
+            addEdge(enterTryNodeBlock, finallyEnterNode)
             finallyEnterNodes.push(finallyEnterNode)
         }
 
@@ -803,9 +805,11 @@ class ControlFlowGraphBuilder {
         levelCounter--
         val node = createTryMainBlockExitNode(tryExpression)
         popAndAddEdge(node)
+        // NB: If this block can escape, not needed to connect to the finally block.
+        val tryMainBlockEscaped = blockEscaped(node) { n -> n is TryMainBlockEnterNode && n.level == levelCounter }
         val finallyEnterNode = finallyEnterNodes.topOrNull()
         // NB: Check the level to avoid adding an edge to the finally block at an upper level.
-        if (finallyEnterNode != null && finallyEnterNode.level == levelCounter + 1) {
+        if (!tryMainBlockEscaped && finallyEnterNode != null && finallyEnterNode.level == levelCounter + 1) {
             addEdge(node, finallyEnterNode)
         } else {
             addEdge(node, tryExitNodes.top())
@@ -821,9 +825,11 @@ class ControlFlowGraphBuilder {
         levelCounter--
         return createCatchClauseExitNode(catch).also {
             popAndAddEdge(it)
+            // NB: If this block can escape, not needed to connect to the finally block.
+            val catchClauseEscaped = blockEscaped(it) { n -> n is CatchClauseEnterNode && n.level == levelCounter }
             val finallyEnterNode = finallyEnterNodes.topOrNull()
             // NB: Check the level to avoid adding an edge to the finally block at an upper level.
-            if (finallyEnterNode != null && finallyEnterNode.level == levelCounter + 1) {
+            if (!catchClauseEscaped && finallyEnterNode != null && finallyEnterNode.level == levelCounter + 1) {
                 addEdge(it, finallyEnterNode, propagateDeadness = false)
             } else {
                 addEdge(it, tryExitNodes.top(), propagateDeadness = false)
@@ -838,9 +844,31 @@ class ControlFlowGraphBuilder {
     }
 
     fun exitFinallyBlock(tryExpression: FirTryExpression): FinallyBlockExitNode {
-        return createFinallyBlockExitNode(tryExpression).also {
-            popAndAddEdge(it)
-            addEdge(it, tryExitNodes.top())
+        return createFinallyBlockExitNode(tryExpression).also { finallyBlockExitNode ->
+            popAndAddEdge(finallyBlockExitNode)
+
+            fun isMatchedFinallyEnterNode(n: CFGNode<*>): Boolean =
+                n is FinallyBlockEnterNode && n.level == finallyBlockExitNode.level + 1
+
+            val finallyEnterNode =
+                lookup(
+                    finallyBlockExitNode,
+                    backwardLookup,
+                    ::isMatchedFinallyEnterNode,
+                    ::isMatchedFinallyEnterNode
+                ).single()
+
+            val tryExitNode = tryExitNodes.top()
+            // If the # of incoming edges to the finally-enter node is only one, that one is the try-main enter node. This also means, the
+            // current finally block is dangling, i.e., all the previous blocks, such as try-main and catch clauses are escaping.
+            // To analyze statements inside the finally block, we still need to connect this to the try-enter node.
+            // On the other hand, if previous blocks are connected through the finally block, we can safely remove the edge from the
+            // try-enter node to the finally-enter node so as to reflect the correct dominance relations.
+            if (finallyEnterNode.previousNodes.size > 1) {
+                val tryEnterNode = finallyEnterNode.previousNodes.single { it is TryMainBlockEnterNode }
+                removeEdge(tryEnterNode, finallyEnterNode)
+            }
+            addEdge(finallyBlockExitNode, tryExitNode)
         }
     }
 
@@ -1229,6 +1257,41 @@ class ControlFlowGraphBuilder {
         if (lastNodes.isEmpty) return null
         return addNewSimpleNode(newNode, isDead)
     }
+
+    private fun lookup(
+        startNode: CFGNode<*>,
+        direction: (CFGNode<*>) -> List<CFGNode<*>>,
+        endCondition: (CFGNode<*>) -> Boolean = { n -> n == lastNodes.topOrNull() },
+        lookupCondition: (CFGNode<*>) -> Boolean,
+    ): List<CFGNode<*>> {
+        val result = mutableListOf<CFGNode<*>>()
+        val q = mutableListOf(startNode)
+        while (q.isNotEmpty()) {
+            val node = q.removeFirst()
+            if (lookupCondition.invoke(node)) {
+                result.add(node)
+            }
+            if (endCondition.invoke(node)) {
+                break
+            }
+            q.addAll(direction.invoke(node))
+        }
+        return result
+    }
+
+    private val forwardLookup: (CFGNode<*>) -> List<CFGNode<*>> = { n -> n.followingNodes }
+    private val backwardLookup: (CFGNode<*>) -> List<CFGNode<*>> = { n -> n.previousNodes }
+
+    private fun blockEscaped(
+        blockExitNode: CFGNode<*>,
+        blockStartCondition: (CFGNode<*>) -> Boolean
+    ): Boolean =
+        lookup(
+            blockExitNode,
+            backwardLookup,
+            blockStartCondition,
+            { n -> n is ThrowExceptionNode || (n is JumpNode && n.fir is FirReturnExpression) },
+        ).isNotEmpty()
 
 }
 
