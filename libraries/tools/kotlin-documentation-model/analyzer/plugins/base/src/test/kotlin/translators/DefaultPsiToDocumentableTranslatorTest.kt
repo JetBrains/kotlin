@@ -1,9 +1,9 @@
 package translators
 
-import org.jetbrains.dokka.model.DModule
-import org.jetbrains.dokka.model.doc.Description
 import org.jetbrains.dokka.model.doc.Text
+import org.jetbrains.dokka.model.firstMemberOfType
 import org.jetbrains.dokka.testApi.testRunner.AbstractCoreTest
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
@@ -22,21 +22,21 @@ class DefaultPsiToDocumentableTranslatorTest : AbstractCoreTest() {
         testInline(
             """
             |/src/main/java/sample/BaseClass1.java
-            |package sample
+            |package sample;
             |public class BaseClass1 {
             |    /** B1 */
             |    void x() { }
             |}
             |
             |/src/main/java/sample/BaseClass2.java
-            |package sample
+            |package sample;
             |public class BaseClass2 extends BaseClass1 {
             |    /** B2 */
             |    void x() { }
             |}
             |
             |/src/main/java/sample/X.java
-            |package sample
+            |package sample;
             |public class X extends BaseClass2 {
             |    void x() { }
             |}
@@ -67,21 +67,21 @@ class DefaultPsiToDocumentableTranslatorTest : AbstractCoreTest() {
         testInline(
             """
             |/src/main/java/sample/BaseClass1.java
-            |package sample
+            |package sample;
             |public class BaseClass1 {
             |    /** B1 */
             |    void x() { }
             |}
             |
             |/src/main/java/sample/Interface1.java
-            |package sample
+            |package sample;
             |public interface Interface1 {
             |    /** I1 */
             |    void x() {}
             |}
             |
             |/src/main/java/sample/X.java
-            |package sample
+            |package sample;
             |public class X extends BaseClass1 implements Interface1 {
             |    void x() { }
             |}
@@ -112,20 +112,20 @@ class DefaultPsiToDocumentableTranslatorTest : AbstractCoreTest() {
         testInline(
             """
             |/src/main/java/sample/BaseClass1.java
-            |package sample
+            |package sample;
             |public class BaseClass1 {
             |    /** B1 */
             |    void x() { }
             |}
             |
             |/src/main/java/sample/BaseClass2.java
-            |package sample
+            |package sample;
             |public class BaseClass2 extends BaseClass1 {
             |    void x() {}
             |}
             |
             |/src/main/java/sample/X.java
-            |package sample
+            |package sample;
             |public class X extends BaseClass2 {
             |    void x() { }
             |}
@@ -137,6 +137,55 @@ class DefaultPsiToDocumentableTranslatorTest : AbstractCoreTest() {
                 assertTrue(
                     "B1" in documentationOfFunctionX,
                     "Expected Documentation \"B1\", found: \"$documentationOfFunctionX\""
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `java package-info package description`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src/main/java")
+                }
+            }
+        }
+
+        testInline(
+            """
+            |/src/main/java/sample/BaseClass1.java
+            |package sample;
+            |public class BaseClass1 {
+            |    /** B1 */
+            |    void x() { }
+            |}
+            |
+            |/src/main/java/sample/BaseClass2.java
+            |package sample;
+            |public class BaseClass2 extends BaseClass1 {
+            |    void x() {}
+            |}
+            |
+            |/src/main/java/sample/X.java
+            |package sample;
+            |public class X extends BaseClass2 {
+            |    void x() { }
+            |}
+            |
+            |/src/main/java/sample/package-info.java
+            |/**
+            | * Here comes description from package-info
+            | */
+            |package sample;
+            """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val documentationOfPackage = module.packages.single().documentation.values.single().children.single()
+                    .firstMemberOfType<Text>().body
+                assertEquals(
+                    "Here comes description from package-info", documentationOfPackage
                 )
             }
         }
