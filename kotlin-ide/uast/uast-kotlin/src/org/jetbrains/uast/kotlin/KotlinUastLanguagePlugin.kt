@@ -20,10 +20,7 @@ import com.intellij.lang.Language
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.registry.Registry
-import com.intellij.psi.PsiComment
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiEnumConstant
-import com.intellij.psi.PsiFile
+import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.LightClassUtil
@@ -530,9 +527,15 @@ internal object KotlinConverter {
             ctor(original as P, ktElement, givenParent)
         }
 
+        fun Array<out Class<out UElement>>.convertToUField(original: PsiField, kotlinOrigin: KtElement?): UElement? =
+            if (original is PsiEnumConstant)
+                el<UEnumConstant>(buildKtOpt(kotlinOrigin, ::KotlinUEnumConstant))
+            else
+                el<UField>(buildKtOpt(kotlinOrigin, ::KotlinUField))
+
         return with(expectedTypes) {
             when (original) {
-                is KtLightMethod -> el<UMethod>(build(KotlinUMethod.Companion::create))   // .Companion is needed because of KT-13934
+                is KtLightMethod -> el<UMethod>(build(KotlinUMethod::create))
                 is UastFakeLightMethod -> el<UMethod> {
                     val ktFunction = original.original
                     if (ktFunction.isLocal)
@@ -548,11 +551,10 @@ internal object KotlinConverter {
                     }
                     else -> el<UClass> { KotlinUClass.create(original, givenParent) }
                 }
-                is KtLightField ->
-                    if (original is PsiEnumConstant)
-                        el<UEnumConstant>(buildKtOpt(original.kotlinOrigin, ::KotlinUEnumConstant))
-                    else
-                        el<UField>(buildKtOpt(original.kotlinOrigin, ::KotlinUField))
+                is KtLightField -> convertToUField(original, original.kotlinOrigin)
+                is KtLightFieldForSourceDeclarationSupport ->
+                    // KtLightFieldForDecompiledDeclaration is not a KtLightField
+                    convertToUField(original, original.kotlinOrigin)
                 is KtLightParameter -> el<UParameter>(buildKtOpt(original.kotlinOrigin, ::KotlinUParameter))
                 is UastKotlinPsiParameter -> el<UParameter>(buildKt(original.ktParameter, ::KotlinUParameter))
                 is UastKotlinPsiParameterBase<*> -> el<UParameter> {

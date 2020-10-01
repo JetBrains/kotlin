@@ -20,12 +20,14 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiLanguageInjectionHost
+import com.intellij.psi.impl.JavaPsiFacadeEx
 import com.intellij.refactoring.rename.RenameProcessor
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
+import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
@@ -36,10 +38,12 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.findFunctionByName
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.junit.internal.runners.JUnit38ClassRunner
 import org.jetbrains.uast.*
+import org.jetbrains.uast.test.env.kotlin.assertEqualsToFile
 import org.jetbrains.uast.test.env.kotlin.findUElementByTextFromPsi
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
+import java.io.File
 
 @RunWith(JUnit38ClassRunner::class)
 class KotlinDetachedUastTest : KotlinLightCodeInsightFixtureTestCase() {
@@ -204,6 +208,17 @@ class KotlinDetachedUastTest : KotlinLightCodeInsightFixtureTestCase() {
         for ((k, _) in linkedMapOf) {
             TestCase.assertEquals(element, k.toUElement()?.sourcePsi)
         }
+    }
+
+    fun testConvertCompiledClass() {
+        val rClass = JavaPsiFacadeEx.getInstanceEx(project).findClass("kotlin.text.Regex")
+        assertInstanceOf(rClass, KtLightClassForDecompiledDeclaration::class.java)
+        val uClass = rClass.toUElementOfType<UClass>()!!
+        assertEqualsToFile(
+            "compiled \"kotlin.text.Regex\" rendered",
+            File(TEST_KOTLIN_MODEL_DIR, "Regex.compiled.log"),
+            uClass.asRecursiveLogString()
+        )
     }
 
 }
