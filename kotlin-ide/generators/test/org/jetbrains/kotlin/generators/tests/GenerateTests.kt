@@ -37,10 +37,7 @@ import org.jetbrains.kotlin.idea.codeInsight.postfix.AbstractPostfixTemplateProv
 import org.jetbrains.kotlin.idea.codeInsight.surroundWith.AbstractSurroundWithTest
 import org.jetbrains.kotlin.idea.codeInsight.unwrap.AbstractUnwrapRemoveTest
 import org.jetbrains.kotlin.idea.completion.test.*
-import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractBasicCompletionHandlerTest
-import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractCompletionCharFilterTest
-import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractKeywordCompletionHandlerTest
-import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractSmartCompletionHandlerTest
+import org.jetbrains.kotlin.idea.completion.test.handlers.*
 import org.jetbrains.kotlin.idea.completion.test.weighers.AbstractBasicCompletionWeigherTest
 import org.jetbrains.kotlin.idea.completion.test.weighers.AbstractSmartCompletionWeigherTest
 import org.jetbrains.kotlin.idea.configuration.AbstractGradleConfigureProjectByChangingFileTest
@@ -1007,6 +1004,10 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         testClass<AbstractHighLevelJvmBasicCompletionTest> {
             model("basic/common")
             model("basic/java")
+        }
+
+        testClass<AbstractHighLevelBasicCompletionHandlerTest> {
+            model("handlers/basic", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
     }
 
