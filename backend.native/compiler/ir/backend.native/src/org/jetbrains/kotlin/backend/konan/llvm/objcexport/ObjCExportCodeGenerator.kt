@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.llvm.objcexport
 
 import llvm.*
 import org.jetbrains.kotlin.backend.common.ir.allParameters
+import org.jetbrains.kotlin.backend.common.ir.allParametersCount
 import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
@@ -982,7 +983,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
                     }
 
                 MethodBridgeValueParameter.SuspendCompletion -> {
-                    val continuation = param(irFunction.allParameters.size) // The last argument.
+                    val continuation = param(irFunction.allParametersCount) // The last argument.
                     // TODO: consider placing interception into the converter to reduce code size.
                     val intercepted = callFromBridge(
                             context.ir.symbols.objCExportInterceptedContinuation.owner.llvmFunction,

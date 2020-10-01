@@ -1401,12 +1401,12 @@ internal object Devirtualization {
                     callSite.origin,
                     actualCallee.parentAsClass.symbol
             )
-            if (actualCallee.explicitParameters.size == arguments.size) {
+            if (actualCallee.explicitParametersCount == arguments.size) {
                 arguments.forEachIndexed { index, argument -> call.putArgument(index, argument) }
                 return call
             }
-            assert(actualCallee.isSuspend && actualCallee.explicitParameters.size == arguments.size - 1) {
-                "Incorrect number of arguments: expected [${actualCallee.explicitParameters.size}] but was [${arguments.size - 1}]\n" +
+            assert(actualCallee.isSuspend && actualCallee.explicitParametersCount == arguments.size - 1) {
+                "Incorrect number of arguments: expected [${actualCallee.explicitParametersCount}] but was [${arguments.size - 1}]\n" +
                         actualCallee.dump()
             }
             val continuation = arguments.last()

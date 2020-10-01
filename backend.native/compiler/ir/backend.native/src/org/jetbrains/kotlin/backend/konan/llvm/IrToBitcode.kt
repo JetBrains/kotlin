@@ -9,6 +9,7 @@ import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.ir.allParameters
+import org.jetbrains.kotlin.backend.common.ir.allParametersCount
 import org.jetbrains.kotlin.backend.common.lower.inline.InlinerExpressionLocationHint
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
@@ -2013,7 +2014,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun getContinuation(): LLVMValueRef {
         val caller = functionGenerationContext.irFunction!!
         return if (caller.isSuspend)
-            codegen.param(caller, caller.allParameters.size)    // The last argument.
+            codegen.param(caller, caller.allParametersCount)    // The last argument.
         else {
             // Suspend call from non-suspend function - must be [invokeSuspend].
             assert ((caller as IrSimpleFunction).overrides(context.ir.symbols.invokeSuspendFunction.owner),
@@ -2033,10 +2034,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val result = expression.getArgumentsWithIr().map { (_, argExpr) ->
             evaluateExpression(argExpr)
         }
-        val explicitParametersSize = expression.symbol.owner.explicitParameters.size
-        if (result.size != explicitParametersSize) {
+        val explicitParametersCount = expression.symbol.owner.explicitParametersCount
+        if (result.size != explicitParametersCount) {
             error("Number of arguments explicitly represented in the IR ${result.size} differs from expected " +
-                    "$explicitParametersSize in ${ir2string(expression)}")
+                    "$explicitParametersCount in ${ir2string(expression)}")
         }
         return result
     }
