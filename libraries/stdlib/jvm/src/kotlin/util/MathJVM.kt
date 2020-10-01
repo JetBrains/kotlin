@@ -42,6 +42,8 @@ private object Constants {
  *
  *  Special cases:
  *   - `sin(NaN|+Inf|-Inf)` is `NaN`
+ *
+ *  @sample samples.math.Maths.doubleSinCosAndTan
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -51,6 +53,8 @@ public actual inline fun sin(x: Double): Double = nativeMath.sin(x)
  *
  *  Special cases:
  *   - `cos(NaN|+Inf|-Inf)` is `NaN`
+ *
+ *  @sample samples.math.Maths.doubleSinCosAndTan
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -60,6 +64,8 @@ public actual inline fun cos(x: Double): Double = nativeMath.cos(x)
  *
  *  Special cases:
  *   - `tan(NaN|+Inf|-Inf)` is `NaN`
+ *
+ *  @sample samples.math.Maths.doubleSinCosAndTan
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -71,6 +77,8 @@ public actual inline fun tan(x: Double): Double = nativeMath.tan(x)
  *
  * Special cases:
  *    - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *
+ * @sample samples.math.Maths.doubleAsinAcosAndAtan
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -82,6 +90,8 @@ public actual inline fun asin(x: Double): Double = nativeMath.asin(x)
  *
  * Special cases:
  *    - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *
+ * @sample samples.math.Maths.doubleAsinAcosAndAtan
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -93,6 +103,8 @@ public actual inline fun acos(x: Double): Double = nativeMath.acos(x)
  *
  * Special cases:
  *   - `atan(NaN)` is `NaN`
+ *
+ * @sample samples.math.Maths.doubleAsinAcosAndAtan
  */
 @SinceKotlin("1.2")
 @InlineOnly
