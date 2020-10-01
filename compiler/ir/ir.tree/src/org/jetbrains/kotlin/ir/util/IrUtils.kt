@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 /**
@@ -199,8 +200,22 @@ val IrClass.primaryConstructor: IrConstructor?
 val IrDeclarationContainer.properties: Sequence<IrProperty>
     get() = declarations.asSequence().filterIsInstance<IrProperty>()
 
+fun IrFunction.addExplicitParametersTo(parametersList: MutableList<IrValueParameter>) {
+    parametersList.addIfNotNull(dispatchReceiverParameter)
+    parametersList.addIfNotNull(extensionReceiverParameter)
+    parametersList.addAll(valueParameters)
+}
+
+private fun Boolean.toInt(): Int = if (this) 1 else 0
+
+val IrFunction.explicitParametersCount: Int
+    get() = (dispatchReceiverParameter != null).toInt() + (extensionReceiverParameter != null).toInt() +
+            valueParameters.size
+
 val IrFunction.explicitParameters: List<IrValueParameter>
-    get() = (listOfNotNull(dispatchReceiverParameter, extensionReceiverParameter) + valueParameters)
+    get() = ArrayList<IrValueParameter>(explicitParametersCount).also {
+        addExplicitParametersTo(it)
+    }
 
 val IrBody.statements: List<IrStatement>
     get() = when (this) {

@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.Scope
@@ -432,13 +431,19 @@ fun IrFunction.createDispatchReceiverParameter(origin: IrDeclarationOrigin? = nu
 
 val IrFunction.allParameters: List<IrValueParameter>
     get() = if (this is IrConstructor) {
-        listOf(
-            this.constructedClass.thisReceiver
-                ?: error(this.render())
-        ) + explicitParameters
+        ArrayList<IrValueParameter>(allParametersCount).also {
+            it.add(
+                this.constructedClass.thisReceiver
+                    ?: error(this.render())
+            )
+            addExplicitParametersTo(it)
+        }
     } else {
         explicitParameters
     }
+
+val IrFunction.allParametersCount: Int
+    get() = if (this is IrConstructor) explicitParametersCount + 1 else explicitParametersCount
 
 private object FakeOverrideBuilder : FakeOverrideBuilderStrategy() {
     override fun linkFakeOverride(fakeOverride: IrOverridableMember) {
