@@ -220,9 +220,12 @@ class PostponedArgumentInputTypesResolver(
 
         return allGroupedParameterTypes.mapIndexed { index, types ->
             val parameterTypeVariable = createTypeVariableForParameterType(argument, index)
+            val typeVariableConstructor = parameterTypeVariable.freshTypeConstructor
 
             for (typeWithKind in types) {
+                if (typeVariableConstructor in fixedTypeVariables) break
                 if (typeWithKind == null) continue
+
                 when (typeWithKind.direction) {
                     ConstraintKind.EQUALITY -> csBuilder.addEqualityConstraint(
                         parameterTypeVariable.defaultType, typeWithKind.type, ArgumentConstraintPositionImpl(atom)
@@ -236,7 +239,13 @@ class PostponedArgumentInputTypesResolver(
                 }
             }
 
-            parameterTypeVariable.defaultType.asTypeProjection()
+            val resultType = if (typeVariableConstructor in fixedTypeVariables) {
+                fixedTypeVariables[typeVariableConstructor] as KotlinType
+            } else {
+                parameterTypeVariable.defaultType
+            }
+
+            resultType.asTypeProjection()
         }
     }
 

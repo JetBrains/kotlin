@@ -17,6 +17,7 @@ class VariableFixationFinder(
 ) {
     interface Context : TypeSystemInferenceExtensionContext {
         val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
+        val fixedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
         val postponedTypeVariables: List<TypeVariableMarker>
         fun isReified(variable: TypeVariableMarker): Boolean
     }
