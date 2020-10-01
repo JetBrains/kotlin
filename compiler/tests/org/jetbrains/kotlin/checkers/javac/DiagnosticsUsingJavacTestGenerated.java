@@ -11087,6 +11087,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                         runTest("compiler/testData/diagnostics/tests/inference/completion/postponedArgumentsAnalysis/callableReferences.kt");
                     }
 
+                    @TestMetadata("fixingVariableDuringAddingConstraintForFirstPosponedArgument.kt")
+                    public void testFixingVariableDuringAddingConstraintForFirstPosponedArgument() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/completion/postponedArgumentsAnalysis/fixingVariableDuringAddingConstraintForFirstPosponedArgument.kt");
+                    }
+
                     @TestMetadata("lackOfDeepIncorporation.kt")
                     public void testLackOfDeepIncorporation() throws Exception {
                         runTest("compiler/testData/diagnostics/tests/inference/completion/postponedArgumentsAnalysis/lackOfDeepIncorporation.kt");
