@@ -1747,6 +1747,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/firProblems/FirBuilder.kt");
         }
 
+        @TestMetadata("InnerClassInAnonymous.kt")
+        public void testInnerClassInAnonymous() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/InnerClassInAnonymous.kt");
+        }
+
         @TestMetadata("putIfAbsent.kt")
         public void testPutIfAbsent() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/putIfAbsent.kt");

@@ -92,18 +92,22 @@ class Fir2IrConverter(
             )
         }
         val processedCallableNames = mutableSetOf<Name>()
+        val classes = mutableListOf<FirRegularClass>()
         for (declaration in sortBySynthetic(anonymousObject.declarations)) {
-            if (declaration is FirRegularClass) {
+            val irDeclaration = if (declaration is FirRegularClass) {
+                classes += declaration
                 registerClassAndNestedClasses(declaration, irClass)
-                processClassAndNestedClassHeaders(declaration)
-            }
-            val irDeclaration = processMemberDeclaration(declaration, anonymousObject, irClass) ?: continue
-            when (declaration) {
-                is FirSimpleFunction -> processedCallableNames += declaration.name
-                is FirProperty -> processedCallableNames += declaration.name
+            } else {
+                when (declaration) {
+                    is FirSimpleFunction -> processedCallableNames += declaration.name
+                    is FirProperty -> processedCallableNames += declaration.name
+                }
+                processMemberDeclaration(declaration, anonymousObject, irClass) ?: continue
             }
             irClass.declarations += irDeclaration
         }
+        classes.forEach { processClassAndNestedClassHeaders(it) }
+        classes.forEach { processClassMembers(it) }
         // Add delegated members *before* fake override generations.
         // Otherwise, fake overrides for delegated members, which are redundant, will be added.
         val realDeclarations = delegatedMembers(irClass) + anonymousObject.declarations
