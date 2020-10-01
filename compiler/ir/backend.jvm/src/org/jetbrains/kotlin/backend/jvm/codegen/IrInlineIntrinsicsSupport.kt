@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.ir.allParameters
+import org.jetbrains.kotlin.backend.common.ir.allParametersNumber
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.intrinsics.SignatureString
 import org.jetbrains.kotlin.backend.jvm.lower.FunctionReferenceLowering
@@ -64,7 +65,7 @@ class IrInlineIntrinsicsSupport(
         // thus cannot have a backing field, and is required to have a getter.
         val getter = property.getter
             ?: error("Property without getter: ${property.render()}")
-        val arity = getter.allParameters.size
+        val arity = getter.allParametersNumber
         val implClass = (if (property.isVar) MUTABLE_PROPERTY_REFERENCE_IMPL else PROPERTY_REFERENCE_IMPL).getOrNull(arity)
             ?: error("No property reference impl class with arity $arity (${property.render()}")
 
@@ -77,7 +78,7 @@ class IrInlineIntrinsicsSupport(
         v.anew(implClass)
         v.dup()
         if (withArity) {
-            v.aconst(function.allParameters.size)
+            v.aconst(function.allParametersNumber)
         }
         putClassInstance(v, FunctionReferenceLowering.getOwnerKClassType(declaration.parent, context))
         v.aconst(declaration.name.asString())

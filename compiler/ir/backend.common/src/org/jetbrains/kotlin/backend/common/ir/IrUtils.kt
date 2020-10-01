@@ -443,6 +443,9 @@ val IrFunction.allParameters: List<IrValueParameter>
         explicitParameters
     }
 
+val IrFunction.allParametersNumber: Int
+    get() = if (this is IrConstructor) explicitParametersNumber + 1 else explicitParametersNumber
+
 private object FakeOverrideBuilder : FakeOverrideBuilderStrategy() {
     override fun linkFakeOverride(fakeOverride: IrOverridableMember) {
         when (fakeOverride) {
