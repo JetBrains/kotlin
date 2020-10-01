@@ -91,12 +91,6 @@ class ClassResolutionScopesSupport(
         isDeprecated: Boolean = false
     ): LexicalScope {
         val companionObjectDescriptor = classDescriptor.companionObjectDescriptor?.takeIf { withCompanionObject }
-        val staticScopes = ArrayList<MemberScope>(3)
-
-        staticScopes.add(classDescriptor.staticScope)
-        staticScopes.add(classDescriptor.unsubstitutedInnerClassesScope)
-        staticScopes.addIfNotNull(companionObjectDescriptor?.getStaticScopeOfCompanionObject(classDescriptor))
-
         val parentForNewScope = companionObjectDescriptor?.packScopesOfCompanionSupertypes(parent, ownerDescriptor) ?: parent
 
         val lexicalChainedScope = LexicalChainedScope.create(
