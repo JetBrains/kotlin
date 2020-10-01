@@ -25,7 +25,6 @@ import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
@@ -55,13 +54,13 @@ import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fir.FirPsiSourceElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirMetadataSerializer
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
+import org.jetbrains.kotlin.fir.session.FirJvmModuleInfo
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
 import org.jetbrains.kotlin.javac.JavacWrapper
@@ -69,16 +68,11 @@ import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.diagnostics.SimpleDiagnostics
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
 import java.io.File
@@ -328,35 +322,18 @@ object KotlinToJVMBytecodeCompiler {
                 .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
             val provider = FirProjectSessionProvider(project)
 
-            class FirJvmModuleInfo(override val name: Name) : ModuleInfo {
-                constructor(moduleName: String) : this(Name.identifier(moduleName))
+            val librariesModuleInfo = FirJvmModuleInfo.createForLibraries()
+            val librariesScope = ProjectScope.getLibrariesScope(project)
+            FirSessionFactory.createLibrarySession(
+                librariesModuleInfo, provider, librariesScope,
+                project, environment.createPackagePartProvider(librariesScope)
+            )
 
-                val dependencies: MutableList<ModuleInfo> = mutableListOf()
-
-                override val platform: TargetPlatform
-                    get() = JvmPlatforms.unspecifiedJvmPlatform
-
-                override val analyzerServices: PlatformDependentAnalyzerServices
-                    get() = JvmPlatformAnalyzerServices
-
-                override fun dependencies(): List<ModuleInfo> {
-                    return dependencies
-                }
-            }
-
-            val moduleInfo = FirJvmModuleInfo(module.getModuleName())
-            val session: FirSession = FirSessionFactory.createJavaModuleBasedSession(moduleInfo, provider, scope) {
+            val moduleInfo = FirJvmModuleInfo(module.getModuleName(), listOf(librariesModuleInfo))
+            val session = FirSessionFactory.createJavaModuleBasedSession(moduleInfo, provider, scope) {
                 if (extendedAnalysisMode) {
                     registerExtendedCommonCheckers()
                 }
-            }.also {
-                val dependenciesInfo = FirJvmModuleInfo(Name.special("<dependencies>"))
-                moduleInfo.dependencies.add(dependenciesInfo)
-                val librariesScope = ProjectScope.getLibrariesScope(project)
-                FirSessionFactory.createLibrarySession(
-                    dependenciesInfo, provider, librariesScope,
-                    project, environment.createPackagePartProvider(librariesScope)
-                )
             }
 
             val firAnalyzerFacade = FirAnalyzerFacade(session, moduleConfiguration.languageVersionSettings, ktFiles)
