@@ -52,6 +52,10 @@
           <option name="linkRegexp" value="https://jetbrains.team/p/ij/review/$2/timeline" />
         </IssueNavigationLink>
         <IssueNavigationLink>
+          <option name="issueRegexp" value="KT-(CR|MR)-(\d+)" />
+          <option name="linkRegexp" value="https://jetbrains.team/p/kt/review/$2/timeline" />
+        </IssueNavigationLink>
+        <IssueNavigationLink>
           <option name="issueRegexp" value="IDEA-COMMUNITY-CR-\d+" />
           <option name="linkRegexp" value="https://upsource.jetbrains.com/idea-community/review/$0" />
         </IssueNavigationLink>
@@ -71,8 +75,8 @@
     </option>
   </component>
   <component name="VcsDirectoryMappings">
-    <mapping directory="$PROJECT_DIR$/intellij" vcs="Git" />
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/intellij" vcs="Git" />
   </component>
   <component name="VcsDirectoryRenames">
     <rename root="$PROJECT_DIR$/intellij" parentPath="." childPath="community">
