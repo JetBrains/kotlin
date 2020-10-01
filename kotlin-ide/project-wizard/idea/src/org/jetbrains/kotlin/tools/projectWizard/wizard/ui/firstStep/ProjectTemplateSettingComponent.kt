@@ -47,10 +47,10 @@ class ProjectTemplateSettingComponent(
     override val alignment: TitleComponentAlignment
         get() = TitleComponentAlignment.AlignFormTopWithPadding(4)
 
-    private val borderedPanel = list.addBorder(BorderFactory.createLineBorder(JBColor.border()))
+    private val scrollPane = ScrollPaneFactory.createScrollPane(list)
 
     override val component: JComponent = borderPanel {
-        addToCenter(borderPanel { addToCenter(list) }.addBorder(JBUI.Borders.empty(0,/*left*/ 3, 0, /*right*/ 3)))
+        addToCenter(borderPanel { addToCenter(scrollPane) }.addBorder(JBUI.Borders.empty(0,/*left*/ 3, 0, /*right*/ 3)))
         addToBottom(templateDescriptionComponent.component.addBorder(JBUI.Borders.empty(/*top*/8,/*left*/ 3, 0, 0)))
     }
 
@@ -93,6 +93,7 @@ private val ProjectTemplate.icon: Icon
         MultiplatformMobileApplicationProjectTemplate -> KotlinIcons.Wizard.MULTIPLATFORM_MOBILE
         MultiplatformMobileLibraryProjectTemplate -> KotlinIcons.Wizard.MULTIPLATFORM_MOBILE_LIBRARY
         NodeJsApplicationProjectTemplate -> KotlinIcons.Wizard.NODE_JS
+        ComposeDesktopApplicationProjectTemplate -> KotlinIcons.Wizard.COMPOSE
     }
 
 class TemplateDescriptionComponent : Component() {
