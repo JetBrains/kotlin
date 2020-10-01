@@ -6,22 +6,19 @@
 package org.jetbrains.kotlin.idea.scripting.gradle.importing
 
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
-import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.projectRoots.JdkUtil
 import com.intellij.openapi.util.io.FileUtil.toSystemIndependentName
 import com.intellij.openapi.vfs.VfsUtil
 import org.gradle.tooling.model.kotlin.dsl.EditorReportSeverity
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslScriptsModel
 import org.jetbrains.kotlin.gradle.BrokenKotlinDslScriptsModel
-import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.scripting.gradle.getGradleScriptInputsStamp
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 import org.jetbrains.plugins.gradle.model.BuildScriptClasspathModel
 import org.jetbrains.plugins.gradle.service.project.DefaultProjectResolverContext
 import org.jetbrains.plugins.gradle.service.project.ProjectResolverContext
-import org.jetbrains.plugins.gradle.settings.GradleSettings
 import java.io.File
+
 
 fun saveGradleBuildEnvironment(resolverCtx: ProjectResolverContext) {
     val task = resolverCtx.externalSystemTaskId
@@ -49,14 +46,15 @@ fun processScriptModel(
     resolverCtx: ProjectResolverContext,
     model: KotlinDslScriptsModel,
     projectName: String
-) {
-    if (model is BrokenKotlinDslScriptsModel) {
+): Boolean {
+    return if (model is BrokenKotlinDslScriptsModel) {
         LOG.error(
             "Couldn't get KotlinDslScriptsModel for $projectName:\n${model.message}\n${model.stackTrace}"
         )
+        false
     } else {
         val task = resolverCtx.externalSystemTaskId
-        val project = task.findProject() ?: return
+        val project = task.findProject() ?: return false
         val models = model.toListOfScriptModels(project)
 
         val tasks = KotlinDslSyncListener.instance.tasks
@@ -69,17 +67,14 @@ fun processScriptModel(
 
         val errors = models.collectErrors()
         if (errors.isNotEmpty()) {
-            if (sync != null) {
-                synchronized(sync) {
-                    sync.failed = true
+            sync?.let {
+                synchronized(it) {
+                    it.failed = true
                 }
             }
-            throw IllegalStateException(
-                KotlinIdeaGradleBundle.message("title.kotlin.build.script")
-                        + ":\n"
-                        + errors.joinToString("\n") { it.text + "\n" + it.details }
-            )
+            handleError(project, errors)
         }
+        errors.isEmpty()
     }
 }
 
