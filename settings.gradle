@@ -324,7 +324,7 @@ include ":compiler:fir:cones",
         ":compiler:fir:analysis-tests"
 
 include ":idea:idea-frontend-fir:idea-fir-low-level-api"
-include ":idea:idea-frontend-fir:idea-fir-performance-tests"
+include ":idea:idea-fir-performance-tests"
 
 include ":plugins:parcelize:parcelize-compiler",
         ":plugins:parcelize:parcelize-ide",
