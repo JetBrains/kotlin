@@ -4,4 +4,5 @@
 
 sharedVar = sharedVar + 1
 
+println("${SharedObject.greeting} ${from.msg} main")
 println("sharedVar == $sharedVar")
