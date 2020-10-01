@@ -10,6 +10,8 @@ import kotlin.contracts.*
 
 /**
  * Executes the given [block] and returns elapsed time in milliseconds.
+ *
+ * @sample samples.system.timing.Timings.measureBlockTimeMillis
  */
 public inline fun measureTimeMillis(block: () -> Unit): Long {
     contract {
@@ -22,6 +24,8 @@ public inline fun measureTimeMillis(block: () -> Unit): Long {
 
 /**
  * Executes the given [block] and returns elapsed time in nanoseconds.
+ *
+ * @sample samples.system.timing.Timings.measureBlockNanoTime
  */
 public inline fun measureNanoTime(block: () -> Unit): Long {
     contract {
