@@ -357,11 +357,13 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
     }
 
     // List of special bridge methods which were not implemented in Kotlin superclasses.
-    private fun IrSimpleFunction.overriddenSpecialBridges(): List<SpecialBridge> = allOverridden().mapNotNull {
-        if (it.parentAsClass.isInterface || it.comesFromJava())
-            it.specialBridgeOrNull?.takeIf { bridge -> bridge.signature != jvmMethod }
-                ?.copy(isFinal = false, isSynthetic = true, methodInfo = null)
-        else null
+    private fun IrSimpleFunction.overriddenSpecialBridges(): List<SpecialBridge> {
+        val targetJvmMethod = context.methodSignatureMapper.mapCalleeToAsmMethod(this)
+        return allOverridden()
+            .filter { it.parentAsClass.isInterface || it.comesFromJava() }
+            .mapNotNull { it.specialBridgeOrNull }
+            .filter { it.signature != targetJvmMethod }
+            .map { it.copy(isFinal = false, isSynthetic = true, methodInfo = null) }
     }
 
     private fun IrClass.addAbstractMethodStub(irFunction: IrSimpleFunction, needsArgumentBoxing: Boolean) =

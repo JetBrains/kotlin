@@ -353,6 +353,9 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         return null
     }
 
+    internal fun mapCalleeToAsmMethod(function: IrSimpleFunction, isSuperCall: Boolean = false): Method =
+        mapAsmMethod(findSuperDeclaration(function, isSuperCall))
+
     // Copied from KotlinTypeMapper.findSuperDeclaration.
     private fun findSuperDeclaration(function: IrSimpleFunction, isSuperCall: Boolean): IrSimpleFunction {
         var current = function
