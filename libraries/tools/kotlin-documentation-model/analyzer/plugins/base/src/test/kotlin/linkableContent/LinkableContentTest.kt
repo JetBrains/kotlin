@@ -209,7 +209,7 @@ class LinkableContentTest : AbstractCoreTest() {
                     val function = classChildren.find { it.name == "printWithExclamation" }
                     val text = function.cast<MemberPageNode>().content.cast<ContentGroup>().children.last()
                         .cast<ContentDivergentGroup>().children.single()
-                        .cast<ContentDivergentInstance>().before
+                        .cast<ContentDivergentInstance>().after
                         .cast<ContentGroup>().children.last()
                         .cast<ContentGroup>().children.last()
                         .cast<PlatformHintedContent>().children.single()
