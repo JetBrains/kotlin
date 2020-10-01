@@ -17,7 +17,7 @@ import java.nio.file.Path
 
 interface FileIR : BuildSystemIR, IrsOwner
 
-data class BuildFileIR(
+data class BuildFileIR constructor(
     val name: String,
     val directoryPath: Path,
     val modules: ModulesStructureIR,

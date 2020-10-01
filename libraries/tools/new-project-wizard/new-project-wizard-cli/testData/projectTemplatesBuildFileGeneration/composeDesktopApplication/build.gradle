@@ -1,0 +1,33 @@
+import org.jetbrains.compose.compose
+
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version 'KOTLIN_VERSION'
+    id 'org.jetbrains.compose' version '0.1.0-build63'
+    id 'application'
+}
+
+group = 'me.user'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    jcenter()
+    mavenCentral()
+    maven { url 'KOTLIN_REPO' }
+    maven { url 'https://maven.pkg.jetbrains.space/public/p/compose/dev' }
+}
+
+dependencies {
+    implementation compose.desktop.all
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = '1.8'
+}
+
+compileTestKotlin {
+    kotlinOptions.jvmTarget = '1.8'
+}
+
+application {
+    mainClassName = 'MainKt'
+}

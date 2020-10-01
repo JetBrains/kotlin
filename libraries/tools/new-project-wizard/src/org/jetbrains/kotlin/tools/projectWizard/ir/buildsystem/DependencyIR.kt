@@ -168,6 +168,19 @@ data class KotlinArbitraryDependencyIR(
     override fun withDependencyType(type: DependencyType): KotlinArbitraryDependencyIR = copy(dependencyType = type)
 }
 
+data class CustomGradleDependencyDependencyIR(
+    val dependency: String,
+    override val dependencyType: DependencyType
+) : DependencyIR, GradleIR {
+    override fun withDependencyType(type: DependencyType): CustomGradleDependencyDependencyIR = copy(dependencyType = type)
+
+    override fun GradlePrinter.renderGradle() {
+        call(dependencyType.getGradleName()) {
+            +dependency
+        }
+    }
+}
+
 enum class StdlibType(val artifact: String) {
     StdlibJdk7("stdlib-jdk7"),
     StdlibJdk8("stdlib-jdk8"),

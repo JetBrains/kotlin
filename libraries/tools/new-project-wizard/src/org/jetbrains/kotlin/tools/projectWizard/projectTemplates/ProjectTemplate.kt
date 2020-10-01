@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.templates.*
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JvmSinglePlatformModuleConfigurator
+import org.jetbrains.kotlin.tools.projectWizard.templates.compose.ComposeJvmDesktopTemplate
 import org.jetbrains.kotlin.tools.projectWizard.templates.mpp.MobileMppTemplate
 
 sealed class ProjectTemplate : DisplayableSettingItem {
@@ -80,7 +82,8 @@ sealed class ProjectTemplate : DisplayableSettingItem {
             FrontendApplicationProjectTemplate,
             ReactApplicationProjectTemplate,
             FullStackWebApplicationProjectTemplate,
-            NodeJsApplicationProjectTemplate
+            NodeJsApplicationProjectTemplate,
+            ComposeDesktopApplicationProjectTemplate,
         )
 
         fun byId(id: String): ProjectTemplate? = ALL.firstOrNull {
@@ -441,6 +444,33 @@ object NodeJsApplicationProjectTemplate : ProjectTemplate() {
                     },
                     subModules = emptyList()
                 )
+            )
+        )
+}
+
+object ComposeDesktopApplicationProjectTemplate : ProjectTemplate() {
+    override val title = KotlinNewProjectWizardBundle.message("project.template.compose.desktop.title")
+    override val description = KotlinNewProjectWizardBundle.message("project.template.compose.desktop.description")
+    override val id = "composeDesktopApplication"
+
+    @NonNls
+    override val suggestedProjectName = "myComposeDesktopApplication"
+    override val projectKind = ProjectKind.COMPOSE
+
+    override val setsPluginSettings: List<SettingWithValue<*, *>>
+        get() = listOf(
+            KotlinPlugin.modules.reference withValue listOf(
+                Module(
+                    "compose",
+                    JvmSinglePlatformModuleConfigurator,
+                    template = ComposeJvmDesktopTemplate(),
+                    sourcesets = SourcesetType.ALL.map { type ->
+                        Sourceset(type, dependencies = emptyList())
+                    },
+                    subModules = emptyList()
+                ).withConfiguratorSettings(JvmSinglePlatformModuleConfigurator) {
+                    ModuleConfiguratorWithTests.testFramework withValue KotlinTestFramework.NONE
+                }
             )
         )
 }
