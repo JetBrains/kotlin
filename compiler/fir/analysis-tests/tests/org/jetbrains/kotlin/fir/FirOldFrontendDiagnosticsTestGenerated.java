@@ -3829,6 +3829,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/assignedInFinally.kt");
         }
 
+        @TestMetadata("assignedInIfElse.kt")
+        public void testAssignedInIfElse() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/assignedInIfElse.kt");
+        }
+
         @TestMetadata("assignmentInLocalsInConstructor.kt")
         public void testAssignmentInLocalsInConstructor() throws Exception {
             runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/assignmentInLocalsInConstructor.kt");
