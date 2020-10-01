@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_WA
 import org.jetbrains.kotlin.gradle.internals.NO_NATIVE_STDLIB_PROPERTY_WARNING
 import org.jetbrains.kotlin.gradle.internals.NO_NATIVE_STDLIB_WARNING
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
+import org.jetbrains.kotlin.gradle.prepareLocalBuildCache
 import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.jetbrains.kotlin.gradle.util.isWindows
 import org.jetbrains.kotlin.gradle.util.modify
@@ -25,6 +26,7 @@ import org.junit.Assume
 import org.junit.Ignore
 import org.junit.Test
 import java.io.File
+import java.nio.file.Files
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -86,6 +88,8 @@ class GeneralNativeIT : BaseGradleIT() {
 
     val nativeHostTargetName = MPPNativeTargets.current
 
+    private val buildCacheEnabledOptions = super.defaultBuildOptions().copy(withBuildCache = true)
+
     private fun Project.targetClassesDir(targetName: String, sourceSetName: String = "main") =
         classesDir(sourceSet = "$targetName/$sourceSetName")
 
@@ -138,6 +142,8 @@ class GeneralNativeIT : BaseGradleIT() {
 
     @Test
     fun testCanProduceNativeLibraries() = with(transformNativeTestProjectWithPluginDsl("libraries", directoryPrefix = "native-binaries")) {
+        prepareLocalBuildCache()
+
         val baseName = "native_library"
 
         val sharedPrefix = CompilerOutputKind.DYNAMIC.prefix(HostManager.host)
@@ -174,10 +180,16 @@ class GeneralNativeIT : BaseGradleIT() {
 
         val klibTask = ":compileKotlinHost"
 
-        // Building
-        build(":assemble") {
+        // Building to local build cache
+        build("assemble", options = buildCacheEnabledOptions) {
             assertSuccessful()
             assertTasksExecuted(linkTasks + klibTask)
+        }
+
+        // Retrieving from build cache
+        build(":clean", ":assemble", options = buildCacheEnabledOptions) {
+            assertSuccessful()
+            assertTasksRetrievedFromCache(linkTasks + klibTask)
 
             sharedPaths.forEach { assertFileExists(it) }
             staticPaths.forEach { assertFileExists(it) }
@@ -830,4 +842,92 @@ class GeneralNativeIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testNativeDependenciesBuildCache() {
+        val libProject = transformNativeTestProjectWithPluginDsl("build-cache-lib", directoryPrefix = "native-build-cache")
+        val appProject = transformNativeTestProjectWithPluginDsl("build-cache-app", directoryPrefix = "native-build-cache")
+        val appProjectAltPath = Project("build-cache-app2", directoryPrefix = "native-build-cache")
+
+        val libLocalRepoUri = libProject.projectDir.resolve("repo").toURI()
+
+        with(libProject) {
+            prepareLocalBuildCache()
+
+            val compileTask = ":compileKotlinHost"
+
+            build("assemble", options = buildCacheEnabledOptions) {
+                assertSuccessful()
+                assertTasksExecuted(compileTask)
+            }
+
+            build("clean", "publish", options = buildCacheEnabledOptions) {
+                assertSuccessful()
+                assertTasksRetrievedFromCache(compileTask)
+            }
+        }
+
+        val compileAppTasks = listOf(
+            ":compileKotlinHost",
+            ":lib-module:compileKotlinHost",
+        )
+
+        with(appProject) {
+            prepareLocalBuildCache()
+
+            val klibPrefix = CompilerOutputKind.LIBRARY.prefix(HostManager.host)
+            val klibSuffix = CompilerOutputKind.LIBRARY.suffix(HostManager.host)
+            val klibPaths = listOf(
+                "${targetClassesDir("host")}${klibPrefix}app$klibSuffix",
+                "lib-module/${targetClassesDir("host")}${klibPrefix}lib-module$klibSuffix",
+            )
+
+            gradleBuildScript().appendText("\nrepositories { maven { setUrl(\"$libLocalRepoUri\") } }")
+
+            build("assemble", options = buildCacheEnabledOptions) {
+                assertSuccessful()
+                assertTasksExecuted(compileAppTasks)
+                klibPaths.forEach { assertFileExists(it) }
+            }
+
+            build("clean", "assemble", options = buildCacheEnabledOptions) {
+                assertSuccessful()
+                assertTasksRetrievedFromCache(compileAppTasks)
+                klibPaths.forEach { assertFileExists(it) }
+            }
+
+            assertTrue(projectDir.resolve(klibPaths[0]).delete())
+
+            build("clean", ":lib-module:assemble") {
+                assertSuccessful()
+                assertTasksExecuted(compileAppTasks[1])
+            }
+
+            build("assemble", options = buildCacheEnabledOptions) {
+                assertSuccessful()
+                assertTasksRetrievedFromCache(compileAppTasks[0])
+                assertTasksUpToDate(compileAppTasks[1])
+                klibPaths.forEach { assertFileExists(it) }
+            }
+
+            build("clean") {
+                assertSuccessful()
+            }
+        }
+
+        Files.move(appProject.projectDir.toPath(), appProjectAltPath.projectDir.toPath())
+
+        // It's very time-consuming check so on Mac TC agent we test only source relocation
+        val alternateBuildEnvOptions = if (isTeamCityRun && HostManager.hostIsMac) {
+            buildCacheEnabledOptions
+        } else {
+            val alternateGradleHome = File(appProject.projectDir.parentFile, "gradleUserHome")
+            buildCacheEnabledOptions.copy(gradleUserHome = alternateGradleHome)
+        }
+        with(appProjectAltPath) {
+            build("assemble", options = alternateBuildEnvOptions) {
+                assertSuccessful()
+                assertTasksRetrievedFromCache(compileAppTasks)
+            }
+        }
+    }
 }

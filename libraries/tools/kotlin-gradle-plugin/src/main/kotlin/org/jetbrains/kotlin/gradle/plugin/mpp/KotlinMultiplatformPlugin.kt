@@ -17,9 +17,8 @@ import org.gradle.api.publish.PublicationContainer
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
-import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
+import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.jvm.tasks.Jar
 import org.gradle.util.ConfigureUtil
 import org.gradle.util.GradleVersion
@@ -153,7 +152,7 @@ class KotlinMultiplatformPlugin(
             (sourceSet.languageSettings as? DefaultLanguageSettingsBuilder)?.run {
                 compilerPluginOptionsTask = lazy {
                     val associatedCompilation = primaryCompilationsBySourceSet[sourceSet] ?: metadataCompilation
-                    project.tasks.getByName(associatedCompilation.compileKotlinTaskName) as AbstractCompile
+                    project.tasks.getByName(associatedCompilation.compileKotlinTaskName) as SourceTask
                 }
             }
         }

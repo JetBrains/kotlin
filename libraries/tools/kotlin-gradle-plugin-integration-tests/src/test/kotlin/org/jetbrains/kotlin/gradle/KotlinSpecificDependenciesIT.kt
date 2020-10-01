@@ -291,11 +291,13 @@ private var testBuildRunId = 0
 fun BaseGradleIT.Project.checkTaskCompileClasspath(
     taskPath: String,
     checkModulesInClasspath: List<String> = emptyList(),
-    checkModulesNotInClasspath: List<String> = emptyList()
+    checkModulesNotInClasspath: List<String> = emptyList(),
+    isNative: Boolean = false
 ) {
     val subproject = taskPath.substringBeforeLast(":").takeIf { it.isNotEmpty() && it != taskPath }
     val taskName = taskPath.removePrefix(subproject.orEmpty())
-    val expression = """(tasks.getByName("$taskName") as AbstractCompile).classpath.toList()"""
+    val taskClass = if (isNative) "org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile<*, *>" else "AbstractCompile"
+    val expression = """(tasks.getByName("$taskName") as $taskClass).classpath.toList()"""
     checkPrintedItems(subproject, expression, checkModulesInClasspath, checkModulesNotInClasspath)
 }
 

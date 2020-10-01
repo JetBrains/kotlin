@@ -23,10 +23,7 @@ import org.gradle.api.plugins.MavenPluginConvention
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.tasks.CompileClasspathNormalizer
-import org.gradle.api.tasks.SourceSet
-import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.Upload
+import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.jvm.tasks.Jar
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
@@ -61,7 +58,7 @@ val KOTLIN_DSL_NAME = "kotlin"
 val KOTLIN_JS_DSL_NAME = "kotlin2js"
 val KOTLIN_OPTIONS_DSL_NAME = "kotlinOptions"
 
-abstract class KotlinCompilationProcessor<out T : AbstractCompile>(
+abstract class KotlinCompilationProcessor<out T : SourceTask>(
     open val kotlinCompilation: KotlinCompilation<*>
 ) {
     abstract val kotlinTask: TaskProvider<out T>

@@ -36,6 +36,8 @@ abstract class BaseGradleIT {
     open val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.None
 
+    val isTeamCityRun = System.getenv("TEAMCITY_VERSION") != null
+
     @Before
     fun setUp() {
         // Aapt2 from Android Gradle Plugin 3.2 and below does not handle long paths on Windows.
@@ -198,6 +200,7 @@ abstract class BaseGradleIT {
         val jsIrBackend: Boolean? = null,
         val androidHome: File? = null,
         val javaHome: File? = null,
+        val gradleUserHome: File? = null,
         val androidGradlePluginVersion: AGPVersion? = null,
         val forceOutputToStdout: Boolean = false,
         val debug: Boolean = false,
@@ -508,6 +511,16 @@ abstract class BaseGradleIT {
 
     fun CompiledProject.assertTasksExecuted(vararg tasks: String) {
         assertTasksExecuted(tasks.toList())
+    }
+
+    fun CompiledProject.assertTasksRetrievedFromCache(tasks: Iterable<String>) {
+        for (task in tasks) {
+            assertContains("$task FROM-CACHE")
+        }
+    }
+
+    fun CompiledProject.assertTasksRetrievedFromCache(vararg tasks: String) {
+        assertTasksRetrievedFromCache(tasks.toList())
     }
 
     fun CompiledProject.assertTasksUpToDate(tasks: Iterable<String>) {
@@ -827,6 +840,10 @@ Finished executing task ':$taskName'|
 
             options.javaHome?.let {
                 put("JAVA_HOME", it.canonicalPath)
+            }
+
+            options.gradleUserHome?.let {
+                put("GRADLE_USER_HOME", it.canonicalPath)
             }
         }
 

@@ -1,0 +1,10 @@
+pluginManagement {
+    repositories {
+        mavenLocal()
+        jcenter()
+        gradlePluginPortal()
+    }
+}
+
+include ":lib-module"
+rootProject.name = "app"
