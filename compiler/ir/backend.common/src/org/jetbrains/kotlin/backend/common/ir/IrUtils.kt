@@ -431,7 +431,7 @@ fun IrFunction.createDispatchReceiverParameter(origin: IrDeclarationOrigin? = nu
 
 val IrFunction.allParameters: List<IrValueParameter>
     get() = if (this is IrConstructor) {
-        ArrayList<IrValueParameter>(valueParameters.size + 3).also {
+        ArrayList<IrValueParameter>(allParametersCount).also {
             it.add(
                 this.constructedClass.thisReceiver
                     ?: error(this.render())
