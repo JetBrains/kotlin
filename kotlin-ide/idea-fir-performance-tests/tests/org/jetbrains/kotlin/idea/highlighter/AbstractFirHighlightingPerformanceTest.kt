@@ -28,7 +28,7 @@ abstract class AbstractFirHighlightingPerformanceTest : AbstractHighlightingTest
         var warmedUp: Boolean = false
 
         @JvmStatic
-        val stats: Stats = Stats("fir-highlight")
+        val stats: Stats = Stats("firHighlight")
 
     }
 
