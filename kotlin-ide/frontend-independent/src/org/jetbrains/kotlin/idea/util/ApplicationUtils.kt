@@ -11,6 +11,7 @@ import com.intellij.openapi.components.ComponentManager
 import com.intellij.openapi.progress.impl.CancellationCheck
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Condition
 
 fun <T> runReadAction(action: () -> T): T {
     return ApplicationManager.getApplication().runReadAction<T>(action)
@@ -51,6 +52,9 @@ inline fun executeOnPooledThread(crossinline action: () -> Unit) =
 
 inline fun invokeLater(crossinline action: () -> Unit) =
     ApplicationManager.getApplication().invokeLater { action() }
+
+inline fun invokeLater(expired: Condition<*>, crossinline action: () -> Unit) =
+    ApplicationManager.getApplication().invokeLater({ action() }, expired)
 
 inline fun isUnitTestMode(): Boolean = ApplicationManager.getApplication().isUnitTestMode
 

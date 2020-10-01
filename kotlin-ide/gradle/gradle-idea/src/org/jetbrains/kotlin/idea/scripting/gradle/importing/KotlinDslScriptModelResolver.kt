@@ -42,7 +42,9 @@ class KotlinDslScriptModelContributor : ProjectModelContributor {
                 if (kotlinDslScriptsModelImportSupported(resolverCtx.projectGradleVersion)) {
                     val model = toolingModelsProvider.getProjectModel(it, KotlinDslScriptsModel::class.java)
                     if (model != null) {
-                        processScriptModel(resolverCtx, model, projectIdentifier)
+                        if (!processScriptModel(resolverCtx, model, projectIdentifier)) {
+                            return@forEach
+                        }
                     }
                 }
 
