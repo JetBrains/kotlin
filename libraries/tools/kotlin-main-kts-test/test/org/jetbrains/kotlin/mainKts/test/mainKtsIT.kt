@@ -41,7 +41,7 @@ class MainKtsIT {
 
         runWithK2JVMCompiler(
             "$TEST_DATA_ROOT/import-test.main.kts",
-            listOf("Hi from common", "Hi from middle", "sharedVar == 5"),
+            listOf("Hi from common", "Hi from middle", "Hi from main", "sharedVar == 5"),
             classpath = listOf(mainKtsJar)
         )
     }

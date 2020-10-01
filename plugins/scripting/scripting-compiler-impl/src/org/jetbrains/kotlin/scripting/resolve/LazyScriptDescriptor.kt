@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
+import org.jetbrains.kotlin.resolve.AllUnderImportScope
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassMemberScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
+import org.jetbrains.kotlin.resolve.scopes.utils.addImportingScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
@@ -43,7 +45,6 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import java.io.File
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.script.experimental.api.*
@@ -180,7 +181,7 @@ class LazyScriptDescriptor(
 
         val localFS by lazy {
             val fileManager = VirtualFileManager.getInstance()
-            fileManager.getFileSystem(StandardFileSystems.FILE_PROTOCOL) 
+            fileManager.getFileSystem(StandardFileSystems.FILE_PROTOCOL)
         }
         val psiManager by lazy { PsiManager.getInstance(scriptInfo.script.project) }
 
@@ -285,6 +286,8 @@ class LazyScriptDescriptor(
                 true,
                 receiverClassDescriptor.thisAsReceiverParameter,
                 LexicalScopeKind.CLASS_MEMBER_SCOPE
+            ).addImportingScope(
+                AllUnderImportScope.create(receiverClassDescriptor, emptyList())
             )
         }
         outerScope
