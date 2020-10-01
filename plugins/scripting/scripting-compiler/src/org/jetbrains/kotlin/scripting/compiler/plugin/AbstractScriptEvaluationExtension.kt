@@ -19,10 +19,11 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import java.io.File
-import java.io.PrintStream
+import java.util.*
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.StringScriptSource
 import kotlin.script.experimental.host.toScriptSource
+import kotlin.script.experimental.jvm.util.renderError
 
 abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
 
@@ -70,13 +71,19 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
                     val extensionHint =
                         if (configuration.get(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)?.let { it.size == 1 && it.first().isDefault } == true) " (.kts)"
                         else ""
-                    messageCollector.report(CompilerMessageSeverity.ERROR, "$error; Specify path to the script file$extensionHint as the first argument")
+                    messageCollector.report(
+                        CompilerMessageSeverity.ERROR,
+                        "$error; Specify path to the script file$extensionHint as the first argument"
+                    )
                     return ExitCode.COMPILATION_ERROR
                 }
                 script
             }
             else -> {
-                messageCollector.report(CompilerMessageSeverity.ERROR, "Illegal set of arguments: either -script or -expression arguments expected at this point")
+                messageCollector.report(
+                    CompilerMessageSeverity.ERROR,
+                    "Illegal set of arguments: either -script or -expression arguments expected at this point"
+                )
                 return ExitCode.COMPILATION_ERROR
             }
         }
@@ -149,20 +156,4 @@ fun ScriptDiagnostic.Severity.toCompilerMessageSeverity(): CompilerMessageSeveri
         ScriptDiagnostic.Severity.INFO -> CompilerMessageSeverity.INFO
         ScriptDiagnostic.Severity.DEBUG -> CompilerMessageSeverity.LOGGING
     }
-
-private fun ResultValue.Error.renderError(stream: PrintStream) {
-    val fullTrace = error.stackTrace
-    if (wrappingException == null || fullTrace.size < wrappingException!!.stackTrace.size) {
-        error.printStackTrace(stream)
-    } else {
-        // subtracting wrapping message stacktrace from error stacktrace to show only user-specific part of it
-        // TODO: consider more reliable logic, e.g. comparing traces, fallback to full error printing in case of mismatch
-        // TODO: write tests
-        stream.println(error)
-        val scriptTraceSize = fullTrace.size - wrappingException!!.stackTrace.size
-        for (i in 0 until scriptTraceSize) {
-            stream.println("\tat " + fullTrace[i])
-        }
-    }
-}
 

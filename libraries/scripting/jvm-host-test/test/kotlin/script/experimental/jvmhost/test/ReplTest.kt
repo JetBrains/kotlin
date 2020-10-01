@@ -88,6 +88,22 @@ class ReplTest : TestCase() {
     }
 
     @Test
+    fun testEvalWithExceptionWithCause() {
+        checkEvaluateInRepl(
+            sequenceOf(
+                """
+                    try {
+                        throw Exception("Error!")
+                    } catch (e: Exception) {
+                        throw Exception("Oh no", e)
+                    }
+                """.trimIndent()
+            ),
+            sequenceOf(Exception("Oh no", Exception("Error!")))
+        )
+    }
+
+    @Test
     fun testEvalWithErrorWithLocation() {
         checkEvaluateInReplDiags(
             sequenceOf(
@@ -240,6 +256,7 @@ class ReplTest : TestCase() {
                             is ResultValue.Error -> Assert.assertTrue(
                                 "#$index: Expected $expectedVal, got Error: ${actualVal.error}",
                                 expectedVal is Throwable && expectedVal.message == actualVal.error.message
+                                        && expectedVal.cause?.message == actualVal.error.cause?.message
                             )
                             is ResultValue.NotEvaluated -> Assert.assertEquals(
                                 "#$index: Expected $expectedVal, got NotEvaluated",
