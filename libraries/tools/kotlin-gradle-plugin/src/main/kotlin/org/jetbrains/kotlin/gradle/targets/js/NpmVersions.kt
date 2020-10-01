@@ -10,7 +10,7 @@ package org.jetbrains.kotlin.gradle.targets.js
  */
 // DO NOT MODIFY DIRECTLY! Use org.jetbrains.kotlin.generators.gradle.targets.js.MainKt
 class NpmVersions {
-    val dukat = NpmPackageVersion("dukat", "0.5.7")
+    val dukat = NpmPackageVersion("dukat", "next")
     val webpack = NpmPackageVersion("webpack", "4.44.1")
     val webpackCli = NpmPackageVersion("webpack-cli", "3.3.12")
     val webpackBundleAnalyzer = NpmPackageVersion("webpack-bundle-analyzer", "3.8.0")
