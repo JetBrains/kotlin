@@ -75,8 +75,8 @@
     </option>
   </component>
   <component name="VcsDirectoryMappings">
-    <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/intellij" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
   </component>
   <component name="VcsDirectoryRenames">
     <rename root="$PROJECT_DIR$/intellij" parentPath="." childPath="community">
