@@ -546,6 +546,10 @@ fun main(args: Array<String>) {
             testClass<AbstractFirBytecodeTextTest> {
                 model("codegen/bytecodeText", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
             }
+
+            testClass<AbstractFirCompileKotlinAgainstKotlinTest> {
+                model("compileKotlinAgainstKotlin", targetBackend = TargetBackend.JVM_IR)
+            }
         }
 
         testGroup(
