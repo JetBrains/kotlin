@@ -12,15 +12,6 @@ abstract class AbstractHighLevelJvmBasicCompletionTest : AbstractJvmBasicComplet
     override val captureExceptions: Boolean = false
 
     override fun executeTest(test: () -> Unit) {
-        val doComparison = InTextDirectivesUtils.isDirectiveDefined(myFixture.file.text, "FIR_COMPARISON")
-        try {
-            test()
-        } catch (e: Throwable) {
-            if (doComparison) throw e
-            return
-        }
-        if (!doComparison) {
-            throw AssertionError("Looks like test is passing, please add // FIR_COMPARISON at the beginning of the file")
-        }
+        runTestWithCustomEnableDirective(FIR_COMPARISON, testDataFile()) { super.executeTest(test) }
     }
 }
