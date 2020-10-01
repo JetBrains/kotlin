@@ -457,7 +457,10 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun arrayType(componentType: KotlinTypeMarker): SimpleTypeMarker = TODO("not implemented")
 
-    override fun KotlinTypeMarker.isArrayOrNullableArray(): Boolean = TODO("not implemented")
+    override fun KotlinTypeMarker.isArrayOrNullableArray(): Boolean {
+        require(this is ConeKotlinType)
+        return this.classId == StandardClassIds.Array
+    }
 
     override fun TypeConstructorMarker.isFinalClassOrEnumEntryOrAnnotationClassConstructor(): Boolean {
         val firRegularClass = toFirRegularClass() ?: return false
