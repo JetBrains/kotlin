@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="libraryTable">
-  <library name="org.jetbrains.teamcity:teamcity-rest-client:1.12.1" type="repository">
+  <library name="TeamcityRestClient" type="repository">
     <properties maven-id="org.jetbrains.teamcity:teamcity-rest-client:1.12.1">
       <exclude>
         <dependency maven-id="org.jetbrains.kotlin:kotlin-stdlib" />
