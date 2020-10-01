@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.Scope
@@ -443,8 +442,8 @@ val IrFunction.allParameters: List<IrValueParameter>
         explicitParameters
     }
 
-val IrFunction.allParametersNumber: Int
-    get() = if (this is IrConstructor) explicitParametersNumber + 1 else explicitParametersNumber
+val IrFunction.allParametersCount: Int
+    get() = if (this is IrConstructor) explicitParametersCount + 1 else explicitParametersCount
 
 private object FakeOverrideBuilder : FakeOverrideBuilderStrategy() {
     override fun linkFakeOverride(fakeOverride: IrOverridableMember) {
