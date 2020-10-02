@@ -485,7 +485,7 @@ abstract class IterableTests<T : Iterable<String>>(val createFrom: (Array<out St
 
     @Test
     fun mapAndJoinToString() {
-        val result = data.joinToString(separator = "-") { it.toUpperCase() }
+        val result = data.joinToString(separator = "-") { it.uppercase() }
         assertEquals("FOO-BAR", result)
     }
 

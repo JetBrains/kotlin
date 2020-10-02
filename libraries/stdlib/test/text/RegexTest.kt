@@ -56,7 +56,7 @@ class RegexTest {
 
     @Test fun matchIgnoreCase() {
         for (input in listOf("ascii", "shrödinger"))
-            assertTrue(input.toUpperCase().matches(input.toLowerCase().toRegex(RegexOption.IGNORE_CASE)))
+            assertTrue(input.uppercase().matches(input.lowercase().toRegex(RegexOption.IGNORE_CASE)))
     }
 
     @Test fun matchSequence() {

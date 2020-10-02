@@ -9,6 +9,60 @@
 package kotlin.text
 
 import kotlin.contracts.contract
+import kotlin.jvm.JvmName
+
+/**
+ * Returns a copy of this string converted to upper case using the rules of the default locale.
+ */
+public expect fun String.toUpperCase(): String
+
+/**
+ * Returns a copy of this string converted to upper case using Unicode mapping rules of the invariant locale.
+ *
+ * This function supports one-to-many and many-to-one character mapping,
+ * thus the length of the returned string can be different from the length of the original string.
+ *
+ * @sample samples.text.Strings.uppercase
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+public expect fun String.uppercase(): String
+
+/**
+ * Returns a copy of this string converted to lower case using the rules of the default locale.
+ */
+public expect fun String.toLowerCase(): String
+
+/**
+ * Returns a copy of this string converted to lower case using Unicode mapping rules of the invariant locale.
+ *
+ * This function supports one-to-many and many-to-one character mapping,
+ * thus the length of the returned string can be different from the length of the original string.
+ *
+ * @sample samples.text.Strings.lowercase
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+public expect fun String.lowercase(): String
+
+/**
+ * Returns a copy of this string having its first letter titlecased using the rules of the default locale,
+ * or the original string if it's empty or already starts with a title case letter.
+ *
+ * The title case of a character is usually the same as its upper case with several exceptions.
+ * The particular list of characters with the special title case form depends on the underlying platform.
+ *
+ * @sample samples.text.Strings.capitalize
+ */
+public expect fun String.capitalize(): String
+
+/**
+ * Returns a copy of this string having its first letter lowercased using the rules of the default locale,
+ * or the original string if it's empty or already starts with a lower case letter.
+ *
+ * @sample samples.text.Strings.decapitalize
+ */
+public expect fun String.decapitalize(): String
 
 /**
  * Returns a sub sequence of this char sequence having leading and trailing characters matching the [predicate] removed.
@@ -709,6 +763,42 @@ public inline fun CharSequence.replace(regex: Regex, noinline transform: (MatchR
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.replaceFirst(regex: Regex, replacement: String): String = regex.replaceFirst(this, replacement)
+
+/**
+ * Returns a copy of this string having its first character replaced with the result of the specified [transform],
+ * or the original string if it's empty.
+ *
+ * @param transform function that takes the first character and returns the result of the transform applied to the character.
+ *
+ * @sample samples.text.Strings.replaceFirstChar
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@JvmName("replaceFirstCharWithChar")
+@kotlin.internal.InlineOnly
+public inline fun String.replaceFirstChar(transform: (Char) -> Char): String {
+    return if (isNotEmpty()) transform(this[0]) + substring(1) else this
+}
+
+/**
+ * Returns a copy of this string having its first character replaced with the result of the specified [transform],
+ * or the original string if it's empty.
+ *
+ * @param transform function that takes the first character and returns the result of the transform applied to the character.
+ *
+ * @sample samples.text.Strings.replaceFirstChar
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@JvmName("replaceFirstCharWithCharSequence")
+@kotlin.internal.InlineOnly
+public inline fun String.replaceFirstChar(transform: (Char) -> CharSequence): String {
+    return if (isNotEmpty()) transform(this[0]).toString() + substring(1) else this
+}
 
 
 /**
