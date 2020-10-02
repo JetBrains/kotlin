@@ -1801,7 +1801,10 @@ public inline fun CharArray.indexOfLast(predicate: (Char) -> Boolean): Int {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the array is empty.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun <T> Array<out T>.last(): T {
     if (isEmpty())
@@ -1811,7 +1814,10 @@ public fun <T> Array<out T>.last(): T {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the array is empty.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun ByteArray.last(): Byte {
     if (isEmpty())
@@ -1821,7 +1827,10 @@ public fun ByteArray.last(): Byte {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the array is empty.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun ShortArray.last(): Short {
     if (isEmpty())
@@ -1831,7 +1840,10 @@ public fun ShortArray.last(): Short {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the array is empty.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun IntArray.last(): Int {
     if (isEmpty())
@@ -1841,7 +1853,10 @@ public fun IntArray.last(): Int {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the array is empty.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun LongArray.last(): Long {
     if (isEmpty())
@@ -1851,7 +1866,10 @@ public fun LongArray.last(): Long {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the array is empty.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun FloatArray.last(): Float {
     if (isEmpty())
@@ -1861,7 +1879,10 @@ public fun FloatArray.last(): Float {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the array is empty.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun DoubleArray.last(): Double {
     if (isEmpty())
@@ -1871,7 +1892,10 @@ public fun DoubleArray.last(): Double {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the array is empty.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun BooleanArray.last(): Boolean {
     if (isEmpty())
@@ -1881,7 +1905,10 @@ public fun BooleanArray.last(): Boolean {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the array is empty.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun CharArray.last(): Char {
     if (isEmpty())
@@ -1891,7 +1918,10 @@ public fun CharArray.last(): Char {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun <T> Array<out T>.last(predicate: (T) -> Boolean): T {
     for (index in this.indices.reversed()) {
@@ -1903,7 +1933,10 @@ public inline fun <T> Array<out T>.last(predicate: (T) -> Boolean): T {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun ByteArray.last(predicate: (Byte) -> Boolean): Byte {
     for (index in this.indices.reversed()) {
@@ -1915,7 +1948,10 @@ public inline fun ByteArray.last(predicate: (Byte) -> Boolean): Byte {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun ShortArray.last(predicate: (Short) -> Boolean): Short {
     for (index in this.indices.reversed()) {
@@ -1927,7 +1963,10 @@ public inline fun ShortArray.last(predicate: (Short) -> Boolean): Short {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun IntArray.last(predicate: (Int) -> Boolean): Int {
     for (index in this.indices.reversed()) {
@@ -1939,7 +1978,10 @@ public inline fun IntArray.last(predicate: (Int) -> Boolean): Int {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun LongArray.last(predicate: (Long) -> Boolean): Long {
     for (index in this.indices.reversed()) {
@@ -1951,7 +1993,10 @@ public inline fun LongArray.last(predicate: (Long) -> Boolean): Long {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun FloatArray.last(predicate: (Float) -> Boolean): Float {
     for (index in this.indices.reversed()) {
@@ -1963,7 +2008,10 @@ public inline fun FloatArray.last(predicate: (Float) -> Boolean): Float {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun DoubleArray.last(predicate: (Double) -> Boolean): Double {
     for (index in this.indices.reversed()) {
@@ -1975,7 +2023,10 @@ public inline fun DoubleArray.last(predicate: (Double) -> Boolean): Double {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun BooleanArray.last(predicate: (Boolean) -> Boolean): Boolean {
     for (index in this.indices.reversed()) {
@@ -1987,7 +2038,10 @@ public inline fun BooleanArray.last(predicate: (Boolean) -> Boolean): Boolean {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun CharArray.last(predicate: (Char) -> Boolean): Char {
     for (index in this.indices.reversed()) {
@@ -2119,6 +2173,8 @@ public fun CharArray.lastIndexOf(element: Char): Int {
 
 /**
  * Returns the last element, or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun <T> Array<out T>.lastOrNull(): T? {
     return if (isEmpty()) null else this[size - 1]
@@ -2126,6 +2182,8 @@ public fun <T> Array<out T>.lastOrNull(): T? {
 
 /**
  * Returns the last element, or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun ByteArray.lastOrNull(): Byte? {
     return if (isEmpty()) null else this[size - 1]
@@ -2133,6 +2191,8 @@ public fun ByteArray.lastOrNull(): Byte? {
 
 /**
  * Returns the last element, or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun ShortArray.lastOrNull(): Short? {
     return if (isEmpty()) null else this[size - 1]
@@ -2140,6 +2200,8 @@ public fun ShortArray.lastOrNull(): Short? {
 
 /**
  * Returns the last element, or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun IntArray.lastOrNull(): Int? {
     return if (isEmpty()) null else this[size - 1]
@@ -2147,6 +2209,8 @@ public fun IntArray.lastOrNull(): Int? {
 
 /**
  * Returns the last element, or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun LongArray.lastOrNull(): Long? {
     return if (isEmpty()) null else this[size - 1]
@@ -2154,6 +2218,8 @@ public fun LongArray.lastOrNull(): Long? {
 
 /**
  * Returns the last element, or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun FloatArray.lastOrNull(): Float? {
     return if (isEmpty()) null else this[size - 1]
@@ -2161,6 +2227,8 @@ public fun FloatArray.lastOrNull(): Float? {
 
 /**
  * Returns the last element, or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun DoubleArray.lastOrNull(): Double? {
     return if (isEmpty()) null else this[size - 1]
@@ -2168,6 +2236,8 @@ public fun DoubleArray.lastOrNull(): Double? {
 
 /**
  * Returns the last element, or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun BooleanArray.lastOrNull(): Boolean? {
     return if (isEmpty()) null else this[size - 1]
@@ -2175,6 +2245,8 @@ public fun BooleanArray.lastOrNull(): Boolean? {
 
 /**
  * Returns the last element, or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun CharArray.lastOrNull(): Char? {
     return if (isEmpty()) null else this[size - 1]
@@ -2182,6 +2254,8 @@ public fun CharArray.lastOrNull(): Char? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun <T> Array<out T>.lastOrNull(predicate: (T) -> Boolean): T? {
     for (index in this.indices.reversed()) {
@@ -2193,6 +2267,8 @@ public inline fun <T> Array<out T>.lastOrNull(predicate: (T) -> Boolean): T? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun ByteArray.lastOrNull(predicate: (Byte) -> Boolean): Byte? {
     for (index in this.indices.reversed()) {
@@ -2204,6 +2280,8 @@ public inline fun ByteArray.lastOrNull(predicate: (Byte) -> Boolean): Byte? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun ShortArray.lastOrNull(predicate: (Short) -> Boolean): Short? {
     for (index in this.indices.reversed()) {
@@ -2215,6 +2293,8 @@ public inline fun ShortArray.lastOrNull(predicate: (Short) -> Boolean): Short? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun IntArray.lastOrNull(predicate: (Int) -> Boolean): Int? {
     for (index in this.indices.reversed()) {
@@ -2226,6 +2306,8 @@ public inline fun IntArray.lastOrNull(predicate: (Int) -> Boolean): Int? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun LongArray.lastOrNull(predicate: (Long) -> Boolean): Long? {
     for (index in this.indices.reversed()) {
@@ -2237,6 +2319,8 @@ public inline fun LongArray.lastOrNull(predicate: (Long) -> Boolean): Long? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun FloatArray.lastOrNull(predicate: (Float) -> Boolean): Float? {
     for (index in this.indices.reversed()) {
@@ -2248,6 +2332,8 @@ public inline fun FloatArray.lastOrNull(predicate: (Float) -> Boolean): Float? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun DoubleArray.lastOrNull(predicate: (Double) -> Boolean): Double? {
     for (index in this.indices.reversed()) {
@@ -2259,6 +2345,8 @@ public inline fun DoubleArray.lastOrNull(predicate: (Double) -> Boolean): Double
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun BooleanArray.lastOrNull(predicate: (Boolean) -> Boolean): Boolean? {
     for (index in this.indices.reversed()) {
@@ -2270,6 +2358,8 @@ public inline fun BooleanArray.lastOrNull(predicate: (Boolean) -> Boolean): Bool
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun CharArray.lastOrNull(predicate: (Char) -> Boolean): Char? {
     for (index in this.indices.reversed()) {
