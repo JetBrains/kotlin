@@ -5,9 +5,7 @@
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/rd/rd-gen/0.203.158/rd-gen-0.203.158.jar!/" />
     </CLASSES>
-    <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/rd/rd-gen/0.203.158/rd-gen-0.203.158-javadoc.jar!/" />
-    </JAVADOC>
+    <JAVADOC />
     <SOURCES>
       <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/rd/rd-gen/0.203.158/rd-gen-0.203.158-sources.jar!/" />
     </SOURCES>

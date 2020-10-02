@@ -8,8 +8,6 @@
     <JAVADOC>
       <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/rd/rd-framework/0.203.158/rd-framework-0.203.158-javadoc.jar!/" />
     </JAVADOC>
-    <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/rd/rd-framework/0.203.158/rd-framework-0.203.158-sources.jar!/" />
-    </SOURCES>
+    <SOURCES />
   </library>
 </component>
