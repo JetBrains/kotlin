@@ -281,7 +281,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun TypeParameterMarker.getUpperBound(index: Int): KotlinTypeMarker
     fun TypeParameterMarker.getTypeConstructor(): TypeConstructorMarker
 
-    fun isEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean
+    fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean
 
     fun TypeConstructorMarker.isDenotable(): Boolean
 

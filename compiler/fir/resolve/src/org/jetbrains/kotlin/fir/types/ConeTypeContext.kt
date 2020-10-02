@@ -275,7 +275,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return this
     }
 
-    override fun isEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean {
+    override fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean {
         if (c1 is ErrorTypeConstructor || c2 is ErrorTypeConstructor) return false
 
         //assert(c1 is ConeSymbol)

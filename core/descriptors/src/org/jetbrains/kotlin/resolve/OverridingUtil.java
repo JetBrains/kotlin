@@ -995,13 +995,6 @@ public class OverridingUtil {
             return super.areEqualTypeConstructors(a, b) || areEqualTypeConstructorsByAxioms(a, b);
         }
 
-        @Override
-        public boolean isEqualTypeConstructors(
-                @NotNull TypeConstructorMarker c1, @NotNull TypeConstructorMarker c2
-        ) {
-            return areEqualTypeConstructors(c1, c2);
-        }
-
         private boolean areEqualTypeConstructorsByAxioms(@NotNull TypeConstructor a, @NotNull TypeConstructor b) {
             if (equalityAxioms.equals(a, b)) return true;
             if (matchingTypeConstructors == null) return false;
