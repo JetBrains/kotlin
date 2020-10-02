@@ -120,8 +120,9 @@ class IncrementalJvmCompilerRunner(
     override fun isICEnabled(): Boolean =
         IncrementalCompilation.isEnabledForJvm()
 
-    override fun createCacheManager(args: K2JVMCompilerArguments): IncrementalJvmCachesManager =
-        IncrementalJvmCachesManager(cacheDirectory, File(args.destination), reporter)
+    //TODO
+    override fun createCacheManager(args: K2JVMCompilerArguments, projectDir: File?): IncrementalJvmCachesManager =
+        IncrementalJvmCachesManager(cacheDirectory, projectDir, File(args.destination), reporter)
 
     override fun destinationDir(args: K2JVMCompilerArguments): File =
         args.destinationAsFile

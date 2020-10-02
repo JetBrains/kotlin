@@ -68,7 +68,7 @@ inline fun <R> withJsIC(fn: () -> R): R {
 }
 
 class IncrementalJsCompilerRunner(
-    workingDir: File,
+    private val workingDir: File,
     reporter: ICReporter,
     buildHistoryFile: File,
     private val modulesApiHistory: ModulesApiHistory,
@@ -82,9 +82,9 @@ class IncrementalJsCompilerRunner(
     override fun isICEnabled(): Boolean =
         IncrementalCompilation.isEnabledForJs()
 
-    override fun createCacheManager(args: K2JSCompilerArguments): IncrementalJsCachesManager {
+    override fun createCacheManager(args: K2JSCompilerArguments, projectDir: File?): IncrementalJsCachesManager {
         val serializerProtocol = if (!args.isIrBackendEnabled()) JsSerializerProtocol else KlibMetadataSerializerProtocol
-        return IncrementalJsCachesManager(cacheDirectory, reporter, serializerProtocol)
+        return IncrementalJsCachesManager(cacheDirectory, workingDir, reporter, serializerProtocol)
     }
 
     override fun destinationDir(args: K2JSCompilerArguments): File =

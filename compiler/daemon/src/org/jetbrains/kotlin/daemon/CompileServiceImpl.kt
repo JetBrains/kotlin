@@ -589,6 +589,8 @@ abstract class CompileServiceImplBase(
             }
         }
 
+        val projectRoot = incrementalCompilationOptions.modulesInfo.projectRoot
+
         val compiler = IncrementalJvmCompilerRunner(
             workingDir,
             reporter,
@@ -599,7 +601,7 @@ abstract class CompileServiceImplBase(
             kotlinSourceFilesExtensions = allKotlinExtensions
         )
         return try {
-            compiler.compile(allKotlinFiles, k2jvmArgs, compilerMessageCollector, changedFiles)
+            compiler.compile(allKotlinFiles, k2jvmArgs, compilerMessageCollector, changedFiles, projectRoot)
         } finally {
             reporter.flush()
         }

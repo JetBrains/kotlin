@@ -54,7 +54,7 @@ abstract class IncrementalCompilerRunner<
     protected open val kotlinSourceFilesExtensions: List<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 
     protected abstract fun isICEnabled(): Boolean
-    protected abstract fun createCacheManager(args: Args): CacheManager
+    protected abstract fun createCacheManager(args: Args, projectDir: File?): CacheManager
     protected abstract fun destinationDir(args: Args): File
 
     fun compile(
@@ -63,16 +63,17 @@ abstract class IncrementalCompilerRunner<
         messageCollector: MessageCollector,
         // when [providedChangedFiles] is not null, changes are provided by external system (e.g. Gradle)
         // otherwise we track source files changes ourselves.
-        providedChangedFiles: ChangedFiles?
+        providedChangedFiles: ChangedFiles?,
+        projectDir: File? = null
     ): ExitCode {
         assert(isICEnabled()) { "Incremental compilation is not enabled" }
-        var caches = createCacheManager(args)
+        var caches = createCacheManager(args, projectDir)
 
         fun rebuild(reason: () -> String): ExitCode {
             reporter.report(reason)
             caches.close(false)
             clearLocalStateOnRebuild(args)
-            caches = createCacheManager(args)
+            caches = createCacheManager(args, projectDir)
             if (providedChangedFiles == null) {
                 caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
             }
