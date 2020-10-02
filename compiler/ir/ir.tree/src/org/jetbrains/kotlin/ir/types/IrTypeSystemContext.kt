@@ -139,7 +139,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun TypeParameterMarker.getTypeConstructor() = this as IrTypeParameterSymbol
 
-    override fun isEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker) = FqNameEqualityChecker.areEqual(
+    override fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker) = FqNameEqualityChecker.areEqual(
         c1 as IrClassifierSymbol, c2 as IrClassifierSymbol
     )
 

@@ -38,7 +38,7 @@ class JavaOverrideChecker internal constructor(
             }
         }
         return with(context) {
-            isEqualTypeConstructors(
+            areEqualTypeConstructors(
                 substitutor.substituteOrSelf(candidateType).typeConstructor(),
                 substitutor.substituteOrSelf(baseType).typeConstructor()
             )

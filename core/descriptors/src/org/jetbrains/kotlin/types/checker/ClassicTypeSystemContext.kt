@@ -212,7 +212,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this.typeConstructor
     }
 
-    override fun isEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean {
+    override fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean {
         require(c1 is TypeConstructor, c1::errorMessage)
         require(c2 is TypeConstructor, c2::errorMessage)
         return c1 == c2

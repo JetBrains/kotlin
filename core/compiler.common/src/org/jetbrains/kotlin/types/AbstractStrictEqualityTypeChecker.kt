@@ -41,7 +41,7 @@ object AbstractStrictEqualityTypeChecker {
         if (a.argumentsCount() != b.argumentsCount()
             || a.isMarkedNullable() != b.isMarkedNullable()
             || (a.asDefinitelyNotNullType() == null) != (b.asDefinitelyNotNullType() == null)
-            || !isEqualTypeConstructors(a.typeConstructor(), b.typeConstructor())
+            || !areEqualTypeConstructors(a.typeConstructor(), b.typeConstructor())
         ) {
             return false
         }
