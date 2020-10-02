@@ -125,6 +125,8 @@ public actual inline fun atan(x: Double): Double = nativeMath.atan(x)
  *   - `atan2(+Inf, x)` is `PI/2` for finite `x`y
  *   - `atan2(-Inf, x)` is `-PI/2` for finite `x`
  *   - `atan2(NaN, x)` and `atan2(y, NaN)` is `NaN`
+ *
+ * @sample samples.math.Maths.doubleAtan2
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -137,6 +139,8 @@ public actual inline fun atan2(y: Double, x: Double): Double = nativeMath.atan2(
  *   - `sinh(NaN)` is `NaN`
  *   - `sinh(+Inf)` is `+Inf`
  *   - `sinh(-Inf)` is `-Inf`
+ *
+ * @sample samples.math.Maths.doubleSinhCoshAndTanh
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -148,6 +152,8 @@ public actual inline fun sinh(x: Double): Double = nativeMath.sinh(x)
  * Special cases:
  *   - `cosh(NaN)` is `NaN`
  *   - `cosh(+Inf|-Inf)` is `+Inf`
+ *
+ * @sample samples.math.Maths.doubleSinhCoshAndTanh
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -160,6 +166,8 @@ public actual inline fun cosh(x: Double): Double = nativeMath.cosh(x)
  *   - `tanh(NaN)` is `NaN`
  *   - `tanh(+Inf)` is `1.0`
  *   - `tanh(-Inf)` is `-1.0`
+ *
+ * @sample samples.math.Maths.doubleSinhCoshAndTanh
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -178,6 +186,8 @@ public actual inline fun tanh(x: Double): Double = nativeMath.tanh(x)
  *   - `asinh(NaN)` is `NaN`
  *   - `asinh(+Inf)` is `+Inf`
  *   - `asinh(-Inf)` is `-Inf`
+ *
+ * @sample samples.math.Maths.doubleAsinhAcoshAndAtanh
  */
 @SinceKotlin("1.2")
 public actual fun asinh(x: Double): Double =
@@ -216,6 +226,8 @@ public actual fun asinh(x: Double): Double =
  *   - `acosh(NaN)` is `NaN`
  *   - `acosh(x)` is `NaN` when `x < 1`
  *   - `acosh(+Inf)` is `+Inf`
+ *
+ * @sample samples.math.Maths.doubleAsinhAcoshAndAtanh
  */
 @SinceKotlin("1.2")
 public actual fun acosh(x: Double): Double =
@@ -252,6 +264,8 @@ public actual fun acosh(x: Double): Double =
  *   - `tanh(x)` is `NaN` when `x > 1` or `x < -1`
  *   - `tanh(1.0)` is `+Inf`
  *   - `tanh(-1.0)` is `-Inf`
+ *
+ * @sample samples.math.Maths.doubleAsinhAcoshAndAtanh
  */
 @SinceKotlin("1.2")
 public actual fun atanh(x: Double): Double {
