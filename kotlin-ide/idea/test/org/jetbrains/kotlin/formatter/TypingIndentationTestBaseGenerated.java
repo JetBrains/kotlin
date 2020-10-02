@@ -98,11 +98,6 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
             runTest("testData/indentationOnNewline/FunctionBlock.after.kt");
         }
 
-        @TestMetadata("FunctionBlock2.after.kt")
-        public void testFunctionBlock2() throws Exception {
-            runTest("testData/indentationOnNewline/FunctionBlock2.after.kt");
-        }
-
         @TestMetadata("HigherOrderFunction.after.kt")
         public void testHigherOrderFunction() throws Exception {
             runTest("testData/indentationOnNewline/HigherOrderFunction.after.kt");
@@ -597,6 +592,59 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
             @TestMetadata("BeforeElvisInBinaryExpression.after.kt")
             public void testBeforeElvisInBinaryExpression() throws Exception {
                 runTest("testData/indentationOnNewline/elvis/BeforeElvisInBinaryExpression.after.kt");
+            }
+        }
+
+        @RunWith(JUnit3RunnerWithInners.class)
+        @TestMetadata("testData/indentationOnNewline/emptyBraces")
+        public static class EmptyBraces extends AbstractTypingIndentationTestBase {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doNewlineTest, this, testDataFilePath);
+            }
+
+            @TestMetadata("ClassWithConstructor.after.kt")
+            public void testClassWithConstructor() throws Exception {
+                runTest("testData/indentationOnNewline/emptyBraces/ClassWithConstructor.after.kt");
+            }
+
+            @TestMetadata("ClassWithConstructor2.after.kt")
+            public void testClassWithConstructor2() throws Exception {
+                runTest("testData/indentationOnNewline/emptyBraces/ClassWithConstructor2.after.kt");
+            }
+
+            @TestMetadata("ClassWithoutConstructor.after.kt")
+            public void testClassWithoutConstructor() throws Exception {
+                runTest("testData/indentationOnNewline/emptyBraces/ClassWithoutConstructor.after.kt");
+            }
+
+            @TestMetadata("FunctionBlock.after.kt")
+            public void testFunctionBlock() throws Exception {
+                runTest("testData/indentationOnNewline/emptyBraces/FunctionBlock.after.kt");
+            }
+
+            @TestMetadata("FunctionBlock2.after.kt")
+            public void testFunctionBlock2() throws Exception {
+                runTest("testData/indentationOnNewline/emptyBraces/FunctionBlock2.after.kt");
+            }
+
+            @TestMetadata("FunctionBody3.after.kt")
+            public void testFunctionBody3() throws Exception {
+                runTest("testData/indentationOnNewline/emptyBraces/FunctionBody3.after.kt");
+            }
+
+            @TestMetadata("FunctionBody4.after.kt")
+            public void testFunctionBody4() throws Exception {
+                runTest("testData/indentationOnNewline/emptyBraces/FunctionBody4.after.kt");
+            }
+
+            @TestMetadata("FunctionBodyInsideClass.after.kt")
+            public void testFunctionBodyInsideClass() throws Exception {
+                runTest("testData/indentationOnNewline/emptyBraces/FunctionBodyInsideClass.after.kt");
+            }
+
+            @TestMetadata("FunctionBodyInsideClass2.after.kt")
+            public void testFunctionBodyInsideClass2() throws Exception {
+                runTest("testData/indentationOnNewline/emptyBraces/FunctionBodyInsideClass2.after.kt");
             }
         }
 
