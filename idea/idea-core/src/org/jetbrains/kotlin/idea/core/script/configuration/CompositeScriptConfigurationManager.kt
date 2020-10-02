@@ -162,10 +162,10 @@ class CompositeScriptConfigurationManager(val project: Project) : ScriptConfigur
     override fun getAllScriptDependenciesSourcesScope(): GlobalSearchScope =
         classpathRoots.allDependenciesSourcesScope
 
-    override fun getAllScriptsDependenciesClassFiles(): List<VirtualFile> =
+    override fun getAllScriptsDependenciesClassFiles(): Collection<VirtualFile> =
         classpathRoots.allDependenciesClassFiles
 
-    override fun getAllScriptDependenciesSources(): List<VirtualFile> =
+    override fun getAllScriptDependenciesSources(): Collection<VirtualFile> =
         classpathRoots.allDependenciesSources
 
     ///////////////////
