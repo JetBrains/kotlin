@@ -1,11 +1,8 @@
-// !LANGUAGE: -UseCorrectExecutionOrderForVarargArguments
-// IGNORE_BACKEND: JS
-// IGNORE_BACKEND_FIR: JVM_IR
+// !LANGUAGE: +UseCorrectExecutionOrderForVarargArguments
 // NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
 // WITH_RUNTIME
 // KJS_WITH_FULL_RUNTIME
-
 package test
 
 open class A(val value: String)
@@ -13,9 +10,9 @@ open class A(val value: String)
 var invokeOrder = ""
 
 inline fun inlineFun(
+        vararg constraints: A,
         receiver: String = { invokeOrder += " default receiver"; "DEFAULT" }(),
-        init: String,
-        vararg constraints: A
+        init: String
 ): String {
     return constraints.map { it.value }.joinToString() + ", " + receiver + ", " + init
 }
@@ -34,7 +31,7 @@ fun box(): String {
                        init = { invokeOrder += " init"; "I" }())
     if (result != "C, R, I") return "fail 1: $result"
 
-    if (invokeOrder != " receiver initconstraints") return "fail 2: $invokeOrder"
+    if (invokeOrder != "constraints receiver init") return "fail 2: $invokeOrder"
 
     result = ""
     invokeOrder = ""
@@ -43,7 +40,7 @@ fun box(): String {
                        receiver = { invokeOrder += " receiver"; "R" }()
     )
     if (result != "C, R, I") return "fail 3: $result"
-    if (invokeOrder != "init receiver constraints") return "fail 4: $invokeOrder"
+    if (invokeOrder != "init constraints receiver") return "fail 4: $invokeOrder"
 
     result = ""
     invokeOrder = ""
