@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <component name="libraryTable">
   <library name="rd-framework" type="repository">
     <properties include-transitive-deps="false" maven-id="com.jetbrains.rd:rd-framework:0.203.158" />
@@ -7,6 +8,8 @@
     <JAVADOC>
       <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/rd/rd-framework/0.203.158/rd-framework-0.203.158-javadoc.jar!/" />
     </JAVADOC>
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/rd/rd-framework/0.203.158/rd-framework-0.203.158-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>
