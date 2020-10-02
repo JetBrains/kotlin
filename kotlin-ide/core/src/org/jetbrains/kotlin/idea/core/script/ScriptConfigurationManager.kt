@@ -106,8 +106,8 @@ interface ScriptConfigurationManager {
 
     fun getAllScriptsDependenciesClassFilesScope(): GlobalSearchScope
     fun getAllScriptDependenciesSourcesScope(): GlobalSearchScope
-    fun getAllScriptsDependenciesClassFiles(): List<VirtualFile>
-    fun getAllScriptDependenciesSources(): List<VirtualFile>
+    fun getAllScriptsDependenciesClassFiles(): Collection<VirtualFile>
+    fun getAllScriptDependenciesSources(): Collection<VirtualFile>
 
     companion object {
         @JvmStatic
