@@ -350,8 +350,7 @@ private class MappingExtensions(
                 Flag.Class.IS_ENUM_CLASS.takeIf { this is ClassStub.Enum }
         )
 
-    // TODO: Looks like [Flag.Constructor.IS_PRIMARY] flag is incorrect.
-    //  Upstream fix to kotlinx-metadata.
+    // TODO: Replace by [Flag.Constructor.IS_SECONDARY] when KT-42429 is fixed
     private val isSecondaryConstructorFlag = Flag(
             org.jetbrains.kotlin.metadata.deserialization.Flags.IS_SECONDARY.offset,
             org.jetbrains.kotlin.metadata.deserialization.Flags.IS_SECONDARY.bitWidth,
