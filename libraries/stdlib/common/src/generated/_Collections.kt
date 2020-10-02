@@ -354,7 +354,10 @@ public inline fun <T> List<T>.indexOfLast(predicate: (T) -> Boolean): Int {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the collection is empty.
+ * 
+ * @throws NoSuchElementException if the collection is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun <T> Iterable<T>.last(): T {
     when (this) {
@@ -373,7 +376,10 @@ public fun <T> Iterable<T>.last(): T {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the list is empty.
+ * 
+ * @throws NoSuchElementException if the list is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun <T> List<T>.last(): T {
     if (isEmpty())
@@ -383,7 +389,10 @@ public fun <T> List<T>.last(): T {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun <T> Iterable<T>.last(predicate: (T) -> Boolean): T {
     var last: T? = null
@@ -401,7 +410,10 @@ public inline fun <T> Iterable<T>.last(predicate: (T) -> Boolean): T {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun <T> List<T>.last(predicate: (T) -> Boolean): T {
     val iterator = this.listIterator(size)
@@ -438,6 +450,8 @@ public fun <@kotlin.internal.OnlyInputTypes T> List<T>.lastIndexOf(element: T): 
 
 /**
  * Returns the last element, or `null` if the collection is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun <T> Iterable<T>.lastOrNull(): T? {
     when (this) {
@@ -456,6 +470,8 @@ public fun <T> Iterable<T>.lastOrNull(): T? {
 
 /**
  * Returns the last element, or `null` if the list is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun <T> List<T>.lastOrNull(): T? {
     return if (isEmpty()) null else this[size - 1]
@@ -463,6 +479,8 @@ public fun <T> List<T>.lastOrNull(): T? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun <T> Iterable<T>.lastOrNull(predicate: (T) -> Boolean): T? {
     var last: T? = null
@@ -476,6 +494,8 @@ public inline fun <T> Iterable<T>.lastOrNull(predicate: (T) -> Boolean): T? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun <T> List<T>.lastOrNull(predicate: (T) -> Boolean): T? {
     val iterator = this.listIterator(size)

@@ -884,7 +884,10 @@ public inline fun UShortArray.indexOfLast(predicate: (UShort) -> Boolean): Int {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the array is empty.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -895,7 +898,10 @@ public inline fun UIntArray.last(): UInt {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the array is empty.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -906,7 +912,10 @@ public inline fun ULongArray.last(): ULong {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the array is empty.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -917,7 +926,10 @@ public inline fun UByteArray.last(): UByte {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the array is empty.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -928,7 +940,10 @@ public inline fun UShortArray.last(): UShort {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -943,7 +958,10 @@ public inline fun UIntArray.last(predicate: (UInt) -> Boolean): UInt {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -958,7 +976,10 @@ public inline fun ULongArray.last(predicate: (ULong) -> Boolean): ULong {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -973,7 +994,10 @@ public inline fun UByteArray.last(predicate: (UByte) -> Boolean): UByte {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1028,6 +1052,8 @@ public inline fun UShortArray.lastIndexOf(element: UShort): Int {
 
 /**
  * Returns the last element, or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1037,6 +1063,8 @@ public fun UIntArray.lastOrNull(): UInt? {
 
 /**
  * Returns the last element, or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1046,6 +1074,8 @@ public fun ULongArray.lastOrNull(): ULong? {
 
 /**
  * Returns the last element, or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1055,6 +1085,8 @@ public fun UByteArray.lastOrNull(): UByte? {
 
 /**
  * Returns the last element, or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1064,6 +1096,8 @@ public fun UShortArray.lastOrNull(): UShort? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1078,6 +1112,8 @@ public inline fun UIntArray.lastOrNull(predicate: (UInt) -> Boolean): UInt? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1092,6 +1128,8 @@ public inline fun ULongArray.lastOrNull(predicate: (ULong) -> Boolean): ULong? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1106,6 +1144,8 @@ public inline fun UByteArray.lastOrNull(predicate: (UByte) -> Boolean): UByte? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes

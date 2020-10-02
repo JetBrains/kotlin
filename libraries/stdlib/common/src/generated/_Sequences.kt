@@ -196,9 +196,12 @@ public inline fun <T> Sequence<T>.indexOfLast(predicate: (T) -> Boolean): Int {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the sequence is empty.
  *
  * The operation is _terminal_.
+ * 
+ * @throws NoSuchElementException if the sequence is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun <T> Sequence<T>.last(): T {
     val iterator = iterator()
@@ -212,9 +215,12 @@ public fun <T> Sequence<T>.last(): T {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
  *
  * The operation is _terminal_.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun <T> Sequence<T>.last(predicate: (T) -> Boolean): T {
     var last: T? = null
@@ -251,6 +257,8 @@ public fun <@kotlin.internal.OnlyInputTypes T> Sequence<T>.lastIndexOf(element: 
  * Returns the last element, or `null` if the sequence is empty.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun <T> Sequence<T>.lastOrNull(): T? {
     val iterator = iterator()
@@ -266,6 +274,8 @@ public fun <T> Sequence<T>.lastOrNull(): T? {
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun <T> Sequence<T>.lastOrNull(predicate: (T) -> Boolean): T? {
     var last: T? = null
