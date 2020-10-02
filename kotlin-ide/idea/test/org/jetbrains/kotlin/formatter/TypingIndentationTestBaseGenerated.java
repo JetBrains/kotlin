@@ -254,6 +254,54 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
         }
 
         @RunWith(JUnit3RunnerWithInners.class)
+        @TestMetadata("testData/indentationOnNewline/afterUnmatchedBrace")
+        public static class AfterUnmatchedBrace extends AbstractTypingIndentationTestBase {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doNewlineTest, this, testDataFilePath);
+            }
+
+            @TestMetadata("LambdaArgumentBeforeFunctionInitializer.after.kt")
+            public void testLambdaArgumentBeforeFunctionInitializer() throws Exception {
+                runTest("testData/indentationOnNewline/afterUnmatchedBrace/LambdaArgumentBeforeFunctionInitializer.after.kt");
+            }
+
+            @TestMetadata("LambdaArgumentBeforeLocalPropertyInitializer.after.kt")
+            public void testLambdaArgumentBeforeLocalPropertyInitializer() throws Exception {
+                runTest("testData/indentationOnNewline/afterUnmatchedBrace/LambdaArgumentBeforeLocalPropertyInitializer.after.kt");
+            }
+
+            @TestMetadata("LambdaArgumentBeforeMemberPropertyInitializer.after.kt")
+            public void testLambdaArgumentBeforeMemberPropertyInitializer() throws Exception {
+                runTest("testData/indentationOnNewline/afterUnmatchedBrace/LambdaArgumentBeforeMemberPropertyInitializer.after.kt");
+            }
+
+            @TestMetadata("LambdaArgumentBeforeTopLevelPropertyInitializer.after.kt")
+            public void testLambdaArgumentBeforeTopLevelPropertyInitializer() throws Exception {
+                runTest("testData/indentationOnNewline/afterUnmatchedBrace/LambdaArgumentBeforeTopLevelPropertyInitializer.after.kt");
+            }
+
+            @TestMetadata("NotApplicableOnInitializer.after.kt")
+            public void testNotApplicableOnInitializer() throws Exception {
+                runTest("testData/indentationOnNewline/afterUnmatchedBrace/NotApplicableOnInitializer.after.kt");
+            }
+
+            @TestMetadata("WhenBeforeLocalPropertyInitializer.after.kt")
+            public void testWhenBeforeLocalPropertyInitializer() throws Exception {
+                runTest("testData/indentationOnNewline/afterUnmatchedBrace/WhenBeforeLocalPropertyInitializer.after.kt");
+            }
+
+            @TestMetadata("WhenBeforeMemberPropertyInitializer.after.kt")
+            public void testWhenBeforeMemberPropertyInitializer() throws Exception {
+                runTest("testData/indentationOnNewline/afterUnmatchedBrace/WhenBeforeMemberPropertyInitializer.after.kt");
+            }
+
+            @TestMetadata("WhenBeforeTopLevelPropertyInitializer.after.kt")
+            public void testWhenBeforeTopLevelPropertyInitializer() throws Exception {
+                runTest("testData/indentationOnNewline/afterUnmatchedBrace/WhenBeforeTopLevelPropertyInitializer.after.kt");
+            }
+        }
+
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/indentationOnNewline/arrayAccess")
         public static class ArrayAccess extends AbstractTypingIndentationTestBase {
             private void runTest(String testDataFilePath) throws Exception {
