@@ -829,7 +829,6 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/xslt-debugger/engine/impl/intellij.xslt.debugger.impl.rt.iml" filepath="$PROJECT_DIR$/intellij/plugins/xslt-debugger/engine/impl/intellij.xslt.debugger.impl.rt.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/xslt-debugger/engine/intellij.xslt.debugger.rt.iml" filepath="$PROJECT_DIR$/intellij/plugins/xslt-debugger/engine/intellij.xslt.debugger.rt.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/yaml/intellij.yaml.iml" filepath="$PROJECT_DIR$/intellij/plugins/yaml/intellij.yaml.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/package-search/intellij.packagesearch.iml" filepath="$PROJECT_DIR$/intellij/plugins/package-search/intellij.packagesearch.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin.all-tests/kotlin.all-tests.iml" filepath="$PROJECT_DIR$/kotlin.all-tests/kotlin.all-tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/common/kotlin.common.iml" filepath="$PROJECT_DIR$/common/kotlin.common.iml" />
       <module fileurl="file://$PROJECT_DIR$/compiler-plugins/allopen/kotlin.compiler-plugins.allopen.iml" filepath="$PROJECT_DIR$/compiler-plugins/allopen/kotlin.compiler-plugins.allopen.iml" />
