@@ -124,4 +124,14 @@ class Chars {
         assertTrue('a'.equals('A', true))
     }
 
+    @sample
+    fun last() {
+	val chars = listOf('a', 'z', '1', '2')
+	val empty = listOf()
+	val last = chars.last()
+	assertPrints(last, '2')
+	assertFailsWith<NoSuchElementException>{
+	    empty.last()
+	}
+    }
 }
