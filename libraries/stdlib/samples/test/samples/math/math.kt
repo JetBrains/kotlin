@@ -98,4 +98,51 @@ class Maths {
         assertPrints(atanh(0.0), "0.0")
         assertPrints(rnd(atanh(1.0 / 5 * sqrt5)), "${rnd(ln(goldenRatio))}")
     }
+
+    @Sample
+    fun doubleHypot() {
+        assertPrints(hypot(3.0, 4.0), "5.0")
+        assertPrints(hypot(5.0, 12.0), "13.0")
+        assertPrints(hypot(8.0, 15.0), "17.0")
+    }
+
+    @Sample
+    fun doubleSqrt() {
+        assertPrints(sqrt(9.0), "3.0")
+        assertPrints(sqrt(25.0), "5.0")
+        assertPrints(sqrt(100.0), "10.0")
+    }
+
+    @Sample
+    fun doubleExp() {
+        fun rnd(d: Double): Double = round(d * 1000) / 1000
+
+        assertPrints(rnd(exp(2.0)), "${rnd(E.pow(2))}")
+        assertPrints(rnd(exp(5.0)), "${rnd(E.pow(5))}")
+        assertPrints(rnd(exp(10.0)), "${rnd(E.pow(10))}")
+    }
+
+    @Sample
+    fun doubleExpm1() {
+        assertPrints(expm1(1e-10), "1.00000000005E-10")
+        assertPrints(expm1(1e-12), "1.0000000000005E-12")
+    }
+
+    @Sample
+    fun doubleLog() {
+        fun rnd(d: Double): Double = round(d * 1000) / 1000
+
+        assertPrints(rnd(log(100.0, 10.0)), "2.0")
+        assertPrints(rnd(log(125.0, 5.0)), "3.0")
+        assertPrints(rnd(log(823543.0, 7.0)), "7.0")
+    }
+
+    @Sample
+    fun doubleLn() {
+        fun rnd(d: Double): Double = round(d * 1000) / 1000
+
+        assertPrints(ln(E), "1.0")
+        assertPrints(rnd(ln(7.0)), "1.946")
+        assertPrints(rnd(ln(0.004)), "-5.521")
+    }
 }

@@ -285,6 +285,8 @@ public actual fun atanh(x: Double): Double {
  * Special cases:
  *   - returns `+Inf` if any of arguments is infinite
  *   - returns `NaN` if any of arguments is `NaN` and the other is not infinite
+ *
+ * @sample samples.math.Maths.doubleHypot
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -295,6 +297,8 @@ public actual inline fun hypot(x: Double, y: Double): Double = nativeMath.hypot(
  *
  * Special cases:
  *   - `sqrt(x)` is `NaN` when `x < 0` or `x` is `NaN`
+ *
+ * @sample samples.math.Maths.doubleSqrt
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -307,6 +311,8 @@ public actual inline fun sqrt(x: Double): Double = nativeMath.sqrt(x)
  *   - `exp(NaN)` is `NaN`
  *   - `exp(+Inf)` is `+Inf`
  *   - `exp(-Inf)` is `0.0`
+ *
+ * @sample samples.math.Maths.doubleExp
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -323,6 +329,8 @@ public actual inline fun exp(x: Double): Double = nativeMath.exp(x)
  *   - `expm1(-Inf)` is `-1.0`
  *
  * @see [exp] function.
+ *
+ * @sample samples.math.Maths.doubleExpm1
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -339,6 +347,8 @@ public actual inline fun expm1(x: Double): Double = nativeMath.expm1(x)
  *   - `log(0.0, b)` is `-Inf` for `b > 1` and `+Inf` for `b > 1`
  *
  * See also logarithm functions for common fixed bases: [ln], [log10] and [log2].
+ *
+ * @sample samples.math.Maths.doubleExpm1
  */
 @SinceKotlin("1.2")
 public actual fun log(x: Double, base: Double): Double {
@@ -354,6 +364,8 @@ public actual fun log(x: Double, base: Double): Double {
  *   - `ln(x)` is `NaN` when `x < 0.0`
  *   - `ln(+Inf)` is `+Inf`
  *   - `ln(0.0)` is `-Inf`
+ *
+ * @sample samples.math.Maths.doubleExpm1
  */
 @SinceKotlin("1.2")
 @InlineOnly
