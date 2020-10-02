@@ -24,12 +24,13 @@
 import lldb
 import struct
 import re
+import sys
 
 NULL = 'null'
 
 def log(msg):
     if False:
-        print(msg())
+        print(msg(), file=sys.stderr)
 
 def exelog(stmt):
     if False:
@@ -96,7 +97,7 @@ ARRAY_TO_STRING_LIMIT = 10
 
 def kotlin_object_type_summary(lldb_val, internal_dict = {}):
     """Hook that is run by lldb to display a Kotlin object."""
-    log(lambda: "kotlin_object_type_summary({:#x})".format(lldb_val.unsigned))
+    log(lambda: "kotlin_object_type_summary({:#x}, {})".format(lldb_val.unsigned, internal_dict))
     fallback = lldb_val.GetValue()
     if str(lldb_val.type) != "struct ObjHeader *":
         if lldb_val.GetValue() is None:
@@ -114,8 +115,9 @@ def kotlin_object_type_summary(lldb_val, internal_dict = {}):
 
 
 def select_provider(lldb_val, tip, internal_dict):
+    log(lambda : "select_provider: name:{} : {}, {}".format(lldb_val.name, lldb_val, internal_dict))
     soa = is_string_or_array(lldb_val)
-    log(lambda : "select_provider: {} : {}".format(lldb_val, soa))
+    log(lambda : "select_provider: {} : soa: {}".format(lldb_val, soa))
     return __FACTORY['string'](lldb_val, tip, internal_dict) if soa == 1 else __FACTORY['array'](lldb_val, tip, internal_dict) if soa == 2 \
         else __FACTORY['object'](lldb_val, tip, internal_dict)
 
@@ -367,11 +369,12 @@ class KonanArraySyntheticProvider(KonanHelperProvider):
 
 class KonanProxyTypeProvider:
     def __init__(self, valobj, internal_dict):
-        log(lambda : "proxy: {:#x}".format(valobj.unsigned))
+        log(lambda : "KonanProxyTypeProvider: {:#x}".format(valobj.unsigned))
         tip = type_info(valobj)
-        log(lambda : "KonanProxyTypeProvider: tip: {:#x}".format(tip))
+
         if not tip:
             return
+        log(lambda : "KonanProxyTypeProvider: tip: {:#x}".format(tip))
         self._proxy = select_provider(valobj, tip, internal_dict)
         log(lambda: "KonanProxyTypeProvider: _proxy: {}".format(self._proxy.__class__.__name__))
         self.update()
