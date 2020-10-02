@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.android.parcel
 
+import com.intellij.openapi.application.ApplicationManager
 import kotlinx.android.parcel.Parceler
 import kotlinx.android.parcel.Parcelize
 import org.jetbrains.kotlin.android.parcel.ParcelableSyntheticComponent.ComponentKind.DESCRIBE_CONTENTS
@@ -158,8 +159,19 @@ interface ParcelableSyntheticComponent {
 val PARCELIZE_CLASS_FQNAME: FqName = FqName(Parcelize::class.java.canonicalName)
 internal val PARCELER_FQNAME: FqName = FqName(Parceler::class.java.canonicalName)
 
+private val PARCELIZE_PLUGIN_PACKAGE = FqName("kotlinx.parcelize")
+
 val ClassDescriptor.isParcelize: Boolean
-    get() = this.annotations.hasAnnotation(PARCELIZE_CLASS_FQNAME)
+    get() {
+        val parcelizeAnnotation = this.annotations.findAnnotation(PARCELIZE_CLASS_FQNAME) ?: return false
+        if (ApplicationManager.getApplication().isHeadlessEnvironment) {
+            // Module check shouldn't affect compilation
+            return true
+        }
+
+        val module = parcelizeAnnotation.type.constructor.declarationDescriptor?.module ?: return false
+        return module.getPackage(PARCELIZE_PLUGIN_PACKAGE).isEmpty()
+    }
 
 val KotlinType.isParceler
     get() = constructor.declarationDescriptor?.fqNameSafe == PARCELER_FQNAME
