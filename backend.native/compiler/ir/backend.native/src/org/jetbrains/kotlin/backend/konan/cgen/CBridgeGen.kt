@@ -55,8 +55,8 @@ internal interface KotlinStubs {
     fun getUniqueCName(prefix: String): String
     fun getUniqueKotlinFunctionReferenceClassName(prefix: String): String
 
-    fun reportError(location: IrElement, message: String): Nothing
     fun throwCompilerError(element: IrElement?, message: String): Nothing
+    fun renderCompilerError(element: IrElement?, message: String = "Failed requirement."): String
 }
 
 private class KotlinToCCallBuilder(
@@ -113,7 +113,7 @@ private fun KotlinToCCallBuilder.buildKotlinBridgeCall(transformCall: (IrMemberA
 
 internal fun KotlinStubs.generateCCall(expression: IrCall, builder: IrBuilderWithScope, isInvoke: Boolean,
                                        foreignExceptionMode: ForeignExceptionMode.Mode = ForeignExceptionMode.default): IrExpression {
-    require(expression.dispatchReceiver == null)
+    require(expression.dispatchReceiver == null) { renderCompilerError(expression) }
 
     val callBuilder = KotlinToCCallBuilder(builder, this, isObjCMethod = false, foreignExceptionMode)
 
@@ -141,7 +141,7 @@ internal fun KotlinStubs.generateCCall(expression: IrCall, builder: IrBuilderWit
             )
         }
     } else {
-        require(expression.extensionReceiver == null)
+        require(expression.extensionReceiver == null) { renderCompilerError(expression) }
         targetPtrParameter = null
         targetFunctionName = this.getUniqueCName("target")
 
@@ -153,9 +153,9 @@ internal fun KotlinStubs.generateCCall(expression: IrCall, builder: IrBuilderWit
 
     val returnValuePassing = if (isInvoke) {
         val returnType = expression.getTypeArgument(expression.typeArgumentsCount - 1)!!
-        mapReturnType(returnType, TypeLocation.FunctionCallResult(expression), signature = null)
+        mapReturnType(returnType, expression, signature = null)
     } else {
-        mapReturnType(callee.returnType, TypeLocation.FunctionCallResult(expression), signature = callee)
+        mapReturnType(callee.returnType, expression, signature = callee)
     }
 
     val result = callBuilder.buildCall(targetFunctionName, returnValuePassing)
@@ -178,7 +178,7 @@ private fun KotlinToCCallBuilder.addArguments(arguments: List<IrExpression?>, ca
     arguments.forEachIndexed { index, argument ->
         val parameter = callee.valueParameters[index]
         if (parameter.isVararg) {
-            require(index == arguments.lastIndex)
+            require(index == arguments.lastIndex) { stubs.renderCompilerError(argument) }
             addVariadicArguments(argument)
             cFunctionBuilder.variadic = true
         } else {
@@ -220,14 +220,9 @@ private fun KotlinToCCallBuilder.unwrapVariadicArguments(
         is IrExpression -> listOf(it)
         is IrSpreadElement -> {
             val expression = it.expression
-            if (expression is IrCall && expression.symbol == symbols.arrayOf) {
-                handleArgumentForVarargParameter(expression.getValueArgument(0)) { _, elements ->
-                    unwrapVariadicArguments(elements)
-                }
-            } else {
-                stubs.reportError(it, "When calling variadic " +
-                        (if (isObjCMethod) "Objective-C methods " else "C functions ") +
-                                "spread operator is supported only for *arrayOf(...)")
+            require(expression is IrCall && expression.symbol == symbols.arrayOf) { stubs.renderCompilerError(it) }
+            handleArgumentForVarargParameter(expression.getValueArgument(0)) { _, elements ->
+                unwrapVariadicArguments(elements)
             }
         }
         else -> stubs.throwCompilerError(it, "unexpected IrVarargElement")
@@ -260,15 +255,12 @@ private fun <R> KotlinToCCallBuilder.handleArgumentForVarargParameter(
         val variable = argument.symbol.owner
         if (variable is IrVariable && variable.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE && !variable.isVar) {
             val initializer = variable.initializer
-            if (initializer is IrVararg) {
-                block(variable, initializer.elements)
-            } else {
-                stubs.throwCompilerError(initializer, "unexpected initializer")
-            }
+            require(initializer is IrVararg) { stubs.renderCompilerError(initializer) }
+            block(variable, initializer.elements)
         } else if (variable is IrValueParameter && FunctionReferenceLowering.isLoweredFunctionReference(variable)) {
             val location = variable.parent // Parameter itself has incorrect location.
             val kind = if (this.isObjCMethod) "Objective-C methods" else "C functions"
-            stubs.reportError(location, "callable references to variadic $kind are not supported")
+            stubs.throwCompilerError(location, "callable references to variadic $kind are not supported")
         } else {
             stubs.throwCompilerError(variable, "unexpected value declaration")
         }
@@ -383,8 +375,7 @@ internal fun KotlinStubs.generateObjCCall(
 
     callBuilder.addArguments(arguments, method)
 
-    val returnValuePassing =
-            mapReturnType(method.returnType, TypeLocation.FunctionCallResult(call), signature = method)
+    val returnValuePassing = mapReturnType(method.returnType, call, signature = method)
 
     val result = callBuilder.buildCall(targetFunctionName, returnValuePassing)
 
@@ -398,7 +389,7 @@ internal fun KotlinStubs.generateObjCCall(
 
 internal fun IrBuilderWithScope.getObjCClass(symbols: KonanSymbols, symbol: IrClassSymbol): IrExpression {
     val classDescriptor = symbol.descriptor
-    assert(!classDescriptor.isObjCMetaClass())
+    require(!classDescriptor.isObjCMetaClass())
     return irCall(symbols.interopGetObjCClass, symbols.nativePtrType, listOf(symbol.typeWithStarProjections))
 }
 
@@ -437,25 +428,14 @@ private fun CCallbackBuilder.passThroughBridge(
 }
 
 private fun CCallbackBuilder.addParameter(it: IrValueParameter, functionParameter: IrValueParameter) {
-    val typeLocation = if (isObjCMethod) {
-        TypeLocation.ObjCMethodParameter(it.index, functionParameter)
-    } else {
-        TypeLocation.FunctionPointerParameter(cFunctionBuilder.numberOfParameters, location)
-    }
-
-    if (functionParameter.isVararg) {
-        stubs.reportError(typeLocation.element, if (isObjCMethod) {
-            "overriding variadic Objective-C methods is not supported"
-        } else {
-            "variadic function pointers are not supported"
-        })
-    }
+    val location = if (isObjCMethod) functionParameter else location
+    require(!functionParameter.isVararg) { stubs.renderCompilerError(location) }
 
     val valuePassing = stubs.mapFunctionParameterType(
             it.type,
             retained = it.isObjCConsumed(),
             variadic = false,
-            location = typeLocation
+            location = location
     )
 
     val kotlinArgument = with(valuePassing) { receiveValue() }
@@ -463,12 +443,11 @@ private fun CCallbackBuilder.addParameter(it: IrValueParameter, functionParamete
 }
 
 private fun CCallbackBuilder.build(function: IrSimpleFunction, signature: IrSimpleFunction): String {
-    val typeLocation = if (isObjCMethod) {
-        TypeLocation.ObjCMethodReturnValue(function)
-    } else {
-        TypeLocation.FunctionPointerReturnValue(location)
-    }
-    val valueReturning = stubs.mapReturnType(signature.returnType, typeLocation, signature)
+    val valueReturning = stubs.mapReturnType(
+            signature.returnType,
+            location = if (isObjCMethod) function else location,
+            signature = signature
+    )
     buildValueReturn(function, valueReturning)
     return buildCFunction()
 }
@@ -512,7 +491,7 @@ private fun KotlinStubs.generateCFunction(
 
     if (isObjCMethod) {
         val receiver = signature.dispatchReceiverParameter!!
-        require(receiver.type.isObjCReferenceType(target, irBuiltIns))
+        require(receiver.type.isObjCReferenceType(target, irBuiltIns)) { renderCompilerError(signature) }
         val valuePassing = ObjCReferenceValuePassing(symbols, receiver.type, retained = signature.objCConsumesReceiver())
         val kotlinArgument = with(valuePassing) { callbackBuilder.receiveValue() }
         callbackBuilder.kotlinCallBuilder.arguments += kotlinArgument
@@ -520,7 +499,7 @@ private fun KotlinStubs.generateCFunction(
         // Selector is ignored:
         with(TrivialValuePassing(symbols.nativePtrType, CTypes.voidPtr)) { callbackBuilder.receiveValue() }
     } else {
-        require(signature.dispatchReceiverParameter == null)
+        require(signature.dispatchReceiverParameter == null) { renderCompilerError(signature) }
     }
 
     signature.extensionReceiverParameter?.let { callbackBuilder.addParameter(it, function.extensionReceiverParameter!!) }
@@ -633,11 +612,7 @@ private fun KotlinToCCallBuilder.mapCalleeFunctionParameter(
                 classifier == symbols.interopCValuesRef -> CValuesRefArgumentPassing
 
         classifier == symbols.string && (variadic || parameter?.isCStringParameter() == true) -> {
-            if (variadic && isObjCMethod) {
-                stubs.reportError(argument, "Passing String as variadic Objective-C argument is ambiguous; " +
-                        "cast it to NSString or pass with '.cstr' as C string")
-                // TODO: consider reporting a warning for C functions.
-            }
+            require(!variadic || !isObjCMethod) { stubs.renderCompilerError(argument) }
             CStringArgumentPassing()
         }
 
@@ -648,7 +623,7 @@ private fun KotlinToCCallBuilder.mapCalleeFunctionParameter(
                 type,
                 retained = parameter?.isObjCConsumed() ?: false,
                 variadic = variadic,
-                location = TypeLocation.FunctionArgument(argument)
+                location = argument
         )
     }
 }
@@ -657,29 +632,15 @@ private fun KotlinStubs.mapFunctionParameterType(
         type: IrType,
         retained: Boolean,
         variadic: Boolean,
-        location: TypeLocation
+        location: IrElement
 ): ArgumentPassing = when {
     type.isUnit() && !variadic -> IgnoredUnitArgumentPassing
     else -> mapType(type, retained = retained, variadic = variadic, location = location)
 }
 
-private sealed class TypeLocation(val element: IrElement) {
-    class FunctionArgument(val argument: IrExpression) : TypeLocation(argument)
-    class FunctionCallResult(val call: IrFunctionAccessExpression) : TypeLocation(call)
-
-    class FunctionPointerParameter(val index: Int, element: IrElement) : TypeLocation(element)
-    class FunctionPointerReturnValue(element: IrElement) : TypeLocation(element)
-
-    class ObjCMethodParameter(val index: Int, element: IrElement) : TypeLocation(element)
-    class ObjCMethodReturnValue(element: IrElement) : TypeLocation(element)
-
-    class BlockParameter(val index: Int, val blockLocation: TypeLocation) : TypeLocation(blockLocation.element)
-    class BlockReturnValue(val blockLocation: TypeLocation) : TypeLocation(blockLocation.element)
-}
-
 private fun KotlinStubs.mapReturnType(
         type: IrType,
-        location: TypeLocation,
+        location: IrElement,
         signature: IrSimpleFunction?
 ): ValueReturning = when {
     type.isUnit() -> VoidReturning
@@ -689,39 +650,29 @@ private fun KotlinStubs.mapReturnType(
 private fun KotlinStubs.mapBlockType(
         type: IrType,
         retained: Boolean,
-        location: TypeLocation
+        location: IrElement
 ): ObjCBlockPointerValuePassing {
-    type as IrSimpleType
-    require(type.classifier == symbols.functionN(type.arguments.size - 1))
+    require(type is IrSimpleType) { renderCompilerError(location) }
+    require(type.classifier == symbols.functionN(type.arguments.size - 1)) { renderCompilerError(location) }
+
     val returnTypeArgument = type.arguments.last()
-    val valueReturning = when (returnTypeArgument) {
-        is IrTypeProjection -> if (returnTypeArgument.variance == Variance.INVARIANT) {
-            mapReturnType(returnTypeArgument.type, TypeLocation.BlockReturnValue(location), null)
-        } else {
-            reportUnsupportedType("${returnTypeArgument.variance.label}-variance of return type", type, location)
-        }
-        is IrStarProjection -> reportUnsupportedType("* as return type", type, location)
-        else -> error(returnTypeArgument)
-    }
-    val parameterValuePassings = type.arguments.dropLast(1).mapIndexed { index, argument ->
-        when (argument) {
-            is IrTypeProjection -> if (argument.variance == Variance.INVARIANT) {
-                mapType(
-                        argument.type,
-                        retained = false,
-                        variadic = false,
-                        location = TypeLocation.BlockParameter(index, location)
-                )
-            } else {
-                reportUnsupportedType("${argument.variance.label}-variance of ${index + 1} parameter type", type, location)
-            }
-            is IrStarProjection -> reportUnsupportedType("* as ${index + 1} parameter type", type, location)
-            else -> error(argument)
-        }
+    require(returnTypeArgument is IrTypeProjection) { renderCompilerError(location) }
+    require(returnTypeArgument.variance == Variance.INVARIANT) { renderCompilerError(location) }
+    val valueReturning = mapReturnType(returnTypeArgument.type, location, null)
+
+    val parameterValuePassings = type.arguments.dropLast(1).map { argument ->
+        require(argument is IrTypeProjection) { renderCompilerError(location) }
+        require(argument.variance == Variance.INVARIANT) { renderCompilerError(location) }
+        mapType(
+                argument.type,
+                retained = false,
+                variadic = false,
+                location = location
+        )
     }
     return ObjCBlockPointerValuePassing(
             this,
-            location.element,
+            location,
             type,
             valueReturning,
             parameterValuePassings,
@@ -729,20 +680,17 @@ private fun KotlinStubs.mapBlockType(
     )
 }
 
-private fun KotlinStubs.mapType(type: IrType, retained: Boolean, variadic: Boolean, location: TypeLocation): ValuePassing =
-        mapType(type, retained, variadic, location, { reportUnsupportedType(it, type, location) })
-
 private fun KotlinStubs.mapType(
         type: IrType,
         retained: Boolean,
         variadic: Boolean,
-        typeLocation: TypeLocation,
-        reportUnsupportedType: (String) -> Nothing
+        location: IrElement
 ): ValuePassing = when {
-    type.isBoolean() -> BooleanValuePassing(
-            cBoolType(target) ?: reportUnsupportedType("unavailable on target platform"),
-            irBuiltIns
-    )
+    type.isBoolean() -> {
+        val cBoolType = cBoolType(target)
+        require(cBoolType != null) { renderCompilerError(location) }
+        BooleanValuePassing(cBoolType, irBuiltIns)
+    }
 
     type.isByte() -> TrivialValuePassing(irBuiltIns.byteType, CTypes.signedChar)
     type.isShort() -> TrivialValuePassing(irBuiltIns.shortType, CTypes.short)
@@ -750,7 +698,7 @@ private fun KotlinStubs.mapType(
     type.isLong() -> TrivialValuePassing(irBuiltIns.longType, CTypes.longLong)
     type.isFloat() -> TrivialValuePassing(irBuiltIns.floatType, CTypes.float)
     type.isDouble() -> TrivialValuePassing(irBuiltIns.doubleType, CTypes.double)
-    type.classifierOrNull == symbols.interopCPointer -> TrivialValuePassing(type, CTypes.voidPtr)
+    type.isCPointer(symbols) -> TrivialValuePassing(type, CTypes.voidPtr)
     type.isTypeOfNullLiteral() && variadic  -> TrivialValuePassing(symbols.interopCPointer.typeWithStarProjections.makeNullable(), CTypes.voidPtr)
     type.isUByte() -> UnsignedValuePassing(type, CTypes.signedChar, CTypes.unsignedChar)
     type.isUShort() -> UnsignedValuePassing(type, CTypes.short, CTypes.unsignedShort)
@@ -768,33 +716,32 @@ private fun KotlinStubs.mapType(
         CEnumValuePassing(
                 enumClass,
                 value,
-                mapType(value.getter!!.returnType, retained, variadic, typeLocation) as SimpleValuePassing
+                mapType(value.getter!!.returnType, retained, variadic, location) as SimpleValuePassing
         )
     }
 
-    type.classifierOrNull == symbols.interopCValue -> if (type.isNullable()) {
-        reportUnsupportedType("must not be nullable")
-    } else {
+    type.isCValue(symbols) -> {
+        require(!type.isNullable()) { renderCompilerError(location) }
         val kotlinClass = (type as IrSimpleType).arguments.singleOrNull()?.typeOrNull?.getClass()
-                ?: reportUnsupportedType("must be parameterized with concrete class")
+        require(kotlinClass != null) { renderCompilerError(location) }
+        val cStructType = getNamedCStructType(kotlinClass)
+        require(cStructType != null) { renderCompilerError(location) }
 
-        StructValuePassing(kotlinClass, getNamedCStructType(kotlinClass)
-                ?: reportUnsupportedType("not a structure or too complex"))
+        StructValuePassing(kotlinClass, cStructType)
     }
 
     type.classOrNull?.isSubtypeOfClass(symbols.nativePointed) == true -> {
         TrivialValuePassing(type, CTypes.voidPtr)
     }
 
-    type.isFunction() -> if (variadic){
-        reportUnsupportedType("not supported as variadic argument")
-    } else {
-        mapBlockType(type, retained = retained, location = typeLocation)
+    type.isFunction() -> {
+        require(!variadic) { renderCompilerError(location) }
+        mapBlockType(type, retained = retained, location = location)
     }
 
     type.isObjCReferenceType(target, irBuiltIns) -> ObjCReferenceValuePassing(symbols, type, retained = retained)
 
-    else -> reportUnsupportedType("doesn't correspond to any C type")
+    else -> throwCompilerError(location, "doesn't correspond to any C type")
 }
 
 private class CExpression(val expression: String, val type: CType)
@@ -1211,7 +1158,7 @@ private class ObjCBlockPointerValuePassing(
         }
 
         val parameterCount = parameterValuePassings.size
-        assert(functionType.arguments.size == parameterCount + 1)
+        require(functionType.arguments.size == parameterCount + 1) { stubs.renderCompilerError(location) }
 
         val overriddenInvokeMethod = (functionType.classifier.owner as IrClass).simpleFunctions()
                 .single { it.name == OperatorNameConventions.INVOKE }
@@ -1308,7 +1255,7 @@ private class ObjCBlockPointerValuePassing(
             }
         }
 
-        assert(functionType.isFunction())
+        require(functionType.isFunction()) { stubs.renderCompilerError(location) }
         val invokeFunction = (functionType.classifier.owner as IrClass)
                 .simpleFunctions().single { it.name == OperatorNameConventions.INVOKE }
 
@@ -1447,22 +1394,3 @@ private object IgnoredUnitArgumentPassing : ArgumentPassing {
 }
 
 internal fun CType.cast(expression: String): String = "((${this.render("")})$expression)"
-
-private fun KotlinStubs.reportUnsupportedType(reason: String, type: IrType, location: TypeLocation): Nothing {
-    // TODO: report errors in frontend instead.
-    fun TypeLocation.render(): String = when (this) {
-        is TypeLocation.FunctionArgument -> ""
-        is TypeLocation.FunctionCallResult -> " of return value"
-        is TypeLocation.FunctionPointerParameter -> " of callback parameter ${index + 1}"
-        is TypeLocation.FunctionPointerReturnValue -> " of callback return value"
-        is TypeLocation.ObjCMethodParameter -> " of overridden Objective-C method parameter"
-        is TypeLocation.ObjCMethodReturnValue -> " of overridden Objective-C method return value"
-        is TypeLocation.BlockParameter -> " of ${index + 1} parameter in Objective-C block type${blockLocation.render()}"
-        is TypeLocation.BlockReturnValue -> " of return value of Objective-C block type${blockLocation.render()}"
-    }
-
-    val typeLocation: String = location.render()
-
-    reportError(location.element, "type ${type.render()} $typeLocation is not supported here" +
-            if (reason.isNotEmpty()) ": $reason" else "")
-}

@@ -355,7 +355,7 @@ private fun InteropCallContext.generateMemberAtAccess(callSite: IrCall): IrExpre
                 else -> failCompilation("Unsupported struct field type: ${type.getClass()?.name}")
             }
         }
-        else -> error("Unexpected accessor function: ${accessor.name}")
+        else -> failCompilation("Unexpected accessor function: ${accessor.name}")
     }
 }
 

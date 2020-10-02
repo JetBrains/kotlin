@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.backend.konan.ir.companionObject
 import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
 import org.jetbrains.kotlin.backend.konan.serialization.resolveFakeOverrideMaybeAbstract
-import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -60,33 +59,6 @@ internal class InteropLowering(context: Context) : FileLoweringPass {
         part1.lower(irFile)
         part2.lower(irFile)
     }
-}
-
-private fun IrExpression.isNonCapturingFunction(): Boolean {
-    if (!type.isFunctionTypeOrSubtype())
-        return false
-
-    val fromContainerExpression = fun(expr: IrExpression): IrConstructorCall? {
-        if (expr !is IrContainerExpression)
-            return null
-        if (expr.statements.size != 2)
-            return null
-
-        val firstStatement = expr.statements[0]
-        if (firstStatement !is IrContainerExpression || firstStatement.statements.size != 0) {
-            return null
-        }
-
-        val secondStatement = expr.statements[1]
-
-        return secondStatement as? IrConstructorCall
-    }
-
-    val constructorCall = this as? IrConstructorCall
-            ?: fromContainerExpression(this)
-            ?: return false
-
-    return constructorCall.valueArgumentsCount == 0
 }
 
 private abstract class BaseInteropIrTransformer(private val context: Context) : IrBuildingTransformer(context) {
@@ -131,14 +103,17 @@ private abstract class BaseInteropIrTransformer(private val context: Context) : 
 
             override val target get() = context.config.target
 
-            override fun reportError(location: IrElement, message: String): Nothing =
-                    context.reportCompilationError(message, irFile, location)
-
             override fun throwCompilerError(element: IrElement?, message: String): Nothing {
                 error(irFile, element, message)
             }
+
+            override fun renderCompilerError(element: IrElement?, message: String) =
+                    renderCompilerError(irFile, element, message)
         }
     }
+
+    protected fun renderCompilerError(element: IrElement?, message: String = "Failed requirement") =
+            renderCompilerError(irFile, element, message)
 
     protected abstract val irFile: IrFile
     protected abstract fun addTopLevel(declaration: IrDeclaration)
@@ -177,12 +152,6 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
                 putValueArgument(0, classPtr)
             }
 
-    private fun IrBuilderWithScope.getObjCClass(classSymbol: IrClassSymbol): IrExpression {
-        val classDescriptor = classSymbol.descriptor
-        assert(!classDescriptor.isObjCMetaClass())
-        return irCall(symbols.interopGetObjCClass, symbols.nativePtrType, listOf(classSymbol.typeWithStarProjections))
-    }
-
     private val outerClasses = mutableListOf<IrClass>()
 
     override fun visitClass(declaration: IrClass): IrStatement {
@@ -220,7 +189,7 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
 
         if (irClass.annotations.hasAnnotation(interop.exportObjCClass.fqNameSafe)) {
             val irBuilder = context.createIrBuilder(currentFile.symbol).at(irClass)
-            topLevelInitializers.add(irBuilder.getObjCClass(irClass.symbol))
+            topLevelInitializers.add(irBuilder.getObjCClass(symbols, irClass.symbol))
         }
     }
 
@@ -241,38 +210,15 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
             constructor.overridesConstructor(it)
         }.toList()
 
-        val superConstructor = superConstructors.singleOrNull() ?: run {
-            val annotation = context.interopBuiltIns.objCOverrideInit.name
-            if (superConstructors.isEmpty()) {
-                context.reportCompilationError(
-                        """
-                            constructor with @$annotation doesn't override any super class constructor.
-                            It must completely match by parameter names and types.""".trimIndent(),
-                        currentFile,
-                        constructor
-                )
-            } else {
-                context.reportCompilationError(
-                        "constructor with @$annotation matches more than one of super constructors",
-                        currentFile,
-                        constructor
-                )
-            }
-        }
+        val superConstructor = superConstructors.singleOrNull()
+        require(superConstructor != null) { renderCompilerError(constructor) }
 
         val initMethod = superConstructor.getObjCInitMethod()!!
 
         // Remove fake overrides of this init method, also check for explicit overriding:
         irClass.declarations.removeAll {
             if (it is IrSimpleFunction && initMethod.symbol in it.overriddenSymbols) {
-                if (it.isReal) {
-                    val annotation = context.interopBuiltIns.objCOverrideInit.name
-                    context.reportCompilationError(
-                            "constructor with @$annotation overrides initializer that is already overridden explicitly",
-                            currentFile,
-                            constructor
-                    )
-                }
+                require(it.isFakeOverride) { renderCompilerError(constructor) }
                 true
             } else {
                 false
@@ -319,7 +265,8 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
                 )
             }
 
-            assert(result.getObjCMethodInfo() != null) // Ensure it gets correctly recognized by the compiler.
+            // Ensure it gets correctly recognized by the compiler.
+            require(result.getObjCMethodInfo() != null) { renderCompilerError(constructor) }
         }
     }
 
@@ -335,55 +282,17 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
     }
 
     private fun generateActionImp(function: IrSimpleFunction): IrSimpleFunction {
-        val action = "@${context.interopBuiltIns.objCAction.name}"
-
-        function.extensionReceiverParameter?.let {
-            context.reportCompilationError("$action method must not have extension receiver",
-                    currentFile, it)
-        }
-
-        function.valueParameters.forEach {
-            val kotlinType = it.descriptor.type
-            if (!kotlinType.isObjCObjectType()) {
-                context.reportCompilationError("Unexpected $action method parameter type: $kotlinType\n" +
-                        "Only Objective-C object types are supported here",
-                        currentFile, it)
-            }
-        }
-
-        val returnType = function.returnType
-
-        if (!returnType.isUnit()) {
-            context.reportCompilationError("Unexpected $action method return type: ${returnType.toKotlinType()}\n" +
-                    "Only 'Unit' is supported here",
-                    currentFile, function
-            )
-        }
+        require(function.extensionReceiverParameter == null) { renderCompilerError(function) }
+        require(function.valueParameters.all { it.type.isObjCObjectType() }) { renderCompilerError(function) }
+        require(function.returnType.isUnit()) { renderCompilerError(function) }
 
         return generateFunctionImp(inferObjCSelector(function.descriptor), function)
     }
 
     private fun generateOutletSetterImp(property: IrProperty): IrSimpleFunction {
-        val descriptor = property.descriptor
-
-        val outlet = "@${context.interopBuiltIns.objCOutlet.name}"
-
-        if (!descriptor.isVar) {
-            context.reportCompilationError("$outlet property must be var",
-                    currentFile, property)
-        }
-
-        property.getter?.extensionReceiverParameter?.let {
-            context.reportCompilationError("$outlet must not have extension receiver",
-                    currentFile, it)
-        }
-
-        val type = descriptor.type
-        if (!type.isObjCObjectType()) {
-            context.reportCompilationError("Unexpected $outlet type: $type\n" +
-                    "Only Objective-C object types are supported here",
-                    currentFile, property)
-        }
+        require(property.isVar) { renderCompilerError(property) }
+        require(property.getter?.extensionReceiverParameter == null) { renderCompilerError(property) }
+        require(property.descriptor.type.isObjCObjectType()) { renderCompilerError(property) }
 
         val name = property.name.asString()
         val selector = "set${name.capitalize()}:"
@@ -392,26 +301,21 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
     }
 
     private fun getMethodSignatureEncoding(function: IrFunction): String {
-        assert(function.extensionReceiverParameter == null)
-        assert(function.valueParameters.all { it.type.isObjCObjectType() })
-        assert(function.returnType.isUnit())
+        require(function.extensionReceiverParameter == null) { renderCompilerError(function) }
+        require(function.valueParameters.all { it.type.isObjCObjectType() }) { renderCompilerError(function) }
+        require(function.returnType.isUnit()) { renderCompilerError(function) }
 
         // Note: these values are valid for x86_64 and arm64.
         return when (function.valueParameters.size) {
             0 -> "v16@0:8"
             1 -> "v24@0:8@16"
             2 -> "v32@0:8@16@24"
-            else -> context.reportCompilationError("Only 0, 1 or 2 parameters are supported here",
-                    currentFile, function
-            )
+            else -> error(irFile, function, "Only 0, 1 or 2 parameters are supported here")
         }
     }
 
     private fun generateFunctionImp(selector: String, function: IrFunction): IrSimpleFunction {
         val signatureEncoding = getMethodSignatureEncoding(function)
-
-        val returnType = function.returnType
-        assert(returnType.isUnit())
 
         val nativePtrType = context.ir.symbols.nativePtrType
 
@@ -419,12 +323,7 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
 
         parameterTypes.add(nativePtrType) // SEL _cmd
 
-        function.valueParameters.mapTo(parameterTypes) {
-            when {
-                it.descriptor.type.isObjCObjectType() -> nativePtrType
-                else -> TODO()
-            }
-        }
+        function.valueParameters.mapTo(parameterTypes) { nativePtrType }
 
         val newFunction = WrappedSimpleFunctionDescriptor().let {
             IrFunctionImpl(
@@ -434,7 +333,7 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
                     ("imp:$selector").synthesizedName,
                     DescriptorVisibilities.PRIVATE,
                     Modality.FINAL,
-                    returnType,
+                    function.returnType,
                     isInline = false,
                     isExternal = false,
                     isTailrec = false,
@@ -516,52 +415,23 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
             }
 
     private fun checkKotlinObjCClass(irClass: IrClass) {
-        val kind = irClass.descriptor.kind
-        if (kind != ClassKind.CLASS && kind != ClassKind.OBJECT) {
-            context.reportCompilationError(
-                    "Only classes are supported as subtypes of Objective-C types",
-                    currentFile, irClass
-            )
-        }
-
-        if (!irClass.descriptor.isFinalClass) {
-            context.reportCompilationError(
-                    "Non-final Kotlin subclasses of Objective-C classes are not yet supported",
-                    currentFile, irClass
-            )
-        }
-
-        irClass.companionObject()?.let {
-            if (it.hasFields() ||
-                    it.getSuperClassNotAny()?.hasFields() ?: false) {
-                context.reportCompilationError(
-                        "Fields are not supported for Companion of subclass of ObjC type",
-                        currentFile, irClass
-                )
-            }
-        }
+        val kind = irClass.kind
+        require(kind == ClassKind.CLASS || kind == ClassKind.OBJECT) { renderCompilerError(irClass) }
+        require(irClass.isFinalClass) { renderCompilerError(irClass) }
+        require(irClass.companionObject()?.hasFields() != true) { renderCompilerError(irClass) }
+        require(irClass.companionObject()?.getSuperClassNotAny()?.hasFields() != true) { renderCompilerError(irClass) }
 
         var hasObjCClassSupertype = false
         irClass.descriptor.defaultType.constructor.supertypes.forEach {
             val descriptor = it.constructor.declarationDescriptor as ClassDescriptor
-            if (!descriptor.isObjCClass()) {
-                context.reportCompilationError(
-                        "Mixing Kotlin and Objective-C supertypes is not supported",
-                        currentFile, irClass
-                )
-            }
+            require(descriptor.isObjCClass()) { renderCompilerError(irClass) }
 
             if (descriptor.kind == ClassKind.CLASS) {
                 hasObjCClassSupertype = true
             }
         }
 
-        if (!hasObjCClassSupertype) {
-            context.reportCompilationError(
-                    "Kotlin implementation of Objective-C protocol must have Objective-C superclass (e.g. NSObject)",
-                    currentFile, irClass
-            )
-        }
+        require(hasObjCClassSupertype) { renderCompilerError(irClass) }
 
         val methodsOfAny =
                 context.ir.symbols.any.owner.declarations.filterIsInstance<IrSimpleFunction>().toSet()
@@ -571,20 +441,7 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
                 it in methodsOfAny
             }
 
-            if (overriddenMethodOfAny != null) {
-                val correspondingObjCMethod = when (method.name.asString()) {
-                    "toString" -> "'description'"
-                    "hashCode" -> "'hash'"
-                    "equals" -> "'isEqual:'"
-                    else -> "corresponding Objective-C method"
-                }
-
-                context.report(
-                        method,
-                        "can't override '${method.name}', override $correspondingObjCMethod instead",
-                        isError = true
-                )
-            }
+            require(overriddenMethodOfAny == null) { renderCompilerError(method) }
         }
     }
 
@@ -616,22 +473,14 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
 
             // Calling super constructor from Kotlin Objective-C class.
 
-            assert(constructedClass.getSuperClassNotAny() == delegatingCallConstructingClass)
+            require(constructedClass.getSuperClassNotAny() == delegatingCallConstructingClass) { renderCompilerError(expression) }
+            require(expression.symbol.owner.objCConstructorIsDesignated()) { renderCompilerError(expression) }
+            require(expression.dispatchReceiver == null) { renderCompilerError(expression) }
+            require(expression.extensionReceiver == null) { renderCompilerError(expression) }
 
             val initMethod = expression.symbol.owner.getObjCInitMethod()!!
 
-            if (!expression.symbol.owner.objCConstructorIsDesignated()) {
-                context.reportCompilationError(
-                        "Unable to call non-designated initializer as super constructor",
-                        currentFile,
-                        expression
-                )
-            }
-
             val initMethodInfo = initMethod.getExternalObjCMethodInfo()!!
-
-            assert(expression.dispatchReceiver == null)
-            assert(expression.extensionReceiver == null)
 
             val initCall = builder.genLoweredObjCMethodCall(
                     initMethodInfo,
@@ -714,13 +563,13 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
         val initMethod = callee.getObjCInitMethod()
         if (initMethod != null) {
             val arguments = callee.valueParameters.map { expression.getValueArgument(it.index) }
-            assert(expression.extensionReceiver == null)
-            assert(expression.dispatchReceiver == null)
+            require(expression.extensionReceiver == null) { renderCompilerError(expression) }
+            require(expression.dispatchReceiver == null) { renderCompilerError(expression) }
 
             val constructedClass = callee.constructedClass
             val initMethodInfo = initMethod.getExternalObjCMethodInfo()!!
             return builder.at(expression).run {
-                val classPtr = getObjCClass(constructedClass.symbol)
+                val classPtr = getObjCClass(symbols, constructedClass.symbol)
                 ensureObjCReferenceNotNull(callAllocAndInit(classPtr, initMethodInfo, arguments, expression, initMethod))
             }
         }
@@ -770,21 +619,9 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
 
             if (!useKotlinDispatch) {
                 val arguments = callee.valueParameters.map { expression.getValueArgument(it.index) }
-                assert(expression.dispatchReceiver == null || expression.extensionReceiver == null)
-
-                if (expression.superQualifierSymbol?.owner?.isObjCMetaClass() == true) {
-                    context.reportCompilationError(
-                            "Super calls to Objective-C meta classes are not supported yet",
-                            currentFile, expression
-                    )
-                }
-
-                if (expression.superQualifierSymbol?.owner?.isInterface == true) {
-                    context.reportCompilationError(
-                            "Super calls to Objective-C protocols are not allowed",
-                            currentFile, expression
-                    )
-                }
+                require(expression.dispatchReceiver == null || expression.extensionReceiver == null) { renderCompilerError(expression) }
+                require(expression.superQualifierSymbol?.owner?.isObjCMetaClass() != true) { renderCompilerError(expression) }
+                require(expression.superQualifierSymbol?.owner?.isInterface != true) { renderCompilerError(expression) }
 
                 builder.at(expression)
                 return builder.genLoweredObjCMethodCall(
@@ -809,7 +646,7 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
                     val irClass = classSymbol.owner
 
                     val companionObject = irClass.companionObject() ?:
-                            error("native variable class ${irClass.descriptor} must have the companion object")
+                            error(irFile, expression, "native variable class ${irClass.descriptor} must have the companion object")
 
                     builder.at(expression).irGetObject(companionObject.symbol)
                 }
@@ -841,8 +678,8 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
             // Note: in interop stubs const val initializer is either `IrConst` or quite simple expression,
             // so it is ok to compute it every time.
 
-            assert(declaration.setter == null)
-            assert(!declaration.isVar)
+            require(declaration.setter == null) { renderCompilerError(declaration) }
+            require(!declaration.isVar) { renderCompilerError(declaration) }
 
             declaration.transformChildrenVoid()
             declaration
@@ -941,16 +778,15 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
 
         val callee = expression.symbol.owner
         val inlinedClass = callee.returnType.getInlinedClassNative()
-        if (inlinedClass?.descriptor == interop.cPointer || inlinedClass?.descriptor == interop.nativePointed) {
-            context.reportCompilationError("Native interop types constructors must not be called directly",
-                irFile, expression)
-        }
+        require(inlinedClass?.descriptor != interop.cPointer) { renderCompilerError(expression) }
+        require(inlinedClass?.descriptor != interop.nativePointed) { renderCompilerError(expression) }
 
         val constructedClass = callee.constructedClass
         if (!constructedClass.isObjCClass())
             return expression
 
-        assert(constructedClass.isKotlinObjCClass()) // Calls to other ObjC class constructors must be lowered.
+        // Calls to other ObjC class constructors must be lowered.
+        require(constructedClass.isKotlinObjCClass()) { renderCompilerError(expression) }
         return builder.at(expression).irBlock {
             val rawPtr = irTemporary(irCall(symbols.interopAllocObjCObject.owner).apply {
                 putValueArgument(0, getObjCClass(symbols, constructedClass.symbol))
@@ -987,14 +823,11 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
                 ?.takeIf { it.isConst }
                 ?: return null
 
-        val irConstant = (constantProperty.backingField
-                ?.initializer
-                ?.expression
-                ?: error("Constant property ${constantProperty.name} has no initializer!"))
-                as IrConst<*>
+        val initializer = constantProperty.backingField?.initializer?.expression
+        require(initializer is IrConst<*>) { renderCompilerError(expression) }
 
         // Avoid node duplication
-        return irConstant.copy()
+        return initializer.copy()
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
@@ -1002,30 +835,23 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
         if (intrinsicType == IntrinsicType.OBJC_INIT_BY) {
             // Need to do this separately as otherwise [expression.transformChildrenVoid(this)] would be called
             // and the [IrConstructorCall] would be transformed which is not what we want.
-            val intrinsic = interop.objCObjectInitBy.name
 
             val argument = expression.getValueArgument(0)!!
-            val constructorCall = argument as? IrConstructorCall
-                    ?: context.reportCompilationError("Argument of '$intrinsic' must be a constructor call",
-                            irFile, argument)
+            require(argument is IrConstructorCall) { renderCompilerError(argument) }
 
-            val constructedClass = constructorCall.symbol.owner.constructedClass
+            val constructedClass = argument.symbol.owner.constructedClass
 
             val extensionReceiver = expression.extensionReceiver!!
-            if (extensionReceiver !is IrGetValue ||
-                    !extensionReceiver.symbol.owner.isDispatchReceiverFor(constructedClass)) {
+            require(extensionReceiver is IrGetValue &&
+                    extensionReceiver.symbol.owner.isDispatchReceiverFor(constructedClass)) { renderCompilerError(extensionReceiver) }
 
-                context.reportCompilationError("Receiver of '$intrinsic' must be a 'this' of the constructed class",
-                        irFile, extensionReceiver)
-            }
-
-            constructorCall.transformChildrenVoid(this)
+            argument.transformChildrenVoid(this)
 
             return builder.at(expression).irBlock {
                 val instance = extensionReceiver.symbol.owner
                 +irCall(symbols.initInstance).apply {
                     putValueArgument(0, irGet(instance))
-                    putValueArgument(1, constructorCall)
+                    putValueArgument(1, argument)
                 }
                 +irGet(instance)
             }
@@ -1052,7 +878,7 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
             return generateWithStubs { generateCCall(expression, builder, isInvoke = false, exceptionMode) }
         }
 
-        val failCompilation = { msg: String -> context.reportCompilationError(msg, irFile, expression) }
+        val failCompilation = { msg: String -> error(irFile, expression, msg) }
         tryGenerateInteropMemberAccess(expression, symbols, builder, failCompilation)?.let { return it }
 
         tryGenerateInteropConstantRead(expression)?.let { return it }
@@ -1080,14 +906,8 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
                 IntrinsicType.INTEROP_STATIC_C_FUNCTION -> {
                     val irCallableReference = unwrapStaticFunctionArgument(expression.getValueArgument(0)!!)
 
-                    if (irCallableReference == null || irCallableReference.getArguments().isNotEmpty()
-                            || irCallableReference.symbol !is IrSimpleFunctionSymbol) {
-                        context.reportCompilationError(
-                                "${function.fqNameForIrSerialization} must take an unbound, non-capturing function or lambda",
-                                irFile, expression
-                        )
-                        // TODO: should probably be reported during analysis.
-                    }
+                    require(irCallableReference != null && irCallableReference.getArguments().isEmpty()
+                            && irCallableReference.symbol is IrSimpleFunctionSymbol) { renderCompilerError(expression) }
 
                     val targetSymbol = irCallableReference.symbol
                     val target = targetSymbol.owner
@@ -1096,13 +916,9 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
                     function.typeParameters.indices.forEach { index ->
                         val typeArgument = expression.getTypeArgument(index)!!.toKotlinType()
                         val signatureType = signatureTypes[index].toKotlinType()
-                        if (typeArgument.constructor != signatureType.constructor ||
-                                typeArgument.isMarkedNullable != signatureType.isMarkedNullable) {
-                            context.reportCompilationError(
-                                    "C function signature element mismatch: expected '$signatureType', got '$typeArgument'",
-                                    irFile, expression
-                            )
-                        }
+
+                        require(typeArgument.constructor == signatureType.constructor &&
+                                typeArgument.isMarkedNullable == signatureType.isMarkedNullable) { renderCompilerError(expression) }
                     }
 
                     generateCFunctionPointer(target as IrSimpleFunction, expression)
@@ -1118,36 +934,19 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
 
                     val receiver = expression.extensionReceiver!!
                     val typeOperand = expression.getSingleTypeArgument()
-                    val kotlinTypeOperand = typeOperand.toKotlinType()
 
                     val receiverTypeIndex = integerTypePredicates.indexOfFirst { it(receiver.type) }
                     val typeOperandIndex = integerTypePredicates.indexOfFirst { it(typeOperand) }
 
-                    val receiverKotlinType = receiver.type.toKotlinType()
-
-                    if (receiverTypeIndex == -1) {
-                        context.reportCompilationError("Receiver's type $receiverKotlinType is not an integer type",
-                                irFile, receiver)
-                    }
-
-                    if (typeOperandIndex == -1) {
-                        context.reportCompilationError("Type argument $kotlinTypeOperand is not an integer type",
-                                irFile, expression)
-                    }
+                    require(receiverTypeIndex >= 0) { renderCompilerError(receiver) }
+                    require(typeOperandIndex >= 0) { renderCompilerError(expression) }
 
                     when (intrinsicType) {
-                        IntrinsicType.INTEROP_SIGN_EXTEND -> if (receiverTypeIndex > typeOperandIndex) {
-                            context.reportCompilationError("unable to sign extend $receiverKotlinType to $kotlinTypeOperand",
-                                    irFile, expression)
-                        }
-
-                        IntrinsicType.INTEROP_NARROW -> if (receiverTypeIndex < typeOperandIndex) {
-                            context.reportCompilationError("unable to narrow $receiverKotlinType to $kotlinTypeOperand",
-                                    irFile, expression)
-                        }
-
-                        else -> context.reportCompilationError("unexpected intrinsic $intrinsicType",
-                                irFile, expression)
+                        IntrinsicType.INTEROP_SIGN_EXTEND ->
+                            require(receiverTypeIndex <= typeOperandIndex) { renderCompilerError(expression) }
+                        IntrinsicType.INTEROP_NARROW ->
+                            require(receiverTypeIndex >= typeOperandIndex) { renderCompilerError(expression) }
+                        else -> error(intrinsicType)
                     }
 
                     val receiverClass = symbols.integerClasses.single {
@@ -1170,26 +969,20 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
                     val typeOperand = expression.getTypeArgument(0)!!
                     val receiverType = expression.symbol.owner.extensionReceiverParameter!!.type
                     val source = receiverType.classifierOrFail as IrClassSymbol
-                    assert(source in integerClasses)
+                    require(source in integerClasses) { renderCompilerError(expression) }
+                    require(typeOperand is IrSimpleType && typeOperand.classifier in integerClasses
+                            && !typeOperand.hasQuestionMark) { renderCompilerError(expression) }
 
-                    if (typeOperand is IrSimpleType && typeOperand.classifier in integerClasses && !typeOperand.hasQuestionMark) {
-                        val target = typeOperand.classifier as IrClassSymbol
-                        val valueToConvert = expression.extensionReceiver!!
+                    val target = typeOperand.classifier as IrClassSymbol
+                    val valueToConvert = expression.extensionReceiver!!
 
-                        if (source in symbols.signedIntegerClasses && target in symbols.unsignedIntegerClasses) {
-                            // Default Kotlin signed-to-unsigned widening integer conversions don't follow C rules.
-                            val signedTarget = symbols.unsignedToSignedOfSameBitWidth[target]!!
-                            val widened = builder.irConvertInteger(source, signedTarget, valueToConvert)
-                            builder.irConvertInteger(signedTarget, target, widened)
-                        } else {
-                            builder.irConvertInteger(source, target, valueToConvert)
-                        }
+                    if (source in symbols.signedIntegerClasses && target in symbols.unsignedIntegerClasses) {
+                        // Default Kotlin signed-to-unsigned widening integer conversions don't follow C rules.
+                        val signedTarget = symbols.unsignedToSignedOfSameBitWidth[target]!!
+                        val widened = builder.irConvertInteger(source, signedTarget, valueToConvert)
+                        builder.irConvertInteger(signedTarget, target, widened)
                     } else {
-                        context.reportCompilationError(
-                                "unable to convert ${receiverType.toKotlinType()} to ${typeOperand.toKotlinType()}",
-                                irFile,
-                                expression
-                        )
+                        builder.irConvertInteger(source, target, valueToConvert)
                     }
                 }
                 IntrinsicType.INTEROP_MEMORY_COPY -> {
@@ -1198,12 +991,8 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
                 IntrinsicType.WORKER_EXECUTE -> {
                     val irCallableReference = unwrapStaticFunctionArgument(expression.getValueArgument(2)!!)
 
-                    if (irCallableReference == null || irCallableReference.getArguments().isNotEmpty()) {
-                        context.reportCompilationError(
-                                "${function.fqNameForIrSerialization} must take an unbound, non-capturing function or lambda",
-                                irFile, expression
-                        )
-                    }
+                    require(irCallableReference != null
+                            && irCallableReference.getArguments().isEmpty()) { renderCompilerError(expression) }
 
                     val targetSymbol = irCallableReference.symbol
                     val jobPointer = IrFunctionReferenceImpl(
@@ -1230,17 +1019,6 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
                 builder.irCall(symbols.interopCPointerGetRawValue).apply {
                     extensionReceiver = expression.dispatchReceiver
                 }
-            // TODO: Move this check out of InteropLowering.
-            symbols.createCleaner.owner -> {
-                val irCallableReference = expression.getValueArgument(1)
-                if (irCallableReference == null || !irCallableReference.isNonCapturingFunction()) {
-                    context.reportCompilationError(
-                            "${function.fqNameForIrSerialization} must take an unbound, non-capturing function or lambda",
-                            irFile, expression
-                    )
-                }
-                expression
-            }
             else -> expression
         }
     }
@@ -1257,38 +1035,6 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
             } else {
                 extensionReceiver = value
             }
-        }
-    }
-
-    private fun IrType.ensureSupportedInCallbacks(isReturnType: Boolean, reportError: (String) -> Nothing) {
-        this.checkCTypeNullability(reportError)
-
-        if (isReturnType && this.isUnit()) {
-            return
-        }
-
-        if (this.isPrimitiveType()) {
-            return
-        }
-
-        if (UnsignedTypes.isUnsignedType(this.toKotlinType()) && !this.containsNull()) {
-            return
-        }
-
-        if (this.getClass()?.descriptor == interop.cPointer) {
-            return
-        }
-
-        reportError("Type ${this.toKotlinType()} is not supported in callback signature")
-    }
-
-    private fun IrType.checkCTypeNullability(reportError: (String) -> Nothing) {
-        if (this.isNullablePrimitiveType() || UnsignedTypes.isUnsignedType(this.toKotlinType()) && this.containsNull()) {
-            reportError("Type ${this.toKotlinType()} must not be nullable when used in C function signature")
-        }
-
-        if (this.getClass() == interop.cPointer && !this.isSimpleTypeWithQuestionMark) {
-            reportError("Type ${this.toKotlinType()} must be nullable when used in C function signature")
         }
     }
 

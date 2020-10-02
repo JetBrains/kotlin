@@ -32,22 +32,25 @@ internal fun CommonBackendContext.reportCompilationWarning(message: String) {
 }
 
 internal fun error(irFile: IrFile?, element: IrElement?, message: String): Nothing {
-    error(buildString {
-        append("Internal compiler error: $message\n")
-        if (element == null) {
-            append("(IR element is null)")
-        } else {
-            if (irFile != null) {
-                val location = element.getCompilerMessageLocation(irFile)
-                append("at $location\n")
-            }
-
-            val renderedElement = try {
-                element.render()
-            } catch (e: Throwable) {
-                "(unable to render IR element)"
-            }
-            append(renderedElement)
-        }
-    })
+    error(renderCompilerError(irFile, element, message))
 }
+
+internal fun renderCompilerError(irFile: IrFile?, element: IrElement?, message: String) =
+        buildString {
+            append("Internal compiler error: $message\n")
+            if (element == null) {
+                append("(IR element is null)")
+            } else {
+                if (irFile != null) {
+                    val location = element.getCompilerMessageLocation(irFile)
+                    append("at $location\n")
+                }
+
+                val renderedElement = try {
+                    element.render()
+                } catch (e: Throwable) {
+                    "(unable to render IR element)"
+                }
+                append(renderedElement)
+            }
+        }

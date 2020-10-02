@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.error
-import org.jetbrains.kotlin.backend.konan.reportCompilationError
+import org.jetbrains.kotlin.backend.konan.renderCompilerError
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.*
@@ -77,23 +77,14 @@ internal class PostInlineLowering(val context: Context) : FileLoweringPass {
                     // Convert arguments of the binary blob to special IrConst<String> structure, so that
                     // vararg lowering will not affect it.
                     val args = expression.getValueArgument(0) as? IrVararg
-                            ?: throw Error("varargs shall not be lowered yet")
-                    if (args.elements.any { it is IrSpreadElement }) {
-                        context.reportCompilationError("no spread elements allowed here", irFile, args)
-                    }
+                            ?: error("varargs shall not be lowered yet")
                     val builder = StringBuilder()
                     args.elements.forEach {
-                        if (it !is IrConst<*>) {
-                            context.reportCompilationError(
-                                    "all elements of binary blob must be constants", irFile, it)
+                        require(it is IrConst<*>) { renderCompilerError(irFile, it, "expected const") }
+                        val value = (it as? IrConst<*>)?.value
+                        require(value is Short && value >= 0 && value <= 0xff) {
+                            renderCompilerError(irFile, it, "incorrect value for binary data: $value")
                         }
-                        val value = when (it.kind) {
-                            IrConstKind.Short ->  (it.value as Short).toInt()
-                            else ->
-                                context.reportCompilationError("incorrect value for binary data: $it.value", irFile, it)
-                        }
-                        if (value < 0 || value > 0xff)
-                            context.reportCompilationError("incorrect value for binary data: $value", irFile, it)
                         // Luckily, all values in range 0x00 .. 0xff represent valid UTF-16 symbols,
                         // block 0 (Basic Latin) and block 1 (Latin-1 Supplement) in
                         // Basic Multilingual Plane, so we could just append data "as is".
