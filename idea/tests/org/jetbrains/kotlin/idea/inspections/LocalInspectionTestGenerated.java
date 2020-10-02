@@ -14250,6 +14250,26 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/unusedReceiverParameter"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
         }
 
+        @TestMetadata("anonymousFunction.kt")
+        public void testAnonymousFunction() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedReceiverParameter/anonymousFunction.kt");
+        }
+
+        @TestMetadata("anonymousFunctionCall.kt")
+        public void testAnonymousFunctionCall() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedReceiverParameter/anonymousFunctionCall.kt");
+        }
+
+        @TestMetadata("anonymousFunctionCallWithReceiver.kt")
+        public void testAnonymousFunctionCallWithReceiver() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedReceiverParameter/anonymousFunctionCallWithReceiver.kt");
+        }
+
+        @TestMetadata("anonymousFunctionCallWithReceiver2.kt")
+        public void testAnonymousFunctionCallWithReceiver2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedReceiverParameter/anonymousFunctionCallWithReceiver2.kt");
+        }
+
         @TestMetadata("companion.kt")
         public void testCompanion() throws Exception {
             runTest("idea/testData/inspectionsLocal/unusedReceiverParameter/companion.kt");
