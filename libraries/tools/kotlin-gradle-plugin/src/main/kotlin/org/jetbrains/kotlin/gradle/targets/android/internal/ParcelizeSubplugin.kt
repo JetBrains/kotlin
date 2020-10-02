@@ -7,6 +7,7 @@
 package org.jetbrains.kotlin.gradle.internal
 
 import com.android.build.gradle.BaseExtension
+import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -16,6 +17,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 class ParcelizeSubplugin : KotlinCompilerPluginSupportPlugin {
     override fun apply(target: Project) {
         addParcelizeRuntime(target)
+
+        target.afterEvaluate {
+            if (target.plugins.hasPlugin(AndroidSubplugin::class.java)) {
+                throw GradleException("${target.path}: 'kotlin-parcelize' can't be applied together with 'kotlin-android-extensions'")
+            }
+        }
     }
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
