@@ -274,6 +274,18 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                 whatDiagnosticsToConsider.value(it.diagnostic)
             }
 
+            filteredDiagnostics.map { it.diagnostic }.forEach { diagnostic ->
+                val diagnosticElementTextRange = diagnostic.psiElement.textRange
+                diagnostic.textRanges.forEach {
+                    check(diagnosticElementTextRange.contains(it)) {
+                        "Annotation API violation:" +
+                                " diagnostic text range $it has to be in range of" +
+                                " diagnostic element ${diagnostic.psiElement} '${diagnostic.psiElement.text}'" +
+                                " (factory ${diagnostic.factory.name}): $diagnosticElementTextRange"
+                    }
+                }
+            }
+
             actualDiagnostics.addAll(filteredDiagnostics)
 
             val uncheckedDiagnostics = mutableListOf<PositionalTextDiagnostic>()

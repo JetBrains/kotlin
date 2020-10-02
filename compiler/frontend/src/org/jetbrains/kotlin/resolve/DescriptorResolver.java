@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
@@ -1371,7 +1372,9 @@ public class DescriptorResolver {
             }
 
             if (isStaticNestedClass(classDescriptor)) {
-                trace.report(INACCESSIBLE_OUTER_CLASS_EXPRESSION.on(reportErrorsOn, classDescriptor));
+                PsiElement onReport = (reportErrorsOn instanceof KtConstructorDelegationCall)
+                                      ? CallResolverUtilKt.reportOnElement((KtConstructorDelegationCall) reportErrorsOn) : reportErrorsOn;
+                trace.report(INACCESSIBLE_OUTER_CLASS_EXPRESSION.on(onReport, classDescriptor));
                 return false;
             }
             classDescriptor = getParentOfType(classDescriptor, ClassDescriptor.class, true);
