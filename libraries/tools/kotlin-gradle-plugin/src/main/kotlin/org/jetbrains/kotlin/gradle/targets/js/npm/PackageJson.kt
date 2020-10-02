@@ -18,7 +18,7 @@ class PackageJson(
     var name: String,
     var version: String
 ) {
-    private val customFields = mutableMapOf<String, Any>()
+    internal val customFields = mutableMapOf<String, Any?>()
 
     val empty: Boolean
         get() = main == null &&
@@ -60,7 +60,19 @@ class PackageJson(
     val bundledDependencies = mutableListOf<String>()
         get() = field ?: mutableListOf()
 
+    fun customField(pair: Pair<String, Any>) {
+        customFields[pair.first] = pair.second
+    }
+
     fun customField(key: String, value: Any) {
+        customFields[key] = value
+    }
+
+    fun customField(key: String, value: Number) {
+        customFields[key] = value
+    }
+
+    fun customField(key: String, value: Boolean) {
         customFields[key] = value
     }
 
@@ -164,3 +176,5 @@ private fun chooseVersion(
             """.trimIndent()
         )
 }
+
+internal const val fakePackageJsonValue = "FAKE"

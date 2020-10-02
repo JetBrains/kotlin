@@ -21,7 +21,7 @@ import javax.inject.Inject
 open class PublicPackageJsonTask
 @Inject
 constructor(
-    compilation: KotlinJsCompilation
+    private val compilation: KotlinJsCompilation
 ) : DefaultTask() {
 
     private val npmProject = compilation.npmProject
@@ -30,6 +30,13 @@ constructor(
 
     private val compilationResolution
         get() = nodeJs.npmResolutionManager.requireInstalled()[project][npmProject.compilation]
+
+    @get:Input
+    val packageJsonCustomFields: Map<String, Any?>
+        get() = PackageJson(fakePackageJsonValue, fakePackageJsonValue)
+            .apply {
+                compilation.packageJsonHandlers.forEach { it() }
+            }.customFields
 
     @get:Nested
     internal val externalDependencies: Collection<NestedNpmDependency>
