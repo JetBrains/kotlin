@@ -410,13 +410,14 @@ fun runTest() {
             "external/compiler/compileKotlinAgainstKotlin/specialBridgesInDependencies.kt",         // FIXME: inherits final class
             "external/compiler/codegen/box/multiplatform/multiModule/expectActualTypealiasLink.kt", // KT-40137
             "external/compiler/codegen/box/multiplatform/multiModule/expectActualMemberLink.kt",    // KT-33091
-            "external/compiler/codegen/box/multiplatform/multiModule/expectActualLink.kt"           // KT-41901
+            "external/compiler/codegen/box/multiplatform/multiModule/expectActualLink.kt",          // KT-41901
+            "external/compiler/codegen/box/coroutines/multiModule/"                                 // KT-40121
     ]
 
     boolean isEnabledForNativeBackend(String fileName) {
         def text = project.buildDir.toPath().resolve(fileName).text
 
-        if (excludeList.contains(fileName.replace(File.separator, "/"))) return false
+        if (excludeList.any { fileName.replace(File.separator, "/").contains(it) }) return false
 
         def languageSettings = findLinesWithPrefixesRemoved(text, '// !LANGUAGE: ')
         if (!languageSettings.empty) {
