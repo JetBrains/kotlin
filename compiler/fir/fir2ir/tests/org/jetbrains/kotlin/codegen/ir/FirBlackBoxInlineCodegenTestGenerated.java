@@ -594,6 +594,11 @@ public class FirBlackBoxInlineCodegenTestGenerated extends AbstractFirBlackBoxIn
             runTest("compiler/testData/codegen/boxInline/argumentOrder/defaultParametersAndLastVararg.kt");
         }
 
+        @TestMetadata("defaultParametersAndLastVarargWithCorrectOrder.kt")
+        public void testDefaultParametersAndLastVarargWithCorrectOrder() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/argumentOrder/defaultParametersAndLastVarargWithCorrectOrder.kt");
+        }
+
         @TestMetadata("extension.kt")
         public void testExtension() throws Exception {
             runTest("compiler/testData/codegen/boxInline/argumentOrder/extension.kt");
@@ -627,6 +632,11 @@ public class FirBlackBoxInlineCodegenTestGenerated extends AbstractFirBlackBoxIn
         @TestMetadata("varargAndDefaultParameters.kt")
         public void testVarargAndDefaultParameters() throws Exception {
             runTest("compiler/testData/codegen/boxInline/argumentOrder/varargAndDefaultParameters.kt");
+        }
+
+        @TestMetadata("varargAndDefaultParametersWithCorrectOrder.kt")
+        public void testVarargAndDefaultParametersWithCorrectOrder() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/argumentOrder/varargAndDefaultParametersWithCorrectOrder.kt");
         }
     }
 

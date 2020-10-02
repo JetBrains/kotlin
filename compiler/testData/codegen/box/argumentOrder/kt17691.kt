@@ -17,5 +17,4 @@ fun box(): String {
     foo(*arrayOf({ acc4 += "1" }()), y = { acc4 += "2" }())
 
     return if (acc1 == "12" && acc2 == "21" && acc3 == "21" && acc4 == "12") "OK" else "ERROR"
-    return "OK"
 }
