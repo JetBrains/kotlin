@@ -113,7 +113,8 @@ public final class IndexUpdateRunner {
           // Internally checks for suspension of the indexing and blocks the current thread if necessary.
           indicator.checkCanceled();
           // Add workers if the previous have stopped for whatever reason.
-          while (numberOfRunningWorkers.get() < myNumberOfIndexingThreads) {
+          int toAddWorkersNumber = myNumberOfIndexingThreads - numberOfRunningWorkers.get();
+          for (int i = 0; i < toAddWorkersNumber; i++) {
             myIndexingExecutor.execute(worker);
             numberOfRunningWorkers.incrementAndGet();
           }
