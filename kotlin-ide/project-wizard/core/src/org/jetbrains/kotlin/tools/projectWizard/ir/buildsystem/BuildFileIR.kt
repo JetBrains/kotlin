@@ -138,6 +138,7 @@ sealed class ModulesStructureIR : BuildSystemIR, IrsOwner {
 
 data class MultiplatformModulesStructureIR(
     val targets: List<BuildSystemIR>,
+    val multiplatformModule: FakeMultiplatformModuleIR,
     override val modules: List<MultiplatformModuleIR>,
     override val irs: PersistentList<BuildSystemIR>
 ) : GradleIR, ModulesStructureIR() {
@@ -172,6 +173,15 @@ fun MultiplatformModulesStructureIR.updateTargets(
     }
     return copy(targets = newTargets)
 }
+
+fun MultiplatformModulesStructureIR.updateSourceSets(
+    updater: (ModuleIR) -> ModuleIR
+): MultiplatformModulesStructureIR {
+    val newModules = modules.map { updater(it) as MultiplatformModuleIR }
+    return copy(modules = newModules)
+}
+
+
 
 data class SingleplatformModulesStructureWithSingleModuleIR(
     val module: SingleplatformModuleIR,

@@ -9,15 +9,13 @@ import org.jetbrains.kotlin.tools.projectWizard.core.*
 
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.*
 import org.jetbrains.kotlin.tools.projectWizard.enumSettingImpl
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.DependencyIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.ModuleIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.MultiplatformModuleIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.RunConfigurationsPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
@@ -73,7 +71,8 @@ abstract class Template : SettingsOwner, EntitiesOwnerDescriptor, DisplayableSet
 
     abstract val title: String
     abstract val description: String
-    abstract val moduleTypes: Set<ModuleType>
+
+    abstract fun isSupportedByModuleType(module: Module): Boolean
 
     override val text: String get() = title
 
@@ -100,6 +99,10 @@ abstract class Template : SettingsOwner, EntitiesOwnerDescriptor, DisplayableSet
         module: ModuleIR
     ): List<BuildSystemIR> = emptyList()
 
+    open fun Writer.runArbitratyTask(
+        module: ModuleIR
+    ): TaskResult<Unit> = UNIT_SUCCESS
+
     open fun updateTargetIr(
         module: ModuleIR,
         targetConfigurationIR: TargetConfigurationIR
@@ -112,24 +115,39 @@ abstract class Template : SettingsOwner, EntitiesOwnerDescriptor, DisplayableSet
 
     open fun Reader.createRunConfigurations(module: ModuleIR): List<WizardRunConfiguration> = emptyList()
 
+
+    open fun Reader.updateModuleIR(module: ModuleIR): ModuleIR = module
+    open fun Reader.updateBuildFileIRs(irs: List<BuildSystemIR>): List<BuildSystemIR> = irs
+
+    open fun createRootBuildFileIrs(): List<BuildSystemIR> = emptyList()
+
     fun Writer.applyToSourceset(
         module: ModuleIR
-    ): TaskResult<TemplateApplicationResult> {
+    ): TaskResult<TemplateApplicationResult> = compute {
+
         val librariesToAdd = getRequiredLibraries(module)
         val irsToAddToBuildFile = getIrsToAddToBuildFile(module)
+        runArbitratyTask(module).ensure()
 
         val targetsUpdater = when (module) {
             is MultiplatformModuleIR -> { target: TargetConfigurationIR ->
                 if (target.targetName == module.name) updateTargetIr(module, target)
                 else target
             }
+            is FakeMultiplatformModuleIR -> {
+                module.targets.map { expectedTarget ->
+                    { configurationIR: TargetConfigurationIR ->
+                        if (configurationIR.targetName == expectedTarget.name) updateTargetIr(expectedTarget, configurationIR)
+                        else configurationIR
+                    }
+                }.reduce(::compose)
+            }
             else -> idFunction()
         }
 
         RunConfigurationsPlugin.configurations.addValues(createRunConfigurations(module))
 
-        val result = TemplateApplicationResult(librariesToAdd, irsToAddToBuildFile, targetsUpdater)
-        return result.asSuccess()
+        TemplateApplicationResult(librariesToAdd, irsToAddToBuildFile, targetsUpdater) { updateModuleIR(it) }
     }
 
     fun Reader.settingsAsMap(module: Module): Map<String, Any> = mutableMapOf<String, Any>().apply {
@@ -290,13 +308,15 @@ fun Writer.applyTemplateToModule(
 data class TemplateApplicationResult(
     val librariesToAdd: List<DependencyIR>,
     val irsToAddToBuildFile: List<BuildSystemIR>,
-    val updateTarget: (TargetConfigurationIR) -> TargetConfigurationIR
+    val updateTarget: (TargetConfigurationIR) -> TargetConfigurationIR,
+    val updateModuleIR: (ModuleIR) -> ModuleIR
 ) {
     companion object {
         val EMPTY = TemplateApplicationResult(
             librariesToAdd = emptyList(),
             irsToAddToBuildFile = emptyList(),
-            updateTarget = { it }
+            updateTarget = { it },
+            updateModuleIR = { it },
         )
     }
 }
@@ -308,5 +328,6 @@ operator fun TemplateApplicationResult.plus(other: TemplateApplicationResult) =
     TemplateApplicationResult(
         librariesToAdd + other.librariesToAdd,
         irsToAddToBuildFile + other.irsToAddToBuildFile,
-        updateTarget andThen other.updateTarget
+        updateTarget andThen other.updateTarget,
+        updateModuleIR andThen other.updateModuleIR,
     )

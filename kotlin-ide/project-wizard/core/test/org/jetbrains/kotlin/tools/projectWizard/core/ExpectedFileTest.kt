@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.core
 
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.mppSources
+import org.jetbrains.kotlin.tools.projectWizard.mpp.mppSources
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.junit.Test
 import kotlin.test.assertEquals

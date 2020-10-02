@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.Reader
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.moduleType
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 
 class ConsoleJvmApplicationTemplate : Template() {
     @NonNls
@@ -21,7 +23,9 @@ class ConsoleJvmApplicationTemplate : Template() {
     override val title: String = KotlinNewProjectWizardBundle.message("module.template.console.jvm.title")
     override val description: String = KotlinNewProjectWizardBundle.message("module.template.console.jvm.description")
 
-    override val moduleTypes: Set<ModuleType> = setOf(ModuleType.jvm)
+
+    override fun isSupportedByModuleType(module: Module): Boolean =
+        module.configurator.moduleType == ModuleType.jvm
 
     override fun Writer.getIrsToAddToBuildFile(
         module: ModuleIR

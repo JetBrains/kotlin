@@ -230,6 +230,13 @@ class ModulesToIRsConverter(
             modulePath,
             MultiplatformModulesStructureIR(
                 targetIrs,
+                FakeMultiplatformModuleIR(
+                    module.name,
+                    modulePath,
+                    module.template,
+                    targetModuleIrs,
+                    module,
+                ),
                 targetModuleIrs,
                 persistentListOf()
             ),

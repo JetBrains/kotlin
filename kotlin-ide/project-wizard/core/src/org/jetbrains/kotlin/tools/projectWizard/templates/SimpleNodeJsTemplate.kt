@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsNodeTargetConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.NodeJsSinglePlatformModuleConfigurator
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.moduleType
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository.Companion.JCENTER
@@ -26,7 +27,9 @@ class SimpleNodeJsTemplate : Template() {
 
     override val description: String = KotlinNewProjectWizardBundle.message("module.template.simple.nodejs.description")
 
-    override val moduleTypes: Set<ModuleType> = setOf(ModuleType.js)
+
+    override fun isSupportedByModuleType(module: Module): Boolean =
+        module.configurator.moduleType == ModuleType.js
 
     @NonNls
     override val id: String = "simpleNodeJs"
