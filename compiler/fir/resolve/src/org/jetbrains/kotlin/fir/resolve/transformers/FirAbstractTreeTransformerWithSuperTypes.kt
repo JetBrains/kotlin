@@ -51,6 +51,7 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(
         firClass: FirClass<*>,
         data: Nothing?
     ): CompositeTransformResult<FirStatement> {
+        firClass.replaceResolvePhase(transformerPhase)
         return withScopeCleanup {
             // Otherwise annotations may try to resolve
             // themselves as inner classes of the `firClass`
