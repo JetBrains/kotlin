@@ -36,6 +36,11 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
         runTest("testData/highlighter/AutoCreatedItParameter.kt");
     }
 
+    @TestMetadata("DelegatingCtor.kt")
+    public void testDelegatingCtor() throws Exception {
+        runTest("idea/testData/highlighter/DelegatingCtor.kt");
+    }
+
     @TestMetadata("Destructuring.kt")
     public void testDestructuring() throws Exception {
         runTest("testData/highlighter/Destructuring.kt");
