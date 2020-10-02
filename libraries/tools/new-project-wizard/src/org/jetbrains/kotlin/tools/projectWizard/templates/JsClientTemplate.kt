@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.Templa
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.interceptTemplate
 
 abstract class JsClientTemplate : Template() {
-    override val moduleTypes: Set<ModuleType> = setOf(ModuleType.js)
+    override fun isSupportedByModuleType(module: Module): Boolean =
+        module.configurator.moduleType == ModuleType.js
 
     override fun isApplicableTo(
         reader: Reader,

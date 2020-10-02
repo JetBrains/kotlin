@@ -16,6 +16,11 @@ fun <I : IrsOwner> I.withIrs(irs: List<BuildSystemIR>) = withReplacedIrs(irs = t
 @Suppress("UNCHECKED_CAST")
 fun <I : IrsOwner> I.withIrs(vararg irs: BuildSystemIR) = withReplacedIrs(irs = this.irs + irs) as I
 
+@Suppress("UNCHECKED_CAST")
+inline fun <I : IrsOwner> I.withoutIrs(filterNot: (BuildSystemIR) -> Boolean): I =
+    withReplacedIrs(irs = this.irs.filterNot(filterNot).toPersistentList()) as I
+
+
 
 inline fun <reified I : BuildSystemIR> IrsOwner.irsOfType(): List<I> =
     irs.filterIsInstance<I>().let { irs ->

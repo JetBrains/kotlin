@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.templates.*
+import org.jetbrains.kotlin.tools.projectWizard.templates.mpp.MobileMppTemplate
 
 sealed class ProjectTemplate : DisplayableSettingItem {
     abstract val title: String
@@ -165,7 +166,7 @@ object MultiplatformApplicationProjectTemplate : ProjectTemplate() {
     override val setsPluginSettings: List<SettingWithValue<*, *>>
         get() = listOf(
             KotlinPlugin.modules.reference withValue listOf(
-                MultiplatformModule("mainModule", listOf(ModuleType.common.createDefaultTarget()))
+                MultiplatformModule("mainModule", targets = listOf(ModuleType.common.createDefaultTarget()))
             )
         )
 }
@@ -206,7 +207,7 @@ object MultiplatformLibraryProjectTemplate : ProjectTemplate() {
             KotlinPlugin.modules.reference withValue listOf(
                 MultiplatformModule(
                     "library",
-                    listOf(
+                    targets = listOf(
                         ModuleType.common.createDefaultTarget(),
                         ModuleType.jvm.createDefaultTarget(),
                         ModuleType.js.createDefaultTarget().withConfiguratorSettings(JsBrowserTargetConfigurator) {
@@ -231,7 +232,7 @@ object FullStackWebApplicationProjectTemplate : ProjectTemplate() {
         KotlinPlugin.modules.reference withValue listOf(
             MultiplatformModule(
                 "application",
-                listOf(
+                targets = listOf(
                     ModuleType.common.createDefaultTarget(),
                     ModuleType.jvm.createDefaultTarget().apply {
                         withTemplate(KtorServerTemplate()) {
@@ -336,7 +337,8 @@ object MultiplatformMobileApplicationProjectTemplate : ProjectTemplate() {
     override val setsModules: List<Module> = buildList {
         val shared = MultiplatformModule(
             "shared",
-            listOf(
+            template = MobileMppTemplate(),
+            targets = listOf(
                 ModuleType.common.createDefaultTarget(),
                 Module(
                     "android",
@@ -390,7 +392,7 @@ object MultiplatformMobileLibraryProjectTemplate : ProjectTemplate() {
             KotlinPlugin.modules.reference withValue listOf(
                 MultiplatformModule(
                     "library",
-                    listOf(
+                    targets = listOf(
                         ModuleType.common.createDefaultTarget(),
                         Module(
                             "android",

@@ -66,6 +66,7 @@ object AndroidSinglePlatformModuleConfigurator :
 
     override fun createBuildFileIRs(reader: Reader, configurationData: ModulesToIrConversionData, module: Module) = irsList {
         +super<AndroidModuleConfigurator>.createBuildFileIRs(reader, configurationData, module)
+        +RepositoryIR((DefaultRepository.JCENTER))
         +AndroidConfigIR(
             javaPackage = when (reader.createAndroidPlugin(module)) {
                 AndroidGradlePlugin.APPLICATION -> module.javaPackage(configurationData.pomIr)

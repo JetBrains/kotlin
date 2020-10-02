@@ -185,11 +185,11 @@ fun MultiplatformTargetModule(@NonNls name: String, configurator: ModuleConfigur
     )
 
 @Suppress("FunctionName")
-fun MultiplatformModule(@NonNls name: String, targets: List<Module> = emptyList()) =
+fun MultiplatformModule(@NonNls name: String, template: Template? = null, targets: List<Module> = emptyList()) =
     Module(
         name,
         MppModuleConfigurator,
-        null,
+        template,
         emptyList(),
         targets
     )

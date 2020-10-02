@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.PluginSetti
 import org.jetbrains.kotlin.tools.projectWizard.core.service.TemplateEngineService
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.ModuleConfiguratorWithTests
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.MppModuleConfigurator.runArbitraryTask
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.isPresent
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
@@ -67,20 +68,31 @@ class TemplatesPlugin(context: Context) : Plugin(context) {
 
             withAction {
                 updateBuildFiles { buildFile ->
-                    buildFile.modules.modules.mapSequence { module ->
+                    val moduleStructure = buildFile.modules
+                    val moduleIRs = buildList<ModuleIR> {
+                        if (moduleStructure is MultiplatformModulesStructureIR) {
+                            +moduleStructure.multiplatformModule
+                        }
+                        +moduleStructure.modules
+                    }
+                    moduleIRs.mapSequence { module ->
                         applyTemplateToModule(
                             module.template,
                             module
-                        ).map { result -> module.withIrs(result.librariesToAdd) to result }
+                        ).map { result -> result.updateModuleIR(module.withIrs(result.librariesToAdd)) to result }
                     }.map {
                         val (moduleIrs, results) = it.unzip()
                         val foldedResults = results.fold()
                         buildFile.copy(
-                            modules = buildFile.modules.withModules(moduleIrs)
+                            modules = buildFile.modules.withModules(moduleIrs.filterNot { it is FakeMultiplatformModuleIR })
                         ).withIrs(foldedResults.irsToAddToBuildFile).let { buildFile ->
                             when (val structure = buildFile.modules) {
                                 is MultiplatformModulesStructureIR ->
-                                    buildFile.copy(modules = structure.updateTargets(foldedResults.updateTarget))
+                                    buildFile.copy(
+                                        modules = structure
+                                            .updateTargets(foldedResults.updateTarget)
+                                            .updateSourceSets(foldedResults.updateModuleIR)
+                                    )
                                 else -> buildFile
                             }
                         }
@@ -164,6 +176,7 @@ class TemplatesPlugin(context: Context) : Plugin(context) {
                     }
                     SRC_DIR / "${module.name}${filePath.sourcesetType.name.capitalize()}" / directory
                 }
+                is FakeMultiplatformModuleIR -> error("Not supported for FakeMultiplatformModuleIR")
             }
         }
     }
