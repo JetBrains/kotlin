@@ -118,6 +118,11 @@ class Fir2IrConversionScope {
     fun dispatchReceiverParameter(irClass: IrClass): IrValueParameter? {
         for (function in functionStack.asReversed()) {
             if (function.parentClassOrNull == irClass) {
+                // An inner class's constructor needs an instance of the outer class as a dispatch receiver.
+                // However, if we are converting `this` receiver inside that constructor, now we should point to the inner class instance.
+                if (function is IrConstructor && irClass.isInner) {
+                    irClass.thisReceiver?.let { return it }
+                }
                 function.dispatchReceiverParameter?.let { return it }
             }
         }
