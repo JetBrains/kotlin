@@ -103,7 +103,10 @@ def kotlin_object_type_summary(lldb_val, internal_dict = {}):
             return NULL
         return lldb_val.GetValueAsSigned()
 
+    if lldb_val.unsigned == 0:
+            return NULL
     tip = internal_dict["type_info"] if "type_info" in internal_dict.keys() else type_info(lldb_val)
+
     if not tip:
         return fallback
 
