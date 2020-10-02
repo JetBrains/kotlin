@@ -165,13 +165,14 @@ private class ModuleTemplateComponent(
 private object NoneTemplate : Template() {
     override val title = KotlinNewProjectWizardUIBundle.message("module.settings.template.none")
     override val description: String = ""
-    override val moduleTypes: Set<ModuleType> = ModuleType.ALL
+    override fun isSupportedByModuleType(module: Module): Boolean = true
+
     override val id: String = "none"
 }
 
 fun Reader.availableTemplatesFor(module: Module) =
     TemplatesPlugin.templates.propertyValue.values.filter { template ->
-        module.configurator.moduleType in template.moduleTypes
+        template.isSupportedByModuleType(module)
     }
 
 
