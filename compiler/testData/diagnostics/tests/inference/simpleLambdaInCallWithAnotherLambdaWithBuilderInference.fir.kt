@@ -15,6 +15,6 @@ interface TestInterface<R> {
 
 fun test() {
     val ret = combined({ }) {
-        emit(1)
+        <!INAPPLICABLE_CANDIDATE!>emit<!>(1)
     }
 }

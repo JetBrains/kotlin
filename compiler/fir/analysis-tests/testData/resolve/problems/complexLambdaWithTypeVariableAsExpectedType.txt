@@ -6,8 +6,8 @@ FILE: complexLambdaWithTypeVariableAsExpectedType.kt
         ^select R|kotlin/TODO|()
     }
     public final fun test(): R|kotlin/Unit| {
-        R|/select|<R|(kotlin/Int) -> kotlin/Unit|>(R|/id|<R|(kotlin/Int) -> kotlin/Int|>(<L> = id@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Int| {
-            R|<local>/it|.R|kotlin/Int.inv|()
+        R|/select|<R|(kotlin/Int) -> kotlin/Any|>(R|/id|<R|(kotlin/Int) -> kotlin/Int|>(<L> = id@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Int| {
+            ^ R|<local>/it|.R|kotlin/Int.inv|()
         }
         ), R|/id|<R|(kotlin/Int) -> kotlin/Unit|>(<L> = id@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| {
             ^@id Unit

@@ -11,7 +11,7 @@ import libCase1.*
 import kotlin.text.format
 
 fun case1() {
-    val y2 : () ->String =(String)::format
+    val y2 : () ->String =<!UNRESOLVED_REFERENCE!>(String)::format<!>
 }
 
 // FILE: LibCase1.kt

@@ -14,12 +14,12 @@ fun main() {
     select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction0<kotlin.Unit>")!>id {}<!>, id(suspend {}))
     select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction0<kotlin.Unit>")!>id {}<!>, id<suspend () -> Unit> {})
 
-    takeSuspend(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> & kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Int>")!>id { <!UNRESOLVED_REFERENCE!>it<!> }<!>, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Int>")!>{ x -> x }<!>)
+    takeSuspend(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Int>")!>id { it }<!>, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Int>")!>{ x -> x }<!>)
 
     val x1: suspend (Int) -> Unit = takeSuspend(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Int>")!>id { it }<!>, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Int>")!>{ x -> x }<!>)
 
     // Here, the error should be
-    val x2: (Int) -> Unit = takeSuspend(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> & kotlin.Function1<kotlin.Int, kotlin.Unit>")!>id { <!UNRESOLVED_REFERENCE!>it<!> }<!>, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Nothing, kotlin.Nothing>")!>{ x -> x }<!>)
-    val x3: suspend (Int) -> Unit = takeSimpleFunction(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Int, kotlin.Unit> & kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>")!>id { <!UNRESOLVED_REFERENCE!>it<!> }<!>, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Nothing, kotlin.Nothing>")!>{ x -> x }<!>)
+    val x2: (Int) -> Unit = takeSuspend(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Int>")!>id { it }<!>, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Int>")!>{ x -> x }<!>)
+    val x3: suspend (Int) -> Unit = takeSimpleFunction(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Int>")!>id { it }<!>, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Int>")!>{ x -> x }<!>)
     val x4: (Int) -> Unit = <!INAPPLICABLE_CANDIDATE!>takeSimpleFunction<!>(id<suspend (Int) -> Unit> {}, <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown")!>{}<!>)
 }
