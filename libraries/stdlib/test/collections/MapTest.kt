@@ -284,7 +284,7 @@ class MapTest {
     }
 
     @Test fun createWithSelectorForKeyAndValue() {
-        val map = listOf("a", "bb", "ccc").associateBy({ it.length }, { it.toUpperCase() })
+        val map = listOf("a", "bb", "ccc").associateBy({ it.length }, { it.uppercase() })
         assertEquals(3, map.size)
         assertEquals("A", map[1])
         assertEquals("BB", map[2])
@@ -292,7 +292,7 @@ class MapTest {
     }
 
     @Test fun createWithPairSelector() {
-        val map = listOf("a", "bb", "ccc").associate { it.length to it.toUpperCase() }
+        val map = listOf("a", "bb", "ccc").associate { it.length to it.uppercase() }
         assertEquals(3, map.size)
         assertEquals("A", map[1])
         assertEquals("BB", map[2])

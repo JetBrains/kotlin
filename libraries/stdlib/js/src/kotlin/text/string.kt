@@ -168,19 +168,41 @@ public actual fun String.encodeToByteArray(
 
 /**
  * Returns a copy of this string converted to upper case using the rules of the default locale.
- *
- * @sample samples.text.Strings.toUpperCase
  */
 @kotlin.internal.InlineOnly
 public actual inline fun String.toUpperCase(): String = asDynamic().toUpperCase()
 
 /**
- * Returns a copy of this string converted to lower case using the rules of the default locale.
+ * Returns a copy of this string converted to upper case using Unicode mapping rules of the invariant locale.
  *
- * @sample samples.text.Strings.toLowerCase
+ * This function supports one-to-many and many-to-one character mapping,
+ * thus the length of the returned string can be different from the length of the original string.
+ *
+ * @sample samples.text.Strings.uppercase
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public actual inline fun String.uppercase(): String = asDynamic().toUpperCase()
+
+/**
+ * Returns a copy of this string converted to lower case using the rules of the default locale.
  */
 @kotlin.internal.InlineOnly
 public actual inline fun String.toLowerCase(): String = asDynamic().toLowerCase()
+
+/**
+ * Returns a copy of this string converted to lower case using Unicode mapping rules of the invariant locale.
+ *
+ * This function supports one-to-many and many-to-one character mapping,
+ * thus the length of the returned string can be different from the length of the original string.
+ *
+ * @sample samples.text.Strings.lowercase
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public actual inline fun String.lowercase(): String = asDynamic().toLowerCase()
 
 @kotlin.internal.InlineOnly
 internal actual inline fun String.nativeIndexOf(str: String, fromIndex: Int): Int = asDynamic().indexOf(str, fromIndex)
@@ -212,6 +234,7 @@ public inline fun String.match(regex: String): Array<String>? = asDynamic().matc
 @kotlin.internal.InlineOnly
 internal inline fun String.nativeReplace(pattern: RegExp, replacement: String): String = asDynamic().replace(pattern, replacement)
 
+@OptIn(ExperimentalStdlibApi::class)
 @SinceKotlin("1.2")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.compareTo(other: String, ignoreCase: Boolean = false): Int {
@@ -226,11 +249,11 @@ public actual fun String.compareTo(other: String, ignoreCase: Boolean = false): 
             var s1 = this.substring(start, end)
             var s2 = other.substring(start, end)
             if (s1 != s2) {
-                s1 = s1.toUpperCase()
-                s2 = s2.toUpperCase()
+                s1 = s1.uppercase()
+                s2 = s2.uppercase()
                 if (s1 != s2) {
-                    s1 = s1.toLowerCase()
-                    s2 = s2.toLowerCase()
+                    s1 = s1.lowercase()
+                    s2 = s2.lowercase()
                     if (s1 != s2) {
                         return s1.compareTo(s2)
                     }
