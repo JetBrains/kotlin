@@ -41,7 +41,7 @@ fun includedRange(
                 requireNotNull(intersection) {
                     "Included versions have no intersection $includedVersions"
                 }
-                intersection
+                intersection!!
             }
     } catch (e: UnsupportedOperationException) {
         throw InvalidUserDataException("No ranges for included versions $includedVersions")
