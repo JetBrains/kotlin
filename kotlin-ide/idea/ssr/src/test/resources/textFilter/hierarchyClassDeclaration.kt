@@ -7,12 +7,8 @@ class X {
         val y = 2
     }</warning>
 
-    <warning descr="SSR">class Foo3 : Foo2() {
+    class Foo3 : Foo2() {
         val z = 3
-    }</warning>
-
-    class Bar {
-        val bar = 0
     }
 }
 
@@ -25,11 +21,7 @@ class Y {
         val y = 2
     }</warning>
 
-    <warning descr="SSR">class Foo3<Int> : Foo2<Int>() {
+    class Foo3<Int> : Foo2<Int>() {
         val z = 3
-    }</warning>
-
-    class Bar {
-        val bar = 0
     }
 }

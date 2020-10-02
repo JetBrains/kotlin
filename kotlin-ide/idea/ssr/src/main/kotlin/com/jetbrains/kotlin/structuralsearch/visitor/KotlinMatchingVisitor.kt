@@ -3,6 +3,7 @@ package com.jetbrains.kotlin.structuralsearch.visitor
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.elementType
 import com.intellij.structuralsearch.StructuralSearchUtil
 import com.intellij.structuralsearch.impl.matcher.CompiledPattern
@@ -21,6 +22,8 @@ import org.jetbrains.kotlin.idea.debugger.sequence.psi.resolveType
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.calleeName
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
+import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
+import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
@@ -39,7 +42,6 @@ import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
 import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.source.getPsi
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlinx.serialization.compiler.resolve.toSimpleType
@@ -606,7 +608,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 )
             }
             is KtDotQualifiedExpression -> other.callExpression is KtCallExpression
-                && myMatchingVisitor.match(expression.calleeExpression, other.receiverExpression)
+                    && myMatchingVisitor.match(expression.calleeExpression, other.receiverExpression)
                     && other.calleeName == "${OperatorNameConventions.INVOKE}"
                     && matchValueArguments(
                 parameters,
@@ -724,19 +726,16 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         myMatchingVisitor.result = myMatchingVisitor.match(specifier.typeReference, other.typeReference)
     }
 
-    private fun matchTypeAgainstPredicate(
-        type: KotlinType,
-        predicate: RegExpPredicate?,
+    private fun matchTypeAgainstElement(
+        type: String,
         element: PsiElement,
         other: PsiElement?
     ): Boolean {
-        return type.renderNames().any { renderedType ->
-            when (predicate) {
-                null -> element.text == renderedType
-                        // Ignore type parameters if absent from the pattern
-                        || !element.text.contains('<') && element.text == renderedType.removeTypeParameters()
-                else -> predicate.doMatch(renderedType, myMatchingVisitor.matchContext, other)
-            }
+        return when (val predicate = (getHandler(element) as? SubstitutionHandler)?.findRegExpPredicate()) {
+            null -> element.text == type
+                    // Ignore type parameters if absent from the pattern
+                    || !element.text.contains('<') && element.text == type.removeTypeParameters()
+            else -> predicate.doMatch(type, myMatchingVisitor.matchContext, other)
         }
     }
 
@@ -746,15 +745,15 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val withinHierarchyEntries = list.entries.filter {
             val type = it.typeReference; type is KtTypeReference && getHandler(type).withinHierarchyTextFilterSet
         }
-        val klass = other.parent
-        if (withinHierarchyEntries.any() && klass is KtClassOrObject) {
+        (other.parent as? KtClassOrObject)?.let { klass ->
             val supertypes = (klass.descriptor as ClassDescriptor).toSimpleType().supertypes()
-            for (entry in withinHierarchyEntries) {
-                val typeReference = entry.typeReference ?: continue
-                val predicate = (getHandler(typeReference) as SubstitutionHandler).findRegExpPredicate()
-                if (supertypes.none { matchTypeAgainstPredicate(it, predicate, typeReference, other) }) {
+            withinHierarchyEntries.forEach { entry ->
+                val typeReference = entry.typeReference
+                if (!matchTextOrVariable(typeReference, klass.nameIdentifier) && typeReference != null && supertypes.none {
+                        it.renderNames().any { type -> matchTypeAgainstElement(type, typeReference, other) }
+                    }) {
                     myMatchingVisitor.result = false
-                    return
+                    return@visitSuperTypeList
                 }
             }
         }
@@ -767,23 +766,31 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val other = getTreeElementDepar<KtClass>() ?: return
 
         val identifier = klass.nameIdentifier
-        var matchNameIdentifiers = matchTextOrVariable(identifier, other.nameIdentifier)
+        val otherIdentifier = other.nameIdentifier
+        var matchNameIdentifiers = matchTextOrVariable(identifier, otherIdentifier)
 
         // Possible match if "within hierarchy" is set
         if (!matchNameIdentifiers && identifier != null) {
             val identifierHandler = getHandler(identifier)
-            val checkHierarchy = when {
-                // "within hierarchy" on class name
-                identifierHandler.withinHierarchyTextFilterSet -> true
-                // "within hierarchy" on KtNamedDeclaration
-                identifier.getUserData(KotlinCompilingVisitor.WITHIN_HIERARCHY) == true -> true
-                else -> false
-            }
+            val checkHierarchyDown = identifierHandler.withinHierarchyTextFilterSet
 
-            if (checkHierarchy) {
-                val predicate = (identifierHandler as? SubstitutionHandler)?.findRegExpPredicate()
-                matchNameIdentifiers = (other.descriptor as ClassDescriptor).toSimpleType().supertypes().any {
-                    matchTypeAgainstPredicate(it, predicate, identifier, other.nameIdentifier)
+            if (checkHierarchyDown) {
+                // Check hierarchy down (down of pattern element = supertypes of code element)
+                matchNameIdentifiers = (other.descriptor as ClassDescriptor).toSimpleType().supertypes().any { type ->
+                    type.renderNames().any { renderedType ->
+                        matchTypeAgainstElement(renderedType, identifier, otherIdentifier)
+                    }
+                }
+            } else if (identifier.getUserData(KotlinCompilingVisitor.WITHIN_HIERARCHY) == true && otherIdentifier != null) {
+                // Check hierarchy up (up of pattern element = inheritors of code element)
+                matchNameIdentifiers = HierarchySearchRequest(
+                    other,
+                    GlobalSearchScope.allScope(other.project),
+                    true
+                ).searchInheritors().any { psiClass ->
+                    arrayOf(psiClass.name, psiClass.qualifiedName).filterNotNull().any { renderedType ->
+                        matchTypeAgainstElement(renderedType, identifier, otherIdentifier)
+                    }
                 }
             }
         }
