@@ -5113,6 +5113,10 @@ public final class kotlin/text/CharsKt {
 	public static final fun getDirectionality (C)Lkotlin/text/CharDirectionality;
 	public static final fun isSurrogate (C)Z
 	public static final fun isWhitespace (C)Z
+	public static final fun lowercase (CLjava/util/Locale;)Ljava/lang/String;
+	public static final fun titlecase (C)Ljava/lang/String;
+	public static final fun titlecase (CLjava/util/Locale;)Ljava/lang/String;
+	public static final fun uppercase (CLjava/util/Locale;)Ljava/lang/String;
 }
 
 public final class kotlin/text/Charsets {

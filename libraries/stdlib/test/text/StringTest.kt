@@ -8,7 +8,6 @@ package test.text
 import kotlin.test.*
 import test.*
 import test.collections.behaviors.iteratorBehavior
-import test.collections.behaviors.setBehavior
 import test.collections.compare
 import kotlin.math.sign
 import kotlin.native.concurrent.SharedImmutable
@@ -290,18 +289,26 @@ class StringTest {
     }
 
     @Test fun capitalize() {
-        assertEquals("A", "A".capitalize())
-        assertEquals("A", "a".capitalize())
-        assertEquals("Abcd", "abcd".capitalize())
-        assertEquals("Abcd", "Abcd".capitalize())
+        fun testCapitalize(expected: String, string: String) {
+            assertEquals(expected, string.capitalize())
+            assertEquals(expected, string.replaceFirstChar { it.uppercase() })
+        }
+        testCapitalize("A", "A")
+        testCapitalize("A", "a")
+        testCapitalize("Abcd", "abcd")
+        testCapitalize("Abcd", "Abcd")
     }
 
     @Test fun decapitalize() {
-        assertEquals("a", "A".decapitalize())
-        assertEquals("a", "a".decapitalize())
-        assertEquals("abcd", "abcd".decapitalize())
-        assertEquals("abcd", "Abcd".decapitalize())
-        assertEquals("uRL", "URL".decapitalize())
+        fun testDecapitalize(expected: String, string: String) {
+            assertEquals(expected, string.decapitalize())
+            assertEquals(expected, string.replaceFirstChar { it.lowercase() })
+        }
+        testDecapitalize("a", "A")
+        testDecapitalize("a", "a")
+        testDecapitalize("abcd", "abcd")
+        testDecapitalize("abcd", "Abcd")
+        testDecapitalize("uRL", "URL")
     }
 
     @Test fun slice() {
@@ -1450,7 +1457,7 @@ class StringTest {
         assertEquals("[v-e-r-y-l-o-n-g-s-t-r-oops]", result2)
 
         val data3 = "a1/b".toList()
-        val result3 = data3.joinToString() { it.toUpperCase().toString() }
+        val result3 = data3.joinToString() { it.uppercase() }
         assertEquals("A, 1, /, B", result3)
     }
 
