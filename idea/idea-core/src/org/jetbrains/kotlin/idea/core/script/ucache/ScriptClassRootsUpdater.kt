@@ -189,7 +189,9 @@ abstract class ScriptClassRootsUpdater(
                 }
             }
 
-            lastSeen = updates.cache
+            val scriptClassRootsCache = updates.cache
+            ScriptCacheDependencies(scriptClassRootsCache).save(project)
+            lastSeen = scriptClassRootsCache
         } finally {
             synchronized(this) {
                 scheduledUpdate = null
@@ -203,7 +205,7 @@ abstract class ScriptClassRootsUpdater(
             val new = recreateRootsCache()
             if (cache.compareAndSet(old, new)) {
                 afterUpdate()
-                return new.diff(lastSeen)
+                return new.diff(project, lastSeen)
             }
         }
     }

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.core.script
 
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.components.serviceIfCreated
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.util.Key
@@ -107,8 +106,8 @@ interface ScriptConfigurationManager {
 
     fun getAllScriptsDependenciesClassFilesScope(): GlobalSearchScope
     fun getAllScriptDependenciesSourcesScope(): GlobalSearchScope
-    fun getAllScriptsDependenciesClassFiles(): List<VirtualFile>
-    fun getAllScriptDependenciesSources(): List<VirtualFile>
+    fun getAllScriptsDependenciesClassFiles(): Collection<VirtualFile>
+    fun getAllScriptDependenciesSources(): Collection<VirtualFile>
 
     companion object {
         fun getServiceIfCreated(project: Project): ScriptConfigurationManager? =
