@@ -1422,7 +1422,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                             * Compilation: 'test', arguments: [-g]
 
                 Please move them into final binary declarations. E.g. binaries.executable { freeCompilerArgs += "..." }
-                See more about final binaries: https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#building-final-native-binaries.
+                See more about final binaries: https://kotlinlang.org/docs/reference/mpp-build-native-binaries.html.
                 """.trimIndent()
             )
         }

@@ -311,7 +311,7 @@ open class GradleKotlinMPPSourceSetsFrameworkSupportProvider : GradleKotlinMPPFr
             """kotlin {
     /* Targets configuration omitted. 
     *  To find out how to configure the targets, please follow the link:
-    *  https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#setting-up-targets */
+    *  https://kotlinlang.org/docs/reference/mpp-set-up-targets.html */
 
     sourceSets {
         commonMain {

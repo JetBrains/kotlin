@@ -254,7 +254,7 @@ open class KotlinPlatformJsPlugin : KotlinPlatformImplementationPluginBase("js")
 internal val KOTLIN_12X_MPP_DEPRECATION_WARNING = "\n" + """
     The 'org.jetbrains.kotlin.platform.*' plugins are deprecated and will no longer be available in Kotlin 1.4.
     Please migrate the project to the 'org.jetbrains.kotlin.multiplatform' plugin.
-    See: https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html
+    See: https://kotlinlang.org/docs/reference/mpp-discover-project.html#multiplatform-plugin
     """.trimIndent()
 
 private const val KOTLIN_12X_MPP_DEPRECATION_SUPPRESS_FLAG = "kotlin.internal.mpp12x.deprecation.suppress"
