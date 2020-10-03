@@ -202,7 +202,7 @@ class GenerateIrRuntime {
     }
 
     @Test
-    fun runIrDeserializationMonolitic() {
+    fun runIrDeserializationMonolithic() {
         val files = fullRuntimeSourceSet
         val analysisResult = doFrontEnd(files)
         val rawModuleFragment = doPsi2Ir(files, analysisResult)
@@ -241,7 +241,7 @@ class GenerateIrRuntime {
     }
 
     @Test
-    fun runMonoliticDiskWriting() {
+    fun runMonolithicDiskWriting() {
         val libraryVersion = "JSIR"
         val compilerVersion = KotlinCompilerVersion.getVersion()
         val abiVersion = KotlinAbiVersion.CURRENT
@@ -257,7 +257,7 @@ class GenerateIrRuntime {
         val fileCount = rawModuleFragment.files.size
         val serializedIr = doSerializeIrModule(rawModuleFragment)
 
-        runBenchWithWarmup("Monolitic Disk Writing of $fileCount files", 10, 30, MeasureUnits.MILLISECONDS, pre = writer::invalidate) {
+        runBenchWithWarmup("Monolithic Disk Writing of $fileCount files", 10, 30, MeasureUnits.MILLISECONDS, pre = writer::invalidate) {
             doWriteIrModuleToStorage(serializedIr, writer)
         }
     }
@@ -285,7 +285,7 @@ class GenerateIrRuntime {
     }
 
     @Test
-    fun runIncrementalKlibGeneratation() {
+    fun runIncrementalKlibGeneration() {
 
         val klibDirectory = workingDir.resolve("output/klib")
 
