@@ -161,7 +161,7 @@ class GenerateIrRuntime {
         val files = fullRuntimeSourceSet
         val analysisResult = doFrontEnd(files)
 
-        runBenchWithWarmup("Pipeline withput FrontEnd", 40, 10, MeasureUnits.MICROSECONDS, pre = System::gc) {
+        runBenchWithWarmup("Pipeline without FrontEnd", 40, 10, MeasureUnits.MICROSECONDS, pre = System::gc) {
             val rawModuleFragment = doPsi2Ir(files, analysisResult)
 
             val modulePath = doSerializeModule(rawModuleFragment, analysisResult.bindingContext, files)
@@ -423,7 +423,7 @@ class GenerateIrRuntime {
         val rawModuleFragment = doPsi2Ir(files, analysisResult)
         val modulePath = doSerializeModule(rawModuleFragment, analysisResult.bindingContext, files)
 
-        runBenchWithWarmup("Deserializtion and Backend", 40, 10, MeasureUnits.MICROSECONDS, pre = System::gc) {
+        runBenchWithWarmup("Deserialization and Backend", 40, 10, MeasureUnits.MICROSECONDS, pre = System::gc) {
             val (module, symbolTable, irBuiltIns, linker) = doDeserializeModule(modulePath)
             doBackEnd(module, symbolTable, irBuiltIns, linker)
         }
