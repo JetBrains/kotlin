@@ -263,7 +263,7 @@ class GenerateIrRuntime {
     }
 
     @Test
-    fun runPerfileDiskWriting() {
+    fun runPerFileDiskWriting() {
         val libraryVersion = "JSIR"
         val compilerVersion = KotlinCompilerVersion.getVersion()
         val abiVersion = KotlinAbiVersion.CURRENT
