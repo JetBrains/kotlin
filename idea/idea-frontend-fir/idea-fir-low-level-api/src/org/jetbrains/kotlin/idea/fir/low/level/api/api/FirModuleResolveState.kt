@@ -37,6 +37,8 @@ abstract class FirModuleResolveState {
 
     internal abstract fun getFirFile(ktFile: KtFile): FirFile
 
+    internal abstract fun isFirFileBuilt(ktFile: KtFile): Boolean
+
     internal abstract fun getDiagnostics(element: KtElement): List<Diagnostic>
 
     internal abstract fun collectDiagnosticsForFile(ktFile: KtFile): Collection<Diagnostic>
