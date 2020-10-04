@@ -69,6 +69,12 @@ internal class FirModuleResolveStateImpl(
         sessionProvider.getModuleCache(ktDeclaration.getModuleInfo() as ModuleSourceInfo)
     )
 
+    override fun isFirFileBuilt(ktFile: KtFile): Boolean {
+        val moduleSourceInfo = ktFile.getModuleInfo() as? ModuleSourceInfo ?: return true
+        val cache = sessionProvider.getModuleCache(moduleSourceInfo)
+        return firFileBuilder.isFirFileBuilt(ktFile, cache)
+    }
+
     override fun <D : FirDeclaration> resolvedFirToPhase(declaration: D, toPhase: FirResolvePhase): D {
         val fileCache = when (val session = declaration.session) {
             is FirIdeSourcesSession -> session.cache
