@@ -9,7 +9,6 @@ import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.editorActions.CopyPastePostProcessor
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ReadAction
-import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
@@ -44,8 +43,10 @@ import org.jetbrains.kotlin.idea.core.util.start
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.*
 import org.jetbrains.kotlin.idea.util.*
-import org.jetbrains.kotlin.idea.util.application.*
-import org.jetbrains.kotlin.idea.util.runReadActionInSmartMode
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.idea.util.application.invokeLater
+import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.kdoc.psi.api.KDocElement
 import org.jetbrains.kotlin.name.FqName
@@ -375,10 +376,12 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
                 showRestoreReferencesDialog(project, referencesPossibleToRestore)
             if (selectedReferencesToRestore.isEmpty()) return@invokeLater
 
-            val imported = TreeSet<String>()
-            restoreReferences(selectedReferencesToRestore, file, imported)
+            project.executeWriteCommand(KotlinBundle.message("resolve.pasted.references")) {
+                val imported = TreeSet<String>()
+                restoreReferences(selectedReferencesToRestore, file, imported)
 
-            reviewAddedImports(project, editor, file, imported)
+                reviewAddedImports(project, editor, file, imported)
+            }
         }
     }
 
@@ -686,9 +689,8 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
         file: KtFile,
         imported: MutableSet<String>
     ) {
-        val project = file.project
-        val importHelper = ImportInsertHelper.getInstance(project)
-        val smartPointerManager = SmartPointerManager.getInstance(project)
+        val importHelper = ImportInsertHelper.getInstance(file.project)
+        val smartPointerManager = SmartPointerManager.getInstance(file.project)
 
         data class BindingRequest(
             val pointer: SmartPsiElementPointer<KtSimpleNameExpression>,
@@ -715,22 +717,18 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
             }
         }
 
-        project.executeWriteCommand(KotlinBundle.message("resolve.pasted.references")) {
-            for (descriptor in descriptorsToImport) {
-                importHelper.importDescriptor(file, descriptor)
-                descriptor.getImportableDescriptor().importableFqName?.let { imported.add(it.asString()) }
-            }
+        for (descriptor in descriptorsToImport) {
+            importHelper.importDescriptor(file, descriptor)
+            descriptor.getImportableDescriptor().importableFqName?.let { imported.add(it.asString()) }
+        }
 
-            for ((pointer, fqName) in bindingRequests) {
-                pointer.element?.mainReference?.let {
-                    it.bindToFqName(fqName, KtSimpleNameReference.ShorteningMode.DELAYED_SHORTENING)
-                    imported.add(fqName.asString())
-                }
+        for ((pointer, fqName) in bindingRequests) {
+            pointer.element?.mainReference?.let {
+                it.bindToFqName(fqName, KtSimpleNameReference.ShorteningMode.DELAYED_SHORTENING)
+                imported.add(fqName.asString())
             }
         }
-        CommandProcessor.getInstance().runUndoTransparentAction {
-            performDelayedRefactoringRequests(file.project)
-        }
+        performDelayedRefactoringRequests(file.project)
     }
 
     private fun findImportableDescriptors(fqName: FqName, file: KtFile): Collection<DeclarationDescriptor> {

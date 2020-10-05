@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.references
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiReference
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.IncorrectOperationException
 import com.intellij.util.SmartList
@@ -20,7 +21,6 @@ import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
-import org.jetbrains.kotlin.idea.util.application.disablePostprocessFormattingInside
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
@@ -171,18 +171,15 @@ class KtSimpleNameReferenceDescriptorsImpl(
         if (expression !is KtNameReferenceExpression) return expression
         if (expression.parent is KtThisExpression || expression.parent is KtSuperExpression) return expression // TODO: it's a bad design of PSI tree, we should change it
 
-        val newExpression =
-            expression.project.disablePostprocessFormattingInside {
-                expression.changeQualifiedName(
-                    fqName.quoteIfNeeded().let {
-                        if (shorteningMode == ShorteningMode.NO_SHORTENING)
-                            it
-                        else
-                            it.withRootPrefixIfNeeded(expression)
-                    },
-                    targetElement
-                )
-            }
+        val newExpression = expression.changeQualifiedName(
+            fqName.quoteIfNeeded().let {
+                if (shorteningMode == ShorteningMode.NO_SHORTENING)
+                    it
+                else
+                    it.withRootPrefixIfNeeded(expression)
+            },
+            targetElement
+        )
         val newQualifiedElement = newExpression.getQualifiedElementOrCallableRef()
 
         if (shorteningMode == ShorteningMode.NO_SHORTENING) return newExpression
