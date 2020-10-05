@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.asJava.LightClassProvider.Companion.providedIsKtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.idea.KotlinIconsIndependent.ACTUAL
 import org.jetbrains.kotlin.idea.KotlinIconsIndependent.EXPECT
-import org.jetbrains.kotlin.idea.search.ifTrue
+import org.jetbrains.kotlin.idea.util.ifTrue
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
