@@ -20,7 +20,7 @@ object JvmBuiltInsSignatures {
             "toArray()[Ljava/lang/Object;", "toArray([Ljava/lang/Object;)[Ljava/lang/Object;"
         ) + "java/lang/annotation/Annotation.annotationType()Ljava/lang/Class;"
 
-    val BLACK_LIST_METHOD_SIGNATURES: Set<String> =
+    val HIDDEN_METHOD_SIGNATURES: Set<String> =
         signatures {
             buildPrimitiveValueMethodsSet() +
 
@@ -62,7 +62,7 @@ object JvmBuiltInsSignatures {
         }
 
 
-    val WHITE_LIST_METHOD_SIGNATURES: Set<String> =
+    val VISIBLE_METHOD_SIGNATURES: Set<String> =
         signatures {
             inJavaLang(
                 "CharSequence",
@@ -132,7 +132,7 @@ object JvmBuiltInsSignatures {
                     )
         }
 
-    val BLACK_LIST_CONSTRUCTOR_SIGNATURES: Set<String> =
+    val HIDDEN_CONSTRUCTOR_SIGNATURES: Set<String> =
         signatures {
             buildPrimitiveStringConstructorsSet() +
                     inJavaLang("Float", *constructors("D")) +
@@ -149,7 +149,7 @@ object JvmBuiltInsSignatures {
                     )
         }
 
-    val WHITE_LIST_CONSTRUCTOR_SIGNATURES: Set<String> =
+    val VISIBLE_CONSTRUCTOR_SIGNATURES: Set<String> =
         signatures {
             inJavaLang("Throwable", *constructors("Ljava/lang/String;Ljava/lang/Throwable;ZZ"))
         }
