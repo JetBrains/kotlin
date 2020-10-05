@@ -153,9 +153,8 @@ internal class UntilHandler(private val context: CommonBackendContext) :
         //   infix fun UInt.until(to: UInt): UIntRange
         //   infix fun ULong.until(to: ULong): ULongRange
         //
-        // The combinations where the range element type is strictly larger than the argument type do NOT need the additional condition.
-        // In such combinations, there is no possibility of underflow when the argument (casted to the range element type) is decremented.
-        // For unexpected combinations that currently don't exist (e.g., Int until Char), we assume the check is needed to be safe.
+        // The additional condition is only needed when the argument casted to the range element type and then decremented can produce
+        // negative overflow - in other words, if the minimum value of `to` is the same as the minimum value for the progression type.
         return with(context.irBuiltIns) {
             when (receiverType) {
                 charType -> true
@@ -167,11 +166,9 @@ internal class UntilHandler(private val context: CommonBackendContext) :
                     byteType, shortType, intType -> false
                     else -> true
                 }
-                uByteType -> false
-                uShortType -> false
-                uIntType -> true
-                uLongType -> true
-                else -> true  // Default in case a new `until` overload is added to stdlib and this function was not updated.
+                // 1. All unsigned types regardless of size "bottom out" at 0, so they all need the check.
+                // 2. In case new types are added to stdlib, conservatively add a check as well.
+                else -> true
             }
         }
     }
