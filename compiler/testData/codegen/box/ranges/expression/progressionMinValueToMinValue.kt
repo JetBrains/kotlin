@@ -3,11 +3,11 @@
 // WITH_RUNTIME
 
 
-const val MinI = Int.MIN_VALUE
-const val MinB = Byte.MIN_VALUE
-const val MinS = Short.MIN_VALUE
-const val MinL = Long.MIN_VALUE
-const val MinC = Char.MIN_VALUE
+val MinI = Int.MIN_VALUE
+val MinB = Byte.MIN_VALUE
+val MinS = Short.MIN_VALUE
+val MinL = Long.MIN_VALUE
+val MinC = Char.MIN_VALUE
 
 fun box(): String {
     val list1 = ArrayList<Int>()

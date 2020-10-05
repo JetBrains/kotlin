@@ -3,14 +3,14 @@
 // WITH_RUNTIME
 
 
-const val MaxUI = UInt.MAX_VALUE
-const val MinUI = UInt.MIN_VALUE
-const val MaxUB = UByte.MAX_VALUE
-const val MinUB = UByte.MIN_VALUE
-const val MaxUS = UShort.MAX_VALUE
-const val MinUS = UShort.MIN_VALUE
-const val MaxUL = ULong.MAX_VALUE
-const val MinUL = ULong.MIN_VALUE
+val MaxUI = UInt.MAX_VALUE
+val MinUI = UInt.MIN_VALUE
+val MaxUB = UByte.MAX_VALUE
+val MinUB = UByte.MIN_VALUE
+val MaxUS = UShort.MAX_VALUE
+val MinUS = UShort.MIN_VALUE
+val MaxUL = ULong.MAX_VALUE
+val MinUL = ULong.MIN_VALUE
 
 fun box(): String {
     val list1 = ArrayList<UInt>()
