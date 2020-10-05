@@ -10,11 +10,11 @@ fun box() {
 // IGNORE_BACKEND: JVM_IR
 // LOCAL VARIABLES
 // TestKt:8:
-// A:3: x:java.lang.String, y:int
+// A:3: x:java.lang.String="O":java.lang.String, y:int=123:int
 // TestKt:8:
-// TestKt:5: a:A, block:TestKt$box$1
-// TestKt$box$1:8: $dstr$x$y:A
+// TestKt:5: a:A=A, block:kotlin.jvm.functions.Function1=TestKt$box$1
+// TestKt$box$1:8: $dstr$x$y:A=A
 // TestKt$box$1.invoke(java.lang.Object)+8:
-// TestKt:5: a:A, block:TestKt$box$1
+// TestKt:5: a:A=A, block:kotlin.jvm.functions.Function1=TestKt$box$1
 // TestKt:8:
 // TestKt:9:

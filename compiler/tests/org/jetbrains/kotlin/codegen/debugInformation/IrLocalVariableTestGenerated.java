@@ -32,6 +32,12 @@ public class IrLocalVariableTestGenerated extends AbstractIrLocalVariableTest {
     }
 
     @Test
+    @TestMetadata("catchClause.kt")
+    public void testCatchClause() throws Exception {
+        runTest("compiler/testData/debug/localVariables/catchClause.kt");
+    }
+
+    @Test
     @TestMetadata("copyFunction.kt")
     public void testCopyFunction() throws Exception {
         runTest("compiler/testData/debug/localVariables/copyFunction.kt");
