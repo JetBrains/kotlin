@@ -1050,6 +1050,12 @@ fun main(args: Array<String>) {
             }
         }
 
+        testGroup("idea/idea-fir-performance-tests/tests", "idea/idea-completion/testData") {
+            testClass<AbstractHighLevelPerformanceBasicCompletionHandlerTest> {
+                model("handlers/basic", testMethod = "doPerfTest", pattern = KT_WITHOUT_DOTS_IN_NAME)
+            }
+        }
+
         testGroup("idea/idea-fir/tests", "idea/testData") {
             testClass<AbstractFirReferenceResolveTest> {
                 model("resolve/references", pattern = KT_WITHOUT_DOTS_IN_NAME)
