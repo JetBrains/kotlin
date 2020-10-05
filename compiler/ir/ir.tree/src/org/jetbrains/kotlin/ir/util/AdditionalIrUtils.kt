@@ -170,11 +170,26 @@ class NaiveSourceBasedFileEntryImpl(
     override val name: String,
     private val lineStartOffsets: IntArray = intArrayOf()
 ) : SourceManager.FileEntry {
+
+    // Map with several last calculated line numbers.
+    // Calculating for same offset is made many times during code and debug info generation.
+    // In the worst case at least getting column recalculates line because it is usually called after getting line.
+    val calculatedBeforeLineNumbers: MutableMap<Int, Int> = mutableMapOf()
+
+    val MAX_SAVED_LINE_NUMBERS = 50
+
     override fun getLineNumber(offset: Int): Int {
         assert(offset != UNDEFINED_OFFSET)
         if (offset == SYNTHETIC_OFFSET) return 0
-        val index = lineStartOffsets.binarySearch(offset)
-        return if (index >= 0) index else -index - 2
+        val resultIndex = calculatedBeforeLineNumbers.getOrPut(offset) {
+            if (calculatedBeforeLineNumbers.size >= MAX_SAVED_LINE_NUMBERS) {
+                calculatedBeforeLineNumbers.clear()
+            }
+            val index = lineStartOffsets.binarySearch(offset)
+            if (index >= 0) index else -index - 2
+        }
+
+        return resultIndex
     }
 
     override fun getColumnNumber(offset: Int): Int {
