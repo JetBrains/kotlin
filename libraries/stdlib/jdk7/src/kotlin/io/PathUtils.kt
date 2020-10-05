@@ -36,12 +36,13 @@ public val Path.invariantSeparatorsPath: String
     }
 
 /**
- * Returns this path's [fileName][Path.getFileName] without an extension.
+ * Returns this path's [fileName][Path.getFileName] without an extension, or an empty string if
+ * this path has zero elements.
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
 public val Path.nameWithoutExtension: String
-    get() = fileName.toString().substringBeforeLast(".")
+    get() = fileName?.toString()?.substringBeforeLast(".") ?: ""
 
 /**
  * Calculates the relative path for this path from a [base] path.

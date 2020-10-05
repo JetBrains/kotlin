@@ -30,6 +30,7 @@ class PathExtensionsTest {
         assertEquals("aaa", Paths.get("aaa.").nameWithoutExtension)
         assertEquals("", Paths.get(".bbb").nameWithoutExtension)
         assertEquals("log", Paths.get("/my.dir/log").nameWithoutExtension)
+        assertEquals("", Paths.get("").nameWithoutExtension)
     }
 
     @Test
@@ -132,9 +133,6 @@ class PathExtensionsTest {
         Files.write(file, lines)
 
         assertEquals(file.bufferedReader().use { it.readLines() }, lines)
-        assertEquals(file.bufferedReader(StandardOpenOption.READ).use { it.readLines() }, lines)
-        assertEquals(file.bufferedReader(1024, StandardOpenOption.READ).use { it.readLines() }, lines)
-        assertEquals(file.bufferedReader(Charsets.UTF_8, StandardOpenOption.READ).use { it.readLines() }, lines)
         assertEquals(file.bufferedReader(Charsets.UTF_8, 1024, StandardOpenOption.READ).use { it.readLines() }, lines)
     }
 
@@ -143,12 +141,9 @@ class PathExtensionsTest {
         val file = Files.createTempFile(null, null)
 
         file.bufferedWriter().use { it.write("line1\n") }
-        file.bufferedWriter(StandardOpenOption.APPEND).use { it.write("line2\n") }
-        file.bufferedWriter(Charsets.UTF_8, StandardOpenOption.APPEND).use { it.write("line3\n") }
-        file.bufferedWriter(1024, StandardOpenOption.APPEND).use { it.write("line4\n") }
-        file.bufferedWriter(Charsets.UTF_8, 1024, StandardOpenOption.APPEND).use { it.write("line5\n") }
+        file.bufferedWriter(Charsets.UTF_8, 1024, StandardOpenOption.APPEND).use { it.write("line2\n") }
 
-        assertEquals(Files.readAllLines(file), listOf("line1", "line2", "line3", "line4", "line5"))
+        assertEquals(Files.readAllLines(file), listOf("line1", "line2"))
     }
 
     @Test
@@ -162,7 +157,7 @@ class PathExtensionsTest {
         writer.println(str2)
         writer.close()
 
-        val writer2 = file.printWriter(StandardOpenOption.APPEND)
+        val writer2 = file.printWriter(options = arrayOf(StandardOpenOption.APPEND))
         val str3 = "Hello again!"
         writer2.println(str3)
         writer2.close()
