@@ -66,6 +66,8 @@ class KotlinSSFunctionTest : KotlinSSResourceInspectionTest() {
     fun testFunVarargAndNormalParam() { doTest("fun '_(vararg '_ : '_, '_ : '_)") }
 
     fun testFunVarargAndNormalReverseParam() { doTest("fun '_('_ : '_, vararg '_ : '_)") }
+
+    fun testFunVarargFullMatchParam() { doTest("fun '_('_)") }
     
     fun testFunNoinlineParam() { doTest("fun '_(noinline '_)") }
 

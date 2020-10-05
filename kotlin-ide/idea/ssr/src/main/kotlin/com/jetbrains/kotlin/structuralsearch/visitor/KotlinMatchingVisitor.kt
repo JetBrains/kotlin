@@ -652,7 +652,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         ) other else other.nameIdentifier
         myMatchingVisitor.result = typeMatched
                 && myMatchingVisitor.match(parameter.defaultValue, other.defaultValue)
-                && parameter.isVarArg == other.isVarArg
+                && (parameter.isVarArg == other.isVarArg || getHandler(parameter) is SubstitutionHandler)
                 && myMatchingVisitor.match(parameter.valOrVarKeyword, other.valOrVarKeyword)
                 && (parameter.nameIdentifier == null || matchTextOrVariable(parameter.nameIdentifier, otherNameIdentifier))
                 && myMatchingVisitor.match(parameter.modifierList, other.modifierList)
