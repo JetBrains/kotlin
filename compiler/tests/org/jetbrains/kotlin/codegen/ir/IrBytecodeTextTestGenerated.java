@@ -1765,6 +1765,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         public void testSimpleConstructorNotRedundantNotOptimizable() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/deadCodeElimination/simpleConstructorNotRedundantNotOptimizable.kt");
         }
+
+        @TestMetadata("unusedPrimitiveAndObjectEquals.kt")
+        public void testUnusedPrimitiveAndObjectEquals() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/deadCodeElimination/unusedPrimitiveAndObjectEquals.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/defaultArguments")
