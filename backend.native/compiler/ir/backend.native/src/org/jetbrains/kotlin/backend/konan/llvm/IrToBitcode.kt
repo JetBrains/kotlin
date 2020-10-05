@@ -1940,8 +1940,15 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    private fun IrFunction.scope(): DIScopeOpaqueRef? = if (startOffset != UNDEFINED_OFFSET)
-        this.scope(startLine()) else null
+    // Saved calculated IrFunction scope which is used several time for getting locations and generating debug info.
+    private var irFunctionSavedScope: Pair<IrFunction, DIScopeOpaqueRef?>? = null
+
+    private fun IrFunction.scope(): DIScopeOpaqueRef? = if (startOffset != UNDEFINED_OFFSET) (
+            if (irFunctionSavedScope != null && this == irFunctionSavedScope!!.first)
+                irFunctionSavedScope!!.second
+            else
+                this.scope(startLine()).also { irFunctionSavedScope = Pair(this, it) }
+            ) else null
 
     private val IrFunction.isReifiedInline:Boolean
         get() = isInline && typeParameters.any { it.isReified }
