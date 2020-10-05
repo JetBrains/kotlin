@@ -143,20 +143,30 @@ private fun JavaArrayType.toConeKotlinTypeWithoutEnhancement(
     javaTypeParameterStack: JavaTypeParameterStack,
     forAnnotationValueParameter: Boolean = false,
     isForSupertypes: Boolean
-): ConeFlexibleType {
+): ConeKotlinType {
     val componentType = componentType
     return if (componentType !is JavaPrimitiveType) {
         val classId = StandardClassIds.Array
-        val argumentType = componentType.toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack, forAnnotationValueParameter, isForSupertypes)
-        classId.toConeFlexibleType(
-            arrayOf(argumentType),
-            typeArgumentsForUpper = arrayOf(ConeKotlinTypeProjectionOut(argumentType))
+        val argumentType = componentType.toConeKotlinTypeWithoutEnhancement(
+            session, javaTypeParameterStack, forAnnotationValueParameter, isForSupertypes
         )
+        if (forAnnotationValueParameter) {
+            classId.constructClassLikeType(arrayOf(argumentType), isNullable = false)
+        } else {
+            classId.toConeFlexibleType(
+                arrayOf(argumentType),
+                typeArgumentsForUpper = arrayOf(ConeKotlinTypeProjectionOut(argumentType))
+            )
+        }
     } else {
         val javaComponentName = componentType.type?.typeName?.asString()?.capitalize() ?: error("Array of voids")
         val classId = StandardClassIds.byName(javaComponentName + "Array")
 
-        classId.toConeFlexibleType(emptyArray())
+        if (forAnnotationValueParameter) {
+            classId.constructClassLikeType(emptyArray(), isNullable = false)
+        } else {
+            classId.toConeFlexibleType(emptyArray())
+        }
     }
 }
 
@@ -183,6 +193,9 @@ private fun JavaClassifierType.toConeKotlinTypeWithoutEnhancement(
         isForSupertypes,
         forAnnotationValueParameter = forAnnotationValueParameter
     )
+    if (forAnnotationValueParameter) {
+        return lowerBound
+    }
     val upperBound =
         toConeKotlinTypeForFlexibleBound(
             session,
