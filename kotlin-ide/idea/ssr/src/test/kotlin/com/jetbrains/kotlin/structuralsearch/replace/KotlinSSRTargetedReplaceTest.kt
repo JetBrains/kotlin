@@ -33,9 +33,7 @@ class KotlinSSRTargetedReplaceTest : KotlinSSRReplaceTest() {
                     fun 'Fun()
                 }
             """.trimIndent(),
-            replacePattern = """
-                fun '_Fun()
-            """.trimIndent(),
+            replacePattern = "fun '_Fun()",
             match = """
                 class Foo {  
                     fun bar(): Int = 0

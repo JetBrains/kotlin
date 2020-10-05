@@ -168,29 +168,51 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
         if(getSuperTypeList()?.findDescendantOfType<PsiErrorElement>() != null) {
             getSuperTypeList()?.delete()
         }
-        if(typeParameters.isEmpty()) {
-            typeParameterList?.delete()
-        }
+        if(typeParameters.isEmpty()) typeParameterList?.delete() // for count filter equals to 0 inside <>
+
         CLASS_MODIFIERS.forEach { replaceModifier(searchTemplate, match, it) }
         fixModifierListFormatting(match)
-        val constr = primaryConstructor
-        val searchContr = searchTemplate.primaryConstructor
-        val matchConstr = match.primaryConstructor
-        if (constr == null && searchContr == null) matchConstr?.let { addFormatted(it) }
-        val paramList = getPrimaryConstructorParameterList()
-        val searchParamList = searchTemplate.getPrimaryConstructorParameterList()
-        val matchParamList = match.getPrimaryConstructorParameterList()
-        if(searchParamList != null && matchParamList != null) paramList?.replaceParameterList(searchParamList, matchParamList)
-        if (getSuperTypeList() == null && searchTemplate.getSuperTypeList() == null) match.superTypeListEntries.forEach {
-            addSuperTypeListEntry(it)
-        }
+
         if(primaryConstructorModifierList == null && searchTemplate.primaryConstructorModifierList == null) {
             match.primaryConstructorModifierList?.let { matchModList ->
                 matchModList.visibilityModifierType()?.let { primaryConstructor?.addModifier(it) }
                 addSurroundingWhiteSpace(primaryConstructor!!, match.primaryConstructor!!)
             }
         }
-        if (body == null && searchTemplate.body == null) match.body?.let { addFormatted(it) }
+
+        val searchParamList = searchTemplate.getPrimaryConstructorParameterList()
+        val matchParamList = match.getPrimaryConstructorParameterList()
+        if(searchParamList != null && matchParamList != null) getPrimaryConstructorParameterList()
+            ?.replaceParameterList(searchParamList, matchParamList)
+
+        if (getSuperTypeList() == null && searchTemplate.getSuperTypeList() == null) {
+            // replace all entries
+            match.superTypeListEntries.forEach {
+                val superTypeEntry = addSuperTypeListEntry(it)
+                getSuperTypeList()?.addSurroundingWhiteSpace(superTypeEntry, it)
+            }
+
+            // format commas
+            val matchCommas = match.getSuperTypeList()?.node?.children()
+                ?.filter { it.elementType == KtTokens.COMMA }
+                ?.map { it.psi }
+                ?.toList()
+            getSuperTypeList()?.node?.children()?.filter { it.elementType == KtTokens.COMMA }?.forEachIndexed { index, element ->
+                getSuperTypeList()?.addSurroundingWhiteSpace(element.psi, matchCommas!![index])
+            }
+
+            // format semi colon
+            if(superTypeListEntries.isNotEmpty() && match.superTypeListEntries.isNotEmpty()) {
+                node.children().find { it.elementType == KtTokens.COLON }?.let { replaceColon -> // TODO replace by getColon in 1.3
+                    val matchColon = match.node.children().find { it.elementType == KtTokens.COLON }!!
+                    addSurroundingWhiteSpace(replaceColon.psi, matchColon.psi)
+                }
+            }
+        }
+        if (body == null && searchTemplate.body == null) match.body?.let { matchBody ->
+            getSuperTypeList()?.node?.lastChildNode?.psi?.let { if(it is PsiWhiteSpace) it.delete() }
+            addFormatted(matchBody)
+        }
         return this
     }
 

@@ -57,6 +57,15 @@ class KotlinSSRClassReplaceTest : KotlinSSRReplaceTest() {
         )
     }
 
+    fun testClassSuperTypesFormatCopy() {
+        doTest(
+            searchPattern = "class '_ID()",
+            replacePattern = "class '_ID()",
+            match = "class Foo()  :  Cloneable  ,  Any()  {}",
+            result = "class Foo()  :  Cloneable  ,  Any()  {}"
+        )
+    }
+
     fun testAnnotatedClassCountFilter() {
         doTest(
             searchPattern = "@'_ANN* class '_ID('_PARAM : '_TYPE)",
@@ -68,10 +77,10 @@ class KotlinSSRClassReplaceTest : KotlinSSRReplaceTest() {
 
     fun testClassExtensionCountFilter() {
         doTest(
-            searchPattern = "class '_ID('_PARAM : '_TYPE) : '_INTFACE*",
-            replacePattern = "class '_ID('_PARAM : '_TYPE) : '_INTFACE",
-            match = "class Foo(bar : Int) {}",
-            result = "class Foo(bar : Int) {}"
+            searchPattern = "class '_ID() : '_INTFACE*",
+            replacePattern = "class '_ID() : '_INTFACE",
+            match = "class Foo() {}",
+            result = "class Foo() {}"
         )
     }
 
