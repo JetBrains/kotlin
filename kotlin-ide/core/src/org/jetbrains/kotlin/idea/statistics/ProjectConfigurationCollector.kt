@@ -85,7 +85,7 @@ class ProjectConfigurationCollector : ProjectUsagesCollector() {
         private fun composePlatformFields(): List<String> {
             return listOf(
                 listOf("jvm", "jvm.android", "js", "common", "native.unknown", "unknown"),
-                KonanTarget.predefinedTargets.keys
+                KonanTarget.predefinedTargets.keys.map { "native.$it" }
             ).flatten()
         }
 
