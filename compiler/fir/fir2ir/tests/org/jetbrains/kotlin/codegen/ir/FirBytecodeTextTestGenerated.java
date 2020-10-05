@@ -2746,11 +2746,6 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
                 runTest("compiler/testData/codegen/bytecodeText/forLoop/unsigned/forInUntilULongMinValue.kt");
             }
 
-            @TestMetadata("forInUntilWithMixedTypeBoundsNoBoundCheckNeededForUIntRangeIR.kt")
-            public void testForInUntilWithMixedTypeBoundsNoBoundCheckNeededForUIntRangeIR() throws Exception {
-                runTest("compiler/testData/codegen/bytecodeText/forLoop/unsigned/forInUntilWithMixedTypeBoundsNoBoundCheckNeededForUIntRangeIR.kt");
-            }
-
             @TestMetadata("illegalStepConst.kt")
             public void testIllegalStepConst() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeText/forLoop/unsigned/illegalStepConst.kt");

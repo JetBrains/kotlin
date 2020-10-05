@@ -45,14 +45,10 @@ internal sealed class ProgressionType(
                 irType.isSubtypeOfClass(symbols.charProgression) -> CharProgressionType(symbols)
                 irType.isSubtypeOfClass(symbols.intProgression) -> IntProgressionType(symbols)
                 irType.isSubtypeOfClass(symbols.longProgression) -> LongProgressionType(symbols)
-                symbols.uIntProgression != null && irType.isSubtypeOfClass(symbols.uIntProgression) -> UIntProgressionType(
-                    symbols,
-                    allowUnsignedBounds
-                )
-                symbols.uLongProgression != null && irType.isSubtypeOfClass(symbols.uLongProgression) -> ULongProgressionType(
-                    symbols,
-                    allowUnsignedBounds
-                )
+                symbols.uIntProgression != null && irType.isSubtypeOfClass(symbols.uIntProgression) ->
+                    UIntProgressionType(symbols, allowUnsignedBounds)
+                symbols.uLongProgression != null && irType.isSubtypeOfClass(symbols.uLongProgression) ->
+                    ULongProgressionType(symbols, allowUnsignedBounds)
                 else -> null
             }
     }
