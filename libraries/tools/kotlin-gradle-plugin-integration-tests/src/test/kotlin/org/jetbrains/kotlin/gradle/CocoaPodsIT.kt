@@ -696,13 +696,12 @@ class CocoaPodsIT : BaseGradleIT() {
 
     @Test
     fun testCinteropExtraOpts() {
-        with(project.gradleBuildScript()) {
-            addPod("AFNetworking", "extraOpts = listOf(\"-help\")")
-        }
-
-        project.build("wrapper", "cinteropAFNetworkingIOS") {
-            assertSuccessful()
-            assertContains("Usage: cinterop options_list")
+        with(project) {
+            gradleBuildScript().addPod("AFNetworking", "extraOpts = listOf(\"-help\")")
+            hooks.addHook {
+                assertContains("Usage: cinterop options_list")
+            }
+            testWithWrapper("cinteropAFNetworkingIOS")
         }
     }
 
