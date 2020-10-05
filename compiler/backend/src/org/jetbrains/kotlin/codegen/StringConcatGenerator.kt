@@ -9,7 +9,7 @@ import com.google.common.collect.Sets
 import org.jetbrains.kotlin.codegen.BranchedValue.Companion.FALSE
 import org.jetbrains.kotlin.codegen.BranchedValue.Companion.TRUE
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.JvmRuntimeStringConcat
+import org.jetbrains.kotlin.config.JvmStringConcat
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
 import org.jetbrains.kotlin.types.KotlinType
@@ -19,7 +19,7 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import java.lang.StringBuilder
 
-class StringConcatGenerator(val mode: JvmRuntimeStringConcat, val mv: InstructionAdapter) {
+class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapter) {
 
     private val template = StringBuilder("")
     private val paramTypes = arrayListOf<Type>()
@@ -39,7 +39,7 @@ class StringConcatGenerator(val mode: JvmRuntimeStringConcat, val mv: Instructio
     @JvmOverloads
     fun putValueOrProcessConstant(stackValue: StackValue, type: Type = stackValue.type, kotlinType: KotlinType? = stackValue.kotlinType) {
         justFlushed = false
-        if (mode == JvmRuntimeStringConcat.ENABLE) {
+        if (mode == JvmStringConcat.INDY_WITH_CONSTANTS) {
             when (stackValue) {
                 is StackValue.Constant -> {
                     template.append(stackValue.value)
@@ -91,7 +91,7 @@ class StringConcatGenerator(val mode: JvmRuntimeStringConcat, val mv: Instructio
         } else {
             //if state was flushed in `invokeAppend` do nothing
             if (justFlushed) return
-            if (mode == JvmRuntimeStringConcat.ENABLE) {
+            if (mode == JvmStringConcat.INDY_WITH_CONSTANTS) {
                 val bootstrap = Handle(
                     Opcodes.H_INVOKESTATIC,
                     "java/lang/invoke/StringConcatFactory",

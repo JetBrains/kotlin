@@ -334,14 +334,14 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var emitJvmTypeAnnotations: Boolean by FreezableVar(false)
 
     @Argument(
-        value = "-Xruntime-string-concat",
-        valueDescription = "{disable|enable|indy}",
+        value = "-Xstring-concat",
+        valueDescription = "{indy-with-constants|indy|inline}",
         description = """Switch a way in which string concatenation is performed.
--Xruntime-string-concat=enable          Performs string concatenation via `invokedynamic` 'makeConcatWithConstants'. Works only with `-jvm-target 9` or greater  
--Xruntime-string-concat=indy            Performs string concatenation via `invokedynamic` 'makeConcat'. Works only with `-jvm-target 9` or greater                                 
--Xruntime-string-concat=disable         Performs string concatenation via `StringBuilder`"""
+-Xstring-concat=indy-with-constants   Performs string concatenation via `invokedynamic` 'makeConcatWithConstants'. Works only with `-jvm-target 9` or greater
+-Xstring-concat=indy                Performs string concatenation via `invokedynamic` 'makeConcat'. Works only with `-jvm-target 9` or greater
+-Xstring-concat=inline              Performs string concatenation via `StringBuilder`"""
     )
-    var runtimeStringConcat: String? by NullableStringFreezableVar(JvmRuntimeStringConcat.DISABLE.name.toLowerCase())
+    var stringConcat: String? by NullableStringFreezableVar(JvmStringConcat.INLINE.description)
 
     @Argument(
         value = "-Xklib",

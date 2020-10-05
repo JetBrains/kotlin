@@ -49,20 +49,20 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         }
     }
 
-    if (arguments.runtimeStringConcat != null) {
-        val runtimeStringConcat = JvmRuntimeStringConcat.fromString(arguments.runtimeStringConcat!!)
+    if (arguments.stringConcat != null) {
+        val runtimeStringConcat = JvmStringConcat.fromString(arguments.stringConcat!!)
         if (runtimeStringConcat != null) {
-            put(JVMConfigurationKeys.RUNTIME_STRING_CONCAT, runtimeStringConcat)
-            if (jvmTarget.bytecodeVersion < JvmTarget.JVM_9.bytecodeVersion && runtimeStringConcat != JvmRuntimeStringConcat.DISABLE) {
+            put(JVMConfigurationKeys.STRING_CONCAT, runtimeStringConcat)
+            if (jvmTarget.bytecodeVersion < JvmTarget.JVM_9.bytecodeVersion && runtimeStringConcat != JvmStringConcat.INLINE) {
                 messageCollector.report(
                     WARNING,
-                    "`-Xruntime-string-concat=${arguments.runtimeStringConcat}` does nothing with JVM target `${jvmTarget.description}`."
+                    "`-Xstring-concat=${arguments.stringConcat}` does nothing with JVM target `${jvmTarget.description}`."
                 )
             }
         } else {
             messageCollector.report(
-                ERROR, "Unknown `runtime-string-concat` mode: ${arguments.jvmTarget}\n" +
-                        "Supported versions: ${JvmRuntimeStringConcat.values().joinToString { it.name.toLowerCase() }}"
+                ERROR, "Unknown `string-concat` mode: ${arguments.jvmTarget}\n" +
+                        "Supported versions: ${JvmStringConcat.values().joinToString { it.name.toLowerCase() }}"
             )
         }
     }

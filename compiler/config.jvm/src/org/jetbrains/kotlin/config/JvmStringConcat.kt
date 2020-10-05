@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.config
 
-enum class JvmRuntimeStringConcat {
-    DISABLE,
-    ENABLE, // makeConcatWithConstants
-    INDY; // makeConcat
+enum class JvmStringConcat(val description: String) {
+    INLINE("inline"),
+    INDY_WITH_CONSTANTS("indy-with-constants"), // makeConcatWithConstants
+    INDY("indy"); // makeConcat
 
     val isDynamic
-        get() = this != DISABLE
+        get() = this != INLINE
 
     companion object {
         @JvmStatic
-        fun fromString(string: String) = values().find { it.name == string.toUpperCase() }
+        fun fromString(string: String) = values().find { it.description == string }
     }
 }
