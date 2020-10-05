@@ -1844,6 +1844,11 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
+        @TestMetadata("emptyWhen.kt")
+        public void testEmptyWhen() throws Exception {
+            runTest("testData/intentions/addWhenRemainingBranches/emptyWhen.kt");
+        }
+
         @TestMetadata("noElse.kt")
         public void testNoElse() throws Exception {
             runTest("testData/intentions/addWhenRemainingBranches/noElse.kt");
