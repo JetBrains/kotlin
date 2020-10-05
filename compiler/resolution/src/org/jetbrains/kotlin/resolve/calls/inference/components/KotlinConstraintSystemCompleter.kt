@@ -20,10 +20,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 class KotlinConstraintSystemCompleter(
     private val resultTypeResolver: ResultTypeResolver,
     val variableFixationFinder: VariableFixationFinder,
-    private val ctx: ConstraintSystemUtilContext,
+    private val postponedArgumentInputTypesResolver: PostponedArgumentInputTypesResolver,
 ) {
-    private val postponedArgumentInputTypesResolver = PostponedArgumentInputTypesResolver(resultTypeResolver, variableFixationFinder, ctx)
-
     fun runCompletion(
         c: ConstraintSystemCompletionContext,
         completionMode: ConstraintSystemCompletionMode,

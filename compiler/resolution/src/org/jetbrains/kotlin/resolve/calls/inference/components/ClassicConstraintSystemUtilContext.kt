@@ -63,7 +63,7 @@ class ClassicConstraintSystemUtilContext(
         return FixVariableConstraintPositionImpl(variable, atom) as FixVariableConstraintPosition<T>
     }
 
-    override fun extractParameterTypesFromDeclaration(declaration: PostponedAtomWithRevisableExpectedType): List<KotlinTypeMarker?>? {
+    override fun extractLambdaParameterTypesFromDeclaration(declaration: PostponedAtomWithRevisableExpectedType): List<KotlinTypeMarker?>? {
         require(declaration is ResolvedAtom)
         return when (val atom = declaration.atom) {
             is FunctionExpression -> {

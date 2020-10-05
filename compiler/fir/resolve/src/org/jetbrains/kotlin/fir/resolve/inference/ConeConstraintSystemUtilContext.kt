@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstrain
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemUtilContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
@@ -56,7 +57,8 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
         return ConeFixVariableConstraintPosition(variable) as FixVariableConstraintPosition<T>
     }
 
-    override fun extractParameterTypesFromDeclaration(declaration: PostponedAtomWithRevisableExpectedType): List<ConeKotlinType?>? {
+    @OptIn(ExperimentalStdlibApi::class)
+    override fun extractLambdaParameterTypesFromDeclaration(declaration: PostponedAtomWithRevisableExpectedType): List<ConeKotlinType?>? {
         require(declaration is PostponedResolvedAtom)
         return when (declaration) {
             is LambdaWithTypeVariableAsExpectedTypeAtom -> {
@@ -66,7 +68,7 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
                         atom.collectDeclaredValueParameterTypes()
                     else null
                 } else { // function expression - all types are explicit, shouldn't return null
-                    mutableListOf<ConeKotlinType?>().apply {
+                    buildList {
                         atom.receiverTypeRef?.coneType?.let { add(it) }
                         addAll(atom.collectDeclaredValueParameterTypes())
                     }
@@ -77,11 +79,7 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
     }
 
     private fun FirAnonymousFunction.collectDeclaredValueParameterTypes(): List<ConeKotlinType?> =
-        valueParameters.map {
-            if (it.returnTypeRef !is FirImplicitTypeRef)
-                it.returnTypeRef.coneType
-            else null
-        }
+        valueParameters.map { it.returnTypeRef.coneTypeSafe() }
 
     override fun PostponedAtomWithRevisableExpectedType.isAnonymousFunction(): Boolean {
         require(this is PostponedResolvedAtom)
@@ -102,7 +100,7 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
         index: Int
     ): TypeVariableMarker {
         return ConeTypeVariableForPostponedAtom(
-            "${PostponedArgumentInputTypesResolver.TYPE_VARIABLE_NAME_PREFIX_FOR_LAMBDA_PARAMETER_TYPE}$index"
+            PostponedArgumentInputTypesResolver.TYPE_VARIABLE_NAME_PREFIX_FOR_LAMBDA_PARAMETER_TYPE + index
         )
     }
 
@@ -111,7 +109,7 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
         index: Int
     ): TypeVariableMarker {
         return ConeTypeVariableForPostponedAtom(
-            "${PostponedArgumentInputTypesResolver.TYPE_VARIABLE_NAME_PREFIX_FOR_CR_PARAMETER_TYPE}$index"
+            PostponedArgumentInputTypesResolver.TYPE_VARIABLE_NAME_PREFIX_FOR_CR_PARAMETER_TYPE + index
         )
     }
 

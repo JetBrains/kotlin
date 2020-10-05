@@ -27,7 +27,7 @@ interface ConstraintSystemUtilContext {
     // PostponedArgumentInputTypesResolver
     fun <T> createArgumentConstraintPosition(argument: T): ArgumentConstraintPosition<T>
     fun <T> createFixVariableConstraintPosition(variable: TypeVariableMarker, atom: T): FixVariableConstraintPosition<T>
-    fun extractParameterTypesFromDeclaration(declaration: PostponedAtomWithRevisableExpectedType): List<KotlinTypeMarker?>?
+    fun extractLambdaParameterTypesFromDeclaration(declaration: PostponedAtomWithRevisableExpectedType): List<KotlinTypeMarker?>?
     fun PostponedAtomWithRevisableExpectedType.isAnonymousFunction(): Boolean
     fun PostponedAtomWithRevisableExpectedType.isFunctionExpressionWithReceiver(): Boolean
     fun createTypeVariableForLambdaReturnType(): TypeVariableMarker

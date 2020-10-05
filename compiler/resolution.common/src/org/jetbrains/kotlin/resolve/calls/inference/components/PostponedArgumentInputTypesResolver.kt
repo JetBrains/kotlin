@@ -332,7 +332,7 @@ class PostponedArgumentInputTypesResolver(
         for (argument in postponedArguments) {
             if (argument !is LambdaWithTypeVariableAsExpectedTypeMarker) continue
             if (argument.parameterTypesFromDeclaration != null) continue
-            argument.updateParameterTypesFromDeclaration(extractParameterTypesFromDeclaration(argument))
+            argument.updateParameterTypesFromDeclaration(extractLambdaParameterTypesFromDeclaration(argument))
         }
 
         return postponedArguments.any { argument ->
@@ -359,21 +359,33 @@ class PostponedArgumentInputTypesResolver(
 
     private fun Context.getAllDeeplyRelatedTypeVariables(
         type: KotlinTypeMarker,
-        variableDependencyProvider: TypeVariableDependencyInformationProvider
-    ): List<TypeVariableTypeConstructorMarker> {
+        variableDependencyProvider: TypeVariableDependencyInformationProvider,
+    ): Collection<TypeVariableTypeConstructorMarker> {
+        val collectedVariables = mutableSetOf<TypeVariableTypeConstructorMarker>()
+        getAllDeeplyRelatedTypeVariables(type, variableDependencyProvider, collectedVariables)
+        return collectedVariables
+    }
+
+    private fun Context.getAllDeeplyRelatedTypeVariables(
+        type: KotlinTypeMarker,
+        variableDependencyProvider: TypeVariableDependencyInformationProvider,
+        typeVariableCollector: MutableSet<TypeVariableTypeConstructorMarker>
+    ) {
         val typeConstructor = type.typeConstructor()
 
-        return when {
+        when {
             typeConstructor is TypeVariableTypeConstructorMarker -> {
                 val relatedVariables = variableDependencyProvider.getDeeplyDependentVariables(typeConstructor).orEmpty()
-                listOf(typeConstructor) + relatedVariables.filterIsInstance<TypeVariableTypeConstructorMarker>()
+                typeVariableCollector.add(typeConstructor)
+                typeVariableCollector.addAll(relatedVariables.filterIsInstance<TypeVariableTypeConstructorMarker>())
             }
             type.argumentsCount() > 0 -> {
-                type.getArguments().flatMap {
-                    if (it.isStarProjection()) emptyList() else getAllDeeplyRelatedTypeVariables(it.getType(), variableDependencyProvider)
+                for (typeArgument in type.lowerBoundIfFlexible().asArgumentList()) {
+                    if (!typeArgument.isStarProjection()) {
+                        getAllDeeplyRelatedTypeVariables(typeArgument.getType(), variableDependencyProvider, typeVariableCollector)
+                    }
                 }
             }
-            else -> emptyList()
         }
     }
 

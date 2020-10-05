@@ -246,7 +246,6 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun KotlinTypeMarker.argumentsCount(): Int
     fun KotlinTypeMarker.getArgument(index: Int): TypeArgumentMarker
-    fun KotlinTypeMarker.getArguments(): List<TypeArgumentMarker>
 
     fun SimpleTypeMarker.getArgumentOrNull(index: Int): TypeArgumentMarker? {
         if (index in 0 until argumentsCount()) return getArgument(index)
@@ -338,6 +337,18 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
             is SimpleTypeMarker -> argumentsCount()
             is ArgumentList -> size
             else -> error("unknown type argument list type: $this, ${this::class}")
+        }
+    }
+
+    operator fun TypeArgumentListMarker.iterator() = object : Iterator<TypeArgumentMarker> {
+        private var argumentIndex: Int = 0
+
+        override fun hasNext(): Boolean = argumentIndex < size()
+
+        override fun next(): TypeArgumentMarker {
+            val argument = get(argumentIndex)
+            argumentIndex += 1
+            return argument
         }
     }
 

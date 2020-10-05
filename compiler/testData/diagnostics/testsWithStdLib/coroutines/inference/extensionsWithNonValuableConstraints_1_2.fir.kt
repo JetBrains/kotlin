@@ -12,6 +12,6 @@ fun <S> generate(g: suspend Controller<S>.() -> Unit): S = TODO()
 suspend fun Base.baseExtension() {}
 
 val test1 = generate {
-    yield("foo")
+    <!INAPPLICABLE_CANDIDATE!>yield<!>("foo")
     baseExtension()
 }

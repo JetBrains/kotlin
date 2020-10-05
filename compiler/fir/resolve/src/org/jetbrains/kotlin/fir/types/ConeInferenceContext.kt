@@ -214,8 +214,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     override fun KotlinTypeMarker.isBuiltinFunctionalTypeOrSubtype(): Boolean {
         require(this is ConeKotlinType)
         return this.isTypeOrSubtypeOf {
-            it.lowerBoundIfFlexible().safeAs<ConeKotlinType>()?.isBuiltinFunctionalType(session)
-                ?: error("Unexpected lower bound for type: ${it.render()}")
+            (it.lowerBoundIfFlexible() as ConeKotlinType).isBuiltinFunctionalType(session)
         }
     }
 
@@ -402,7 +401,8 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
             this,
             {
                 // FIXME supertypes of type constructor contain unsubstituted arguments
-                it.typeConstructor().supertypes().cast<Collection<ConeKotlinType>>()
+                @Suppress("UNCHECKED_CAST")
+                it.typeConstructor().supertypes() as Collection<ConeKotlinType>
             },
             DFS.VisitedWithSet(),
             object : DFS.AbstractNodeHandler<ConeKotlinType, Boolean>() {
@@ -423,8 +423,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     override fun KotlinTypeMarker.isSuspendFunctionTypeOrSubtype(): Boolean {
         require(this is ConeKotlinType)
         return isTypeOrSubtypeOf {
-            it.lowerBoundIfFlexible().safeAs<ConeKotlinType>()?.isSuspendFunctionType(session)
-                ?: error("Unexpected lower bound for type: ${it.render()}")
+            (it.lowerBoundIfFlexible() as ConeKotlinType).isSuspendFunctionType(session)
         }
     }
 
@@ -433,7 +432,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return this.lowerBoundIfFlexible().safeAs<ConeKotlinType>()?.isExtensionFunctionType(session) == true
     }
 
-    @ExperimentalStdlibApi
+    @OptIn(ExperimentalStdlibApi::class)
     override fun KotlinTypeMarker.extractArgumentsForFunctionalTypeOrSubtype(): List<KotlinTypeMarker> {
         val builtInFunctionalType = getFunctionalTypeFromSupertypes().cast<ConeKotlinType>()
         return buildList {
@@ -452,7 +451,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
         return fullyExpandedType(session).let {
             val simpleType = it.lowerBoundIfFlexible()
-            if (simpleType.safeAs<ConeKotlinType>()?.isBuiltinFunctionalType(session) == true)
+            if ((simpleType as ConeKotlinType).isBuiltinFunctionalType(session))
                 this
             else {
                 var functionalSupertype: KotlinTypeMarker? = null
