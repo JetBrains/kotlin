@@ -2019,6 +2019,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/javaQualifier.kt");
         }
 
+        @TestMetadata("kt42346.kt")
+        public void testKt42346() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/problems/kt42346.kt");
+        }
+
         @TestMetadata("multipleJavaClassesInOneFile.kt")
         public void testMultipleJavaClassesInOneFile() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/multipleJavaClassesInOneFile.kt");
