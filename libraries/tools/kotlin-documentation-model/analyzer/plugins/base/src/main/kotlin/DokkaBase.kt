@@ -202,12 +202,16 @@ class DokkaBase : DokkaPlugin() {
         htmlPreprocessors with SearchPageInstaller order { after(rootCreator) }
     }
 
-    val resourceInstaller by extending {
-        htmlPreprocessors with ResourceInstaller order { after(rootCreator) }
+    val scriptsInstaller by extending {
+        htmlPreprocessors with ScriptsInstaller order { after(rootCreator) }
     }
 
-    val styleAndScriptsAppender by extending {
-        htmlPreprocessors with StyleAndScriptsAppender order { after(rootCreator) }
+    val stylesInstaller by extending {
+        htmlPreprocessors with StylesInstaller order { after(rootCreator) }
+    }
+
+    val assetsInstaller by extending {
+        htmlPreprocessors with AssetsInstaller order { after(rootCreator) }
     }
 
     val packageListCreator by extending {
