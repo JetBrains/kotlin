@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.symbols.CallableId
@@ -223,16 +224,17 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                         isInline = Flags.IS_INLINE_ACCESSOR.get(getterFlags)
                         isExternal = Flags.IS_EXTERNAL_ACCESSOR.get(getterFlags)
                     }
-                    annotations +=
-                        c.annotationDeserializer.loadPropertyGetterAnnotations(
-                            c.containerSource, proto, local.nameResolver, local.typeTable, getterFlags
-                        )
                     this.symbol = FirPropertyAccessorSymbol()
                 }.apply {
                     versionRequirementsTable = c.versionRequirementTable
                 }
             } else {
                 FirDefaultPropertyGetter(null, c.session, FirDeclarationOrigin.Library, returnTypeRef, visibility)
+            }.apply {
+                (annotations as MutableList<FirAnnotationCall>) +=
+                    c.annotationDeserializer.loadPropertyGetterAnnotations(
+                        c.containerSource, proto, local.nameResolver, local.typeTable, getterFlags
+                    )
             }
         } else {
             null
@@ -253,10 +255,6 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                         isInline = Flags.IS_INLINE_ACCESSOR.get(setterFlags)
                         isExternal = Flags.IS_EXTERNAL_ACCESSOR.get(setterFlags)
                     }
-                    annotations +=
-                        c.annotationDeserializer.loadPropertySetterAnnotations(
-                            c.containerSource, proto, local.nameResolver, local.typeTable, setterFlags
-                        )
                     this.symbol = FirPropertyAccessorSymbol()
                     valueParameters += local.memberDeserializer.valueParameters(
                         listOf(proto.setterValueParameter),
@@ -269,6 +267,11 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 }
             } else {
                 FirDefaultPropertySetter(null, c.session, FirDeclarationOrigin.Library, returnTypeRef, visibility)
+            }.apply {
+                (annotations as MutableList<FirAnnotationCall>) +=
+                    c.annotationDeserializer.loadPropertySetterAnnotations(
+                        c.containerSource, proto, local.nameResolver, local.typeTable, setterFlags
+                    )
             }
         } else {
             null
