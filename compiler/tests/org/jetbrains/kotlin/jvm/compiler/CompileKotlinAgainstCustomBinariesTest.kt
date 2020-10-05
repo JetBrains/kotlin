@@ -632,6 +632,11 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-jvm-target", "1.8", "-Xjvm-default=all"))
     }
 
+    fun testJvmDefaultCompatibilityAgainstJava() {
+        val library = compileLibrary("library", additionalOptions = listOf("-Xjvm-default=disable"))
+        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-jvm-target", "1.8", "-Xjvm-default=all-compatibility"))
+    }
+
     fun testInternalFromForeignModuleJs() {
         compileKotlin("source.kt", File(tmpdir, "usage.js"), listOf(compileJsLibrary("library")), K2JSCompiler())
     }
