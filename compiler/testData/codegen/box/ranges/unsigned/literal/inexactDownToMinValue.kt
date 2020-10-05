@@ -3,10 +3,10 @@
 // WITH_RUNTIME
 
 
-const val MinUI = UInt.MIN_VALUE
-const val MinUB = UByte.MIN_VALUE
-const val MinUS = UShort.MIN_VALUE
-const val MinUL = ULong.MIN_VALUE
+val MinUI = UInt.MIN_VALUE
+val MinUB = UByte.MIN_VALUE
+val MinUS = UShort.MIN_VALUE
+val MinUL = ULong.MIN_VALUE
 
 fun box(): String {
     val list1 = ArrayList<UInt>()

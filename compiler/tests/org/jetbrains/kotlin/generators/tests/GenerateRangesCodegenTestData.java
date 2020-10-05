@@ -159,7 +159,9 @@ public class GenerateRangesCodegenTestData {
         out.println();
         MIN_MAX_CONSTANTS.forEach((name, value) -> {
             if (generatedBody.contains(name)) {
-                out.printf("const val %s = %s", name, value).println();
+                // They are intentionally added as non-const vals rather than direct references to MIN_VALUE/MAX_VALUE
+                // in order to fool constant evaluation.
+                out.printf("val %s = %s", name, value).println();
             }
         });
 
