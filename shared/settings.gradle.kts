@@ -9,6 +9,7 @@ pluginManagement {
     repositories {
         maven(kotlinCompilerRepo)
         maven("https://cache-redirector.jetbrains.com/maven-central")
+        mavenCentral()
     }
 
     resolutionStrategy {

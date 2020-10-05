@@ -17,6 +17,7 @@ buildscript {
         maven {
             url 'https://cache-redirector.jetbrains.com/maven-central'
         }
+        mavenCentral()
         maven {
             url buildKotlinCompilerRepo
         }

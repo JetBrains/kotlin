@@ -9,6 +9,7 @@ buildscript {
         maven {
             url 'https://cache-redirector.jetbrains.com/jcenter'
         }
+        jcenter()
     }
 }
 

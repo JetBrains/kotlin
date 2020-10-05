@@ -37,6 +37,7 @@ version = konanVersion
 
 repositories {
     maven("https://cache-redirector.jetbrains.com/maven-central")
+    mavenCentral()
     maven(kotlinCompilerRepo)
     maven(buildKotlinCompilerRepo)
 }

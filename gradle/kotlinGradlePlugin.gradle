@@ -16,6 +16,7 @@ project.buildscript.repositories {
     maven {
         url 'https://cache-redirector.jetbrains.com/maven-central'
     }
+    mavenCentral()
 }
 
 project.buildscript.dependencies {

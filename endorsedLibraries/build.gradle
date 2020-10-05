@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.EndorsedLibraryInfo
 buildscript {
     repositories {
         maven { url 'https://cache-redirector.jetbrains.com/jcenter' }
+        jcenter()
     }
 
     dependencies {
