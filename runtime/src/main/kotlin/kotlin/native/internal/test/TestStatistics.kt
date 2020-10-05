@@ -36,12 +36,12 @@ internal class MutableTestStatistics: TestStatistics {
         get() = _failedTests
 
     fun registerSuite(count: Int = 1) {
-        require(count > 0)
+        require(count >= 0)
         totalSuites += count
     }
 
     fun registerPass(count: Int = 1) {
-        require(count > 0)
+        require(count >= 0)
         total += count
         passed += count
     }
@@ -54,7 +54,7 @@ internal class MutableTestStatistics: TestStatistics {
     fun registerFail(testCase: TestCase) = registerFail(listOf(testCase))
 
     fun registerIgnore(count: Int = 1) {
-        require(count > 0)
+        require(count >= 0)
         total += count
         ignored += count
     }

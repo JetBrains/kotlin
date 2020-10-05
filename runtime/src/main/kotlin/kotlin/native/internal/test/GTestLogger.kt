@@ -19,12 +19,12 @@ internal class GTestLogger : TestLoggerWithStatistics() {
         }
         super.startIteration(runner, iteration, suites)
         println("[==========] Running ${suites.totalTestsNotIgnored} tests from ${suites.totalNotIgnored} test cases.")
-        // Just hack to deal with the Clion parser. TODO: Remove it after changes in the parser.
+        // Just hack to deal with GTest output parsers.
         println("[----------] Global test environment set-up.")
     }
 
     private fun printResults(timeMillis: Long) = with (statistics) {
-        println("[----------] Global test environment tear-down") // Just hack to deal with the Clion parser.
+        println("[----------] Global test environment tear-down") // Just hack to deal with GTest output parsers.
         println("[==========] $total tests from $totalSuites test cases ran. ($timeMillis ms total)")
         println("[  PASSED  ] $passed tests.")
         if (hasFailedTests) {
