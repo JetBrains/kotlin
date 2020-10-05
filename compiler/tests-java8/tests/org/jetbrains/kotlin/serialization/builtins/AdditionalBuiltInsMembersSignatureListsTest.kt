@@ -38,22 +38,21 @@ class AdditionalBuiltInsMembersSignatureListsTest : KotlinTestWithEnvironment() 
     fun testAllListedSignaturesExistInJdk() {
         val module = JvmResolveUtil.analyze(environment).moduleDescriptor as ModuleDescriptorImpl
 
-        val blackList =
-                JvmBuiltInsSignatures.BLACK_LIST_METHOD_SIGNATURES +
-                JvmBuiltInsSignatures.MUTABLE_METHOD_SIGNATURES +
-                JvmBuiltInsSignatures.BLACK_LIST_CONSTRUCTOR_SIGNATURES +
-                JvmBuiltInsSignatures.WHITE_LIST_METHOD_SIGNATURES +
-                JvmBuiltInsSignatures.WHITE_LIST_CONSTRUCTOR_SIGNATURES
+        val hiddenSignatures =
+            JvmBuiltInsSignatures.HIDDEN_METHOD_SIGNATURES +
+                    JvmBuiltInsSignatures.MUTABLE_METHOD_SIGNATURES +
+                    JvmBuiltInsSignatures.HIDDEN_CONSTRUCTOR_SIGNATURES +
+                    JvmBuiltInsSignatures.VISIBLE_METHOD_SIGNATURES +
+                    JvmBuiltInsSignatures.VISIBLE_CONSTRUCTOR_SIGNATURES
 
-        val groupedByInternalName = blackList.groupBy({ it.split(".")[0] }) { it.split(".")[1] }
+        val groupedByInternalName = hiddenSignatures.groupBy({ it.split(".")[0] }) { it.split(".")[1] }
 
-        groupedByInternalName.entries.forEach {
-            it ->
+        groupedByInternalName.entries.forEach { it ->
             val (internalName, jvmDescriptors) = it
             val classDescriptor =
-                    module.resolveClassByFqName(
-                            JvmClassName.byInternalName(internalName).fqNameForClassNameWithoutDollars, NoLookupLocation.FROM_TEST
-                    )!!
+                module.resolveClassByFqName(
+                    JvmClassName.byInternalName(internalName).fqNameForClassNameWithoutDollars, NoLookupLocation.FROM_TEST
+                )!!
 
             val scope = classDescriptor.unsubstitutedMemberScope
 
@@ -64,10 +63,10 @@ class AdditionalBuiltInsMembersSignatureListsTest : KotlinTestWithEnvironment() 
 
                 val stringName = jvmDescriptor.split("(")[0]
                 val functions =
-                        if (stringName == "<init>")
-                            classDescriptor.constructors
-                        else
-                            scope.getContributedFunctions(Name.identifier(stringName), NoLookupLocation.FROM_TEST)
+                    if (stringName == "<init>")
+                        classDescriptor.constructors
+                    else
+                        scope.getContributedFunctions(Name.identifier(stringName), NoLookupLocation.FROM_TEST)
 
                 functions.singleOrNull {
                     it.isEffectivelyPublicApi && it.computeJvmDescriptor() == jvmDescriptor
