@@ -70,7 +70,7 @@ internal class GradleNodeModuleBuilder(
     }
 }
 
-private val File.isCompatibleArchive
+internal val File.isCompatibleArchive
     get() = isFile
             && (extension == "jar"
             || extension == "zip"

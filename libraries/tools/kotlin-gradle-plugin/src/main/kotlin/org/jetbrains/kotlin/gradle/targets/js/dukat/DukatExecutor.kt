@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.dukat
 
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
+import org.jetbrains.kotlin.gradle.targets.js.npm.isCompatibleArchive
 
 class DukatExecutor(
     val nodeJs: NodeJsRootExtension,
@@ -59,5 +60,27 @@ class DukatExecutor(
         }
 
         versionFile.writeText(version)
+
+        gradleModelPostProcess()
+    }
+
+    private fun gradleModelPostProcess() {
+        val compilation = npmProject.compilation
+        val project = npmProject.project
+        when (dukatMode) {
+            DukatMode.SOURCE -> compilation.defaultSourceSet.kotlin.srcDir(npmProject.externalsDir)
+            DukatMode.BINARY -> {
+                npmProject.externalsDir
+                    .listFiles()
+                    ?.filter { it.isCompatibleArchive }
+                    ?.forEach {
+                        project.dependencies.add(
+                            compilation.compileDependencyConfigurationName,
+                            project.files(it)
+                        )
+                    }
+
+            }
+        }
     }
 }

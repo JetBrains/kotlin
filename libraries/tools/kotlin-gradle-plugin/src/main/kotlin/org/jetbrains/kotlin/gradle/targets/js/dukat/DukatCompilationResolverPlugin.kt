@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.dukat
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.plugins.CompilationResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
@@ -26,15 +27,6 @@ internal class DukatCompilationResolverPlugin(
 
     init {
         val dukatMode = compilation.dukatMode
-        when (dukatMode) {
-            DukatMode.SOURCE -> compilation.defaultSourceSet.kotlin.srcDir(npmProject.externalsDir)
-            DukatMode.BINARY -> {
-                project.dependencies.add(
-                    compilation.compileDependencyConfigurationName,
-                    project.files(npmProject.externalsDir)
-                )
-            }
-        }
 
         val integratedTask = project.registerTask<IntegratedDukatTask>(
             integratedTaskName,
@@ -46,12 +38,17 @@ internal class DukatCompilationResolverPlugin(
             it.dependsOn(nodeJs.npmInstallTaskProvider, npmProject.packageJsonTask)
         }
 
-        compilation.compileKotlinTaskProvider.dependsOn(integratedTask)
-
         val target = compilation.target
-        if (target is KotlinJsTarget && target.irTarget != null) {
-            target.irTarget?.compilations?.named(compilation.name) {
-                it.compileKotlinTaskProvider.dependsOn(integratedTask)
+
+        if (target is KotlinJsIrTarget || target is KotlinJsTarget && dukatMode != DukatMode.SOURCE) {
+            compilation.compileKotlinTaskProvider.dependsOn(integratedTask)
+        }
+
+        if (target is KotlinJsIrTarget && target.legacyTarget != null) {
+            target.legacyTarget?.compilations?.named(compilation.name) {
+                if (it.dukatMode == DukatMode.SOURCE) {
+                    it.compileKotlinTaskProvider.dependsOn(integratedTask)
+                }
             }
         }
 

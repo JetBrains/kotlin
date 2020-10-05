@@ -24,7 +24,7 @@ class DukatRunner(
             val args = mutableListOf<String>()
 
             if (dukatMode == DukatMode.BINARY) {
-                args.add("--descriptors")
+                args.add("--descriptors-jar")
             }
 
             val qualifiedPackageName = qualifiedPackageName

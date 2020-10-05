@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.compilationDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
@@ -73,9 +72,7 @@ internal class KotlinCompilationNpmResolver(
 
     val plugins: List<CompilationResolverPlugin> = projectResolver.resolver.plugins
         .flatMap {
-            val target = compilation.target
-            // If mixedMode (BOTH) register only for legacy target
-            if (compilation.isMain() && ((target is KotlinJsTarget) || (target is KotlinJsIrTarget && !target.mixedMode))) {
+            if (compilation.isMain()) {
                 it.createCompilationResolverPlugins(this)
             } else {
                 emptyList()

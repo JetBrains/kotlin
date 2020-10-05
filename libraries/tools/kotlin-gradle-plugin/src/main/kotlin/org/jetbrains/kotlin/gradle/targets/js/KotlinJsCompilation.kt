@@ -37,7 +37,7 @@ open class KotlinJsCompilation(
     internal val dukatMode: DukatMode
         get() = kotlinProperties.dukatMode ?: defaultDukatMode
 
-    protected open val defaultDukatMode: DukatMode = DukatMode.BINARY
+    internal open val defaultDukatMode: DukatMode = DukatMode.BINARY
 
     override val kotlinOptions: KotlinJsOptions = KotlinJsOptionsImpl()
 
