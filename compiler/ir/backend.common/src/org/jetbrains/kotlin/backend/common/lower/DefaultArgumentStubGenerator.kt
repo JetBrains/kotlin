@@ -109,13 +109,13 @@ open class DefaultArgumentStubGenerator(
                         ++sourceParameterIndex
                     }
                     val parameter = newIrFunction.valueParameters[valueParameter.index]
-                    val remapped = if (valueParameter.defaultValue != null) {
+                    val remapped = valueParameter.defaultValue?.let { defaultValue ->
                         val mask = irGet(newIrFunction.valueParameters[irFunction.valueParameters.size + valueParameter.index / 32])
                         val bit = irInt(1 shl (sourceParameterIndex % 32))
                         val defaultFlag =
                             irCallOp(intAnd, context.irBuiltIns.intType, mask, bit)
 
-                        val expression = valueParameter.defaultValue!!.expression
+                        val expression = defaultValue.expression
                             .prepareToBeUsedIn(newIrFunction)
                             .transform(object : IrElementTransformerVoid() {
                                 override fun visitGetValue(expression: IrGetValue): IrExpression {
@@ -126,9 +126,8 @@ open class DefaultArgumentStubGenerator(
                             }, null)
 
                         selectArgumentOrDefault(defaultFlag, parameter, expression)
-                    } else {
-                        parameter
-                    }
+                    } ?: parameter
+
                     params.add(remapped)
                     variables[valueParameter] = remapped
                 }
