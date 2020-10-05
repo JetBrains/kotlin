@@ -31,13 +31,9 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyAccessorDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.types.FlexibleTypesKt;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.KotlinTypeKt;
-import org.jetbrains.kotlin.types.TypeConstructor;
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
-import org.jetbrains.kotlin.types.checker.KotlinTypeCheckerImpl;
-import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
+import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.types.checker.*;
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker;
 import org.jetbrains.kotlin.utils.SmartSet;
 
 import java.util.*;
@@ -313,18 +309,22 @@ public class OverridingUtil {
             return OverrideCompatibilityInfo.conflict("Type parameter number mismatch");
         }
 
-        KotlinTypeChecker typeChecker = createTypeChecker(superTypeParameters, subTypeParameters);
+        Pair<NewKotlinTypeCheckerImpl, ClassicTypeCheckerContext> typeChecker = createTypeChecker(superTypeParameters, subTypeParameters);
 
         for (int i = 0; i < superTypeParameters.size(); i++) {
-            if (!areTypeParametersEquivalent(superTypeParameters.get(i), subTypeParameters.get(i), typeChecker)) {
+            if (!areTypeParametersEquivalent(
+                    superTypeParameters.get(i),
+                    subTypeParameters.get(i),
+                    typeChecker
+            )) {
                 return OverrideCompatibilityInfo.incompatible("Type parameter bounds mismatch");
             }
         }
 
         for (int i = 0; i < superValueParameters.size(); i++) {
             if (!areTypesEquivalent(
-                    kotlinTypeRefiner.refineType(superValueParameters.get(i)),
-                    kotlinTypeRefiner.refineType(subValueParameters.get(i)),
+                    superValueParameters.get(i),
+                    subValueParameters.get(i),
                     typeChecker)
             ) {
                 return OverrideCompatibilityInfo.incompatible("Value parameter type mismatch");
@@ -343,9 +343,10 @@ public class OverridingUtil {
             if (superReturnType != null && subReturnType != null) {
                 boolean bothErrors = KotlinTypeKt.isError(subReturnType) && KotlinTypeKt.isError(superReturnType);
                 if (!bothErrors &&
-                    !typeChecker.isSubtypeOf(
-                            kotlinTypeRefiner.refineType(subReturnType),
-                            kotlinTypeRefiner.refineType(superReturnType)
+                    !typeChecker.getFirst().isSubtypeOf(
+                            typeChecker.getSecond(),
+                            subReturnType.unwrap(),
+                            superReturnType.unwrap()
                     )
                 ) {
                     return OverrideCompatibilityInfo.conflict("Return type mismatch");
@@ -384,28 +385,32 @@ public class OverridingUtil {
     }
 
     @NotNull
-    private KotlinTypeChecker createTypeChecker(
+    private Pair<NewKotlinTypeCheckerImpl, ClassicTypeCheckerContext> createTypeChecker(
             @NotNull List<TypeParameterDescriptor> firstParameters,
             @NotNull List<TypeParameterDescriptor> secondParameters
     ) {
         assert firstParameters.size() == secondParameters.size() :
                 "Should be the same number of type parameters: " + firstParameters + " vs " + secondParameters;
-        if (firstParameters.isEmpty()) return KotlinTypeCheckerImpl.withAxioms(equalityAxioms);
 
-        final Map<TypeConstructor, TypeConstructor> matchingTypeConstructors = new HashMap<TypeConstructor, TypeConstructor>();
+        NewKotlinTypeCheckerImpl typeChecker = new NewKotlinTypeCheckerImpl(kotlinTypeRefiner);
+        OverridingUtilTypeCheckerContext context = createTypeCheckerContext(firstParameters, secondParameters);
+
+        return new Pair<NewKotlinTypeCheckerImpl, ClassicTypeCheckerContext>(typeChecker, context);
+    }
+
+    @NotNull
+    private OverridingUtilTypeCheckerContext createTypeCheckerContext(
+            @NotNull List<TypeParameterDescriptor> firstParameters,
+            @NotNull List<TypeParameterDescriptor> secondParameters
+    ) {
+        if (firstParameters.isEmpty()) return new OverridingUtilTypeCheckerContext(null);
+
+        Map<TypeConstructor, TypeConstructor> matchingTypeConstructors = new HashMap<TypeConstructor, TypeConstructor>();
         for (int i = 0; i < firstParameters.size(); i++) {
             matchingTypeConstructors.put(firstParameters.get(i).getTypeConstructor(), secondParameters.get(i).getTypeConstructor());
         }
 
-        return KotlinTypeCheckerImpl.withAxioms(new KotlinTypeChecker.TypeConstructorEquality() {
-            @Override
-            public boolean equals(@NotNull TypeConstructor a, @NotNull TypeConstructor b) {
-                if (equalityAxioms.equals(a, b)) return true;
-                TypeConstructor img1 = matchingTypeConstructors.get(a);
-                TypeConstructor img2 = matchingTypeConstructors.get(b);
-                return (img1 != null && img1.equals(b)) || (img2 != null && img2.equals(a));
-            }
-        });
+        return new OverridingUtilTypeCheckerContext(matchingTypeConstructors);
     }
 
     @Nullable
@@ -427,19 +432,18 @@ public class OverridingUtil {
     private boolean areTypesEquivalent(
             @NotNull KotlinType typeInSuper,
             @NotNull KotlinType typeInSub,
-            @NotNull KotlinTypeChecker typeChecker
+            @NotNull Pair<NewKotlinTypeCheckerImpl, ClassicTypeCheckerContext> typeChecker
     ) {
         boolean bothErrors = KotlinTypeKt.isError(typeInSuper) && KotlinTypeKt.isError(typeInSub);
         if (bothErrors) return true;
-        return typeChecker.equalTypes(kotlinTypeRefiner.refineType(typeInSuper), kotlinTypeRefiner.refineType(typeInSub));
+        return typeChecker.getFirst().equalTypes(typeChecker.getSecond(), typeInSuper.unwrap(), typeInSub.unwrap());
     }
 
     // See JLS 8, 8.4.4 Generic Methods
-    // TODO: use TypeSubstitutor instead
     private boolean areTypeParametersEquivalent(
             @NotNull TypeParameterDescriptor superTypeParameter,
             @NotNull TypeParameterDescriptor subTypeParameter,
-            @NotNull KotlinTypeChecker typeChecker
+            @NotNull Pair<NewKotlinTypeCheckerImpl, ClassicTypeCheckerContext> typeChecker
     ) {
         List<KotlinType> superBounds = superTypeParameter.getUpperBounds();
         List<KotlinType> subBounds = new ArrayList<KotlinType>(subTypeParameter.getUpperBounds());
@@ -577,10 +581,13 @@ public class OverridingUtil {
 
         if (!isVisibilityMoreSpecific(a, b)) return false;
 
+        Pair<NewKotlinTypeCheckerImpl, ClassicTypeCheckerContext> checker =
+                DEFAULT.createTypeChecker(a.getTypeParameters(), b.getTypeParameters());
+
         if (a instanceof FunctionDescriptor) {
             assert b instanceof FunctionDescriptor : "b is " + b.getClass();
 
-            return isReturnTypeMoreSpecific(a, aReturnType, b, bReturnType);
+            return isReturnTypeMoreSpecific(a, aReturnType, b, bReturnType, checker);
         }
         if (a instanceof PropertyDescriptor) {
             assert b instanceof PropertyDescriptor : "b is " + b.getClass();
@@ -591,11 +598,12 @@ public class OverridingUtil {
             if (!isAccessorMoreSpecific(pa.getSetter(), pb.getSetter())) return false;
 
             if (pa.isVar() && pb.isVar()) {
-                return DEFAULT.createTypeChecker(a.getTypeParameters(), b.getTypeParameters()).equalTypes(aReturnType, bReturnType);
+                // TODO(dsavvinov): using DEFAULT here looks suspicious
+                return checker.getFirst().equalTypes(checker.getSecond(), aReturnType.unwrap(), bReturnType.unwrap());
             }
             else {
                 // both vals or var vs val: val can't be more specific then var
-                return !(!pa.isVar() && pb.isVar()) && isReturnTypeMoreSpecific(a, aReturnType, b, bReturnType);
+                return !(!pa.isVar() && pb.isVar()) && isReturnTypeMoreSpecific(a, aReturnType, b, bReturnType, checker);
             }
         }
         throw new IllegalArgumentException("Unexpected callable: " + a.getClass());
@@ -629,10 +637,10 @@ public class OverridingUtil {
             @NotNull CallableDescriptor a,
             @NotNull KotlinType aReturnType,
             @NotNull CallableDescriptor b,
-            @NotNull KotlinType bReturnType
+            @NotNull KotlinType bReturnType,
+            @NotNull Pair<NewKotlinTypeCheckerImpl, ClassicTypeCheckerContext> typeChecker
     ) {
-        KotlinTypeChecker typeChecker = DEFAULT.createTypeChecker(a.getTypeParameters(), b.getTypeParameters());
-        return typeChecker.isSubtypeOf(aReturnType, bReturnType);
+        return typeChecker.getFirst().isSubtypeOf(typeChecker.getSecond(), aReturnType.unwrap(), bReturnType.unwrap());
     }
 
     @NotNull
@@ -967,6 +975,41 @@ public class OverridingUtil {
             }
         }
         return maxVisibility;
+    }
+
+    private class OverridingUtilTypeCheckerContext extends ClassicTypeCheckerContext {
+        private final @Nullable Map<TypeConstructor, TypeConstructor> matchingTypeConstructors;
+
+        public OverridingUtilTypeCheckerContext(@Nullable Map<TypeConstructor, TypeConstructor> matchingTypeConstructors) {
+            super(
+                    /* errorTypesEqualsToAnything = */ true,
+                    /* stubTypesEqualsToAnything = */ true,
+                    /* allowedTypeVariable = */ true,
+                    kotlinTypeRefiner
+            );
+            this.matchingTypeConstructors = matchingTypeConstructors;
+        }
+
+        @Override
+        public boolean areEqualTypeConstructors(@NotNull TypeConstructor a, @NotNull TypeConstructor b) {
+            return super.areEqualTypeConstructors(a, b) || areEqualTypeConstructorsByAxioms(a, b);
+        }
+
+        @Override
+        public boolean isEqualTypeConstructors(
+                @NotNull TypeConstructorMarker c1, @NotNull TypeConstructorMarker c2
+        ) {
+            return areEqualTypeConstructors(c1, c2);
+        }
+
+        private boolean areEqualTypeConstructorsByAxioms(@NotNull TypeConstructor a, @NotNull TypeConstructor b) {
+            if (equalityAxioms.equals(a, b)) return true;
+            if (matchingTypeConstructors == null) return false;
+
+            TypeConstructor img1 = matchingTypeConstructors.get(a);
+            TypeConstructor img2 = matchingTypeConstructors.get(b);
+            return (img1 != null && img1.equals(b)) || (img2 != null && img2.equals(a));
+        }
     }
 
     public static class OverrideCompatibilityInfo {
