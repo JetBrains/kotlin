@@ -1,0 +1,13 @@
+// WITH_RUNTIME
+
+enum class Entry {
+    FOO, BAR, BAZ
+}
+
+fun test(e: Entry) {
+    when (e) {
+        <caret>Entry.FOO -> TODO()
+        Entry.BAR -> TODO()
+        Entry.BAZ -> TODO()
+    }
+}

@@ -14,7 +14,6 @@ class AddWhenRemainingBranchesIntention : SelfTargetingIntention<KtWhenExpressio
     KtWhenExpression::class.java, KotlinBundle.lazyMessage("add.remaining.branches")
 ) {
     override fun isApplicableTo(element: KtWhenExpression, caretOffset: Int): Boolean {
-        if (element.entries.none { it.isElse }) return false
         return AddWhenRemainingBranchesFix.isAvailable(element)
     }
 

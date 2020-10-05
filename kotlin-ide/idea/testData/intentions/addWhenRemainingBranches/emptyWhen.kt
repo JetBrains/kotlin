@@ -5,7 +5,7 @@ enum class Entry {
 }
 
 fun test(e: Entry) {
-    <caret>when (e) {
-        Entry.FOO -> {}
+    when (e) {
+        <caret>
     }
 }

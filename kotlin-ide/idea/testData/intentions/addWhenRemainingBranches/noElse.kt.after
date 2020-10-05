@@ -7,5 +7,7 @@ enum class Entry {
 fun test(e: Entry) {
     <caret>when (e) {
         Entry.FOO -> {}
+        Entry.BAR -> TODO()
+        Entry.BAZ -> TODO()
     }
 }
