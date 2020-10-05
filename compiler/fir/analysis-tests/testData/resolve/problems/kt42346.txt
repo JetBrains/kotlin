@@ -21,7 +21,7 @@ FILE: kt42346.kt
         }
 
     }
-    @R|MagicConstant|(vararg(intValues = <implicitArrayOf>(Q|StepRequest|.R|/StepRequest.Companion.STEP_INTO|.R|kotlin/Int.toLong|(), Q|StepRequest|.R|/StepRequest.Companion.STEP_OVER|.R|kotlin/Int.toLong|(), Q|StepRequest|.R|/StepRequest.Companion.STEP_OUT|.R|kotlin/Int.toLong|()))) public final val depth: R|kotlin/Int| = Int(42)
+    @R|MagicConstant|(intValues = <implicitArrayOf>(Q|StepRequest|.R|/StepRequest.Companion.STEP_INTO|.R|kotlin/Int.toLong|(), Q|StepRequest|.R|/StepRequest.Companion.STEP_OVER|.R|kotlin/Int.toLong|(), Q|StepRequest|.R|/StepRequest.Companion.STEP_OUT|.R|kotlin/Int.toLong|())) public final val depth: R|kotlin/Int| = Int(42)
         public get(): R|kotlin/Int|
     public final annotation class KotlinMagicConstant : R|kotlin/Annotation| {
         public constructor(intValues: R|kotlin/LongArray|): R|KotlinMagicConstant| {

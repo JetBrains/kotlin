@@ -369,13 +369,13 @@ class JavaSymbolProvider(
             val parameterForAnnotationConstructor = buildJavaValueParameter {
                 session = this@JavaSymbolProvider.session
                 returnTypeRef = firJavaMethod.returnTypeRef
-                name = firJavaMethod.name
+                name = methodName
                 if (javaMethod.hasAnnotationParameterDefaultValue) {
                     defaultValue = buildExpressionStub()
                 }
-                isVararg = javaMethod.returnType is JavaArrayType
+                isVararg = returnType is JavaArrayType && methodName == VALUE_METHOD_NAME
             }
-            if (firJavaMethod.name == VALUE_METHOD_NAME) {
+            if (methodName == VALUE_METHOD_NAME) {
                 valueParametersForAnnotationConstructor.valueParameterForValue = parameterForAnnotationConstructor
             } else {
                 valueParametersForAnnotationConstructor.valueParameters += parameterForAnnotationConstructor
