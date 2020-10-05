@@ -1,11 +1,10 @@
 package org.jetbrains.kotlin.codegen.debugInformation
 
-import com.sun.jdi.LocalVariable
-import com.sun.jdi.StackFrame
-import com.sun.jdi.VirtualMachine
+import com.sun.jdi.*
 import com.sun.jdi.event.Event
 import com.sun.jdi.event.LocatableEvent
 import junit.framework.TestCase
+import org.jetbrains.kotlin.test.TargetBackend
 import org.junit.AfterClass
 import org.junit.BeforeClass
 import java.io.File
@@ -15,7 +14,41 @@ abstract class AbstractLocalVariableTest : AbstractDebugTest() {
     override val virtualMachine: VirtualMachine = Companion.virtualMachine
     override val proxyPort: Int = Companion.proxyPort
 
+    interface LocalValue
+
+    class LocalPrimitive(val value: String, val valueType: String) : LocalValue {
+        override fun toString(): String {
+            return "$value:$valueType"
+        }
+    }
+
+    class LocalReference(val id: String, val referenceType: String) : LocalValue {
+        override fun toString(): String {
+            return "$referenceType"
+        }
+    }
+
+    class LocalNullValue : LocalValue {
+        override fun toString(): String {
+            return "null"
+        }
+    }
+
+    class LocalVariableRecord(
+        val variable: String,
+        val variableType: String,
+        val value: LocalValue
+    ) {
+        override fun toString(): String {
+            return "$variable:$variableType=$value"
+        }
+    }
+
     companion object {
+        const val LOCAL_VARIABLES_MARKER = "// LOCAL VARIABLES"
+        const val JVM_LOCAL_VARIABLES_MARKER = "$LOCAL_VARIABLES_MARKER JVM"
+        const val JVM_IR_LOCAL_VARIABLES_MARKER = "$LOCAL_VARIABLES_MARKER JVM_IR"
+
         const val LOCAL_VARIABLES = "// LOCAL VARIABLES"
         var proxyPort = 0
         lateinit var process: Process
@@ -41,29 +74,60 @@ abstract class AbstractLocalVariableTest : AbstractDebugTest() {
 
     override fun storeStep(loggedItems: ArrayList<Any>, event: Event) {
         waitUntil { (event as LocatableEvent).thread().isSuspended }
-        val visibleVars = (event as LocatableEvent)
-            .thread()
-            .frame(0)
-            .visibleVariables()
-            .map { variable -> toRecord(event.thread().frame(0), variable) }
-            .joinToString(", ")
-        loggedItems.add("${event.location()}: $visibleVars".trim())
+        val frame = (event as LocatableEvent).thread().frame(0)
+        try {
+            val visibleVars = frame
+                .visibleVariables()
+                .map { variable -> toRecord(frame, variable) }
+                .joinToString(", ")
+            loggedItems.add("${event.location()}: $visibleVars".trim())
+        } catch (e: AbsentInformationException) {
+            // LVT Completely absent - not distinguished from an empty table
+            loggedItems.add("${event.location()}:".trim())
+        }
     }
 
     override fun checkResult(wholeFile: File, loggedItems: List<Any>) {
-        val expectedLocalVariables = wholeFile
-            .readLines()
-            .dropWhile { !it.startsWith(LOCAL_VARIABLES) }
-            .drop(1)
-            .map { it.drop(3) }
-            .joinToString("\n")
+        val lines = wholeFile.readLines()
+
+        val expectedLocalVariables = mutableListOf<String>()
+        val lineIterator = lines.iterator()
+        for (line in lineIterator) {
+            if (line.startsWith(LOCAL_VARIABLES_MARKER)) break
+        }
+
+        var currentBackend = TargetBackend.ANY
+        for (line in lineIterator) {
+            if (line.trim() == "") continue
+            if (line.startsWith(LOCAL_VARIABLES_MARKER)) {
+                currentBackend = when (line) {
+                    LOCAL_VARIABLES_MARKER -> TargetBackend.ANY
+                    JVM_LOCAL_VARIABLES_MARKER -> TargetBackend.JVM
+                    JVM_IR_LOCAL_VARIABLES_MARKER -> TargetBackend.JVM_IR
+                    else -> error("Expected JVM backend: $line")
+                }
+                continue
+            }
+            if (currentBackend == TargetBackend.ANY || currentBackend == backend) {
+                expectedLocalVariables.add(line.drop(3))
+            }
+        }
+
         val actualLocalVariables = loggedItems.joinToString("\n")
 
-        TestCase.assertEquals(expectedLocalVariables, actualLocalVariables)
+        TestCase.assertEquals(expectedLocalVariables.joinToString("\n"), actualLocalVariables)
     }
 
-    private fun toRecord(frame: StackFrame, variable: LocalVariable): String {
-        return "${variable.name()}:${frame.getValue(variable)?.type()?.name() ?: "null"}"
+    private fun toRecord(frame: StackFrame, variable: LocalVariable): LocalVariableRecord {
+        val value = frame.getValue(variable)
+        val valueRecord = if (value == null) {
+            LocalNullValue()
+        } else if (value is ObjectReference && value.referenceType().name() != "java.lang.String") {
+            LocalReference(value.uniqueID().toString(), value.referenceType().name())
+        } else {
+            LocalPrimitive(value.toString(), value.type().name())
+        }
+        return LocalVariableRecord(variable.name(), variable.typeName(), valueRecord)
     }
 
     private fun waitUntil(condition: () -> Boolean) {

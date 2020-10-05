@@ -171,6 +171,9 @@ abstract class AbstractDebugTest : CodegenTestCase() {
 
         val classLoader = createGeneratedClassLoader(classesDir)
         val aClass = getGeneratedClass(classLoader, TEST_CLASS)
+        assert(aClass.declaredMethods.any { it.name == BOX_METHOD }) {
+            "Test method $BOX_METHOD not present on test class $TEST_CLASS"
+        }
         if (virtualMachine.allThreads().any { it.isSuspended }) {
             virtualMachine.resume()
         }

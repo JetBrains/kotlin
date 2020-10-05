@@ -29,11 +29,6 @@ public class CheckLocalVariablesTableTestGenerated extends AbstractCheckLocalVar
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/checkLocalVariablesTable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
     }
 
-    @TestMetadata("catchClause.kt")
-    public void testCatchClause() throws Exception {
-        runTest("compiler/testData/checkLocalVariablesTable/catchClause.kt");
-    }
-
     @TestMetadata("copyFunction.kt")
     public void testCopyFunction() throws Exception {
         runTest("compiler/testData/checkLocalVariablesTable/copyFunction.kt");
