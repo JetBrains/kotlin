@@ -10,7 +10,6 @@ import com.intellij.structuralsearch.impl.matcher.CompiledPattern
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
 import com.intellij.structuralsearch.impl.matcher.handlers.LiteralWithSubstitutionHandler
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
-import com.intellij.structuralsearch.impl.matcher.predicates.RegExpPredicate
 import com.intellij.util.containers.reverse
 import com.jetbrains.kotlin.structuralsearch.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -640,8 +639,11 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitParameter(parameter: KtParameter) {
         val other = getTreeElementDepar<KtParameter>() ?: return
-        val typeMatched = when (other.parent.parent) {
-            is KtFunctionType, is KtCatchClause -> myMatchingVisitor.match(parameter.typeReference, other.typeReference)
+        val decl = other.parent.parent
+        val typeMatched = when {
+            decl is KtFunctionType || decl is KtCatchClause || (parameter.isVarArg && other.isVarArg) -> {
+                myMatchingVisitor.match(parameter.typeReference, other.typeReference)
+            }
             else -> matchTypeReferenceWithDeclaration(parameter.typeReference, other)
         }
         val otherNameIdentifier = if (getHandler(parameter) is SubstitutionHandler
@@ -650,11 +652,11 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         ) other else other.nameIdentifier
         myMatchingVisitor.result = typeMatched
                 && myMatchingVisitor.match(parameter.defaultValue, other.defaultValue)
+                && parameter.isVarArg == other.isVarArg
                 && myMatchingVisitor.match(parameter.valOrVarKeyword, other.valOrVarKeyword)
                 && (parameter.nameIdentifier == null || matchTextOrVariable(parameter.nameIdentifier, otherNameIdentifier))
                 && myMatchingVisitor.match(parameter.modifierList, other.modifierList)
                 && myMatchingVisitor.match(parameter.destructuringDeclaration, other.destructuringDeclaration)
-
         parameter.nameIdentifier?.let { nameIdentifier ->
             val handler = getHandler(nameIdentifier)
             if (myMatchingVisitor.result && handler is SubstitutionHandler) {
@@ -875,7 +877,6 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
             codeBody == null -> myMatchingVisitor.match(patternBody, other.bodyExpression)
             else -> myMatchingVisitor.match(function.bodyBlockExpression, other.bodyBlockExpression)
         }
-
         myMatchingVisitor.result = myMatchingVisitor.match(function.modifierList, other.modifierList)
                 && matchTextOrVariable(function.nameIdentifier, other.nameIdentifier)
                 && myMatchingVisitor.match(function.typeParameterList, other.typeParameterList)

@@ -62,6 +62,10 @@ class KotlinSSFunctionTest : KotlinSSResourceInspectionTest() {
     fun testFunFqReceiverTypeReference() { doTest("fun kotlin.Int.'_()") }
 
     fun testFunVarargParam() { doTest("fun '_(vararg '_)") }
+
+    fun testFunVarargAndNormalParam() { doTest("fun '_(vararg '_ : '_, '_ : '_)") }
+
+    fun testFunVarargAndNormalReverseParam() { doTest("fun '_('_ : '_, vararg '_ : '_)") }
     
     fun testFunNoinlineParam() { doTest("fun '_(noinline '_)") }
 
