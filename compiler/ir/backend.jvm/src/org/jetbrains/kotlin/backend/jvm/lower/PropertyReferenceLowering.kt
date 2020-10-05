@@ -66,9 +66,6 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
     private val IrMemberAccessExpression<*>.field: IrFieldSymbol?
         get() = (this as? IrPropertyReference)?.field
 
-    private val IrSimpleFunction.signature: String
-        get() = context.methodSignatureMapper.mapSignatureSkipGeneric(collectRealOverrides().first()).toString()
-
     // Plain Java fields do not have a getter, but can be referenced nonetheless. The signature should be the one
     // that a getter would have, if it existed.
     private val IrField.signature: String
@@ -216,6 +213,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                 cachedKProperty(expression)
 
             private fun cachedKProperty(expression: IrCallableReference<*>): IrExpression {
+                expression.transformChildrenVoid()
                 if (expression.origin != IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE)
                     return createSpecializedKProperty(expression)
 

@@ -2976,6 +2976,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 runTest("compiler/testData/codegen/box/callableReference/property/inEnum.kt");
             }
 
+            @TestMetadata("inReceiverOfAnother.kt")
+            public void testInReceiverOfAnother() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/property/inReceiverOfAnother.kt");
+            }
+
             @TestMetadata("invokePropertyReference.kt")
             public void testInvokePropertyReference() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/property/invokePropertyReference.kt");
