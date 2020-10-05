@@ -9,7 +9,8 @@
                         area="IDEA_PROJECT"/>
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.highlighterExtension"
-                        interface="org.jetbrains.kotlin.idea.highlighter.HighlighterExtension"/>
+                        interface="org.jetbrains.kotlin.idea.highlighter.HighlighterExtension"
+                        dynamic="true"/>
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.ultraLightClassModifierExtension"
                         interface="org.jetbrains.kotlin.asJava.UltraLightClassModifierExtension"
@@ -35,14 +36,15 @@
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.scriptDefinitionsProvider"
                         interface="kotlin.script.experimental.intellij.ScriptDefinitionsProvider"
-                        area="IDEA_PROJECT"/>
+                        area="IDEA_PROJECT" dynamic="true"/>
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.syntheticScopeProviderExtension"
                         interface="org.jetbrains.kotlin.synthetic.SyntheticScopeProviderExtension"
                         area="IDEA_PROJECT"/>
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.resolveScopeEnlarger"
-                        interface="org.jetbrains.kotlin.idea.caches.resolve.util.KotlinResolveScopeEnlarger"/>
+                        interface="org.jetbrains.kotlin.idea.caches.resolve.util.KotlinResolveScopeEnlarger"
+                        dynamic="true"/>
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.j2kConverterExtension"
                         interface="org.jetbrains.kotlin.j2k.J2kConverterExtension"/>

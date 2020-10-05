@@ -1,10 +1,12 @@
 <idea-plugin>
     <extensionPoints>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.gradleProjectImportHandler" area="IDEA_PROJECT"
-                        interface="org.jetbrains.kotlin.idea.configuration.GradleProjectImportHandler"/>
+                        interface="org.jetbrains.kotlin.idea.configuration.GradleProjectImportHandler"
+                        dynamic="true"/>
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.gradleModelFacade"
-                        interface="org.jetbrains.kotlin.idea.inspections.gradle.KotlinGradleModelFacade"/>
+                        interface="org.jetbrains.kotlin.idea.inspections.gradle.KotlinGradleModelFacade"
+                        dynamic="true"/>
     </extensionPoints>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
