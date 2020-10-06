@@ -4528,6 +4528,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamicConstants.kt");
         }
 
+        @TestMetadata("concatDynamicDataClass.kt")
+        public void testConcatDynamicDataClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamicDataClass.kt");
+        }
+
         @TestMetadata("concatDynamicIndy.kt")
         public void testConcatDynamicIndy() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamicIndy.kt");
@@ -4536,6 +4541,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("concatDynamicIndy201.kt")
         public void testConcatDynamicIndy201() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamicIndy201.kt");
+        }
+
+        @TestMetadata("concatDynamicIndyDataClass.kt")
+        public void testConcatDynamicIndyDataClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamicIndyDataClass.kt");
         }
 
         @TestMetadata("concatNotDynamic.kt")
