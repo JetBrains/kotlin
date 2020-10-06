@@ -3,10 +3,20 @@
  * that can be found in the LICENSE file.
  */
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.testing.native.*
 import org.jetbrains.kotlin.bitcode.CompileToBitcode
 
 plugins {
     id("compile-to-bitcode")
+    id("runtime-testing")
+}
+
+googletest {
+    // The latest release GTest (1.10.0) doesn't properly register skipped tests in an XML-report.
+    // Therefore we use a fixed commit form the master branch where this problem is already fixed.
+    // https://github.com/google/googletest/commit/07f4869221012b16b7f9ee685d94856e1fc9f361
+    revision = "07f4869221012b16b7f9ee685d94856e1fc9f361"
+    refresh = project.hasProperty("refresh-gtest")
 }
 
 fun CompileToBitcode.includeRuntime() {
