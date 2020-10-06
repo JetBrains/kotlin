@@ -235,6 +235,9 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 val value = args[1]
                 jsAssignment(JsNameRef(Namer.SHARED_BOX_V, box), value)
             }
+            add(intrinsics.jsUndefined) { call: IrCall, context: JsGenerationContext ->
+                JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(1))
+            }
         }
     }
 

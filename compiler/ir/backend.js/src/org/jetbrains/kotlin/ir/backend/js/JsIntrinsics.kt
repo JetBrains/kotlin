@@ -308,6 +308,8 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val readSharedBox = defineReadSharedBox()
     val writeSharedBox = defineWriteSharedBox()
 
+    val jsUndefined = defineJsUndefinedIntrinsic()
+
     // Helpers:
 
     private fun getInternalFunction(name: String) =
@@ -398,6 +400,14 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
                     buildSimpleType()
                 }
             }
+        }
+    }
+
+    private fun defineJsUndefinedIntrinsic(): IrSimpleFunction {
+        return irFactory.addFunction(externalPackageFragment) {
+            name = Name.identifier("\$undefined")
+        }.apply {
+            returnType = context.irBuiltIns.nothingNType
         }
     }
 
