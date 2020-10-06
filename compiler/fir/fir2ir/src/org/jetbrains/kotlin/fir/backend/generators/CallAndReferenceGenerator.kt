@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.calls.getExpectedTypeForSAMConversion
 import org.jetbrains.kotlin.fir.resolve.calls.isFunctional
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -529,12 +530,37 @@ class CallAndReferenceGenerator(
 
     private fun IrExpression.applySamConversionIfNeeded(
         argument: FirExpression,
-        parameter: FirValueParameter?
+        parameter: FirValueParameter?,
+        shouldUnwrapVarargType: Boolean = false
     ): IrExpression {
-        if (parameter == null || !needSamConversion(argument, parameter)) {
+        if (parameter == null) {
             return this
         }
-        val samType = parameter.returnTypeRef.toIrType()
+        if (this is IrVararg) {
+            // element-wise SAM conversion if and only if we can build 1-to-1 mapping for elements.
+            if (argument !is FirVarargArgumentsExpression || argument.arguments.size != elements.size) {
+                return this
+            }
+            val argumentMapping = this.elements.zip(argument.arguments).toMap()
+            // [IrElementTransformer] is not preferred, since it's hard to visit vararg elements only.
+            val irVarargElements = elements as MutableList<IrVarargElement>
+            irVarargElements.replaceAll { irVarargElement ->
+                if (irVarargElement is IrExpression) {
+                    val firVarargArgument =
+                        argumentMapping[irVarargElement] ?: error("Can't find the original FirExpression for ${irVarargElement.render()}")
+                    irVarargElement.applySamConversionIfNeeded(firVarargArgument, parameter, shouldUnwrapVarargType = true)
+                } else
+                    irVarargElement
+            }
+            return this
+        }
+        if (!needSamConversion(argument, parameter)) {
+            return this
+        }
+        var samType = parameter.returnTypeRef.toIrType()
+        if (shouldUnwrapVarargType) {
+            samType = samType.getArrayElementType(irBuiltIns)
+        }
         // Make sure the converted IrType owner indeed has a single abstract method, since FunctionReferenceLowering relies on it.
         if (!samType.isSamType) return this
         return IrTypeOperatorCallImpl(this.startOffset, this.endOffset, samType, IrTypeOperator.SAM_CONVERSION, samType, this)
@@ -542,7 +568,8 @@ class CallAndReferenceGenerator(
 
     private fun needSamConversion(argument: FirExpression, parameter: FirValueParameter): Boolean {
         // If the expected type is a built-in functional type, we don't need SAM conversion.
-        if (parameter.returnTypeRef.coneType.isBuiltinFunctionalType(session)) {
+        val expectedType = argument.getExpectedTypeForSAMConversion(parameter)
+        if (expectedType is ConeTypeParameterType || expectedType.isBuiltinFunctionalType(session)) {
             return false
         }
         // On the other hand, the actual type should be a functional type.
