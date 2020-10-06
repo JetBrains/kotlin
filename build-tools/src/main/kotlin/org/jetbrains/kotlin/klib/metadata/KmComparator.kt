@@ -143,7 +143,7 @@ internal class KmComparator(private val configuration: ComparisonConfig) {
     )(flags1, flags2)
 
     private fun compareConstructorFlags(flags1: Flags, flags2: Flags): MetadataCompareResult = serialComparator(
-            checkFlag(Flag.Constructor.IS_PRIMARY) to "IS_PRIMARY mismatch"
+            checkFlag(Flag.Constructor.IS_SECONDARY) to "IS_SECONDARY mismatch"
     )(flags1, flags2)
 
     private fun compare(constructor1: KmConstructor, constructor2: KmConstructor): MetadataCompareResult = serialComparator(

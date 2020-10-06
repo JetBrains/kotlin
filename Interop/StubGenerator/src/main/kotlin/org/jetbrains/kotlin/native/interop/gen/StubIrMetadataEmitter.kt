@@ -359,7 +359,7 @@ private class MappingExtensions(
 
     val ConstructorStub.flags: Flags
         get() = flagsOfNotNull(
-                isSecondaryConstructorFlag.takeIf { !isPrimary },
+                Flag.Constructor.IS_SECONDARY.takeIf { !isPrimary },
                 Flag.HAS_ANNOTATIONS.takeIf { annotations.isNotEmpty() }
         ) or visibility.flags
 
