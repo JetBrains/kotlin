@@ -50,7 +50,8 @@ class IrFileImpl(
         get() = fileEntry.maxOffset
 
     @ObsoleteDescriptorBasedAPI
-    override val packageFragmentDescriptor: PackageFragmentDescriptor get() = symbol.descriptor
+    override val packageFragmentDescriptor: PackageFragmentDescriptor
+        get() = symbol.descriptor
 
     override val declarations: MutableList<IrDeclaration> = ArrayList()
 

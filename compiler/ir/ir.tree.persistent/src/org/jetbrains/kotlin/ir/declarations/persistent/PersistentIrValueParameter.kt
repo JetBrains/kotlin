@@ -53,7 +53,7 @@ internal class PersistentIrValueParameter(
     init {
         symbol.bind(this)
     }
-    
+
     override var lastModified: Int = stageController.currentStage
     override var loweredUpTo: Int = stageController.currentStage
     override var values: Array<Carrier>? = null

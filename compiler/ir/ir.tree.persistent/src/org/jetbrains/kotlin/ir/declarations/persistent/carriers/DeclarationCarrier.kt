@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 
-interface DeclarationCarrier: Carrier {
+interface DeclarationCarrier : Carrier {
     var parentField: IrDeclarationParent?
     var originField: IrDeclarationOrigin
     var annotationsField: List<IrConstructorCall>

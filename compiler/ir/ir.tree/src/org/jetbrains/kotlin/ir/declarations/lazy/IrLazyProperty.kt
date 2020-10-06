@@ -21,25 +21,25 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 
 class IrLazyProperty(
-        override val startOffset: Int,
-        override val endOffset: Int,
-        override var origin: IrDeclarationOrigin,
-        override val symbol: IrPropertySymbol,
-        @OptIn(ObsoleteDescriptorBasedAPI::class)
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override var origin: IrDeclarationOrigin,
+    override val symbol: IrPropertySymbol,
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val descriptor: PropertyDescriptor,
-        override val name: Name,
-        override var visibility: DescriptorVisibility,
-        override val modality: Modality,
-        override val isVar: Boolean,
-        override val isConst: Boolean,
-        override val isLateinit: Boolean,
-        override val isDelegated: Boolean,
-        override val isExternal: Boolean,
-        override val isExpect: Boolean,
-        override val isFakeOverride: Boolean,
-        override val stubGenerator: DeclarationStubGenerator,
-        override val typeTranslator: TypeTranslator,
-        bindingContext: BindingContext? = null
+    override val name: Name,
+    override var visibility: DescriptorVisibility,
+    override val modality: Modality,
+    override val isVar: Boolean,
+    override val isConst: Boolean,
+    override val isLateinit: Boolean,
+    override val isDelegated: Boolean,
+    override val isExternal: Boolean,
+    override val isExpect: Boolean,
+    override val isFakeOverride: Boolean,
+    override val stubGenerator: DeclarationStubGenerator,
+    override val typeTranslator: TypeTranslator,
+    bindingContext: BindingContext? = null
 ) : IrProperty(), IrLazyDeclarationBase {
     init {
         symbol.bind(this)
