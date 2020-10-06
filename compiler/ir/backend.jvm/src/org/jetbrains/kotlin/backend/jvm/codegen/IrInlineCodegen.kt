@@ -76,7 +76,7 @@ class IrInlineCodegen(
         blockInfo: BlockInfo
     ) {
         val isInlineParameter = irValueParameter.isInlineParameter()
-        if (isInlineParameter && isInlineIrExpression(argumentExpression)) {
+        if (isInlineParameter && argumentExpression.isInlineIrExpression()) {
             val irReference = (argumentExpression as IrBlock).statements.filterIsInstance<IrFunctionReference>().single()
             val lambdaInfo = IrExpressionLambdaImpl(codegen, irReference, irValueParameter)
             val closureInfo = invocationParamBuilder.addNextValueParameter(parameterType, true, null, irValueParameter.index)
@@ -245,18 +245,19 @@ class IrDefaultLambda(
         }.toIrBasedDescriptor()
 }
 
-fun isInlineIrExpression(argumentExpression: IrExpression) =
-    when (argumentExpression) {
-        is IrBlock -> argumentExpression.isInlineIrBlock()
+fun IrExpression.isInlineIrExpression() =
+    when (this) {
+        is IrBlock -> origin.isInlineIrExpression()
         is IrCallableReference<*> -> true.also {
-            assert((0 until argumentExpression.valueArgumentsCount).count { argumentExpression.getValueArgument(it) != null } == 0) {
-                "Expecting 0 value arguments for bounded callable reference: ${argumentExpression.dump()}"
+            assert((0 until valueArgumentsCount).count { getValueArgument(it) != null } == 0) {
+                "Expecting 0 value arguments for bounded callable reference: ${dump()}"
             }
         }
         else -> false
     }
 
-fun IrBlock.isInlineIrBlock(): Boolean = origin.isLambda || origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
+fun IrStatementOrigin?.isInlineIrExpression() =
+    isLambda || this == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || this == IrStatementOrigin.SUSPEND_CONVERSION
 
 fun IrFunction.isInlineFunctionCall(context: JvmBackendContext) =
     (!context.state.isInlineDisabled || typeParameters.any { it.isReified }) && isInline
