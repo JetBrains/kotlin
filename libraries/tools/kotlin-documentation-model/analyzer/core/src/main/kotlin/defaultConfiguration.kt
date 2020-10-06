@@ -14,7 +14,7 @@ data class DokkaConfigurationImpl(
     override val pluginsClasspath: List<File> = emptyList(),
     override val pluginsConfiguration: List<PluginConfigurationImpl> = DokkaDefaults.pluginsConfiguration,
     override val modules: List<DokkaModuleDescriptionImpl> = emptyList(),
-    override val failOnWarning: Boolean = DokkaDefaults.failOnWarning
+    override val failOnWarning: Boolean = DokkaDefaults.failOnWarning,
 ) : DokkaConfiguration
 
 data class PluginConfigurationImpl(
@@ -45,19 +45,19 @@ data class DokkaSourceSetImpl(
     override val noStdlibLink: Boolean = DokkaDefaults.noStdlibLink,
     override val noJdkLink: Boolean = DokkaDefaults.noJdkLink,
     override val suppressedFiles: Set<File> = emptySet(),
-    override val analysisPlatform: Platform = DokkaDefaults.analysisPlatform
+    override val analysisPlatform: Platform = DokkaDefaults.analysisPlatform,
 ) : DokkaSourceSet
 
 data class DokkaModuleDescriptionImpl(
     override val name: String,
     override val relativePathToOutputDirectory: File,
-    override val includes: Set<File>
+    override val includes: Set<File>,
 ) : DokkaConfiguration.DokkaModuleDescription
 
 data class SourceLinkDefinitionImpl(
     override val localDirectory: String,
     override val remoteUrl: URL,
-    override val remoteLineSuffix: String?
+    override val remoteLineSuffix: String?,
 ) : DokkaConfiguration.SourceLinkDefinition {
     companion object {
         fun parseSourceLinkDefinition(srcLink: String): SourceLinkDefinitionImpl {
@@ -75,11 +75,11 @@ data class PackageOptionsImpl(
     override val includeNonPublic: Boolean,
     override val reportUndocumented: Boolean?,
     override val skipDeprecated: Boolean,
-    override val suppress: Boolean
+    override val suppress: Boolean,
 ) : DokkaConfiguration.PackageOptions
 
 
 data class ExternalDocumentationLinkImpl(
     override val url: URL,
-    override val packageListUrl: URL
+    override val packageListUrl: URL,
 ) : DokkaConfiguration.ExternalDocumentationLink
