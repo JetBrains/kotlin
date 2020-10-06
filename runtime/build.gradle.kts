@@ -100,7 +100,6 @@ targetList.forEach { targetName ->
             "${targetName}StdAllocRuntimeTests",
             listOf(
                 "${targetName}Runtime",
-                "${targetName}TestSupport",
                 "${targetName}Strict",
                 "${targetName}Release",
                 "${targetName}StdAlloc"
@@ -112,7 +111,6 @@ targetList.forEach { targetName ->
             "${targetName}MimallocRuntimeTests",
             listOf(
                 "${targetName}Runtime",
-                "${targetName}TestSupport",
                 "${targetName}Strict",
                 "${targetName}Release",
                 "${targetName}Mimalloc",

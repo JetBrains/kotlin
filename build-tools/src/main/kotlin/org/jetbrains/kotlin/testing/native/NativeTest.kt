@@ -9,6 +9,7 @@ import groovy.lang.Closure
 import java.io.File
 import javax.inject.Inject
 import org.gradle.api.*
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.ExecClang
 import org.jetbrains.kotlin.bitcode.CompileToBitcode
@@ -17,7 +18,7 @@ import org.jetbrains.kotlin.konan.target.*
 open class CompileNativeTest @Inject constructor(
         @InputFile val inputFile: File,
         @Input val target: String
-) : DefaultTask () {
+) : DefaultTask() {
     @OutputFile
     var outputFile = project.buildDir.resolve("bin/test/$target/${inputFile.nameWithoutExtension}.o")
 
@@ -27,10 +28,54 @@ open class CompileNativeTest @Inject constructor(
     @TaskAction
     fun compile() {
         val plugin = project.convention.getPlugin(ExecClang::class.java)
-        plugin.execBareClang(Action {
+        plugin.execBareClang {
             it.executable = "clang++"
             it.args = clangArgs + listOf(inputFile.absolutePath, "-o", outputFile.absolutePath)
-        })
+        }
+    }
+}
+
+open class LlvmLinkNativeTest @Inject constructor(
+        val baseName: String,
+        @Input val target: String,
+        @InputFile val mainFile: File
+) : DefaultTask() {
+
+    @SkipWhenEmpty
+    @InputFiles
+    var inputFiles: ConfigurableFileCollection = project.files()
+
+    @OutputFile
+    var outputFile: File = project.buildDir.resolve("bitcode/test/$target/$baseName.bc")
+
+    @TaskAction
+    fun llvmLink() {
+        val llvmDir = project.property("llvmDir")
+        val tmpOutput = File.createTempFile("runtimeTests", ".bc").apply {
+            deleteOnExit()
+        }
+
+        // The runtime provides our implementations for some standard functions (see StdCppStubs.cpp).
+        // We need to internalize these symbols to avoid clashes with symbols provided by the C++ stdlib.
+        // But llvm-link -internalize is kinda broken: it links modules one by one and can't see usages
+        // of a symbol in subsequent modules. So it will mangle such symbols causing "unresolved symbol"
+        // errors at the link stage. So we have to run llvm-link twice: the first one links all modules
+        // except the one containing the entry point to a single *.bc without internalization. The second
+        // run internalizes this big module and links it with a module containing the entry point.
+        project.exec {
+            it.executable = "$llvmDir/bin/llvm-link"
+            it.args = listOf("-o", tmpOutput.absolutePath) + inputFiles.map { it.absolutePath }
+        }
+
+        project.exec {
+            it.executable = "$llvmDir/bin/llvm-link"
+            it.args = listOf(
+                    "-o", outputFile.absolutePath,
+                    mainFile.absolutePath,
+                    tmpOutput.absolutePath,
+                    "-internalize"
+            )
+        }
     }
 }
 
@@ -106,15 +151,6 @@ open class LinkNativeTest @Inject constructor(
     }
 }
 
-@Suppress("UNCHECKED_CAST")
-private fun <T: Task> T.configure(f: T.() -> Unit): T =
-    this.configure(object: Closure<Unit>(this) {
-        // Dynamically invoked by Groovy
-        fun doCall() {
-            f()
-        }
-    }) as T
-
 fun createTestTask(
         project: Project,
         testTaskName: String,
@@ -137,7 +173,7 @@ fun createTestTask(
                     it.srcRoot,
                     "${it.folderName}Tests",
                     target, "test"
-                    ).configure {
+                    ).apply {
                 excludeFiles = emptyList()
                 includeFiles = listOf("**/*Test.cpp", "**/*Test.mm")
                 dependsOn(it)
@@ -153,29 +189,42 @@ fun createTestTask(
         project.tasks.getByName("${target}Googletest") as CompileToBitcode,
         project.tasks.getByName("${target}Googlemock") as CompileToBitcode
     )
-    val compileToObjectFileTasks = (compileToBitcodeTasks + testedTasks + testFrameworkTasks).map {
-        val name = "${it.name}Object"
-        val clangFlags = platformManager.platform(konanTarget).configurables as ClangFlags
-        project.tasks.findByName(name) as? CompileNativeTest ?:
-                project.tasks.create(name,
-                        CompileNativeTest::class.java,
-                        it.outFile,
-                        target
-                ).configure {
-                    dependsOn(it)
-                    clangArgs.addAll(clangFlags.clangFlags)
-                    clangArgs.addAll(clangFlags.clangNooptFlags)
-                }
+
+    val testSupportTask = project.tasks.getByName("${target}TestSupport") as CompileToBitcode
+
+    // TODO: It may make sense to merge llvm-link, compile and link to a single task.
+    val llvmLinkTask = project.tasks.create(
+            "${testTaskName}LlvmLink",
+            LlvmLinkNativeTest::class.java,
+            testTaskName, target, testSupportTask.outFile
+    ).apply {
+        val tasksToLink = (compileToBitcodeTasks + testedTasks + testFrameworkTasks)
+        inputFiles = project.files(tasksToLink.map { it.outFile })
+        dependsOn(testSupportTask)
+        dependsOn(tasksToLink)
     }
+
+    val clangFlags = platformManager.platform(konanTarget).configurables as ClangFlags
+    val compileTask = project.tasks.create(
+            "${testTaskName}Compile",
+            CompileNativeTest::class.java,
+            llvmLinkTask.outputFile,
+            target
+    ).apply {
+        dependsOn(llvmLinkTask)
+        clangArgs.addAll(clangFlags.clangFlags)
+        clangArgs.addAll(clangFlags.clangNooptFlags)
+    }
+
     val linkTask = LinkNativeTest.create(
             project,
             platformManager,
             "${testTaskName}Link",
-            compileToObjectFileTasks.map { it.outputFile },
+            listOf(compileTask.outputFile),
             target,
             testTaskName
-    ).configure {
-        dependsOn(compileToObjectFileTasks)
+    ).apply {
+        dependsOn(compileTask)
     }
 
     return project.tasks.create(testTaskName, Exec::class.java).apply {
