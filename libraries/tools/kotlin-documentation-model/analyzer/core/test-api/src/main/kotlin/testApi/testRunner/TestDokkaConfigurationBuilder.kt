@@ -45,7 +45,7 @@ class TestDokkaConfigurationBuilder {
         pluginsClasspath = pluginsClasspath,
         pluginsConfiguration = pluginsConfigurations,
         modules = emptyList(),
-        failOnWarning = failOnWarning
+        failOnWarning = failOnWarning,
     )
 
     fun sourceSets(block: SourceSetsBuilder.() -> Unit) {
