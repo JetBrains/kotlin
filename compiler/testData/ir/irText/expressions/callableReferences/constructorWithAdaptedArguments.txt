@@ -100,8 +100,6 @@ FILE fqName:<root> fileName:/constructorWithAdaptedArguments.kt
       RETURN type=kotlin.Nothing from='public final fun testInnerClassConstructorCapturingOuter (): kotlin.Any declared in <root>'
         CALL 'public final fun use (fn: kotlin.Function1<kotlin.Int, kotlin.Any>): kotlin.Any declared in <root>' type=kotlin.Any origin=null
           fn: BLOCK type=kotlin.Function1<kotlin.Int, <root>.Outer.Inner> origin=ADAPTED_FUNCTION_REFERENCE
-            VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.Outer [val]
-              CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Outer' type=<root>.Outer origin=null
             FUN ADAPTER_FOR_CALLABLE_REFERENCE name:<init> visibility:local modality:FINAL <> ($receiver:<root>.Outer, p0:kotlin.Int) returnType:<root>.Outer.Inner
               $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:receiver type:<root>.Outer
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:kotlin.Int
@@ -112,4 +110,4 @@ FILE fqName:<root> fileName:/constructorWithAdaptedArguments.kt
                     xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
                       GET_VAR 'p0: kotlin.Int declared in <root>.testInnerClassConstructorCapturingOuter.<init>' type=kotlin.Int origin=null
             FUNCTION_REFERENCE 'local final fun <init> (p0: kotlin.Int): <root>.Outer.Inner declared in <root>.testInnerClassConstructorCapturingOuter' type=kotlin.Function1<kotlin.Int, <root>.Outer.Inner> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=null
-              $receiver: GET_VAR 'val tmp_0: <root>.Outer [val] declared in <root>.testInnerClassConstructorCapturingOuter' type=<root>.Outer origin=null
+              $receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Outer' type=<root>.Outer origin=null
