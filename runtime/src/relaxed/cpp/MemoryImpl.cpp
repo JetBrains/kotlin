@@ -33,6 +33,10 @@ void ReleaseHeapRef(const ObjHeader* object) {
   ReleaseHeapRefRelaxed(object);
 }
 
+void ReleaseHeapRefNoCollect(const ObjHeader* object) {
+  ReleaseHeapRefNoCollectRelaxed(object);
+}
+
 void ZeroStackRef(ObjHeader** location) {
   ZeroStackRefRelaxed(location);
 }

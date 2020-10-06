@@ -153,7 +153,7 @@ bool BackRefFromAssociatedObject::tryAddRef() {
   RuntimeAssert(isForeignRefAccessible(obj_, context_), "Cannot be inaccessible because of the check above");
   // TODO: This is a very weird way to ask for "unsafe" addRef.
   addRef<ErrorPolicy::kIgnore>();
-  ReleaseHeapRef(obj); // Balance TryAddHeapRef.
+  ReleaseHeapRefNoCollect(obj); // Balance TryAddHeapRef.
   // TODO: consider optimizing for non-shared objects.
 
   return true;

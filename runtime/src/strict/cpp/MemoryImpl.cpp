@@ -33,6 +33,10 @@ void ReleaseHeapRef(const ObjHeader* object) {
   ReleaseHeapRefStrict(object);
 }
 
+void ReleaseHeapRefNoCollect(const ObjHeader* object) {
+  ReleaseHeapRefNoCollectStrict(object);
+}
+
 void SetStackRef(ObjHeader** location, const ObjHeader* object) {
   SetStackRefStrict(location, object);
 }

@@ -1616,23 +1616,23 @@ inline bool tryAddHeapRef(const ObjHeader* header) {
   return (container != nullptr) ? tryAddHeapRef(container) : true;
 }
 
-template <bool Strict>
+template <bool Strict, bool CanCollect>
 inline void releaseHeapRef(ContainerHeader* container) {
   MEMORY_LOG("ReleaseHeapRef %p: rc=%d\n", container, container->refCount())
   UPDATE_RELEASEREF_STAT(memoryState, container, needAtomicAccess(container), canBeCyclic(container), 0)
   if (container->tag() != CONTAINER_TAG_STACK) {
     if (Strict)
-      enqueueDecrementRC</* CanCollect = */ true>(container);
+      enqueueDecrementRC</* CanCollect = */ CanCollect>(container);
     else
       decrementRC(container);
   }
 }
 
-template <bool Strict>
+template <bool Strict, bool CanCollect = true>
 inline void releaseHeapRef(const ObjHeader* header) {
   auto* container = header->container();
   if (container != nullptr)
-    releaseHeapRef<Strict>(const_cast<ContainerHeader*>(container));
+    releaseHeapRef<Strict, CanCollect>(const_cast<ContainerHeader*>(container));
 }
 
 // We use first slot as place to store frame-local arena container.
@@ -3133,6 +3133,13 @@ void ReleaseHeapRefStrict(const ObjHeader* object) {
 }
 void ReleaseHeapRefRelaxed(const ObjHeader* object) {
   releaseHeapRef<false>(const_cast<ObjHeader*>(object));
+}
+
+void ReleaseHeapRefNoCollectStrict(const ObjHeader* object) {
+  releaseHeapRef<true, /* CanCollect = */ false>(const_cast<ObjHeader*>(object));
+}
+void ReleaseHeapRefNoCollectRelaxed(const ObjHeader* object) {
+  releaseHeapRef<false, /* CanCollect = */ false>(const_cast<ObjHeader*>(object));
 }
 
 ForeignRefContext InitLocalForeignRef(ObjHeader* object) {
