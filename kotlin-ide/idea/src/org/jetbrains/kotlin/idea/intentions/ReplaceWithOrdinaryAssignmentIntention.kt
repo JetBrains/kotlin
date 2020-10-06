@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ReplaceWithOrdinaryAssignmentIntention : SelfTargetingIntention<KtBinaryExpression>(
@@ -24,7 +26,9 @@ class ReplaceWithOrdinaryAssignmentIntention : SelfTargetingIntention<KtBinaryEx
         val left = element.left ?: return false
         if ((left.safeAs<KtQualifiedExpression>()?.selectorExpression ?: left) !is KtNameReferenceExpression) return false
         if (element.right == null) return false
-        return operationReference.mainReference.resolve().safeAs<KtFunction>()?.name?.endsWith("Assign") != true
+
+        val resultingDescriptor = operationReference.resolveToCall(BodyResolveMode.PARTIAL)?.resultingDescriptor ?: return false
+        return resultingDescriptor.name !in OperatorNameConventions.ASSIGNMENT_OPERATIONS
     }
 
     override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
