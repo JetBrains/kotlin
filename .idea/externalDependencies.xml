@@ -9,9 +9,9 @@
     <plugin id="com.intellij.java-i18n" />
     <plugin id="com.intellij.properties" />
     <plugin id="com.intellij.uiDesigner" />
+    <plugin id="com.jetbrains.idea.safepush" />
     <plugin id="com.jetbrains.intellij.api.watcher" min-version="6.41.0" />
     <plugin id="jetbrains.team.auth" />
     <plugin id="org.intellij.groovy" />
-    <plugin id="com.jetbrains.idea.safepush" />
   </component>
 </project>
