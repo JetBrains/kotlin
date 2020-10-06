@@ -82,6 +82,10 @@ gradlePlugin {
             id = "swift-benchmarking"
             implementationClass = "org.jetbrains.kotlin.benchmark.SwiftBenchmarkingPlugin"
         }
+        create("compileToBitcode") {
+            id = "compile-to-bitcode"
+            implementationClass = "org.jetbrains.kotlin.bitcode.CompileToBitcodePlugin"
+        }
     }
 }
 

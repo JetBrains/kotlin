@@ -16,7 +16,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.bitcode.CompileToBitcode
 import java.io.FileReader
 import java.io.FileWriter
 

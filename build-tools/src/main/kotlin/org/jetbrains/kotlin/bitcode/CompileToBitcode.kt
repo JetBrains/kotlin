@@ -1,47 +1,51 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin
+package org.jetbrains.kotlin.bitcode
 
-import org.gradle.api.Action
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.InputDirectory
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.file.FileCollection
+import org.gradle.api.tasks.*
+import org.jetbrains.kotlin.ExecClang
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
-
 import java.io.File
 import javax.inject.Inject
 
-open class CompileToBitcode @Inject constructor(@InputDirectory val srcRoot: File,
-                                                val folderName: String,
-                                                val target: String) : DefaultTask() {
+open class CompileToBitcode @Inject constructor(
+        val srcRoot: File,
+        val folderName: String,
+        val target: String
+) : DefaultTask() {
+
     enum class Language {
         C, CPP
     }
 
+    // Compiler args are part of compilerFlags so we don't register them as an input.
     val compilerArgs = mutableListOf<String>()
+    @Input
     val linkerArgs = mutableListOf<String>()
-    val excludeFiles = mutableListOf<String>()
-    var srcDir = File(srcRoot, "cpp")
-    var headersDir = File(srcRoot, "headers")
+    var excludeFiles: List<String> = listOf(
+            "**/*Test.cpp",
+            "**/*Test.mm",
+    )
+    var includeFiles: List<String> = listOf(
+            "**/*.cpp",
+            "**/*.mm"
+    )
+
+    // Source files and headers are registered as inputs by the `inputFiles` and `headers` properties.
+    var srcDirs: FileCollection = project.files(srcRoot.resolve("cpp"))
+    var headersDirs: FileCollection = project.files(srcRoot.resolve("headers"))
+
+    @Input
     var skipLinkagePhase = false
-    var excludedTargets = mutableListOf<String>()
+
+    @Input
     var language = Language.CPP
 
     private val targetDir by lazy { File(project.buildDir, target) }
@@ -57,9 +61,10 @@ open class CompileToBitcode @Inject constructor(@InputDirectory val srcRoot: Fil
             Language.CPP -> "clang++"
         }
 
+    @get:Input
     val compilerFlags: List<String>
         get() {
-            val commonFlags = listOf("-c", "-emit-llvm", "-I$headersDir")
+            val commonFlags = listOf("-c", "-emit-llvm") + headersDirs.map { "-I$it" }
             val languageFlags = when (language) {
                 Language.C ->
                     // Used flags provided by original build of allocator C code.
@@ -75,17 +80,30 @@ open class CompileToBitcode @Inject constructor(@InputDirectory val srcRoot: Fil
             return commonFlags + languageFlags + compilerArgs
         }
 
+    @get:SkipWhenEmpty
+    @get:InputFiles
     val inputFiles: Iterable<File>
         get() {
-            val srcFilesPatterns =
-                when (language) {
-                    Language.C -> listOf("**/*.c")
-                    Language.CPP -> listOf("**/*.cpp", "**/*.mm")
-                }
-            return project.fileTree(srcDir) {
-                it.include(srcFilesPatterns)
-                it.exclude(excludeFiles)
-            }.files
+            return srcDirs.flatMap { srcDir ->
+                project.fileTree(srcDir) {
+                    it.include(includeFiles)
+                    it.exclude(excludeFiles)
+                }.files
+            }
+        }
+
+    @get:InputFiles
+    protected val headers: Iterable<File>
+        get() {
+            return headersDirs.files.flatMap { dir ->
+                project.fileTree(dir) {
+                    val includePatterns = when (language) {
+                        Language.C -> arrayOf("**/.h")
+                        Language.CPP -> arrayOf("**/*.h", "**/*.hpp")
+                    }
+                    it.include(*includePatterns)
+                }.files
+            }
         }
 
     @OutputFile
@@ -93,15 +111,14 @@ open class CompileToBitcode @Inject constructor(@InputDirectory val srcRoot: Fil
 
     @TaskAction
     fun compile() {
-        if (target in excludedTargets) return
         objDir.mkdirs()
         val plugin = project.convention.getPlugin(ExecClang::class.java)
 
-        plugin.execKonanClang(target, Action {
+        plugin.execKonanClang(target) {
             it.workingDir = objDir
             it.executable = executable
             it.args = compilerFlags + inputFiles.map { it.absolutePath }
-        })
+        }
 
         if (!skipLinkagePhase) {
             project.exec {

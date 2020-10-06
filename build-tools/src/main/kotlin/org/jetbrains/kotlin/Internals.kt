@@ -8,11 +8,14 @@ package org.jetbrains.kotlin
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.ExtraPropertiesExtension
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
+import java.io.File
 
 /*
  * This file includes internal short-cuts visible only inside of the 'buildSrc' module.
@@ -38,3 +41,8 @@ internal val NamedDomainObjectCollection<KotlinTargetPreset<*>>.mingwX64: Kotlin
 
 internal val NamedDomainObjectContainer<out KotlinCompilation<*>>.main: KotlinNativeCompilation
     get() = getByName(::main.name) as KotlinNativeCompilation
+
+internal val FileCollection.isNotEmpty: Boolean
+    get() = !isEmpty
+
+internal fun Provider<File>.resolve(child: String): Provider<File> = map { it.resolve(child) }

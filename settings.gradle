@@ -31,7 +31,7 @@ include ':backend.native:tests'
 include ':backend.native:debugger-tests'
 include ':utilities:basic-utils'
 include ':utilities:cli-runner'
-include 'dependencyPacker'
+include ':dependencyPacker'
 
 include ':performance'
 include ':performance:ring'
