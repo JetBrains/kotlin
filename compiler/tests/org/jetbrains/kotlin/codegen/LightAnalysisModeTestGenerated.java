@@ -9885,6 +9885,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/coroutines/suspendConversion/onArgument.kt");
             }
 
+            @TestMetadata("onInlineArgument.kt")
+            public void ignoreOnInlineArgument() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/suspendConversion/onInlineArgument.kt");
+            }
+
             @TestMetadata("subtypeOfFunctionalTypeToSuspendConversion.kt")
             public void ignoreSubtypeOfFunctionalTypeToSuspendConversion() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/suspendConversion/subtypeOfFunctionalTypeToSuspendConversion.kt");

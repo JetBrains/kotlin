@@ -109,12 +109,9 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
     override fun lower(irFile: IrFile) {
         val inlineReferences = IrInlineReferenceLocator.scan(context, irFile)
         irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
-            private fun IrFunctionReference.shouldBeTreatedAsSuspendLambda() =
-                isSuspend && (origin == IrStatementOrigin.LAMBDA || origin == IrStatementOrigin.SUSPEND_CONVERSION)
-
             override fun visitBlock(expression: IrBlock): IrExpression {
                 val reference = expression.statements.lastOrNull() as? IrFunctionReference ?: return super.visitBlock(expression)
-                if (reference.shouldBeTreatedAsSuspendLambda() && reference !in inlineReferences) {
+                if (reference.isSuspend && reference.origin.isLambda && reference !in inlineReferences) {
                     assert(expression.statements.size == 2 && expression.statements[0] is IrFunction)
                     expression.transformChildrenVoid(this)
                     val parent = currentDeclarationParent ?: error("No current declaration parent at ${reference.dump()}")

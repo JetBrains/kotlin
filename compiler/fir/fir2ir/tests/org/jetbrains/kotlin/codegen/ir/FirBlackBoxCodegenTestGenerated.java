@@ -8678,6 +8678,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 runTest("compiler/testData/codegen/box/coroutines/suspendConversion/onArgument.kt");
             }
 
+            @TestMetadata("onInlineArgument.kt")
+            public void testOnInlineArgument() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/suspendConversion/onInlineArgument.kt");
+            }
+
             @TestMetadata("subtypeOfFunctionalTypeToSuspendConversion.kt")
             public void testSubtypeOfFunctionalTypeToSuspendConversion() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/suspendConversion/subtypeOfFunctionalTypeToSuspendConversion.kt");
