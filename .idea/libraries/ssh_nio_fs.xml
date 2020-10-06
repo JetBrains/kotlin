@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="libraryTable">
   <library name="ssh-nio-fs" type="repository">
-    <properties include-transitive-deps="false" maven-id="org.jetbrains.intellij.deps:ssh-nio-fs:1.0.17" />
+    <properties include-transitive-deps="false" maven-id="org.jetbrains.intellij.deps:ssh-nio-fs:1.0.19" />
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/ssh-nio-fs/1.0.17/ssh-nio-fs-1.0.17.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/ssh-nio-fs/1.0.19/ssh-nio-fs-1.0.19.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
