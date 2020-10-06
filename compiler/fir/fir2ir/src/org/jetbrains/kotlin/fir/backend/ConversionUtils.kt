@@ -143,11 +143,12 @@ private fun FirCallableSymbol<*>.toSymbol(declarationStorage: Fir2IrDeclarationS
     is FirFunctionSymbol<*> -> declarationStorage.getIrFunctionSymbol(this)
     is SyntheticPropertySymbol -> {
         (fir as? FirSyntheticProperty)?.let { syntheticProperty ->
-            if (preferGetter) {
-                syntheticProperty.getter.delegate.symbol.toSymbol(declarationStorage, preferGetter)
+            val delegateSymbol = if (preferGetter) {
+                syntheticProperty.getter.delegate.symbol
             } else {
-                syntheticProperty.setter!!.delegate.symbol.toSymbol(declarationStorage, preferGetter)
+                syntheticProperty.setter!!.delegate.symbol
             }
+            delegateSymbol.deepestMatchingOverriddenSymbol().toSymbol(declarationStorage, preferGetter)
         } ?: declarationStorage.getIrPropertySymbol(this)
     }
     is FirPropertySymbol -> declarationStorage.getIrPropertySymbol(this)
