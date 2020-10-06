@@ -1679,7 +1679,8 @@ public class FunctionCodegen {
         assert isInterface(containingDeclaration) : "'processInterfaceMethod' method should be called only for interfaces, but: " +
                                                     containingDeclaration;
 
-        if (JvmAnnotationUtilKt.isCompiledToJvmDefault(memberDescriptor, mode)) {
+        // Fake overrides in interfaces should be expanded to implementation to make proper default check
+        if (JvmAnnotationUtilKt.checkIsImplementationCompiledToJvmDefault(memberDescriptor, mode)) {
             return (kind != OwnerKind.DEFAULT_IMPLS && !isSynthetic) ||
                    (kind == OwnerKind.DEFAULT_IMPLS &&
                     (isSynthetic || //TODO: move synthetic method generation into interface

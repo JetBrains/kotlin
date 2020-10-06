@@ -563,6 +563,11 @@ public class FirCompileKotlinAgainstKotlinTestGenerated extends AbstractFirCompi
                     runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes2Compatibility.kt");
                 }
 
+                @TestMetadata("newAndOldSchemes3.kt")
+                public void testNewAndOldSchemes3() throws Exception {
+                    runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes3.kt");
+                }
+
                 @TestMetadata("newSchemeWithJvmDefault.kt")
                 public void testNewSchemeWithJvmDefault() throws Exception {
                     runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/interop/newSchemeWithJvmDefault.kt");

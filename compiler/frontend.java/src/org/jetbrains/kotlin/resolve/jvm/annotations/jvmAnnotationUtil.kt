@@ -61,7 +61,7 @@ fun CallableMemberDescriptor.isCompiledToJvmDefault(jvmDefault: JvmDefaultMode):
     return JvmProtoBufUtil.isNewPlaceForBodyGeneration(clazz.classProto)
 }
 
-fun FunctionDescriptor.checkIsImplementationCompiledToJvmDefault(jvmDefaultMode: JvmDefaultMode): Boolean {
+fun CallableMemberDescriptor.checkIsImplementationCompiledToJvmDefault(jvmDefaultMode: JvmDefaultMode): Boolean {
     val actualImplementation =
         (if (kind.isReal) this else findImplementationFromInterface(this))
             ?: error("Can't find actual implementation for $this")
