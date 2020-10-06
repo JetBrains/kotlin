@@ -89,7 +89,7 @@ internal fun captureStack(instance: Throwable, constructorFunction: Any) {
 
 internal fun newThrowable(message: String?, cause: Throwable?): Throwable {
     val throwable = js("new Error()")
-    throwable.message = message ?: cause?.toString() ?: undefined
+    throwable.message = if (isUndefined(message)) cause?.toString() else message
     throwable.cause = cause
     throwable.name = "Throwable"
     return throwable.unsafeCast<Throwable>()
@@ -102,7 +102,17 @@ internal fun extendThrowable(this_: dynamic, message: String?, cause: Throwable?
 
 internal fun setPropertiesToThrowableInstance(this_: dynamic, message: String?, cause: Throwable?) {
     if (!hasOwnPrototypeProperty(this_, "message")) {
-        this_.message = message ?: cause?.toString() ?: undefined
+        @Suppress("IfThenToElvis")
+        this_.message = if (message == null) {
+            @Suppress("SENSELESS_COMPARISON")
+            if (message !== null) {
+                // undefined
+                cause?.toString() ?: undefined
+            } else {
+                // real null
+                message
+            }
+        } else message
     }
     if (!hasOwnPrototypeProperty(this_, "cause")) {
         this_.cause = cause
@@ -121,6 +131,9 @@ internal external class JsObject {
 internal fun errorCode(description: String): Nothing {
     throw IllegalStateException(description)
 }
+
+@Suppress("SENSELESS_COMPARISON")
+internal fun isUndefined(value: dynamic): Boolean = value === undefined
 
 internal fun <T, R> boxIntrinsic(@Suppress("UNUSED_PARAMETER") x: T): R = error("Should be lowered")
 internal fun <T, R> unboxIntrinsic(@Suppress("UNUSED_PARAMETER") x: T): R = error("Should be lowered")

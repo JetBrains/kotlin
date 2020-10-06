@@ -24,12 +24,14 @@ class ThrowableLowering(
     val context: JsIrBackendContext,
     val extendThrowableFunction: IrSimpleFunctionSymbol
 ) : BodyLoweringPass {
-    private val nothingNType get() = context.irBuiltIns.nothingNType
+    private val nothingNType = context.irBuiltIns.nothingNType
 
     private val throwableConstructors = context.throwableConstructors
     private val newThrowableFunction = context.newThrowableSymbol
+    private val jsUndefined = context.intrinsics.jsUndefined.symbol
 
     fun nullValue(): IrExpression = IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, nothingNType)
+    fun undefinedValue(): IrExpression = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, nothingNType, jsUndefined, 0, 0)
 
     data class ThrowableArguments(
         val message: IrExpression,
@@ -44,7 +46,7 @@ class ThrowableLowering(
 
     private fun IrFunctionAccessExpression.extractThrowableArguments(): ThrowableArguments =
         when (valueArgumentsCount) {
-            0 -> ThrowableArguments(nullValue(), nullValue())
+            0 -> ThrowableArguments(nullValue(), undefinedValue())
             2 -> ThrowableArguments(
                 message = getValueArgument(0)!!,
                 cause = getValueArgument(1)!!
@@ -53,10 +55,10 @@ class ThrowableLowering(
                 val arg = getValueArgument(0)!!
                 val parameter = symbol.owner.valueParameters[0]
                 when {
-                    parameter.type.isNullableString() -> ThrowableArguments(message = arg, cause = nullValue())
+                    parameter.type.isNullableString() -> ThrowableArguments(message = arg, cause = undefinedValue())
                     else -> {
                         assert(parameter.type.makeNotNull().isThrowable())
-                        ThrowableArguments(message = nullValue(), cause = arg)
+                        ThrowableArguments(message = undefinedValue(), cause = arg)
                     }
                 }
             }

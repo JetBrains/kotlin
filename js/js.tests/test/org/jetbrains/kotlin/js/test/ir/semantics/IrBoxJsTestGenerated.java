@@ -7675,6 +7675,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         public void testStringPlus() throws Exception {
             runTest("js/js.translator/testData/box/standardClasses/stringPlus.kt");
         }
+
+        @TestMetadata("throwableCtor.kt")
+        public void testThrowableCtor() throws Exception {
+            runTest("js/js.translator/testData/box/standardClasses/throwableCtor.kt");
+        }
     }
 
     @TestMetadata("js/js.translator/testData/box/superCall")
