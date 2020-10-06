@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToParameterDescriptorIfAny
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaOrKotlinMemberDescriptor
@@ -58,6 +59,31 @@ import org.jetbrains.kotlin.resolve.sam.getSingleAbstractMethodOrNull
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.isValidOperator
+
+@Deprecated(
+    "This method is obsolete and will be removed",
+    ReplaceWith(
+        "resolveToDescriptorIfAny(BodyResolveMode.FULL)",
+        "org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny",
+        "org.jetbrains.kotlin.resolve.lazy.BodyResolveMode"
+    )
+)
+@get:JvmName("getDescriptor")
+val KtDeclaration.descriptorCompat: DeclarationDescriptor?
+    get() = if (this is KtParameter) this.descriptorCompat else this.resolveToDescriptorIfAny(BodyResolveMode.FULL)
+
+@Deprecated(
+    "This method is obsolete and will be removed",
+    ReplaceWith(
+        "resolveToParameterDescriptorIfAny(BodyResolveMode.FULL)",
+        "org.jetbrains.kotlin.idea.caches.resolve.resolveToParameterDescriptorIfAny",
+        "org.jetbrains.kotlin.resolve.lazy.BodyResolveMode"
+    )
+)
+
+@get:JvmName("getDescriptor")
+val KtParameter.descriptorCompat: ValueParameterDescriptor?
+    get() = this.resolveToParameterDescriptorIfAny(BodyResolveMode.FULL)
 
 class KotlinConstructorCallLazyDescriptorHandle(ktElement: KtDeclaration) :
     KotlinSearchUsagesSupport.ConstructorCallHandle {
