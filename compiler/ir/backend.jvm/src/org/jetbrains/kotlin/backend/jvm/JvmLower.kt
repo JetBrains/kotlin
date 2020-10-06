@@ -300,6 +300,7 @@ private val jvmFilePhases = listOf(
 
     rangeContainsLoweringPhase,
     forLoopsPhase,
+    collectionStubMethodLowering,
     jvmInlineClassPhase,
 
     sharedVariablesPhase,
@@ -348,7 +349,6 @@ private val jvmFilePhases = listOf(
     staticInitializersPhase,
     initializersPhase,
     initializersCleanupPhase,
-    collectionStubMethodLowering,
     functionNVarargBridgePhase,
     jvmStaticAnnotationPhase,
     staticDefaultFunctionPhase,

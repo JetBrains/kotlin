@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi.mangledNameFor
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
@@ -46,7 +46,8 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, pr
                 it.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA ||
                         (it.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR && it.visibility == DescriptorVisibilities.LOCAL) ||
                         it.isStaticInlineClassReplacement ||
-                        it.origin.isSynthetic -> null
+                        it.origin.isSynthetic ->
+                    null
 
                 it.isInlineClassFieldGetter ->
                     if (it.hasMangledReturnType)
@@ -56,11 +57,21 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, pr
 
                 // Mangle all functions in the body of an inline class
                 it.parent.safeAs<IrClass>()?.isInline == true ->
-                    createStaticReplacement(it)
+                    when (it.origin) {
+                        IrDeclarationOrigin.IR_BUILTINS_STUB ->
+                            createMethodReplacement(it)
+                        IrDeclarationOrigin.BRIDGE_SPECIAL ->
+                            null
+                        else ->
+                            createStaticReplacement(it)
+                    }
 
                 // Otherwise, mangle functions with mangled parameters, ignoring constructors
                 it is IrSimpleFunction && (it.hasMangledParameters || mangleReturnTypes && it.hasMangledReturnType) ->
-                    if (it.dispatchReceiverParameter != null) createMethodReplacement(it) else createStaticReplacement(it)
+                    if (it.dispatchReceiverParameter != null)
+                        createMethodReplacement(it)
+                    else
+                        createStaticReplacement(it)
 
                 else ->
                     null

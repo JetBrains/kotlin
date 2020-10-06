@@ -18,7 +18,11 @@ import kotlin.test.assertNull
 abstract class AbstractBytecodeListingTest : CodegenTestCase() {
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         compile(files)
-        val actualTxt = BytecodeListingTextCollectingVisitor.getText(classFileFactory, withSignatures = isWithSignatures(wholeFile))
+        val actualTxt = BytecodeListingTextCollectingVisitor.getText(
+            classFileFactory,
+            withSignatures = isWithSignatures(wholeFile),
+            withAnnotations = isWithAnnotations(wholeFile)
+        )
 
         val prefixes = when {
             backend.isIR -> listOf("_ir", "_1_3", "")
@@ -36,23 +40,33 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
     private fun isWithSignatures(wholeFile: File): Boolean =
         WITH_SIGNATURES.containsMatchIn(wholeFile.readText())
 
+    private fun isWithAnnotations(wholeFile: File): Boolean =
+        !IGNORE_ANNOTATIONS.containsMatchIn(wholeFile.readText())
+
     companion object {
         private val WITH_SIGNATURES = Regex.fromLiteral("// WITH_SIGNATURES")
+        private val IGNORE_ANNOTATIONS = Regex.fromLiteral("// IGNORE_ANNOTATIONS")
     }
 }
 
-class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignatures: Boolean, api: Int = API_VERSION) : ClassVisitor(api) {
+class BytecodeListingTextCollectingVisitor(
+    val filter: Filter,
+    val withSignatures: Boolean,
+    api: Int = API_VERSION,
+    val withAnnotations: Boolean = true
+) : ClassVisitor(api) {
     companion object {
         @JvmOverloads
         fun getText(
             factory: ClassFileFactory,
             filter: Filter = Filter.EMPTY,
-            withSignatures: Boolean = false
+            withSignatures: Boolean = false,
+            withAnnotations: Boolean = true
         ) = factory.getClassFiles()
             .sortedBy { it.relativePath }
             .mapNotNull {
                 val cr = ClassReader(it.asByteArray())
-                val visitor = BytecodeListingTextCollectingVisitor(filter, withSignatures)
+                val visitor = BytecodeListingTextCollectingVisitor(filter, withSignatures, withAnnotations = withAnnotations)
                 cr.accept(visitor, ClassReader.SKIP_CODE)
 
                 if (!filter.shouldWriteClass(cr.access, cr.className)) null else visitor.text
@@ -204,22 +218,26 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
             private var invisibleAnnotableParameterCount = methodParamCount
 
             override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
-                val type = Type.getType(desc).className
-                methodAnnotations += "@$type "
+                if (withAnnotations) {
+                    val type = Type.getType(desc).className
+                    methodAnnotations += "@$type "
+                }
                 return super.visitAnnotation(desc, visible)
             }
 
             override fun visitParameterAnnotation(parameter: Int, desc: String, visible: Boolean): AnnotationVisitor? {
-                val type = Type.getType(desc).className
-                parameterAnnotations.getOrPut(
-                    parameter + methodParamCount - (if (visible) visibleAnnotableParameterCount else invisibleAnnotableParameterCount),
-                    { arrayListOf() }).add("@$type ")
+                if (withAnnotations) {
+                    val type = Type.getType(desc).className
+                    parameterAnnotations.getOrPut(
+                        parameter + methodParamCount - (if (visible) visibleAnnotableParameterCount else invisibleAnnotableParameterCount),
+                        { arrayListOf() }).add("@$type ")
+                }
                 return super.visitParameterAnnotation(parameter, desc, visible)
             }
 
             override fun visitEnd() {
                 val parameterWithAnnotations = parameterTypes.mapIndexed { index, parameter ->
-                    val annotations = parameterAnnotations.getOrElse(index, { emptyList<String>() }).joinToString("")
+                    val annotations = parameterAnnotations.getOrElse(index, { emptyList() }).joinToString("")
                     "${annotations}p$index: $parameter"
                 }.joinToString()
                 val signatureIfRequired = if (withSignatures) "<$signature> " else ""
@@ -254,15 +272,19 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
 
         return object : FieldVisitor(API_VERSION) {
             override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
-                addAnnotation(desc)
+                if (withAnnotations) {
+                    addAnnotation(desc)
+                }
                 return super.visitAnnotation(desc, visible)
             }
         }
     }
 
     override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
-        val name = Type.getType(desc).className
-        classAnnotations.add("@$name")
+        if (withAnnotations) {
+            val name = Type.getType(desc).className
+            classAnnotations.add("@$name")
+        }
         return super.visitAnnotation(desc, visible)
     }
 

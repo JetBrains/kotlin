@@ -323,6 +323,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/declarations/genericDelegatedProperty.kt");
         }
 
+        @TestMetadata("inlineCollectionOfInlineClass.kt")
+        public void testInlineCollectionOfInlineClass() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/inlineCollectionOfInlineClass.kt");
+        }
+
         @TestMetadata("interfaceProperties.kt")
         public void testInterfaceProperties() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/interfaceProperties.kt");

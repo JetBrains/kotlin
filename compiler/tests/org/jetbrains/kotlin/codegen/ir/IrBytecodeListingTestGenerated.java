@@ -684,6 +684,16 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/nullabilityInExpansion.kt");
         }
 
+        @TestMetadata("overridingGenericMethodWithInlineClassParameterType.kt")
+        public void testOverridingGenericMethodWithInlineClassParameterType() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/overridingGenericMethodWithInlineClassParameterType.kt");
+        }
+
+        @TestMetadata("overridingGenericMethodWithInlineClassReturnType.kt")
+        public void testOverridingGenericMethodWithInlineClassReturnType() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/overridingGenericMethodWithInlineClassReturnType.kt");
+        }
+
         @TestMetadata("primaryValsWithDifferentVisibilities.kt")
         public void testPrimaryValsWithDifferentVisibilities() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/primaryValsWithDifferentVisibilities.kt");
@@ -697,6 +707,89 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         @TestMetadata("shapeOfInlineClassWithPrimitive.kt")
         public void testShapeOfInlineClassWithPrimitive() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/shapeOfInlineClassWithPrimitive.kt");
+        }
+
+        @TestMetadata("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollectionOfInlineClass")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class InlineCollectionOfInlineClass extends AbstractIrBytecodeListingTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInInlineCollectionOfInlineClass() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollectionOfInlineClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @TestMetadata("collection.kt")
+            public void testCollection() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollectionOfInlineClass/collection.kt");
+            }
+
+            @TestMetadata("iterable.kt")
+            public void testIterable() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollectionOfInlineClass/iterable.kt");
+            }
+
+            @TestMetadata("iterator.kt")
+            public void testIterator() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollectionOfInlineClass/iterator.kt");
+            }
+
+            @TestMetadata("list.kt")
+            public void testList() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollectionOfInlineClass/list.kt");
+            }
+
+            @TestMetadata("map.kt")
+            public void testMap() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollectionOfInlineClass/map.kt");
+            }
+
+            @TestMetadata("mapEntry.kt")
+            public void testMapEntry() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollectionOfInlineClass/mapEntry.kt");
+            }
+
+            @TestMetadata("mutableCollection.kt")
+            public void testMutableCollection() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollectionOfInlineClass/mutableCollection.kt");
+            }
+
+            @TestMetadata("mutableIterable.kt")
+            public void testMutableIterable() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollectionOfInlineClass/mutableIterable.kt");
+            }
+
+            @TestMetadata("mutableIterator.kt")
+            public void testMutableIterator() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollectionOfInlineClass/mutableIterator.kt");
+            }
+
+            @TestMetadata("mutableList.kt")
+            public void testMutableList() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollectionOfInlineClass/mutableList.kt");
+            }
+
+            @TestMetadata("mutableMap.kt")
+            public void testMutableMap() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollectionOfInlineClass/mutableMap.kt");
+            }
+
+            @TestMetadata("mutableMapEntry.kt")
+            public void testMutableMapEntry() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollectionOfInlineClass/mutableMapEntry.kt");
+            }
+
+            @TestMetadata("mutableSet.kt")
+            public void testMutableSet() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollectionOfInlineClass/mutableSet.kt");
+            }
+
+            @TestMetadata("set.kt")
+            public void testSet() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollectionOfInlineClass/set.kt");
+            }
         }
     }
 
