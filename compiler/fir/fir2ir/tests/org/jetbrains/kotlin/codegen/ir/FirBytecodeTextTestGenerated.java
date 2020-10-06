@@ -4551,6 +4551,11 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/kt19037.kt");
         }
 
+        @TestMetadata("kt42457_old.kt")
+        public void testKt42457_old() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/kt42457_old.kt");
+        }
+
         @TestMetadata("multipleNestedConcat.kt")
         public void testMultipleNestedConcat() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/multipleNestedConcat.kt");
