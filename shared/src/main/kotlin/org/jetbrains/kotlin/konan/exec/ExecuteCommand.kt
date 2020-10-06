@@ -28,6 +28,8 @@ open class Command(initialCommand: List<String>) {
     constructor(vararg command: String) : this(command.toList<String>()) 
     protected val command = initialCommand.toMutableList()
 
+    val argsWithExecutable: List<String> = command
+
     val args: List<String> 
         get() = command.drop(1)
 

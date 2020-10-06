@@ -86,10 +86,52 @@ bitcode {
     create("objc") {
         includeRuntime()
     }
+
+    create("test_support", outputGroup = "test") {
+        includeRuntime()
+        dependsOn("downloadGoogleTest")
+        headersDirs += googletest.headersDirs
+    }
+}
+
+targetList.forEach { targetName ->
+    createTestTask(
+            project,
+            "${targetName}StdAllocRuntimeTests",
+            listOf(
+                "${targetName}Runtime",
+                "${targetName}TestSupport",
+                "${targetName}Strict",
+                "${targetName}Release",
+                "${targetName}StdAlloc"
+            )
+    )
+
+    createTestTask(
+            project,
+            "${targetName}MimallocRuntimeTests",
+            listOf(
+                "${targetName}Runtime",
+                "${targetName}TestSupport",
+                "${targetName}Strict",
+                "${targetName}Release",
+                "${targetName}Mimalloc",
+                "${targetName}OptAlloc"
+            )
+    )
+
+    tasks.register("${targetName}RuntimeTests") {
+        dependsOn("${targetName}StdAllocRuntimeTests")
+        dependsOn("${targetName}MimallocRuntimeTests")
+    }
 }
 
 val hostRuntime by tasks.registering {
     dependsOn("${hostName}Runtime")
+}
+
+val hostRuntimeTests by tasks.registering {
+    dependsOn("${hostName}RuntimeTests")
 }
 
 val assemble by tasks.registering {
