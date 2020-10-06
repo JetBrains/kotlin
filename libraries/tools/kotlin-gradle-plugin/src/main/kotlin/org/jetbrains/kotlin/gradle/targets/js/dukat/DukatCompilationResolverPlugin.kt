@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.dukat
 
+import org.gradle.api.artifacts.FileCollectionDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
+import org.jetbrains.kotlin.gradle.targets.js.npm.isCompatibleArchive
 import org.jetbrains.kotlin.gradle.targets.js.npm.plugins.CompilationResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
@@ -27,6 +30,8 @@ internal class DukatCompilationResolverPlugin(
 
     init {
         val dukatMode = compilation.dukatMode
+
+        gradleModelPostProcess(dukatMode, npmProject)
 
         val integratedTask = project.registerTask<IntegratedDukatTask>(
             integratedTaskName,
@@ -66,7 +71,8 @@ internal class DukatCompilationResolverPlugin(
         internalDependencies: Set<KotlinCompilationNpmResolver>,
         internalCompositeDependencies: Set<KotlinCompilationNpmResolver.CompositeDependency>,
         externalGradleDependencies: Set<KotlinCompilationNpmResolver.ExternalGradleDependency>,
-        externalNpmDependencies: Set<NpmDependency>
+        externalNpmDependencies: Set<NpmDependency>,
+        fileCollectionDependencies: Set<FileCollectionDependency>
     ) {
         if (nodeJs.experimental.discoverTypes) {
             // todo: discoverTypes
@@ -92,5 +98,28 @@ internal class DukatCompilationResolverPlugin(
 
     companion object {
         const val VERSION = "2"
+    }
+}
+
+internal fun gradleModelPostProcess(
+    dukatMode: DukatMode,
+    npmProject: NpmProject
+) {
+    val compilation = npmProject.compilation
+    val project = npmProject.project
+    when (dukatMode) {
+        DukatMode.SOURCE -> compilation.defaultSourceSet.kotlin.srcDir(npmProject.externalsDir)
+        DukatMode.BINARY -> {
+            npmProject.externalsDir
+                .listFiles()
+                ?.filter { it.isCompatibleArchive }
+                ?.forEach {
+                    project.dependencies.add(
+                        compilation.compileDependencyConfigurationName,
+                        project.files(it)
+                    )
+                }
+
+        }
     }
 }

@@ -14,7 +14,6 @@ import java.io.File
  */
 internal class CompositeNodeModuleBuilder(
     val project: Project,
-    val dependency: ResolvedDependency,
     val srcDir: File,
     val cache: CompositeNodeModulesCache
 ) {

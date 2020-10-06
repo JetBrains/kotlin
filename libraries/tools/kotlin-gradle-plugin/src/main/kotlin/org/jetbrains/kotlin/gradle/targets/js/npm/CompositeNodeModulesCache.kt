@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import org.gradle.api.artifacts.ResolvedDependency
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import java.io.File
 
@@ -14,10 +13,11 @@ import java.io.File
  */
 internal class CompositeNodeModulesCache(nodeJs: NodeJsRootExtension) : AbstractNodeModulesCache(nodeJs) {
     override fun buildImportedPackage(
-        dependency: ResolvedDependency,
+        name: String,
+        version: String,
         file: File
     ): File? {
-        val module = CompositeNodeModuleBuilder(project, dependency, file, this)
+        val module = CompositeNodeModuleBuilder(project, file, this)
         return module.rebuild()
     }
 }
