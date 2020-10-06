@@ -108,8 +108,6 @@ FILE fqName:<root> fileName:/suspendConversion.kt
     BLOCK_BODY
       CALL 'public final fun useSuspend (fn: kotlin.coroutines.SuspendFunction0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         fn: BLOCK type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
-          VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.C [val]
-            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
           FUN ADAPTER_FOR_CALLABLE_REFERENCE name:bar visibility:local modality:FINAL <> ($receiver:<root>.C) returnType:kotlin.Unit [suspend]
             $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:receiver type:<root>.C
             BLOCK_BODY

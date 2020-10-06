@@ -154,22 +154,15 @@ internal class AdapterGenerator(
             if (boundReceiver == null) {
                 IrFunctionExpressionImpl(startOffset, endOffset, type, irAdapterFunction, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE)
             } else {
+                // TODO add a bound receiver property to IrFunctionExpressionImpl?
                 val irAdapterRef = IrFunctionReferenceImpl(
                     startOffset, endOffset, type, irAdapterFunction.symbol, irAdapterFunction.typeParameters.size,
                     irAdapterFunction.valueParameters.size, null, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
                 )
-                val statements = SmartList<IrStatement>()
-                if (boundReceiver.isSafeToUseWithoutCopying()) {
-                    irAdapterRef.extensionReceiver = boundReceiver
-                } else {
-                    val (irVariable, irVariableSymbol) = createTemporaryVariable(boundReceiver.deepCopyWithSymbols(), conversionScope)
-                    irAdapterRef.extensionReceiver = IrGetValueImpl(startOffset, endOffset, irVariableSymbol)
-                    statements.add(irVariable)
+                IrBlockImpl(startOffset, endOffset, type, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE).apply {
+                    statements.add(irAdapterFunction)
+                    statements.add(irAdapterRef.apply { extensionReceiver = boundReceiver })
                 }
-                statements.add(irAdapterFunction)
-                statements.add(irAdapterRef)
-
-                IrBlockImpl(startOffset, endOffset, type, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE, statements)
             }
         }
     }

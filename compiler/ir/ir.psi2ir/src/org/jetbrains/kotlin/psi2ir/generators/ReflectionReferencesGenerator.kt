@@ -153,35 +153,26 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
             resolvedCall.dispatchReceiver, resolvedCall.extensionReceiver,
             isSafe = false
         ).call { dispatchReceiverValue, extensionReceiverValue ->
-            val irAdapterRef = IrFunctionReferenceImpl(
-                startOffset, endOffset, irFunctionalType, irAdapterFun.symbol, irAdapterFun.typeParameters.size,
-                irAdapterFun.valueParameters.size, null, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
-            )
-
             val irDispatchReceiver = dispatchReceiverValue?.loadIfExists()
             val irExtensionReceiver = extensionReceiverValue?.loadIfExists()
             check(irDispatchReceiver == null || irExtensionReceiver == null) {
                 "Bound callable reference cannot have both receivers: $adapteeDescriptor"
             }
             val receiver = irDispatchReceiver ?: irExtensionReceiver
-
             if (receiver == null) {
                 IrFunctionExpressionImpl(
                     startOffset, endOffset, irFunctionalType, irAdapterFun, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
                 )
             } else {
-                val statements = SmartList<IrStatement>()
-                if (receiver.isSafeToUseWithoutCopying()) {
-                    irAdapterRef.extensionReceiver = receiver
-                } else {
-                    val irVariable = statementGenerator.scope.createTemporaryVariable(receiver, "receiver")
-                    irAdapterRef.extensionReceiver = IrGetValueImpl(startOffset, endOffset, irVariable.symbol)
-                    statements.add(irVariable)
+                // TODO add a bound receiver property to IrFunctionExpressionImpl?
+                val irAdapterRef = IrFunctionReferenceImpl(
+                    startOffset, endOffset, irFunctionalType, irAdapterFun.symbol, irAdapterFun.typeParameters.size,
+                    irAdapterFun.valueParameters.size, null, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
+                )
+                IrBlockImpl(startOffset, endOffset, irFunctionalType, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE).apply {
+                    statements.add(irAdapterFun)
+                    statements.add(irAdapterRef.apply { extensionReceiver = receiver })
                 }
-                statements.add(irAdapterFun)
-                statements.add(irAdapterRef)
-
-                IrBlockImpl(startOffset, endOffset, irFunctionalType, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE, statements)
             }
         }
     }
