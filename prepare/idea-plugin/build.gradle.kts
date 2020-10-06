@@ -14,6 +14,9 @@ repositories {
 val projectsToShadow by extra(listOf(
         ":plugins:annotation-based-compiler-plugins-ide-support",
         ":compiler:backend",
+        ":compiler:resolution.common.jvm",
+        ":core:compiler.common.jvm",
+        ":compiler:backend.common.jvm",
         ":compiler:backend-common",
         ":compiler:backend.jvm",
         ":compiler:ir.backend.common",
@@ -29,6 +32,8 @@ val projectsToShadow by extra(listOf(
         ":core:compiler.common",
         ":core:descriptors",
         ":core:descriptors.jvm",
+        ":core:deserialization.common",
+        ":core:deserialization.common.jvm",
         ":core:deserialization",
         ":idea:jvm-debugger:eval4j",
         ":idea:jvm-debugger:jvm-debugger-util",
@@ -43,8 +48,10 @@ val projectsToShadow by extra(listOf(
         ":compiler:psi",
         ":compiler:fir:cones",
         ":compiler:fir:checkers",
+        ":compiler:fir:entrypoint",
         ":compiler:fir:resolve",
         ":compiler:fir:fir-serialization",
+        ":compiler:fir:fir-deserialization",
         ":compiler:fir:tree",
         ":compiler:fir:java",
         ":compiler:fir:jvm",
@@ -75,6 +82,7 @@ val projectsToShadow by extra(listOf(
         ":compiler:light-classes",
         ":compiler:plugin-api",
         ":kotlin-preloader",
+        ":compiler:resolution.common",
         ":compiler:resolution",
         ":compiler:serialization",
         ":compiler:util",
@@ -109,7 +117,8 @@ val projectsToShadow by extra(listOf(
             )
         else
             emptyArray<String>()
-))
+    )
+)
 
 // Projects published to maven copied to the plugin as separate jars
 val libraryProjects = listOf(
@@ -132,6 +141,7 @@ val libraryProjects = listOf(
     ":kotlin-noarg-compiler-plugin",
     ":kotlin-sam-with-receiver-compiler-plugin",
     ":plugins:android-extensions-compiler",
+    ":plugins:parcelize:parcelize-compiler",
     ":kotlinx-serialization-compiler-plugin",
     ":idea:ide-common"
 )
@@ -164,7 +174,7 @@ dependencies {
     embedded(protobufFull())
     embedded(kotlinBuiltins(forJvm = true))
 
-    libraries(commonDep("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:${property("versions.kotlinx-collections-immutable")}"))
+    libraries(commonDep(kotlinxCollectionsImmutable()))
     libraries(commonDep("javax.inject"))
     libraries(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8"))
     libraries(commonDep("org.jetbrains", "markdown"))
@@ -184,6 +194,7 @@ dependencies {
     gradleToolingModel(project(":sam-with-receiver-ide-plugin")) { isTransitive = false }
     gradleToolingModel(project(":plugins:kapt3-idea")) { isTransitive = false }
     gradleToolingModel(project(":plugins:android-extensions-ide")) { isTransitive = false }
+    gradleToolingModel(project(":plugins:parcelize:parcelize-ide")) { isTransitive = false }
     gradleToolingModel(project(":noarg-ide-plugin")) { isTransitive = false }
     gradleToolingModel(project(":allopen-ide-plugin")) { isTransitive = false }
 

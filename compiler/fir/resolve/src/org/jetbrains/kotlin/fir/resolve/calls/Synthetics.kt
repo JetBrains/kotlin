@@ -19,10 +19,8 @@ import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.load.java.propertyNameByGetMethodName
+import org.jetbrains.kotlin.fir.types.ConeNullability.NOT_NULL
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeFirstWord
 
 class SyntheticPropertySymbol(
     callableId: CallableId,
@@ -37,38 +35,10 @@ class FirSyntheticPropertiesScope(
     val session: FirSession,
     private val baseScope: FirTypeScope
 ) : FirScope() {
-
-    companion object {
-        private const val GETTER_PREFIX = "get"
-        private const val IS_PREFIX = "is"
-
-        fun possibleGetterNamesByPropertyName(name: Name): List<Name> {
-            if (name.isSpecial) return emptyList()
-            val identifier = name.identifier
-            val capitalizedAsciiName = identifier.capitalizeAsciiOnly()
-            val capitalizedFirstWordName = identifier.capitalizeFirstWord(asciiOnly = true)
-            return listOfNotNull(
-                Name.identifier(GETTER_PREFIX + capitalizedAsciiName),
-                if (capitalizedFirstWordName == capitalizedAsciiName) null else Name.identifier(GETTER_PREFIX + capitalizedFirstWordName),
-                name.takeIf { identifier.startsWith(IS_PREFIX) }
-            ).filter {
-                propertyNameByGetMethodName(it) == name
-            }
-        }
-
-        fun setterNameByGetterName(name: Name): Name {
-            val identifier = name.identifier
-            val prefix = when {
-                identifier.startsWith("get") -> "get"
-                identifier.startsWith("is") -> "is"
-                else -> throw IllegalArgumentException()
-            }
-            return Name.identifier("set" + identifier.removePrefix(prefix))
-        }
-    }
+    private val syntheticNamesProvider = session.syntheticNamesProvider
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
-        val getterNames = possibleGetterNamesByPropertyName(name)
+        val getterNames = syntheticNamesProvider.possibleGetterNamesByPropertyName(name)
         for (getterName in getterNames) {
             baseScope.processFunctionsByName(getterName) {
                 checkGetAndCreateSynthetic(name, getterName, it, processor)
@@ -94,16 +64,20 @@ class FirSyntheticPropertiesScope(
 
         var matchingSetter: FirSimpleFunction? = null
         if (getterReturnType != null) {
-            val setterName = setterNameByGetterName(getterName)
-            baseScope.processFunctionsByName(setterName, fun(setterSymbol: FirFunctionSymbol<*>) {
-                if (matchingSetter != null) return
-                val setter = setterSymbol.fir as? FirSimpleFunction ?: return
-                val parameter = setter.valueParameters.singleOrNull() ?: return
-                if (setter.typeParameters.isNotEmpty() || setter.isStatic) return
-                val parameterType = (parameter.returnTypeRef as? FirResolvedTypeRef)?.type ?: return
-                if (getterReturnType.withNullability(ConeNullability.NOT_NULL) != parameterType.withNullability(ConeNullability.NOT_NULL)) return
-                matchingSetter = setter
-            })
+            val setterName = syntheticNamesProvider.setterNameByGetterName(getterName)
+            if (setterName != null) {
+                baseScope.processFunctionsByName(setterName, fun(setterSymbol: FirFunctionSymbol<*>) {
+                    if (matchingSetter != null) return
+                    val setter = setterSymbol.fir as? FirSimpleFunction ?: return
+                    val parameter = setter.valueParameters.singleOrNull() ?: return
+                    if (setter.typeParameters.isNotEmpty() || setter.isStatic) return
+                    val parameterType = (parameter.returnTypeRef as? FirResolvedTypeRef)?.type ?: return
+                    if (getterReturnType.withNullability(NOT_NULL) != parameterType.withNullability(NOT_NULL)) {
+                        return
+                    }
+                    matchingSetter = setter
+                })
+            }
         }
 
         val property = buildSyntheticProperty {

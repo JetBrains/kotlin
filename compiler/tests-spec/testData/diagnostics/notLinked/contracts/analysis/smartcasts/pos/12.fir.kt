@@ -10,7 +10,7 @@ fun case_1(arg: Int?) {
 // TESTCASE NUMBER: 2
 fun case_2(arg: Int?) {
     funWithAtLeastOnceCallsInPlace { arg!! }
-    arg.<!AMBIGUITY!>inc<!>()
+    arg.<!INAPPLICABLE_CANDIDATE!>inc<!>()
 }
 
 // TESTCASE NUMBER: 3

@@ -62,7 +62,7 @@ fun case_1(value_1: Any?) {
     <!AMBIGUITY!>println<!>(value_1?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     if (funWithReturnsTrue(value_1 !is Number)) {
         <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>toByte<!>())
-        if (funWithReturnsNotNull(value_1 is Int) == null) <!AMBIGUITY!>println<!>(value_1.inv())
+        if (funWithReturnsNotNull(value_1 is Int) == null) <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
     }
 }
 
@@ -72,7 +72,7 @@ fun case_2(value_1: Any?) {
         <!AMBIGUITY!>println<!>(value_1?.<!UNRESOLVED_REFERENCE!>toByte<!>())
         funWithReturns(value_1 !is Number)
         <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>toByte<!>())
-        if (funWithReturnsNull(value_1 !is Int) == null) <!AMBIGUITY!>println<!>(value_1.inv())
+        if (funWithReturnsNull(value_1 !is Int) == null) <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
     }
 }
 
@@ -91,7 +91,7 @@ fun case_3(value_1: Int?, value_2: Any?) {
 // TESTCASE NUMBER: 4
 fun case_4(value_1: Number, value_2: (() -> Unit)?) {
     if (contracts.case_4(value_1, value_2) == true) {
-        value_1.inv()
+        value_1.<!UNRESOLVED_REFERENCE!>inv<!>()
     } else if (contracts.case_4(value_1, value_2) == false) {
         println(value_2)
     } else if (contracts.case_4(value_1, value_2) == null) {
@@ -108,7 +108,7 @@ fun case_5(value_1: Number?, value_2: String?) {
         }
         false -> {
             println(value_2.<!INAPPLICABLE_CANDIDATE!>length<!>)
-            <!AMBIGUITY!>println<!>(value_1.inv())
+            <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
         }
     }
 }

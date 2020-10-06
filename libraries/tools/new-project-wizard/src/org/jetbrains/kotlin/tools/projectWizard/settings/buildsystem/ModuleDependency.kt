@@ -222,16 +222,12 @@ private fun Writer.addExpectFilesForMppModuleForAndroidAndIos(mppModule: Module,
             file(FileTemplateDescriptor("mppCommon/Greeting.kt.vm", relativePath = null), "Greeting.kt", SourcesetType.main)
         }
 
-        inContextOfModuleConfigurator(mppModule) {
-            if (MppModuleConfigurator.generateTests.reference.settingValue) {
-                filesFor(ModuleSubType.android) {
-                    file(FileTemplateDescriptor("android/androidTest.kt.vm", relativePath = null), "androidTest.kt", SourcesetType.test)
-                }
+        filesFor(ModuleSubType.android) {
+            file(FileTemplateDescriptor("android/androidTest.kt.vm", relativePath = null), "androidTest.kt", SourcesetType.test)
+        }
 
-                filesFor(ModuleSubType.iosArm64, ModuleSubType.iosX64, ModuleSubType.ios) {
-                    file(FileTemplateDescriptor("ios/iosTest.kt.vm", relativePath = null), "iosTest.kt", SourcesetType.test)
-                }
-            }
+        filesFor(ModuleSubType.iosArm64, ModuleSubType.iosX64, ModuleSubType.ios) {
+            file(FileTemplateDescriptor("ios/iosTest.kt.vm", relativePath = null), "iosTest.kt", SourcesetType.test)
         }
 
     }

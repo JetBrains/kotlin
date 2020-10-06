@@ -41,6 +41,67 @@ class KlibBasedMppIT : BaseGradleIT() {
     }
 
     @Test
+    fun testHostSpecificSourceSetsInTransitiveDependencies() = with(Project("common-klib-lib-and-app")) {
+        // KT-41083
+        // Publish a lib with host specific source sets depending on another lib with host-specific source sets
+        setupWorkingDir()
+        val projectDepName = "dependency"
+        val publishedGroup = "published"
+        val producerProjectName = "producer"
+        embedProject(this, renameTo = projectDepName)
+        projectDir.resolve("$projectDepName/src").walkTopDown().filter { it.extension == "kt" }.forEach { ktFile ->
+            // Avoid FQN duplicates between producer & consumer
+            ktFile.modify { it.replace("package com.h0tk3y.hmpp.klib.demo", "package com.h0tk3y.hmpp.klib.lib") }
+        }
+
+        gradleBuildScript(projectDepName).appendText(
+            """
+            ${"\n"}
+            group = "$publishedGroup"
+            """.trimIndent()
+        )
+        gradleBuildScript().modify {
+            transformBuildScriptWithPluginsDsl(it) +
+                    """
+                    ${"\n"}
+                    dependencies { "commonMainImplementation"(project(":$projectDepName")) }
+                    group = "$publishedGroup"
+                    """.trimIndent()
+        }
+        gradleSettingsScript().appendText("\nrootProject.name = \"$producerProjectName\"")
+
+        build("publish") {
+            assertSuccessful()
+        }
+
+        // Then consume the published project. To do that, rename the modules so that Gradle chooses the published ones given the original
+        // Maven coordinates and doesn't resolve them as project dependencies.
+
+        val localGroup = "local"
+        gradleBuildScript(projectDepName).appendText("""${"\n"}group = "$localGroup"""")
+        gradleBuildScript().appendText(
+            """
+            ${"\n"}
+            repositories { maven("${'$'}rootDir/repo") }
+            dependencies { "commonMainImplementation"("$publishedGroup:$producerProjectName:1.0") }
+            group = "$localGroup"
+            """.trimIndent()
+        )
+
+        // The consumer should correctly receive the klibs of the host-specific source sets
+
+        checkTaskCompileClasspath(
+            "compile${hostSpecificSourceSet.capitalize()}KotlinMetadata",
+            listOf(
+                "published-producer-metadata-$hostSpecificSourceSet.klib",
+                "published-producer-metadata-commonMain.klib",
+                "published-dependency-metadata-$hostSpecificSourceSet.klib",
+                "published-dependency-metadata-commonMain.klib"
+            )
+        )
+    }
+
+    @Test
     fun testBuildWithPublishedDependency() = testBuildWithDependency {
         publishProjectDepAndAddDependency(validateHostSpecificPublication = true)
     }

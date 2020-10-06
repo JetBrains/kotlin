@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.idea.references.findPsiDeclarations
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
 import org.jetbrains.kotlin.idea.search.fileScope
-import org.jetbrains.kotlin.idea.search.usagesSearch.isImportUsage
+import org.jetbrains.kotlin.idea.search.isImportUsage
 import org.jetbrains.kotlin.idea.util.ImportInsertHelperImpl
 import org.jetbrains.kotlin.idea.util.getAllAccessibleFunctions
 import org.jetbrains.kotlin.idea.util.getAllAccessibleVariables
@@ -136,7 +136,7 @@ private fun invokeRename(
 private fun replaceUsages(usages: List<UsageContext>, newName: String) {
     // case: inner element
     for (usage in usages.asReversed()) {
-        val reference = usage.pointer.element?.safeAs<KtElement>()?.mainReference?.takeUnless(KtReference::isImportUsage) ?: continue
+        val reference = usage.pointer.element?.safeAs<KtElement>()?.mainReference?.takeUnless { it.isImportUsage() } ?: continue
         val newExpression = reference.handleElementRename(newName) as? KtNameReferenceExpression ?: continue
         if (usage.isExtension) {
             newExpression.getQualifiedElementSelector()?.replace(newExpression)

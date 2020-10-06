@@ -134,8 +134,8 @@ fun case_12(z: Any?) {
         return@let it as Int
         it as? Float ?: 10f
     }
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float>")!>y<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float>")!>y<!>.toByte()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<*>")!>y<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<*>")!>y<!>.toByte()
 }
 
 /*
@@ -158,8 +158,8 @@ fun case_14(z: Any?) {
         return@run this as Int
         this as? Float ?: 10f
     }
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float>")!>y<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float>")!>y<!>.toByte()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<*>")!>y<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<*>")!>y<!>.toByte()
 }
 
 /*

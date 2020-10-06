@@ -10,27 +10,25 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
+import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.typeContext
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.upperBoundIfFlexible
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
+import org.jetbrains.kotlin.utils.addToStdlib.min
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-object FirTypeMismatchOnOverrideChecker : FirMemberDeclarationChecker() {
-    override fun check(declaration: FirMemberDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration !is FirRegularClass) {
-            return
-        }
-
+object FirTypeMismatchOnOverrideChecker : FirRegularClassChecker() {
+    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val typeCheckerContext = context.session.typeContext.newBaseTypeCheckerContext(
             errorTypesEqualToAnything = false,
             stubTypesEqualToAnything = false
@@ -43,66 +41,22 @@ object FirTypeMismatchOnOverrideChecker : FirMemberDeclarationChecker() {
 
         for (it in declaration.declarations) {
             when (it) {
-                is FirSimpleFunction -> checkFunction(declaration, it, context, reporter, typeCheckerContext, firTypeScope)
-                is FirProperty -> checkProperty(declaration, it, context, reporter, typeCheckerContext, firTypeScope)
+                is FirSimpleFunction -> checkFunction(it, reporter, typeCheckerContext, firTypeScope, context)
+                is FirProperty -> checkProperty(it, reporter, typeCheckerContext, firTypeScope, context)
             }
         }
     }
 
-    private fun FirTypeScope.getDirectOverridesOf(function: FirSimpleFunction): List<FirFunctionSymbol<*>> {
-        val overriddenFunctions = mutableSetOf<FirFunctionSymbol<*>>()
-
+    private fun FirTypeScope.retrieveDirectOverriddenOf(function: FirSimpleFunction): List<FirFunctionSymbol<*>> {
         processFunctionsByName(function.name) {}
-        processDirectlyOverriddenFunctions(function.symbol) {
-            overriddenFunctions.add(it)
-            ProcessorAction.NEXT
-        }
 
-        return overriddenFunctions.toList()
+        return getDirectOverriddenFunctions(function.symbol as FirNamedFunctionSymbol)
     }
 
-    private fun FirTypeScope.getDirectOverridesOf(property: FirProperty): List<FirPropertySymbol> {
-        val overriddenProperties = mutableSetOf<FirPropertySymbol>()
-
+    private fun FirTypeScope.retrieveDirectOverriddenOf(property: FirProperty): List<FirPropertySymbol> {
         processPropertiesByName(property.name) {}
-        processDirectlyOverriddenProperties(property.symbol) {
-            overriddenProperties.add(it)
-            ProcessorAction.NEXT
-        }
 
-        return overriddenProperties.toList()
-    }
-
-    private fun FirRegularClass.substituteAllSupertypeParameters(context: CheckerContext): ConeSubstitutor {
-        val allSupertypesMapping = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
-        val remapper = mutableMapOf<ConeKotlinType, ConeKotlinType>()
-
-        fun FirRegularClass.collectSupertypes() {
-            for (it in superTypeRefs) {
-                val fir = it.coneType.safeAs<ConeClassLikeType>()?.lookupTag?.toSymbol(context.session)
-                    ?.fir.safeAs<FirRegularClass>()
-                    ?: continue
-
-                if (it.coneType.typeArguments.size != fir.typeParameters.size) {
-                    continue
-                }
-
-                for (that in fir.typeParameters.indices) {
-                    val proto = fir.typeParameters[that].symbol
-                    val actual = it.coneType.typeArguments[that].safeAs<ConeKotlinType>()
-                        ?.lowerBoundIfFlexible()
-                        ?: continue
-                    val value = remapper.getOrDefault(actual, actual)
-                    remapper[proto.fir.toConeType()] = value
-                    allSupertypesMapping[proto] = value
-                }
-
-                fir.collectSupertypes()
-            }
-        }
-
-        collectSupertypes()
-        return substitutorByMap(allSupertypesMapping)
+        return getDirectOverriddenProperties(property.symbol)
     }
 
     private fun ConeKotlinType.substituteAllTypeParameters(
@@ -117,32 +71,31 @@ object FirTypeMismatchOnOverrideChecker : FirMemberDeclarationChecker() {
             ?: return this
 
         val map = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
+        val size = min(overrideDeclaration.typeParameters.size, parametersOwner.typeParameters.size)
 
-        overrideDeclaration.typeParameters.zip(parametersOwner.typeParameters).forEach { (to, from) ->
+        for (it in 0 until size) {
+            val to = overrideDeclaration.typeParameters[it]
+            val from = parametersOwner.typeParameters[it]
+
             map[from.symbol] = to.toConeType()
         }
 
         return substitutorByMap(map).substituteOrSelf(this)
     }
 
-    private fun ConeKotlinType.substituteOrSelf(substitutor: ConeSubstitutor) = substitutor.substituteOrSelf(this)
-
     private fun FirCallableMemberDeclaration<*>.checkReturnType(
-        regularClass: FirRegularClass,
         overriddenSymbols: List<FirCallableSymbol<*>>,
-        context: CheckerContext,
         typeCheckerContext: AbstractTypeCheckerContext,
+        context: CheckerContext,
     ): FirMemberDeclaration? {
         val returnType = returnTypeRef.safeAs<FirResolvedTypeRef>()?.type
             ?: return null
 
-        val bounds = overriddenSymbols.map { it.fir.returnTypeRef.coneType.upperBoundIfFlexible() }
-        val supertypesParameterSubstitutor = regularClass.substituteAllSupertypeParameters(context)
+        val bounds = overriddenSymbols.map { context.returnTypeCalculator.tryCalculateReturnType(it.fir).coneType.upperBoundIfFlexible() }
 
         for (it in bounds.indices) {
             val restriction = bounds[it]
                 .substituteAllTypeParameters(this, overriddenSymbols[it])
-                .substituteOrSelf(supertypesParameterSubstitutor)
 
             if (!AbstractTypeChecker.isSubtypeOf(typeCheckerContext, returnType, restriction)) {
                 return overriddenSymbols[it].fir.safeAs()
@@ -153,28 +106,26 @@ object FirTypeMismatchOnOverrideChecker : FirMemberDeclarationChecker() {
     }
 
     private fun checkFunction(
-        regularClass: FirRegularClass,
         function: FirSimpleFunction,
-        context: CheckerContext,
         reporter: DiagnosticReporter,
         typeCheckerContext: AbstractTypeCheckerContext,
-        firTypeScope: FirTypeScope
+        firTypeScope: FirTypeScope,
+        context: CheckerContext,
     ) {
         if (!function.isOverride) {
             return
         }
 
-        val overriddenFunctionSymbols = firTypeScope.getDirectOverridesOf(function)
+        val overriddenFunctionSymbols = firTypeScope.retrieveDirectOverriddenOf(function)
 
         if (overriddenFunctionSymbols.isEmpty()) {
             return
         }
 
         val restriction = function.checkReturnType(
-            regularClass = regularClass,
             overriddenSymbols = overriddenFunctionSymbols,
+            typeCheckerContext = typeCheckerContext,
             context = context,
-            typeCheckerContext = typeCheckerContext
         )
 
         restriction?.let {
@@ -187,28 +138,26 @@ object FirTypeMismatchOnOverrideChecker : FirMemberDeclarationChecker() {
     }
 
     private fun checkProperty(
-        regularClass: FirRegularClass,
         property: FirProperty,
-        context: CheckerContext,
         reporter: DiagnosticReporter,
         typeCheckerContext: AbstractTypeCheckerContext,
-        firTypeScope: FirTypeScope
+        firTypeScope: FirTypeScope,
+        context: CheckerContext,
     ) {
         if (!property.isOverride) {
             return
         }
 
-        val overriddenPropertySymbols = firTypeScope.getDirectOverridesOf(property)
+        val overriddenPropertySymbols = firTypeScope.retrieveDirectOverriddenOf(property)
 
         if (overriddenPropertySymbols.isEmpty()) {
             return
         }
 
         val restriction = property.checkReturnType(
-            regularClass = regularClass,
             overriddenSymbols = overriddenPropertySymbols,
+            typeCheckerContext = typeCheckerContext,
             context = context,
-            typeCheckerContext = typeCheckerContext
         )
 
         restriction?.let {

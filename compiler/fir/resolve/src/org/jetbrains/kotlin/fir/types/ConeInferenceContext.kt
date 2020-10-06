@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
+import org.jetbrains.kotlin.fir.isPrimitiveNumberOrUnsignedNumberType
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.NoSubstitutor
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -316,8 +317,25 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return this.defaultType
     }
 
+    override fun KotlinTypeMarker.isSpecial(): Boolean {
+        // TODO
+        return false
+    }
+
+    override fun TypeConstructorMarker.isTypeVariable(): Boolean {
+        return this is ConeTypeVariableTypeConstructor
+    }
+
+    override fun TypeVariableTypeConstructorMarker.isContainedInInvariantOrContravariantPositions(): Boolean {
+        return false
+    }
+
     override fun captureFromExpression(type: KotlinTypeMarker): KotlinTypeMarker? {
         return type
+    }
+
+    override fun createErrorType(debugName: String): ConeClassErrorType {
+        return ConeClassErrorType(ConeIntermediateDiagnostic(debugName))
     }
 
     override fun createErrorTypeWithCustomConstructor(debugName: String, constructor: TypeConstructorMarker): KotlinTypeMarker {
@@ -344,8 +362,6 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return createErrorType("Unknown reason")
     }
 
-    private fun createErrorType(reason: String) = ConeClassErrorType(ConeIntermediateDiagnostic(reason))
-
     override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<SimpleTypeMarker>): SimpleTypeMarker? {
         return ConeIntegerLiteralTypeImpl.findCommonSuperType(explicitSupertypes)
     }
@@ -353,5 +369,11 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     override fun TypeConstructorMarker.getApproximatedIntegerLiteralType(): KotlinTypeMarker {
         require(this is ConeIntegerLiteralType)
         return this.getApproximatedType()
+    }
+
+    override fun KotlinTypeMarker.isSignedOrUnsignedNumberType(): Boolean {
+        require(this is ConeKotlinType)
+        if (this !is ConeClassLikeType) return false
+        return isPrimitiveNumberOrUnsignedNumberType()
     }
 }

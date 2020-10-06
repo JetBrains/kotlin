@@ -94,7 +94,7 @@ abstract class AbstractCoroutineCodegen(
                 },
                 builtIns.nullableAnyType,
                 Modality.FINAL,
-                Visibilities.PUBLIC,
+                DescriptorVisibilities.PUBLIC,
                 userDataForDoResume
             )
         }
@@ -220,7 +220,7 @@ class CoroutineCodegenForLambda private constructor(
                 state.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
             ),
             funDescriptor.modality,
-            Visibilities.PUBLIC
+            DescriptorVisibilities.PUBLIC
         )
     }
 
@@ -311,7 +311,7 @@ class CoroutineCodegenForLambda private constructor(
         val untypedAsmMethod = typeMapper.mapAsmMethod(untypedDescriptor)
         val jvmMethodSignature = typeMapper.mapSignatureSkipGeneric(untypedDescriptor)
         val mv = v.newMethod(
-            OtherOrigin(element, funDescriptor), AsmUtil.getVisibilityAccessFlag(untypedDescriptor) or Opcodes.ACC_FINAL,
+            OtherOrigin(element, funDescriptor), DescriptorAsmUtil.getVisibilityAccessFlag(untypedDescriptor) or Opcodes.ACC_FINAL,
             untypedAsmMethod.name, untypedAsmMethod.descriptor, null, ArrayUtil.EMPTY_STRING_ARRAY
         )
         mv.visitCode()
@@ -448,7 +448,7 @@ class CoroutineCodegenForLambda private constructor(
                         } else {
                             load(index, fieldInfoForCoroutineLambdaParameter.fieldType)
                         }
-                        AsmUtil.genAssignInstanceFieldFromParam(
+                        DescriptorAsmUtil.genAssignInstanceFieldFromParam(
                             fieldInfoForCoroutineLambdaParameter,
                             index,
                             this,
@@ -486,7 +486,7 @@ class CoroutineCodegenForLambda private constructor(
 
             val name =
                 if (parameter is ReceiverParameterDescriptor)
-                    AsmUtil.getNameForReceiverParameter(originalSuspendFunctionDescriptor, bindingContext, languageVersionSettings)
+                    DescriptorAsmUtil.getNameForReceiverParameter(originalSuspendFunctionDescriptor, bindingContext, languageVersionSettings)
                 else
                     (getNameForDestructuredParameterOrNull(parameter as ValueParameterDescriptor) ?: parameter.name.asString())
             val label = Label()
@@ -636,6 +636,9 @@ class CoroutineCodegenForNamedFunction private constructor(
 
     override val passArityToSuperClass get() = false
 
+    private val inlineClassToBoxInInvokeSuspend: KotlinType? =
+        originalSuspendFunctionDescriptor.originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass(state.typeMapper)
+
     override fun generateBridges() {
         // Do not generate any closure bridges
     }
@@ -719,6 +722,17 @@ class CoroutineCodegenForNamedFunction private constructor(
                         callableMethod.genInvokeInstruction(codegen.v)
                     }
 
+                    if (inlineClassToBoxInInvokeSuspend != null) {
+                        with(codegen.v) {
+                            // We need to box the returned inline class in resume path.
+                            // But first, check for COROUTINE_SUSPENDED, since the function can return it
+                            generateCoroutineSuspendedCheck(languageVersionSettings)
+                            // Now we box the inline class
+                            StackValue.coerce(AsmTypes.OBJECT_TYPE, typeMapper.mapType(inlineClassToBoxInInvokeSuspend), this)
+                            StackValue.boxInlineClass(inlineClassToBoxInInvokeSuspend, this)
+                        }
+                    }
+
                     codegen.v.visitInsn(Opcodes.ARETURN)
                 }
             }
@@ -764,7 +778,7 @@ class CoroutineCodegenForNamedFunction private constructor(
                 serializer.functionProto(
                     createFreeFakeLambdaDescriptor(suspendFunctionJvmView, state.typeApproximator)
                 )?.build() ?: return@writeKotlinMetadata
-            AsmUtil.writeAnnotationData(av, serializer, functionProto)
+            DescriptorAsmUtil.writeAnnotationData(av, serializer, functionProto)
         }
     }
 

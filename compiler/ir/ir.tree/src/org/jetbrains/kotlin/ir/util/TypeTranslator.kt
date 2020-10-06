@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
@@ -87,9 +87,9 @@ class TypeTranslator(
 
         when {
             flexibleApproximatedType.isError ->
-                return IrErrorTypeImpl(flexibleApproximatedType, translateTypeAnnotations(flexibleApproximatedType.annotations), variance)
+                return IrErrorTypeImpl(flexibleApproximatedType, translateTypeAnnotations(flexibleApproximatedType), variance)
             flexibleApproximatedType.isDynamic() ->
-                return IrDynamicTypeImpl(flexibleApproximatedType, translateTypeAnnotations(flexibleApproximatedType.annotations), variance)
+                return IrDynamicTypeImpl(flexibleApproximatedType, translateTypeAnnotations(flexibleApproximatedType), variance)
         }
 
         val approximatedType = flexibleApproximatedType.upperIfFlexible()
@@ -111,33 +111,28 @@ class TypeTranslator(
 
         return IrSimpleTypeBuilder().apply {
             this.kotlinType = flexibleApproximatedType
-            this.hasQuestionMark = approximatedType.isMarkedNullable || extensions.enhancedNullability.hasEnhancedNullability(approximatedType)
+            this.hasQuestionMark = approximatedType.isMarkedNullable
             this.variance = variance
             this.abbreviation = approximatedType.getAbbreviation()?.toIrTypeAbbreviation()
             when (ktTypeDescriptor) {
                 is TypeParameterDescriptor -> {
                     classifier = resolveTypeParameter(ktTypeDescriptor)
-                    annotations = translateTypeAnnotations(approximatedType.annotations)
+                    annotations = translateTypeAnnotations(approximatedType, flexibleApproximatedType)
                 }
 
                 is ClassDescriptor -> {
                     classifier = symbolTable.referenceClass(ktTypeDescriptor)
-                    arguments = translateTypeArguments(approximatedType.arguments)
-                    annotations = translateTypeAnnotations(approximatedType.annotations)
+                    arguments =
+                        if (flexibleApproximatedType is RawType)
+                            translateTypeArguments(flexibleApproximatedType.arguments)
+                        else
+                            translateTypeArguments(approximatedType.arguments)
+                    annotations = translateTypeAnnotations(approximatedType, flexibleApproximatedType)
                 }
 
                 else ->
                     throw AssertionError("Unexpected type descriptor $ktTypeDescriptor :: ${ktTypeDescriptor::class}")
             }
-            if (flexibleApproximatedType.isNullabilityFlexible())
-                extensions.flexibleNullabilityAnnotationConstructor?.let { flexibleTypeAnnotationConstructor ->
-                    annotations += IrConstructorCallImpl(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        flexibleTypeAnnotationConstructor.constructedClassType,
-                        flexibleTypeAnnotationConstructor.symbol,
-                        0, 0, 0
-                    )
-                }
         }.buildTypeProjection()
     }
 
@@ -155,7 +150,7 @@ class TypeTranslator(
             symbolTable.referenceTypeAlias(typeAliasDescriptor),
             isMarkedNullable,
             translateTypeArguments(this.arguments),
-            translateTypeAnnotations(this.annotations)
+            translateTypeAnnotations(this)
         )
     }
 
@@ -195,8 +190,43 @@ class TypeTranslator(
                 approximateCapturedTypes(ktType).upper
         }
 
-    private fun translateTypeAnnotations(annotations: Annotations): List<IrConstructorCall> =
-        annotations.mapNotNull(constantValueGenerator::generateAnnotationConstructorCall)
+    private fun translateTypeAnnotations(kotlinType: KotlinType, flexibleType: KotlinType = kotlinType): List<IrConstructorCall> {
+        val annotations = kotlinType.annotations
+        val irAnnotations = ArrayList<IrConstructorCall>()
+
+        annotations.mapNotNullTo(irAnnotations) {
+            constantValueGenerator.generateAnnotationConstructorCall(it)
+        }
+
+        // EnhancedNullability annotation is not present in 'annotations', see 'EnhancedTypeAnnotations::iterator()'.
+        // Also, EnhancedTypeAnnotationDescriptor is not a "real" annotation descriptor, there's no corresponding ClassDescriptor, etc.
+        if (extensions.enhancedNullability.hasEnhancedNullability(kotlinType)) {
+            irAnnotations.addSpecialAnnotation(extensions.enhancedNullabilityAnnotationConstructor)
+        }
+
+        if (flexibleType.isNullabilityFlexible()) {
+            irAnnotations.addSpecialAnnotation(extensions.flexibleNullabilityAnnotationConstructor)
+        }
+
+        if (flexibleType is RawType) {
+            irAnnotations.addSpecialAnnotation(extensions.rawTypeAnnotationConstructor)
+        }
+
+        return irAnnotations
+    }
+
+    private fun MutableList<IrConstructorCall>.addSpecialAnnotation(irConstructor: IrConstructor?) {
+        if (irConstructor != null) {
+            add(
+                IrConstructorCallImpl.fromSymbolOwner(
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    irConstructor.constructedClassType,
+                    irConstructor.symbol
+                )
+            )
+        }
+    }
 
     private fun translateTypeArguments(arguments: List<TypeProjection>) =
         arguments.map {

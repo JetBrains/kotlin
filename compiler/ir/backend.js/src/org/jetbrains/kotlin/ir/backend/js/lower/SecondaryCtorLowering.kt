@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -172,7 +172,7 @@ private fun JsIrBackendContext.buildInitDeclaration(constructor: IrConstructor, 
     return irFactory.buildFun {
         name = Name.identifier(functionName)
         returnType = type
-        visibility = Visibilities.INTERNAL
+        visibility = DescriptorVisibilities.INTERNAL
         modality = Modality.FINAL
         isInline = constructor.isInline
         isExternal = constructor.isExternal

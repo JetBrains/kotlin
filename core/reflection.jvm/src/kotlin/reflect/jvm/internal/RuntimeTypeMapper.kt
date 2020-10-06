@@ -115,13 +115,13 @@ internal sealed class JvmPropertySignature {
 
         private fun getManglingSuffix(): String {
             val containingDeclaration = descriptor.containingDeclaration
-            if (descriptor.visibility == Visibilities.INTERNAL && containingDeclaration is DeserializedClassDescriptor) {
+            if (descriptor.visibility == DescriptorVisibilities.INTERNAL && containingDeclaration is DeserializedClassDescriptor) {
                 val classProto = containingDeclaration.classProto
                 val moduleName = classProto.getExtensionOrNull(JvmProtoBuf.classModuleName)?.let(nameResolver::getString)
                     ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
                 return "$" + NameUtils.sanitizeAsJavaIdentifier(moduleName)
             }
-            if (descriptor.visibility == Visibilities.PRIVATE && containingDeclaration is PackageFragmentDescriptor) {
+            if (descriptor.visibility == DescriptorVisibilities.PRIVATE && containingDeclaration is PackageFragmentDescriptor) {
                 val packagePartSource = (descriptor as DeserializedPropertyDescriptor).containerSource
                 if (packagePartSource is JvmPackagePartSource && packagePartSource.facadeClassName != null) {
                     return "$" + packagePartSource.simpleName.asString()

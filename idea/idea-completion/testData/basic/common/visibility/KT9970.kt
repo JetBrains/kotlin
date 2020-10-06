@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 class Z<T> {
     fun f(): Z<T> = ext<caret>
 }

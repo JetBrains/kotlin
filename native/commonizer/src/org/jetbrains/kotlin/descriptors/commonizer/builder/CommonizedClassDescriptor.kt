@@ -29,7 +29,7 @@ class CommonizedClassDescriptor(
     name: Name,
     private val kind: ClassKind,
     private val modality: Modality,
-    private val visibility: Visibility,
+    private val visibility: DescriptorVisibility,
     private val isCompanion: Boolean,
     private val isData: Boolean,
     private val isInline: Boolean,
@@ -147,6 +147,12 @@ class CommonizedClassDescriptor(
 class CommonizedClassConstructorDescriptor(
     containingDeclaration: ClassDescriptor,
     annotations: Annotations,
-    isPrimary: Boolean,
-    kind: CallableMemberDescriptor.Kind
-) : ClassConstructorDescriptorImpl(containingDeclaration, null, annotations, isPrimary, kind, SourceElement.NO_SOURCE)
+    isPrimary: Boolean
+) : ClassConstructorDescriptorImpl(
+    containingDeclaration,
+    null,
+    annotations,
+    isPrimary,
+    CallableMemberDescriptor.Kind.DECLARATION,
+    SourceElement.NO_SOURCE
+)

@@ -32,7 +32,7 @@ interface AbstractFir2IrLazyDeclaration<F : FirMemberDeclaration, D : IrSymbolOw
             classifierStorage.getIrTypeParameter(typeParameter, index).apply {
                 parent = this@AbstractFir2IrLazyDeclaration
                 if (superTypes.isEmpty()) {
-                    typeParameter.bounds.mapTo(superTypes) { it.toIrType(typeConverter) }
+                    superTypes = typeParameter.bounds.map { it.toIrType(typeConverter) }
                 }
             }
         }

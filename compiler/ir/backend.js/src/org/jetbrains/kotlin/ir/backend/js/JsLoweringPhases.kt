@@ -335,6 +335,12 @@ private val returnableBlockLoweringPhase = makeBodyLoweringPhase(
     prerequisite = setOf(functionInliningPhase)
 )
 
+private val rangeContainsLoweringPhase = makeBodyLoweringPhase(
+    ::RangeContainsLowering,
+    name = "RangeContainsLowering",
+    description = "[Optimization] Optimizes calls to contains() for ClosedRanges"
+)
+
 private val forLoopsLoweringPhase = makeBodyLoweringPhase(
     ::ForLoopsLowering,
     name = "ForLoopsLowering",
@@ -514,6 +520,19 @@ private val multipleCatchesLoweringPhase = makeBodyLoweringPhase(
     description = "Replace multiple catches with single one"
 )
 
+private val errorExpressionLoweringPhase = makeBodyLoweringPhase(
+    ::JsErrorExpressionLowering,
+    name = "errorExpressionLoweringPhase",
+    description = "Transform error expressions into simple ir code",
+    prerequisite = setOf(multipleCatchesLoweringPhase)
+)
+
+private val errorDeclarationLoweringPhase = makeDeclarationTransformerPhase(
+    ::JsErrorDeclarationLowering,
+    name = "errorDeclarationLoweringPhase",
+    description = "Transform error declarations into simple ir code"
+)
+
 private val bridgesConstructionPhase = makeDeclarationTransformerPhase(
     ::BridgesConstruction,
     name = "BridgesConstruction",
@@ -534,7 +553,7 @@ private val typeOperatorLoweringPhase = makeBodyLoweringPhase(
     prerequisite = setOf(
         bridgesConstructionPhase,
         removeInlineFunctionsWithReifiedTypeParametersLoweringPhase,
-        singleAbstractMethodPhase
+        singleAbstractMethodPhase, errorExpressionLoweringPhase
     )
 )
 
@@ -690,6 +709,7 @@ val loweringList = listOf<Lowering>(
     propertyReferenceLoweringPhase,
     interopCallableReferenceLoweringPhase,
     returnableBlockLoweringPhase,
+    rangeContainsLoweringPhase,
     forLoopsLoweringPhase,
     primitiveCompanionLoweringPhase,
     propertyAccessorInlinerLoweringPhase,
@@ -707,6 +727,8 @@ val loweringList = listOf<Lowering>(
     es6ConstructorLowering,
     varargLoweringPhase,
     multipleCatchesLoweringPhase,
+    errorExpressionLoweringPhase,
+    errorDeclarationLoweringPhase,
     bridgesConstructionPhase,
     typeOperatorLoweringPhase,
     secondaryConstructorLoweringPhase,

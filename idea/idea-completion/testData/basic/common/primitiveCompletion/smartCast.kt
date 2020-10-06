@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 interface A {
     fun a()
 }

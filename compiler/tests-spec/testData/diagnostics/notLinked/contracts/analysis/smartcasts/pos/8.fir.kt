@@ -133,7 +133,7 @@ fun case_6(value_1: Number, value_2: String?, value_3: Any?) {
             println(value_2.<!INAPPLICABLE_CANDIDATE!>length<!>)
         }
         null -> {
-            <!AMBIGUITY!>println<!>(value_1.inv())
+            <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
         }
     }
 }

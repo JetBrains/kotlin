@@ -86,4 +86,7 @@ public class JSConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> DISABLE_FAKE_OVERRIDE_VALIDATOR =
             CompilerConfigurationKey.create("disable IR fake override validator");
+
+    public static final CompilerConfigurationKey<ErrorTolerancePolicy> ERROR_TOLERANCE_POLICY =
+            CompilerConfigurationKey.create("set up policy to ignore compilation errors");
 }

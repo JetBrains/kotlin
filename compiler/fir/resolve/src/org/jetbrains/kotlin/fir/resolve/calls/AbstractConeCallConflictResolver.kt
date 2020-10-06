@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.fir.types.arrayElementType
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.resolve.calls.results.*
-import org.jetbrains.kotlin.types.checker.requireOrDescribe
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.requireOrDescribe
 
 abstract class AbstractConeCallConflictResolver(
     private val specificityComparator: TypeSpecificityComparator,
@@ -129,7 +129,7 @@ abstract class AbstractConeCallConflictResolver(
             //constructor.receiverTypeRef != null,
             false,
             constructor.valueParameters.any { it.isVararg },
-            constructor.valueParameters.count { it.defaultValue != null },
+            call.numDefaults,
             constructor.isExpect,
             false // TODO
         )
@@ -142,7 +142,7 @@ abstract class AbstractConeCallConflictResolver(
             computeParameterTypes(call, function),
             function.receiverTypeRef != null,
             function.valueParameters.any { it.isVararg },
-            function.valueParameters.count { it.defaultValue != null },
+            call.numDefaults,
             function.isExpect,
             false // TODO
         )

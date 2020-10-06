@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildLegacyRawContractDescription
@@ -288,7 +289,21 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
     }
     val isMember = ownerSymbol != null
 
-    fun thisRef(): FirExpression =
+    /*
+     * If we have delegation with provide delegate then we generate call like
+     *   `delegateExpression.provideDelegate(this, ::prop)`
+     * Note that `this` is always  reference for dispatch receiver
+     *   unlike other `this` references in `getValue` `setValue` calls, where
+     *  `this` is reference to closest receiver (extension, then dispatch)
+     *
+     * So for top-level extension properties we should generate
+     *   val A.prop by delegateExpression.provideDelegate(null, ::prop)
+     *      get() = delegate.getValue(this@prop, ::prop)
+     *
+     * And for this case we can pass isForDelegateProviderCall to this reference
+     *   generator function
+     */
+    fun thisRef(isForDelegateProviderCall: Boolean = false): FirExpression =
         when {
             ownerSymbol != null -> buildThisReceiverExpression {
                 source = delegateBuilder.source
@@ -300,7 +315,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
                     type = ownerSymbol.constructStarProjectedType(typeParameterNumber)
                 }
             }
-            isExtension -> buildThisReceiverExpression {
+            isExtension && !isForDelegateProviderCall -> buildThisReceiverExpression {
                 source = delegateBuilder.source
                 calleeReference = buildImplicitThisReference {
                     boundSymbol = this@generateAccessorsByDelegate.symbol
@@ -352,11 +367,12 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
             source = delegateBuilder.source
             name = PROVIDE_DELEGATE
         }
-        argumentList = buildBinaryArgumentList(thisRef(), propertyRef())
+        argumentList = buildBinaryArgumentList(thisRef(isForDelegateProviderCall = true), propertyRef())
     }
     delegate = delegateBuilder.build()
     if (stubMode) return
     if (getter == null || getter is FirDefaultPropertyAccessor) {
+        val annotations = getter?.annotations
         val returnTarget = FirFunctionTarget(null, isLambda = false)
         getter = buildPropertyAccessor {
             this.session = session
@@ -380,11 +396,15 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
                     target = returnTarget
                 }
             )
+            if (annotations != null) {
+                this.annotations.addAll(annotations)
+            }
         }.also {
             returnTarget.bind(it)
         }
     }
     if (isVar && (setter == null || setter is FirDefaultPropertyAccessor)) {
+        val annotations = setter?.annotations
         setter = buildPropertyAccessor {
             this.session = session
             origin = FirDeclarationOrigin.Source
@@ -421,6 +441,9 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
                     }
                 }
             )
+            if (annotations != null) {
+                this.annotations.addAll(annotations)
+            }
         }
     }
 }
@@ -479,3 +502,9 @@ fun FirQualifiedAccess.wrapWithSafeCall(receiver: FirExpression): FirSafeCallExp
         this.source = this@wrapWithSafeCall.source?.fakeElement(FirFakeSourceElementKind.DesugaredSafeCallExpression)
     }
 }
+
+data class CalleeAndReceiver(
+    val reference: FirNamedReference,
+    val receiverExpression: FirExpression? = null,
+    val isImplicitInvoke: Boolean = false
+)

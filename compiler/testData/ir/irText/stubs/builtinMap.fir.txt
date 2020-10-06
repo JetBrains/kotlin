@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/builtinMap.kt
                   $receiver: VALUE_PARAMETER name:<this> type:java.util.LinkedHashMap<K1 of <root>.plus?, V1 of <root>.plus?>
                   BLOCK_BODY
                     RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.plus'
-                      CALL 'public open fun put (p0: K of java.util.LinkedHashMap?, p1: V of java.util.LinkedHashMap?): V of java.util.LinkedHashMap? [fake_override] declared in java.util.LinkedHashMap' type=V1 of <root>.plus? origin=null
+                      CALL 'public open fun put (p0: K of java.util.LinkedHashMap?, p1: V of java.util.LinkedHashMap?): V of java.util.LinkedHashMap? declared in java.util.LinkedHashMap' type=V1 of <root>.plus? origin=null
                         $this: GET_VAR '<this>: java.util.LinkedHashMap<K1 of <root>.plus?, V1 of <root>.plus?> declared in <root>.plus.<anonymous>' type=java.util.LinkedHashMap<K1 of <root>.plus?, V1 of <root>.plus?> origin=null
                         p0: CALL 'public final fun <get-first> (): A of kotlin.Pair declared in kotlin.Pair' type=K1 of <root>.plus origin=GET_PROPERTY
                           $this: GET_VAR 'pair: kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus> declared in <root>.plus' type=kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus> origin=null

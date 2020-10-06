@@ -87,7 +87,9 @@ fun AbstractSerialGenerator.allSealedSerializableSubclassesFor(
     }
 
     val serializableSubtypes = recursiveSealed(klass).map { it.toSimpleType() }
-    return serializableSubtypes to serializableSubtypes.mapNotNull { findTypeSerializerOrContextUnchecked(module, it) }
+    return serializableSubtypes.mapNotNull { subtype ->
+        findTypeSerializerOrContextUnchecked(module, subtype)?.let { Pair(subtype, it) }
+    }.unzip()
 }
 
 fun KotlinType.serialName(): String {

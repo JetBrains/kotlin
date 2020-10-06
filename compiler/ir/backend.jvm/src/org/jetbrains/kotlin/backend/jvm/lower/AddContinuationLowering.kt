@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.backend.jvm.localDeclarationsPhase
 import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -41,9 +41,8 @@ import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -96,13 +95,13 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
     private fun transformSuspendLambdasIntoContinuations(irFile: IrFile) {
         val inlineReferences = mutableSetOf<IrCallableReference<*>>()
         val suspendLambdas = mutableMapOf<IrFunctionReference, SuspendLambdaInfo>()
-        irFile.acceptChildrenVoid(object : IrInlineReferenceLocator(context) {
+        irFile.acceptChildren(object : IrInlineReferenceLocator(context) {
             override fun visitInlineReference(argument: IrCallableReference<*>) {
                 inlineReferences.add(argument)
             }
 
-            override fun visitFunctionReference(expression: IrFunctionReference) {
-                expression.acceptChildrenVoid(this)
+            override fun visitFunctionReference(expression: IrFunctionReference, data: IrDeclaration?) {
+                expression.acceptChildren(this, data)
                 if (expression.isSuspend && expression.shouldBeTreatedAsSuspendLambda() && expression !in inlineReferences) {
                     val isRestricted = expression.symbol.owner.extensionReceiverParameter?.type?.classOrNull?.owner?.annotations?.any {
                         it.type.classOrNull?.signature == IdSignature.PublicSignature("kotlin.coroutines", "RestrictsSuspension", null, 0)
@@ -115,7 +114,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                 origin == IrStatementOrigin.LAMBDA ||
                         origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE ||
                         origin == IrStatementOrigin.SUSPEND_CONVERSION
-        })
+        }, null)
 
         for (lambda in suspendLambdas.values) {
             (lambda.function.parent as IrDeclarationContainer).declarations.remove(lambda.function)
@@ -136,9 +135,6 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                             "Inconsistency between callable reference to suspend lambda and the corresponding continuation"
                         }
                         +irCall(constructor.symbol).apply {
-                            for (typeParameter in constructor.parentAsClass.typeParameters) {
-                                putTypeArgument(typeParameter.index, expression.getTypeArgument(typeParameter.index))
-                            }
                             expressionArguments.forEachIndexed { index, argument ->
                                 putValueArgument(index, argument)
                             }
@@ -164,10 +160,9 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA,
             // Since inline functions can be inlined to different package, we should generate lambdas inside these functions
             // as public
-            if (insideInlineFunction) Visibilities.PUBLIC else JavaVisibilities.PACKAGE_VISIBILITY
+            if (insideInlineFunction) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
         ).apply {
             copyAttributes(info.reference)
-            copyTypeParametersFrom(info.function)
             val functionNClass = context.ir.symbols.getJvmFunctionClass(info.arity + 1)
             superTypes +=
                 IrSimpleTypeImpl(
@@ -179,7 +174,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                     annotations = emptyList()
                 )
 
-            addField(COROUTINE_LABEL_FIELD_NAME, context.irBuiltIns.intType, JavaVisibilities.PACKAGE_VISIBILITY)
+            addField(COROUTINE_LABEL_FIELD_NAME, context.irBuiltIns.intType, JavaDescriptorVisibilities.PACKAGE_VISIBILITY)
 
             val receiverField = info.function.extensionReceiverParameter?.let {
                 assert(info.arity != 0)
@@ -189,7 +184,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                     // NB extension receiver can't be crossinline
                     origin = LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE
                     type = it.type
-                    visibility = Visibilities.PRIVATE
+                    visibility = DescriptorVisibilities.PRIVATE
                 }
             }
 
@@ -202,7 +197,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                     else
                         LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE
                     isFinal = info.reference.getValueArgument(it.index) != null
-                    visibility = JavaVisibilities.PACKAGE_VISIBILITY
+                    visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
                 }
             }
             val fieldsForBound = parametersFields.filter { it.isFinal }
@@ -362,7 +357,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
     private fun IrClass.createContinuationClassFor(
         parent: IrDeclarationParent,
         newOrigin: IrDeclarationOrigin,
-        newVisibility: Visibility
+        newVisibility: DescriptorVisibility
     ): IrClass = context.irFactory.buildClass {
         name = Name.special("<Continuation>")
         origin = newOrigin
@@ -383,7 +378,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         addConstructor {
             isPrimary = true
             returnType = defaultType
-            visibility = if (insideInlineFunction) Visibilities.PUBLIC else JavaVisibilities.PACKAGE_VISIBILITY
+            visibility = if (insideInlineFunction) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
         }.also { constructor ->
             for ((param, arg) in info.reference.getArguments()) {
                 constructor.addValueParameter(name = param.name.asString(), type = arg.type)
@@ -424,25 +419,25 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             .createContinuationClassFor(
                 irFunction,
                 JvmLoweredDeclarationOrigin.CONTINUATION_CLASS,
-                if (capturesCrossinline) Visibilities.PUBLIC else JavaVisibilities.PACKAGE_VISIBILITY
+                if (capturesCrossinline) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
             ).apply {
                 copyTypeParametersFrom(irFunction)
                 val resultField = addField {
                     origin = JvmLoweredDeclarationOrigin.CONTINUATION_CLASS_RESULT_FIELD
                     name = Name.identifier(context.state.languageVersionSettings.dataFieldName())
                     type = context.irBuiltIns.anyNType
-                    visibility = JavaVisibilities.PACKAGE_VISIBILITY
+                    visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
                 }
                 val capturedThisField = dispatchReceiverParameter?.let {
                     addField {
                         name = Name.identifier("this$0")
                         type = it.type
                         origin = InnerClassesSupport.FIELD_FOR_OUTER_THIS
-                        visibility = JavaVisibilities.PACKAGE_VISIBILITY
+                        visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
                         isFinal = true
                     }
                 }
-                val labelField = addField(COROUTINE_LABEL_FIELD_NAME, context.irBuiltIns.intType, JavaVisibilities.PACKAGE_VISIBILITY)
+                val labelField = addField(COROUTINE_LABEL_FIELD_NAME, context.irBuiltIns.intType, JavaDescriptorVisibilities.PACKAGE_VISIBILITY)
                 addConstructorForNamedFunction(capturedThisField, capturesCrossinline)
                 addInvokeSuspendForNamedFunction(
                     irFunction,
@@ -459,7 +454,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         addConstructor {
             isPrimary = true
             returnType = defaultType
-            visibility = if (capturesCrossinline) Visibilities.PUBLIC else JavaVisibilities.PACKAGE_VISIBILITY
+            visibility = if (capturesCrossinline) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
         }.also { constructor ->
             val capturedThisParameter = capturedThisField?.let { constructor.addValueParameter(it.name.asString(), it.type) }
             val completionParameterSymbol = constructor.addCompletionValueParameter()
@@ -616,7 +611,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                         modality = view.modality
                         isSuspend = view.isSuspend
                         isInline = view.isInline
-                        visibility = if (view.isInline) Visibilities.PRIVATE else view.visibility
+                        visibility = if (view.isInline) DescriptorVisibilities.PRIVATE else view.visibility
                         origin =
                             if (view.isInline) JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE
                             else JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE

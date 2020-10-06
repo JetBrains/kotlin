@@ -1,4 +1,5 @@
 // !API_VERSION: LATEST
+// IGNORE_BACKEND_FIR: JVM_IR
 // FILE: j/J.java
 
 package j;

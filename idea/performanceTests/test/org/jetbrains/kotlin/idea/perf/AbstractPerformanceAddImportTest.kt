@@ -22,12 +22,6 @@ abstract class AbstractPerformanceAddImportTest : AbstractPerformanceImportTest(
 
         @JvmStatic
         val stats: Stats = Stats("add-import")
-
-        init {
-            // there is no @AfterClass for junit3.8
-            Runtime.getRuntime().addShutdownHook(Thread(Runnable { stats.close() }))
-        }
-
     }
 
     override fun stats(): Stats = stats

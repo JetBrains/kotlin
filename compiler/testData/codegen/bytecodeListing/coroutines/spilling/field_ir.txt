@@ -2,6 +2,7 @@
 @kotlin.Metadata
 final class FieldKt$test$1 {
     // source: 'field.kt'
+    enclosing method FieldKt.test()V
     field label: int
     private synthetic field p$: Foo
     inner (anonymous) class FieldKt$test$1

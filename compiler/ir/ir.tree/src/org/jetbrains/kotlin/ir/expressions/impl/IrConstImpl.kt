@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 class IrConstImpl<T>(
     override val startOffset: Int,
     override val endOffset: Int,
-    override val type: IrType,
+    override var type: IrType,
     override val kind: IrConstKind<T>,
     override val value: T
 ) : IrConst<T>() {
@@ -32,6 +32,9 @@ class IrConstImpl<T>(
         visitor.visitConst(this, data)
 
     override fun copy(): IrConst<T> =
+        IrConstImpl(startOffset, endOffset, type, kind, value)
+
+    override fun copyWithOffsets(startOffset: Int, endOffset: Int) =
         IrConstImpl(startOffset, endOffset, type, kind, value)
 
     companion object {

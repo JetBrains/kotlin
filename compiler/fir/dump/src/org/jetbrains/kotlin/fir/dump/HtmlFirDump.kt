@@ -10,6 +10,8 @@ import kotlinx.html.stream.appendHTML
 import org.apache.commons.lang.StringEscapeUtils
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.left
 import org.jetbrains.kotlin.fir.backend.right
@@ -1229,7 +1231,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             is ConeInapplicableCandidateError -> {
                 describeVerbose(diagnostic.candidateSymbol)
                 br
-                diagnostic.diagnostics.forEach { callDiagnostic ->
+                diagnostic.errors.forEach { callDiagnostic ->
                     when (callDiagnostic) {
                         is NewConstraintError -> {
                             ident()

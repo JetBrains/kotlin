@@ -5,18 +5,20 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
+import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProvider
+import org.jetbrains.kotlin.idea.frontend.api.assertIsValid
 import org.jetbrains.kotlin.psi.KtElement
 import java.util.concurrent.ConcurrentHashMap
 
+@OptIn(InvalidWayOfUsingAnalysisSession::class)
 class KtFirAnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider() {
     private val analysisSessionByModuleInfoCache =
         CachedValuesManager.getManager(project).createCachedValue {
@@ -30,6 +32,8 @@ class KtFirAnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider
         return analysisSessionByModuleInfoCache.value.getOrPut(contextElement.getModuleInfo()) {
             @Suppress("DEPRECATION")
             KtFirAnalysisSession.createForElement(contextElement)
+        }.apply {
+            assertIsValid()
         }
     }
 }

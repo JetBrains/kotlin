@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 class C {
     fun String.extFun() {
         <caret>

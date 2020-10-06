@@ -12,10 +12,6 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.*
 
 abstract class FirDefaultTransformer<D> : FirTransformer<D>() {
-    override fun transformDelegatedTypeRef(delegatedTypeRef: FirDelegatedTypeRef, data: D): CompositeTransformResult<FirTypeRef> {
-        return transformTypeRef(delegatedTypeRef, data)
-    }
-
     override fun transformImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: D): CompositeTransformResult<FirTypeRef> {
         return transformTypeRef(implicitTypeRef, data)
     }
@@ -26,10 +22,6 @@ abstract class FirDefaultTransformer<D> : FirTransformer<D>() {
 
     override fun transformErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: D): CompositeTransformResult<FirTypeRef> {
         return transformResolvedTypeRef(errorTypeRef, data)
-    }
-
-    override fun transformResolvedFunctionTypeRef(resolvedFunctionTypeRef: FirResolvedFunctionTypeRef, data: D): CompositeTransformResult<FirTypeRef> {
-        return transformResolvedTypeRef(resolvedFunctionTypeRef, data)
     }
 
     override fun transformTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability, data: D): CompositeTransformResult<FirTypeRef> {
@@ -105,6 +97,10 @@ abstract class FirDefaultTransformer<D> : FirTransformer<D>() {
         data: D
     ): CompositeTransformResult<FirStatement> {
         return transformResolvedQualifier(errorResolvedQualifier, data)
+    }
+
+    override fun transformImplicitInvokeCall(implicitInvokeCall: FirImplicitInvokeCall, data: D): CompositeTransformResult<FirStatement> {
+        return transformFunctionCall(implicitInvokeCall, data)
     }
 }
 

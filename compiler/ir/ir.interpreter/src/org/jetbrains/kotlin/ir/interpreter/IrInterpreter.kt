@@ -533,6 +533,10 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
         val field = expression.symbol.owner
         // for java static variables
         if (field.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && field.isStatic) {
+            val initializerExpression = field.initializer?.expression
+            if (initializerExpression is IrConst<*>) {
+                return interpretConst(initializerExpression)
+            }
             stack.pushReturnValue(Wrapper.getStaticGetter(field)!!.invokeWithArguments().toState(field.type))
             return Next
         }

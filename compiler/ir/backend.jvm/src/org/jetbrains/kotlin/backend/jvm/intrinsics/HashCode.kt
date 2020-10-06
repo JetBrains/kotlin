@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.DescriptorAsmUtil
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
@@ -33,9 +34,10 @@ object HashCode : IntrinsicMethod() {
         val result = receiver.accept(this, data).materialized()
         val target = context.state.target
         when {
-            irFunction.origin == JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD || irFunction.origin == IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER ->
-                AsmUtil.genHashCode(mv, mv, result.type, target)
-            target == JvmTarget.JVM_1_6 -> {
+            irFunction.origin == JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD ||
+                    irFunction.origin == IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER ->
+                DescriptorAsmUtil.genHashCode(mv, mv, result.type, target)
+            target == JvmTarget.JVM_1_6 || !AsmUtil.isPrimitive(result.type) -> {
                 result.materializeAtBoxed(receiver.type)
                 mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Object", "hashCode", "()I", false)
             }

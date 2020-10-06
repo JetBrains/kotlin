@@ -1,13 +1,8 @@
-public enum E {
-    /**
-     * @deprecated
-     */
-    @kotlin.Deprecated(message = "a")
-    Entry1, Entry2, /**
-     * @deprecated
-     */
-    @kotlin.Deprecated(message = "b")
-    Entry3;
+public enum E /* p.E*/ {
+  Entry1,
+  Entry2,
+  Entry3;
 
-    private E() { /* compiled code */ }
+  private  E();//  .ctor()
+
 }

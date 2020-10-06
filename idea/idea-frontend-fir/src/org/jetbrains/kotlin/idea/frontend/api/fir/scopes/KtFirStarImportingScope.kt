@@ -16,12 +16,9 @@ import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
-import org.jetbrains.kotlin.idea.frontend.api.scopes.Import
-import org.jetbrains.kotlin.idea.frontend.api.scopes.KtStarImportingScope
-import org.jetbrains.kotlin.idea.frontend.api.scopes.StarImport
+import org.jetbrains.kotlin.idea.frontend.api.scopes.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelClassByPackageIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionByPackageIndex
@@ -51,12 +48,12 @@ internal class KtFirStarImportingScope(
         }
     }
 
-    override fun getCallableSymbols(): Sequence<KtCallableSymbol> = withValidityAssertion {
-        firScope.getCallableSymbols(getCallableNames(), builder)
+    override fun getCallableSymbols(nameFilter: KtScopeNameFilter): Sequence<KtCallableSymbol> = withValidityAssertion {
+        firScope.getCallableSymbols(getCallableNames().filter(nameFilter), builder)
     }
 
-    override fun getClassClassLikeSymbols(): Sequence<KtClassLikeSymbol> = withValidityAssertion {
-        firScope.getClassLikeSymbols(getClassLikeSymbolNames(), builder)
+    override fun getClassifierSymbols(nameFilter: KtScopeNameFilter): Sequence<KtClassifierSymbol> = withValidityAssertion {
+        firScope.getClassifierSymbols(getClassifierNames().filter(nameFilter), builder)
     }
 
     // todo cache?
@@ -72,7 +69,7 @@ internal class KtFirStarImportingScope(
         }
     }
 
-    override fun getClassLikeSymbolNames(): Set<Name> = withValidityAssertion {
+    override fun getClassifierNames(): Set<Name> = withValidityAssertion {
         imports.flatMapTo(hashSetOf()) { import ->
             if (import.relativeClassName == null) {
                 packageHelper.getPackageTopLevelClassifiers(import.packageFqName)

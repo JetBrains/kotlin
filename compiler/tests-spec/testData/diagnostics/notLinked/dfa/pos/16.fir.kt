@@ -95,7 +95,7 @@ fun case_7(x: Class?) {
 fun case_8(x: Int?) {
     if (false || false || false || x == nullableNothingProperty) return
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.inv()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>()
 }
 
 // TESTCASE NUMBER: 9

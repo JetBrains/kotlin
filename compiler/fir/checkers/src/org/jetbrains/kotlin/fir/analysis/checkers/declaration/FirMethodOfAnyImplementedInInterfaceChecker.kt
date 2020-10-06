@@ -34,13 +34,26 @@ object FirMethodOfAnyImplementedInInterfaceChecker : FirMemberDeclarationChecker
         inspector = this
     }
 
-    override fun represent(it: FirSimpleFunction) = buildFunctionRepresentation {
-        typeArguments = it.typeParameters.joinToString { represent(it) }
-        it.receiverTypeRef?.let {
-            receiver = represent(it)
+    @Suppress("DuplicatedCode")
+    override fun represent(it: FirSimpleFunction) = buildString {
+        append('<')
+        it.typeParameters.forEach {
+            appendRepresentation(it)
+            append(',')
         }
-        name = it.name.asString()
-        parameters = it.valueParameters.joinToString { represent(it) }
+        append('>')
+        append('[')
+        it.receiverTypeRef?.let {
+            appendRepresentation(it)
+        }
+        append(']')
+        append(it.name.asString())
+        append('(')
+        it.valueParameters.forEach {
+            appendRepresentation(it)
+            append(',')
+        }
+        append(')')
     }
 
     override fun check(declaration: FirMemberDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {

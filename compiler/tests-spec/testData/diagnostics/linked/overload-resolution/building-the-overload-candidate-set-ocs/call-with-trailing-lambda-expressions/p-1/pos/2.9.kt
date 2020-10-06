@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION -NOTHING_TO_INLINE
 // SKIP_TXT
@@ -21,7 +20,7 @@ package testsCase1
 import libPackageCase1.*
 
 fun case1() {
-    <!DEBUG_INFO_CALL("fqName: testsCase1.listOf; typeCall: function")!>listOf(elements1 = arrayOf(1), body = { "" })<!>
+    <!DEBUG_INFO_CALL("fqName: testsCase1.listOf; typeCall: function")!>listOf(<!CHANGING_ARGUMENTS_EXECUTION_ORDER_FOR_NAMED_VARARGS!>elements1 = arrayOf(1)<!>, body = { "" })<!>
 }
 
 // FILE: Lib.kt
@@ -40,7 +39,7 @@ package testsCase2
 import libPackageCase2.*
 
 fun case2() {
-    <!DEBUG_INFO_CALL("fqName: testsCase2.listOf; typeCall: function")!>listOf(elements1 = arrayOf(1), body = { "" })<!>
+    <!DEBUG_INFO_CALL("fqName: testsCase2.listOf; typeCall: function")!>listOf(<!CHANGING_ARGUMENTS_EXECUTION_ORDER_FOR_NAMED_VARARGS!>elements1 = arrayOf(1)<!>, body = { "" })<!>
 }
 
 // FILE: Lib.kt
@@ -68,7 +67,7 @@ package testsCase3
 import libPackageCase3.*
 
 fun case3() {
-    <!DEBUG_INFO_CALL("fqName: testsCase3.A.invoke; typeCall: variable&invoke")!>listOf(elements1 = arrayOf(1), body = { "" })<!>
+    <!DEBUG_INFO_CALL("fqName: testsCase3.A.invoke; typeCall: variable&invoke")!>listOf(<!CHANGING_ARGUMENTS_EXECUTION_ORDER_FOR_NAMED_VARARGS!>elements1 = arrayOf(1)<!>, body = { "" })<!>
 }
 
 // FILE: Lib.kt

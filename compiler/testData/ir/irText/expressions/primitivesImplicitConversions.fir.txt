@@ -29,7 +29,7 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
   PROPERTY name:test4 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Long visibility:private [final,static]
       EXPRESSION_BODY
-        CALL 'public final fun unaryMinus (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Long origin=null
+        CALL 'public final fun unaryMinus (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
           $this: CONST Int type=kotlin.Int value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:kotlin.Long
       correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [val]
@@ -39,7 +39,7 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
   PROPERTY name:test5 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.Short visibility:private [final,static]
       EXPRESSION_BODY
-        CALL 'public final fun unaryMinus (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Short origin=null
+        CALL 'public final fun unaryMinus (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
           $this: CONST Int type=kotlin.Int value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test5> visibility:public modality:FINAL <> () returnType:kotlin.Short
       correspondingProperty: PROPERTY name:test5 visibility:public modality:FINAL [val]
@@ -49,7 +49,7 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
   PROPERTY name:test6 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.Byte visibility:private [final,static]
       EXPRESSION_BODY
-        CALL 'public final fun unaryMinus (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Byte origin=null
+        CALL 'public final fun unaryMinus (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
           $this: CONST Int type=kotlin.Int value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test6> visibility:public modality:FINAL <> () returnType:kotlin.Byte
       correspondingProperty: PROPERTY name:test6 visibility:public modality:FINAL [val]
@@ -63,9 +63,9 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
       VAR name:test2 type:kotlin.Long [val]
         CONST Long type=kotlin.Long value=42
       VAR name:test3 type:kotlin.Long? [val]
-        CONST Int type=kotlin.Int value=42
+        CONST Long type=kotlin.Long value=42
       VAR name:test4 type:kotlin.Long? [val]
-        CONST Int type=kotlin.Int value=-1
+        CONST Long type=kotlin.Long value=-1
       VAR name:test5 type:kotlin.Long? [val]
         CONST Int type=kotlin.Int value=-1
       VAR name:test6 type:kotlin.Short? [val]

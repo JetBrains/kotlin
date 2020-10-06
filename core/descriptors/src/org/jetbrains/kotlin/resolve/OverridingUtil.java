@@ -489,8 +489,8 @@ public class OverridingUtil {
     }
 
     public static boolean isVisibleForOverride(@NotNull MemberDescriptor overriding, @NotNull MemberDescriptor fromSuper) {
-        return !Visibilities.isPrivate(fromSuper.getVisibility()) &&
-               Visibilities.isVisibleIgnoringReceiver(fromSuper, overriding);
+        return !DescriptorVisibilities.isPrivate(fromSuper.getVisibility()) &&
+               DescriptorVisibilities.isVisibleIgnoringReceiver(fromSuper, overriding);
     }
 
     private Collection<CallableMemberDescriptor> extractAndBindOverridesForMember(
@@ -601,7 +601,7 @@ public class OverridingUtil {
             @NotNull DeclarationDescriptorWithVisibility a,
             @NotNull DeclarationDescriptorWithVisibility b
     ) {
-        Integer result = Visibilities.compare(a.getVisibility(), b.getVisibility());
+        Integer result = DescriptorVisibilities.compare(a.getVisibility(), b.getVisibility());
         return result == null || result >= 0;
     }
 
@@ -691,7 +691,7 @@ public class OverridingUtil {
         Collection<CallableMemberDescriptor> effectiveOverridden = allInvisible ? overridables : visibleOverridables;
 
         Modality modality = determineModalityForFakeOverride(effectiveOverridden, current);
-        Visibility visibility = allInvisible ? Visibilities.INVISIBLE_FAKE : Visibilities.INHERITED;
+        DescriptorVisibility visibility = allInvisible ? DescriptorVisibilities.INVISIBLE_FAKE : DescriptorVisibilities.INHERITED;
 
         // FIXME doesn't work as expected for flexible types: should create a refined signature.
         // Current algorithm produces bad results in presence of annotated Java signatures such as:
@@ -788,8 +788,8 @@ public class OverridingUtil {
             @Override
             public Boolean invoke(CallableMemberDescriptor descriptor) {
                 //nested class could capture private member, so check for private visibility added
-                return !Visibilities.isPrivate(descriptor.getVisibility()) &&
-                       Visibilities.isVisibleIgnoringReceiver(descriptor, current);
+                return !DescriptorVisibilities.isPrivate(descriptor.getVisibility()) &&
+                       DescriptorVisibilities.isVisibleIgnoringReceiver(descriptor, current);
             }
         });
     }
@@ -872,22 +872,22 @@ public class OverridingUtil {
             @Nullable Function1<CallableMemberDescriptor, Unit> cannotInferVisibility
     ) {
         for (CallableMemberDescriptor descriptor : memberDescriptor.getOverriddenDescriptors()) {
-            if (descriptor.getVisibility() == Visibilities.INHERITED) {
+            if (descriptor.getVisibility() == DescriptorVisibilities.INHERITED) {
                 resolveUnknownVisibilityForMember(descriptor, cannotInferVisibility);
             }
         }
 
-        if (memberDescriptor.getVisibility() != Visibilities.INHERITED) {
+        if (memberDescriptor.getVisibility() != DescriptorVisibilities.INHERITED) {
             return;
         }
 
-        Visibility maxVisibility = computeVisibilityToInherit(memberDescriptor);
-        Visibility visibilityToInherit;
+        DescriptorVisibility maxVisibility = computeVisibilityToInherit(memberDescriptor);
+        DescriptorVisibility visibilityToInherit;
         if (maxVisibility == null) {
             if (cannotInferVisibility != null) {
                 cannotInferVisibility.invoke(memberDescriptor);
             }
-            visibilityToInherit = Visibilities.PUBLIC;
+            visibilityToInherit = DescriptorVisibilities.PUBLIC;
         }
         else {
             visibilityToInherit = maxVisibility;
@@ -914,9 +914,9 @@ public class OverridingUtil {
     }
 
     @Nullable
-    private static Visibility computeVisibilityToInherit(@NotNull CallableMemberDescriptor memberDescriptor) {
+    private static DescriptorVisibility computeVisibilityToInherit(@NotNull CallableMemberDescriptor memberDescriptor) {
         Collection<? extends CallableMemberDescriptor> overriddenDescriptors = memberDescriptor.getOverriddenDescriptors();
-        Visibility maxVisibility = findMaxVisibility(overriddenDescriptors);
+        DescriptorVisibility maxVisibility = findMaxVisibility(overriddenDescriptors);
         if (maxVisibility == null) {
             return null;
         }
@@ -933,19 +933,19 @@ public class OverridingUtil {
     }
 
     @Nullable
-    public static Visibility findMaxVisibility(@NotNull Collection<? extends CallableMemberDescriptor> descriptors) {
+    public static DescriptorVisibility findMaxVisibility(@NotNull Collection<? extends CallableMemberDescriptor> descriptors) {
         if (descriptors.isEmpty()) {
-            return Visibilities.DEFAULT_VISIBILITY;
+            return DescriptorVisibilities.DEFAULT_VISIBILITY;
         }
-        Visibility maxVisibility = null;
+        DescriptorVisibility maxVisibility = null;
         for (CallableMemberDescriptor descriptor : descriptors) {
-            Visibility visibility = descriptor.getVisibility();
-            assert visibility != Visibilities.INHERITED : "Visibility should have been computed for " + descriptor;
+            DescriptorVisibility visibility = descriptor.getVisibility();
+            assert visibility != DescriptorVisibilities.INHERITED : "Visibility should have been computed for " + descriptor;
             if (maxVisibility == null) {
                 maxVisibility = visibility;
                 continue;
             }
-            Integer compareResult = Visibilities.compare(visibility, maxVisibility);
+            Integer compareResult = DescriptorVisibilities.compare(visibility, maxVisibility);
             if (compareResult == null) {
                 maxVisibility = null;
             }
@@ -957,7 +957,7 @@ public class OverridingUtil {
             return null;
         }
         for (CallableMemberDescriptor descriptor : descriptors) {
-            Integer compareResult = Visibilities.compare(maxVisibility, descriptor.getVisibility());
+            Integer compareResult = DescriptorVisibilities.compare(maxVisibility, descriptor.getVisibility());
             if (compareResult == null || compareResult < 0) {
                 return null;
             }

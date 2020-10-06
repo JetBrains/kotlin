@@ -11,6 +11,42 @@ public object EnumSerializer : kotlinx.serialization.KSerializer<ExplicitlyMarke
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+@kotlinx.serialization.Serializable public final data class EnumUsage {
+    public constructor EnumUsage(/*0*/ s: SimpleEnum, /*1*/ m: MarkedNameEnum, /*2*/ e: ExplicitlyMarkedEnum)
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public /*synthesized*/ constructor EnumUsage(/*0*/ seen1: kotlin.Int, /*1*/ s: SimpleEnum?, /*2*/ m: MarkedNameEnum?, /*3*/ e: ExplicitlyMarkedEnum?, /*4*/ serializationConstructorMarker: kotlinx.serialization.internal.SerializationConstructorMarker?)
+    public final val e: ExplicitlyMarkedEnum
+    public final val m: MarkedNameEnum
+    public final val s: SimpleEnum
+    public final operator /*synthesized*/ fun component1(): SimpleEnum
+    public final operator /*synthesized*/ fun component2(): MarkedNameEnum
+    public final operator /*synthesized*/ fun component3(): ExplicitlyMarkedEnum
+    public final /*synthesized*/ fun copy(/*0*/ s: SimpleEnum = ..., /*1*/ m: MarkedNameEnum = ..., /*2*/ e: ExplicitlyMarkedEnum = ...): EnumUsage
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public object `$serializer` : kotlinx.serialization.internal.GeneratedSerializer<EnumUsage> {
+        private constructor `$serializer`()
+        public open override /*1*/ /*synthesized*/ val descriptor: kotlinx.serialization.descriptors.SerialDescriptor
+        public open override /*1*/ /*synthesized*/ fun childSerializers(): kotlin.Array<kotlinx.serialization.KSerializer<*>>
+        public open override /*1*/ /*synthesized*/ fun deserialize(/*0*/ decoder: kotlinx.serialization.encoding.Decoder): EnumUsage
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Patch function is deprecated for removal since this functionality is no longer supported by serializer.Some formats may provide implementation-specific patching in their Decoders.") public open override /*1*/ /*fake_override*/ fun patch(/*0*/ decoder: kotlinx.serialization.encoding.Decoder, /*1*/ old: EnumUsage): EnumUsage
+        public open override /*1*/ /*synthesized*/ fun serialize(/*0*/ encoder: kotlinx.serialization.encoding.Encoder, /*1*/ value: EnumUsage): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun typeParametersSerializers(): kotlin.Array<kotlinx.serialization.KSerializer<*>>
+    }
+
+    public companion object Companion {
+        private constructor Companion()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final /*synthesized*/ fun serializer(): kotlinx.serialization.KSerializer<EnumUsage>
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
 @kotlinx.serialization.Serializable public final enum class ExplicitlyMarkedEnum : kotlin.Enum<ExplicitlyMarkedEnum> {
     @kotlinx.serialization.SerialName(value = "a") enum entry A
 

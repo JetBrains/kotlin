@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.*
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.search.DelegatingGlobalSearchScope
@@ -31,8 +31,6 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
-import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
-import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -56,28 +54,15 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fir.FirPsiSourceElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
+import org.jetbrains.kotlin.fir.analysis.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
-import org.jetbrains.kotlin.fir.analysis.registerExtendedCheckersComponent
-import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
-import org.jetbrains.kotlin.fir.backend.jvm.FirJvmClassCodegen
-import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
-import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
-import org.jetbrains.kotlin.fir.builder.RawFirBuilder
-import org.jetbrains.kotlin.fir.extensions.BunchOfRegisteredExtensions
-import org.jetbrains.kotlin.fir.extensions.extensionService
-import org.jetbrains.kotlin.fir.extensions.registerExtensions
-import org.jetbrains.kotlin.fir.java.FirJavaModuleBasedSession
-import org.jetbrains.kotlin.fir.java.FirLibrarySession
+import org.jetbrains.kotlin.fir.backend.jvm.FirMetadataSerializer
+import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.resolve.firProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
-import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
+import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.modules.Module
@@ -318,9 +303,7 @@ object KotlinToJVMBytecodeCompiler {
         val project = environment.project
         val performanceManager = environment.configuration.get(CLIConfigurationKeys.PERF_MANAGER)
 
-        Extensions.getArea(project)
-            .getExtensionPoint(PsiElementFinder.EP_NAME)
-            .unregisterExtension(JavaElementFinder::class.java)
+        PsiElementFinder.EP.getPoint(project).unregisterExtension(JavaElementFinder::class.java)
 
         val projectConfiguration = environment.configuration
         val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
@@ -354,38 +337,24 @@ object KotlinToJVMBytecodeCompiler {
             }
 
             val moduleInfo = FirJvmModuleInfo(module.getModuleName())
-            val session: FirSession = FirJavaModuleBasedSession.create(moduleInfo, provider, scope).also {
+            val session: FirSession = FirSessionFactory.createJavaModuleBasedSession(moduleInfo, provider, scope) {
+                if (extendedAnalysisMode) {
+                    registerExtendedCommonCheckers()
+                }
+            }.also {
                 val dependenciesInfo = FirJvmModuleInfo(Name.special("<dependencies>"))
                 moduleInfo.dependencies.add(dependenciesInfo)
                 val librariesScope = ProjectScope.getLibrariesScope(project)
-                FirLibrarySession.create(
+                FirSessionFactory.createLibrarySession(
                     dependenciesInfo, provider, librariesScope,
                     project, environment.createPackagePartProvider(librariesScope)
                 )
-                it.extensionService.registerExtensions(BunchOfRegisteredExtensions.empty())
-                if (extendedAnalysisMode) {
-                    it.registerExtendedCheckersComponent()
-                }
             }
-            val firProvider = (session.firProvider as FirProviderImpl)
-            val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, stubMode = false)
-            val resolveTransformer = FirTotalResolveProcessor(session)
-            val collector = FirDiagnosticsCollector.create(session)
-            val firDiagnostics = mutableListOf<FirDiagnostic<*>>()
-            val firFiles = ktFiles.map {
-                val firFile = builder.buildFirFile(it)
-                firProvider.recordFile(firFile)
-                firFile
-            }.also { firFiles ->
-                try {
-                    resolveTransformer.process(firFiles)
-                    firFiles.forEach {
-                        firDiagnostics += collector.collectDiagnostics(it)
-                    }
-                } catch (e: Exception) {
-                    throw e
-                }
-            }
+
+            val firAnalyzerFacade = FirAnalyzerFacade(session, moduleConfiguration.languageVersionSettings, ktFiles)
+
+            firAnalyzerFacade.runResolution()
+            val firDiagnostics = firAnalyzerFacade.runCheckers()
             AnalyzerWithCompilerReport.reportDiagnostics(
                 SimpleDiagnostics(
                     firDiagnostics.map { it.toRegularDiagnostic() }
@@ -399,16 +368,9 @@ object KotlinToJVMBytecodeCompiler {
             }
 
             performanceManager?.notifyGenerationStarted()
-            val signaturer = IdSignatureDescriptor(JvmManglerDesc())
 
             performanceManager?.notifyIRTranslationStarted()
-            val (moduleFragment, symbolTable, sourceManager, components) =
-                Fir2IrConverter.createModuleFragment(
-                    session, resolveTransformer.scopeSession, firFiles,
-                    moduleConfiguration.languageVersionSettings, signaturer,
-                    JvmGeneratorExtensions(), FirJvmKotlinMangler(session), IrFactoryImpl,
-                    FirJvmVisibilityConverter
-                )
+            val (moduleFragment, symbolTable, sourceManager, components) = firAnalyzerFacade.convertToIr()
 
             performanceManager?.notifyIRTranslationFinished()
 
@@ -437,8 +399,8 @@ object KotlinToJVMBytecodeCompiler {
             generationState.beforeCompile()
             codegenFactory.generateModuleInFrontendIRMode(
                 generationState, moduleFragment, symbolTable, sourceManager
-            ) { irClass, context, parentFunction ->
-                FirJvmClassCodegen(irClass, context, parentFunction, session)
+            ) { context, irClass, _, serializationBindings, parent ->
+                FirMetadataSerializer(session, context, irClass, serializationBindings, parent)
             }
             CodegenFactory.doCheckCancelled(generationState)
             generationState.factory.done()
@@ -467,23 +429,24 @@ object KotlinToJVMBytecodeCompiler {
 
     private fun FirDiagnostic<*>.toRegularDiagnostic(): Diagnostic {
         val psiSource = element as FirPsiSourceElement<*>
-        @Suppress("TYPE_MISMATCH")
+        @Suppress("UNCHECKED_CAST")
         when (this) {
             is FirSimpleDiagnostic ->
                 return SimpleDiagnostic(
-                    psiSource.psi, factory.psiDiagnosticFactory, severity
+                    psiSource.psi, factory.psiDiagnosticFactory as DiagnosticFactory0<PsiElement>, severity
                 )
             is FirDiagnosticWithParameters1<*, *> ->
                 return DiagnosticWithParameters1(
-                    psiSource.psi, this.a, factory.psiDiagnosticFactory, severity
+                    psiSource.psi, this.a, factory.psiDiagnosticFactory as DiagnosticFactory1<PsiElement, Any>, severity
                 )
             is FirDiagnosticWithParameters2<*, *, *> ->
                 return DiagnosticWithParameters2(
-                    psiSource.psi, this.a, this.b, factory.psiDiagnosticFactory, severity
+                    psiSource.psi, this.a, this.b, factory.psiDiagnosticFactory as DiagnosticFactory2<PsiElement, Any, Any>, severity
                 )
             is FirDiagnosticWithParameters3<*, *, *, *> ->
                 return DiagnosticWithParameters3(
-                    psiSource.psi, this.a, this.b, this.c, factory.psiDiagnosticFactory, severity
+                    psiSource.psi, this.a, this.b, this.c,
+                    factory.psiDiagnosticFactory as DiagnosticFactory3<PsiElement, Any, Any, Any>, severity
                 )
         }
     }

@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-
 interface CirClassConstructor :
     CirDeclaration,
     CirHasAnnotations,
@@ -16,6 +14,5 @@ interface CirClassConstructor :
     CirCallableMemberWithParameters {
 
     val isPrimary: Boolean
-    val kind: CallableMemberDescriptor.Kind
     override val containingClassDetails: CirContainingClassDetails // non-nullable
 }

@@ -18,6 +18,7 @@ dependencies {
     testRuntimeOnly(project(":allopen-ide-plugin"))
     testRuntimeOnly(project(":kotlin-scripting-idea"))
     testRuntimeOnly(project(":kotlinx-serialization-ide-plugin"))
+    testRuntimeOnly(project(":plugins:parcelize:parcelize-ide"))
     testRuntimeOnly(project(":nj2k:nj2k-services"))
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":idea:kotlin-gradle-tooling"))

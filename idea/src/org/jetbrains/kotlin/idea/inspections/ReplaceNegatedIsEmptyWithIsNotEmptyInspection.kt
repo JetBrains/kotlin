@@ -45,10 +45,14 @@ class ReplaceNegatedIsEmptyWithIsNotEmptyInspection : AbstractKotlinInspection()
             val calleeText = calleeExpression.text
             val isEmptyCall = calleeText == "isEmpty"
             val isNotEmptyCall = calleeText == "isNotEmpty"
-            if (!isEmptyCall && !isNotEmptyCall) return null
+            val isBlankCall = calleeText == "isBlank"
+            val isNotBlankCall = calleeText == "isNotBlank"
+            if (!isEmptyCall && !isNotEmptyCall && !isBlankCall && !isNotBlankCall) return null
             if (isEmptyCall && isEmptyFunctions.none { callExpression.isCalling(FqName(it)) }
-                || isNotEmptyCall && isNotEmptyFunctions.none { callExpression.isCalling(FqName(it)) }) return null
-            val to = if (isEmptyCall) "isNotEmpty" else "isEmpty"
+                || isNotEmptyCall && isNotEmptyFunctions.none { callExpression.isCalling(FqName(it)) }
+                || isBlankCall && !callExpression.isCalling(FqName("kotlin.text.isBlank"))
+                || isNotBlankCall && !callExpression.isCalling(FqName("kotlin.text.isNotBlank"))) return null
+            val to = if (isEmptyCall) "isNotEmpty" else if (isNotEmptyCall) "isEmpty" else if (isBlankCall) "isNotBlank" else "isBlank"
             return KtPsiFactory(this).createExpressionByPattern(
                 "$0.$to()",
                 this.receiverExpression,

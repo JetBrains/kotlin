@@ -1,6 +1,5 @@
 // KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
-// IGNORE_BACKEND_FIR: JVM_IR
 import kotlin.test.assertEquals
 
 inline class S(val x: String)

@@ -9,9 +9,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
@@ -19,78 +17,172 @@ import org.jetbrains.kotlin.name.Name
  * Provides representations for FirElement's.
  */
 interface FirDeclarationPresenter {
-    open class RepresentationBuilder {
-        var receiver = ""
-        var name = ""
-
-        open fun build() = "[$receiver] $name"
+    fun StringBuilder.appendRepresentation(it: FirElement) {
+        append("NO_REPRESENTATION")
     }
 
-    fun buildRepresentation(init: RepresentationBuilder.() -> Unit): String {
-        return RepresentationBuilder().apply(init).build()
+    fun StringBuilder.appendRepresentation(it: ClassId) {
+        append(it.packageFqName.asString())
+        append('/')
+        append(it.relativeClassName.asString())
     }
 
-    class FunctionRepresentationBuilder : RepresentationBuilder() {
-        var representsOperator = false
-        var typeArguments = ""
-        var parameters = ""
-
-        override fun build() = "<$typeArguments> [$receiver] ${if (representsOperator) "operator " else ""}$name ($parameters)"
-    }
-
-    fun buildFunctionRepresentation(init: FunctionRepresentationBuilder.() -> Unit): String {
-        return FunctionRepresentationBuilder().apply(init).build()
-    }
-
-    fun represent(it: FirElement) = "NO_REPRESENTATION"
-
-    fun represent(it: ClassId) = it.packageFqName.asString() + '/' + it.relativeClassName.asString()
-
-    fun represent(it: CallableId) = if (it.className != null) {
-        it.packageName.asString() + '/' + it.className + '.' + it.callableName
-    } else {
-        it.packageName.asString() + '/' + it.callableName
-    }
-
-    fun represent(it: FirTypeRef) = when (it) {
-        is FirResolvedTypeRef -> it.type.toString()
-        is FirErrorTypeRef -> "ERROR"
-        else -> "?"
-    }
-
-    fun represent(it: FirTypeParameter) = it.name.asString() + " : " + it.bounds
-        .map { represent(it) }
-        .sorted()
-        .joinToString()
-
-    fun represent(it: FirValueParameter): String {
-        val prefix = if (it.isVararg) "vararg " else ""
-        return prefix + " " + represent(it.returnTypeRef)
-    }
-
-    fun represent(it: FirProperty) = buildRepresentation {
-        it.receiverTypeRef?.let {
-            receiver = represent(it)
+    fun StringBuilder.appendRepresentation(it: CallableId) {
+        if (it.className != null) {
+            append(it.packageName.asString())
+            append('/')
+            append(it.className)
+            append('.')
+            append(it.callableName)
+        } else {
+            append(it.packageName.asString())
+            append('/')
+            append(it.callableName)
         }
-        name = represent(it.symbol.callableId)
     }
 
-    fun represent(it: FirSimpleFunction) = buildFunctionRepresentation {
-        typeArguments = it.typeParameters.joinToString { represent(it) }
-        it.receiverTypeRef?.let {
-            receiver = represent(it)
+    fun StringBuilder.appendRepresentation(it: ConeTypeProjection) {
+        when (it) {
+            ConeStarProjection -> {
+                append('*')
+            }
+            is ConeKotlinTypeProjectionIn -> {
+                append("in ")
+                appendRepresentation(it.type)
+            }
+            is ConeKotlinTypeProjectionOut -> {
+                append("out ")
+                appendRepresentation(it.type)
+            }
+            is ConeKotlinType -> {
+                appendRepresentation(it)
+            }
         }
-        representsOperator = it.isOperator
-        name = represent(it.symbol.callableId)
-        parameters = it.valueParameters.joinToString { represent(it) }
     }
 
-    fun represent(it: FirTypeAlias) = buildRepresentation {
-        name = represent(it.symbol.classId)
+    fun StringBuilder.appendRepresentation(it: ConeKotlinType) {
+        when (it) {
+            is ConeDefinitelyNotNullType -> {
+                appendRepresentation(it.original)
+                append(it.nullability.suffix)
+            }
+            is ConeClassErrorType -> {
+                append("ERROR(")
+                append(it.diagnostic.reason)
+                append(')')
+            }
+            is ConeCapturedType -> {
+                append(it.constructor.projection)
+                append(it.nullability.suffix)
+            }
+            is ConeClassLikeType -> {
+                appendRepresentation(it.lookupTag.classId)
+                if (it.typeArguments.isNotEmpty()) {
+                    append('<')
+                    it.typeArguments.forEach { that ->
+                        appendRepresentation(that)
+                        append(',')
+                    }
+                    append('>')
+                }
+                append(it.nullability.suffix)
+            }
+            is ConeLookupTagBasedType -> {
+                append(it.lookupTag.name)
+                append(it.nullability.suffix)
+            }
+            is ConeIntegerLiteralType -> {
+                append(it.value)
+                append(it.nullability.suffix)
+            }
+            is ConeFlexibleType,
+            is ConeIntersectionType,
+            is ConeStubType -> {
+                append("ERROR")
+            }
+        }
     }
 
-    fun represent(it: FirRegularClass) = buildRepresentation {
-        name = represent(it.symbol.classId)
+    fun StringBuilder.appendRepresentation(it: FirTypeRef) {
+        when (it) {
+            is FirResolvedTypeRef -> appendRepresentation(it.type)
+            is FirErrorTypeRef -> append("ERROR")
+            else -> append("?")
+        }
+    }
+
+    fun StringBuilder.appendRepresentation(it: FirTypeParameter) {
+        append(it.name.asString())
+        append(':')
+        when (it.bounds.size) {
+            0 -> {
+            }
+            1 -> {
+                appendRepresentation(it.bounds[0])
+            }
+            else -> {
+                val set = sortedSetOf<String>()
+                it.bounds.forEach { that ->
+                    set.add(buildString { appendRepresentation(that) })
+                }
+                set.forEach { that ->
+                    append(that)
+                    append(',')
+                }
+            }
+        }
+    }
+
+    fun StringBuilder.appendRepresentation(it: FirValueParameter) {
+        if (it.isVararg) {
+            append("vararg ")
+        }
+        appendRepresentation(it.returnTypeRef)
+    }
+
+    fun represent(it: FirProperty) = buildString {
+        append('[')
+        it.receiverTypeRef?.let {
+            appendRepresentation(it)
+        }
+        append(']')
+        appendRepresentation(it.symbol.callableId)
+    }
+
+    fun represent(it: FirSimpleFunction) = buildString {
+        append('<')
+        it.typeParameters.forEach {
+            appendRepresentation(it)
+            append(',')
+        }
+        append('>')
+        append('[')
+        it.receiverTypeRef?.let {
+            appendRepresentation(it)
+        }
+        append(']')
+        if (it.isOperator) {
+            append("operator ")
+        }
+        appendRepresentation(it.symbol.callableId)
+        append('(')
+        it.valueParameters.forEach {
+            appendRepresentation(it)
+            append(',')
+        }
+        append(')')
+    }
+
+    fun represent(it: FirTypeAlias) = buildString {
+        append('[')
+        append(']')
+        appendRepresentation(it.symbol.classId)
+    }
+
+    fun represent(it: FirRegularClass) = buildString {
+        append('[')
+        append(']')
+        appendRepresentation(it.symbol.classId)
     }
 }
 

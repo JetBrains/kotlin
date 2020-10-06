@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.JvmSimpleFileClassInfo
@@ -35,11 +35,10 @@ import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import java.util.*
 
 internal val fileClassPhase = makeIrModulePhase(
@@ -67,7 +66,8 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
                 fileClassMembers.add(it)
         }
 
-        if (fileClassMembers.isEmpty() && (irFile.metadata as? MetadataSource.File)?.descriptors.isNullOrEmpty()) return
+        // TODO FirMetadataSource.File
+        if (fileClassMembers.isEmpty() && (irFile.metadata as? DescriptorMetadataSource.File)?.descriptors.isNullOrEmpty()) return
 
         val irFileClass = createFileClass(irFile, fileClassMembers)
         classes.add(irFileClass)
@@ -85,7 +85,7 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
                 val ktFile = context.psiSourceManager.getKtFile(fileEntry)
                     ?: throw AssertionError("Unexpected file entry: $fileEntry")
                 fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(ktFile)
-                descriptor = WrappedClassDescriptor(sourceElement = KotlinSourceElement(ktFile))
+                descriptor = WrappedClassDescriptor()
             }
             is NaiveSourceBasedFileEntryImpl -> {
                 fileClassInfo = JvmSimpleFileClassInfo(PackagePartClassUtils.getPackagePartFqName(irFile.fqName, fileEntry.name), false)
@@ -100,7 +100,7 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
             symbol = IrClassSymbolImpl(descriptor),
             name = fileClassInfo.fileClassFqName.shortName(),
             kind = ClassKind.CLASS,
-            visibility = if (!fileClassInfo.withJvmMultifileClass) Visibilities.PUBLIC else JavaVisibilities.PACKAGE_VISIBILITY,
+            visibility = if (!fileClassInfo.withJvmMultifileClass) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY,
             modality = Modality.FINAL
         ).apply {
             descriptor.bind(this)

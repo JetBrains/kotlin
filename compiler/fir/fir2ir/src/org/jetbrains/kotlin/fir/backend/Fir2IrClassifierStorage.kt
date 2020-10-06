@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.Visibilities
-import org.jetbrains.kotlin.fir.Visibility
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.resolve.firProvider
@@ -79,7 +79,7 @@ class Fir2IrClassifierStorage(
     private fun IrClass.setThisReceiver(typeParameters: List<FirTypeParameterRef>) {
         symbolTable.enterScope(this)
         val typeArguments = typeParameters.map {
-            IrSimpleTypeImpl(getCachedIrTypeParameter(it.symbol.fir)!!.symbol, false, emptyList(), emptyList())
+            IrSimpleTypeImpl(getIrTypeParameterSymbol(it.symbol, ConversionTypeContext.DEFAULT), false, emptyList(), emptyList())
         }
         thisReceiver = declareThisReceiverParameter(
             symbolTable,
@@ -111,7 +111,7 @@ class Fir2IrClassifierStorage(
             getIrTypeParameter(typeParameter, index, typeContext).apply {
                 parent = this@setTypeParameters
                 if (superTypes.isEmpty()) {
-                    typeParameter.bounds.mapTo(superTypes) { it.toIrType() }
+                    superTypes = typeParameter.bounds.map { it.toIrType() }
                 }
             }
         }
@@ -200,7 +200,7 @@ class Fir2IrClassifierStorage(
             declareIrTypeAlias(signature) { symbol ->
                 val irTypeAlias = irFactory.createTypeAlias(
                     startOffset, endOffset, symbol,
-                    typeAlias.name, components.visibilityConverter.convertToOldVisibility(typeAlias.visibility),
+                    typeAlias.name, components.visibilityConverter.convertToDescriptorVisibility(typeAlias.visibility),
                     typeAlias.expandedTypeRef.toIrType(),
                     typeAlias.isActual, IrDeclarationOrigin.DEFINED
                 ).apply {
@@ -245,7 +245,7 @@ class Fir2IrClassifierStorage(
                     symbol,
                     regularClass.name,
                     regularClass.classKind,
-                    components.visibilityConverter.convertToOldVisibility(visibility),
+                    components.visibilityConverter.convertToDescriptorVisibility(visibility),
                     modality,
                     isCompanion = regularClass.isCompanion,
                     isInner = regularClass.isInner,
@@ -285,7 +285,7 @@ class Fir2IrClassifierStorage(
                     startOffset, endOffset, origin, symbol, name,
                     // NB: for unknown reason, IR uses 'CLASS' kind for simple anonymous objects
                     anonymousObject.classKind.takeIf { it == ClassKind.ENUM_ENTRY } ?: ClassKind.CLASS,
-                    components.visibilityConverter.convertToOldVisibility(visibility), modality
+                    components.visibilityConverter.convertToDescriptorVisibility(visibility), modality
                 ).apply {
                     metadata = FirMetadataSource.Class(anonymousObject)
                     setThisReceiver(anonymousObject.typeParameters)
@@ -369,7 +369,7 @@ class Fir2IrClassifierStorage(
         getCachedIrTypeParameter(typeParameter, index, typeContext)?.let { return it }
         return typeParameter.run {
             val irTypeParameter = createIrTypeParameterWithoutBounds(typeParameter, index, typeContext)
-            bounds.mapTo(irTypeParameter.superTypes) { it.toIrType() }
+            irTypeParameter.superTypes = bounds.map { it.toIrType() }
             irTypeParameter
         }
     }
@@ -471,7 +471,10 @@ class Fir2IrClassifierStorage(
         firTypeParameterSymbol: FirTypeParameterSymbol,
         typeContext: ConversionTypeContext
     ): IrTypeParameterSymbol {
-        return getCachedIrTypeParameter(firTypeParameterSymbol.fir, typeContext = typeContext)?.symbol
+        val firTypeParameter = firTypeParameterSymbol.fir
+        return getCachedIrTypeParameter(firTypeParameter, typeContext = typeContext)?.symbol
+        // We can try to use default cache because setter can use parent type parameters
+            ?: typeParameterCache[firTypeParameter]?.symbol
             ?: error("Cannot find cached type parameter by FIR symbol: ${firTypeParameterSymbol.name}")
     }
 }

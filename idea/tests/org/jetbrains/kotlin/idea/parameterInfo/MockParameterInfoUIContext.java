@@ -27,22 +27,36 @@ public class MockParameterInfoUIContext implements ParameterInfoUIContext {
     public String setupUIComponentPresentation(String text, int highlightStartOffset, int highlightEndOffset,
                                              boolean isDisabled, boolean strikeout,
                                              boolean isDisabledBeforeHighlight, Color background) {
-        String highlightedText;
+        String taggedText;
         if (highlightStartOffset != -1 && highlightEndOffset != -1) {
-            highlightedText = text.substring(0, highlightStartOffset)
-                              + "<highlight>"
-                              + text.substring(highlightStartOffset, highlightEndOffset)
-                              + "</highlight>"
-                              + text.substring(highlightEndOffset);
+            StringBuilder sb = new StringBuilder();
+            if (isDisabledBeforeHighlight) {
+                sb.append("<disabled>");
+            }
+
+            sb.append(text, 0, highlightStartOffset);
+
+            if (isDisabledBeforeHighlight) {
+                sb.append("</disabled>");
+            }
+
+            sb.append("<highlight>");
+            sb.append(text, highlightStartOffset, highlightEndOffset);
+            sb.append("</highlight>");
+
+            sb.append(text, highlightEndOffset, text.length());
+
+            taggedText = sb.toString();
         }
         else {
-            highlightedText = text;
+            taggedText = text;
         }
 
-        String resultText = "Text: (" + highlightedText + "), " +
+        String resultText = "Text: (" + taggedText + "), " +
                             "Disabled: " + isDisabled + ", " +
                             "Strikeout: " + strikeout + ", " +
                             "Green: " + KotlinParameterInfoWithCallHandlerBase.GREEN_BACKGROUND.equals(background);
+
         result.add(resultText);
 
         // return value not used, just return something

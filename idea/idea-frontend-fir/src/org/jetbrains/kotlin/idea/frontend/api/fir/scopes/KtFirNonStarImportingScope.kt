@@ -13,9 +13,10 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtNonStarImportingScope
+import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.idea.frontend.api.scopes.NonStarImport
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassLikeSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.name.Name
 
@@ -42,12 +43,12 @@ internal class KtFirNonStarImportingScope(
         }
     }
 
-    override fun getCallableSymbols(): Sequence<KtCallableSymbol> = withValidityAssertion {
-        firScope.getCallableSymbols(getCallableNames(), builder)
+    override fun getCallableSymbols(nameFilter: KtScopeNameFilter): Sequence<KtCallableSymbol> = withValidityAssertion {
+        firScope.getCallableSymbols(getCallableNames().filter(nameFilter), builder)
     }
 
-    override fun getClassClassLikeSymbols(): Sequence<KtClassLikeSymbol> = withValidityAssertion {
-        firScope.getClassLikeSymbols(getClassLikeSymbolNames(), builder)
+    override fun getClassifierSymbols(nameFilter: KtScopeNameFilter): Sequence<KtClassifierSymbol> = withValidityAssertion {
+        firScope.getClassifierSymbols(getClassifierNames().filter(nameFilter), builder)
     }
 
 
@@ -55,7 +56,7 @@ internal class KtFirNonStarImportingScope(
         imports.mapNotNullTo(hashSetOf()) { it.callableName }
     }
 
-    override fun getClassLikeSymbolNames(): Set<Name> = withValidityAssertion {
+    override fun getClassifierNames(): Set<Name> = withValidityAssertion {
         imports.mapNotNullTo((hashSetOf())) { it.relativeClassName?.shortName() }
     }
 

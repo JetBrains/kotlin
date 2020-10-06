@@ -7,18 +7,15 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.SamType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFactory
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -28,6 +25,7 @@ import org.jetbrains.kotlin.load.java.descriptors.getParentJavaStaticClassScope
 import org.jetbrains.kotlin.load.java.sam.JavaSingleAbstractMethodUtils
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -54,7 +52,7 @@ class JvmGeneratorExtensions(private val generateFacades: Boolean = true) : Gene
         companion object Instance : JvmSamConversion()
     }
 
-    override fun computeFieldVisibility(descriptor: PropertyDescriptor): Visibility? =
+    override fun computeFieldVisibility(descriptor: PropertyDescriptor): DescriptorVisibility? =
         if (descriptor.hasJvmFieldAnnotation() || descriptor is JavaCallableMemberDescriptor)
             descriptor.visibility
         else
@@ -105,24 +103,51 @@ class JvmGeneratorExtensions(private val generateFacades: Boolean = true) : Gene
     override fun getParentClassStaticScope(descriptor: ClassDescriptor): MemberScope? =
         descriptor.getParentJavaStaticClassScope()
 
-    private val annotationPackage =
-        IrExternalPackageFragmentImpl(DescriptorlessExternalPackageFragmentSymbol(), StandardNames.ANNOTATION_PACKAGE_FQ_NAME)
+    private val kotlinIrInternalPackage =
+        IrExternalPackageFragmentImpl(DescriptorlessExternalPackageFragmentSymbol(), IrBuiltIns.KOTLIN_INTERNAL_IR_FQN)
 
-    private val flexibleNullabilityAnnotationClass = IrFactoryImpl.buildClass {
-        kind = ClassKind.ANNOTATION_CLASS
-        name = FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME.shortName()
-    }.apply {
-        createImplicitParameterDeclarationWithWrappedDescriptor()
-        parent = annotationPackage
-        addConstructor {
-            isPrimary = true
+    private val kotlinJvmInternalPackage =
+        IrExternalPackageFragmentImpl(DescriptorlessExternalPackageFragmentSymbol(), JvmAnnotationNames.KOTLIN_JVM_INTERNAL)
+
+    private fun createSpecialAnnotationClass(fqn: FqName, parent: IrPackageFragment) =
+        IrFactoryImpl.buildClass {
+            kind = ClassKind.ANNOTATION_CLASS
+            name = fqn.shortName()
+        }.apply {
+            createImplicitParameterDeclarationWithWrappedDescriptor()
+            this.parent = parent
+            addConstructor {
+                isPrimary = true
+            }
         }
-    }
 
-    override val flexibleNullabilityAnnotationConstructor: IrConstructor? = flexibleNullabilityAnnotationClass.constructors.single()
+    private val flexibleNullabilityAnnotationClass =
+        createSpecialAnnotationClass(FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME, kotlinIrInternalPackage)
+
+    private val rawTypeAnnotationClass =
+        createSpecialAnnotationClass(RAW_TYPE_ANNOTATION_FQ_NAME, kotlinIrInternalPackage)
+
+    // NB Class 'kotlin.jvm.internal.EnhancedNullability' doesn't exist anywhere in descriptors or in bytecode
+    private val enhancedNullabilityAnnotationClass =
+        createSpecialAnnotationClass(ENHANCED_NULLABILITY_ANNOTATION_FQ_NAME, kotlinJvmInternalPackage)
+
+    override val flexibleNullabilityAnnotationConstructor: IrConstructor? =
+        flexibleNullabilityAnnotationClass.constructors.single()
+
+    override val enhancedNullabilityAnnotationConstructor: IrConstructor? =
+        enhancedNullabilityAnnotationClass.constructors.single()
+
+    override val rawTypeAnnotationConstructor: IrConstructor? =
+        rawTypeAnnotationClass.constructors.single()
 
     companion object {
         val FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME =
-            StandardNames.ANNOTATION_PACKAGE_FQ_NAME.child(Name.identifier("FlexibleNullability"))
+            IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier("FlexibleNullability"))
+
+        val ENHANCED_NULLABILITY_ANNOTATION_FQ_NAME: FqName =
+            JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION
+
+        val RAW_TYPE_ANNOTATION_FQ_NAME =
+            IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier("RawType"))
     }
 }

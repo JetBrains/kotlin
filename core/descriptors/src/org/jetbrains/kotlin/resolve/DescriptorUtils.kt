@@ -135,7 +135,7 @@ val DeclarationDescriptorWithVisibility.isEffectivelyPrivateApi: Boolean
 val DeclarationDescriptor.isInsidePrivateClass: Boolean
     get() {
         val parent = containingDeclaration as? ClassDescriptor
-        return parent != null && Visibilities.isPrivate(parent.visibility)
+        return parent != null && DescriptorVisibilities.isPrivate(parent.visibility)
     }
 
 
@@ -452,3 +452,6 @@ fun ModuleDescriptor.getKotlinTypeRefiner(): KotlinTypeRefiner = getCapability(R
 
 @OptIn(TypeRefinement::class)
 fun ModuleDescriptor.isTypeRefinementEnabled(): Boolean = getCapability(REFINER_CAPABILITY)?.value != null
+
+val VariableDescriptor.isUnderscoreNamed
+    get() = !name.isSpecial && name.identifier == "_"

@@ -2,7 +2,7 @@
  * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
+@file:Suppress("JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE")
 package org.jetbrains.kotlin.codegen.inline.coroutines
 
 import com.intellij.util.ArrayUtil
@@ -43,10 +43,13 @@ class CoroutineTransformer(
     fun shouldGenerateStateMachine(node: MethodNode): Boolean {
         // Continuations are similar to lambdas from bird's view, but we should never generate state machine for them
         if (isContinuationNotLambda()) return false
-        // there can be suspend lambdas inside inline functions, which do not
-        // capture crossinline lambdas, thus, there is no need to transform them
         return isSuspendFunctionWithFakeConstructorCall(node) || (isSuspendLambda(node) && !isStateMachine(node))
     }
+
+    // there can be suspend lambdas inside inline functions, which do not
+    // capture crossinline lambdas, thus, there is no need to transform them
+    fun suspendLambdaWithGeneratedStateMachine(node: MethodNode): Boolean =
+        !isContinuationNotLambda() && isSuspendLambda(node) && isStateMachine(node)
 
     private fun isContinuationNotLambda(): Boolean = inliningContext.isContinuation &&
             if (state.languageVersionSettings.isReleaseCoroutines()) superClassName.endsWith("ContinuationImpl")

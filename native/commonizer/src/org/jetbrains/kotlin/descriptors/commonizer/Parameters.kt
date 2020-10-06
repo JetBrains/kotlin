@@ -23,6 +23,9 @@ class Parameters(
             field = value
         }
 
+    // only for test purposes
+    internal var commonModulesProvider: ModulesProvider? = null
+
     fun addTarget(targetProvider: TargetProvider): Parameters {
         require(targetProvider.target !in _targetProviders) { "Target ${targetProvider.target} is already added" }
         _targetProviders[targetProvider.target] = targetProvider

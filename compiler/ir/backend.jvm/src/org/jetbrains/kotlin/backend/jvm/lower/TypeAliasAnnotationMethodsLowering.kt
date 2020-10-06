@@ -37,7 +37,7 @@ class TypeAliasAnnotationMethodsLowering(val context: CommonBackendContext) :
     private fun IrClass.visitTypeAliases() {
         val annotatedAliases = declarations
             .filterIsInstance<IrTypeAlias>()
-            .filter { !it.descriptor.annotations.isEmpty() }
+            .filter { it.annotations.isNotEmpty() }
 
         for (alias in annotatedAliases) {
             addFunction {

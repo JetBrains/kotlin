@@ -21,5 +21,5 @@ fun <S> intersectNoBound(vararg elements: S): S = TODO()
 fun some(a: One, b: Two, c: Three) = intersectNoBound(intersect(a, b), c)
 
 fun test(arg: Base, arg2: Base) {
-    some(O1, O2, O3).base()
+    some(O1, O2, O3).<!UNRESOLVED_REFERENCE!>base<!>()
 }

@@ -69,6 +69,6 @@ enum class IrTypeOperator {
 abstract class IrTypeOperatorCall : IrExpression() {
     abstract val operator: IrTypeOperator
     abstract var argument: IrExpression
-    abstract val typeOperand: IrType
+    abstract var typeOperand: IrType
     abstract val typeOperandClassifier: IrClassifierSymbol
 }

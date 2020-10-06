@@ -58,16 +58,20 @@ FILE fqName:<root> fileName:/kt36956.kt
     FIELD PROPERTY_BACKING_FIELD name:aInt type:kotlin.Float visibility:private [final,static]
       EXPRESSION_BODY
         BLOCK type=kotlin.Float origin=null
-          VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Float [val]
+          VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.A<kotlin.Float> [val]
+            CALL 'public final fun <get-aFloat> (): <root>.A<kotlin.Float> declared in <root>' type=<root>.A<kotlin.Float> origin=GET_PROPERTY
+          VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
+            CONST Int type=kotlin.Int value=1
+          VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Float [val]
             CALL 'public final fun get (i: kotlin.Int): T of <root>.A [operator] declared in <root>.A' type=kotlin.Float origin=null
-              $this: CALL 'public final fun <get-aFloat> (): <root>.A<kotlin.Float> declared in <root>' type=<root>.A<kotlin.Float> origin=GET_PROPERTY
-              i: CONST Int type=kotlin.Int value=1
+              $this: GET_VAR 'val tmp_0: <root>.A<kotlin.Float> [val] declared in <root>.aInt' type=<root>.A<kotlin.Float> origin=null
+              i: GET_VAR 'val tmp_1: kotlin.Int [val] declared in <root>.aInt' type=kotlin.Int origin=null
           CALL 'public final fun set (i: kotlin.Int, v: T of <root>.A): kotlin.Unit [operator] declared in <root>.A' type=kotlin.Unit origin=null
-            $this: CALL 'public final fun <get-aFloat> (): <root>.A<kotlin.Float> declared in <root>' type=<root>.A<kotlin.Float> origin=GET_PROPERTY
-            i: CONST Int type=kotlin.Int value=1
+            $this: GET_VAR 'val tmp_0: <root>.A<kotlin.Float> [val] declared in <root>.aInt' type=<root>.A<kotlin.Float> origin=null
+            i: GET_VAR 'val tmp_1: kotlin.Int [val] declared in <root>.aInt' type=kotlin.Int origin=null
             v: CALL 'public final fun dec (): kotlin.Float [operator] declared in kotlin.Float' type=kotlin.Float origin=null
-              $this: GET_VAR 'val tmp_0: kotlin.Float [val] declared in <root>.aInt' type=kotlin.Float origin=null
-          GET_VAR 'val tmp_0: kotlin.Float [val] declared in <root>.aInt' type=kotlin.Float origin=null
+              $this: GET_VAR 'val tmp_2: kotlin.Float [val] declared in <root>.aInt' type=kotlin.Float origin=null
+          GET_VAR 'val tmp_2: kotlin.Float [val] declared in <root>.aInt' type=kotlin.Float origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aInt> visibility:public modality:FINAL <> () returnType:kotlin.Float
       correspondingProperty: PROPERTY name:aInt visibility:public modality:FINAL [val]
       BLOCK_BODY

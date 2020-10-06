@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -29,18 +29,18 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class IrConstructorImpl(
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var origin: IrDeclarationOrigin,
-    override val symbol: IrConstructorSymbol,
-    override val name: Name,
-    override var visibility: Visibility,
-    returnType: IrType,
-    override val isInline: Boolean,
-    override val isExternal: Boolean,
-    override val isPrimary: Boolean,
-    override val isExpect: Boolean,
-    override val containerSource: DeserializedContainerSource? = null,
+        override val startOffset: Int,
+        override val endOffset: Int,
+        override var origin: IrDeclarationOrigin,
+        override val symbol: IrConstructorSymbol,
+        override val name: Name,
+        override var visibility: DescriptorVisibility,
+        returnType: IrType,
+        override val isInline: Boolean,
+        override val isExternal: Boolean,
+        override val isPrimary: Boolean,
+        override val isExpect: Boolean,
+        override val containerSource: DeserializedContainerSource? = null,
 ) : IrConstructor() {
     init {
         symbol.bind(this)

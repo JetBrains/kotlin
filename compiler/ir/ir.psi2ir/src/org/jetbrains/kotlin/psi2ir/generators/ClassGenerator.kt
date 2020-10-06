@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -79,7 +80,7 @@ class ClassGenerator(
         }
     }
 
-    fun generateClass(ktClassOrObject: KtPureClassOrObject, visibility_: Visibility? = null): IrClass {
+    fun generateClass(ktClassOrObject: KtPureClassOrObject, visibility_: DescriptorVisibility? = null): IrClass {
         val classDescriptor = ktClassOrObject.findClassDescriptor(this.context.bindingContext)
         val startOffset = ktClassOrObject.getStartOffsetOfClassDeclarationOrNull() ?: ktClassOrObject.pureStartOffset
         val endOffset = ktClassOrObject.pureEndOffset
@@ -91,7 +92,7 @@ class ClassGenerator(
                 startOffset, endOffset, IrDeclarationOrigin.DEFINED, it, classDescriptor,
                 context.symbolTable.nameProvider.nameForDeclaration(classDescriptor), visibility, modality
             ).apply {
-                metadata = MetadataSource.Class(it.descriptor)
+                metadata = DescriptorMetadataSource.Class(it.descriptor)
             }
         }.buildWithScope { irClass ->
             declarationGenerator.generateGlobalTypeParametersDeclarations(irClass, classDescriptor.declaredTypeParameters)
@@ -169,7 +170,7 @@ class ClassGenerator(
             getContributedDescriptors()
                 .filterIsInstance<FunctionDescriptor>()
                 .filter {
-                    Visibilities.isVisibleIgnoringReceiver(it, classDescriptor)
+                    DescriptorVisibilities.isVisibleIgnoringReceiver(it, classDescriptor)
                 }
                 .sortedByRenderer()
                 .forEach { parentStaticMember ->
@@ -305,7 +306,7 @@ class ClassGenerator(
         delegateToDescriptor: FunctionDescriptor
     ): IrSimpleFunction =
         context.symbolTable.declareSimpleFunctionWithOverrides(
-            irDelegate.startOffset, irDelegate.endOffset,
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             IrDeclarationOrigin.DELEGATED_MEMBER,
             delegatedDescriptor
         ).buildWithScope { irFunction ->
@@ -323,8 +324,8 @@ class ClassGenerator(
         delegateToDescriptor: FunctionDescriptor,
         irDelegatedFunction: IrSimpleFunction
     ): IrBlockBody {
-        val startOffset = irDelegate.startOffset
-        val endOffset = irDelegate.endOffset
+        val startOffset = UNDEFINED_OFFSET
+        val endOffset = UNDEFINED_OFFSET
 
         val irBlockBody = context.irFactory.createBlockBody(startOffset, endOffset)
 
@@ -505,7 +506,7 @@ class ClassGenerator(
             }
 
             if (ktEnumEntry.hasMemberDeclarations()) {
-                irEnumEntry.correspondingClass = generateClass(ktEnumEntry, Visibilities.PRIVATE)
+                irEnumEntry.correspondingClass = generateClass(ktEnumEntry, DescriptorVisibilities.PRIVATE)
             }
         }
 

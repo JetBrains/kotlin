@@ -35,7 +35,7 @@ class IrTemporaryVariableDescriptorImpl(
     IrTemporaryVariableDescriptor {
     override fun getCompileTimeInitializer(): ConstantValue<*>? = null
 
-    override fun getVisibility(): Visibility = Visibilities.LOCAL
+    override fun getVisibility(): DescriptorVisibility = DescriptorVisibilities.LOCAL
 
     override fun substitute(substitutor: TypeSubstitutor): VariableDescriptor {
         throw UnsupportedOperationException("Temporary variable descriptor shouldn't be substituted (so far): $this")

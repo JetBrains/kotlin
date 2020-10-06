@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // FULL_JDK
 // FILE: 1.kt
 // !JVM_DEFAULT_MODE: disable

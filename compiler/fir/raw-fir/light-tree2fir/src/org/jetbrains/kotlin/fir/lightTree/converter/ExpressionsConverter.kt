@@ -10,6 +10,7 @@ import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -367,13 +368,25 @@ class ExpressionsConverter(
                         prefix = unaryExpression.tokenType == PREFIX_EXPRESSION
                     ) { getAsFirExpression(this) }
                 }
+                val receiver = getAsFirExpression<FirExpression>(argument, "No operand")
+                if (operationToken == PLUS || operationToken == MINUS) {
+                    if (receiver is FirConstExpression<*> && receiver.kind == FirConstKind.IntegerLiteral) {
+                        val value = receiver.value as Long
+                        val convertedValue = when (operationToken) {
+                            MINUS -> -value
+                            PLUS -> value
+                            else -> error("Should not be here")
+                        }
+                        return buildConstExpression(unaryExpression.toFirSourceElement(), FirConstKind.IntegerLiteral, convertedValue)
+                    }
+                }
                 buildFunctionCall {
                     source = unaryExpression.toFirSourceElement()
                     calleeReference = buildSimpleNamedReference {
                         source = this@buildFunctionCall.source
                         name = conventionCallName
                     }
-                    explicitReceiver = getAsFirExpression(argument, "No operand")
+                    explicitReceiver = receiver
                 }
             }
             else -> throw IllegalStateException("Unexpected expression: ${unaryExpression.asText}")
@@ -523,35 +536,46 @@ class ExpressionsConverter(
 
         val source = callSuffix.toFirSourceElement()
 
-        val (calleeReference, explicitReceiver) = when {
-            name != null -> buildSimpleNamedReference {
-                this.source = source
-                this.name = name.nameAsSafeName()
-            } to null
-
-            additionalArgument != null -> {
+        val (calleeReference, explicitReceiver, isImplicitInvoke) = when {
+            name != null -> CalleeAndReceiver(
                 buildSimpleNamedReference {
                     this.source = source
-                    this.name = OperatorNameConventions.INVOKE
-                } to additionalArgument!!
+                    this.name = name.nameAsSafeName()
+                }
+            )
+
+            additionalArgument != null -> {
+                CalleeAndReceiver(
+                    buildSimpleNamedReference {
+                        this.source = source
+                        this.name = OperatorNameConventions.INVOKE
+                    },
+                    additionalArgument!!,
+                    isImplicitInvoke = true
+                )
             }
 
             superNode != null -> {
-                buildErrorNamedReference {
-                    val node = superNode!!
-                    this.source = node.toFirSourceElement()
-                    diagnostic = ConeSimpleDiagnostic("Super cannot be a callee", DiagnosticKind.SuperNotAllowed)
-                } to null
+                CalleeAndReceiver(
+                    buildErrorNamedReference {
+                        val node = superNode!!
+                        this.source = node.toFirSourceElement()
+                        diagnostic = ConeSimpleDiagnostic("Super cannot be a callee", DiagnosticKind.SuperNotAllowed)
+                    }
+                )
             }
 
-            else -> buildErrorNamedReference {
-                this.source = source
-                diagnostic = ConeSimpleDiagnostic("Call has no callee", DiagnosticKind.Syntax)
-            } to null
+            else -> CalleeAndReceiver(
+                buildErrorNamedReference {
+                    this.source = source
+                    diagnostic = ConeSimpleDiagnostic("Call has no callee", DiagnosticKind.Syntax)
+                }
+            )
         }
 
         val builder: FirQualifiedAccessBuilder = if (hasArguments) {
-            FirFunctionCallBuilder().apply {
+            val builder = if (isImplicitInvoke) FirImplicitInvokeCallBuilder() else FirFunctionCallBuilder()
+            builder.apply {
                 this.source = source
                 this.calleeReference = calleeReference
 

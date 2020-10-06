@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.ir.isExpect
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6AddInternalParametersToConstructorPhase.*
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
@@ -331,8 +331,18 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
 
         if (function.isFakeOverriddenFromAny())
             return Exportability.NotNeeded
-        if (function.name.asString().endsWith("-impl"))
+
+
+        val nameString = function.name.asString()
+        if (nameString.endsWith("-impl"))
             return Exportability.NotNeeded
+
+
+        // Workaround in case IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER is rewritten.
+        // TODO: Properly fix KT-41613
+        if (nameString.endsWith("\$") && function.valueParameters.any { "\$mask" in it.name.asString() }) {
+            return Exportability.NotNeeded
+        }
 
         val name = function.getExportedIdentifier()
         // TODO: Use [] syntax instead of prohibiting
@@ -356,7 +366,7 @@ private fun getExportCandidate(declaration: IrDeclaration): IrDeclarationWithNam
     // Only actual public declarations with name can be exported
     if (declaration !is IrDeclarationWithVisibility ||
         declaration !is IrDeclarationWithName ||
-        declaration.visibility != Visibilities.PUBLIC ||
+        declaration.visibility != DescriptorVisibilities.PUBLIC ||
         declaration.isExpect
     ) {
         return null
@@ -379,7 +389,10 @@ private fun getExportCandidate(declaration: IrDeclaration): IrDeclarationWithNam
 }
 
 private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, context: JsIrBackendContext): Boolean {
-    if (declaration.fqNameWhenAvailable in context.additionalExportedDeclarations)
+    if (declaration.fqNameWhenAvailable in context.additionalExportedDeclarationNames)
+        return true
+
+    if (declaration in context.additionalExportedDeclarations)
         return true
 
     if (declaration.isJsExport())

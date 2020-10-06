@@ -152,7 +152,7 @@ class TypeInstantiationItems(
         val allConstructors = classifier.constructors
         val visibleConstructors = allConstructors.filter {
             if (isAbstract)
-                visibilityFilter(it) || it.visibility == Visibilities.PROTECTED
+                visibilityFilter(it) || it.visibility == DescriptorVisibilities.PROTECTED
             else
                 visibilityFilter(it)
         }

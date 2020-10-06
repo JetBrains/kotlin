@@ -85,7 +85,7 @@ class LazyScriptClassMemberScope(
                     SourceElement.NO_SOURCE
                 ).initialize(
                     emptyList(),
-                    Visibilities.PUBLIC
+                    DescriptorVisibilities.PUBLIC
                 )
         setDeferredReturnType(constructor)
         return constructor

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclaration
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
@@ -116,7 +116,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         private fun buildReferenceClass(): IrClass {
             return context.irFactory.buildClass {
                 setSourceRange(reference)
-                visibility = Visibilities.LOCAL
+                visibility = DescriptorVisibilities.LOCAL
                 // A callable reference results in a synthetic class, while a lambda is not synthetic.
                 // We don't produce GENERATED_SAM_IMPLEMENTATION, which is always synthetic.
                 origin = if (isKReference || !isLambda) FUNCTION_REFERENCE_IMPL else LAMBDA_IMPL
@@ -213,10 +213,31 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         fun getValue(d: IrValueDeclaration): IrGetValue =
             IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, d.type, d.symbol, CALLABLE_REFERENCE_INVOKE)
 
+        /**
+        inner class IN<IT> {
+            private fun <T> foo() {
+                class CC<TT>(t: T, tt: TT, ttt: IT)
+            }
+        }
+        */
+
+        private fun IrConstructor.countContextTypeParameters(): Int {
+            fun countImpl(container: IrDeclarationParent): Int {
+                return when (container) {
+                    is IrClass -> container.typeParameters.size + container.run { if (isInner) countImpl(container.parent) else 0 }
+                    is IrFunction -> container.typeParameters.size + countImpl(container.parent)
+                    is IrProperty -> (container.run { getter ?: setter }?.typeParameters?.size ?: 0) + countImpl(container.parent)
+                    is IrDeclaration -> countImpl(container.parent)
+                    else -> 0
+                }
+            }
+
+            return countImpl(parent)
+        }
 
         private fun IrSimpleFunction.buildInvoke(): IrFunctionAccessExpression {
             val callee = function
-            val irCall =  reference.run {
+            val irCall = reference.run {
                 when (callee) {
                     is IrConstructor ->
                         IrConstructorCallImpl(
@@ -224,8 +245,8 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                             endOffset,
                             callee.parentAsClass.defaultType,
                             callee.symbol,
+                            callee.countContextTypeParameters(),
                             callee.typeParameters.size,
-                            0 /* TODO */,
                             callee.valueParameters.size,
                             CALLABLE_REFERENCE_INVOKE
                         )

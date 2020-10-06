@@ -60,7 +60,7 @@ public interface ConstructorDescriptor extends FunctionDescriptor {
     ConstructorDescriptor copy(
             DeclarationDescriptor newOwner,
             Modality modality,
-            Visibility visibility,
+            DescriptorVisibility visibility,
             Kind kind,
             boolean copyOverrides
     );

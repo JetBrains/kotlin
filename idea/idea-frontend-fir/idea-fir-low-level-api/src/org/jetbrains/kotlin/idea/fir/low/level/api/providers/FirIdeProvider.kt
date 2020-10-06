@@ -8,9 +8,12 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.providers
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.NoMutableState
+import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
+import org.jetbrains.kotlin.fir.dependenciesWithoutSelf
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -22,6 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper
 import org.jetbrains.kotlin.idea.fir.low.level.api.PackageExistenceCheckerForMultipleModules
+import org.jetbrains.kotlin.idea.fir.low.level.api.PackageExistenceCheckerForSingleModule
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.collectTransitiveDependenciesWithSelf
@@ -29,7 +33,9 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtProperty
 
+@ThreadSafeMutableState
 internal class FirIdeProvider(
     project: Project,
     val session: FirSession,
@@ -42,10 +48,7 @@ internal class FirIdeProvider(
     override val symbolProvider: FirSymbolProvider = SymbolProvider()
 
     private val indexHelper = IndexHelper(project, searchScope)
-    private val packageExistenceChecker = PackageExistenceCheckerForMultipleModules(
-        project,
-        moduleInfo.collectTransitiveDependenciesWithSelf().filterIsInstance<ModuleSourceInfo>()
-    )
+    private val packageExistenceChecker = PackageExistenceCheckerForSingleModule(project, moduleInfo)
 
     private val providerHelper = FirProviderHelper(
         cache,
@@ -100,6 +103,10 @@ internal class FirIdeProvider(
         return RawFirBuilder(session, kotlinScopeProvider, stubMode = false).buildFunctionWithBody(ktNamedFunction)
     }
 
+    fun buildPropertyWithBody(ktNamedFunction: KtProperty): FirProperty {
+        return RawFirBuilder(session, kotlinScopeProvider, stubMode = false).buildPropertyWithBody(ktNamedFunction)
+    }
+
 
     @FirProviderInternals
     override fun recordGeneratedClass(owner: FirAnnotatedDeclaration, klass: FirRegularClass) {
@@ -116,6 +123,7 @@ internal class FirIdeProvider(
         return emptySet()
     }
 
+    @NoMutableState
     private inner class SymbolProvider : FirSymbolProvider(session) {
         override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> =
             providerHelper.getTopLevelCallableSymbols(packageFqName, name)

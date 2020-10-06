@@ -17,7 +17,7 @@ import kotlin.reflect.KClass
 
 interface FirSessionComponent
 
-abstract class FirSession(val sessionProvider: FirSessionProvider?) : ComponentArrayOwner<FirSessionComponent, FirSessionComponent>() {
+abstract class FirSession @PrivateSessionConstructor constructor(val sessionProvider: FirSessionProvider?) : ComponentArrayOwner<FirSessionComponent, FirSessionComponent>() {
     companion object : TypeRegistry<FirSessionComponent, FirSessionComponent>() {
         inline fun <reified T : FirSessionComponent> sessionComponentAccessor(): ArrayMapAccessor<FirSessionComponent, FirSessionComponent, T> {
             return generateAccessor(T::class)
@@ -30,12 +30,11 @@ abstract class FirSession(val sessionProvider: FirSessionProvider?) : ComponentA
 
     open val moduleInfo: ModuleInfo? get() = null
 
-    val jsr305State: Jsr305State? get() = null
-
-    val builtinTypes: BuiltinTypes = BuiltinTypes()
+    open val builtinTypes: BuiltinTypes = BuiltinTypes()
 
     final override val typeRegistry: TypeRegistry<FirSessionComponent, FirSessionComponent> = Companion
 
+    @SessionConfiguration
     fun register(tClass: KClass<out FirSessionComponent>, value: FirSessionComponent) {
         registerComponent(tClass, value)
     }

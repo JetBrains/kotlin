@@ -4,13 +4,13 @@
 // TESTCASE NUMBER: 1
 fun case_1(arg: Int?) {
     funWithAtMostOnceCallsInPlace { arg!! }
-    arg.<!AMBIGUITY!>inc<!>()
+    arg.<!INAPPLICABLE_CANDIDATE!>inc<!>()
 }
 
 // TESTCASE NUMBER: 2
 fun case_2(arg: Int?) {
     funWithUnknownCallsInPlace { arg!! }
-    arg.<!AMBIGUITY!>inc<!>()
+    arg.<!INAPPLICABLE_CANDIDATE!>inc<!>()
 }
 
 // TESTCASE NUMBER: 3

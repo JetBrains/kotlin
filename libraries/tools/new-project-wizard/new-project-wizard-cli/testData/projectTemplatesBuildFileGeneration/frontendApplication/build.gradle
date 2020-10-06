@@ -1,6 +1,7 @@
 plugins {
     id 'org.jetbrains.kotlin.js' version 'KOTLIN_VERSION'
 }
+
 group = 'me.user'
 version = '1.0-SNAPSHOT'
 
@@ -8,14 +9,16 @@ repositories {
     mavenCentral()
     jcenter()
     maven {
-        url 'https://dl.bintray.com/kotlin/kotlin-dev'
+        url 'KOTLIN_REPO'
     }
 }
+
 dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test-js'
 }
+
 kotlin {
-    js {
+    js(LEGACY) {
         browser {
             binaries.executable()
             webpackTask {

@@ -35,13 +35,13 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
             ?.fir.safeAs<FirTypeParameterRefsOwner>()
             ?: return
 
-        val typeCheckerContext = context.session.typeContext.newBaseTypeCheckerContext(
-            errorTypesEqualToAnything = false,
-            stubTypesEqualToAnything = false
-        )
+        val count = min(calleeFir.typeParameters.size, expression.typeArguments.size)
+
+        if (count == 0) {
+            return
+        }
 
         val parameterPairs = mutableMapOf<FirTypeParameterSymbol, FirResolvedTypeRef>()
-        val count = min(calleeFir.typeParameters.size, expression.typeArguments.size)
 
         for (it in 0 until count) {
             expression.typeArguments[it].safeAs<FirTypeProjectionWithVariance>()
@@ -59,6 +59,11 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
         // type parameters from the declaration
         val substitutor = substitutorByMap(
             parameterPairs.mapValues { it.value.type }
+        )
+
+        val typeCheckerContext = context.session.typeContext.newBaseTypeCheckerContext(
+            errorTypesEqualToAnything = false,
+            stubTypesEqualToAnything = false
         )
 
         parameterPairs.forEach { (proto, actual) ->
@@ -122,8 +127,13 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
             ?.type.safeAs<ConeClassLikeType>()
             ?: return
 
-        val constructorsParameterPairs = mutableMapOf<FirTypeParameterSymbol, ConeSimpleKotlinType>()
         val count = min(protoConstructor.typeParameters.size, actualConstructor.typeArguments.size)
+
+        if (count == 0) {
+            return
+        }
+
+        val constructorsParameterPairs = mutableMapOf<FirTypeParameterSymbol, ConeSimpleKotlinType>()
 
         for (it in 0 until count) {
             actualConstructor.typeArguments[it].safeAs<ConeSimpleKotlinType>()
@@ -182,8 +192,13 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
             ?.fir.safeAs<FirRegularClass>()
             ?: return false
 
-        val parameterPairs = mutableMapOf<FirTypeParameterSymbol, ConeClassLikeType>()
         val count = min(prototypeClass.typeParameters.size, type.typeArguments.size)
+
+        if (count == 0) {
+            return false
+        }
+
+        val parameterPairs = mutableMapOf<FirTypeParameterSymbol, ConeClassLikeType>()
 
         for (it in 0 until count) {
             type.typeArguments[it].safeAs<ConeClassLikeType>()

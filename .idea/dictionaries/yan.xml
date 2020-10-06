@@ -10,7 +10,10 @@
       <w>kapt</w>
       <w>kotlinc</w>
       <w>mutators</w>
+      <w>parcelable</w>
       <w>parceler</w>
+      <w>parcelers</w>
+      <w>parcelize</w>
       <w>repl</w>
       <w>testdata</w>
       <w>uast</w>

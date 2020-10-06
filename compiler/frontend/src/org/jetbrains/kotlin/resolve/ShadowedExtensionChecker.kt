@@ -22,9 +22,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
-import org.jetbrains.kotlin.resolve.calls.results.FlatSignature
-import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
-import org.jetbrains.kotlin.resolve.calls.results.isSignatureNotLessSpecific
+import org.jetbrains.kotlin.resolve.calls.results.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasHidesMembersAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.descriptorUtil.varargParameterPosition
@@ -90,7 +88,7 @@ class ShadowedExtensionChecker(val typeSpecificityComparator: TypeSpecificityCom
     }
 
     private fun DeclarationDescriptorWithVisibility.isPublic() =
-        visibility.normalize() == Visibilities.PUBLIC
+        visibility.normalize() == DescriptorVisibilities.PUBLIC
 
     private fun isExtensionFunctionShadowedByMemberFunction(extension: FunctionDescriptor, member: FunctionDescriptor): Boolean {
         // Permissive check:

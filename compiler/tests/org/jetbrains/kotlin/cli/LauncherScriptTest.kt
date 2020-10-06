@@ -176,6 +176,41 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    fun testCommandlineProcessing() {
+        runProcess(
+            "kotlin",
+            "-e",
+            "println(args.joinToString())",
+            "-a",
+            "b",
+            expectedStdout = "-a, b\n"
+        )
+        runProcess(
+            "kotlin",
+            "-e",
+            "println(args.joinToString())",
+            "--",
+            "-a",
+            "b",
+            expectedStdout = "-a, b\n"
+        )
+        runProcess(
+            "kotlin",
+            "$testDataDirectory/printargs.kts",
+            "-a",
+            "b",
+            expectedStdout = "-a, b\n"
+        )
+        runProcess(
+            "kotlin",
+            "$testDataDirectory/printargs.kts",
+            "--",
+            "-a",
+            "b",
+            expectedStdout = "-a, b\n"
+        )
+    }
+
     fun testLegacyAssert() {
         runProcess(
             "kotlinc",

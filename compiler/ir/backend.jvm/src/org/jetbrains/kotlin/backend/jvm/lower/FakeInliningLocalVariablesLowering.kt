@@ -19,8 +19,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 
 internal val fakeInliningLocalVariablesLowering = makeIrFilePhase(
@@ -31,11 +29,11 @@ internal val fakeInliningLocalVariablesLowering = makeIrFilePhase(
 
 internal class FakeInliningLocalVariablesLowering(val context: JvmBackendContext) : IrInlineReferenceLocator(context), FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.acceptVoid(this)
+        irFile.accept(this, null)
     }
 
-    override fun visitFunctionNew(declaration: IrFunction) {
-        declaration.acceptChildrenVoid(this)
+    override fun visitFunction(declaration: IrFunction, data: IrDeclaration?) {
+        super.visitFunction(declaration, data)
         if (declaration.isInline && !declaration.origin.isSynthetic && declaration.body != null) {
             declaration.addFakeInliningLocalVariables()
         }

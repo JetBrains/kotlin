@@ -19,22 +19,23 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.incremental.components.LocationInfo
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.Position
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.IrBasedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.util.isSuspend
+import org.jetbrains.kotlin.ir.util.module
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.doNotAnalyze
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.SUSPENSION_POINT_INSIDE_MONITOR
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import java.io.File
 
 class IrSourceCompilerForInline(
     override val state: GenerationState,
@@ -83,7 +84,7 @@ class IrSourceCompilerForInline(
                 root.classCodegen.type.internalName,
                 root.signature.asmMethod.name,
                 root.signature.asmMethod.descriptor,
-                root.irFunction.descriptor.isInlineOrInsideInline(),
+                root.irFunction.isInlineOrInsideInline(),
                 root.irFunction.isSuspend,
                 findElement()?.let { CodegenUtil.getLineNumberForElement(it, false) } ?: 0
             )
@@ -120,8 +121,11 @@ class IrSourceCompilerForInline(
         }
 
     override fun isCallInsideSameModuleAsDeclared(functionDescriptor: FunctionDescriptor): Boolean {
-        // TODO port to IR structures
-        return DescriptorUtils.areInSameModule(DescriptorUtils.getDirectMember(functionDescriptor), codegen.irFunction.descriptor)
+        require(functionDescriptor is IrBasedSimpleFunctionDescriptor) {
+            "expected an IrBasedSimpleFunctionDescriptor, got $functionDescriptor"
+        }
+        val function = functionDescriptor.owner
+        return function.module == codegen.irFunction.module
     }
 
     override fun isFinallyMarkerRequired(): Boolean {
@@ -132,7 +136,7 @@ class IrSourceCompilerForInline(
         get() = compilationContextFunctionDescriptor
 
     override val compilationContextFunctionDescriptor: FunctionDescriptor
-        get() = generateSequence(codegen) { it.inlinedInto }.last().irFunction.descriptor
+        get() = generateSequence(codegen) { it.inlinedInto }.last().irFunction.toIrBasedDescriptor()
 
     override fun getContextLabels(): Set<String> {
         val name = codegen.irFunction.name.asString()
@@ -147,4 +151,12 @@ class IrSourceCompilerForInline(
     }
 
     private fun findElement() = callElement.psiElement as? KtElement
+}
+
+private tailrec fun IrDeclaration.isInlineOrInsideInline(): Boolean {
+    val original = (this as? IrAttributeContainer)?.attributeOwnerId as? IrDeclaration ?: this
+    if (original is IrSimpleFunction && original.isInline) return true
+    val parent = original.parent
+    if (parent !is IrDeclaration) return false
+    return parent.isInlineOrInsideInline()
 }

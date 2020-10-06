@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.fir.resolve.calls.tower
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.Name
@@ -146,9 +148,9 @@ private class TowerScopeLevelProcessor(
         symbol: AbstractFirBasedSymbol<*>,
         dispatchReceiverValue: ReceiverValue?,
         implicitExtensionReceiverValue: ImplicitReceiverValue<*>?,
+        scope: FirScope,
         builtInExtensionFunctionReceiverValue: ReceiverValue?
     ) {
-        with(candidateFactory.bodyResolveComponents) { symbol.phasedFir }
         // Check explicit extension receiver for default package members
         if (symbol is FirNamedFunctionSymbol && dispatchReceiverValue == null &&
             (implicitExtensionReceiverValue == null) != (explicitReceiver == null) &&
@@ -161,7 +163,7 @@ private class TowerScopeLevelProcessor(
                 val declarationReceiverType = (symbol as? FirCallableSymbol<*>)?.fir?.receiverTypeRef?.coneType
                 if (declarationReceiverType is ConeClassLikeType) {
                     if (!AbstractTypeChecker.isSubtypeOf(
-                            candidateFactory.bodyResolveComponents.inferenceComponents.ctx,
+                            candidateFactory.context.session.typeContext,
                             extensionReceiverType,
                             declarationReceiverType.lookupTag.constructClassType(
                                 declarationReceiverType.typeArguments.map { ConeStarProjection }.toTypedArray(),
@@ -179,10 +181,11 @@ private class TowerScopeLevelProcessor(
             group, candidateFactory.createCandidate(
                 symbol,
                 explicitReceiverKind,
+                scope,
                 dispatchReceiverValue,
                 implicitExtensionReceiverValue,
                 builtInExtensionFunctionReceiverValue
-            )
+            ), candidateFactory.context
         )
     }
 

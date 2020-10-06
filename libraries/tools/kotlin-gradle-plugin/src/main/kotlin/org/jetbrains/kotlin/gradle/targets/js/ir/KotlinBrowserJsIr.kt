@@ -8,16 +8,14 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.Task
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
-import org.gradle.api.tasks.Sync
-import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.targets.js.dsl.*
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDceDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
-import org.jetbrains.kotlin.gradle.targets.js.subtargets.BrowserDistribution
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
@@ -25,8 +23,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
-import org.jetbrains.kotlin.gradle.utils.decamelize
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import java.io.File
 import javax.inject.Inject
 
@@ -36,7 +33,6 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
     private val webpackTaskConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
     private val runTaskConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
-    private val distribution: Distribution = BrowserDistribution(project)
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
@@ -67,11 +63,6 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         runTaskConfigurations.add(body)
     }
 
-    @ExperimentalDistributionDsl
-    override fun distribution(body: Distribution.() -> Unit) {
-        distribution.body()
-    }
-
     override fun webpackTask(body: KotlinWebpack.() -> Unit) {
         webpackTaskConfigurations.add(body)
     }
@@ -96,10 +87,6 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
                 val mode = binary.mode
 
-                val runCompileSync = registerRunCompileSync(
-                    binary
-                )
-
                 val runTask = registerSubTargetTask<KotlinWebpack>(
                     disambiguateCamelCased(
                         binary.executeTaskBaseName,
@@ -107,7 +94,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     ),
                     listOf(compilation)
                 ) { task ->
-                    val entryFileProvider = runCompileSync.map {
+                    val entryFileProvider = binary.linkSyncTask.map {
                         it.destinationDir
                             .resolve(binary.linkTask.get().outputFile.name)
                     }
@@ -148,17 +135,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
         val processResourcesTask = target.project.tasks.named(compilation.processResourcesTaskName)
 
-        val distributeResourcesTask = registerSubTargetTask<Copy>(
-            disambiguateCamelCased(
-                DISTRIBUTE_RESOURCES_TASK_NAME
-            )
-        ) {
-            it.from(processResourcesTask)
-            it.into(distribution.directory)
-        }
-
         val assembleTaskProvider = project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
-        assembleTaskProvider.dependsOn(distributeResourcesTask)
 
         compilation.binaries
             .matching { it is Executable }
@@ -166,6 +143,17 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                 binary as Executable
 
                 val mode = binary.mode
+
+                val distributeResourcesTask = registerSubTargetTask<Copy>(
+                    disambiguateCamelCased(
+                        binary.name,
+                        DISTRIBUTE_RESOURCES_TASK_NAME
+                    )
+                ) {
+                    it.from(processResourcesTask)
+                    it.into(binary.distribution.directory)
+                }
+
                 val webpackTask = registerSubTargetTask<KotlinWebpack>(
                     disambiguateCamelCased(
                         binary.executeTaskBaseName,
@@ -173,14 +161,17 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     ),
                     listOf(compilation)
                 ) { task ->
-                    val entryFileProvider = binary.linkTask.map { it.outputFile }
+                    val entryFileProvider = binary.linkSyncTask.map {
+                        it.destinationDir
+                            .resolve(binary.linkTask.get().outputFile.name)
+                    }
+
+                    task.description = "build webpack ${mode.name.toLowerCase()} bundle"
+                    task._destinationDirectory = binary.distribution.directory
 
                     task.dependsOn(
                         distributeResourcesTask
                     )
-
-                    task.description = "build webpack ${mode.name.toLowerCase()} bundle"
-                    task._destinationDirectory = distribution.directory
 
                     task.commonConfigure(
                         compilation = compilation,
@@ -191,46 +182,27 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     )
                 }
 
+                val distributionTask = registerSubTargetTask<Task>(
+                    disambiguateCamelCased(
+                        if (binary.mode == KotlinJsBinaryMode.PRODUCTION) "" else binary.name,
+                        DISTRIBUTION_TASK_NAME
+                    )
+                ) {
+                    it.dependsOn(webpackTask)
+                    it.dependsOn(distributeResourcesTask)
+
+                    it.outputs.dir(project.newFileProperty { binary.distribution.directory })
+                }
+
                 if (mode == KotlinJsBinaryMode.PRODUCTION) {
-                    assembleTaskProvider.dependsOn(webpackTask)
-                    val webpackCommonTask = registerSubTargetTask<Task>(
+                    assembleTaskProvider.dependsOn(distributionTask)
+                    registerSubTargetTask<Task>(
                         disambiguateCamelCased(WEBPACK_TASK_NAME)
                     ) {
                         it.dependsOn(webpackTask)
                     }
-                    registerSubTargetTask<Task>(disambiguateCamelCased(DISTRIBUTION_TASK_NAME)) {
-                        it.dependsOn(webpackCommonTask)
-                        it.dependsOn(distributeResourcesTask)
-
-                        it.outputs.dir(distribution.directory)
-                    }
                 }
             }
-    }
-
-    private fun registerRunCompileSync(binary: Executable): TaskProvider<Sync> {
-        val compilation = binary.compilation
-        val runCompileSyncTaskName = lowerCamelCaseName(
-            compilation.target.disambiguationClassifier,
-            compilation.name.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
-            binary.name,
-            RUN_COMPILE_COPY
-        )
-
-        return registerSubTargetTask(
-            runCompileSyncTaskName
-        ) { task ->
-            task.from(
-                project.layout.file(binary.linkTask.map { it.destinationDir })
-            )
-
-            task.into(
-                binary.linkTask.map {
-                    it.destinationDir.parentFile
-                        .resolve(binary.name.decamelize())
-                }
-            )
-        }
     }
 
     private fun KotlinWebpack.commonConfigure(
@@ -281,9 +253,5 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
     companion object {
         private const val WEBPACK_TASK_NAME = "webpack"
-        private const val DISTRIBUTE_RESOURCES_TASK_NAME = "distributeResources"
-        private const val DISTRIBUTION_TASK_NAME = "distribution"
-
-        private const val RUN_COMPILE_COPY = "runCompileSync"
     }
 }

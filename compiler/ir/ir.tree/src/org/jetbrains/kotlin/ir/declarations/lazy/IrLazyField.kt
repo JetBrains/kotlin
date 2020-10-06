@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.declarations.lazy
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -23,19 +23,19 @@ import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.name.Name
 
 class IrLazyField(
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var origin: IrDeclarationOrigin,
-    override val symbol: IrFieldSymbol,
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
+        override val startOffset: Int,
+        override val endOffset: Int,
+        override var origin: IrDeclarationOrigin,
+        override val symbol: IrFieldSymbol,
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val descriptor: PropertyDescriptor,
-    override val name: Name,
-    override var visibility: Visibility,
-    override val isFinal: Boolean,
-    override val isExternal: Boolean,
-    override val isStatic: Boolean,
-    override val stubGenerator: DeclarationStubGenerator,
-    override val typeTranslator: TypeTranslator,
+        override val name: Name,
+        override var visibility: DescriptorVisibility,
+        override val isFinal: Boolean,
+        override val isExternal: Boolean,
+        override val isStatic: Boolean,
+        override val stubGenerator: DeclarationStubGenerator,
+        override val typeTranslator: TypeTranslator,
 ) : IrField(), IrLazyDeclarationBase {
     init {
         symbol.bind(this)

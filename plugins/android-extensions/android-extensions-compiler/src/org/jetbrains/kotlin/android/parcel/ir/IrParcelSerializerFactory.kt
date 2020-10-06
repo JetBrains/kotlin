@@ -171,7 +171,7 @@ class IrParcelSerializerFactory(symbols: AndroidSymbols) {
                 }
                 return wrapNullableSerializerIfNeeded(
                     irType,
-                    IrListParcelSerializer(classifier, get(elementType, scope, parcelizeType, strict()))
+                    IrListParcelSerializer(classifier, elementType, get(elementType, scope, parcelizeType, strict()))
                 )
             }
 
@@ -185,6 +185,8 @@ class IrParcelSerializerFactory(symbols: AndroidSymbols) {
                 val parceler =
                     IrMapParcelSerializer(
                         classifier,
+                        keyType,
+                        valueType,
                         get(keyType, scope, parcelizeType, strict()),
                         get(valueType, scope, parcelizeType, strict())
                     )
@@ -228,7 +230,9 @@ class IrParcelSerializerFactory(symbols: AndroidSymbols) {
             classifier.isEnumClass ->
                 return wrapNullableSerializerIfNeeded(irType, IrEnumParcelSerializer(classifier))
 
-            classifier.isSubclassOfFqName("java.io.Serializable") ->
+            classifier.isSubclassOfFqName("java.io.Serializable")
+                    // Functions and Continuations are always serializable.
+                    || irType.isFunctionTypeOrSubtype() || irType.isSuspendFunctionTypeOrSubtype() ->
                 return serializableSerializer
 
             strict() ->
@@ -265,9 +269,9 @@ class IrParcelSerializerFactory(symbols: AndroidSymbols) {
     private val longArraySerializer = IrSimpleParcelSerializer(symbols.parcelCreateLongArray, symbols.parcelWriteLongArray)
 
     // Primitive types without dedicated read/write methods need an additional cast.
-    private val booleanSerializer = IrWrappedPrimitiveParcelSerializer(irBuiltIns.booleanType, intSerializer)
-    private val shortSerializer = IrWrappedPrimitiveParcelSerializer(irBuiltIns.shortType, intSerializer)
-    private val charSerializer = IrWrappedPrimitiveParcelSerializer(irBuiltIns.charType, intSerializer)
+    private val booleanSerializer = IrWrappedIntParcelSerializer(irBuiltIns.booleanType)
+    private val shortSerializer = IrWrappedIntParcelSerializer(irBuiltIns.shortType)
+    private val charSerializer = IrWrappedIntParcelSerializer(irBuiltIns.charType)
 
     private val charSequenceSerializer = IrCharSequenceParcelSerializer()
 

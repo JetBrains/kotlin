@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
-import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 
@@ -69,15 +68,15 @@ class DeserializedSimpleFunctionDescriptor(
         private set
 
     fun initialize(
-        extensionReceiverParameter: ReceiverParameterDescriptor?,
-        dispatchReceiverParameter: ReceiverParameterDescriptor?,
-        typeParameters: List<TypeParameterDescriptor>,
-        unsubstitutedValueParameters: List<ValueParameterDescriptor>,
-        unsubstitutedReturnType: KotlinType?,
-        modality: Modality?,
-        visibility: Visibility,
-        userDataMap: Map<out CallableDescriptor.UserDataKey<*>, *>,
-        isExperimentalCoroutineInReleaseEnvironment: DeserializedMemberDescriptor.CoroutinesCompatibilityMode
+            extensionReceiverParameter: ReceiverParameterDescriptor?,
+            dispatchReceiverParameter: ReceiverParameterDescriptor?,
+            typeParameters: List<TypeParameterDescriptor>,
+            unsubstitutedValueParameters: List<ValueParameterDescriptor>,
+            unsubstitutedReturnType: KotlinType?,
+            modality: Modality?,
+            visibility: DescriptorVisibility,
+            userDataMap: Map<out CallableDescriptor.UserDataKey<*>, *>,
+            isExperimentalCoroutineInReleaseEnvironment: DeserializedMemberDescriptor.CoroutinesCompatibilityMode
     ): SimpleFunctionDescriptorImpl {
         return super.initialize(
             extensionReceiverParameter,
@@ -112,24 +111,24 @@ class DeserializedSimpleFunctionDescriptor(
 }
 
 class DeserializedPropertyDescriptor(
-    containingDeclaration: DeclarationDescriptor,
-    original: PropertyDescriptor?,
-    annotations: Annotations,
-    modality: Modality,
-    visibility: Visibility,
-    isVar: Boolean,
-    name: Name,
-    kind: CallableMemberDescriptor.Kind,
-    isLateInit: Boolean,
-    isConst: Boolean,
-    isExternal: Boolean,
-    isDelegated: Boolean,
-    isExpect: Boolean,
-    override val proto: ProtoBuf.Property,
-    override val nameResolver: NameResolver,
-    override val typeTable: TypeTable,
-    override val versionRequirementTable: VersionRequirementTable,
-    override val containerSource: DeserializedContainerSource?
+        containingDeclaration: DeclarationDescriptor,
+        original: PropertyDescriptor?,
+        annotations: Annotations,
+        modality: Modality,
+        visibility: DescriptorVisibility,
+        isVar: Boolean,
+        name: Name,
+        kind: CallableMemberDescriptor.Kind,
+        isLateInit: Boolean,
+        isConst: Boolean,
+        isExternal: Boolean,
+        isDelegated: Boolean,
+        isExpect: Boolean,
+        override val proto: ProtoBuf.Property,
+        override val nameResolver: NameResolver,
+        override val typeTable: TypeTable,
+        override val versionRequirementTable: VersionRequirementTable,
+        override val containerSource: DeserializedContainerSource?
 ) : DeserializedCallableMemberDescriptor, PropertyDescriptorImpl(
     containingDeclaration, original, annotations, modality, visibility, isVar, name, kind, SourceElement.NO_SOURCE,
     isLateInit, isConst, isExpect, false, isExternal, isDelegated
@@ -149,13 +148,13 @@ class DeserializedPropertyDescriptor(
     }
 
     override fun createSubstitutedCopy(
-        newOwner: DeclarationDescriptor,
-        newModality: Modality,
-        newVisibility: Visibility,
-        original: PropertyDescriptor?,
-        kind: CallableMemberDescriptor.Kind,
-        newName: Name,
-        source: SourceElement
+            newOwner: DeclarationDescriptor,
+            newModality: Modality,
+            newVisibility: DescriptorVisibility,
+            original: PropertyDescriptor?,
+            kind: CallableMemberDescriptor.Kind,
+            newName: Name,
+            source: SourceElement
     ): PropertyDescriptorImpl {
         return DeserializedPropertyDescriptor(
             newOwner, original, annotations, newModality, newVisibility, isVar, newName, kind, isLateInit, isConst, isExternal,
@@ -211,16 +210,16 @@ class DeserializedClassConstructorDescriptor(
 }
 
 class DeserializedTypeAliasDescriptor(
-    override val storageManager: StorageManager,
-    containingDeclaration: DeclarationDescriptor,
-    annotations: Annotations,
-    name: Name,
-    visibility: Visibility,
-    override val proto: ProtoBuf.TypeAlias,
-    override val nameResolver: NameResolver,
-    override val typeTable: TypeTable,
-    override val versionRequirementTable: VersionRequirementTable,
-    override val containerSource: DeserializedContainerSource?
+        override val storageManager: StorageManager,
+        containingDeclaration: DeclarationDescriptor,
+        annotations: Annotations,
+        name: Name,
+        visibility: DescriptorVisibility,
+        override val proto: ProtoBuf.TypeAlias,
+        override val nameResolver: NameResolver,
+        override val typeTable: TypeTable,
+        override val versionRequirementTable: VersionRequirementTable,
+        override val containerSource: DeserializedContainerSource?
 ) : AbstractTypeAliasDescriptor(containingDeclaration, annotations, name, SourceElement.NO_SOURCE, visibility),
     DeserializedMemberDescriptor {
     override lateinit var constructors: Collection<TypeAliasConstructorDescriptor> private set

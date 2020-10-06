@@ -253,7 +253,11 @@ private class AnalyzedModules(
         check(originalPlatformModules.keys == commonizedPlatformModules.keys)
     }
 
-    fun toCommonizationParameters(): Parameters = originalPlatformModules.mapValues { it.value.module }.toCommonizationParameters()
+    fun toCommonizationParameters(): Parameters {
+        val parameters = originalPlatformModules.mapValues { it.value.module }.toCommonizationParameters()
+        parameters.commonModulesProvider = MockModulesProvider(commonizedCommonModule.module)
+        return parameters
+    }
 
     companion object {
         fun create(

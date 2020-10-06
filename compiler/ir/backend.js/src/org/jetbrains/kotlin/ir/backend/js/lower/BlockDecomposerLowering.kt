@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.isElseBranch
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
@@ -57,7 +57,7 @@ abstract class AbstractBlockDecomposerLowering(
                     val initFunction = context.irFactory.buildFun {
                         name = Name.identifier(container.name.asString() + "\$init\$")
                         returnType = container.type
-                        visibility = Visibilities.PRIVATE
+                        visibility = DescriptorVisibilities.PRIVATE
                         origin = JsIrBuilder.SYNTHESIZED_DECLARATION
                     }.apply {
                         parent = container.parent

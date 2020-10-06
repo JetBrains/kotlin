@@ -87,13 +87,13 @@ class VarianceCheckerCore(
     }
 
     fun checkMember(member: KtCallableDeclaration, descriptor: CallableMemberDescriptor) =
-        Visibilities.isPrivate(descriptor.visibility) || checkCallableDeclaration(context, member, descriptor)
+        DescriptorVisibilities.isPrivate(descriptor.visibility) || checkCallableDeclaration(context, member, descriptor)
 
     private fun TypeParameterDescriptor.varianceWithManual() =
         if (manualVariance != null && this.original == manualVariance.descriptor) manualVariance.variance else variance
 
     fun recordPrivateToThisIfNeeded(descriptor: CallableMemberDescriptor) {
-        if (isIrrelevant(descriptor) || descriptor.visibility != Visibilities.PRIVATE) return
+        if (isIrrelevant(descriptor) || descriptor.visibility != DescriptorVisibilities.PRIVATE) return
 
         val psiElement = descriptor.source.getPsi() as? KtCallableDeclaration ?: return
 
@@ -185,11 +185,11 @@ class VarianceCheckerCore(
 
         private fun recordPrivateToThis(descriptor: CallableMemberDescriptor) {
             when (descriptor) {
-                is FunctionDescriptorImpl -> descriptor.visibility = Visibilities.PRIVATE_TO_THIS
+                is FunctionDescriptorImpl -> descriptor.visibility = DescriptorVisibilities.PRIVATE_TO_THIS
                 is PropertyDescriptorImpl -> {
-                    descriptor.visibility = Visibilities.PRIVATE_TO_THIS
+                    descriptor.visibility = DescriptorVisibilities.PRIVATE_TO_THIS
                     for (accessor in descriptor.accessors) {
-                        (accessor as PropertyAccessorDescriptorImpl).visibility = Visibilities.PRIVATE_TO_THIS
+                        (accessor as PropertyAccessorDescriptorImpl).visibility = DescriptorVisibilities.PRIVATE_TO_THIS
                     }
                 }
                 else -> throw IllegalStateException("Unexpected descriptor type: ${descriptor::class.java.name}")

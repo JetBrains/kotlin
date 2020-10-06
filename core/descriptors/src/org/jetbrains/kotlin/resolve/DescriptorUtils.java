@@ -65,7 +65,7 @@ public class DescriptorUtils {
 
     public static boolean isDescriptorWithLocalVisibility(DeclarationDescriptor current) {
         return current instanceof DeclarationDescriptorWithVisibility &&
-         ((DeclarationDescriptorWithVisibility) current).getVisibility() == Visibilities.LOCAL;
+         ((DeclarationDescriptorWithVisibility) current).getVisibility() == DescriptorVisibilities.LOCAL;
     }
 
     @NotNull
@@ -380,16 +380,16 @@ public class DescriptorUtils {
     }
 
     @NotNull
-    public static Visibility getDefaultConstructorVisibility(@NotNull ClassDescriptor classDescriptor) {
+    public static DescriptorVisibility getDefaultConstructorVisibility(@NotNull ClassDescriptor classDescriptor) {
         ClassKind classKind = classDescriptor.getKind();
         if (classKind == ClassKind.ENUM_CLASS || classKind.isSingleton() || isSealedClass(classDescriptor)) {
-            return Visibilities.PRIVATE;
+            return DescriptorVisibilities.PRIVATE;
         }
         if (isAnonymousObject(classDescriptor)) {
-            return Visibilities.DEFAULT_VISIBILITY;
+            return DescriptorVisibilities.DEFAULT_VISIBILITY;
         }
         assert classKind == ClassKind.CLASS || classKind == ClassKind.INTERFACE || classKind == ClassKind.ANNOTATION_CLASS;
-        return Visibilities.PUBLIC;
+        return DescriptorVisibilities.PUBLIC;
     }
 
     // TODO: should be internal

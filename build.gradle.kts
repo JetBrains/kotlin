@@ -7,7 +7,7 @@ import proguard.gradle.ProGuardTask
 buildscript {
     val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
-    kotlinBootstrapFrom(BootstrapOption.BintrayBootstrap(kotlinBuildProperties.kotlinBootstrapVersion!!, cacheRedirectorEnabled))
+    kotlinBootstrapFrom(BootstrapOption.SpaceBootstrap(kotlinBuildProperties.kotlinBootstrapVersion!!, cacheRedirectorEnabled))
 
     repositories {
         bootstrapKotlinRepo?.let(::maven)
@@ -27,9 +27,10 @@ buildscript {
     dependencies {
         bootstrapCompilerClasspath(kotlin("compiler-embeddable", bootstrapKotlinVersion))
 
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.19")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.20")
         classpath(kotlin("gradle-plugin", bootstrapKotlinVersion))
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.9.17")
+        classpath("org.jfrog.buildinfo:build-info-extractor-gradle:4.17.2")
     }
 }
 
@@ -177,7 +178,7 @@ extra["versions.org.springframework"] = "4.2.0.RELEASE"
 extra["versions.jflex"] = "1.7.0"
 extra["versions.markdown"] = "0.1.25"
 extra["versions.trove4j"] = "1.0.20181211"
-extra["versions.completion-ranking-kotlin"] = "0.1.2"
+extra["versions.completion-ranking-kotlin"] = "0.1.3"
 extra["versions.r8"] = "2.0.88"
 val immutablesVersion = "0.3.1"
 extra["versions.kotlinx-collections-immutable"] = immutablesVersion
@@ -221,6 +222,8 @@ extra["compilerModules"] = arrayOf(
     ":compiler:config",
     ":compiler:config.jvm",
     ":compiler:container",
+    ":compiler:resolution.common",
+    ":compiler:resolution.common.jvm",
     ":compiler:resolution",
     ":compiler:serialization",
     ":compiler:psi",
@@ -265,7 +268,11 @@ extra["compilerModules"] = arrayOf(
     ":kotlin-build-common",
     ":core:metadata",
     ":core:metadata.jvm",
+    ":core:deserialization.common",
+    ":core:deserialization.common.jvm",
     ":core:compiler.common",
+    ":core:compiler.common.jvm",
+    ":compiler:backend.common.jvm",
     ":core:descriptors",
     ":core:descriptors.jvm",
     ":core:descriptors.runtime",
@@ -274,6 +281,7 @@ extra["compilerModules"] = arrayOf(
     ":compiler:fir:cones",
     ":compiler:fir:resolve",
     ":compiler:fir:fir-serialization",
+    ":compiler:fir:fir-deserialization",
     ":compiler:fir:tree",
     ":compiler:fir:raw-fir:raw-fir.common",
     ":compiler:fir:raw-fir:psi2fir",
@@ -283,6 +291,7 @@ extra["compilerModules"] = arrayOf(
     ":compiler:fir:java",
     ":compiler:fir:jvm",
     ":compiler:fir:checkers",
+    ":compiler:fir:entrypoint",
     ":compiler:fir:analysis-tests"
 )
 
@@ -296,6 +305,7 @@ extra["compilerModulesForJps"] = listOf(
     ":daemon-common",
     ":daemon-common-new",
     ":core:compiler.common",
+    ":core:compiler.common.jvm",
     ":core:descriptors",
     ":core:descriptors.jvm",
     ":idea:idea-jps-common",
@@ -331,7 +341,8 @@ val gradlePluginProjects = listOf(
     ":kotlin-allopen",
     ":kotlin-annotation-processing-gradle",
     ":kotlin-noarg",
-    ":kotlin-sam-with-receiver"
+    ":kotlin-sam-with-receiver",
+    ":kotlin-parcelize-compiler"
 )
 
 apply {
@@ -355,7 +366,7 @@ fun Task.listConfigurationContents(configName: String) {
 }
 
 val defaultJvmTarget = "1.8"
-val defaultJavaHome = jdkPath(defaultJvmTarget)
+val defaultJavaHome = jdkPath(if (Platform[203].orHigher()) "11" else defaultJvmTarget)
 val ignoreTestFailures by extra(project.kotlinBuildProperties.ignoreTestFailures)
 
 allprojects {
@@ -457,16 +468,6 @@ allprojects {
         outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KT-37089") { true }
     }
 
-    tasks.withType<SourceTask>().configureEach {
-        doFirst {
-            source.visit {
-                if (file.isDirectory && file.listFiles()?.isEmpty() == true) {
-                    logger.warn("Empty source directories may cause build cache misses: " + file.absolutePath)
-                }
-            }
-        }
-    }
-
     normalization {
         runtimeClasspath {
             ignore("META-INF/MANIFEST.MF")
@@ -522,6 +523,23 @@ allprojects {
         }
 
         apply(from = "$rootDir/gradle/cacheRedirector.gradle.kts")
+        apply(from = "$rootDir/gradle/testRetry.gradle.kts")
+    }
+}
+
+gradle.buildFinished {
+    val taskGraph = gradle?.taskGraph
+    if (taskGraph != null) {
+        taskGraph.allTasks
+                .filterIsInstance<SourceTask>()
+                .filter { it.didWork }
+                .forEach {
+                    it.source.visit {
+                        if (file.isDirectory && file.listFiles()?.isEmpty() == true) {
+                            logger.warn("Empty source directories may cause build cache misses: " + file.absolutePath)
+                        }
+                    }
+                }
     }
 }
 
@@ -695,9 +713,12 @@ tasks {
         dependsOn("scriptingTest")
         dependsOn(":kotlin-build-common:test")
         dependsOn(":compiler:incremental-compilation-impl:test")
+        dependsOn(":compiler:incremental-compilation-impl:testJvmICWithJdk11")
         dependsOn(":core:descriptors.runtime:test")
 
         dependsOn("jvmCompilerIntegrationTest")
+
+        dependsOn(":plugins:parcelize:parcelize-compiler:test")
     }
 
     register("toolsTest") {
@@ -770,7 +791,8 @@ tasks {
         dependsOn(
             ":plugins:android-extensions-ide:test",
             ":idea:idea-android:test",
-            ":kotlin-annotation-processing:test"
+            ":kotlin-annotation-processing:test",
+            ":plugins:parcelize:parcelize-ide:test"
         )
     }
 
@@ -865,6 +887,7 @@ tasks {
                 ":prepare:ide-plugin-dependencies:noarg-compiler-plugin-for-ide:publish",
                 ":prepare:ide-plugin-dependencies:sam-with-receiver-compiler-plugin-for-ide:publish",
                 ":prepare:ide-plugin-dependencies:compiler-components-for-jps:publish",
+                ":prepare:ide-plugin-dependencies:parcelize-compiler-plugin-for-ide:publish",
                 ":kotlin-script-runtime:publish",
                 ":kotlin-script-util:publish",
                 ":kotlin-scripting-common:publish",
@@ -946,7 +969,7 @@ val zipPlugin by task<Zip> {
     setExecutablePermissions()
 
     doLast {
-        logger.lifecycle("Plugin artifacts packed to $archiveFile")
+        logger.lifecycle("Plugin artifacts packed to ${archiveFile.get()}")
     }
 }
 

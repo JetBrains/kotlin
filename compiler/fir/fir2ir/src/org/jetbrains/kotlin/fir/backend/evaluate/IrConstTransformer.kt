@@ -61,12 +61,16 @@ class IrConstTransformer(irBuiltIns: IrBuiltIns) : IrElementTransformerVoid() {
 
     private fun transformAnnotations(annotationContainer: IrAnnotationContainer) {
         annotationContainer.annotations.forEach { annotation ->
-            for (i in 0 until annotation.valueArgumentsCount) {
-                val arg = annotation.getValueArgument(i) ?: continue
-                when (arg) {
-                    is IrVararg -> annotation.putValueArgument(i, arg.transformVarArg())
-                    else -> annotation.putValueArgument(i, arg.transformSingleArg(annotation.symbol.owner.valueParameters[i].type))
-                }
+            transformAnnotation(annotation)
+        }
+    }
+
+    private fun transformAnnotation(annotation: IrConstructorCall) {
+        for (i in 0 until annotation.valueArgumentsCount) {
+            val arg = annotation.getValueArgument(i) ?: continue
+            when (arg) {
+                is IrVararg -> annotation.putValueArgument(i, arg.transformVarArg())
+                else -> annotation.putValueArgument(i, arg.transformSingleArg(annotation.symbol.owner.valueParameters[i].type))
             }
         }
     }
@@ -92,6 +96,8 @@ class IrConstTransformer(irBuiltIns: IrBuiltIns) : IrElementTransformerVoid() {
         if (this.accept(IrCompileTimeChecker(mode = EvaluationMode.ONLY_BUILTINS), null)) {
             val const = interpreter.interpret(this).replaceIfError(this)
             return const.convertToConstIfPossible(expectedType)
+        } else if (this is IrConstructorCall) {
+            transformAnnotation(this)
         }
         return this
     }

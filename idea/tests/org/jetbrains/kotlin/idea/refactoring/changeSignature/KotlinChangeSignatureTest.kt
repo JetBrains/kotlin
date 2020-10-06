@@ -25,7 +25,7 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.ui.KotlinChangeSignatureDialog.Companion.getTypeCodeFragmentContext
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.ui.KotlinChangeSignatureDialog.Companion.getTypeInfo
@@ -277,12 +277,12 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     fun testChangeConstructorVisibility() {
-        doTest { newVisibility = Visibilities.PROTECTED }
+        doTest { newVisibility = DescriptorVisibilities.PROTECTED }
     }
 
     fun testAddConstructorVisibility() {
         doTest {
-            newVisibility = Visibilities.PROTECTED
+            newVisibility = DescriptorVisibilities.PROTECTED
 
             val newParameter = KotlinParameterInfo(
                 callableDescriptor = originalBaseFunctionDescriptor,
@@ -297,7 +297,7 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun testConstructor() {
         doTest {
-            newVisibility = Visibilities.PUBLIC
+            newVisibility = DescriptorVisibilities.PUBLIC
 
             newParameters[0].valOrVar = KotlinValVar.Var
             newParameters[1].valOrVar = KotlinValVar.None
@@ -313,7 +313,7 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun testGenericConstructor() {
         doTest {
-            newVisibility = Visibilities.PUBLIC
+            newVisibility = DescriptorVisibilities.PUBLIC
 
             newParameters[0].valOrVar = KotlinValVar.Var
             newParameters[1].valOrVar = KotlinValVar.None
@@ -338,7 +338,7 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun testFunctions() {
         doTest {
-            newVisibility = Visibilities.PUBLIC
+            newVisibility = DescriptorVisibilities.PUBLIC
 
             newParameters[0].name = "_x1"
             newParameters[1].name = "_x2"
@@ -350,7 +350,7 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun testGenericFunctions() {
         doTest {
-            newVisibility = Visibilities.PUBLIC
+            newVisibility = DescriptorVisibilities.PUBLIC
 
             newParameters[0].name = "_x1"
             newParameters[1].name = "_x2"
@@ -370,7 +370,7 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun testFunctionsAddRemoveArguments() {
         doTest {
-            newVisibility = Visibilities.INTERNAL
+            newVisibility = DescriptorVisibilities.INTERNAL
 
             val defaultValueForCall = KtPsiFactory(project).createExpression("null")
             val newParameters = newParameters
@@ -1270,11 +1270,11 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     fun testMakePrimaryConstructorPrivateNoParams() {
-        doTest { newVisibility = Visibilities.PRIVATE }
+        doTest { newVisibility = DescriptorVisibilities.PRIVATE }
     }
 
     fun testMakePrimaryConstructorPublic() {
-        doTest { newVisibility = Visibilities.PUBLIC }
+        doTest { newVisibility = DescriptorVisibilities.PUBLIC }
     }
 
     fun testRenameExtensionParameterWithNamedArgs() {

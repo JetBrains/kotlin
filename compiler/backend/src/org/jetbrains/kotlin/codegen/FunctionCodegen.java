@@ -67,8 +67,10 @@ import java.io.StringWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.*;
+import static org.jetbrains.kotlin.codegen.AsmUtil.CAPTURED_THIS_FIELD;
+import static org.jetbrains.kotlin.codegen.AsmUtil.boxType;
 import static org.jetbrains.kotlin.codegen.CodegenUtilKt.generateBridgeForMainFunctionIfNecessary;
+import static org.jetbrains.kotlin.codegen.DescriptorAsmUtil.*;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION;
 import static org.jetbrains.kotlin.codegen.state.KotlinTypeMapper.isAccessor;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
@@ -609,7 +611,7 @@ public class FunctionCodegen {
         else if (isCompatibilityStubInDefaultImpls(functionDescriptor, context, jvmDefaultMode)) {
             FunctionDescriptor compatibility = ((DefaultImplsClassContext) context.getParentContext()).getInterfaceContext()
                     .getAccessorForJvmDefaultCompatibility(functionDescriptor);
-            int flags = AsmUtil.getMethodAsmFlags(functionDescriptor, OwnerKind.DEFAULT_IMPLS, context.getState());
+            int flags = DescriptorAsmUtil.getMethodAsmFlags(functionDescriptor, OwnerKind.DEFAULT_IMPLS, context.getState());
             assert (flags & Opcodes.ACC_ABSTRACT) == 0 : "Interface method with body should be non-abstract" + functionDescriptor;
             CallableMethod method = typeMapper.mapToCallableMethod(compatibility, false);
 
@@ -761,7 +763,7 @@ public class FunctionCodegen {
         generateLocalVariablesForParameters(mv,
                                             jvmMethodSignature, functionDescriptor,
                                             thisType, methodBegin, methodEnd, functionDescriptor.getValueParameters(),
-                                            AsmUtil.isStaticMethod(ownerKind, functionDescriptor), state
+                                            DescriptorAsmUtil.isStaticMethod(ownerKind, functionDescriptor), state
         );
     }
 
@@ -809,7 +811,7 @@ public class FunctionCodegen {
                             : nameForDestructuredParameter;
                     break;
                 case RECEIVER:
-                    parameterName = AsmUtil.getNameForReceiverParameter(
+                    parameterName = DescriptorAsmUtil.getNameForReceiverParameter(
                             functionDescriptor, typeMapper.getBindingContext(), state.getLanguageVersionSettings());
                     break;
                 case OUTER:
@@ -1060,7 +1062,7 @@ public class FunctionCodegen {
         // or all return types are supertypes of inline class (and can't be inline classes).
 
         for (DescriptorBasedFunctionHandleForJvm handle : bridge.getOriginalFunctions()) {
-            return state.getTypeMapper().getReturnValueType(handle.getDescriptor());
+            return handle.getDescriptor().getReturnType();
         }
 
         if (state.getClassBuilderMode().mightBeIncorrectCode) {
@@ -1152,7 +1154,7 @@ public class FunctionCodegen {
         // $default methods are never private to be accessible from other class files (e.g. inner) without the need of synthetic accessors
         // $default methods are never protected to be accessible from subclass nested classes
         int visibilityFlag =
-                Visibilities.isPrivate(functionDescriptor.getVisibility()) || isInlineOnlyPrivateInBytecode(functionDescriptor)
+                DescriptorVisibilities.isPrivate(functionDescriptor.getVisibility()) || isInlineOnlyPrivateInBytecode(functionDescriptor)
                 ? AsmUtil.NO_FLAG_PACKAGE_PRIVATE : Opcodes.ACC_PUBLIC;
         int flags = visibilityFlag | getDeprecatedAccessFlag(functionDescriptor) | ACC_SYNTHETIC;
         if (!(functionDescriptor instanceof ConstructorDescriptor &&
@@ -1411,7 +1413,7 @@ public class FunctionCodegen {
         if (isVarargInvoke) {
             assert argTypes.length == 1 && argTypes[0].equals(AsmUtil.getArrayType(OBJECT_TYPE)) :
                     "Vararg invoke must have one parameter of type [Ljava/lang/Object;: " + bridge;
-            AsmUtil.generateVarargInvokeArityAssert(iv, originalArgTypes.length);
+            DescriptorAsmUtil.generateVarargInvokeArityAssert(iv, originalArgTypes.length);
         }
         else {
             assert argTypes.length == originalArgTypes.length :
@@ -1457,7 +1459,7 @@ public class FunctionCodegen {
             }
         }
 
-        KotlinType returnValueType = state.getTypeMapper().getReturnValueType(descriptor);
+        KotlinType returnValueType = descriptor.getReturnType();
         StackValue.coerce(delegateTo.getReturnType(), returnValueType, bridge.getReturnType(), bridgeReturnType, iv);
         iv.areturn(bridge.getReturnType());
 
@@ -1616,7 +1618,7 @@ public class FunctionCodegen {
                         }
 
                         //noinspection ConstantConditions
-                        StackValue stackValue = AsmUtil.genNotNullAssertions(
+                        StackValue stackValue = DescriptorAsmUtil.genNotNullAssertions(
                                 state,
                                 StackValue.onStack(delegateToMethod.getReturnType(), delegatedTo.getReturnType()),
                                 RuntimeAssertionInfo.create(
@@ -1685,7 +1687,7 @@ public class FunctionCodegen {
         } else {
             switch (kind) {
                 case DEFAULT_IMPLS: return true;
-                case IMPLEMENTATION: return !Visibilities.isPrivate(memberDescriptor.getVisibility()) && !isDefault && !isSynthetic;
+                case IMPLEMENTATION: return !DescriptorVisibilities.isPrivate(memberDescriptor.getVisibility()) && !isDefault && !isSynthetic;
                 default: return false;
             }
         }

@@ -31,7 +31,7 @@ class ScriptProvidedPropertiesDescriptor(script: LazyScriptDescriptor) :
 
     init {
         modality = Modality.FINAL
-        visibility = Visibilities.PUBLIC
+        visibility = DescriptorVisibilities.PUBLIC
         setTypeParameterDescriptors(emptyList())
         createTypeConstructor()
     }

@@ -318,10 +318,10 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         propertyAccessor.configure {
             parentArg(function, "F", propertyAccessor)
+            parentArg(callableMemberDeclaration, "F", propertyAccessor)
             +symbol("FirPropertyAccessorSymbol")
             +booleanField("isGetter")
             +booleanField("isSetter")
-            +status.withTransform()
             +annotations
             +typeParameters
         }
@@ -561,12 +561,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         resolvedTypeRef.configure {
             +field("type", coneKotlinTypeType)
             +field("delegatedTypeRef", typeRef, nullable = true)
-            +booleanField("isSuspend")
-        }
-
-        delegatedTypeRef.configure {
-            +field("delegate", expression, nullable = true)
-            +field(typeRef)
         }
 
         typeRefWithNullability.configure {

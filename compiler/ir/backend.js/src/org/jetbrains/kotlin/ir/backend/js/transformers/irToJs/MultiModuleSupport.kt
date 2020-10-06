@@ -188,7 +188,7 @@ fun breakCrossModuleFieldAccess(
 
                 return expression.symbol.owner.transformAccess {
                     val getter = getter()
-                    IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, getter.returnType, getter.symbol)
+                    IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, getter.returnType, getter.symbol, getter.typeParameters.size, getter.valueParameters.size)
                 } ?: expression
             }
 
@@ -197,7 +197,7 @@ fun breakCrossModuleFieldAccess(
 
                 return expression.symbol.owner.transformAccess {
                     val setter = setter()
-                    IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, setter.returnType, setter.symbol).apply {
+                    IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, setter.returnType, setter.symbol, setter.typeParameters.size, setter.valueParameters.size).apply {
                         putValueArgument(0, expression.value)
                     }
                 } ?: expression

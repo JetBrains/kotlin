@@ -16,14 +16,14 @@ fun test() {
     <!INAPPLICABLE_CANDIDATE!>fooInt<!>(p3)
     fooInt(p4)
     <!INAPPLICABLE_CANDIDATE!>fooInt<!>(p5)
-    fooInt(p6)
+    <!INAPPLICABLE_CANDIDATE!>fooInt<!>(p6)
 
     <!INAPPLICABLE_CANDIDATE!>fooLong<!>(p1)
     fooLong(p2)
     <!INAPPLICABLE_CANDIDATE!>fooLong<!>(p3)
     <!INAPPLICABLE_CANDIDATE!>fooLong<!>(p4)
     <!INAPPLICABLE_CANDIDATE!>fooLong<!>(p5)
-    <!INAPPLICABLE_CANDIDATE!>fooLong<!>(p6)
+    fooLong(p6)
 
     <!INAPPLICABLE_CANDIDATE!>fooShort<!>(p1)
     <!INAPPLICABLE_CANDIDATE!>fooShort<!>(p2)

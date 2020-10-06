@@ -23,12 +23,12 @@ import org.jetbrains.kotlin.codegen.replaceValueParametersIn
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.codegen.state.extractTypeMappingModeFromAnnotation
 import org.jetbrains.kotlin.codegen.state.isMethodWithDeclarationSiteWildcardsFqName
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunction
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.descriptors.IrBasedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
@@ -37,13 +37,11 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.*
-import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
-import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
-import org.jetbrains.kotlin.load.kotlin.forceSingleValueParameterBoxing
-import org.jetbrains.kotlin.load.kotlin.signatures
+import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -70,6 +68,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
     }
 
     fun mapFunctionName(function: IrFunction, skipSpecial: Boolean = false): String {
+        if (function !is IrSimpleFunction) return function.name.asString()
+
         if (!skipSpecial) {
             if (function.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) {
                 val platformName = function.getJvmNameFromAnnotation()
@@ -80,8 +80,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
             if (nameForSpecialFunction != null) return nameForSpecialFunction
         }
 
-        val property = (function as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
-        if (property != null && function.name.isSpecial) {
+        val property = function.correspondingPropertySymbol?.owner
+        if (property != null) {
             val propertyName = property.name.asString()
             val propertyParent = property.parentAsClass
             if (propertyParent.isAnnotationClass)
@@ -93,43 +93,57 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
             if ((propertyParent.isEnumClass || propertyParent.isEnumEntry) && (propertyName == "name" || propertyName == "ordinal"))
                 return propertyName
 
-            val accessorName = if (function.isGetter) JvmAbi.getterName(propertyName) else JvmAbi.setterName(propertyName)
-            return mangleMemberNameIfRequired(accessorName, function)
+            if (function.name.isSpecial) {
+                val accessorName = if (function.isGetter) JvmAbi.getterName(propertyName) else JvmAbi.setterName(propertyName)
+                return mangleMemberNameIfRequired(accessorName, function)
+            }
         }
 
         return mangleMemberNameIfRequired(function.name.asString(), function)
     }
 
-    private fun mangleMemberNameIfRequired(name: String, function: IrFunction): String {
+    private fun mangleMemberNameIfRequired(name: String, function: IrSimpleFunction): String {
         val newName = JvmCodegenUtil.sanitizeNameIfNeeded(name, context.state.languageVersionSettings)
 
-        if (function.isTopLevel) {
-            if (Visibilities.isPrivate(function.suspendFunctionOriginal().visibility) &&
-                newName != "<clinit>" && (function.parent as? IrClass)?.attributeOwnerId in context.multifileFacadeForPart
-            ) {
-                return "$newName$${function.parentAsClass.name.asString()}"
-            }
-            return newName
+        val suffix = when {
+            function.isTopLevel ->
+                if (function.isInvisibleInMultifilePart()) function.parentAsClass.name.asString() else null
+            function.shouldMangleAsInternal() ->
+                NameUtils.sanitizeAsJavaIdentifier(getModuleName(function))
+            else -> null
+        } ?: return newName
+
+        if (function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
+            assert(newName.endsWith(JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX)) { "Default adapter should end with \$default: ${function.render()}" }
+            return newName.substringBeforeLast(JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX) + "$" + suffix + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX
         }
 
-        return if (function.shouldMangleAsInternal())
-            KotlinTypeMapper.InternalNameMapper.mangleInternalName(newName, getModuleName(function))
-        else
-            newName
+        return "$newName$$suffix"
     }
 
-    private fun IrFunction.shouldMangleAsInternal() =
-        this !is IrConstructor &&
-                origin != JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR &&
-                visibility == Visibilities.INTERNAL &&
-                !isPublishedApi()
+    private fun IrSimpleFunction.isInvisibleInMultifilePart(): Boolean =
+        name.asString() != "<clinit>" &&
+                (parent as? IrClass)?.attributeOwnerId in context.multifileFacadeForPart &&
+                (DescriptorVisibilities.isPrivate(suspendFunctionOriginal().visibility) ||
+                        originalForDefaultAdapter?.isInvisibleInMultifilePart() == true)
 
-    private fun getModuleName(function: IrFunction): String =
-        (if (function is IrLazyFunctionBase)
+    private fun IrSimpleFunction.shouldMangleAsInternal(): Boolean =
+        (origin != JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR &&
+                visibility == DescriptorVisibilities.INTERNAL &&
+                !isPublishedApi())
+                || originalForDefaultAdapter?.shouldMangleAsInternal() == true
+
+    private val IrSimpleFunction.originalForDefaultAdapter: IrSimpleFunction?
+        get() = if (origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
+            ((body?.statements?.lastOrNull() as? IrReturn)?.value as? IrCall)?.symbol?.owner
+        } else null
+
+    private fun getModuleName(function: IrSimpleFunction): String =
+        (if (function is IrLazyFunction)
             getJvmModuleNameForDeserialized(function)
         else null) ?: context.state.moduleName
 
-    private fun IrFunction.isPublishedApi(): Boolean =
+    private fun IrSimpleFunction.isPublishedApi(): Boolean =
         propertyIfAccessor.annotations.hasAnnotation(StandardNames.FqNames.publishedApi)
 
     fun mapReturnType(declaration: IrDeclaration, sw: JvmSignatureWriter? = null): Type {
@@ -311,8 +325,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         val invokeOpcode = when {
             callee.dispatchReceiverParameter == null -> Opcodes.INVOKESTATIC
             isSuperCall -> Opcodes.INVOKESPECIAL
-            isInterface && !Visibilities.isPrivate(callee.visibility) -> Opcodes.INVOKEINTERFACE
-            Visibilities.isPrivate(callee.visibility) && !callee.isSuspend -> Opcodes.INVOKESPECIAL
+            isInterface && !DescriptorVisibilities.isPrivate(callee.visibility) -> Opcodes.INVOKEINTERFACE
+            DescriptorVisibilities.isPrivate(callee.visibility) && !callee.isSuspend -> Opcodes.INVOKESPECIAL
             else -> Opcodes.INVOKEVIRTUAL
         }
 
@@ -339,6 +353,9 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         return null
     }
 
+    internal fun mapCalleeToAsmMethod(function: IrSimpleFunction, isSuperCall: Boolean = false): Method =
+        mapAsmMethod(findSuperDeclaration(function, isSuperCall))
+
     // Copied from KotlinTypeMapper.findSuperDeclaration.
     private fun findSuperDeclaration(function: IrSimpleFunction, isSuperCall: Boolean): IrSimpleFunction {
         var current = function
@@ -363,10 +380,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         return current
     }
 
-    private fun getJvmMethodNameIfSpecial(irFunction: IrFunction): String? =
-        (irFunction as? IrSimpleFunction)?.run {
-            getBuiltinSpecialPropertyGetterName() ?: getDifferentNameForJvmBuiltinFunction()
-        }
+    private fun getJvmMethodNameIfSpecial(irFunction: IrSimpleFunction): String? =
+        irFunction.getBuiltinSpecialPropertyGetterName() ?: irFunction.getDifferentNameForJvmBuiltinFunction()
 
     private val IrSimpleFunction.isBuiltIn: Boolean
         get() = getPackageFragment()?.fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME ||
@@ -404,7 +419,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
     }
 
     // From org.jetbrains.kotlin.load.kotlin.getJvmModuleNameForDeserializedDescriptor
-    private fun getJvmModuleNameForDeserialized(function: IrLazyFunctionBase): String? {
+    private fun getJvmModuleNameForDeserialized(function: IrLazyFunction): String? {
         var current: IrDeclarationParent? = function.parent
         while (current != null) {
             when (current) {

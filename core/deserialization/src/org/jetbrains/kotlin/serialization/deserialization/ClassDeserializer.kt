@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.packageFragments
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirementTable
 import org.jetbrains.kotlin.name.ClassId
@@ -52,7 +53,7 @@ class ClassDeserializer(private val components: DeserializationComponents) {
 
             outerClass.c
         } else {
-            val fragments = components.packageFragmentProvider.getPackageFragments(classId.packageFqName)
+            val fragments = components.packageFragmentProvider.packageFragments(classId.packageFqName)
             val fragment = fragments.firstOrNull { it !is DeserializedPackageFragment || it.hasTopLevelClass(classId.shortClassName) }
                 ?: return null
 

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.getJvmVisibilityOfDefaultArgumentStub
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -75,4 +76,7 @@ class JvmDefaultArgumentStubGenerator(override val context: JvmBackendContext) :
             }
         )
     }
+
+    // Since the call to the underlying implementation in a default stub has different inlining behavior we need to mark it.
+    override fun getOriginForCallToImplementation() = JvmLoweredStatementOrigin.DEFAULT_STUB_CALL_TO_IMPLEMENTATION
 }

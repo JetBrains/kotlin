@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 var holder = ""
 var globalA: A = A(-1)
     get(): A {

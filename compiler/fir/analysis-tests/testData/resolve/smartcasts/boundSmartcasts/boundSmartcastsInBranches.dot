@@ -677,7 +677,7 @@ digraph boundSmartcastsInBranches_kt {
                         275 [label="Access variable R|<local>/x|"];
                         276 [label="Access variable R|kotlin/String.length|"];
                         277 [label="Access variable R|<local>/y|"];
-                        278 [label="Access variable <Inapplicable(WRONG_RECEIVER): kotlin/String.length>#"];
+                        278 [label="Access variable <Inapplicable(INAPPLICABLE_WRONG_RECEIVER): kotlin/String.length>#"];
                         279 [label="Access variable R|<local>/z|"];
                         280 [label="Access variable R|kotlin/String.length|"];
                         281 [label="Exit block"];
@@ -702,11 +702,11 @@ digraph boundSmartcastsInBranches_kt {
                         color=blue
                         292 [label="Enter block"];
                         293 [label="Access variable R|<local>/x|"];
-                        294 [label="Access variable <Inapplicable(WRONG_RECEIVER): kotlin/String.length>#"];
+                        294 [label="Access variable <Inapplicable(INAPPLICABLE_WRONG_RECEIVER): kotlin/String.length>#"];
                         295 [label="Access variable R|<local>/y|"];
                         296 [label="Access variable R|kotlin/String.length|"];
                         297 [label="Access variable R|<local>/z|"];
-                        298 [label="Access variable <Inapplicable(WRONG_RECEIVER): kotlin/String.length>#"];
+                        298 [label="Access variable <Inapplicable(INAPPLICABLE_WRONG_RECEIVER): kotlin/String.length>#"];
                         299 [label="Exit block"];
                     }
                     300 [label="Exit when branch result"];
@@ -731,7 +731,7 @@ digraph boundSmartcastsInBranches_kt {
                         311 [label="Access variable R|<local>/x|"];
                         312 [label="Access variable R|kotlin/String.length|"];
                         313 [label="Access variable R|<local>/y|"];
-                        314 [label="Access variable <Inapplicable(WRONG_RECEIVER): kotlin/String.length>#"];
+                        314 [label="Access variable <Inapplicable(INAPPLICABLE_WRONG_RECEIVER): kotlin/String.length>#"];
                         315 [label="Access variable R|<local>/z|"];
                         316 [label="Access variable R|kotlin/String.length|"];
                         317 [label="Exit block"];

@@ -255,9 +255,8 @@ fun buildIvyRepositoryTask(
         inputs.files(configuration)
 
         outputs.upToDateWhen {
-            configuration.resolvedConfiguration.resolvedArtifacts.single()
-                .moduleDirectory()
-                .exists()
+            val repoMarker = configuration.resolvedConfiguration.resolvedArtifacts.single().moduleDirectory().resolve(".marker")
+            repoMarker.exists()
         }
 
         doFirst {
@@ -266,8 +265,9 @@ fun buildIvyRepositoryTask(
 
             artifact.storeDirectory().cleanStore()
 
-            if (moduleDirectory.exists()) {
-                logger.info("Path ${moduleDirectory.absolutePath} already exists, skipping unpacking.")
+            val repoMarker = File(moduleDirectory, ".marker")
+            if (repoMarker.exists()) {
+                logger.info("Path ${repoMarker.absolutePath} already exists, skipping unpacking.")
                 return@doFirst
             }
 
@@ -326,6 +326,8 @@ fun buildIvyRepositoryTask(
                             )
                         }
                 }
+
+                repoMarker.createNewFile()
             }
         }
     }

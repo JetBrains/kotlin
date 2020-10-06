@@ -30,6 +30,9 @@ object JvmAnalysisFlags {
     @JvmStatic
     val irCheckLocalNames by AnalysisFlag.Delegates.Boolean
 
+    @JvmStatic
+    val disableUltraLightClasses by AnalysisFlag.Delegates.Boolean
+
     private object Delegates {
         object Jsr305StateWarnByDefault {
             operator fun provideDelegate(instance: Any?, property: KProperty<*>): AnalysisFlag.Delegate<Jsr305State> =

@@ -71,7 +71,7 @@ open class ParcelableResolveExtension : SyntheticResolveExtension {
 
             functionDescriptor.initialize(
                     null, classDescriptor.thisAsReceiverParameter, emptyList(), valueParameters,
-                    returnType, modality, Visibilities.PUBLIC)
+                    returnType, modality, DescriptorVisibilities.PUBLIC)
 
             return functionDescriptor
         }

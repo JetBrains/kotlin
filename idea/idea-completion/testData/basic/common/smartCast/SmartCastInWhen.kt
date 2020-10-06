@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 interface Expr
 class Sum(val left : Expr, val right : Expr) : Expr
 

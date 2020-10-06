@@ -86,7 +86,7 @@ internal fun checkRedeclarations(
     descriptor: DeclarationDescriptor = declaration.unsafeResolveToDescriptor(resolutionFacade)
 ) {
     fun DeclarationDescriptor.isTopLevelPrivate(): Boolean =
-        this is DeclarationDescriptorWithVisibility && visibility == Visibilities.PRIVATE && containingDeclaration is PackageFragmentDescriptor
+        this is DeclarationDescriptorWithVisibility && visibility == DescriptorVisibilities.PRIVATE && containingDeclaration is PackageFragmentDescriptor
 
     fun isInSameFile(d1: DeclarationDescriptor, d2: DeclarationDescriptor): Boolean =
         (d1 as? DeclarationDescriptorWithSource)?.source?.getPsi()?.containingFile == (d2 as? DeclarationDescriptorWithSource)?.source

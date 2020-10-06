@@ -78,10 +78,10 @@ class Test() {
         (f@ <!VARIABLE_EXPECTED!>getInt()<!>) += 343
 
         <!VARIABLE_EXPECTED!>1<!>++
-        (<!VARIABLE_EXPECTED!>r@ 1<!>)++
+        (r@ <!VARIABLE_EXPECTED!>1<!>)++
 
         <!VARIABLE_EXPECTED!>getInt()<!>++
-        (<!VARIABLE_EXPECTED!>m@ getInt()<!>)++
+        (m@ <!VARIABLE_EXPECTED!>getInt()<!>)++
 
         this<!UNRESOLVED_REFERENCE!>++<!>
 
@@ -106,7 +106,7 @@ class Test() {
         <!VARIABLE_EXPECTED!>b<!> += 34
 
         a++
-        (<!VARIABLE_EXPECTED!>l@ a<!>)++
+        (l@ a)++
         (a)++
     }
 

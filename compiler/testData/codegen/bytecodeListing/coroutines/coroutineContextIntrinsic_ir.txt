@@ -2,6 +2,7 @@
 @kotlin.Metadata
 final class CoroutineContextIntrinsicKt$notTailCall$1 {
     // source: 'coroutineContextIntrinsic.kt'
+    enclosing method CoroutineContextIntrinsicKt.notTailCall(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field label: int
     synthetic field result: java.lang.Object
     inner (anonymous) class CoroutineContextIntrinsicKt$notTailCall$1

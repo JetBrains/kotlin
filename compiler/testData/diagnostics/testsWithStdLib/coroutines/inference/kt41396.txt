@@ -1,0 +1,20 @@
+package
+
+public fun </*0*/ T> flow(/*0*/ @kotlin.BuilderInference block: suspend FlowCollector<T>.() -> kotlin.Unit): Flow<T>
+public fun </*0*/ T> flowOf(/*0*/ value: T): Flow<T>
+public fun foo(): Flow<kotlin.Int>
+public fun </*0*/ T, /*1*/ R> Flow<T>.transformLatest(/*0*/ @kotlin.BuilderInference transform: suspend FlowCollector<R>.(value: T) -> kotlin.Unit): Flow<R>
+
+public interface Flow</*0*/ out T> {
+    public abstract suspend fun collect(/*0*/ collector: FlowCollector<T>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface FlowCollector</*0*/ in T> {
+    public abstract suspend fun emit(/*0*/ value: T): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

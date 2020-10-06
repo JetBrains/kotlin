@@ -1,6 +1,4 @@
 public final class InheritMethodsDifferentReturnTypes : R|kotlin/Any| {
-    public constructor(): R|test/InheritMethodsDifferentReturnTypes|
-
     public abstract interface Sub : R|test/InheritMethodsDifferentReturnTypes.Super1|, R|test/InheritMethodsDifferentReturnTypes.Super2| {
     }
 
@@ -17,5 +15,7 @@ public final class InheritMethodsDifferentReturnTypes : R|kotlin/Any| {
         public abstract fun foo(): R|kotlin/String?|
 
     }
+
+    public constructor(): R|test/InheritMethodsDifferentReturnTypes|
 
 }

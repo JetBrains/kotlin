@@ -447,7 +447,8 @@ public final class TranslationUtils {
             }
 
             DeclarationDescriptor container = descriptor.getContainingDeclaration();
-            boolean isPublic = descriptor.getVisibility().effectiveVisibility(descriptor, true).getPublicApi() && !forcePrivate;
+            EffectiveVisibility effectiveVisibility = EffectiveVisibilityUtilsKt.effectiveVisibility(descriptor.getVisibility(), descriptor, true);
+            boolean isPublic = effectiveVisibility.getPublicApi() && !forcePrivate;
             if (KotlinBuiltIns.isCharOrNullableChar(returnType) && container instanceof ClassDescriptor && isPublic) {
                 ClassDescriptor containingClass = (ClassDescriptor) container;
                 FqNameUnsafe containingClassName = DescriptorUtilsKt.getFqNameUnsafe(containingClass);

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -27,6 +27,23 @@ val IrDeclarationParent.fqNameForIrSerialization: FqName
     get() = when (this) {
         is IrPackageFragment -> this.fqName
         is IrDeclaration -> this.parent.fqNameForIrSerialization.child(this.nameForIrSerialization)
+        else -> error(this)
+    }
+
+/**
+ * Skips synthetic FILE_CLASS to make top-level functions look as in kotlin source
+ */
+val IrDeclarationParent.kotlinFqName: FqName
+    get() = when (this) {
+        is IrPackageFragment -> this.fqName
+        is IrClass -> {
+            if (isFileClass) {
+                parent.kotlinFqName
+            } else {
+                parent.kotlinFqName.child(nameForIrSerialization)
+            }
+        }
+        is IrDeclaration -> this.parent.kotlinFqName.child(nameForIrSerialization)
         else -> error(this)
     }
 
@@ -83,7 +100,8 @@ val IrDeclaration.fileEntry: SourceManager.FileEntry
         }
     }
 
-fun IrClass.companionObject() = this.declarations.singleOrNull {it is IrClass && it.isCompanion }
+fun IrClass.companionObject(): IrClass? =
+    this.declarations.singleOrNull { it is IrClass && it.isCompanion } as IrClass?
 
 val IrDeclaration.isGetter get() = this is IrSimpleFunction && this == this.correspondingPropertySymbol?.owner?.getter
 
@@ -109,7 +127,7 @@ val IrDeclaration.isLocal: Boolean
             require(current is IrDeclaration)
 
             if (current is IrDeclarationWithVisibility) {
-                if (current.visibility == Visibilities.LOCAL) return true
+                if (current.visibility == DescriptorVisibilities.LOCAL) return true
             }
 
             if (current.isAnonymousObject) return true

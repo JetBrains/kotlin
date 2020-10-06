@@ -24,7 +24,8 @@ internal class KotlinOutputChecker(
     private val testDir: String,
     appPath: String,
     outputPath: String,
-    private val useIrBackend: Boolean
+    private val useIrBackend: Boolean,
+    private val expectedOutputFile: File,
 ) : OutputChecker(appPath, outputPath) {
     companion object {
         @JvmStatic
@@ -44,6 +45,9 @@ internal class KotlinOutputChecker(
 
     private lateinit var myTestName: String
 
+    // True if the underlying test has already failed, but the failure was ignored.
+    var threwException = false
+
     override fun init(testName: String) {
         super.init(testName)
         this.myTestName = Character.toLowerCase(testName[0]) + testName.substring(1)
@@ -58,14 +62,8 @@ internal class KotlinOutputChecker(
         val actual = preprocessBuffer(buildOutputString())
 
         val outDir = File(testDir)
-        var outFile = File(outDir, "$myTestName.out")
-
-        if (useIrBackend) {
-            val irBackendOutFile = File(outDir, "$myTestName.ir.out")
-            if (irBackendOutFile.exists()) {
-                outFile = irBackendOutFile
-            }
-        }
+        var outFile = expectedOutputFile
+        val isIgnored = InTextDirectivesUtils.isIgnoredTarget(if (useIrBackend) TargetBackend.JVM_IR else TargetBackend.JVM, outFile)
 
         if (!outFile.exists()) {
             if (SystemInfo.isWindows) {
@@ -86,7 +84,6 @@ internal class KotlinOutputChecker(
             LOG.error("Test file created ${outFile.path}\n**************** Don't forget to put it into VCS! *******************")
         } else {
             val originalText = FileUtilRt.loadFile(outFile, CharsetToolkit.UTF8)
-            val isIgnored = InTextDirectivesUtils.isIgnoredTarget(if (useIrBackend) TargetBackend.JVM_IR else TargetBackend.JVM, outFile)
             val expected = StringUtilRt.convertLineSeparators(originalText).split("\n").filter {
                 !it.trim().startsWith(InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIX)
             }.joinToString("\n")
@@ -110,7 +107,7 @@ internal class KotlinOutputChecker(
                 if (isIgnored) return
 
                 Assert.assertEquals(expected, actual)
-            } else if (isIgnored) {
+            } else if (isIgnored && !threwException) {
                 // Fail if tests are marked as failing, but actually pass.
                 throw AssertionError("Test passes and could be unmuted, remove IGNORE_BACKEND directive from ${outFile.path}")
             }

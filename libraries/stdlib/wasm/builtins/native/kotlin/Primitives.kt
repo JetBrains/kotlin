@@ -844,17 +844,32 @@ public class Int private constructor() : Number(), Comparable<Int> {
     /** Returns the negative of this value. */
     public inline operator fun unaryMinus(): Int = 0 - this
 
-    /** Shifts this value left by the [bitCount] number of bits. */
+    /**
+     * Shifts this value left by the [bitCount] number of bits.
+     *
+     * Note that only the five lowest-order bits of the [bitCount] are used as the shift distance.
+     * The shift distance actually used is therefore always in the range `0..31`.
+     */
     @WasmInstruction(WasmInstruction.I32_SHL)
     public infix fun shl(bitCount: Int): Int =
         implementedAsIntrinsic
 
-    /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit. */
+    /**
+     * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit.
+     *
+     * Note that only the five lowest-order bits of the [bitCount] are used as the shift distance.
+     * The shift distance actually used is therefore always in the range `0..31`.
+     */
     @WasmInstruction(WasmInstruction.I32_SHR_S)
     public infix fun shr(bitCount: Int): Int =
         implementedAsIntrinsic
 
-    /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros. */
+    /**
+     * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros.
+     *
+     * Note that only the five lowest-order bits of the [bitCount] are used as the shift distance.
+     * The shift distance actually used is therefore always in the range `0..31`.
+     */
     @WasmInstruction(WasmInstruction.I32_SHR_U)
     public infix fun ushr(bitCount: Int): Int =
         implementedAsIntrinsic
@@ -1233,15 +1248,30 @@ public class Long private constructor() : Number(), Comparable<Long> {
 //        return LongRange(this, other.toLong())
 //    }
 
-    /** Shifts this value left by the [bitCount] number of bits. */
+    /**
+     * Shifts this value left by the [bitCount] number of bits.
+     *
+     * Note that only the six lowest-order bits of the [bitCount] are used as the shift distance.
+     * The shift distance actually used is therefore always in the range `0..63`.
+     */
     public inline infix fun shl(bitCount: Int): Long =
         wasm_i64_shl(this, bitCount.toLong())
 
-    /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit. */
+    /**
+     * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit.
+     *
+     * Note that only the six lowest-order bits of the [bitCount] are used as the shift distance.
+     * The shift distance actually used is therefore always in the range `0..63`.
+     */
     public inline infix fun shr(bitCount: Int): Long =
         wasm_i64_shr_s(this, bitCount.toLong())
 
-    /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros. */
+    /**
+     * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros.
+     *
+     * Note that only the six lowest-order bits of the [bitCount] are used as the shift distance.
+     * The shift distance actually used is therefore always in the range `0..63`.
+     */
     public inline infix fun ushr(bitCount: Int): Long =
         wasm_i64_shr_u(this, bitCount.toLong())
 

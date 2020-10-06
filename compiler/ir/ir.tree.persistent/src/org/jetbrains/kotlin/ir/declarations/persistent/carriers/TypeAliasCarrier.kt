@@ -9,9 +9,11 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.types.IrType
 
 internal interface TypeAliasCarrier : DeclarationCarrier {
     var typeParametersField: List<IrTypeParameter>
+    var expandedTypeField: IrType
 
     override fun clone(): TypeAliasCarrier {
         return TypeAliasCarrierImpl(
@@ -19,7 +21,8 @@ internal interface TypeAliasCarrier : DeclarationCarrier {
             parentField,
             originField,
             annotationsField,
-            typeParametersField
+            typeParametersField,
+            expandedTypeField
         )
     }
 }
@@ -29,5 +32,6 @@ internal class TypeAliasCarrierImpl(
     override var parentField: IrDeclarationParent?,
     override var originField: IrDeclarationOrigin,
     override var annotationsField: List<IrConstructorCall>,
-    override var typeParametersField: List<IrTypeParameter>
+    override var typeParametersField: List<IrTypeParameter>,
+    override var expandedTypeField: IrType,
 ) : TypeAliasCarrier

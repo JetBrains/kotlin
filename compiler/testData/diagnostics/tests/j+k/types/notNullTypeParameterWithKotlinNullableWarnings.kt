@@ -10,6 +10,8 @@ public interface SLRUMap<V> {
 
     void takeVList(@NotNull List<@NotNull V> value);
     <E> void takeEList(@NotNull List<@NotNull E> value);
+
+    public <K> K id(K value) { return null; }
 }
 
 // FILE: main.kt
@@ -20,9 +22,20 @@ fun <V> SLRUMap<V>.getOrPut(value: V, l: List<V>) {
 
     takeE(<!NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER!>value<!>)
     takeEList(<!NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER!>l<!>)
+    takeE(<!NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER!>id(value)<!>)
 
     if (value != null) {
         takeV(value)
         takeE(value)
+        takeE(id(value))
     }
+}
+
+fun <V : Any> SLRUMap<V>.getOrPutNN(value: V, l: List<V>) {
+    takeV(value)
+    takeVList(l)
+
+    takeE(value)
+    takeEList(l)
+    takeE(id(value))
 }

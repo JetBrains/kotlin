@@ -6,16 +6,14 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir
 
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
-import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
-import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacade
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacadeForCompletion
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.ReadActionConfinementValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.assertIsValid
-import org.jetbrains.kotlin.idea.frontend.api.components.KtCallResolver
-import org.jetbrains.kotlin.idea.frontend.api.components.KtDiagnosticProvider
-import org.jetbrains.kotlin.idea.frontend.api.components.KtSmartCastProvider
-import org.jetbrains.kotlin.idea.frontend.api.components.KtTypeProvider
+import org.jetbrains.kotlin.idea.frontend.api.components.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.components.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbolProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.threadLocal
@@ -43,12 +41,14 @@ private constructor(
     override val callResolver: KtCallResolver = KtFirCallResolver(this, token)
     override val scopeProvider by threadLocal { KtFirScopeProvider(this, firSymbolBuilder, project, firResolveState, token) }
     override val symbolProvider: KtSymbolProvider =
-        KtFirSymbolProvider(this, firResolveState.firIdeLibrariesSession.firSymbolProvider, firResolveState, firSymbolBuilder, token)
-
+        KtFirSymbolProvider(this, firResolveState.rootModuleSession.firSymbolProvider, firResolveState, firSymbolBuilder, token)
+    override val completionCandidateChecker: KtCompletionCandidateChecker by threadLocal { KtFirCompletionCandidateChecker(this, token) }
+    override val symbolDeclarationOverridesProvider: KtSymbolDeclarationOverridesProvider
+            by threadLocal { KtFirSymbolDeclarationOverridesProvider(this, token) }
 
     override fun createContextDependentCopy(): KtAnalysisSession {
         check(!isContextSession) { "Cannot create context-dependent copy of KtAnalysis session from a context dependent one" }
-        val contextResolveState = LowLevelFirApiFacade.getResolveStateForCompletion(element, firResolveState)
+        val contextResolveState = LowLevelFirApiFacadeForCompletion.getResolveStateForCompletion(element, firResolveState)
         return KtFirAnalysisSession(
             element,
             contextResolveState,

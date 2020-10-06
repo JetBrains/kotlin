@@ -1,5 +1,5 @@
 "use strict";
-var ClassWithDefaultCtor = JS_TESTS.ClassWithDefaultCtor, ClassWithPrimaryCtor = JS_TESTS.ClassWithPrimaryCtor, ClassWithSecondaryCtor = JS_TESTS.ClassWithSecondaryCtor, ClassWithMultipleSecondaryCtors = JS_TESTS.ClassWithMultipleSecondaryCtors, DerivedClassWithSecondaryCtor = JS_TESTS.DerivedClassWithSecondaryCtor, OpenClassWithMixedConstructors = JS_TESTS.OpenClassWithMixedConstructors;
+var ClassWithDefaultCtor = JS_TESTS.ClassWithDefaultCtor, ClassWithPrimaryCtor = JS_TESTS.ClassWithPrimaryCtor, ClassWithSecondaryCtor = JS_TESTS.ClassWithSecondaryCtor, ClassWithMultipleSecondaryCtors = JS_TESTS.ClassWithMultipleSecondaryCtors, DerivedClassWithSecondaryCtor = JS_TESTS.DerivedClassWithSecondaryCtor, OpenClassWithMixedConstructors = JS_TESTS.OpenClassWithMixedConstructors, KotlinGreeter = JS_TESTS.KotlinGreeter;
 function box() {
     var o1 = new ClassWithDefaultCtor();
     if (o1.x !== "ClassWithDefaultCtor::x")
@@ -31,5 +31,8 @@ function box() {
     var o10 = DerivedClassWithSecondaryCtor.delegateToCreateFromInts(-10, 20);
     if (o10.x !== "fromStrings:-10:20")
         return "Fail: DerivedClassWithSecondaryCtor.delegateToCreateFromInts";
+    var kg = new KotlinGreeter("Hi");
+    if (kg.greeting != "Hi")
+        return "Fail: KotlinGreeter";
     return "OK";
 }

@@ -9,6 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiClass
 import com.intellij.psi.impl.compiled.ClsElementImpl
 import junit.framework.TestCase
+import org.jetbrains.kotlin.asJava.PsiClassRenderer.renderClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
@@ -22,7 +23,7 @@ object LightClassTestCommon {
         expectedFile: File,
         testDataFile: File,
         findLightClass: (String) -> PsiClass?,
-        normalizeText: (String) -> String
+        normalizeText: (String) -> String,
     ) {
         val text = FileUtil.loadFile(testDataFile, true)
         val matcher = SUBJECT_FQ_NAME_PATTERN.matcher(text)
@@ -40,14 +41,7 @@ object LightClassTestCommon {
             return NOT_GENERATED_DIRECTIVE
         }
         TestCase.assertTrue("Not a light class: $lightClass ($fqName)", lightClass is KtLightClass)
-
-        val delegate = (lightClass as KtLightClass).clsDelegate
-        TestCase.assertTrue("Not a CLS element: $delegate", delegate is ClsElementImpl)
-
-        val buffer = StringBuilder()
-        (delegate as ClsElementImpl).appendMirrorText(0, buffer)
-
-        return normalizeText(buffer.toString())
+        return normalizeText(lightClass.renderClass(renderInner = true))
     }
 
     // Actual text for light class is generated with ClsElementImpl.appendMirrorText() that can find empty DefaultImpl inner class in stubs

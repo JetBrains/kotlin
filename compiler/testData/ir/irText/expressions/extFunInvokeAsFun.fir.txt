@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/extFunInvokeAsFun.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun with1 (receiver: kotlin.Any?, block: @[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<kotlin.Any?, kotlin.Unit>): kotlin.Unit declared in <root>'
         CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 [operator] declared in kotlin.Function1' type=kotlin.Unit origin=INVOKE
-          $this: GET_VAR 'block: @[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<kotlin.Any?, kotlin.Unit> declared in <root>.with1' type=@[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<kotlin.Any?, kotlin.Unit> origin=null
+          $this: GET_VAR 'block: @[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<kotlin.Any?, kotlin.Unit> declared in <root>.with1' type=@[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<kotlin.Any?, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
           p1: GET_VAR 'receiver: kotlin.Any? declared in <root>.with1' type=kotlin.Any? origin=null
   FUN name:with2 visibility:public modality:FINAL <> (receiver:kotlin.Any?, block:@[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<kotlin.Any?, kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:receiver index:0 type:kotlin.Any?
@@ -13,5 +13,5 @@ FILE fqName:<root> fileName:/extFunInvokeAsFun.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun with2 (receiver: kotlin.Any?, block: @[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<kotlin.Any?, kotlin.Unit>): kotlin.Unit declared in <root>'
         CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 [operator] declared in kotlin.Function1' type=kotlin.Unit origin=INVOKE
-          $this: GET_VAR 'block: @[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<kotlin.Any?, kotlin.Unit> declared in <root>.with2' type=@[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<kotlin.Any?, kotlin.Unit> origin=null
+          $this: GET_VAR 'block: @[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<kotlin.Any?, kotlin.Unit> declared in <root>.with2' type=@[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<kotlin.Any?, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
           p1: GET_VAR 'receiver: kotlin.Any? declared in <root>.with2' type=kotlin.Any? origin=null

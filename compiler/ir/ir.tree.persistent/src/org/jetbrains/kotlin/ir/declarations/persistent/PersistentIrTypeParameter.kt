@@ -62,5 +62,13 @@ internal class PersistentIrTypeParameter(
     override val descriptor: TypeParameterDescriptor
         get() = symbol.descriptor
 
-    override val superTypes: MutableList<IrType> = SmartList()
+    override var superTypesField: List<IrType> = emptyList()
+
+    override var superTypes: List<IrType>
+        get() = getCarrier().superTypesField
+        set(v) {
+            if (superTypes !== v) {
+                setCarrier().superTypesField = v
+            }
+        }
 }

@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 class IrCompositeImpl(
     override val startOffset: Int,
     override val endOffset: Int,
-    override val type: IrType,
+    override var type: IrType,
     override val origin: IrStatementOrigin? = null,
 ) : IrComposite() {
     constructor(

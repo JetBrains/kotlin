@@ -20,5 +20,5 @@ fun <S> test(i: Int, s: S) {
 
     c
 
-    takeInvInt(create(i))
+    <!INAPPLICABLE_CANDIDATE!>takeInvInt<!>(create(i))
 }

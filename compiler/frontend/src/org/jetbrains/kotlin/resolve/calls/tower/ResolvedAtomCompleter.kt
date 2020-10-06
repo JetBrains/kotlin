@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
+import org.jetbrains.kotlin.resolve.calls.commonSuperType
 import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceAdaptation
 import org.jetbrains.kotlin.resolve.calls.components.SuspendConversionStrategy
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
@@ -344,12 +345,11 @@ class ResolvedAtomCompleter(
                 (callableCandidate.candidate.typeParameters.map { it.typeConstructor } zip resultTypeParameters).toMap()
             )
 
-        val firstSubstitution = typeParametersSubstitutor.toOldSubstitution()
-        val secondSubstitution = resultSubstitutor.toOldSubstitution()
-        val resultSubstitutor = TypeSubstitutor.createChainedSubstitutor(
-            firstSubstitution,
-            secondSubstitution
-        )
+        val resultSubstitutor = if (callableCandidate.candidate.isSupportedForCallableReference()) {
+            val firstSubstitution = typeParametersSubstitutor.toOldSubstitution()
+            val secondSubstitution = resultSubstitutor.toOldSubstitution()
+            TypeSubstitutor.createChainedSubstitutor(firstSubstitution, secondSubstitution)
+        } else TypeSubstitutor.EMPTY
 
         val psiCallArgument = resolvedAtom.atom.psiCallArgument as CallableReferenceKotlinCallArgumentImpl
         val callableReferenceExpression = psiCallArgument.ktCallableReferenceExpression

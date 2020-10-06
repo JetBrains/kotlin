@@ -6,14 +6,21 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.isOperator
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLambdaArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildNamedArgumentExpression
+import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.defaultParameterResolver
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.name.Name
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.LinkedHashMap
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
@@ -23,11 +30,11 @@ data class ArgumentMapping(
     //      fun foo(a: Int, b: Int) {}
     //      foo(b = bar(), a = qux())
     // parameterToCallArgumentMap.values() should be [ 'bar()', 'foo()' ]
-    val parameterToCallArgumentMap: Map<FirValueParameter, ResolvedCallArgument>,
+    val parameterToCallArgumentMap: LinkedHashMap<FirValueParameter, ResolvedCallArgument>,
     val diagnostics: List<ResolutionDiagnostic>
 ) {
-    fun toArgumentToParameterMapping(): Map<FirExpression, FirValueParameter> {
-        val argumentToParameterMapping = mutableMapOf<FirExpression, FirValueParameter>()
+    fun toArgumentToParameterMapping(): LinkedHashMap<FirExpression, FirValueParameter> {
+        val argumentToParameterMapping = linkedMapOf<FirExpression, FirValueParameter>()
         parameterToCallArgumentMap.forEach { (valueParameter, resolvedArgument) ->
             when (resolvedArgument) {
                 is ResolvedCallArgument.SimpleArgument -> argumentToParameterMapping[resolvedArgument.callArgument] = valueParameter
@@ -38,25 +45,48 @@ data class ArgumentMapping(
         }
         return argumentToParameterMapping
     }
+
+    fun numDefaults(): Int {
+        return parameterToCallArgumentMap.values.count { it == ResolvedCallArgument.DefaultArgument }
+    }
 }
 
-private val EmptyArgumentMapping = ArgumentMapping(emptyMap(), emptyList())
+private val EmptyArgumentMapping = ArgumentMapping(linkedMapOf(), emptyList())
 
-fun mapArguments(
+fun BodyResolveComponents.mapArguments(
     arguments: List<FirExpression>,
-    function: FirFunction<*>
+    function: FirFunction<*>,
+    originScope: FirScope?,
 ): ArgumentMapping {
     if (arguments.isEmpty() && function.valueParameters.isEmpty()) {
         return EmptyArgumentMapping
     }
     val externalArgument: FirExpression? = arguments.lastOrNull { it is FirLambdaArgumentExpression }
-    val argumentsInParenthesis: List<FirExpression> = if (externalArgument == null) {
+    var argumentsInParenthesis: List<FirExpression> = if (externalArgument == null) {
         arguments
     } else {
         arguments.subList(0, arguments.size - 1)
     }
 
-    val processor = FirCallArgumentsProcessor(function)
+    // If this is an overloading indexed access operator, it could have default values or a vararg parameter in the middle.
+    // For proper argument mapping, wrap the last one, which is supposed to be the updated value, as a named argument.
+    if ((function as? FirSimpleFunction)?.isOperator == true &&
+        function.name == Name.identifier("set") &&
+        function.valueParameters.any { it.defaultValue != null || it.isVararg }
+    ) {
+        val v = argumentsInParenthesis.last()
+        if (v !is FirNamedArgumentExpression) {
+            val namedV = buildNamedArgumentExpression {
+                source = v.source
+                expression = v
+                isSpread = false
+                name = function.valueParameters.last().name
+            }
+            argumentsInParenthesis = argumentsInParenthesis.dropLast(1) + listOf(namedV)
+        }
+    }
+
+    val processor = FirCallArgumentsProcessor(function, this, originScope)
     processor.processArgumentsInParenthesis(argumentsInParenthesis)
     if (externalArgument != null) {
         processor.processExternalArgument(externalArgument)
@@ -66,14 +96,18 @@ fun mapArguments(
     return ArgumentMapping(processor.result, processor.diagnostics ?: emptyList())
 }
 
-private class FirCallArgumentsProcessor(private val function: FirFunction<*>) {
+private class FirCallArgumentsProcessor(
+    private val function: FirFunction<*>,
+    private val bodyResolveComponents: BodyResolveComponents,
+    private val originScope: FirScope?,
+) {
     private var state = State.POSITION_ARGUMENTS
     private var currentPositionedParameterIndex = 0
     private var varargArguments: MutableList<FirExpression>? = null
     private var nameToParameter: Map<Name, FirValueParameter>? = null
     var diagnostics: MutableList<ResolutionDiagnostic>? = null
         private set
-    val result: MutableMap<FirValueParameter, ResolvedCallArgument> = LinkedHashMap()
+    val result: LinkedHashMap<FirValueParameter, ResolvedCallArgument> = LinkedHashMap(function.valueParameters.size)
 
     private enum class State {
         POSITION_ARGUMENTS,
@@ -114,20 +148,20 @@ private class FirCallArgumentsProcessor(private val function: FirFunction<*>) {
 
         val parameter = parameters.getOrNull(currentPositionedParameterIndex)
         if (parameter == null) {
-             addDiagnostic(TooManyArguments(argument, function))
+            addDiagnostic(TooManyArguments(argument, function))
             return false
         }
 
-        if (!parameter.isVararg) {
+        return if (!parameter.isVararg) {
             currentPositionedParameterIndex++
 
             result[parameter] = ResolvedCallArgument.SimpleArgument(argument)
-            return false
+            false
         }
         // all position arguments will be mapped to current vararg parameter
         else {
             addVarargArgument(argument)
-            return true
+            true
         }
     }
 
@@ -186,9 +220,9 @@ private class FirCallArgumentsProcessor(private val function: FirFunction<*>) {
             }
         }
 
-        for (parameter in parameters) {
+        for ((index, parameter) in parameters.withIndex()) {
             if (!result.containsKey(parameter)) {
-                if (parameter.defaultValue != null) {
+                if (bodyResolveComponents.session.defaultParameterResolver.declaresDefaultValue(parameter, function, originScope, index)) {
                     result[parameter] = ResolvedCallArgument.DefaultArgument
                 } else if (parameter.isVararg) {
                     result[parameter] = ResolvedCallArgument.VarargArgument(emptyList())

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
@@ -36,19 +36,19 @@ object CirClassFactory {
 
     @Suppress("NOTHING_TO_INLINE")
     inline fun create(
-        annotations: List<CirAnnotation>,
-        name: Name,
-        typeParameters: List<CirTypeParameter>,
-        visibility: Visibility,
-        modality: Modality,
-        kind: ClassKind,
-        companion: Name?,
-        isCompanion: Boolean,
-        isData: Boolean,
-        isInline: Boolean,
-        isInner: Boolean,
-        isExternal: Boolean,
-        supertypes: MutableCollection<CirType>
+            annotations: List<CirAnnotation>,
+            name: Name,
+            typeParameters: List<CirTypeParameter>,
+            visibility: DescriptorVisibility,
+            modality: Modality,
+            kind: ClassKind,
+            companion: Name?,
+            isCompanion: Boolean,
+            isData: Boolean,
+            isInline: Boolean,
+            isInner: Boolean,
+            isExternal: Boolean,
+            supertypes: MutableCollection<CirType>
     ): CirClass {
         return CirClassImpl(
             annotations = annotations,

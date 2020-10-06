@@ -22,7 +22,12 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.org.objectweb.asm.Type
 
 interface IrCallGenerator {
-    fun genCall(callableMethod: IrCallableMethod, codegen: ExpressionCodegen, expression: IrFunctionAccessExpression) {
+    fun genCall(
+        callableMethod: IrCallableMethod,
+        codegen: ExpressionCodegen,
+        expression: IrFunctionAccessExpression,
+        isInsideIfCondition: Boolean,
+    ) {
         with(callableMethod) {
             codegen.mv.visitMethodInsn(invokeOpcode, owner.internalName, asmMethod.name, asmMethod.descriptor, isInterfaceMethod)
         }

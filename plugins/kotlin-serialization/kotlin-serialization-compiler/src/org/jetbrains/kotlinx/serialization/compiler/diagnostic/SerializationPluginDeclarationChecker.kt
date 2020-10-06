@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.psi.*
@@ -218,6 +219,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
             val ktType = (propertyPsi as? KtCallableDeclaration)?.typeReference
             if (serializer != null) {
                 val element = ktType?.typeElement
+                checkCustomSerializerMatch(it.module, it.type, it.descriptor, element, trace, propertyPsi)
                 checkSerializerNullability(it.type, serializer.defaultType, element, trace, propertyPsi)
                 generatorContextForAnalysis.checkTypeArguments(it.module, it.type, element, trace, propertyPsi)
             } else {
@@ -260,11 +262,34 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         }
         val serializer = findTypeSerializerOrContextUnchecked(module, type)
         if (serializer != null) {
+            checkCustomSerializerMatch(module, type, type, element, trace, fallbackElement)
             checkSerializerNullability(type, serializer.defaultType, element, trace, fallbackElement)
             checkTypeArguments(module, type, element, trace, fallbackElement)
         } else {
             trace.report(SerializationErrors.SERIALIZER_NOT_FOUND.on(element ?: fallbackElement, type))
         }
+    }
+
+    private fun checkCustomSerializerMatch(
+        module: ModuleDescriptor,
+        classType: KotlinType,
+        descriptor: Annotated,
+        element: KtElement?,
+        trace: BindingTrace,
+        fallbackElement: PsiElement
+    ) {
+        val serializerType = descriptor.annotations.serializableWith(module) ?: return
+        val serializerForType = serializerType.supertypes().find { isKSerializer(it) }?.arguments?.first()?.type ?: return
+        // Compare constructors because we do not care about generic arguments and nullability
+        if (classType.constructor != serializerForType.constructor)
+            trace.report(
+                SerializationErrors.SERIALIZER_TYPE_INCOMPATIBLE.on(
+                    element ?: fallbackElement,
+                    classType,
+                    serializerType,
+                    serializerForType
+                )
+            )
     }
 
     private fun checkSerializerNullability(
@@ -277,7 +302,8 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         // @Serializable annotation has proper signature so this error would be caught in type checker
         val castedToKSerial = serializerType.supertypes().find { isKSerializer(it) } ?: return
 
-        if (!classType.isMarkedNullable && castedToKSerial.arguments.first().type.isMarkedNullable)
+        val serializerForType = castedToKSerial.arguments.first().type
+        if (!classType.isMarkedNullable && serializerForType.isMarkedNullable)
             trace.report(
                 SerializationErrors.SERIALIZER_NULLABILITY_INCOMPATIBLE.on(element ?: fallbackElement, serializerType, classType),
             )

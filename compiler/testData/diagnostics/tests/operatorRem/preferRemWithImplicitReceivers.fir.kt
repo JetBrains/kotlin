@@ -12,7 +12,7 @@ class B {
 fun test() {
     with(B()) {
         with(A()) {
-            <!INAPPLICABLE_CANDIDATE!>takeString<!>(1 % "")
+            takeString(1 % "")
         }
     }
 }

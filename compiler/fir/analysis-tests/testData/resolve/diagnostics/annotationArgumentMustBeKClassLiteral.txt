@@ -1,0 +1,23 @@
+FILE: annotationArgumentMustBeKClassLiteral.kt
+    @R|kotlin/annotation/Repeatable|() public final annotation class Ann : R|kotlin/Annotation| {
+        public constructor(a: R|kotlin/Array<kotlin/reflect/KClass<*>>|): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/Array<kotlin/reflect/KClass<*>>| = R|<local>/a|
+            public get(): R|kotlin/Array<kotlin/reflect/KClass<*>>|
+
+    }
+    public final class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final val foo: R|kotlin/reflect/KClass<Foo>| = <getClass>(Q|Foo|)
+        public get(): R|kotlin/reflect/KClass<Foo>|
+    public final fun bar(): R|kotlin/reflect/KClass<Foo>| {
+        ^bar <getClass>(Q|Foo|)
+    }
+    @R|Ann|(<implicitArrayOf>(<getClass>(String()), <getClass>(Boolean(true)), <getClass>(Int(1)))) @R|Ann|(<implicitArrayOf>(R|/foo|, R|/bar|())) public final fun test1(): R|kotlin/Unit| {
+    }

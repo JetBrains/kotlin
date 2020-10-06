@@ -56,8 +56,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static kotlin.collections.CollectionsKt.firstOrNull;
-import static org.jetbrains.kotlin.descriptors.Visibilities.PRIVATE;
-import static org.jetbrains.kotlin.descriptors.Visibilities.PUBLIC;
+import static org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE;
+import static org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PUBLIC;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.lexer.KtTokens.INNER_KEYWORD;
 import static org.jetbrains.kotlin.resolve.BindingContext.TYPE;
@@ -79,7 +79,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
     private final LazyClassTypeConstructor typeConstructor;
     private final NotNullLazyValue<Modality> modality;
-    private final Visibility visibility;
+    private final DescriptorVisibility visibility;
     private final ClassKind kind;
     private final boolean isInner;
     private final boolean isData;
@@ -149,7 +149,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         }
 
         boolean isLocal = classOrObject != null && KtPsiUtil.isLocal(classOrObject);
-        this.visibility = isLocal ? Visibilities.LOCAL : resolveVisibilityFromModifiers(modifierList, Visibilities.DEFAULT_VISIBILITY);
+        this.visibility = isLocal ? DescriptorVisibilities.LOCAL : resolveVisibilityFromModifiers(modifierList, DescriptorVisibilities.DEFAULT_VISIBILITY);
 
         this.isInner = modifierList != null && modifierList.hasModifier(INNER_KEYWORD) && !isIllegalInner(this);
         this.isData = modifierList != null && modifierList.hasModifier(KtTokens.DATA_KEYWORD);
@@ -292,7 +292,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         ) {
             {
                 initialize(null, null, Collections.emptyList(), Collections.emptyList(),
-                           null, Modality.FINAL, Visibilities.PRIVATE);
+                           null, Modality.FINAL, DescriptorVisibilities.PRIVATE);
             }
 
             @NotNull
@@ -513,7 +513,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
     @NotNull
     @Override
-    public Visibility getVisibility() {
+    public DescriptorVisibility getVisibility() {
         return visibility;
     }
 
@@ -650,6 +650,12 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 ClassDescriptor superclass = (ClassDescriptor) supertypeDescriptor;
                 reportCyclicInheritanceHierarchyError(c.getTrace(), LazyClassDescriptor.this, superclass);
             }
+        }
+
+        @Override
+        protected boolean getShouldReportCyclicScopeWithCompanionWarning() {
+            return !c.getLanguageVersionSettings()
+                    .supportsFeature(LanguageFeature.ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion);
         }
 
         @Override

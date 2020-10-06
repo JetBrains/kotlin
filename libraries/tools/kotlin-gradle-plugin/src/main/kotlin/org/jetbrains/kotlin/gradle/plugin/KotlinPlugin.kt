@@ -774,6 +774,7 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
             val kotlinSourceSet = project.kotlinExtension.sourceSets.maybeCreate(
                 kotlinSourceSetNameForAndroidSourceSet(kotlinAndroidTarget, sourceSet.name)
             ).apply {
+                createDefaultDependsOnEdges(kotlinAndroidTarget, sourceSet, this)
                 kotlin.srcDir(project.file(project.file("src/${sourceSet.name}/kotlin")))
                 kotlin.srcDirs(sourceSet.java.srcDirs)
             }
@@ -843,6 +844,21 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
 
             addKotlinDependenciesToAndroidSourceSets(project, kotlinAndroidTarget)
         }
+    }
+
+    private fun createDefaultDependsOnEdges(
+        kotlinAndroidTarget: KotlinAndroidTarget,
+        androidSourceSet: AndroidSourceSet,
+        kotlinSourceSet: KotlinSourceSet
+    ) {
+        val commonSourceSetName = when (androidSourceSet.name) {
+            "main" -> "commonMain"
+            "test" -> "commonTest"
+            "androidTest" -> "commonTest"
+            else -> return
+        }
+        val commonSourceSet = kotlinAndroidTarget.project.kotlinExtension.sourceSets.findByName(commonSourceSetName) ?: return
+        kotlinSourceSet.dependsOn(commonSourceSet)
     }
 
     /**
@@ -961,14 +977,6 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
 
         // Register the source only after the task is created, because the task is required for that:
         compilation.source(defaultSourceSet)
-
-        // In MPPs, add the common main Kotlin sources to non-test variants, the common test sources to test variants
-        val commonSourceSetName = if (getTestedVariantData(variantData) == null)
-            KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME else
-            KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME
-        project.kotlinExtension.sourceSets.findByName(commonSourceSetName)?.let {
-            compilation.source(it)
-        }
     }
 
     private fun postprocessVariant(

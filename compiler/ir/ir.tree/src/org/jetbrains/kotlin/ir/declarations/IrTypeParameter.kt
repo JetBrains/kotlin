@@ -31,7 +31,7 @@ abstract class IrTypeParameter : IrDeclarationBase(), IrSymbolDeclaration<IrType
     abstract val variance: Variance
     abstract val index: Int
     abstract val isReified: Boolean
-    abstract val superTypes: MutableList<IrType>
+    abstract var superTypes: List<IrType>
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitTypeParameter(this, data)

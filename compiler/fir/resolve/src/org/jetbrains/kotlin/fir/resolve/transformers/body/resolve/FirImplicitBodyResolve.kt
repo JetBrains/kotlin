@@ -170,7 +170,7 @@ private class ReturnTypeCalculatorWithJump(
     val designationMapForLocalClasses: Map<FirCallableMemberDeclaration<*>, List<FirClass<*>>> = mapOf()
 ) : ReturnTypeCalculator {
 
-    var outerBodyResolveContext: FirAbstractBodyResolveTransformer.BodyResolveContext? = null
+    var outerBodyResolveContext: BodyResolveContext? = null
 
     override fun tryCalculateReturnType(declaration: FirTypedDeclaration): FirResolvedTypeRef {
         if (declaration is FirValueParameter && declaration.returnTypeRef is FirImplicitTypeRef) {
@@ -187,6 +187,16 @@ private class ReturnTypeCalculatorWithJump(
         if (returnTypeRef is FirResolvedTypeRef) return returnTypeRef
 
         require(declaration is FirCallableMemberDeclaration<*>) { "${declaration::class}: ${declaration.render()}" }
+
+        if (declaration is FirSyntheticProperty) {
+            return tryCalculateReturnType(declaration.getter.delegate)
+        }
+
+        if (declaration.origin == FirDeclarationOrigin.IntersectionOverride) {
+            val result = tryCalculateReturnType(declaration.symbol.overriddenSymbol!!.fir)
+            declaration.replaceReturnTypeRef(result)
+            return result
+        }
 
         return when (val status = implicitBodyResolveComputationSession.getStatus(declaration.symbol)) {
             is ImplicitBodyResolveComputationStatus.Computed -> status.resolvedTypeRef
@@ -304,7 +314,7 @@ private class ImplicitBodyResolveComputationSession {
 
         val returnTypeRef = transformedDeclaration.returnTypeRef
         require(returnTypeRef is FirResolvedTypeRef) {
-            "Not FirResolvedTypeRef (${transformedDeclaration.receiverTypeRef?.render()}) in storeResult for: ${symbol.fir.render()}"
+            "Not FirResolvedTypeRef (${transformedDeclaration.returnTypeRef.render()}) in storeResult for: ${symbol.fir.render()}"
         }
 
         implicitBodyResolveStatusMap[symbol] = ImplicitBodyResolveComputationStatus.Computed(returnTypeRef, transformedDeclaration)

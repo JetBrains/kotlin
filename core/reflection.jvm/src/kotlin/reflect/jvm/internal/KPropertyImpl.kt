@@ -7,7 +7,7 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -54,7 +54,7 @@ internal abstract class KPropertyImpl<out V> private constructor(
             is KotlinProperty -> {
                 val descriptor = jvmSignature.descriptor
                 JvmProtoBufUtil.getJvmFieldSignature(jvmSignature.proto, jvmSignature.nameResolver, jvmSignature.typeTable)?.let {
-                    val owner = if (JvmAbi.isPropertyWithBackingFieldInOuterClass(descriptor) ||
+                    val owner = if (DescriptorsJvmAbiUtil.isPropertyWithBackingFieldInOuterClass(descriptor) ||
                         JvmProtoBufUtil.isMovedFromInterfaceCompanion(jvmSignature.proto)
                     ) {
                         container.jClass.enclosingClass
@@ -229,7 +229,7 @@ private fun KPropertyImpl.Accessor<*, *>.computeCallerForAccessor(isGetter: Bool
             when {
                 accessor == null -> {
                     if (property.descriptor.isUnderlyingPropertyOfInlineClass() &&
-                        property.descriptor.visibility == Visibilities.INTERNAL
+                        property.descriptor.visibility == DescriptorVisibilities.INTERNAL
                     ) {
                         val unboxMethod = property.descriptor.containingDeclaration.toInlineClass()?.getUnboxMethod(property.descriptor)
                             ?: throw KotlinReflectionInternalError("Underlying property of inline class $property should have a field")

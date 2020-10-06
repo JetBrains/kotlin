@@ -60,14 +60,19 @@ tasks {
         kotlinOptions {
             languageVersion = "1.2"
             apiVersion = "1.2"
-            freeCompilerArgs = listOf("-Xcoroutines=enable")
+            freeCompilerArgs = listOf(
+                "-Xcoroutines=enable",
+                "-Xno-use-ir"
+            )
         }
     }
     val compileMigrationTestKotlin by existing(KotlinCompile::class) {
         kotlinOptions {
             languageVersion = "1.3"
             apiVersion = "1.3"
-            freeCompilerArgs = listOf()
+            freeCompilerArgs = listOf(
+                "-Xno-use-ir"
+            )
         }
     }
 

@@ -16,7 +16,7 @@ fun test_fun(s: String, arr: Array<String>) {
     withVararg(s = *<!REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION!>arr<!>) // Warning
 
     withVararg(s) // OK
-    withVararg(s = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR!>s<!>) // Error
+    withVararg(s = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR, NI;TYPE_MISMATCH!>s<!>) // Error
 }
 
 fun test_ann(s: String, arr: Array<String>) {
@@ -24,13 +24,13 @@ fun test_ann(s: String, arr: Array<String>) {
     foo()
     @Ann(*[""], x = 1)
     foo()
-    @Ann(s = [""], x = 1)
+    @Ann(<!NI;CHANGING_ARGUMENTS_EXECUTION_ORDER_FOR_NAMED_VARARGS!>s = [""]<!>, x = 1)
     foo()
-    @Ann(s = *<!REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION!>[""]<!>, x = 1)
+    @Ann(<!NI;CHANGING_ARGUMENTS_EXECUTION_ORDER_FOR_NAMED_VARARGS!>s = *<!REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION!>[""]<!><!>, x = 1)
     foo()
 
     @Ann("", x = 1)
     foo()
-    @Ann(s = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION_ERROR!>""<!>, x = 1)
+    @Ann(<!NI;CHANGING_ARGUMENTS_EXECUTION_ORDER_FOR_NAMED_VARARGS!>s = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION_ERROR, NI;TYPE_MISMATCH!>""<!><!>, x = 1)
     foo()
 }

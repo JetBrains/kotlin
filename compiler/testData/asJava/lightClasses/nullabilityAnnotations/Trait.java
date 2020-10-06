@@ -1,37 +1,38 @@
-public interface Trait {
-    @org.jetbrains.annotations.NotNull
-    java.lang.String notNull(@org.jetbrains.annotations.NotNull java.lang.String p);
+public abstract interface Trait /* Trait*/ {
+  @org.jetbrains.annotations.NotNull()
+  @org.jetbrains.annotations.Nullable()
+  public abstract java.lang.String notNullWithN();//  notNullWithN()
 
-    @org.jetbrains.annotations.Nullable
-    java.lang.String nullable(@org.jetbrains.annotations.Nullable java.lang.String p);
+  @org.jetbrains.annotations.NotNull()
+  @org.jetbrains.annotations.Nullable()
+  public abstract java.lang.String nullableWithNN();//  nullableWithNN()
 
-    @org.jetbrains.annotations.NotNull
-    java.lang.String notNullWithNN();
+  @org.jetbrains.annotations.NotNull()
+  public abstract java.lang.String getNotNullVal();//  getNotNullVal()
 
-    @org.jetbrains.annotations.Nullable
-    @org.jetbrains.annotations.NotNull
-    java.lang.String notNullWithN();
+  @org.jetbrains.annotations.NotNull()
+  public abstract java.lang.String getNotNullVar();//  getNotNullVar()
 
-    @org.jetbrains.annotations.Nullable
-    java.lang.String nullableWithN();
+  @org.jetbrains.annotations.NotNull()
+  public abstract java.lang.String notNull(@org.jetbrains.annotations.NotNull() java.lang.String);//  notNull(java.lang.String)
 
-    @org.jetbrains.annotations.NotNull
-    @org.jetbrains.annotations.Nullable
-    java.lang.String nullableWithNN();
+  @org.jetbrains.annotations.NotNull()
+  public abstract java.lang.String notNullWithNN();//  notNullWithNN()
 
-    @org.jetbrains.annotations.Nullable
-    java.lang.String getNullableVal();
+  @org.jetbrains.annotations.Nullable()
+  public abstract java.lang.String getNullableVal();//  getNullableVal()
 
-    @org.jetbrains.annotations.Nullable
-    java.lang.String getNullableVar();
+  @org.jetbrains.annotations.Nullable()
+  public abstract java.lang.String getNullableVar();//  getNullableVar()
 
-    void setNullableVar(@org.jetbrains.annotations.Nullable java.lang.String p);
+  @org.jetbrains.annotations.Nullable()
+  public abstract java.lang.String nullable(@org.jetbrains.annotations.Nullable() java.lang.String);//  nullable(java.lang.String)
 
-    @org.jetbrains.annotations.NotNull
-    java.lang.String getNotNullVal();
+  @org.jetbrains.annotations.Nullable()
+  public abstract java.lang.String nullableWithN();//  nullableWithN()
 
-    @org.jetbrains.annotations.NotNull
-    java.lang.String getNotNullVar();
+  public abstract void setNotNullVar(@org.jetbrains.annotations.NotNull() java.lang.String);//  setNotNullVar(java.lang.String)
 
-    void setNotNullVar(@org.jetbrains.annotations.NotNull java.lang.String p);
+  public abstract void setNullableVar(@org.jetbrains.annotations.Nullable() java.lang.String);//  setNullableVar(java.lang.String)
+
 }

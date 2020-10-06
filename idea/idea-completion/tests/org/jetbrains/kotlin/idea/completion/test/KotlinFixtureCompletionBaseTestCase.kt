@@ -36,19 +36,24 @@ abstract class KotlinFixtureCompletionBaseTestCase : KotlinLightCodeInsightFixtu
                 if (ExpectedCompletionUtils.shouldRunHighlightingBeforeCompletion(fileText)) {
                     myFixture.doHighlighting()
                 }
-
-                testCompletion(
-                    fileText,
-                    getPlatform(),
-                    { completionType, count -> complete(completionType, count) },
-                    defaultCompletionType(),
-                    defaultInvocationCount(),
-                    additionalValidDirectives = CompilerTestDirectives.ALL_COMPILER_TEST_DIRECTIVES
-                )
+                executeTest {
+                    testCompletion(
+                        fileText,
+                        getPlatform(),
+                        { completionType, count -> complete(completionType, count) },
+                        defaultCompletionType(),
+                        defaultInvocationCount(),
+                        additionalValidDirectives = CompilerTestDirectives.ALL_COMPILER_TEST_DIRECTIVES + "FIR_COMPARISON"
+                    )
+                }
             }
         } finally {
             tearDownFixture()
         }
+    }
+
+    protected open fun executeTest(test: () -> Unit) {
+        test()
     }
 
     protected open fun setUpFixture(testPath: String) {

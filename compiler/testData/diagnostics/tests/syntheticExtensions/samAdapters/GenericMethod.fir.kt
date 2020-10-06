@@ -1,7 +1,7 @@
 // JAVAC_EXPECTED_FILE
 // FILE: KotlinFile.kt
 fun foo(javaClass: JavaClass): String {
-    return javaClass.doSomething("") { <!UNRESOLVED_REFERENCE!>it<!> }
+    return javaClass.<!INAPPLICABLE_CANDIDATE!>doSomething<!>("") { <!UNRESOLVED_REFERENCE!>it<!> }
 }
 
 // FILE: JavaClass.java

@@ -243,6 +243,11 @@
 
 -keep class com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem { *; }
 
+# For Anvil https://youtrack.jetbrains.com/issue/KT-42103
+-keepclassmembers class com.intellij.openapi.extensions.impl.ExtensionPointImpl {
+    public void registerExtension(...);
+}
+
 # Serialization plugin
 
 -keep class com.intellij.openapi.util.io.JarUtil {
@@ -262,3 +267,5 @@
 -keepclassmembers class * implements java.io.Serializable {
     static final long serialVersionUID;
 }
+
+-dontwarn org.jetbrains.kotlin.fir.**

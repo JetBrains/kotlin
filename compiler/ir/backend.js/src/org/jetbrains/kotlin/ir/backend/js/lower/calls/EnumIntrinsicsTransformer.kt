@@ -42,7 +42,7 @@ class EnumIntrinsicsTransformer(private val context: JsIrBackendContext) : Calls
         it.name == Name.identifier("values") && it.valueParameters.count() == 0
     }
 
-    override fun transformFunctionAccess(call: IrFunctionAccessExpression) = when (call.symbol) {
+    override fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean) = when (call.symbol) {
         context.intrinsics.enumValueOfIntrinsic -> transformEnumValueOfIntrinsic(call)
         context.intrinsics.enumValuesIntrinsic -> transformEnumValuesIntrinsic(call)
         else -> call

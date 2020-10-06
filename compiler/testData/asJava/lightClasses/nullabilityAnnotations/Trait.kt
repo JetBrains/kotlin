@@ -10,7 +10,7 @@ interface Trait {
     @NotNull fun notNullWithNN(): String
     @Nullable fun notNullWithN(): String
 
-    @Nullable fun nullableWithN(): String?
+    @Nullable fun `nullableWithN`(): String?
     @NotNull fun nullableWithNN(): String?
 
     val nullableVal: String?

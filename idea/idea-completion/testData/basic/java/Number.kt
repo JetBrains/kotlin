@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 fun test(x: java.lang.Integer) {
     x.<caret>
 }

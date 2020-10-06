@@ -9,6 +9,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildRawContractDescription
@@ -45,7 +47,6 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import java.util.*
 
 class RawFirBuilder(
     session: FirSession, val baseScopeProvider: FirScopeProvider, val stubMode: Boolean
@@ -61,7 +62,19 @@ class RawFirBuilder(
 
     fun buildFunctionWithBody(function: KtNamedFunction): FirFunction<*> {
         assert(!stubMode) { "Building FIR function with body isn't supported in stub mode" }
-        val parentsUpToFile = function.parents
+        setupContextForPosition(function)
+        return function.accept(Visitor(), Unit) as FirFunction<*>
+    }
+
+    fun buildPropertyWithBody(property: KtProperty): FirProperty {
+        require(!property.isLocal) { "Should not be used to build local properties (variables)" }
+        assert(!stubMode) { "Building FIR function with body isn't supported in stub mode" }
+        setupContextForPosition(property)
+        return property.accept(Visitor(), Unit) as FirProperty
+    }
+
+    private fun setupContextForPosition(position: KtElement) {
+        val parentsUpToFile = position.parents
         for (parent in parentsUpToFile.toList().asReversed()) {
             when (parent) {
                 is KtFile -> {
@@ -73,7 +86,6 @@ class RawFirBuilder(
                 }
             }
         }
-        return function.accept(Visitor(), Unit) as FirFunction<*>
     }
 
     override fun PsiElement.toFirSourceElement(kind: FirFakeSourceElementKind?): FirPsiSourceElement<*> {
@@ -110,8 +122,21 @@ class RawFirBuilder(
         return (this as KtAnnotatedExpression).baseExpression
     }
 
+    override fun PsiElement.getLabeledExpression(): PsiElement? {
+        return (this as KtLabeledExpression).baseExpression
+    }
+
+    override val PsiElement?.receiverExpression: PsiElement?
+        get() = (this as? KtQualifiedExpression)?.receiverExpression
+
     override val PsiElement?.selectorExpression: PsiElement?
         get() = (this as? KtQualifiedExpression)?.selectorExpression
+
+    override val PsiElement?.arrayExpression: PsiElement?
+        get() = (this as? KtArrayAccessExpression)?.arrayExpression
+
+    override val PsiElement?.indexExpressions: List<PsiElement>?
+        get() = (this as? KtArrayAccessExpression)?.indexExpressions
 
     private val KtModifierListOwner.visibility: Visibility
         get() = with(modifierList) {
@@ -236,8 +261,7 @@ class RawFirBuilder(
                 }
                 else -> {
                     val result = { bodyExpression }.toFirExpression("Function has no body (but should)")
-                    // basePsi is null, because 'return' is synthetic & should not be bound to some PSI
-                    FirSingleExpressionBlock(result.toReturn(baseSource = null)) to null
+                    FirSingleExpressionBlock(result.toReturn(baseSource = result.source)) to null
                 }
             }
 
@@ -1728,13 +1752,26 @@ class RawFirBuilder(
                             prefix = expression is KtPrefixExpression,
                         ) { (this as KtExpression).toFirExpression("Incorrect expression inside inc/dec") }
                     }
+
+                    val receiver = argument.toFirExpression("No operand")
+                    if (operationToken == PLUS || operationToken == MINUS) {
+                        if (receiver is FirConstExpression<*> && receiver.kind == FirConstKind.IntegerLiteral) {
+                            val value = receiver.value as Long
+                            val convertedValue = when (operationToken) {
+                                MINUS -> -value
+                                PLUS -> value
+                                else -> error("Should not be here")
+                            }
+                            return buildConstExpression(expression.toFirPsiSourceElement(), FirConstKind.IntegerLiteral, convertedValue)
+                        }
+                    }
                     buildFunctionCall {
                         source = expression.toFirSourceElement()
                         calleeReference = buildSimpleNamedReference {
                             source = expression.operationReference.toFirSourceElement()
                             name = conventionCallName
                         }
-                        explicitReceiver = argument.toFirExpression("No operand")
+                        explicitReceiver = receiver
                     }
                 }
                 else -> throw IllegalStateException("Unexpected expression: ${expression.text}")
@@ -1744,38 +1781,49 @@ class RawFirBuilder(
         private fun splitToCalleeAndReceiver(
             calleeExpression: KtExpression?,
             defaultSource: FirPsiSourceElement<*>,
-        ): Pair<FirNamedReference, FirExpression?> {
+        ): CalleeAndReceiver {
             return when (calleeExpression) {
-                is KtSimpleNameExpression -> buildSimpleNamedReference {
-                    source = calleeExpression.toFirSourceElement()
-                    name = calleeExpression.getReferencedNameAsName()
-                } to null
+                is KtSimpleNameExpression ->
+                    CalleeAndReceiver(
+                        buildSimpleNamedReference {
+                            source = calleeExpression.toFirSourceElement()
+                            name = calleeExpression.getReferencedNameAsName()
+                        }
+                    )
 
                 is KtParenthesizedExpression -> splitToCalleeAndReceiver(calleeExpression.expression, defaultSource)
 
                 null -> {
-                    buildErrorNamedReference { diagnostic = ConeSimpleDiagnostic("Call has no callee", DiagnosticKind.Syntax) } to null
+                    CalleeAndReceiver(
+                        buildErrorNamedReference { diagnostic = ConeSimpleDiagnostic("Call has no callee", DiagnosticKind.Syntax) }
+                    )
                 }
 
                 is KtSuperExpression -> {
-                    buildErrorNamedReference {
-                        source = calleeExpression.toFirSourceElement()
-                        diagnostic = ConeSimpleDiagnostic("Super cannot be a callee", DiagnosticKind.SuperNotAllowed)
-                    } to null
+                    CalleeAndReceiver(
+                        buildErrorNamedReference {
+                            source = calleeExpression.toFirSourceElement()
+                            diagnostic = ConeSimpleDiagnostic("Super cannot be a callee", DiagnosticKind.SuperNotAllowed)
+                        }
+                    )
                 }
 
                 else -> {
-                    buildSimpleNamedReference {
-                        source = defaultSource.fakeElement(FirFakeSourceElementKind.ImplicitInvokeCall)
-                        name = OperatorNameConventions.INVOKE
-                    } to calleeExpression.toFirExpression("Incorrect invoke receiver")
+                    CalleeAndReceiver(
+                        buildSimpleNamedReference {
+                            source = defaultSource.fakeElement(FirFakeSourceElementKind.ImplicitInvokeCall)
+                            name = OperatorNameConventions.INVOKE
+                        },
+                        receiverExpression = calleeExpression.toFirExpression("Incorrect invoke receiver"),
+                        isImplicitInvoke = true
+                    )
                 }
             }
         }
 
         override fun visitCallExpression(expression: KtCallExpression, data: Unit): FirElement {
             val source = expression.toFirSourceElement()
-            val (calleeReference, explicitReceiver) = splitToCalleeAndReceiver(expression.calleeExpression, source)
+            val (calleeReference, explicitReceiver, isImplicitInvoke) = splitToCalleeAndReceiver(expression.calleeExpression, source)
 
             val result: FirQualifiedAccessBuilder = if (expression.valueArgumentList == null && expression.lambdaArguments.isEmpty()) {
                 FirQualifiedAccessExpressionBuilder().apply {
@@ -1783,7 +1831,8 @@ class RawFirBuilder(
                     this.calleeReference = calleeReference
                 }
             } else {
-                FirFunctionCallBuilder().apply {
+                val builder = if (isImplicitInvoke) FirImplicitInvokeCallBuilder() else FirFunctionCallBuilder()
+                builder.apply {
                     this.source = source
                     this.calleeReference = calleeReference
                     context.calleeNamesForLambda += calleeReference.name

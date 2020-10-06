@@ -29,13 +29,17 @@ class RealNativeTargetConfigurator private constructor(
     override val isIosTarget: Boolean
         get() = moduleSubType.isIOS
 
-    override fun createInnerTargetIrs(reader: Reader, module: Module): List<BuildSystemIR> = if (moduleSubType.isIOS) irsList {
-        "binaries" {
-            "framework"  {
-                "baseName" assign const(module.parent!!.name)
+    override fun createInnerTargetIrs(reader: Reader, module: Module): List<BuildSystemIR> = irsList {
+        +super<SimpleTargetConfigurator>.createInnerTargetIrs(reader, module)
+        if (moduleSubType.isIOS) {
+            "binaries" {
+                "framework"  {
+                    "baseName" assign const(module.parent!!.name)
+                }
             }
         }
-    } else emptyList()
+    }
+
 
     companion object {
         val configurators = ModuleSubType.values()

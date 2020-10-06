@@ -33,10 +33,10 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
-interface FirSamResolver : FirSessionComponent {
-    fun getFunctionTypeForPossibleSamType(type: ConeKotlinType): ConeKotlinType?
-    fun shouldRunSamConversionForFunction(firFunction: FirFunction<*>): Boolean
-    fun getSamConstructor(firRegularClass: FirRegularClass): FirSimpleFunction?
+abstract class FirSamResolver {
+    abstract fun getFunctionTypeForPossibleSamType(type: ConeKotlinType): ConeKotlinType?
+    abstract fun shouldRunSamConversionForFunction(firFunction: FirFunction<*>): Boolean
+    abstract fun getSamConstructor(firRegularClass: FirRegularClass): FirSimpleFunction?
 }
 
 private val NULL_STUB = Any()
@@ -45,7 +45,7 @@ val SAM_PARAMETER_NAME = Name.identifier("block")
 class FirSamResolverImpl(
     private val firSession: FirSession,
     private val scopeSession: ScopeSession,
-) : FirSamResolver {
+) : FirSamResolver() {
 
     private val resolvedFunctionType: MutableMap<FirRegularClass, Any> = mutableMapOf()
     private val samConstructor: MutableMap<FirRegularClass, Any> = mutableMapOf()

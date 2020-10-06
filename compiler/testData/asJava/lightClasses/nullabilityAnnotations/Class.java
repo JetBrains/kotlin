@@ -1,72 +1,85 @@
-public final class Class {
-    @org.jetbrains.annotations.Nullable
-    private final java.lang.String nullableVal;
-    @org.jetbrains.annotations.Nullable
-    private java.lang.String nullableVar;
-    @org.jetbrains.annotations.NotNull
-    private final java.lang.String notNullVal;
-    @org.jetbrains.annotations.NotNull
-    private java.lang.String notNullVar;
-    private final java.lang.String privateNN;
-    private final java.lang.String privateN;
+public final class Class /* Class*/ {
+  @org.jetbrains.annotations.NotNull()
+  private final java.lang.String notNullVal;
 
-    @org.jetbrains.annotations.NotNull
-    public final java.lang.String notNull(@org.jetbrains.annotations.NotNull java.lang.String a) { /* compiled code */ }
+  @org.jetbrains.annotations.NotNull()
+  private java.lang.String notNullVar;
 
-    @org.jetbrains.annotations.Nullable
-    public final java.lang.String nullable(@org.jetbrains.annotations.Nullable java.lang.String a) { /* compiled code */ }
+  @org.jetbrains.annotations.Nullable()
+  private final java.lang.String nullableVal;
 
-    @org.jetbrains.annotations.NotNull
-    public final java.lang.String notNullWithNN() { /* compiled code */ }
+  @org.jetbrains.annotations.Nullable()
+  private java.lang.String nullableVar;
 
-    @org.jetbrains.annotations.Nullable
-    @org.jetbrains.annotations.NotNull
-    public final java.lang.String notNullWithN() { /* compiled code */ }
+  private final java.lang.String privateN;
 
-    @org.jetbrains.annotations.Nullable
-    public final java.lang.String nullableWithN() { /* compiled code */ }
+  private final java.lang.String privateNN;
 
-    @org.jetbrains.annotations.NotNull
-    @org.jetbrains.annotations.Nullable
-    public final java.lang.String nullableWithNN() { /* compiled code */ }
+  public java.lang.String lateInitVar;
 
-    @org.jetbrains.annotations.Nullable
-    public final java.lang.String getNullableVal() { /* compiled code */ }
+  @org.jetbrains.annotations.NotNull()
+  @org.jetbrains.annotations.Nullable()
+  public final java.lang.String getNotNullValWithGet();//  getNotNullValWithGet()
 
-    @org.jetbrains.annotations.Nullable
-    public final java.lang.String getNullableVar() { /* compiled code */ }
+  @org.jetbrains.annotations.NotNull()
+  @org.jetbrains.annotations.Nullable()
+  public final java.lang.String getNotNullVarWithGetSet();//  getNotNullVarWithGetSet()
 
-    public final void setNullableVar(@org.jetbrains.annotations.Nullable java.lang.String p) { /* compiled code */ }
+  @org.jetbrains.annotations.NotNull()
+  @org.jetbrains.annotations.Nullable()
+  public final java.lang.String getNullableValWithGet();//  getNullableValWithGet()
 
-    @org.jetbrains.annotations.NotNull
-    public final java.lang.String getNotNullVal() { /* compiled code */ }
+  @org.jetbrains.annotations.NotNull()
+  @org.jetbrains.annotations.Nullable()
+  public final java.lang.String getNullableVarWithGetSet();//  getNullableVarWithGetSet()
 
-    @org.jetbrains.annotations.NotNull
-    public final java.lang.String getNotNullVar() { /* compiled code */ }
+  @org.jetbrains.annotations.NotNull()
+  @org.jetbrains.annotations.Nullable()
+  public final java.lang.String notNullWithN();//  notNullWithN()
 
-    public final void setNotNullVar(@org.jetbrains.annotations.NotNull java.lang.String p) { /* compiled code */ }
+  @org.jetbrains.annotations.NotNull()
+  @org.jetbrains.annotations.Nullable()
+  public final java.lang.String nullableWithNN();//  nullableWithNN()
 
-    @org.jetbrains.annotations.Nullable
-    @org.jetbrains.annotations.NotNull
-    public final java.lang.String getNotNullValWithGet() { /* compiled code */ }
+  @org.jetbrains.annotations.NotNull()
+  public final java.lang.String getLateInitVar();//  getLateInitVar()
 
-    @org.jetbrains.annotations.Nullable
-    @org.jetbrains.annotations.NotNull
-    public final java.lang.String getNotNullVarWithGetSet() { /* compiled code */ }
+  @org.jetbrains.annotations.NotNull()
+  public final java.lang.String getNotNullVal();//  getNotNullVal()
 
-    @org.jetbrains.annotations.Nullable
-    public final void setNotNullVarWithGetSet(@org.jetbrains.annotations.NotNull java.lang.String v) { /* compiled code */ }
+  @org.jetbrains.annotations.NotNull()
+  public final java.lang.String getNotNullVar();//  getNotNullVar()
 
-    @org.jetbrains.annotations.NotNull
-    @org.jetbrains.annotations.Nullable
-    public final java.lang.String getNullableValWithGet() { /* compiled code */ }
+  @org.jetbrains.annotations.NotNull()
+  public final java.lang.String notNull(@org.jetbrains.annotations.NotNull() java.lang.String);//  notNull(java.lang.String)
 
-    @org.jetbrains.annotations.NotNull
-    @org.jetbrains.annotations.Nullable
-    public final java.lang.String getNullableVarWithGetSet() { /* compiled code */ }
+  @org.jetbrains.annotations.NotNull()
+  public final java.lang.String notNullWithNN();//  notNullWithNN()
 
-    @org.jetbrains.annotations.NotNull
-    public final void setNullableVarWithGetSet(@org.jetbrains.annotations.Nullable java.lang.String v) { /* compiled code */ }
+  @org.jetbrains.annotations.NotNull()
+  public final void setNullableVarWithGetSet(@org.jetbrains.annotations.Nullable() java.lang.String);//  setNullableVarWithGetSet(java.lang.String)
 
-    public Class() { /* compiled code */ }
+  @org.jetbrains.annotations.Nullable()
+  public final java.lang.String getNullableVal();//  getNullableVal()
+
+  @org.jetbrains.annotations.Nullable()
+  public final java.lang.String getNullableVar();//  getNullableVar()
+
+  @org.jetbrains.annotations.Nullable()
+  public final java.lang.String nullable(@org.jetbrains.annotations.Nullable() java.lang.String);//  nullable(java.lang.String)
+
+  @org.jetbrains.annotations.Nullable()
+  public final java.lang.String nullableWithN();//  nullableWithN()
+
+  @org.jetbrains.annotations.Nullable()
+  public final void setNotNullVarWithGetSet(@org.jetbrains.annotations.NotNull() java.lang.String);//  setNotNullVarWithGetSet(java.lang.String)
+
+  public  Class();//  .ctor()
+
+  public final void setLateInitVar(@org.jetbrains.annotations.NotNull() java.lang.String);//  setLateInitVar(java.lang.String)
+
+  public final void setNotNullVar(@org.jetbrains.annotations.NotNull() java.lang.String);//  setNotNullVar(java.lang.String)
+
+  public final void setNullableVar(@org.jetbrains.annotations.Nullable() java.lang.String);//  setNullableVar(java.lang.String)
+
 }

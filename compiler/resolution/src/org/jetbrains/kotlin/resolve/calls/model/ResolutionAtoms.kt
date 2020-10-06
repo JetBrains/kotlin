@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.typeUtil.unCapture
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -66,7 +65,7 @@ abstract class ResolvedCallAtom : ResolvedAtom() {
     abstract val typeArgumentMappingByOriginal: TypeArgumentsToParametersMapper.TypeArgumentsMapping
     abstract val argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument>
     abstract val freshVariablesSubstitutor: FreshVariableNewTypeSubstitutor
-    abstract val knownParametersSubstitutor: TypeSubstitutor
+    abstract val knownParametersSubstitutor: NewTypeSubstitutor
     abstract val argumentsWithConversion: Map<KotlinCallArgument, SamConversionDescription>
     abstract val argumentsWithSuspendConversion: Map<KotlinCallArgument, UnwrappedType>
     abstract val argumentsWithUnitConversion: Map<KotlinCallArgument, UnwrappedType>
@@ -91,12 +90,6 @@ class ResolvedSubCallArgument(override val atom: SubKotlinCallArgument, resolveI
         else
             setAnalyzedResults(listOf(atom.callResult))
     }
-}
-
-interface PostponedResolvedAtomMarker {
-    val inputTypes: Collection<KotlinTypeMarker>
-    val outputType: KotlinTypeMarker?
-    val analyzed: Boolean
 }
 
 interface PostponedAtomWithRevisableExpectedType {
@@ -237,16 +230,17 @@ sealed class CallResolutionResult(
 
     fun completedDiagnostic(substitutor: NewTypeSubstitutor): List<KotlinCallDiagnostic> {
         return diagnostics.map {
-            if (it !is NewConstraintError) return@map it
-            val lowerType = it.lowerType.safeAs<KotlinType>()?.unwrap() ?: return@map it
+            val error = it.constraintSystemError ?: return@map it
+            if (error !is NewConstraintError) return@map it
+            val lowerType = error.lowerType.safeAs<KotlinType>()?.unwrap() ?: return@map it
             val newLowerType = substitutor.safeSubstitute(lowerType.unCapture())
-            NewConstraintError(newLowerType, it.upperType, it.position)
+            NewConstraintError(newLowerType, error.upperType, error.position).asDiagnostic()
         }
     }
 
     override val atom: ResolutionAtom? get() = null
 
-    override fun toString() = "diagnostics: (${diagnostics.joinToString()})"
+    override fun toString(): String = "diagnostics: (${diagnostics.joinToString()})"
 }
 
 open class SingleCallResolutionResult(

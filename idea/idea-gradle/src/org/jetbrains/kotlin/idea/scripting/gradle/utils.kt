@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -31,41 +30,39 @@ fun getGradleScriptInputsStamp(
     project: Project,
     file: VirtualFile,
     givenKtFile: KtFile? = null,
-    givenTimeStamp: Long = System.currentTimeMillis()
+    givenTimeStamp: Long = file.modificationStamp
 ): GradleKotlinScriptConfigurationInputs? {
     if (!isGradleKotlinScript(file)) return null
 
     return runReadAction {
-        val ktFile = givenKtFile ?: PsiManager.getInstance(project).findFile(file) as? KtFile
+        val ktFile = givenKtFile ?: PsiManager.getInstance(project).findFile(file) as? KtFile ?: return@runReadAction null
 
-        if (ktFile != null) {
-            val result = StringBuilder()
-            ktFile.script?.blockExpression
-                ?.getChildrenOfType<KtScriptInitializer>()
-                ?.forEach {
-                    val call = it.children.singleOrNull() as? KtCallExpression
-                    val callRef = call?.firstChild?.text ?: return@forEach
-                    if (callRef in sections) {
-                        result.append(callRef)
-                        val lambda = call.lambdaArguments.singleOrNull()
-                        lambda?.accept(object : PsiRecursiveElementVisitor(false) {
-                            override fun visitElement(element: PsiElement) {
-                                super.visitElement(element)
-                                when (element) {
-                                    is PsiWhiteSpace -> if (element.text.contains("\n")) result.append("\n")
-                                    is PsiComment -> {
-                                    }
-                                    is LeafPsiElement -> result.append(element.text)
+        val result = StringBuilder()
+        ktFile.script?.blockExpression
+            ?.getChildrenOfType<KtScriptInitializer>()
+            ?.forEach {
+                val call = it.children.singleOrNull() as? KtCallExpression
+                val callRef = call?.firstChild?.text ?: return@forEach
+                if (callRef in sections) {
+                    result.append(callRef)
+                    val lambda = call.lambdaArguments.singleOrNull()
+                    lambda?.accept(object : PsiRecursiveElementVisitor(false) {
+                        override fun visitElement(element: PsiElement) {
+                            super.visitElement(element)
+                            when (element) {
+                                is PsiWhiteSpace -> if (element.text.contains("\n")) result.append("\n")
+                                is PsiComment -> {
                                 }
+                                is LeafPsiElement -> result.append(element.text)
                             }
-                        })
-                        result.append("\n")
-                    }
+                        }
+                    })
+                    result.append("\n")
                 }
+            }
 
-            val buildRoot = GradleBuildRootsManager.getInstance(project).findScriptBuildRoot(file)?.nearest as? GradleBuildRoot
-            GradleKotlinScriptConfigurationInputs(result.toString(), givenTimeStamp, buildRoot?.pathPrefix)
-        } else null
+        val buildRoot = GradleBuildRootsManager.getInstance(project).findScriptBuildRoot(file)?.nearest as? GradleBuildRoot
+        GradleKotlinScriptConfigurationInputs(result.toString(), givenTimeStamp, buildRoot?.pathPrefix)
     }
 }
 

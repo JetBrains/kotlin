@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
-import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
-import org.jetbrains.kotlin.backend.jvm.codegen.IrTypeMapper
-import org.jetbrains.kotlin.backend.jvm.codegen.MethodSignatureMapper
+import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.backend.jvm.codegen.createFakeContinuation
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmSharedVariablesManager
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
@@ -22,6 +20,7 @@ import org.jetbrains.kotlin.backend.jvm.lower.CollectionStubComputer
 import org.jetbrains.kotlin.backend.jvm.lower.JvmInnerClassesSupport
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.MemoizedInlineClassReplacements
+import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
@@ -43,6 +42,8 @@ import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.Type
 
+typealias MetadataSerializerFactory = (JvmBackendContext, IrClass, Type, JvmSerializationBindings, MetadataSerializer?) -> MetadataSerializer
+
 class JvmBackendContext(
     val state: GenerationState,
     val psiSourceManager: PsiSourceManager,
@@ -53,7 +54,7 @@ class JvmBackendContext(
     // If the JVM fqname of a class differs from what is implied by its parent, e.g. if it's a file class
     // annotated with @JvmPackageName, the correct name is recorded here.
     val classNameOverride: MutableMap<IrClass, JvmClassName>,
-    internal val createCodegen: (IrClass, JvmBackendContext, IrFunction?) -> ClassCodegen?,
+    val serializerFactory: MetadataSerializerFactory
 ) : CommonBackendContext {
     override val transformedFunction: MutableMap<IrFunctionSymbol, IrSimpleFunctionSymbol>
         get() = TODO("not implemented")
@@ -91,7 +92,7 @@ class JvmBackendContext(
         localClassType[container.attributeOwnerId] = value
     }
 
-    internal val customEnclosingFunction = mutableMapOf<IrAttributeContainer, IrFunction>()
+    internal val isEnclosedInConstructor = mutableSetOf<IrAttributeContainer>()
 
     internal val classCodegens = mutableMapOf<IrClass, ClassCodegen>()
 

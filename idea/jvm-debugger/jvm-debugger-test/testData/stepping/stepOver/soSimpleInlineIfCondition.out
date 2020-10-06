@@ -3,6 +3,8 @@ Run Java
 Connected to the target VM
 soSimpleInlineIfCondition.kt:5
 soSimpleInlineIfCondition.kt:8
+soSimpleInlineIfCondition.kt:11
+soSimpleInlineIfCondition.kt:12
 Disconnected from the target VM
 
 Process finished with exit code 0

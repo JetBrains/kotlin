@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInsight.FileModificationService
-import com.intellij.codeInsight.daemon.impl.HighlightInfoType
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.isOverridable
+import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.isMainFunction
 import org.jetbrains.kotlin.idea.quickfix.RemoveUnusedFunctionParameterFix
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatureConfiguration
@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -49,7 +50,13 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
                 if (receiverTypeReference == null || receiverTypeReference.textRange.isEmpty) return
 
                 if (callableDeclaration is KtProperty && callableDeclaration.accessors.isEmpty()) return
-                if (callableDeclaration is KtNamedFunction && !callableDeclaration.hasBody()) return
+                if (callableDeclaration is KtNamedFunction) {
+                    if (!callableDeclaration.hasBody()) return
+                    if (callableDeclaration.name == null) {
+                        val parentQualified = callableDeclaration.getStrictParentOfType<KtQualifiedExpression>()
+                        if (KtPsiUtil.deparenthesize(parentQualified?.callExpression?.calleeExpression) == callableDeclaration) return
+                    }
+                }
 
                 if (callableDeclaration.hasModifier(KtTokens.OVERRIDE_KEYWORD) ||
                     callableDeclaration.hasModifier(KtTokens.OPERATOR_KEYWORD) ||

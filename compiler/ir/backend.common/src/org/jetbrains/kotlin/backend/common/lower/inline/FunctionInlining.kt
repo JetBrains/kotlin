@@ -9,7 +9,11 @@ package org.jetbrains.kotlin.backend.common.lower.inline
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.createTemporaryVariableWithWrappedDescriptor
+import org.jetbrains.kotlin.backend.common.ir.getNewWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.coroutinesIntrinsicsPackageFqName
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -19,9 +23,7 @@ import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -37,17 +39,34 @@ interface InlineFunctionResolver {
     fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
+fun IrFunction.isTopLevelInPackage(name: String, packageName: String): Boolean {
+    if (name != this.name.asString()) return false
+
+    val containingDeclaration = parent as? IrPackageFragment ?: return false
+    val packageFqName = containingDeclaration.fqName.asString()
+    return packageName == packageFqName
+}
+
+fun IrFunction.isBuiltInIntercepted(languageVersionSettings: LanguageVersionSettings): Boolean =
+    !languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines) &&
+            isTopLevelInPackage("intercepted", languageVersionSettings.coroutinesIntrinsicsPackageFqName().asString())
+
+fun IrFunction.isBuiltInSuspendCoroutineUninterceptedOrReturn(languageVersionSettings: LanguageVersionSettings): Boolean =
+    isTopLevelInPackage(
+        "suspendCoroutineUninterceptedOrReturn",
+        languageVersionSettings.coroutinesIntrinsicsPackageFqName().asString()
+    )
+
 open class DefaultInlineFunctionResolver(open val context: CommonBackendContext) : InlineFunctionResolver {
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction {
-        val descriptor = symbol.descriptor.original
+        val function = symbol.owner
         val languageVersionSettings = context.configuration.languageVersionSettings
         // TODO: Remove these hacks when coroutine intrinsics are fixed.
         return when {
-            descriptor.isBuiltInIntercepted(languageVersionSettings) ->
+            function.isBuiltInIntercepted(languageVersionSettings) ->
                 error("Continuation.intercepted is not available with release coroutines")
 
-            descriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(languageVersionSettings) ->
+            function.isBuiltInSuspendCoroutineUninterceptedOrReturn(languageVersionSettings) ->
                 context.ir.symbols.suspendCoroutineUninterceptedOrReturn.owner
 
             symbol == context.ir.symbols.coroutineContextGetter ->
@@ -156,7 +175,7 @@ class FunctionInlining(
             val evaluationStatements = evaluateArguments(callSite, copiedCallee)
             val statements = (copiedCallee.body as IrBlockBody).statements
 
-            val irReturnableBlockSymbol = IrReturnableBlockSymbolImpl(copiedCallee.descriptor.original)
+            val irReturnableBlockSymbol = IrReturnableBlockSymbolImpl(callee.getNewWrappedDescriptor())
             val endOffset = callee.endOffset
             /* creates irBuilder appending to the end of the given returnable block: thus why we initialize
              * irBuilder with (..., endOffset, endOffset).
@@ -246,7 +265,7 @@ class FunctionInlining(
                                 )
                             }
                             is IrSimpleFunction ->
-                                IrCallImpl(startOffset, endOffset, function.returnType, function.symbol)
+                                IrCallImpl(startOffset, endOffset, function.returnType, function.symbol, function.typeParameters.size, function.valueParameters.size)
                             else ->
                                 error("Unknown function kind : ${function.render()}")
                         }
@@ -520,7 +539,11 @@ class FunctionInlining(
         override val startOffset: Int get() = UNDEFINED_OFFSET
         override val endOffset: Int get() = UNDEFINED_OFFSET
 
-        override val type: IrType get() = symbol.owner.type
+        override var type: IrType
+            get() = symbol.owner.type
+            set(value) {
+                symbol.owner.type = value
+            }
 
         override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D) =
             visitor.visitGetValue(this, data)

@@ -44,7 +44,7 @@ public class ErrorSimpleFunctionDescriptorImpl extends SimpleFunctionDescriptorI
 
     @NotNull
     @Override
-    public SimpleFunctionDescriptor copy(DeclarationDescriptor newOwner, Modality modality, Visibility visibility, Kind kind, boolean copyOverrides) {
+    public SimpleFunctionDescriptor copy(DeclarationDescriptor newOwner, Modality modality, DescriptorVisibility visibility, Kind kind, boolean copyOverrides) {
         return this;
     }
 
@@ -66,7 +66,7 @@ public class ErrorSimpleFunctionDescriptorImpl extends SimpleFunctionDescriptorI
 
             @NotNull
             @Override
-            public CopyBuilder<SimpleFunctionDescriptor> setVisibility(@NotNull Visibility visibility) {
+            public CopyBuilder<SimpleFunctionDescriptor> setVisibility(@NotNull DescriptorVisibility visibility) {
                 return this;
             }
 

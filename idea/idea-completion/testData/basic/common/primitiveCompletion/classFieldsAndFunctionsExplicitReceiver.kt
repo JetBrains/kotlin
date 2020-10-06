@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 class B {
     fun bb() {}
     val bbb = 20

@@ -47,6 +47,26 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
+@Deprecated("For binary compatibility with AS, see KT-42061", replaceWith = ReplaceWith("mainReference"))
+@get:JvmName("getMainReference")
+val KtSimpleNameExpression.mainReferenceCompat: KtSimpleNameReference
+    get() = mainReference
+
+@Deprecated("For binary compatibility with AS, see KT-42061", replaceWith = ReplaceWith("mainReference"))
+@get:JvmName("getMainReference")
+val KtReferenceExpression.mainReferenceCompat: KtReference
+    get() = mainReference
+
+@Deprecated("For binary compatibility with AS, see KT-42061", replaceWith = ReplaceWith("mainReference"))
+@get:JvmName("getMainReference")
+val KDocName.mainReferenceCompat: KDocReference
+    get() = mainReference
+
+@Deprecated("For binary compatibility with AS, see KT-42061", replaceWith = ReplaceWith("mainReference"))
+@get:JvmName("getMainReference")
+val KtElement.mainReferenceCompat: KtReference?
+    get() = mainReference
+
 // Navigation element of the resolved reference
 // For property accessor return enclosing property
 val PsiReference.unwrappedTargets: Set<PsiElement>

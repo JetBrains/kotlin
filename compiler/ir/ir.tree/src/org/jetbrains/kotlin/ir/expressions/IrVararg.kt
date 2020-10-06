@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 interface IrVarargElement : IrElement
 
 abstract class IrVararg : IrExpression() {
-    abstract val varargElementType: IrType
+    abstract var varargElementType: IrType
 
     abstract val elements: List<IrVarargElement>
 

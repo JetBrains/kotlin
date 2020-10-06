@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.codegen.intrinsics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.AsmUtil.genInvokeAppendMethod
-import org.jetbrains.kotlin.codegen.AsmUtil.genStringBuilderConstructor
+import org.jetbrains.kotlin.codegen.DescriptorAsmUtil.genInvokeAppendMethod
+import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
@@ -32,68 +32,73 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class Concat : IntrinsicMethod() {
     fun generateImpl(
-            codegen: ExpressionCodegen,
-            v: InstructionAdapter,
-            returnType: Type,
-            element: PsiElement?,
-            arguments: List<KtExpression>,
-            receiver: StackValue
+        codegen: ExpressionCodegen,
+        v: InstructionAdapter,
+        returnType: Type,
+        element: PsiElement?,
+        arguments: List<KtExpression>,
+        receiver: StackValue
     ): Type {
+        val generator = StringConcatGenerator.create(codegen.state, v)
         if (element is KtBinaryExpression && element.operationReference.getReferencedNameElementType() == KtTokens.PLUS) {
-            // LHS + RHS
-            genStringBuilderConstructor(v)
-            codegen.invokeAppend(v, element.left)
-            codegen.invokeAppend(v, element.right)
-        }
-        else {
+            // LHS + RHS            
+            generator.genStringBuilderConstructorIfNeded()
+            codegen.invokeAppend(generator, element.left)
+            codegen.invokeAppend(generator, element.right)
+        } else {
             // Explicit plus call LHS?.plus(RHS) or LHS.plus(RHS)
             receiver.put(AsmTypes.JAVA_STRING_TYPE, v)
-            genStringBuilderConstructor(v)
-            v.swap()
-            genInvokeAppendMethod(v, returnType, null)
-            codegen.invokeAppend(v, arguments[0])
+            generator.genStringBuilderConstructorIfNeded(true)
+            genInvokeAppendMethod(generator, returnType, null, null, StackValue.onStack(JAVA_STRING_TYPE))
+            codegen.invokeAppend(generator, arguments[0])
         }
-
-        v.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)
+        generator.genToString()
         return JAVA_STRING_TYPE
     }
 
+
     override fun toCallable(method: CallableMethod): Callable =
-            object : IntrinsicCallable(method) {
-                override fun invokeMethodWithArguments(
-                        resolvedCall: ResolvedCall<*>,
-                        receiver: StackValue,
-                        codegen: ExpressionCodegen
-                ): StackValue {
-                    if (resolvedCall.call.callElement.parent is KtCallableReferenceExpression) {
-                        // NB we come here only in case of inlined callable reference to String::plus.
-                        // This will map arguments properly, invoking callbacks defined in Callable.
-                        return super.invokeMethodWithArguments(resolvedCall, receiver, codegen)
-                    }
-                    return StackValue.operation(returnType) {
-                        val arguments = resolvedCall.call.valueArguments.map { it.getArgumentExpression()!! }
-                        val actualType = generateImpl(
-                                codegen, it, returnType,
-                                resolvedCall.call.callElement,
-                                arguments,
-                                StackValue.receiver(resolvedCall, receiver, codegen, this)
-                        )
-                        StackValue.coerce(actualType, returnType, it)
-                    }
+        object : IntrinsicCallable(method) {
+            lateinit var generator: StringConcatGenerator
+            override fun invokeMethodWithArguments(
+                resolvedCall: ResolvedCall<*>,
+                receiver: StackValue,
+                codegen: ExpressionCodegen
+            ): StackValue {
+                if (resolvedCall.call.callElement.parent is KtCallableReferenceExpression) {
+                    // NB we come here only in case of inlined callable reference to String::plus.
+                    // This will map arguments properly, invoking callbacks defined in Callable.
+                    return super.invokeMethodWithArguments(resolvedCall, receiver, codegen)
                 }
-
-                override fun afterReceiverGeneration(v: InstructionAdapter, frameMap: FrameMap) {
-                    v.generateNewInstanceDupAndPlaceBeforeStackTop(frameMap, AsmTypes.JAVA_STRING_TYPE, "java/lang/StringBuilder")
-                    v.invokespecial("java/lang/StringBuilder", "<init>", "(Ljava/lang/String;)V", false)
-                }
-
-                override fun invokeIntrinsic(v: InstructionAdapter) {
-                    // String::plus has type String.(Any?) -> String, thus we have no argument type information
-                    // in case of callable reference passed to a generic function, e.g.:
-                    //      charArrayOf('O', 'K').fold("", String::plus)
-                    // TODO Make String::plus generic, and invoke proper StringBuilder#append.
-                    AsmUtil.genInvokeAppendMethod(v, AsmTypes.OBJECT_TYPE, null)
-                    v.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)
+                return StackValue.operation(returnType) {
+                    val arguments = resolvedCall.call.valueArguments.map { it.getArgumentExpression()!! }
+                    val actualType = generateImpl(
+                        codegen, it, returnType,
+                        resolvedCall.call.callElement,
+                        arguments,
+                        StackValue.receiver(resolvedCall, receiver, codegen, this)
+                    )
+                    StackValue.coerce(actualType, returnType, it)
                 }
             }
+
+            override fun afterReceiverGeneration(v: InstructionAdapter, frameMap: FrameMap, state: GenerationState) {
+                generator = StringConcatGenerator.create(state, v)
+                if (!generator.mode.isDynamic) {
+                    v.generateNewInstanceDupAndPlaceBeforeStackTop(frameMap, JAVA_STRING_TYPE, "java/lang/StringBuilder")
+                    v.invokespecial("java/lang/StringBuilder", "<init>", "(Ljava/lang/String;)V", false)
+                } else {
+                    generator.invokeAppend(JAVA_STRING_TYPE)
+                }
+            }
+
+            override fun invokeIntrinsic(v: InstructionAdapter) {
+                // String::plus has type String.(Any?) -> String, thus we have no argument type information
+                // in case of callable reference passed to a generic function, e.g.:
+                //      charArrayOf('O', 'K').fold("", String::plus)
+                // TODO Make String::plus generic, and invoke proper StringBuilder#append.
+                generator.invokeAppend(AsmTypes.OBJECT_TYPE)
+                generator.genToString()
+            }
+        }
 }

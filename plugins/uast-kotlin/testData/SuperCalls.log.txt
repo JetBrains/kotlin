@@ -13,8 +13,8 @@ UFile (package = )
                                 UObjectLiteralExpression
                                     ULiteralExpression (value = "inner literal")
                                     UClass (name = null)
-                                        UMethod (name = SuperCallsKt$anon$1$bar$1)
-                    UMethod (name = SuperCallsKt$anon$1)
+                                        UMethod (name = )
+                    UMethod (name = )
                     UClass (name = InnerClass)
                         UMethod (name = InnerClass)
                             UBlockExpression

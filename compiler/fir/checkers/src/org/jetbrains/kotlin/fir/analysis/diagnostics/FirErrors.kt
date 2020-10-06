@@ -80,14 +80,19 @@ object FirErrors {
     val SEALED_CLASS_CONSTRUCTOR_CALL by error0<FirSourceElement, PsiElement>()
 
     // Annotations
+    val ANNOTATION_ARGUMENT_KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR by existing<FirSourceElement, KtExpression>(Errors.ANNOTATION_ARGUMENT_KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR)
+    val ANNOTATION_ARGUMENT_MUST_BE_CONST by existing<FirSourceElement, KtExpression>(Errors.ANNOTATION_ARGUMENT_MUST_BE_CONST)
+    val ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST by existing<FirSourceElement, KtExpression>(Errors.ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST)
+    val ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL by existing<FirSourceElement, KtExpression>(Errors.ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL)
     val ANNOTATION_CLASS_MEMBER by existing<FirSourceElement, PsiElement>(Errors.ANNOTATION_CLASS_MEMBER)
     val ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT by existing<FirSourceElement, KtExpression>(Errors.ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT)
+    val INVALID_TYPE_OF_ANNOTATION_MEMBER by existing<FirSourceElement, KtTypeReference>(Errors.INVALID_TYPE_OF_ANNOTATION_MEMBER)
     val LOCAL_ANNOTATION_CLASS_ERROR by existing<FirSourceElement, KtClassOrObject>(Errors.LOCAL_ANNOTATION_CLASS_ERROR)
     val MISSING_VAL_ON_ANNOTATION_PARAMETER by existing<FirSourceElement, KtParameter>(Errors.MISSING_VAL_ON_ANNOTATION_PARAMETER)
-    val NULLABLE_TYPE_OF_ANNOTATION_MEMBER by existing<FirSourceElement, KtTypeReference>(Errors.NULLABLE_TYPE_OF_ANNOTATION_MEMBER)
-    val INVALID_TYPE_OF_ANNOTATION_MEMBER by existing<FirSourceElement, KtTypeReference>(Errors.INVALID_TYPE_OF_ANNOTATION_MEMBER)
-    val VAR_ANNOTATION_PARAMETER by existing<FirSourceElement, KtParameter>(Errors.VAR_ANNOTATION_PARAMETER)
+    val NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION by existing<FirSourceElement, KtExpression>(Errors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION)
     val NOT_AN_ANNOTATION_CLASS by error1<FirSourceElement, PsiElement, String>()
+    val NULLABLE_TYPE_OF_ANNOTATION_MEMBER by existing<FirSourceElement, KtTypeReference>(Errors.NULLABLE_TYPE_OF_ANNOTATION_MEMBER)
+    val VAR_ANNOTATION_PARAMETER by existing<FirSourceElement, KtParameter>(Errors.VAR_ANNOTATION_PARAMETER)
 
     // Exposed visibility group
     val EXPOSED_TYPEALIAS_EXPANDED_TYPE by error3<FirSourceElement, PsiElement, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>()
@@ -165,4 +170,5 @@ object FirErrors {
     val ASSIGNED_VALUE_IS_NEVER_READ by warning0<FirSourceElement, PsiElement>()
     val VARIABLE_INITIALIZER_IS_REDUNDANT by warning0<FirSourceElement, PsiElement>()
     val VARIABLE_NEVER_READ by warning0<FirSourceElement, PsiElement>()
+    val USELESS_CALL_ON_NOT_NULL by warning0<FirSourceElement, PsiElement>()
 }

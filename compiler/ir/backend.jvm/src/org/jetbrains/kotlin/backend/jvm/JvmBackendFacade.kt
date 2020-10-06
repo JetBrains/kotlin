@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
+import org.jetbrains.kotlin.backend.jvm.codegen.DescriptorMetadataSerializer
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -23,7 +24,6 @@ import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrLinker
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -101,8 +101,6 @@ object JvmBackendFacade {
         }
         val irProviders = listOf(irLinker)
 
-        stubGenerator.setIrProviders(irProviders)
-
         val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files, irProviders, pluginExtensions, expectDescriptorToSymbol = null)
         irLinker.postProcess()
 
@@ -112,7 +110,8 @@ object JvmBackendFacade {
         irModuleFragment.files.addAll(dependencies.flatMap { it.files })
 
         doGenerateFilesInternal(
-            state, irModuleFragment, psi2irContext.symbolTable, psi2irContext.sourceManager, phaseConfig, irProviders, extensions
+            state, irModuleFragment, psi2irContext.symbolTable, psi2irContext.sourceManager, phaseConfig,
+            irProviders, extensions, ::DescriptorMetadataSerializer
         )
     }
 
@@ -124,11 +123,11 @@ object JvmBackendFacade {
         phaseConfig: PhaseConfig,
         irProviders: List<IrProvider>,
         extensions: JvmGeneratorExtensions,
-        createCodegen: (IrClass, JvmBackendContext, IrFunction?) -> ClassCodegen? = { _, _, _ -> null },
+        serializerFactory: MetadataSerializerFactory,
     ) {
         val context = JvmBackendContext(
             state, sourceManager, irModuleFragment.irBuiltins, irModuleFragment,
-            symbolTable, phaseConfig, extensions.classNameOverride, createCodegen
+            symbolTable, phaseConfig, extensions.classNameOverride, serializerFactory
         )
         /* JvmBackendContext creates new unbound symbols, have to resolve them. */
         ExternalDependenciesGenerator(symbolTable, irProviders, state.languageVersionSettings).generateUnboundSymbolsAsDependencies()

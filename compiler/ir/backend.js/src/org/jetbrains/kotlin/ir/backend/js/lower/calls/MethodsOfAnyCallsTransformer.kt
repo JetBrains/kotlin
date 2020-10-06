@@ -53,7 +53,7 @@ class MethodsOfAnyCallsTransformer(context: JsIrBackendContext) : CallsTransform
     }
 
 
-    override fun transformFunctionAccess(call: IrFunctionAccessExpression): IrExpression {
+    override fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean): IrExpression {
         val symbol = call.symbol
         nameToTransformer[symbol.owner.name]?.let {
             return it(call)

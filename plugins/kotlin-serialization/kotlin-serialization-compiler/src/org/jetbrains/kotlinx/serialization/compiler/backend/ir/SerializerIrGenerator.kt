@@ -51,11 +51,11 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
     protected val irAnySerialDescProperty = anySerialDescProperty?.let { compilerContext.symbolTable.referenceProperty(it) }
 
 
-    override fun generateSerialDesc() {
-        val desc: PropertyDescriptor = generatedSerialDescPropertyDescriptor ?: return
-        val serialDescImplClass = serializerDescriptor
+    protected open val serialDescImplClass: ClassDescriptor = serializerDescriptor
             .getClassFromInternalSerializationPackage(SERIAL_DESCRIPTOR_CLASS_IMPL)
 
+    override fun generateSerialDesc() {
+        val desc: PropertyDescriptor = generatedSerialDescPropertyDescriptor ?: return
         val addFuncS = serialDescImplClass.referenceMethod(CallingConventions.addElement)
 
         val thisAsReceiverParameter = irClass.thisReceiver!!
@@ -452,7 +452,8 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
                     // throw exception on unknown field
 
                     val exceptionFqn = getSerializationPackageFqn(UNKNOWN_FIELD_EXC)
-                    val excClassRef = compilerContext.referenceConstructors(exceptionFqn).single { it.owner.isPrimary }
+                    val excClassRef = compilerContext.referenceConstructors(exceptionFqn)
+                        .single { it.owner.valueParameters.singleOrNull()?.type?.isInt() == true }
                     +elseBranch(
                         irThrow(
                             irInvoke(

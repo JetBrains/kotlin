@@ -79,7 +79,7 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T>() {
 
     private var data = arrayOfNulls<Any>(DEFAULT_SIZE)
     private fun ensureCapacity(index: Int) {
-        if (data.size < index) {
+        if (data.size <= index) {
             data = data.copyOf(data.size * INCREASE_K)
         }
     }

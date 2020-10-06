@@ -5,5 +5,5 @@ public final class Foo<T> : R|kotlin/Any| {
 
 }
 
-public final typealias MyHandler<P> = R|(test/Foo<P>) -> kotlin/Unit|
+public final typealias MyHandler<P> = R|test/Foo<P>.() -> kotlin/Unit|
 

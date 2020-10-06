@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
+import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import javax.inject.Inject
 
@@ -33,23 +34,70 @@ open class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
     override fun configureRun(
         compilation: KotlinJsIrCompilation
     ) {
-        compilation.binaries.getIrBinaries(KotlinJsBinaryMode.DEVELOPMENT)
+        compilation.binaries
+            .withType(JsIrBinary::class.java)
+            .matching { it is Executable }
             .all { developmentExecutable ->
-                val runTaskHolder = NodeJsExec.create(compilation, disambiguateCamelCased(RUN_TASK_NAME)) {
-                    group = taskGroupName
-                    inputFileProperty.set(developmentExecutable.linkTask.flatMap { it.outputFileProperty })
-                }
-
-                target.runTask.dependsOn(runTaskHolder)
+                configureRun(developmentExecutable)
             }
+    }
+
+    private fun configureRun(binary: JsIrBinary) {
+        val binaryRunName = disambiguateCamelCased(
+            binary.mode.name.toLowerCase(),
+            RUN_TASK_NAME
+        )
+        locateOrRegisterRunTask(binary, binaryRunName)
+
+        if (binary.mode == KotlinJsBinaryMode.DEVELOPMENT) {
+            val runName = disambiguateCamelCased(
+                RUN_TASK_NAME
+            )
+            locateOrRegisterRunTask(binary, runName)
+        }
+    }
+
+    private fun locateOrRegisterRunTask(
+        binary: JsIrBinary,
+        name: String
+    ) {
+        val runTask = project.locateTask<NodeJsExec>(name)
+        if (runTask == null) {
+            val runTaskHolder = NodeJsExec.create(binary.compilation, name) {
+                group = taskGroupName
+                inputFileProperty.set(
+                    project.layout.file(
+                        binary.linkSyncTask.map {
+                            it.destinationDir
+                                .resolve(binary.linkTask.get().outputFile.name)
+                        }
+                    )
+                )
+            }
+
+            target.runTask.dependsOn(runTaskHolder)
+        }
     }
 
     override fun configureBuild(
         compilation: KotlinJsIrCompilation
     ) {
-        compilation.binaries.getIrBinaries(KotlinJsBinaryMode.PRODUCTION)
+        compilation.binaries
+            .getIrBinaries(KotlinJsBinaryMode.PRODUCTION)
+            .matching { it is Executable }
             .all { productionExecutable ->
                 project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(productionExecutable.linkTask)
+            }
+    }
+
+    override fun configureLibrary(compilation: KotlinJsIrCompilation) {
+        super.configureLibrary(compilation)
+
+        compilation.binaries
+            .withType(JsIrBinary::class.java)
+            .matching { it is Library }
+            .all { binary ->
+                configureRun(binary)
             }
     }
 }

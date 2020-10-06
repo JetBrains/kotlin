@@ -7,10 +7,13 @@ package org.jetbrains.kotlin.fir.resolve.calls.tower
 
 import org.jetbrains.kotlin.fir.resolve.calls.CandidateCollector
 import java.util.*
-import kotlin.coroutines.*
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.coroutines.intrinsics.createCoroutineUnintercepted
 import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
-import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
+import kotlin.coroutines.resume
 
 class TowerResolveManager private constructor(private val shouldStopAtTheLevel: (TowerGroup) -> Boolean) {
 
@@ -24,9 +27,7 @@ class TowerResolveManager private constructor(private val shouldStopAtTheLevel: 
 
     private suspend fun suspendResolverTask(group: TowerGroup) =
         suspendCoroutineUninterceptedOrReturn<Unit> {
-            val nextTask = queue.poll()
             queue += SuspendedResolverTask(it, group)
-            if (nextTask != null) resumeTask(nextTask)
             COROUTINE_SUSPENDED
         }
 

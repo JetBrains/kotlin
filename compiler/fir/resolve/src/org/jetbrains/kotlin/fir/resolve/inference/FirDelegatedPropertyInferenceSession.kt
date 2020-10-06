@@ -13,17 +13,20 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeTypeVariableTypeConstructor
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -32,9 +35,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 class FirDelegatedPropertyInferenceSession(
     val property: FirProperty,
     initialCall: FirExpression,
-    components: BodyResolveComponents,
+    resolutionContext: ResolutionContext,
     private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
-) : AbstractManyCandidatesInferenceSession(components) {
+) : AbstractManyCandidatesInferenceSession(resolutionContext) {
     init {
         val initialCandidate = (initialCall as? FirResolvable)
             ?.calleeReference
@@ -61,17 +64,17 @@ class FirDelegatedPropertyInferenceSession(
     fun completeCandidates(): List<FirResolvable> {
         @Suppress("UNCHECKED_CAST")
         val resolvedCalls = partiallyResolvedCalls.map { it.first }
-        val commonSystem = components.inferenceComponents.createConstraintSystem().apply {
+        val commonSystem = components.session.inferenceComponents.createConstraintSystem().apply {
             addOtherSystem(currentConstraintSystem)
         }
         prepareForCompletion(commonSystem, resolvedCalls)
-        components.inferenceComponents.withInferenceSession(DEFAULT) {
+        resolutionContext.bodyResolveContext.withInferenceSession(DEFAULT) {
             @Suppress("UNCHECKED_CAST")
             components.callCompleter.completer.complete(
                 commonSystem.asConstraintSystemCompleterContext(),
-                KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL,
+                ConstraintSystemCompletionMode.FULL,
                 resolvedCalls as List<FirStatement>,
-                unitType
+                unitType, resolutionContext
             ) {
                 postponedArgumentsAnalyzer.analyze(
                     commonSystem.asPostponedArgumentsAnalyzerContext(),
@@ -97,7 +100,7 @@ class FirDelegatedPropertyInferenceSession(
 
     fun createFinalSubstitutor(): ConeSubstitutor {
         return resultingConstraintSystem.asReadOnlyStorage()
-            .buildAbstractResultingSubstitutor(components.inferenceComponents.ctx) as ConeSubstitutor
+            .buildAbstractResultingSubstitutor(components.session.inferenceComponents.ctx) as ConeSubstitutor
     }
 
     private fun Candidate.addConstraintsForGetValueMethod(commonSystem: ConstraintSystemBuilder) {

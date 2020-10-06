@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 object NamedObject
 
 fun test() {

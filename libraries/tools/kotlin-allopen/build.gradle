@@ -24,9 +24,9 @@ dependencies {
 }
 
 tasks.withType(project.compileKotlin.class) {
-    kotlinOptions.languageVersion = "1.2"
-    kotlinOptions.apiVersion = "1.2"
-    kotlinOptions.freeCompilerArgs += ["-Xskip-metadata-version-check"]
+    kotlinOptions.languageVersion = "1.3"
+    kotlinOptions.apiVersion = "1.3"
+    kotlinOptions.freeCompilerArgs += ["-Xskip-prerelease-check"]
 }
 
 jar {

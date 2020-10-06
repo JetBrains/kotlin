@@ -1,6 +1,7 @@
 @kotlin.Metadata
 public final class _2Kt$sameName$$inlined$call$1 {
     // source: '1.kt'
+    enclosing method _2Kt.sameName(J)Ljava/lang/String;
     inner (anonymous) class _2Kt$sameName$$inlined$call$1
     public method <init>(): void
     public final method invoke(): java.lang.Object
@@ -9,6 +10,7 @@ public final class _2Kt$sameName$$inlined$call$1 {
 @kotlin.Metadata
 public final class _2Kt$sameName$$inlined$call$2 {
     // source: '1.kt'
+    enclosing method _2Kt.sameName(I)Ljava/lang/String;
     inner (anonymous) class _2Kt$sameName$$inlined$call$2
     public method <init>(): void
     public final method invoke(): java.lang.Object
@@ -17,6 +19,7 @@ public final class _2Kt$sameName$$inlined$call$2 {
 @kotlin.Metadata
 public final class _2Kt$sameName$$inlined$call$3 {
     // source: '1.kt'
+    enclosing method _2Kt.sameName(I)Ljava/lang/String;
     inner (anonymous) class _2Kt$sameName$$inlined$call$3
     public method <init>(): void
     public final method invoke(): java.lang.Object
@@ -25,6 +28,7 @@ public final class _2Kt$sameName$$inlined$call$3 {
 @kotlin.Metadata
 public final class _2Kt$sameName$$inlined$call$4 {
     // source: '1.kt'
+    enclosing method _2Kt.sameName(J)Ljava/lang/String;
     inner (anonymous) class _2Kt$sameName$$inlined$call$4
     public method <init>(): void
     public final method invoke(): java.lang.Object
@@ -41,6 +45,7 @@ public final class _2Kt {
 @kotlin.Metadata
 public final class test/_1Kt$call$1 {
     // source: '1.kt'
+    enclosing method test/_1Kt.call(Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
     synthetic final field $f: kotlin.jvm.functions.Function0
     inner (anonymous) class test/_1Kt$call$1
     public method <init>(p0: kotlin.jvm.functions.Function0): void

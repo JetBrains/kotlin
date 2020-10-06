@@ -17,6 +17,6 @@ class AllOpenAdditionalCheckers(session: FirSession) : FirAdditionalCheckersExte
         get() = AllOpenPluginKey
 
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
-        override val memberDeclarationCheckers: List<FirMemberDeclarationChecker> = listOf(DummyNameChecker)
+        override val memberDeclarationCheckers: Set<FirMemberDeclarationChecker> = setOf(DummyNameChecker)
     }
 }

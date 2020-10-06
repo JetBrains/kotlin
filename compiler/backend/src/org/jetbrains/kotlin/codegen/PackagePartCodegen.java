@@ -43,7 +43,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.writeAnnotationData;
+import static org.jetbrains.kotlin.codegen.DescriptorAsmUtil.writeAnnotationData;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_PACKAGE_NAME_FIELD_NAME;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 

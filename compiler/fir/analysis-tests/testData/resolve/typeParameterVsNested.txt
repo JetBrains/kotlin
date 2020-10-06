@@ -24,7 +24,7 @@ FILE: typeParameterVsNested.kt
         public abstract val z: <ERROR TYPE REF: Type argument not defined>
             public get(): <ERROR TYPE REF: Type argument not defined>
 
-        public final class Some : R|test/My.T<T>| {
+        public final class Some : <ERROR TYPE REF: Type parameter cannot be a super-type: T> {
             public constructor(): R|test/My.Some| {
                 super<R|test/My.T<T>|>()
             }

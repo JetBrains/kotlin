@@ -12,8 +12,8 @@ import com.intellij.psi.*
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -628,12 +628,12 @@ fun isTopLevelInFileOrScript(element: PsiElement): Boolean {
     }
 }
 
-fun KtModifierKeywordToken.toVisibility(): Visibility {
+fun KtModifierKeywordToken.toVisibility(): DescriptorVisibility {
     return when (this) {
-        KtTokens.PUBLIC_KEYWORD -> Visibilities.PUBLIC
-        KtTokens.PRIVATE_KEYWORD -> Visibilities.PRIVATE
-        KtTokens.PROTECTED_KEYWORD -> Visibilities.PROTECTED
-        KtTokens.INTERNAL_KEYWORD -> Visibilities.INTERNAL
+        KtTokens.PUBLIC_KEYWORD -> DescriptorVisibilities.PUBLIC
+        KtTokens.PRIVATE_KEYWORD -> DescriptorVisibilities.PRIVATE
+        KtTokens.PROTECTED_KEYWORD -> DescriptorVisibilities.PROTECTED
+        KtTokens.INTERNAL_KEYWORD -> DescriptorVisibilities.INTERNAL
         else -> throw IllegalArgumentException("Unknown visibility modifier:$this")
     }
 }
@@ -673,3 +673,6 @@ fun getTrailingCommaByElementsList(elementList: PsiElement?): PsiElement? {
     val lastChild = elementList?.lastChild?.let { if (it !is PsiComment) it else it.getPrevSiblingIgnoringWhitespaceAndComments() }
     return lastChild?.takeIf { it.node.elementType == KtTokens.COMMA }
 }
+
+val KtNameReferenceExpression.isUnderscoreInBackticks
+    get() = getReferencedName() == "`_`"

@@ -42,14 +42,11 @@ import org.jetbrains.kotlin.idea.core.util.range
 import org.jetbrains.kotlin.idea.core.util.start
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.*
-import org.jetbrains.kotlin.idea.util.ImportInsertHelper
-import org.jetbrains.kotlin.idea.util.ProgressIndicatorUtils
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.invokeLater
 import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.idea.util.getFileResolutionScope
-import org.jetbrains.kotlin.idea.util.getSourceRoot
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.kdoc.psi.api.KDocElement
 import org.jetbrains.kotlin.name.FqName
@@ -170,9 +167,11 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
             elements.flatMap { it.collectDescendantsOfType<KtElement>() }
         }
 
+        val project = file.project
+
         // TODO: allowResolveInDispatchThread could be dropped as soon as
         //  ConvertJavaCopyPasteProcessor will perform it on non UI thread
-        val bindingContext = runReadAction {
+        val bindingContext = project.runReadActionInSmartMode {
             allowResolveInDispatchThread {
                 file.getResolutionFacade().analyze(allElementsToResolve, BodyResolveMode.PARTIAL)
             }
@@ -180,7 +179,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
 
         val result = mutableListOf<KotlinReferenceData>()
         for (ktElement in allElementsToResolve) {
-            runReadAction {
+            project.runReadActionInSmartMode {
                 indicator?.checkCanceled()
                 result.addReferenceDataInsideElement(
                     ktElement, file, ranges, bindingContext, fakePackageName = fakePackageName,
@@ -214,7 +213,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
         sourcePackageName: String? = null,
         targetPackageName: String? = null
     ) {
-        val reference = runReadAction { ktElement.mainReference } ?: return
+        val reference = file.project.runReadActionInSmartMode { ktElement.mainReference } ?: return
 
         val descriptors = resolveReference(reference, bindingContext)
         //check whether this reference is unambiguous
@@ -488,6 +487,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
             .withDocumentsCommitted(project)
             .cancelWith(indicator)
             .expireWith(project)
+            .inSmartMode(project)
             .submit(AppExecutorUtil.getAppExecutorService())
 
     private fun buildDummySourceScope(
@@ -515,8 +515,9 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
 
         fun joinLines(items: Collection<String>) = items.joinToString("\n")
 
+        val project = file.project
         val dummyImportsFile = runReadAction {
-            KtPsiFactory(file.project)
+            KtPsiFactory(project)
                 .createAnalyzableFile(
                     "dummy-imports.kt",
                     "package $fakePkgName\n" +
@@ -526,7 +527,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
                 )
         }
 
-        val dummyFileImports = runReadAction {
+        val dummyFileImports = project.runReadActionInSmartMode {
             dummyImportsFile.collectDescendantsOfType<KtImportDirective>().mapNotNull { directive ->
                 val importedReference =
                     directive.importedReference?.getQualifiedElementSelector()?.mainReference?.resolve() as? KtNamedDeclaration

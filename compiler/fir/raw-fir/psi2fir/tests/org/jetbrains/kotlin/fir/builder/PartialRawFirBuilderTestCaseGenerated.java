@@ -28,18 +28,33 @@ public class PartialRawFirBuilderTestCaseGenerated extends AbstractPartialRawFir
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/partialRawBuilder"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @TestMetadata("local.kt")
-    public void testLocal() throws Exception {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/partialRawBuilder/local.kt");
+    @TestMetadata("localFunction.kt")
+    public void testLocalFunction() throws Exception {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/partialRawBuilder/localFunction.kt");
     }
 
-    @TestMetadata("member.kt")
-    public void testMember() throws Exception {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/partialRawBuilder/member.kt");
+    @TestMetadata("memberFunction.kt")
+    public void testMemberFunction() throws Exception {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/partialRawBuilder/memberFunction.kt");
     }
 
-    @TestMetadata("simple.kt")
-    public void testSimple() throws Exception {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/partialRawBuilder/simple.kt");
+    @TestMetadata("memberProperty.kt")
+    public void testMemberProperty() throws Exception {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/partialRawBuilder/memberProperty.kt");
+    }
+
+    @TestMetadata("simpleFunction.kt")
+    public void testSimpleFunction() throws Exception {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/partialRawBuilder/simpleFunction.kt");
+    }
+
+    @TestMetadata("simpleVal.kt")
+    public void testSimpleVal() throws Exception {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/partialRawBuilder/simpleVal.kt");
+    }
+
+    @TestMetadata("simpleVar.kt")
+    public void testSimpleVar() throws Exception {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/partialRawBuilder/simpleVar.kt");
     }
 }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.providers.impl
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeUnexpectedTypeArgumentsError
@@ -14,7 +15,6 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeWrongNumberOfTypeArgumentsError
-import org.jetbrains.kotlin.fir.resolve.bindSymbolToLookupTag
 import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.ClassId
 
-class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
+@ThreadSafeMutableState
+class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
     private val symbolProvider by lazy {
         session.firSymbolProvider
@@ -173,7 +174,6 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
                 resolveUserType(typeRef, symbol, substitutor, areBareTypesAllowed)
             }
             is FirFunctionTypeRef -> createFunctionalType(typeRef)
-            is FirDelegatedTypeRef -> resolveType(typeRef.typeRef, scope, areBareTypesAllowed)
             is FirDynamicTypeRef -> ConeKotlinErrorType(ConeIntermediateDiagnostic("Not supported: ${typeRef::class.simpleName}"))
             else -> error("!")
         }

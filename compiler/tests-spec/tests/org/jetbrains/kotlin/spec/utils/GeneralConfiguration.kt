@@ -10,4 +10,7 @@ object GeneralConfiguration {
     const val SPEC_MODULE_PATH = "compiler/tests-spec"
     const val SPEC_TESTDATA_PATH = "$SPEC_MODULE_PATH/testData"
     const val SPEC_TEST_PATH = "$SPEC_MODULE_PATH/tests"
+    const val LINKED_TESTS_PATH = "linked"
+    const val TESTS_MAP_FILENAME = "testsMap.json"
+    const val SECTIONS_TESTS_MAP_FILENAME = "sectionsMap.json"
 }

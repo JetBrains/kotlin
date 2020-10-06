@@ -111,6 +111,9 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> EMIT_JVM_TYPE_ANNOTATIONS =
             CompilerConfigurationKey.create("Emit JVM type annotations in bytecode");
 
+    public static final CompilerConfigurationKey<JvmRuntimeStringConcat> RUNTIME_STRING_CONCAT =
+            CompilerConfigurationKey.create("Specifies string concatenation scheme");
+
     public static final CompilerConfigurationKey<List<String>> KLIB_PATHS =
             CompilerConfigurationKey.create("Paths to .klib libraries");
 
@@ -122,6 +125,9 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> NO_KOTLIN_NOTHING_VALUE_EXCEPTION =
             CompilerConfigurationKey.create("Do not use KotlinNothingValueException available since 1.4");
+
+    public static final CompilerConfigurationKey<Boolean> NO_UNIFIED_NULL_CHECKS =
+            CompilerConfigurationKey.create("Use pre-1.4 exception types in null checks instead of java.lang.NPE");
 
     public static final CompilerConfigurationKey<Boolean> USE_OLD_SPILLED_VAR_TYPE_ANALYSIS =
             CompilerConfigurationKey.create("Use old, SourceInterpreter-based analysis for fields, used for spilled variables in coroutines");

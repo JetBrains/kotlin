@@ -62,13 +62,19 @@ class KtUltraLightClassForScript(
     }
 
     private fun MutableList<KtLightMethod>.addScriptDefaultMethods() {
+
+        val defaultConstructorDelegate = LightMethodBuilder(manager, language, name)
+            .setConstructor(true)
+            .addModifier(PsiModifier.PUBLIC)
+
         val defaultConstructor = KtUltraLightMethodForSourceDeclaration(
-            delegate = LightMethodBuilder(manager, language, name).setConstructor(true).addModifier(PsiModifier.PUBLIC),
+            delegate = defaultConstructorDelegate,
             declaration = script,
             support = support,
             containingClass = this@KtUltraLightClassForScript,
             methodIndex = METHOD_INDEX_FOR_DEFAULT_CTOR,
         )
+        defaultConstructorDelegate.addParameter(KtUltraLightScriptMainParameter(defaultConstructor))
         add(defaultConstructor)
 
         val methodBuilder = LightMethodBuilder(manager, language, "main").apply {

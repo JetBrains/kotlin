@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common.lower.inline
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.DescriptorsToIrRemapper
-import org.jetbrains.kotlin.backend.common.WrappedDescriptorPatcher
+import org.jetbrains.kotlin.ir.util.DescriptorsToIrRemapper
+import org.jetbrains.kotlin.ir.util.WrappedDescriptorPatcher
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer

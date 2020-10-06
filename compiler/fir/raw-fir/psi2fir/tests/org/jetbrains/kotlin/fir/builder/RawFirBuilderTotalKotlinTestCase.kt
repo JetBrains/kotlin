@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
@@ -262,7 +263,10 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                                 it.parent is KtValueArgumentName || it.parent is KtTypeConstraint) ||
                         it.getStrictParentOfType<KtPackageDirective>() != null ||
                         it.getStrictParentOfType<KtImportDirective>() != null ||
-                        (it is KtPropertyAccessor && !it.hasBody())
+                        (it is KtPropertyAccessor && !it.hasBody()) ||
+                        it is KtConstantExpression && it.parent.let { parent ->
+                            parent is KtPrefixExpression && (parent.operationToken == KtTokens.MINUS || parent.operationToken == KtTokens.PLUS)
+                        }
             }
             if (psiSetDirect.isNotEmpty()) {
                 println("Total of $counter files processed successfully")

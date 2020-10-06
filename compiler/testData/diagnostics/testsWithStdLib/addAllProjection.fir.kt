@@ -3,12 +3,12 @@
 fun test(mc: MutableCollection<out CharSequence>) {
     mc.addAll(mc)
 
-    mc.addAll(arrayListOf<CharSequence>())
+    mc.<!INAPPLICABLE_CANDIDATE!>addAll<!>(arrayListOf<CharSequence>())
     mc.addAll(arrayListOf())
 
-    mc.addAll(listOf(""))
-    mc.addAll(listOf<String>(""))
-    mc.addAll(listOf<CharSequence>(""))
+    mc.<!INAPPLICABLE_CANDIDATE!>addAll<!>(listOf(""))
+    mc.<!INAPPLICABLE_CANDIDATE!>addAll<!>(listOf<String>(""))
+    mc.<!INAPPLICABLE_CANDIDATE!>addAll<!>(listOf<CharSequence>(""))
 
     mc.addAll(emptyList())
     mc.addAll(emptyList<Nothing>())

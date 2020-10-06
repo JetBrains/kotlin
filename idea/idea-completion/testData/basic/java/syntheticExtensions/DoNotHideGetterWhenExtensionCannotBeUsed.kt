@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 import java.io.File
 
 fun File.foo(absolutePath: String?) {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
+import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
@@ -21,6 +22,9 @@ import java.io.File
 
 @CacheableTask
 open class KotlinJsIrLink : Kotlin2JsCompile() {
+    // Link tasks are not affected by compiler plugin
+    override val pluginClasspath: FileCollection = project.objects.fileCollection()
+
     @Input
     lateinit var mode: KotlinJsBinaryMode
 

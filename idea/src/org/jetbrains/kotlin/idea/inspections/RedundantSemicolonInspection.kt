@@ -49,6 +49,9 @@ class RedundantSemicolonInspection : AbstractKotlinInspection(), CleanupLocalIns
                 if (semicolon.parent is KtPackageDirective && (nextLeaf as? KtImportList)?.imports?.isEmpty() == true) {
                     return true
                 }
+                if (semicolon.prevLeaf { it !is PsiWhiteSpace && it !is PsiComment || it.isLineBreak() } is PsiWhiteSpace) {
+                    return true
+                }
                 return false
             }
 

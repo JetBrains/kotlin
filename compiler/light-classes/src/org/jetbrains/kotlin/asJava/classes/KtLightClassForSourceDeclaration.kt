@@ -11,7 +11,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.*
 import com.intellij.psi.impl.InheritanceImplUtil
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
@@ -355,8 +354,13 @@ abstract class KtLightClassForSourceDeclaration(
                 return null
             }
 
-            if (!forceUsingOldLightClasses && Registry.`is`("kotlin.use.ultra.light.classes", true)) {
-                LightClassGenerationSupport.getInstance(classOrObject.project).createUltraLightClass(classOrObject)?.let { return it }
+            if (!forceUsingOldLightClasses) {
+                LightClassGenerationSupport.getInstance(classOrObject.project).run {
+                    if (useUltraLightClasses) {
+                        return createUltraLightClass(classOrObject)
+                            ?: error { "Unable to create UL class for ${classOrObject.javaClass.name}" }
+                    }
+                }
             }
 
             return when {

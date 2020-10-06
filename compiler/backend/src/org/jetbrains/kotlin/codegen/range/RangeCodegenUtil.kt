@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.codegen.range
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.UnsignedTypes
-import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitiveNumberClassDescriptor
+import org.jetbrains.kotlin.codegen.DescriptorAsmUtil.isPrimitiveNumberClassDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.name.ClassId

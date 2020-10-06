@@ -1,8 +1,8 @@
 UTypeReferenceExpression (name = boolean) -> USimpleNameReferenceExpression (identifier = Boolean) -> PsiClass:Boolean: Boolean
-    UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))(resolves to LightMethodBuilder:Local) -> USimpleNameReferenceExpression (identifier = Local) -> KtLightClassForLocalDeclaration:class Local: Local
-        UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))(resolves to LightMethodBuilder:Local) -> USimpleNameReferenceExpression (identifier = Local) -> KtLightClassForLocalDeclaration:class Local: Local
+    UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))(resolves to KtUltraLightMethodForSourceDeclaration:Local) -> USimpleNameReferenceExpression (identifier = Local) -> KtUltraLightClassForLocalDeclaration:class Local: Local
+        UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))(resolves to KtUltraLightMethodForSourceDeclaration:Local) -> USimpleNameReferenceExpression (identifier = Local) -> KtUltraLightClassForLocalDeclaration:class Local: Local
     UTypeReferenceExpression (name = int) -> USimpleNameReferenceExpression (identifier = Int) -> PsiClass:Integer: Integer
     UTypeReferenceExpression (name = java.lang.String) -> USimpleNameReferenceExpression (identifier = String) -> PsiClass:String: String
     UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))(resolves to LightMethodBuilder:bar) -> USimpleNameReferenceExpression (identifier = bar) -> LightVariableBuilder:bar: bar
     UBinaryExpression (operator = ==) -> USimpleNameReferenceExpression (identifier = ==) -> null: null
-    UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))(resolves to LightMethodBuilder:Local) -> USimpleNameReferenceExpression (identifier = Local) -> KtLightClassForLocalDeclaration:class Local: Local
+    UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))(resolves to KtUltraLightMethodForSourceDeclaration:Local) -> USimpleNameReferenceExpression (identifier = Local) -> KtUltraLightClassForLocalDeclaration:class Local: Local

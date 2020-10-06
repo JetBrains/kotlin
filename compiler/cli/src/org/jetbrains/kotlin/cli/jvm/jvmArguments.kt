@@ -49,6 +49,24 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         }
     }
 
+    if (arguments.runtimeStringConcat != null) {
+        val runtimeStringConcat = JvmRuntimeStringConcat.fromString(arguments.runtimeStringConcat!!)
+        if (runtimeStringConcat != null) {
+            put(JVMConfigurationKeys.RUNTIME_STRING_CONCAT, runtimeStringConcat)
+            if (jvmTarget.bytecodeVersion < JvmTarget.JVM_9.bytecodeVersion && runtimeStringConcat != JvmRuntimeStringConcat.DISABLE) {
+                messageCollector.report(
+                    WARNING,
+                    "`-Xruntime-string-concat=${arguments.runtimeStringConcat}` does nothing with JVM target `${jvmTarget.description}`."
+                )
+            }
+        } else {
+            messageCollector.report(
+                ERROR, "Unknown `runtime-string-concat` mode: ${arguments.jvmTarget}\n" +
+                        "Supported versions: ${JvmRuntimeStringConcat.values().joinToString { it.name.toLowerCase() }}"
+            )
+        }
+    }
+
     addAll(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, arguments.additionalJavaModules?.asList())
 }
 
@@ -166,6 +184,7 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     put(JVMConfigurationKeys.EMIT_JVM_TYPE_ANNOTATIONS, arguments.emitJvmTypeAnnotations)
     put(JVMConfigurationKeys.NO_OPTIMIZED_CALLABLE_REFERENCES, arguments.noOptimizedCallableReferences)
     put(JVMConfigurationKeys.NO_KOTLIN_NOTHING_VALUE_EXCEPTION, arguments.noKotlinNothingValueException)
+    put(JVMConfigurationKeys.NO_UNIFIED_NULL_CHECKS, arguments.noUnifiedNullChecks)
 
     if (!JVMConstructorCallNormalizationMode.isSupportedValue(arguments.constructorCallNormalizationMode)) {
         getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(

@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.nonSourceAnnotations
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
+import org.jetbrains.kotlin.serialization.deserialization.descriptorVisibility
+import org.jetbrains.kotlin.serialization.deserialization.memberKind
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
@@ -66,7 +68,7 @@ class DescriptorSerializer private constructor(
 
         val flags = Flags.getClassFlags(
             hasAnnotations(classDescriptor),
-            ProtoEnumFlags.visibility(normalizeVisibility(classDescriptor)),
+            ProtoEnumFlags.descriptorVisibility(normalizeVisibility(classDescriptor)),
             ProtoEnumFlags.modality(classDescriptor.modality),
             ProtoEnumFlags.classKind(classDescriptor.kind, classDescriptor.isCompanionObject),
             classDescriptor.isInner, classDescriptor.isData, classDescriptor.isExternal, classDescriptor.isExpect,
@@ -204,7 +206,7 @@ class DescriptorSerializer private constructor(
 
         val defaultAccessorFlags = Flags.getAccessorFlags(
             hasAnnotations,
-            ProtoEnumFlags.visibility(normalizeVisibility(descriptor)),
+            ProtoEnumFlags.descriptorVisibility(normalizeVisibility(descriptor)),
             ProtoEnumFlags.modality(descriptor.modality),
             false, false, false
         )
@@ -236,7 +238,7 @@ class DescriptorSerializer private constructor(
 
         val flags = Flags.getPropertyFlags(
             hasAnnotations,
-            ProtoEnumFlags.visibility(normalizeVisibility(descriptor)),
+            ProtoEnumFlags.descriptorVisibility(normalizeVisibility(descriptor)),
             ProtoEnumFlags.modality(descriptor.modality),
             ProtoEnumFlags.memberKind(descriptor.kind),
             descriptor.isVar, hasGetter, hasSetter, hasConstant, descriptor.isConst, descriptor.isLateInit, descriptor.isExternal,
@@ -308,7 +310,7 @@ class DescriptorSerializer private constructor(
 
         val flags = Flags.getFunctionFlags(
             hasAnnotations(descriptor),
-            ProtoEnumFlags.visibility(normalizeVisibility(descriptor)),
+            ProtoEnumFlags.descriptorVisibility(normalizeVisibility(descriptor)),
             ProtoEnumFlags.modality(descriptor.modality),
             ProtoEnumFlags.memberKind(descriptor.kind),
             descriptor.isOperator, descriptor.isInfix, descriptor.isInline, descriptor.isTailrec, descriptor.isExternal,
@@ -375,7 +377,7 @@ class DescriptorSerializer private constructor(
         val local = createChildSerializer(descriptor)
 
         val flags = Flags.getConstructorFlags(
-            hasAnnotations(descriptor), ProtoEnumFlags.visibility(normalizeVisibility(descriptor)), !descriptor.isPrimary,
+            hasAnnotations(descriptor), ProtoEnumFlags.descriptorVisibility(normalizeVisibility(descriptor)), !descriptor.isPrimary,
             shouldSerializeHasStableParameterNames(descriptor)
         )
         if (flags != builder.flags) {
@@ -431,7 +433,7 @@ class DescriptorSerializer private constructor(
         val builder = ProtoBuf.TypeAlias.newBuilder()
         val local = createChildSerializer(descriptor)
 
-        val flags = Flags.getTypeAliasFlags(hasAnnotations(descriptor), ProtoEnumFlags.visibility(normalizeVisibility(descriptor)))
+        val flags = Flags.getTypeAliasFlags(hasAnnotations(descriptor), ProtoEnumFlags.descriptorVisibility(normalizeVisibility(descriptor)))
         if (flags != builder.flags) {
             builder.flags = flags
         }
@@ -745,7 +747,7 @@ class DescriptorSerializer private constructor(
 
     private fun getAccessorFlags(accessor: PropertyAccessorDescriptor): Int = Flags.getAccessorFlags(
         hasAnnotations(accessor),
-        ProtoEnumFlags.visibility(normalizeVisibility(accessor)),
+        ProtoEnumFlags.descriptorVisibility(normalizeVisibility(accessor)),
         ProtoEnumFlags.modality(accessor.modality),
         !accessor.isDefault,
         accessor.isExternal,

@@ -63,9 +63,18 @@ fun setupGenerateAllTestsRunConfiguration() {
 // Needed because of idea.ext plugin doesn't allow to set TEST_SEARCH_SCOPE = moduleWithDependencies
 fun setupFirRunConfiguration() {
 
+    val tests = listOf(
+        "org\\.jetbrains\\.kotlin\\.fir((?!\\.lightTree\\.benchmark)(\\.\\w+)*)\\.((?!(TreesCompareTest|TotalKotlinTest|RawFirBuilderTotalKotlinTestCase))\\w+)",
+        "org\\.jetbrains\\.kotlin\\.codegen\\.ir\\.FirBlackBoxCodegenTestGenerated",
+        "org\\.jetbrains\\.kotlin\\.spec\\.checkers\\.FirDiagnosticsTestSpecGenerated",
+        "org\\.jetbrains\\.kotlin\\.codegen\\.ir\\.FirBytecodeTextTestGenerated",
+        "org\\.jetbrains\\.kotlin\\.codegen\\.ir\\.FirBlackBoxAgainstJavaCodegenTestGenerated",
+        "org\\.jetbrains\\.kotlin\\.codegen\\.ir\\.FirBlackBoxInlineCodegenTestGenerated"
+    )
+
     val junit = JUnit("_stub").apply { configureForKotlin("2048m") }
     junit.moduleName = "kotlin.compiler.tests-spec.test"
-    junit.pattern = "^(org\\.jetbrains\\.kotlin\\.fir((?!\\.lightTree\\.benchmark)(\\.\\w+)*)\\.((?!(TreesCompareTest|TotalKotlinTest|RawFirBuilderTotalKotlinTestCase))\\w+)|org\\.jetbrains\\.kotlin\\.codegen\\.ir\\.FirBlackBoxCodegenTestGenerated|org\\.jetbrains\\.kotlin\\.spec\\.checkers\\.FirDiagnosticsTestSpecGenerated)\$"
+    junit.pattern = tests.joinToString(separator = "|", prefix = "^(", postfix = ")\$")
     junit.vmParameters = junit.vmParameters.replace(rootDir.absolutePath, "\$PROJECT_DIR\$")
     junit.workingDirectory = junit.workingDirectory.replace(rootDir.absolutePath, "\$PROJECT_DIR\$")
 
@@ -198,6 +207,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                             pluginDir: File,
                             disableProcessCanceledException: Boolean = false
                         ) {
+                            val useAndroidStudio = rootProject.extra.has("versions.androidStudioRelease")
                             application(title) {
                                 moduleName = "kotlin.idea-runner.main"
                                 workingDirectory = File(intellijRootDir(), "bin").toString()
@@ -213,11 +223,13 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                                     "-Didea.system.path=${sandboxDir.absolutePath}",
                                     "-Didea.config.path=${sandboxDir.absolutePath}/config",
                                     "-Didea.tooling.debug=true",
+                                    "-Dfus.internal.test.mode=true",
                                     "-Dapple.laf.useScreenMenuBar=true",
                                     "-Dapple.awt.graphics.UseQuartz=true",
                                     "-Dsun.io.useCanonCaches=false",
                                     "-Dplugin.path=${pluginDir.absolutePath}",
-                                    "-Didea.ProcessCanceledException=${if (disableProcessCanceledException) "disabled" else "enabled"}"
+                                    "-Didea.ProcessCanceledException=${if (disableProcessCanceledException) "disabled" else "enabled"}",
+                                    if (useAndroidStudio) "-Didea.platform.prefix=AndroidStudio" else ""
                                 ).joinToString(" ")
                             }
                         }

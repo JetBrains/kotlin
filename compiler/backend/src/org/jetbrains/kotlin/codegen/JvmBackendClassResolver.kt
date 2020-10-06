@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
@@ -42,7 +42,7 @@ class JvmBackendClassResolverForModuleWithDependencies(
 
         val platformClass = moduleDescriptor.findClassAcrossModuleDependencies(type.classId) ?: return emptyList()
 
-        return JavaToKotlinClassMap.mapPlatformClass(platformClass) + platformClass
+        return JavaToKotlinClassMapper.mapPlatformClass(platformClass) + platformClass
     }
 }
 

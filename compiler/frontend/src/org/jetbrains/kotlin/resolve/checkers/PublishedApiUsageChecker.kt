@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -32,7 +32,7 @@ object PublishedApiUsageChecker {
         descriptor: DeclarationDescriptor,
         trace: BindingTrace
     ) {
-        if (descriptor !is DeclarationDescriptorWithVisibility || descriptor.visibility == Visibilities.INTERNAL) return
+        if (descriptor !is DeclarationDescriptorWithVisibility || descriptor.visibility == DescriptorVisibilities.INTERNAL) return
         // Don't report the diagnostic twice
         if (descriptor is PropertyAccessorDescriptor) return
 

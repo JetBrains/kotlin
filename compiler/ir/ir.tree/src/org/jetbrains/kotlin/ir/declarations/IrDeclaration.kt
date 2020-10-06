@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.IrStatement
@@ -56,7 +56,7 @@ interface IrOverridableDeclaration<S : IrSymbol> : IrDeclaration {
 }
 
 interface IrDeclarationWithVisibility : IrDeclaration {
-    var visibility: Visibility
+    var visibility: DescriptorVisibility
 }
 
 interface IrDeclarationWithName : IrDeclaration {

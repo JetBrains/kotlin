@@ -83,7 +83,7 @@ object FunctionsFromAny {
             functionFromAny.valueParameters.map { it.copy(functionDescriptor, it.name, it.index) },
             functionFromAny.returnType,
             Modality.OPEN,
-            Visibilities.PUBLIC
+            DescriptorVisibilities.PUBLIC
         )
 
         return functionDescriptor

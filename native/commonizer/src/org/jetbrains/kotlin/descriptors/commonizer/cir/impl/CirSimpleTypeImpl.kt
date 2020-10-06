@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir.impl
 
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.appendHashCode
 import org.jetbrains.kotlin.descriptors.commonizer.utils.hashCode
 
 data class CirSimpleTypeImpl(
-    override val classifierId: CirClassifierId,
-    override val visibility: Visibility, // visibility of the classifier descriptor
-    override val arguments: List<CirTypeProjection>,
-    override val isMarkedNullable: Boolean
+        override val classifierId: CirClassifierId,
+        override val visibility: DescriptorVisibility, // visibility of the classifier descriptor
+        override val arguments: List<CirTypeProjection>,
+        override val isMarkedNullable: Boolean
 ) : CirSimpleType() {
     // See also org.jetbrains.kotlin.types.KotlinType.cachedHashCode
     private var cachedHashCode = 0

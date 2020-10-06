@@ -65,7 +65,7 @@ object CodegenUtil {
                 if (copy)
                     copyFunctions(
                         declaration, traitMember, declaration.containingDeclaration, traitMember.modality,
-                        Visibilities.PUBLIC, CallableMemberDescriptor.Kind.DECLARATION, true
+                        DescriptorVisibilities.PUBLIC, CallableMemberDescriptor.Kind.DECLARATION, true
                     )
                 else mapMembers(declaration, traitMember)
             )
@@ -74,13 +74,13 @@ object CodegenUtil {
     }
 
     fun copyFunctions(
-        inheritedMember: CallableMemberDescriptor,
-        traitMember: CallableMemberDescriptor,
-        newOwner: DeclarationDescriptor,
-        modality: Modality,
-        visibility: Visibility,
-        kind: CallableMemberDescriptor.Kind,
-        copyOverrides: Boolean
+            inheritedMember: CallableMemberDescriptor,
+            traitMember: CallableMemberDescriptor,
+            newOwner: DeclarationDescriptor,
+            modality: Modality,
+            visibility: DescriptorVisibility,
+            kind: CallableMemberDescriptor.Kind,
+            copyOverrides: Boolean
     ): Map<FunctionDescriptor, FunctionDescriptor> =
         mapMembers(inheritedMember.copy(newOwner, modality, visibility, kind, copyOverrides), traitMember)
 

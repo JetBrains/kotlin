@@ -78,7 +78,7 @@ class NonStableParameterNamesSerializationTest : TestCaseWithTmpdir() {
 
             fun recurse(packageFqName: FqName) {
                 packageFragmentProvider
-                    .getPackageFragments(packageFqName)
+                    .packageFragments(packageFqName)
                     .forEach { packageFragment ->
                         recurse(packageFragment.getMemberScope())
                     }

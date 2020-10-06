@@ -35,6 +35,7 @@ dependencies {
     testCompile(commonDep("junit:junit"))
 
     testRuntime(intellijPluginDep("junit"))
+    testRuntime(intellijDep())
 
     robolectricClasspath(commonDep("org.robolectric", "robolectric"))
     robolectricClasspath("org.robolectric:android-all:4.4_r1-robolectric-1")

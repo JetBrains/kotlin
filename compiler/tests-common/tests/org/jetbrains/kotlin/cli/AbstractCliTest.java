@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.checkers.AbstractForeignAnnotationsTestKt;
 import org.jetbrains.kotlin.cli.common.CLITool;
 import org.jetbrains.kotlin.cli.common.ExitCode;
+import org.jetbrains.kotlin.cli.common.Usage;
 import org.jetbrains.kotlin.cli.js.K2JSCompiler;
 import org.jetbrains.kotlin.cli.js.dce.K2JSDce;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
@@ -85,6 +86,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
                 .replace("expected version is " + JsMetadataVersion.INSTANCE, "expected version is $ABI_VERSION$")
                 .replace("\\", "/")
                 .replace(KotlinCompilerVersion.VERSION, "$VERSION$")
+                .replace("\n" + Usage.BAT_DELIMITER_CHARACTERS_NOTE + "\n", "")
                 .replaceAll("log4j:WARN.*\n", "");
 
         return normalizedOutputWithoutExitCode + exitCode + "\n";

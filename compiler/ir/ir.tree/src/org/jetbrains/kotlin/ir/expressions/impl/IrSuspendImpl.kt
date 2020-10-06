@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 class IrSuspensionPointImpl(
     override val startOffset: Int,
     override val endOffset: Int,
-    override val type: IrType,
+    override var type: IrType,
     override var suspensionPointIdParameter: IrVariable,
     override var result: IrExpression,
     override var resumeResult: IrExpression
@@ -40,7 +40,7 @@ class IrSuspensionPointImpl(
 class IrSuspendableExpressionImpl(
     override val startOffset: Int,
     override val endOffset: Int,
-    override val type: IrType,
+    override var type: IrType,
     override var suspensionPointId: IrExpression,
     override var result: IrExpression
 ) : IrSuspendableExpression() {

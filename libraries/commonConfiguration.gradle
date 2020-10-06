@@ -53,7 +53,8 @@ ext.compileJava9Sources = { Project project, String moduleName, Collection<FileC
 
             options.compilerArgs = [
                     '--module-path', modulePath.asPath,
-                    '--patch-module', "$moduleName=${moduleFiles.asPath}"
+                    '--patch-module', "$moduleName=${moduleFiles.asPath}",
+                    '-Xlint:-requires-transitive-automatic' // suppress automatic module transitive dependencies in kotlin.test
             ]
 
             classpath = files()

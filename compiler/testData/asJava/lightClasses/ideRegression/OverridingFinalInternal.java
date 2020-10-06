@@ -1,7 +1,8 @@
-public final class C extends p.A {
-    public int getAp$light_idea_test_case() { /* compiled code */ }
+public final class C /* p.C*/ extends p.A {
+  public  C();//  .ctor()
 
-    public int af$light_idea_test_case() { /* compiled code */ }
+  public int af();//  af$light_idea_test_case()
 
-    public C() { /* compiled code */ }
+  public int getAp();//  getAp$light_idea_test_case()
+
 }

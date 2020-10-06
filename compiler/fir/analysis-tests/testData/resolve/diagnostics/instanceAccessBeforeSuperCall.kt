@@ -22,9 +22,9 @@ class D {
 
 fun main() {
     val x1: String.() -> String = if (true) {
-        { <!NO_THIS!>this<!> }
+        { this }
     } else {
-        { <!NO_THIS!>this<!> }
+        { this }
     }
 }
 

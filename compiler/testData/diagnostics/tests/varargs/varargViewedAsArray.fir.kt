@@ -23,7 +23,7 @@ fun test() {
     usePrimitiveIntArray(::intVararg)
     <!INAPPLICABLE_CANDIDATE!>useIntArray<!>(<!UNRESOLVED_REFERENCE!>::intVararg<!>)
     <!INAPPLICABLE_CANDIDATE!>useMixedStringArgs1<!>(<!UNRESOLVED_REFERENCE!>::stringVararg<!>)
-    useMixedStringArgs2(::stringVararg)
+    <!INAPPLICABLE_CANDIDATE!>useMixedStringArgs2<!>(<!UNRESOLVED_REFERENCE!>::stringVararg<!>)
     <!INAPPLICABLE_CANDIDATE!>useMixedStringArgs3<!>(<!UNRESOLVED_REFERENCE!>::stringVararg<!>)
-    useTwoStringArrays(::stringVararg)
+    <!INAPPLICABLE_CANDIDATE!>useTwoStringArrays<!>(<!UNRESOLVED_REFERENCE!>::stringVararg<!>)
 }

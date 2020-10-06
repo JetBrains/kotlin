@@ -1008,7 +1008,8 @@ abstract class IrFileDeserializer(
                 deserializeIrType(nameAndType.typeIndex),
                 if (proto.hasVarargElementType()) deserializeIrType(proto.varargElementType) else null,
                 flags.isCrossInline,
-                flags.isNoInline
+                flags.isNoInline,
+                flags.isHidden
             ).apply {
                 if (proto.hasDefaultValue())
                     defaultValue = irFactory.createExpressionBody(deserializeExpressionBody(proto.defaultValue))
@@ -1089,7 +1090,7 @@ abstract class IrFileDeserializer(
         }
 
         for (i in protos.indices) {
-            protos[i].superTypeList.mapTo(result[i].superTypes) { deserializeIrType(it) }
+            result[i].superTypes = protos[i].superTypeList.map { deserializeIrType(it) }
         }
 
         return result

@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 object Obj {
     val inObject = 1
 }

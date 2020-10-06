@@ -45,7 +45,7 @@ class ResultClassInReturnTypeChecker : DeclarationChecker {
             }
 
             val visibility = (declarationDescriptor as DeclarationDescriptorWithVisibility).visibility
-            return !Visibilities.isPrivate(visibility) && visibility != Visibilities.LOCAL
+            return !DescriptorVisibilities.isPrivate(visibility) && visibility != DescriptorVisibilities.LOCAL
         }
 
         return true

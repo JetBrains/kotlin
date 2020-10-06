@@ -54,3 +54,5 @@ fun DeclarationDescriptor.isTopLevelInPackage(name: String, packageName: String)
     val packageFqName = containingDeclaration.fqName.asString()
     return packageName == packageFqName
 }
+
+fun CallableDescriptor.isSupportedForCallableReference() = this is PropertyDescriptor || this is FunctionDescriptor

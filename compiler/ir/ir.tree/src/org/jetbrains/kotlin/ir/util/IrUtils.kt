@@ -19,9 +19,8 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 /**
@@ -156,23 +155,8 @@ fun IrExpression.isFalseConst() = this is IrConst<*> && this.kind == IrConstKind
 
 fun IrExpression.isIntegerConst(value: Int) = this is IrConst<*> && this.kind == IrConstKind.Int && this.value == value
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrExpression.coerceToUnit(builtins: IrBuiltIns): IrExpression {
-    return coerceToUnitIfNeeded(type.toKotlinType(), builtins)
-}
-
-@ObsoleteDescriptorBasedAPI
-fun IrExpression.coerceToUnitIfNeeded(valueType: KotlinType, irBuiltIns: IrBuiltIns): IrExpression {
-    return if (KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, irBuiltIns.unitType.toKotlinType()))
-        this
-    else
-        IrTypeOperatorCallImpl(
-            startOffset, endOffset,
-            irBuiltIns.unitType,
-            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
-            irBuiltIns.unitType,
-            this
-        )
+    return coerceToUnitIfNeeded(type, builtins)
 }
 
 fun IrExpression.coerceToUnitIfNeeded(valueType: IrType, irBuiltIns: IrBuiltIns): IrExpression {
@@ -216,8 +200,22 @@ val IrClass.primaryConstructor: IrConstructor?
 val IrDeclarationContainer.properties: Sequence<IrProperty>
     get() = declarations.asSequence().filterIsInstance<IrProperty>()
 
+fun IrFunction.addExplicitParametersTo(parametersList: MutableList<IrValueParameter>) {
+    parametersList.addIfNotNull(dispatchReceiverParameter)
+    parametersList.addIfNotNull(extensionReceiverParameter)
+    parametersList.addAll(valueParameters)
+}
+
+private fun Boolean.toInt(): Int = if (this) 1 else 0
+
+val IrFunction.explicitParametersCount: Int
+    get() = (dispatchReceiverParameter != null).toInt() + (extensionReceiverParameter != null).toInt() +
+            valueParameters.size
+
 val IrFunction.explicitParameters: List<IrValueParameter>
-    get() = (listOfNotNull(dispatchReceiverParameter, extensionReceiverParameter) + valueParameters)
+    get() = ArrayList<IrValueParameter>(explicitParametersCount).also {
+        addExplicitParametersTo(it)
+    }
 
 val IrBody.statements: List<IrStatement>
     get() = when (this) {
@@ -536,6 +534,9 @@ fun IrExpression.isSafeToUseWithoutCopying() =
             this is IrGetEnumValue ||
             this is IrConst<*> ||
             this is IrGetValue && symbol.isBound && symbol.owner.isImmutable
+
+val IrStatementOrigin?.isLambda: Boolean
+    get() = this == IrStatementOrigin.LAMBDA || this == IrStatementOrigin.ANONYMOUS_FUNCTION
 
 val IrFunction.originalFunction: IrFunction
     get() = (this as? IrAttributeContainer)?.attributeOwnerId as? IrFunction ?: this

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.types.expressions;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMap;
+import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMapper;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.contracts.EffectSystem;
@@ -33,7 +33,7 @@ public class ExpressionTypingComponents {
     /*package*/ ModuleDescriptor moduleDescriptor;
     /*package*/ ExpressionTypingServices expressionTypingServices;
     /*package*/ CallResolver callResolver;
-    /*package*/ PlatformToKotlinClassMap platformToKotlinClassMap;
+    /*package*/ PlatformToKotlinClassMapper platformToKotlinClassMapper;
     /*package*/ ControlStructureTypingUtils controlStructureTypingUtils;
     /*package*/ ForLoopConventionsChecker forLoopConventionsChecker;
     /*package*/ FakeCallResolver fakeCallResolver;
@@ -90,8 +90,8 @@ public class ExpressionTypingComponents {
     }
 
     @Inject
-    public void setPlatformToKotlinClassMap(@NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
-        this.platformToKotlinClassMap = platformToKotlinClassMap;
+    public void setPlatformToKotlinClassMap(@NotNull PlatformToKotlinClassMapper platformToKotlinClassMapper) {
+        this.platformToKotlinClassMapper = platformToKotlinClassMapper;
     }
 
     @Inject

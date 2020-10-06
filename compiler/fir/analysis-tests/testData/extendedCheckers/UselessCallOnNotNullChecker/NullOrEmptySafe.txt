@@ -1,0 +1,5 @@
+FILE: NullOrEmptySafe.kt
+    public final val s: R|kotlin/String?| = String()
+        public get(): R|kotlin/String?|
+    public final val empty: R|kotlin/Boolean?| = R|/s|?.{ $subj$.R|kotlin/text/isNullOrEmpty|() }
+        public get(): R|kotlin/Boolean?|

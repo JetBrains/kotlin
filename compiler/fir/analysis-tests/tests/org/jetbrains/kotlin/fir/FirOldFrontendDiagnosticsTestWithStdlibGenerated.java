@@ -1737,6 +1737,11 @@ public class FirOldFrontendDiagnosticsTestWithStdlibGenerated extends AbstractFi
             runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/kt38179.kt");
         }
 
+        @TestMetadata("kt41430.kt")
+        public void testKt41430() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/kt41430.kt");
+        }
+
         @TestMetadata("lambdaExpectedType.kt")
         public void testLambdaExpectedType() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/lambdaExpectedType.kt");
@@ -2109,6 +2114,11 @@ public class FirOldFrontendDiagnosticsTestWithStdlibGenerated extends AbstractFi
             @TestMetadata("kt41308.kt")
             public void testKt41308() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt41308.kt");
+            }
+
+            @TestMetadata("kt41396.kt")
+            public void testKt41396() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt41396.kt");
             }
 
             @TestMetadata("nestedLambdaInferenceWithListMap.kt")
@@ -2903,6 +2913,11 @@ public class FirOldFrontendDiagnosticsTestWithStdlibGenerated extends AbstractFi
             runTest("compiler/testData/diagnostics/testsWithStdLib/inference/arrayConstructor.kt");
         }
 
+        @TestMetadata("callableReferenceOnParameter.kt")
+        public void testCallableReferenceOnParameter() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/inference/callableReferenceOnParameter.kt");
+        }
+
         @TestMetadata("integerLiterals.kt")
         public void testIntegerLiterals() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/inference/integerLiterals.kt");
@@ -3188,6 +3203,11 @@ public class FirOldFrontendDiagnosticsTestWithStdlibGenerated extends AbstractFi
                 @TestMetadata("kt38799.kt")
                 public void testKt38799() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis/kt38799.kt");
+                }
+
+                @TestMetadata("manyArguments.kt")
+                public void testManyArguments() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis/manyArguments.kt");
                 }
 
                 @TestMetadata("moreSpecificOutputType.kt")

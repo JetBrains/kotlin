@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 class Xyzzz
 
 fun foo(xyz: Xyzzzz){}

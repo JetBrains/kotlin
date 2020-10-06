@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.util.transformInPlace
 
 internal val anonymousObjectSuperConstructorPhase = makeIrFilePhase(
@@ -78,16 +79,19 @@ private class AnonymousObjectSuperConstructorLowering(val context: JvmBackendCon
             )
         }
 
+        fun IrExpression.transform(remapping: Map<IrVariable, IrValueParameter>): IrExpression =
+            when (this) {
+                is IrConst<*> -> this
+                is IrGetValue -> IrGetValueImpl(startOffset, endOffset, remapping[symbol.owner]?.symbol ?: symbol)
+                is IrTypeOperatorCall ->
+                    IrTypeOperatorCallImpl(startOffset, endOffset, type, operator, typeOperand, argument.transform(remapping))
+                else -> IrGetValueImpl(startOffset, endOffset, addArgument(this).symbol)
+            }
+
         fun IrDelegatingConstructorCall.transform(lift: List<IrVariable>) = apply {
             val remapping = lift.associateWith { addArgument(it.initializer!!) }
-            for (i in 0 until symbol.owner.valueParameters.size) {
-                val argument = getValueArgument(i) ?: continue
-                val mapped = when (argument) {
-                    is IrConst<*> -> null
-                    is IrGetValue -> remapping[argument.symbol.owner]
-                    else -> addArgument(argument)
-                } ?: continue
-                putValueArgument(i, IrGetValueImpl(argument.startOffset, argument.endOffset, mapped.symbol))
+            for (i in symbol.owner.valueParameters.indices) {
+                putValueArgument(i, getValueArgument(i)?.transform(remapping))
             }
         }
 

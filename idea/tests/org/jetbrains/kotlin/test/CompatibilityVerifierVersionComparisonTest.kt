@@ -43,6 +43,23 @@ class CompatibilityVerifierVersionComparisonTest : LightPlatformTestCase() {
         assertEquals("1", version.patchNumber)
     }
 
+    fun testMilestoneVersionWithoutStatus() {
+        val version = KotlinPluginVersion.parse("1.4-M1-42-IJ2020.1-1") ?: throw AssertionError("Version should not be null")
+
+        assertEquals("1.4", version.kotlinVersion)
+        assertEquals("M1", version.milestone)
+        assertEquals("42", version.buildNumber)
+        assertEquals(PlatformVersion.Platform.IDEA, version.platformVersion.platform)
+        assertEquals("2020.1", version.platformVersion.version)
+        assertEquals("1", version.patchNumber)
+    }
+
+    fun testInvalidVersion() {
+        val version = KotlinPluginVersion.parse("1.4-release-M5-IJ2020.1-1")
+
+        assertNull(version)
+    }
+
     fun testPlatformVersionParsing() {
         PlatformVersion.getCurrent() ?: throw AssertionError("Version should not be null")
     }

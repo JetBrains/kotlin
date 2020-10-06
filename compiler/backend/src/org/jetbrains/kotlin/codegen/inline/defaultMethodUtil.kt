@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.DescriptorAsmUtil
 import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.isNeedClassReificationMarker
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
@@ -50,7 +50,7 @@ fun extractDefaultLambdaOffsetAndDescriptor(
     val kind =
         if (DescriptorUtils.isInterface(containingDeclaration)) OwnerKind.DEFAULT_IMPLS
         else OwnerKind.getMemberOwnerKind(containingDeclaration)
-    val parameterOffsets = parameterOffsets(AsmUtil.isStaticMethod(kind, functionDescriptor), valueParameters)
+    val parameterOffsets = parameterOffsets(DescriptorAsmUtil.isStaticMethod(kind, functionDescriptor), valueParameters)
     val valueParameterOffset = valueParameters.takeWhile { it.kind != JvmMethodParameterKind.VALUE }.size
 
     return functionDescriptor.valueParameters.filter {

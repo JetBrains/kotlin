@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.jvm
 
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCompositeConflictResolver
 import org.jetbrains.kotlin.fir.resolve.calls.ConeOverloadConflictResolver
@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.jvm.JvmTypeSpecificityComparator
 
+@NoMutableState
 object JvmCallConflictResolverFactory : ConeCallConflictResolverFactory() {
     override fun create(
         typeSpecificityComparator: TypeSpecificityComparator,
@@ -24,8 +25,4 @@ object JvmCallConflictResolverFactory : ConeCallConflictResolverFactory() {
             ConeEquivalentCallConflictResolver(specificityComparator, components)
         )
     }
-}
-
-fun FirSession.registerJvmCallConflictResolverFactory() {
-    register(ConeCallConflictResolverFactory::class, JvmCallConflictResolverFactory)
 }

@@ -142,7 +142,7 @@ class InlineAnalyzerExtension(
             return
         }
 
-        if (Visibilities.isPrivate(callableDescriptor.visibility)) {
+        if (DescriptorVisibilities.isPrivate(callableDescriptor.visibility)) {
             return
         }
 

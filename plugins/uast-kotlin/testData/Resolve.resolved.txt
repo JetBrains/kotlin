@@ -1,22 +1,22 @@
-UBlockExpression -> UQualifiedReferenceExpression -> KtLightMethodImpl:foo: foo
-    UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))(resolves to KtLightMethodImpl:A) -> USimpleNameReferenceExpression (identifier = A) -> KtLightClassImpl:open class A {
+UBlockExpression -> UQualifiedReferenceExpression -> KtUltraLightMethodForSourceDeclaration:foo: foo
+    UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))(resolves to KtUltraLightMethodForSourceDeclaration:A) -> USimpleNameReferenceExpression (identifier = A) -> KtUltraLightClass:open class A {
     fun foo() {}
     inline fun inlineFoo() {
 
     }
 }: A
-    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))(resolves to KtLightMethodImpl:foo) -> USimpleNameReferenceExpression (identifier = foo) -> KtLightMethodImpl:foo: foo
-    UBlockExpression -> UQualifiedReferenceExpression -> KtLightMethodImpl:inlineFoo: inlineFoo
-    UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))(resolves to KtLightMethodImpl:A) -> USimpleNameReferenceExpression (identifier = A) -> KtLightClassImpl:open class A {
+    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))(resolves to KtUltraLightMethodForSourceDeclaration:foo) -> USimpleNameReferenceExpression (identifier = foo) -> KtUltraLightMethodForSourceDeclaration:foo: foo
+    UBlockExpression -> UQualifiedReferenceExpression -> KtUltraLightMethodForSourceDeclaration:inlineFoo: inlineFoo
+    UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))(resolves to KtUltraLightMethodForSourceDeclaration:A) -> USimpleNameReferenceExpression (identifier = A) -> KtUltraLightClass:open class A {
     fun foo() {}
     inline fun inlineFoo() {
 
     }
 }: A
-    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))(resolves to KtLightMethodImpl:inlineFoo) -> USimpleNameReferenceExpression (identifier = inlineFoo) -> KtLightMethodImpl:inlineFoo: inlineFoo
+    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))(resolves to KtUltraLightMethodForSourceDeclaration:inlineFoo) -> USimpleNameReferenceExpression (identifier = inlineFoo) -> KtUltraLightMethodForSourceDeclaration:inlineFoo: inlineFoo
     UBlockExpression -> UQualifiedReferenceExpression -> PsiMethod:forEach: forEach
     UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))(resolves to PsiMethod:listOf) -> USimpleNameReferenceExpression (identifier = listOf) -> PsiMethod:listOf: listOf
-    UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))(resolves to KtLightMethodImpl:A) -> USimpleNameReferenceExpression (identifier = A) -> KtLightClassImpl:open class A {
+    UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))(resolves to KtUltraLightMethodForSourceDeclaration:A) -> USimpleNameReferenceExpression (identifier = A) -> KtUltraLightClass:open class A {
     fun foo() {}
     inline fun inlineFoo() {
 
@@ -64,28 +64,28 @@ UBlockExpression -> UQualifiedReferenceExpression -> KtLightMethodImpl:foo: foo
     UBinaryExpressionWithType -> USimpleNameReferenceExpression (identifier = as) -> null: null
     UTypeReferenceExpression (name = int) -> USimpleNameReferenceExpression (identifier = Int) -> PsiClass:Integer: Integer
     UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 2))(resolves to PsiMethod:IntRange) -> USimpleNameReferenceExpression (identifier = IntRange) -> PsiClass:IntRange: IntRange
-UTypeReferenceExpression (name = A) -> USimpleNameReferenceExpression (identifier = A) -> KtLightClassImpl:open class A {
+UTypeReferenceExpression (name = A) -> USimpleNameReferenceExpression (identifier = A) -> KtUltraLightClass:open class A {
     fun foo() {}
     inline fun inlineFoo() {
 
     }
 }: A
-UTypeReferenceExpression (name = T) -> USimpleNameReferenceExpression (identifier = T) -> KotlinLightTypeParameter:T: T
-    UBlockExpression -> UQualifiedReferenceExpression -> KtLightMethodImpl:foo: foo
+UTypeReferenceExpression (name = T) -> USimpleNameReferenceExpression (identifier = T) -> Light PSI class: T: T
+    UBlockExpression -> UQualifiedReferenceExpression -> KtUltraLightMethodForSourceDeclaration:foo: foo
     UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = t) -> Light Parameter: t
-    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))(resolves to KtLightMethodImpl:foo) -> USimpleNameReferenceExpression (identifier = foo) -> KtLightMethodImpl:foo: foo
+    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))(resolves to KtUltraLightMethodForSourceDeclaration:foo) -> USimpleNameReferenceExpression (identifier = foo) -> KtUltraLightMethodForSourceDeclaration:foo: foo
 UTypeReferenceExpression (name = java.util.List<? extends A>) -> USimpleNameReferenceExpression (identifier = List) -> PsiClass:List: List
-UTypeReferenceExpression (name = A) -> USimpleNameReferenceExpression (identifier = A) -> KtLightClassImpl:open class A {
+UTypeReferenceExpression (name = A) -> USimpleNameReferenceExpression (identifier = A) -> KtUltraLightClass:open class A {
     fun foo() {}
     inline fun inlineFoo() {
 
     }
 }: A
-UTypeReferenceExpression (name = T) -> USimpleNameReferenceExpression (identifier = T) -> KotlinLightTypeParameter:T: T
+UTypeReferenceExpression (name = T) -> USimpleNameReferenceExpression (identifier = T) -> Light PSI class: T: T
     UBlockExpression -> UQualifiedReferenceExpression -> PsiMethod:isEmpty: isEmpty
     UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = listT) -> Light Parameter: listT
     UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))(resolves to PsiMethod:isEmpty) -> USimpleNameReferenceExpression (identifier = isEmpty) -> PsiMethod:isEmpty: isEmpty
     UForEachExpression -> USimpleNameReferenceExpression (identifier = listT) -> Light Parameter: listT
-        UBlockExpression -> UQualifiedReferenceExpression -> KtLightMethodImpl:foo: foo
+        UBlockExpression -> UQualifiedReferenceExpression -> KtUltraLightMethodForSourceDeclaration:foo: foo
         UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = a) -> VALUE_PARAMETER: a
-        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))(resolves to KtLightMethodImpl:foo) -> USimpleNameReferenceExpression (identifier = foo) -> KtLightMethodImpl:foo: foo
+        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))(resolves to KtUltraLightMethodForSourceDeclaration:foo) -> USimpleNameReferenceExpression (identifier = foo) -> KtUltraLightMethodForSourceDeclaration:foo: foo

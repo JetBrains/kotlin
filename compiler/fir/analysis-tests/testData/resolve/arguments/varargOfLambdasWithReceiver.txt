@@ -1,0 +1,9 @@
+FILE: varargOfLambdasWithReceiver.kt
+    public final fun runLambdas(vararg values: @R|kotlin/ExtensionFunctionType|() R|kotlin/Array<out @ExtensionFunctionType kotlin/Function1<kotlin/String, kotlin/Unit>>|): R|kotlin/Unit| {
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/runLambdas|(vararg(runLambdas@fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| {
+            this@R|special/anonymous|.R|kotlin/String.length|
+        }
+        ))
+    }

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.utils.checkWithAttachment
@@ -531,7 +532,12 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
             appendFixedText("(")
 
             if (name != null) {
-                appendName(name)
+                val asString = name.asString()
+                if (asString.isIdentifier()) {
+                    appendName(name)
+                } else {
+                    appendFixedText("`$asString`")
+                }
                 appendFixedText(" = ")
             }
 

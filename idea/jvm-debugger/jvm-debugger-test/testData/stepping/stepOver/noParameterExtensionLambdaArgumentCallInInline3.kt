@@ -13,3 +13,5 @@ inline fun lookAtMe(f: String.() -> Unit) {
         f()
     val b = "b"
 }
+
+// STEP_OVER: 4

@@ -49,21 +49,6 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         runTest("compiler/testData/codegen/bytecodeListing/defaultImpls.kt");
     }
 
-    @TestMetadata("deprecatedEnumEntryFields.kt")
-    public void testDeprecatedEnumEntryFields() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/deprecatedEnumEntryFields.kt");
-    }
-
-    @TestMetadata("deprecatedLateinitVar.kt")
-    public void testDeprecatedLateinitVar() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/deprecatedLateinitVar.kt");
-    }
-
-    @TestMetadata("deprecatedProperty.kt")
-    public void testDeprecatedProperty() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/deprecatedProperty.kt");
-    }
-
     @TestMetadata("emptyMultifileFacade.kt")
     public void testEmptyMultifileFacade() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/emptyMultifileFacade.kt");
@@ -92,11 +77,6 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
     @TestMetadata("jvmStaticWithDefaultParameters.kt")
     public void testJvmStaticWithDefaultParameters() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/jvmStaticWithDefaultParameters.kt");
-    }
-
-    @TestMetadata("lateInitNotNull.kt")
-    public void testLateInitNotNull() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/lateInitNotNull.kt");
     }
 
     @TestMetadata("localFunctionInInitBlock.kt")
@@ -139,11 +119,6 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         runTest("compiler/testData/codegen/bytecodeListing/noToArrayInJava.kt");
     }
 
-    @TestMetadata("platformTypes.kt")
-    public void testPlatformTypes() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/platformTypes.kt");
-    }
-
     @TestMetadata("privateDefaultImpls.kt")
     public void testPrivateDefaultImpls() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/privateDefaultImpls.kt");
@@ -157,6 +132,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
     @TestMetadata("privateNestedClassInInterface.kt")
     public void testPrivateNestedClassInInterface() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/privateNestedClassInInterface.kt");
+    }
+
+    @TestMetadata("rawTypeInSignature.kt")
+    public void testRawTypeInSignature() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/rawTypeInSignature.kt");
     }
 
     @TestMetadata("samAdapterAndInlinedOne.kt")
@@ -230,6 +210,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         public void testOnReceiver() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/annotations/onReceiver.kt");
         }
+
+        @TestMetadata("unsignedTypes.kt")
+        public void testUnsignedTypes() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/annotations/unsignedTypes.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeListing/collectionStubs")
@@ -244,9 +229,124 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/collectionStubs"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
+        @TestMetadata("collectionByDelegation.kt")
+        public void testCollectionByDelegation() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/collectionByDelegation.kt");
+        }
+
+        @TestMetadata("collectionByDelegation2.kt")
+        public void testCollectionByDelegation2() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/collectionByDelegation2.kt");
+        }
+
+        @TestMetadata("collectionByDelegation2WithFullJdk.kt")
+        public void testCollectionByDelegation2WithFullJdk() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/collectionByDelegation2WithFullJdk.kt");
+        }
+
+        @TestMetadata("collectionByDelegation3.kt")
+        public void testCollectionByDelegation3() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/collectionByDelegation3.kt");
+        }
+
+        @TestMetadata("collectionByDelegation3WithFullJdk.kt")
+        public void testCollectionByDelegation3WithFullJdk() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/collectionByDelegation3WithFullJdk.kt");
+        }
+
+        @TestMetadata("collectionByDelegationWithFullJdk.kt")
+        public void testCollectionByDelegationWithFullJdk() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/collectionByDelegationWithFullJdk.kt");
+        }
+
+        @TestMetadata("collectionsWithFullJdk.kt")
+        public void testCollectionsWithFullJdk() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/collectionsWithFullJdk.kt");
+        }
+
+        @TestMetadata("customListIterator.kt")
+        public void testCustomListIterator() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/customListIterator.kt");
+        }
+
+        @TestMetadata("customMutableListIterator.kt")
+        public void testCustomMutableListIterator() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/customMutableListIterator.kt");
+        }
+
+        @TestMetadata("emptyList.kt")
+        public void testEmptyList() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/emptyList.kt");
+        }
+
+        @TestMetadata("extendingAbstractCollection.kt")
+        public void testExtendingAbstractCollection() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/extendingAbstractCollection.kt");
+        }
+
+        @TestMetadata("mapOfPrimitivesFullJdk.kt")
+        public void testMapOfPrimitivesFullJdk() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/mapOfPrimitivesFullJdk.kt");
+        }
+
+        @TestMetadata("noStubsForCollection.kt")
+        public void testNoStubsForCollection() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/noStubsForCollection.kt");
+        }
+
+        @TestMetadata("noStubsForMapImplementations.kt")
+        public void testNoStubsForMapImplementations() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/noStubsForMapImplementations.kt");
+        }
+
+        @TestMetadata("noStubsForMutableSetIterators.kt")
+        public void testNoStubsForMutableSetIterators() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/noStubsForMutableSetIterators.kt");
+        }
+
+        @TestMetadata("noStubsForSetIterators.kt")
+        public void testNoStubsForSetIterators() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/noStubsForSetIterators.kt");
+        }
+
+        @TestMetadata("noStubsInIterable.kt")
+        public void testNoStubsInIterable() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/noStubsInIterable.kt");
+        }
+
         @TestMetadata("noStubsInJavaSuperClass.kt")
         public void testNoStubsInJavaSuperClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/noStubsInJavaSuperClass.kt");
+        }
+
+        @TestMetadata("noStubsInMutableIterable.kt")
+        public void testNoStubsInMutableIterable() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/noStubsInMutableIterable.kt");
+        }
+
+        @TestMetadata("observableMutableMap.kt")
+        public void testObservableMutableMap() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/observableMutableMap.kt");
+        }
+
+        @TestMetadata("stubForAbstractFun.kt")
+        public void testStubForAbstractFun() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/stubForAbstractFun.kt");
+        }
+
+        @TestMetadata("stubForAbstractFunInAbstractClass.kt")
+        public void testStubForAbstractFunInAbstractClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/stubForAbstractFunInAbstractClass.kt");
+        }
+
+        @TestMetadata("stubForAbstractFunInAbstractClassWithCovariantOverride.kt")
+        public void testStubForAbstractFunInAbstractClassWithCovariantOverride() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/stubForAbstractFunInAbstractClassWithCovariantOverride.kt");
+        }
+
+        @TestMetadata("stubForAbstractFunWithCovariantOverride.kt")
+        public void testStubForAbstractFunWithCovariantOverride() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/stubForAbstractFunWithCovariantOverride.kt");
         }
 
         @TestMetadata("stubsFromSuperclass.kt")
@@ -390,6 +490,62 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/bytecodeListing/defaultArguments")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DefaultArguments extends AbstractBytecodeListingTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInDefaultArguments() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("internalNameMangling.kt")
+        public void testInternalNameMangling() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/defaultArguments/internalNameMangling.kt");
+        }
+
+        @TestMetadata("privateFunctionInMultifilePart.kt")
+        public void testPrivateFunctionInMultifilePart() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/defaultArguments/privateFunctionInMultifilePart.kt");
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/bytecodeListing/deprecated")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Deprecated extends AbstractBytecodeListingTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInDeprecated() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/deprecated"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("deprecatedClass.kt")
+        public void testDeprecatedClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/deprecated/deprecatedClass.kt");
+        }
+
+        @TestMetadata("deprecatedEnumEntryFields.kt")
+        public void testDeprecatedEnumEntryFields() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/deprecated/deprecatedEnumEntryFields.kt");
+        }
+
+        @TestMetadata("deprecatedLateinitVar.kt")
+        public void testDeprecatedLateinitVar() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/deprecated/deprecatedLateinitVar.kt");
+        }
+
+        @TestMetadata("deprecatedProperty.kt")
+        public void testDeprecatedProperty() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/deprecated/deprecatedProperty.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeListing/inline")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -446,6 +602,49 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         public void testSimpleNamed() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inline/simpleNamed.kt");
         }
+
+        @TestMetadata("compiler/testData/codegen/bytecodeListing/inline/enclosingInfo")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class EnclosingInfo extends AbstractBytecodeListingTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInEnclosingInfo() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inline/enclosingInfo"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("crossinlineLambdaChain.kt")
+            public void testCrossinlineLambdaChain() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inline/enclosingInfo/crossinlineLambdaChain.kt");
+            }
+
+            @TestMetadata("kt10259.kt")
+            public void testKt10259() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inline/enclosingInfo/kt10259.kt");
+            }
+
+            @TestMetadata("lambdaInInitBlockNoPrimaryConstructor.kt")
+            public void testLambdaInInitBlockNoPrimaryConstructor() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inline/enclosingInfo/lambdaInInitBlockNoPrimaryConstructor.kt");
+            }
+
+            @TestMetadata("lambdaInInnerClassConstructor.kt")
+            public void testLambdaInInnerClassConstructor() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inline/enclosingInfo/lambdaInInnerClassConstructor.kt");
+            }
+
+            @TestMetadata("transformedConstructor.kt")
+            public void testTransformedConstructor() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inline/enclosingInfo/transformedConstructor.kt");
+            }
+
+            @TestMetadata("transformedConstructorWithNestedInline.kt")
+            public void testTransformedConstructorWithNestedInline() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inline/enclosingInfo/transformedConstructorWithNestedInline.kt");
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeListing/inlineClasses")
@@ -478,6 +677,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         @TestMetadata("constructorsWithDefaultParameterValues.kt")
         public void testConstructorsWithDefaultParameterValues() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/constructorsWithDefaultParameterValues.kt");
+        }
+
+        @TestMetadata("inlineClassImplementingCollection.kt")
+        public void testInlineClassImplementingCollection() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineClassImplementingCollection.kt");
         }
 
         @TestMetadata("inlineClassMembersVisibility.kt")
@@ -664,12 +868,80 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/bytecodeListing/nullabilityAnnotations")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class NullabilityAnnotations extends AbstractBytecodeListingTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInNullabilityAnnotations() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/nullabilityAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("lateInitNotNull.kt")
+        public void testLateInitNotNull() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/nullabilityAnnotations/lateInitNotNull.kt");
+        }
+
+        @TestMetadata("nullabilityAnnotationsForReturnType.kt")
+        public void testNullabilityAnnotationsForReturnType() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/nullabilityAnnotations/nullabilityAnnotationsForReturnType.kt");
+        }
+
+        @TestMetadata("nullabilityAnnotationsOnDelegatedMembers.kt")
+        public void testNullabilityAnnotationsOnDelegatedMembers() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/nullabilityAnnotations/nullabilityAnnotationsOnDelegatedMembers.kt");
+        }
+
+        @TestMetadata("platformTypes.kt")
+        public void testPlatformTypes() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/nullabilityAnnotations/platformTypes.kt");
+        }
+
+        @TestMetadata("samAdapterForJavaInterfaceWithNullability.kt")
+        public void testSamAdapterForJavaInterfaceWithNullability() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/nullabilityAnnotations/samAdapterForJavaInterfaceWithNullability.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeListing/specialBridges")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SpecialBridges extends AbstractBytecodeListingTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        @TestMetadata("abstractCollections.kt")
+        public void testAbstractCollections() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/specialBridges/abstractCollections.kt");
+        }
+
+        @TestMetadata("abstractIterables.kt")
+        public void testAbstractIterables() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/specialBridges/abstractIterables.kt");
+        }
+
+        @TestMetadata("abstractLists.kt")
+        public void testAbstractLists() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/specialBridges/abstractLists.kt");
+        }
+
+        @TestMetadata("abstractListsWithJavaBase.kt")
+        public void testAbstractListsWithJavaBase() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/specialBridges/abstractListsWithJavaBase.kt");
+        }
+
+        @TestMetadata("abstractMutableLists.kt")
+        public void testAbstractMutableLists() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/specialBridges/abstractMutableLists.kt");
+        }
+
+        @TestMetadata("abstractSets.kt")
+        public void testAbstractSets() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/specialBridges/abstractSets.kt");
         }
 
         public void testAllFilesPresentInSpecialBridges() throws Exception {
@@ -679,6 +951,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         @TestMetadata("contains.kt")
         public void testContains() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/specialBridges/contains.kt");
+        }
+
+        @TestMetadata("kt41123.kt")
+        public void testKt41123() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/specialBridges/kt41123.kt");
         }
 
         @TestMetadata("noDefaultImplsOnEmptySubInterface.kt")

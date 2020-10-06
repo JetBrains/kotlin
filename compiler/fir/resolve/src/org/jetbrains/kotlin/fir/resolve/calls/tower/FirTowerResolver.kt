@@ -25,24 +25,25 @@ class FirTowerResolver(
 
     fun runResolver(
         info: CallInfo,
+        context: ResolutionContext,
         collector: CandidateCollector = this.collector,
         manager: TowerResolveManager = this.manager
     ): CandidateCollector {
-        val candidateFactoriesAndCollectors = buildCandidateFactoriesAndCollectors(info, collector)
+        val candidateFactoriesAndCollectors = buildCandidateFactoriesAndCollectors(info, collector, context)
 
-        enqueueResolutionTasks(components, manager, candidateFactoriesAndCollectors, info)
+        enqueueResolutionTasks(context, manager, candidateFactoriesAndCollectors, info)
 
         manager.runTasks()
         return collector
     }
 
     private fun enqueueResolutionTasks(
-        components: BodyResolveComponents,
+        context: ResolutionContext,
         manager: TowerResolveManager,
         candidateFactoriesAndCollectors: CandidateFactoriesAndCollectors,
         info: CallInfo
     ) {
-        val invokeResolveTowerExtension = FirInvokeResolveTowerExtension(components, manager, candidateFactoriesAndCollectors)
+        val invokeResolveTowerExtension = FirInvokeResolveTowerExtension(context, manager, candidateFactoriesAndCollectors)
 
         val mainTask = FirTowerResolveTask(
             components,
@@ -65,10 +66,14 @@ class FirTowerResolver(
                 if (receiver is FirQualifiedAccessExpression) {
                     val calleeReference = receiver.calleeReference
                     if (calleeReference is FirSuperReference) {
-                        return manager.enqueueResolverTask { mainTask.runResolverForSuperReceiver(info, receiver.typeRef) }
+                        manager.enqueueResolverTask { mainTask.runResolverForSuperReceiver(info, receiver.typeRef) }
+                        return
                     }
                 }
-
+                if (info.isImplicitInvoke) {
+                    invokeResolveTowerExtension.enqueueResolveTasksForImplicitInvokeCall(info, receiver)
+                    return
+                }
                 manager.enqueueResolverTask { mainTask.runResolverForExpressionReceiver(info, receiver) }
                 invokeResolveTowerExtension.enqueueResolveTasksForExpressionReceiver(info, receiver)
             }
@@ -77,7 +82,8 @@ class FirTowerResolver(
 
     fun runResolverForDelegatingConstructor(
         info: CallInfo,
-        constructedType: ConeClassLikeType
+        constructedType: ConeClassLikeType,
+        context: ResolutionContext
     ): CandidateCollector {
         val outerType = components.outerClassManager.outerType(constructedType)
         val scope = constructedType.scope(components.session, components.scopeSession) ?: return collector
@@ -90,7 +96,7 @@ class FirTowerResolver(
             else
                 null
 
-        val candidateFactory = CandidateFactory(components, info)
+        val candidateFactory = CandidateFactory(context, info)
         val resultCollector = collector
 
         scope.processDeclaredConstructors {
@@ -99,10 +105,12 @@ class FirTowerResolver(
                 candidateFactory.createCandidate(
                     it,
                     ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+                    scope,
                     dispatchReceiver,
                     implicitExtensionReceiverValue = null,
                     builtInExtensionFunctionReceiverValue = null
-                )
+                ),
+                context
             )
         }
 
@@ -111,9 +119,10 @@ class FirTowerResolver(
 
     private fun buildCandidateFactoriesAndCollectors(
         info: CallInfo,
-        collector: CandidateCollector
+        collector: CandidateCollector,
+        context: ResolutionContext
     ): CandidateFactoriesAndCollectors {
-        val candidateFactory = CandidateFactory(components, info)
+        val candidateFactory = CandidateFactory(context, info)
         val stubReceiverCandidateFactory =
             if (info.callKind == CallKind.CallableReference && info.stubReceiver != null)
                 candidateFactory.replaceCallInfo(info.replaceExplicitReceiver(info.stubReceiver))

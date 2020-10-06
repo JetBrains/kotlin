@@ -5,31 +5,30 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.fir.Visibilities
-import org.jetbrains.kotlin.fir.Visibility
-import org.jetbrains.kotlin.descriptors.Visibility as OldVisibility
-import org.jetbrains.kotlin.descriptors.Visibilities as OldVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 
 abstract class Fir2IrVisibilityConverter {
     object Default : Fir2IrVisibilityConverter() {
-        override fun convertPlatformVisibility(visibility: Visibility): OldVisibility {
+        override fun convertPlatformVisibility(visibility: Visibility): DescriptorVisibility {
             error("Unknown visibility: $this")
         }
     }
 
-    fun convertToOldVisibility(visibility: Visibility): OldVisibility {
+    fun convertToDescriptorVisibility(visibility: Visibility): DescriptorVisibility {
         return when (visibility) {
-            Visibilities.Private -> OldVisibilities.PRIVATE
-            Visibilities.PrivateToThis -> OldVisibilities.PRIVATE_TO_THIS
-            Visibilities.Protected -> OldVisibilities.PROTECTED
-            Visibilities.Internal -> OldVisibilities.INTERNAL
-            Visibilities.Public -> OldVisibilities.PUBLIC
-            Visibilities.Local -> OldVisibilities.LOCAL
-            Visibilities.InvisibleFake -> OldVisibilities.INVISIBLE_FAKE
-            Visibilities.Unknown -> OldVisibilities.UNKNOWN
+            Visibilities.Private -> org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE
+            Visibilities.PrivateToThis -> org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE_TO_THIS
+            Visibilities.Protected -> org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PROTECTED
+            Visibilities.Internal -> org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL
+            Visibilities.Public -> org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PUBLIC
+            Visibilities.Local -> org.jetbrains.kotlin.descriptors.DescriptorVisibilities.LOCAL
+            Visibilities.InvisibleFake -> org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INVISIBLE_FAKE
+            Visibilities.Unknown -> org.jetbrains.kotlin.descriptors.DescriptorVisibilities.UNKNOWN
             else -> convertPlatformVisibility(visibility)
         }
     }
 
-    protected abstract fun convertPlatformVisibility(visibility: Visibility): OldVisibility
+    protected abstract fun convertPlatformVisibility(visibility: Visibility): DescriptorVisibility
 }

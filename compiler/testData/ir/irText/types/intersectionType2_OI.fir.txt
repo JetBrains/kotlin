@@ -74,10 +74,10 @@ FILE fqName:<root> fileName:/intersectionType2_OI.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun run <T> (fn: kotlin.Function0<T of <root>.run>): T of <root>.run declared in <root>'
         CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=T of <root>.run origin=INVOKE
-          $this: GET_VAR 'fn: kotlin.Function0<T of <root>.run> declared in <root>.run' type=kotlin.Function0<T of <root>.run> origin=null
-  FUN name:foo visibility:public modality:FINAL <> () returnType:<root>.Foo
+          $this: GET_VAR 'fn: kotlin.Function0<T of <root>.run> declared in <root>.run' type=kotlin.Function0<T of <root>.run> origin=VARIABLE_AS_FUNCTION
+  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Any
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun foo (): <root>.Foo declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Any declared in <root>'
         CALL 'public final fun run <T> (fn: kotlin.Function0<T of <root>.run>): T of <root>.run declared in <root>' type=<root>.Foo origin=null
           <T>: <root>.Foo
           fn: FUN_EXPR type=kotlin.Function0<<root>.Foo> origin=LAMBDA

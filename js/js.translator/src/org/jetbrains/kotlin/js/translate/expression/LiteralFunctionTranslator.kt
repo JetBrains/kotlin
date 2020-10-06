@@ -258,6 +258,6 @@ private fun HasName.getStaticRef(): JsNode? {
 
 private fun isLocalInlineDeclaration(descriptor: CallableDescriptor): Boolean {
     return descriptor is FunctionDescriptor
-           && descriptor.getVisibility() == Visibilities.LOCAL
+           && descriptor.getVisibility() == DescriptorVisibilities.LOCAL
            && InlineUtil.isInline(descriptor)
 }

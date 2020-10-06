@@ -24,6 +24,7 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.DumbService
 
 fun <T> runReadAction(action: () -> T): T {
     return ApplicationManager.getApplication().runReadAction<T>(action)
@@ -63,3 +64,8 @@ inline fun <reified T : Any> ComponentManager.getServiceSafe(): T =
 
 fun <T> Project.getServiceIfCreated(serviceClass: Class<T>): T? =
     ServiceManager.getServiceIfCreated(this, serviceClass)
+
+fun <T> Project.runReadActionInSmartMode(action: () -> T): T {
+    if (ApplicationManager.getApplication().isReadAccessAllowed) return action()
+    return DumbService.getInstance(this).runReadActionInSmartMode<T>(action)
+}

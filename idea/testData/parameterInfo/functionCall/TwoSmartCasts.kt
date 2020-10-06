@@ -1,3 +1,4 @@
+// COMPILER_ARGUMENTS: -XXLanguage:-TrailingCommas
 // See KT-14484
 
 class C {

@@ -276,7 +276,8 @@ class QuickFixRegistrar : QuickFixContributor {
         ELSE_MISPLACED_IN_WHEN.registerFactory(MoveWhenElseBranchFix)
         NO_ELSE_IN_WHEN.registerFactory(AddWhenElseBranchFix)
         NO_ELSE_IN_WHEN.registerFactory(AddWhenRemainingBranchesFix)
-        REDUNDANT_ELSE_IN_WHEN.registerFactory(RemoveWhenElseBranchFix)
+        REDUNDANT_ELSE_IN_WHEN.registerFactory(RemoveWhenBranchFix)
+        SENSELESS_NULL_IN_WHEN.registerFactory(RemoveWhenBranchFix)
         NON_EXHAUSTIVE_WHEN.registerFactory(AddWhenElseBranchFix)
         NON_EXHAUSTIVE_WHEN.registerFactory(AddWhenRemainingBranchesFix)
         NON_EXHAUSTIVE_WHEN_ON_SEALED_CLASS.registerFactory(AddWhenElseBranchFix)
@@ -599,7 +600,10 @@ class QuickFixRegistrar : QuickFixContributor {
 
         TYPE_VARIANCE_CONFLICT.registerFactory(RemoveTypeVarianceFix)
 
-        CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT.registerFactory(MoveMemberToCompanionObjectIntention)
+        CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT.registerFactory(
+            MoveMemberToCompanionObjectIntention,
+            RemoveModifierFix.createRemoveModifierFactory()
+        )
 
         NO_COMPANION_OBJECT.registerFactory(AddIsToWhenConditionFix)
 
@@ -658,5 +662,7 @@ class QuickFixRegistrar : QuickFixContributor {
         MISSING_EXCEPTION_IN_THROWS_ON_SUSPEND.registerFactory(AddExceptionToThrowsFix)
         THROWS_LIST_EMPTY.registerFactory(RemoveAnnotationFix)
         INCOMPATIBLE_THROWS_OVERRIDE.registerFactory(RemoveAnnotationFix)
+
+        INLINE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER.registerFactory(InlineClassConstructorNotValParameterFactory)
     }
 }

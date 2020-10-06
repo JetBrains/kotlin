@@ -56,7 +56,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         }
         return scope.getContributedDescriptors().mapNotNull { descriptor ->
             if (descriptor is CallableMemberDescriptor &&
-                descriptor.visibility != Visibilities.INVISIBLE_FAKE &&
+                descriptor.visibility != DescriptorVisibilities.INVISIBLE_FAKE &&
                 belonginess.accept(descriptor)
             ) descriptor.accept(visitor, Unit) else null
         }.toList()
@@ -101,7 +101,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
             val mostVisibleProperties = properties
                 .groupBy { it.visibility }
                 .toSortedMap(Comparator { first, second ->
-                    Visibilities.compare(first, second) ?: 0
+                    DescriptorVisibilities.compare(first, second) ?: 0
                 }).values.last()
             if (mostVisibleProperties.size == 1) {
                 return mostVisibleProperties.first()

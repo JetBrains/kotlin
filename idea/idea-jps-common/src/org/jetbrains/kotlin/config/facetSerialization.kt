@@ -17,10 +17,8 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.platform.*
 import org.jetbrains.kotlin.platform.impl.FakeK2NativeCompilerArguments
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
-import org.jetbrains.kotlin.platform.js.JsPlatform
 import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.JdkPlatform
-import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.*
 import java.lang.reflect.Modifier
@@ -113,7 +111,7 @@ fun Element.getFacetPlatformByConfigurationElement(): TargetPlatform {
     if (targetPlatform != null) return targetPlatform
 
     // failed to read list of all platforms. Fallback to legacy algorithm
-    val platformName = getAttributeValue("platform") as String
+    val platformName = getAttributeValue("platform") ?: return DefaultIdeTargetPlatformKindProvider.defaultPlatform
 
     return CommonPlatforms.allSimplePlatforms.firstOrNull {
         // first, look for exact match through all simple platforms

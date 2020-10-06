@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.Variance
@@ -106,8 +107,9 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
     private inline fun <T> T.runTrimEnd(fn: T.() -> String): String =
         run(fn).trimEnd()
 
-    private fun IrType.render() =
-        "${renderTypeAnnotations(annotations)}${renderTypeInner()}"
+    private fun IrType.render(): String =
+        if (this === IrUninitializedType) "<Uninitialized>"
+        else "${renderTypeAnnotations(annotations)}${renderTypeInner()}"
 
     private fun IrType.renderTypeInner() =
         when (this) {

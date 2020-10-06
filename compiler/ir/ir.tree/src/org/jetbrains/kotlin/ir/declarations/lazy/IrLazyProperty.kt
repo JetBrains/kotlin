@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.declarations.lazy
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -21,25 +21,25 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 
 class IrLazyProperty(
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var origin: IrDeclarationOrigin,
-    override val symbol: IrPropertySymbol,
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
+        override val startOffset: Int,
+        override val endOffset: Int,
+        override var origin: IrDeclarationOrigin,
+        override val symbol: IrPropertySymbol,
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val descriptor: PropertyDescriptor,
-    override val name: Name,
-    override var visibility: Visibility,
-    override val modality: Modality,
-    override val isVar: Boolean,
-    override val isConst: Boolean,
-    override val isLateinit: Boolean,
-    override val isDelegated: Boolean,
-    override val isExternal: Boolean,
-    override val isExpect: Boolean,
-    override val isFakeOverride: Boolean,
-    override val stubGenerator: DeclarationStubGenerator,
-    override val typeTranslator: TypeTranslator,
-    bindingContext: BindingContext? = null
+        override val name: Name,
+        override var visibility: DescriptorVisibility,
+        override val modality: Modality,
+        override val isVar: Boolean,
+        override val isConst: Boolean,
+        override val isLateinit: Boolean,
+        override val isDelegated: Boolean,
+        override val isExternal: Boolean,
+        override val isExpect: Boolean,
+        override val isFakeOverride: Boolean,
+        override val stubGenerator: DeclarationStubGenerator,
+        override val typeTranslator: TypeTranslator,
+        bindingContext: BindingContext? = null
 ) : IrProperty(), IrLazyDeclarationBase {
     init {
         symbol.bind(this)

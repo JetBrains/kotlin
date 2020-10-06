@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
 
 class JvmInnerClassesSupport(private val irFactory: IrFactory) : InnerClassesSupport {
@@ -36,7 +36,7 @@ class JvmInnerClassesSupport(private val irFactory: IrFactory) : InnerClassesSup
                 name = Name.identifier("this$0")
                 type = innerClass.parentAsClass.defaultType
                 origin = InnerClassesSupport.FIELD_FOR_OUTER_THIS
-                visibility = JavaVisibilities.PACKAGE_VISIBILITY
+                visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
                 isFinal = true
             }.apply {
                 parent = innerClass

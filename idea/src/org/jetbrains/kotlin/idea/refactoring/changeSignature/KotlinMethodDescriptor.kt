@@ -10,12 +10,12 @@ import com.intellij.refactoring.changeSignature.MethodDescriptor
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 
-interface KotlinMethodDescriptor : MethodDescriptor<KotlinParameterInfo, Visibility> {
+interface KotlinMethodDescriptor : MethodDescriptor<KotlinParameterInfo, DescriptorVisibility> {
     enum class Kind(val isConstructor: Boolean) {
         FUNCTION(false),
         PRIMARY_CONSTRUCTOR(true),

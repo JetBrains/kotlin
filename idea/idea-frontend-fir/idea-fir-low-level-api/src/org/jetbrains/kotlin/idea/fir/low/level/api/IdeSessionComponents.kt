@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
 import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 
+@NoMutableState
 data class IdeSessionComponents(val signatureComposer: FirBasedSignatureComposer): FirSessionComponent {
     companion object {
         fun create(session: FirSession) = IdeSessionComponents(

@@ -2,6 +2,7 @@
 @kotlin.Metadata
 final class DestructuredKt$test$1 {
     // source: 'destructured.kt'
+    enclosing method DestructuredKt.test()V
     field label: int
     inner (anonymous) class DestructuredKt$test$1
     method <init>(p0: kotlin.coroutines.Continuation): void
@@ -14,6 +15,7 @@ final class DestructuredKt$test$1 {
 @kotlin.Metadata
 final class DestructuredKt$test$2 {
     // source: 'destructured.kt'
+    enclosing method DestructuredKt.test()V
     private synthetic field L$0: java.lang.Object
     field label: int
     inner (anonymous) class DestructuredKt$test$2
@@ -27,6 +29,7 @@ final class DestructuredKt$test$2 {
 @kotlin.Metadata
 final class DestructuredKt$test$3 {
     // source: 'destructured.kt'
+    enclosing method DestructuredKt.test()V
     private synthetic field L$0: java.lang.Object
     field label: int
     inner (anonymous) class DestructuredKt$test$3
@@ -40,6 +43,7 @@ final class DestructuredKt$test$3 {
 @kotlin.Metadata
 final class DestructuredKt$test$4 {
     // source: 'destructured.kt'
+    enclosing method DestructuredKt.test()V
     private synthetic field L$0: java.lang.Object
     field label: int
     inner (anonymous) class DestructuredKt$test$4

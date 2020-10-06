@@ -2,6 +2,7 @@
 // "class org.jetbrains.kotlin.idea.quickfix.ImportMemberFix" "false"
 // ERROR: Unresolved reference: foobar
 // ACTION: Create local variable 'foobar'
+// ACTION: Convert assignment to assignment expression
 // ACTION: Create property 'foobar'
 // ACTION: Rename reference
 

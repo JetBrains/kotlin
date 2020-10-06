@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
+import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
-import org.jetbrains.kotlin.types.checker.convertVariance
 import org.jetbrains.kotlin.types.model.*
 
 class ErrorTypeConstructor(val reason: String) : TypeConstructorMarker {
@@ -233,10 +233,10 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is ConeTypeVariableTypeConstructor -> emptyList()
             is ConeTypeParameterLookupTag -> symbol.fir.bounds.map { it.coneType }
             is ConeClassLikeLookupTag -> {
-                when (val symbol = toClassLikeSymbol()) {
+                when (val symbol = toClassLikeSymbol().also { it?.ensureResolved(FirResolvePhase.TYPES, session) }) {
                     is FirClassSymbol<*> -> symbol.fir.superConeTypes
                     is FirTypeAliasSymbol -> listOfNotNull(symbol.fir.expandedConeType)
-                    else -> emptyList()
+                    else -> listOf(session.builtinTypes.anyType.type)
                 }
             }
             is ConeCapturedTypeConstructor -> supertypes!!
@@ -328,6 +328,10 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             ConeCapturedType(status, lowerType, argument, typeConstructor.getParameter(index))
         }
 
+        val substitutor = substitutorByMap((0 until argumentsCount).map { index ->
+            (typeConstructor.getParameter(index) as ConeTypeParameterLookupTag).toSymbol() to (newArguments[index] as ConeKotlinType)
+        }.toMap())
+
         for (index in 0 until argumentsCount) {
             val oldArgument = type.typeArguments[index]
             val newArgument = newArguments[index]
@@ -336,7 +340,9 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
             val parameter = typeConstructor.getParameter(index)
             val upperBounds = (0 until parameter.upperBoundCount()).mapTo(mutableListOf()) { paramIndex ->
-                parameter.getUpperBound(paramIndex) // TODO: substitution
+                substitutor.safeSubstitute(
+                    this as TypeSystemInferenceExtensionContext, parameter.getUpperBound(paramIndex)
+                )
             }
 
             if (!oldArgument.isStarProjection() && oldArgument.getVariance() == TypeVariance.OUT) {
@@ -518,7 +524,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun TypeConstructorMarker.isError(): Boolean {
-        return this is ErrorTypeConstructor || (this is ConeClassLikeLookupTag && this.toSymbol(session) == null)
+        return this is ErrorTypeConstructor
     }
 }
 
@@ -583,7 +589,7 @@ class ConeTypeCheckerContext(
         firstCandidate: KotlinTypeMarker,
         secondCandidate: KotlinTypeMarker
     ): KotlinTypeMarker {
-        TODO("Not yet implemented")
+        // TODO
+        return firstCandidate
     }
-
 }

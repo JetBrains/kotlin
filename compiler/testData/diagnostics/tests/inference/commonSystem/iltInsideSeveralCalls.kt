@@ -5,9 +5,9 @@ fun <T> consumeLongAndMaterialize(x: Long): T = null as T
 fun consumeAny(x: Any) = x
 
 fun main() {
-    consumeAny(consumeLongAndMaterialize(3 * 1000))
+    consumeAny(consumeLongAndMaterialize(3L * 1000))
 
     if (true) {
-        consumeLongAndMaterialize(3 * 1000)
+        consumeLongAndMaterialize(3L * 1000)
     } else true
 }

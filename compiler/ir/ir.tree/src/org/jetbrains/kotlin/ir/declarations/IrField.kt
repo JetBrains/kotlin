@@ -22,7 +22,7 @@ abstract class IrField :
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: PropertyDescriptor
 
-    abstract val type: IrType
+    abstract var type: IrType
     abstract val isFinal: Boolean
     abstract val isExternal: Boolean
     abstract val isStatic: Boolean

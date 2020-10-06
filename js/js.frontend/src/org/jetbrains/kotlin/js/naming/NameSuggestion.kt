@@ -288,7 +288,7 @@ class NameSuggestion {
                 is PackageFragmentDescriptor -> when {
                     effectiveVisibility.isPublicAPI -> mangledAndStable()
 
-                    effectiveVisibility == Visibilities.INTERNAL -> mangledInternal()
+                    effectiveVisibility == DescriptorVisibilities.INTERNAL -> mangledInternal()
 
                     else -> regularAndUnstable()
                 }
@@ -297,16 +297,16 @@ class NameSuggestion {
                     descriptor is FunctionDescriptor && descriptor.isEnumValueOfMethod() -> mangledAndStable()
 
                     // Make all public declarations stable
-                    effectiveVisibility == Visibilities.PUBLIC -> mangledAndStable()
+                    effectiveVisibility == DescriptorVisibilities.PUBLIC -> mangledAndStable()
 
                     descriptor.isOverridableOrOverrides -> mangledAndStable()
 
                     // Make all protected declarations of non-final public classes stable
-                    effectiveVisibility == Visibilities.PROTECTED &&
+                    effectiveVisibility == DescriptorVisibilities.PROTECTED &&
                         !containingDeclaration.isFinalClass &&
                         containingDeclaration.visibility.isPublicAPI -> mangledAndStable()
 
-                    effectiveVisibility == Visibilities.INTERNAL -> mangledInternal()
+                    effectiveVisibility == DescriptorVisibilities.INTERNAL -> mangledInternal()
 
                     // Mangle (but make unstable) all non-public API of public classes
                     containingDeclaration.visibility.isPublicAPI && !containingDeclaration.isFinalClass -> mangledPrivate()
@@ -348,8 +348,8 @@ class NameSuggestion {
             return if (absHashCode != 0) absHashCode.toString(Character.MAX_RADIX) else ""
         }
 
-        private val DeclarationDescriptorWithVisibility.ownEffectiveVisibility
-            get() = visibility.effectiveVisibility(this, checkPublishedApi = true).toVisibility()
+        private val DeclarationDescriptorWithVisibility.ownEffectiveVisibility: DescriptorVisibility
+            get() = visibility.effectiveVisibility(this, checkPublishedApi = true).toDescriptorVisibility()
 
         @JvmStatic fun sanitizeName(name: String): String {
             if (name.isEmpty()) return "_"

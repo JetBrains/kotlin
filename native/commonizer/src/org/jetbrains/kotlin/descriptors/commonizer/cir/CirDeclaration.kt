@@ -36,7 +36,7 @@ interface CirHasFqName {
 }
 
 interface CirHasVisibility {
-    val visibility: Visibility
+    val visibility: DescriptorVisibility
 }
 
 interface CirHasModality {

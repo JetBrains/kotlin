@@ -5,18 +5,18 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.transformers.createSubstitutionForSupertype
-import org.jetbrains.kotlin.fir.typeContext
-import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.types.model.CaptureStatus
 
 abstract class SupertypeSupplier {
     abstract fun forClass(firClass: FirClass<*>): List<ConeClassLikeType>
@@ -64,9 +64,11 @@ data class SubstitutionScopeKey(val type: ConeClassLikeType) : ScopeSessionKey<F
 /* TODO REMOVE */
 fun createSubstitution(
     typeParameters: List<FirTypeParameterRef>, // TODO: or really declared?
-    typeArguments: Array<out ConeTypeProjection>,
+    type: ConeClassLikeType,
     session: FirSession
 ): Map<FirTypeParameterSymbol, ConeKotlinType> {
+    val capturedOrType = session.typeContext.captureFromArguments(type, CaptureStatus.FROM_EXPRESSION) ?: type
+    val typeArguments = (capturedOrType as ConeClassLikeType).typeArguments
     return typeParameters.zip(typeArguments) { typeParameter, typeArgument ->
         val typeParameterSymbol = typeParameter.symbol
         typeParameterSymbol to when (typeArgument) {
@@ -88,22 +90,21 @@ fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
     useSiteMemberScope: FirTypeScope,
     declaration: FirClassLikeDeclaration<*>,
     builder: ScopeSession,
-    derivedClassId: ClassId? = null
+    derivedClassId: ClassId?
 ): FirTypeScope {
     if (this.typeArguments.isEmpty()) return useSiteMemberScope
     return builder.getOrBuild(declaration.symbol, SubstitutionScopeKey(this)) {
         val typeParameters = (declaration as? FirTypeParameterRefsOwner)?.typeParameters.orEmpty()
-        val originalSubstitution = createSubstitution(typeParameters, typeArguments, session)
-        val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(declaration.symbol.classId.asSingleFqName().toUnsafe())
-        val javaClass = javaClassId?.let { session.firSymbolProvider.getClassLikeSymbolByFqName(it)?.fir } as? FirRegularClass
-        if (javaClass != null) {
+        val originalSubstitution = createSubstitution(typeParameters, this, session)
+        val platformClass = session.platformClassMapper.getCorrespondingPlatformClass(declaration)
+        if (platformClass != null) {
             // This kind of substitution is necessary when method which is mapped from Java (e.g. Java Map.forEach)
             // is called on an external type, like MyMap<String, String>,
             // to determine parameter types properly (e.g. String, String instead of K, V)
-            val javaTypeParameters = javaClass.typeParameters
-            val javaSubstitution = createSubstitution(javaTypeParameters, typeArguments, session)
+            val platformTypeParameters = platformClass.typeParameters
+            val platformSubstitution = createSubstitution(platformTypeParameters, this, session)
             FirClassSubstitutionScope(
-                session, useSiteMemberScope, builder, originalSubstitution + javaSubstitution,
+                session, useSiteMemberScope, builder, originalSubstitution + platformSubstitution,
                 skipPrivateMembers = true, derivedClassId = derivedClassId
             )
         } else {

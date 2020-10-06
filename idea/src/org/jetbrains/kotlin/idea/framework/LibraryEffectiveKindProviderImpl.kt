@@ -24,9 +24,7 @@ class LibraryEffectiveKindProviderImpl(project: Project) : LibraryEffectiveKindP
             ProjectTopics.PROJECT_ROOTS,
             object : ModuleRootListener {
                 override fun rootsChanged(event: ModuleRootEvent) {
-                    synchronized(effectiveKindMap) {
-                        effectiveKindMap.clear()
-                    }
+                    effectiveKindMap.clear()
                 }
             }
         )
@@ -39,9 +37,7 @@ class LibraryEffectiveKindProviderImpl(project: Project) : LibraryEffectiveKindP
 
         return when (val kind = library.kind) {
             is KotlinLibraryKind -> kind
-            else -> synchronized(effectiveKindMap) {
-                effectiveKindMap.get(library)
-            }
+            else -> effectiveKindMap.get(library)
         }
     }
 }

@@ -1,3 +1,4 @@
-public final class SingleFileKt {
-    public static final void foo() { /* compiled code */ }
+public final class SingleFileKt /* SingleFileKt*/ {
+  public static final void foo();//  foo()
+
 }

@@ -769,6 +769,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/callableReference/boundPropertyReferenceInInline.kt");
         }
 
+        @TestMetadata("kt36975.kt")
+        public void testKt36975() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/callableReference/kt36975.kt");
+        }
+
         @TestMetadata("nameIntrinsicWithImplicitThis.kt")
         public void testNameIntrinsicWithImplicitThis() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/callableReference/nameIntrinsicWithImplicitThis.kt");
@@ -1421,11 +1426,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/coroutines/nonLocalReturn.kt");
         }
 
-        @TestMetadata("returnResult.kt")
-        public void testReturnResult() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/coroutines/returnResult.kt");
-        }
-
         @TestMetadata("returnUnitInLambda.kt")
         public void testReturnUnitInLambda_1_2() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/bytecodeText/coroutines/returnUnitInLambda.kt", "kotlin.coroutines.experimental");
@@ -1580,6 +1580,26 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             @TestMetadata("noInlineClassBoxingInSuspendFunReturn_InlineAny.kt")
             public void testNoInlineClassBoxingInSuspendFunReturn_InlineAny() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeText/coroutines/inlineClasses/noInlineClassBoxingInSuspendFunReturn_InlineAny.kt");
+            }
+
+            @TestMetadata("noInlineClassBoxingInSuspendFunReturn_SameJvmType.kt")
+            public void testNoInlineClassBoxingInSuspendFunReturn_SameJvmType() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/inlineClasses/noInlineClassBoxingInSuspendFunReturn_SameJvmType.kt");
+            }
+
+            @TestMetadata("noInlineClassBoxingInSuspendFunReturn_String.kt")
+            public void testNoInlineClassBoxingInSuspendFunReturn_String() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/inlineClasses/noInlineClassBoxingInSuspendFunReturn_String.kt");
+            }
+
+            @TestMetadata("returnResult.kt")
+            public void testReturnResult() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/inlineClasses/returnResult.kt");
+            }
+
+            @TestMetadata("returnStringOverride.kt")
+            public void testReturnStringOverride() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/inlineClasses/returnStringOverride.kt");
             }
         }
 
@@ -1809,6 +1829,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/defaultArguments/kt11962.kt");
         }
 
+        @TestMetadata("localVariablesInInlinedDefaultStubs.kt")
+        public void testLocalVariablesInInlinedDefaultStubs() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/defaultArguments/localVariablesInInlinedDefaultStubs.kt");
+        }
+
         @TestMetadata("maskAndArgumentElimination.kt")
         public void testMaskAndArgumentElimination() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/defaultArguments/maskAndArgumentElimination.kt");
@@ -1827,6 +1852,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("noAccessorForDefault.kt")
         public void testNoAccessorForDefault() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/defaultArguments/noAccessorForDefault.kt");
+        }
+
+        @TestMetadata("noAnonymousObjectRegenerationInDefaultStub.kt")
+        public void testNoAnonymousObjectRegenerationInDefaultStub() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/defaultArguments/noAnonymousObjectRegenerationInDefaultStub.kt");
         }
 
         @TestMetadata("noEmptyArray.kt")
@@ -2751,9 +2781,9 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/inline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }
 
-        @TestMetadata("deleteClassOnTransfromation.kt")
-        public void testDeleteClassOnTransfromation() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/inline/deleteClassOnTransfromation.kt");
+        @TestMetadata("deleteClassOnTransformation.kt")
+        public void testDeleteClassOnTransformation() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inline/deleteClassOnTransformation.kt");
         }
 
         @TestMetadata("finallyMarkers.kt")
@@ -3157,9 +3187,19 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/skipCallToUnderlyingValueOfInlineClass.kt");
         }
 
-        @TestMetadata("toStringIsCalledByInlineClass.kt")
-        public void testToStringIsCalledByInlineClass() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/toStringIsCalledByInlineClass.kt");
+        @TestMetadata("suspendFunctionMangling.kt")
+        public void testSuspendFunctionMangling() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/suspendFunctionMangling.kt");
+        }
+
+        @TestMetadata("toStringOfInlineClassValue.kt")
+        public void testToStringOfInlineClassValue() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/toStringOfInlineClassValue.kt");
+        }
+
+        @TestMetadata("toStringOfReferenceInlineClassValue.kt")
+        public void testToStringOfReferenceInlineClassValue() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/toStringOfReferenceInlineClassValue.kt");
         }
 
         @TestMetadata("uIntArrayIteratorWithoutBoxing.kt")
@@ -4478,6 +4518,41 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/concat.kt");
         }
 
+        @TestMetadata("concatDynamic.kt")
+        public void testConcatDynamic() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamic.kt");
+        }
+
+        @TestMetadata("concatDynamic200.kt")
+        public void testConcatDynamic200() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamic200.kt");
+        }
+
+        @TestMetadata("concatDynamic201.kt")
+        public void testConcatDynamic201() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamic201.kt");
+        }
+
+        @TestMetadata("concatDynamicConstants.kt")
+        public void testConcatDynamicConstants() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamicConstants.kt");
+        }
+
+        @TestMetadata("concatDynamicIndy.kt")
+        public void testConcatDynamicIndy() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamicIndy.kt");
+        }
+
+        @TestMetadata("concatDynamicIndy201.kt")
+        public void testConcatDynamicIndy201() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamicIndy201.kt");
+        }
+
+        @TestMetadata("concatNotDynamic.kt")
+        public void testConcatNotDynamic() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatNotDynamic.kt");
+        }
+
         @TestMetadata("constConcat.kt")
         public void testConstConcat() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/constConcat.kt");
@@ -4931,19 +5006,14 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/whenStringOptimization/duplicatingItems.kt");
         }
 
-        @TestMetadata("duplicatingItemsSameHashCode.kt")
-        public void testDuplicatingItemsSameHashCode() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/whenStringOptimization/duplicatingItemsSameHashCode.kt");
+        @TestMetadata("duplicatingItemsSameHashCodeFewBranches.kt")
+        public void testDuplicatingItemsSameHashCodeFewBranches() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/whenStringOptimization/duplicatingItemsSameHashCodeFewBranches.kt");
         }
 
-        @TestMetadata("duplicatingItemsSameHashCode2.kt")
-        public void testDuplicatingItemsSameHashCode2() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/whenStringOptimization/duplicatingItemsSameHashCode2.kt");
-        }
-
-        @TestMetadata("duplicatingItemsSameHashCode3.kt")
-        public void testDuplicatingItemsSameHashCode3() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/whenStringOptimization/duplicatingItemsSameHashCode3.kt");
+        @TestMetadata("duplicatingItemsSameHashCodeMoreBranches.kt")
+        public void testDuplicatingItemsSameHashCodeMoreBranches() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/whenStringOptimization/duplicatingItemsSameHashCodeMoreBranches.kt");
         }
 
         @TestMetadata("expression.kt")

@@ -97,22 +97,28 @@
     @0:0..4:1 FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.C) returnType:kotlin.Int
       @0:0..4:1 VALUE_PARAMETER name:<this> type:<root>.C
       @0:0..4:1 BLOCK_BODY
-        @0:0..4:1 RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.C'
+        @0:0..4:1 VAR name:result type:kotlin.Int [var]
+          @0:0..4:1 CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Int' type=kotlin.Int origin=null
+            @0:0..4:1 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              @0:0..4:1 GET_VAR '<this>: <root>.C declared in <root>.C.hashCode' type=<root>.C origin=null
+        @0:0..4:1 SET_VAR 'var result: kotlin.Int [var] declared in <root>.C.hashCode' type=kotlin.Unit origin=EQ
           @0:0..4:1 CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
             @0:0..4:1 CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-              @0:0..4:1 CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-                @0:0..4:1 CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-                  @0:0..4:1 CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Int' type=kotlin.Int origin=null
-                    @0:0..4:1 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-                      @0:0..4:1 GET_VAR '<this>: <root>.C declared in <root>.C.hashCode' type=<root>.C origin=null
-                  @0:0..4:1 CONST Int type=kotlin.Int value=31
-                @0:0..4:1 CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.String' type=kotlin.Int origin=null
-                  @0:0..4:1 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
-                    @0:0..4:1 GET_VAR '<this>: <root>.C declared in <root>.C.hashCode' type=<root>.C origin=null
+              @0:0..4:1 GET_VAR 'var result: kotlin.Int [var] declared in <root>.C.hashCode' type=kotlin.Int origin=null
+              @0:0..4:1 CONST Int type=kotlin.Int value=31
+            @0:0..4:1 CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.String' type=kotlin.Int origin=null
+              @0:0..4:1 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+                @0:0..4:1 GET_VAR '<this>: <root>.C declared in <root>.C.hashCode' type=<root>.C origin=null
+        @0:0..4:1 SET_VAR 'var result: kotlin.Int [var] declared in <root>.C.hashCode' type=kotlin.Unit origin=EQ
+          @0:0..4:1 CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+            @0:0..4:1 CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+              @0:0..4:1 GET_VAR 'var result: kotlin.Int [var] declared in <root>.C.hashCode' type=kotlin.Int origin=null
               @0:0..4:1 CONST Int type=kotlin.Int value=31
             @0:0..4:1 CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
               @0:0..4:1 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Any visibility:private [final]' type=kotlin.Any origin=null
                 @0:0..4:1 GET_VAR '<this>: <root>.C declared in <root>.C.hashCode' type=<root>.C origin=null
+        @0:0..4:1 RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.C'
+          @0:0..4:1 GET_VAR 'var result: kotlin.Int [var] declared in <root>.C.hashCode' type=kotlin.Int origin=null
     @0:0..4:1 FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.C, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       @0:0..4:1 VALUE_PARAMETER name:<this> type:<root>.C
       @0:0..4:1 VALUE_PARAMETER name:other index:0 type:kotlin.Any?

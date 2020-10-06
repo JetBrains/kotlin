@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.descriptors.Visibility as OldVisibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 
 class Fir2IrLazyClass(
     components: Fir2IrComponents,
@@ -56,7 +56,7 @@ class Fir2IrLazyClass(
         get() = fir.name
 
     @Suppress("SetterBackingFieldAssignment")
-    override var visibility: OldVisibility = components.visibilityConverter.convertToOldVisibility(fir.visibility)
+    override var visibility: DescriptorVisibility = components.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
         set(_) {
             error("Mutating Fir2Ir lazy elements is not possible")
         }
@@ -155,7 +155,7 @@ class Fir2IrLazyClass(
                         processedNames += declaration.name
                         scope.processPropertiesByName(declaration.name) {
                             if (it is FirPropertySymbol) {
-                                result += declarationStorage.getIrPropertyOrFieldSymbol(it).owner as IrProperty
+                                result += declarationStorage.getIrPropertySymbol(it).owner as IrProperty
                             }
                         }
                     }
@@ -168,7 +168,7 @@ class Fir2IrLazyClass(
             }
         }
         with(fakeOverrideGenerator) {
-            val fakeOverrides = getFakeOverrides(fir, processedNames)
+            val fakeOverrides = getFakeOverrides(fir, fir.declarations)
             bindOverriddenSymbols(fakeOverrides)
             result += fakeOverrides
         }

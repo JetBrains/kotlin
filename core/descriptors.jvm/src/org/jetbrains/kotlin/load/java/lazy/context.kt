@@ -24,17 +24,13 @@ import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.load.java.AnnotationTypeQualifierResolver
-import org.jetbrains.kotlin.load.java.JavaClassFinder
-import org.jetbrains.kotlin.load.java.JavaClassesTracker
+import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.components.JavaPropertyInitializerEvaluator
 import org.jetbrains.kotlin.load.java.components.JavaResolverCache
 import org.jetbrains.kotlin.load.java.components.SignaturePropagator
 import org.jetbrains.kotlin.load.java.lazy.types.JavaTypeResolver
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElementFactory
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameterListOwner
-import org.jetbrains.kotlin.load.java.typeEnhancement.JavaTypeQualifiers
-import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifierWithMigrationStatus
 import org.jetbrains.kotlin.load.java.typeEnhancement.SignatureEnhancement
 import org.jetbrains.kotlin.load.kotlin.DeserializedDescriptorResolver
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
@@ -43,7 +39,6 @@ import org.jetbrains.kotlin.resolve.sam.SamConversionResolver
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
-import java.util.*
 
 class JavaResolverComponents(
     val storageManager: StorageManager,
@@ -104,20 +99,6 @@ interface JavaResolverSettings {
     }
 }
 
-typealias QualifierByApplicabilityType = EnumMap<AnnotationTypeQualifierResolver.QualifierApplicabilityType, NullabilityQualifierWithMigrationStatus?>
-
-class JavaTypeQualifiersByElementType(val nullabilityQualifiers: QualifierByApplicabilityType) {
-    operator fun get(applicabilityType: AnnotationTypeQualifierResolver.QualifierApplicabilityType?): JavaTypeQualifiers? {
-        val nullabilityQualifierWithMigrationStatus = nullabilityQualifiers[applicabilityType] ?: return null
-
-        return JavaTypeQualifiers(
-            nullabilityQualifierWithMigrationStatus.qualifier, null,
-            isNotNullTypeParameter = false,
-            isNullabilityQualifierForWarning = nullabilityQualifierWithMigrationStatus.isForWarningOnly
-        )
-    }
-}
-
 class LazyJavaResolverContext internal constructor(
     val components: JavaResolverComponents,
     val typeParameterResolver: TypeParameterResolver,
@@ -155,7 +136,7 @@ fun LazyJavaResolverContext.computeNewDefaultTypeQualifiers(
 
     val nullabilityQualifiersByType =
         defaultTypeQualifiers?.nullabilityQualifiers?.let(::QualifierByApplicabilityType)
-            ?: QualifierByApplicabilityType(AnnotationTypeQualifierResolver.QualifierApplicabilityType::class.java)
+            ?: QualifierByApplicabilityType(AnnotationQualifierApplicabilityType::class.java)
 
     var wasUpdate = false
     for ((nullability, applicableTo) in nullabilityQualifiersWithApplicability) {
@@ -194,11 +175,6 @@ private fun LazyJavaResolverContext.extractDefaultNullabilityQualifier(
 
     return NullabilityQualifierWithApplicability(nullabilityQualifier, applicability)
 }
-
-data class NullabilityQualifierWithApplicability(
-    val nullabilityQualifier: NullabilityQualifierWithMigrationStatus,
-    val qualifierApplicabilityTypes: Collection<AnnotationTypeQualifierResolver.QualifierApplicabilityType>
-)
 
 fun LazyJavaResolverContext.replaceComponents(
     components: JavaResolverComponents

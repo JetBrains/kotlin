@@ -154,7 +154,7 @@ class JvmDefaultChecker(val jvmTarget: JvmTarget, project: Project) : Declaratio
         declaration: KtDeclaration,
         performSpecializationCheck: Boolean
     ): Boolean {
-        if (!performSpecializationCheck) return true
+        if (!performSpecializationCheck || actualImplementation is JavaMethodDescriptor) return true
         val inheritedSignature = inheritedFun.computeJvmDescriptor(withReturnType = true, withName = false)
         val originalImplementation = actualImplementation.original
         val actualSignature = originalImplementation.computeJvmDescriptor(withReturnType = true, withName = false)

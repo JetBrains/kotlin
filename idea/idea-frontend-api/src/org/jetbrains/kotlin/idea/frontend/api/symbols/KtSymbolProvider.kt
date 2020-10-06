@@ -22,6 +22,7 @@ abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
         is KtLambdaExpression -> getAnonymousFunctionSymbol(psi)
         is KtProperty -> getVariableSymbol(psi)
         is KtClassOrObject -> getClassOrObjectSymbol(psi)
+        is KtPropertyAccessor -> getPropertyAccessorSymbol(psi)
         else -> error("Cannot build symbol for ${psi::class}")
     }
 
@@ -35,6 +36,7 @@ abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
     abstract fun getAnonymousFunctionSymbol(psi: KtLambdaExpression): KtAnonymousFunctionSymbol
     abstract fun getVariableSymbol(psi: KtProperty): KtVariableSymbol
     abstract fun getClassOrObjectSymbol(psi: KtClassOrObject): KtClassOrObjectSymbol
+    abstract fun getPropertyAccessorSymbol(psi: KtPropertyAccessor): KtPropertyAccessorSymbol
 
     /**
      * @return symbol with specified [classId] or `null` in case such symbol is not found

@@ -26,6 +26,7 @@ public annotation class FunAnn {
 @kotlin.Metadata
 final class LiteralsKt$foo$1 {
     // source: 'literals.kt'
+    enclosing method LiteralsKt.foo(I)LMy;
     synthetic final field $arg: int
     inner (anonymous) class LiteralsKt$foo$1
     method <init>(p0: int): void
@@ -36,6 +37,7 @@ final class LiteralsKt$foo$1 {
 @kotlin.Metadata
 final class LiteralsKt$foo$2 {
     // source: 'literals.kt'
+    enclosing method LiteralsKt.foo(I)LMy;
     synthetic final field $arg: int
     inner (anonymous) class LiteralsKt$foo$2
     method <init>(p0: int): void
@@ -47,6 +49,7 @@ final class LiteralsKt$foo$2 {
 @kotlin.Metadata
 public final class LiteralsKt$foo$3 {
     // source: 'literals.kt'
+    enclosing method LiteralsKt.foo(I)LMy;
     inner (anonymous) class LiteralsKt$foo$3
     method <init>(): void
 }
@@ -54,6 +57,7 @@ public final class LiteralsKt$foo$3 {
 @kotlin.Metadata
 final class LiteralsKt$foo$x$1 {
     // source: 'literals.kt'
+    enclosing method LiteralsKt.foo(I)LMy;
     synthetic final field $arg: int
     inner (anonymous) class LiteralsKt$foo$x$1
     method <init>(p0: int): void

@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -311,7 +311,7 @@ class CheckIrElementVisitor(
         if (declaration is IrOverridableDeclaration<*>) {
             for (overriddenSymbol in declaration.overriddenSymbols) {
                 val overriddenDeclaration = overriddenSymbol.owner as? IrDeclarationWithVisibility ?: continue
-                if (overriddenDeclaration.visibility == Visibilities.PRIVATE) {
+                if (overriddenDeclaration.visibility == DescriptorVisibilities.PRIVATE) {
                     reportError(declaration, "Overrides private declaration $overriddenDeclaration")
                 }
             }

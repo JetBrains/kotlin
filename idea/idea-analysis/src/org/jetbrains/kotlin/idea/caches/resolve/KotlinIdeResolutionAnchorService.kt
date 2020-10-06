@@ -28,59 +28,17 @@ import org.jetbrains.kotlin.resolve.ResolutionAnchorProvider
  * manually for the libraries in project via resolution anchors. Anchor by itself is a source module which is mapped
  * to a library and used during resolution as a fallback.
  */
-@State(name = "KotlinIdeAnchorService", storages = [Storage("anchors.xml")])
 class KotlinIdeResolutionAnchorService(
     val project: Project
-) : ResolutionAnchorProvider,
-    PersistentStateComponent<KotlinIdeResolutionAnchorService.State> {
-
-    data class State(
-        var moduleNameToAnchorName: Map<String, String> = emptyMap()
-    )
-
-    private val logger = logger<KotlinIdeResolutionAnchorService>()
-
-    @JvmField
-    @Volatile
-    var myState: State = State()
-
-    private fun buildMapping(): Map<ModuleInfo, ModuleInfo> {
-        val modulesByNames = getModuleInfosFromIdeaModel(project).associateBy { moduleInfo ->
-            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-            when (moduleInfo) {
-                is LibraryInfo -> moduleInfo.library.name
-                is ModuleSourceInfo -> moduleInfo.module.name
-                else -> moduleInfo.name.asString()
-            }
-        }
-
-        return myState.moduleNameToAnchorName.entries.mapNotNull { (moduleName, anchorName) ->
-            val module = modulesByNames[moduleName] ?: return@mapNotNull notFoundModule(moduleName)
-            val anchor = modulesByNames[anchorName] ?: return@mapNotNull notFoundModule(moduleName)
-            module to anchor
-        }.toMap()
-    }
-
-    private fun notFoundModule(moduleName: String): Nothing? {
-        logger.warn("Module <${moduleName}> not found in project model")
-        return null
-    }
-
-    private val moduleToAnchor: Map<ModuleInfo, ModuleInfo>
-        get() = project.cacheInvalidatingOnRootModifications {
-            buildMapping()
-        }
-
-    override fun getState(): State = myState
-
-    override fun loadState(state: State) {
-        XmlSerializerUtil.copyBean(state, myState)
-    }
-
+) : ResolutionAnchorProvider {
     override fun getResolutionAnchor(moduleDescriptor: ModuleDescriptor): ModuleDescriptor? {
         if (!project.libraryToSourceAnalysisEnabled) return null
+
+        val moduleToAnchor = ResolutionAnchorCacheService.getInstance(project).resolutionAnchorsForLibraries
         val moduleInfo = moduleDescriptor.moduleInfo ?: return null
-        val mapped = moduleToAnchor[moduleInfo] ?: return null
+        val keyModuleInfo = if (moduleInfo is SourceForBinaryModuleInfo) moduleInfo.binariesModuleInfo else moduleInfo
+        val mapped = moduleToAnchor[keyModuleInfo] ?: return null
+
         return KotlinCacheService.getInstance(project)
             .getResolutionFacadeByModuleInfo(mapped, mapped.platform)
             ?.moduleDescriptor

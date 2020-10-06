@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
@@ -160,7 +160,7 @@ class DeprecatedCallableAddReplaceWithInspection : AbstractApplicabilityBasedIns
 
             override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
                 val target = expression.resolveToCall()?.resultingDescriptor as? DeclarationDescriptorWithVisibility ?: return
-                if (Visibilities.isPrivate((target.visibility))) {
+                if (DescriptorVisibilities.isPrivate((target.visibility))) {
                     isGood = false
                 }
             }

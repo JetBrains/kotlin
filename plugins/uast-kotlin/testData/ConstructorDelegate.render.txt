@@ -19,7 +19,4 @@ public final class BaseImpl : Base {
 
 public final class Derived : Base, java.lang.CharSequence {
     public fun Derived(@org.jetbrains.annotations.NotNull b: Base) = UastEmptyExpression
-    public fun getLength() : int = UastEmptyExpression
-    public fun get(@null index: int) : char = UastEmptyExpression
-    public fun subSequence(@null startIndex: int, @null endIndex: int) : java.lang.CharSequence = UastEmptyExpression
 }

@@ -33,7 +33,7 @@ abstract class IrLocalDelegatedProperty :
     abstract override val descriptor: VariableDescriptorWithAccessors
     abstract override val symbol: IrLocalDelegatedPropertySymbol
 
-    abstract val type: IrType
+    abstract var type: IrType
     abstract val isVar: Boolean
 
     abstract var delegate: IrVariable

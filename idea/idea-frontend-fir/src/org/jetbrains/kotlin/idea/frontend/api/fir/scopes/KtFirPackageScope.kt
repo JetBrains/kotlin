@@ -5,41 +5,51 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.scopes
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.searchScope
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
-import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtPackageScope
+import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassLikeSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
+import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelClassByPackageIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionByPackageIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyByPackageIndex
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 internal class KtFirPackageScope(
     firScope: FirPackageMemberScope,
+    private val project: Project,
     private val builder: KtSymbolByFirBuilder,
     override val token: ValidityToken,
-) : KtPackageScope, ValidityTokenOwner {
+) : KtPackageScope {
     private val firScope by weakRef(firScope)
     override val fqName: FqName get() = firScope.fqName
 
-    override fun getCallableNames(): Set<Name> = withValidityAssertion {
-        // TODO: KT-41048
-        emptySet()
+    override fun getCallableNames() = withValidityAssertion {
+        hashSetOf<Name>().apply {
+            KotlinTopLevelPropertyByPackageIndex.getInstance()[fqName.asString(), project, firScope.session.searchScope]
+                .mapNotNullTo(this) { it.nameAsName }
+            KotlinTopLevelFunctionByPackageIndex.getInstance()[fqName.asString(), project, firScope.session.searchScope]
+                .mapNotNullTo(this) { it.nameAsName }
+        }
     }
 
-    override fun getClassLikeSymbolNames(): Set<Name> = withValidityAssertion {
-        // TODO: KT-41048
-        emptySet()
+    override fun getClassifierNames(): Set<Name> = withValidityAssertion {
+        KotlinTopLevelClassByPackageIndex.getInstance()[fqName.asString(), project, firScope.session.searchScope]
+            .mapNotNullTo(hashSetOf()) { it.nameAsName }
     }
 
-    override fun getCallableSymbols(): Sequence<KtCallableSymbol> = withValidityAssertion {
-        firScope.getCallableSymbols(getCallableNames(), builder)
+    override fun getCallableSymbols(nameFilter: KtScopeNameFilter): Sequence<KtCallableSymbol> = withValidityAssertion {
+        firScope.getCallableSymbols(getCallableNames().filter(nameFilter), builder)
     }
 
-    override fun getClassClassLikeSymbols(): Sequence<KtClassLikeSymbol> = withValidityAssertion {
-        firScope.getClassLikeSymbols(getClassLikeSymbolNames(), builder)
+    override fun getClassifierSymbols(nameFilter: KtScopeNameFilter): Sequence<KtClassifierSymbol> = withValidityAssertion {
+        firScope.getClassifierSymbols(getClassifierNames().filter(nameFilter), builder)
     }
 }

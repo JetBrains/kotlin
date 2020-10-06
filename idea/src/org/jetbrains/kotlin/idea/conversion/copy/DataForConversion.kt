@@ -29,8 +29,6 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.idea.core.util.start
 import org.jetbrains.kotlin.idea.core.util.end
 import org.jetbrains.kotlin.idea.core.util.range
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 

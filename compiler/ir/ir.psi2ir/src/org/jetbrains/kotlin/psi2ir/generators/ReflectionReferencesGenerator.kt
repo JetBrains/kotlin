@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.builtins.isKFunctionType
 import org.jetbrains.kotlin.builtins.isKSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
@@ -335,7 +335,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
                 IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE,
                 irAdapterSymbol,
                 adapteeDescriptor.name,
-                Visibilities.LOCAL,
+                DescriptorVisibilities.LOCAL,
                 Modality.FINAL,
                 ktExpectedReturnType.toIrType(),
                 isInline = adapteeDescriptor.isInline, // TODO ?
@@ -350,7 +350,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
                 adapterFunctionDescriptor.bind(irAdapterFun)
 
                 context.symbolTable.withScope(adapterFunctionDescriptor) {
-                    irAdapterFun.metadata = MetadataSource.Function(adapteeDescriptor)
+                    irAdapterFun.metadata = DescriptorMetadataSource.Function(adapteeDescriptor)
 
                     irAdapterFun.dispatchReceiverParameter = null
 

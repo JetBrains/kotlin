@@ -31,10 +31,9 @@ import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
-import org.jetbrains.kotlin.psi.psiUtil.getLastParentOfTypeInRow
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
+import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
+import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.isNullabilityMismatch
 
 class WrapWithSafeLetCallFix(
@@ -83,18 +82,23 @@ class WrapWithSafeLetCallFix(
     object UnsafeFactory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val element = diagnostic.psiElement
-
             if (element is KtNameReferenceExpression) {
                 val resolvedCall = element.resolveToCall()
                 if (resolvedCall?.call?.callType != Call.CallType.INVOKE) return null
             }
-
-            val expression = element.getParentOfType<KtExpression>(true) ?: return null
-
-            val parent = element.parent
-            val nullableExpression = (parent as? KtCallExpression)?.calleeExpression ?: return null
-
-            return WrapWithSafeLetCallFix(expression, nullableExpression)
+            val expression = element.getStrictParentOfType<KtExpression>() ?: return null
+            val (targetExpression, nullableExpression) = if (expression is KtQualifiedExpression) {
+                val argument = expression.parent as? KtValueArgument ?: return null
+                val call = argument.getStrictParentOfType<KtCallExpression>() ?: return null
+                val parameter = call.resolveToCall()?.getParameterForArgument(argument) ?: return null
+                if (parameter.type.isNullable()) return null
+                val targetExpression = call.getLastParentOfTypeInRow<KtQualifiedExpression>() ?: call
+                targetExpression to expression.receiverExpression
+            } else {
+                val nullableExpression = (element.parent as? KtCallExpression)?.calleeExpression ?: return null
+                expression to nullableExpression
+            }
+            return WrapWithSafeLetCallFix(targetExpression, nullableExpression)
         }
     }
 

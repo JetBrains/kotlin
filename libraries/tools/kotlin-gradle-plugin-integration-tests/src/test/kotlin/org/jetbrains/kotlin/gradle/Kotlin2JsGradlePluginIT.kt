@@ -609,7 +609,10 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
                     val packageJson = Gson().fromJson(it, PackageJson::class.java)
                     val devDep = "42"
                     val devDepVersion = "0.0.1"
-                    assertTrue("There is expected dev dependency \"$devDep\": \"$devDepVersion\" in package.json") {
+                    assertTrue(
+                        "Dev dependency \"$devDep\": \"$devDepVersion\" in package.json expected, but actual:\n" +
+                                "${packageJson.devDependencies}"
+                    ) {
                         val devDependencies = packageJson.devDependencies
                         devDependencies
                             .containsKey(devDep) &&
@@ -618,7 +621,10 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
 
                     val dep = "@yworks/optimizer"
                     val depVersion = "1.0.6"
-                    assertTrue("There is expected dependency \"$dep\": \"$depVersion\" in package.json") {
+                    assertTrue(
+                        "Dependency \"$dep\": \"$depVersion\" in package.json expected, but actual:\n" +
+                                "${packageJson.dependencies}"
+                    ) {
                         val dependencies = packageJson.dependencies
                         dependencies
                             .containsKey(dep) &&
@@ -627,7 +633,10 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
 
                     val peerDep = "date-arithmetic"
                     val peerDepVersion = "4.1.0"
-                    assertTrue("There is expected peer dependency \"$peerDep\": \"$peerDepVersion\" in package.json") {
+                    assertTrue(
+                        "Peer dependency \"$peerDep\": \"$peerDepVersion\" in package.json expected, but actual:\n" +
+                                "${packageJson.peerDependencies}"
+                    ) {
                         val peerDependencies = packageJson.peerDependencies
                         peerDependencies
                             .containsKey(peerDep) &&
@@ -708,7 +717,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
         build("clean", "browserDistribution") {
             assertTasksExecuted(
                 ":app:processResources",
-                ":app:browserDistributeResources"
+                if (irBackend) ":app:browserProductionExecutableDistributeResources" else ":app:browserDistributeResources"
             )
 
             assertFileExists("app/build/distributions/index.html")
@@ -754,17 +763,6 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
         setupWorkingDir()
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
 
-        fun assertYarnResolutions(
-            packageJson: PackageJson
-        ) {
-            val name = "lodash"
-            val version = packageJson.resolutions?.get(name)
-            val requiredVersion = ">=1.0.0 <1.2.1 || >1.4.0 <2.0.0"
-            assertTrue("Root package.json must have resolution $name with version $requiredVersion, but $version found") {
-                version == requiredVersion
-            }
-        }
-
         build("packageJson", "rootPackageJson", "kotlinNpmInstall") {
             assertSuccessful()
 
@@ -775,7 +773,19 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
                         Gson().fromJson(it.readText(), PackageJson::class.java)
                     }
 
-            assertYarnResolutions(getPackageJson())
+            val name = "lodash"
+            val version = getPackageJson().resolutions?.get(name)
+            val requiredVersion = ">=1.0.0 <1.2.1 || >1.4.0 <2.0.0"
+            assertTrue("Root package.json must have resolution $name with version $requiredVersion, but $version found") {
+                version == requiredVersion
+            }
+
+            val react = "react"
+            val reactVersion = getPackageJson().resolutions?.get(react)
+            val requiredReactVersion = "16.0.0"
+            assertTrue("Root package.json must have resolution $react with version $requiredReactVersion, but $reactVersion found") {
+                reactVersion == requiredReactVersion
+            }
         }
     }
 }

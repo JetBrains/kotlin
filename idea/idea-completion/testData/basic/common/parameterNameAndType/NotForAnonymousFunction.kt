@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 package pack
 
 class Boo

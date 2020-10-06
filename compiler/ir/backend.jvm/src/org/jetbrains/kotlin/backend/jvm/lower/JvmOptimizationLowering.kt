@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrPublicSymbolBase
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -35,7 +36,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
     companion object {
         fun isNegation(expression: IrExpression, context: JvmBackendContext): Boolean =
             expression is IrCall &&
-                    context.state.intrinsics.getIntrinsic(expression.symbol.descriptor) is Not
+                    (expression.symbol as? IrPublicSymbolBase<*>)?.signature == context.irBuiltIns.booleanNotSymbol.signature
     }
 
     private val IrFunction.isObjectEquals
@@ -346,7 +347,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                 // initializer with the constant initializer.
                 val variable = expression.symbol.owner
                 return if (isImmutableTemporaryVariableWithConstantValue(variable))
-                    ((variable as IrVariable).initializer!! as IrConst<*>).copy()
+                    ((variable as IrVariable).initializer!! as IrConst<*>).copyWithOffsets(expression.startOffset, expression.endOffset)
                 else
                     expression
             }

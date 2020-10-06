@@ -73,6 +73,7 @@ where advanced options include:
                              Do not use optimized callable reference superclasses available from 1.4
   -Xno-param-assertions      Don't generate not-null assertions on parameters of methods accessible from Java
   -Xno-receiver-assertions   Don't generate not-null assertion for extension receiver arguments of platform types
+  -Xno-unified-null-checks   Use pre-1.4 exception types in null checks instead of java.lang.NPE. See KT-22275 for more details
   -Xno-use-ir                Do not use the IR backend. Useful for a custom-built compiler where IR backend is enabled by default
   -Xprofile=<profilerPath:command:outputDir>
                              Debug option: Run compiler with async profiler, save snapshots to outputDir, command is passed to async-profiler on start
@@ -80,6 +81,11 @@ where advanced options include:
                              profilerPath is a path to libasyncProfiler.so
                              Example: -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfiler.so:event=cpu,interval=1ms,threads,start,framebuf=50000000:<SNAPSHOT_DIR_PATH>
   -Xrepeat=<number>          Debug option: Repeats modules compilation <number> times
+  -Xruntime-string-concat={disable|enable|indy}
+                             Switch a way in which string concatenation is performed.
+                             -Xruntime-string-concat=enable          Performs string concatenation via `invokedynamic` 'makeConcatWithConstants'. Works only with `-jvm-target 9` or greater
+                             -Xruntime-string-concat=indy            Performs string concatenation via `invokedynamic` 'makeConcat'. Works only with `-jvm-target 9` or greater
+                             -Xruntime-string-concat=disable         Performs string concatenation via `StringBuilder`
   -Xsanitize-parentheses     Transform '(' and ')' in method names to some other character sequence.
                              This mode can BREAK BINARY COMPATIBILITY and is only supposed to be used to workaround
                              problems with parentheses in identifiers on certain platforms
@@ -116,6 +122,7 @@ where advanced options include:
   -Xdisable-default-scripting-plugin
                              Do not enable scripting plugin by default
   -Xdisable-phases           Disable backend phases
+  -Xdisable-ultra-light-classes Do not use the ultra light classes implementation
   -Xdump-directory           Dump backend state into directory
   -Xdump-fqname              FqName of declaration that should be dumped
   -Xdump-perf=<path>         Dump detailed performance statistics to the specified file
@@ -125,6 +132,7 @@ where advanced options include:
   -Xexplicit-api={strict|warning|disable}
                              Force compiler to report errors on all public API declarations without explicit visibility or return type.
                              Use 'warning' level to issue warnings instead of errors.
+  -Xinference-compatibility  Enable compatibility changes for generic type inference algorithm
   -Xinline-classes           Enable experimental inline classes
   -Xintellij-plugin-root=<path> Path to the kotlin-compiler.jar or directory where IntelliJ configuration files can be found
   -Xlegacy-smart-cast-after-try Allow var smart casts despite assignment in try block

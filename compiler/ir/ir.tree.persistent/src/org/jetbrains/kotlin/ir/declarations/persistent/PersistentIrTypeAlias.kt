@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.declarations.persistent
 
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
@@ -17,14 +17,14 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
 internal class PersistentIrTypeAlias(
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override val symbol: IrTypeAliasSymbol,
-    override val name: Name,
-    override var visibility: Visibility,
-    override val expandedType: IrType,
-    override val isActual: Boolean,
-    origin: IrDeclarationOrigin
+        override val startOffset: Int,
+        override val endOffset: Int,
+        override val symbol: IrTypeAliasSymbol,
+        override val name: Name,
+        override var visibility: DescriptorVisibility,
+        expandedType: IrType,
+        override val isActual: Boolean,
+        origin: IrDeclarationOrigin
 ) : IrTypeAlias(),
     PersistentIrDeclarationBase<TypeAliasCarrier>,
     TypeAliasCarrier {
@@ -54,6 +54,16 @@ internal class PersistentIrTypeAlias(
         set(v) {
             if (typeParameters !== v) {
                 setCarrier().typeParametersField = v
+            }
+        }
+
+    override var expandedTypeField: IrType = expandedType
+
+    override var expandedType: IrType
+        get() = getCarrier().expandedTypeField
+        set(v) {
+            if (expandedType !== v) {
+                setCarrier().expandedTypeField = v
             }
         }
 }

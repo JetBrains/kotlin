@@ -48,6 +48,9 @@ dependencies {
     embedded(project(":core:metadata"))
     embedded(project(":core:metadata.jvm"))
     embedded(project(":core:compiler.common"))
+    embedded(project(":core:compiler.common.jvm"))
+    embedded(project(":core:deserialization.common"))
+    embedded(project(":core:deserialization.common.jvm"))
     embedded(project(":core:descriptors"))
     embedded(project(":core:descriptors.jvm"))
     embedded(project(":core:deserialization"))
@@ -106,6 +109,7 @@ val reflectShadowJar by task<ShadowJar> {
     configurations = listOf(embedded)
 
     exclude("**/*.proto")
+    exclude("org/jetbrains/annotations/Nls*.class")
 
     if (kotlinBuildProperties.relocation) {
         mergeServiceFiles()

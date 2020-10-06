@@ -10,17 +10,17 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.backend.jvm.ir.isSmartcastFromHigherThanNullable
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.AsmUtil.genAreEqualCall
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
+import org.jetbrains.kotlin.codegen.DescriptorAsmUtil.genAreEqualCall
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.isEnumClass
 import org.jetbrains.kotlin.ir.util.isEnumEntry
 import org.jetbrains.kotlin.ir.util.isIntegerConst
@@ -172,11 +172,11 @@ class Ieee754Equals(val operandType: Type) : IntrinsicMethod() {
         val arg0 = expression.getValueArgument(0)!!
         val arg1 = expression.getValueArgument(1)!!
 
-        val arg0Type = arg0.type.toKotlinType()
+        val arg0Type = arg0.type.toIrBasedKotlinType()
         if (!arg0Type.isPrimitiveNumberOrNullableType() && !arg0Type.upperBoundedByPrimitiveNumberOrNullableType())
             throw AssertionError("Should be primitive or nullable primitive type: $arg0Type")
 
-        val arg1Type = arg1.type.toKotlinType()
+        val arg1Type = arg1.type.toIrBasedKotlinType()
         if (!arg1Type.isPrimitiveNumberOrNullableType() && !arg1Type.upperBoundedByPrimitiveNumberOrNullableType())
             throw AssertionError("Should be primitive or nullable primitive type: $arg1Type")
 

@@ -1,9 +1,9 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 class A(x: String = "", y: String = "") {
-    constructor(x: String, y: String): <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this<!>(x, y)
-    constructor(): <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this<!>("", "")
-    constructor(): <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this<!>("", "")
+    constructor(x: String, y: String): <!AMBIGUITY!>this<!>(x, y)
+    constructor(): <!AMBIGUITY!>this<!>("", "")
+    constructor(): <!AMBIGUITY!>this<!>("", "")
 }
 
 class B {
@@ -14,9 +14,9 @@ fun B(x: Int) {}
 
 class Outer {
     class A(x: String = "", y: String = "") {
-        constructor(x: String, y: String): <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this<!>(x, y)
-        constructor(): <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this<!>("", "")
-        constructor(): <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this<!>("", "")
+        constructor(x: String, y: String): <!AMBIGUITY!>this<!>(x, y)
+        constructor(): <!AMBIGUITY!>this<!>("", "")
+        constructor(): <!AMBIGUITY!>this<!>("", "")
     }
 
     class B {

@@ -5232,6 +5232,16 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             runTest("js/js.translator/testData/box/jsModule/importCountUmd.kt");
         }
 
+        @TestMetadata("interfaces.kt")
+        public void testInterfaces() throws Exception {
+            runTest("js/js.translator/testData/box/jsModule/interfaces.kt");
+        }
+
+        @TestMetadata("kt39378.kt")
+        public void testKt39378() throws Exception {
+            runTest("js/js.translator/testData/box/jsModule/kt39378.kt");
+        }
+
         @TestMetadata("topLevelVarargFun.kt")
         public void testTopLevelVarargFun() throws Exception {
             runTest("js/js.translator/testData/box/jsModule/topLevelVarargFun.kt");
@@ -5331,6 +5341,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         @TestMetadata("classes.kt")
         public void testClasses() throws Exception {
             runTest("js/js.translator/testData/box/jsQualifier/classes.kt");
+        }
+
+        @TestMetadata("interfaces.kt")
+        public void testInterfaces() throws Exception {
+            runTest("js/js.translator/testData/box/jsQualifier/interfaces.kt");
         }
 
         @TestMetadata("simple.kt")

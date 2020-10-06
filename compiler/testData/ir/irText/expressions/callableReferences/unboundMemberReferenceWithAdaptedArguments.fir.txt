@@ -67,8 +67,6 @@ FILE fqName:<root> fileName:/unboundMemberReferenceWithAdaptedArguments.kt
             BLOCK_BODY
               CALL 'public open fun foo (vararg xs: kotlin.Int): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
                 $this: GET_VAR 'p0: <root>.A declared in <root>.testUnbound.foo' type=<root>.A origin=null
-                xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-                  GET_VAR 'p0: <root>.A declared in <root>.testUnbound.foo' type=<root>.A origin=null
   FUN name:testBound visibility:public modality:FINAL <> (a:<root>.A) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:<root>.A
     BLOCK_BODY

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
@@ -33,7 +32,7 @@ abstract class AbstractTypeAliasDescriptor(
     annotations: Annotations,
     name: Name,
     sourceElement: SourceElement,
-    private val visibilityImpl: Visibility
+    private val visibilityImpl: DescriptorVisibility
 ) : DeclarationDescriptorNonRootImpl(containingDeclaration, annotations, name, sourceElement),
     TypeAliasDescriptor {
 

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.builtins.StandardNames.COROUTINES_PACKAGE_FQ_NAME_RE
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.MutableClassDescriptor
@@ -31,7 +31,7 @@ private val FAKE_CONTINUATION_CLASS_DESCRIPTOR_EXPERIMENTAL =
         CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL.shortName(), SourceElement.NO_SOURCE, LockBasedStorageManager.NO_LOCKS
     ).apply {
         modality = Modality.ABSTRACT
-        visibility = Visibilities.PUBLIC
+        visibility = DescriptorVisibilities.PUBLIC
         setTypeParameterDescriptors(
             TypeParameterDescriptorImpl.createWithDefaultBound(
                 this, Annotations.EMPTY, false, Variance.IN_VARIANCE, Name.identifier("T"), 0, LockBasedStorageManager.NO_LOCKS
@@ -47,7 +47,7 @@ private val FAKE_CONTINUATION_CLASS_DESCRIPTOR_RELEASE =
         CONTINUATION_INTERFACE_FQ_NAME_RELEASE.shortName(), SourceElement.NO_SOURCE, LockBasedStorageManager.NO_LOCKS
     ).apply {
         modality = Modality.ABSTRACT
-        visibility = Visibilities.PUBLIC
+        visibility = DescriptorVisibilities.PUBLIC
         setTypeParameterDescriptors(
             TypeParameterDescriptorImpl.createWithDefaultBound(
                 this, Annotations.EMPTY, false, Variance.IN_VARIANCE, Name.identifier("T"), 0, LockBasedStorageManager.NO_LOCKS

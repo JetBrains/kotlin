@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.idea.run
 
 import com.intellij.execution.Location
-import com.intellij.execution.PsiLocation
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.ConfigurationFromContext
+import com.intellij.execution.actions.ConfigurationFromContextImpl
 import com.intellij.execution.junit.InheritorChooser
 import com.intellij.execution.junit2.PsiMemberParameterizedLocation
+import com.intellij.execution.junit2.info.MethodLocation
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
@@ -19,9 +20,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.idea.caches.project.isNewMPPModule
-import org.jetbrains.kotlin.idea.facet.externalSystemTestRunTasks
 import org.jetbrains.kotlin.idea.project.platform
-import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.plugins.gradle.execution.test.runner.TestMethodGradleConfigurationProducer
 import org.jetbrains.plugins.gradle.execution.test.runner.applyTestConfiguration
@@ -46,12 +45,17 @@ abstract class AbstractKotlinMultiplatformTestMethodGradleConfigurationProducer 
         return isApplicable(module, platform)
     }
 
+    private fun shouldDisgraceConfiguration(other: ConfigurationFromContext): Boolean {
+        return other.isJpsJunitConfiguration() ||
+                (other as? ConfigurationFromContextImpl)?.configurationProducer is TestMethodGradleConfigurationProducer
+    }
+
     override fun isPreferredConfiguration(self: ConfigurationFromContext, other: ConfigurationFromContext): Boolean {
-        return other.isJpsJunitConfiguration()
+        return shouldDisgraceConfiguration(other)
     }
 
     override fun shouldReplace(self: ConfigurationFromContext, other: ConfigurationFromContext): Boolean {
-        return other.isJpsJunitConfiguration()
+        return shouldDisgraceConfiguration(other)
     }
 
     override fun onFirstRun(fromContext: ConfigurationFromContext, context: ConfigurationContext, performRunnable: Runnable) {
@@ -80,23 +84,20 @@ abstract class AbstractKotlinMultiplatformTestMethodGradleConfigurationProducer 
     ) {
         val dataContext = MultiplatformTestTasksChooser.createContext(context.dataContext, psiMethod.name)
 
-        val availableTargets =
-            classes
-                .mapNotNull { psiClass -> psiClass.module }
-                .flatMap { module -> module.externalSystemTestRunTasks() }
-                .map { extTask -> extTask.targetName }
-                .distinct()
+        val contextualSuffix = when (context.location) {
+            is PsiMemberParameterizedLocation -> (context.location as? PsiMemberParameterizedLocation)?.paramSetName?.trim('[', ']')
+            is MethodLocation -> "jvm"  // jvm, being default target, is treated differently
+            else -> null // from gutters
+        }
 
-        mppTestTasksChooser.multiplatformChooseTasks(context.project, dataContext, classes.asList()) { tasks ->
+        mppTestTasksChooser.multiplatformChooseTasks(context.project, dataContext, classes.asList(), contextualSuffix) { tasks ->
             val configuration = fromContext.configuration as ExternalSystemRunConfiguration
             val settings = configuration.settings
 
             val result = settings.applyTestConfiguration(context.module, tasks, *classes) {
                 var filters = createTestFilterFrom(context.location, it, psiMethod, true)
-                if (context.location is PsiMemberParameterizedLocation) {
-                    availableTargets.forEach { targetName ->
-                        filters = filters.replace("[*$targetName*]", "")
-                    }
+                if (context.location is PsiMemberParameterizedLocation && contextualSuffix != null) {
+                    filters = filters.replace("[*$contextualSuffix*]", "")
                 }
                 filters
             }

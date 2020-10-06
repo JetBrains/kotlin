@@ -616,7 +616,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         String nameForClassOrPackageMember = getNameForClassOrPackageMember(functionDescriptor);
 
         if (functionDescriptor instanceof SimpleFunctionDescriptor && functionDescriptor.isSuspend() &&
-            !functionDescriptor.getVisibility().equals(Visibilities.LOCAL)) {
+            !functionDescriptor.getVisibility().equals(DescriptorVisibilities.LOCAL)) {
 
             if (nameForClassOrPackageMember != null) {
                 nameStack.push(nameForClassOrPackageMember);

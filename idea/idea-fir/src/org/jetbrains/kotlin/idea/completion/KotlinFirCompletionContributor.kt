@@ -9,31 +9,32 @@ import com.intellij.codeInsight.completion.*
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PsiJavaPatterns
 import com.intellij.util.ProcessingContext
+import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.getAnalysisSessionFor
+import org.jetbrains.kotlin.idea.frontend.api.scopes.KtCompositeScope
+import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScope
+import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtPossibleExtensionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.isExtension
-import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtLabelReferenceExpression
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 
 class KotlinFirCompletionContributor : CompletionContributor() {
     init {
-        extend(CompletionType.BASIC, PlatformPatterns.psiElement(), KotlinHighLevelApiContributor)
+        extend(CompletionType.BASIC, PlatformPatterns.psiElement(), KotlinFirCompletionProvider)
     }
 }
 
-private object KotlinHighLevelApiContributor : CompletionProvider<CompletionParameters>() {
+private object KotlinFirCompletionProvider : CompletionProvider<CompletionParameters>() {
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
         if (shouldSuppressCompletion(parameters, result.prefixMatcher)) return
 
-        KotlinAvailableScopesCompletionContributor.collectCompletions(parameters, result)
+        KotlinAvailableScopesCompletionProvider(result.prefixMatcher).addCompletions(parameters, result)
     }
 
     private val AFTER_NUMBER_LITERAL = PsiJavaPatterns.psiElement().afterLeafSkipping(
@@ -59,56 +60,83 @@ private object KotlinHighLevelApiContributor : CompletionProvider<CompletionPara
     }
 }
 
-private object KotlinAvailableScopesCompletionContributor {
-    private val lookupElementFactory = HighLevelApiLookupElementFactory()
+private class KotlinAvailableScopesCompletionProvider(prefixMatcher: PrefixMatcher) {
+    private val lookupElementFactory = KotlinFirLookupElementFactory()
 
-    fun collectCompletions(parameters: CompletionParameters, result: CompletionResultSet) {
+    private val scopeNameFilter: KtScopeNameFilter =
+        { name -> !name.isSpecial && prefixMatcher.prefixMatches(name.identifier) }
+
+    private fun CompletionResultSet.addSymbolToCompletion(symbol: KtSymbol) {
+        if (symbol !is KtNamedSymbol) return
+        lookupElementFactory.createLookupElement(symbol)?.let(::addElement)
+    }
+
+    @OptIn(InvalidWayOfUsingAnalysisSession::class)
+    fun addCompletions(parameters: CompletionParameters, result: CompletionResultSet) {
         val originalFile = parameters.originalFile as? KtFile ?: return
 
         val reference = (parameters.position.parent as? KtSimpleNameExpression)?.mainReference ?: return
         val nameExpression = reference.expression.takeIf { it !is KtLabelReferenceExpression } ?: return
 
-        val possibleReceiver = nameExpression.getQualifiedExpressionForSelector()?.receiverExpression
+        val explicitReceiver = nameExpression.getReceiverExpression()
 
         with(getAnalysisSessionFor(originalFile).createContextDependentCopy()) {
-            val (implicitScopes, implicitReceivers) = originalFile.getScopeContextForPosition(parameters.originalPosition, nameExpression)
+            val (implicitScopes, _) = originalFile.getScopeContextForPosition(nameExpression)
 
-            val typeOfPossibleReceiver = possibleReceiver?.getKtType()
-            val possibleReceiverScope = typeOfPossibleReceiver?.getTypeScope()
+            fun KtCallableSymbol.hasSuitableExtensionReceiver(): Boolean =
+                checkExtensionIsSuitable(originalFile, nameExpression, explicitReceiver)
 
-            fun addToCompletion(symbol: KtSymbol) {
-                if (symbol !is KtNamedSymbol) return
-                result.addElement(lookupElementFactory.createLookupElement(symbol))
-            }
-
-            if (possibleReceiverScope != null) {
-                val nonExtensionMembers = possibleReceiverScope
-                    .getCallableSymbols()
-                    .filterNot { it.isExtension }
-
-                val extensionNonMembers = implicitScopes
-                    .getCallableSymbols()
-                    .filter { it.isExtension && it.canBeCalledWith(listOf(typeOfPossibleReceiver)) }
-
-                nonExtensionMembers.forEach(::addToCompletion)
-                extensionNonMembers.forEach(::addToCompletion)
-            } else if (possibleReceiver == null) {
-                val extensionNonMembers = implicitScopes
-                    .getCallableSymbols()
-                    .filter { !it.isExtension || it.canBeCalledWith(implicitReceivers) }
-
-                extensionNonMembers.forEach(::addToCompletion)
-
-                val availableClasses = implicitScopes.getClassClassLikeSymbols()
-                availableClasses.forEach(::addToCompletion)
+            when {
+                nameExpression.parent is KtUserType -> collectTypesCompletion(result, implicitScopes)
+                explicitReceiver != null ->
+                    collectDotCompletion(result, implicitScopes, explicitReceiver, KtCallableSymbol::hasSuitableExtensionReceiver)
+                else -> collectDefaultCompletion(result, implicitScopes, KtCallableSymbol::hasSuitableExtensionReceiver)
             }
         }
     }
-}
 
-private fun KtCallableSymbol.canBeCalledWith(implicitReceivers: List<KtType>): Boolean {
-    val requiredReceiverType = (this as? KtPossibleExtensionSymbol)?.receiverType
-        ?: error("Extension receiver type should be present on $this")
+    private fun collectTypesCompletion(result: CompletionResultSet, implicitScopes: KtScope) {
+        val availableClasses = implicitScopes.getClassifierSymbols(scopeNameFilter)
+        availableClasses.forEach { result.addSymbolToCompletion(it) }
+    }
 
-    return implicitReceivers.any { it.isSubTypeOf(requiredReceiverType) }
+    private fun KtAnalysisSession.collectDotCompletion(
+        result: CompletionResultSet,
+        implicitScopes: KtCompositeScope,
+        explicitReceiver: KtExpression,
+        hasSuitableExtensionReceiver: KtCallableSymbol.() -> Boolean
+    ) {
+        val typeOfPossibleReceiver = explicitReceiver.getKtType()
+        val possibleReceiverScope = typeOfPossibleReceiver.getTypeScope() ?: return
+
+        val nonExtensionMembers = possibleReceiverScope
+            .getCallableSymbols(scopeNameFilter)
+            .filterNot { it.isExtension }
+
+        val extensionNonMembers = implicitScopes
+            .getCallableSymbols(scopeNameFilter)
+            .filter { it.isExtension && it.hasSuitableExtensionReceiver() }
+
+        nonExtensionMembers.forEach { result.addSymbolToCompletion(it) }
+        extensionNonMembers.forEach { result.addSymbolToCompletion(it) }
+    }
+
+    private fun collectDefaultCompletion(
+        result: CompletionResultSet,
+        implicitScopes: KtCompositeScope,
+        hasSuitableExtensionReceiver: KtCallableSymbol.() -> Boolean,
+    ) {
+        val availableNonExtensions = implicitScopes
+            .getCallableSymbols(scopeNameFilter)
+            .filterNot { it.isExtension }
+
+        val extensionsWhichCanBeCalled = implicitScopes
+            .getCallableSymbols(scopeNameFilter)
+            .filter { it.isExtension && it.hasSuitableExtensionReceiver() }
+
+        availableNonExtensions.forEach { result.addSymbolToCompletion(it) }
+        extensionsWhichCanBeCalled.forEach { result.addSymbolToCompletion(it) }
+
+        collectTypesCompletion(result, implicitScopes)
+    }
 }

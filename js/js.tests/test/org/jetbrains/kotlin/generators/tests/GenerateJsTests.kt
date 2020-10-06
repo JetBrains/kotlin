@@ -81,6 +81,10 @@ fun main(args: Array<String>) {
                 model("codegen/box", targetBackend = TargetBackend.JS_IR)
             }
 
+            testClass<AbstractIrJsCodegenBoxErrorTest> {
+                model("codegen/boxError", targetBackend = TargetBackend.JS_IR)
+            }
+
             testClass<AbstractIrJsCodegenBoxES6Test> {
                 model("codegen/box", targetBackend = TargetBackend.JS_IR_ES6)
             }

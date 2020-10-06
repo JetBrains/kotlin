@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
@@ -19,9 +19,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import org.jetbrains.kotlin.name.ClassId
 
 fun FirTypeParameterBuilder.addDefaultBoundIfNecessary(isFlexible: Boolean = false) {
     if (bounds.isEmpty()) {
@@ -127,16 +125,6 @@ val FirProperty.hasBackingField: Boolean
             isVar && setter is FirDefaultPropertySetter ||
             delegate != null ||
             isReferredViaField == true
-
-inline val FirProperty.hasJvmFieldAnnotation: Boolean
-    get() = annotations.any {
-        val classId = it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.classId
-        classId?.packageFqName?.asString() == "kotlin.jvm" && classId.relativeClassName.asString() == "JvmField"
-    }
-
-fun FirAnnotatedDeclaration.hasAnnotation(classId: ClassId): Boolean {
-    return annotations.any { it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.classId == classId }
-}
 
 inline val FirDeclaration.isFromLibrary: Boolean
     get() = origin == FirDeclarationOrigin.Library

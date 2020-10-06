@@ -48,7 +48,7 @@ class TreeBasedField(
         get() = containingClass.isInterface || tree.modifiers.isFinal
 
     override val visibility: Visibility
-        get() = if (containingClass.isInterface) Visibilities.PUBLIC else tree.modifiers.visibility
+        get() = if (containingClass.isInterface) Visibilities.Public else tree.modifiers.visibility
 
     override val isEnumEntry: Boolean
         get() = tree.modifiers.flags and Flags.ENUM.toLong() != 0L

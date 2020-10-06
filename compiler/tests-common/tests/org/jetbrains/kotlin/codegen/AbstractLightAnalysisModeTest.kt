@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.`when`.WhenByEnumsMapping.MAPPINGS_CLASS_NAME_POSTFIX
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
@@ -53,7 +53,7 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
         assert(!relativePath.startsWith(".."))
 
         val configuration = createConfiguration(
-            configurationKind, getTestJdkKind(files), listOf(getAnnotationsJar()), listOfNotNull(writeJavaFiles(files)), files
+            configurationKind, getTestJdkKind(files), backend, listOf(getAnnotationsJar()), listOfNotNull(writeJavaFiles(files)), files
         )
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         AnalysisHandlerExtension.registerExtension(environment.project, PartialAnalysisHandlerExtension())
@@ -89,7 +89,7 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
             }
 
             private fun shouldFilterClass(descriptor: ClassDescriptor): Boolean {
-                return descriptor.visibility == Visibilities.LOCAL || descriptor is SyntheticClassDescriptorForLambda
+                return descriptor.visibility == DescriptorVisibilities.LOCAL || descriptor is SyntheticClassDescriptorForLambda
             }
         })
     }

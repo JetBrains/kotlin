@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.contracts.buildContractFir
 import org.jetbrains.kotlin.fir.resolve.dfa.contracts.createArgumentsMapping
+import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
@@ -76,31 +77,32 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 private val receiverStack: PersistentImplicitReceiverStack
                     get() = components.implicitReceiverStack as PersistentImplicitReceiverStack
 
-                override val logicSystem: PersistentLogicSystem = object : PersistentLogicSystem(components.inferenceComponents.ctx) {
-                    override fun processUpdatedReceiverVariable(flow: PersistentFlow, variable: RealVariable) {
-                        val symbol = variable.identifier.symbol
+                override val logicSystem: PersistentLogicSystem =
+                    object : PersistentLogicSystem(components.session.inferenceComponents.ctx) {
+                        override fun processUpdatedReceiverVariable(flow: PersistentFlow, variable: RealVariable) {
+                            val symbol = variable.identifier.symbol
 
-                        val index = receiverStack.getReceiverIndex(symbol) ?: return
-                        val info = flow.getTypeStatement(variable)
+                            val index = receiverStack.getReceiverIndex(symbol) ?: return
+                            val info = flow.getTypeStatement(variable)
 
-                        if (info == null) {
-                            receiverStack.replaceReceiverType(index, receiverStack.getOriginalType(index))
-                        } else {
-                            val types = info.exactType.toMutableList().also {
-                                it += receiverStack.getOriginalType(index)
-                            }
-                            receiverStack.replaceReceiverType(index, context.intersectTypesOrNull(types)!!)
-                        }
-                    }
-
-                    override fun updateAllReceivers(flow: PersistentFlow) {
-                        receiverStack.forEach {
-                            variableStorage.getRealVariable(it.boundSymbol, it.receiverExpression, flow)?.let { variable ->
-                                processUpdatedReceiverVariable(flow, variable)
+                            if (info == null) {
+                                receiverStack.replaceReceiverType(index, receiverStack.getOriginalType(index))
+                            } else {
+                                val types = info.exactType.toMutableList().also {
+                                    it += receiverStack.getOriginalType(index)
+                                }
+                                receiverStack.replaceReceiverType(index, context.intersectTypesOrNull(types)!!)
                             }
                         }
+
+                        override fun updateAllReceivers(flow: PersistentFlow) {
+                            receiverStack.forEach {
+                                variableStorage.getRealVariable(it.boundSymbol, it.receiverExpression, flow)?.let { variable ->
+                                    processUpdatedReceiverVariable(flow, variable)
+                                }
+                            }
+                        }
                     }
-                }
             }
     }
 

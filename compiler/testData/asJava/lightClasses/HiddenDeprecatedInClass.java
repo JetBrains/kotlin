@@ -1,3 +1,4 @@
-public final class A {
-    public A() { /* compiled code */ }
+public final class A /* a.A*/ {
+  public  A();//  .ctor()
+
 }

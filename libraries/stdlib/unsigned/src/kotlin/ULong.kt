@@ -145,12 +145,24 @@ public inline class ULong @PublishedApi internal constructor(@PublishedApi inter
     @kotlin.internal.InlineOnly
     public inline operator fun rangeTo(other: ULong): ULongRange = ULongRange(this, other)
 
-    /** Shifts this value left by the [bitCount] number of bits. */
+    /**
+     * Shifts this value left by the [bitCount] number of bits.
+     *
+     * Note that only the six lowest-order bits of the [bitCount] are used as the shift distance.
+     * The shift distance actually used is therefore always in the range `0..63`.
+     */
     @kotlin.internal.InlineOnly
     public inline infix fun shl(bitCount: Int): ULong = ULong(data shl bitCount)
-    /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros. */
+
+    /**
+     * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros.
+     *
+     * Note that only the six lowest-order bits of the [bitCount] are used as the shift distance.
+     * The shift distance actually used is therefore always in the range `0..63`.
+     */
     @kotlin.internal.InlineOnly
     public inline infix fun shr(bitCount: Int): ULong = ULong(data ushr bitCount)
+
     /** Performs a bitwise AND operation between the two values. */
     @kotlin.internal.InlineOnly
     public inline infix fun and(other: ULong): ULong = ULong(this.data and other.data)

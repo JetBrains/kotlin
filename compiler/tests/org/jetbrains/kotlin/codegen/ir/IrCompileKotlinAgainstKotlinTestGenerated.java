@@ -358,6 +358,11 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
         runTest("compiler/testData/compileKotlinAgainstKotlin/starImportEnum.kt");
     }
 
+    @TestMetadata("suspendFunWithDefaultMangling.kt")
+    public void testSuspendFunWithDefaultMangling() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/suspendFunWithDefaultMangling.kt");
+    }
+
     @TestMetadata("targetedJvmName.kt")
     public void testTargetedJvmName() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/targetedJvmName.kt");
@@ -376,6 +381,24 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
     @TestMetadata("useDeserializedFunInterface.kt")
     public void testUseDeserializedFunInterface() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/useDeserializedFunInterface.kt");
+    }
+
+    @TestMetadata("compiler/testData/compileKotlinAgainstKotlin/fir")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Fir extends AbstractIrCompileKotlinAgainstKotlinTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInFir() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin/fir"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("LibraryProperty.kt")
+        public void testLibraryProperty() throws Exception {
+            runTest("compiler/testData/compileKotlinAgainstKotlin/fir/LibraryProperty.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/compileKotlinAgainstKotlin/jvm8")

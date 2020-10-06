@@ -9,8 +9,13 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.ClassId
 
+sealed class KtClassifierSymbol : KtSymbol, KtNamedSymbol
 
-sealed class KtClassLikeSymbol : KtSymbol, KtNamedSymbol, KtSymbolWithKind {
+abstract class KtTypeParameterSymbol : KtClassifierSymbol(), KtNamedSymbol {
+    abstract override fun createPointer(): KtSymbolPointer<KtTypeParameterSymbol>
+}
+
+sealed class KtClassLikeSymbol : KtClassifierSymbol(), KtNamedSymbol, KtSymbolWithKind {
     abstract val classIdIfNonLocal: ClassId?
 
     abstract override fun createPointer(): KtSymbolPointer<KtClassLikeSymbol>

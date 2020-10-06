@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir.impl
 
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirSimpleType
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeAlias
@@ -13,12 +13,12 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeParameter
 import org.jetbrains.kotlin.name.Name
 
 data class CirTypeAliasImpl(
-    override val annotations: List<CirAnnotation>,
-    override val name: Name,
-    override val typeParameters: List<CirTypeParameter>,
-    override val visibility: Visibility,
-    override val underlyingType: CirSimpleType,
-    override val expandedType: CirSimpleType // only for commonization algorithm; does not participate in building resulting declarations
+        override val annotations: List<CirAnnotation>,
+        override val name: Name,
+        override val typeParameters: List<CirTypeParameter>,
+        override val visibility: DescriptorVisibility,
+        override val underlyingType: CirSimpleType,
+        override val expandedType: CirSimpleType // only for commonization algorithm; does not participate in building resulting declarations
 ) : CirTypeAlias {
     // any TA in "common" fragment is already lifted up
     override val isLiftedUp get() = true

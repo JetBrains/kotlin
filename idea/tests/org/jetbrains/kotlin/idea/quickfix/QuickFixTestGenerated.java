@@ -3764,6 +3764,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     runTest("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/enumEntryWithSuperclass.kt");
                 }
 
+                @TestMetadata("enumInBinaryExpression.kt")
+                public void testEnumInBinaryExpression() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/enumInBinaryExpression.kt");
+                }
+
                 @TestMetadata("enumNoReceiver.kt")
                 public void testEnumNoReceiver() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/enumNoReceiver.kt");
@@ -3782,6 +3787,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("objectByQualifier.kt")
                 public void testObjectByQualifier() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/objectByQualifier.kt");
+                }
+
+                @TestMetadata("objectForEnum.kt")
+                public void testObjectForEnum() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/objectForEnum.kt");
+                }
+
+                @TestMetadata("objectForEnumInArgument.kt")
+                public void testObjectForEnumInArgument() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/objectForEnumInArgument.kt");
+                }
+
+                @TestMetadata("objectForEnumInEquals.kt")
+                public void testObjectForEnumInEquals() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/objectForEnumInEquals.kt");
                 }
 
                 @TestMetadata("objectInPackage.kt")
@@ -6923,6 +6943,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             public void testKeepOutside() throws Exception {
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/functionLiteralArguments/keepOutside.kt");
             }
+
+            @TestMetadata("keepOutsideWithNamedArgument.kt")
+            public void testKeepOutsideWithNamedArgument() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/functionLiteralArguments/keepOutsideWithNamedArgument.kt");
+            }
         }
 
         @TestMetadata("idea/testData/quickfix/deprecatedSymbolUsage/imports")
@@ -8475,6 +8500,29 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("topLevelProperty.kt")
         public void testTopLevelProperty() throws Exception {
             runTest("idea/testData/quickfix/initializeWithConstructorParameter/topLevelProperty.kt");
+        }
+    }
+
+    @TestMetadata("idea/testData/quickfix/inlineClassConstructorNotValParameter")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class InlineClassConstructorNotValParameter extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInInlineClassConstructorNotValParameter() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/inlineClassConstructorNotValParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("basic.kt")
+        public void testBasic() throws Exception {
+            runTest("idea/testData/quickfix/inlineClassConstructorNotValParameter/basic.kt");
+        }
+
+        @TestMetadata("var.kt")
+        public void testVar() throws Exception {
+            runTest("idea/testData/quickfix/inlineClassConstructorNotValParameter/var.kt");
         }
     }
 
@@ -10157,6 +10205,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 runTest("idea/testData/quickfix/override/nothingToOverride/addFunctionNonUnitReturnType.kt");
             }
 
+            @TestMetadata("addFunctionReciever.kt")
+            public void testAddFunctionReciever() throws Exception {
+                runTest("idea/testData/quickfix/override/nothingToOverride/addFunctionReciever.kt");
+            }
+
             @TestMetadata("addFunctionSealedClass.kt")
             public void testAddFunctionSealedClass() throws Exception {
                 runTest("idea/testData/quickfix/override/nothingToOverride/addFunctionSealedClass.kt");
@@ -10219,6 +10272,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
             public void testAllFilesPresentInNothingToOverride() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/override/nothingToOverride"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("changeFunctionReciever.kt")
+            public void testChangeFunctionReciever() throws Exception {
+                runTest("idea/testData/quickfix/override/nothingToOverride/changeFunctionReciever.kt");
             }
 
             @TestMetadata("changeParameterType.kt")
@@ -10606,6 +10664,24 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("protected2.kt")
         public void testProtected2() throws Exception {
             runTest("idea/testData/quickfix/protectedInFinal/protected2.kt");
+        }
+    }
+
+    @TestMetadata("idea/testData/quickfix/redundantConst")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RedundantConst extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInRedundantConst() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/redundantConst"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("idea/testData/quickfix/redundantConst/simple.kt");
         }
     }
 
@@ -15441,6 +15517,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/when/noElseInWhenWithoutBranches.kt");
         }
 
+        @TestMetadata("removeRedundantBranch.kt")
+        public void testRemoveRedundantBranch() throws Exception {
+            runTest("idea/testData/quickfix/when/removeRedundantBranch.kt");
+        }
+
         @TestMetadata("removeRedundantElse.kt")
         public void testRemoveRedundantElse() throws Exception {
             runTest("idea/testData/quickfix/when/removeRedundantElse.kt");
@@ -15527,6 +15608,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("objectQualifier.kt")
         public void testObjectQualifier() throws Exception {
             runTest("idea/testData/quickfix/wrapWithSafeLetCall/objectQualifier.kt");
+        }
+
+        @TestMetadata("unsafe.kt")
+        public void testUnsafe() throws Exception {
+            runTest("idea/testData/quickfix/wrapWithSafeLetCall/unsafe.kt");
+        }
+
+        @TestMetadata("unsafe2.kt")
+        public void testUnsafe2() throws Exception {
+            runTest("idea/testData/quickfix/wrapWithSafeLetCall/unsafe2.kt");
+        }
+
+        @TestMetadata("unsafeForNullableParameter.kt")
+        public void testUnsafeForNullableParameter() throws Exception {
+            runTest("idea/testData/quickfix/wrapWithSafeLetCall/unsafeForNullableParameter.kt");
         }
 
         @TestMetadata("unstableValue.kt")

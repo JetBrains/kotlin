@@ -1,7 +1,6 @@
 // TARGET_BACKEND: JVM
 // !JVM_DEFAULT_MODE: all
 // JVM_TARGET: 1.8
-// IGNORE_BACKEND_FIR: JVM_IR
 interface Foo<T> {
     fun test(p: T) = p
     val T.prop: T

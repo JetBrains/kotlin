@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun box(): String {
     for ((i, v) in (4 until 8).withIndex()) {
     }

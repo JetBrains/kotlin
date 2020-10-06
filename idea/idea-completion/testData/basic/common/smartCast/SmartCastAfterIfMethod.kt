@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 class Expr {}
 class Num : Expr() {
     fun testing() {}

@@ -118,6 +118,18 @@ class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport
         )
     }
 
+    private val recursiveGuard = ThreadLocal<Boolean>()
+
+    private inline fun <T> guardedRun(body: () -> T): T? {
+        if (recursiveGuard.get() == true) return null
+        return try {
+            recursiveGuard.set(true)
+            body()
+        } finally {
+            recursiveGuard.set(false)
+        }
+    }
+
     override fun getLightClass(classOrObject: KtClassOrObject): KtLightClass? {
         if (!classOrObject.isValid) {
             return null
@@ -131,7 +143,9 @@ class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport
                 ProjectRootsUtil.isLibraryClassFile(project, virtualFile) ->
                     return getLightClassForDecompiledClassOrObject(classOrObject)
                 ProjectRootsUtil.isLibrarySourceFile(project, virtualFile) ->
-                    return SourceNavigationHelper.getOriginalClass(classOrObject) as? KtLightClass
+                    return guardedRun {
+                        SourceNavigationHelper.getOriginalClass(classOrObject) as? KtLightClass
+                    }
             }
         }
         if ((classOrObject.containingFile as? KtFile)?.analysisContext != null ||

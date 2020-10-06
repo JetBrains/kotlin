@@ -109,8 +109,8 @@ fun getNonPrivateTraitMembersForDelegation(
 ): CallableMemberDescriptor? {
     val traitMember = findInterfaceImplementation(descriptor, returnImplNotDelegate)
     if (traitMember == null ||
-        Visibilities.isPrivate(traitMember.visibility) ||
-        traitMember.visibility == Visibilities.INVISIBLE_FAKE
+        DescriptorVisibilities.isPrivate(traitMember.visibility) ||
+        traitMember.visibility == DescriptorVisibilities.INVISIBLE_FAKE
     ) return null
     return traitMember
 }

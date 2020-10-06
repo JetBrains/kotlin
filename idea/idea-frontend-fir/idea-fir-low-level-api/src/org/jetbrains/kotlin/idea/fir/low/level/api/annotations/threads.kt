@@ -10,3 +10,6 @@ annotation class ThreadSafe
 
 @Target(AnnotationTarget.CLASS)
 annotation class NotThreadSafe
+
+@Target(AnnotationTarget.CLASS)
+annotation class Immutable

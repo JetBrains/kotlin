@@ -92,7 +92,7 @@ class Fir2IrTypeConverter(
                 typeAnnotations += with(annotationGenerator) { annotations.toIrAnnotations() }
                 IrSimpleTypeImpl(
                     irSymbol, !typeContext.definitelyNotNull && this.isMarkedNullable,
-                    fullyExpandedType(session).typeArguments.map { it.toIrTypeArgument() },
+                    fullyExpandedType(session).typeArguments.map { it.toIrTypeArgument(typeContext) },
                     typeAnnotations
                 )
             }
@@ -115,19 +115,19 @@ class Fir2IrTypeConverter(
         }
     }
 
-    private fun ConeTypeProjection.toIrTypeArgument(): IrTypeArgument {
+    private fun ConeTypeProjection.toIrTypeArgument(typeContext: ConversionTypeContext): IrTypeArgument {
         return when (this) {
             ConeStarProjection -> IrStarProjectionImpl
             is ConeKotlinTypeProjectionIn -> {
-                val irType = this.type.toIrType()
+                val irType = this.type.toIrType(typeContext)
                 makeTypeProjection(irType, Variance.IN_VARIANCE)
             }
             is ConeKotlinTypeProjectionOut -> {
-                val irType = this.type.toIrType()
+                val irType = this.type.toIrType(typeContext)
                 makeTypeProjection(irType, Variance.OUT_VARIANCE)
             }
             is ConeKotlinType -> {
-                val irType = toIrType()
+                val irType = toIrType(typeContext)
                 makeTypeProjection(irType, Variance.INVARIANT)
             }
         }

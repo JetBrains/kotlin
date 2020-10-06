@@ -11,6 +11,8 @@ import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.GENERATE_D_TS
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
@@ -19,7 +21,7 @@ import javax.inject.Inject
 open class PublicPackageJsonTask
 @Inject
 constructor(
-    compilation: KotlinJsCompilation
+    private val compilation: KotlinJsCompilation
 ) : DefaultTask() {
 
     private val npmProject = compilation.npmProject
@@ -28,6 +30,13 @@ constructor(
 
     private val compilationResolution
         get() = nodeJs.npmResolutionManager.requireInstalled()[project][npmProject.compilation]
+
+    @get:Input
+    val packageJsonCustomFields: Map<String, Any?>
+        get() = PackageJson(fakePackageJsonValue, fakePackageJsonValue)
+            .apply {
+                compilation.packageJsonHandlers.forEach { it() }
+            }.customFields
 
     @get:Nested
     internal val externalDependencies: Collection<NestedNpmDependency>
@@ -53,7 +62,14 @@ constructor(
 
     @TaskAction
     fun resolve() {
+        val compilation = npmProject.compilation
+
         packageJson(npmProject, realExternalDependencies).let { packageJson ->
+            packageJson.main = "${npmProject.name}.js"
+
+            if (compilation is KotlinJsIrCompilation) {
+                packageJson.types = "${npmProject.name}.d.ts"
+            }
 
             packageJson.apply {
                 listOf(

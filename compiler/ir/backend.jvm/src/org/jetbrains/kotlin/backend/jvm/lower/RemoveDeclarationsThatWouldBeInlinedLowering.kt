@@ -8,13 +8,14 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.ir.isLambda
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.util.isLambda
 import org.jetbrains.kotlin.ir.visitors.*
 
 internal val removeDeclarationsThatWouldBeInlined = makeIrModulePhase(
@@ -36,7 +37,7 @@ private class RemoveDeclarationsThatWouldBeInlinedLowering(val context: JvmBacke
             override fun visitElement(element: IrElement) = element.acceptChildrenVoid(this)
 
             override fun visitFunctionReference(expression: IrFunctionReference) {
-                if (expression.origin.isLambda) {
+                if (expression.origin.isLambda || expression.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE) {
                     loweredLambdasToDelete.add(expression.symbol.owner)
                 }
 

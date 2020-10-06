@@ -31,12 +31,9 @@ import org.jetbrains.kotlin.idea.core.util.getKotlinJvmRuntimeMarkerClass
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.framework.effectiveKind
 import org.jetbrains.kotlin.idea.quickfix.KotlinAddRequiredModuleFix
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.idea.util.findFirstPsiJavaModule
-import org.jetbrains.kotlin.idea.util.isDev
-import org.jetbrains.kotlin.idea.util.isEap
-import org.jetbrains.kotlin.idea.util.isSnapshot
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
 import org.jetbrains.kotlin.idea.util.projectStructure.version
@@ -136,7 +133,8 @@ fun getModulesWithKotlinFiles(project: Project): Collection<Module> {
     if (!isUnitTestMode() && ApplicationManager.getApplication().isDispatchThread) {
         LOG.error("getModulesWithKotlinFiles could be a heavy operation and should not be call on AWT thread")
     }
-    if (!runReadAction {
+
+    if (!project.runReadActionInSmartMode {
             !project.isDisposed &&
                     FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, GlobalSearchScope.projectScope(project))
         }) {
@@ -145,7 +143,7 @@ fun getModulesWithKotlinFiles(project: Project): Collection<Module> {
 
     return project.allModules()
         .filter { module ->
-            runReadAction {
+            project.runReadActionInSmartMode {
                 !project.isDisposed && !module.isDisposed
                         && FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(true))
             }
@@ -267,7 +265,7 @@ fun findApplicableConfigurator(module: Module): KotlinProjectConfigurator {
 }
 
 fun hasAnyKotlinRuntimeInScope(module: Module): Boolean {
-    return runReadAction {
+    return module.project.runReadActionInSmartMode {
         val scope = module.getModuleWithDependenciesAndLibrariesScope(hasKotlinFilesOnlyInTests(module))
         getKotlinJvmRuntimeMarkerClass(module.project, scope) != null ||
                 hasKotlinJsKjsmFile(module.project, LibraryKindSearchScope(module, scope, JSLibraryKind)) ||
@@ -283,7 +281,7 @@ fun hasKotlinJvmRuntimeInScope(module: Module): Boolean {
 }
 
 fun hasKotlinJsRuntimeInScope(module: Module): Boolean {
-    return runReadAction {
+    return module.project.runReadActionInSmartMode {
         val scope = module.getModuleWithDependenciesAndLibrariesScope(hasKotlinFilesOnlyInTests(module))
         hasKotlinJsKjsmFile(module.project, LibraryKindSearchScope(module, scope, JSLibraryKind))
     }

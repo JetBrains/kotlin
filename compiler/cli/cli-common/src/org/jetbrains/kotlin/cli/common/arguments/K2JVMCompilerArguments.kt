@@ -63,6 +63,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var scriptTemplates: Array<String>? by FreezableVar(null)
 
+    @GradleOption(DefaultValues.StringNullDefault::class)
     @Argument(value = "-module-name", valueDescription = "<name>", description = "Name of the generated .kotlin_module file")
     var moduleName: String? by NullableStringFreezableVar(null)
 
@@ -334,6 +335,16 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var emitJvmTypeAnnotations: Boolean by FreezableVar(false)
 
     @Argument(
+        value = "-Xruntime-string-concat",
+        valueDescription = "{disable|enable|indy}",
+        description = """Switch a way in which string concatenation is performed.
+-Xruntime-string-concat=enable          Performs string concatenation via `invokedynamic` 'makeConcatWithConstants'. Works only with `-jvm-target 9` or greater  
+-Xruntime-string-concat=indy            Performs string concatenation via `invokedynamic` 'makeConcat'. Works only with `-jvm-target 9` or greater                                 
+-Xruntime-string-concat=disable         Performs string concatenation via `StringBuilder`"""
+    )
+    var runtimeStringConcat: String? by NullableStringFreezableVar(JvmRuntimeStringConcat.DISABLE.name.toLowerCase())
+
+    @Argument(
         value = "-Xklib",
         valueDescription = "<path>",
         description = "Paths to cross-platform libraries in .klib format"
@@ -351,6 +362,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
         description = "Do not use KotlinNothingValueException available since 1.4"
     )
     var noKotlinNothingValueException: Boolean by FreezableVar(false)
+
+    @Argument(
+        value = "-Xno-unified-null-checks",
+        description = "Use pre-1.4 exception types in null checks instead of java.lang.NPE. See KT-22275 for more details"
+    )
+    var noUnifiedNullChecks: Boolean by FreezableVar(false)
 
     @Argument(
         value = "-Xprofile",
@@ -395,6 +412,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
         result[JvmAnalysisFlags.suppressMissingBuiltinsError] = suppressMissingBuiltinsError
         result[JvmAnalysisFlags.irCheckLocalNames] = irCheckLocalNames
         result[AnalysisFlags.reportErrorsOnIrDependencies] = !useIR && !useFir && !allowJvmIrDependencies
+        result[JvmAnalysisFlags.disableUltraLightClasses] = disableUltraLightClasses
         return result
     }
 

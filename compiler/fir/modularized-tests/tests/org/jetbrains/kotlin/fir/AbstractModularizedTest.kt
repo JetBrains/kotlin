@@ -36,6 +36,10 @@ data class ModuleData(
     val classpath = rawClasspath.map { File(ROOT_PATH_PREFIX, it.removePrefix("/")) }
     val sources = rawSources.map { File(ROOT_PATH_PREFIX, it.removePrefix("/")) }
     val javaSourceRoots = rawJavaSourceRoots.map { File(ROOT_PATH_PREFIX, it.removePrefix("/")) }
+    lateinit var targetInfo: String
+    var compilationError: String? = null
+    var jvmInternalError: String? = null
+    var exceptionMessage: String = "NO MESSAGE"
 }
 
 private fun NodeList.toList(): List<Node> {

@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
@@ -263,29 +264,29 @@ public class DescriptorResolver {
         }
     }
 
-    public static Visibility getDefaultVisibility(KtModifierListOwner modifierListOwner, DeclarationDescriptor containingDescriptor) {
-        Visibility defaultVisibility;
+    public static DescriptorVisibility getDefaultVisibility(KtModifierListOwner modifierListOwner, DeclarationDescriptor containingDescriptor) {
+        DescriptorVisibility defaultVisibility;
         if (containingDescriptor instanceof ClassDescriptor) {
             KtModifierList modifierList = modifierListOwner.getModifierList();
             defaultVisibility = modifierList != null && modifierList.hasModifier(OVERRIDE_KEYWORD)
-                                           ? Visibilities.INHERITED
-                                           : Visibilities.DEFAULT_VISIBILITY;
+                                           ? DescriptorVisibilities.INHERITED
+                                           : DescriptorVisibilities.DEFAULT_VISIBILITY;
         }
         else if (containingDescriptor instanceof FunctionDescriptor || containingDescriptor instanceof PropertyDescriptor) {
-            defaultVisibility = Visibilities.LOCAL;
+            defaultVisibility = DescriptorVisibilities.LOCAL;
         }
         else {
-            defaultVisibility = Visibilities.DEFAULT_VISIBILITY;
+            defaultVisibility = DescriptorVisibilities.DEFAULT_VISIBILITY;
         }
         return defaultVisibility;
     }
 
-    public static Modality getDefaultModality(DeclarationDescriptor containingDescriptor, Visibility visibility, boolean isBodyPresent) {
+    public static Modality getDefaultModality(DeclarationDescriptor containingDescriptor, DescriptorVisibility visibility, boolean isBodyPresent) {
         Modality defaultModality;
         if (containingDescriptor instanceof ClassDescriptor) {
             boolean isTrait = ((ClassDescriptor) containingDescriptor).getKind() == ClassKind.INTERFACE;
             boolean isDefinitelyAbstract = isTrait && !isBodyPresent;
-            Modality basicModality = isTrait && !Visibilities.isPrivate(visibility) ? Modality.OPEN : Modality.FINAL;
+            Modality basicModality = isTrait && !DescriptorVisibilities.isPrivate(visibility) ? Modality.OPEN : Modality.FINAL;
             defaultModality = isDefinitelyAbstract ? Modality.ABSTRACT : basicModality;
         }
         else {
@@ -720,7 +721,7 @@ public class DescriptorResolver {
         }
 
         KtModifierList modifierList = typeAlias.getModifierList();
-        Visibility visibility = resolveVisibilityFromModifiers(typeAlias, getDefaultVisibility(typeAlias, containingDeclaration));
+        DescriptorVisibility visibility = resolveVisibilityFromModifiers(typeAlias, getDefaultVisibility(typeAlias, containingDeclaration));
 
         Annotations allAnnotations = annotationResolver.resolveAnnotationsWithArguments(scope, modifierList, trace);
         Name name = KtPsiUtil.safeName(typeAlias.getName());
@@ -874,7 +875,7 @@ public class DescriptorResolver {
         KtModifierList modifierList = variableDeclaration.getModifierList();
         boolean isVar = variableDeclaration.isVar();
 
-        Visibility visibility = resolveVisibilityFromModifiers(variableDeclaration, getDefaultVisibility(variableDeclaration, container));
+        DescriptorVisibility visibility = resolveVisibilityFromModifiers(variableDeclaration, getDefaultVisibility(variableDeclaration, container));
         Modality modality = container instanceof ClassDescriptor
                             ? resolveMemberModalityFromModifiers(variableDeclaration,
                                                                  getDefaultModality(container, visibility, propertyInfo.getHasBody()),
@@ -1032,7 +1033,7 @@ public class DescriptorResolver {
             return type;
         }
 
-        if (!Visibilities.isPrivate(descriptor.getVisibility())) {
+        if (!DescriptorVisibilities.isPrivate(descriptor.getVisibility())) {
             if (type.getConstructor().getSupertypes().size() == 1) {
                 return type.getConstructor().getSupertypes().iterator().next();
             }
@@ -1371,7 +1372,9 @@ public class DescriptorResolver {
             }
 
             if (isStaticNestedClass(classDescriptor)) {
-                trace.report(INACCESSIBLE_OUTER_CLASS_EXPRESSION.on(reportErrorsOn, classDescriptor));
+                PsiElement onReport = (reportErrorsOn instanceof KtConstructorDelegationCall)
+                                      ? CallResolverUtilKt.reportOnElement((KtConstructorDelegationCall) reportErrorsOn) : reportErrorsOn;
+                trace.report(INACCESSIBLE_OUTER_CLASS_EXPRESSION.on(onReport, classDescriptor));
                 return false;
             }
             classDescriptor = getParentOfType(classDescriptor, ClassDescriptor.class, true);

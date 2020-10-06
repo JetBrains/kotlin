@@ -10,10 +10,10 @@ import com.google.common.collect.Multimap
 import kotlinx.collections.immutable.PersistentList
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.extensions.predicate.*
-import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.fqName
 
 abstract class FirPredicateBasedProvider : FirSessionComponent {
@@ -49,6 +49,7 @@ abstract class FirPredicateBasedProvider : FirSessionComponent {
     abstract fun matches(predicate: DeclarationPredicate, declaration: FirAnnotatedDeclaration): Boolean
 }
 
+@NoMutableState
 private class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredicateBasedProvider() {
     private val registeredPluginAnnotations = session.registeredPluginAnnotations
     private val cache = Cache()

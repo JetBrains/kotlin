@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 LineBreakpoint created at stepOverWhenWithInline.kt:5
 Run Java
 Connected to the target VM
@@ -35,6 +34,7 @@ stepOverWhenWithInline.kt:63
 stepOverWhenWithInline.kt:75
 stepOverWhenWithInline.kt:76
 stepOverWhenWithInline.kt:75
+stepOverWhenWithInline.kt:80
 Disconnected from the target VM
 
 Process finished with exit code 0

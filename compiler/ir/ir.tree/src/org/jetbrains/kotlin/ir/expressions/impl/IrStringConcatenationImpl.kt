@@ -26,7 +26,7 @@ import java.util.*
 class IrStringConcatenationImpl(
     override val startOffset: Int,
     override val endOffset: Int,
-    override val type: IrType
+    override var type: IrType
 ) : IrStringConcatenation() {
     constructor(
         startOffset: Int,

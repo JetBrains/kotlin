@@ -82,9 +82,10 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
 
     protected open fun configureTestSpecific(configuration: CompilerConfiguration, testFiles: List<TestFile>) {}
 
-    protected open fun createConfiguration(
+    protected fun createConfiguration(
         kind: ConfigurationKind,
         jdkKind: TestJdkKind,
+        backend: TargetBackend,
         classpath: List<File?>,
         javaSource: List<File?>,
         testFilesWithConfigurationDirectives: List<TestFile>
@@ -156,6 +157,7 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
             "CONSTRUCTOR_CALL_NORMALIZATION_MODE=([a-zA-Z_\\-0-9]*)"
         )
         private val ASSERTIONS_MODE_FLAG_PATTERN = Pattern.compile("ASSERTIONS_MODE=([a-zA-Z_0-9-]*)")
+        private val RUNTIME_STRING_CONCAT = Pattern.compile("RUNTIME_STRING_CONCAT=([a-zA-Z_0-9-]*)")
 
         private fun tryApplyBooleanFlag(
             configuration: CompilerConfiguration,
@@ -292,6 +294,14 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
                     val mode = JVMAssertionsMode.fromStringOrNull(flagValueString)
                         ?: error("Wrong ASSERTIONS_MODE value: $flagValueString")
                     configuration.put(JVMConfigurationKeys.ASSERTIONS_MODE, mode)
+                }
+
+                m = RUNTIME_STRING_CONCAT.matcher(flag)
+                if (m.matches()) {
+                    val flagValueString = m.group(1)
+                    val mode = JvmRuntimeStringConcat.fromString(flagValueString)
+                        ?: error("Wrong RUNTIME_STRING_CONCAT value: $flagValueString")
+                    configuration.put(JVMConfigurationKeys.RUNTIME_STRING_CONCAT, mode)
                 }
             }
         }

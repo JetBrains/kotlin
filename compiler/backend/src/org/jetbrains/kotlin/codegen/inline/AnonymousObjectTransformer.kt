@@ -57,6 +57,7 @@ class AnonymousObjectTransformer(
         lateinit var superClassName: String
         var sourceInfo: String? = null
         var debugInfo: String? = null
+        var debugMetadataAnnotation: AnnotationNode? = null
 
         createClassReader().accept(object : ClassVisitor(Opcodes.API_VERSION, classBuilder.visitor) {
             override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<String>) {
@@ -77,7 +78,8 @@ class AnonymousObjectTransformer(
                     val innerClassesInfo = FileBasedKotlinClass.InnerClassesInfo()
                     return FileBasedKotlinClass.convertAnnotationVisitor(metadataReader, desc, innerClassesInfo)
                 } else if (desc == DEBUG_METADATA_ANNOTATION_ASM_TYPE.descriptor) {
-                    return null
+                    debugMetadataAnnotation = AnnotationNode(desc)
+                    return debugMetadataAnnotation
                 }
                 return super.visitAnnotation(desc, visible)
             }
@@ -137,12 +139,20 @@ class AnonymousObjectTransformer(
             methodsToTransform,
             superClassName
         )
+        var putDebugMetadata = false
         loop@ for (next in methodsToTransform) {
             val deferringVisitor =
                 when {
                     coroutineTransformer.shouldSkip(next) -> continue@loop
                     coroutineTransformer.shouldGenerateStateMachine(next) -> coroutineTransformer.newMethod(next)
-                    else -> newMethod(classBuilder, next)
+                    else -> {
+                        // Debug metadata is not put, but we should keep, since we do not generate state-machine,
+                        // if the lambda does not capture crossinline lambdas.
+                        if (coroutineTransformer.suspendLambdaWithGeneratedStateMachine(next)) {
+                            putDebugMetadata = true
+                        }
+                        newMethod(classBuilder, next)
+                    }
                 }
 
             if (next.name == "<clinit>") {
@@ -190,6 +200,13 @@ class AnonymousObjectTransformer(
             writeTransformedMetadata(header, classBuilder)
         }
 
+        // debugMetadataAnnotation can be null in LV < 1.3
+        if (putDebugMetadata && debugMetadataAnnotation != null) {
+            visitor.visitAnnotation(debugMetadataAnnotation!!.desc, true).also {
+                debugMetadataAnnotation!!.accept(it)
+            }
+        }
+
         writeOuterInfo(visitor)
 
         if (inliningContext.generateAssertField && fieldNames.none { it.key == ASSERTIONS_DISABLED_FIELD_NAME }) {
@@ -218,7 +235,7 @@ class AnonymousObjectTransformer(
                 }
                 return@action
             }
-            AsmUtil.writeAnnotationData(av, newProto, newStringTable)
+            DescriptorAsmUtil.writeAnnotationData(av, newProto, newStringTable)
         }
     }
 
@@ -359,7 +376,7 @@ class AnonymousObjectTransformer(
         val capturedFieldInitializer = InstructionAdapter(constructorVisitor)
         fieldInfoWithSkipped.forEachIndexed { paramIndex, fieldInfo ->
             if (!newFieldsWithSkipped[paramIndex].skip) {
-                AsmUtil.genAssignInstanceFieldFromParam(fieldInfo, capturedIndexes[paramIndex], capturedFieldInitializer)
+                DescriptorAsmUtil.genAssignInstanceFieldFromParam(fieldInfo, capturedIndexes[paramIndex], capturedFieldInitializer)
             }
         }
 
@@ -402,7 +419,7 @@ class AnonymousObjectTransformer(
             }
         })
         constructorVisitor.visitEnd()
-        AsmUtil.genClosureFields(
+        DescriptorAsmUtil.genClosureFields(
             toNameTypePair(filterSkipped(newFieldsWithSkipped)), classBuilder
         )
     }

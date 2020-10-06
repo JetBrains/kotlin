@@ -37,6 +37,7 @@ fun Task.dependsOnKotlinPluginInstall() {
         ":kotlin-noarg:install",
         ":kotlin-sam-with-receiver:install",
         ":kotlin-android-extensions:install",
+        ":kotlin-parcelize-compiler:install",
         ":kotlin-build-common:install",
         ":kotlin-compiler-embeddable:install",
         ":native:kotlin-native-utils:install",

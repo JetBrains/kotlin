@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.Visibilities
-import org.jetbrains.kotlin.fir.Visibility
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -109,10 +109,10 @@ class FirStatusResolveTransformer(
     override fun transformPropertyAccessor(
         propertyAccessor: FirPropertyAccessor,
         data: FirDeclarationStatus?
-    ): CompositeTransformResult<FirStatement> {
+    ): CompositeTransformResult<FirDeclaration> {
         propertyAccessor.transformStatus(this, propertyAccessor.resolveStatus(propertyAccessor.status, containingClass, isLocal = false))
         @Suppress("UNCHECKED_CAST")
-        return transformDeclaration(propertyAccessor, data) as CompositeTransformResult<FirStatement>
+        return transformDeclaration(propertyAccessor, data)
     }
 
     override fun transformConstructor(

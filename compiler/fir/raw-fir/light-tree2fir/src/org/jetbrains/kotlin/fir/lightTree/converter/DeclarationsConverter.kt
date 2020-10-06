@@ -11,6 +11,8 @@ import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.Context
@@ -1361,8 +1363,9 @@ class DeclarationsConverter(
                 baseSession, baseScopeProvider, stubMode, blockTree, offset = tree.getStartOffset(block), context
             ).convertBlockExpression(blockTree.root)
         } else {
+            val firExpression = buildExpressionStub()
             FirSingleExpressionBlock(
-                buildExpressionStub().toReturn()
+                firExpression.toReturn(baseSource = firExpression.source)
             )
         }
     }

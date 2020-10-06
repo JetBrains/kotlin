@@ -2,6 +2,7 @@
 @kotlin.Metadata
 final class InlineWithoutStateMachineKt$box$1 {
     // source: 'inlineWithoutStateMachine.kt'
+    enclosing method InlineWithoutStateMachineKt.box()Ljava/lang/String;
     synthetic final field $result: kotlin.jvm.internal.Ref$ObjectRef
     field L$0: java.lang.Object
     field L$1: java.lang.Object
@@ -17,6 +18,7 @@ final class InlineWithoutStateMachineKt$box$1 {
 @kotlin.coroutines.jvm.internal.DebugMetadata
 final class InlineWithoutStateMachineKt$complexSuspend$1 {
     // source: 'inlineWithoutStateMachine.kt'
+    enclosing method InlineWithoutStateMachineKt.complexSuspend(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field L$0: java.lang.Object
     field L$1: java.lang.Object
     field label: int

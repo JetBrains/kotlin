@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 // TODO: fix expect/actual default parameters
 
@@ -99,19 +100,22 @@ open class DefaultArgumentStubGenerator(
 
                 generateSuperCallHandlerCheckIfNeeded(irFunction, newIrFunction)
 
+                val intAnd = this@DefaultArgumentStubGenerator.context.ir.symbols.getBinaryOperator(
+                    OperatorNameConventions.AND, context.irBuiltIns.intType, context.irBuiltIns.intType
+                )
                 var sourceParameterIndex = -1
                 for (valueParameter in irFunction.valueParameters) {
                     if (!valueParameter.isMovedReceiver()) {
                         ++sourceParameterIndex
                     }
                     val parameter = newIrFunction.valueParameters[valueParameter.index]
-                    val remapped = if (valueParameter.defaultValue != null) {
+                    val remapped = valueParameter.defaultValue?.let { defaultValue ->
                         val mask = irGet(newIrFunction.valueParameters[irFunction.valueParameters.size + valueParameter.index / 32])
                         val bit = irInt(1 shl (sourceParameterIndex % 32))
                         val defaultFlag =
-                            irCallOp(this@DefaultArgumentStubGenerator.context.ir.symbols.intAnd, context.irBuiltIns.intType, mask, bit)
+                            irCallOp(intAnd, context.irBuiltIns.intType, mask, bit)
 
-                        val expression = valueParameter.defaultValue!!.expression
+                        val expression = defaultValue.expression
                             .prepareToBeUsedIn(newIrFunction)
                             .transform(object : IrElementTransformerVoid() {
                                 override fun visitGetValue(expression: IrGetValue): IrExpression {
@@ -122,9 +126,8 @@ open class DefaultArgumentStubGenerator(
                             }, null)
 
                         selectArgumentOrDefault(defaultFlag, parameter, expression)
-                    } else {
-                        parameter
-                    }
+                    } ?: parameter
+
                     params.add(remapped)
                     variables[valueParameter] = remapped
                 }
@@ -178,12 +181,14 @@ open class DefaultArgumentStubGenerator(
         return createTmpVariable(value, nameHint = parameter.name.asString())
     }
 
+    protected open fun getOriginForCallToImplementation(): IrStatementOrigin? = null
+
     private fun IrBlockBodyBuilder.dispatchToImplementation(
         irFunction: IrSimpleFunction,
         newIrFunction: IrFunction,
         params: MutableList<IrValueDeclaration>
     ): IrExpression {
-        val dispatchCall = irCall(irFunction.symbol).apply {
+        val dispatchCall = irCall(irFunction, origin = getOriginForCallToImplementation()).apply {
             passTypeArgumentsFrom(newIrFunction)
             dispatchReceiver = newIrFunction.dispatchReceiverParameter?.let { irGet(it) }
             extensionReceiver = newIrFunction.extensionReceiverParameter?.let { irGet(it) }
@@ -229,7 +234,7 @@ open class DefaultArgumentStubGenerator(
         error("This method should be overridden")
     }
 
-    protected open fun defaultArgumentStubVisibility(function: IrFunction) = Visibilities.PUBLIC
+    protected open fun defaultArgumentStubVisibility(function: IrFunction) = DescriptorVisibilities.PUBLIC
 
     protected open fun useConstructorMarker(function: IrFunction) = function is IrConstructor
 
@@ -415,7 +420,7 @@ open class DefaultParameterInjector(
     protected open fun nullConst(startOffset: Int, endOffset: Int, type: IrType): IrExpression =
         IrConstImpl.defaultValueForType(startOffset, endOffset, type)
 
-    protected open fun defaultArgumentStubVisibility(function: IrFunction) = Visibilities.PUBLIC
+    protected open fun defaultArgumentStubVisibility(function: IrFunction) = DescriptorVisibilities.PUBLIC
 
     protected open fun useConstructorMarker(function: IrFunction) = function is IrConstructor
 
@@ -465,12 +470,12 @@ class DefaultParameterPatchOverridenSymbolsLowering(
 }
 
 private fun IrFunction.generateDefaultsFunction(
-    context: CommonBackendContext,
-    skipInlineMethods: Boolean,
-    skipExternalMethods: Boolean,
-    forceSetOverrideSymbols: Boolean,
-    visibility: Visibility,
-    useConstructorMarker: Boolean
+        context: CommonBackendContext,
+        skipInlineMethods: Boolean,
+        skipExternalMethods: Boolean,
+        forceSetOverrideSymbols: Boolean,
+        visibility: DescriptorVisibility,
+        useConstructorMarker: Boolean
 ): IrFunction? {
     if (skipInlineMethods && isInline) return null
     if (skipExternalMethods && isExternalOrInheritedFromExternal()) return null
@@ -520,11 +525,11 @@ private fun IrFunction.generateDefaultsFunction(
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 private fun IrFunction.generateDefaultsFunctionImpl(
-    context: CommonBackendContext,
-    newOrigin: IrDeclarationOrigin,
-    newVisibility: Visibility,
-    isFakeOverride: Boolean,
-    useConstructorMarker: Boolean
+        context: CommonBackendContext,
+        newOrigin: IrDeclarationOrigin,
+        newVisibility: DescriptorVisibility,
+        isFakeOverride: Boolean,
+        useConstructorMarker: Boolean
 ): IrFunction {
     val newFunction = when (this) {
         is IrConstructor ->

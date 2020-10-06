@@ -22,7 +22,7 @@ annotation class Ann(
         Companion.CONST,
         Nested.CONST,
         Interface.CONST,
-        a,
+        <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>a<!>,
         b()
 )
 class A {

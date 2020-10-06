@@ -1,2 +1,2 @@
-public final class ActualTypeAliasKt {
+public final class ActualTypeAliasKt /* p.ActualTypeAliasKt*/ {
 }

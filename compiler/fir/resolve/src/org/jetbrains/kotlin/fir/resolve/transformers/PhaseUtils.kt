@@ -6,39 +6,65 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolve.firProvider
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
 
-fun <D> AbstractFirBasedSymbol<D>.phasedFir(
-    requiredPhase: FirResolvePhase = FirResolvePhase.DECLARATIONS
-): D where D : FirDeclaration, D : FirSymbolOwner<D> {
-    val result = this.fir
-    val availablePhase = result.resolvePhase
-    if (availablePhase < requiredPhase) {
-        // NB: we should use session from symbol here, not transformer session (important for IDE)
-        val provider = fir.session.firProvider
+fun AbstractFirBasedSymbol<*>.ensureResolved(
+    requiredPhase: FirResolvePhase,
+    // TODO: Currently, the parameter is unused but it's needed to guarantee that all call-sites are able to supply use-site session
+    // TODO: Decide which one session should be used and probably get rid of the parameter if use-site session is not needed
+    useSiteSession: FirSession,
+) {
+    val fir = fir as FirDeclaration
+    val availablePhase = fir.resolvePhase
+    if (availablePhase >= requiredPhase) return
+    val resolver = fir.session.phaseManager
+        ?: error("phaseManager should be defined when working with FIR in phased mode")
 
-        require(provider.isPhasedFirAllowed) {
-            "Incorrect resolvePhase: actual: $availablePhase, expected: $requiredPhase\n For: ${fir.render()}"
-        }
-
-        val containingFile = when (this) {
-            is FirCallableSymbol<*> -> provider.getFirCallableContainerFile(this)
-            is FirClassLikeSymbol<*> -> provider.getFirClassifierContainerFile(this)
-            else -> null
-        }
-            ?: throw AssertionError("Cannot get container file by symbol: $this (${result.render()})")
-
-        val resolver = fir.session.phasedFirFileResolver
-            ?: error("phasedFirFileResolver should be defined when working with FIR in phased mode")
-        resolver.resolveFile(containingFile, fromPhase = availablePhase, toPhase = requiredPhase)
-    }
-    return result
+    resolver.ensureResolved(this, requiredPhase)
 }
 
+fun AbstractFirBasedSymbol<*>.ensureResolvedForCalls(
+    useSiteSession: FirSession,
+) {
+    val fir = fir as FirDeclaration
+    if (fir.resolvePhase >= FirResolvePhase.DECLARATIONS) return
+
+//    val requiredPhase = when (fir) {
+//        is FirFunction<*>, is FirProperty -> FirResolvePhase.CONTRACTS
+//        else -> FirResolvePhase.STATUS
+//    }
+//
+//    if (requiredPhase == FirResolvePhase.CONTRACTS) {
+//        // Workaround for recursive contracts in CLI
+//        // Otherwise the assertion about presence of fir.session.phaseManager would fail
+//        // See org.jetbrains.kotlin.fir.FirOldFrontendDiagnosticsTestWithStdlibGenerated.Contracts.Dsl.Errors.testRecursiveContract
+//        if (fir.session.phaseManager == null) return
+//    }
+
+    val requiredPhase = FirResolvePhase.DECLARATIONS
+
+    ensureResolved(requiredPhase, useSiteSession)
+}
+
+fun ConeKotlinType.ensureResolvedTypeDeclaration(
+    useSiteSession: FirSession,
+) {
+    if (this !is ConeClassLikeType) return
+
+    lookupTag.toSymbol(useSiteSession)?.ensureResolved(FirResolvePhase.STATUS, useSiteSession)
+    fullyExpandedType(useSiteSession).lookupTag.toSymbol(useSiteSession)?.ensureResolved(FirResolvePhase.STATUS, useSiteSession)
+}
+
+fun FirTypeRef.ensureResolvedTypeDeclaration(
+    useSiteSession: FirSession,
+) {
+    coneTypeSafe<ConeKotlinType>()?.ensureResolvedTypeDeclaration(useSiteSession)
+}

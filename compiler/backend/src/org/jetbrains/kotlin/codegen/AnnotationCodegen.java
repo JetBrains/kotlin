@@ -142,7 +142,7 @@ public abstract class AnnotationCodegen {
                 && !applicableTargets.contains(KotlinTarget.CLASS)
                 && !applicableTargets.contains(KotlinTarget.ANNOTATION_CLASS)) {
                 ClassDescriptor classDescriptor = (ClassDescriptor) annotated;
-                if (classDescriptor.getVisibility() == Visibilities.LOCAL) {
+                if (classDescriptor.getVisibility() == DescriptorVisibilities.LOCAL) {
                     assert applicableTargets.contains(KotlinTarget.EXPRESSION) :
                             "Inconsistent target list for object literal annotation: " + applicableTargets + " on " + annotated;
                     continue;
@@ -221,7 +221,7 @@ public abstract class AnnotationCodegen {
     private static boolean isInvisibleFromTheOutside(@Nullable DeclarationDescriptor descriptor) {
         if (isAccessor(descriptor)) return true;
         if (descriptor instanceof MemberDescriptor) {
-            return AsmUtil.getVisibilityAccessFlag((MemberDescriptor) descriptor) == Opcodes.ACC_PRIVATE;
+            return DescriptorAsmUtil.getVisibilityAccessFlag((MemberDescriptor) descriptor) == Opcodes.ACC_PRIVATE;
         }
         return false;
     }

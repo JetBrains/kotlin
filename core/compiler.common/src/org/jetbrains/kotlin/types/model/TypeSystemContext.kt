@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.types.model
 
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
+import org.jetbrains.kotlin.types.Variance
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 interface KotlinTypeMarker
 interface TypeArgumentMarker
@@ -28,6 +31,8 @@ interface TypeVariableTypeConstructorMarker : TypeConstructorMarker
 
 interface CapturedTypeConstructorMarker : TypeConstructorMarker
 
+interface IntersectionTypeConstructorMarker : TypeConstructorMarker
+
 interface TypeSubstitutorMarker
 
 
@@ -39,6 +44,13 @@ enum class TypeVariance(val presentation: String) {
     override fun toString(): String = presentation
 }
 
+fun Variance.convertVariance(): TypeVariance {
+    return when (this) {
+        Variance.INVARIANT -> TypeVariance.INV
+        Variance.IN_VARIANCE -> TypeVariance.IN
+        Variance.OUT_VARIANCE -> TypeVariance.OUT
+    }
+}
 
 interface TypeSystemOptimizationContext {
     /**
@@ -66,6 +78,7 @@ interface TypeSystemTypeFactoryContext {
     fun createTypeArgument(type: KotlinTypeMarker, variance: TypeVariance): TypeArgumentMarker
     fun createStarProjection(typeParameter: TypeParameterMarker): TypeArgumentMarker
 
+    fun createErrorType(debugName: String): SimpleTypeMarker
     fun createErrorTypeWithCustomConstructor(debugName: String, constructor: TypeConstructorMarker): KotlinTypeMarker
 }
 
@@ -173,6 +186,13 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
         firstCandidate: KotlinTypeMarker,
         secondCandidate: KotlinTypeMarker
     ): KotlinTypeMarker
+
+    fun KotlinTypeMarker.isSpecial(): Boolean
+
+    fun TypeConstructorMarker.isTypeVariable(): Boolean
+    fun TypeVariableTypeConstructorMarker.isContainedInInvariantOrContravariantPositions(): Boolean
+
+    fun KotlinTypeMarker.isSignedOrUnsignedNumberType(): Boolean
 }
 
 
@@ -199,6 +219,9 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun SimpleTypeMarker.asDefinitelyNotNullType(): DefinitelyNotNullTypeMarker?
     fun SimpleTypeMarker.isMarkedNullable(): Boolean
+    fun KotlinTypeMarker.isMarkedNullable(): Boolean =
+        this is SimpleTypeMarker && isMarkedNullable()
+
     fun SimpleTypeMarker.withNullability(nullable: Boolean): SimpleTypeMarker
     fun SimpleTypeMarker.typeConstructor(): TypeConstructorMarker
 
@@ -320,7 +343,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun intersectTypes(types: List<KotlinTypeMarker>): KotlinTypeMarker
     fun intersectTypes(types: List<SimpleTypeMarker>): SimpleTypeMarker
 
-    fun KotlinTypeMarker.isSimpleType() = asSimpleType() != null
+    fun KotlinTypeMarker.isSimpleType(): Boolean = asSimpleType() != null
 
     fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker
 
@@ -341,4 +364,17 @@ inline fun TypeArgumentListMarker.all(
         if (!predicate(get(index))) return false
     }
     return true
+}
+
+@OptIn(ExperimentalContracts::class)
+fun requireOrDescribe(condition: Boolean, value: Any?) {
+    contract {
+        returns() implies condition
+    }
+    require(condition) {
+        val typeInfo = if (value != null) {
+            ", type = '${value::class}'"
+        } else ""
+        "Unexpected: value = '$value'$typeInfo"
+    }
 }

@@ -247,6 +247,12 @@ private class DelegatingPackageFragmentProvider<M : ModuleInfo>(
         return resolverForProject.resolverForModuleDescriptor(module).packageFragmentProvider.getPackageFragments(fqName)
     }
 
+    override fun collectPackageFragments(fqName: FqName, packageFragments: MutableCollection<PackageFragmentDescriptor>) {
+        if (certainlyDoesNotExist(fqName)) return
+
+        resolverForProject.resolverForModuleDescriptor(module).packageFragmentProvider.collectPackageFragments(fqName, packageFragments)
+    }
+
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
         if (certainlyDoesNotExist(fqName)) return emptyList()
 

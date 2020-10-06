@@ -2,6 +2,7 @@
 @kotlin.Metadata
 final class BooleanParameterKt$box$1 {
     // source: 'booleanParameter.kt'
+    enclosing method BooleanParameterKt.box()Ljava/lang/String;
     synthetic final field $lambda: kotlin.jvm.functions.Function2
     synthetic final field $res: kotlin.jvm.internal.Ref$ObjectRef
     field L$0: java.lang.Object
@@ -17,6 +18,7 @@ final class BooleanParameterKt$box$1 {
 @kotlin.Metadata
 final class BooleanParameterKt$box$lambda$1 {
     // source: 'booleanParameter.kt'
+    enclosing method BooleanParameterKt.box()Ljava/lang/String;
     private synthetic field Z$0: boolean
     field label: int
     inner (anonymous) class BooleanParameterKt$box$lambda$1
@@ -49,6 +51,7 @@ public abstract class helpers/ContinuationAdapter {
 @kotlin.Metadata
 public final class helpers/CoroutineUtilKt$handleExceptionContinuation$1 {
     // source: 'CoroutineUtil.kt'
+    enclosing method helpers/CoroutineUtilKt.handleExceptionContinuation(Lkotlin/jvm/functions/Function1;)Lkotlin/coroutines/Continuation;
     synthetic final field $x: kotlin.jvm.functions.Function1
     private final @org.jetbrains.annotations.NotNull field context: kotlin.coroutines.EmptyCoroutineContext
     inner (anonymous) class helpers/CoroutineUtilKt$handleExceptionContinuation$1
@@ -61,6 +64,7 @@ public final class helpers/CoroutineUtilKt$handleExceptionContinuation$1 {
 @kotlin.Metadata
 public final class helpers/CoroutineUtilKt$handleResultContinuation$1 {
     // source: 'CoroutineUtil.kt'
+    enclosing method helpers/CoroutineUtilKt.handleResultContinuation(Lkotlin/jvm/functions/Function1;)Lkotlin/coroutines/Continuation;
     synthetic final field $x: kotlin.jvm.functions.Function1
     private final @org.jetbrains.annotations.NotNull field context: kotlin.coroutines.EmptyCoroutineContext
     inner (anonymous) class helpers/CoroutineUtilKt$handleResultContinuation$1

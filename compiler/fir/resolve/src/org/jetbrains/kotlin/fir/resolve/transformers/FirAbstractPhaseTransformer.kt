@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 
@@ -26,12 +24,6 @@ abstract class FirAbstractPhaseTransformer<D>(
             "Raw FIR building shouldn't be done in phase transformer"
         }
     }
-
-    open val <D> AbstractFirBasedSymbol<D>.phasedFir: D where D : FirDeclaration, D : FirSymbolOwner<D>
-        get() {
-            val requiredPhase = transformerPhase.requiredToLaunch
-            return phasedFir(requiredPhase)
-        }
 
     override fun transformFile(file: FirFile, data: D): CompositeTransformResult<FirFile> {
         checkSessionConsistency(file)

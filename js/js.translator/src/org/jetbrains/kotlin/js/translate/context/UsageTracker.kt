@@ -54,7 +54,7 @@ class UsageTracker(
         if (descriptor is FakeCallableDescriptorForObject) return
 
         // local named function
-        if (descriptor is FunctionDescriptor && descriptor.visibility == Visibilities.LOCAL) {
+        if (descriptor is FunctionDescriptor && descriptor.visibility == DescriptorVisibilities.LOCAL) {
             captureIfNeed(descriptor)
         }
         // local variable

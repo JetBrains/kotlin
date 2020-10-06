@@ -68,6 +68,11 @@ public class DiagnosticsWithExplicitApiGenerated extends AbstractDiagnosticsWith
         runTest("compiler/testData/diagnostics/testsWithExplicitApi/properties.kt");
     }
 
+    @TestMetadata("publishedApi.kt")
+    public void testPublishedApi() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithExplicitApi/publishedApi.kt");
+    }
+
     @TestMetadata("toplevel.kt")
     public void testToplevel() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithExplicitApi/toplevel.kt");

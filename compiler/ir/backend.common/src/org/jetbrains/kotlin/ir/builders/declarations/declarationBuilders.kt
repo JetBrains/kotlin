@@ -65,14 +65,14 @@ inline fun IrClass.addField(builder: IrFieldBuilder.() -> Unit) =
         declarations.add(field)
     }
 
-fun IrClass.addField(fieldName: Name, fieldType: IrType, fieldVisibility: Visibility = Visibilities.PRIVATE): IrField =
+fun IrClass.addField(fieldName: Name, fieldType: IrType, fieldVisibility: DescriptorVisibility = DescriptorVisibilities.PRIVATE): IrField =
     addField {
         name = fieldName
         type = fieldType
         visibility = fieldVisibility
     }
 
-fun IrClass.addField(fieldName: String, fieldType: IrType, fieldVisibility: Visibility = Visibilities.PRIVATE): IrField =
+fun IrClass.addField(fieldName: String, fieldType: IrType, fieldVisibility: DescriptorVisibility = DescriptorVisibilities.PRIVATE): IrField =
     addField(Name.identifier(fieldName), fieldType, fieldVisibility)
 
 @PublishedApi
@@ -162,14 +162,14 @@ inline fun IrClass.addFunction(builder: IrFunctionBuilder.() -> Unit): IrSimpleF
     factory.addFunction(this, builder)
 
 fun IrClass.addFunction(
-    name: String,
-    returnType: IrType,
-    modality: Modality = Modality.FINAL,
-    visibility: Visibility = Visibilities.PUBLIC,
-    isStatic: Boolean = false,
-    isSuspend: Boolean = false,
-    isFakeOverride: Boolean = false,
-    origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
+        name: String,
+        returnType: IrType,
+        modality: Modality = Modality.FINAL,
+        visibility: DescriptorVisibility = DescriptorVisibilities.PUBLIC,
+        isStatic: Boolean = false,
+        isSuspend: Boolean = false,
+        isFakeOverride: Boolean = false,
+        origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
 ): IrSimpleFunction =
     addFunction {
         this.name = Name.identifier(name)
@@ -223,11 +223,11 @@ fun <D> buildReceiverParameter(
 @PublishedApi
 internal fun IrFactory.buildValueParameter(builder: IrValueParameterBuilder, parent: IrDeclarationParent): IrValueParameter =
     with(builder) {
-        val wrappedDescriptor = WrappedValueParameterDescriptor(wrappedDescriptorAnnotations)
+        val wrappedDescriptor = WrappedValueParameterDescriptor()
         return createValueParameter(
             startOffset, endOffset, origin,
             IrValueParameterSymbolImpl(wrappedDescriptor),
-            name, index, type, varargElementType, isCrossInline, isNoinline
+            name, index, type, varargElementType, isCrossInline, isNoinline, isHidden
         ).also {
             wrappedDescriptor.bind(it)
             it.parent = parent
@@ -291,7 +291,7 @@ internal fun IrFactory.buildTypeParameter(builder: IrTypeParameterBuilder, paren
             name, index, isReified, variance
         ).also {
             wrappedDescriptor.bind(it)
-            it.superTypes.addAll(superTypes)
+            it.superTypes = superTypes
             it.parent = parent
         }
     }

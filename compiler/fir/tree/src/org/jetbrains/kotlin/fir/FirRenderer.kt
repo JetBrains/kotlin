@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.contracts.*
 import org.jetbrains.kotlin.fir.contracts.description.ConeContractRenderer
@@ -823,12 +825,6 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         visitElement(typeRef)
     }
 
-    override fun visitDelegatedTypeRef(delegatedTypeRef: FirDelegatedTypeRef) {
-        delegatedTypeRef.typeRef.accept(this)
-        print(" by ")
-        delegatedTypeRef.delegate?.accept(this)
-    }
-
     override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef) {
         visitTypeRef(errorTypeRef)
         print("<ERROR TYPE REF: ${errorTypeRef.diagnostic.reason}>")
@@ -959,8 +955,8 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         if (isFakeOverride) {
             print("FakeOverride<")
         }
-        print(symbol.render())
 
+        print(symbol.unwrapIntersectionOverrides().render())
 
         if (resolvedNamedReference is FirResolvedCallableReference) {
             if (resolvedNamedReference.inferredTypeArguments.isNotEmpty()) {
@@ -986,6 +982,11 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
             print(">")
         }
         print("|")
+    }
+
+    private fun AbstractFirBasedSymbol<*>.unwrapIntersectionOverrides(): AbstractFirBasedSymbol<*> {
+        if (this is FirCallableSymbol<*> && isIntersectionOverride) return overriddenSymbol!!.unwrapIntersectionOverrides()
+        return this
     }
 
     override fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference) {
@@ -1106,6 +1107,10 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         functionCall.calleeReference.accept(this)
         functionCall.typeArguments.renderTypeArguments()
         visitCall(functionCall)
+    }
+
+    override fun visitImplicitInvokeCall(implicitInvokeCall: FirImplicitInvokeCall) {
+        visitFunctionCall(implicitInvokeCall)
     }
 
     override fun visitComparisonExpression(comparisonExpression: FirComparisonExpression) {

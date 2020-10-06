@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.irArray
 import org.jetbrains.kotlin.codegen.ImplementationBodyCodegen
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addField
@@ -87,7 +87,7 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
         private fun buildValuesField(): IrField = irClass.addField {
             name = Name.identifier(ImplementationBodyCodegen.ENUM_VALUES_FIELD_NAME)
             type = context.irBuiltIns.arrayClass.typeWith(irClass.defaultType)
-            visibility = Visibilities.PRIVATE
+            visibility = DescriptorVisibilities.PRIVATE
             origin = IrDeclarationOrigin.FIELD_FOR_ENUM_VALUES
             isFinal = true
             isStatic = true

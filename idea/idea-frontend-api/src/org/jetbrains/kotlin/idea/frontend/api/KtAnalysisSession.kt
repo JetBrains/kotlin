@@ -40,12 +40,15 @@ abstract class KtAnalysisSession(override val token: ValidityToken) : ValidityTo
     protected abstract val containingDeclarationProvider: KtSymbolContainingDeclarationProvider
     protected abstract val symbolProvider: KtSymbolProvider
     protected abstract val callResolver: KtCallResolver
-
+    protected abstract val completionCandidateChecker: KtCompletionCandidateChecker
+    protected abstract val symbolDeclarationOverridesProvider: KtSymbolDeclarationOverridesProvider
 
     /// TODO: get rid of
     @Deprecated("Used only in completion now, temporary")
     abstract fun createContextDependentCopy(): KtAnalysisSession
 
+    fun KtCallableSymbol.getOverriddenSymbols(containingDeclaration: KtClassOrObjectSymbol): List<KtCallableSymbol> =
+        symbolDeclarationOverridesProvider.getOverriddenSymbols(this, containingDeclaration)
 
     fun KtExpression.getSmartCasts(): Collection<KtType> = smartCastProvider.getSmartCastedToTypes(this)
 
@@ -56,6 +59,8 @@ abstract class KtAnalysisSession(override val token: ValidityToken) : ValidityTo
     fun KtDeclaration.getReturnKtType(): KtType = typeProvider.getReturnTypeForKtDeclaration(this)
 
     fun KtElement.getDiagnostics(): Collection<Diagnostic> = diagnosticProvider.getDiagnosticsForElement(this)
+
+    fun KtFile.collectDiagnosticsForFile(): Collection<Diagnostic> = diagnosticProvider.collectDiagnosticsForFile(this)
 
     fun KtSymbolWithKind.getContainingSymbol(): KtSymbolWithKind? = containingDeclarationProvider.getContainingDeclaration(this)
 
@@ -69,8 +74,8 @@ abstract class KtAnalysisSession(override val token: ValidityToken) : ValidityTo
 
     fun KtType.getTypeScope(): KtScope? = scopeProvider.getTypeScope(this)
 
-    fun KtFile.getScopeContextForPosition(originalPosition: PsiElement?, positionInFakeFile: KtElement): KtScopeContext =
-        scopeProvider.getScopeContextForPosition(this, originalPosition, positionInFakeFile)
+    fun KtFile.getScopeContextForPosition(positionInFakeFile: KtElement): KtScopeContext =
+        scopeProvider.getScopeContextForPosition(this, positionInFakeFile)
 
     fun KtDeclaration.getSymbol(): KtSymbol = symbolProvider.getSymbol(this)
 
@@ -94,6 +99,8 @@ abstract class KtAnalysisSession(override val token: ValidityToken) : ValidityTo
 
     fun KtClassOrObject.getClassOrObjectSymbol(): KtClassOrObjectSymbol = symbolProvider.getClassOrObjectSymbol(this)
 
+    fun KtPropertyAccessor.getPropertyAccessorSymbol(): KtPropertyAccessorSymbol = symbolProvider.getPropertyAccessorSymbol(this)
+
     /**
      * @return symbol with specified [this@getClassOrObjectSymbolByClassId] or `null` in case such symbol is not found
      */
@@ -116,4 +123,15 @@ abstract class KtAnalysisSession(override val token: ValidityToken) : ValidityTo
         check(this is KtSymbolBasedReference) { "To get reference symbol the one should be KtSymbolBasedReference but was ${this::class}" }
         return resolveToSymbols().singleOrNull()
     }
+
+    fun KtCallableSymbol.checkExtensionIsSuitable(
+        originalPsiFile: KtFile,
+        psiFakeCompletionExpression: KtSimpleNameExpression,
+        psiReceiverExpression: KtExpression?,
+    ): Boolean = completionCandidateChecker.checkExtensionFitsCandidate(
+        this,
+        originalPsiFile,
+        psiFakeCompletionExpression,
+        psiReceiverExpression
+    )
 }

@@ -52,6 +52,7 @@ object FirSupertypeInitializedWithoutPrimaryConstructor : FirMemberDeclarationCh
     }
 
     private fun PsiElement.anySupertypeHasConstructorParentheses(): Boolean {
+        val children = this.children // this is a method call and it collects children
         return children.isNotEmpty() && children[0] !is PsiErrorElement && children[0].children.any { it is KtSuperTypeCallEntry }
     }
 

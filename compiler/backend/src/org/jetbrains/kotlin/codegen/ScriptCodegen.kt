@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.codegen
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.codegen.AsmUtil.writeAnnotationData
 import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.codegen.context.ScriptContext
@@ -71,7 +70,7 @@ class ScriptCodegen private constructor(
         val serializer = DescriptorSerializer.create(scriptDescriptor, JvmSerializerExtension(v.serializationBindings, state), null)
         val classProto = serializer.classProto(scriptDescriptor).build()
         writeKotlinMetadata(v, state, KotlinClassHeader.Kind.CLASS, JvmAnnotationNames.METADATA_SCRIPT_FLAG) { av ->
-            writeAnnotationData(av, serializer, classProto)
+            DescriptorAsmUtil.writeAnnotationData(av, serializer, classProto)
         }
     }
 

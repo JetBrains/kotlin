@@ -114,7 +114,7 @@ object DataClassDescriptorResolver {
             parameterDescriptors,
             classDescriptor.defaultType,
             Modality.FINAL,
-            Visibilities.PUBLIC
+            DescriptorVisibilities.PUBLIC
         )
 
         trace.record(BindingContext.DATA_CLASS_COPY_FUNCTION, classDescriptor, functionDescriptor)

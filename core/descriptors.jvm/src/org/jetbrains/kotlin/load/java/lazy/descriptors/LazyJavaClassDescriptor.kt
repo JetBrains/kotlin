@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.FakePureImplementationsProvider
-import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.components.JavaResolverCache
 import org.jetbrains.kotlin.load.java.components.TypeUsage
@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaType
+import org.jetbrains.kotlin.load.java.toDescriptorVisibility
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.resolve.constants.StringValue
@@ -89,8 +90,13 @@ class LazyJavaClassDescriptor(
     // which can be inherited from the same package.
     // Kotlin considers this "private in package" just as "private" and thinks they are invisible for inheritors,
     // so their functions are invisible fake which is not true.
-    override fun getVisibility() =
-        if (visibility == Visibilities.PRIVATE && jClass.outerClass == null) JavaVisibilities.PACKAGE_VISIBILITY else visibility
+    override fun getVisibility(): DescriptorVisibility {
+        return if (visibility == DescriptorVisibilities.PRIVATE && jClass.outerClass == null) {
+            JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+        } else {
+            visibility.toDescriptorVisibility()
+        }
+    }
 
     override fun isInner() = isInner
     override fun isData() = false

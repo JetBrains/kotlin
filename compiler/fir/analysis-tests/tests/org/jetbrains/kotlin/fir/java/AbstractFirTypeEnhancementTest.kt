@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.java
 
 import com.intellij.lang.java.JavaLanguage
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtilRt
@@ -82,9 +81,7 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
             ),
             EnvironmentConfigFiles.JVM_CONFIG_FILES
         ).apply {
-            Extensions.getArea(project)
-                .getExtensionPoint(PsiElementFinder.EP_NAME)
-                .unregisterExtension(JavaElementFinder::class.java)
+            PsiElementFinder.EP.getPoint(project).unregisterExtension(JavaElementFinder::class.java)
         }
     }
 

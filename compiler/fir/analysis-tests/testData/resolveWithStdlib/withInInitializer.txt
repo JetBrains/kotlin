@@ -13,8 +13,8 @@ FILE: withInInitializer.kt
             super<R|kotlin/Any|>()
         }
 
-        public final val list: R|kotlin/collections/List<it(kotlin/Comparable<it(kotlin/String & kotlin/Int)> & java/io/Serializable)>| = R|kotlin/collections/listOf|<R|it(kotlin/Comparable<it(kotlin/String & kotlin/Int)> & java/io/Serializable)|>(vararg(Int(1), Int(2), Int(3), String()))
-            public get(): R|kotlin/collections/List<it(kotlin/Comparable<it(kotlin/String & kotlin/Int)> & java/io/Serializable)>|
+        public final val list: R|kotlin/collections/List<kotlin/Any>| = R|kotlin/collections/listOf|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>(vararg(Int(1), Int(2), Int(3), String()))
+            public get(): R|kotlin/collections/List<kotlin/Any>|
 
         public final val data: R|First| = R|/First.First|(Int(42))
             public get(): R|First|

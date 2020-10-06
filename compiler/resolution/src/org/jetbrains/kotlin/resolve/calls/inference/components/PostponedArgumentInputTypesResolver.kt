@@ -6,22 +6,22 @@
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.builtins.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.components.transformToResolvedLambda
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.builtIns
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+
+private typealias Context = ConstraintSystemCompletionContext
 
 class PostponedArgumentInputTypesResolver(
     private val resultTypeResolver: ResultTypeResolver,
     private val variableFixationFinder: VariableFixationFinder
 ) {
-    interface Context : KotlinConstraintSystemCompleter.Context
-
     private class ParameterTypesInfo(
         val parametersFromDeclaration: List<UnwrappedType?>?,
         val parametersFromDeclarationOfRelatedLambdas: Set<List<UnwrappedType?>>?,
@@ -155,6 +155,12 @@ class PostponedArgumentInputTypesResolver(
         val expectedType = argument.expectedType
             ?: throw IllegalStateException("Postponed argument's expected type must not be null")
 
+        val variable = getBuilder().currentStorage().allTypeVariables[expectedType.constructor]
+        if (variable != null) {
+            val revisedVariableForReturnType = getBuilder().getRevisedVariableForReturnType(variable)
+            if (revisedVariableForReturnType != null) return revisedVariableForReturnType as NewTypeVariable
+        }
+
         return when (argument) {
             is LambdaWithTypeVariableAsExpectedTypeAtom -> TypeVariableForLambdaReturnType(
                 expectedType.builtIns,
@@ -165,7 +171,11 @@ class PostponedArgumentInputTypesResolver(
                 TYPE_VARIABLE_NAME_FOR_CR_RETURN_TYPE
             )
             else -> throw IllegalStateException("Unsupported postponed argument type of $argument")
-        }.also { getBuilder().registerVariable(it) }
+        }.also {
+            if (variable != null) getBuilder().putRevisedVariableForReturnType(variable, it)
+
+            getBuilder().registerVariable(it)
+        }
     }
 
     private fun Context.createTypeVariableForParameterType(
@@ -174,6 +184,12 @@ class PostponedArgumentInputTypesResolver(
     ): NewTypeVariable {
         val expectedType = argument.expectedType
             ?: throw IllegalStateException("Postponed argument's expected type must not be null")
+
+        val variable = getBuilder().currentStorage().allTypeVariables[expectedType.constructor]
+        if (variable != null) {
+            val revisedVariableForParameter = getBuilder().getRevisedVariableForParameter(variable, index)
+            if (revisedVariableForParameter != null) return revisedVariableForParameter as NewTypeVariable
+        }
 
         return when (argument) {
             is LambdaWithTypeVariableAsExpectedTypeAtom -> TypeVariableForLambdaParameterType(
@@ -187,7 +203,11 @@ class PostponedArgumentInputTypesResolver(
                 TYPE_VARIABLE_NAME_PREFIX_FOR_CR_PARAMETER_TYPE + (index + 1)
             )
             else -> throw IllegalStateException("Unsupported postponed argument type of $argument")
-        }.also { getBuilder().registerVariable(it) }
+        }.also {
+            if (variable != null) getBuilder().putRevisedVariableForParameter(variable, index, it)
+
+            getBuilder().registerVariable(it)
+        }
     }
 
     private fun Context.createTypeVariablesForParameters(
@@ -200,23 +220,32 @@ class PostponedArgumentInputTypesResolver(
 
         return allGroupedParameterTypes.mapIndexed { index, types ->
             val parameterTypeVariable = createTypeVariableForParameterType(argument, index)
+            val typeVariableConstructor = parameterTypeVariable.freshTypeConstructor
 
             for (typeWithKind in types) {
+                if (typeVariableConstructor in fixedTypeVariables) break
                 if (typeWithKind == null) continue
+
                 when (typeWithKind.direction) {
                     ConstraintKind.EQUALITY -> csBuilder.addEqualityConstraint(
-                        parameterTypeVariable.defaultType, typeWithKind.type, ArgumentConstraintPosition(atom)
+                        parameterTypeVariable.defaultType, typeWithKind.type, ArgumentConstraintPositionImpl(atom)
                     )
                     ConstraintKind.UPPER -> csBuilder.addSubtypeConstraint(
-                        parameterTypeVariable.defaultType, typeWithKind.type, ArgumentConstraintPosition(atom)
+                        parameterTypeVariable.defaultType, typeWithKind.type, ArgumentConstraintPositionImpl(atom)
                     )
                     ConstraintKind.LOWER -> csBuilder.addSubtypeConstraint(
-                        typeWithKind.type, parameterTypeVariable.defaultType, ArgumentConstraintPosition(atom)
+                        typeWithKind.type, parameterTypeVariable.defaultType, ArgumentConstraintPositionImpl(atom)
                     )
                 }
             }
 
-            parameterTypeVariable.defaultType.asTypeProjection()
+            val resultType = if (typeVariableConstructor in fixedTypeVariables) {
+                fixedTypeVariables[typeVariableConstructor] as KotlinType
+            } else {
+                parameterTypeVariable.defaultType
+            }
+
+            resultType.asTypeProjection()
         }
     }
 
@@ -330,7 +359,7 @@ class PostponedArgumentInputTypesResolver(
         getBuilder().addSubtypeConstraint(
             newExpectedType,
             expectedType,
-            ArgumentConstraintPosition(argument.atom)
+            ArgumentConstraintPositionImpl(argument.atom)
         )
 
         return newExpectedType
@@ -339,7 +368,7 @@ class PostponedArgumentInputTypesResolver(
     fun collectParameterTypesAndBuildNewExpectedTypes(
         c: Context,
         postponedArguments: List<PostponedAtomWithRevisableExpectedType>,
-        completionMode: KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode,
+        completionMode: ConstraintSystemCompletionMode,
         dependencyProvider: TypeVariableDependencyInformationProvider
     ): Boolean {
         // We can collect parameter types from declaration in any mode, they can't change during completion.
@@ -357,7 +386,7 @@ class PostponedArgumentInputTypesResolver(
              *
              * TODO: investigate why we can't do it for anonymous functions in full mode always (see `diagnostics/tests/resolve/resolveWithSpecifiedFunctionLiteralWithId.kt`)
              */
-            if (completionMode == KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.PARTIAL && !isAnonymousFunction(argument))
+            if (completionMode == ConstraintSystemCompletionMode.PARTIAL && !isAnonymousFunction(argument))
                 return@any false
             if (argument.revisedExpectedType != null) return@any false
             val parameterTypesInfo =
@@ -434,13 +463,19 @@ class PostponedArgumentInputTypesResolver(
         postponedArguments: List<PostponedResolvedAtom>,
         topLevelType: UnwrappedType,
         topLevelAtoms: List<ResolvedAtom>,
-        dependencyProvider: TypeVariableDependencyInformationProvider
+        dependencyProvider: TypeVariableDependencyInformationProvider,
     ): Boolean {
         val expectedType = argument.run { safeAs<PostponedAtomWithRevisableExpectedType>()?.revisedExpectedType ?: expectedType }
 
         if (expectedType != null && expectedType.isFunctionOrKFunctionTypeWithAnySuspendability) {
             val wasFixedSomeVariable =
-                c.fixNextReadyVariableForParameterType(expectedType, postponedArguments, topLevelType, topLevelAtoms, dependencyProvider)
+                c.fixNextReadyVariableForParameterType(
+                    expectedType,
+                    postponedArguments,
+                    topLevelType,
+                    topLevelAtoms,
+                    dependencyProvider,
+                )
 
             if (wasFixedSomeVariable)
                 return true
@@ -454,12 +489,12 @@ class PostponedArgumentInputTypesResolver(
         postponedArguments: List<PostponedResolvedAtom>,
         topLevelType: UnwrappedType,
         topLevelAtoms: List<ResolvedAtom>,
-        dependencyProvider: TypeVariableDependencyInformationProvider
+        dependencyProvider: TypeVariableDependencyInformationProvider,
     ): Boolean {
         val relatedVariables = type.getPureArgumentsForFunctionalTypeOrSubtype()
             .flatMap { getAllDeeplyRelatedTypeVariables(it, dependencyProvider) }
         val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
-            this, relatedVariables, postponedArguments, KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL, topLevelType
+            this, relatedVariables, postponedArguments, ConstraintSystemCompletionMode.FULL, topLevelType
         )
 
         if (variableForFixation == null || !variableForFixation.hasProperConstraint)
@@ -468,10 +503,11 @@ class PostponedArgumentInputTypesResolver(
         val variableWithConstraints = notFixedTypeVariables.getValue(variableForFixation.variable)
         val resultType =
             resultTypeResolver.findResultType(this, variableWithConstraints, TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN)
-        val resolvedAtom = KotlinConstraintSystemCompleter.findResolvedAtomBy(variableWithConstraints.typeVariable, topLevelAtoms)
+        val variable = variableWithConstraints.typeVariable
+        val resolvedAtom = KotlinConstraintSystemCompleter.findResolvedAtomBy(variable, topLevelAtoms)
             ?: topLevelAtoms.firstOrNull()
 
-        fixVariable(variableWithConstraints.typeVariable, resultType, resolvedAtom)
+        fixVariable(variable, resultType, FixVariableConstraintPositionImpl(variable, resolvedAtom))
 
         return true
     }

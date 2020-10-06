@@ -19,14 +19,13 @@ abstract public class KotlinCompletionTestCase extends CompletionTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory());
+        VfsRootAccess.allowRootAccess(getTestRootDisposable(), KotlinTestUtils.getHomeDirectory());
         CodeInsightSettings.getInstance().EXCLUDED_PACKAGES = new String[]{"excludedPackage", "somePackage.ExcludedClass"};
     }
 
     @Override
     protected void tearDown() throws Exception {
         CodeInsightSettings.getInstance().EXCLUDED_PACKAGES = ArrayUtil.EMPTY_STRING_ARRAY;
-        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory());
         super.tearDown();
     }
 

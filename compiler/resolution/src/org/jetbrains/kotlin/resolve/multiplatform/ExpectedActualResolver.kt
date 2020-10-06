@@ -455,7 +455,7 @@ object ExpectedActualResolver {
         a: CallableMemberDescriptor,
         b: CallableMemberDescriptor
     ): Boolean {
-        val compare = Visibilities.compare(a.visibility, b.visibility)
+        val compare = DescriptorVisibilities.compare(a.visibility, b.visibility)
         return if (a.isOverridable) {
             // For overridable declarations visibility should match precisely, see KT-19664
             compare == 0

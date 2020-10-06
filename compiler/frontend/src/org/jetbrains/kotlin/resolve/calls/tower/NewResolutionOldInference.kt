@@ -420,7 +420,7 @@ class NewResolutionOldInference(
         operator fun component1() = diagnostics
         operator fun component2() = resolvedCall
 
-        override val resultingApplicability: ResolutionCandidateApplicability by lazy(LazyThreadSafetyMode.NONE) {
+        override val resultingApplicability: CandidateApplicability by lazy(LazyThreadSafetyMode.NONE) {
             getResultApplicability(diagnostics)
         }
 
@@ -606,15 +606,15 @@ fun transformToReceiverWithSmartCastInfo(
     )
 }
 
-internal class PreviousResolutionError(candidateLevel: ResolutionCandidateApplicability) : ResolutionDiagnostic(candidateLevel)
+internal class PreviousResolutionError(candidateLevel: CandidateApplicability) : ResolutionDiagnostic(candidateLevel)
 
 internal fun createPreviousResolveError(status: ResolutionStatus): PreviousResolutionError? {
     val level = when (status) {
         ResolutionStatus.SUCCESS, ResolutionStatus.INCOMPLETE_TYPE_INFERENCE -> return null
-        ResolutionStatus.UNSAFE_CALL_ERROR -> ResolutionCandidateApplicability.MAY_THROW_RUNTIME_ERROR
-        ResolutionStatus.ARGUMENTS_MAPPING_ERROR -> ResolutionCandidateApplicability.INAPPLICABLE_ARGUMENTS_MAPPING_ERROR
-        ResolutionStatus.RECEIVER_TYPE_ERROR -> ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
-        else -> ResolutionCandidateApplicability.INAPPLICABLE
+        ResolutionStatus.UNSAFE_CALL_ERROR -> CandidateApplicability.MAY_THROW_RUNTIME_ERROR
+        ResolutionStatus.ARGUMENTS_MAPPING_ERROR -> CandidateApplicability.INAPPLICABLE_ARGUMENTS_MAPPING_ERROR
+        ResolutionStatus.RECEIVER_TYPE_ERROR -> CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
+        else -> CandidateApplicability.INAPPLICABLE
     }
     return PreviousResolutionError(level)
 }

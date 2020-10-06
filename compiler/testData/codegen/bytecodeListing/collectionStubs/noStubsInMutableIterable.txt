@@ -1,0 +1,17 @@
+@kotlin.Metadata
+public final class MyIterable$MyIterator {
+    // source: 'noStubsInMutableIterable.kt'
+    public method <init>(): void
+    public method hasNext(): boolean
+    public method next(): java.lang.Object
+    public method remove(): void
+    public final inner class MyIterable$MyIterator
+}
+
+@kotlin.Metadata
+public final class MyIterable {
+    // source: 'noStubsInMutableIterable.kt'
+    public method <init>(): void
+    public @org.jetbrains.annotations.NotNull method iterator(): java.util.Iterator
+    public final inner class MyIterable$MyIterator
+}

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
 // see https://youtrack.jetbrains.com/issue/KT-21515
 
@@ -6,13 +7,13 @@ open class Container {
     // (this is case because we can't know if there are any loops without resolving, but resolving
     // itself provokes loops)
 
-    interface <!CYCLIC_SCOPES_WITH_COMPANION!>Base<!> {
+    interface Base {
         open fun m() {}
     }
 
-    interface <!CYCLIC_SCOPES_WITH_COMPANION!>DerivedAbstract<!> : Base
+    interface DerivedAbstract : Base
 
-    companion <!CYCLIC_SCOPES_WITH_COMPANION!>object<!> : DerivedAbstract {
+    companion object : DerivedAbstract {
         override fun m() {}
     }
 }

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.JsMapping
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder.SYNTHESIZED_DECLARATION
@@ -41,7 +41,7 @@ class JsInnerClassesSupport(mapping: JsMapping, private val irFactory: IrFactory
                     origin = InnerClassesSupport.FIELD_FOR_OUTER_THIS
                     name = Name.identifier("\$this")
                     type = outerClass.defaultType
-                    visibility = Visibilities.PROTECTED
+                    visibility = DescriptorVisibilities.PROTECTED
                     isFinal = true
                     isExternal = false
                     isStatic = false

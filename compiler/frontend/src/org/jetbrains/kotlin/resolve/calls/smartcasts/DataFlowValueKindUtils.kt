@@ -130,7 +130,7 @@ private fun isAccessedBeforeAllClosureWriters(
 
 
 private fun DeclarationDescriptorWithVisibility.isInvisibleFromOtherModules(): Boolean {
-    if (Visibilities.INVISIBLE_FROM_OTHER_MODULES.contains(visibility)) return true
+    if (DescriptorVisibilities.INVISIBLE_FROM_OTHER_MODULES.contains(visibility)) return true
 
     val containingDeclaration = containingDeclaration
     return containingDeclaration is DeclarationDescriptorWithVisibility && containingDeclaration.isInvisibleFromOtherModules()

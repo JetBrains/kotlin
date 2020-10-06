@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.components.CreateFreshVariablesSubstitutor.createToFreshVariableSubstitutorAndAddInitialConstraints
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPositionImpl
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.DISPATCH_RECEIVER
@@ -88,10 +88,6 @@ class CallableReferenceAdaptation(
     val suspendConversionStrategy: SuspendConversionStrategy
 )
 
-enum class SuspendConversionStrategy {
-    SUSPEND_CONVERSION, NO_CONVERSION
-}
-
 /**
  * cases: class A {}, class B { companion object }, object C, enum class D { E }
  * A::foo <-> Type
@@ -140,7 +136,7 @@ fun ConstraintSystemOperation.checkCallableReference(
     expectedType: UnwrappedType?,
     ownerDescriptor: DeclarationDescriptor
 ): Pair<FreshVariableNewTypeSubstitutor, KotlinCallDiagnostic?> {
-    val position = ArgumentConstraintPosition(argument)
+    val position = ArgumentConstraintPositionImpl(argument)
 
     val toFreshSubstitutor = createToFreshVariableSubstitutorAndAddInitialConstraints(candidateDescriptor, this)
 
@@ -153,7 +149,7 @@ fun ConstraintSystemOperation.checkCallableReference(
         addSubtypeConstraint(toFreshSubstitutor.safeSubstitute(reflectionCandidateType), expectedType, position)
     }
 
-    val invisibleMember = Visibilities.findInvisibleMember(
+    val invisibleMember = DescriptorVisibilities.findInvisibleMember(
         dispatchReceiver?.asReceiverValueForVisibilityChecks,
         candidateDescriptor, ownerDescriptor
     )
@@ -165,7 +161,7 @@ private fun ConstraintSystemOperation.addReceiverConstraint(
     toFreshSubstitutor: FreshVariableNewTypeSubstitutor,
     receiverArgument: CallableReceiver?,
     receiverParameter: ReceiverParameterDescriptor?,
-    position: ArgumentConstraintPosition
+    position: ArgumentConstraintPositionImpl
 ) {
     if (receiverArgument == null || receiverParameter == null) {
         assert(receiverArgument == null) { "Receiver argument should be null if parameter is: $receiverArgument" }
@@ -491,17 +487,17 @@ class CallableReferencesCandidateFactory(
         val descriptorReturnType = descriptor.returnType
             ?: ErrorUtils.createErrorType("Error return type for descriptor: $descriptor")
 
-        when (descriptor) {
+        return when (descriptor) {
             is PropertyDescriptor -> {
                 val mutable = descriptor.isVar && run {
                     val setter = descriptor.setter
-                    setter == null || Visibilities.isVisible(
+                    setter == null || DescriptorVisibilities.isVisible(
                         dispatchReceiver?.asReceiverValueForVisibilityChecks, setter,
                         scopeTower.lexicalScope.ownerDescriptor
                     )
                 }
 
-                return callComponents.reflectionTypes.getKPropertyType(
+                callComponents.reflectionTypes.getKPropertyType(
                     Annotations.EMPTY,
                     argumentsAndReceivers,
                     descriptorReturnType,
@@ -532,12 +528,15 @@ class CallableReferencesCandidateFactory(
                 val suspendConversionStrategy = callableReferenceAdaptation?.suspendConversionStrategy
                 val isSuspend = descriptor.isSuspend || suspendConversionStrategy == SuspendConversionStrategy.SUSPEND_CONVERSION
 
-                return callComponents.reflectionTypes.getKFunctionType(
+                callComponents.reflectionTypes.getKFunctionType(
                     Annotations.EMPTY, null, argumentsAndReceivers, null,
                     returnType, descriptor.builtIns, isSuspend
                 ) to callableReferenceAdaptation
             }
-            else -> return ErrorUtils.createErrorType("Unsupported descriptor type: $descriptor") to null
+            else -> {
+                assert(!descriptor.isSupportedForCallableReference()) { "${descriptor::class} isn't supported to use in callable references actually, but it's listed in `isSupportedForCallableReference` method" }
+                ErrorUtils.createErrorType("Unsupported descriptor type: $descriptor") to null
+            }
         }
     }
 

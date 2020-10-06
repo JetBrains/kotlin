@@ -39,7 +39,7 @@ class SerializableProperties(private val serializableClass: ClassDescriptor, val
 
         fun isPropSerializable(it: PropertyDescriptor) =
             if (serializableClass.isInternalSerializable) !it.annotations.serialTransient
-            else !Visibilities.isPrivate(it.visibility) && ((it.isVar && !it.annotations.serialTransient) || primaryConstructorProperties.contains(
+            else !DescriptorVisibilities.isPrivate(it.visibility) && ((it.isVar && !it.annotations.serialTransient) || primaryConstructorProperties.contains(
                 it
             ))
 

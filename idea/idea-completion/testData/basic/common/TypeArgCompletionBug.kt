@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 interface FooBar1
 
 interface FooBar2 {

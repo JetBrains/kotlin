@@ -93,7 +93,8 @@ class IncrementalJsCompilerRunner(
     override fun calculateSourcesToCompile(
         caches: IncrementalJsCachesManager,
         changedFiles: ChangedFiles.Known,
-        args: K2JSCompilerArguments
+        args: K2JSCompilerArguments,
+        messageCollector: MessageCollector
     ): CompilationMode {
         val lastBuildInfo = BuildInfo.read(lastBuildInfoFile)
             ?: return CompilationMode.Rebuild { "No information on previous build" }

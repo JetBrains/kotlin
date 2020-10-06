@@ -5,16 +5,18 @@
 
 package org.jetbrains.kotlin.fir.java
 
+import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirVisibilityChecker
-import org.jetbrains.kotlin.fir.JavaVisibilities
-import org.jetbrains.kotlin.fir.Visibility
+import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.name.ClassId
 
+@NoMutableState
 object FirJavaVisibilityChecker : FirVisibilityChecker() {
     override fun platformVisibilityCheck(
         declarationVisibility: Visibility,
@@ -41,8 +43,4 @@ object FirJavaVisibilityChecker : FirVisibilityChecker() {
             else -> true
         }
     }
-}
-
-fun FirSession.registerJavaVisibilityChecker() {
-    register(FirVisibilityChecker::class, FirJavaVisibilityChecker)
 }

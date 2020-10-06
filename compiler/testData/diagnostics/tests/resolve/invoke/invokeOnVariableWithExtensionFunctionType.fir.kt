@@ -27,7 +27,7 @@ fun test(a: A, b: B) {
         a.<!INAPPLICABLE_CANDIDATE!>foo<!>()
         a.(<!INAPPLICABLE_CANDIDATE!>foo<!>)()
 
-        <!INAPPLICABLE_CANDIDATE!>(a.foo)()<!>
+        (a.foo)()
 
         (a.foo)(this)
         a.foo(this)
@@ -69,7 +69,7 @@ fun test(a: A, b: B) {
         a.<!INAPPLICABLE_CANDIDATE!>foo<!>()
         a.(<!INAPPLICABLE_CANDIDATE!>foo<!>)()
 
-        <!INAPPLICABLE_CANDIDATE!>(a.foo)()<!>
+        (a.foo)()
 
         (a.foo)(this)
         a.foo(this)

@@ -38,7 +38,7 @@ class IrLazyTypeParameter(
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
 
-    override val superTypes: MutableList<IrType> by lazy {
+    override var superTypes: List<IrType> by lazyVar {
         withInitialIr {
             typeTranslator.buildWithScope(this.parent as IrTypeParametersContainer) {
                 val descriptor = symbol.descriptor

@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.*
-import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -101,7 +100,7 @@ internal fun FirTypedDeclaration.transformTypeToArrayType() {
     transformReturnTypeRef(
         StoreType,
         returnTypeRef.withReplacedConeType(
-            ConeKotlinTypeProjectionOut(returnType).createArrayOf(),
+            ConeKotlinTypeProjectionOut(returnType).createArrayType(),
             FirFakeSourceElementKind.ArrayTypeFromVarargParameter
         )
     )

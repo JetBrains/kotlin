@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirSimpleType
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeAlias
@@ -27,12 +27,12 @@ object CirTypeAliasFactory {
 
     @Suppress("NOTHING_TO_INLINE")
     inline fun create(
-        annotations: List<CirAnnotation>,
-        name: Name,
-        typeParameters: List<CirTypeParameter>,
-        visibility: Visibility,
-        underlyingType: CirSimpleType,
-        expandedType: CirSimpleType
+            annotations: List<CirAnnotation>,
+            name: Name,
+            typeParameters: List<CirTypeParameter>,
+            visibility: DescriptorVisibility,
+            underlyingType: CirSimpleType,
+            expandedType: CirSimpleType
     ): CirTypeAlias {
         return CirTypeAliasImpl(
             annotations = annotations,

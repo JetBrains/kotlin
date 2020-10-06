@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleStri
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.irsList
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.DefaultTargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetAccessIR
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JSConfigurator.Companion.jsCompilerParam
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsBrowserBasedConfigurator.Companion.browserSubTarget
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsBrowserBasedConfigurator.Companion.cssSupport
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsNodeBasedConfigurator.Companion.nodejsSubTarget
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.buildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
@@ -79,16 +81,6 @@ internal fun Module.createTargetAccessIr(
 
 interface JsTargetConfigurator : JSConfigurator, TargetConfigurator, SingleCoexistenceTargetConfigurator, ModuleConfiguratorWithSettings
 
-internal fun JsTargetConfigurator.jsCompilerParam(
-    reader: Reader,
-    module: Module
-) =
-    reader.settingValue(module, JSConfigurator.compiler)?.let {
-        if (it != JsCompiler.IR) {
-            listOf(it.text)
-        } else emptyList()
-    } ?: emptyList()
-
 enum class JsTargetKind(override val text: String) : DisplayableSettingItem {
     LIBRARY(KotlinNewProjectWizardBundle.message("module.configurator.js.target.settings.kind.library")),
     APPLICATION(KotlinNewProjectWizardBundle.message("module.configurator.js.target.settings.kind.application"))
@@ -119,7 +111,7 @@ object JsBrowserTargetConfigurator : JsTargetConfigurator, ModuleConfiguratorWit
         +DefaultTargetConfigurationIR(
             module.createTargetAccessIr(
                 ModuleSubType.js,
-                jsCompilerParam(this@createTargetIrs, module)
+                paramsWithJsCompiler(module)
             )
         ) {
             browserSubTarget(module, this@createTargetIrs)
@@ -139,13 +131,17 @@ object JsNodeTargetConfigurator : JsTargetConfigurator {
         +DefaultTargetConfigurationIR(
             module.createTargetAccessIr(
                 ModuleSubType.js,
-                jsCompilerParam(this@createTargetIrs, module)
+                paramsWithJsCompiler(module)
             )
         ) {
             nodejsSubTarget(module, this@createTargetIrs)
         }
     }
 }
+
+internal fun Reader.paramsWithJsCompiler(module: Module): List<String> = jsCompilerParam(module)?.let {
+    listOf(it)
+} ?: emptyList()
 
 object CommonTargetConfigurator : TargetConfiguratorWithTests(), SimpleTargetConfigurator, SingleCoexistenceTargetConfigurator {
     override val moduleSubType = ModuleSubType.common
@@ -167,6 +163,7 @@ object JvmTargetConfigurator : JvmModuleConfigurator,
         reader: Reader,
         module: Module
     ): List<BuildSystemIR> = irsList {
+        +super<SimpleTargetConfigurator>.createInnerTargetIrs(reader, module)
         reader {
             inContextOfModuleConfigurator(module) {
                 val targetVersionValue = JvmModuleConfigurator.targetJvmVersion.reference.settingValue.value
@@ -178,6 +175,14 @@ object JvmTargetConfigurator : JvmModuleConfigurator,
                 }
                 if (Settings.javaSupport.reference.settingValue) {
                     "withJava"()
+                }
+            }
+            val testFramework = inContextOfModuleConfigurator(module) { ModuleConfiguratorWithTests.testFramework.reference.settingValue }
+            if (testFramework != KotlinTestFramework.NONE) {
+                testFramework.usePlatform?.let { usePlatform ->
+                    "testRuns[\"test\"].executionTask.configure" {
+                        +"$usePlatform()"
+                    }
                 }
             }
         }
@@ -192,6 +197,7 @@ object JvmTargetConfigurator : JvmModuleConfigurator,
             KotlinNewProjectWizardBundle.message("module.configurator.jvm.setting.java.support"),
             GenerationPhase.PROJECT_GENERATION
         ) {
+            description = KotlinNewProjectWizardBundle.message("module.configurator.jvm.setting.java.support.description")
             defaultValue = value(false)
         }
     }

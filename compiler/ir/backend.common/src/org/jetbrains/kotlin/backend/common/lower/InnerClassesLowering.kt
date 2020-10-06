@@ -46,10 +46,11 @@ class InnerClassesLowering(val context: BackendContext, private val innerClasses
 
             val newConstructor = lowerConstructor(declaration)
             val oldConstructorParameterToNew = innerClassesSupport.primaryConstructorParameterMap(declaration)
+            val variableRemapper = VariableRemapper(oldConstructorParameterToNew)
             for ((oldParam, newParam) in oldConstructorParameterToNew.entries) {
                 newParam.defaultValue = oldParam.defaultValue?.let { oldDefault ->
                     context.irFactory.createExpressionBody(oldDefault.startOffset, oldDefault.endOffset) {
-                        expression = oldDefault.expression.patchDeclarationParents(newConstructor)
+                        expression = oldDefault.expression.transform(variableRemapper, null).patchDeclarationParents(newConstructor)
                     }
                 }
             }
@@ -141,7 +142,7 @@ class InnerClassesMemberBodyLowering(val context: BackendContext, private val in
     private fun IrBody.fixThisReference(irClass: IrClass, container: IrDeclaration) {
         val enclosingFunction: IrDeclaration? = run {
             var current: IrDeclaration? = container
-            while (current != null && current !is IrFunction) {
+            while (current != null && current !is IrFunction && current !is IrClass) {
                 current = current.parent as? IrDeclaration
             }
             current

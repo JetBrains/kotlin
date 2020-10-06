@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 annotation class Simple(val value: String)
 
 fun localCaptured(): Any {

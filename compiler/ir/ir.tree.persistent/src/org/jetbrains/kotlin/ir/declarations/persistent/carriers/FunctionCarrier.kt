@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.declarations.persistent.carriers
 
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -40,19 +40,19 @@ internal interface FunctionCarrier : FunctionBaseCarrier {
 }
 
 internal class FunctionCarrierImpl(
-    override val lastModified: Int,
-    override var parentField: IrDeclarationParent?,
-    override var originField: IrDeclarationOrigin,
-    override var annotationsField: List<IrConstructorCall>,
-    override var returnTypeFieldField: IrType,
-    override var dispatchReceiverParameterField: IrValueParameter?,
-    override var extensionReceiverParameterField: IrValueParameter?,
-    override var bodyField: IrBody?,
-    override var metadataField: MetadataSource?,
-    override var visibilityField: Visibility,
-    override var typeParametersField: List<IrTypeParameter>,
-    override var valueParametersField: List<IrValueParameter>,
-    override var correspondingPropertySymbolField: IrPropertySymbol?,
-    override var overriddenSymbolsField: List<IrSimpleFunctionSymbol>,
-    override var attributeOwnerIdField: IrAttributeContainer
+        override val lastModified: Int,
+        override var parentField: IrDeclarationParent?,
+        override var originField: IrDeclarationOrigin,
+        override var annotationsField: List<IrConstructorCall>,
+        override var returnTypeFieldField: IrType,
+        override var dispatchReceiverParameterField: IrValueParameter?,
+        override var extensionReceiverParameterField: IrValueParameter?,
+        override var bodyField: IrBody?,
+        override var metadataField: MetadataSource?,
+        override var visibilityField: DescriptorVisibility,
+        override var typeParametersField: List<IrTypeParameter>,
+        override var valueParametersField: List<IrValueParameter>,
+        override var correspondingPropertySymbolField: IrPropertySymbol?,
+        override var overriddenSymbolsField: List<IrSimpleFunctionSymbol>,
+        override var attributeOwnerIdField: IrAttributeContainer
 ) : FunctionCarrier

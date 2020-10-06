@@ -1,11 +1,12 @@
-public final class AnnotatedParameterInInnerClassConstructor {
-    public AnnotatedParameterInInnerClassConstructor() { /* compiled code */ }
+public final class AnnotatedParameterInInnerClassConstructor /* test.AnnotatedParameterInInnerClassConstructor*/ {
+  public  AnnotatedParameterInInnerClassConstructor();//  .ctor()
 
-    public final class Inner {
-        public Inner(@test.Anno(x = "a") @org.jetbrains.annotations.NotNull java.lang.String a, @test.Anno(x = "b") @org.jetbrains.annotations.NotNull java.lang.String b) { /* compiled code */ }
-    }
 
-    public final class InnerGeneric <T> {
-        public InnerGeneric(@test.Anno(x = "a") T a, @test.Anno(x = "b") @org.jetbrains.annotations.NotNull java.lang.String b) { /* compiled code */ }
-    }
-}
+
+public final class Inner /* test.AnnotatedParameterInInnerClassConstructor.Inner*/ {
+  public  Inner(@org.jetbrains.annotations.NotNull() @test.Anno(x = "a") java.lang.String, @org.jetbrains.annotations.NotNull() @test.Anno(x = "b") java.lang.String);//  .ctor(java.lang.String, java.lang.String)
+
+}public final class InnerGeneric /* test.AnnotatedParameterInInnerClassConstructor.InnerGeneric*/<T>  {
+  public  InnerGeneric(@test.Anno(x = "a") T, @org.jetbrains.annotations.NotNull() @test.Anno(x = "b") java.lang.String);//  .ctor(T, java.lang.String)
+
+}}

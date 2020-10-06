@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
-import org.jetbrains.kotlin.load.java.AnnotationTypeQualifierResolver
+import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType
 import org.jetbrains.kotlin.load.java.descriptors.NullDefaultValue
 import org.jetbrains.kotlin.load.java.descriptors.StringDefaultValue
 import org.jetbrains.kotlin.load.java.typeEnhancement.*
@@ -47,7 +47,7 @@ class FirSignatureEnhancement(
     private val javaTypeParameterStack: JavaTypeParameterStack =
         if (owner is FirJavaClass) owner.javaTypeParameterStack else JavaTypeParameterStack.EMPTY
 
-    private val jsr305State: Jsr305State = session.jsr305State ?: Jsr305State.DEFAULT
+    private val jsr305State: Jsr305State = session.jsr305StateContainer.jsr305State
 
     private val typeQualifierResolver = FirAnnotationTypeQualifierResolver(session, jsr305State)
 
@@ -102,14 +102,20 @@ class FirSignatureEnhancement(
                     isStatic = firElement.isStatic
                     annotations += firElement.annotations
                     status = firElement.status
+                    initializer = firElement.initializer
                 }
                 return symbol
             }
             is FirSyntheticProperty -> {
                 val accessorSymbol = firElement.symbol
-                val enhancedFunctionSymbol = enhanceMethod(
-                    firElement.getter.delegate, accessorSymbol.accessorId, accessorSymbol.accessorId.callableName
-                )
+                val getterDelegate = firElement.getter.delegate
+                val enhancedFunctionSymbol = if (getterDelegate is FirJavaMethod) {
+                    enhanceMethod(
+                        getterDelegate, accessorSymbol.accessorId, accessorSymbol.accessorId.callableName
+                    )
+                } else {
+                    getterDelegate.symbol
+                }
                 return buildSyntheticProperty {
                     session = this@FirSignatureEnhancement.session
                     this.name = name
@@ -317,14 +323,12 @@ class FirSignatureEnhancement(
             typeContainer = owner, isCovariant = true,
             containerContext = memberContext,
             containerApplicabilityType =
-            if (owner is FirJavaField) AnnotationTypeQualifierResolver.QualifierApplicabilityType.FIELD
-            else AnnotationTypeQualifierResolver.QualifierApplicabilityType.METHOD_RETURN_TYPE,
+            if (owner is FirJavaField) AnnotationQualifierApplicabilityType.FIELD
+            else AnnotationQualifierApplicabilityType.METHOD_RETURN_TYPE,
             typeInSignature = TypeInSignature.Return
         ).enhance(session, jsr305State, predefinedEnhancementInfo?.returnTypeInfo)
         return signatureParts.type
     }
-
-    private val overrideBindCache = mutableMapOf<Name, Map<FirCallableSymbol<*>?, List<FirCallableSymbol<*>>>>()
 
     private sealed class TypeInSignature {
         abstract fun getTypeRef(member: FirCallableMemberDeclaration<*>): FirTypeRef
@@ -364,7 +368,7 @@ class FirSignatureEnhancement(
         parameterContainer?.let {
             methodContext.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, jsr305State, it.annotations)
         } ?: methodContext,
-        AnnotationTypeQualifierResolver.QualifierApplicabilityType.VALUE_PARAMETER,
+        AnnotationQualifierApplicabilityType.VALUE_PARAMETER,
         typeInSignature
     )
 
@@ -374,7 +378,7 @@ class FirSignatureEnhancement(
         typeContainer: FirAnnotationContainer?,
         isCovariant: Boolean,
         containerContext: FirJavaEnhancementContext,
-        containerApplicabilityType: AnnotationTypeQualifierResolver.QualifierApplicabilityType,
+        containerApplicabilityType: AnnotationQualifierApplicabilityType,
         typeInSignature: TypeInSignature
     ): EnhancementSignatureParts {
         val typeRef = typeInSignature.getTypeRef(this)

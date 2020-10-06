@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
+import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.mapTypeParameters
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -139,18 +142,37 @@ abstract class DataClassMembersGenerator(
             }.let { symbolTable.referenceSimpleFunction(it) }
 
         fun generateHashCodeMethodBody(properties: List<PropertyDescriptor>) {
-            val irIntType = context.irBuiltIns.intType
-            var result: IrExpression? = null
-            for (property in properties) {
-                val hashCodeOfProperty = getHashCodeOfProperty(property)
-                result = if (result == null) {
-                    hashCodeOfProperty
-                } else {
-                    val shiftedResult = irCallOp(intTimesSymbol, irIntType, result, irInt(31))
-                    irCallOp(intPlusSymbol, irIntType, shiftedResult, hashCodeOfProperty)
-                }
+            if (properties.isEmpty()) {
+                +irReturn(irInt(0))
+                return
+            } else if (properties.size == 1) {
+                +irReturn(getHashCodeOfProperty(properties[0]))
+                return
             }
-            +irReturn(result ?: irInt(0))
+
+            val irIntType = context.irBuiltIns.intType
+
+            val resultVarDescriptor = WrappedVariableDescriptor()
+            val irResultVar = IrVariableImpl(
+                startOffset, endOffset,
+                IrDeclarationOrigin.DEFINED,
+                IrVariableSymbolImpl(resultVarDescriptor),
+                Name.identifier("result"), irIntType,
+                isVar = true, isConst = false, isLateinit = false
+            ).also {
+                resultVarDescriptor.bind(it)
+                it.parent = irFunction
+                it.initializer = getHashCodeOfProperty(properties[0])
+            }
+            +irResultVar
+
+            for (property in properties.drop(1)) {
+                val shiftedResult = irCallOp(intTimesSymbol, irIntType, irGet(irResultVar), irInt(31))
+                val irRhs = irCallOp(intPlusSymbol, irIntType, shiftedResult, getHashCodeOfProperty(property))
+                +irSetVar(irResultVar.symbol, irRhs)
+            }
+
+            +irReturn(irGet(irResultVar))
         }
 
         private fun getHashCodeOfProperty(property: PropertyDescriptor): IrExpression {

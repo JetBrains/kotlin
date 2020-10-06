@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.resolve
 
+import com.intellij.codeInsight.completion.CompletionUtilCore
 import com.intellij.psi.impl.source.DummyHolder
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.isLibraryToSourceAnalysisEnabled
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
@@ -35,6 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.CallExpressionElement
 import org.jetbrains.kotlin.resolve.calls.checkers.UnderscoreUsageChecker
 import org.jetbrains.kotlin.resolve.calls.unrollToLeftMostQualifiedExpression
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.scopes.CompositePrioritizedImportingScope
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
@@ -216,6 +219,31 @@ class QualifiedExpressionResolver(val languageVersionSettings: LanguageVersionSe
     }
 
     fun processImportReference(
+        importDirective: KtImportInfo,
+        moduleDescriptor: ModuleDescriptor,
+        trace: BindingTrace,
+        excludedImportNames: Collection<FqName>,
+        packageFragmentForVisibilityCheck: PackageFragmentDescriptor?
+    ): ImportingScope? {
+        fun processReferenceInContextOf(moduleDescriptor: ModuleDescriptor): ImportingScope? =
+            doProcessImportReference(
+                importDirective,
+                moduleDescriptor,
+                trace,
+                excludedImportNames,
+                packageFragmentForVisibilityCheck
+            )
+
+        val primaryImportingScope = processReferenceInContextOf(moduleDescriptor)
+        if (!languageVersionSettings.isLibraryToSourceAnalysisEnabled) return primaryImportingScope
+
+        val resolutionAnchor = moduleDescriptor.getResolutionAnchorIfAny() ?: return primaryImportingScope
+        val anchorImportingScope = processReferenceInContextOf(resolutionAnchor) ?: return primaryImportingScope
+        if (primaryImportingScope == null) return anchorImportingScope
+        return CompositePrioritizedImportingScope(anchorImportingScope, primaryImportingScope)
+    }
+
+    private fun doProcessImportReference(
         importDirective: KtImportInfo,
         moduleDescriptor: ModuleDescriptor,
         trace: BindingTrace,
@@ -546,6 +574,9 @@ class QualifiedExpressionResolver(val languageVersionSettings: LanguageVersionSe
         context: ExpressionTypingContext
     ): Qualifier? {
         val name = expression.getReferencedNameAsName()
+        if (!expression.isPhysical && !name.isSpecial && name.asString().endsWith(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED)) {
+            return null
+        }
 
         val location = KotlinLookupLocation(expression)
         val qualifierDescriptor = when (receiver) {
@@ -811,10 +842,10 @@ internal fun isVisible(
 
     val visibility = descriptor.visibility
     if (position == QualifierPosition.IMPORT) {
-        if (Visibilities.isPrivate(visibility)) return Visibilities.inSameFile(descriptor, shouldBeVisibleFrom)
+        if (DescriptorVisibilities.isPrivate(visibility)) return DescriptorVisibilities.inSameFile(descriptor, shouldBeVisibleFrom)
         if (!visibility.mustCheckInImports()) return true
     }
-    return Visibilities.isVisibleIgnoringReceiver(descriptor, shouldBeVisibleFrom)
+    return DescriptorVisibilities.isVisibleIgnoringReceiver(descriptor, shouldBeVisibleFrom)
 }
 
 internal enum class QualifierPosition {

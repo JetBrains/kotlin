@@ -37,6 +37,7 @@ fun box(): String {
     // a::someFunction parameter has type of Nothing
     // while it's completely safe to pass a lambda for a SAM
     // since Hello is effectively contravariant by its parameter
+    // NB: this ^ is not supported by FIR yet
     a.someFunction {
         result = it
     }

@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.ir.declarations.persistent.carriers
 
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.types.IrType
 
 internal interface LocalDelegatedPropertyCarrier : DeclarationCarrier {
+    var typeField: IrType
     var delegateField: IrVariable?
     var getterField: IrFunction?
     var setterField: IrFunction?
@@ -20,6 +22,7 @@ internal interface LocalDelegatedPropertyCarrier : DeclarationCarrier {
             parentField,
             originField,
             annotationsField,
+            typeField,
             delegateField,
             getterField,
             setterField,
@@ -33,6 +36,7 @@ internal class LocalDelegatedPropertyCarrierImpl(
     override var parentField: IrDeclarationParent?,
     override var originField: IrDeclarationOrigin,
     override var annotationsField: List<IrConstructorCall>,
+    override var typeField: IrType,
     override var delegateField: IrVariable?,
     override var getterField: IrFunction?,
     override var setterField: IrFunction?,

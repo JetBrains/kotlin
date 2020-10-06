@@ -142,7 +142,7 @@ fun Call.resolveCandidates(
 
     if (filterOutByVisibility) {
         candidates = candidates.filter {
-            Visibilities.isVisible(it.getDispatchReceiverWithSmartCast(), it.resultingDescriptor, inDescriptor)
+            DescriptorVisibilities.isVisible(it.getDispatchReceiverWithSmartCast(), it.resultingDescriptor, inDescriptor)
         }
     }
 

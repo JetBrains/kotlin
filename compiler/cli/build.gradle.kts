@@ -24,6 +24,7 @@ dependencies {
     compile(project(":compiler:fir:resolve"))
     compile(project(":compiler:fir:jvm"))
     compile(project(":compiler:fir:java"))
+    implementation(project(":compiler:fir:entrypoint"))
     compile(project(":compiler:fir:fir2ir"))
     compile(project(":compiler:fir:fir2ir:jvm-backend"))
     compile(project(":compiler:fir:checkers"))
@@ -54,9 +55,9 @@ sourceSets {
 
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
     kotlinOptions {
-        languageVersion = "1.2"
-        apiVersion = "1.2"
-        freeCompilerArgs += "-Xskip-metadata-version-check"
+        languageVersion = "1.3"
+        apiVersion = "1.3"
+        freeCompilerArgs += "-Xskip-prerelease-check"
     }
 }
 

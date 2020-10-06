@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // FILE: test.kt
 
 fun checkNotEqual(x: Any, y: Any) {

@@ -482,11 +482,6 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/kt24343.kt");
         }
 
-        @TestMetadata("kt34905.kt")
-        public void testKt34905() throws Exception {
-            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/kt34905.kt");
-        }
-
         @TestMetadata("lambdaToInlineFold.kt")
         public void testLambdaToInlineFold() throws Exception {
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/lambdaToInlineFold.kt");
@@ -610,6 +605,11 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         @TestMetadata("soInlineLibFun.kt")
         public void testSoInlineLibFun() throws Exception {
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/soInlineLibFun.kt");
+        }
+
+        @TestMetadata("soInlineLibFunInWhen.kt")
+        public void testSoInlineLibFunInWhen() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/soInlineLibFunInWhen.kt");
         }
 
         @TestMetadata("soInlineOperatorIterator.kt")

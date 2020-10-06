@@ -44,6 +44,7 @@ class SimpleNodeJsTemplate : Template() {
         GenerationPhase.PROJECT_GENERATION
     ) {
         defaultValue = value(false)
+        description = KotlinNewProjectWizardBundle.message("module.template.simple.nodejs.use.kotlinx.nodejs.description")
     }
 
     override val settings: List<TemplateSetting<*, *>> = listOf(useKotlinxNodejs)

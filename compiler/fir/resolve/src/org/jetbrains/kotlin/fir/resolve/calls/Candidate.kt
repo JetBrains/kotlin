@@ -17,8 +17,10 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
+import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.PostponedResolvedAtom
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
@@ -37,6 +39,7 @@ data class CallInfo(
     val explicitReceiver: FirExpression?,
     val argumentList: FirArgumentList,
     val isPotentialQualifierPart: Boolean,
+    val isImplicitInvoke: Boolean,
 
     val typeArguments: List<FirTypeProjection>,
     val session: FirSession,
@@ -73,43 +76,34 @@ data class CallInfo(
         )
 }
 
-enum class CandidateApplicability {
-    HIDDEN,
-    WRONG_RECEIVER,
-    PARAMETER_MAPPING_ERROR,
-    INAPPLICABLE,
-    SYNTHETIC_RESOLVED,
-    RESOLVED_LOW_PRIORITY,
-    RESOLVED
-}
-
 class Candidate(
     val symbol: AbstractFirBasedSymbol<*>,
     val dispatchReceiverValue: ReceiverValue?,
     val implicitExtensionReceiverValue: ImplicitReceiverValue<*>?,
     val explicitReceiverKind: ExplicitReceiverKind,
-    val bodyResolveComponents: BodyResolveComponents,
+    val constraintSystemFactory: InferenceComponents.ConstraintSystemFactory,
     private val baseSystem: ConstraintStorage,
-    val callInfo: CallInfo
+    val callInfo: CallInfo,
+    val originScope: FirScope?,
 ) {
 
     var systemInitialized: Boolean = false
-    val system: NewConstraintSystemImpl by lazy {
-        val system = bodyResolveComponents.inferenceComponents.createConstraintSystem()
+    val system: NewConstraintSystemImpl by lazy(LazyThreadSafetyMode.NONE) {
+        val system = constraintSystemFactory.createConstraintSystem()
         system.addOtherSystem(baseSystem)
         systemInitialized = true
         system
     }
-
-    val samResolver get() = bodyResolveComponents.samResolver
 
     lateinit var substitutor: ConeSubstitutor
     lateinit var freshVariables: List<ConeTypeVariable>
     var resultingTypeForCallableReference: ConeKotlinType? = null
     var outerConstraintBuilderEffect: (ConstraintSystemOperation.() -> Unit)? = null
     var usesSAM: Boolean = false
+    var usesSuspendConversion: Boolean = false
 
-    var argumentMapping: Map<FirExpression, FirValueParameter>? = null
+    var argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>? = null
+    var numDefaults: Int = 0
     lateinit var typeArgumentMapping: TypeArgumentMapping
     val postponedAtoms = mutableListOf<PostponedResolvedAtom>()
 

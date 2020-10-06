@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 class IrFunctionExpressionImpl(
     override val startOffset: Int,
     override val endOffset: Int,
-    override val type: IrType,
+    override var type: IrType,
     override var function: IrSimpleFunction,
     override val origin: IrStatementOrigin
 ) : IrFunctionExpression() {

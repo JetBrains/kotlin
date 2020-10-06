@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.backend.wasm.ast.WasmExport
 import org.jetbrains.kotlin.backend.wasm.ast.WasmModule
 import org.jetbrains.kotlin.backend.wasm.ast.wasmModuleToWat
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.jsAssignment
 import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
 import org.jetbrains.kotlin.ir.declarations.*
@@ -58,7 +58,7 @@ class IrModuleToWasm(private val backendContext: WasmBackendContext) {
         if (declaration !is IrDeclarationWithVisibility ||
             declaration !is IrDeclarationWithName ||
             declaration !is IrSimpleFunction ||
-            declaration.visibility != Visibilities.PUBLIC
+            declaration.visibility != DescriptorVisibilities.PUBLIC
         ) {
             return null
         }

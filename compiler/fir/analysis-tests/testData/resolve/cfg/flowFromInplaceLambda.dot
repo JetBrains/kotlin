@@ -25,8 +25,8 @@ digraph flowFromInplaceLambda_kt {
             5 [label="Enter block"];
             6 [label="Access variable R|<local>/x|"];
             7 [label="Const: Int(0)"];
-            8 [label="Function call: R|<local>/x|.R|FakeOverride<kotlin/Array.get: R|K|>|(...)"];
-            9 [label="Jump: ^select R|<local>/x|.R|FakeOverride<kotlin/Array.get: R|K|>|(Int(0))"];
+            8 [label="Function call: R|<local>/x|.R|FakeOverride<kotlin/Array.get: R|CapturedType(out K)|>|(...)"];
+            9 [label="Jump: ^select R|<local>/x|.R|FakeOverride<kotlin/Array.get: R|CapturedType(out K)|>|(Int(0))"];
             10 [label="Stub" style="filled" fillcolor=gray];
             11 [label="Exit block" style="filled" fillcolor=gray];
         }

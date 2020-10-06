@@ -1,17 +1,21 @@
-public final class A {
-    private final int i;
-    private final java.lang.String i$1;
-    private final java.lang.String j;
-    private final java.lang.String j$1;
+public final class A /* A*/ {
+  private final int i;
 
-    public final void f(int i, double s) { /* compiled code */ }
+  private final java.lang.String i$1;
 
-    public final void f(int i, double s) { /* compiled code */ }
+  private final java.lang.String j$1;
 
-    public final int g(int i, double s) { /* compiled code */ }
+  private final java.lang.String j;
 
-    @org.jetbrains.annotations.NotNull
-    public final java.lang.String g(int s, double i) { /* compiled code */ }
+  @org.jetbrains.annotations.NotNull()
+  public final java.lang.String g(int, double);//  g(int, double)
 
-    public A() { /* compiled code */ }
+  public  A();//  .ctor()
+
+  public final int g(int, double);//  g(int, double)
+
+  public final void f(int, double);//  f(int, double)
+
+  public final void f(int, double);//  f(int, double)
+
 }

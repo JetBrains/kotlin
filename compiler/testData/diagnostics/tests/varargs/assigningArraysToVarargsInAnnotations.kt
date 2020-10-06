@@ -33,7 +33,7 @@ fun jTest1() {}
 @JavaAnn(value = ["value"])
 fun jTest2() {}
 
-@JavaAnn(value = ["value"], path = ["path"])
+@JavaAnn(<!NI;CHANGING_ARGUMENTS_EXECUTION_ORDER_FOR_NAMED_VARARGS!>value = ["value"]<!>, path = ["path"])
 fun jTest3() {}
 
 

@@ -1,6 +1,7 @@
 @kotlin.Metadata
 synthetic final class SuspendMainKt$main$2 {
     // source: 'suspendMain.kt'
+    enclosing method SuspendMainKt.main([Ljava/lang/String;)V
     private synthetic field args: java.lang.String[]
     inner (anonymous) class SuspendMainKt$main$2
     method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String[]): void

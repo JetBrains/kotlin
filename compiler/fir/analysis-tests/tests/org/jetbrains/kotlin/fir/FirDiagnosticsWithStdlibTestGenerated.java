@@ -128,6 +128,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/getOnKProperty.kt");
     }
 
+    @TestMetadata("getOrPutAmbiguity.kt")
+    public void testGetOrPutAmbiguity() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/getOrPutAmbiguity.kt");
+    }
+
     @TestMetadata("hashMapTypeAlias.kt")
     public void testHashMapTypeAlias() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/hashMapTypeAlias.kt");
@@ -842,6 +847,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/builderInference.kt");
         }
 
+        @TestMetadata("builderInferenceAndCoercionToUnit.kt")
+        public void testBuilderInferenceAndCoercionToUnit() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/builderInferenceAndCoercionToUnit.kt");
+        }
+
         @TestMetadata("builderInferenceFromStdlib.kt")
         public void testBuilderInferenceFromStdlib() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/builderInferenceFromStdlib.kt");
@@ -1182,6 +1192,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
 
         public void testAllFilesPresentInProblems() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("DeepCopyIrTree.kt")
+        public void testDeepCopyIrTree() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/DeepCopyIrTree.kt");
         }
 
         @TestMetadata("invokePriority.kt")

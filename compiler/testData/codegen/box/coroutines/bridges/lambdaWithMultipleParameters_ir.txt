@@ -2,6 +2,7 @@
 @kotlin.Metadata
 final class LambdaWithMultipleParametersKt$box$1$1 {
     // source: 'lambdaWithMultipleParameters.kt'
+    enclosing method LambdaWithMultipleParametersKt$box$1.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
     synthetic field a: java.lang.String
     synthetic field b: long
     synthetic field c: long
@@ -20,6 +21,7 @@ final class LambdaWithMultipleParametersKt$box$1$1 {
 @kotlin.Metadata
 final class LambdaWithMultipleParametersKt$box$1 {
     // source: 'lambdaWithMultipleParameters.kt'
+    enclosing method LambdaWithMultipleParametersKt.box()Ljava/lang/String;
     synthetic final field $res: kotlin.jvm.internal.Ref$ObjectRef
     field L$0: java.lang.Object
     field label: int

@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 open class Base
 
 class Test

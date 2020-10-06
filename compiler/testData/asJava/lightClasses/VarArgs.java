@@ -1,7 +1,8 @@
-public final class C {
-    public final void f(@org.jetbrains.annotations.NotNull int... i) { /* compiled code */ }
+public final class C /* C*/ {
+  public  C();//  .ctor()
 
-    public final void p(int i, @org.jetbrains.annotations.NotNull java.lang.String... s) { /* compiled code */ }
+  public final /* vararg */ void f(@org.jetbrains.annotations.NotNull() int...);//  f(int[])
 
-    public C() { /* compiled code */ }
+  public final /* vararg */ void p(int, @org.jetbrains.annotations.NotNull() java.lang.String...);//  p(int, java.lang.String[])
+
 }

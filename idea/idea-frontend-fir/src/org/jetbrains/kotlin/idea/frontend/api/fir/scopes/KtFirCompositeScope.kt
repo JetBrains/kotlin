@@ -9,8 +9,9 @@ import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtCompositeScope
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScope
+import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassLikeSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.name.Name
@@ -34,9 +35,9 @@ class KtFirCompositeScope(
         }
     }
 
-    override fun getClassLikeSymbolNames(): Set<Name> = withValidityAssertion {
+    override fun getClassifierNames(): Set<Name> = withValidityAssertion {
         buildSet {
-            subScopes.flatMapTo(this) { it.getClassLikeSymbolNames() }
+            subScopes.flatMapTo(this) { it.getClassifierNames() }
         }
     }
 
@@ -46,15 +47,15 @@ class KtFirCompositeScope(
         }
     }
 
-    override fun getCallableSymbols(): Sequence<KtCallableSymbol> = withValidityAssertion {
+    override fun getCallableSymbols(nameFilter: KtScopeNameFilter): Sequence<KtCallableSymbol> = withValidityAssertion {
         sequence {
-            subScopes.forEach { yieldAll(it.getCallableSymbols()) }
+            subScopes.forEach { yieldAll(it.getCallableSymbols(nameFilter)) }
         }
     }
 
-    override fun getClassClassLikeSymbols(): Sequence<KtClassLikeSymbol> = withValidityAssertion {
+    override fun getClassifierSymbols(nameFilter: KtScopeNameFilter): Sequence<KtClassifierSymbol> = withValidityAssertion {
         sequence {
-            subScopes.forEach { yieldAll(it.getClassClassLikeSymbols()) }
+            subScopes.forEach { yieldAll(it.getClassifierSymbols(nameFilter)) }
         }
     }
 

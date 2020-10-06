@@ -7,9 +7,9 @@ fun fooShort(p: Short) = p
 
 fun test() {
     fooInt(1 % 1)
-    fooByte(1 % 1)
-    fooLong(1 % 1)
-    fooShort(1 % 1)
+    <!INAPPLICABLE_CANDIDATE!>fooByte<!>(1 % 1)
+    <!INAPPLICABLE_CANDIDATE!>fooLong<!>(1 % 1)
+    <!INAPPLICABLE_CANDIDATE!>fooShort<!>(1 % 1)
 }
 
 public operator fun Int.rem(other: Int): Int = 0

@@ -33,7 +33,7 @@ internal class PersistentIrLocalDelegatedProperty(
     origin: IrDeclarationOrigin,
     override val symbol: IrLocalDelegatedPropertySymbol,
     override val name: Name,
-    override val type: IrType,
+    type: IrType,
     override val isVar: Boolean
 ) :
     PersistentIrDeclarationBase<LocalDelegatedPropertyCarrier>,
@@ -57,6 +57,16 @@ internal class PersistentIrLocalDelegatedProperty(
     @ObsoleteDescriptorBasedAPI
     override val descriptor: VariableDescriptorWithAccessors
         get() = symbol.descriptor
+
+    override var typeField: IrType = type
+
+    override var type: IrType
+        get() = getCarrier().typeField
+        set(v) {
+            if (getCarrier().typeField !== v) {
+                setCarrier().typeField = v
+            }
+        }
 
     override var delegateField: IrVariable? = null
 

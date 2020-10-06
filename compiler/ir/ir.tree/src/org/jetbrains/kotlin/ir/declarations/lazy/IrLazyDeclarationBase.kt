@@ -41,7 +41,7 @@ interface IrLazyDeclarationBase : IrDeclaration {
 
     fun generateChildStubs(descriptors: Collection<DeclarationDescriptor>, declarations: MutableList<IrDeclaration>) {
         descriptors.mapNotNullTo(declarations) { descriptor ->
-            if (descriptor is DeclarationDescriptorWithVisibility && Visibilities.isPrivate(descriptor.visibility)) null
+            if (descriptor is DeclarationDescriptorWithVisibility && DescriptorVisibilities.isPrivate(descriptor.visibility)) null
             else stubGenerator.generateMemberStub(descriptor)
         }
     }

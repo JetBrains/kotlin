@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import java.io.File
+import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
 abstract class AbstractBytecodeListingTest : CodegenTestCase() {
@@ -29,9 +30,7 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
             prefixes.firstNotNullResult { File(wholeFile.parentFile, wholeFile.nameWithoutExtension + "$it.txt").takeIf(File::exists) }
                 .sure { "No testData file exists: ${wholeFile.nameWithoutExtension}.txt" }
 
-        KotlinTestUtils.assertEqualsToFile(txtFile, actualTxt) {
-            it.replace("COROUTINES_PACKAGE", coroutinesPackage)
-        }
+        KotlinTestUtils.assertEqualsToFile(txtFile, actualTxt)
     }
 
     private fun isWithSignatures(wholeFile: File): Boolean =
@@ -271,6 +270,16 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
         className = name
         classAccess = access
         classSignature = signature
+    }
+
+    override fun visitOuterClass(owner: String, name: String?, descriptor: String?) {
+        if (name == null) {
+            assertNull(descriptor)
+            declarationsInsideClass.add(Declaration("enclosing class $owner"))
+        } else {
+            assertNotNull(descriptor)
+            declarationsInsideClass.add(Declaration("enclosing method $owner.$name$descriptor"))
+        }
     }
 
     override fun visitInnerClass(name: String, outerName: String?, innerName: String?, access: Int) {

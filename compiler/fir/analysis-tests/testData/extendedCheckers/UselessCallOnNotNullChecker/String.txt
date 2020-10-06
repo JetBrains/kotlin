@@ -1,0 +1,5 @@
+FILE: String.kt
+    public final val s: R|kotlin/String| = String()
+        public get(): R|kotlin/String|
+    public final val s1: R|kotlin/String| = R|/s|.R|kotlin/text/orEmpty|()
+        public get(): R|kotlin/String|

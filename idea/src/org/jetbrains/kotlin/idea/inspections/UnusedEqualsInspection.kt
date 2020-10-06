@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
-import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.idea.KotlinBundle
@@ -21,15 +20,10 @@ class UnusedEqualsInspection : AbstractKotlinInspection() {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : KtVisitorVoid() {
-            private fun reportIfNotUsedAsExpression(expression: KtExpression, target: KtExpression) {
+            private fun reportIfNotUsedAsExpression(expression: KtExpression) {
                 val context = expression.analyze()
                 if (!expression.isUsedAsExpression(context)) {
-                    holder.registerProblem(
-                        target,
-                        KotlinBundle.message("unused.equals.expression"),
-                        ProblemHighlightType.LIKE_UNUSED_SYMBOL
-                    )
-
+                    holder.registerProblem(expression, KotlinBundle.message("unused.equals.expression"))
                 }
             }
 
@@ -38,7 +32,7 @@ class UnusedEqualsInspection : AbstractKotlinInspection() {
                 if (expression.operationToken == KtTokens.EQEQ &&
                     (expression.parent is KtBlockExpression || expression.parent.parent is KtIfExpression)
                 ) {
-                    reportIfNotUsedAsExpression(expression, expression.operationReference)
+                    reportIfNotUsedAsExpression(expression)
                 }
             }
 
@@ -49,7 +43,7 @@ class UnusedEqualsInspection : AbstractKotlinInspection() {
                 if (calleeExpression.getReferencedNameAsName() != OperatorNameConventions.EQUALS) return
 
                 if (!expression.isAnyEquals()) return
-                reportIfNotUsedAsExpression(expression.getQualifiedExpressionForSelectorOrThis(), calleeExpression)
+                reportIfNotUsedAsExpression(expression.getQualifiedExpressionForSelectorOrThis())
             }
         }
     }

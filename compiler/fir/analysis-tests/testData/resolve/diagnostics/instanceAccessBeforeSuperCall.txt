@@ -47,14 +47,14 @@ FILE: instanceAccessBeforeSuperCall.kt
     public final fun main(): R|kotlin/Unit| {
         lval x1: R|kotlin/String.() -> kotlin/String| = when () {
             Boolean(true) ->  {
-                fun <anonymous>(it: R|kotlin/String|): R|ERROR CLASS: 'this' is not defined in this context| {
-                    ^ this#
+                fun R|kotlin/String|.<anonymous>(): R|kotlin/String| {
+                    ^ this@R|special/anonymous|
                 }
 
             }
             else ->  {
-                fun <anonymous>(it: R|kotlin/String|): R|ERROR CLASS: 'this' is not defined in this context| {
-                    ^ this#
+                fun R|kotlin/String|.<anonymous>(): R|kotlin/String| {
+                    ^ this@R|special/anonymous|
                 }
 
             }

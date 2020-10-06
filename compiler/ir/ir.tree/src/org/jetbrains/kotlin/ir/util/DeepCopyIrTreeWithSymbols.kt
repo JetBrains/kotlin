@@ -308,7 +308,7 @@ open class DeepCopyIrTreeWithSymbols(
     override fun visitTypeParameter(declaration: IrTypeParameter): IrTypeParameter =
         copyTypeParameter(declaration).apply {
             // TODO type parameter scopes?
-            declaration.superTypes.mapTo(superTypes) { it.remapType() }
+            superTypes = declaration.superTypes.map { it.remapType() }
         }
 
     private fun copyTypeParameter(declaration: IrTypeParameter): IrTypeParameter =
@@ -331,7 +331,7 @@ open class DeepCopyIrTreeWithSymbols(
 
         typeRemapper.withinScope(this) {
             for ((thisTypeParameter, otherTypeParameter) in this.typeParameters.zip(other.typeParameters)) {
-                otherTypeParameter.superTypes.mapTo(thisTypeParameter.superTypes) {
+                thisTypeParameter.superTypes = otherTypeParameter.superTypes.map {
                     typeRemapper.remapType(it)
                 }
             }
@@ -552,7 +552,8 @@ open class DeepCopyIrTreeWithSymbols(
             expression.startOffset, expression.endOffset,
             expression.type.remapType(),
             newConstructor,
-            expression.typeArgumentsCount
+            expression.typeArgumentsCount,
+            expression.valueArgumentsCount
         ).apply {
             copyRemappedTypeArgumentsFrom(expression)
             transformValueArguments(expression)

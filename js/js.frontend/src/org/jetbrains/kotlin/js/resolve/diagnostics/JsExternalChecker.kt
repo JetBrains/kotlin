@@ -216,7 +216,7 @@ object JsExternalChecker : DeclarationChecker {
 
     private fun isPrivateMemberOfExternalClass(descriptor: DeclarationDescriptor): Boolean {
         if (descriptor is PropertyAccessorDescriptor && descriptor.visibility == descriptor.correspondingProperty.visibility) return false
-        if (descriptor !is MemberDescriptor || descriptor.visibility != Visibilities.PRIVATE) return false
+        if (descriptor !is MemberDescriptor || descriptor.visibility != DescriptorVisibilities.PRIVATE) return false
 
         val containingDeclaration = descriptor.containingDeclaration as? ClassDescriptor ?: return false
         return AnnotationsUtils.isNativeObject(containingDeclaration)

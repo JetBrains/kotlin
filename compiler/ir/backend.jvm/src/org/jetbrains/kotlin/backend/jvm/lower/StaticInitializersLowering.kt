@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.expressions.IrSetField
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
-import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
 
 class StaticInitializersLowering(override val context: JvmBackendContext) : InitializersLoweringBase(context), ClassLoweringPass {
@@ -43,7 +43,7 @@ class StaticInitializersLowering(override val context: JvmBackendContext) : Init
                 // TODO: mark as synthesized
                 origin = JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER
                 returnType = context.irBuiltIns.unitType
-                visibility = JavaVisibilities.PACKAGE_VISIBILITY
+                visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
             }.apply {
                 body = IrBlockBodyImpl(irClass.startOffset, irClass.endOffset, staticInitializerStatements).patchDeclarationParents(this)
             }

@@ -8,7 +8,7 @@ interface A<R, T: A<R, T>> {
 
 fun testA(a: A<*, *>) {
     a.r().checkType { _<Any?>() }
-    a.t().checkType { <!INAPPLICABLE_CANDIDATE!>_<!><A<*, *>>() }
+    a.t().checkType { _<A<*, *>>() }
 }
 
 interface B<R, T: B<List<R>, T>> {

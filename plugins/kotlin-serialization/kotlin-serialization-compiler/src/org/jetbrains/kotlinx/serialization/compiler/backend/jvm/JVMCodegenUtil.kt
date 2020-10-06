@@ -294,7 +294,7 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(codegen: Class
                 if (serializer.classId == contextSerializerId && serializer.constructors.any { it.valueParameters.size == 3 }) {
                     // append new additional arguments
                     val fallbackDefaultSerializer = findTypeSerializer(module, kType)
-                    if (fallbackDefaultSerializer != null) {
+                    if (fallbackDefaultSerializer != null && fallbackDefaultSerializer != serializer) {
                         instantiate(kType to fallbackDefaultSerializer, writeSignature = false)
                     } else {
                         aconst(null)

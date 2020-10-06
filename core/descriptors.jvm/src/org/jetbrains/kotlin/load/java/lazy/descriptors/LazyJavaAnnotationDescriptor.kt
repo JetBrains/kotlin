@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.findNonGenericClassAcrossDependencies
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME
@@ -47,7 +47,7 @@ class LazyJavaAnnotationDescriptor(
 
     override val type by c.storageManager.createLazyValue {
         val fqName = fqName ?: return@createLazyValue ErrorUtils.createErrorType("No fqName: $javaAnnotation")
-        val annotationClass = JavaToKotlinClassMap.mapJavaToKotlin(fqName, c.module.builtIns)
+        val annotationClass = JavaToKotlinClassMapper.mapJavaToKotlin(fqName, c.module.builtIns)
             ?: javaAnnotation.resolve()?.let { javaClass -> c.components.moduleClassResolver.resolveClass(javaClass) }
             ?: createTypeForMissingDependencies(fqName)
         annotationClass.defaultType

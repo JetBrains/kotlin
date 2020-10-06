@@ -145,7 +145,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 withGetter = true
             }
             default("annotations", "mutableListOf()")
-            defaultFalse("isSuspend")
             useTypes(coneClassErrorTypeType)
         }
 
@@ -371,13 +370,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             useTypes(errorTypeRefImpl, coneStubDiagnosticType)
         }
 
-        impl(resolvedFunctionTypeRef) {
-            default("delegatedTypeRef") {
-                value = "null"
-                withGetter = true
-            }
-        }
-
         impl(errorFunction) {
             defaultNull("receiverTypeRef", "body", withGetter = true)
             default("returnTypeRef", "FirErrorTypeRefImpl(null, diagnostic)")
@@ -434,14 +426,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             kind = OpenClass
         }
 
-        impl(delegatedTypeRef) {
-            listOf("source", "annotations").forEach {
-                default(it) {
-                    delegate = "typeRef"
-                }
-            }
-        }
-
         impl(safeCallExpression) {
             useTypes(safeCallCheckedSubjectType)
         }
@@ -462,7 +446,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         val implementationWithConfigurableTypeRef = listOf(
-            "FirDelegatedTypeRefImpl",
             "FirTypeProjectionWithVarianceImpl",
             "FirCallableReferenceAccessImpl",
             "FirThisReceiverExpressionImpl",
@@ -479,6 +462,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             "FirVarargArgumentsExpressionImpl",
             "FirSafeCallExpressionImpl",
             "FirCheckedSafeCallSubjectImpl",
+            "FirArrayOfCallImpl",
         )
         configureFieldInAllImplementations(
             field = "typeRef",

@@ -23,9 +23,9 @@ pill {
 
 tasks {
     withType<KotlinCompile> {
-        kotlinOptions.languageVersion = "1.2"
-        kotlinOptions.apiVersion = "1.2"
-        kotlinOptions.freeCompilerArgs += listOf("-Xskip-metadata-version-check")
+        kotlinOptions.languageVersion = "1.3"
+        kotlinOptions.apiVersion = "1.3"
+        kotlinOptions.freeCompilerArgs += listOf("-Xskip-prerelease-check")
     }
 
     named<Jar>("jar") {

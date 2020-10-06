@@ -12,12 +12,13 @@ import kotlin.contracts.contract
 fun ConeKotlinType.render(): String {
     val nullabilitySuffix = if (this !is ConeKotlinErrorType && this !is ConeClassErrorType) nullability.suffix else ""
     return when (this) {
-        is ConeTypeVariableType -> "TypeVariable(${this.lookupTag.name})"
+        is ConeTypeVariableType -> "${renderAttributes()}TypeVariable(${this.lookupTag.name})"
         is ConeDefinitelyNotNullType -> "${original.render()}!!"
-        is ConeClassErrorType -> "ERROR CLASS: ${diagnostic.reason}"
-        is ConeCapturedType -> "CapturedType(${constructor.projection.render()})"
+        is ConeClassErrorType -> "${renderAttributes()}ERROR CLASS: ${diagnostic.reason}"
+        is ConeCapturedType -> "${renderAttributes()}CapturedType(${constructor.projection.render()})"
         is ConeClassLikeType -> {
             buildString {
+                append(renderAttributes())
                 append(lookupTag.classId.asString())
                 if (typeArguments.isNotEmpty()) {
                     append(typeArguments.joinToString(prefix = "<", postfix = ">") {
@@ -27,7 +28,7 @@ fun ConeKotlinType.render(): String {
             }
         }
         is ConeLookupTagBasedType -> {
-            lookupTag.name.asString()
+            "${renderAttributes()}${lookupTag.name.asString()}"
         }
         is ConeFlexibleType -> {
             buildString {
@@ -41,13 +42,18 @@ fun ConeKotlinType.render(): String {
         is ConeIntersectionType -> {
             intersectedTypes.joinToString(
                 separator = " & ",
-                prefix = "it(",
+                prefix = "${renderAttributes()}it(",
                 postfix = ")"
             )
         }
-        is ConeStubType -> "Stub: $variable"
-        is ConeIntegerLiteralType -> "ILT: $value"
+        is ConeStubType -> "${renderAttributes()}Stub: $variable"
+        is ConeIntegerLiteralType -> "${renderAttributes()}ILT: $value"
     } + nullabilitySuffix
+}
+
+private fun ConeKotlinType.renderAttributes(): String {
+    if (!attributes.any()) return ""
+    return attributes.joinToString(" ", postfix = " ") { it.toString() }
 }
 
 private fun ConeTypeProjection.render(): String {

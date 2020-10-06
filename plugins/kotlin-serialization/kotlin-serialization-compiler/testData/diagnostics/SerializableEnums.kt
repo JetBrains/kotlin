@@ -19,3 +19,6 @@ object EnumSerializer: KSerializer<ExplicitlyMarkedEnumCustom> {
     override fun serialize(encoder: Encoder, value: ExplicitlyMarkedEnumCustom) = TODO()
     override fun deserialize(decoder: Decoder): ExplicitlyMarkedEnumCustom = TODO()
 }
+
+@Serializable
+data class EnumUsage(val s: SimpleEnum, val m: MarkedNameEnum, val e: ExplicitlyMarkedEnum)

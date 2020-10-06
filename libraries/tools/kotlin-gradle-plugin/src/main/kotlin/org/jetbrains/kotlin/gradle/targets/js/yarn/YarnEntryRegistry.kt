@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
-import com.github.gundy.semver4j.SemVer
+import org.gradle.api.GradleException
 import org.jetbrains.kotlin.gradle.targets.js.npm.FILE_VERSION_PREFIX
+import org.jetbrains.kotlin.gradle.targets.js.npm.includedRange
+import org.jetbrains.kotlin.gradle.targets.js.npm.intersect
 import java.io.File
 
 internal class YarnEntryRegistry(private val lockFile: File) {
@@ -16,21 +18,25 @@ internal class YarnEntryRegistry(private val lockFile: File) {
 
     fun find(packageKey: String, version: String): YarnLock.Entry {
         val key = dependencyKey(packageKey, version)
-        var entry = entryMap[key]
+        val entry = entryMap[key]
 
-        if (entry == null && version == "*") {
-            val searchKey = dependencyKey(packageKey, "")
-            entry = entryMap.entries
-                .filter { it.key.startsWith(searchKey) }
-                .firstOrNull {
-                    SemVer.satisfies(it.key.removePrefix(searchKey), "*")
+        if (entry != null) {
+            return entry
+        }
+
+        entryMap.entries
+            .firstOrNull { (_, entry) ->
+                if (entry.version == null) {
+                    false
+                } else {
+                    (includedRange(version) intersect includedRange(entry.version)) != null
                 }
-                ?.value
-        }
+            }
+            ?.let { return it.value }
 
-        return checkNotNull(entry) {
+        throw GradleException(
             "Cannot find $key in yarn.lock"
-        }
+        )
     }
 
     private val YarnLock.Entry.dependencyKey: String

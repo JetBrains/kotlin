@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // LANGUAGE: +InlineClasses
 import kotlin.reflect.KProperty
 

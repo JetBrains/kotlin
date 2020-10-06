@@ -5,25 +5,20 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructor
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolved
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
-import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
-import org.jetbrains.kotlin.fir.scopes.scope
+import org.jetbrains.kotlin.fir.scopes.scopeForClass
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 
 private operator fun <T> Pair<T, *>?.component1() = this?.first
@@ -69,16 +64,10 @@ internal fun FirScope.processFunctionsAndConstructorsByName(
     processConstructorsByName(
         name, session, bodyResolveComponents,
         includeInnerConstructors = includeInnerConstructors,
-        processor = {
-            with(bodyResolveComponents) { it.phasedFir }
-            processor(it)
-        }
+        processor
     )
 
-    processFunctionsByName(name) {
-        with(bodyResolveComponents) { it.phasedFir }
-        processor(it)
-    }
+    processFunctionsByName(name, processor)
 }
 
 private fun FirScope.getFirstClassifierOrNull(name: Name): Pair<FirClassifierSymbol<*>, ConeSubstitutor>? {
@@ -153,6 +142,7 @@ private fun processConstructors(
         if (matchedSymbol != null) {
             val scope = when (matchedSymbol) {
                 is FirTypeAliasSymbol -> {
+                    matchedSymbol.ensureResolved(FirResolvePhase.TYPES, session)
                     val type = matchedSymbol.fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>().fullyExpandedType(session)
                     val basicScope = type.scope(session, scopeSession)
 
@@ -163,8 +153,8 @@ private fun processConstructors(
                     } else basicScope
                 }
                 is FirClassSymbol ->
-                    (matchedSymbol.fir as FirClass<*>).scope(
-                        substitutor, session, scopeSession, false,
+                    (matchedSymbol.fir as FirClass<*>).scopeForClass(
+                        substitutor, session, scopeSession
                     )
             }
 
@@ -175,8 +165,6 @@ private fun processConstructors(
                 }
             }
         }
-    } catch (e: ProcessCanceledException) {
-        throw e
     } catch (e: Throwable) {
         throw RuntimeException("While processing constructors", e)
     }

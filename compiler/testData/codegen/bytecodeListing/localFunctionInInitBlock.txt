@@ -1,6 +1,7 @@
 @kotlin.Metadata
 final class C$1$1 {
     // source: 'localFunctionInInitBlock.kt'
+    enclosing method C$1.invoke()V
     public final static field INSTANCE: C$1$1
     inner (anonymous) class C$1
     inner (anonymous) class C$1$1
@@ -13,6 +14,7 @@ final class C$1$1 {
 @kotlin.Metadata
 final class C$1 {
     // source: 'localFunctionInInitBlock.kt'
+    enclosing method C.<init>(I)V
     public final static field INSTANCE: C$1
     inner (anonymous) class C$1
     inner (anonymous) class C$1$1
@@ -25,6 +27,7 @@ final class C$1 {
 @kotlin.Metadata
 final class C$2$1 {
     // source: 'localFunctionInInitBlock.kt'
+    enclosing method C$2.invoke()V
     public final static field INSTANCE: C$2$1
     inner (anonymous) class C$2
     inner (anonymous) class C$2$1
@@ -37,6 +40,7 @@ final class C$2$1 {
 @kotlin.Metadata
 final class C$2 {
     // source: 'localFunctionInInitBlock.kt'
+    enclosing method C.<init>(Ljava/lang/String;)V
     public final static field INSTANCE: C$2
     inner (anonymous) class C$2
     inner (anonymous) class C$2$1
@@ -49,6 +53,7 @@ final class C$2 {
 @kotlin.Metadata
 final class C$3$1 {
     // source: 'localFunctionInInitBlock.kt'
+    enclosing method C$3.invoke()V
     public final static field INSTANCE: C$3$1
     inner (anonymous) class C$3
     inner (anonymous) class C$3$1
@@ -61,6 +66,7 @@ final class C$3$1 {
 @kotlin.Metadata
 final class C$3 {
     // source: 'localFunctionInInitBlock.kt'
+    enclosing method C.<init>()V
     public final static field INSTANCE: C$3
     inner (anonymous) class C$3
     inner (anonymous) class C$3$1
@@ -73,6 +79,7 @@ final class C$3 {
 @kotlin.Metadata
 final class C$test$1 {
     // source: 'localFunctionInInitBlock.kt'
+    enclosing method C.test()V
     public final static field INSTANCE: C$test$1
     inner (anonymous) class C$test$1
     static method <clinit>(): void

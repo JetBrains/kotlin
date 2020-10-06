@@ -1,6 +1,6 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.KtParameter
 // OPTIONS: usages
-
+// FIR_COMPARISON
 data class A(val <caret>a: A?, val n: Int)
 
 fun f(a: A) {

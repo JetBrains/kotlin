@@ -47,10 +47,13 @@ object FirDelegationInInterfaceChecker : FirMemberDeclarationChecker() {
         return -1
     }
 
-    private fun PsiElement.findSuperTypeDelegation() = if (children.isNotEmpty() && children[0] !is PsiErrorElement) {
-        children[0].children.indexOfFirst { it is KtDelegatedSuperTypeEntry }
-    } else {
-        -1
+    private fun PsiElement.findSuperTypeDelegation(): Int {
+        val children = this.children // this is a method call and it collects children
+        return if (children.isNotEmpty() && children[0] !is PsiErrorElement) {
+            children[0].children.indexOfFirst { it is KtDelegatedSuperTypeEntry }
+        } else {
+            -1
+        }
     }
 
     private fun LighterASTNode.findSuperTypeDelegation(tree: FlyweightCapableTreeStructure<LighterASTNode>): Int {

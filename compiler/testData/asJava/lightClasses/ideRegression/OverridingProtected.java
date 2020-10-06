@@ -1,7 +1,8 @@
-public final class C extends p.A {
-    protected int getAp() { /* compiled code */ }
+public final class C /* p.C*/ extends p.A {
+  protected int af();//  af()
 
-    protected int af() { /* compiled code */ }
+  protected int getAp();//  getAp()
 
-    public C() { /* compiled code */ }
+  public  C();//  .ctor()
+
 }

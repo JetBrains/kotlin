@@ -53,12 +53,6 @@ class DeclarationStubGenerator(
             lazyTable.stubGenerator = if (value) this else null
         }
 
-    private lateinit var irProviders_: List<IrProvider>
-
-    fun setIrProviders(value: List<IrProvider>) {
-        irProviders_ = value
-    }
-
     val typeTranslator =
         TypeTranslator(
             lazyTable,
@@ -198,13 +192,11 @@ class DeclarationStubGenerator(
         }
 
         if (createPropertyIfNeeded && descriptor is PropertyGetterDescriptor) {
-            val propertySymbol = symbolTable.referenceProperty(descriptor.correspondingProperty)
-            val property = irProviders_.getDeclaration(propertySymbol) as IrProperty
+            val property = generatePropertyStub(descriptor.correspondingProperty)
             return property.getter!!
         }
         if (createPropertyIfNeeded && descriptor is PropertySetterDescriptor) {
-            val propertySymbol = symbolTable.referenceProperty(descriptor.correspondingProperty)
-            val property = irProviders_.getDeclaration(propertySymbol) as IrProperty
+            val property = generatePropertyStub(descriptor.correspondingProperty)
             return property.setter!!
         }
 

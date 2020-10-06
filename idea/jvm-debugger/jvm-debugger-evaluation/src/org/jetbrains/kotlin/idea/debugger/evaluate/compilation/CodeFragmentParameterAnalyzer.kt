@@ -290,7 +290,7 @@ class CodeFragmentParameterAnalyzer(
             )
         }
 
-        val isLocalTarget = (target as? DeclarationDescriptorWithVisibility)?.visibility == Visibilities.LOCAL
+        val isLocalTarget = (target as? DeclarationDescriptorWithVisibility)?.visibility == DescriptorVisibilities.LOCAL
 
         val isPrimaryConstructorParameter = !isLocalTarget
                 && target is PropertyDescriptor

@@ -1,0 +1,23 @@
+package
+
+public fun main(/*0*/ x: Foo<out kotlin.Number?>, /*1*/ y: Bar<out kotlin.Number?>, /*2*/ z1: Foo<out kotlin.Number>, /*3*/ z2: Bar<out kotlin.Number>): kotlin.Unit
+public fun </*0*/ T : kotlin.Any> Bar<T?>.bar(): T
+public fun </*0*/ T : kotlin.Any> Foo<T>.boo1(): T
+public fun </*0*/ T : kotlin.Any> Foo<T?>.boo2(): T
+public fun </*0*/ T : kotlin.Any> Bar<T>.foo(): T
+
+public open class Bar</*0*/ out K> {
+    public constructor Bar</*0*/ out K>(/*0*/ x: K)
+    public final val x: K
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class Foo</*0*/ L : kotlin.Any!> : Bar<L!> {
+    public constructor Foo</*0*/ L : kotlin.Any!>(/*0*/ x: L!)
+    public final override /*1*/ /*fake_override*/ val x: L!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -160,6 +160,22 @@ object AbstractTypeChecker {
         return AbstractTypeChecker.isSubtypeOf(context.newBaseTypeCheckerContext(true, stubTypesEqualToAnything), subType, superType)
     }
 
+    fun isSubtypeOfClass(
+        context: AbstractTypeCheckerContext,
+        typeConstructor: TypeConstructorMarker,
+        superConstructor: TypeConstructorMarker
+    ): Boolean {
+        if (typeConstructor == superConstructor) return true
+        with(context) {
+            for (superType in typeConstructor.supertypes()) {
+                if (isSubtypeOfClass(context, superType.typeConstructor(), superConstructor)) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
     fun equalTypes(
         context: TypeCheckerProviderContext,
         a: KotlinTypeMarker,
@@ -219,13 +235,23 @@ object AbstractTypeChecker {
         return isSubtypeOfForSingleClassifierType(subType.lowerBoundIfFlexible(), superType.upperBoundIfFlexible())
     }
 
-    private fun AbstractTypeCheckerContext.checkSubtypeForIntegerLiteralType(subType: SimpleTypeMarker, superType: SimpleTypeMarker): Boolean? {
+    private fun AbstractTypeCheckerContext.checkSubtypeForIntegerLiteralType(
+        subType: SimpleTypeMarker,
+        superType: SimpleTypeMarker
+    ): Boolean? {
         if (!subType.isIntegerLiteralType() && !superType.isIntegerLiteralType()) return null
 
-        fun typeInIntegerLiteralType(integerLiteralType: SimpleTypeMarker, type: SimpleTypeMarker, checkSupertypes: Boolean): Boolean =
+        fun isTypeInIntegerLiteralType(integerLiteralType: SimpleTypeMarker, type: SimpleTypeMarker, checkSupertypes: Boolean): Boolean =
             integerLiteralType.possibleIntegerTypes().any { possibleType ->
                 (possibleType.typeConstructor() == type.typeConstructor()) || (checkSupertypes && isSubtypeOf(this, type, possibleType))
             }
+
+        fun isIntegerLiteralTypeInIntersectionComponents(type: SimpleTypeMarker): Boolean {
+            val typeConstructor = type.typeConstructor()
+
+            return typeConstructor is IntersectionTypeConstructorMarker
+                    && typeConstructor.supertypes().any { it.asSimpleType()?.isIntegerLiteralType() == true }
+        }
 
         when {
             subType.isIntegerLiteralType() && superType.isIntegerLiteralType() -> {
@@ -233,14 +259,16 @@ object AbstractTypeChecker {
             }
 
             subType.isIntegerLiteralType() -> {
-                if (typeInIntegerLiteralType(subType, superType, checkSupertypes = false)) {
+                if (isTypeInIntegerLiteralType(subType, superType, checkSupertypes = false)) {
                     return true
                 }
             }
 
             superType.isIntegerLiteralType() -> {
                 // Here we also have to check supertypes for intersection types: { Int & String } <: IntegerLiteralTypes
-                if (typeInIntegerLiteralType(superType, subType, checkSupertypes = true)) {
+                if (isIntegerLiteralTypeInIntersectionComponents(subType)
+                    || isTypeInIntegerLiteralType(superType, subType, checkSupertypes = true)
+                ) {
                     return true
                 }
             }

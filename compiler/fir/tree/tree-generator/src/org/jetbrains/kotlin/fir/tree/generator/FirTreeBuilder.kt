@@ -55,7 +55,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
 
     val contractDescriptionOwner = element("ContractDescriptionOwner", Declaration)
     val simpleFunction = element("SimpleFunction", Declaration, function, callableMemberDeclaration, contractDescriptionOwner, typeParametersOwner)
-    val propertyAccessor = element("PropertyAccessor", Declaration, function, contractDescriptionOwner, typeParametersOwner)
+    val propertyAccessor = element("PropertyAccessor", Declaration, function, callableMemberDeclaration, contractDescriptionOwner, typeParametersOwner)
     val constructor = element("Constructor", Declaration, function, callableMemberDeclaration, typeParameterRefsOwner)
     val file = element("File", Declaration, annotatedDeclaration)
 
@@ -102,6 +102,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val errorProperty = element("ErrorProperty", Declaration, variable, diagnosticHolder, typeParametersOwner)
     val qualifiedAccessExpression = element("QualifiedAccessExpression", Expression, expression, qualifiedAccess)
     val functionCall = element("FunctionCall", Expression, qualifiedAccessExpression, call)
+    val implicitInvokeCall = element("ImplicitInvokeCall", Expression, functionCall)
     val delegatedConstructorCall = element("DelegatedConstructorCall", Expression, resolvable, call)
     val componentCall = element("ComponentCall", Expression, functionCall)
     val callableReferenceAccess = element("CallableReferenceAccess", Expression, qualifiedAccessExpression)
@@ -142,12 +143,10 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
 
     val resolvedTypeRef = element("ResolvedTypeRef", TypeRef, typeRef)
     val errorTypeRef = element("ErrorTypeRef", TypeRef, resolvedTypeRef, diagnosticHolder)
-    val delegatedTypeRef = element("DelegatedTypeRef", TypeRef, typeRef)
     val typeRefWithNullability = element("TypeRefWithNullability", TypeRef, typeRef)
     val userTypeRef = element("UserTypeRef", TypeRef, typeRefWithNullability)
     val dynamicTypeRef = element("DynamicTypeRef", TypeRef, typeRefWithNullability)
     val functionTypeRef = element("FunctionTypeRef", TypeRef, typeRefWithNullability)
-    val resolvedFunctionTypeRef = element("ResolvedFunctionTypeRef", TypeRef, resolvedTypeRef, functionTypeRef)
     val implicitTypeRef = element("ImplicitTypeRef", TypeRef, typeRef)
     val composedSuperTypeRef = element("ComposedSuperTypeRef", TypeRef, typeRef)
 
