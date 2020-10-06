@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.ir.allParameters
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
@@ -15,9 +14,9 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.irArray
-import org.jetbrains.kotlin.codegen.AsmUtil.BOUND_REFERENCE_RECEIVER
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.addExtensionReceiver
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
@@ -86,6 +85,7 @@ private class InlineCallableReferenceToLambdaTransformer(
     private fun expandInlineFieldReferenceToLambda(expression: IrPropertyReference, field: IrField): IrExpression {
         val irBuilder = context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
         return irBuilder.irBlock(expression, IrStatementOrigin.LAMBDA) {
+            val boundReceiver = expression.dispatchReceiver ?: expression.extensionReceiver
             val function = context.irFactory.buildFun {
                 setSourceRange(expression)
                 origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
@@ -95,15 +95,11 @@ private class InlineCallableReferenceToLambdaTransformer(
                 isSuspend = false
             }.apply {
                 parent = currentDeclarationParent ?: error("No current declaration parent at ${expression.dump()}")
-                val boundReceiver = expression.dispatchReceiver ?: expression.extensionReceiver
-
-                val receiver =
-                    when {
-                        field.isStatic -> null
-                        boundReceiver != null -> irGet(irTemporary(boundReceiver, BOUND_REFERENCE_RECEIVER))
-                        else -> irGet(addValueParameter("receiver", field.parentAsClass.defaultType))
-                    }
-
+                val receiver = when {
+                    field.isStatic -> null
+                    boundReceiver != null -> irGet(addExtensionReceiver(boundReceiver.type))
+                    else -> irGet(addValueParameter("receiver", field.parentAsClass.defaultType))
+                }
                 body = this@InlineCallableReferenceToLambdaTransformer.context.createIrBuilder(symbol).run {
                     irExprBody(irGetField(receiver, field))
                 }
@@ -120,6 +116,7 @@ private class InlineCallableReferenceToLambdaTransformer(
                 origin = IrStatementOrigin.LAMBDA
             ).apply {
                 copyAttributes(expression)
+                extensionReceiver = boundReceiver
             }
         }
     }
@@ -132,10 +129,8 @@ private class InlineCallableReferenceToLambdaTransformer(
             // specific because of approximation. See compiler/testData/codegen/box/callableReference/function/argumentTypes.kt
             val boundReceiver: Pair<IrValueParameter, IrExpression>? = expression.getArgumentsWithIr().singleOrNull()
             val nParams = (expression.type as IrSimpleType).arguments.size - 1
-            var toDropAtStart = 0
-            if (boundReceiver != null) toDropAtStart++
-            if (referencedFunction is IrConstructor) toDropAtStart++
-            val argumentTypes = referencedFunction.allParameters.drop(toDropAtStart).take(nParams).map { parameter ->
+            val toDropAtStart = if (boundReceiver != null) 1 else 0
+            val argumentTypes = referencedFunction.explicitParameters.drop(toDropAtStart).take(nParams).map { parameter ->
                 parameter.type.substitute(
                     referencedFunction.typeParameters,
                     referencedFunction.typeParameters.indices.map { expression.getTypeArgument(it)!! }
@@ -151,6 +146,9 @@ private class InlineCallableReferenceToLambdaTransformer(
                 isSuspend = referencedFunction.isSuspend
             }.apply {
                 parent = currentDeclarationParent!!
+                if (boundReceiver != null) {
+                    addExtensionReceiver(boundReceiver.first.type)
+                }
                 for ((index, argumentType) in argumentTypes.withIndex()) {
                     addValueParameter {
                         name = Name.identifier("p$index")
@@ -172,7 +170,7 @@ private class InlineCallableReferenceToLambdaTransformer(
                         for (parameter in referencedFunction.explicitParameters) {
                             when {
                                 boundReceiver?.first == parameter ->
-                                    irGet(irTemporary(boundReceiver.second))
+                                    irGet(extensionReceiverParameter!!)
                                 parameter.isVararg && unboundIndex < argumentTypes.size && parameter.type == valueParameters[unboundIndex].type ->
                                     irGet(valueParameters[unboundIndex++])
                                 parameter.isVararg && (unboundIndex < argumentTypes.size || !parameter.hasDefaultValue()) ->
@@ -200,6 +198,7 @@ private class InlineCallableReferenceToLambdaTransformer(
                 origin = IrStatementOrigin.LAMBDA
             ).apply {
                 copyAttributes(expression)
+                extensionReceiver = boundReceiver?.second
             }
         }
     }
