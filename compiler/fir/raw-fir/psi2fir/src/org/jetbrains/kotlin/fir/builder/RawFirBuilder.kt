@@ -742,6 +742,8 @@ class RawFirBuilder(
                             owner = ktEnumEntry,
                             typeParameters
                         )
+                        // Use ANONYMOUS_OBJECT_NAME for the owner class id for enum entry declarations (see KT-42351)
+                        this@RawFirBuilder.context.className = this@RawFirBuilder.context.className.parent().child(ANONYMOUS_OBJECT_NAME)
                         for (declaration in ktEnumEntry.declarations) {
                             declarations += declaration.toFirDeclaration(
                                 correctedEnumSelfTypeRef,

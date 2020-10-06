@@ -643,7 +643,12 @@ class DeclarationsConverter(
                     )
                     superTypeRefs += enumClassWrapper.delegatedSuperTypeRef
                     convertPrimaryConstructor(null, null, enumClassWrapper, null)?.let { declarations += it.firConstructor }
-                    classBodyNode?.also { declarations += convertClassBody(it, enumClassWrapper) }
+                    classBodyNode?.also {
+                        // Use ANONYMOUS_OBJECT_NAME for the owner class id of enum entry declarations
+                        this@DeclarationsConverter.context.className =
+                            this@DeclarationsConverter.context.className.parent().child(ANONYMOUS_OBJECT_NAME)
+                        declarations += convertClassBody(it, enumClassWrapper)
+                    }
                 }
             }
         }
