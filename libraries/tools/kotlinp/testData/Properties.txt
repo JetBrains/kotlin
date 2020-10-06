@@ -3,7 +3,7 @@
 public final class C : kotlin/Any {
 
   // signature: <init>(Ljava/lang/String;)V
-  public /* primary */ constructor(constructorParam: kotlin/String /* = ... */)
+  public constructor(constructorParam: kotlin/String /* = ... */)
 
   // signature: getValue(Ljava/lang/Void;Ljava/lang/Object;Ljava/lang/Object;)Ljava/util/List;
   public final operator fun kotlin/Nothing?.getValue(x: kotlin/Any?, y: kotlin/Any?): kotlin/collections/List<kotlin/Nothing>

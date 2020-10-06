@@ -3,10 +3,10 @@
 public final class SimpleClass<in T#0 /* A */> : kotlin/Any {
 
   // signature: <init>([Ljava/lang/String;)V
-  public constructor(s: kotlin/Array<kotlin/String?>?)
+  public /* secondary */ constructor(s: kotlin/Array<kotlin/String?>?)
 
   // signature: <init>(I)V
-  public /* primary */ constructor(p: kotlin/Int /* = ... */)
+  public constructor(p: kotlin/Int /* = ... */)
 
   // requires language version 1.3.0 (level=ERROR)
   // signature: g(Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
