@@ -404,7 +404,6 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
                         genericIndex = property.genericIndex
                     )
                     val isSerializable = innerSerial != null
-                    // todo: update
                     val decodeFuncToCall =
                         (if (isSerializable) "${CallingConventions.decode}${sti.elementMethodPrefix}Serializable${CallingConventions.elementPostfix}"
                         else "${CallingConventions.decode}${sti.elementMethodPrefix}${CallingConventions.elementPostfix}")
@@ -414,8 +413,8 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
                     val typeArgs =
                         if (decodeFuncToCall.descriptor.typeParameters.isNotEmpty()) listOf(property.type.toIrType()) else listOf()
                     val args = mutableListOf<IrExpression>(localSerialDesc.get(), irInt(index))
-                    if (innerSerial != null) {
-                        args.add(innerSerial)
+                    if (isSerializable) {
+                        args.add(innerSerial!!)
                         args.add(localProps[index].get())
                     }
                     // local$i = localInput.decode...(...)
