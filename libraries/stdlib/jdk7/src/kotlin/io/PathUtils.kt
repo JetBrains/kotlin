@@ -55,7 +55,11 @@ public val Path.nameWithoutExtension: String
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
-public fun Path.relativeTo(base: Path): Path = base.relativize(this)
+public fun Path.relativeTo(base: Path): Path = try {
+    PathRelativizer.tryRelativeTo(this, base)
+} catch (e: IllegalArgumentException) {
+    throw java.lang.IllegalArgumentException(e.message + "\nthis path: $this\nbase path: $base", e)
+}
 
 /**
  * Calculates the relative path for this path from a [base] path.
@@ -78,11 +82,38 @@ public fun Path.relativeToOrSelf(base: Path): Path =
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
-public fun Path.relativeToOrNull(base: Path): Path? {
-    return try {
-        base.relativize(this)
-    } catch (e: IllegalArgumentException) {
-        null
+public fun Path.relativeToOrNull(base: Path): Path? = try {
+    PathRelativizer.tryRelativeTo(this, base)
+} catch (e: IllegalArgumentException) {
+    null
+}
+
+internal object PathRelativizer {
+    private val emptyPath = Paths.get("")
+    private val parentPath = Paths.get("..")
+
+    // Workarounds some bugs in Path.relativize that were fixed only in JDK9
+    fun tryRelativeTo(path: Path, base: Path): Path {
+        val bn = base.normalize()
+        val pn = path.normalize()
+        val rn = bn.relativize(pn)
+        // work around https://bugs.openjdk.java.net/browse/JDK-8066943
+        for (i in 0 until minOf(bn.nameCount, pn.nameCount)) {
+            if (bn.getName(i) != parentPath) break
+            if (pn.getName(i) != parentPath) throw IllegalArgumentException("Unable to compute relative path")
+        }
+        // work around https://bugs.openjdk.java.net/browse/JDK-8072495
+        val r = if (pn != bn && bn == emptyPath) {
+            pn
+        } else {
+            val rnString = rn.toString()
+            // drop invalid dangling separator from path string https://bugs.openjdk.java.net/browse/JDK-8140449
+            if (rnString.endsWith(rn.fileSystem.separator))
+                rn.fileSystem.getPath(rnString.dropLast(rn.fileSystem.separator.length))
+            else
+                rn
+        }
+        return r
     }
 }
 
