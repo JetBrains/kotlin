@@ -51,7 +51,9 @@ object JvmBuiltInsSignatures {
                     inJavaLang("Double", "isInfinite()Z", "isNaN()Z") +
                     inJavaLang("Float", "isInfinite()Z", "isNaN()Z") +
 
-                    inJavaLang("Enum", "getDeclaringClass()Ljava/lang/Class;", "finalize()V")
+                    inJavaLang("Enum", "getDeclaringClass()Ljava/lang/Class;", "finalize()V") +
+                    inJavaLang("CharSequence", "isEmpty()Z")
+
         }
 
     private fun buildPrimitiveValueMethodsSet(): Set<String> =

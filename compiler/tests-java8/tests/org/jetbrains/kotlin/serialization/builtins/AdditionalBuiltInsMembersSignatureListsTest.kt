@@ -76,6 +76,7 @@ class AdditionalBuiltInsMembersSignatureListsTest : KotlinTestWithEnvironment() 
     }
 
     private val LATE_JDK_SIGNATURES = mapOf(
-        "java/lang/String" to setOf("isBlank()Z", "lines()Ljava/util/stream/Stream;", "repeat(I)Ljava/lang/String;")
+        "java/lang/String" to setOf("isBlank()Z", "lines()Ljava/util/stream/Stream;", "repeat(I)Ljava/lang/String;"),
+        "java/lang/CharSequence" to setOf("isEmpty()Z"),
     )
 }
