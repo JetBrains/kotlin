@@ -6,6 +6,7 @@
 package kotlin.jdk7.test
 
 import java.io.File
+import java.io.IOException
 import java.nio.file.*
 import kotlin.test.*
 
@@ -18,9 +19,9 @@ class PathExtensionsTest {
         assertEquals("bbb", Paths.get("aaa.bbb").extension)
         assertEquals("", Paths.get("aaa").extension)
         assertEquals("", Paths.get("aaa.").extension)
-        // maybe we should think that such files have name .bbb and no extension
         assertEquals("bbb", Paths.get(".bbb").extension)
         assertEquals("", Paths.get("/my.dir/log").extension)
+        assertEquals("", Paths.get("/").extension)
     }
 
     @Test
@@ -31,6 +32,7 @@ class PathExtensionsTest {
         assertEquals("", Paths.get(".bbb").nameWithoutExtension)
         assertEquals("log", Paths.get("/my.dir/log").nameWithoutExtension)
         assertEquals("", Paths.get("").nameWithoutExtension)
+        assertEquals("", Paths.get("/").nameWithoutExtension)
     }
 
     @Test
@@ -127,65 +129,10 @@ class PathExtensionsTest {
     }
 
     @Test
-    fun testBufferedReader() {
-        val file = Files.createTempFile(null, null)
-        val lines = listOf("line1", "line2")
-        Files.write(file, lines)
-
-        assertEquals(file.bufferedReader().use { it.readLines() }, lines)
-        assertEquals(file.bufferedReader(Charsets.UTF_8, 1024, StandardOpenOption.READ).use { it.readLines() }, lines)
-    }
-
-    @Test
-    fun testBufferedWriter() {
-        val file = Files.createTempFile(null, null)
-
-        file.bufferedWriter().use { it.write("line1\n") }
-        file.bufferedWriter(Charsets.UTF_8, 1024, StandardOpenOption.APPEND).use { it.write("line2\n") }
-
-        assertEquals(Files.readAllLines(file), listOf("line1", "line2"))
-    }
-
-    @Test
-    fun testPrintWriter() {
-        val file = Files.createTempFile(null, null)
-
-        val writer = file.printWriter()
-        val str1 = "Hello, world!"
-        val str2 = "Everything is wonderful!"
-        writer.println(str1)
-        writer.println(str2)
-        writer.close()
-
-        val writer2 = file.printWriter(options = arrayOf(StandardOpenOption.APPEND))
-        val str3 = "Hello again!"
-        writer2.println(str3)
-        writer2.close()
-
-        val writer3 = file.printWriter(Charsets.UTF_8, StandardOpenOption.APPEND)
-        val str4 = "Hello one last time!"
-        writer3.println(str4)
-        writer3.close()
-
-        val reader = file.bufferedReader()
-        assertEquals(str1, reader.readLine())
-        assertEquals(str2, reader.readLine())
-        assertEquals(str3, reader.readLine())
-        assertEquals(str4, reader.readLine())
-    }
-
-    @Test
-    fun testWriteBytes() {
-        val file = Files.createTempFile(null, null)
-        file.writeBytes("Hello".encodeToByteArray())
-        file.appendBytes(" world!".encodeToByteArray())
-        assertEquals(file.readText(), "Hello world!")
-    }
-
-    @Test
-    fun testAttributeGetters() {
+    fun testAttributeGettersOnFile() {
         val file = Files.createTempFile(null, null)
         assertTrue(file.exists())
+        assertFalse(file.notExists())
         assertTrue(file.isRegularFile())
         assertFalse(file.isDirectory())
         assertFalse(file.isSymbolicLink())
@@ -200,13 +147,50 @@ class PathExtensionsTest {
     }
 
     @Test
+    fun testAttributeGettersOnDirectory() {
+        val file = Files.createTempDirectory(null)
+        assertTrue(file.exists())
+        assertFalse(file.notExists())
+        assertFalse(file.isRegularFile())
+        assertTrue(file.isDirectory())
+        assertFalse(file.isSymbolicLink())
+        assertTrue(file.isReadable())
+        assertTrue(file.isWritable())
+        assertTrue(file.isSameFile(file))
+
+        file.isExecutable()
+        file.isHidden()
+    }
+
+    @Test
+    fun testAttributeGettersOnNonExistentPath() {
+        val file = Files.createTempDirectory(null).resolve("foo")
+        assertFalse(file.exists())
+        assertTrue(file.notExists())
+        assertFalse(file.isRegularFile())
+        assertFalse(file.isDirectory())
+        assertFalse(file.isSymbolicLink())
+        assertFalse(file.isReadable())
+        assertFalse(file.isWritable())
+        assertTrue(file.isSameFile(file))
+
+        file.isExecutable()
+        // This function will either throw an exception or return false,
+        // depending on the operating system.
+        try {
+            assertFalse(file.isHidden())
+        } catch (e: IOException) {
+        }
+    }
+
+    @Test
     fun testListDirectoryEntries() {
         val dir = Files.createTempDirectory(null)
-        assertEquals(dir.listDirectoryEntries().size, 0)
+        assertEquals(0, dir.listDirectoryEntries().size)
 
         val file = dir.resolve("f1")
         Files.createFile(file)
-        assertEquals(dir.listDirectoryEntries().size, 1)
+        assertEquals(listOf(file), dir.listDirectoryEntries())
 
         assertFailsWith<NotDirectoryException> { file.listDirectoryEntries() }
     }
@@ -214,11 +198,11 @@ class PathExtensionsTest {
     @Test
     fun testUseDirectoryEntries() {
         val dir = Files.createTempDirectory(null)
-        assertEquals(dir.useDirectoryEntries { it.toList() }.size, 0)
+        assertEquals(0, dir.useDirectoryEntries { it.toList() }.size)
 
         val file = dir.resolve("f1")
         Files.createFile(file)
-        assertEquals(dir.useDirectoryEntries { it.toList() }.size, 1)
+        assertEquals(listOf(file), dir.useDirectoryEntries { it.toList() })
 
         assertFailsWith<NotDirectoryException> { file.useDirectoryEntries { it.toList() } }
     }
@@ -226,15 +210,15 @@ class PathExtensionsTest {
     @Test
     fun testForEachDirectoryEntry() {
         val dir = Files.createTempDirectory(null)
-        var size = 0
-        dir.forEachDirectoryEntry { size++ }
-        assertEquals(size, 0)
+        val entries = mutableListOf<Path>()
+
+        dir.forEachDirectoryEntry { entries.add(it) }
+        assertTrue(entries.isEmpty())
 
         val file = dir.resolve("f1")
         Files.createFile(file)
-        size = 0
-        dir.forEachDirectoryEntry { size++ }
-        assertEquals(size, 1)
+        dir.forEachDirectoryEntry { entries.add(it) }
+        assertEquals(listOf(file), entries)
 
         assertFailsWith<NotDirectoryException> { file.forEachDirectoryEntry { } }
     }

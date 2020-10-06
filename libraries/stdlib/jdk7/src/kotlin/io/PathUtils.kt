@@ -21,7 +21,7 @@ import java.nio.file.NoSuchFileException
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
 public val Path.extension: String
-    get() = fileName.toString().substringAfterLast('.', "")
+    get() = fileName?.toString()?.substringAfterLast('.', "") ?: ""
 
 /**
  * Returns this path as a [String] using the invariant separator '/' to

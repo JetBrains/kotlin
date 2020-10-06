@@ -182,22 +182,6 @@ public fun Path.forEachLine(charset: Charset = Charsets.UTF_8, vararg options: O
 }
 
 /**
- * Reads this file line by line using the specified [charset] and calls [action] for each line.
- * Default charset is UTF-8.
- *
- * You may use this function on huge files.
- *
- * @param charset character set to use.
- * @param action function to process file lines.
- */
-@SinceKotlin("1.4")
-@ExperimentalStdlibApi
-public fun Path.forEachLine(charset: Charset = Charsets.UTF_8, action: (line: String) -> Unit): Unit {
-    // Note: close is called at forEachLine
-    bufferedReader(charset = charset).forEachLine(action)
-}
-
-/**
  * Constructs a new InputStream of this file and returns it as a result.
  *
  * The [options] parameter determines how the file is opened. If no options are present then it is
