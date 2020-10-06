@@ -64,16 +64,74 @@ external public fun Char.isUpperCase(): Boolean
 external public fun Char.isLowerCase(): Boolean
 
 /**
- * Converts this character to uppercase.
+ * Converts this character to upper case using Unicode mapping rules of the invariant locale.
  */
 @SymbolName("Kotlin_Char_toUpperCase")
 external public actual fun Char.toUpperCase(): Char
 
 /**
- * Converts this character to lowercase.
+ * Converts this character to upper case using Unicode mapping rules of the invariant locale.
+ *
+ * This function performs one-to-one character mapping.
+ * To support one-to-many character mapping use the [uppercase] function.
+ * If this character has no mapping equivalent, the character itself is returned.
+ *
+ * @sample samples.text.Chars.uppercase
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+public actual fun Char.uppercaseChar(): Char = toUpperCase()
+
+/**
+ * Converts this character to upper case using Unicode mapping rules of the invariant locale.
+ *
+ * This function supports one-to-many character mapping, thus the length of the returned string can be greater than one.
+ * For example, `'\uFB00'.uppercase()` returns `"\u0046\u0046"`,
+ * where `'\uFB00'` is the LATIN SMALL LIGATURE FF character (`ﬀ`).
+ * If this character has no upper case mapping, the result of `toString()` of this char is returned.
+ *
+ * @sample samples.text.Chars.uppercase
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+public actual fun Char.uppercase(): String {
+    return uppercaseChar().toString()
+}
+
+/**
+ * Converts this character to lower case using Unicode mapping rules of the invariant locale.
  */
 @SymbolName("Kotlin_Char_toLowerCase")
 external public actual fun Char.toLowerCase(): Char
+
+/**
+ * Converts this character to lower case using Unicode mapping rules of the invariant locale.
+ *
+ * This function performs one-to-one character mapping.
+ * To support one-to-many character mapping use the [lowercase] function.
+ * If this character has no mapping equivalent, the character itself is returned.
+ *
+ * @sample samples.text.Chars.lowercase
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+public actual fun Char.lowercaseChar(): Char = toLowerCase()
+
+/**
+ * Converts this character to lower case using Unicode mapping rules of the invariant locale.
+ *
+ * This function supports one-to-many character mapping, thus the length of the returned string can be greater than one.
+ * For example, `'\u0130'.lowercase()` returns `"\u0069\u0307"`,
+ * where `'\u0130'` is the LATIN CAPITAL LETTER I WITH DOT ABOVE character (`İ`).
+ * If this character has no lower case mapping, the result of `toString()` of this char is returned.
+ *
+ * @sample samples.text.Chars.lowercase
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+public actual fun Char.lowercase(): String {
+    return lowercaseChar().toString()
+}
 
 /**
  * Returns `true` if this character is a Unicode high-surrogate code unit (also known as leading-surrogate code unit).
