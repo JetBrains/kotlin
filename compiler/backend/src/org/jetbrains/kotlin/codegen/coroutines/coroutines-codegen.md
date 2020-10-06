@@ -1282,7 +1282,7 @@ abstract class RestrictedSuspendLambda(
 ) : RestrictedContinuationImpl(completion), FunctionBase<Any?>, SuspendFunction
 ```
 the only difference from `SuspendLambda` is superclass. `SuspendLambda` inherits `ContinuationImpl`, while
-`RestrictedSuspendLambda` inherits `RestrictedSuspendLambda`.
+`RestrictedSuspendLambda` inherits `RestrictedContinuationImpl`.
 
 #### SuspendFunction{N}
 Every suspending lambda has a special suspend functional type: `SuspendFunction{N}`, where `{N}` is the number of lambda parameters. They
@@ -1894,8 +1894,8 @@ fun invokeSuspend($result: Any?): Any? {
 }
 ```
 After we resume the coroutine (its `label` value is `1`), `$result` is `42`, and it will get printed. That is right, a function returning
-`Unit` appers returning non-`Unit`. To fix the issue, we replace returns unit markers with `POP; GETSTATIC kotlin/Unit.INSTANCE` sequence.
-That way, we ignore the value, passed to `resume` the same way as if the was no suspension. By the way, we do the same in `callSuspend` and
+`Unit` appears returning non-`Unit`. To fix the issue, we replace returns unit markers with `POP; GETSTATIC kotlin/Unit.INSTANCE` sequence.
+That way, we ignore the value, passed to `resume` the same way as if there was no suspension. By the way, we do the same in `callSuspend` and
 `callSuspendBy` functions.
 
 However, we cannot always do the replacement, as shown in the following example:
