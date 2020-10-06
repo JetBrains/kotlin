@@ -7,11 +7,10 @@ package org.jetbrains.kotlin.idea.inspections.collections
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
-import com.jetbrains.rd.util.firstOrNull
 import org.jetbrains.kotlin.backend.common.descriptors.isSuspend
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getReturnTypeReference
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -19,8 +18,8 @@ import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
@@ -45,13 +44,8 @@ class SimplifiableCallChainInspection : AbstractCallChainChecker() {
                     ) return@check false
                 }
                 if (conversion.replacement == "maxBy" || conversion.replacement == "minBy") {
-                    val argument = firstResolvedCall.valueArguments.firstOrNull()?.value?.arguments?.firstOrNull()
-                    val returnType = when (val argumentExpression = argument?.getArgumentExpression()) {
-                        is KtLambdaExpression -> argumentExpression.bodyExpression?.statements?.lastOrNull()?.getType(context)
-                        is KtNamedFunction -> argumentExpression.getReturnTypeReference()?.let { context[BindingContext.TYPE, it] }
-                        else -> null
-                    }
-                    if (returnType?.isNullable() == true) return@check false
+                    val functionalParameterReturnType = firstResolvedCall.lastFunctionalParameterReturnType() ?: return@check false
+                    if (functionalParameterReturnType.isNullable()) return@check false
                 }
                 return@check conversion.enableSuspendFunctionCall || !containsSuspendFunctionCall(firstResolvedCall, context)
             } ?: return
@@ -76,6 +70,12 @@ class SimplifiableCallChainInspection : AbstractCallChainChecker() {
             )
             holder.registerProblem(descriptor)
         })
+    }
+
+    private fun ResolvedCall<*>.lastFunctionalParameterReturnType(): KotlinType? {
+        val returnType = resultingDescriptor.valueParameters.lastOrNull()?.returnType ?: return null
+        if (!returnType.isFunctionType) return null
+        return returnType.arguments.lastOrNull()?.type
     }
 
     private fun containsSuspendFunctionCall(resolvedCall: ResolvedCall<*>, context: BindingContext): Boolean {
