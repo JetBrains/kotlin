@@ -396,9 +396,8 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
      */
 
     // TODO:
-    // 1. Support receiver capturing for `array.b++` (elementType == ARRAY_ACCESS_EXPRESSION).
-    // 2. Support receiver capturing for `a?.b++` (elementType == SAFE_ACCESS_EXPRESSION).
-    // 3. Add box test cases for #1 and #2 where receiver expression has side effects.
+    // 1. Support receiver capturing for `a?.b++` (elementType == SAFE_ACCESS_EXPRESSION).
+    // 2. Add box test cases for #1 where receiver expression has side effects.
     fun generateIncrementOrDecrementBlock(
         baseExpression: T,
         operationReference: T?,
@@ -633,9 +632,8 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
      *     val <array> = a
      *     val <index0> = b
      *     val <index1> = c
-     *     val <unary-result> = <array>.get(b, c).inc()
-     *     <array>.set(b, c, <unary-result>)
-     *     ^<unary-result>
+     *     <array>.set(b, c, <array>.get(b, c).inc())
+     *     <array>.get(b, c)
      * }
      *
      */
@@ -675,7 +673,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 ).also { statements += it }
             }
 
-            val firArgument = buildFunctionCall {
+            fun getArgument() = buildFunctionCall {
                 source = desugaredSource
                 calleeReference = buildSimpleNamedReference {
                     source = argument?.toFirSourceElement()
@@ -690,6 +688,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             }
 
             // initialValueVar is only used for postfix increment/decrement (stores the argument value before increment/decrement).
+            val firArgument = getArgument()
             val initialValueVar = generateTemporaryVariable(
                 this@BaseFirBuilder.baseSession,
                 desugaredSource,
@@ -711,14 +710,6 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 }
             }
 
-            // resultVar is only used for prefix increment/decrement.
-            val resultVar = generateTemporaryVariable(
-                this@BaseFirBuilder.baseSession,
-                desugaredSource,
-                Name.special("<unary-result>"),
-                resultInitializer
-            )
-
             fun appendAssignment() {
                 statements += buildFunctionCall {
                     source = desugaredSource
@@ -731,19 +722,14 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                         for (indexVar in indexVariables) {
                             arguments += generateResolvedAccessExpression(indexVar.source, indexVar)
                         }
-                        arguments += if (prefix) {
-                            generateResolvedAccessExpression(source, resultVar)
-                        } else {
-                            resultInitializer
-                        }
+                        arguments += resultInitializer
                     }
                 }
             }
 
             if (prefix) {
-                statements += resultVar
                 appendAssignment()
-                statements += generateResolvedAccessExpression(desugaredSource, resultVar)
+                statements += getArgument()
             } else {
                 statements += initialValueVar
                 appendAssignment()
