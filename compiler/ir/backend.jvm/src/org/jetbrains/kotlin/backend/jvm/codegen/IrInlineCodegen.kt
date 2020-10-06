@@ -77,15 +77,15 @@ class IrInlineCodegen(
     ) {
         val isInlineParameter = irValueParameter.isInlineParameter()
         if (isInlineParameter && isInlineIrExpression(argumentExpression)) {
-            val irReference: IrFunctionReference =
-                (argumentExpression as IrBlock).statements.filterIsInstance<IrFunctionReference>().single()
-            val boundReceiver = argumentExpression.statements.filterIsInstance<IrVariable>().singleOrNull()
-            val lambdaInfo =
-                rememberClosure(irReference, parameterType, irValueParameter, boundReceiver) as IrExpressionLambdaImpl
-
+            val irReference = (argumentExpression as IrBlock).statements.filterIsInstance<IrFunctionReference>().single()
+            val lambdaInfo = IrExpressionLambdaImpl(codegen, irReference, irValueParameter)
+            val closureInfo = invocationParamBuilder.addNextValueParameter(parameterType, true, null, irValueParameter.index)
+            closureInfo.functionalArgument = lambdaInfo
+            expressionMap[closureInfo.index] = lambdaInfo
+            val boundReceiver = irReference.extensionReceiver
             if (boundReceiver != null) {
                 activeLambda = lambdaInfo
-                putCapturedValueOnStack(boundReceiver.initializer!!, lambdaInfo.capturedParamsInDesc.single(), 0)
+                putCapturedValueOnStack(boundReceiver, lambdaInfo.capturedParamsInDesc.single(), 0)
                 activeLambda = null
             }
         } else {
@@ -153,23 +153,6 @@ class IrInlineCodegen(
         )
     }
 
-    private fun rememberClosure(
-        irReference: IrFunctionReference,
-        type: Type,
-        parameter: IrValueParameter,
-        boundReceiver: IrVariable?
-    ): LambdaInfo {
-        val referencedFunction = irReference.symbol.owner
-        return IrExpressionLambdaImpl(
-            irReference, referencedFunction, codegen.typeMapper, codegen.methodSignatureMapper, codegen.context, parameter.isCrossinline,
-            boundReceiver != null, parameter.type.isExtensionFunctionType
-        ).also { lambda ->
-            val closureInfo = invocationParamBuilder.addNextValueParameter(type, true, null, parameter.index)
-            closureInfo.functionalArgument = lambda
-            expressionMap[closureInfo.index] = lambda
-        }
-    }
-
     override fun extractDefaultLambdas(node: MethodNode): List<DefaultLambda> {
         if (maskStartIndex == -1) return listOf()
         return expandMaskConditionsAndUpdateVariableNodes(
@@ -181,15 +164,17 @@ class IrInlineCodegen(
 }
 
 class IrExpressionLambdaImpl(
+    codegen: ExpressionCodegen,
     val reference: IrFunctionReference,
-    val function: IrFunction,
-    private val typeMapper: IrTypeMapper,
-    methodSignatureMapper: MethodSignatureMapper,
-    context: JvmBackendContext,
-    isCrossInline: Boolean,
-    override val isBoundCallableReference: Boolean,
-    override val isExtensionLambda: Boolean
-) : ExpressionLambda(isCrossInline), IrExpressionLambda {
+    irValueParameter: IrValueParameter
+) : ExpressionLambda(irValueParameter.isCrossinline), IrExpressionLambda {
+    override val isExtensionLambda: Boolean = irValueParameter.type.isExtensionFunctionType
+
+    val function: IrFunction
+        get() = reference.symbol.owner
+
+    override val isBoundCallableReference: Boolean
+        get() = reference.extensionReceiver != null
 
     override val isSuspend: Boolean = function.isSuspend
 
@@ -201,17 +186,17 @@ class IrExpressionLambdaImpl(
     // arguments apart from any other scope's. So long as it's unique, any value is fine.
     // This particular string slightly aids in debugging internal compiler errors as it at least
     // points towards the function containing the lambda.
-    override val lambdaClassType: Type =
-        context.getLocalClassType(reference) ?: throw AssertionError("callable reference ${reference.dump()} has no name in context")
+    override val lambdaClassType: Type = codegen.context.getLocalClassType(reference)
+        ?: throw AssertionError("callable reference ${reference.dump()} has no name in context")
 
     private val capturedParameters: Map<CapturedParamDesc, IrValueParameter> =
         reference.getArgumentsWithIr().associate { (param, _) ->
-            capturedParamDesc(param.name.asString(), typeMapper.mapType(param.type)) to param
+            capturedParamDesc(param.name.asString(), codegen.typeMapper.mapType(param.type)) to param
         }
 
     override val capturedVars: List<CapturedParamDesc> = capturedParameters.keys.toList()
 
-    private val loweredMethod = methodSignatureMapper.mapAsmMethod(function)
+    private val loweredMethod = codegen.methodSignatureMapper.mapAsmMethod(function)
 
     val capturedParamsInDesc: List<Type> = if (isBoundCallableReference) {
         loweredMethod.argumentTypes.take(1)
