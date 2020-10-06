@@ -761,14 +761,17 @@ class RawFirBuilder(
                             owner = ktEnumEntry,
                             typeParameters
                         )
-                        for (declaration in ktEnumEntry.declarations) {
-                            declarations += declaration.toFirDeclaration(
-                                correctedEnumSelfTypeRef,
-                                delegatedSelfType = delegatedEntrySelfType,
-                                ktEnumEntry,
-                                ownerClassBuilder = this,
-                                ownerTypeParameters = emptyList()
-                            )
+                        // Use ANONYMOUS_OBJECT_NAME for the owner class id for enum entry declarations (see KT-42351)
+                        withChildClassName(ANONYMOUS_OBJECT_NAME, isLocal = true) {
+                            for (declaration in ktEnumEntry.declarations) {
+                                declarations += declaration.toFirDeclaration(
+                                    correctedEnumSelfTypeRef,
+                                    delegatedSelfType = delegatedEntrySelfType,
+                                    ktEnumEntry,
+                                    ownerClassBuilder = this,
+                                    ownerTypeParameters = emptyList()
+                                )
+                            }
                         }
                     }
                 }
