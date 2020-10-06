@@ -81,6 +81,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
 
         builder(constructor, "FirConstructorImpl") {
             openBuilder()
+            withCopy()
         }
 
         builder(field) {

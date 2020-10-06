@@ -85,3 +85,26 @@ inline fun buildConstructor(init: FirConstructorBuilder.() -> Unit): FirConstruc
     }
     return FirConstructorBuilder().apply(init).build()
 }
+
+@OptIn(ExperimentalContracts::class)
+inline fun buildConstructorCopy(original: FirConstructor, init: FirConstructorBuilder.() -> Unit): FirConstructor {
+    contract {
+        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+    }
+    val copyBuilder = FirConstructorBuilder()
+    copyBuilder.source = original.source
+    copyBuilder.session = original.session
+    copyBuilder.resolvePhase = original.resolvePhase
+    copyBuilder.origin = original.origin
+    copyBuilder.returnTypeRef = original.returnTypeRef
+    copyBuilder.receiverTypeRef = original.receiverTypeRef
+    copyBuilder.typeParameters.addAll(original.typeParameters)
+    copyBuilder.valueParameters.addAll(original.valueParameters)
+    copyBuilder.status = original.status
+    copyBuilder.containerSource = original.containerSource
+    copyBuilder.annotations.addAll(original.annotations)
+    copyBuilder.symbol = original.symbol
+    copyBuilder.delegatedConstructor = original.delegatedConstructor
+    copyBuilder.body = original.body
+    return copyBuilder.apply(init).build()
+}
