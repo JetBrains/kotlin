@@ -59,8 +59,7 @@ internal interface ForLoopHeader {
 internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
     protected val headerInfo: T,
     builder: DeclarationIrBuilder,
-    context: CommonBackendContext,
-    protected val isLastInclusive: Boolean
+    context: CommonBackendContext
 ) : ForLoopHeader {
 
     override val consumesLoopVariableComponents = false
@@ -160,7 +159,7 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
                 // Bounds are signed for unsigned progressions but bound comparisons should be done as unsigned, to ensure that the
                 // correct comparison function is used (`UInt/ULongCompare`). Also, `compareTo` must be used for UInt/ULong;
                 // they don't have intrinsic comparison operators.
-                val intCompFun = if (isLastInclusive) {
+                val intCompFun = if (headerInfo.isLastInclusive) {
                     builtIns.lessOrEqualFunByOperandType.getValue(builtIns.intClass)
                 } else {
                     builtIns.lessFunByOperandType.getValue(builtIns.intClass)
@@ -174,7 +173,7 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
                 } else null
 
                 val elementCompFun =
-                    if (isLastInclusive) {
+                    if (headerInfo.isLastInclusive) {
                         builtIns.lessOrEqualFunByOperandType[elementClass.symbol]
                     } else {
                         builtIns.lessFunByOperandType[elementClass.symbol]
@@ -249,7 +248,7 @@ internal class ProgressionLoopHeader(
     headerInfo: ProgressionHeaderInfo,
     builder: DeclarationIrBuilder,
     context: CommonBackendContext
-) : NumericForLoopHeader<ProgressionHeaderInfo>(headerInfo, builder, context, isLastInclusive = true) {
+) : NumericForLoopHeader<ProgressionHeaderInfo>(headerInfo, builder, context) {
 
     // For this loop:
     //
@@ -374,7 +373,7 @@ internal class IndexedGetLoopHeader(
     headerInfo: IndexedGetHeaderInfo,
     builder: DeclarationIrBuilder,
     context: CommonBackendContext
-) : NumericForLoopHeader<IndexedGetHeaderInfo>(headerInfo, builder, context, isLastInclusive = false) {
+) : NumericForLoopHeader<IndexedGetHeaderInfo>(headerInfo, builder, context) {
 
     override val loopInitStatements =
         listOfNotNull(headerInfo.objectVariable, inductionVariable, lastVariableIfCanCacheLast, stepVariable)
