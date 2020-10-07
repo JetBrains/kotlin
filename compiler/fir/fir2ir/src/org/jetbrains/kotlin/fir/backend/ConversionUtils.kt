@@ -146,7 +146,8 @@ private fun FirCallableSymbol<*>.toSymbol(declarationStorage: Fir2IrDeclarationS
             val delegateSymbol = if (preferGetter) {
                 syntheticProperty.getter.delegate.symbol
             } else {
-                syntheticProperty.setter!!.delegate.symbol
+                syntheticProperty.setter?.delegate?.symbol
+                    ?: throw AssertionError("Written synthetic property must have a setter")
             }
             delegateSymbol.deepestMatchingOverriddenSymbol().toSymbol(declarationStorage, preferGetter)
         } ?: declarationStorage.getIrPropertySymbol(this)
