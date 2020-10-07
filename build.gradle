@@ -497,11 +497,11 @@ targetList.each { target ->
                 }
             }
         }
-        from(project(':runtime').file("build/$target")) {
+        from(project(':runtime').file("build/bitcode/main/$target")) {
             include("runtime.bc")
             into("$stdlibDefaultComponent/targets/$target/native")
         }
-        from(project(':runtime').file("build/$target")) {
+        from(project(':runtime').file("build/bitcode/main/$target")) {
             include("*.bc")
             exclude("runtime.bc")
             into("konan/targets/$target/native")

@@ -18,7 +18,8 @@ import javax.inject.Inject
 open class CompileToBitcode @Inject constructor(
         val srcRoot: File,
         val folderName: String,
-        val target: String
+        val target: String,
+        val outputGroup: String
 ) : DefaultTask() {
 
     enum class Language {
@@ -48,7 +49,7 @@ open class CompileToBitcode @Inject constructor(
     @Input
     var language = Language.CPP
 
-    private val targetDir by lazy { File(project.buildDir, target) }
+    private val targetDir by lazy { project.buildDir.resolve("bitcode/$outputGroup/$target") }
 
     val objDir by lazy { File(targetDir, folderName) }
 

@@ -43,7 +43,7 @@ bitcode {
             "${target}ExceptionsSupport"
         )
         includeRuntime()
-        linkerArgs.add(project.file("../common/build/$target/hash.bc").path)
+        linkerArgs.add(project.file("../common/build/bitcode/main/$target/hash.bc").path)
     }
 
     create("mimalloc") {
@@ -93,6 +93,12 @@ bitcode {
 
 val hostRuntime by tasks.registering {
     dependsOn("${hostName}Runtime")
+}
+
+val assemble by tasks.registering {
+    dependsOn(tasks.withType(CompileToBitcode::class).matching {
+        it.outputGroup == "main"
+    })
 }
 
 val clean by tasks.registering {

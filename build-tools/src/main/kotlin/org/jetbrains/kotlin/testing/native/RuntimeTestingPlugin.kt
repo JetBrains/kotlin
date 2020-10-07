@@ -53,7 +53,7 @@ open class RuntimeTestingPlugin : Plugin<Project> {
             val bitcodeExtension =
                     project.extensions.getByName(CompileToBitcodePlugin.EXTENSION_NAME) as CompileToBitcodeExtension
 
-            bitcodeExtension.create("googletest") {
+            bitcodeExtension.create("googletest", outputGroup = "test") {
                 srcDirs = project.files(
                         googleTestRoot.resolve("googletest/src")
                 )
@@ -68,7 +68,7 @@ open class RuntimeTestingPlugin : Plugin<Project> {
                 dependsOn(dependencies)
             }
 
-            bitcodeExtension.create("googlemock") {
+            bitcodeExtension.create("googlemock", outputGroup = "test") {
                 srcDirs = project.files(
                         googleTestRoot.resolve("googlemock/src")
                 )

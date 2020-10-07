@@ -80,7 +80,7 @@ targetList.each { target ->
     if (target != "wasm32") defaultArgs += '-g'
     def konanArgs = [*defaultArgs,
                      '-target', target,
-                     "-Xruntime=${project(':runtime').file('build/' + target + '/runtime.bc')}",
+                     "-Xruntime=${project(':runtime').file('build/bitcode/main/' + target + '/runtime.bc')}",
                      *project.globalBuildArgs]
 
     task("${target}KotlinxCli", type: JavaExec) {

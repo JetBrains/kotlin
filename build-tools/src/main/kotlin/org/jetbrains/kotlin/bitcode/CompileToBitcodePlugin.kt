@@ -38,12 +38,17 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
         provider { rootProject.property("targetList") as List<String> } // TODO: Can we make it better?
     }
 
-    fun create(name: String, srcDir: File = project.file("src/$name"), configurationBlock: CompileToBitcode.() -> Unit = {}) {
+    fun create(
+            name: String,
+            srcDir: File = project.file("src/$name"),
+            outputGroup: String = "main",
+            configurationBlock: CompileToBitcode.() -> Unit = {}
+    ) {
         targetList.get().forEach { targetName ->
             project.tasks.register(
                     "${targetName}${name.snakeCaseToCamelCase().capitalize()}",
                     CompileToBitcode::class.java,
-                    srcDir, name, targetName
+                    srcDir, name, targetName, outputGroup
             ).configure {
                 it.group = BasePlugin.BUILD_GROUP
                 it.description = "Compiles '$name' to bitcode for $targetName"
