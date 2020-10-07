@@ -25,3 +25,4 @@ enum class E {
 }
 
 // DISABLE-ERRORS
+// FIR_IGNORE

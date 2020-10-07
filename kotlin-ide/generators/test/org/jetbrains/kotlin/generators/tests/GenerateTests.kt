@@ -950,6 +950,20 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         }
     }
 
+    testGroup("idea/idea-fir/tests", "compiler/testData") {
+        testClass<AbstractFirLightClassTest> {
+            model("asJava/lightClasses", excludeDirs = listOf("delegation", "script"), pattern = KT_WITHOUT_DOTS_IN_NAME)
+        }
+
+        testClass<AbstractFirClassLoadingTest> {
+            model("asJava/ultraLightClasses", pattern = KT_OR_KTS)
+        }
+
+        testClass<AbstractFirLightFacadeClassTest> {
+            model("asJava/ultraLightFacades", pattern = KT_OR_KTS)
+        }
+    }
+
     testGroup("fir-low-level-api", testDataPath = "../idea/testData") {
         testClass<AbstractFirMultiModuleResolveTest> {
             model("fir/multiModule", isRecursive = false, pattern = DIRECTORY)

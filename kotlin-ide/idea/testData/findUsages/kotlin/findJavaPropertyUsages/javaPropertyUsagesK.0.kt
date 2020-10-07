@@ -27,3 +27,4 @@ fun test() {
 }
 
 // DISABLE-ERRORS
+// FIR_IGNORE

@@ -125,8 +125,7 @@ abstract class AbstractIdeCompiledLightClassTest : KotlinDaemonAnalyzerTestCase(
 }
 
 private fun testLightClass(expected: File, testData: File, normalize: (String) -> String, findLightClass: (String) -> PsiClass?) {
-    LightClassTestCommon.testLightClass(
-        expected,
+    val actual = LightClassTestCommon.getActualLightClassText(
         testData,
         findLightClass = findLightClass,
         normalizeText = { text ->
@@ -141,9 +140,10 @@ private fun testLightClass(expected: File, testData: File, normalize: (String) -
                 .run(normalize)
         }
     )
+    KotlinTestUtils.assertEqualsToFile(expected, actual)
 }
 
-private fun findClass(fqName: String, ktFile: KtFile?, project: Project): PsiClass? {
+fun findClass(fqName: String, ktFile: KtFile?, project: Project): PsiClass? {
     ktFile?.script?.let {
         return it.toLightClass()
     }

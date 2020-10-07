@@ -20,16 +20,20 @@ import com.intellij.util.ref.DebugReflectionUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
+import org.jetbrains.kotlin.asJava.PsiClassRenderer
 import org.jetbrains.kotlin.asJava.PsiClassRenderer.renderClass
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCaseBase
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
+import java.io.File
 import kotlin.test.assertFails
 
 fun UsefulTestCase.forceUsingOldLightClassesForTest() {
@@ -74,6 +78,29 @@ object UltraLightChecker {
         checkClassEquivalenceByRendering(gold, ultraLightClass)
 
         return ultraLightClass
+    }
+
+
+    fun checkByJavaFile(testDataPath: String, lightClasses: List<KtLightClass>) {
+        val expectedTextFile = getJavaFileForTest(testDataPath)
+        val renderedResult = renderLightClasses(testDataPath, lightClasses)
+            KotlinTestUtils.assertEqualsToFile(expectedTextFile, renderedResult)
+    }
+
+    fun getJavaFileForTest(testDataPath: String): File {
+        val expectedTextFile = KotlinTestUtils.replaceExtension(File(testDataPath), "java")
+        KotlinLightCodeInsightFixtureTestCaseBase.assertTrue(expectedTextFile.exists())
+        return expectedTextFile
+    }
+
+    fun renderLightClasses(testDataPath: String, lightClasses: List<KtLightClass>): String {
+        val extendedTypeRendererOld = PsiClassRenderer.extendedTypeRenderer
+        return try {
+            PsiClassRenderer.extendedTypeRenderer = testDataPath.endsWith("typeAnnotations.kt")
+            lightClasses.joinToString("\n\n") { it.renderClass() }
+        } finally {
+            PsiClassRenderer.extendedTypeRenderer = extendedTypeRendererOld
+        }
     }
 
     fun checkClassEquivalence(ktClass: KtClassOrObject): KtUltraLightClass? {
