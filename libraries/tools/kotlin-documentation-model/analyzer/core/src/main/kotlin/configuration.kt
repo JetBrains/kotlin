@@ -16,6 +16,7 @@ object DokkaDefaults {
     val cacheRoot: File? = null
     const val offlineMode: Boolean = false
     const val failOnWarning: Boolean = false
+    const val delayTemplateSubstitution: Boolean = false
 
     const val includeNonPublic: Boolean = false
     const val reportUndocumented: Boolean = false
@@ -96,6 +97,7 @@ interface DokkaConfiguration : Serializable {
     val modules: List<DokkaModuleDescription>
     val pluginsClasspath: List<File>
     val pluginsConfiguration: List<PluginConfiguration>
+    val delayTemplateSubstitution: Boolean
 
     enum class SerializationFormat : Serializable {
         JSON, XML
