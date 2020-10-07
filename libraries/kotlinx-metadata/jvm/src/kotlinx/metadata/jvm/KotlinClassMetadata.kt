@@ -29,7 +29,7 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
     class Class internal constructor(header: KotlinClassHeader) : KotlinClassMetadata(header) {
         private val classData by lazy(PUBLICATION) {
             val data1 = (header.data1.takeIf(Array<*>::isNotEmpty)
-                    ?: throw InconsistentKotlinMetadataException("data1 must not be empty"))
+                ?: throw InconsistentKotlinMetadataException("data1 must not be empty"))
             JvmProtoBufUtil.readClassDataFrom(data1, header.data2)
         }
 
@@ -68,12 +68,12 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
                 metadataVersion: IntArray = KotlinClassHeader.COMPATIBLE_METADATA_VERSION,
                 bytecodeVersion: IntArray = KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION,
                 extraInt: Int = 0
-            ): KotlinClassMetadata.Class {
+            ): Class {
                 val (d1, d2) = writeProtoBufData(t.build(), c)
                 val metadata = KotlinClassHeader(
                     KotlinClassHeader.CLASS_KIND, metadataVersion, bytecodeVersion, d1, d2, null, null, extraInt
                 )
-                return KotlinClassMetadata.Class(metadata)
+                return Class(metadata)
             }
         }
     }
@@ -84,7 +84,7 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
     class FileFacade internal constructor(header: KotlinClassHeader) : KotlinClassMetadata(header) {
         private val packageData by lazy(PUBLICATION) {
             val data1 = (header.data1.takeIf(Array<*>::isNotEmpty)
-                    ?: throw InconsistentKotlinMetadataException("data1 must not be empty"))
+                ?: throw InconsistentKotlinMetadataException("data1 must not be empty"))
             JvmProtoBufUtil.readPackageDataFrom(data1, header.data2)
         }
 
@@ -123,12 +123,12 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
                 metadataVersion: IntArray = KotlinClassHeader.COMPATIBLE_METADATA_VERSION,
                 bytecodeVersion: IntArray = KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION,
                 extraInt: Int = 0
-            ): KotlinClassMetadata.FileFacade {
+            ): FileFacade {
                 val (d1, d2) = writeProtoBufData(t.build(), c)
                 val metadata = KotlinClassHeader(
                     KotlinClassHeader.FILE_FACADE_KIND, metadataVersion, bytecodeVersion, d1, d2, null, null, extraInt
                 )
-                return KotlinClassMetadata.FileFacade(metadata)
+                return FileFacade(metadata)
             }
         }
     }
@@ -196,15 +196,15 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
                 metadataVersion: IntArray = KotlinClassHeader.COMPATIBLE_METADATA_VERSION,
                 bytecodeVersion: IntArray = KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION,
                 extraInt: Int = 0
-            ): KotlinClassMetadata.SyntheticClass {
+            ): SyntheticClass {
                 val proto = t?.build()
                 val (d1, d2) =
-                        if (proto != null) writeProtoBufData(proto, c)
-                        else Pair(emptyArray(), emptyArray())
+                    if (proto != null) writeProtoBufData(proto, c)
+                    else Pair(emptyArray(), emptyArray())
                 val metadata = KotlinClassHeader(
                     KotlinClassHeader.SYNTHETIC_CLASS_KIND, metadataVersion, bytecodeVersion, d1, d2, null, null, extraInt
                 )
-                return KotlinClassMetadata.SyntheticClass(metadata)
+                return SyntheticClass(metadata)
             }
         }
     }
@@ -241,12 +241,12 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
                 metadataVersion: IntArray = KotlinClassHeader.COMPATIBLE_METADATA_VERSION,
                 bytecodeVersion: IntArray = KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION,
                 extraInt: Int = 0
-            ): KotlinClassMetadata.MultiFileClassFacade {
+            ): MultiFileClassFacade {
                 val metadata = KotlinClassHeader(
                     KotlinClassHeader.MULTI_FILE_CLASS_FACADE_KIND, metadataVersion, bytecodeVersion, partClassNames.toTypedArray(),
                     null, null, null, extraInt
                 )
-                return KotlinClassMetadata.MultiFileClassFacade(metadata)
+                return MultiFileClassFacade(metadata)
             }
         }
     }
@@ -260,7 +260,7 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
     class MultiFileClassPart internal constructor(header: KotlinClassHeader) : KotlinClassMetadata(header) {
         private val packageData by lazy(PUBLICATION) {
             val data1 = (header.data1.takeIf(Array<*>::isNotEmpty)
-                    ?: throw InconsistentKotlinMetadataException("data1 must not be empty"))
+                ?: throw InconsistentKotlinMetadataException("data1 must not be empty"))
             JvmProtoBufUtil.readPackageDataFrom(data1, header.data2)
         }
 
@@ -307,12 +307,12 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
                 metadataVersion: IntArray = KotlinClassHeader.COMPATIBLE_METADATA_VERSION,
                 bytecodeVersion: IntArray = KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION,
                 extraInt: Int = 0
-            ): KotlinClassMetadata.MultiFileClassPart {
+            ): MultiFileClassPart {
                 val (d1, d2) = writeProtoBufData(t.build(), c)
                 val metadata = KotlinClassHeader(
                     KotlinClassHeader.MULTI_FILE_CLASS_PART_KIND, metadataVersion, bytecodeVersion, d1, d2, facadeClassName, null, extraInt
                 )
-                return KotlinClassMetadata.MultiFileClassPart(metadata)
+                return MultiFileClassPart(metadata)
             }
         }
     }
@@ -344,12 +344,12 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
 
             return try {
                 when (header.kind) {
-                    KotlinClassHeader.CLASS_KIND -> KotlinClassMetadata.Class(header)
-                    KotlinClassHeader.FILE_FACADE_KIND -> KotlinClassMetadata.FileFacade(header)
-                    KotlinClassHeader.SYNTHETIC_CLASS_KIND -> KotlinClassMetadata.SyntheticClass(header)
-                    KotlinClassHeader.MULTI_FILE_CLASS_FACADE_KIND -> KotlinClassMetadata.MultiFileClassFacade(header)
-                    KotlinClassHeader.MULTI_FILE_CLASS_PART_KIND -> KotlinClassMetadata.MultiFileClassPart(header)
-                    else -> KotlinClassMetadata.Unknown(header)
+                    KotlinClassHeader.CLASS_KIND -> Class(header)
+                    KotlinClassHeader.FILE_FACADE_KIND -> FileFacade(header)
+                    KotlinClassHeader.SYNTHETIC_CLASS_KIND -> SyntheticClass(header)
+                    KotlinClassHeader.MULTI_FILE_CLASS_FACADE_KIND -> MultiFileClassFacade(header)
+                    KotlinClassHeader.MULTI_FILE_CLASS_PART_KIND -> MultiFileClassPart(header)
+                    else -> Unknown(header)
                 }
             } catch (e: InconsistentKotlinMetadataException) {
                 throw e
