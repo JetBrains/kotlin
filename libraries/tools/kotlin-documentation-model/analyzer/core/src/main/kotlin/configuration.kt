@@ -2,6 +2,7 @@
 
 package org.jetbrains.dokka
 
+import org.jetbrains.dokka.plugability.ConfigurableBlock
 import org.jetbrains.dokka.utilities.parseJson
 import org.jetbrains.dokka.utilities.toJsonString
 import java.io.File
@@ -29,6 +30,7 @@ object DokkaDefaults {
     const val sourceSetDisplayName = "JVM"
     const val sourceSetName = "main"
     val moduleVersion: String? = null
+    val pluginsConfiguration = mutableListOf<PluginConfigurationImpl>()
 }
 
 enum class Platform(val key: String) {
@@ -81,6 +83,7 @@ data class DokkaSourceSetID(
 fun DokkaConfigurationImpl(json: String): DokkaConfigurationImpl = parseJson(json)
 
 fun DokkaConfiguration.toJsonString(): String = toJsonString(this)
+fun <T : ConfigurableBlock> T.toJsonString(): String = toJsonString(this)
 
 interface DokkaConfiguration : Serializable {
     val moduleName: String
@@ -92,7 +95,17 @@ interface DokkaConfiguration : Serializable {
     val sourceSets: List<DokkaSourceSet>
     val modules: List<DokkaModuleDescription>
     val pluginsClasspath: List<File>
-    val pluginsConfiguration: Map<String, String>
+    val pluginsConfiguration: List<PluginConfiguration>
+
+    enum class SerializationFormat : Serializable {
+        JSON, XML
+    }
+
+    interface PluginConfiguration : Serializable {
+        val fqPluginName: String
+        val serializationFormat: SerializationFormat
+        val values: String
+    }
 
     interface DokkaSourceSet : Serializable {
         val sourceSetID: DokkaSourceSetID
