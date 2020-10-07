@@ -283,25 +283,25 @@ digraph propertiesAndInitBlocks_kt {
             }
             subgraph cluster_29 {
                 color=blue
-                91 [label="Enter finally"];
+                91 [label="Catch enter"];
                 subgraph cluster_30 {
                     color=blue
                     92 [label="Enter block"];
-                    93 [label="Const: Int(0)"];
+                    93 [label="Const: Int(2)"];
                     94 [label="Exit block"];
                 }
-                95 [label="Exit finally"];
+                95 [label="Catch exit"];
             }
             subgraph cluster_31 {
                 color=blue
-                96 [label="Catch enter"];
+                96 [label="Enter finally"];
                 subgraph cluster_32 {
                     color=blue
                     97 [label="Enter block"];
-                    98 [label="Const: Int(2)"];
+                    98 [label="Const: Int(0)"];
                     99 [label="Exit block"];
                 }
-                100 [label="Catch exit"];
+                100 [label="Exit finally"];
             }
             101 [label="Try expression exit"];
         }
@@ -309,17 +309,17 @@ digraph propertiesAndInitBlocks_kt {
     }
     84 -> {85};
     85 -> {86};
-    86 -> {102 96 91 87};
+    86 -> {102 91 96 87};
     87 -> {88};
     88 -> {89};
     89 -> {90};
-    90 -> {101};
-    91 -> {92};
+    90 -> {96};
+    91 -> {102 92};
     92 -> {93};
     93 -> {94};
     94 -> {95};
-    95 -> {101};
-    96 -> {102 97};
+    95 -> {96};
+    96 -> {97};
     97 -> {98};
     98 -> {99};
     99 -> {100};

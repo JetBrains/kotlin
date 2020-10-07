@@ -804,7 +804,13 @@ class ControlFlowGraphBuilder {
         levelCounter--
         val node = createTryMainBlockExitNode(tryExpression)
         popAndAddEdge(node)
-        addEdge(node, tryExitNodes.top())
+        val finallyEnterNode = finallyEnterNodes.topOrNull()
+        // NB: Check the level to avoid adding an edge to the finally block at an upper level.
+        if (finallyEnterNode != null && finallyEnterNode.level == levelCounter + 1) {
+            addEdge(node, finallyEnterNode)
+        } else {
+            addEdge(node, tryExitNodes.top())
+        }
         return node
     }
 
@@ -816,7 +822,13 @@ class ControlFlowGraphBuilder {
         levelCounter--
         return createCatchClauseExitNode(catch).also {
             popAndAddEdge(it)
-            addEdge(it, tryExitNodes.top(), propagateDeadness = false)
+            val finallyEnterNode = finallyEnterNodes.topOrNull()
+            // NB: Check the level to avoid adding an edge to the finally block at an upper level.
+            if (finallyEnterNode != null && finallyEnterNode.level == levelCounter + 1) {
+                addEdge(it, finallyEnterNode, propagateDeadness = false)
+            } else {
+                addEdge(it, tryExitNodes.top(), propagateDeadness = false)
+            }
         }
     }
 
