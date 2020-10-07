@@ -2657,6 +2657,11 @@ public class IrJsCodegenInlineES6TestGenerated extends AbstractIrJsCodegenInline
             runTest("compiler/testData/codegen/boxInline/reified/capturedLambda2.kt");
         }
 
+        @TestMetadata("dontSubstituteNonReified.kt")
+        public void testDontSubstituteNonReified() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/reified/dontSubstituteNonReified.kt");
+        }
+
         @TestMetadata("kt15956.kt")
         public void testKt15956() throws Exception {
             runTest("compiler/testData/codegen/boxInline/reified/kt15956.kt");

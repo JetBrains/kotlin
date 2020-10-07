@@ -2912,6 +2912,11 @@ public class IrCompileKotlinAgainstInlineKotlinTestGenerated extends AbstractIrC
             runTest("compiler/testData/codegen/boxInline/reified/capturedLambda2.kt");
         }
 
+        @TestMetadata("dontSubstituteNonReified.kt")
+        public void testDontSubstituteNonReified() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/reified/dontSubstituteNonReified.kt");
+        }
+
         @TestMetadata("kt11081.kt")
         public void testKt11081() throws Exception {
             runTest("compiler/testData/codegen/boxInline/reified/kt11081.kt");
