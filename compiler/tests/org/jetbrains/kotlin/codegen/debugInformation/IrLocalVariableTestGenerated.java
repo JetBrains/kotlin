@@ -56,9 +56,27 @@ public class IrLocalVariableTestGenerated extends AbstractIrLocalVariableTest {
     }
 
     @Test
+    @TestMetadata("inlineProperty.kt")
+    public void testInlineProperty() throws Exception {
+        runTest("compiler/testData/debug/localVariables/inlineProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("jvmOverloads.kt")
+    public void testJvmOverloads() throws Exception {
+        runTest("compiler/testData/debug/localVariables/jvmOverloads.kt");
+    }
+
+    @Test
     @TestMetadata("localFun.kt")
     public void testLocalFun() throws Exception {
         runTest("compiler/testData/debug/localVariables/localFun.kt");
+    }
+
+    @Test
+    @TestMetadata("receiverParameter.kt")
+    public void testReceiverParameter() throws Exception {
+        runTest("compiler/testData/debug/localVariables/receiverParameter.kt");
     }
 
     @Test
