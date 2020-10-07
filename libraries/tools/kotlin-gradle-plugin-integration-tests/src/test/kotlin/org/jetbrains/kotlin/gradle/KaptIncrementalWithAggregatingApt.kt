@@ -190,7 +190,7 @@ class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
         project.gradleBuildScript().appendText("""
             
             dependencies {
-                compile 'com.google.guava:guava:12.0'
+                implementation 'com.google.guava:guava:12.0'
             }
         """.trimIndent())
         project.build("build") {
