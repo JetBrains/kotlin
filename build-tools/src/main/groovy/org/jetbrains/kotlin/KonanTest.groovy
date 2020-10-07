@@ -339,7 +339,8 @@ class RunExternalTestGroup extends JavaExec {
             text.eachLine { line ->
                 packages.each { pkg ->
                     // line contains val or var declaration or function parameter declaration
-                    if ((line =~ ~/va(l|r) *$pkg *(get\(\))? *\=/) || (line =~ ~/fun .*\(\n?\s*$pkg:.*/)) {
+                    if ((line =~ ~/va(l|r) *$pkg*( *: *$fullQualified*)?( *get\(\))? *\=.*/) ||
+                            (line =~ ~/fun .*\(\n?\s*$pkg:.*/)) {
                         vars.add(pkg)
                     }
                     if (line.contains("$pkg.") && !(line =~ packagePattern || line =~ importRegex)
