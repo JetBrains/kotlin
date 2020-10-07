@@ -1,5 +1,4 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 description = "Kotlin JVM metadata manipulation library"
 
@@ -37,15 +36,16 @@ configurations.getByName("compileOnly").extendsFrom(shadows)
 configurations.getByName("testCompile").extendsFrom(shadows)
 
 dependencies {
-    compile(kotlinStdlib())
+    api(kotlinStdlib())
     shadows(project(":kotlinx-metadata"))
     shadows(project(":core:metadata"))
     shadows(project(":core:metadata.jvm"))
     shadows(protobufLite())
-    testCompile(commonDep("junit:junit"))
-    testCompile(intellijDep()) { includeJars("asm-all", rootProject = rootProject) }
+    testImplementation(project(":kotlin-test:kotlin-test-junit"))
+    testImplementation(commonDep("junit:junit"))
+    testImplementation(intellijDep()) { includeJars("asm-all", rootProject = rootProject) }
     testCompileOnly(project(":kotlin-reflect-api"))
-    testRuntime(project(":kotlin-reflect"))
+    testRuntimeOnly(project(":kotlin-reflect"))
 }
 
 if (deployVersion != null) {

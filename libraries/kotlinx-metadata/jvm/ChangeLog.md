@@ -1,7 +1,10 @@
 # kotlinx-metadata-jvm
 
-## 0.1.1
+## 0.2.0
 
+- ['KT-41011`](https://youtrack.jetbrains.com/issue/KT-41011) Using KotlinClassMetadata.Class.Writer with metadata version < 1.4 will write incorrect version requirement table
+    - Breaking change: `KotlinClassMetadata.*.Writer.write` throws exception on `metadataVersion` earlier than 1.4.0.
+      Note: metadata of version 1.4 is readable by Kotlin compiler/reflection of versions 1.3 and later.
 - Breaking change: `KotlinClassMetadata.*.Writer.write` no longer accept `bytecodeVersion`.
 - [`KT-42429`](https://youtrack.jetbrains.com/issue/KT-42429) Wrong interpretation of Flag.Constructor.IS_PRIMARY
     - Breaking change: `Flag.Constructor.IS_PRIMARY` is deprecated, use `Flag.Constructor.IS_SECONDARY` instead
