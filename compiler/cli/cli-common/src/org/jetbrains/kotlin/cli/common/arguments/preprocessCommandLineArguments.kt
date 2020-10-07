@@ -83,7 +83,7 @@ private fun Reader.parseNextArgument(): String? {
 private fun Reader.consumeRestOfQuotedSequence(sb: StringBuilder, quote: Char) {
     var ch = nextChar()
     while (ch != null && ch != quote) {
-        if (ch == BACKSLASH) nextChar()?.apply(sb::append) else sb.append(ch)
+        if (ch == BACKSLASH) nextChar()?.let { sb.append(it) } else sb.append(ch)
         ch = nextChar()
     }
 }
