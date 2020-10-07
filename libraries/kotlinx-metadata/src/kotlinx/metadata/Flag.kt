@@ -220,11 +220,8 @@ class Flag(private val offset: Int, private val bitWidth: Int, private val value
      */
     object Constructor {
         @JvmField
-        @Deprecated(
-            "Use IS_SECONDARY which holds inverted value instead.",
-            ReplaceWith("Flag.Constructor.IS_SECONDARY"),
-            level = DeprecationLevel.ERROR
-        )
+        @Deprecated("Use IS_SECONDARY which holds inverted value instead.", level = DeprecationLevel.ERROR)
+        @Suppress("unused")
         val IS_PRIMARY = Flag(F.IS_SECONDARY, 0)
 
         /**
