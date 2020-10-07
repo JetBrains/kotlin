@@ -58,3 +58,6 @@ A. Code transition is in progress. We will delete the IDE plugin sources from th
 Q. What will happen with Pull Requests submitted to the [JetBrains/kotlin](https://github.com/JetBrains/kotlin) repository?  
 A. We will process all existing PRs and replicate commits in the new repository. However, all new PRs to the Kotlin IDEA plugin code
 should be done only in this repository.
+
+## 3. License
+Kotlin is distributed under the terms of the Apache License (Version 2.0). See [license folder](license/README.md) for details.
