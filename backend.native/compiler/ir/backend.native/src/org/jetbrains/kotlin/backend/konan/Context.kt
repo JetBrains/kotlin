@@ -425,11 +425,13 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
 
     lateinit var compilerOutput: List<ObjectFile>
 
-    val llvmModuleSpecification: LlvmModuleSpecification = LlvmModuleSpecificationImpl(
-            config.cachedLibraries,
-            producingCache = config.produce.isCache,
-            librariesToCache = config.librariesToCache
-    )
+    val llvmModuleSpecification: LlvmModuleSpecification by lazy {
+        when {
+            config.produce.isCache ->
+                CacheLlvmModuleSpecification(config.cachedLibraries, config.librariesToCache)
+            else -> DefaultLlvmModuleSpecification(config.cachedLibraries)
+        }
+    }
 
     val declaredLocalArrays: MutableMap<String, LLVMTypeRef> = HashMap()
 
