@@ -51,8 +51,6 @@ internal val addContinuationPhase = makeIrFilePhase(
 
 private class AddContinuationLowering(context: JvmBackendContext) : SuspendLoweringUtils(context), FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        // This should be done after converting lambdas into classes to avoid breaking the invariant that
-        // each lambda is referenced at most once while creating `$$forInline` methods.
         addContinuationObjectAndContinuationParameterToSuspendFunctions(irFile)
         addContinuationParameterToSuspendCalls(irFile)
     }

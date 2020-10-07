@@ -283,7 +283,6 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
     private fun IrBlockBodyBuilder.callInvokeSuspend(invokeSuspend: IrSimpleFunction, lambda: IrExpression): IrExpression =
         irCallOp(invokeSuspend.symbol, invokeSuspend.returnType, lambda, irUnit())
 
-    // Primary constructor accepts parameters equal to function reference arguments + continuation and sets the fields.
     private fun IrClass.addPrimaryConstructorForLambda(superClass: IrClass, arity: Int): IrConstructor =
         addConstructor {
             origin = JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA
