@@ -80,6 +80,9 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
                 configuration.languageVersionSettings.apiVersion,
                 specificFeatures = mapOf(
                     LanguageFeature.NewInference to if (USE_NI) LanguageFeature.State.ENABLED else LanguageFeature.State.DISABLED
+                ),
+                analysisFlags = mapOf(
+                    AnalysisFlags.skipPrereleaseCheck to true
                 )
             )
 
