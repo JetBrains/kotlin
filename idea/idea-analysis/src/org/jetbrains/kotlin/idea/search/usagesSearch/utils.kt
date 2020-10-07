@@ -47,6 +47,14 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isTypeRefinementEnabled
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
+@Deprecated(
+    "This method is obsolete and will be removed",
+    ReplaceWith(
+        "resolveToDescriptorIfAny(BodyResolveMode.FULL)",
+        "org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny",
+        "org.jetbrains.kotlin.resolve.lazy.BodyResolveMode"
+    )
+)
 val KtDeclaration.descriptor: DeclarationDescriptor?
     get() = if (this is KtParameter) this.descriptor else this.resolveToDescriptorIfAny(BodyResolveMode.FULL)
 
@@ -60,6 +68,14 @@ val KtDeclaration.constructor: ConstructorDescriptor?
         }
     }
 
+@Deprecated(
+    "This method is obsolete and will be removed",
+    ReplaceWith(
+        "resolveToParameterDescriptorIfAny(BodyResolveMode.FULL)",
+        "org.jetbrains.kotlin.idea.caches.resolve.resolveToParameterDescriptorIfAny",
+        "org.jetbrains.kotlin.resolve.lazy.BodyResolveMode"
+    )
+)
 val KtParameter.descriptor: ValueParameterDescriptor?
     get() = this.resolveToParameterDescriptorIfAny(BodyResolveMode.FULL)
 
