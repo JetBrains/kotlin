@@ -6,6 +6,8 @@ import org.jetbrains.dokka.CoreExtensions
 import org.jetbrains.dokka.analysis.KotlinAnalysis
 import org.jetbrains.dokka.base.renderers.*
 import org.jetbrains.dokka.base.renderers.html.*
+import org.jetbrains.dokka.base.renderers.html.command.consumers.PathToRootConsumer
+import org.jetbrains.dokka.base.renderers.html.command.consumers.ResolveLinkConsumer
 import org.jetbrains.dokka.base.resolvers.external.ExternalLocationProviderFactory
 import org.jetbrains.dokka.base.resolvers.external.DefaultExternalLocationProviderFactory
 import org.jetbrains.dokka.base.resolvers.external.javadoc.JavadocExternalLocationProviderFactory
@@ -15,6 +17,7 @@ import org.jetbrains.dokka.base.resolvers.shared.RecognizedLinkFormat
 import org.jetbrains.dokka.base.signatures.KotlinSignatureProvider
 import org.jetbrains.dokka.base.signatures.SignatureProvider
 import org.jetbrains.dokka.base.templating.Command
+import org.jetbrains.dokka.base.templating.ImmediateHtmlCommandConsumer
 import org.jetbrains.dokka.base.transformers.documentables.*
 import org.jetbrains.dokka.base.transformers.pages.annotations.SinceKotlinTransformer
 import org.jetbrains.dokka.base.transformers.pages.comments.CommentsToContentConverter
@@ -38,7 +41,7 @@ class DokkaBase : DokkaPlugin() {
     val htmlPreprocessors by extensionPoint<PageTransformer>()
     val kotlinAnalysis by extensionPoint<KotlinAnalysis>()
     val tabSortingStrategy by extensionPoint<TabSortingStrategy>()
-    val templatingCommand by extensionPoint<Class<out Command>>()
+    val immediateHtmlCommandConsumer by extensionPoint<ImmediateHtmlCommandConsumer>()
 
     val descriptorToDocumentableTranslator by extending {
         CoreExtensions.sourceToDocumentableTranslator providing ::DefaultDescriptorToDocumentableTranslator
@@ -206,6 +209,13 @@ class DokkaBase : DokkaPlugin() {
         htmlPreprocessors providing ::SourcesetDependencyAppender order { after(rootCreator) }
     }
 
+    val resolveLinkConsumer by extending {
+        immediateHtmlCommandConsumer with ResolveLinkConsumer
+    }
+
+    val pathToRootConsumer by extending {
+        immediateHtmlCommandConsumer with PathToRootConsumer
+    }
     val baseSearchbarDataInstaller by extending {
         htmlPreprocessors providing ::SearchbarDataInstaller order { after(sourceLinksTransformer) }
     }
