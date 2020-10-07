@@ -171,8 +171,11 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
                 }
 
                 is IrField -> {
-                    assert(candidate.correspondingPropertySymbol != null) {
-                        "Properties without fields are not supported ${candidate.fqNameWhenAvailable}"
+                    assert(
+                        candidate.origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE
+                                || candidate.correspondingPropertySymbol != null
+                    ) {
+                        "Unexpected field without property ${candidate.fqNameWhenAvailable}"
                     }
                 }
 
