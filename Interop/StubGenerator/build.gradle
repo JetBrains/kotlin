@@ -37,7 +37,7 @@ dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     api "org.jetbrains.kotlin:kotlin-compiler:$kotlinVersion"
     api "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
-    api "org.jetbrains.kotlinx:kotlinx-metadata-klib:0.0.1-dev-9"
+    api "org.jetbrains.kotlinx:kotlinx-metadata-klib:0.0.1-dev-10"
 
     testImplementation "junit:junit:4.12"
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$buildKotlinVersion"
