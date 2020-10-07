@@ -58,10 +58,6 @@ class BackRefFromAssociatedObject {
   template <ErrorPolicy errorPolicy>
   ObjHeader* ref() const;
 
-  inline bool permanent() const {
-    return obj_->permanent(); // Safe to query from any thread.
-  }
-
  private:
   ObjHeader* obj_;
   ForeignRefContext context_;

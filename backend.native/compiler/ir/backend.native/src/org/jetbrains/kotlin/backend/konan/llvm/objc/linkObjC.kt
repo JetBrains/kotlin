@@ -121,7 +121,7 @@ private fun PatchBuilder.addObjCPatches() {
     addPrivateCategory("NSDictionaryToKotlin")
     addPrivateCategory("NSEnumeratorAsAssociatedObject")
 
-    addExportedClass(objCExportNamer.kotlinAnyName, "KotlinBase", "refHolder")
+    addExportedClass(objCExportNamer.kotlinAnyName, "KotlinBase", "refHolder", "permanent")
 
     addExportedClass(objCExportNamer.mutableSetName, "KotlinMutableSet", "setHolder")
     addExportedClass(objCExportNamer.mutableMapName, "KotlinMutableDictionary", "mapHolder")

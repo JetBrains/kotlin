@@ -42,6 +42,7 @@ static void injectToRuntime();
 
 @implementation KotlinBase {
   BackRefFromAssociatedObject refHolder;
+  bool permanent;
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
@@ -79,6 +80,8 @@ static void injectToRuntime();
   ObjHolder holder;
   AllocInstanceWithAssociatedObject(typeInfo, result, holder.slot());
   result->refHolder.initAndAddRef(holder.obj());
+  RuntimeAssert(!holder.obj()->permanent(), "dynamically allocated object is permanent");
+  result->permanent = false;
   return result;
 }
 
@@ -86,6 +89,7 @@ static void injectToRuntime();
   KotlinBase* candidate = [super allocWithZone:nil];
   // TODO: should we call NSObject.init ?
   candidate->refHolder.initAndAddRef(obj);
+  candidate->permanent = obj->permanent();
 
   if (!obj->permanent()) { // TODO: permanent objects should probably be supported as custom types.
     if (!obj->container()->shareable()) {
@@ -104,7 +108,7 @@ static void injectToRuntime();
 }
 
 -(instancetype)retain {
-  if (refHolder.permanent()) { // TODO: consider storing `isPermanent` to self field.
+  if (permanent) {
     [super retain];
   } else {
     refHolder.addRef<ErrorPolicy::kTerminate>();
@@ -113,7 +117,7 @@ static void injectToRuntime();
 }
 
 -(BOOL)_tryRetain {
-  if (refHolder.permanent()) {
+  if (permanent) {
     return [super _tryRetain];
   } else {
     return refHolder.tryAddRef<ErrorPolicy::kTerminate>();
@@ -121,7 +125,7 @@ static void injectToRuntime();
 }
 
 -(oneway void)release {
-  if (refHolder.permanent()) {
+  if (permanent) {
     [super release];
   } else {
     refHolder.releaseRef();
