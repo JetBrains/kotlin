@@ -730,10 +730,6 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
     private val descriptorRendererForErrorDeclarations = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES
 }
 
-@ObsoleteDescriptorBasedAPI
-internal fun IrDeclaration.name(): String =
-    descriptor.name.toString()
-
 internal fun DescriptorRenderer.renderDescriptor(descriptor: DeclarationDescriptor): String =
     if (descriptor is ReceiverParameterDescriptor)
         "this@${descriptor.containingDeclaration.name}: ${descriptor.type}"
