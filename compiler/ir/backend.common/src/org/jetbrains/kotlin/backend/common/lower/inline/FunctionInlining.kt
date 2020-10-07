@@ -136,9 +136,9 @@ class FunctionInlining(
                     callee.parentAsClass.typeParameters
                 else callee.typeParameters
             val typeArguments =
-                (0 until callSite.typeArgumentsCount).map {
+                (0 until callSite.typeArgumentsCount).associate {
                     typeParameters[it].symbol to callSite.getTypeArgument(it)
-                }.associate { it }
+                }
             DeepCopyIrTreeWithSymbolsForInliner(typeArguments, parent)
         }
 
