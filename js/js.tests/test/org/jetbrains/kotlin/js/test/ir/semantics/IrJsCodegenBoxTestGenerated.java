@@ -16913,16 +16913,6 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                     runTest("compiler/testData/codegen/box/primitiveTypes/equalityWithObject/generated/primitiveEqObjectChar.kt");
                 }
 
-                @TestMetadata("primitiveEqObjectInt.kt")
-                public void testPrimitiveEqObjectInt() throws Exception {
-                    runTest("compiler/testData/codegen/box/primitiveTypes/equalityWithObject/generated/primitiveEqObjectInt.kt");
-                }
-
-                @TestMetadata("primitiveEqObjectLong.kt")
-                public void testPrimitiveEqObjectLong() throws Exception {
-                    runTest("compiler/testData/codegen/box/primitiveTypes/equalityWithObject/generated/primitiveEqObjectLong.kt");
-                }
-
                 @TestMetadata("primitiveEqObjectShort.kt")
                 public void testPrimitiveEqObjectShort() throws Exception {
                     runTest("compiler/testData/codegen/box/primitiveTypes/equalityWithObject/generated/primitiveEqObjectShort.kt");
@@ -18806,6 +18796,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             @TestMetadata("forIntInIntUntilSmartcastInt.kt")
             public void testForIntInIntUntilSmartcastInt() throws Exception {
                 runTest("compiler/testData/codegen/box/ranges/forInUntil/forIntInIntUntilSmartcastInt.kt");
+            }
+
+            @TestMetadata("kt42533.kt")
+            public void testKt42533() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/forInUntil/kt42533.kt");
             }
         }
 
