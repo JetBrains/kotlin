@@ -29991,6 +29991,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }
 
+        @TestMetadata("accessorForAbstractProtected.kt")
+        public void testAccessorForAbstractProtected() throws Exception {
+            runTest("compiler/testData/codegen/box/syntheticAccessors/accessorForAbstractProtected.kt");
+        }
+
         @TestMetadata("accessorForGenericConstructor.kt")
         public void testAccessorForGenericConstructor() throws Exception {
             runTest("compiler/testData/codegen/box/syntheticAccessors/accessorForGenericConstructor.kt");

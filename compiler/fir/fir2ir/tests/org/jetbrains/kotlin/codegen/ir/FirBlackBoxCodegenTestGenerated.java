@@ -30591,6 +30591,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JVM_IR, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
         }
 
+        @TestMetadata("accessorForAbstractProtected.kt")
+        public void testAccessorForAbstractProtected() throws Exception {
+            runTest("compiler/testData/codegen/box/syntheticAccessors/accessorForAbstractProtected.kt");
+        }
+
         @TestMetadata("accessorForGenericConstructor.kt")
         public void testAccessorForGenericConstructor() throws Exception {
             runTest("compiler/testData/codegen/box/syntheticAccessors/accessorForGenericConstructor.kt");
