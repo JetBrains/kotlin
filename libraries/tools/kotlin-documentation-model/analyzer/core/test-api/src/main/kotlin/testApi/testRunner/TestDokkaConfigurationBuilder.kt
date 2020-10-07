@@ -31,7 +31,7 @@ class TestDokkaConfigurationBuilder {
     var offlineMode: Boolean = false
     var cacheRoot: String? = null
     var pluginsClasspath: List<File> = emptyList()
-    var pluginsConfigurations: Map<String, String> = emptyMap()
+    var pluginsConfigurations: MutableList<PluginConfigurationImpl> = mutableListOf()
     var failOnWarning: Boolean = false
     private val lazySourceSets = mutableListOf<Lazy<DokkaSourceSetImpl>>()
 
