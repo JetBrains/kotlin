@@ -12,10 +12,16 @@ data class DokkaConfigurationImpl(
     override val offlineMode: Boolean = DokkaDefaults.offlineMode,
     override val sourceSets: List<DokkaSourceSetImpl> = emptyList(),
     override val pluginsClasspath: List<File> = emptyList(),
-    override val pluginsConfiguration: Map<String, String> = emptyMap(),
+    override val pluginsConfiguration: List<PluginConfigurationImpl> = DokkaDefaults.pluginsConfiguration,
     override val modules: List<DokkaModuleDescriptionImpl> = emptyList(),
     override val failOnWarning: Boolean = DokkaDefaults.failOnWarning
 ) : DokkaConfiguration
+
+data class PluginConfigurationImpl(
+    override val fqPluginName: String,
+    override val serializationFormat: DokkaConfiguration.SerializationFormat,
+    override val values: String
+) : DokkaConfiguration.PluginConfiguration
 
 
 data class DokkaSourceSetImpl(
