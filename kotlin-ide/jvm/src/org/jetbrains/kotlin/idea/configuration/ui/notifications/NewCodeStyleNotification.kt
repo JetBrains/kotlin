@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.idea.configuration.ui.notifications
 
 import com.intellij.application.options.CodeStyle
 import com.intellij.facet.ProjectFacetManager
-import com.intellij.ide.util.PropertiesComponent
 import com.intellij.notification.*
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
@@ -19,16 +19,15 @@ import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
 import org.jetbrains.kotlin.idea.formatter.kotlinCodeStyleDefaults
 
 private const val KOTLIN_UPDATE_CODE_STYLE_GROUP_ID = "Update Kotlin code style"
-private const val KOTLIN_UPDATE_CODE_STYLE_PROPERTY_NAME = "update.kotlin.code.style.notified"
 
 fun notifyKotlinStyleUpdateIfNeeded(project: Project) {
+    if (ApplicationManager.getApplication().isUnitTestMode) return
+
     val modulesWithFacet = ProjectFacetManager.getInstance(project).getModulesWithFacet(KotlinFacetType.TYPE_ID)
     if (modulesWithFacet.isEmpty()) return
 
     if (CodeStyle.getSettings(project).kotlinCodeStyleDefaults() == KotlinStyleGuideCodeStyle.CODE_STYLE_ID) return
-
-    val settingsComponent = PropertiesComponent.getInstance(project)
-    if (settingsComponent.getBoolean(KOTLIN_UPDATE_CODE_STYLE_PROPERTY_NAME, false)) {
+    if (SuppressKotlinCodeStyleComponent.getInstance(project).state.disableForAll) {
         return
     }
 
@@ -38,12 +37,6 @@ fun notifyKotlinStyleUpdateIfNeeded(project: Project) {
         NotificationDisplayType.STICKY_BALLOON,
         true
     )
-
-    if (ApplicationManager.getApplication().isUnitTestMode) {
-        return
-    }
-
-    settingsComponent.setValue(KOTLIN_UPDATE_CODE_STYLE_PROPERTY_NAME, true, false)
 
     notification.notify(project)
 }
@@ -66,6 +59,30 @@ private fun createNotification(): Notification = Notification(
         }
     }
 
-    addAction(notificationAction)
+    val disableAction = NotificationAction.create(
+        KotlinJvmBundle.message("do.not.suggest.new.code.style")
+    ) { e: AnActionEvent, notification: Notification ->
+        notification.expire()
+
+        e.project?.takeIf { !it.isDisposed }?.let { project ->
+            runWriteAction {
+                SuppressKotlinCodeStyleComponent.getInstance(project).state.disableForAll = true
+            }
+        }
+    }
+
+    addActions(listOf(notificationAction, disableAction))
     isImportant = true
+}
+
+class SuppressKotlinCodeStyleState : BaseState() {
+    var disableForAll by property(false)
+}
+
+@Service
+@State(name = "SuppressKotlinCodeStyleNotification")
+class SuppressKotlinCodeStyleComponent : SimplePersistentStateComponent<SuppressKotlinCodeStyleState>(SuppressKotlinCodeStyleState()) {
+    companion object {
+        fun getInstance(project: Project): SuppressKotlinCodeStyleComponent = project.service()
+    }
 }
