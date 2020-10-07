@@ -2585,6 +2585,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/callableReference/function/classMemberFromClass.kt");
             }
 
+            @TestMetadata("classMemberFromCompanionObject.kt")
+            public void testClassMemberFromCompanionObject() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/function/classMemberFromCompanionObject.kt");
+            }
+
             @TestMetadata("classMemberFromExtension.kt")
             public void testClassMemberFromExtension() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/function/classMemberFromExtension.kt");
