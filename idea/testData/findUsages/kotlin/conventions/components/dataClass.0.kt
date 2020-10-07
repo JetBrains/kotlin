@@ -1,6 +1,5 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.KtParameter
 // OPTIONS: usages
-// FIR_IGNORE
 
 package pack
 
@@ -27,3 +26,5 @@ fun List<A>.ext1() {
 }
 
 fun <T> T.getThis(): T = this
+
+// FIR_IGNORE

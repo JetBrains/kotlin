@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBytecodeShapeTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidIrBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidSyntheticPropertyDescriptorTest
-import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightClassLoadingTest
-import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightClassSanityTest
-import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightFacadeClassTest
-import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightScriptLoadingTest
+import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.checkers.*
 import org.jetbrains.kotlin.copyright.AbstractUpdateKotlinCopyrightTest
 import org.jetbrains.kotlin.findUsages.*
@@ -1219,6 +1216,20 @@ fun main(args: Array<String>) {
                     excludeDirs = listOf("local", "compilationErrors", "ideRegression"),
                     pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME
                 )
+            }
+        }
+
+        testGroup("idea/idea-fir/tests", "compiler/testData") {
+            testClass<AbstractFirLightClassTest> {
+                model("asJava/lightClasses", excludeDirs = listOf("delegation", "script"), pattern = KT_WITHOUT_DOTS_IN_NAME)
+            }
+
+            testClass<AbstractFirClassLoadingTest> {
+                model("asJava/ultraLightClasses", pattern = KT_OR_KTS)
+            }
+
+            testClass<AbstractFirLightFacadeClassTest> {
+                model("asJava/ultraLightFacades", pattern = KT_OR_KTS)
             }
         }
 

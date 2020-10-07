@@ -1,3 +1,4 @@
+// CHECK_BY_JAVA_FILE
 import kotlin.reflect.KClass
 
 annotation class SimpleAnn(val value: String)
