@@ -8580,6 +8580,36 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
             runTest("testData/inspectionsLocal/redundantUnitExpression/atLastAfterVal.kt");
         }
 
+        @TestMetadata("dynamic.kt")
+        public void testDynamic() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/dynamic.kt");
+        }
+
+        @TestMetadata("dynamic2.kt")
+        public void testDynamic2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/dynamic2.kt");
+        }
+
+        @TestMetadata("dynamic3.kt")
+        public void testDynamic3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/dynamic3.kt");
+        }
+
+        @TestMetadata("dynamic4.kt")
+        public void testDynamic4() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/dynamic4.kt");
+        }
+
+        @TestMetadata("dynamic5.kt")
+        public void testDynamic5() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/dynamic5.kt");
+        }
+
+        @TestMetadata("dynamic6.kt")
+        public void testDynamic6() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/dynamic6.kt");
+        }
+
         @TestMetadata("labeledReturnAny.kt")
         public void testLabeledReturnAny() throws Exception {
             runTest("testData/inspectionsLocal/redundantUnitExpression/labeledReturnAny.kt");

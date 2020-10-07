@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.getTargetFunctionDescript
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 class RedundantUnitExpressionInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
@@ -51,6 +52,7 @@ class RedundantUnitExpressionInspection : AbstractKotlinInspection(), CleanupLoc
                 if (referenceExpression == parent.lastBlockStatementOrThis()) {
                     val prev = referenceExpression.previousStatement() ?: return true
                     if (prev.isUnitLiteral) return true
+                    if (prev is KtDeclaration && isDynamicCall(parent)) return false
                     val prevType = prev.analyze(BodyResolveMode.PARTIAL).getType(prev)
                     if (prevType != null) {
                         return prevType.isUnit()
@@ -73,17 +75,25 @@ class RedundantUnitExpressionInspection : AbstractKotlinInspection(), CleanupLoc
     }
 }
 
+private fun isDynamicCall(parent: KtBlockExpression): Boolean = parent.getStrictParentOfType<KtFunctionLiteral>()
+    ?.findLambdaReturnType()
+    ?.isDynamic() == true
+
 private fun KtReturnExpression.expectedReturnType(): KotlinType? {
     val functionDescriptor = getTargetFunctionDescriptor(analyze()) ?: return null
     val functionLiteral = DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor) as? KtFunctionLiteral
-    if (functionLiteral != null) {
-        val callExpression = functionLiteral.getStrictParentOfType<KtCallExpression>() ?: return null
-        val resolvedCall = callExpression.resolveToCall() ?: return null
-        val valueArgument = functionLiteral.getStrictParentOfType<KtValueArgument>() ?: return null
-        val mapping = resolvedCall.getArgumentMapping(valueArgument) as? ArgumentMatch ?: return null
-        return mapping.valueParameter.returnType?.arguments?.lastOrNull()?.type
-    }
-    return functionDescriptor.returnType
+    return if (functionLiteral != null)
+        functionLiteral.findLambdaReturnType()
+    else
+        functionDescriptor.returnType
+}
+
+private fun KtFunctionLiteral.findLambdaReturnType(): KotlinType? {
+    val callExpression = getStrictParentOfType<KtCallExpression>() ?: return null
+    val resolvedCall = callExpression.resolveToCall() ?: return null
+    val valueArgument = getStrictParentOfType<KtValueArgument>() ?: return null
+    val mapping = resolvedCall.getArgumentMapping(valueArgument) as? ArgumentMatch ?: return null
+    return mapping.valueParameter.returnType?.arguments?.lastOrNull()?.type
 }
 
 private class RemoveRedundantUnitFix : LocalQuickFix {
