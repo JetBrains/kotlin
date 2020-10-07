@@ -1578,10 +1578,12 @@ inline void addHeapRef(ContainerHeader* container) {
     case CONTAINER_TAG_STACK:
       break;
     case CONTAINER_TAG_LOCAL:
+      RuntimeAssert(container->refCount() > 0, "add ref for reclaimed object");
       incrementRC</* Atomic = */ false>(container);
       break;
     /* case CONTAINER_TAG_FROZEN: case CONTAINER_TAG_SHARED: */
     default:
+      RuntimeAssert(container->refCount() > 0, "add ref for reclaimed object");
       incrementRC</* Atomic = */ true>(container);
       break;
   }

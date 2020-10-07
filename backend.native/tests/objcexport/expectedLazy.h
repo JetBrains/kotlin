@@ -318,6 +318,19 @@ __attribute__((swift_name("CoroutinesKt")))
 + (void)invoke1Block:(id<KtKotlinSuspendFunction1>)block argument:(id _Nullable)argument completionHandler:(void (^)(id _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("invoke1(block:argument:completionHandler:)")));
 @end;
 
+__attribute__((swift_name("DeallocRetainBase")))
+@interface KtDeallocRetainBase : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("DeallocRetainKt")))
+@interface KtDeallocRetainKt : KtBase
++ (void)garbageCollect __attribute__((swift_name("garbageCollect()")));
++ (KtKotlinWeakReference<id> *)createWeakReferenceValue:(id)value __attribute__((swift_name("createWeakReference(value:)")));
+@end;
+
 __attribute__((swift_name("FHolder")))
 @interface KtFHolder : KtBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));

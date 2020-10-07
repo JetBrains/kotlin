@@ -127,6 +127,8 @@ void BackRefFromAssociatedObject::addRef() {
   static_assert(errorPolicy != ErrorPolicy::kDefaultValue, "Cannot use default return value here");
 
   if (atomicAdd(&refCount, 1) == 1) {
+    if (obj_ == nullptr) return; // E.g. after [detach].
+
     // There are no references to the associated object itself, so Kotlin object is being passed from Kotlin,
     // and it is owned therefore.
     ensureRefAccessible<errorPolicy>(obj_, context_); // TODO: consider removing explicit verification.
@@ -143,6 +145,8 @@ template void BackRefFromAssociatedObject::addRef<ErrorPolicy::kTerminate>();
 template <ErrorPolicy errorPolicy>
 bool BackRefFromAssociatedObject::tryAddRef() {
   static_assert(errorPolicy != ErrorPolicy::kDefaultValue, "Cannot use default return value here");
+
+  if (obj_ == nullptr) return false; // E.g. after [detach].
 
   // Suboptimal but simple:
   ensureRefAccessible<errorPolicy>(obj_, context_);
@@ -165,6 +169,8 @@ template bool BackRefFromAssociatedObject::tryAddRef<ErrorPolicy::kTerminate>();
 void BackRefFromAssociatedObject::releaseRef() {
   ForeignRefContext context = context_;
   if (atomicAdd(&refCount, -1) == 0) {
+    if (obj_ == nullptr) return; // E.g. after [detach].
+
     // Note: by this moment "subsequent" addRef may have already happened and patched context_.
     // So use the value loaded before refCount update:
     DeinitForeignRef(obj_, context);
@@ -173,8 +179,15 @@ void BackRefFromAssociatedObject::releaseRef() {
   }
 }
 
+void BackRefFromAssociatedObject::detach() {
+  RuntimeAssert(atomicGet(&refCount) == 0, "unexpected refCount")
+  obj_ = nullptr; // Handled in addRef/tryAddRef/releaseRef/ref.
+}
+
 template <ErrorPolicy errorPolicy>
 ObjHeader* BackRefFromAssociatedObject::ref() const {
+  RuntimeAssert(obj_ != nullptr, "no valid Kotlin object found");
+
   if (!ensureRefAccessible<errorPolicy>(obj_, context_)) {
     return nullptr;
   }
