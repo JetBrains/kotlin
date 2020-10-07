@@ -1626,6 +1626,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/osmorc/intellij.osgi.iml" filepath="$PROJECT_DIR$/intellij/contrib/osmorc/intellij.osgi.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/osmorc/osmorc-jps-plugin/intellij.osgi.jps.iml" filepath="$PROJECT_DIR$/intellij/contrib/osmorc/osmorc-jps-plugin/intellij.osgi.jps.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/performanceTesting/intellij.performanceTesting.iml" filepath="$PROJECT_DIR$/intellij/plugins/performanceTesting/intellij.performanceTesting.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/performanceTesting/maven/intellij.performanceTesting.maven.iml" filepath="$PROJECT_DIR$/intellij/plugins/performanceTesting/maven/intellij.performanceTesting.maven.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/phpstorm/phing/intellij.phing.iml" filepath="$PROJECT_DIR$/intellij/phpstorm/phing/intellij.phing.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/phoneGap/intellij.phoneGap.iml" filepath="$PROJECT_DIR$/intellij/contrib/phoneGap/intellij.phoneGap.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/phpstorm/php-openapi/intellij.php.iml" filepath="$PROJECT_DIR$/intellij/phpstorm/php-openapi/intellij.php.iml" />
@@ -1815,6 +1816,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/properties/properties-psi-api/intellij.properties.psi.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/properties/properties-psi-api/intellij.properties.psi.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/properties/properties-psi-impl/intellij.properties.psi.impl.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/properties/properties-psi-impl/intellij.properties.psi.impl.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/properties/properties-resource-bundle-editor/intellij.properties.resource.bundle.editor.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/properties/properties-resource-bundle-editor/intellij.properties.resource.bundle.editor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/properties/tests/intellij.properties.tests.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/properties/tests/intellij.properties.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/phpstorm/psalm/intellij.psalm.iml" filepath="$PROJECT_DIR$/intellij/phpstorm/psalm/intellij.psalm.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/puppet/intellij.puppet.iml" filepath="$PROJECT_DIR$/intellij/plugins/puppet/intellij.puppet.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/python/intellij.pycharm.community.iml" filepath="$PROJECT_DIR$/intellij/community/python/intellij.pycharm.community.iml" />

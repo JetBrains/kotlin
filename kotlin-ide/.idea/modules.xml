@@ -737,6 +737,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/properties/properties-psi-api/intellij.properties.psi.iml" filepath="$PROJECT_DIR$/intellij/plugins/properties/properties-psi-api/intellij.properties.psi.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/properties/properties-psi-impl/intellij.properties.psi.impl.iml" filepath="$PROJECT_DIR$/intellij/plugins/properties/properties-psi-impl/intellij.properties.psi.impl.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/properties/properties-resource-bundle-editor/intellij.properties.resource.bundle.editor.iml" filepath="$PROJECT_DIR$/intellij/plugins/properties/properties-resource-bundle-editor/intellij.properties.resource.bundle.editor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/properties/tests/intellij.properties.tests.iml" filepath="$PROJECT_DIR$/intellij/plugins/properties/tests/intellij.properties.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/python/intellij.pycharm.community.iml" filepath="$PROJECT_DIR$/intellij/python/intellij.pycharm.community.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/python/build/intellij.pycharm.community.build.iml" filepath="$PROJECT_DIR$/intellij/python/build/intellij.pycharm.community.build.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/python/build/build-debug-binaries/intellij.pycharm.community.build.debugBinaries.iml" filepath="$PROJECT_DIR$/intellij/python/build/build-debug-binaries/intellij.pycharm.community.build.debugBinaries.iml" />
