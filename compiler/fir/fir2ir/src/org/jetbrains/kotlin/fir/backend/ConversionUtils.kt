@@ -389,7 +389,7 @@ fun Fir2IrComponents.createSafeCallConstruction(
     val startOffset = expressionOnNotNull.startOffset
     val endOffset = expressionOnNotNull.endOffset
 
-    val resultType = expressionOnNotNull.type.let { if (isReceiverNullable) it.makeNullable() else it }
+    val resultType = expressionOnNotNull.type.makeNullable()
     return IrBlockImpl(startOffset, endOffset, resultType, IrStatementOrigin.SAFE_CALL).apply {
         statements += receiverVariable
         statements += IrWhenImpl(startOffset, endOffset, resultType).apply {
