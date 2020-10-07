@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.overrides.IrOverridingUtil
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -163,14 +164,16 @@ fun IrTypeParameter.copyToWithoutSuperTypes(
     this.index = index
 }
 
-fun IrFunction.copyReceiverParametersFrom(from: IrFunction) {
+fun IrFunction.copyReceiverParametersFrom(from: IrFunction, substitutionMap: Map<IrTypeParameterSymbol, IrType>) {
     dispatchReceiverParameter = from.dispatchReceiverParameter?.run {
         val newDescriptor = WrappedReceiverParameterDescriptor()
         factory.createValueParameter(
             startOffset, endOffset, origin,
             IrValueParameterSymbolImpl(newDescriptor),
-            name,
-            index, type, varargElementType, isCrossinline, isNoinline
+            name, index,
+            type.substitute(substitutionMap),
+            varargElementType?.substitute(substitutionMap),
+            isCrossinline, isNoinline
         ).also { parameter ->
             parameter.parent = this@copyReceiverParametersFrom
             newDescriptor.bind(this)
@@ -179,16 +182,19 @@ fun IrFunction.copyReceiverParametersFrom(from: IrFunction) {
     extensionReceiverParameter = from.extensionReceiverParameter?.copyTo(this)
 }
 
-fun IrFunction.copyValueParametersFrom(from: IrFunction) {
-    copyReceiverParametersFrom(from)
+fun IrFunction.copyValueParametersFrom(from: IrFunction, substitutionMap: Map<IrTypeParameterSymbol, IrType>) {
+    copyReceiverParametersFrom(from, substitutionMap)
     val shift = valueParameters.size
-    valueParameters += from.valueParameters.map { it.copyTo(this, index = it.index + shift) }
+    valueParameters += from.valueParameters.map {
+        it.copyTo(this, index = it.index + shift, type = it.type.substitute(substitutionMap))
+    }
 }
 
 fun IrFunction.copyParameterDeclarationsFrom(from: IrFunction) {
     assert(typeParameters.isEmpty())
     copyTypeParametersFrom(from)
-    copyValueParametersFrom(from)
+    val substitutionMap = makeTypeParameterSubstitutionMap(from, this)
+    copyValueParametersFrom(from, substitutionMap)
 }
 
 fun IrTypeParametersContainer.copyTypeParameters(
@@ -230,6 +236,16 @@ private fun IrTypeParameter.copySuperTypesFrom(source: IrTypeParameter, srcToDst
 fun IrMutableAnnotationContainer.copyAnnotationsFrom(source: IrAnnotationContainer) {
     annotations += source.annotations.map { it.deepCopyWithSymbols(this as? IrDeclarationParent) }
 }
+
+fun makeTypeParameterSubstitutionMap(
+    original: IrTypeParametersContainer,
+    transformed: IrTypeParametersContainer
+): Map<IrTypeParameterSymbol, IrType> =
+    original.typeParameters
+        .map { it.symbol }
+        .zip(transformed.typeParameters.map { it.defaultType })
+        .toMap()
+
 
 // Copy value parameters, dispatch receiver, and extension receiver from source to value parameters of this function.
 // Type of dispatch receiver defaults to source's dispatch receiver. It is overridable in case the new function and the old one are used in

@@ -74,12 +74,23 @@ private fun IrFunction.capturesCrossinline(): Boolean {
 
 internal abstract class SuspendLoweringUtils(protected val context: JvmBackendContext) {
     protected fun IrClass.addFunctionOverride(
-        function: IrSimpleFunction, startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET
-    ): IrSimpleFunction =
-        addFunction(function.name.asString(), function.returnType, startOffset = startOffset, endOffset = endOffset).apply {
+        function: IrSimpleFunction,
+        startOffset: Int = UNDEFINED_OFFSET,
+        endOffset: Int = UNDEFINED_OFFSET,
+    ): IrSimpleFunction {
+        val overriddenType = superTypes.single { it.classifierOrFail == function.parentAsClass.symbol }
+        val typeSubstitution = (overriddenType.classifierOrFail.owner as IrClass).typeParameters
+            .map { it.symbol }
+            .zip((overriddenType as IrSimpleType).arguments.map { (it as IrTypeProjection).type }) // No star projections in this lowering
+            .toMap()
+        return addFunction(
+            function.name.asString(), function.returnType.substitute(typeSubstitution),
+            startOffset = startOffset, endOffset = endOffset
+        ).apply {
             overriddenSymbols = listOf(function.symbol)
-            valueParameters = function.valueParameters.map { it.copyTo(this) }
+            valueParameters = function.valueParameters.map { it.copyTo(this, type = it.type.substitute(typeSubstitution)) }
         }
+    }
 
     protected fun IrClass.addFunctionOverride(
         function: IrSimpleFunction,
@@ -178,7 +189,7 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
             val createToOverride = suspendLambda.symbol.functions.singleOrNull {
                 it.owner.valueParameters.size == arity + 1 && it.owner.name.asString() == "create"
             }
-            val invokeSuspend = addInvokeSuspendForLambda(function, parametersFields)
+            val invokeSuspend = addInvokeSuspendForLambda(function, suspendLambda, parametersFields)
             if (function.capturesCrossinline()) {
                 addInvokeSuspendForInlineForLambda(invokeSuspend)
             }
@@ -192,11 +203,11 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
             context.suspendLambdaToOriginalFunctionMap[attributeOwnerId as IrFunctionReference] = function
         }
 
-    private fun IrClass.addInvokeSuspendForLambda(irFunction: IrFunction, fields: List<IrField>): IrSimpleFunction {
-        val superMethod = context.ir.symbols.suspendLambdaClass.functions.single {
-            it.owner.name.asString() == INVOKE_SUSPEND_METHOD_NAME && it.owner.valueParameters.size == 1 &&
-                    it.owner.valueParameters[0].type.isKotlinResult()
-        }.owner
+    private fun IrClass.addInvokeSuspendForLambda(irFunction: IrFunction, suspendLambda: IrClass, fields: List<IrField>): IrSimpleFunction {
+        val superMethod = suspendLambda.functions.single {
+            it.name.asString() == INVOKE_SUSPEND_METHOD_NAME && it.valueParameters.size == 1 &&
+                    it.valueParameters[0].type.isKotlinResult()
+        }
         return addFunctionOverride(superMethod, irFunction.startOffset, irFunction.endOffset).apply {
             body = irFunction.moveBodyTo(this, mapOf())?.transform(object : IrElementTransformerVoid() {
                 override fun visitGetValue(expression: IrGetValue): IrExpression {

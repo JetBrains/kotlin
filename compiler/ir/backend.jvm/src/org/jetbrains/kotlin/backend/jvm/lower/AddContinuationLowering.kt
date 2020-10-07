@@ -382,7 +382,8 @@ private fun IrFunction.createSuspendFunctionStub(context: JvmBackendContext): Ir
 
         function.copyAttributes(this)
         function.copyTypeParametersFrom(this)
-        function.copyReceiverParametersFrom(this)
+        val substitutionMap = makeTypeParameterSubstitutionMap(this, function)
+        function.copyReceiverParametersFrom(this, substitutionMap)
 
         if (origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE) {
             function.overriddenSymbols +=
@@ -393,11 +394,15 @@ private fun IrFunction.createSuspendFunctionStub(context: JvmBackendContext): Ir
         // TODO: It would be nice if AddContinuationLowering could insert the continuation argument before default stub generation.
         val index = valueParameters.firstOrNull { it.origin == IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION }?.index
             ?: valueParameters.size
-        function.valueParameters += valueParameters.take(index).map { it.copyTo(function, index = it.index) }
+        function.valueParameters += valueParameters.take(index).map {
+            it.copyTo(function, index = it.index, type = it.type.substitute(substitutionMap))
+        }
         function.addValueParameter(
-            SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, continuationType(context), JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
+            SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, continuationType(context).substitute(substitutionMap), JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
         )
-        function.valueParameters += valueParameters.drop(index).map { it.copyTo(function, index = it.index + 1) }
+        function.valueParameters += valueParameters.drop(index).map {
+            it.copyTo(function, index = it.index + 1, type = it.type.substitute(substitutionMap))
+        }
     }
 }
 
