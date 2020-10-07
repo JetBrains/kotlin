@@ -62,6 +62,7 @@ object FirSessionFactory {
         moduleInfo: ModuleInfo,
         sessionProvider: FirProjectSessionProvider,
         scope: GlobalSearchScope,
+        project: Project,
         dependenciesProvider: FirSymbolProvider? = null,
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
         init: FirSessionConfigurator.() -> Unit = {}
@@ -82,7 +83,7 @@ object FirSessionFactory {
                     this,
                     listOf(
                         firProvider.symbolProvider,
-                        JavaSymbolProvider(this, sessionProvider.project, scope),
+                        JavaSymbolProvider(this, project, scope),
                         dependenciesProvider ?: FirDependenciesSymbolProviderImpl(this)
                     )
                 ) as FirSymbolProvider
@@ -93,8 +94,7 @@ object FirSessionFactory {
                 init()
             }.configure()
 
-            PsiElementFinder.EP.getPoint(sessionProvider.project)
-                .registerExtension(FirJavaElementFinder(this, sessionProvider.project), sessionProvider.project)
+            PsiElementFinder.EP.getPoint(project).registerExtension(FirJavaElementFinder(this, project), project)
         }
     }
 
@@ -115,7 +115,7 @@ object FirSessionFactory {
         return FirLibrarySession(moduleInfo, sessionProvider).apply {
             registerCommonComponents(languageVersionSettings)
 
-            val javaSymbolProvider = JavaSymbolProvider(this, sessionProvider.project, scope)
+            val javaSymbolProvider = JavaSymbolProvider(this, project, scope)
 
             val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
 
@@ -125,7 +125,7 @@ object FirSessionFactory {
                     this,
                     listOf(
                         KotlinDeserializedJvmSymbolsProvider(
-                            this, sessionProvider.project,
+                            this, project,
                             packagePartProvider,
                             javaSymbolProvider,
                             kotlinClassFinder,

@@ -320,7 +320,7 @@ object KotlinToJVMBytecodeCompiler {
 
             val scope = GlobalSearchScope.filesScope(project, ktFiles.map { it.virtualFile })
                 .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
-            val provider = FirProjectSessionProvider(project)
+            val provider = FirProjectSessionProvider()
 
             val librariesModuleInfo = FirJvmModuleInfo.createForLibraries()
             val librariesScope = ProjectScope.getLibrariesScope(project)
@@ -330,7 +330,7 @@ object KotlinToJVMBytecodeCompiler {
             )
 
             val moduleInfo = FirJvmModuleInfo(module.getModuleName(), listOf(librariesModuleInfo))
-            val session = FirSessionFactory.createJavaModuleBasedSession(moduleInfo, provider, scope) {
+            val session = FirSessionFactory.createJavaModuleBasedSession(moduleInfo, provider, scope, project) {
                 if (extendedAnalysisMode) {
                     registerExtendedCommonCheckers()
                 }

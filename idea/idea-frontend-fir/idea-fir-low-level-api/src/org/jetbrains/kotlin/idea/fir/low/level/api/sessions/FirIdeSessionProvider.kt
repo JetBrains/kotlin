@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 
 @Immutable
 class FirIdeSessionProvider internal constructor(
-    override val project: Project,
+    val project: Project,
     internal val rootModuleSession: FirIdeSourcesSession,
     val sessions: Map<ModuleSourceInfo, FirIdeSession>
 ) : FirSessionProvider {
