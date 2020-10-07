@@ -157,7 +157,7 @@ public class IdeErrorMessages {
                 HTML_AMBIGUOUS_CALLS);
         MAP.put(UNRESOLVED_REFERENCE_WRONG_RECEIVER,
                 KotlinIdeaAnalysisBundle.htmlMessage(
-                "html.unresolved.reference.br.none.of.the.following.candidates.is.applicable.because.of.receiver.type.mismatch.ul.0.ul.html"),
+                "html.unresolved.reference.br.none.of.the.following.candidates.are.applicable.because.of.receiver.type.mismatch.ul.0.ul.html"),
                 HTML_AMBIGUOUS_CALLS);
 
         MAP.put(DELEGATE_SPECIAL_FUNCTION_AMBIGUITY,
