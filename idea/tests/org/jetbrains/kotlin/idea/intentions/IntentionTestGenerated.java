@@ -3763,6 +3763,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/intentions/chop/argumentList"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
             }
 
+            @TestMetadata("leftParOnSameLine.kt")
+            public void testLeftParOnSameLine() throws Exception {
+                runTest("idea/testData/intentions/chop/argumentList/leftParOnSameLine.kt");
+            }
+
             @TestMetadata("onNestedArgumentList.kt")
             public void testOnNestedArgumentList() throws Exception {
                 runTest("idea/testData/intentions/chop/argumentList/onNestedArgumentList.kt");
@@ -3786,11 +3791,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("onRightParenthesis.kt")
             public void testOnRightParenthesis() throws Exception {
                 runTest("idea/testData/intentions/chop/argumentList/onRightParenthesis.kt");
-            }
-
-            @TestMetadata("leftParOnSameLine.kt")
-            public void testLeftParOnSameLine() throws Exception {
-                runTest("idea/testData/intentions/chop/argumentList/leftParOnSameLine.kt");
             }
 
             @TestMetadata("parOnSameLine.kt")
