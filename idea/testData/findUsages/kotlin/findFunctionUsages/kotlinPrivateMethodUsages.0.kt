@@ -1,6 +1,6 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.KtNamedFunction
 // OPTIONS: usages
-// FIR_IGNORE
+// FIR_COMPARISON
 
 package server
 

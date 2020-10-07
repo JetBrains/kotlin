@@ -1,6 +1,5 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.KtParameter
 // OPTIONS: usages
-// FIR_IGNORE
 
 data class A(val <caret>a: Int, val b: Int)
 
@@ -40,3 +39,5 @@ var Any.v: (A) -> Unit
 fun f() {
     "".v = { val (x, y ) = it }
 }
+
+// FIR_IGNORE

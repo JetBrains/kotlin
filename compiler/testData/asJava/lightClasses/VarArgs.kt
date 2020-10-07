@@ -10,3 +10,5 @@ class C {
 
     }
 }
+
+// FIR_COMPARISON
