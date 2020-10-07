@@ -24,9 +24,11 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.process.CommandLineArgumentProvider
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.CLASS_STRUCTURE_ARTIFACT_TYPE
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.StructureTransformAction
+import org.jetbrains.kotlin.gradle.internal.kapt.incremental.StructureTransformLegacyAction
 import org.jetbrains.kotlin.gradle.model.builder.KaptModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
@@ -515,12 +517,17 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
     private fun maybeRegisterTransform(project: Project) {
         if (!project.extensions.extraProperties.has("KaptStructureTransformAdded")) {
-            project.dependencies.registerTransform(StructureTransformAction::class.java) { transformSpec ->
+            val transformActionClass =
+                if (GradleVersion.current() >= GradleVersion.version("5.4"))
+                    StructureTransformAction::class.java
+                else
+                    StructureTransformLegacyAction::class.java
+            project.dependencies.registerTransform(transformActionClass) { transformSpec ->
                 transformSpec.from.attribute(artifactType, "jar")
                 transformSpec.to.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
             }
 
-            project.dependencies.registerTransform(StructureTransformAction::class.java) { transformSpec ->
+            project.dependencies.registerTransform(transformActionClass) { transformSpec ->
                 transformSpec.from.attribute(artifactType, "directory")
                 transformSpec.to.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
             }
