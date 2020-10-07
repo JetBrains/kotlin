@@ -94,3 +94,11 @@ object O {
 
 fun takesO(o: O): Int =
     O.x + O.foo()
+
+// Test that JsExport with companion object compiles without error.
+// Usage is not supported yet.
+class KT_37829 {
+    companion object {
+        val x = 10
+    }
+}
