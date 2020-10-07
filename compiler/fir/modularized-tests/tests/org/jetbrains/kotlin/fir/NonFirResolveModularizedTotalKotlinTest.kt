@@ -46,11 +46,13 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         }
         val vmAfter = vmStateSnapshot()
 
-        files += environment.getSourceFiles().size
-        lines += environment.getSourceFiles().sumBy { StringUtil.countNewLines(it.text) }
+        val psiFiles = environment.getSourceFiles()
+        files += psiFiles.size
+        lines += psiFiles.sumBy { StringUtil.countNewLines(it.text) }
         totalTime += time
         measure.time += time
         measure.vmCounters += vmAfter - vmBefore
+        measure.files += psiFiles.size
 
         println("Time is ${time * 1e-6} ms")
     }
