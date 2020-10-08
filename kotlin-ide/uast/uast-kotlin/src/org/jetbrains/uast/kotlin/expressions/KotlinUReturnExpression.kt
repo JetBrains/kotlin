@@ -18,9 +18,7 @@ package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtReturnExpression
-import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UExpression
-import org.jetbrains.uast.UReturnExpression
+import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.internal.KotlinFakeUElement
 import org.jetbrains.uast.kotlin.internal.toSourcePsiFakeAware
 
@@ -29,6 +27,13 @@ class KotlinUReturnExpression(
         givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), UReturnExpression, KotlinUElementWithType {
     override val returnExpression by lz { KotlinConverter.convertOrNull(sourcePsi.returnedExpression, this) }
+
+    override val label: String?
+        get() = sourcePsi.getTargetLabel()?.getReferencedName()
+
+    override val jumpTarget: UElement?
+        get() = generateSequence(uastParent) { it.uastParent }
+            .find { it is ULabeledExpression && it.label == label }
 }
 
 class KotlinUImplicitReturnExpression(
