@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyExpression
 import org.jetbrains.kotlin.fir.psi
@@ -67,6 +68,12 @@ internal object FirLazyBodiesCalculator {
             if (firProperty.initializer is FirLazyExpression) {
                 firProperty.replaceInitializer(newProperty.initializer)
             }
+
+            val delegate = firProperty.delegate
+            if (delegate is FirWrappedDelegateExpression && delegate.expression is FirLazyExpression) {
+                val newDelegate = newProperty.delegate as FirWrappedDelegateExpression
+                delegate.replaceExpression(newDelegate.expression)
+            }
         }
     }
 
@@ -74,6 +81,7 @@ internal object FirLazyBodiesCalculator {
         firProperty.getter?.body is FirLazyBlock
                 || firProperty.setter?.body is FirLazyBlock
                 || firProperty.initializer is FirLazyExpression
+                || (firProperty.delegate as? FirWrappedDelegateExpression)?.expression is FirLazyExpression
 
 
     private fun createRawFirBuilder(firDeclaration: FirDeclaration): RawFirBuilder {

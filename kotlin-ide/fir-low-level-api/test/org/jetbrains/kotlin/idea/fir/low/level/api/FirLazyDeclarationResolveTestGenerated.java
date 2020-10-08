@@ -33,6 +33,11 @@ public class FirLazyDeclarationResolveTestGenerated extends AbstractFirLazyDecla
         runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/lazyResolve/classMembers.kt");
     }
 
+    @TestMetadata("delegates.kt")
+    public void testDelegates() throws Exception {
+        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/lazyResolve/delegates.kt");
+    }
+
     @TestMetadata("propertyWithGetter.kt")
     public void testPropertyWithGetter() throws Exception {
         runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/lazyResolve/propertyWithGetter.kt");
