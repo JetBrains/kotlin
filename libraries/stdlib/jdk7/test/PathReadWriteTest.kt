@@ -8,24 +8,25 @@ package kotlin.jdk7.test
 import java.nio.file.Files
 import java.nio.file.StandardOpenOption
 import kotlin.io.path.*
+import kotlin.random.Random
 import kotlin.test.*
 
 class PathReadWriteTest {
     @Test
-    fun testAppendText() {
-        val file = Files.createTempFile(null, null)
+    fun appendText() {
+        val file = createTempFile()
         file.writeText("Hello\n")
         file.appendText("World\n")
         file.writeText("Again", Charsets.US_ASCII, StandardOpenOption.APPEND)
 
         assertEquals("Hello\nWorld\nAgain", file.readText())
         assertEquals(listOf("Hello", "World", "Again"), file.readLines(Charsets.UTF_8))
-        file.toFile().deleteOnExit()
+        file.deleteExisting()
     }
 
     @Test
     fun file() {
-        val file = Files.createTempFile(null, null)
+        val file = createTempFile()
         val writer = file.outputStream().writer().buffered()
 
         writer.write("Hello")
@@ -72,31 +73,54 @@ class PathReadWriteTest {
     }
 
     @Test
-    fun testBufferedReader() {
-        val file = Files.createTempFile(null, null)
+    fun bufferedReader() {
+        val file = createTempFile()
         val lines = listOf("line1", "line2")
-        Files.write(file, lines, Charsets.UTF_8)
+        file.writeLines(lines)
 
-        assertEquals(file.bufferedReader().use { it.readLines() }, lines)
-        assertEquals(file.bufferedReader(Charsets.UTF_8, 1024, StandardOpenOption.READ).use { it.readLines() }, lines)
+        assertEquals(lines, file.bufferedReader().use { it.readLines() })
+        assertEquals(lines, file.bufferedReader(Charsets.UTF_8, 1024, StandardOpenOption.READ).use { it.readLines() })
     }
 
     @Test
-    fun testBufferedWriter() {
-        val file = Files.createTempFile(null, null)
+    fun bufferedWriter() {
+        val file = createTempFile()
 
         file.bufferedWriter().use { it.write("line1\n") }
         file.bufferedWriter(Charsets.UTF_8, 1024, StandardOpenOption.APPEND).use { it.write("line2\n") }
 
-        assertEquals(Files.readAllLines(file, Charsets.UTF_8), listOf("line1", "line2"))
+        assertEquals(listOf("line1", "line2"), file.readLines())
     }
 
     @Test
-    fun testWriteBytes() {
-        val file = Files.createTempFile(null, null)
+    fun writeBytes() {
+        val file = createTempFile()
         file.writeBytes("Hello".encodeToByteArray())
         file.appendBytes(" world!".encodeToByteArray())
         assertEquals(file.readText(), "Hello world!")
+
+        val bytes = Random.nextBytes(100)
+        file.writeBytes(bytes)
+        file.appendBytes(bytes)
+        assertTrue((bytes + bytes) contentEquals file.readBytes())
+    }
+
+    @Test
+    fun writeLines() {
+        val file = createTempFile()
+        val lines = listOf("first line", "second line")
+        file.writeLines(lines)
+        assertEquals(lines, file.readLines())
+
+        file.writeLines(lines.asSequence())
+        assertEquals(lines, file.readLines())
+
+        val moreLines = listOf("third line", "the bottom line")
+        file.appendLines(moreLines)
+        assertEquals(lines + moreLines, file.readLines())
+
+        file.appendLines(moreLines.asSequence())
+        assertEquals(lines + moreLines + moreLines, file.readLines())
     }
 }
 
