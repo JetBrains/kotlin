@@ -148,6 +148,7 @@ class FirStatusResolveTransformer(
     }
 
     override fun transformEnumEntry(enumEntry: FirEnumEntry, data: FirDeclarationStatus?): CompositeTransformResult<FirDeclaration> {
+        enumEntry.transformStatus(this, enumEntry.resolveStatus(enumEntry.status, containingClass, isLocal = false))
         return transformDeclaration(enumEntry, data)
     }
 
