@@ -1246,7 +1246,14 @@ class RawFirBuilder(
                             FirWrappedDelegateExpressionBuilder().apply {
                                 source =
                                     if (stubMode) null else delegateExpression?.toFirSourceElement(FirFakeSourceElementKind.WrappedDelegate)
-                                expression = { delegateExpression }.toFirExpression("Should have delegate")
+                                expression = when (mode) {
+                                    RawFirBuilderMode.NORMAL -> delegateExpression.toFirExpression("Should have delegate")
+                                    RawFirBuilderMode.STUBS -> buildExpressionStub()
+                                    RawFirBuilderMode.LAZY_BODIES -> buildLazyExpression {
+                                        source = delegateExpression!!.toFirSourceElement()
+                                    }
+                                }
+
                             }
                         } else null
 
