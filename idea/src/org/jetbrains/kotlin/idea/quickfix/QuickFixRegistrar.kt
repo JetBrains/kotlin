@@ -665,6 +665,6 @@ class QuickFixRegistrar : QuickFixContributor {
 
         INLINE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER.registerFactory(InlineClassConstructorNotValParameterFactory)
 
-        JAVA_CLASS_ON_COMPANION.registerFactory(ReplaceJavaClassWithClassJavaFix)
+        JAVA_CLASS_ON_COMPANION.registerFactory(JavaClassOnCompanionFixes)
     }
 }
