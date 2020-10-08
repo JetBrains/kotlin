@@ -46,7 +46,7 @@ class ThrowableLowering(
 
     private fun IrFunctionAccessExpression.extractThrowableArguments(): ThrowableArguments =
         when (valueArgumentsCount) {
-            0 -> ThrowableArguments(nullValue(), undefinedValue())
+            0 -> ThrowableArguments(undefinedValue(), undefinedValue())
             2 -> ThrowableArguments(
                 message = getValueArgument(0)!!,
                 cause = getValueArgument(1)!!

@@ -89,7 +89,9 @@ internal fun captureStack(instance: Throwable, constructorFunction: Any) {
 
 internal fun newThrowable(message: String?, cause: Throwable?): Throwable {
     val throwable = js("new Error()")
-    throwable.message = if (isUndefined(message)) cause?.toString() else message
+    throwable.message = if (isUndefined(message)) {
+        if (isUndefined(cause)) message else cause?.toString() ?: undefined
+    } else message ?: undefined
     throwable.cause = cause
     throwable.name = "Throwable"
     return throwable.unsafeCast<Throwable>()
@@ -110,7 +112,7 @@ internal fun setPropertiesToThrowableInstance(this_: dynamic, message: String?, 
                 cause?.toString() ?: undefined
             } else {
                 // real null
-                message
+                undefined
             }
         } else message
     }
