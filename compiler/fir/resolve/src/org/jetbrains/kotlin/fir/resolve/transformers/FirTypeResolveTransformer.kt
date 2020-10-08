@@ -86,7 +86,10 @@ class FirTypeResolveTransformer(
     }
 
     override fun transformEnumEntry(enumEntry: FirEnumEntry, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-        return transformDeclaration(enumEntry, data)
+        enumEntry.transformReturnTypeRef(this, data)
+        enumEntry.transformTypeParameters(this, data)
+        enumEntry.transformAnnotations(this, data)
+        return enumEntry.compose()
     }
 
     override fun transformProperty(property: FirProperty, data: Nothing?): CompositeTransformResult<FirDeclaration> {
