@@ -187,6 +187,7 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
                 addInvokeCallingConstructor(constructor, invokeSuspend, invokeToOverride, parametersFields)
             }
 
+            this.metadata = function.metadata
             context.suspendLambdaToOriginalFunctionMap[attributeOwnerId as IrFunctionReference] = function
         }
 

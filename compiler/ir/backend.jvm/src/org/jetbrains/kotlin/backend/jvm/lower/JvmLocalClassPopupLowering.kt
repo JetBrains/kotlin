@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.LocalClassPopupLowering
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
+import org.jetbrains.kotlin.backend.jvm.isGeneratedLambdaClass
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 
@@ -31,15 +32,11 @@ class JvmLocalClassPopupLowering(context: JvmBackendContext) : LocalClassPopupLo
     // On JVM, we only pop up local classes in field initializers and anonymous init blocks, so that InitializersLowering would not copy
     // them to each constructor. (Moving all local classes is not possible because of cases where they use reified type parameters,
     // or capture crossinline lambdas.)
-    // Upon moving such class, we record customEnclosingFunction for it to be the class constructor. This is needed because otherwise
-    // the class will not get any EnclosingMethod in the codegen later, since it won't be local anymore.
+    // Upon moving such class, we record that it used to be in an initializer so that the codegen later sets its EnclosingMethod
+    // to the primary constructor.
     override fun shouldPopUp(klass: IrClass, currentScope: ScopeWithIr?): Boolean {
-        // On JVM, lambdas have package-private visibility after LocalDeclarationsLowering, so we have to check something else.
-        val isLocal = super.shouldPopUp(klass, currentScope) ||
-                klass.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL ||
-                klass.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL ||
-                klass.origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
-        if (!isLocal) return false
+        // On JVM, lambdas have package-private visibility after LocalDeclarationsLowering; see `forClass` in `localDeclarationsPhase`.
+        if (!super.shouldPopUp(klass, currentScope) && !klass.isGeneratedLambdaClass) return false
 
         var parent = currentScope?.irElement
         while (parent is IrFunction) {
