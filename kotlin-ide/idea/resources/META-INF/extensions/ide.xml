@@ -1,5 +1,5 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
-    <xi:include href="ide-frontend-independent.xml" xpointer="xpointer(/idea-plugin/*)"/>
+    <xi:include href="/META-INF/extensions/ide-frontend-independent.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
     <extensionPoints>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.updater" beanClass="com.intellij.openapi.fileTypes.FileTypeExtensionPoint"/>
