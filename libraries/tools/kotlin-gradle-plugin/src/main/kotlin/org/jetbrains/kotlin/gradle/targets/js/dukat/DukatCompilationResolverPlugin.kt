@@ -85,10 +85,16 @@ internal class DukatCompilationResolverPlugin(
     ) {
         val externalNpmDependencies = resolution[project][compilation].externalNpmDependencies
 
+        val target = compilation.target
+        val dukatMode = compilation.dukatMode
+        if (target is KotlinJsTarget && dukatMode == DukatMode.SOURCE) {
+            return
+        }
+
         DukatExecutor(
             nodeJs,
             DtsResolver(npmProject).getAllDts(externalNpmDependencies),
-            compilation.dukatMode,
+            dukatMode,
             npmProject,
             packageJsonIsUpdated,
             operation = compilation.name + " > " + DukatExecutor.OPERATION,

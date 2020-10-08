@@ -337,15 +337,17 @@ internal class KotlinCompilationNpmResolver(
             }
             val importedExternalGradleDependencies = externalGradleDependencies.mapNotNull {
                 resolver.gradleNodeModules.get(it.dependency.moduleName, it.dependency.moduleVersion, it.artifact.file)
-            } + fileCollectionDependencies.mapNotNull {
-                val file = it.files.singleFile
-
-                resolver.gradleNodeModules.get(
-                    it.name,
-                    it.version ?: "0.0.1",
-                    file
-                )
-            }
+            } + fileCollectionDependencies.flatMap { dependency ->
+                dependency.files
+                    .filter { it.exists() }
+                    .map { file ->
+                        resolver.gradleNodeModules.get(
+                            file.name,
+                            dependency.version ?: "0.0.1",
+                            file
+                        )
+                    }
+            }.filterNotNull()
 
             val compositeDependencies = internalCompositeDependencies.flatMap { dependency ->
                 dependency.getPackages()

@@ -12,5 +12,7 @@ enum class DukatMode {
     companion object {
         fun byArgumentOrNull(argument: String): DukatMode? =
             values().firstOrNull { it.name.equals(argument, ignoreCase = true) }
+
+        const val dukatModeProperty = "dukat.mode"
     }
 }

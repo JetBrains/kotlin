@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.Companion.jsCompi
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.dukat.DukatMode
+import org.jetbrains.kotlin.gradle.targets.js.dukat.DukatMode.Companion.dukatModeProperty
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.CacheBuilder
@@ -221,7 +222,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
      * Default mode of generating of Dukat
      */
     val dukatMode: DukatMode?
-        get() = property("dukat.mode")?.let { DukatMode.byArgumentOrNull(it) }
+        get() = property(dukatModeProperty)?.let { DukatMode.byArgumentOrNull(it) }
 
     /**
      * Use Kotlin/JS backend compiler type
