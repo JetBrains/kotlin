@@ -1431,6 +1431,11 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/coroutines/effectivelyInlineOnly.kt");
         }
 
+        @TestMetadata("mergeLvt.kt")
+        public void testMergeLvt() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/coroutines/mergeLvt.kt");
+        }
+
         @TestMetadata("nonLocalReturn.kt")
         public void testNonLocalReturn() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/coroutines/nonLocalReturn.kt");

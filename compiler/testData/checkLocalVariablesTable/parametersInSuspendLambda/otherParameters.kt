@@ -15,6 +15,7 @@ suspend fun test() = foo(A("O", "K")) { i_param, (x_param, y_param), v_param ->
 
 // JVM_TEMPLATES
 // VARIABLE : NAME=i_param TYPE=I INDEX=2
+// VARIABLE : NAME=$dstr$x_param$y_param TYPE=LA; INDEX=3
 // VARIABLE : NAME=v_param TYPE=Ljava/lang/String; INDEX=4
 // VARIABLE : NAME=x_param TYPE=Ljava/lang/String; INDEX=5
 // VARIABLE : NAME=y_param TYPE=Ljava/lang/String; INDEX=6
