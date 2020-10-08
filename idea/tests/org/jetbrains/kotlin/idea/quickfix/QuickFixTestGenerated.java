@@ -8664,6 +8664,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 runTest("idea/testData/quickfix/javaClassOnCompanion/replaceWithCompanionClassJava/hasType.kt");
             }
 
+            @TestMetadata("namedCompanion.kt")
+            public void testNamedCompanion() throws Exception {
+                runTest("idea/testData/quickfix/javaClassOnCompanion/replaceWithCompanionClassJava/namedCompanion.kt");
+            }
+
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 runTest("idea/testData/quickfix/javaClassOnCompanion/replaceWithCompanionClassJava/simple.kt");
