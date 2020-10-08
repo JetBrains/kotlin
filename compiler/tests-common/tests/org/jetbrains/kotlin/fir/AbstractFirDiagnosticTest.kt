@@ -326,8 +326,8 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         private fun checkEdge(from: CFGNode<*>, to: CFGNode<*>) {
             KtUsefulTestCase.assertContainsElements(from.followingNodes, to)
             KtUsefulTestCase.assertContainsElements(to.previousNodes, from)
-            val fromKind = from.outgoingEdges.getValue(to)
-            val toKind = to.incomingEdges.getValue(from)
+            val fromKind = from.outgoingEdges.getValue(to).kind
+            val toKind = to.incomingEdges.getValue(from).kind
             TestCase.assertEquals(fromKind, toKind)
             if (from.isDead && to.isDead) {
                 KtUsefulTestCase.assertContainsElements(cfgKinds, toKind)
@@ -339,7 +339,7 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
             for (node in graph.nodes) {
                 for (previousNode in node.previousNodes) {
                     if (previousNode.owner != graph) continue
-                    if (!node.incomingEdges.getValue(previousNode).isBack) {
+                    if (!node.incomingEdges.getValue(previousNode).kind.isBack) {
                         assertTrue(previousNode in visited)
                     }
                 }
