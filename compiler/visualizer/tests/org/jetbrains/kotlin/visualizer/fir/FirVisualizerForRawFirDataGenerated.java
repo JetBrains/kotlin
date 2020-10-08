@@ -60,6 +60,11 @@ public class FirVisualizerForRawFirDataGenerated extends AbstractFirVisualizer {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/constructorOfAnonymousObject.kt");
         }
 
+        @TestMetadata("delegates.kt")
+        public void testDelegates() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/delegates.kt");
+        }
+
         @TestMetadata("derivedClass.kt")
         public void testDerivedClass() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/derivedClass.kt");
