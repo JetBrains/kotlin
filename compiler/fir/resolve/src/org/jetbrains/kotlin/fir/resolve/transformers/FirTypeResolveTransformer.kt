@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -179,5 +180,10 @@ class FirTypeResolveTransformer(
         )
         delegatedConstructorCall.transformCalleeReference(this, data)
         return delegatedConstructorCall.compose()
+    }
+
+    override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: Nothing?): CompositeTransformResult<FirStatement> {
+        annotationCall.transformAnnotationTypeRef(this, data)
+        return annotationCall.compose()
     }
 }
