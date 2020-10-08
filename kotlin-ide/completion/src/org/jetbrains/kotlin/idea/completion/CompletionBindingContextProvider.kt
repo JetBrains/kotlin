@@ -18,7 +18,6 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener
-import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListenerCompat
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.application.getServiceSafe
 import org.jetbrains.kotlin.idea.util.getResolutionScope
@@ -96,7 +95,7 @@ class CompletionBindingContextProvider(project: Project) {
         val inStatement = position.findStatementInBlock()
         val block = inStatement?.parent as KtBlockExpression?
         val prevStatement = inStatement?.siblings(forward = false, withItself = false)?.firstIsInstanceOrNull<KtExpression>()
-        val modificationScope = inStatement?.let { KotlinCodeBlockModificationListenerCompat.getInsideCodeBlockModificationScope(it)?.element }
+        val modificationScope = inStatement?.let { KotlinCodeBlockModificationListener.getInsideCodeBlockModificationScope(it)?.element }
 
         val psiElementsBeforeAndAfter = modificationScope?.let { collectPsiElementsBeforeAndAfter(modificationScope, inStatement) }
 
