@@ -17,7 +17,6 @@ public class NotImplementedError(message: String = "An operation is not implemen
 /**
  * Always throws [NotImplementedError] stating that operation is not implemented.
  */
-
 @kotlin.internal.InlineOnly
 public inline fun TODO(): Nothing = throw NotImplementedError()
 
@@ -28,8 +27,6 @@ public inline fun TODO(): Nothing = throw NotImplementedError()
  */
 @kotlin.internal.InlineOnly
 public inline fun TODO(reason: String): Nothing = throw NotImplementedError("An operation is not implemented: $reason")
-
-
 
 /**
  * Calls the specified function [block] and returns its result.
