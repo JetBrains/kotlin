@@ -556,6 +556,7 @@ internal object EscapeAnalysis {
                 } else {
                     context.log { "Escape analysis was refined:\n$endResult" }
                     if (numberOfRuns[function]!! > 1) {
+                        // TODO: suboptimal. May be it is possible somehow handle the entire component at once?
                         context.log {
                             "WARNING: Escape analysis for $function seems not to be converging." +
                                     " Assuming conservative results."
@@ -571,7 +572,9 @@ internal object EscapeAnalysis {
                 }
             }
 
-            for (graph in pointsToGraphs.values) {
+            pointsToGraphs.forEach { (function, graph) ->
+                // TODO: suboptimal.
+                if (function !in nodes) return@forEach
                 for (node in graph.nodes.keys) {
                     node.ir?.let {
                         val lifetime = graph.lifetimeOf(node)

@@ -2779,6 +2779,10 @@ task codegen_escapeAnalysis_zeroOutObjectOnAlloc(type: KonanLocalTest) {
     source = "codegen/escapeAnalysis/zeroOutObjectOnAlloc.kt"
 }
 
+task codegen_escapeAnalysis_recursion(type: KonanLocalTest) {
+    source = "codegen/escapeAnalysis/recursion.kt"
+}
+
 task memory_var1(type: KonanLocalTest) {
     source = "runtime/memory/var1.kt"
 }
