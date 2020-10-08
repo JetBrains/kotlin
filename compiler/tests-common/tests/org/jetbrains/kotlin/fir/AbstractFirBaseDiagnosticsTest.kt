@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
+import org.jetbrains.kotlin.fir.builder.RawFirBuilderMode
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.extensions.BunchOfRegisteredExtensions
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
@@ -54,6 +55,9 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
     }
 
     protected open val useLightTree: Boolean
+        get() = false
+
+    protected open val useLazyBodiesModeForRawFir: Boolean
         get() = false
 
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
@@ -118,7 +122,11 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
                 firFile
             }
         } else {
-            val firBuilder = RawFirBuilder(session, firProvider.kotlinScopeProvider)
+            val firBuilder = RawFirBuilder(
+                session,
+                firProvider.kotlinScopeProvider,
+                RawFirBuilderMode.lazyBodies(useLazyBodiesModeForRawFir)
+            )
             ktFiles.mapTo(firFiles) {
                 val firFile = firBuilder.buildFirFile(it)
                 firProvider.recordFile(firFile)

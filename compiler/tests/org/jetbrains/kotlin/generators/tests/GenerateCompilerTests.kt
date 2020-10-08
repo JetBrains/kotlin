@@ -610,6 +610,11 @@ fun main(args: Array<String>) {
             testClass<AbstractFirDiagnosticsWithLightTreeTest> {
                 model("resolve", pattern = KT_WITHOUT_DOTS_IN_NAME)
             }
+
+            testClass<AbstractLazyBodyIsNotTouchedTilContractsPhaseTest> {
+                model("resolve", pattern = KT_WITHOUT_DOTS_IN_NAME)
+            }
+
         }
 
         testGroup("compiler/fir/analysis-tests/tests", "compiler/fir/analysis-tests/testData") {
