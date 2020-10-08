@@ -159,9 +159,10 @@ class FirTypeResolveTransformer(
     }
 
     override fun transformValueParameter(valueParameter: FirValueParameter, data: Nothing?): CompositeTransformResult<FirStatement> {
-        val result = transformDeclaration(valueParameter, data).single as FirValueParameter
-        result.transformVarargTypeToArrayType()
-        return result.compose()
+        valueParameter.transformReturnTypeRef(this, data)
+        valueParameter.transformAnnotations(this, data)
+        valueParameter.transformVarargTypeToArrayType()
+        return valueParameter.compose()
     }
 
     override fun transformBlock(block: FirBlock, data: Nothing?): CompositeTransformResult<FirStatement> {
