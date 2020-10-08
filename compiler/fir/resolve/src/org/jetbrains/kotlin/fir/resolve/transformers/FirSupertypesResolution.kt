@@ -103,8 +103,8 @@ private class FirApplySupertypesTransformer(
 
             // TODO: Replace with an immutable version or transformer
             firClass.replaceSuperTypeRefs(supertypeRefs)
-            firClass.replaceResolvePhase(FirResolvePhase.SUPER_TYPES)
         }
+        firClass.replaceResolvePhase(FirResolvePhase.SUPER_TYPES)
     }
 
     override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: Nothing?): CompositeTransformResult<FirStatement> {
