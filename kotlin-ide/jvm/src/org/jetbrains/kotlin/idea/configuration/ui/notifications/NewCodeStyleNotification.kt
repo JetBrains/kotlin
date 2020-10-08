@@ -16,6 +16,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
+import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter
 import org.jetbrains.kotlin.idea.formatter.kotlinCodeStyleDefaults
 
 private const val KOTLIN_UPDATE_CODE_STYLE_GROUP_ID = "Update Kotlin code style"
@@ -54,7 +55,7 @@ private fun createNotification(): Notification = Notification(
 
         e.project?.takeIf { !it.isDisposed }?.let { project ->
             runWriteAction {
-                KotlinStyleGuideCodeStyle.apply(CodeStyle.getSettings(project))
+                ProjectCodeStyleImporter.apply(project, KotlinStyleGuideCodeStyle.INSTANCE)
             }
         }
     }
