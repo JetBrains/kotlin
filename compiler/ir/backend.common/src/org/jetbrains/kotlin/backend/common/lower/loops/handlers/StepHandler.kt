@@ -46,6 +46,14 @@ internal class StepHandler(
             val nestedInfo = expression.extensionReceiver!!.accept(visitor, null) as? ProgressionHeaderInfo
                 ?: return null
 
+            if (!nestedInfo.isLastInclusive) {
+                // To compute the new "last" value for a stepped progression (see call to getProgressionLastElement() below) where the
+                // underlying progression is last-exclusive, we must decrement the nested "last" by the step. However, this can cause
+                // underflow if "last" is MIN_VALUE. We will not support fully optimizing this scenario (e.g., `for (i in A until B step C`)
+                // for now. It will be partly optimized via DefaultProgressionHandler.
+                return null
+            }
+
             val stepArg = expression.getValueArgument(0)!!
             // We can return the nested info if its step is constant and its absolute value is the same as the step argument. Examples:
             //
