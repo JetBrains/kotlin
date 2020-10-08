@@ -27008,6 +27008,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             public void testReflectOnLambdaInSuspendLambda() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/lambdaClasses/reflectOnLambdaInSuspendLambda.kt");
             }
+
+            @TestMetadata("reflectOnSuspendLambdaInField.kt")
+            public void testReflectOnSuspendLambdaInField() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/lambdaClasses/reflectOnSuspendLambdaInField.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/reflection/mapping")
