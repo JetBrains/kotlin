@@ -50,11 +50,29 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     abstract class RenderMode(
         val renderLambdaBodies: Boolean,
         val renderCallArguments: Boolean,
-        val renderCallableFqNames: Boolean
+        val renderCallableFqNames: Boolean,
+        val renderDeclatationResovlePhase: Boolean
     ) {
-        object Normal : RenderMode(renderLambdaBodies = true, renderCallArguments = true, renderCallableFqNames = false)
+        object Normal : RenderMode(
+            renderLambdaBodies = true,
+            renderCallArguments = true,
+            renderCallableFqNames = false,
+            renderDeclatationResovlePhase = false
+        )
 
-        object WithFqNames: RenderMode(renderLambdaBodies = true, renderCallArguments = true, renderCallableFqNames = true)
+        object WithFqNames : RenderMode(
+            renderLambdaBodies = true,
+            renderCallArguments = true,
+            renderCallableFqNames = true,
+            renderDeclatationResovlePhase = false
+        )
+
+        object WithResolvePhases : RenderMode(
+            renderLambdaBodies = true,
+            renderCallArguments = true,
+            renderCallableFqNames = false,
+            renderDeclatationResovlePhase = true
+        )
     }
 
     private val printer = Printer(builder)
@@ -322,6 +340,9 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     }
 
     override fun visitDeclaration(declaration: FirDeclaration) {
+        if (mode.renderDeclatationResovlePhase) {
+            print("[${declaration.resolvePhase}] ")
+        }
         print(
             when (declaration) {
                 is FirRegularClass -> declaration.classKind.name.toLowerCase().replace("_", " ")
