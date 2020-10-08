@@ -114,6 +114,14 @@ class JavadocParserTest : AbstractCoreTest() {
             | * not fall within the indicated ranges; for example, a date may be
             | * specified as January 32 and is interpreted as meaning February 1.
             | *
+            | * <pre class="prettyprint">
+            | * class MyFragment extends Fragment {
+            | *   public MyFragment() {
+            | *     super(R.layout.fragment_main);
+            | *   }
+            | * }
+            | * </pre>
+            |
             | * @author  James Gosling
             | * @author  Arthur van Hoff
             | * @author  Alan Liu
@@ -178,4 +186,19 @@ class JavadocParserTest : AbstractCoreTest() {
             assertEquals(expectedText.trim(), preTagContent.body.trim())
         }
     }
+
+    @Test
+    fun `correctly parsed code block with curly braces (which PSI has problem with)`() {
+        performJavadocTest { module ->
+            val dateDescription = module.descriptionOf("Date2")!!
+            val preTagContent = dateDescription.childrenOfType<Pre>()[1].firstChildOfType<Text>()
+            val expectedText = """class MyFragment extends Fragment {
+  public MyFragment() {
+    super(R.layout.fragment_main);
+  }
+}""".trimIndent()
+            assertEquals(expectedText.trim(), preTagContent.body.trim())
+        }
+    }
+
 }
