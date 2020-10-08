@@ -155,7 +155,8 @@ class DefaultKotlinSourceSet(
                 ?.associateBy { ModuleIds.fromComponent(project, it.dependency) }
                 ?: emptyMap()
 
-        val baseDir = project.buildDir.resolve("tmp/kotlinMetadata/$name/${scope.scopeName}")
+        val baseDir = SourceSetMetadataStorageForIde.sourceSetStorage(project, this@DefaultKotlinSourceSet.name)
+
         if (metadataDependencyResolutionByModule.values.any { it is MetadataDependencyResolution.ChooseVisibleSourceSets }) {
             if (baseDir.isDirectory) {
                 baseDir.deleteRecursively()

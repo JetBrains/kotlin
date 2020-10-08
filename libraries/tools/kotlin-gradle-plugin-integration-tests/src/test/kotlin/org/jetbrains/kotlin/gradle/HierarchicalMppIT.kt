@@ -103,6 +103,14 @@ class HierarchicalMppIT : BaseGradleIT() {
                         assertTrue("$it") { it.newVisibleSourceSets == emptySet<String>() }
                     }
                 }
+
+                // ALso check that the files produced by dependency transformations survive a clean build:
+                val existingFilesFromReports = reports.flatMap { it.useFiles }.filter { it.isFile }
+                assertTrue { existingFilesFromReports.isNotEmpty() }
+                build("clean") {
+                    assertSuccessful()
+                    existingFilesFromReports.forEach { assertTrue("Expected that $it exists after clean build.") { it.isFile } }
+                }
             }
 
             // --- Move the dependency from jvmAndJsMain to commonMain, expect that it is now propagated to commonTest:
@@ -582,7 +590,8 @@ class HierarchicalMppIT : BaseGradleIT() {
                                                 scope,
                                                 it.groupId + ":" + it.moduleName,
                                                 it.allVisibleSourceSets.joinToString(","),
-                                                it.useFilesForSourceSets.keys.joinToString(",")
+                                                it.useFilesForSourceSets.keys.joinToString(","),
+                                                it.useFilesForSourceSets.values.flatten().joinToString(",")
                                         )
                     
                                         println("        " + line.joinToString(" :: "))
@@ -613,7 +622,8 @@ class HierarchicalMppIT : BaseGradleIT() {
         val scope: String,
         val groupAndModule: String,
         val allVisibleSourceSets: Set<String>,
-        val newVisibleSourceSets: Set<String> // those which the dependsOn parents don't see
+        val newVisibleSourceSets: Set<String>, // those which the dependsOn parents don't see
+        val useFiles: List<File>
     ) {
         val isExcluded: Boolean get() = allVisibleSourceSets.isEmpty()
 
@@ -622,14 +632,17 @@ class HierarchicalMppIT : BaseGradleIT() {
             const val TEST_OUTPUT_COMPONENT_SEPARATOR = " :: "
             const val TEST_OUTPUT_ITEMS_SEPARATOR = ","
 
+            private operator fun <T> List<T>.component6() = this[5]
+
             fun parseTestOutputLine(line: String): DependencyTransformationReport {
                 val tail = line.substringAfter(TEST_OUTPUT_MARKER + TEST_OUTPUT_COMPONENT_SEPARATOR)
-                val (sourceSetName, scope, groupAndModule, allVisibleSourceSets, newVisibleSourceSets) =
+                val (sourceSetName, scope, groupAndModule, allVisibleSourceSets, newVisibleSourceSets, useFiles) =
                     tail.split(TEST_OUTPUT_COMPONENT_SEPARATOR)
                 return DependencyTransformationReport(
                     sourceSetName, scope, groupAndModule,
                     allVisibleSourceSets.split(TEST_OUTPUT_ITEMS_SEPARATOR).filter { it.isNotEmpty() }.toSet(),
-                    newVisibleSourceSets.split(TEST_OUTPUT_ITEMS_SEPARATOR).filter { it.isNotEmpty() }.toSet()
+                    newVisibleSourceSets.split(TEST_OUTPUT_ITEMS_SEPARATOR).filter { it.isNotEmpty() }.toSet(),
+                    useFiles.split(TEST_OUTPUT_ITEMS_SEPARATOR).map { File(it) }
                 )
             }
         }
