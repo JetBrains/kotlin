@@ -12,13 +12,16 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object JavaClassOnCompanionFixes : KotlinIntentionActionsFactory() {
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
         val expression = diagnostic.psiElement.parent as? KtDotQualifiedExpression ?: return emptyList()
-        val companionName = expression.receiverExpression.mainReference?.resolve()?.safeAs<KtObjectDeclaration>()?.name ?: "Companion"
+        val companionName = expression.receiverExpression.mainReference?.resolve()?.safeAs<KtObjectDeclaration>()?.name
+            ?: SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT.identifier
+
         return listOf(
             ReplaceWithCompanionClassJavaFix(expression, companionName),
             ReplaceWithClassJavaFix(expression)
