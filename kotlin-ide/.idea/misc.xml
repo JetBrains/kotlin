@@ -37,9 +37,6 @@
   <component name="SvnBranchConfigurationManager">
     <option name="mySupportsUserInfoFilter" value="true" />
   </component>
-  <component name="SuppressKotlinCodeStyleNotification">
-    <option name="disableForAll" value="true" />
-  </component>
   <component name="intellij-api-watcher-check-current-project">
     <option name="shouldCheckCurrentProject" value="true" />
   </component>
