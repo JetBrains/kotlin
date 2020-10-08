@@ -33,7 +33,7 @@ class FirAnalyzerFacade(val session: FirSession, val languageVersionSettings: La
     private fun buildRawFir() {
         if (firFiles != null) return
         val firProvider = (session.firProvider as FirProviderImpl)
-        val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, stubMode = false)
+        val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider)
         firFiles = ktFiles.map {
             val firFile = builder.buildFirFile(it)
             firProvider.recordFile(firFile)

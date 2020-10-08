@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.file.builder
 
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
+import org.jetbrains.kotlin.fir.builder.RawFirBuilderMode
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
@@ -33,7 +34,7 @@ internal class FirFileBuilder(
         cache: ModuleFileCache,
         lazyBodiesMode: Boolean
     ): FirFile = cache.fileCached(ktFile) {
-        RawFirBuilder(cache.session, scopeProvider, stubMode = false, lazyBodiesMode = lazyBodiesMode).buildFirFile(ktFile)
+        RawFirBuilder(cache.session, scopeProvider, RawFirBuilderMode.lazyBodies(lazyBodiesMode)).buildFirFile(ktFile)
     }
 
     fun getBuiltFirFileOrNull(ktFile: KtFile, cache: ModuleFileCache): FirFile? =

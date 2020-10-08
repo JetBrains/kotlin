@@ -12,7 +12,7 @@ import java.io.File
 abstract class AbstractRawFirBuilderLazyBodiesTestCase : AbstractRawFirBuilderTestCase() {
     override fun doRawFirTest(filePath: String) {
         val file = createKtFile(filePath)
-        val firFile = file.toFirFile(stubMode = false, bodyStubMode = true)
+        val firFile = file.toFirFile(RawFirBuilderMode.LAZY_BODIES)
         val firFileDump = StringBuilder().also { FirRenderer(it).visitFile(firFile) }.toString()
         val expectedPath = filePath.replace(".kt", ".lazyBodies.txt")
         KotlinTestUtils.assertEqualsToFile(File(expectedPath), firFileDump)

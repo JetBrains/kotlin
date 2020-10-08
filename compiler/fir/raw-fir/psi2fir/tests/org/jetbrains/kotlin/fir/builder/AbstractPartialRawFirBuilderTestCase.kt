@@ -59,7 +59,7 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractRawFirBuilderTestC
 
         val session = FirSessionFactory.createEmptySession()
 
-        val firElement = buildFirElement(RawFirBuilder(session, StubFirScopeProvider, false), elementToBuild)
+        val firElement = buildFirElement(RawFirBuilder(session, StubFirScopeProvider), elementToBuild)
 
         val firDump = firElement.render(FirRenderer.RenderMode.WithFqNames)
         val expectedPath = filePath.replace(".kt", ".txt")

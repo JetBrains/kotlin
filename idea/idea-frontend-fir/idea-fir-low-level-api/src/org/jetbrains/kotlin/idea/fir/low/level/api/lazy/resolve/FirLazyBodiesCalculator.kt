@@ -78,7 +78,7 @@ internal object FirLazyBodiesCalculator {
 
     private fun createRawFirBuilder(firDeclaration: FirDeclaration): RawFirBuilder {
         val scopeProvider = firDeclaration.session.firIdeProvider.kotlinScopeProvider
-        return RawFirBuilder(firDeclaration.session, scopeProvider, stubMode = false)
+        return RawFirBuilder(firDeclaration.session, scopeProvider)
     }
 
     private val FIRST_PHASE_WHICH_NEEDS_BODIES = FirResolvePhase.CONTRACTS

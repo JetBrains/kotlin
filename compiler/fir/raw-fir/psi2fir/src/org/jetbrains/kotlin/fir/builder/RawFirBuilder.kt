@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.builder.*
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
@@ -49,8 +50,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class RawFirBuilder(
-    session: FirSession, val baseScopeProvider: FirScopeProvider, val stubMode: Boolean, val lazyBodiesMode: Boolean = false
+    session: FirSession, val baseScopeProvider: FirScopeProvider, val mode: RawFirBuilderMode = RawFirBuilderMode.NORMAL
 ) : BaseFirBuilder<PsiElement>(session) {
+
+    private val stubMode get() = mode == RawFirBuilderMode.STUBS
 
     fun buildFirFile(file: KtFile): FirFile {
         return file.accept(Visitor(), Unit) as FirFile
@@ -74,7 +77,7 @@ class RawFirBuilder(
     }
 
     private fun buildDeclaration(declaration: KtDeclaration): FirDeclaration {
-        assert(!stubMode) { "Building FIR declarations isn't supported in stub mode" }
+        assert(mode ==  RawFirBuilderMode.NORMAL) { "Building FIR declarations isn't supported in stub or lazy mode mode" }
         setupContextForPosition(declaration)
         return declaration.accept(Visitor(), Unit) as FirDeclaration
     }
@@ -258,7 +261,7 @@ class RawFirBuilder(
             when {
                 !hasBody() ->
                     null to null
-                lazyBodiesMode -> {
+                mode == RawFirBuilderMode.LAZY_BODIES -> {
                     val block = buildLazyBlock {
                         source = bodyExpression?.toFirSourceElement()
                             ?: error("hasBody() == true but body is null")
@@ -1196,12 +1199,12 @@ class RawFirBuilder(
             val isVar = isVar
             val propertyInitializer = when {
                 !hasInitializer() -> null
-                lazyBodiesMode -> buildLazyExpression {
+                mode == RawFirBuilderMode.LAZY_BODIES -> buildLazyExpression {
                     source = initializer?.toFirSourceElement()
                 }
-                else -> {
-                    { initializer }.toFirExpression("Should have initializer")
-                }
+                mode == RawFirBuilderMode.STUBS -> buildExpressionStub()
+                else -> initializer.toFirExpression("Should have initializer")
+
             }
             val delegateExpression by lazy { delegate?.expression }
             val propertySource = toFirSourceElement()
@@ -2078,5 +2081,31 @@ class RawFirBuilder(
         calleeReference = buildSimpleNamedReference {
             name = Name.identifier("ExtensionFunctionType")
         }
+    }
+}
+
+enum class RawFirBuilderMode {
+    /**
+     * Build every expression and every body
+     */
+    NORMAL,
+
+    /**
+     * Build [org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub] for expressions
+     */
+    STUBS,
+
+    /**
+     * Build [org.jetbrains.kotlin.fir.expressions.impl.FirLazyBlock] for function bodies, constructors & getters/setters
+     * Build [org.jetbrains.kotlin.fir.expressions.impl.FirLazyExpression] for property initializers
+     */
+    LAZY_BODIES;
+
+    companion object {
+        fun lazyBodies(lazyBodies: Boolean): RawFirBuilderMode =
+            if (lazyBodies) LAZY_BODIES else NORMAL
+
+        fun stubs(stubs: Boolean): RawFirBuilderMode =
+            if (stubs) STUBS else NORMAL
     }
 }
