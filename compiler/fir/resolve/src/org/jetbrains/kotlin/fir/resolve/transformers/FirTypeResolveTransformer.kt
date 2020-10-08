@@ -101,6 +101,7 @@ class FirTypeResolveTransformer(
                 .transformReceiverTypeRef(this, data)
                 .transformGetter(this, data)
                 .transformSetter(this, data)
+                .transformAnnotations(this, data)
             if (property.isFromVararg == true) {
                 property.transformTypeToArrayType()
                 property.getter?.transformReturnTypeRef(StoreType, property.returnTypeRef)
