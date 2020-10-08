@@ -12,7 +12,7 @@ public class A<T extends @NotNull Object> {
 
 import org.jspecify.annotations.*;
 
-@DefaultNotNull
+@DefaultNonNull
 public class B<T> {
     public void foo(T t) {}
     public <E> void bar(E e) {}

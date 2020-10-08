@@ -12,7 +12,7 @@ public class A<T extends @NotNull Object, E extends @Nullable Object, F extends 
 import org.jspecify.annotations.*;
 
 public class B {
-    @DefaultNotNull
+    @DefaultNonNull
     public void noBoundsNotNull(A<?, ?, ?> a) {}
     @DefaultNullable
     public void noBoundsNullable(A<?, ?, ?> a) {}

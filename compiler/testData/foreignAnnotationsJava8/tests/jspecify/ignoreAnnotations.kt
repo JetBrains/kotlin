@@ -17,7 +17,7 @@ public class A {
         return "";
     }
 
-    @DefaultNotNull
+    @DefaultNonNull
     public String everythingNotNullable(String x) { return ""; }
 
     @DefaultNullable

@@ -23,7 +23,7 @@ val JSPECIFY_NOT_NULL = FqName("org.jspecify.annotations.NotNull")
 val JSPECIFY_NULLNESS_UNKNOWN = FqName("org.jspecify.annotations.NullnessUnspecified")
 
 val JSPECIFY_DEFAULT_NULLABLE = FqName("org.jspecify.annotations.DefaultNullable")
-val JSPECIFY_DEFAULT_NOT_NULL = FqName("org.jspecify.annotations.DefaultNotNull")
+val JSPECIFY_DEFAULT_NOT_NULL = FqName("org.jspecify.annotations.DefaultNonNull")
 val JSPECIFY_DEFAULT_NULLNESS_UNKNOWN = FqName("org.jspecify.annotations.DefaultNullnessUnspecified")
 
 val NULLABLE_ANNOTATIONS = listOf(

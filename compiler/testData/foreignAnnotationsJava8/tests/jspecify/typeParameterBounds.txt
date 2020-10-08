@@ -11,7 +11,7 @@ public open class A</*0*/ T : @org.jspecify.annotations.NotNull kotlin.Any> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@org.jspecify.annotations.DefaultNotNull public open class B</*0*/ T : kotlin.Any> {
+@org.jspecify.annotations.DefaultNonNull public open class B</*0*/ T : kotlin.Any> {
     public constructor B</*0*/ T : kotlin.Any>()
     public open fun </*0*/ E : kotlin.Any> bar(/*0*/ e: E): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

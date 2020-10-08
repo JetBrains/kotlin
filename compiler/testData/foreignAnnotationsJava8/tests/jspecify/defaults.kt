@@ -3,7 +3,7 @@
 
 import org.jspecify.annotations.*;
 
-@DefaultNotNull
+@DefaultNonNull
 public class A {
     public String defaultField = "";
     @Nullable public String field = null;

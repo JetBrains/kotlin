@@ -4,7 +4,7 @@ public fun main(/*0*/ a1: A<kotlin.Int>, /*1*/ a2: A<kotlin.Int?>): kotlin.Unit
 
 public open class A</*0*/ T : kotlin.Any!> {
     public constructor A</*0*/ T : kotlin.Any!>()
-    @org.jspecify.annotations.DefaultNotNull public open fun bar(/*0*/ s: kotlin.String, /*1*/ t: T!): kotlin.Unit
+    @org.jspecify.annotations.DefaultNonNull public open fun bar(/*0*/ s: kotlin.String, /*1*/ t: T!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open fun foo(/*0*/ t: T!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

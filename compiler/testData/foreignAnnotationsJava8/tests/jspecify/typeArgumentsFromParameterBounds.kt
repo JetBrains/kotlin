@@ -19,7 +19,7 @@ public class B {
 
 import org.jspecify.annotations.*;
 
-@DefaultNotNull
+@DefaultNonNull
 public class C {
     public void bar(A<String, String, String> a) {}
 }

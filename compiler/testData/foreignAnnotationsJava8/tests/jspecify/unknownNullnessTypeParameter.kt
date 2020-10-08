@@ -6,7 +6,7 @@ import org.jspecify.annotations.*;
 public class A<T> {
     public void foo(T t) {}
 
-    @DefaultNotNull
+    @DefaultNonNull
     public void bar(String s, T t) {} // t should not become not nullable
 }
 

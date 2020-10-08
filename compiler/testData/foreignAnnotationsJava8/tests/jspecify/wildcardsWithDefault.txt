@@ -13,7 +13,7 @@ public open class B {
     public constructor B()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    @org.jspecify.annotations.DefaultNotNull public open fun noBoundsNotNull(/*0*/ a: A<out @org.jspecify.annotations.NotNull kotlin.Any, out @org.jspecify.annotations.Nullable kotlin.Any, out @org.jspecify.annotations.NullnessUnspecified kotlin.Any>): kotlin.Unit
+    @org.jspecify.annotations.DefaultNonNull public open fun noBoundsNotNull(/*0*/ a: A<out @org.jspecify.annotations.NotNull kotlin.Any, out @org.jspecify.annotations.Nullable kotlin.Any, out @org.jspecify.annotations.NullnessUnspecified kotlin.Any>): kotlin.Unit
     @org.jspecify.annotations.DefaultNullable public open fun noBoundsNullable(/*0*/ a: A<out @org.jspecify.annotations.NotNull kotlin.Any, *, *>?): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

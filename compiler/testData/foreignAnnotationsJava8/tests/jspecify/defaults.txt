@@ -2,7 +2,7 @@ package
 
 public fun main(/*0*/ a: A): kotlin.Unit
 
-@org.jspecify.annotations.DefaultNotNull public open class A {
+@org.jspecify.annotations.DefaultNonNull public open class A {
     public constructor A()
     public final var defaultField: kotlin.String
     @org.jspecify.annotations.Nullable public final var field: @org.jspecify.annotations.Nullable kotlin.String?

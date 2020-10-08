@@ -7,7 +7,7 @@ public open class A {
     @org.jspecify.annotations.Nullable public final var field: @org.jspecify.annotations.Nullable kotlin.String!
     @org.jspecify.annotations.NotNull public open fun bar(): @org.jspecify.annotations.NotNull kotlin.String!
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @org.jspecify.annotations.DefaultNotNull public open fun everythingNotNullable(/*0*/ x: kotlin.String!): @org.jspecify.annotations.DefaultNotNull kotlin.String!
+    @org.jspecify.annotations.DefaultNonNull public open fun everythingNotNullable(/*0*/ x: kotlin.String!): @org.jspecify.annotations.DefaultNonNull kotlin.String!
     @org.jspecify.annotations.DefaultNullable public open fun everythingNullable(/*0*/ x: kotlin.String!): @org.jspecify.annotations.DefaultNullable kotlin.String!
     @org.jspecify.annotations.DefaultNullnessUnspecified public open fun everythingUnknown(/*0*/ x: kotlin.String!): @org.jspecify.annotations.DefaultNullnessUnspecified kotlin.String!
     @org.jspecify.annotations.Nullable public open fun foo(/*0*/ @org.jspecify.annotations.NotNull x: @org.jspecify.annotations.NotNull kotlin.String!, /*1*/ @org.jspecify.annotations.NullnessUnspecified y: @org.jspecify.annotations.NullnessUnspecified kotlin.CharSequence!): @org.jspecify.annotations.Nullable kotlin.String!

@@ -1,4 +1,4 @@
-@org.jspecify.annotations.DefaultNotNull
+@org.jspecify.annotations.DefaultNonNull
 public class A {
     public void foo(String x) {}
 
