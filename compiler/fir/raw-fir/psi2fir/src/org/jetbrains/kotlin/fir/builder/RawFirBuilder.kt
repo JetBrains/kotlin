@@ -1194,9 +1194,15 @@ class RawFirBuilder(
             val propertyType = typeReference.toFirOrImplicitType()
             val propertyName = nameAsSafeName
             val isVar = isVar
-            val propertyInitializer = if (hasInitializer()) {
-                { initializer }.toFirExpression("Should have initializer")
-            } else null
+            val propertyInitializer = when {
+                !hasInitializer() -> null
+                lazyBodiesMode -> buildLazyExpression {
+                    source = initializer?.toFirSourceElement()
+                }
+                else -> {
+                    { initializer }.toFirExpression("Should have initializer")
+                }
+            }
             val delegateExpression by lazy { delegate?.expression }
             val propertySource = toFirSourceElement()
 

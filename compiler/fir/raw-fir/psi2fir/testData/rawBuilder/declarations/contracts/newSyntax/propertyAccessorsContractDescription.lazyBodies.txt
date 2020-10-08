@@ -4,7 +4,7 @@ FILE: propertyAccessorsContractDescription.kt
             super<R|kotlin/Any|>()
         }
 
-        public? final? var myInt: Int = IntegerLiteral(0)
+        public? final? var myInt: Int = LAZY_EXPRESSION
             public? get(): Int
                 [Contract description] <
                     returnsNotNull#()
@@ -18,7 +18,7 @@ FILE: propertyAccessorsContractDescription.kt
             super<R|kotlin/Any|>()
         }
 
-        public? final? var anotherInt: Int = IntegerLiteral(0)
+        public? final? var anotherInt: Int = LAZY_EXPRESSION
             public? get(): Int
                 [Contract description] <
                     returnsNotNull#()
@@ -36,7 +36,7 @@ FILE: propertyAccessorsContractDescription.kt
             super<R|kotlin/Any|>()
         }
 
-        public? final? var someInt: Int = IntegerLiteral(0)
+        public? final? var someInt: Int = LAZY_EXPRESSION
             public? get(): Int
                 [Contract description] <
                     returnsNotNull#()

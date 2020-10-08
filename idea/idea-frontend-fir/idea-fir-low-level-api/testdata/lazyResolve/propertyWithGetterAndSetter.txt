@@ -4,6 +4,6 @@ FILE: propertyWithGetterAndSetter.kt
         R|/withGetterAndSetter| = Int(123)
     }
     public final [STATUS] fun receive(value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
-    public final [STATUS] var withGetterAndSetter: R|kotlin/Int| = IntegerLiteral(42)
+    public final [STATUS] var withGetterAndSetter: R|kotlin/Int| = LAZY_EXPRESSION
         public get(): R|kotlin/Int| { LAZY_BLOCK }
         public set(value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }

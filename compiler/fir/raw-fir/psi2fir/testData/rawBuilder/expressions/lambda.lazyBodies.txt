@@ -21,13 +21,7 @@ FILE: lambda.kt
     public? final? fun foo(): Int { LAZY_BLOCK }
     public? final? fun bar(): Int { LAZY_BLOCK }
     public? final? fun test(list: List<Int>): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? val simple: <implicit> = fun <implicit>.<anonymous>(): <implicit> {
-        ^ Unit
-    }
-
+    public? final? val simple: <implicit> = LAZY_EXPRESSION
         public? get(): <implicit>
-    public? final? val another: <implicit> = fun <implicit>.<anonymous>(): <implicit> {
-        IntegerLiteral(42)
-    }
-
+    public? final? val another: <implicit> = LAZY_EXPRESSION
         public? get(): <implicit>

@@ -44,11 +44,5 @@ FILE: constructorInObject.kt
         }
 
     }
-    public? final? val anonObject: <implicit> = object : R|kotlin/Any| {
-        public? constructor(): R|<anonymous>| {
-            super<R|kotlin/Any|>()
-        }
-
-    }
-
+    public? final? val anonObject: <implicit> = LAZY_EXPRESSION
         public? get(): <implicit>

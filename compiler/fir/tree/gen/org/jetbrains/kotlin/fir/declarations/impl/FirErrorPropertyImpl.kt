@@ -117,4 +117,6 @@ internal class FirErrorPropertyImpl(
     }
 
     override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {}
+
+    override fun replaceInitializer(newInitializer: FirExpression?) {}
 }

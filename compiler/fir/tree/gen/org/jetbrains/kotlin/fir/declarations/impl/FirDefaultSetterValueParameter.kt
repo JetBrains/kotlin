@@ -133,6 +133,10 @@ internal class FirDefaultSetterValueParameter(
         receiverTypeRef = newReceiverTypeRef
     }
 
+    override fun replaceInitializer(newInitializer: FirExpression?) {
+        initializer = newInitializer
+    }
+
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
         controlFlowGraphReference = newControlFlowGraphReference
     }

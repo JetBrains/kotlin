@@ -141,4 +141,8 @@ class FirSyntheticProperty(
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
         throw AssertionError("Mutation of synthetic property isn't supported")
     }
+
+    override fun replaceInitializer(newInitializer: FirExpression?) {
+        throw AssertionError("Mutation of synthetic property isn't supported")
+    }
 }

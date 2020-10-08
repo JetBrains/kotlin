@@ -52,7 +52,7 @@ FILE: enums.kt
 
         }
 
-        public? final? val g: Double = G#.times#(m#).div#(r#.times#(r#))
+        public? final? val g: Double = LAZY_EXPRESSION
             public? get(): Double
 
         public? abstract fun sayHello(): R|kotlin/Unit|
@@ -62,7 +62,7 @@ FILE: enums.kt
                 super<R|kotlin/Any|>()
             }
 
-            public? final? const val G: <implicit> = Double(6.67E-11)
+            public? final? const val G: <implicit> = LAZY_EXPRESSION
                 public? get(): <implicit>
 
         }

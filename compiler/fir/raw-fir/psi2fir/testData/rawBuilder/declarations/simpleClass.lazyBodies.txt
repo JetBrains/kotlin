@@ -11,7 +11,7 @@ FILE: simpleClass.kt
             super<<implicit>>()
         }
 
-        private final? val baz: <implicit> = IntegerLiteral(42)
+        private final? val baz: <implicit> = LAZY_EXPRESSION
             private get(): <implicit>
 
         public? open? override fun foo(x: Int, y: String): String { LAZY_BLOCK }

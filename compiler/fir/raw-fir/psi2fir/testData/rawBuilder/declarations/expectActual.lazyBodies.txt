@@ -15,5 +15,5 @@ FILE: expectActual.kt
 
     }
     public? final? actual fun foo(): <implicit> { LAZY_BLOCK }
-    public? final? actual val x: <implicit> = IntegerLiteral(42)
+    public? final? actual val x: <implicit> = LAZY_EXPRESSION
         public? get(): <implicit>

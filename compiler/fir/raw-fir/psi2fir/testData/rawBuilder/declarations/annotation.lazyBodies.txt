@@ -51,5 +51,5 @@ FILE: annotation.kt
 
     }
     @base() public? final? fun foo(@base() y: @base() Int): Int { LAZY_BLOCK }
-    @base() public? final? val z: <implicit> = IntegerLiteral(0)
+    @base() public? final? val z: <implicit> = LAZY_EXPRESSION
         public? get(): <implicit>
