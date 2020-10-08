@@ -53,6 +53,12 @@ open class YarnRootExtension(val project: Project) : ConfigurationPhaseAware<Yar
         )
     }
 
+    fun resolution(path: String, version: String) {
+        resolution(path, Action {
+            it.include(version)
+        })
+    }
+
     @Incubating
     fun disableGranularWorkspaces() {
         val packageJsonUmbrella = NodeJsRootPlugin.apply(project)

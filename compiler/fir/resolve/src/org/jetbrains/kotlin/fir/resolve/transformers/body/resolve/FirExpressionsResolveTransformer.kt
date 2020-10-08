@@ -389,7 +389,12 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                         calleeReference = when {
                             lhsIsVar -> lhsReference!!
                             else -> buildErrorNamedReference {
-                                source = assignmentOperatorStatement.leftArgument.source
+                                source = when (leftArgument) {
+                                    is FirFunctionCall -> leftArgument.source
+                                    is FirQualifiedAccess ->
+                                        leftArgument.calleeReference.source
+                                    else -> leftArgument.source
+                                }
                                 diagnostic = ConeVariableExpectedError()
                             }
                         }

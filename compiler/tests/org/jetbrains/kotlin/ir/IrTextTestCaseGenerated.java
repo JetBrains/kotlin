@@ -323,6 +323,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/declarations/genericDelegatedProperty.kt");
         }
 
+        @TestMetadata("inlineCollectionOfInlineClass.kt")
+        public void testInlineCollectionOfInlineClass() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/inlineCollectionOfInlineClass.kt");
+        }
+
         @TestMetadata("interfaceProperties.kt")
         public void testInterfaceProperties() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/interfaceProperties.kt");
@@ -1712,8 +1717,18 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
+        @TestMetadata("AllCandidates.kt")
+        public void testAllCandidates() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/AllCandidates.kt");
+        }
+
         public void testAllFilesPresentInFirProblems() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/firProblems"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("AnnotationInAnnotation.kt")
+        public void testAnnotationInAnnotation() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/AnnotationInAnnotation.kt");
         }
 
         @TestMetadata("candidateSymbol.kt")
@@ -1739,6 +1754,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("FirBuilder.kt")
         public void testFirBuilder() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/FirBuilder.kt");
+        }
+
+        @TestMetadata("InnerClassInAnonymous.kt")
+        public void testInnerClassInAnonymous() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/InnerClassInAnonymous.kt");
         }
 
         @TestMetadata("putIfAbsent.kt")

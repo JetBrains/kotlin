@@ -49,7 +49,8 @@ class IrInlineCodegen(
         if (info.generateAssertField) {
             // May be inlining code into `<clinit>`, in which case it's too late to modify the IR and
             // `generateAssertFieldIfNeeded` will return a statement for which we need to emit bytecode.
-            codegen.classCodegen.generateAssertFieldIfNeeded()?.accept(codegen, BlockInfo())?.discard()
+            val isClInit = info.callSiteInfo.functionName == "<clinit>"
+            codegen.classCodegen.generateAssertFieldIfNeeded(isClInit)?.accept(codegen, BlockInfo())?.discard()
         }
     }
 
@@ -270,7 +271,7 @@ fun isInlineIrExpression(argumentExpression: IrExpression) =
         else -> false
     }
 
-fun IrBlock.isInlineIrBlock(): Boolean = origin.isLambda
+fun IrBlock.isInlineIrBlock(): Boolean = origin.isLambda || origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
 
 fun IrFunction.isInlineFunctionCall(context: JvmBackendContext) =
     (!context.state.isInlineDisabled || typeParameters.any { it.isReified }) && isInline

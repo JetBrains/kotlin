@@ -925,28 +925,27 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
         else {
             return StackValue.operation(type, v -> {
-                genStringBuilderConstructor(v);
-                invokeAppendForEntries(v, entries);
-                v.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
+                StringConcatGenerator generator = StringConcatGenerator.Companion.create(state, v);
+                generator.genStringBuilderConstructorIfNeded();
+                invokeAppendForEntries(generator, entries);
+                generator.genToString();
                 return Unit.INSTANCE;
             });
         }
     }
 
-    private void invokeAppendForEntries(InstructionAdapter v, List<StringTemplateEntry> entries) {
+    private void invokeAppendForEntries(StringConcatGenerator generator, List<StringTemplateEntry> entries) {
         for (StringTemplateEntry entry : entries) {
             if (entry instanceof StringTemplateEntry.Expression) {
-                invokeAppend(v, ((StringTemplateEntry.Expression) entry).expression);
+                invokeAppend(generator, ((StringTemplateEntry.Expression) entry).expression);
             }
             else {
                 String value = ((StringTemplateEntry.Constant) entry).value;
                 if (value.length() == 1) {
-                    v.iconst(value.charAt(0));
-                    genInvokeAppendMethod(v, Type.CHAR_TYPE, null);
+                    generator.putValueOrProcessConstant(StackValue.constant(value.charAt(0), Type.CHAR_TYPE, null));
                 }
                 else {
-                    v.aconst(value);
-                    genInvokeAppendMethod(v, JAVA_STRING_TYPE, null);
+                    generator.addStringConstant(value);
                 }
             }
         }
@@ -2840,7 +2839,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 myFrameMap.leaveTemp(firstReceiverType);
             }
 
-            callableMethod.afterReceiverGeneration(v, myFrameMap);
+            callableMethod.afterReceiverGeneration(v, myFrameMap, state);
         }
     }
 
@@ -4301,7 +4300,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
     }
 
-    public void invokeAppend(InstructionAdapter v, KtExpression expr) {
+    public void invokeAppend(StringConcatGenerator generator, KtExpression expr) {
         expr = KtPsiUtil.safeDeparenthesize(expr);
 
         ConstantValue<?> compileTimeConstant = getPrimitiveOrStringCompileTimeConstant(expr);
@@ -4315,28 +4314,29 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                     Type leftType = expressionType(left);
 
                     if (leftType.equals(JAVA_STRING_TYPE)) {
-                        invokeAppend(v, left);
-                        invokeAppend(v, right);
+                        invokeAppend(generator, left);
+                        invokeAppend(generator, right);
                         return;
                     }
                 }
             }
             else if (expr instanceof KtStringTemplateExpression) {
                 List<StringTemplateEntry> entries = preprocessStringTemplate((KtStringTemplateExpression) expr);
-                invokeAppendForEntries(v, entries);
+                invokeAppendForEntries(generator, entries);
                 return;
             }
         }
 
         Type exprType = expressionType(expr);
         KotlinType exprKotlinType = kotlinType(expr);
+        StackValue value;
         if (compileTimeConstant != null) {
-            StackValue.constant(compileTimeConstant.getValue(), exprType, exprKotlinType).put(exprType, exprKotlinType, v);
+            value = StackValue.constant(compileTimeConstant.getValue(), exprType, exprKotlinType);
         } else {
-            gen(expr, exprType, exprKotlinType);
+            value = gen(expr);
         }
 
-        genInvokeAppendMethod(v, exprType, exprKotlinType, typeMapper);
+        genInvokeAppendMethod(generator, exprType, exprKotlinType, typeMapper, value);
     }
 
     @Nullable

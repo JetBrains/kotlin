@@ -1,0 +1,24 @@
+import java.lang.System;
+
+@kotlin.Metadata()
+public abstract interface Foo {
+
+    public abstract void foo();
+
+    public default void foo2(int a) {
+    }
+
+    public abstract void bar();
+
+    @kotlin.Metadata()
+    public static final class DefaultImpls {
+
+        public DefaultImpls() {
+            super();
+        }
+
+        public static void foo(@org.jetbrains.annotations.NotNull()
+        Foo $this) {
+        }
+    }
+}

@@ -3789,6 +3789,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     runTest("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/objectByQualifier.kt");
                 }
 
+                @TestMetadata("objectForEnum.kt")
+                public void testObjectForEnum() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/objectForEnum.kt");
+                }
+
+                @TestMetadata("objectForEnumInArgument.kt")
+                public void testObjectForEnumInArgument() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/objectForEnumInArgument.kt");
+                }
+
+                @TestMetadata("objectForEnumInEquals.kt")
+                public void testObjectForEnumInEquals() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/objectForEnumInEquals.kt");
+                }
+
                 @TestMetadata("objectInPackage.kt")
                 public void testObjectInPackage() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/objectInPackage.kt");
@@ -8488,6 +8503,29 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/inlineClassConstructorNotValParameter")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class InlineClassConstructorNotValParameter extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInInlineClassConstructorNotValParameter() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/inlineClassConstructorNotValParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("basic.kt")
+        public void testBasic() throws Exception {
+            runTest("idea/testData/quickfix/inlineClassConstructorNotValParameter/basic.kt");
+        }
+
+        @TestMetadata("var.kt")
+        public void testVar() throws Exception {
+            runTest("idea/testData/quickfix/inlineClassConstructorNotValParameter/var.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/inlineTypeParameterFix")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -10626,6 +10664,24 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("protected2.kt")
         public void testProtected2() throws Exception {
             runTest("idea/testData/quickfix/protectedInFinal/protected2.kt");
+        }
+    }
+
+    @TestMetadata("idea/testData/quickfix/redundantConst")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RedundantConst extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInRedundantConst() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/redundantConst"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("idea/testData/quickfix/redundantConst/simple.kt");
         }
     }
 
@@ -15459,6 +15515,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("noElseInWhenWithoutBranches.kt")
         public void testNoElseInWhenWithoutBranches() throws Exception {
             runTest("idea/testData/quickfix/when/noElseInWhenWithoutBranches.kt");
+        }
+
+        @TestMetadata("removeRedundantBranch.kt")
+        public void testRemoveRedundantBranch() throws Exception {
+            runTest("idea/testData/quickfix/when/removeRedundantBranch.kt");
         }
 
         @TestMetadata("removeRedundantElse.kt")

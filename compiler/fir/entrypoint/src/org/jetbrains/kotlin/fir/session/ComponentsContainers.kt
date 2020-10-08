@@ -29,11 +29,13 @@ import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
 fun FirSession.registerCommonComponents() {
     register(FirDeclaredMemberScopeProvider::class, FirDeclaredMemberScopeProvider())
     register(FirCorrespondingSupertypesCache::class, FirCorrespondingSupertypesCache(this))
+    register(FirDefaultParametersResolver::class, FirDefaultParametersResolver())
 
     register(FirExtensionService::class, FirExtensionService(this))
     register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotations.create(this))
     register(FirPredicateBasedProvider::class, FirPredicateBasedProvider.create(this))
     register(GeneratedClassIndex::class, GeneratedClassIndex.create())
+    register(FirLanguageSettingsComponent::class, FirLanguageSettingsComponent(this))
     register(InferenceComponents::class, InferenceComponents(this))
 }
 

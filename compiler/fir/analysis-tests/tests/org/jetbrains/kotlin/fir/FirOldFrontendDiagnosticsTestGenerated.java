@@ -3369,6 +3369,16 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/checkArguments/booleanExpressions.kt");
         }
 
+        @TestMetadata("kt17691.kt")
+        public void testKt17691() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/checkArguments/kt17691.kt");
+        }
+
+        @TestMetadata("kt17691WithEnabledFeature.kt")
+        public void testKt17691WithEnabledFeature() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/checkArguments/kt17691WithEnabledFeature.kt");
+        }
+
         @TestMetadata("kt1897_diagnostic_part.kt")
         public void testKt1897_diagnostic_part() throws Exception {
             runTest("compiler/testData/diagnostics/tests/checkArguments/kt1897_diagnostic_part.kt");
@@ -3827,6 +3837,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
         @TestMetadata("assignedInFinally.kt")
         public void testAssignedInFinally() throws Exception {
             runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/assignedInFinally.kt");
+        }
+
+        @TestMetadata("assignedInIfElse.kt")
+        public void testAssignedInIfElse() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/assignedInIfElse.kt");
         }
 
         @TestMetadata("assignmentInLocalsInConstructor.kt")
@@ -7612,6 +7627,16 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/enum/SecondaryConstructorCall.kt");
         }
 
+        @TestMetadata("secondaryConstructorWithoutDelegatingToPrimaryOne.kt")
+        public void testSecondaryConstructorWithoutDelegatingToPrimaryOne() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/enum/secondaryConstructorWithoutDelegatingToPrimaryOne.kt");
+        }
+
+        @TestMetadata("secondaryConstructorWithoutDelegatingToPrimaryOneWithEnabledFeature.kt")
+        public void testSecondaryConstructorWithoutDelegatingToPrimaryOneWithEnabledFeature() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/enum/secondaryConstructorWithoutDelegatingToPrimaryOneWithEnabledFeature.kt");
+        }
+
         @TestMetadata("starImportNestedClassAndEntries.kt")
         public void testStarImportNestedClassAndEntries() throws Exception {
             runTest("compiler/testData/diagnostics/tests/enum/starImportNestedClassAndEntries.kt");
@@ -11065,6 +11090,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
                     runTest("compiler/testData/diagnostics/tests/inference/completion/postponedArgumentsAnalysis/callableReferences.kt");
                 }
 
+                @TestMetadata("fixingVariableDuringAddingConstraintForFirstPosponedArgument.kt")
+                public void testFixingVariableDuringAddingConstraintForFirstPosponedArgument() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/completion/postponedArgumentsAnalysis/fixingVariableDuringAddingConstraintForFirstPosponedArgument.kt");
+                }
+
                 @TestMetadata("lackOfDeepIncorporation.kt")
                 public void testLackOfDeepIncorporation() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/completion/postponedArgumentsAnalysis/lackOfDeepIncorporation.kt");
@@ -12419,6 +12449,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
         @TestMetadata("recursion.kt")
         public void testRecursion() throws Exception {
             runTest("compiler/testData/diagnostics/tests/inline/recursion.kt");
+        }
+
+        @TestMetadata("returnedAnonymousObjects.kt")
+        public void testReturnedAnonymousObjects() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/inline/returnedAnonymousObjects.kt");
         }
 
         @TestMetadata("returns.kt")
@@ -19182,6 +19217,16 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/resolve/typeParameterInDefaultValueInLocalFunction.kt");
         }
 
+        @TestMetadata("underscoreInCatchBlock.kt")
+        public void testUnderscoreInCatchBlock() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/resolve/underscoreInCatchBlock.kt");
+        }
+
+        @TestMetadata("underscoreInCatchBlockWithEnabledFeature.kt")
+        public void testUnderscoreInCatchBlockWithEnabledFeature() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/resolve/underscoreInCatchBlockWithEnabledFeature.kt");
+        }
+
         @TestMetadata("wrongNumberOfTypeArguments.kt")
         public void testWrongNumberOfTypeArguments() throws Exception {
             runTest("compiler/testData/diagnostics/tests/resolve/wrongNumberOfTypeArguments.kt");
@@ -24220,6 +24265,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/typeParameters/implicitNothingInReturnPosition.kt");
         }
 
+        @TestMetadata("implicitNothingOfJavaCallAgainstNotNothingExpectedType.kt")
+        public void testImplicitNothingOfJavaCallAgainstNotNothingExpectedType() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/typeParameters/implicitNothingOfJavaCallAgainstNotNothingExpectedType.kt");
+        }
+
         @TestMetadata("implicitNothingOnDelegates.kt")
         public void testImplicitNothingOnDelegates() throws Exception {
             runTest("compiler/testData/diagnostics/tests/typeParameters/implicitNothingOnDelegates.kt");
@@ -25172,6 +25222,21 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
 
         public void testAllFilesPresentInVisibility() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/visibility"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+        }
+
+        @TestMetadata("invisibleSetterOfJavaClass.kt")
+        public void testInvisibleSetterOfJavaClass() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/visibility/invisibleSetterOfJavaClass.kt");
+        }
+
+        @TestMetadata("invisibleSetterOfJavaClassWithDisabledFeature.kt")
+        public void testInvisibleSetterOfJavaClassWithDisabledFeature() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/visibility/invisibleSetterOfJavaClassWithDisabledFeature.kt");
+        }
+
+        @TestMetadata("lackOfInvisibleSetterOfJavaClassInSamePackage.kt")
+        public void testLackOfInvisibleSetterOfJavaClassInSamePackage() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/visibility/lackOfInvisibleSetterOfJavaClassInSamePackage.kt");
         }
     }
 

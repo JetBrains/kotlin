@@ -1253,6 +1253,26 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/addNameToArgument/ambiguousCall.kt");
         }
 
+        @TestMetadata("backtickedArgument.kt")
+        public void testBacktickedArgument() throws Exception {
+            runTest("idea/testData/intentions/addNameToArgument/backtickedArgument.kt");
+        }
+
+        @TestMetadata("backtickedArgument2.kt")
+        public void testBacktickedArgument2() throws Exception {
+            runTest("idea/testData/intentions/addNameToArgument/backtickedArgument2.kt");
+        }
+
+        @TestMetadata("backtickedArgument3.kt")
+        public void testBacktickedArgument3() throws Exception {
+            runTest("idea/testData/intentions/addNameToArgument/backtickedArgument3.kt");
+        }
+
+        @TestMetadata("backtickedArgument4.kt")
+        public void testBacktickedArgument4() throws Exception {
+            runTest("idea/testData/intentions/addNameToArgument/backtickedArgument4.kt");
+        }
+
         @TestMetadata("beforeOtherNamed.kt")
         public void testBeforeOtherNamed() throws Exception {
             runTest("idea/testData/intentions/addNameToArgument/beforeOtherNamed.kt");
@@ -3743,6 +3763,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/intentions/chop/argumentList"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
             }
 
+            @TestMetadata("leftParOnSameLine.kt")
+            public void testLeftParOnSameLine() throws Exception {
+                runTest("idea/testData/intentions/chop/argumentList/leftParOnSameLine.kt");
+            }
+
+            @TestMetadata("parOnSameLine.kt")
+            public void testParOnSameLine() throws Exception {
+                runTest("idea/testData/intentions/chop/argumentList/parOnSameLine.kt");
+            }
+
+            @TestMetadata("rightParOnSameLine.kt")
+            public void testRightParOnSameLine() throws Exception {
+                runTest("idea/testData/intentions/chop/argumentList/rightParOnSameLine.kt");
+            }
+
             @TestMetadata("threeArgs.kt")
             public void testThreeArgs() throws Exception {
                 runTest("idea/testData/intentions/chop/argumentList/threeArgs.kt");
@@ -3786,9 +3821,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 runTest("idea/testData/intentions/chop/parameterList/hasSomeLineBreaks2.kt");
             }
 
+            @TestMetadata("leftParOnSameLine.kt")
+            public void testLeftParOnSameLine() throws Exception {
+                runTest("idea/testData/intentions/chop/parameterList/leftParOnSameLine.kt");
+            }
+
             @TestMetadata("oneParameter.kt")
             public void testOneParameter() throws Exception {
                 runTest("idea/testData/intentions/chop/parameterList/oneParameter.kt");
+            }
+
+            @TestMetadata("parOnSameLine.kt")
+            public void testParOnSameLine() throws Exception {
+                runTest("idea/testData/intentions/chop/parameterList/parOnSameLine.kt");
+            }
+
+            @TestMetadata("rightParOnSameLine.kt")
+            public void testRightParOnSameLine() throws Exception {
+                runTest("idea/testData/intentions/chop/parameterList/rightParOnSameLine.kt");
             }
 
             @TestMetadata("threeParameters.kt")
@@ -10776,6 +10826,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/joinDeclarationAndAssignment/usedLocal2.kt");
         }
 
+        @TestMetadata("usedLocal3.kt")
+        public void testUsedLocal3() throws Exception {
+            runTest("idea/testData/intentions/joinDeclarationAndAssignment/usedLocal3.kt");
+        }
+
+        @TestMetadata("usedLocal4.kt")
+        public void testUsedLocal4() throws Exception {
+            runTest("idea/testData/intentions/joinDeclarationAndAssignment/usedLocal4.kt");
+        }
+
         @TestMetadata("varReassignment.kt")
         public void testVarReassignment() throws Exception {
             runTest("idea/testData/intentions/joinDeclarationAndAssignment/varReassignment.kt");
@@ -15701,6 +15761,26 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("nullableComplex2.kt")
         public void testNullableComplex2() throws Exception {
             runTest("idea/testData/intentions/simplifyBooleanWithConstants/nullableComplex2.kt");
+        }
+
+        @TestMetadata("positiveZeroNegativeZero1.kt")
+        public void testPositiveZeroNegativeZero1() throws Exception {
+            runTest("idea/testData/intentions/simplifyBooleanWithConstants/positiveZeroNegativeZero1.kt");
+        }
+
+        @TestMetadata("positiveZeroNegativeZero2.kt")
+        public void testPositiveZeroNegativeZero2() throws Exception {
+            runTest("idea/testData/intentions/simplifyBooleanWithConstants/positiveZeroNegativeZero2.kt");
+        }
+
+        @TestMetadata("positiveZeroNegativeZero3.kt")
+        public void testPositiveZeroNegativeZero3() throws Exception {
+            runTest("idea/testData/intentions/simplifyBooleanWithConstants/positiveZeroNegativeZero3.kt");
+        }
+
+        @TestMetadata("positiveZeroNegativeZero4.kt")
+        public void testPositiveZeroNegativeZero4() throws Exception {
+            runTest("idea/testData/intentions/simplifyBooleanWithConstants/positiveZeroNegativeZero4.kt");
         }
 
         @TestMetadata("reduceableBinary.kt")

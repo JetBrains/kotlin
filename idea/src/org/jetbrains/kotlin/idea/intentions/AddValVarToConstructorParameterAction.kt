@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.idea.refactoring.ValVarExpression
 import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.idea.util.mustHaveValOrVar
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -33,7 +34,7 @@ interface AddValVarToConstructorParameterAction {
 
         element.addBefore(KtPsiFactory(project).createValKeyword(), element.nameIdentifier)
 
-        if (editor == null) return
+        if (element.containingClass()?.isInline() == true || editor == null) return
 
         val parameter = element.createSmartPointer().let {
             PsiDocumentManager.getInstance(project).commitAllDocuments()
@@ -55,7 +56,8 @@ interface AddValVarToConstructorParameterAction {
     ), AddValVarToConstructorParameterAction {
         override fun applicabilityRange(element: KtParameter): TextRange? {
             if (!canInvoke(element)) return null
-            if (element.getStrictParentOfType<KtClass>()?.isData() == true) return null
+            val containingClass = element.getStrictParentOfType<KtClass>()
+            if (containingClass?.isData() == true || containingClass?.isInline() == true) return null
             setTextGetter(KotlinBundle.lazyMessage("add.val.var.to.parameter.0", element.name ?: ""))
             return element.nameIdentifier?.textRange
         }
@@ -66,7 +68,16 @@ interface AddValVarToConstructorParameterAction {
     class QuickFix(parameter: KtParameter) :
         KotlinQuickFixAction<KtParameter>(parameter),
         AddValVarToConstructorParameterAction {
-        override fun getText() = element?.let { KotlinBundle.message("add.val.var.to.parameter.0", it.name ?: "") } ?: ""
+        override fun getText(): String {
+            val element = this.element ?: return ""
+
+            val key = when {
+                element.getStrictParentOfType<KtClass>()?.isInline() == true -> "add.val.to.parameter.0"
+                else -> "add.val.var.to.parameter.0"
+            }
+
+            return KotlinBundle.message(key, element.name ?: "")
+        }
 
         override fun getFamilyName() = KotlinBundle.message("add.val.var.to.primary.constructor.parameter")
 

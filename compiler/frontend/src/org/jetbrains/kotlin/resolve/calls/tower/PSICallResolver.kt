@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.isUnderscoreNamed
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.*
@@ -837,7 +838,11 @@ class PSICallResolver(
         val catchScope = with(scope) {
             LexicalWritableScope(this, ownerDescriptor, false, redeclarationChecker, LexicalScopeKind.CATCH)
         }
-        catchScope.addVariableDescriptor(variableDescriptor)
+        val isReferencingToUnderscoreNamedParameterForbidden =
+            languageVersionSettings.getFeatureSupport(LanguageFeature.ForbidReferencingToUnderscoreNamedParameterOfCatchBlock) == LanguageFeature.State.ENABLED
+        if (!variableDescriptor.isUnderscoreNamed || !isReferencingToUnderscoreNamedParameterForbidden) {
+            catchScope.addVariableDescriptor(variableDescriptor)
+        }
         return replaceScope(catchScope)
     }
 }

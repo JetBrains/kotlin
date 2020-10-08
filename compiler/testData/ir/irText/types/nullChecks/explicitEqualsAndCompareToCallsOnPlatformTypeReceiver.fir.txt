@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/explicitEqualsAndCompareToCallsOnPlatformTypeReceiv
     $receiver: VALUE_PARAMETER name:<this> type:<root>.JavaClass
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testPlatformEqualsPlatform (): kotlin.Boolean declared in <root>'
-        CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any' type=kotlin.Boolean origin=null
+        CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in kotlin.Double' type=kotlin.Boolean origin=null
           $this: CALL 'public open fun null0 (): kotlin.Double? declared in <root>.JavaClass' type=kotlin.Double? origin=null
             $this: GET_VAR '<this>: <root>.JavaClass declared in <root>.testPlatformEqualsPlatform' type=<root>.JavaClass origin=null
           other: CALL 'public open fun null0 (): kotlin.Double? declared in <root>.JavaClass' type=kotlin.Double? origin=null
@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/explicitEqualsAndCompareToCallsOnPlatformTypeReceiv
     $receiver: VALUE_PARAMETER name:<this> type:<root>.JavaClass
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testPlatformEqualsKotlin (): kotlin.Boolean declared in <root>'
-        CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any' type=kotlin.Boolean origin=null
+        CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in kotlin.Double' type=kotlin.Boolean origin=null
           $this: CALL 'public open fun null0 (): kotlin.Double? declared in <root>.JavaClass' type=kotlin.Double? origin=null
             $this: GET_VAR '<this>: <root>.JavaClass declared in <root>.testPlatformEqualsKotlin' type=<root>.JavaClass origin=null
           other: CONST Double type=kotlin.Double value=0.0
@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/explicitEqualsAndCompareToCallsOnPlatformTypeReceiv
     $receiver: VALUE_PARAMETER name:<this> type:<root>.JavaClass
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testKotlinEqualsPlatform (): kotlin.Boolean declared in <root>'
-        CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any' type=kotlin.Boolean origin=null
+        CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in kotlin.Double' type=kotlin.Boolean origin=null
           $this: CONST Double type=kotlin.Double value=0.0
           other: CALL 'public open fun null0 (): kotlin.Double? declared in <root>.JavaClass' type=kotlin.Double? origin=null
             $this: GET_VAR '<this>: <root>.JavaClass declared in <root>.testKotlinEqualsPlatform' type=<root>.JavaClass origin=null

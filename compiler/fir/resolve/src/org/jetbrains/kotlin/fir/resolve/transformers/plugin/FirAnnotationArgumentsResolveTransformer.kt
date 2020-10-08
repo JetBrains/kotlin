@@ -87,7 +87,7 @@ private class FirDeclarationsResolveTransformerForArgumentAnnotations(
     override fun transformPropertyAccessor(
         propertyAccessor: FirPropertyAccessor,
         data: ResolutionMode
-    ): CompositeTransformResult<FirStatement> {
+    ): CompositeTransformResult<FirDeclaration> {
         propertyAccessor.transformAnnotations(this, data)
         return propertyAccessor.compose()
     }

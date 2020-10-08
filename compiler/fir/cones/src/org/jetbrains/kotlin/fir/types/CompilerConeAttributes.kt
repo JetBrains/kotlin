@@ -64,3 +64,6 @@ val ConeAttributes.exact: CompilerConeAttributes.Exact? by ConeAttributes.attrib
 val ConeAttributes.noInfer: CompilerConeAttributes.NoInfer? by ConeAttributes.attributeAccessor<CompilerConeAttributes.NoInfer>()
 val ConeAttributes.extensionFunctionType: CompilerConeAttributes.ExtensionFunctionType? by ConeAttributes.attributeAccessor<CompilerConeAttributes.ExtensionFunctionType>()
 val ConeAttributes.unsafeVarianceType: CompilerConeAttributes.UnsafeVariance? by ConeAttributes.attributeAccessor<CompilerConeAttributes.UnsafeVariance>()
+
+val ConeKotlinType.isExtensionFunctionType: Boolean
+    get() = attributes.extensionFunctionType != null

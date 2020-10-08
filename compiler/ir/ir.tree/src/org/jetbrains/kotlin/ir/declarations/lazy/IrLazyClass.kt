@@ -19,25 +19,25 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 
 class IrLazyClass(
-        override val startOffset: Int,
-        override val endOffset: Int,
-        override var origin: IrDeclarationOrigin,
-        override val symbol: IrClassSymbol,
-        @OptIn(ObsoleteDescriptorBasedAPI::class)
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override var origin: IrDeclarationOrigin,
+    override val symbol: IrClassSymbol,
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val descriptor: ClassDescriptor,
-        override val name: Name,
-        override val kind: ClassKind,
-        override var visibility: DescriptorVisibility,
-        override var modality: Modality,
-        override val isCompanion: Boolean,
-        override val isInner: Boolean,
-        override val isData: Boolean,
-        override val isExternal: Boolean,
-        override val isInline: Boolean,
-        override val isExpect: Boolean,
-        override val isFun: Boolean,
-        override val stubGenerator: DeclarationStubGenerator,
-        override val typeTranslator: TypeTranslator
+    override val name: Name,
+    override val kind: ClassKind,
+    override var visibility: DescriptorVisibility,
+    override var modality: Modality,
+    override val isCompanion: Boolean,
+    override val isInner: Boolean,
+    override val isData: Boolean,
+    override val isExternal: Boolean,
+    override val isInline: Boolean,
+    override val isExpect: Boolean,
+    override val isFun: Boolean,
+    override val stubGenerator: DeclarationStubGenerator,
+    override val typeTranslator: TypeTranslator
 ) : IrClass(), IrLazyDeclarationBase {
     init {
         symbol.bind(this)

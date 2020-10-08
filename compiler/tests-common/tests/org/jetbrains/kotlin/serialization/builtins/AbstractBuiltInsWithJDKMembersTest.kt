@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.builtins.StandardNames.COLLECTIONS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.StandardNames.RANGES_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.descriptors.packageFragments
 import org.jetbrains.kotlin.renderer.AnnotationArgumentsRenderingPolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
@@ -36,7 +37,7 @@ abstract class AbstractBuiltInsWithJDKMembersTest : KotlinTestWithEnvironment() 
         val module = JvmResolveUtil.analyze(environment).moduleDescriptor as ModuleDescriptorImpl
 
         for (packageFqName in listOf(BUILT_INS_PACKAGE_FQ_NAME, COLLECTIONS_PACKAGE_FQ_NAME, RANGES_PACKAGE_FQ_NAME)) {
-            val loaded = module.packageFragmentProvider.getPackageFragments(packageFqName)
+            val loaded = module.packageFragmentProvider.packageFragments(packageFqName)
                 .filterIsInstance<BuiltInsPackageFragment>()
                 .single { !it.isFallback }
             RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile(

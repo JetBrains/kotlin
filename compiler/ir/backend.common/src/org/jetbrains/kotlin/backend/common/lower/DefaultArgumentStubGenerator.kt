@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 // TODO: fix expect/actual default parameters
 
@@ -99,19 +100,22 @@ open class DefaultArgumentStubGenerator(
 
                 generateSuperCallHandlerCheckIfNeeded(irFunction, newIrFunction)
 
+                val intAnd = this@DefaultArgumentStubGenerator.context.ir.symbols.getBinaryOperator(
+                    OperatorNameConventions.AND, context.irBuiltIns.intType, context.irBuiltIns.intType
+                )
                 var sourceParameterIndex = -1
                 for (valueParameter in irFunction.valueParameters) {
                     if (!valueParameter.isMovedReceiver()) {
                         ++sourceParameterIndex
                     }
                     val parameter = newIrFunction.valueParameters[valueParameter.index]
-                    val remapped = if (valueParameter.defaultValue != null) {
+                    val remapped = valueParameter.defaultValue?.let { defaultValue ->
                         val mask = irGet(newIrFunction.valueParameters[irFunction.valueParameters.size + valueParameter.index / 32])
                         val bit = irInt(1 shl (sourceParameterIndex % 32))
                         val defaultFlag =
-                            irCallOp(this@DefaultArgumentStubGenerator.context.ir.symbols.intAnd, context.irBuiltIns.intType, mask, bit)
+                            irCallOp(intAnd, context.irBuiltIns.intType, mask, bit)
 
-                        val expression = valueParameter.defaultValue!!.expression
+                        val expression = defaultValue.expression
                             .prepareToBeUsedIn(newIrFunction)
                             .transform(object : IrElementTransformerVoid() {
                                 override fun visitGetValue(expression: IrGetValue): IrExpression {
@@ -122,9 +126,8 @@ open class DefaultArgumentStubGenerator(
                             }, null)
 
                         selectArgumentOrDefault(defaultFlag, parameter, expression)
-                    } else {
-                        parameter
-                    }
+                    } ?: parameter
+
                     params.add(remapped)
                     variables[valueParameter] = remapped
                 }
@@ -174,8 +177,24 @@ open class DefaultArgumentStubGenerator(
         parameter: IrValueParameter,
         default: IrExpression
     ): IrValueDeclaration {
-        val value = irIfThenElse(parameter.type, irNotEquals(defaultFlag, irInt(0)), default, irGet(parameter))
-        return createTmpVariable(value, nameHint = parameter.name.asString())
+        // For the JVM backend, we have to generate precisely this code because that results in the
+        // bytecode the inliner expects see `expandMaskConditionsAndUpdateVariableNodes`. In short,
+        // the bytecode sequence should be
+        //
+        //     -- no loads of the parameter here, as after inlining its value will be uninitialized
+        //     ILOAD <mask>
+        //     ICONST <bit>
+        //     IAND
+        //     IFEQ Lx
+        //     -- any code inserted here is removed if the call site specifies the parameter
+        //     STORE <n>
+        //     -- no jumps here
+        //   Lx
+        //
+        // This control flow limits us to an if-then (without an else), and this together with the
+        // restriction on loading the parameter in the default case means we cannot create any temporaries.
+        +irIfThen(irNotEquals(defaultFlag, irInt(0)), irSet(parameter.symbol, default))
+        return parameter
     }
 
     protected open fun getOriginForCallToImplementation(): IrStatementOrigin? = null
@@ -567,7 +586,8 @@ private fun IrFunction.generateDefaultsFunctionImpl(
             type = if (makeNullable) newType.makeNullable() else newType,
             defaultValue = if (it.defaultValue != null) {
                 factory.createExpressionBody(IrErrorExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it.type, "Default Stub"))
-            } else null
+            } else null,
+            isAssignable = it.defaultValue != null
         )
     }
 

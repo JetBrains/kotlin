@@ -53,7 +53,7 @@ class MetadataSmokeTest {
         val klass = KmClass().apply {
             name = "Hello"
             flags = flagsOf(Flag.IS_PUBLIC)
-            constructors += KmConstructor(flagsOf(Flag.IS_PUBLIC, Flag.Constructor.IS_PRIMARY)).apply {
+            constructors += KmConstructor(flagsOf(Flag.IS_PUBLIC)).apply {
                 signature = JvmMethodSignature("<init>", "()V")
             }
             functions += KmFunction(flagsOf(Flag.IS_PUBLIC, Flag.Function.IS_DECLARATION), "hello").apply {

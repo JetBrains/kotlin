@@ -308,7 +308,7 @@ class CallAndReferenceGenerator(
                         putValueArgument(0, assignedValue)
                     }
                 }
-                is IrVariableSymbol -> IrSetVariableImpl(startOffset, endOffset, type, symbol, assignedValue, origin)
+                is IrVariableSymbol -> IrSetValueImpl(startOffset, endOffset, type, symbol, assignedValue, origin)
                 else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
             }
         }.applyTypeArguments(variableAssignment).applyReceivers(variableAssignment, explicitReceiverExpression)
@@ -361,15 +361,28 @@ class CallAndReferenceGenerator(
         }.applyCallArguments(annotationCall, annotationMode = true)
     }
 
-    fun convertToGetObject(qualifier: FirResolvedQualifier): IrExpression {
-        return convertToGetObject(qualifier, callableReferenceMode = false)!!
+    internal fun convertToGetObject(qualifier: FirResolvedQualifier): IrExpression {
+        return convertToGetObject(qualifier, null)!!
     }
 
-    internal fun convertToGetObject(qualifier: FirResolvedQualifier, callableReferenceMode: Boolean): IrExpression? {
+    internal fun convertToGetObject(
+        qualifier: FirResolvedQualifier,
+        callableReferenceAccess: FirCallableReferenceAccess?
+    ): IrExpression? {
         val classSymbol = (qualifier.typeRef.coneType as? ConeClassLikeType)?.lookupTag?.toSymbol(session)
-        if (callableReferenceMode && classSymbol is FirRegularClassSymbol) {
-            if (classSymbol.classId != qualifier.classId) {
-                return null
+        if (callableReferenceAccess != null && classSymbol is FirRegularClassSymbol) {
+            val classIdMatched = classSymbol.classId == qualifier.classId
+            if (!classIdMatched) {
+                // Check whether we need get companion object as dispatch receiver
+                if (!classSymbol.fir.isCompanion || classSymbol.classId.outerClassId != qualifier.classId) {
+                    return null
+                }
+                val resolvedReference = callableReferenceAccess.calleeReference as FirResolvedNamedReference
+                val callableId = (resolvedReference.resolvedSymbol as FirCallableSymbol<*>).callableId
+                // Make sure the reference indeed refers to a member of that companion
+                if (callableId.classId != classSymbol.classId) {
+                    return null
+                }
             }
         }
         val irType = qualifier.typeRef.toIrType()
@@ -443,7 +456,7 @@ class CallAndReferenceGenerator(
     }
 
     private fun IrMemberAccessExpression<*>.applyArgumentsWithReorderingIfNeeded(
-        argumentMapping: Map<FirExpression, FirValueParameter>,
+        argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>,
         valueParameters: List<FirValueParameter>,
         annotationMode: Boolean
     ): IrExpression {
@@ -612,7 +625,7 @@ class CallAndReferenceGenerator(
             return explicitReceiverExpression
         }
         if (firReceiver is FirResolvedQualifier) {
-            return convertToGetObject(firReceiver, callableReferenceMode = this is FirCallableReferenceAccess)
+            return convertToGetObject(firReceiver, this as? FirCallableReferenceAccess)
         }
         return firReceiver.takeIf { it !is FirNoReceiverExpression }?.let { visitor.convertToIrExpression(it) }
             ?: explicitReceiverExpression

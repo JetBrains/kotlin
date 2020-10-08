@@ -76,8 +76,11 @@ object InlineClassAbi {
                 hashSuffix(irFunction)
             mangleReturnTypes && irFunction.hasMangledReturnType ->
                 returnHashSuffix(irFunction)
-            (irFunction.parent as? IrClass)?.isInline == true -> "impl"
-            else -> return irFunction.name
+            (irFunction.parent as? IrClass)?.isInline == true &&
+                    irFunction.origin != IrDeclarationOrigin.IR_BUILTINS_STUB ->
+                "impl"
+            else ->
+                return irFunction.name
         }
 
         val base = when {

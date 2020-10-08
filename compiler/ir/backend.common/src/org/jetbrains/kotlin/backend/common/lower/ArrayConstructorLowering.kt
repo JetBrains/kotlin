@@ -103,7 +103,7 @@ private class ArrayConstructorTransformer(
                         putValueArgument(1, value)
                     }
                     val inc = index.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INC }
-                    +irSetVar(index.symbol, irCallOp(inc.symbol, index.type, irGet(index)))
+                    +irSet(index.symbol, irCallOp(inc.symbol, index.type, irGet(index)))
                 }
             }
             +irGet(result)

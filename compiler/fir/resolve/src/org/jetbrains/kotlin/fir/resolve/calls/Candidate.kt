@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.PostponedResolvedAtom
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
@@ -82,7 +83,8 @@ class Candidate(
     val explicitReceiverKind: ExplicitReceiverKind,
     val constraintSystemFactory: InferenceComponents.ConstraintSystemFactory,
     private val baseSystem: ConstraintStorage,
-    val callInfo: CallInfo
+    val callInfo: CallInfo,
+    val originScope: FirScope?,
 ) {
 
     var systemInitialized: Boolean = false
@@ -100,7 +102,8 @@ class Candidate(
     var usesSAM: Boolean = false
     var usesSuspendConversion: Boolean = false
 
-    var argumentMapping: Map<FirExpression, FirValueParameter>? = null
+    var argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>? = null
+    var numDefaults: Int = 0
     lateinit var typeArgumentMapping: TypeArgumentMapping
     val postponedAtoms = mutableListOf<PostponedResolvedAtom>()
 

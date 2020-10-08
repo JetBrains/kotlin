@@ -39,8 +39,8 @@ class W4(val f: L2) {
 
 fun test1() { // to extension lambda 0
     val w10 = W1 { this } // oi+ ni+
-    val i10: E0 = id { <!NO_THIS!>this<!> } // o1- ni+
-    val j10 = id<E0> { <!NO_THIS!>this<!> } // oi+ ni+
+    val i10: E0 = id { this } // o1- ni+
+    val j10 = id<E0> { this } // oi+ ni+
     val f10 = W1(fun Int.(): Int = this) // oi+ ni+
     val g10: E0 = id(fun Int.(): Int = this) // oi+ ni+
 
@@ -60,23 +60,23 @@ fun test1() { // to extension lambda 0
 
 fun test2() { // to extension lambda 1
     val w20 = W2 { this + it.length } // oi+ ni+
-    val i20: E1 = id { <!NO_THIS!>this<!> + <!UNRESOLVED_REFERENCE!>it<!>.<!UNRESOLVED_REFERENCE!>length<!> } // oi- ni+
+    val i20: E1 = id { this + it.length } // oi- ni+
     val w21 = W2 { this } // oi+ ni+
-    val i21: E1 = id { <!NO_THIS!>this<!> } // oi- ni+
+    val i21: E1 = id { this } // oi- ni+
     val f21 = W2(fun Int.(String): Int = this) // oi+ ni+
     val g21: E1 = id(fun Int.(String): Int = this) // oi+ ni+
     val w22 = W2 { s -> this + s.length } // oi+ ni+
-    val i22: E1 = id { s -> <!NO_THIS!>this<!> + s.<!UNRESOLVED_REFERENCE!>length<!> } // oi+ ni+
+    val i22: E1 = id { s -> this + s.length } // oi+ ni+
     val w23 = W2 { s -> s.length } // oi+ ni+
-    val i23: E1 = id { s -> s.<!UNRESOLVED_REFERENCE!>length<!> } // oi+ ni+
+    val i23: E1 = id { s -> s.length } // oi+ ni+
     val w24 = W2 { s: String -> this + s.length } // oi+ ni+
-    val i24: E1 = id { s: String -> <!NO_THIS!>this<!> + s.length } //oi- ni+
+    val i24: E1 = id { s: String -> this + s.length } //oi- ni+
     val w25 = W2 { s: String -> s.length } // oi+ ni+
     val i25: E1 = id { s: String -> s.length } // oi- ni+
-    val w26 = W2(id { s: String -> <!NO_THIS!>this<!> + s.length }) // oi- ni+
-    val w26a = W2(id { s -> <!NO_THIS!>this<!> + s.<!UNRESOLVED_REFERENCE!>length<!> }) // oi+ ni+
-    val i26: E1 = id { s: String -> <!NO_THIS!>this<!> + s.length } // oi- ni+
-    val i26a: E1 = id { s -> <!NO_THIS!>this<!> + s.<!UNRESOLVED_REFERENCE!>length<!> } // oi+ ni+
+    val w26 = W2(id { s: String -> this + s.length }) // oi- ni+
+    val w26a = W2(id { s -> this + s.length }) // oi+ ni+
+    val i26: E1 = id { s: String -> this + s.length } // oi- ni+
+    val i26a: E1 = id { s -> this + s.length } // oi+ ni+
     val e = E.VALUE
     val w27 = <!INAPPLICABLE_CANDIDATE!>W2<!>(when (e) { E.VALUE ->  { s: String -> <!NO_THIS!>this<!> + s.length } }) // oi- ni+
     val w27a = <!INAPPLICABLE_CANDIDATE!>W2<!>(when (e) { E.VALUE ->  { s -> <!NO_THIS!>this<!> + s.<!UNRESOLVED_REFERENCE!>length<!> } }) // oi+ ni+
@@ -84,7 +84,7 @@ fun test2() { // to extension lambda 1
     val i27a: E1 = when (e) { E.VALUE ->  { s -> <!NO_THIS!>this<!> + s.<!UNRESOLVED_REFERENCE!>length<!> } } // oi+ ni+
 
     val w28 = <!INAPPLICABLE_CANDIDATE!>W2<!> { i: Int, s -> i <!AMBIGUITY!>+<!> s.<!UNRESOLVED_REFERENCE!>length<!> } // oi- ni-
-    val i28: E1 = id { i: Int, s -> i + s.length } // oi- ni-
+    val i28: E1 = id { i: Int, s -> i <!AMBIGUITY!>+<!> s.<!UNRESOLVED_REFERENCE!>length<!> } // oi- ni-
     val w29 = <!INAPPLICABLE_CANDIDATE!>W2<!> { i: Int, s: String -> i + s.length } // oi- ni-
     val i29: E1 = id { i: Int, s: String -> i + s.length } // oi+ ni+
 

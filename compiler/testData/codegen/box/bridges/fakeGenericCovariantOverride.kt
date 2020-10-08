@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // KT-3985
 
 interface Trait<T> {

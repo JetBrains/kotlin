@@ -32,6 +32,14 @@ class CompositePackageFragmentProvider(// can be modified from outside
         }
     }
 
+    override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> {
+        val result = ArrayList<PackageFragmentDescriptor>()
+        for (provider in providers) {
+            provider.collectPackageFragments(fqName, result)
+        }
+        return result.toList()
+    }
+
     override fun collectPackageFragments(fqName: FqName, packageFragments: MutableCollection<PackageFragmentDescriptor>) {
         for (provider in providers) {
             provider.collectPackageFragments(fqName, packageFragments)

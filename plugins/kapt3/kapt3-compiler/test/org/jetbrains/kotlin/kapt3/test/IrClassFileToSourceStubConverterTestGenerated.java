@@ -109,6 +109,11 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/enumImports.kt");
     }
 
+    @TestMetadata("enumInCompanion.kt")
+    public void testEnumInCompanion() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/enumInCompanion.kt");
+    }
+
     @TestMetadata("enums.kt")
     public void testEnums() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/enums.kt");
@@ -212,6 +217,26 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
     @TestMetadata("javadoc.kt")
     public void testJavadoc() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/javadoc.kt");
+    }
+
+    @TestMetadata("jvmDefaultAll.kt")
+    public void testJvmDefaultAll() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/jvmDefaultAll.kt");
+    }
+
+    @TestMetadata("jvmDefaultAllCompatibility.kt")
+    public void testJvmDefaultAllCompatibility() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/jvmDefaultAllCompatibility.kt");
+    }
+
+    @TestMetadata("jvmDefaultDisable.kt")
+    public void testJvmDefaultDisable() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/jvmDefaultDisable.kt");
+    }
+
+    @TestMetadata("jvmDefaultEnable.kt")
+    public void testJvmDefaultEnable() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/jvmDefaultEnable.kt");
     }
 
     @TestMetadata("jvmOverloads.kt")
@@ -417,6 +442,11 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
     @TestMetadata("strangeNames.kt")
     public void testStrangeNames() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/strangeNames.kt");
+    }
+
+    @TestMetadata("stripMetadata.kt")
+    public void testStripMetadata() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/stripMetadata.kt");
     }
 
     @TestMetadata("suspendErrorTypes.kt")

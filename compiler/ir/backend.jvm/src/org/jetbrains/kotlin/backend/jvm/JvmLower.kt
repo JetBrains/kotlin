@@ -113,6 +113,7 @@ internal val localDeclarationsPhase = makeIrFilePhase(
             object : VisibilityPolicy {
                 override fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): DescriptorVisibility =
                     if (declaration.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL ||
+                        declaration.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA ||
                         declaration.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL ||
                         declaration.origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
                     ) {
@@ -287,10 +288,14 @@ private val jvmFilePhases = listOf(
     lateinitDeclarationLoweringPhase,
     lateinitUsageLoweringPhase,
 
-    moveOrCopyCompanionObjectFieldsPhase,
     inlineCallableReferenceToLambdaPhase,
+    functionReferencePhase,
+    suspendLambdaPhase,
     propertyReferencePhase,
     constPhase,
+    // TODO: merge the next three phases together, as visitors behave incorrectly between them
+    //  (backing fields moved out of companion objects are reachable by two paths):
+    moveOrCopyCompanionObjectFieldsPhase,
     propertiesPhase,
     remapObjectFieldAccesses,
     anonymousObjectSuperConstructorPhase,
@@ -300,6 +305,7 @@ private val jvmFilePhases = listOf(
 
     rangeContainsLoweringPhase,
     forLoopsPhase,
+    collectionStubMethodLowering,
     jvmInlineClassPhase,
 
     sharedVariablesPhase,
@@ -309,7 +315,6 @@ private val jvmFilePhases = listOf(
     enumWhenPhase,
     singletonReferencesPhase,
 
-    functionReferencePhase,
     singleAbstractMethodPhase,
     assertionPhase,
     returnableBlocksPhase,
@@ -348,7 +353,6 @@ private val jvmFilePhases = listOf(
     staticInitializersPhase,
     initializersPhase,
     initializersCleanupPhase,
-    collectionStubMethodLowering,
     functionNVarargBridgePhase,
     jvmStaticAnnotationPhase,
     staticDefaultFunctionPhase,

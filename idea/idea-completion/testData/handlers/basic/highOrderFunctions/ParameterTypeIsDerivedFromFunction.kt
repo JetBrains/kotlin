@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 interface I : () -> Unit
 
 fun foo(i: I){}

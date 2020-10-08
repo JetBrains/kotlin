@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.Scope
@@ -127,7 +126,8 @@ fun IrValueParameter.copyTo(
     varargElementType: IrType? = this.varargElementType, // TODO: remapTypeParameters here as well
     defaultValue: IrExpressionBody? = this.defaultValue,
     isCrossinline: Boolean = this.isCrossinline,
-    isNoinline: Boolean = this.isNoinline
+    isNoinline: Boolean = this.isNoinline,
+    isAssignable: Boolean = this.isAssignable
 ): IrValueParameter {
     val descriptor = if (index < 0) {
         WrappedReceiverParameterDescriptor()
@@ -144,7 +144,7 @@ fun IrValueParameter.copyTo(
     }
     return factory.createValueParameter(
         startOffset, endOffset, origin, symbol,
-        name, index, type, varargElementType, isCrossinline, isNoinline
+        name, index, type, varargElementType, isCrossinline, isNoinline, isAssignable = isAssignable
     ).also {
         descriptor.bind(it)
         it.parent = irFunction
@@ -422,8 +422,8 @@ fun IrFunction.createDispatchReceiverParameter(origin: IrDeclarationOrigin? = nu
         -1,
         parentAsClass.defaultType,
         null,
-        false,
-        false
+        isCrossinline = false,
+        isNoinline = false
     ).apply {
         parent = this@createDispatchReceiverParameter
         newDescriptor.bind(this)
@@ -432,13 +432,19 @@ fun IrFunction.createDispatchReceiverParameter(origin: IrDeclarationOrigin? = nu
 
 val IrFunction.allParameters: List<IrValueParameter>
     get() = if (this is IrConstructor) {
-        listOf(
-            this.constructedClass.thisReceiver
-                ?: error(this.render())
-        ) + explicitParameters
+        ArrayList<IrValueParameter>(allParametersCount).also {
+            it.add(
+                this.constructedClass.thisReceiver
+                    ?: error(this.render())
+            )
+            addExplicitParametersTo(it)
+        }
     } else {
         explicitParameters
     }
+
+val IrFunction.allParametersCount: Int
+    get() = if (this is IrConstructor) explicitParametersCount + 1 else explicitParametersCount
 
 private object FakeOverrideBuilder : FakeOverrideBuilderStrategy() {
     override fun linkFakeOverride(fakeOverride: IrOverridableMember) {

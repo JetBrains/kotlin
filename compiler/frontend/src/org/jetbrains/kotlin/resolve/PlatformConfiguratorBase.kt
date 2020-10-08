@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.resolve
 import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMapper
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.resolve.calls.checkers.*
-import org.jetbrains.kotlin.resolve.calls.inference.InferenceCompatibilityCheckerImpl
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.checkers.*
 import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
@@ -39,7 +38,8 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     MissingDependencySupertypeChecker.ForDeclarations,
     FunInterfaceDeclarationChecker(),
     DeprecatedSinceKotlinAnnotationChecker,
-    ContractDescriptionBlockChecker
+    ContractDescriptionBlockChecker,
+    PrivateInlineFunctionsReturningAnonymousObjectsChecker
 )
 
 private val DEFAULT_CALL_CHECKERS = listOf(
@@ -53,7 +53,8 @@ private val DEFAULT_CALL_CHECKERS = listOf(
     UselessElvisCallChecker(), ResultTypeWithNullableOperatorsChecker(), NullableVarargArgumentCallChecker,
     NamedFunAsExpressionChecker, ContractNotAllowedCallChecker, ReifiedTypeParameterSubstitutionChecker(),
     MissingDependencySupertypeChecker.ForCalls, AbstractClassInstantiationChecker, SuspendConversionCallChecker,
-    UnitConversionCallChecker, FunInterfaceConstructorReferenceChecker, NullableExtensionOperatorWithSafeCallChecker
+    UnitConversionCallChecker, FunInterfaceConstructorReferenceChecker, NullableExtensionOperatorWithSafeCallChecker,
+    ReferencingToUnderscoreNamedParameterOfCatchBlockChecker, VarargWrongExecutionOrderChecker
 )
 private val DEFAULT_TYPE_CHECKERS = emptyList<AdditionalTypeChecker>()
 private val DEFAULT_CLASSIFIER_USAGE_CHECKERS = listOf(
@@ -108,7 +109,6 @@ abstract class PlatformConfiguratorBase(
 
     override fun configureModuleDependentCheckers(container: StorageComponentContainer) {
         container.useImpl<ExperimentalMarkerDeclarationAnnotationChecker>()
-        container.useImpl<InferenceCompatibilityCheckerImpl>()
     }
 
     fun configureExtensionsAndCheckers(container: StorageComponentContainer) {

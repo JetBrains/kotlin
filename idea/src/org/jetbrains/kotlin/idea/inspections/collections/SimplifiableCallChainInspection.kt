@@ -7,19 +7,25 @@ package org.jetbrains.kotlin.idea.inspections.collections
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import org.jetbrains.kotlin.backend.common.descriptors.isSuspend
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtVisitorVoid
+import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi.qualifiedExpressionVisitor
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class SimplifiableCallChainInspection : AbstractCallChainChecker() {
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) =
-        qualifiedExpressionVisitor(fun(expression) {
+    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): KtVisitorVoid {
+        return qualifiedExpressionVisitor(fun(expression) {
             val conversion = findQualifiedConversion(expression, conversionGroups) check@{ conversion, firstResolvedCall, _, context ->
                 // Do not apply on maps due to lack of relevant stdlib functions
                 val firstReceiverType = firstResolvedCall.extensionReceiver?.type
@@ -36,7 +42,8 @@ class SimplifiableCallChainInspection : AbstractCallChainChecker() {
                         }
                     ) return@check false
                 }
-                true
+
+                return@check conversion.enableSuspendFunctionCall || !containsSuspendFunctionCall(firstResolvedCall, context)
             } ?: return
 
             val replacement = conversion.replacement
@@ -59,6 +66,13 @@ class SimplifiableCallChainInspection : AbstractCallChainChecker() {
             )
             holder.registerProblem(descriptor)
         })
+    }
+
+    private fun containsSuspendFunctionCall(resolvedCall: ResolvedCall<*>, context: BindingContext): Boolean {
+        return resolvedCall.call.callElement.anyDescendantOfType<KtCallExpression> {
+            it.getResolvedCall(context)?.resultingDescriptor?.isSuspend == true
+        }
+    }
 
     private val conversionGroups = conversions.group()
 
@@ -99,8 +113,8 @@ class SimplifiableCallChainInspection : AbstractCallChainChecker() {
             Conversion("kotlin.text.filter", "kotlin.text.isNotEmpty", "any"),
             Conversion("kotlin.text.filter", "kotlin.text.isEmpty", "none"),
 
-            Conversion("kotlin.collections.map", "kotlin.collections.joinTo", "joinTo"),
-            Conversion("kotlin.collections.map", "kotlin.collections.joinToString", "joinToString"),
+            Conversion("kotlin.collections.map", "kotlin.collections.joinTo", "joinTo", enableSuspendFunctionCall = false),
+            Conversion("kotlin.collections.map", "kotlin.collections.joinToString", "joinToString", enableSuspendFunctionCall = false),
             Conversion("kotlin.collections.map", "kotlin.collections.filterNotNull", "mapNotNull"),
 
             Conversion("kotlin.collections.listOf", "kotlin.collections.filterNotNull", "listOfNotNull")

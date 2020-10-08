@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.ReturnTypeIsNotInitializedException
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.Variance
@@ -106,7 +107,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
     private inline fun <T> T.runTrimEnd(fn: T.() -> String): String =
         run(fn).trimEnd()
 
-    private fun IrType.render() =
+    private fun IrType.render(): String =
         "${renderTypeAnnotations(annotations)}${renderTypeInner()}"
 
     private fun IrType.renderTypeInner() =
@@ -250,7 +251,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
 
                 if (declaration is IrSimpleFunction) {
                     append(": ")
-                    append(declaration.returnType.render())
+                    append(declaration.renderReturnType())
                 }
                 append(' ')
 
@@ -280,8 +281,11 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
 
                 append(declaration.name.asString())
 
-                val type = declaration.getter?.returnType ?: declaration.backingField?.type
-                if (type != null) {
+                val getter = declaration.getter
+                if (getter != null) {
+                    append(": ")
+                    append(getter.renderReturnType())
+                } else declaration.backingField?.type?.let { type ->
                     append(": ")
                     append(type.render())
                 }
@@ -365,8 +369,18 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
                     "name:$name visibility:$visibility modality:$modality " +
                     renderTypeParameters() + " " +
                     renderValueParameterTypes() + " " +
-                    "returnType:${returnType.render()} " +
+                    "returnType:${renderReturnType()} " +
                     renderSimpleFunctionFlags()
+        }
+
+    private fun IrFunction.renderReturnType(): String =
+        safeReturnType?.render() ?: "<Uninitialized>"
+
+    private val IrFunction.safeReturnType: IrType?
+        get() = try {
+            returnType
+        } catch (e: ReturnTypeIsNotInitializedException) {
+            null
         }
 
     private fun renderFlagsList(vararg flags: String?) =
@@ -405,7 +419,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
                     "visibility:$visibility " +
                     renderTypeParameters() + " " +
                     renderValueParameterTypes() + " " +
-                    "returnType:${returnType.render()} " +
+                    "returnType:${renderReturnType()} " +
                     renderConstructorFlags()
         }
 
@@ -510,7 +524,8 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
         renderFlagsList(
             "vararg".takeIf { varargElementType != null },
             "crossinline".takeIf { isCrossinline },
-            "noinline".takeIf { isNoinline }
+            "noinline".takeIf { isNoinline },
+            "assignable".takeIf { isAssignable }
         )
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?): String =
@@ -593,7 +608,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
     override fun visitGetValue(expression: IrGetValue, data: Nothing?): String =
         "GET_VAR '${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
 
-    override fun visitSetVariable(expression: IrSetVariable, data: Nothing?): String =
+    override fun visitSetValue(expression: IrSetValue, data: Nothing?): String =
         "SET_VAR '${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitGetField(expression: IrGetField, data: Nothing?): String =

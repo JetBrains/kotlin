@@ -156,7 +156,13 @@ class JavaNullabilityChecker : AdditionalTypeChecker {
     private fun isNullableTypeAgainstNotNullTypeParameter(
         subType: KotlinType,
         superType: KotlinType
-    ) = superType is NotNullTypeVariable && subType.isNullable()
+    ): Boolean {
+        if (superType !is NotNullTypeVariable) return false
+        return !AbstractNullabilityChecker.isSubtypeOfAny(
+            ClassicTypeCheckerContext(errorTypeEqualsToAnything = true) as AbstractTypeCheckerContext,
+            subType
+        )
+    }
 
     override fun checkReceiver(
         receiverParameter: ReceiverParameterDescriptor,

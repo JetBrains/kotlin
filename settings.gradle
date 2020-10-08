@@ -27,12 +27,12 @@ buildscript {
         }
     }
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.19")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.20")
     }
 }
 
 plugins {
-    id "com.gradle.enterprise" version "3.3.4"
+    id "com.gradle.enterprise" version "3.4.1"
 }
 
 def buildProperties = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
@@ -160,6 +160,7 @@ include ":benchmarks",
         ":idea:ide-common",
         ":idea:idea-core",
         ":idea:idea-fir",
+        ":idea:idea-fir-performance-tests",
         ":idea:kotlin-gradle-tooling",
         ":idea:line-indent-provider",
         ":idea:idea-android",
@@ -323,6 +324,7 @@ include ":compiler:fir:cones",
         ":compiler:fir:analysis-tests"
 
 include ":idea:idea-frontend-fir:idea-fir-low-level-api"
+include ":idea:idea-fir-performance-tests"
 
 include ":plugins:parcelize:parcelize-compiler",
         ":plugins:parcelize:parcelize-ide",
@@ -352,11 +354,9 @@ if (buildProperties.includeCidrPlugins) {
             ":kotlin-ultimate:ide:common-cidr-native",
             ":kotlin-ultimate:ide:common-cidr-swift-native",
             ":kotlin-ultimate:ide:common-noncidr-native",
-            ":kotlin-ultimate:ide:clion-native",
             ":kotlin-ultimate:ide:appcode-native",
             ":kotlin-ultimate:ide:mobile-native",
             ":kotlin-ultimate:prepare:cidr-plugin",
-            ":kotlin-ultimate:prepare:clion-plugin",
             ":kotlin-ultimate:prepare:appcode-plugin",
             ":kotlin-ultimate:prepare:mobile-plugin",
             ":kotlin-ultimate:libraries:tools:apple-gradle-plugin-api"

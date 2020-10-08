@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
+import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
@@ -39,7 +39,8 @@ class IrValueParameterImpl(
     override var varargElementType: IrType?,
     override val isCrossinline: Boolean,
     override val isNoinline: Boolean,
-    override val isHidden: Boolean = false
+    override val isHidden: Boolean = false,
+    override val isAssignable: Boolean = false
 ) : IrValueParameter() {
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ParameterDescriptor

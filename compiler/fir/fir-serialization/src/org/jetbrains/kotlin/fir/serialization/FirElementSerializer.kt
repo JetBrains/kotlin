@@ -649,10 +649,18 @@ class FirElementSerializer private constructor(
     }
 
     private fun fillFromPossiblyInnerType(builder: ProtoBuf.Type.Builder, type: ConeClassLikeType) {
-        val classifierSymbol = type.lookupTag.toSymbol(session) ?: error("Can't lookup $type")
-        val classifier = classifierSymbol.fir
-        val classifierId = getClassifierId(classifier)
-        builder.className = classifierId
+        val classifierSymbol = type.lookupTag.toSymbol(session)
+        if (classifierSymbol != null) {
+            val classifier = classifierSymbol.fir
+            val classifierId = getClassifierId(classifier)
+            if (classifier is FirTypeAlias) {
+                builder.typeAliasName = classifierId
+            } else {
+                builder.className = classifierId
+            }
+        } else {
+            builder.className = getClassifierId(type.lookupTag.classId)
+        }
 
         for (projection in type.typeArguments) {
             builder.addArgument(typeArgument(projection))
@@ -829,6 +837,9 @@ class FirElementSerializer private constructor(
 
     private fun getClassifierId(declaration: FirClassLikeDeclaration<*>): Int =
         stringTable.getFqNameIndex(declaration)
+
+    private fun getClassifierId(classId: ClassId): Int =
+        stringTable.getQualifiedClassNameIndex(classId)
 
     private fun getSimpleNameIndex(name: Name): Int =
         stringTable.getStringIndex(name.asString())

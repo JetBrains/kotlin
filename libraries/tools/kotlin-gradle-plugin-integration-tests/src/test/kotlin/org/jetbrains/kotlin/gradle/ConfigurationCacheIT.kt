@@ -52,7 +52,7 @@ abstract class AbstractConfigurationCacheIT : BaseGradleIT() {
     override fun defaultBuildOptions() =
         super.defaultBuildOptions().copy(configurationCache = true)
 
-    override val defaultGradleVersion: GradleVersionRequired = GradleVersionRequired.AtLeast("6.6-rc-3")
+    override val defaultGradleVersion: GradleVersionRequired = GradleVersionRequired.AtLeast("6.6.1")
 
     protected fun Project.testConfigurationCacheOf(
         vararg taskNames: String,

@@ -96,7 +96,7 @@ class JvmBackendContext(
 
     internal val classCodegens = mutableMapOf<IrClass, ClassCodegen>()
 
-    val localDelegatedProperties = mutableMapOf<IrClass, List<IrLocalDelegatedPropertySymbol>>()
+    val localDelegatedProperties = mutableMapOf<IrAttributeContainer, List<IrLocalDelegatedPropertySymbol>>()
 
     internal val multifileFacadesToAdd = mutableMapOf<JvmClassName, MutableList<IrClass>>()
     val multifileFacadeForPart = mutableMapOf<IrClass, JvmClassName>()

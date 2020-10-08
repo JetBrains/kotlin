@@ -26,10 +26,13 @@ abstract class KotlinSoftwareComponent(
     protected val kotlinTargets: Iterable<KotlinTarget>
 ) : SoftwareComponentInternal, ComponentWithVariants {
 
-    override fun getUsages(): Set<UsageContext> = emptySet()
+    private val metadataTarget: KotlinMetadataTarget
+        get() = kotlinTargets.filterIsInstance<KotlinMetadataTarget>().single()
+
+    override fun getUsages(): Set<UsageContext> = (metadataTarget.components.single() as SoftwareComponentInternal).usages
 
     override fun getVariants(): Set<SoftwareComponent> =
-        kotlinTargets.flatMap { it.components }.toSet()
+        kotlinTargets.minus(metadataTarget).flatMap { it.components }.toSet()
 
     override fun getName(): String = name
 
@@ -72,11 +75,7 @@ class DefaultKotlinUsageContext(
 
     override fun getUsage(): Usage = usage
 
-    override fun getName(): String = kotlinTarget.targetName + when (dependencyConfigurationName) {
-        kotlinTarget.apiElementsConfigurationName -> "-api"
-        kotlinTarget.runtimeElementsConfigurationName -> "-runtime"
-        else -> "-$dependencyConfigurationName"
-    }
+    override fun getName(): String = dependencyConfigurationName
 
     private val configuration: Configuration
         get() = project.configurations.getByName(dependencyConfigurationName)

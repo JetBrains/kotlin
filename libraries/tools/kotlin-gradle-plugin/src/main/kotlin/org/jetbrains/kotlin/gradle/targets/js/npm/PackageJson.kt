@@ -9,6 +9,8 @@ import com.google.gson.ExclusionStrategy
 import com.google.gson.FieldAttributes
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import org.gradle.api.GradleException
+import org.gradle.api.tasks.Input
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import java.io.File
 
@@ -17,7 +19,7 @@ class PackageJson(
     var name: String,
     var version: String
 ) {
-    private val customFields = mutableMapOf<String, Any>()
+    internal val customFields = mutableMapOf<String, Any?>()
 
     val empty: Boolean
         get() = main == null &&
@@ -59,7 +61,19 @@ class PackageJson(
     val bundledDependencies = mutableListOf<String>()
         get() = field ?: mutableListOf()
 
+    fun customField(pair: Pair<String, Any>) {
+        customFields[pair.first] = pair.second
+    }
+
     fun customField(key: String, value: Any) {
+        customFields[key] = value
+    }
+
+    fun customField(key: String, value: Number) {
+        customFields[key] = value
+    }
+
+    fun customField(key: String, value: Boolean) {
         customFields[key] = value
     }
 
@@ -80,6 +94,7 @@ class PackageJson(
     fun saveTo(packageJsonFile: File) {
         val gson = GsonBuilder()
             .setPrettyPrinting()
+            .disableHtmlEscaping()
             .addSerializationExclusionStrategy(
                 object : ExclusionStrategy {
                     override fun shouldSkipField(f: FieldAttributes?): Boolean =
@@ -126,7 +141,7 @@ fun packageJson(
 
     npmDependencies.forEach {
         val module = it.key
-        dependencies[it.key] = chooseVersion(dependencies[module], it.version)
+        dependencies[module] = chooseVersion(module, dependencies[module], it.version)
     }
 
     npmDependencies.forEach {
@@ -146,12 +161,21 @@ fun packageJson(
     return packageJson
 }
 
-// TODO: real versions conflict resolution
-private fun chooseVersion(oldVersion: String?, newVersion: String): String {
-    // https://yarnpkg.com/lang/en/docs/dependency-versions/#toc-x-ranges
-    if (oldVersion == "*") {
+private fun chooseVersion(
+    module: String,
+    oldVersion: String?,
+    newVersion: String
+): String {
+    if (oldVersion == null) {
         return newVersion
     }
 
-    return oldVersion ?: newVersion
+    return (includedRange(oldVersion) intersect includedRange(newVersion))?.toString()
+        ?: throw GradleException(
+            """
+                There is already declared version of '$module' with version '$oldVersion' which does not intersects with another declared version '${newVersion}'
+            """.trimIndent()
+        )
 }
+
+internal const val fakePackageJsonValue = "FAKE"

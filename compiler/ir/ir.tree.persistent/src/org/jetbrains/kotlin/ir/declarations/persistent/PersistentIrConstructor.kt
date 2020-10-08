@@ -27,22 +27,23 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
+import org.jetbrains.kotlin.ir.types.impl.ReturnTypeIsNotInitializedException
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 internal class PersistentIrConstructor(
-        override val startOffset: Int,
-        override val endOffset: Int,
-        origin: IrDeclarationOrigin,
-        override val symbol: IrConstructorSymbol,
-        override val name: Name,
-        visibility: DescriptorVisibility,
-        returnType: IrType,
-        override val isInline: Boolean,
-        override val isExternal: Boolean,
-        override val isPrimary: Boolean,
-        override val isExpect: Boolean,
-        override val containerSource: DeserializedContainerSource?
+    override val startOffset: Int,
+    override val endOffset: Int,
+    origin: IrDeclarationOrigin,
+    override val symbol: IrConstructorSymbol,
+    override val name: Name,
+    visibility: DescriptorVisibility,
+    returnType: IrType,
+    override val isInline: Boolean,
+    override val isExternal: Boolean,
+    override val isPrimary: Boolean,
+    override val isExpect: Boolean,
+    override val containerSource: DeserializedContainerSource?
 ) : IrConstructor(),
     PersistentIrDeclarationBase<ConstructorCarrier>,
     ConstructorCarrier {
@@ -73,7 +74,7 @@ internal class PersistentIrConstructor(
 
     override var returnType: IrType
         get() = returnTypeField.let {
-            if (it !== IrUninitializedType) it else error("Return type is not initialized")
+            if (it !== IrUninitializedType) it else throw ReturnTypeIsNotInitializedException(this)
         }
         set(c) {
             returnTypeField = c

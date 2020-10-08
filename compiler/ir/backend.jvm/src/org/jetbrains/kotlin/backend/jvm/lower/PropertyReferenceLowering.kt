@@ -48,7 +48,10 @@ import org.jetbrains.kotlin.types.Variance
 internal val propertyReferencePhase = makeIrFilePhase(
     ::PropertyReferenceLowering,
     name = "PropertyReference",
-    description = "Construct KProperty instances returned by expressions such as A::x and A()::x"
+    description = "Construct KProperty instances returned by expressions such as A::x and A()::x",
+    // This must be done after contents of functions are extracted into separate classes, or else the `$$delegatedProperties`
+    // field will end up in the wrong class (not the one that declares the delegated property).
+    prerequisite = setOf(functionReferencePhase, suspendLambdaPhase)
 )
 
 internal class PropertyReferenceLowering(val context: JvmBackendContext) : ClassLoweringPass {
@@ -65,9 +68,6 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
 
     private val IrMemberAccessExpression<*>.field: IrFieldSymbol?
         get() = (this as? IrPropertyReference)?.field
-
-    private val IrSimpleFunction.signature: String
-        get() = context.methodSignatureMapper.mapSignatureSkipGeneric(collectRealOverrides().first()).toString()
 
     // Plain Java fields do not have a getter, but can be referenced nonetheless. The signature should be the one
     // that a getter would have, if it existed.
@@ -216,6 +216,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                 cachedKProperty(expression)
 
             private fun cachedKProperty(expression: IrCallableReference<*>): IrExpression {
+                expression.transformChildrenVoid()
                 if (expression.origin != IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE)
                     return createSpecializedKProperty(expression)
 
@@ -415,7 +416,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                 }
             })
 
-            context.localDelegatedProperties[irClass.attributeOwnerId as IrClass] =
+            context.localDelegatedProperties[irClass.attributeOwnerId] =
                 kProperties.keys.filterIsInstance<IrLocalDelegatedPropertySymbol>()
         }
     }

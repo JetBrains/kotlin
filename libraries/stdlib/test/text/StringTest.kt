@@ -895,6 +895,7 @@ class StringTest {
         assertEquals("/b/", input.replace("ab", "/", ignoreCase = true))
 
         assertEquals("-a-b-b-A-b-", input.replace("", "-"))
+        assertEquals("-a-b-b-A-b-", input.replace("", "-", ignoreCase = true))
     }
 
     @Test fun replaceFirst() {

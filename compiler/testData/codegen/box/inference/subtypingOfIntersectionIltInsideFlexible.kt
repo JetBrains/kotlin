@@ -1,5 +1,4 @@
-// IGNORE_BACKEND: JS
-// IGNORE_BACKEND: JS_IR
+// TARGET_BACKEND: JVM
 
 // FILE: Bar.java
 public class Bar {

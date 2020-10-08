@@ -320,13 +320,13 @@ public final class IrOperation extends
             break;
           }
           case 170: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable.Builder subBuilder = null;
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue.Builder subBuilder = null;
             if (operationCase_ == 21) {
-              subBuilder = ((org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable) operation_).toBuilder();
+              subBuilder = ((org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue) operation_).toBuilder();
             }
-            operation_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable.PARSER, extensionRegistry);
+            operation_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue.PARSER, extensionRegistry);
             if (subBuilder != null) {
-              subBuilder.mergeFrom((org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable) operation_);
+              subBuilder.mergeFrom((org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue) operation_);
               operation_ = subBuilder.buildPartial();
             }
             operationCase_ = 21;
@@ -547,7 +547,7 @@ public final class IrOperation extends
     PROPERTY_REFERENCE(18),
     RETURN(19),
     SET_FIELD(20),
-    SET_VARIABLE(21),
+    SET_VALUE(21),
     STRING_CONCAT(22),
     THROW(23),
     TRY(24),
@@ -587,7 +587,7 @@ public final class IrOperation extends
         case 18: return PROPERTY_REFERENCE;
         case 19: return RETURN;
         case 20: return SET_FIELD;
-        case 21: return SET_VARIABLE;
+        case 21: return SET_VALUE;
         case 22: return STRING_CONCAT;
         case 23: return THROW;
         case 24: return TRY;
@@ -956,21 +956,21 @@ public final class IrOperation extends
     return org.jetbrains.kotlin.backend.common.serialization.proto.IrSetField.getDefaultInstance();
   }
 
-  public static final int SET_VARIABLE_FIELD_NUMBER = 21;
+  public static final int SET_VALUE_FIELD_NUMBER = 21;
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable set_variable = 21;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue set_value = 21;</code>
    */
-  public boolean hasSetVariable() {
+  public boolean hasSetValue() {
     return operationCase_ == 21;
   }
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable set_variable = 21;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue set_value = 21;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable getSetVariable() {
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue getSetValue() {
     if (operationCase_ == 21) {
-       return (org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable) operation_;
+       return (org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue) operation_;
     }
-    return org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable.getDefaultInstance();
+    return org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue.getDefaultInstance();
   }
 
   public static final int STRING_CONCAT_FIELD_NUMBER = 22;
@@ -1299,8 +1299,8 @@ public final class IrOperation extends
         return false;
       }
     }
-    if (hasSetVariable()) {
-      if (!getSetVariable().isInitialized()) {
+    if (hasSetValue()) {
+      if (!getSetValue().isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -1445,7 +1445,7 @@ public final class IrOperation extends
       output.writeMessage(20, (org.jetbrains.kotlin.backend.common.serialization.proto.IrSetField) operation_);
     }
     if (operationCase_ == 21) {
-      output.writeMessage(21, (org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable) operation_);
+      output.writeMessage(21, (org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue) operation_);
     }
     if (operationCase_ == 22) {
       output.writeMessage(22, (org.jetbrains.kotlin.backend.common.serialization.proto.IrStringConcat) operation_);
@@ -1574,7 +1574,7 @@ public final class IrOperation extends
     }
     if (operationCase_ == 21) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(21, (org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable) operation_);
+        .computeMessageSize(21, (org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue) operation_);
     }
     if (operationCase_ == 22) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -1938,8 +1938,8 @@ public final class IrOperation extends
           mergeSetField(other.getSetField());
           break;
         }
-        case SET_VARIABLE: {
-          mergeSetVariable(other.getSetVariable());
+        case SET_VALUE: {
+          mergeSetValue(other.getSetValue());
           break;
         }
         case STRING_CONCAT: {
@@ -2114,8 +2114,8 @@ public final class IrOperation extends
           return false;
         }
       }
-      if (hasSetVariable()) {
-        if (!getSetVariable().isInitialized()) {
+      if (hasSetValue()) {
+        if (!getSetValue().isInitialized()) {
           
           return false;
         }
@@ -3510,24 +3510,24 @@ public final class IrOperation extends
     }
 
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable set_variable = 21;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue set_value = 21;</code>
      */
-    public boolean hasSetVariable() {
+    public boolean hasSetValue() {
       return operationCase_ == 21;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable set_variable = 21;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue set_value = 21;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable getSetVariable() {
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue getSetValue() {
       if (operationCase_ == 21) {
-        return (org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable) operation_;
+        return (org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue) operation_;
       }
-      return org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable.getDefaultInstance();
+      return org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue.getDefaultInstance();
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable set_variable = 21;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue set_value = 21;</code>
      */
-    public Builder setSetVariable(org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable value) {
+    public Builder setSetValue(org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue value) {
       if (value == null) {
         throw new NullPointerException();
       }
@@ -3537,22 +3537,22 @@ public final class IrOperation extends
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable set_variable = 21;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue set_value = 21;</code>
      */
-    public Builder setSetVariable(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable.Builder builderForValue) {
+    public Builder setSetValue(
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue.Builder builderForValue) {
       operation_ = builderForValue.build();
 
       operationCase_ = 21;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable set_variable = 21;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue set_value = 21;</code>
      */
-    public Builder mergeSetVariable(org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable value) {
+    public Builder mergeSetValue(org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue value) {
       if (operationCase_ == 21 &&
-          operation_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable.getDefaultInstance()) {
-        operation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable.newBuilder((org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable) operation_)
+          operation_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue.getDefaultInstance()) {
+        operation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue.newBuilder((org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue) operation_)
             .mergeFrom(value).buildPartial();
       } else {
         operation_ = value;
@@ -3562,9 +3562,9 @@ public final class IrOperation extends
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable set_variable = 21;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue set_value = 21;</code>
      */
-    public Builder clearSetVariable() {
+    public Builder clearSetValue() {
       if (operationCase_ == 21) {
         operationCase_ = 0;
         operation_ = null;

@@ -314,7 +314,7 @@ fun Map<FqName, ByteArray>.missingMetadata(
 
         val fragment = KotlinJavascriptSerializationUtil.serializeDescriptors(
             bindingContext, moduleDescriptor,
-            moduleDescriptor.packageFragmentProviderForModuleContentWithoutDependencies.getPackageFragments(fqName).flatMap {
+            moduleDescriptor.packageFragmentProviderForModuleContentWithoutDependencies.packageFragments(fqName).flatMap {
                 it.getMemberScope().getContributedDescriptors()
             },
             fqName, languageVersionSettings, metadataVersion

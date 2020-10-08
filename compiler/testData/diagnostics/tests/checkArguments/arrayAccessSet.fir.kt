@@ -28,8 +28,8 @@ fun test() {
     B[0] = 2.72
     B[0] = true
 
-    <!INAPPLICABLE_CANDIDATE!>D[0] = ""<!>
-    <!INAPPLICABLE_CANDIDATE!>D[0] = 2.72<!>
+    D[0] = ""
+    D[0] = 2.72
 
     <!INAPPLICABLE_CANDIDATE!>Z[0] = ""<!>
 }

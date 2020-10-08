@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
-import java.lang.IllegalStateException
 
 open class FirJvmMangleComputer(
     private val builder: StringBuilder,
@@ -79,7 +78,7 @@ open class FirJvmMangleComputer(
             else -> return
         }
         if (parentClassId != null && !parentClassId.isLocal) {
-            val parentClassLike = session.firSymbolProvider.getClassLikeSymbolByFqName(parentClassId)?.fir
+            val parentClassLike = this@FirJvmMangleComputer.session.firSymbolProvider.getClassLikeSymbolByFqName(parentClassId)?.fir
                 ?: error("Attempt to find parent ($parentClassId) for probably-local declaration!")
             if (parentClassLike is FirRegularClass || parentClassLike is FirTypeAlias) {
                 parentClassLike.accept(this@FirJvmMangleComputer, false)

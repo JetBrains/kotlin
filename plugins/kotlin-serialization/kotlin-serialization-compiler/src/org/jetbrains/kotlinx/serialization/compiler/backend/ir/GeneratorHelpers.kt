@@ -109,11 +109,7 @@ interface IrBuilderExtension {
     }
 
     fun IrBuilderWithScope.irBinOp(name: Name, lhs: IrExpression, rhs: IrExpression): IrExpression {
-        val symbol = compilerContext.symbols.getBinaryOperator(
-            name,
-            lhs.type.toKotlinType(),
-            rhs.type.toKotlinType()
-        )
+        val symbol = compilerContext.symbols.getBinaryOperator(name, lhs.type, rhs.type)
         return irInvoke(lhs, symbol, rhs)
     }
 
@@ -383,7 +379,7 @@ interface IrBuilderExtension {
         fun irValueParameter(descriptor: ParameterDescriptor): IrValueParameter = with(descriptor) {
             factory.createValueParameter(
                 function.startOffset, function.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, IrValueParameterSymbolImpl(this),
-                name, indexOrMinusOne, type.toIrType(), varargElementType?.toIrType(), isCrossinline, isNoinline
+                name, indexOrMinusOne, type.toIrType(), varargElementType?.toIrType(), isCrossinline, isNoinline, false
             ).also {
                 it.parent = function
             }
@@ -429,25 +425,29 @@ interface IrBuilderExtension {
 
     fun createClassReference(classType: KotlinType, startOffset: Int, endOffset: Int): IrClassReference {
         val clazz = classType.toClassDescriptor!!
-        val returnType =
-            kClassTypeFor(TypeProjectionImpl(Variance.INVARIANT, classType))
+        val classSymbol = compilerContext.referenceClass(clazz.fqNameSafe) ?: error("Couldn't load class $clazz")
         return IrClassReferenceImpl(
             startOffset,
             endOffset,
-            returnType.toIrType(),
-            compilerContext.referenceClass(clazz.fqNameSafe) ?: error("Couldn't load class $clazz"),
-            classType.toIrType()
+            compilerContext.irBuiltIns.kClassClass.starProjectedType,
+            classSymbol,
+            classSymbol.starProjectedType
         )
     }
 
     fun IrBuilderWithScope.classReference(classType: KotlinType): IrClassReference = createClassReference(classType, startOffset, endOffset)
 
-    fun buildInitializersRemapping(irClass: IrClass): (IrField) -> IrExpression? {
+    private fun extractDefaultValuesFromConstructor(irClass: IrClass?): Map<ParameterDescriptor, IrExpression?> {
+        if (irClass == null) return emptyMap()
         val original = irClass.constructors.singleOrNull { it.isPrimary }
-            ?: throw IllegalStateException("Serializable class must have single primary constructor")
         // default arguments of original constructor
         val defaultsMap: Map<ParameterDescriptor, IrExpression?> =
-            original.valueParameters.associate { it.descriptor to it.defaultValue?.expression }
+            original?.valueParameters?.associate { it.descriptor to it.defaultValue?.expression } ?: emptyMap()
+        return defaultsMap + extractDefaultValuesFromConstructor(irClass.getSuperClassNotAny())
+    }
+
+    fun buildInitializersRemapping(irClass: IrClass): (IrField) -> IrExpression? {
+        val defaultsMap = extractDefaultValuesFromConstructor(irClass)
         return fun(f: IrField): IrExpression? {
             val i = f.initializer?.expression ?: return null
             val irExpression =
@@ -744,10 +744,12 @@ interface IrBuilderExtension {
         return forClass.declarations.filterIsInstance<IrConstructor>().single { it.isSerializationCtor() }.symbol
     }
 
-    fun IrClass.getSuperClassOrAny(): IrClass {
+    fun IrClass.getSuperClassOrAny(): IrClass = getSuperClassNotAny() ?: compilerContext.irBuiltIns.anyClass.owner
+
+    fun IrClass.getSuperClassNotAny(): IrClass? {
         val superClasses = superTypes.mapNotNull { it.classOrNull }.map { it.owner }
 
-        return superClasses.singleOrNull { it.kind == ClassKind.CLASS } ?: compilerContext.irBuiltIns.anyClass.owner
+        return superClasses.singleOrNull { it.kind == ClassKind.CLASS }
     }
 
 }

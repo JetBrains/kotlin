@@ -15,7 +15,7 @@ public abstract interface B : kotlin/Any {
 public final class Delegate<T#0 /* T */> : kotlin/Any {
 
   // signature: <init>()V
-  public /* primary */ constructor()
+  public constructor()
 
   // signature: getValue(Ljava/lang/Object;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
   public final operator fun getValue(thisRef: kotlin/Any?, property: kotlin/reflect/KProperty<*>): T#0
@@ -75,7 +75,7 @@ lambda {
 public final class Inv<T#0 /* T */> : kotlin/Any {
 
   // signature: <init>(Ljava/lang/Object;)V
-  public /* primary */ constructor(e: T#0)
+  public constructor(e: T#0)
 
   // module name: test-module
 }

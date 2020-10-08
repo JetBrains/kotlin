@@ -1,0 +1,111 @@
+{
+  "type-inference": [
+    "smart-casts/smart-cast-sink-stability",
+    "local-type-inference",
+    "smart-casts/smart-cast-types"
+  ],
+  "overload-resolution": [
+    "building-the-overload-candidate-set-ocs/operator-call",
+    "building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver",
+    "choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1",
+    "choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection",
+    "callables-and-invoke-convention",
+    "building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions",
+    "building-the-overload-candidate-set-ocs/call-with-named-parameters",
+    "building-the-overload-candidate-set-ocs/call-with-specified-type-parameters",
+    "building-the-overload-candidate-set-ocs/infix-function-call",
+    "determining-function-applicability-for-a-specific-call/description",
+    "building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver",
+    "c-level-partition",
+    "receivers",
+    "building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/call-with-an-explicit-type-receiver",
+    "resolving-callable-references/bidirectional-resolution-for-callable-calls",
+    "resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call",
+    "resolving-callable-references",
+    "determining-function-applicability-for-a-specific-call/rationale"
+  ],
+  "type-system": [
+    "type-kinds/built-in-types/kotlin.any",
+    "introduction-1",
+    "type-kinds/built-in-types/kotlin.nothing",
+    "subtyping/subtyping-rules",
+    "subtyping",
+    "subtyping/subtyping-for-intersection-types",
+    "type-contexts-and-scopes/inner-and-nested-type-contexts",
+    "subtyping/subtyping-for-nullable-types",
+    "type-kinds/type-parameters"
+  ],
+  "declarations": [
+    "classifier-declaration/class-declaration/abstract-classes",
+    "classifier-declaration/class-declaration/constructor-declaration",
+    "classifier-declaration/class-declaration",
+    "classifier-declaration/data-class-declaration",
+    "classifier-declaration/class-declaration/nested-and-inner-classifiers",
+    "property-declaration/local-property-declaration",
+    "property-declaration/property-initialization",
+    "type-alias",
+    "classifier-declaration/classifier-initialization",
+    "function-declaration"
+  ],
+  "inheritance": [
+    "overriding"
+  ],
+  "statements": [
+    "assignments/operator-assignments",
+    "assignments",
+    "assignments/simple-assignments",
+    "loop-statements/while-loop-statement",
+    "loop-statements/do-while-loop-statement"
+  ],
+  "expressions": [
+    "not-null-assertion-expression",
+    "comparison-expressions",
+    "when-expression",
+    "when-expression/exhaustive-when-expressions",
+    "constant-literals/real-literals",
+    "constant-literals/integer-literals/decimal-integer-literals",
+    "constant-literals/integer-literals/binary-integer-literals",
+    "constant-literals/integer-literals/hexadecimal-integer-literals",
+    "constant-literals/boolean-literals",
+    "constant-literals/character-literals",
+    "constant-literals/the-types-for-integer-literals",
+    "logical-disjunction-expression",
+    "logical-conjunction-expression",
+    "additive-expression",
+    "type-checking-and-containment-checking-expressions/type-checking-expression",
+    "type-checking-and-containment-checking-expressions/containment-checking-expression",
+    "try-expression",
+    "elvis-operator-expression",
+    "multiplicative-expression",
+    "range-expression",
+    "equality-expressions/value-equality-expressions",
+    "jump-expressions/break-expression",
+    "jump-expressions/return-expressions",
+    "jump-expressions/continue-expression",
+    "jump-expressions",
+    "conditional-expression",
+    "built-in-types-and-their-semantics/kotlin.nothing-1",
+    "built-in-types-and-their-semantics/kotlin.unit",
+    "prefix-expressions/unary-minus-expression",
+    "prefix-expressions/logical-not-expression",
+    "prefix-expressions/unary-plus-expression",
+    "prefix-expressions/prefix-increment-expression",
+    "prefix-expressions/prefix-decrement-expression",
+    "call-and-property-access-expressions/callable-references",
+    "call-and-property-access-expressions/navigation-operators",
+    "function-literals/lambda-literals"
+  ],
+  "overloadable-operators": [
+    ""
+  ],
+  "built-in-types-and-their-semantics": [
+    "built-in-integer-types-1/integer-type-widening"
+  ],
+  "control--and-data-flow-analysis": [
+    "control-flow-graph/expressions-1/conditional-expressions",
+    "performing-analysis-on-the-control-flow-graph/variable-initialization-analysis"
+  ],
+  "annotations": [
+    "annotation-targets"
+  ]
+}

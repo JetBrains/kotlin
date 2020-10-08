@@ -42,10 +42,11 @@ abstract class FirDefaultPropertyAccessor(
     propertyTypeRef,
     valueParameters,
     body = null,
+    FirDeclarationStatusImpl(visibility, Modality.FINAL),
+    containerSource = null,
     contractDescription = FirEmptyContractDescription,
     symbol,
     isGetter,
-    FirDeclarationStatusImpl(visibility, Modality.FINAL),
     annotations = mutableListOf(),
     typeParameters = mutableListOf(),
 ) {

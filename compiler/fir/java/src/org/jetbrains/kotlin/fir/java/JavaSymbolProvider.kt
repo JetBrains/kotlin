@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.resolve.constructType
@@ -205,6 +206,7 @@ class JavaSymbolProvider(
             val classIsAnnotation = classKind == ClassKind.ANNOTATION_CLASS
 
             for (javaMethod in javaClass.methods) {
+                if (javaMethod.isObjectMethodInInterface()) continue
                 declarations += convertJavaMethodToFir(
                     javaMethod,
                     classId,
@@ -308,8 +310,14 @@ class JavaSymbolProvider(
                 isVar = !javaField.isFinal
                 isStatic = javaField.isStatic
                 addAnnotationsFrom(this@JavaSymbolProvider.session, javaField, javaTypeParameterStack)
+                initializer = convertJavaInitializerToFir(javaField.initializerValue)
             }
         }
+    }
+
+    private fun convertJavaInitializerToFir(value: Any?): FirExpression? {
+        // NB: null should be converted to null
+        return value?.createConstantIfAny(session)
     }
 
     private fun convertJavaMethodToFir(
@@ -361,13 +369,13 @@ class JavaSymbolProvider(
             val parameterForAnnotationConstructor = buildJavaValueParameter {
                 session = this@JavaSymbolProvider.session
                 returnTypeRef = firJavaMethod.returnTypeRef
-                name = firJavaMethod.name
+                name = methodName
                 if (javaMethod.hasAnnotationParameterDefaultValue) {
                     defaultValue = buildExpressionStub()
                 }
-                isVararg = javaMethod.returnType is JavaArrayType
+                isVararg = returnType is JavaArrayType && methodName == VALUE_METHOD_NAME
             }
-            if (firJavaMethod.name == VALUE_METHOD_NAME) {
+            if (methodName == VALUE_METHOD_NAME) {
                 valueParametersForAnnotationConstructor.valueParameterForValue = parameterForAnnotationConstructor
             } else {
                 valueParametersForAnnotationConstructor.valueParameters += parameterForAnnotationConstructor

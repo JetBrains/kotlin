@@ -51,10 +51,7 @@ import org.jetbrains.kotlin.idea.codeInsight.surroundWith.AbstractSurroundWithTe
 import org.jetbrains.kotlin.idea.codeInsight.unwrap.AbstractUnwrapRemoveTest
 import org.jetbrains.kotlin.idea.completion.AbstractHighLevelJvmBasicCompletionTest
 import org.jetbrains.kotlin.idea.completion.test.*
-import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractBasicCompletionHandlerTest
-import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractCompletionCharFilterTest
-import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractKeywordCompletionHandlerTest
-import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractSmartCompletionHandlerTest
+import org.jetbrains.kotlin.idea.completion.test.handlers.*
 import org.jetbrains.kotlin.idea.completion.test.weighers.AbstractBasicCompletionWeigherTest
 import org.jetbrains.kotlin.idea.completion.test.weighers.AbstractSmartCompletionWeigherTest
 import org.jetbrains.kotlin.idea.configuration.AbstractGradleConfigureProjectByChangingFileTest
@@ -251,6 +248,11 @@ fun main(args: Array<String>) {
             testClass<AbstractKotlinEvaluateExpressionTest> {
                 model("evaluation/singleBreakpoint", testMethod = "doSingleBreakpointTest")
                 model("evaluation/multipleBreakpoints", testMethod = "doMultipleBreakpointsTest")
+            }
+
+            testClass<AbstractIrKotlinEvaluateExpressionTest> {
+                model("evaluation/singleBreakpoint", testMethod = "doSingleBreakpointTest", targetBackend = TargetBackend.JVM_IR)
+                model("evaluation/multipleBreakpoints", testMethod = "doMultipleBreakpointsTest", targetBackend = TargetBackend.JVM_IR)
             }
 
             testClass<AbstractSelectExpressionForDebuggerTest> {
@@ -1042,6 +1044,12 @@ fun main(args: Array<String>) {
             }
         }
 
+        testGroup("idea/idea-fir-performance-tests/tests", "idea") {
+            testClass<AbstractFirHighlightingPerformanceTest> {
+                model("testData/highlighter")
+            }
+        }
+
         testGroup("idea/idea-fir/tests", "idea/testData") {
             testClass<AbstractFirReferenceResolveTest> {
                 model("resolve/references", pattern = KT_WITHOUT_DOTS_IN_NAME)
@@ -1061,6 +1069,10 @@ fun main(args: Array<String>) {
             testClass<AbstractHighLevelJvmBasicCompletionTest> {
                 model("basic/common")
                 model("basic/java")
+            }
+
+            testClass<AbstractHighLevelBasicCompletionHandlerTest> {
+                model("handlers/basic", pattern = KT_WITHOUT_DOTS_IN_NAME)
             }
         }
 

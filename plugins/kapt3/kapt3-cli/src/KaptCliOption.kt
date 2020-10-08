@@ -188,6 +188,13 @@ enum class KaptCliOption(
         cliToolOption = CliToolOption("-Kapt-strict", FLAG)
     ),
 
+    STRIP_METADATA_OPTION(
+        "stripMetadata",
+        "true | false",
+        "Strip @Metadata annotations from stubs",
+        cliToolOption = CliToolOption("-Kapt-strip-metadata", FLAG)
+    ),
+
     DETECT_MEMORY_LEAKS_OPTION("detectMemoryLeaks", "true | false", "Detect memory leaks in annotation processors"),
     INCLUDE_COMPILE_CLASSPATH(
         "includeCompileClasspath",

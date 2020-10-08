@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.util.isLambda
 import org.jetbrains.kotlin.ir.visitors.*
 
@@ -36,7 +37,7 @@ private class RemoveDeclarationsThatWouldBeInlinedLowering(val context: JvmBacke
             override fun visitElement(element: IrElement) = element.acceptChildrenVoid(this)
 
             override fun visitFunctionReference(expression: IrFunctionReference) {
-                if (expression.origin.isLambda) {
+                if (expression.origin.isLambda || expression.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE) {
                     loweredLambdasToDelete.add(expression.symbol.owner)
                 }
 

@@ -57,17 +57,18 @@ abstract class AbstractVariableRemapper : IrElementTransformerVoid() {
         remapVariable(expression.symbol.owner)?.let {
             IrGetValueImpl(expression.startOffset, expression.endOffset, it.type, it.symbol, expression.origin)
         } ?: expression
+
+    override fun visitSetValue(expression: IrSetValue): IrExpression {
+        expression.transformChildrenVoid()
+        return remapVariable(expression.symbol.owner)?.let {
+            IrSetValueImpl(expression.startOffset, expression.endOffset, it.type, it.symbol, expression.value, expression.origin)
+        } ?: expression
+    }
 }
 
 open class VariableRemapper(val mapping: Map<IrValueParameter, IrValueDeclaration>) : AbstractVariableRemapper() {
     override fun remapVariable(value: IrValueDeclaration): IrValueDeclaration? =
         mapping[value]
-}
-
-@ObsoleteDescriptorBasedAPI
-class VariableRemapperDesc(val mapping: Map<ValueDescriptor, IrValueParameter>) : AbstractVariableRemapper() {
-    override fun remapVariable(value: IrValueDeclaration): IrValueDeclaration? =
-        mapping[value.descriptor]
 }
 
 fun BackendContext.createIrBuilder(

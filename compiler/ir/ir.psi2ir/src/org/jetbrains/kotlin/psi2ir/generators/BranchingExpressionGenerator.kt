@@ -113,7 +113,7 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
             for (ktCondition in ktEntry.conditions) {
                 val irCondition =
                     if (irSubject != null)
-                        generateWhenConditionWithSubject(ktCondition, irSubject)
+                        generateWhenConditionWithSubject(ktCondition, irSubject, expression.subjectExpression)
                     else
                         generateWhenConditionNoSubject(ktCondition)
                 irBranchCondition = irBranchCondition?.let { context.whenComma(it, irCondition) } ?: irCondition
@@ -190,12 +190,14 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
     private fun generateWhenConditionNoSubject(ktCondition: KtWhenCondition): IrExpression =
         (ktCondition as KtWhenConditionWithExpression).expression!!.genExpr()
 
-    private fun generateWhenConditionWithSubject(ktCondition: KtWhenCondition, irSubject: IrVariable): IrExpression {
+    private fun generateWhenConditionWithSubject(
+        ktCondition: KtWhenCondition, irSubject: IrVariable, ktSubject: KtExpression?
+    ): IrExpression {
         return when (ktCondition) {
             is KtWhenConditionWithExpression ->
                 generateEqualsCondition(irSubject, ktCondition)
             is KtWhenConditionInRange ->
-                generateInRangeCondition(irSubject, ktCondition)
+                generateInCondition(irSubject, ktCondition, ktSubject)
             is KtWhenConditionIsPattern ->
                 generateIsPatternCondition(irSubject, ktCondition)
             else ->
@@ -227,11 +229,13 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
             irInstanceOf
     }
 
-    private fun generateInRangeCondition(irSubject: IrVariable, ktCondition: KtWhenConditionInRange): IrExpression {
-        val inCall = statementGenerator.pregenerateCall(getResolvedCall(ktCondition.operationReference)!!)
+    private fun generateInCondition(irSubject: IrVariable, ktCondition: KtWhenConditionInRange, ktSubject: KtExpression?): IrExpression {
         val startOffset = ktCondition.startOffsetSkippingComments
         val endOffset = ktCondition.endOffset
-        inCall.irValueArgumentsByIndex[0] = irSubject.loadAt(startOffset, startOffset)
+        val inCall = statementGenerator.pregenerateCallUsing(getResolvedCall(ktCondition.operationReference)!!) {
+            // In a `when` with a subject, `in x` is represented as `x.contains(<reference to subject expression>)`.
+            if (it === ktSubject) irSubject.loadAt(startOffset, startOffset) else statementGenerator.generateExpression(it)
+        }
         val inOperator = getInfixOperator(ktCondition.operationReference.getReferencedNameElementType())
         val irInCall = CallGenerator(statementGenerator).generateCall(ktCondition, inCall, inOperator)
         return when (inOperator) {

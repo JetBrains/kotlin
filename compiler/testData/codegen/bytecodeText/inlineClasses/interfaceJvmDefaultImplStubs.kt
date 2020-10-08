@@ -1,4 +1,5 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND_FIR: JVM_IR
 
 // IGNORE_BACKEND: JVM
 // The JVM backend does not generate the g-impl method, but ends up calling it from box.

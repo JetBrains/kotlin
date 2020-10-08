@@ -246,7 +246,7 @@ message IrSetField {
   optional int32 origin_name = 3;
 }
 
-message IrSetVariable {
+message IrSetValue {
   required int64 symbol = 1;
   required IrExpression value = 2;
   optional int32 origin_name = 3;
@@ -375,7 +375,7 @@ message IrOperation {
     IrPropertyReference property_reference = 18;
     IrReturn return = 19;
     IrSetField set_field = 20;
-    IrSetVariable set_variable = 21;
+    IrSetValue set_value = 21;
     IrStringConcat string_concat = 22;
     IrThrow throw = 23;
     IrTry try = 24;

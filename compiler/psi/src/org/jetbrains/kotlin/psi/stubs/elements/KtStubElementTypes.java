@@ -89,6 +89,10 @@ public interface KtStubElementTypes {
     KtPlaceHolderStubElementType<KtFunctionType> FUNCTION_TYPE =
             new KtPlaceHolderStubElementType<>("FUNCTION_TYPE", KtFunctionType.class);
 
+    KtTypeCodeFragmentType TYPE_CODE_FRAGMENT = new KtTypeCodeFragmentType();
+    KtExpressionCodeFragmentType EXPRESSION_CODE_FRAGMENT = new KtExpressionCodeFragmentType();
+    KtBlockCodeFragmentType BLOCK_CODE_FRAGMENT = new KtBlockCodeFragmentType();
+
     KtTypeProjectionElementType TYPE_PROJECTION = new KtTypeProjectionElementType("TYPE_PROJECTION");
 
     KtPlaceHolderStubElementType<KtFunctionTypeReceiver> FUNCTION_TYPE_RECEIVER =

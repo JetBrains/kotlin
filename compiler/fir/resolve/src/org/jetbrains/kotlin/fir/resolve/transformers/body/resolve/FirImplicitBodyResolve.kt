@@ -188,6 +188,16 @@ private class ReturnTypeCalculatorWithJump(
 
         require(declaration is FirCallableMemberDeclaration<*>) { "${declaration::class}: ${declaration.render()}" }
 
+        if (declaration is FirSyntheticProperty) {
+            return tryCalculateReturnType(declaration.getter.delegate)
+        }
+
+        if (declaration.origin == FirDeclarationOrigin.IntersectionOverride) {
+            val result = tryCalculateReturnType(declaration.symbol.overriddenSymbol!!.fir)
+            declaration.replaceReturnTypeRef(result)
+            return result
+        }
+
         return when (val status = implicitBodyResolveComputationSession.getStatus(declaration.symbol)) {
             is ImplicitBodyResolveComputationStatus.Computed -> status.resolvedTypeRef
             is ImplicitBodyResolveComputationStatus.Computing ->

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ArrayUtil;
@@ -52,7 +51,6 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isBoolean;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isPrimitiveClass;
@@ -69,12 +67,6 @@ import static org.jetbrains.kotlin.types.TypeUtils.isNullableType;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class DescriptorAsmUtil {
-    private static final Set<Type> STRING_BUILDER_OBJECT_APPEND_ARG_TYPES = Sets.newHashSet(
-            getType(String.class),
-            getType(StringBuffer.class),
-            getType(CharSequence.class)
-    );
-
     private DescriptorAsmUtil() {
     }
 
@@ -501,46 +493,27 @@ public class DescriptorAsmUtil {
         return index;
     }
 
-    public static void genInvokeAppendMethod(@NotNull InstructionAdapter v, @NotNull Type type, @Nullable KotlinType kotlinType) {
-        genInvokeAppendMethod(v, type, kotlinType, null);
-    }
-
     public static void genInvokeAppendMethod(
-            @NotNull InstructionAdapter v,
+            @NotNull StringConcatGenerator generator,
             @NotNull Type type,
             @Nullable KotlinType kotlinType,
-            @Nullable KotlinTypeMapper typeMapper
+            @Nullable KotlinTypeMapper typeMapper,
+            @NotNull StackValue stackValue
     ) {
-        Type appendParameterType;
-
         CallableMethod specializedToString = getSpecializedToStringCallableMethodOrNull(kotlinType, typeMapper);
         if (specializedToString != null) {
-            specializedToString.genInvokeInstruction(v);
-            appendParameterType = AsmTypes.JAVA_STRING_TYPE;
+            stackValue.put(type, kotlinType, generator.getMv());
+            specializedToString.genInvokeInstruction(generator.getMv());
+            generator.invokeAppend(AsmTypes.JAVA_STRING_TYPE);
         }
         else if (kotlinType != null && InlineClassesUtilsKt.isInlineClassType(kotlinType)) {
-            appendParameterType = OBJECT_TYPE;
             SimpleType nullableAnyType = kotlinType.getConstructor().getBuiltIns().getNullableAnyType();
-            StackValue.coerce(type, kotlinType, appendParameterType, nullableAnyType, v);
+            stackValue.put(type, kotlinType, generator.getMv());
+            StackValue.coerce(type, kotlinType, OBJECT_TYPE, nullableAnyType, generator.getMv());
+            generator.invokeAppend(OBJECT_TYPE);
         }
         else {
-            appendParameterType = stringBuilderAppendType(type);
-        }
-
-        v.invokevirtual("java/lang/StringBuilder", "append", "(" + appendParameterType.getDescriptor() + ")Ljava/lang/StringBuilder;", false);
-    }
-
-    private static Type stringBuilderAppendType(Type type) {
-        switch (type.getSort()) {
-            case Type.OBJECT:
-                return STRING_BUILDER_OBJECT_APPEND_ARG_TYPES.contains(type) ? type : OBJECT_TYPE;
-            case Type.ARRAY:
-                return OBJECT_TYPE;
-            case Type.BYTE:
-            case Type.SHORT:
-                return Type.INT_TYPE;
-            default:
-                return type;
+            generator.putValueOrProcessConstant(stackValue, type, kotlinType);
         }
     }
 

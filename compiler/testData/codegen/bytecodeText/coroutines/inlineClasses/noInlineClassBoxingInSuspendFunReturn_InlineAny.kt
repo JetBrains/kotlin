@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JVM_IR
 
 inline class IC0(val x: Any) // IC0.unbox-impl in generated 'equals'

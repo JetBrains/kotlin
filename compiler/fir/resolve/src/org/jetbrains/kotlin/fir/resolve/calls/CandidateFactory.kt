@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildErrorProperty
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.returnExpressions
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
@@ -49,6 +50,7 @@ class CandidateFactory private constructor(
     fun createCandidate(
         symbol: AbstractFirBasedSymbol<*>,
         explicitReceiverKind: ExplicitReceiverKind,
+        scope: FirScope?,
         dispatchReceiverValue: ReceiverValue? = null,
         implicitExtensionReceiverValue: ImplicitReceiverValue<*>? = null,
         builtInExtensionFunctionReceiverValue: ReceiverValue? = null
@@ -58,7 +60,8 @@ class CandidateFactory private constructor(
             explicitReceiverKind, context.inferenceComponents.constraintSystemFactory, baseSystem,
             builtInExtensionFunctionReceiverValue?.receiverExpression?.let {
                 callInfo.withReceiverAsArgument(it)
-            } ?: callInfo
+            } ?: callInfo,
+            scope,
         )
     }
 
@@ -79,7 +82,8 @@ class CandidateFactory private constructor(
             explicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
             context.inferenceComponents.constraintSystemFactory,
             baseSystem,
-            callInfo
+            callInfo,
+            originScope = null,
         )
     }
 

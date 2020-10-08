@@ -304,7 +304,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             KotlinType expectedType = refineTypeFromPropertySetterIfPossible(context.trace.getBindingContext(), leftOperand, leftType);
 
             components.dataFlowAnalyzer.checkType(binaryOperationType, expression, context.replaceExpectedType(expectedType)
-                    .replaceDataFlowInfo(rightInfo.getDataFlowInfo()).replaceCallPosition(new CallPosition.PropertyAssignment(left)));
+                    .replaceDataFlowInfo(rightInfo.getDataFlowInfo()).replaceCallPosition(new CallPosition.PropertyAssignment(left, false)));
             basic.checkLValue(context.trace, context, leftOperand, right, expression, false);
         }
         temporary.commit();
@@ -354,14 +354,21 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             basic.checkLValue(context.trace, context, arrayAccessExpression, right, expression, true);
             return typeInfo.replaceType(checkAssignmentType(typeInfo.getType(), expression, contextWithExpectedType));
         }
-        KotlinTypeInfo leftInfo = ExpressionTypingUtils.getTypeInfoOrNullType(left, context, facade);
+        KotlinTypeInfo leftInfo = ExpressionTypingUtils.getTypeInfoOrNullType(
+                left,
+                context.replaceCallPosition(new CallPosition.PropertyAssignment(left, true)),
+                facade
+        );
         KotlinType expectedType = refineTypeFromPropertySetterIfPossible(context.trace.getBindingContext(), leftOperand, leftInfo.getType());
         DataFlowInfo dataFlowInfo = leftInfo.getDataFlowInfo();
         KotlinTypeInfo resultInfo;
         if (right != null) {
             resultInfo = facade.getTypeInfo(
-                            right, context.replaceDataFlowInfo(dataFlowInfo).replaceExpectedType(expectedType).replaceCallPosition(
-                                    new CallPosition.PropertyAssignment(leftOperand)));
+                    right,
+                    context.replaceDataFlowInfo(dataFlowInfo)
+                            .replaceExpectedType(expectedType)
+                            .replaceCallPosition(new CallPosition.PropertyAssignment(leftOperand, false))
+            );
 
             dataFlowInfo = resultInfo.getDataFlowInfo();
             KotlinType rightType = resultInfo.getType();

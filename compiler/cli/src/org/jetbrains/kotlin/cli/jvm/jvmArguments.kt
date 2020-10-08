@@ -49,6 +49,24 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         }
     }
 
+    if (arguments.stringConcat != null) {
+        val runtimeStringConcat = JvmStringConcat.fromString(arguments.stringConcat!!)
+        if (runtimeStringConcat != null) {
+            put(JVMConfigurationKeys.STRING_CONCAT, runtimeStringConcat)
+            if (jvmTarget.bytecodeVersion < JvmTarget.JVM_9.bytecodeVersion && runtimeStringConcat != JvmStringConcat.INLINE) {
+                messageCollector.report(
+                    WARNING,
+                    "`-Xstring-concat=${arguments.stringConcat}` does nothing with JVM target `${jvmTarget.description}`."
+                )
+            }
+        } else {
+            messageCollector.report(
+                ERROR, "Unknown `string-concat` mode: ${arguments.jvmTarget}\n" +
+                        "Supported versions: ${JvmStringConcat.values().joinToString { it.name.toLowerCase() }}"
+            )
+        }
+    }
+
     addAll(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, arguments.additionalJavaModules?.asList())
 }
 

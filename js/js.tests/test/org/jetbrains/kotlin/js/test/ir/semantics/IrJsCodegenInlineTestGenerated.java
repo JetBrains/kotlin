@@ -534,6 +534,11 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
             runTest("compiler/testData/codegen/boxInline/argumentOrder/defaultParametersAndLastVararg.kt");
         }
 
+        @TestMetadata("defaultParametersAndLastVarargWithCorrectOrder.kt")
+        public void testDefaultParametersAndLastVarargWithCorrectOrder() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/argumentOrder/defaultParametersAndLastVarargWithCorrectOrder.kt");
+        }
+
         @TestMetadata("extension.kt")
         public void testExtension() throws Exception {
             runTest("compiler/testData/codegen/boxInline/argumentOrder/extension.kt");
@@ -567,6 +572,11 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
         @TestMetadata("varargAndDefaultParameters.kt")
         public void testVarargAndDefaultParameters() throws Exception {
             runTest("compiler/testData/codegen/boxInline/argumentOrder/varargAndDefaultParameters.kt");
+        }
+
+        @TestMetadata("varargAndDefaultParametersWithCorrectOrder.kt")
+        public void testVarargAndDefaultParametersWithCorrectOrder() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/argumentOrder/varargAndDefaultParametersWithCorrectOrder.kt");
         }
     }
 
@@ -658,6 +668,11 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
     public static class CallableReference extends AbstractIrJsCodegenInlineTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+        }
+
+        @TestMetadata("adapted.kt")
+        public void testAdapted() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/callableReference/adapted.kt");
         }
 
         public void testAllFilesPresentInCallableReference() throws Exception {
@@ -1557,6 +1572,11 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
         @TestMetadata("local.kt")
         public void testLocal() throws Exception {
             runTest("compiler/testData/codegen/boxInline/delegatedProperty/local.kt");
+        }
+
+        @TestMetadata("localDeclaredInLambda.kt")
+        public void testLocalDeclaredInLambda() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/delegatedProperty/localDeclaredInLambda.kt");
         }
 
         @TestMetadata("localInAnonymousObject.kt")

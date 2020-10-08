@@ -23,7 +23,7 @@ FILE: Test.kt
         }
 
         public final fun test(): R|kotlin/String| {
-            ^test this@R|/LightClassWrapper|.R|/Light.typeParameters|.R|/single|()
+            ^test this@R|/LightClassWrapper|.R|/LightClassWrapper.typeParameters|.R|/single|()
         }
 
     }
@@ -47,7 +47,7 @@ FILE: Test.kt
         public final fun test(other: R|kotlin/Any?|): R|kotlin/Unit| {
             when () {
                 (R|<local>/other| is R|LightField<*>|) ->  {
-                    R|<local>/other|.R|/LightMember.name|
+                    R|<local>/other|.R|/LightField.name|
                 }
             }
 

@@ -48,6 +48,7 @@ interface TowerScopeLevel {
             symbol: T,
             dispatchReceiverValue: ReceiverValue?,
             implicitExtensionReceiverValue: ImplicitReceiverValue<*>?,
+            scope: FirScope,
             builtInExtensionFunctionReceiverValue: ReceiverValue? = null
         )
     }
@@ -94,18 +95,20 @@ class MemberScopeTowerLevel(
 
                 output.consumeCandidate(
                     candidate, dispatchReceiverValue,
-                    implicitExtensionReceiverValue = extensionReceiver as? ImplicitReceiverValue<*>
+                    implicitExtensionReceiverValue = extensionReceiver as? ImplicitReceiverValue<*>,
+                    scope
                 )
 
                 if (implicitExtensionInvokeMode) {
                     output.consumeCandidate(
                         candidate, dispatchReceiverValue,
                         implicitExtensionReceiverValue = null,
+                        scope,
                         builtInExtensionFunctionReceiverValue = this.extensionReceiver
                     )
                 }
             } else if (candidate is FirClassLikeSymbol<*>) {
-                output.consumeCandidate(candidate, null, extensionReceiver as? ImplicitReceiverValue<*>)
+                output.consumeCandidate(candidate, null, extensionReceiver as? ImplicitReceiverValue<*>, scope)
             }
         }
 
@@ -113,7 +116,7 @@ class MemberScopeTowerLevel(
             val withSynthetic = FirSyntheticPropertiesScope(session, scope)
             withSynthetic.processScopeMembers { symbol ->
                 empty = false
-                output.consumeCandidate(symbol, NotNullableReceiverValue(dispatchReceiver), null)
+                output.consumeCandidate(symbol, NotNullableReceiverValue(dispatchReceiver), null, scope)
             }
         }
         return if (empty) ProcessorAction.NONE else ProcessorAction.NEXT
@@ -226,7 +229,8 @@ class ScopeTowerLevel(
             @Suppress("UNCHECKED_CAST")
             processor.consumeCandidate(
                 unwrappedCandidate as T, dispatchReceiverValue,
-                implicitExtensionReceiverValue = extensionReceiver as? ImplicitReceiverValue<*>
+                implicitExtensionReceiverValue = extensionReceiver as? ImplicitReceiverValue<*>,
+                scope
             )
         }
     }
@@ -256,7 +260,8 @@ class ScopeTowerLevel(
                 empty = false
                 processor.consumeCandidate(
                     it as T, dispatchReceiverValue = null,
-                    implicitExtensionReceiverValue = null
+                    implicitExtensionReceiverValue = null,
+                    scope = scope
                 )
             }
         }

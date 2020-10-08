@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JVM_IR
 // TODO KT-36637 Trivial closure optimizatin in JVM_IR
 

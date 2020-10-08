@@ -55,7 +55,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
 
     val contractDescriptionOwner = element("ContractDescriptionOwner", Declaration)
     val simpleFunction = element("SimpleFunction", Declaration, function, callableMemberDeclaration, contractDescriptionOwner, typeParametersOwner)
-    val propertyAccessor = element("PropertyAccessor", Declaration, function, contractDescriptionOwner, typeParametersOwner)
+    val propertyAccessor = element("PropertyAccessor", Declaration, function, callableMemberDeclaration, contractDescriptionOwner, typeParametersOwner)
     val constructor = element("Constructor", Declaration, function, callableMemberDeclaration, typeParameterRefsOwner)
     val file = element("File", Declaration, annotatedDeclaration)
 

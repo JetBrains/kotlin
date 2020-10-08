@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION -NOTHING_TO_INLINE -EXTENSION_SHADOWED_BY_MEMBER -EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE
 // SKIP_TXT
@@ -27,7 +26,7 @@ class Case1() {
     fun case1() {
         fun <T> Case1.listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
-        <!DEBUG_INFO_CALL("fqName: testsCase1.Case1.listOf; typeCall: function")!>listOf(elements1 = arrayOf(1), body = { "" })<!>
+        <!DEBUG_INFO_CALL("fqName: testsCase1.Case1.listOf; typeCall: function")!>listOf(<!CHANGING_ARGUMENTS_EXECUTION_ORDER_FOR_NAMED_VARARGS!>elements1 = arrayOf(1)<!>, body = { "" })<!>
     }
 }
 // FILE: Lib.kt
@@ -67,7 +66,7 @@ class Case2() {
     fun case1() {
         fun <T> Case2.listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
-        <!DEBUG_INFO_CALL("fqName: testsCase2.Case2.listOf; typeCall: function")!>listOf(elements1 = arrayOf(1), body = { "" })<!>
+        <!DEBUG_INFO_CALL("fqName: testsCase2.Case2.listOf; typeCall: function")!>listOf(<!CHANGING_ARGUMENTS_EXECUTION_ORDER_FOR_NAMED_VARARGS!>elements1 = arrayOf(1)<!>, body = { "" })<!>
     }
 }
 
@@ -121,7 +120,7 @@ class Case3() {
     fun case1() {
         fun <T> Case3.listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
-        <!DEBUG_INFO_CALL("fqName: testsCase3.A.invoke; typeCall: variable&invoke")!>listOf(elements1 = arrayOf(1), body = { "" })<!>
+        <!DEBUG_INFO_CALL("fqName: testsCase3.A.invoke; typeCall: variable&invoke")!>listOf(<!CHANGING_ARGUMENTS_EXECUTION_ORDER_FOR_NAMED_VARARGS!>elements1 = arrayOf(1)<!>, body = { "" })<!>
     }
 }
 

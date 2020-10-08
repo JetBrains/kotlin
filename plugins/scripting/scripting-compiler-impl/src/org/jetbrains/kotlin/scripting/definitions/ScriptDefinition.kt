@@ -175,7 +175,7 @@ abstract class ScriptDefinition : UserDataHolderBase() {
             get() = compilationConfiguration[ScriptCompilationConfiguration.annotationsForSamWithReceivers].orEmpty().map { it.typeName }
 
         override fun equals(other: Any?): Boolean = this === other ||
-                (other as? FromConfigurations)?.let {
+                (other as? FromConfigurationsBase)?.let {
                     compilationConfiguration == it.compilationConfiguration && evaluationConfiguration == it.evaluationConfiguration
                 } == true
 

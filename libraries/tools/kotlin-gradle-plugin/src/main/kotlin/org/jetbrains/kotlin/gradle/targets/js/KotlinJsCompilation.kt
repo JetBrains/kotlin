@@ -8,7 +8,9 @@
 // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import groovy.lang.Closure
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.util.ConfigureUtil
 import org.gradle.util.WrapUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptionsImpl
@@ -60,9 +62,14 @@ open class KotlinJsCompilation(
 
     internal val packageJsonHandlers = mutableListOf<PackageJson.() -> Unit>()
 
-    @Suppress("unused")
     fun packageJson(handler: PackageJson.() -> Unit) {
         packageJsonHandlers.add(handler)
+    }
+
+    fun packageJson(handler: Closure<*>) {
+        packageJson {
+            ConfigureUtil.configure(handler, this)
+        }
     }
 
     override val apiConfigurationName: String

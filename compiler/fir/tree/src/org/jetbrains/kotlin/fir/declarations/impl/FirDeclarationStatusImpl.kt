@@ -166,7 +166,7 @@ open class FirDeclarationStatusImpl(
         return this
     }
 
-    fun resolved(visibility: Visibility, modality: Modality): FirDeclarationStatus {
+    fun resolved(visibility: Visibility, modality: Modality): FirResolvedDeclarationStatusImpl {
         return FirResolvedDeclarationStatusImpl(visibility, modality, flags)
     }
 }

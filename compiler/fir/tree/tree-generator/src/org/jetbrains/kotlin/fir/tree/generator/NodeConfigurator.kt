@@ -318,10 +318,10 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         propertyAccessor.configure {
             parentArg(function, "F", propertyAccessor)
+            parentArg(callableMemberDeclaration, "F", propertyAccessor)
             +symbol("FirPropertyAccessorSymbol")
             +booleanField("isGetter")
             +booleanField("isSetter")
-            +status.withTransform()
             +annotations
             +typeParameters
         }

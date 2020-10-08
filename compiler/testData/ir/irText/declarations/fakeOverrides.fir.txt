@@ -83,6 +83,7 @@ FILE fqName:<root> fileName:/fakeOverrides.kt
     FUN FAKE_OVERRIDE name:foo visibility:public modality:FINAL <> ($this:<root>.CFoo<T of <root>.CFoo>, x:kotlin.String) returnType:kotlin.Unit [fake_override]
       overridden:
         public final fun foo (x: T of <root>.CFoo): kotlin.Unit declared in <root>.CFoo
+        public abstract fun foo (x: kotlin.String): kotlin.Unit declared in <root>.IFooStr
       $this: VALUE_PARAMETER name:<this> type:<root>.CFoo<T of <root>.CFoo>
       VALUE_PARAMETER name:x index:0 type:kotlin.String
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]

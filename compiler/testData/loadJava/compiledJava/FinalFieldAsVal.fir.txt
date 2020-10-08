@@ -1,5 +1,5 @@
 public final class FinalFieldAsVal : R|kotlin/Any| {
-    public final field f: R|kotlin/Int|
+    public final field f: R|kotlin/Int| = Int(1)
 
     public constructor(): R|test/FinalFieldAsVal|
 

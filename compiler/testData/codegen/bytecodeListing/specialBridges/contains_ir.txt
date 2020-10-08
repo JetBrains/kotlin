@@ -58,7 +58,6 @@ public abstract class A5 {
     public bridge method indexOf(p0: java.lang.String): int
     public bridge final method lastIndexOf(p0: java.lang.Object): int
     public bridge method lastIndexOf(p0: java.lang.String): int
-    public synthetic bridge method remove(p0: int): java.lang.Object
     public bridge final method remove(p0: int): java.lang.String
     public bridge final method remove(p0: java.lang.Object): boolean
     public bridge method remove(p0: java.lang.String): boolean
@@ -78,7 +77,6 @@ public abstract class A6 {
     public bridge method indexOf(p0: java.lang.String): int
     public bridge final method lastIndexOf(p0: java.lang.Object): int
     public bridge method lastIndexOf(p0: java.lang.String): int
-    public synthetic bridge method remove(p0: int): java.lang.Object
     public bridge final method remove(p0: int): java.lang.String
     public bridge final method remove(p0: java.lang.Object): boolean
     public bridge method remove(p0: java.lang.String): boolean

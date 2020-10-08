@@ -132,6 +132,12 @@ class RawFirBuilder(
     override val PsiElement?.selectorExpression: PsiElement?
         get() = (this as? KtQualifiedExpression)?.selectorExpression
 
+    override val PsiElement?.arrayExpression: PsiElement?
+        get() = (this as? KtArrayAccessExpression)?.arrayExpression
+
+    override val PsiElement?.indexExpressions: List<PsiElement>?
+        get() = (this as? KtArrayAccessExpression)?.indexExpressions
+
     private val KtModifierListOwner.visibility: Visibility
         get() = with(modifierList) {
             when {
@@ -1424,7 +1430,11 @@ class RawFirBuilder(
         }
 
         override fun visitSimpleNameExpression(expression: KtSimpleNameExpression, data: Unit): FirElement {
-            return generateAccessExpression(expression.toFirSourceElement(), expression.getReferencedNameAsName())
+            val qualifiedSource = when {
+                expression.getQualifiedExpressionForSelector() != null -> expression.parent
+                else -> expression
+            }.toFirSourceElement()
+            return generateAccessExpression(qualifiedSource, expression.toFirSourceElement(), expression.getReferencedNameAsName())
         }
 
         override fun visitConstantExpression(expression: KtConstantExpression, data: Unit): FirElement =

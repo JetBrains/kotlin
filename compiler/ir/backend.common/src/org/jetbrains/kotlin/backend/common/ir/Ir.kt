@@ -20,13 +20,13 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
@@ -226,32 +226,39 @@ open class BuiltinSymbolsBase(protected val irBuiltIns: IrBuiltIns, protected va
     val mutableListIterator = symbolTable.referenceClass(builtIns.mutableListIterator)
     val comparable = symbolTable.referenceClass(builtIns.comparable)
 
-    private val binaryOperatorCache = mutableMapOf<Triple<Name, KotlinType, KotlinType>, IrSimpleFunctionSymbol>()
+    private val binaryOperatorCache = mutableMapOf<Triple<Name, IrType, IrType>, IrSimpleFunctionSymbol>()
 
-    fun getBinaryOperator(name: Name, lhsType: KotlinType, rhsType: KotlinType): IrSimpleFunctionSymbol {
+    fun getBinaryOperator(name: Name, lhsType: IrType, rhsType: IrType): IrSimpleFunctionSymbol {
+        require(lhsType is IrSimpleType) { "Expected IrSimpleType in getBinaryOperator, got $lhsType" }
+        val classifier = lhsType.classifier
+        require(classifier is IrClassSymbol && classifier.isBound) {
+            "Expected a bound IrClassSymbol for lhsType in getBinaryOperator, got $classifier"
+        }
         val key = Triple(name, lhsType, rhsType)
         return binaryOperatorCache.getOrPut(key) {
-            symbolTable.referenceSimpleFunction(
-                lhsType.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
-                    .first { it.valueParameters.size == 1 && it.valueParameters[0].type == rhsType }
-            )
+            classifier.functions.single {
+                val function = it.owner
+                function.name == name && function.valueParameters.size == 1 && function.valueParameters[0].type == rhsType
+            }
         }
     }
 
-    private val unaryOperatorCache = mutableMapOf<Pair<Name, KotlinType>, IrSimpleFunctionSymbol>()
+    private val unaryOperatorCache = mutableMapOf<Pair<Name, IrType>, IrSimpleFunctionSymbol>()
 
-    fun getUnaryOperator(name: Name, receiverType: KotlinType): IrSimpleFunctionSymbol {
-        val key = name to receiverType
+    fun getUnaryOperator(name: Name, receiverType: IrType): IrSimpleFunctionSymbol {
+        require(receiverType is IrSimpleType) { "Expected IrSimpleType in getBinaryOperator, got $receiverType" }
+        val classifier = receiverType.classifier
+        require(classifier is IrClassSymbol && classifier.isBound) {
+            "Expected a bound IrClassSymbol for receiverType in getBinaryOperator, got $classifier"
+        }
+        val key = Pair(name, receiverType)
         return unaryOperatorCache.getOrPut(key) {
-            symbolTable.referenceSimpleFunction(
-                receiverType.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
-                    .first { it.valueParameters.isEmpty() }
-            )
+            classifier.functions.single {
+                val function = it.owner
+                function.name == name && function.valueParameters.isEmpty()
+            }
         }
     }
-
-    val intAnd = getBinaryOperator(OperatorNameConventions.AND, builtIns.intType, builtIns.intType)
-    val intPlusInt = getBinaryOperator(OperatorNameConventions.PLUS, builtIns.intType, builtIns.intType)
 
     open fun functionN(n: Int): IrClassSymbol = irBuiltIns.function(n)
     open fun suspendFunctionN(n: Int): IrClassSymbol = irBuiltIns.suspendFunction(n)

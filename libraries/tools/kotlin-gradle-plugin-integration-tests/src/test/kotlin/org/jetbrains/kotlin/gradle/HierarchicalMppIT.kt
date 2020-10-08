@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.internals.MULTIPLATFORM_PROJECT_METADATA_FILE_NAME
-import org.jetbrains.kotlin.gradle.internals.parseKotlinSourceSetMetadataFromXml
+import org.jetbrains.kotlin.gradle.internals.MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME
+import org.jetbrains.kotlin.gradle.internals.parseKotlinSourceSetMetadataFromJson
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.ModuleDependencyIdentifier
@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.modify
 import java.io.File
 import java.util.zip.ZipFile
-import javax.xml.parsers.DocumentBuilderFactory
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -59,8 +58,41 @@ class HierarchicalMppIT : BaseGradleIT() {
     }
 
     @Test
-    fun testDependenciesInTests() {
+    fun testNoSourceSetsVisibleIfNoVariantMatched() {
         publishThirdPartyLib(withGranularMetadata = true)
+
+        Project("my-lib-foo", gradleVersion, "hierarchical-mpp-published-modules").run {
+            setupWorkingDir()
+            gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+            // --- Move the dependency from jvmAndJsMain to commonMain, where there's a linuxX64 target missing in the lib
+            gradleBuildScript().modify {
+                it.checkedReplace("api(\"com.example.thirdparty:third-party-lib:1.0\")", "//") + "\n" + """
+                dependencies {
+                    "commonMainApi"("com.example.thirdparty:third-party-lib:1.0")
+                }
+                """.trimIndent()
+            }
+
+            testDependencyTransformations { reports ->
+                val thirdPartyLibApiVisibility = reports.filter { report ->
+                    report.groupAndModule.startsWith("com.example.thirdparty:third-party-lib") && report.scope == "api"
+                }
+                val jvmJsSourceSets = setOf("jvmMain", "jsMain", "jvmTest", "jsTest", "jvmAndJsMain", "jvmAndJsTest")
+                thirdPartyLibApiVisibility.forEach {
+                    if (it.sourceSetName in jvmJsSourceSets)
+                        assertTrue("$it") { it.allVisibleSourceSets == setOf("commonMain") }
+                }
+            }
+        }
+    }
+
+    @Test
+    fun testDependenciesInTests() {
+        publishThirdPartyLib(withGranularMetadata = true) {
+            projectDir.resolve("src/jvmMain").copyRecursively(projectDir.resolve("src/linuxX64Main"))
+            gradleBuildScript().appendText("\nkotlin.linuxX64()")
+        }
 
         Project("my-lib-foo", gradleVersion, "hierarchical-mpp-published-modules").run {
             setupWorkingDir()
@@ -69,12 +101,18 @@ class HierarchicalMppIT : BaseGradleIT() {
             testDependencyTransformations { reports ->
                 val testApiTransformationReports =
                     reports.filter { report ->
-                        report.groupAndModule.startsWith("com.example.thirdparty") &&
-                                report.sourceSetName.let { it == "commonTest" || it == "jvmAndJsTest" }
+                        report.groupAndModule.startsWith("com.example.thirdparty:third-party-lib") &&
+                                report.sourceSetName.let { it == "commonTest" || it == "jvmAndJsTest" } &&
+                                report.scope == "api"
                     }
 
                 testApiTransformationReports.forEach {
-                    assertTrue("$it") { it.isExcluded } // should not be visible in test source sets
+                    if (it.sourceSetName == "commonTest")
+                        assertTrue("$it") { it.isExcluded } // should not be visible in commonTest
+                    else {
+                        assertTrue("$it") { it.allVisibleSourceSets == setOf("commonMain") }
+                        assertTrue("$it") { it.newVisibleSourceSets == emptySet<String>() }
+                    }
                 }
             }
 
@@ -188,11 +226,14 @@ class HierarchicalMppIT : BaseGradleIT() {
         projectName: String = "third-party-lib",
         directoryPrefix: String = "hierarchical-mpp-published-modules",
         withGranularMetadata: Boolean,
-        jsCompilerType: KotlinJsCompilerType = KotlinJsCompilerType.LEGACY
+        jsCompilerType: KotlinJsCompilerType = KotlinJsCompilerType.LEGACY,
+        beforePublishing: Project.() -> Unit = { }
     ): Project =
         Project(projectName, gradleVersion, directoryPrefix).apply {
             setupWorkingDir()
             gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+            beforePublishing()
 
             if (withGranularMetadata) {
                 projectDir.resolve("gradle.properties").appendText("kotlin.mpp.enableGranularSourceSetsMetadata=true")
@@ -212,11 +253,11 @@ class HierarchicalMppIT : BaseGradleIT() {
 
         ZipFile(
             project.projectDir.parentFile.resolve(
-                "repo/com/example/foo/my-lib-foo-metadata/1.0/my-lib-foo-metadata-1.0-all.jar"
+                "repo/com/example/foo/my-lib-foo/1.0/my-lib-foo-1.0-all.jar"
             )
         ).use { publishedMetadataJar ->
             publishedMetadataJar.checkAllEntryNamesArePresent(
-                "META-INF/$MULTIPLATFORM_PROJECT_METADATA_FILE_NAME",
+                "META-INF/$MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME",
 
                 "commonMain/default/manifest",
                 "commonMain/default/linkdata/package_com.example/",
@@ -250,11 +291,11 @@ class HierarchicalMppIT : BaseGradleIT() {
 
         ZipFile(
             project.projectDir.parentFile.resolve(
-                "repo/com/example/bar/my-lib-bar-metadata/1.0/my-lib-bar-metadata-1.0-all.jar"
+                "repo/com/example/bar/my-lib-bar/1.0/my-lib-bar-1.0-all.jar"
             )
         ).use { publishedMetadataJar ->
             publishedMetadataJar.checkAllEntryNamesArePresent(
-                "META-INF/$MULTIPLATFORM_PROJECT_METADATA_FILE_NAME",
+                "META-INF/$MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME",
 
                 "commonMain/default/manifest",
                 "commonMain/default/linkdata/package_com.example.bar/",
@@ -379,14 +420,21 @@ class HierarchicalMppIT : BaseGradleIT() {
         val compilerArgsLine = taskOutput.lines().single { "Kotlin compiler args:" in it }
         val classpathItems = compilerArgsLine.substringAfter("-classpath").substringBefore(" -").split(File.pathSeparator)
 
+        val actualClasspath = classpathItems.joinToString("\n")
+
         shouldInclude.forEach { (module, sourceSet) ->
-            assertTrue("expected module '$module' source set '$sourceSet' on the classpath of task $taskPath") {
+            assertTrue(
+                "expected module '$module' source set '$sourceSet' on the classpath of task $taskPath. Actual classpath:\n$actualClasspath"
+            ) {
                 classpathItems.any { module in it && it.contains(sourceSet, ignoreCase = true) }
             }
         }
 
         shouldNotInclude.forEach { (module, sourceSet) ->
-            assertTrue("not expected module '$module' source set '$sourceSet' on the compile classpath of task $taskPath") {
+            assertTrue(
+                "not expected module '$module' source set '$sourceSet' on the compile classpath of task $taskPath. " +
+                        "Actual classpath:\n$actualClasspath"
+            ) {
                 classpathItems.none { module in it && it.contains(sourceSet, ignoreCase = true) }
             }
         }
@@ -411,11 +459,11 @@ class HierarchicalMppIT : BaseGradleIT() {
         val jsSourceSets = setOf("commonMain", "jvmAndJsMain", "linuxAndJsMain")
         return KotlinProjectStructureMetadata(
             sourceSetNamesByVariantName = mapOf(
-                "js-api" to jsSourceSets,
-                "js-runtime" to jsSourceSets,
-                "jvm-api" to jvmSourceSets,
-                "jvm-runtime" to jvmSourceSets,
-                "linuxX64-api" to setOf("commonMain", "linuxAndJsMain")
+                "jsApiElements" to jsSourceSets,
+                "jsRuntimeElements" to jsSourceSets,
+                "jvmApiElements" to jvmSourceSets,
+                "jvmRuntimeElements" to jvmSourceSets,
+                "linuxX64ApiElements" to setOf("commonMain", "linuxAndJsMain")
             ),
             sourceSetsDependsOnRelation = mapOf(
                 "jvmAndJsMain" to setOf("commonMain"),
@@ -428,7 +476,8 @@ class HierarchicalMppIT : BaseGradleIT() {
                 }.toSet()
             },
             hostSpecificSourceSets = emptySet(),
-            sourceSetBinaryLayout = sourceSetModuleDependencies.mapValues { SourceSetMetadataLayout.KLIB }
+            sourceSetBinaryLayout = sourceSetModuleDependencies.mapValues { SourceSetMetadataLayout.KLIB },
+            isPublishedAsRoot = true
         )
     }
 
@@ -441,10 +490,8 @@ class HierarchicalMppIT : BaseGradleIT() {
     }
 
     private fun ZipFile.getProjectStructureMetadata(): KotlinProjectStructureMetadata {
-        val documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-        val document = getInputStream(getEntry("META-INF/$MULTIPLATFORM_PROJECT_METADATA_FILE_NAME"))
-            .use { inputStream -> documentBuilder.parse(inputStream) }
-        return checkNotNull(parseKotlinSourceSetMetadataFromXml(document))
+        val json = getInputStream(getEntry("META-INF/$MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME")).reader().readText()
+        return checkNotNull(parseKotlinSourceSetMetadataFromJson(json))
     }
 
     @Test

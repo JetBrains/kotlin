@@ -1,4 +1,5 @@
 // !LANGUAGE: -ProhibitOperatorMod
+// IGNORE_BACKEND_FIR: JVM_IR
 // FILE: Java.java
 
 import org.jetbrains.annotations.NotNull;

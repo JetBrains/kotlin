@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.expressions.FirArgumentList
-import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -37,28 +34,44 @@ internal inline var FirExpression.resultType: FirTypeRef
 internal fun remapArgumentsWithVararg(
     varargParameter: FirValueParameter,
     varargArrayType: ConeKotlinType,
-    argumentList: FirArgumentList,
-    argumentMapping: Map<FirExpression, FirValueParameter>
-): Map<FirExpression, FirValueParameter> {
-    // Create a FirVarargArgumentExpression for the vararg arguments
+    argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>
+): LinkedHashMap<FirExpression, FirValueParameter> {
+    // Create a FirVarargArgumentExpression for the vararg arguments.
+    // The order of arguments in the mapping must be preserved for FIR2IR, hence we have to find where the vararg arguments end.
+    // FIR2IR uses the mapping order to determine if arguments need to be reordered.
     val varargParameterTypeRef = varargParameter.returnTypeRef
     val varargElementType = varargArrayType.arrayElementType()
-    var firstIndex = argumentList.arguments.size
-    val newArgumentMapping = mutableMapOf<FirExpression, FirValueParameter>()
+    val argumentList = argumentMapping.keys.toList()
+    var indexAfterVarargs = argumentList.size
+    val newArgumentMapping = linkedMapOf<FirExpression, FirValueParameter>()
     val varargArgument = buildVarargArgumentsExpression {
         this.varargElementType = varargParameterTypeRef.withReplacedConeType(varargElementType)
         this.typeRef = varargParameterTypeRef.withReplacedConeType(varargArrayType)
-        for ((i, arg) in argumentList.arguments.withIndex()) {
-            val valueParameter = argumentMapping[arg] ?: continue
-            if (valueParameter.isVararg) {
-                firstIndex = min(firstIndex, i)
+        for ((i, arg) in argumentList.withIndex()) {
+            val valueParameter = argumentMapping.getValue(arg)
+            // Collect arguments if `arg` is a vararg argument of interest or other vararg arguments.
+            if (valueParameter == varargParameter ||
+                // NB: don't pull out of named arguments.
+                (valueParameter.isVararg && arg !is FirNamedArgumentExpression)
+            ) {
                 arguments += arg
-            } else {
+            } else if (arguments.isEmpty()) {
+                // `arg` is BEFORE the vararg arguments.
                 newArgumentMapping[arg] = valueParameter
+            } else {
+                // `arg` is AFTER the vararg arguments.
+                indexAfterVarargs = i
+                break
             }
         }
     }
     newArgumentMapping[varargArgument] = varargParameter
+
+    // Add mapping for arguments after the vararg arguments, if any.
+    for (i in indexAfterVarargs until argumentList.size) {
+        val arg = argumentList[i]
+        newArgumentMapping[arg] = argumentMapping.getValue(arg)
+    }
     return newArgumentMapping
 }
 

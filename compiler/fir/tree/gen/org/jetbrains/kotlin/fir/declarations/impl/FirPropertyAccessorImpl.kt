@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -37,10 +38,11 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
     override var returnTypeRef: FirTypeRef,
     override val valueParameters: MutableList<FirValueParameter>,
     override var body: FirBlock?,
+    override var status: FirDeclarationStatus,
+    override val containerSource: DeserializedContainerSource?,
     override var contractDescription: FirContractDescription,
     override val symbol: FirPropertyAccessorSymbol,
     override val isGetter: Boolean,
-    override var status: FirDeclarationStatus,
     override val annotations: MutableList<FirAnnotationCall>,
     override val typeParameters: MutableList<FirTypeParameter>,
 ) : FirPropertyAccessor() {
@@ -58,8 +60,8 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
         controlFlowGraphReference?.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
         body?.accept(visitor, data)
-        contractDescription.accept(visitor, data)
         status.accept(visitor, data)
+        contractDescription.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         typeParameters.forEach { it.accept(visitor, data) }
     }
@@ -69,8 +71,8 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
         controlFlowGraphReference = controlFlowGraphReference?.transformSingle(transformer, data)
         transformValueParameters(transformer, data)
         transformBody(transformer, data)
-        transformContractDescription(transformer, data)
         transformStatus(transformer, data)
+        transformContractDescription(transformer, data)
         transformAnnotations(transformer, data)
         transformTypeParameters(transformer, data)
         return this
@@ -95,13 +97,13 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
         return this
     }
 
-    override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
-        contractDescription = contractDescription.transformSingle(transformer, data)
+    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
+        status = status.transformSingle(transformer, data)
         return this
     }
 
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
-        status = status.transformSingle(transformer, data)
+    override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
+        contractDescription = contractDescription.transformSingle(transformer, data)
         return this
     }
 

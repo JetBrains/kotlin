@@ -69,8 +69,7 @@ open class KotlinVariant(
 
     override fun getName(): String = componentName ?: producingCompilation.target.targetName
 
-    override val publishable: Boolean
-        get() = target.publishable
+    override var publishable: Boolean = target.publishable
 
     override var sourcesArtifacts: Set<PublishArtifact> = emptySet()
         internal set
@@ -102,7 +101,7 @@ class JointAndroidKotlinTargetComponent(
     private val nestedVariants: Set<KotlinVariant>,
     val flavorNames: List<String>,
     override val sourcesArtifacts: Set<PublishArtifact>
-    ) : KotlinTargetComponentWithCoordinatesAndPublication, SoftwareComponentInternal {
+) : KotlinTargetComponentWithCoordinatesAndPublication, SoftwareComponentInternal {
 
     override fun getUsages(): Set<KotlinUsageContext> = nestedVariants.flatMap { it.usages }.toSet()
 

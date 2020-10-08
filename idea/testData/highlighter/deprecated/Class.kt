@@ -1,3 +1,5 @@
+// IGNORE_FIR
+
 package test
 
 import java.util.ArrayList

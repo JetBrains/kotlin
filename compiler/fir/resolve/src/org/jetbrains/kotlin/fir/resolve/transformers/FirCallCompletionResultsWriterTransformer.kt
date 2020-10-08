@@ -165,7 +165,7 @@ class FirCallCompletionResultsWriterTransformer(
                 val expectedArgumentsTypeMapping = runIf(!calleeReference.isError) { subCandidate.createArgumentsMapping() }
                 result.argumentList.transformArguments(this, expectedArgumentsTypeMapping)
                 if (!calleeReference.isError) {
-                    subCandidate.handleVarargs(result.argumentList)
+                    subCandidate.handleVarargs()
                     subCandidate.argumentMapping?.let {
                         result.replaceArgumentList(buildResolvedArgumentList(it))
                     }
@@ -207,12 +207,16 @@ class FirCallCompletionResultsWriterTransformer(
         withFirArrayOfCallTransformer {
             annotationCall.argumentList.transformArguments(this, expectedArgumentsTypeMapping)
             var index = 0
-            subCandidate.argumentMapping = subCandidate.argumentMapping?.mapKeys { (_, _) ->
-                annotationCall.argumentList.arguments[index++]
+            subCandidate.argumentMapping = subCandidate.argumentMapping?.let {
+                LinkedHashMap<FirExpression, FirValueParameter>(it.size).let { newMapping ->
+                    subCandidate.argumentMapping?.mapKeysTo(newMapping) { (_, _) ->
+                        annotationCall.argumentList.arguments[index++]
+                    }
+                }
             }
         }
         if (!calleeReference.isError) {
-            subCandidate.handleVarargs(annotationCall.argumentList)
+            subCandidate.handleVarargs()
             subCandidate.argumentMapping?.let {
                 annotationCall.replaceArgumentList(buildResolvedArgumentList(it))
             }
@@ -220,14 +224,14 @@ class FirCallCompletionResultsWriterTransformer(
         return annotationCall.compose()
     }
 
-    private fun Candidate.handleVarargs(argumentList: FirArgumentList) {
+    private fun Candidate.handleVarargs() {
         val argumentMapping = this.argumentMapping
         val varargParameter = argumentMapping?.values?.firstOrNull { it.isVararg }
         if (varargParameter != null) {
             // Create a FirVarargArgumentExpression for the vararg arguments
             val varargParameterTypeRef = varargParameter.returnTypeRef
             val resolvedArrayType = varargParameterTypeRef.substitute(this)
-            this.argumentMapping = remapArgumentsWithVararg(varargParameter, resolvedArrayType, argumentList, argumentMapping)
+            this.argumentMapping = remapArgumentsWithVararg(varargParameter, resolvedArrayType, argumentMapping)
         }
     }
 
@@ -358,7 +362,7 @@ class FirCallCompletionResultsWriterTransformer(
         val argumentsMapping = runIf(!calleeReference.isError) { calleeReference.candidate.createArgumentsMapping() }
         delegatedConstructorCall.argumentList.transformArguments(this, argumentsMapping)
         if (!calleeReference.isError) {
-            subCandidate.handleVarargs(delegatedConstructorCall.argumentList)
+            subCandidate.handleVarargs()
             subCandidate.argumentMapping?.let {
                 delegatedConstructorCall.replaceArgumentList(buildResolvedArgumentList(it))
             }
@@ -620,7 +624,7 @@ class FirDeclarationCompletionResultsWriter(private val finalSubstitutor: ConeSu
     override fun transformPropertyAccessor(
         propertyAccessor: FirPropertyAccessor,
         data: Nothing?
-    ): CompositeTransformResult<FirStatement> {
+    ): CompositeTransformResult<FirDeclaration> {
         propertyAccessor.transformReturnTypeRef(this, data)
         propertyAccessor.transformValueParameters(this, data)
         return propertyAccessor.compose()

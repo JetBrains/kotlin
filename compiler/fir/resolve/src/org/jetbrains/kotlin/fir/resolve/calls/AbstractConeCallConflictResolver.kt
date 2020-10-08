@@ -129,7 +129,7 @@ abstract class AbstractConeCallConflictResolver(
             //constructor.receiverTypeRef != null,
             false,
             constructor.valueParameters.any { it.isVararg },
-            constructor.valueParameters.count { it.defaultValue != null },
+            call.numDefaults,
             constructor.isExpect,
             false // TODO
         )
@@ -142,7 +142,7 @@ abstract class AbstractConeCallConflictResolver(
             computeParameterTypes(call, function),
             function.receiverTypeRef != null,
             function.valueParameters.any { it.isVararg },
-            function.valueParameters.count { it.defaultValue != null },
+            call.numDefaults,
             function.isExpect,
             false // TODO
         )

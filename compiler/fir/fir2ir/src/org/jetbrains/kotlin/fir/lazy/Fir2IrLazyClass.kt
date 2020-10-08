@@ -168,7 +168,7 @@ class Fir2IrLazyClass(
             }
         }
         with(fakeOverrideGenerator) {
-            val fakeOverrides = getFakeOverrides(fir, processedNames)
+            val fakeOverrides = getFakeOverrides(fir, fir.declarations)
             bindOverriddenSymbols(fakeOverrides)
             result += fakeOverrides
         }

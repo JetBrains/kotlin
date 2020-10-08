@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import groovy.lang.Closure
+import groovy.lang.GString
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.reflect.TypeOf
@@ -163,10 +164,13 @@ private abstract class NpmDependencyExtensionDelegate(
     override fun call(vararg args: Any?): NpmDependency {
         if (args.size > 3) npmDeclarationException(args)
 
-        val arg = args[0]
-        return when (arg) {
+        return when (val arg = args[0]) {
             is String -> withName(
                 name = arg,
+                args = *args
+            )
+            is GString -> withName(
+                name = arg.toString(),
                 args = *args
             )
             else -> processNonStringFirstArgument(arg, *args)
@@ -176,16 +180,20 @@ private abstract class NpmDependencyExtensionDelegate(
     protected abstract fun processNonStringFirstArgument(arg: Any?, vararg args: Any?): NpmDependency
 
     private fun withName(name: String, vararg args: Any?): NpmDependency {
-        val arg1 = if (args.size > 1) args[1] else null
         val generateExternals = generateExternalsIfPossible(*args)
 
-        return when (arg1) {
+        return when (val arg1 = if (args.size > 1) args[1] else null) {
             null -> invoke(
                 name = name
             )
             is String -> invoke(
                 name = name,
                 version = arg1,
+                generateExternals = generateExternals
+            )
+            is GString -> invoke(
+                name = name,
+                version = arg1.toString(),
                 generateExternals = generateExternals
             )
             else -> processNamedNonStringSecondArgument(

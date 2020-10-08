@@ -189,6 +189,9 @@ open class PodspecTask : DefaultTask() {
             if (project.rootProject == project) project.multiplatformExtensionOrNull?.cocoapodsExtensionOrNull?.podfile != null
             else project.multiplatformExtensionOrNull?.cocoapodsExtensionOrNull?.podfile != null
                     || (project.parent?.let { hasPodfileOwnOrParent(it) } ?: false)
+
+        internal fun retrieveSpecRepos(project: Project): SpecRepos? = project.multiplatformExtensionOrNull?.cocoapodsExtensionOrNull?.specRepos
+        internal fun retrievePods(project: Project): List<CocoapodsDependency>? = project.multiplatformExtensionOrNull?.cocoapodsExtensionOrNull?.podsAsTaskInput
     }
 }
 

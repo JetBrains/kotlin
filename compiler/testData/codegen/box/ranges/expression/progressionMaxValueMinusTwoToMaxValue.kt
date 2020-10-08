@@ -3,11 +3,11 @@
 // WITH_RUNTIME
 
 
-const val MaxI = Int.MAX_VALUE
-const val MaxB = Byte.MAX_VALUE
-const val MaxS = Short.MAX_VALUE
-const val MaxL = Long.MAX_VALUE
-const val MaxC = Char.MAX_VALUE
+val MaxI = Int.MAX_VALUE
+val MaxB = Byte.MAX_VALUE
+val MaxS = Short.MAX_VALUE
+val MaxL = Long.MAX_VALUE
+val MaxC = Char.MAX_VALUE
 
 fun box(): String {
     val list1 = ArrayList<Int>()

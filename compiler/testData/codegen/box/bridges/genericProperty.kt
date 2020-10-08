@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 open class A<T> {
     var size: T = 56 as T
 }

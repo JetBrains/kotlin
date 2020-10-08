@@ -467,12 +467,26 @@ public class RangeIterationTest : RangeIterationTestBase() {
     }
 
     @Test fun overflowZeroToMinValue() {
+        doTest(0.toByte()..MinB step 3, 0, MinB.toInt(), 3, listOf())
+        doTest(0.toShort()..MinS step 3, 0, MinS.toInt(), 3, listOf())
         doTest(0..MinI step 3, 0, MinI, 3, listOf())
         doTest(0L..MinL step 3, 0, MinL, 3L, listOf())
 
+        doTest(0.toByte() until MinB step 3, 0, MinB.toInt() - 1, 3, listOf())
+        doTest(0.toShort() until MinS step 3, 0, MinS.toInt() - 1, 3, listOf())
+        doTest(0 until MinI step 3, 1, 0, 3, listOf())
+        doTest(0L until MinL step 3, 1L, 0L, 3L, listOf())
+
         // 1u as used as a start since min value is 0u for unsigned types
+        doTest(1u.toUByte()..MinUB step 3, 1u, MinUB.toUInt(), 3, listOf())
+        doTest(1u.toUShort()..MinUS step 3, 1u, MinUS.toUInt(), 3, listOf())
         doTest(1u..MinUI step 3, 1u, MinUI, 3, listOf())
         doTest(1uL..MinUL step 3, 1u, MinUL, 3L, listOf())
+
+        doTest(1u.toUByte() until MinUB step 3, MaxUI, MinUI, 3, listOf())
+        doTest(1u.toUShort() until MinUS step 3, MaxUI, MinUI, 3, listOf())
+        doTest(1u until MinUI step 3, MaxUI, MinUI, 3, listOf())
+        doTest(1uL until MinUL step 3, MaxUL, MinUL, 3L, listOf())
     }
 
     @Test fun progressionDownToMinValue() {

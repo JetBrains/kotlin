@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -103,6 +104,13 @@ internal sealed class CheckReceivers : ResolutionStage() {
         val explicitReceiverExpression = callInfo.explicitReceiver
         val explicitReceiverKind = candidate.explicitReceiverKind
 
+        if (explicitReceiverExpression.isSuperCall()) {
+            val status = candidate.symbol.fir as? FirMemberDeclaration
+            if (status?.modality == Modality.ABSTRACT) {
+                sink.reportDiagnostic(ResolvedWithLowPriority)
+            }
+        }
+
         if (expectedReceiverType != null) {
             if (explicitReceiverExpression != null &&
                 explicitReceiverKind.shouldBeCheckedAgainstExplicit() &&
@@ -122,10 +130,16 @@ internal sealed class CheckReceivers : ResolutionStage() {
             } else {
                 val argumentExtensionReceiverValue = candidate.implicitExtensionReceiverValue
                 if (argumentExtensionReceiverValue != null && explicitReceiverKind.shouldBeCheckedAgainstImplicit()) {
+                    val expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverType.type)
+                    val argumentType = captureFromTypeParameterUpperBoundIfNeeded(
+                        argumentType = argumentExtensionReceiverValue.type,
+                        expectedType = expectedType,
+                        session = context.session
+                    )
                     candidate.resolvePlainArgumentType(
                         candidate.csBuilder,
-                        argumentType = argumentExtensionReceiverValue.type,
-                        expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverType.type),
+                        argumentType = argumentType,
+                        expectedType = expectedType,
                         sink = sink,
                         context = context,
                         isReceiver = true,
@@ -135,6 +149,11 @@ internal sealed class CheckReceivers : ResolutionStage() {
                 }
             }
         }
+    }
+
+    private fun FirExpression?.isSuperCall(): Boolean {
+        if (this !is FirQualifiedAccessExpression) return false
+        return calleeReference is FirSuperReference
     }
 }
 
@@ -150,8 +169,9 @@ internal object MapArguments : ResolutionStage() {
         val symbol = candidate.symbol as? FirFunctionSymbol<*> ?: return sink.reportDiagnostic(HiddenCandidate)
         val function = symbol.fir
 
-        val mapping = mapArguments(callInfo.arguments, function)
+        val mapping = context.bodyResolveComponents.mapArguments(callInfo.arguments, function, candidate.originScope)
         candidate.argumentMapping = mapping.toArgumentToParameterMapping()
+        candidate.numDefaults = mapping.numDefaults()
 
         mapping.diagnostics.forEach(sink::reportDiagnostic)
         sink.yieldIfNeed()

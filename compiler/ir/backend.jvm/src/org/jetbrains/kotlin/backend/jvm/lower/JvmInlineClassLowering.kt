@@ -29,9 +29,8 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrSetVariableImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -48,8 +47,9 @@ val jvmInlineClassPhase = makeIrFilePhase(
     name = "Inline Classes",
     description = "Lower inline classes",
     // forLoopsPhase may produce UInt and ULong which are inline classes.
-    // standard library replacements are done on the unmangled names for UInt and ULong classes.
-    prerequisite = setOf(forLoopsPhase, jvmStandardLibraryBuiltInsPhase)
+    // Standard library replacements are done on the unmangled names for UInt and ULong classes.
+    // Collection stubs may require mangling by inline class rules.
+    prerequisite = setOf(forLoopsPhase, jvmStandardLibraryBuiltInsPhase, collectionStubMethodLowering)
 )
 
 /**
@@ -131,9 +131,9 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         val bridgeFunction = createBridgeDeclaration(
             function,
             when {
-                // If the original function has value parameters which need mangling we still need to replace
+                // If the original function has signature which need mangling we still need to replace
                 // it with a mangled version.
-                !function.isFakeOverride && function.fullValueParameterList.any { it.type.requiresMangling } ->
+                !function.isFakeOverride && function.signatureRequiresMangling() ->
                     replacement.name
                 // Since we remove the corresponding property symbol from the bridge we need to resolve getter/setter
                 // names at this point.
@@ -159,6 +159,10 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
 
         return listOf(replacement, bridgeFunction)
     }
+
+    private fun IrSimpleFunction.signatureRequiresMangling() =
+        fullValueParameterList.any { it.type.requiresMangling } ||
+                context.state.functionsWithInlineClassReturnTypesMangled && returnType.requiresMangling
 
     // We may need to add a bridge method for inline class methods with static replacements. Ideally, we'd do this in BridgeLowering,
     // but unfortunately this is a special case in the old backend. The bridge method is not marked as such and does not follow the normal
@@ -215,7 +219,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
                         // This is safe, since the delegating constructor call precedes all references to "this".
                         override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
                             expression.transformChildrenVoid()
-                            return irSetVar(thisVar.symbol, expression)
+                            return irSet(thisVar.symbol, expression)
                         }
 
                         // A constructor body has type unit and may contain explicit return statements.
@@ -452,16 +456,16 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         return super.visitGetValue(expression)
     }
 
-    override fun visitSetVariable(expression: IrSetVariable): IrExpression {
+    override fun visitSetValue(expression: IrSetValue): IrExpression {
         valueMap[expression.symbol]?.let {
-            return IrSetVariableImpl(
+            return IrSetValueImpl(
                 expression.startOffset, expression.endOffset,
-                it.type, it.symbol as IrVariableSymbol,
+                it.type, it.symbol,
                 expression.value.transform(this@JvmInlineClassLowering, null),
                 expression.origin
             )
         }
-        return super.visitSetVariable(expression)
+        return super.visitSetValue(expression)
     }
 
     private fun buildPrimaryInlineClassConstructor(irClass: IrClass, irConstructor: IrConstructor) {

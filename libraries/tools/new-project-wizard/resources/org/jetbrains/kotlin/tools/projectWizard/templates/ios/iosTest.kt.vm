@@ -3,7 +3,7 @@ package ${package}
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-class GreetingTest {
+class IosGreetingTest {
 
     @Test
     fun testExample() {

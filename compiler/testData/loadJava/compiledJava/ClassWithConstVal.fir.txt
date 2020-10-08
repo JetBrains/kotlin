@@ -1,7 +1,7 @@
 public final class ClassWithConstVal : R|kotlin/Any| {
-    public final field f: R|kotlin/Int|
+    public final field f: R|kotlin/Int| = Int(1)
 
-    public final field f2: R|kotlin/Int|
+    public final field f2: R|kotlin/Int| = Int(1)
 
     public constructor(): R|test/ClassWithConstVal|
 

@@ -9,11 +9,11 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -45,12 +45,10 @@ class KotlinScopeProvider(
                     val symbol = useSiteSuperType.lookupTag.toSymbol(useSiteSession)
                     if (symbol is FirRegularClassSymbol) {
                         val delegateField = delegateFields.find { it.returnTypeRef.coneType == useSiteSuperType }
-                        symbol.fir.scope(
+                        symbol.fir.scopeForSupertype(
                             substitutor(symbol, useSiteSuperType, useSiteSession),
                             useSiteSession, scopeSession, delegateField,
-                            skipPrivateMembers = true,
-                            classId = klass.classId,
-                            isFromExpectClass = (klass as? FirRegularClass)?.isExpect == true
+                            subClass = klass
                         ).let {
                             it as? FirTypeScope ?: error("$it is expected to be FirOverrideAwareScope")
                         }
@@ -61,7 +59,8 @@ class KotlinScopeProvider(
             FirClassUseSiteMemberScope(
                 useSiteSession,
                 FirTypeIntersectionScope.prepareIntersectionScope(
-                    useSiteSession, FirStandardOverrideChecker(useSiteSession), scopes
+                    useSiteSession, FirStandardOverrideChecker(useSiteSession), scopes,
+                    klass.classId,
                 ),
                 decoratedDeclaredMemberScope
             )
@@ -101,32 +100,58 @@ fun FirClass<*>.unsubstitutedScope(useSiteSession: FirSession, scopeSession: Sco
     return scopeProvider.getUseSiteMemberScope(this, useSiteSession, scopeSession)
 }
 
-internal fun FirClass<*>.scope(
+fun FirClass<*>.scopeForClass(
+    substitutor: ConeSubstitutor,
+    useSiteSession: FirSession,
+    scopeSession: ScopeSession
+): FirTypeScope = scopeForClassImpl(
+    substitutor, useSiteSession, scopeSession,
+    skipPrivateMembers = false,
+    containingClassForAdditionalMembers = symbol.toLookupTag(),
+    // TODO: why it's always false?
+    isFromExpectClass = false
+)
+
+private fun FirClass<*>.scopeForSupertype(
     substitutor: ConeSubstitutor,
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
-    delegateField: FirField? = null,
-    skipPrivateMembers: Boolean,
-    classId: ClassId? = this.classId,
-    isFromExpectClass: Boolean = false
-): FirTypeScope {
-    val basicScope = unsubstitutedScope(useSiteSession, scopeSession).let {
-        if (delegateField != null) {
-            scopeSession.getOrBuild(delegateField, DelegatedMemberScopeKey(delegateField.symbol.callableId)) {
-                FirDelegatedMemberScope(it, useSiteSession)
-            }
-        } else {
-            it
+    delegateField: FirField?,
+    subClass: FirClass<*>
+): FirTypeScope = scopeForClassImpl(
+    substitutor,
+    useSiteSession,
+    scopeSession,
+    skipPrivateMembers = true,
+    containingClassForAdditionalMembers = subClass.symbol.toLookupTag(),
+    isFromExpectClass = (subClass as? FirRegularClass)?.isExpect == true
+).let {
+    if (delegateField != null) {
+        scopeSession.getOrBuild(delegateField, DelegatedMemberScopeKey(delegateField.symbol.callableId)) {
+            FirDelegatedMemberScope(it, useSiteSession, subClass.symbol.toLookupTag(), delegateField)
         }
+    } else {
+        it
     }
+}
+
+private fun FirClass<*>.scopeForClassImpl(
+    substitutor: ConeSubstitutor,
+    useSiteSession: FirSession,
+    scopeSession: ScopeSession,
+    skipPrivateMembers: Boolean,
+    containingClassForAdditionalMembers: ConeClassLikeLookupTag,
+    isFromExpectClass: Boolean
+): FirTypeScope {
+    val basicScope = unsubstitutedScope(useSiteSession, scopeSession)
     if (substitutor == ConeSubstitutor.Empty) return basicScope
 
     return scopeSession.getOrBuild(
-        this, ConeSubstitutionScopeKey(classId, isFromExpectClass, substitutor)
+        this, ConeSubstitutionScopeKey(containingClassForAdditionalMembers.classId, isFromExpectClass, substitutor)
     ) {
         FirClassSubstitutionScope(
             useSiteSession, basicScope, scopeSession, substitutor,
-            skipPrivateMembers, classId, makeExpect = isFromExpectClass
+            skipPrivateMembers, containingClassForAdditionalMembers.classId, makeExpect = isFromExpectClass
         )
     }
 }

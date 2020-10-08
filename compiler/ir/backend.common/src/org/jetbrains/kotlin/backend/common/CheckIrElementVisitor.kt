@@ -135,9 +135,12 @@ class CheckIrElementVisitor(
         expression.ensureTypeIs(expression.symbol.owner.type)
     }
 
-    override fun visitSetVariable(expression: IrSetVariable) {
-        super.visitSetVariable(expression)
-
+    override fun visitSetValue(expression: IrSetValue) {
+        super.visitSetValue(expression)
+        val declaration = expression.symbol.owner
+        if (declaration is IrValueParameter && !declaration.isAssignable) {
+            reportError(expression, "Assignment to value parameters not marked assignable")
+        }
         expression.ensureTypeIs(irBuiltIns.unitType)
     }
 

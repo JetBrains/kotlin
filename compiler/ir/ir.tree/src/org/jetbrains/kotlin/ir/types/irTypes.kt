@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -33,6 +34,20 @@ fun IrType.withHasQuestionMark(newHasQuestionMark: Boolean): IrType =
                     }
                 }
         else -> this
+    }
+
+fun IrType.addAnnotations(newAnnotations: List<IrConstructorCall>): IrType =
+    if (newAnnotations.isEmpty())
+        this
+    else when (this) {
+        is IrSimpleType ->
+            toBuilder().apply {
+                annotations = annotations + newAnnotations
+            }.buildSimpleType()
+        is IrDynamicType ->
+            IrDynamicTypeImpl(null, annotations + newAnnotations, Variance.INVARIANT)
+        else ->
+            this
     }
 
 val IrType.classifierOrFail: IrClassifierSymbol

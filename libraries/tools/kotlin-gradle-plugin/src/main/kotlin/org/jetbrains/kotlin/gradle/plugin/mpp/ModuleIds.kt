@@ -28,7 +28,7 @@ internal object ModuleIds {
         else -> idFromName(componentSelector.displayName)
     }
 
-    fun fromComponentId(
+    private fun fromComponentId(
         thisProject: Project,
         componentIdentifier: ComponentIdentifier
     ): ModuleDependencyIdentifier =
@@ -39,7 +39,11 @@ internal object ModuleIds {
         }
 
     fun fromComponent(thisProject: Project, component: ResolvedComponentResult) =
-        fromComponentId(thisProject, component.id)
+        // If the project component comes from another build, we can't extract anything from it, so just use the module coordinates:
+        if ((component.id as? ProjectComponentIdentifier)?.build?.isCurrentBuild == false)
+            ModuleDependencyIdentifier(component.moduleVersion?.group ?: "unspecified", component.moduleVersion?.name ?: "unspecified")
+        else
+            fromComponentId(thisProject, component.id)
 
     private fun idOfRootModule(project: Project): ModuleDependencyIdentifier =
         if (project.multiplatformExtensionOrNull != null) {

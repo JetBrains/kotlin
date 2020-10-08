@@ -13,8 +13,12 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.types.ConeInferenceContext
+import org.jetbrains.kotlin.fir.types.ConeTypeCheckerContext
 
 val FirSession.typeContext: ConeInferenceContext
+    get() = inferenceComponents.ctx
+
+val FirSession.typeCheckerContext: ConeTypeCheckerContext
     get() = inferenceComponents.ctx
 
 /**

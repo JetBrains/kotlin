@@ -92,23 +92,27 @@ class Fir2IrConverter(
             )
         }
         val processedCallableNames = mutableSetOf<Name>()
+        val classes = mutableListOf<FirRegularClass>()
         for (declaration in sortBySynthetic(anonymousObject.declarations)) {
-            if (declaration is FirRegularClass) {
+            val irDeclaration = if (declaration is FirRegularClass) {
+                classes += declaration
                 registerClassAndNestedClasses(declaration, irClass)
-                processClassAndNestedClassHeaders(declaration)
-            }
-            val irDeclaration = processMemberDeclaration(declaration, anonymousObject, irClass) ?: continue
-            when (declaration) {
-                is FirSimpleFunction -> processedCallableNames += declaration.name
-                is FirProperty -> processedCallableNames += declaration.name
+            } else {
+                when (declaration) {
+                    is FirSimpleFunction -> processedCallableNames += declaration.name
+                    is FirProperty -> processedCallableNames += declaration.name
+                }
+                processMemberDeclaration(declaration, anonymousObject, irClass) ?: continue
             }
             irClass.declarations += irDeclaration
         }
+        classes.forEach { processClassAndNestedClassHeaders(it) }
+        classes.forEach { processClassMembers(it) }
         // Add delegated members *before* fake override generations.
         // Otherwise, fake overrides for delegated members, which are redundant, will be added.
-        processedCallableNames += delegatedMemberNames(irClass)
+        val realDeclarations = delegatedMembers(irClass) + anonymousObject.declarations
         with(fakeOverrideGenerator) {
-            irClass.addFakeOverrides(anonymousObject, processedCallableNames)
+            irClass.addFakeOverrides(anonymousObject, realDeclarations)
         }
 
         return irClass
@@ -124,47 +128,39 @@ class Fir2IrConverter(
         if (irConstructor != null) {
             irClass.declarations += irConstructor
         }
-        val processedCallableNames = mutableSetOf<Name>()
+        val allDeclarations = regularClass.declarations.toMutableList()
         for (declaration in sortBySynthetic(regularClass.declarations)) {
             val irDeclaration = processMemberDeclaration(declaration, regularClass, irClass) ?: continue
-            when (declaration) {
-                is FirSimpleFunction -> processedCallableNames += declaration.name
-                is FirProperty -> processedCallableNames += declaration.name
-            }
             irClass.declarations += irDeclaration
         }
         // Add delegated members *before* fake override generations.
         // Otherwise, fake overrides for delegated members, which are redundant, will be added.
-        processedCallableNames += delegatedMemberNames(irClass)
+        allDeclarations += delegatedMembers(irClass)
         // Add synthetic members *before* fake override generations.
         // Otherwise, redundant members, e.g., synthetic toString _and_ fake override toString, will be added.
         if (irConstructor != null && (irClass.isInline || irClass.isData)) {
             declarationStorage.enterScope(irConstructor)
             val dataClassMembersGenerator = DataClassMembersGenerator(components)
             if (irClass.isInline) {
-                processedCallableNames += dataClassMembersGenerator.generateInlineClassMembers(regularClass, irClass)
+                allDeclarations += dataClassMembersGenerator.generateInlineClassMembers(regularClass, irClass)
             }
             if (irClass.isData) {
-                processedCallableNames += dataClassMembersGenerator.generateDataClassMembers(regularClass, irClass)
+                allDeclarations += dataClassMembersGenerator.generateDataClassMembers(regularClass, irClass)
             }
             declarationStorage.leaveScope(irConstructor)
         }
         with(fakeOverrideGenerator) {
-            irClass.addFakeOverrides(regularClass, processedCallableNames)
+            irClass.addFakeOverrides(regularClass, allDeclarations)
         }
 
         return irClass
     }
 
-    private fun delegatedMemberNames(irClass: IrClass): List<Name> {
+    private fun delegatedMembers(irClass: IrClass): List<FirDeclaration> {
         return irClass.declarations.filter {
             it.origin == IrDeclarationOrigin.DELEGATED_MEMBER
         }.mapNotNull {
-            when (it) {
-                is IrSimpleFunction -> it.name
-                is IrProperty -> it.name
-                else -> null
-            }
+            components.declarationStorage.originalDeclarationForDelegated(it)
         }
     }
 
@@ -206,12 +202,12 @@ class Fir2IrConverter(
                 processClassMembers(declaration)
             }
             is FirSimpleFunction -> {
-                declarationStorage.createIrFunction(
+                declarationStorage.getOrCreateIrFunction(
                     declaration, parent, isLocal = isLocal
                 )
             }
             is FirProperty -> {
-                declarationStorage.createIrProperty(
+                declarationStorage.getOrCreateProperty(
                     declaration, parent, isLocal = isLocal
                 )
             }
@@ -274,7 +270,9 @@ class Fir2IrConverter(
             val components = Fir2IrComponentsStorage(session, scopeSession, symbolTable, irBuiltIns, irFactory, mangler)
             val conversionScope = Fir2IrConversionScope()
             val classifierStorage = Fir2IrClassifierStorage(components)
-            val declarationStorage = Fir2IrDeclarationStorage(components, moduleDescriptor)
+            val converter = Fir2IrConverter(moduleDescriptor, sourceManager, components)
+            val fir2irVisitor = Fir2IrVisitor(converter, components, conversionScope)
+            val declarationStorage = Fir2IrDeclarationStorage(components, fir2irVisitor, moduleDescriptor)
             val typeConverter = Fir2IrTypeConverter(components)
             val builtIns = Fir2IrBuiltIns(components, session)
             components.declarationStorage = declarationStorage
@@ -284,7 +282,6 @@ class Fir2IrConverter(
             components.builtIns = builtIns
             val irFiles = mutableListOf<IrFile>()
 
-            val converter = Fir2IrConverter(moduleDescriptor, sourceManager, components)
             for (firFile in firFiles) {
                 irFiles += converter.registerFileAndClasses(firFile)
             }
@@ -300,10 +297,9 @@ class Fir2IrConverter(
             externalDependenciesGenerator.generateUnboundSymbolsAsDependencies()
             classifierStorage.preCacheBuiltinClasses()
             val fakeOverrideGenerator = FakeOverrideGenerator(
-                session, scopeSession, classifierStorage, declarationStorage, conversionScope, FakeOverrideMode.NORMAL
+                session, scopeSession, classifierStorage, declarationStorage, conversionScope
             )
             components.fakeOverrideGenerator = fakeOverrideGenerator
-            val fir2irVisitor = Fir2IrVisitor(converter, components, conversionScope)
             val callGenerator = CallAndReferenceGenerator(components, fir2irVisitor, conversionScope)
             components.callGenerator = callGenerator
             declarationStorage.annotationGenerator = AnnotationGenerator(components)
@@ -324,7 +320,11 @@ class Fir2IrConverter(
             val stubGenerator = irProviders.filterIsInstance<DeclarationStubGenerator>().first()
             for (descriptor in symbolTable.wrappedTopLevelCallableDescriptors()) {
                 val parentClass = stubGenerator.generateOrGetFacadeClass(descriptor as WrappedDeclarationDescriptor<*>)
-                descriptor.owner.parent = parentClass ?: continue
+                val owner = descriptor.owner
+                owner.parent = parentClass ?: continue
+                if (owner is IrProperty) {
+                    owner.backingField?.parent = parentClass
+                }
             }
 
             evaluateConstants(irModuleFragment)

@@ -3,4 +3,6 @@
 
 sharedVar *= 2
 
-println("Hi from middle")
+val from = SharedClass("from")
+
+println("${SharedObject.greeting} ${from.msg} middle")

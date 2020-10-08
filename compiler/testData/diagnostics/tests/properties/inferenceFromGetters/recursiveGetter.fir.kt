@@ -13,7 +13,7 @@ class A {
     val z1 get() = <!INAPPLICABLE_CANDIDATE!>id<!>(z1)
     val z2 get() = <!INAPPLICABLE_CANDIDATE!>l<!>(z2)
 
-    val u get() = field
+    val u get() = <!UNRESOLVED_REFERENCE!>field<!>
 }
 
 fun <E> id(x: E) = x

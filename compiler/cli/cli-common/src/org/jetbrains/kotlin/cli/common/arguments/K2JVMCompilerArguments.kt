@@ -335,6 +335,16 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var emitJvmTypeAnnotations: Boolean by FreezableVar(false)
 
     @Argument(
+        value = "-Xstring-concat",
+        valueDescription = "{indy-with-constants|indy|inline}",
+        description = """Switch a way in which string concatenation is performed.
+-Xstring-concat=indy-with-constants   Performs string concatenation via `invokedynamic` 'makeConcatWithConstants'. Works only with `-jvm-target 9` or greater
+-Xstring-concat=indy                Performs string concatenation via `invokedynamic` 'makeConcat'. Works only with `-jvm-target 9` or greater
+-Xstring-concat=inline              Performs string concatenation via `StringBuilder`"""
+    )
+    var stringConcat: String? by NullableStringFreezableVar(JvmStringConcat.INLINE.description)
+
+    @Argument(
         value = "-Xklib",
         valueDescription = "<path>",
         description = "Paths to cross-platform libraries in .klib format"
