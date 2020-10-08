@@ -159,6 +159,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         val superQualifierSymbol: IrClassSymbol? = null,
         val isFinal: Boolean = true,
         val isSynthetic: Boolean = false,
+        val isOverriding: Boolean = true,
     )
 
     private val potentialBridgeTargets = mutableListOf<IrSimpleFunction>()
@@ -383,6 +384,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
             valueParameters = irFunction.valueParameters.map { param ->
                 param.copyTo(this, type = if (needsArgumentBoxing) param.type.makeNullable() else param.type)
             }
+            overriddenSymbols = irFunction.overriddenSymbols.toList()
         }
 
     private fun IrClass.addBridge(bridge: Bridge, target: IrSimpleFunction): IrSimpleFunction =
@@ -437,7 +439,10 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
                 }
                 +irReturn(delegatingCall(this@apply, target, specialBridge.superQualifierSymbol))
             }
-            overriddenSymbols = listOf(specialBridge.overridden.symbol)
+
+            if (specialBridge.isOverriding) {
+                overriddenSymbols = listOf(specialBridge.overridden.symbol)
+            }
         }
 
     private fun IrSimpleFunction.rewriteSpecialMethodBody(
@@ -570,7 +575,10 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
             if (correspondingProperty != null) {
                 if (correspondingProperty.owner.name !in specialBridgeMethods.specialPropertyNames) return null
             } else {
-                if (function.name !in specialBridgeMethods.specialMethodNames) return null
+                // 'removeAt' function can be mangled by inline class rules
+                if (function.name !in specialBridgeMethods.specialMethodNames && !function.name.asString().startsWith("removeAt-")) {
+                    return null
+                }
             }
 
             val specialMethodInfo = specialBridgeMethods.getSpecialMethodInfo(function)
@@ -581,7 +589,10 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
 
             val specialBuiltInInfo = specialBridgeMethods.getBuiltInWithDifferentJvmName(function)
             if (specialBuiltInInfo != null)
-                return SpecialBridge(function, computeJvmMethod(function), specialBuiltInInfo.needsGenericSignature)
+                return SpecialBridge(
+                    function, computeJvmMethod(function), specialBuiltInInfo.needsGenericSignature,
+                    isOverriding = specialBuiltInInfo.isOverriding
+                )
 
             for (overridden in function.overriddenSymbols) {
                 val specialBridge = computeSpecialBridge(overridden.owner) ?: continue

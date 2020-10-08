@@ -33,11 +33,11 @@ public abstract class AMLI {
     public bridge final method indexOf(p0: java.lang.Object): int
     public abstract method lastIndexOf(p0: int): int
     public bridge final method lastIndexOf(p0: java.lang.Object): int
-    public bridge final method remove(p0: int): java.lang.Integer
+    public bridge final method remove(p0: int): int
     public synthetic bridge method remove(p0: int): java.lang.Object
     public abstract method remove(p0: java.lang.Integer): boolean
     public bridge final method remove(p0: java.lang.Object): boolean
-    public abstract method removeAt(p0: int): int
+    public abstract method removeAt(p0: int): java.lang.Integer
     public bridge final method size(): int
     public method toArray(): java.lang.Object[]
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]

@@ -679,11 +679,6 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/constructorsWithDefaultParameterValues.kt");
         }
 
-        @TestMetadata("inlineClassImplementingCollection.kt")
-        public void testInlineClassImplementingCollection() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineClassImplementingCollection.kt");
-        }
-
         @TestMetadata("inlineClassMembersVisibility.kt")
         public void testInlineClassMembersVisibility() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineClassMembersVisibility.kt");
@@ -737,6 +732,89 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         @TestMetadata("shapeOfInlineClassWithPrimitive.kt")
         public void testShapeOfInlineClassWithPrimitive() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/shapeOfInlineClassWithPrimitive.kt");
+        }
+
+        @TestMetadata("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class InlineCollection extends AbstractBytecodeListingTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInInlineCollection() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("collection.kt")
+            public void testCollection() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection/collection.kt");
+            }
+
+            @TestMetadata("iterable.kt")
+            public void testIterable() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection/iterable.kt");
+            }
+
+            @TestMetadata("iterator.kt")
+            public void testIterator() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection/iterator.kt");
+            }
+
+            @TestMetadata("list.kt")
+            public void testList() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection/list.kt");
+            }
+
+            @TestMetadata("map.kt")
+            public void testMap() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection/map.kt");
+            }
+
+            @TestMetadata("mapEntry.kt")
+            public void testMapEntry() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection/mapEntry.kt");
+            }
+
+            @TestMetadata("mutableCollection.kt")
+            public void testMutableCollection() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection/mutableCollection.kt");
+            }
+
+            @TestMetadata("mutableIterable.kt")
+            public void testMutableIterable() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection/mutableIterable.kt");
+            }
+
+            @TestMetadata("mutableIterator.kt")
+            public void testMutableIterator() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection/mutableIterator.kt");
+            }
+
+            @TestMetadata("mutableList.kt")
+            public void testMutableList() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection/mutableList.kt");
+            }
+
+            @TestMetadata("mutableMap.kt")
+            public void testMutableMap() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection/mutableMap.kt");
+            }
+
+            @TestMetadata("mutableMapEntry.kt")
+            public void testMutableMapEntry() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection/mutableMapEntry.kt");
+            }
+
+            @TestMetadata("mutableSet.kt")
+            public void testMutableSet() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection/mutableSet.kt");
+            }
+
+            @TestMetadata("set.kt")
+            public void testSet() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection/set.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollectionOfInlineClass")
@@ -1027,6 +1105,16 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             runTest("compiler/testData/codegen/bytecodeListing/specialBridges/abstractListsWithJavaBase.kt");
         }
 
+        @TestMetadata("abstractMutableCollectionOfPrimitive.kt")
+        public void testAbstractMutableCollectionOfPrimitive() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/specialBridges/abstractMutableCollectionOfPrimitive.kt");
+        }
+
+        @TestMetadata("abstractMutableListOfPrimitive.kt")
+        public void testAbstractMutableListOfPrimitive() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/specialBridges/abstractMutableListOfPrimitive.kt");
+        }
+
         @TestMetadata("abstractMutableLists.kt")
         public void testAbstractMutableLists() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/specialBridges/abstractMutableLists.kt");
@@ -1049,6 +1137,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         @TestMetadata("kt41123.kt")
         public void testKt41123() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/specialBridges/kt41123.kt");
+        }
+
+        @TestMetadata("mutableListOfPrimitive.kt")
+        public void testMutableListOfPrimitive() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/specialBridges/mutableListOfPrimitive.kt");
         }
 
         @TestMetadata("noDefaultImplsOnEmptySubInterface.kt")

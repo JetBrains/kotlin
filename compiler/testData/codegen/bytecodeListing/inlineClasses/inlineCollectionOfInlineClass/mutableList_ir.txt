@@ -33,7 +33,7 @@ public final class InlineMutableList {
     public method clear(): void
     public static method clear-impl(p0: java.util.List): void
     public static method constructor-impl(p0: java.util.List): java.util.List
-    public bridge final method contains(p0: java.lang.Object): boolean
+    public synthetic bridge method contains(p0: java.lang.Object): boolean
     public static method contains-jHY5zpA(p0: java.util.List, p1: long): boolean
     public method contains-jHY5zpA(p0: long): boolean
     public method containsAll(p0: java.util.Collection): boolean
@@ -48,14 +48,14 @@ public final class InlineMutableList {
     public static method getSize-impl(p0: java.util.List): int
     public method hashCode(): int
     public static method hashCode-impl(p0: java.util.List): int
-    public bridge final method indexOf(p0: java.lang.Object): int
+    public synthetic bridge method indexOf(p0: java.lang.Object): int
     public static method indexOf-jHY5zpA(p0: java.util.List, p1: long): int
     public method indexOf-jHY5zpA(p0: long): int
     public method isEmpty(): boolean
     public static method isEmpty-impl(p0: java.util.List): boolean
     public method iterator(): java.util.Iterator
     public static method iterator-impl(p0: java.util.List): java.util.Iterator
-    public bridge final method lastIndexOf(p0: java.lang.Object): int
+    public synthetic bridge method lastIndexOf(p0: java.lang.Object): int
     public static method lastIndexOf-jHY5zpA(p0: java.util.List, p1: long): int
     public method lastIndexOf-jHY5zpA(p0: long): int
     public method listIterator(): java.util.ListIterator
@@ -64,7 +64,7 @@ public final class InlineMutableList {
     public static method listIterator-impl(p0: java.util.List, p1: int): java.util.ListIterator
     public synthetic bridge method remove(p0: int): java.lang.Object
     public bridge final method remove(p0: int): long
-    public bridge final method remove(p0: java.lang.Object): boolean
+    public synthetic bridge method remove(p0: java.lang.Object): boolean
     public static method remove-jHY5zpA(p0: java.util.List, p1: long): boolean
     public method remove-jHY5zpA(p0: long): boolean
     public method removeAll(p0: java.util.Collection): boolean
@@ -76,7 +76,7 @@ public final class InlineMutableList {
     public synthetic bridge method set(p0: int, p1: java.lang.Object): java.lang.Object
     public method set-_bimVNw(p0: int, p1: long): long
     public static method set-_bimVNw(p0: java.util.List, p1: int, p2: long): long
-    public bridge final method size(): int
+    public synthetic bridge method size(): int
     public method subList(p0: int, p1: int): java.util.List
     public static method subList-impl(p0: java.util.List, p1: int, p2: int): java.util.List
     public method toArray(): java.lang.Object[]

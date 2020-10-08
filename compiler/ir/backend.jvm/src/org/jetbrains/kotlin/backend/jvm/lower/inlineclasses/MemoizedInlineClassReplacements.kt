@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
+import org.jetbrains.kotlin.ir.types.isInt
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
@@ -57,11 +58,11 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, pr
 
                 // Mangle all functions in the body of an inline class
                 it.parent.safeAs<IrClass>()?.isInline == true ->
-                    when (it.origin) {
-                        IrDeclarationOrigin.IR_BUILTINS_STUB ->
-                            createMethodReplacement(it)
-                        IrDeclarationOrigin.BRIDGE_SPECIAL ->
+                    when {
+                        it.isRemoveAtSpecialBuiltinStub() ->
                             null
+                        it.origin == IrDeclarationOrigin.IR_BUILTINS_STUB ->
+                            createMethodReplacement(it)
                         else ->
                             createStaticReplacement(it)
                     }
@@ -77,6 +78,12 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, pr
                     null
             }
         }
+
+    private fun IrFunction.isRemoveAtSpecialBuiltinStub() =
+        origin == IrDeclarationOrigin.IR_BUILTINS_STUB &&
+                name.asString() == "remove" &&
+                valueParameters.size == 1 &&
+                valueParameters[0].type.isInt()
 
     /**
      * Get the box function for an inline class. Concretely, this is a synthetic
@@ -220,7 +227,7 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, pr
             val propertySymbol = function.correspondingPropertySymbol
             if (propertySymbol != null) {
                 val property = propertyMap.getOrPut(propertySymbol) {
-                    irFactory.buildProperty() {
+                    irFactory.buildProperty {
                         name = propertySymbol.owner.name
                         updateFrom(propertySymbol.owner)
                     }.apply {

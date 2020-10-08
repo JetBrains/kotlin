@@ -1,6 +1,4 @@
 // IGNORE_ANNOTATIONS
-// IGNORE_BACKEND: JVM_IR
-// ^ TODO: special bridges <-> inline classes interaction
 
 inline class IT(val x: Int)
 

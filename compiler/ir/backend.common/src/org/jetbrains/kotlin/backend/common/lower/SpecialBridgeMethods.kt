@@ -29,6 +29,7 @@ data class SpecialMethodWithDefaultInfo(
 
 class BuiltInWithDifferentJvmName(
     val needsGenericSignature: Boolean = false,
+    val isOverriding: Boolean = true
 )
 
 class SpecialBridgeMethods(val context: CommonBackendContext) {
@@ -66,7 +67,7 @@ class SpecialBridgeMethods(val context: CommonBackendContext) {
         makeDescription(StandardNames.FqNames.collection, "contains", 1) to
                 SpecialMethodWithDefaultInfo(::constFalse, 1),
         makeDescription(StandardNames.FqNames.mutableCollection, "remove", 1) to
-                SpecialMethodWithDefaultInfo(::constFalse, 1, needsArgumentBoxing = true),
+                SpecialMethodWithDefaultInfo(::constFalse, 1, needsArgumentBoxing = false),
         makeDescription(StandardNames.FqNames.map, "containsKey", 1) to
                 SpecialMethodWithDefaultInfo(::constFalse, 1),
         makeDescription(StandardNames.FqNames.map, "containsValue", 1) to
@@ -102,7 +103,8 @@ class SpecialBridgeMethods(val context: CommonBackendContext) {
         makeDescription(StandardNames.FqNames.number.toSafe(), "toFloat") to BuiltInWithDifferentJvmName(),
         makeDescription(StandardNames.FqNames.number.toSafe(), "toDouble") to BuiltInWithDifferentJvmName(),
         makeDescription(StandardNames.FqNames.charSequence.toSafe(), "get", 1) to BuiltInWithDifferentJvmName(),
-        makeDescription(StandardNames.FqNames.mutableList, "removeAt", 1) to BuiltInWithDifferentJvmName(needsGenericSignature = true)
+        makeDescription(StandardNames.FqNames.mutableList, "removeAt", 1) to
+                BuiltInWithDifferentJvmName(needsGenericSignature = true, isOverriding = false)
     )
 
     val specialMethodNames = (specialMethodsWithDefaults + specialMethods).map { (description) -> description.name }.toHashSet()
