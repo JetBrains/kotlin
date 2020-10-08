@@ -40,7 +40,7 @@ class PathExtensionsTest {
         val dstFile = Files.createTempFile(null, null)
         try {
             srcFile.writeText("Hello, World!")
-            assertFailsWith(FileAlreadyExistsException::class, "copy do not overwrite existing file") {
+            assertFailsWith<FileAlreadyExistsException>("copy do not overwrite existing file") {
                 srcFile.copyTo(dstFile)
             }
 
@@ -48,15 +48,24 @@ class PathExtensionsTest {
             assertSame(dst, dstFile)
             compareFiles(srcFile, dst, "copy with overwrite over existing file")
 
+            srcFile.copyTo(srcFile)
+            srcFile.copyTo(srcFile, overwrite = true)
+            compareFiles(dst, srcFile, "copying file to itself leaves it intact")
+
             assertTrue(Files.deleteIfExists(dstFile))
             dst = srcFile.copyTo(dstFile)
             compareFiles(srcFile, dst, "copy to new file")
 
+            val subDst = dstFile.resolve("foo/bar")
+            assertFailsWith<NoSuchFileException> { srcFile.copyTo(subDst) }
+            assertFailsWith<NoSuchFileException> { srcFile.copyTo(subDst, overwrite = true) }
             assertTrue(Files.deleteIfExists(dstFile))
+            assertFailsWith<NoSuchFileException> { srcFile.copyTo(subDst) }
+
             Files.createDirectory(dstFile)
             val child = dstFile.resolve("child")
             Files.createFile(child)
-            assertFailsWith(DirectoryNotEmptyException::class, "copy with overwrite do not overwrite non-empty dir") {
+            assertFailsWith<DirectoryNotEmptyException>( "copy with overwrite do not overwrite non-empty dir") {
                 srcFile.copyTo(dstFile, overwrite = true)
             }
             Files.delete(child)
@@ -67,21 +76,21 @@ class PathExtensionsTest {
             assertTrue(Files.deleteIfExists(srcFile))
             assertTrue(Files.deleteIfExists(dstFile))
 
-            assertFailsWith(NoSuchFileException::class) {
+            assertFailsWith<NoSuchFileException> {
                 srcFile.copyTo(dstFile)
             }
 
             Files.createDirectory(srcFile)
             srcFile.resolve("somefile").writeText("some content")
             dstFile.writeText("")
-            assertFailsWith(FileAlreadyExistsException::class, "copy dir do not overwrite file") {
+            assertFailsWith<FileAlreadyExistsException>("copy dir do not overwrite file") {
                 srcFile.copyTo(dstFile)
             }
             srcFile.copyTo(dstFile, overwrite = true)
             assertTrue(dstFile.isDirectory())
             assertTrue(dstFile.listDirectoryEntries().isEmpty(), "only directory is copied, but not its content")
 
-            assertFailsWith(FileAlreadyExistsException::class, "copy dir do not overwrite dir") {
+            assertFailsWith<FileAlreadyExistsException>("copy dir do not overwrite dir") {
                 srcFile.copyTo(dstFile)
             }
 
@@ -90,7 +99,7 @@ class PathExtensionsTest {
             assertTrue(dstFile.listDirectoryEntries().isEmpty(), "only directory is copied, but not its content")
 
             dstFile.resolve("somefile2").writeText("some content2")
-            assertFailsWith(FileAlreadyExistsException::class, "copy dir do not overwrite non-empty dir") {
+            assertFailsWith<DirectoryNotEmptyException>("copy dir do not overwrite non-empty dir") {
                 srcFile.copyTo(dstFile, overwrite = true)
             }
         } finally {

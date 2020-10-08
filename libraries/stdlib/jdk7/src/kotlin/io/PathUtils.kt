@@ -120,7 +120,12 @@ internal object PathRelativizer {
 /**
  * Copies this path to the given [target] path.
  *
- * If some directories on a way to the [target] are missing, then they will be created.
+ * Unlike `File.copyTo`, if some directories on a way to the [target] are missing, then they won't be created automatically.
+ * You can use the following approach to ensure that required intermediate directories are created:
+ * ```
+ * sourcePath.copyTo(destinationPath.apply { parent?.createDirectories() })
+ * ```
+ *
  * If the [target] path already exists, this function will fail unless [overwrite] argument is set to `true`.
  *
  * When [overwrite] is `true` and [target] is a directory, it is replaced only if it is empty.
@@ -134,6 +139,8 @@ internal object PathRelativizer {
  * @return the [target] path.
  * @throws NoSuchFileException if the source path doesn't exist.
  * @throws FileAlreadyExistsException if the destination path already exists and [overwrite] argument is set to `false`.
+ * @throws DirectoryNotEmptyException if the destination path point to an existing directory and [overwrite] argument is `true`,
+ *   when the directory being replaced is not empty.
  * @throws IOException if any errors occur while copying.
  */
 @SinceKotlin("1.4")
@@ -146,15 +153,20 @@ public fun Path.copyTo(target: Path, overwrite: Boolean = false): Path {
 /**
  * Copies this path to the given [target] path.
  *
- * If some directories on a way to the [target] are missing, then they will be created.
+ * Unlike `File.copyTo`, if some directories on a way to the [target] are missing, then they won't be created automatically.
+ * You can use the following approach to ensure that required intermediate directories are created:
+ * ```
+ * sourcePath.copyTo(destinationPath.apply { parent?.createDirectories() })
+ * ```
+ *
  * If the [target] path already exists, this function will fail unless the
  * [REPLACE_EXISTING][StandardCopyOption.REPLACE_EXISTING] is option is used.
  *
  * When [REPLACE_EXISTING][StandardCopyOption.REPLACE_EXISTING] is used and [target] is a directory,
  * it is replaced only if it is empty.
  *
- * If this path is a directory, it is copied without its content, i.e. an empty [target] directory is created.
- * If you want to copy directory including its contents, use [copyRecursively].
+ * If this path is a directory, it is copied *without* its content, i.e. an empty [target] directory is created.
+ * If you want to copy a directory including its contents, use [copyRecursively].
  *
  * The operation doesn't preserve copied file attributes such as creation/modification date,
  * permissions, etc. unless [COPY_ATTRIBUTES][StandardCopyOption.COPY_ATTRIBUTES] is used.
@@ -163,36 +175,14 @@ public fun Path.copyTo(target: Path, overwrite: Boolean = false): Path {
  * @return the [target] path.
  * @throws NoSuchFileException if the source path doesn't exist.
  * @throws FileAlreadyExistsException if the destination path already exists and [REPLACE_EXISTING][StandardCopyOption.REPLACE_EXISTING] is not used.
+ * @throws DirectoryNotEmptyException if the destination path point to an existing directory and [REPLACE_EXISTING][StandardCopyOption.REPLACE_EXISTING] is used,
+ *   when the directory being replaced is not empty.
  * @throws IOException if any errors occur while copying.
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
 public fun Path.copyTo(target: Path, vararg options: CopyOption): Path {
-    if (this.notExists()) {
-        throw NoSuchFileException(toString(), null, "The source path doesn't exist.")
-    }
-
-    if (target.exists() && StandardCopyOption.REPLACE_EXISTING !in options) {
-        throw FileAlreadyExistsException(toString(), null, "The destination path already exists.")
-    }
-
-    if (this.isDirectory()) {
-        if (target.isDirectory() && Files.newDirectoryStream(target).use { it.firstOrNull() } != null) {
-            throw FileAlreadyExistsException(toString(), null, "The destination path already exists.")
-        }
-        try {
-            Files.createDirectories(target)
-        } catch (_: FileAlreadyExistsException) {
-            // File already exists and is not a directory
-            Files.delete(target)
-            Files.createDirectories(target)
-        }
-    } else {
-        target.parent?.let { Files.createDirectories(it) }
-        Files.copy(this, target, *options)
-    }
-
-    return target
+    return Files.copy(this, target, *options)
 }
 
 /**
