@@ -87,13 +87,14 @@
           "update": "span(brush) ? invert('x', brush) : null"
         }
       ]
-    }
+    },
+    {"name": "timestamp", "value": true, "bind": {"input": "checkbox"}}
   ],
   "data": [
     {
       "name": "table",
-      "comment": "Uncomment `values` and comment `url` to test chart in VEGA editor https://vega.github.io/editor/#/",
-      /*"values" : {
+      "comment": "To test chart in VEGA editor https://vega.github.io/editor/#/ change `_values` to `values` and rename `url` property",
+      "_values" : {
           "hits" : {
             "hits" : [
               {
@@ -113,12 +114,12 @@
               }
             ]
           }
-      },*/
+      },
       "url": {
         "comment": "source index pattern",
         "index": "kotlin_ide_benchmarks*",
         "comment": "it's a body of ES _search query to check query place it into `POST /kotlin_ide_benchmarks*/_search`",
-        "comment": "it uses Kibana specific %timefilter% for time frame selection"
+        "comment": "it uses Kibana specific %timefilter% for time frame selection",
         "body": {
           "size": 1000,
           "query": {
@@ -136,6 +137,7 @@
       "comment": "we need to have follow data: \"build_id\", \"metric_name\", \"metric_value\" and \"metric_error\"",
       "comment": "so it has to be array of {\"build_id\": \"...\", \"metric_name\": \"...\", \"metric_value\": ..., \"metric_error\": ...}",
       "transform": [
+        {"type": "collect","sort": {"field": "_source.build\\.timestamp"}},
         {
           "comment": "make alias: _source.build_id -> build_id",
           "type": "formula",
@@ -159,6 +161,11 @@
           "type": "formula",
           "as": "metric_error",
           "expr": "0"
+        },
+        {
+          "type": "formula",
+          "as": "timestamp",
+          "expr": "timeFormat(toDate(datum._source['build.timestamp']), '%Y-%m-%d %H:%M')"
         },
         {
           "comment": "create `url` value that points to TC build",
@@ -186,7 +193,7 @@
       "orient": "bottom",
       "labelAngle": -20,
       "labelAlign": "right",
-      "title": "build_id",
+      "title": {"signal": "timestamp ? 'timestamp' : 'build_id'"},
       "titlePadding": 10,
       "tickCount": 5,
       "encode": {
@@ -212,7 +219,7 @@
       "name": "x",
       "type": "point",
       "range": "width",
-      "domain": {"data": "table", "field": "build_id"}
+      "domain": {"data": "table", "field": {"signal": "timestamp ? 'timestamp' : 'build_id'"}}
     },
     {
       "name": "y",
@@ -294,7 +301,7 @@
           "encode": {
             "hover": {"opacity": {"value": 1}, "strokeWidth": {"value": 4}},
             "update": {
-              "x": {"scale": "x", "field": "build_id"},
+              "x": {"scale": "x", "field": {"signal": "timestamp ? 'timestamp' : 'build_id'"}},
               "y": {"scale": "y", "field": "metric_value"},
               "strokeWidth": {"value": 2},
               "opacity": [
@@ -326,7 +333,7 @@
               "href": {"field": "url"},
               "cursor": {"value": "pointer"},
               "size": {"scale": "size", "field": "metric_error"},
-              "x": {"scale": "x", "field": "build_id"},
+              "x": {"scale": "x", "field": {"signal": "timestamp ? 'timestamp' : 'build_id'"}},
               "y": {"scale": "y", "field": "metric_value"},
               "strokeWidth": {"value": 1},
               "fill": {"scale": "color", "field": "metric_name"}
