@@ -105,12 +105,12 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
     private fun mangleMemberNameIfRequired(name: String, function: IrSimpleFunction): String {
         val newName = JvmCodegenUtil.sanitizeNameIfNeeded(name, context.state.languageVersionSettings)
 
-        val suffix = when {
-            function.isTopLevel ->
-                if (function.isInvisibleInMultifilePart()) function.parentAsClass.name.asString() else null
-            function.shouldMangleAsInternal() ->
-                NameUtils.sanitizeAsJavaIdentifier(getModuleName(function))
-            else -> null
+        val suffix = if (function.isTopLevel) {
+            if (function.isInvisibleInMultifilePart()) function.parentAsClass.name.asString() else null
+        } else {
+            function.getInternalFunctionForManglingIfNeeded()?.let {
+                NameUtils.sanitizeAsJavaIdentifier(getModuleName(it))
+            }
         } ?: return newName
 
         if (function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
@@ -127,15 +127,19 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
                 (DescriptorVisibilities.isPrivate(suspendFunctionOriginal().visibility) ||
                         originalForDefaultAdapter?.isInvisibleInMultifilePart() == true)
 
-    private fun IrSimpleFunction.shouldMangleAsInternal(): Boolean =
-        (origin != JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR &&
-                visibility == DescriptorVisibilities.INTERNAL &&
-                !isPublishedApi())
-                || originalForDefaultAdapter?.shouldMangleAsInternal() == true
+    private fun IrSimpleFunction.getInternalFunctionForManglingIfNeeded(): IrSimpleFunction? {
+        if (origin != JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR &&
+            visibility == DescriptorVisibilities.INTERNAL &&
+            !isPublishedApi()) {
+            return this
+        }
+        originalForDefaultAdapter?.getInternalFunctionForManglingIfNeeded()?.let { return it }
+        return null
+    }
 
     private val IrSimpleFunction.originalForDefaultAdapter: IrSimpleFunction?
         get() = if (origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
-            ((body?.statements?.lastOrNull() as? IrReturn)?.value as? IrCall)?.symbol?.owner
+            (attributeOwnerId as IrFunction).symbol.owner as IrSimpleFunction
         } else null
 
     private fun getModuleName(function: IrSimpleFunction): String =
