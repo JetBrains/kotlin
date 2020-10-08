@@ -26,7 +26,6 @@
       </additionalClassPath>
     </buildFile>
     <buildFile url="file://$PROJECT_DIR$/intellij/community/json/src/jsonSchema/build.xml" />
-    <buildFile url="file://$PROJECT_DIR$/intellij/community/build/gant.xml" />
   </component>
   <component name="GantSettings">
     <option name="SDK_HOME" value="$PROJECT_DIR$/intellij/community/build/lib/gant" />
