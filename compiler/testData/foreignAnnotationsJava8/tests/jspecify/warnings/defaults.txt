@@ -9,8 +9,8 @@ public fun main(/*0*/ a: A): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open fun everythingNotNullable(/*0*/ x: kotlin.String!): kotlin.String!
     @org.jspecify.annotations.DefaultNullable public open fun everythingNullable(/*0*/ x: kotlin.String!): @org.jspecify.annotations.DefaultNullable kotlin.String!
-    @org.jspecify.annotations.DefaultNullnessUnknown public open fun everythingUnknown(/*0*/ x: kotlin.String!): @org.jspecify.annotations.DefaultNullnessUnknown kotlin.String!
-    public open fun explicitlyNullnessUnknown(/*0*/ @org.jspecify.annotations.NullnessUnknown x: @org.jspecify.annotations.NullnessUnknown kotlin.String!): kotlin.String!
+    @org.jspecify.annotations.DefaultNullnessUnspecified public open fun everythingUnknown(/*0*/ x: kotlin.String!): @org.jspecify.annotations.DefaultNullnessUnspecified kotlin.String!
+    public open fun explicitlyNullnessUnspecified(/*0*/ @org.jspecify.annotations.NullnessUnspecified x: @org.jspecify.annotations.NullnessUnspecified kotlin.String!): kotlin.String!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     @org.jspecify.annotations.DefaultNullable public open fun mixed(/*0*/ @org.jspecify.annotations.NotNull x: @org.jspecify.annotations.NotNull kotlin.String!): @org.jspecify.annotations.DefaultNullable kotlin.String!
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

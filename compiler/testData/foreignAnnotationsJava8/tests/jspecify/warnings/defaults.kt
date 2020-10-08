@@ -14,13 +14,13 @@ public class A {
     @DefaultNullable
     public String everythingNullable(String x) { return ""; }
 
-    @DefaultNullnessUnknown
+    @DefaultNullnessUnspecified
     public String everythingUnknown(String x) { return ""; }
 
     @DefaultNullable
     public String mixed(@NotNull String x) { return ""; }
 
-    public String explicitlyNullnessUnknown(@NullnessUnknown String x) { return ""; }
+    public String explicitlyNullnessUnspecified(@NullnessUnspecified String x) { return ""; }
 }
 
 // FILE: main.kt
@@ -40,9 +40,9 @@ fun main(a: A) {
     a.mixed(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)?.length
     a.mixed("")?.length
 
-    a.explicitlyNullnessUnknown("").length
-    a.explicitlyNullnessUnknown("")<!UNNECESSARY_SAFE_CALL!>?.<!>length
-    a.explicitlyNullnessUnknown(null).length
+    a.explicitlyNullnessUnspecified("").length
+    a.explicitlyNullnessUnspecified("")<!UNNECESSARY_SAFE_CALL!>?.<!>length
+    a.explicitlyNullnessUnspecified(null).length
 
     a.defaultField<!UNNECESSARY_SAFE_CALL!>?.<!>length
     a.defaultField.length

@@ -8,7 +8,7 @@ public class A {
     @Nullable public String field = null;
 
     @Nullable
-    public String foo(@NotNull String x, @NullnessUnknown CharSequence y) {
+    public String foo(@NotNull String x, @NullnessUnspecified CharSequence y) {
         return "";
     }
 
@@ -23,7 +23,7 @@ public class A {
     @DefaultNullable
     public String everythingNullable(String x) { return ""; }
 
-    @DefaultNullnessUnknown
+    @DefaultNullnessUnspecified
     public String everythingUnknown(String x) { return ""; }
 }
 

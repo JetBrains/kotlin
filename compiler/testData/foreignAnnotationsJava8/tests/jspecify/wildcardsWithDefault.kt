@@ -3,7 +3,7 @@
 
 import org.jspecify.annotations.*;
 
-public class A<T extends @NotNull Object, E extends @Nullable Object, F extends @NullnessUnknown Object> {
+public class A<T extends @NotNull Object, E extends @Nullable Object, F extends @NullnessUnspecified Object> {
 }
 
 // FILE: B.java
