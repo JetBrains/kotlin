@@ -8,6 +8,9 @@ FILE: classMembers.kt
             this@R|/A|.R|/A.receive|(this@R|/A|.R|/A.functionWithLazyBody|())
         }
 
+        public final [STATUS] val x: R|kotlin/Int| = LAZY_EXPRESSION
+            public get(): R|kotlin/Int| { LAZY_BLOCK }
+
         public final [STATUS] fun receive(value: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
         public final [STATUS] fun functionWithLazyBody(): R|kotlin/String| { LAZY_BLOCK }

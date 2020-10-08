@@ -43,6 +43,11 @@ public class FirLazyDeclarationResolveTestGenerated extends AbstractFirLazyDecla
         runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/lazyResolve/propertyWithGetterAndSetter.kt");
     }
 
+    @TestMetadata("propertyWithInitializer.kt")
+    public void testPropertyWithInitializer() throws Exception {
+        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/lazyResolve/propertyWithInitializer.kt");
+    }
+
     @TestMetadata("secondaryConstructor.kt")
     public void testSecondaryConstructor() throws Exception {
         runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/lazyResolve/secondaryConstructor.kt");

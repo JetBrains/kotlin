@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyBlock
+import org.jetbrains.kotlin.fir.expressions.impl.FirLazyExpression
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -48,7 +49,7 @@ internal object FirLazyBodiesCalculator {
     }
 
     fun calculateLazyBodyForProperty(firProperty: FirProperty) {
-        if (firProperty.getter?.body !is FirLazyBlock && firProperty.setter?.body !is FirLazyBlock) return
+        if (!needCalculatingLazyBodyForProperty(firProperty)) return
 
         val rawFirBuilder = createRawFirBuilder(firProperty)
         val newProperty = rawFirBuilder.buildPropertyWithBody(firProperty.psi as KtProperty)
@@ -63,8 +64,16 @@ internal object FirLazyBodiesCalculator {
                 setter.replaceBody(newSetter.body)
                 setter.replaceContractDescription(newSetter.contractDescription)
             }
+            if (firProperty.initializer is FirLazyExpression) {
+                firProperty.replaceInitializer(newProperty.initializer)
+            }
         }
     }
+
+    fun needCalculatingLazyBodyForProperty(firProperty: FirProperty): Boolean =
+        firProperty.getter?.body is FirLazyBlock
+                || firProperty.setter?.body is FirLazyBlock
+                || firProperty.initializer is FirLazyExpression
 
 
     private fun createRawFirBuilder(firDeclaration: FirDeclaration): RawFirBuilder {
@@ -98,8 +107,9 @@ private object FirLazyBodiesCalculatorTransformer : FirTransformer<Nothing?>() {
     }
 
     override fun transformProperty(property: FirProperty, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-        if (property.getter?.body is FirLazyBlock || property.setter?.body is FirLazyBlock) {
+        if (FirLazyBodiesCalculator.needCalculatingLazyBodyForProperty(property)) {
             FirLazyBodiesCalculator.calculateLazyBodyForProperty(property)
+            return property.compose()
         }
         return super.transformProperty(property, data)
     }
