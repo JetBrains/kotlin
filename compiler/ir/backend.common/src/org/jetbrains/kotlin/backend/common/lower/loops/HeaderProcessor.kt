@@ -346,10 +346,7 @@ internal class ProgressionLoopHeader(
             }
 
             val loopCondition = buildLoopCondition(this@with)
-            // Combine with the additional "not empty" condition, if any.
-            val notEmptyCheck =
-                irIfThen(headerInfo.additionalNotEmptyCondition?.let { context.andand(it, loopCondition) } ?: loopCondition, newLoop)
-            LoopReplacement(newLoop, notEmptyCheck)
+            LoopReplacement(newLoop, irIfThen(loopCondition, newLoop))
         }
 }
 

@@ -128,7 +128,6 @@ private class Transformer(
         val shouldUpperComeFirst: Boolean
         val useCompareTo: Boolean
         val isNumericRange: Boolean
-        val additionalNotEmptyCondition: IrExpression?
         val additionalStatements = mutableListOf<IrStatement>()
 
         when (headerInfo) {
@@ -181,7 +180,6 @@ private class Transformer(
                 useCompareTo = headerInfo.progressionType is UnsignedProgressionType
                 isUpperInclusive = headerInfo.isLastInclusive
                 isNumericRange = true
-                additionalNotEmptyCondition = headerInfo.additionalNotEmptyCondition
             }
             is FloatingPointRangeHeaderInfo -> {
                 lower = headerInfo.start
@@ -190,7 +188,6 @@ private class Transformer(
                 shouldUpperComeFirst = false
                 useCompareTo = false
                 isNumericRange = true
-                additionalNotEmptyCondition = null
             }
             is ComparableRangeInfo -> {
                 lower = headerInfo.start
@@ -199,7 +196,6 @@ private class Transformer(
                 shouldUpperComeFirst = false
                 useCompareTo = true
                 isNumericRange = false
-                additionalNotEmptyCondition = null
             }
             else -> return null
         }
@@ -342,16 +338,7 @@ private class Transformer(
             if (useLowerClauseOnLeftSide) lowerClause else upperClause,
             if (useLowerClauseOnLeftSide) upperClause else lowerClause,
             origin
-        ).let {
-            if (additionalNotEmptyCondition != null) {
-                // Add additional condition, currently used in `until` ranges (see UntilHandler.kt).
-                // NOTE: The additional condition must be on the RIGHT side of the &&, to guarantee that the expressions for the bounds
-                // and argument are evaluated as designed. (See big comment above on expressions with side effects and temp variables.)
-                context.andand(it, additionalNotEmptyCondition)
-            } else {
-                it
-            }
-        }
+        )
         return if (additionalStatements.isEmpty()) {
             contains
         } else {

@@ -277,7 +277,6 @@ internal class StepHandler(
                 step = finalStepExpression,
                 isReversed = nestedInfo.isReversed,
                 additionalStatements = additionalStatements,
-                additionalNotEmptyCondition = nestedInfo.additionalNotEmptyCondition,
                 direction = nestedInfo.direction
             )
         }

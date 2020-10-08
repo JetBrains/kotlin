@@ -70,8 +70,7 @@ internal sealed class NumericHeaderInfo(
     val isLastInclusive: Boolean,
     val canCacheLast: Boolean,
     val isReversed: Boolean,
-    val direction: ProgressionDirection,
-    val additionalNotEmptyCondition: IrExpression?
+    val direction: ProgressionDirection
 ) : HeaderInfo()
 
 /** Information about a for-loop over a progression. */
@@ -84,14 +83,12 @@ internal class ProgressionHeaderInfo(
     isReversed: Boolean = false,
     canOverflow: Boolean? = null,
     direction: ProgressionDirection,
-    additionalNotEmptyCondition: IrExpression? = null,
     val additionalStatements: List<IrStatement> = listOf()
 ) : NumericHeaderInfo(
     progressionType, first, last, step, isLastInclusive,
     canCacheLast = true,
     isReversed = isReversed,
-    direction = direction,
-    additionalNotEmptyCondition = additionalNotEmptyCondition
+    direction = direction
 ) {
 
     val canOverflow: Boolean by lazy {
@@ -162,7 +159,6 @@ internal class ProgressionHeaderInfo(
             step = step.negate(),
             isReversed = !isReversed,
             direction = direction.asReversed(),
-            additionalNotEmptyCondition = additionalNotEmptyCondition,
             additionalStatements = additionalStatements
         )
     } else {
@@ -189,8 +185,7 @@ internal class IndexedGetHeaderInfo(
     isLastInclusive = false,
     canCacheLast = canCacheLast,
     isReversed = false,
-    direction = ProgressionDirection.INCREASING,
-    additionalNotEmptyCondition = null
+    direction = ProgressionDirection.INCREASING
 ) {
     // Technically one can easily iterate over an array in reverse by swapping first/last and
     // negating the step. However, Array.reversed() and Array.reversedArray() return a collection
