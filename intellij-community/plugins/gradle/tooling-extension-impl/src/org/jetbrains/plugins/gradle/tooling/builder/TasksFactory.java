@@ -48,10 +48,19 @@ public class TasksFactory {
       collectTasks(rootProject);
     }
 
-    Set<Task> tasks = new LinkedHashSet<Task>(allTasks.get(project));
+    Set<Task> tasks = new LinkedHashSet<Task>(getTasksNullsafe(project));
     for (Project subProject : project.getSubprojects()) {
-      tasks.addAll(allTasks.get(subProject));
+      tasks.addAll(getTasksNullsafe(subProject));
     }
     return tasks;
+  }
+
+  private Set<Task> getTasksNullsafe(Project project) {
+    Set<Task> tasks = allTasks.get(project);
+    if (tasks != null) {
+      return tasks;
+    } else {
+      return Collections.emptySet();
+    }
   }
 }
