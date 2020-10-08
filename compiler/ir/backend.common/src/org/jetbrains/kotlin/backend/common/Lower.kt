@@ -120,7 +120,11 @@ fun DeclarationContainerLoweringPass.runOnFilePostfix(irFile: IrFile) {
     this.lower(irFile as IrDeclarationContainer)
 }
 
-fun BodyLoweringPass.runOnFilePostfix(irFile: IrFile, withLocalDeclarations: Boolean = false, allowDeclarationModification: Boolean = false) {
+fun BodyLoweringPass.runOnFilePostfix(
+    irFile: IrFile,
+    withLocalDeclarations: Boolean = false,
+    allowDeclarationModification: Boolean = false
+) {
     ArrayList(irFile.declarations).forEach {
         it.accept(object : IrElementVisitor<Unit, IrDeclaration?> {
             override fun visitElement(element: IrElement, data: IrDeclaration?) {
@@ -173,7 +177,7 @@ fun FunctionLoweringPass.runOnFilePostfix(irFile: IrFile) {
     })
 }
 
-interface DeclarationTransformer: FileLoweringPass {
+interface DeclarationTransformer : FileLoweringPass {
     fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>?
 
     override fun lower(irFile: IrFile) {
@@ -198,78 +202,83 @@ fun DeclarationTransformer.toFileLoweringPass(): FileLoweringPass {
 fun DeclarationTransformer.runPostfix(withLocalDeclarations: Boolean = false): DeclarationTransformer {
     return object : DeclarationTransformer {
         override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-            declaration.acceptVoid(object : IrElementVisitorVoid {
-                override fun visitElement(element: IrElement) {
-                    element.acceptChildrenVoid(this)
-                }
-
-                override fun visitBody(body: IrBody) {
-                    if (withLocalDeclarations) {
-                        super.visitBody(body)
-                    }
-                    // else stop
-                }
-
-                override fun visitFunction(declaration: IrFunction) {
-                    declaration.acceptChildrenVoid(this)
-
-                    for (v in declaration.valueParameters) {
-                        val result = this@runPostfix.transformFlatRestricted(v)
-                        if (result != null) error("Don't know how to add value parameters")
-                    }
-                }
-
-                override fun visitProperty(declaration: IrProperty) {
-                    // TODO This is a hack to allow lowering a getter separately from the enclosing property
-
-                    val visitor = this
-
-                    fun IrDeclaration.transform() {
-
-                        acceptVoid(visitor)
-
-                        val result = this@runPostfix.transformFlatRestricted(this)
-                        if (result != null) {
-                            (parent as? IrDeclarationContainer)?.let {
-                                var index = it.declarations.indexOf(this)
-                                if (index == -1) {
-                                    index = it.declarations.indexOf(declaration)
-                                } else {
-                                    it.declarations.removeAt(index)
-                                    --index
-                                }
-
-                                it.declarations.addAll(index + 1, result)
-                            }
-                        }
-                    }
-
-                    declaration.backingField?.transform()
-                    declaration.getter?.transform()
-                    declaration.setter?.transform()
-                }
-
-                override fun visitClass(declaration: IrClass) {
-                    declaration.thisReceiver?.accept(this, null)
-                    declaration.typeParameters.forEach { it.accept(this, null) }
-                    ArrayList(declaration.declarations).forEach { it.accept(this, null) }
-
-                    declaration.declarations.transformFlat(this@runPostfix::transformFlatRestricted)
-                }
-
-                override fun visitScript(declaration: IrScript) {
-                    ArrayList(declaration.declarations).forEach { it.accept(this, null) }
-                    declaration.declarations.transformFlat(this@runPostfix::transformFlatRestricted)
-
-                    if (withLocalDeclarations) {
-                        declaration.statements.forEach { it.accept(this, null) }
-                    }
-
-                    declaration.thisReceiver.accept(this, null)
-                }
-            })
+            declaration.acceptVoid(PostfixDeclarationTransformer(withLocalDeclarations, this@runPostfix))
 
             return this@runPostfix.transformFlatRestricted(declaration)
         }
+    }
+}
+
+private class PostfixDeclarationTransformer(
+    private val withLocalDeclarations: Boolean,
+    private val transformer: DeclarationTransformer
+) : IrElementVisitorVoid {
+    override fun visitElement(element: IrElement) {
+        element.acceptChildrenVoid(this)
+    }
+
+    override fun visitBody(body: IrBody) {
+        if (withLocalDeclarations) {
+            super.visitBody(body)
+        }
+        // else stop
+    }
+
+    override fun visitFunction(declaration: IrFunction) {
+        declaration.acceptChildrenVoid(this)
+
+        for (v in declaration.valueParameters) {
+            val result = transformer.transformFlatRestricted(v)
+            if (result != null) error("Don't know how to add value parameters")
+        }
+    }
+
+    override fun visitProperty(declaration: IrProperty) {
+        // TODO This is a hack to allow lowering a getter separately from the enclosing property
+
+        val visitor = this
+
+        fun IrDeclaration.transform() {
+
+            acceptVoid(visitor)
+
+            val result = transformer.transformFlatRestricted(this)
+            if (result != null) {
+                (parent as? IrDeclarationContainer)?.let {
+                    var index = it.declarations.indexOf(this)
+                    if (index == -1) {
+                        index = it.declarations.indexOf(declaration)
+                    } else {
+                        it.declarations.removeAt(index)
+                        --index
+                    }
+
+                    it.declarations.addAll(index + 1, result)
+                }
+            }
+        }
+
+        declaration.backingField?.transform()
+        declaration.getter?.transform()
+        declaration.setter?.transform()
+    }
+
+    override fun visitClass(declaration: IrClass) {
+        declaration.thisReceiver?.accept(this, null)
+        declaration.typeParameters.forEach { it.accept(this, null) }
+        ArrayList(declaration.declarations).forEach { it.accept(this, null) }
+
+        declaration.declarations.transformFlat(transformer::transformFlatRestricted)
+    }
+
+    override fun visitScript(declaration: IrScript) {
+        ArrayList(declaration.declarations).forEach { it.accept(this, null) }
+        declaration.declarations.transformFlat(transformer::transformFlatRestricted)
+
+        if (withLocalDeclarations) {
+            declaration.statements.forEach { it.accept(this, null) }
+        }
+
+        declaration.thisReceiver.accept(this, null)
     }
 }
