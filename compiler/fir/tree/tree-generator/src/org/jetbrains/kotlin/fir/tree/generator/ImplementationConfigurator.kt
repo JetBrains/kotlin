@@ -140,6 +140,19 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             publicImplementation()
         }
 
+        impl(expression, "FirLazyExpression") {
+            val error = """error("FirLazyExpression should be calculated before accessing")"""
+            default("typeRef") {
+                value = error
+                withGetter = true
+            }
+            default("annotations") {
+                value = error
+                withGetter = true
+            }
+            publicImplementation()
+        }
+
         impl(functionCall) {
             kind = OpenClass
         }
