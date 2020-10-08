@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -162,5 +163,16 @@ class FirTypeResolveTransformer(
 
     override fun transformBlock(block: FirBlock, data: Nothing?): CompositeTransformResult<FirStatement> {
         return block.compose()
+    }
+
+    override fun transformDelegatedConstructorCall(
+        delegatedConstructorCall: FirDelegatedConstructorCall,
+        data: Nothing?
+    ): CompositeTransformResult<FirStatement> {
+        delegatedConstructorCall.replaceConstructedTypeRef(
+            delegatedConstructorCall.constructedTypeRef.transform<FirTypeRef, Nothing?>(this, data).single
+        )
+        delegatedConstructorCall.transformCalleeReference(this, data)
+        return delegatedConstructorCall.compose()
     }
 }
