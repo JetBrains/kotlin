@@ -8,8 +8,8 @@ fun f(a: Char): Int {
     return n
 }
 
-// For "until" progressions in JVM IR, there is a check that the range is not empty: upper bound != MIN_VALUE.
-// When the upper bound == const MIN_VALUE, the backend can eliminate the entire loop as dead code.
+// JVM non-IR uses while.
+// JVM IR uses if + do-while.
 
 // 0 iterator
 // 0 getStart
@@ -17,10 +17,9 @@ fun f(a: Char): Int {
 // 0 getFirst
 // 0 getLast
 // 0 getStep
-// 0 LINENUMBER 7
 
 // JVM_TEMPLATES
 // 1 IF
 
 // JVM_IR_TEMPLATES
-// 0 IF
+// 2 IF

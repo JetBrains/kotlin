@@ -124,6 +124,7 @@ private class Transformer(
 
         val lower: IrExpression
         val upper: IrExpression
+        val isUpperInclusive: Boolean
         val shouldUpperComeFirst: Boolean
         val useCompareTo: Boolean
         val isNumericRange: Boolean
@@ -178,12 +179,14 @@ private class Transformer(
 
                 // `compareTo` must be used for UInt/ULong; they don't have intrinsic comparison operators.
                 useCompareTo = headerInfo.progressionType is UnsignedProgressionType
+                isUpperInclusive = headerInfo.isLastInclusive
                 isNumericRange = true
                 additionalNotEmptyCondition = headerInfo.additionalNotEmptyCondition
             }
             is FloatingPointRangeHeaderInfo -> {
                 lower = headerInfo.start
                 upper = headerInfo.endInclusive
+                isUpperInclusive = true
                 shouldUpperComeFirst = false
                 useCompareTo = false
                 isNumericRange = true
@@ -192,6 +195,7 @@ private class Transformer(
             is ComparableRangeInfo -> {
                 lower = headerInfo.start
                 upper = headerInfo.endInclusive
+                isUpperInclusive = true
                 shouldUpperComeFirst = false
                 useCompareTo = true
                 isNumericRange = false
@@ -289,7 +293,12 @@ private class Transformer(
             upperExpression = upperExpression.castIfNecessary(comparisonClass)
         }
 
-        val lessOrEqualFun = builtIns.lessOrEqualFunByOperandType.getValue(if (useCompareTo) builtIns.intClass else comparisonClass.symbol)
+        val lowerCompFun = builtIns.lessOrEqualFunByOperandType.getValue(if (useCompareTo) builtIns.intClass else comparisonClass.symbol)
+        val upperCompFun = if (isUpperInclusive) {
+            builtIns.lessOrEqualFunByOperandType
+        } else {
+            builtIns.lessFunByOperandType
+        }.getValue(if (useCompareTo) builtIns.intClass else comparisonClass.symbol)
         val compareToFun = comparisonClass.functions.singleOrNull {
             it.name == OperatorNameConventions.COMPARE_TO &&
                     it.dispatchReceiverParameter != null && it.extensionReceiverParameter == null &&
@@ -301,7 +310,7 @@ private class Transformer(
         // for compareTo() may have side effects dependent on which expressions are the receiver and argument
         // (see evaluationOrderForComparableRange.kt test).
         val lowerClause = if (useCompareTo) {
-            irCall(lessOrEqualFun).apply {
+            irCall(lowerCompFun).apply {
                 putValueArgument(0, irInt(0))
                 putValueArgument(1, irCall(compareToFun).apply {
                     dispatchReceiver = argExpression
@@ -309,13 +318,13 @@ private class Transformer(
                 })
             }
         } else {
-            irCall(lessOrEqualFun).apply {
+            irCall(lowerCompFun).apply {
                 putValueArgument(0, lowerExpression)
                 putValueArgument(1, argExpression)
             }
         }
         val upperClause = if (useCompareTo) {
-            irCall(lessOrEqualFun).apply {
+            irCall(upperCompFun).apply {
                 putValueArgument(0, irCall(compareToFun).apply {
                     dispatchReceiver = argExpression.deepCopyWithSymbols()
                     putValueArgument(0, upperExpression)
@@ -323,7 +332,7 @@ private class Transformer(
                 putValueArgument(1, irInt(0))
             }
         } else {
-            irCall(lessOrEqualFun).apply {
+            irCall(upperCompFun).apply {
                 putValueArgument(0, argExpression.deepCopyWithSymbols())
                 putValueArgument(1, upperExpression)
             }
