@@ -312,4 +312,66 @@ class LinkableContentTest : AbstractCoreTest() {
         }
 
     }
+
+    @Test
+    fun `Include module with description parted in two files`() {
+
+        val testDataDir = getTestDataDir("multiplatform/basicMultiplatformTest").toAbsolutePath()
+        val includesDir = getTestDataDir("linkable/includes").toAbsolutePath()
+
+        val configuration = dokkaConfiguration {
+            moduleName = "example"
+            sourceSets {
+                val common = sourceSet {
+                    name = "common"
+                    displayName = "common"
+                    analysisPlatform = "common"
+                    sourceRoots = listOf(Paths.get("$testDataDir/commonMain/kotlin").toString())
+                }
+                val jvmAndJsSecondCommonMain = sourceSet {
+                    name = "jvmAndJsSecondCommonMain"
+                    displayName = "jvmAndJsSecondCommonMain"
+                    analysisPlatform = "common"
+                    dependentSourceSets = setOf(common.value.sourceSetID)
+                    sourceRoots = listOf(Paths.get("$testDataDir/jvmAndJsSecondCommonMain/kotlin").toString())
+                }
+                val js = sourceSet {
+                    name = "js"
+                    displayName = "js"
+                    analysisPlatform = "js"
+                    dependentSourceSets = setOf(common.value.sourceSetID, jvmAndJsSecondCommonMain.value.sourceSetID)
+                    sourceRoots = listOf(Paths.get("$testDataDir/jsMain/kotlin").toString())
+                    includes = listOf(Paths.get("$includesDir/include2.md").toString())
+                }
+                val jvm = sourceSet {
+                    name = "jvm"
+                    displayName = "jvm"
+                    analysisPlatform = "jvm"
+                    dependentSourceSets = setOf(common.value.sourceSetID, jvmAndJsSecondCommonMain.value.sourceSetID)
+                    sourceRoots = listOf(Paths.get("$testDataDir/jvmMain/kotlin").toString())
+                    includes = listOf(
+                        Paths.get("$includesDir/include1.md").toString(),
+                        Paths.get("$includesDir/include11.md").toString()
+                    )
+                }
+            }
+        }
+
+        testFromData(configuration) {
+            documentablesMergingStage = {
+                it.documentation.entries.single {
+                    it.key.displayName == "jvm"
+                }.value.run {
+                    Assertions.assertNotNull(dfs {
+                        (it as? Text)?.body == "This is second JVM documentation for module example"
+                    })
+
+                    Assertions.assertNotNull(dfs {
+                        (it as? Text)?.body == "This is JVM documentation for module example"
+                    })
+                }
+            }
+        }
+
+    }
 }
