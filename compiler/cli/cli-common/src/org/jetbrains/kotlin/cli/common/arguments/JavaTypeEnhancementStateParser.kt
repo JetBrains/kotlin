@@ -25,7 +25,7 @@ class JavaTypeEnhancementStateParser(private val collector: MessageCollector) {
     fun parse(
         jsr305Args: Array<String>?,
         supportCompatqualCheckerFrameworkAnnotations: String?,
-        codeAnalysisState: String?
+        jspecifyState: String?
     ): JavaTypeEnhancementState {
         val jsr305State = parseJsr305State(jsr305Args)
 
@@ -42,29 +42,29 @@ class JavaTypeEnhancementStateParser(private val collector: MessageCollector) {
             }
         }
 
-        val codeAnalysisReportLevel = parseCodeAnalysisReportLevel(codeAnalysisState)
+        val jspecifyReportLevel = parseJspecifyReportLevel(jspecifyState)
 
         val state = JavaTypeEnhancementState(
             jsr305State.global ?: ReportLevel.WARN, jsr305State.migration, jsr305State.usedDefined,
             enableCompatqualCheckerFrameworkAnnotations =
             enableCompatqualCheckerFrameworkAnnotations
                 ?: JavaTypeEnhancementState.COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS_SUPPORT_DEFAULT_VALUE,
-            jspecifyReportLevel = codeAnalysisReportLevel
+            jspecifyReportLevel = jspecifyReportLevel
         )
         return if (state == JavaTypeEnhancementState.DISABLED_JSR_305) JavaTypeEnhancementState.DISABLED_JSR_305 else state
     }
 
 
-    private fun parseCodeAnalysisReportLevel(codeAnalysisState: String?): ReportLevel {
-        if (codeAnalysisState == null) return JavaTypeEnhancementState.DEFAULT_REPORT_LEVEL_FOR_CODE_ANALYSIS
-        val reportLevel = ReportLevel.findByDescription(codeAnalysisState)
+    private fun parseJspecifyReportLevel(jspecifyState: String?): ReportLevel {
+        if (jspecifyState == null) return JavaTypeEnhancementState.DEFAULT_REPORT_LEVEL_FOR_JSPECIFY
+        val reportLevel = ReportLevel.findByDescription(jspecifyState)
 
         if (reportLevel == null) {
             collector.report(
                 CompilerMessageSeverity.ERROR,
-                "Unrecognized -Xcodeanalysis-annotations option: $codeAnalysisState. Possible values are 'disable'/'warn'/'strict'"
+                "Unrecognized -Xjspecify-annotations option: $jspecifyState. Possible values are 'disable'/'warn'/'strict'"
             )
-            return JavaTypeEnhancementState.DEFAULT_REPORT_LEVEL_FOR_CODE_ANALYSIS
+            return JavaTypeEnhancementState.DEFAULT_REPORT_LEVEL_FOR_JSPECIFY
         }
 
         return reportLevel

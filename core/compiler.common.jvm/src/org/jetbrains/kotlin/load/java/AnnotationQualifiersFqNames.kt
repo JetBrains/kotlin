@@ -31,7 +31,7 @@ val DEFAULT_JSPECIFY_APPLICABILITY = listOf(
     AnnotationQualifierApplicabilityType.TYPE_USE
 )
 
-val CODE_ANALYSIS_DEFAULT_ANNOTATIONS = mapOf(
+val JSPECIFY_DEFAULT_ANNOTATIONS = mapOf(
     JSPECIFY_DEFAULT_NULLABLE to JavaDefaultQualifiers(
         NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE),
         DEFAULT_JSPECIFY_APPLICABILITY
@@ -58,6 +58,6 @@ val BUILT_IN_TYPE_QUALIFIER_DEFAULT_ANNOTATIONS = mapOf(
                 NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL),
                 listOf(AnnotationQualifierApplicabilityType.VALUE_PARAMETER)
             )
-) + CODE_ANALYSIS_DEFAULT_ANNOTATIONS
+) + JSPECIFY_DEFAULT_ANNOTATIONS
 
 val BUILT_IN_TYPE_QUALIFIER_FQ_NAMES = setOf(JAVAX_NONNULL_ANNOTATION, JAVAX_CHECKFORNULL_ANNOTATION)

@@ -28,7 +28,7 @@ public class C {
 
 import org.jspecify.annotations.*;
 
-@DefaultUnknownNullness
+@DefaultNullnessUnknown
 public class D {
     public void bar(A<String, String, String> a) {}
 }

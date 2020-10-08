@@ -40,11 +40,11 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractForeignJava8AnnotationsNoAnnotationInClasspathTest> {
-                model("foreignAnnotationsJava8/tests")
+                model("foreignAnnotationsJava8/tests", excludeDirs = listOf("jspecify"))
             }
 
             testClass<AbstractForeignJava8AnnotationsNoAnnotationInClasspathWithPsiClassReadingTest> {
-                model("foreignAnnotationsJava8/tests")
+                model("foreignAnnotationsJava8/tests", excludeDirs = listOf("jspecify"))
             }
 
             testClass<AbstractLoadJava8Test> {

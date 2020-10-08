@@ -105,6 +105,19 @@ public class ForeignJava8AnnotationsTestGenerated extends AbstractForeignJava8An
             runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/wildcardsWithDefault.kt");
         }
 
+        @TestMetadata("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Kotlin extends AbstractForeignJava8AnnotationsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInKotlin() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+        }
+
         @TestMetadata("compiler/testData/foreignAnnotationsJava8/tests/jspecify/warnings")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

@@ -12,9 +12,6 @@ where advanced options include:
                              -Xassertions=legacy:         calculate condition on each call, check depends on jvm assertion settings in the kotlin package;
                              default: legacy
   -Xbuild-file=<path>        Path to the .xml build file to compile
-  -Xcodeanalysis-annotations=ignore|strict|warn
-                             Specify behavior for Codeanalysis annotations.
-                             Default value is 'warn'
   -Xcompile-java             Reuse javac analysis and compile Java source files
   -Xnormalize-constructor-calls={disable|enable}
                              Normalize constructor calls (disable: don't normalize; enable: normalize),
@@ -32,6 +29,9 @@ where advanced options include:
   -Xjava-package-prefix      Package prefix for Java files
   -Xjava-source-roots=<path> Paths to directories with Java source files
   -Xjavac-arguments=<option[,]> Java compiler arguments
+  -Xjspecify-annotations=ignore|strict|warn
+                             Specify behavior for jspecify annotations.
+                             Default value is 'warn'
   -Xjsr305={ignore/strict/warn}|under-migration:{ignore/strict/warn}|@<fq.name>:{ignore/strict/warn}
                              Specify behavior for JSR-305 nullability annotations:
                              -Xjsr305={ignore/strict/warn}                   globally (all non-@UnderMigration annotations)

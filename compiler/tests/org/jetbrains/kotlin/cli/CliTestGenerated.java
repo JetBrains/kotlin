@@ -115,26 +115,6 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/classpath.args");
         }
 
-        @TestMetadata("codeanalysisDefault.args")
-        public void testCodeanalysisDefault() throws Exception {
-            runTest("compiler/testData/cli/jvm/codeanalysisDefault.args");
-        }
-
-        @TestMetadata("codeanalysisIgnore.args")
-        public void testCodeanalysisIgnore() throws Exception {
-            runTest("compiler/testData/cli/jvm/codeanalysisIgnore.args");
-        }
-
-        @TestMetadata("codeanalysisStrict.args")
-        public void testCodeanalysisStrict() throws Exception {
-            runTest("compiler/testData/cli/jvm/codeanalysisStrict.args");
-        }
-
-        @TestMetadata("codeanalysisWarn.args")
-        public void testCodeanalysisWarn() throws Exception {
-            runTest("compiler/testData/cli/jvm/codeanalysisWarn.args");
-        }
-
         @TestMetadata("compatqualDefault.args")
         public void testCompatqualDefault() throws Exception {
             runTest("compiler/testData/cli/jvm/compatqualDefault.args");
@@ -443,6 +423,26 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("jdkPathDoesNotExist.args")
         public void testJdkPathDoesNotExist() throws Exception {
             runTest("compiler/testData/cli/jvm/jdkPathDoesNotExist.args");
+        }
+
+        @TestMetadata("jspecifyDefault.args")
+        public void testJspecifyDefault() throws Exception {
+            runTest("compiler/testData/cli/jvm/jspecifyDefault.args");
+        }
+
+        @TestMetadata("jspecifyIgnore.args")
+        public void testJspecifyIgnore() throws Exception {
+            runTest("compiler/testData/cli/jvm/jspecifyIgnore.args");
+        }
+
+        @TestMetadata("jspecifyStrict.args")
+        public void testJspecifyStrict() throws Exception {
+            runTest("compiler/testData/cli/jvm/jspecifyStrict.args");
+        }
+
+        @TestMetadata("jspecifyWarn.args")
+        public void testJspecifyWarn() throws Exception {
+            runTest("compiler/testData/cli/jvm/jspecifyWarn.args");
         }
 
         @TestMetadata("jsr305AllIgnore.args")

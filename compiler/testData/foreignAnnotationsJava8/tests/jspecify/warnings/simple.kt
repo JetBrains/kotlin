@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
-// CODE_ANALYSIS_STATE warn
+// JSPECIFY_STATE warn
 // FILE: A.java
 
 import org.jspecify.annotations.*;
