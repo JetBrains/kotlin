@@ -10,7 +10,6 @@ import com.intellij.ide.highlighter.custom.SyntaxTable;
 import com.intellij.injected.editor.EditorWindow;
 import com.intellij.lang.Commenter;
 import com.intellij.lang.Language;
-import com.intellij.lang.LanguageCommenters;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
@@ -170,7 +169,7 @@ public final class CommentByLineCommentHandler extends MultiCaretCodeInsightActi
 
       int endOffset = CharArrayUtil.shiftBackward(chars, document.getLineEndOffset(endLine), " \t\n");
 
-      block.blockSuitableCommenter = getBlockSuitableCommenter(psiFile, offset, endOffset);
+      block.blockSuitableCommenter = getBlockSuitableCommenter(psiFile, block.editor, offset, endOffset);
       Language lineStartLanguage = getLineStartLanguage(block.editor, psiFile, startLine);
       CommonCodeStyleSettings languageSettings = CodeStyle.getLanguageSettings(psiFile, lineStartLanguage);
       block.commentWithIndent = !languageSettings.LINE_COMMENT_AT_FIRST_COLUMN;
@@ -283,7 +282,8 @@ public final class CommentByLineCommentHandler extends MultiCaretCodeInsightActi
                                });
   }
 
-  private static Commenter getBlockSuitableCommenter(final PsiFile file, int offset, int endOffset) {
+  private static Commenter getBlockSuitableCommenter(final PsiFile file, Editor editor,
+                                                     int offset, int endOffset) {
     final Language languageSuitableForCompleteFragment;
     if (offset >= endOffset) {  // we are on empty line
       PsiElement element = file.findElementAt(offset);
@@ -294,9 +294,10 @@ public final class CommentByLineCommentHandler extends MultiCaretCodeInsightActi
       languageSuitableForCompleteFragment = PsiUtilBase.reallyEvaluateLanguageInRange(offset, endOffset, file);
     }
 
+    Commenter blockSuitableCommenter = languageSuitableForCompleteFragment == null
+                                       ? CommentByBlockCommentHandler.getCommenter(file, editor, file.getLanguage(), file.getLanguage())
+                                       : null;
 
-    Commenter blockSuitableCommenter =
-      languageSuitableForCompleteFragment == null ? LanguageCommenters.INSTANCE.forLanguage(file.getLanguage()) : null;
     if (blockSuitableCommenter == null && file.getFileType() instanceof CustomSyntaxTableFileType) {
       blockSuitableCommenter = new Commenter() {
         final SyntaxTable mySyntaxTable = ((CustomSyntaxTableFileType)file.getFileType()).getSyntaxTable();

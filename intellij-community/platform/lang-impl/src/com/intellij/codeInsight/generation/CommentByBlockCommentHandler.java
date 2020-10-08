@@ -123,7 +123,7 @@ public final class CommentByBlockCommentHandler extends MultiCaretCodeInsightAct
         int selectionEnd = myCaret.getSelectionEnd();
         if (commenter instanceof IndentedCommenter) {
           final Boolean value = ((IndentedCommenter)commenter).forceIndentedBlockComment();
-          if (value == Boolean.TRUE) {
+          if (value == Boolean.FALSE) {
             selectionStart = myDocument.getLineStartOffset(myDocument.getLineNumber(selectionStart));
             selectionEnd = myDocument.getLineEndOffset(myDocument.getLineNumber(selectionEnd));
           }
@@ -135,7 +135,7 @@ public final class CommentByBlockCommentHandler extends MultiCaretCodeInsightAct
         int caretOffset = myCaret.getOffset();
         if (commenter instanceof IndentedCommenter) {
           final Boolean value = ((IndentedCommenter)commenter).forceIndentedBlockComment();
-          if (value == Boolean.TRUE) {
+          if (value == Boolean.FALSE) {
             final int lineNumber = myDocument.getLineNumber(caretOffset);
             final int start = myDocument.getLineStartOffset(lineNumber);
             final int end = myDocument.getLineEndOffset(lineNumber);
@@ -403,7 +403,8 @@ public final class CommentByBlockCommentHandler extends MultiCaretCodeInsightAct
       if (endOffset == myDocument.getTextLength() || endOffset > 0 && chars.charAt(endOffset - 1) == '\n') {
         CommonCodeStyleSettings settings = CodeStyle.getLanguageSettings(myFile);
         String space;
-        if (!settings.BLOCK_COMMENT_AT_FIRST_COLUMN) {
+        Boolean forced = commenter instanceof IndentedCommenter ? ((IndentedCommenter)commenter).forceIndentedBlockComment() : null;
+        if ((forced == null && !settings.BLOCK_COMMENT_AT_FIRST_COLUMN) || forced == Boolean.TRUE) {
           int line1 = myEditor.offsetToLogicalPosition(startOffset).line;
           int line2 = myEditor.offsetToLogicalPosition(endOffset - 1).line;
           IndentData minIndent = CommentUtil.getMinLineIndent(myDocument, line1, line2, myFile);
