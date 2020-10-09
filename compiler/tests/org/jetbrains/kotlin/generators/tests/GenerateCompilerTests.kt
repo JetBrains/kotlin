@@ -581,6 +581,10 @@ fun main(args: Array<String>) {
                 model("rawBuilder", testMethod = "doRawFirTest")
             }
 
+            testClass<AbstractRawFirBuilderLazyBodiesTestCase> {
+                model("rawBuilder", testMethod = "doRawFirTest")
+            }
+
             testClass<AbstractRawFirBuilderSourceElementMappingTestCase> {
                 model("sourceElementMapping", testMethod = "doRawFirTest")
             }

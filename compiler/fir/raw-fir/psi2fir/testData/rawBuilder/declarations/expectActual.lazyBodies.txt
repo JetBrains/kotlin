@@ -1,0 +1,19 @@
+FILE: expectActual.kt
+    public? final? expect class MyClass : R|kotlin/Any| {
+        public? expect constructor(): R|MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public? final? expect fun foo(): String
+    public? final? expect val x: Int
+        public? get(): Int
+    public? final? actual class MyClass : R|kotlin/Any| {
+        public? constructor(): R|MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public? final? actual fun foo(): <implicit> { LAZY_BLOCK }
+    public? final? actual val x: <implicit> = IntegerLiteral(42)
+        public? get(): <implicit>

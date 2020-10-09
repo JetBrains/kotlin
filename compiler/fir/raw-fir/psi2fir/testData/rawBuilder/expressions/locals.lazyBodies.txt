@@ -1,0 +1,2 @@
+FILE: locals.kt
+    public? final? fun withLocals(p: Int): Int { LAZY_BLOCK }

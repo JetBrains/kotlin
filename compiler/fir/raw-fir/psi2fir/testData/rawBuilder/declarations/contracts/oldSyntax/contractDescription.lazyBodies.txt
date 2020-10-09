@@ -1,0 +1,11 @@
+FILE: contractDescription.kt
+    public? final? fun test_1(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? fun test_2(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? var test_3: Int = IntegerLiteral(1)
+        public? get(): Int { LAZY_BLOCK }
+        public? set(value: Int): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? fun test_4(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? fun test_5(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? fun test_6(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? fun test_7(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? fun test_8(): R|kotlin/Unit| { LAZY_BLOCK }

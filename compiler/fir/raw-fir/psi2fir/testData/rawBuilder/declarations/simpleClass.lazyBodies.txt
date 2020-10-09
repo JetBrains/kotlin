@@ -1,0 +1,33 @@
+FILE: simpleClass.kt
+    public? final? interface SomeInterface : R|kotlin/Any| {
+        public? final? fun foo(x: Int, y: String): String
+
+        public? final? val bar: Boolean
+            public? get(): Boolean
+
+    }
+    public? final? class SomeClass : SomeInterface {
+        public? constructor(): R|SomeClass| {
+            super<<implicit>>()
+        }
+
+        private final? val baz: <implicit> = IntegerLiteral(42)
+            private get(): <implicit>
+
+        public? open? override fun foo(x: Int, y: String): String { LAZY_BLOCK }
+
+        public? open? override var bar: Boolean
+            public? get(): Boolean { LAZY_BLOCK }
+            public? set(value: Boolean): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? lateinit var fau: Double
+            public? get(): Double
+            public? set(value: Double): R|kotlin/Unit|
+
+    }
+    public? final? inline class InlineClass : R|kotlin/Any| {
+        public? constructor(): R|InlineClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

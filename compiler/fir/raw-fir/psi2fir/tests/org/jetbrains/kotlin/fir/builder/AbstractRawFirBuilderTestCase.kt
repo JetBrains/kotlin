@@ -74,9 +74,9 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         }
     }
 
-    protected fun KtFile.toFirFile(stubMode: Boolean): FirFile {
+    protected fun KtFile.toFirFile(stubMode: Boolean, bodyStubMode: Boolean = false): FirFile {
         val session = FirSessionFactory.createEmptySession()
-        return RawFirBuilder(session, StubFirScopeProvider, stubMode).buildFirFile(this)
+        return RawFirBuilder(session, StubFirScopeProvider, stubMode, bodyStubMode).buildFirFile(this)
     }
 
     private fun FirElement.traverseChildren(result: MutableSet<FirElement> = hashSetOf()): MutableSet<FirElement> {

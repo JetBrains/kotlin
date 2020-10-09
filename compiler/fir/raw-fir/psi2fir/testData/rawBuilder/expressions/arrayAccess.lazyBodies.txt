@@ -1,0 +1,14 @@
+FILE: arrayAccess.kt
+    public? final? val p: <implicit> = IntegerLiteral(0)
+        public? get(): <implicit>
+    public? final? fun foo(): <implicit> { LAZY_BLOCK }
+    public? final? class Wrapper : R|kotlin/Any| {
+        public? constructor(v: IntArray): R|Wrapper| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? val v: IntArray = R|<local>/v|
+            public? get(): IntArray
+
+    }
+    public? final? fun test(a: IntArray, w: Wrapper): <implicit> { LAZY_BLOCK }
