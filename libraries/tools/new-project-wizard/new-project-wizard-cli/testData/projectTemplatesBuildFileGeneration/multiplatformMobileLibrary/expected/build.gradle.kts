@@ -56,12 +56,5 @@ android {
     defaultConfig {
         minSdkVersion(24)
         targetSdkVersion(29)
-        versionCode = 1
-        versionName = "1.0"
-    }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-        }
     }
 }

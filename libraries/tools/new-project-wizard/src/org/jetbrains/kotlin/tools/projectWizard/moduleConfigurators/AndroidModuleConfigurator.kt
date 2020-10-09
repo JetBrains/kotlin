@@ -70,13 +70,6 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
         +GradleOnlyPluginByNameIR(reader.createAndroidPlugin(module).pluginName, priority = 1)
 
         +GradleOnlyPluginByNameIR("kotlin-android-extensions", priority = 3)
-        +AndroidConfigIR(
-            javaPackage = when (reader.createAndroidPlugin(module)) {
-                AndroidGradlePlugin.APPLICATION -> module.javaPackage(configurationData.pomIr)
-                AndroidGradlePlugin.LIBRARY -> null
-            },
-            newManifestPath = getNewAndroidManifestPath(module)
-        )
         +createRepositories(configurationData.kotlinVersion).map(::RepositoryIR)
     }
 
@@ -203,6 +196,15 @@ object AndroidTargetConfigurator : TargetConfigurator,
         buildList {
             +super<AndroidModuleConfigurator>.createBuildFileIRs(reader, configurationData, module)
             +super<ModuleConfiguratorWithTests>.createBuildFileIRs(reader, configurationData, module)
+            +AndroidConfigIR(
+                javaPackage = when (reader.createAndroidPlugin(module)) {
+                    AndroidGradlePlugin.APPLICATION -> module.javaPackage(configurationData.pomIr)
+                    AndroidGradlePlugin.LIBRARY -> null
+                },
+                newManifestPath = getNewAndroidManifestPath(module),
+                printVersionCode = false,
+                printBuildTypes = false,
+            )
         }
 
     val androidPlugin by enumSetting<AndroidGradlePlugin>(
