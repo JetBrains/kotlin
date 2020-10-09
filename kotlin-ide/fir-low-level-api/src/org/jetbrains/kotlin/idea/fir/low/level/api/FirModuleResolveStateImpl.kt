@@ -57,6 +57,11 @@ internal class FirModuleResolveStateImpl(
     override fun collectDiagnosticsForFile(ktFile: KtFile): Collection<Diagnostic> =
         diagnosticsCollector.collectDiagnosticsForFile(ktFile)
 
+    override fun getBuiltFirFileOrNull(ktFile: KtFile): FirFile? {
+        val cache = sessionProvider.getModuleCache(ktFile.getModuleInfo() as ModuleSourceInfo)
+        return firFileBuilder.getBuiltFirFileOrNull(ktFile, cache)
+    }
+
     override fun recordPsiToFirMappingsForCompletionFrom(fir: FirDeclaration, firFile: FirFile, ktFile: KtFile) {
         error("Should be called only from FirModuleResolveStateForCompletion")
     }
