@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.lower.inline.DefaultInlineFunctionRes
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesExtractionFromInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
-import org.jetbrains.kotlin.backend.common.runPostfix
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -50,7 +49,7 @@ internal class NativeInlineFunctionResolver(override val context: Context) : Def
     }
 
     private fun DeclarationTransformer.lowerWithLocalDeclarations(function: IrFunction) {
-        if (runPostfix(true).transformFlat(function) != null)
+        if (transformFlat(function) != null)
             error("Unexpected transformation of function ${function.dump()}")
     }
 }

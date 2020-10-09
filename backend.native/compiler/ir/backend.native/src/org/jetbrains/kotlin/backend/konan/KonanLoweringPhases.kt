@@ -92,10 +92,8 @@ internal val arrayConstructorPhase = makeKonanModuleLoweringPhase(
 
 internal val lateinitPhase = makeKonanModuleOpPhase(
         { context, irModule ->
-            NullableFieldsForLateinitCreationLowering(context)
-                    .runPostfix(true).toFileLoweringPass().lower(irModule)
-            NullableFieldsDeclarationLowering(context)
-                    .runPostfix(true).toFileLoweringPass().lower(irModule)
+            NullableFieldsForLateinitCreationLowering(context).lower(irModule)
+            NullableFieldsDeclarationLowering(context).lower(irModule)
             LateinitUsageLowering(context).lower(irModule)
         },
         name = "Lateinit",
