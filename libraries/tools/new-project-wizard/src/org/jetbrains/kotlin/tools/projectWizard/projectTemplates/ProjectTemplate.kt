@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.templates.*
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JvmSinglePlatformModuleConfigurator
+import org.jetbrains.kotlin.tools.projectWizard.templates.compose.ComposeAndroidTemplate
 import org.jetbrains.kotlin.tools.projectWizard.templates.compose.ComposeJvmDesktopTemplate
+import org.jetbrains.kotlin.tools.projectWizard.templates.compose.ComposeMppModuleTemplate
 import org.jetbrains.kotlin.tools.projectWizard.templates.mpp.MobileMppTemplate
 
 sealed class ProjectTemplate : DisplayableSettingItem {
@@ -84,6 +86,7 @@ sealed class ProjectTemplate : DisplayableSettingItem {
             FullStackWebApplicationProjectTemplate,
             NodeJsApplicationProjectTemplate,
             ComposeDesktopApplicationProjectTemplate,
+            ComposeMultiplatformApplicationProjectTemplate,
         )
 
         fun byId(id: String): ProjectTemplate? = ALL.firstOrNull {
@@ -473,4 +476,67 @@ object ComposeDesktopApplicationProjectTemplate : ProjectTemplate() {
                 }
             )
         )
+}
+
+object ComposeMultiplatformApplicationProjectTemplate : ProjectTemplate() {
+    override val title = KotlinNewProjectWizardBundle.message("project.template.compose.multiplatform.title")
+    override val description = KotlinNewProjectWizardBundle.message("project.template.compose.multiplatform.description")
+    override val id = "composeMultiplatformApplication"
+
+    @NonNls
+    override val suggestedProjectName = "myComposeMultiplatformApplication"
+    override val projectKind = ProjectKind.COMPOSE
+
+    override val setsModules: List<Module>
+        get() = buildList {
+            val common = MultiplatformModule(
+                "common",
+                template = ComposeMppModuleTemplate(),
+                listOf(
+                    ModuleType.common.createDefaultTarget().withConfiguratorSettings(CommonTargetConfigurator) {
+                        ModuleConfiguratorWithTests.testFramework withValue KotlinTestFramework.NONE
+                    },
+                    Module(
+                        "android",
+                        AndroidTargetConfigurator,
+                        template = null,
+                        sourcesets = createDefaultSourcesets(),
+                        subModules = emptyList()
+                    ).withConfiguratorSettings(AndroidTargetConfigurator) {
+                        configurator.androidPlugin withValue AndroidGradlePlugin.LIBRARY
+                        ModuleConfiguratorWithTests.testFramework withValue KotlinTestFramework.NONE
+                    },
+                    Module(
+                        "desktop",
+                        JvmTargetConfigurator,
+                        template = null,
+                        sourcesets = createDefaultSourcesets(),
+                        subModules = emptyList()
+                    ).withConfiguratorSettings(JvmTargetConfigurator) {
+                        ModuleConfiguratorWithTests.testFramework withValue KotlinTestFramework.NONE
+                    }
+                )
+            )
+            +Module(
+                "android",
+                AndroidSinglePlatformModuleConfigurator,
+                template = ComposeAndroidTemplate(),
+                sourcesets = createDefaultSourcesets(),
+                subModules = emptyList(),
+                dependencies = mutableListOf(ModuleReference.ByModule(common))
+            ).withConfiguratorSettings(AndroidSinglePlatformModuleConfigurator) {
+                ModuleConfiguratorWithTests.testFramework withValue KotlinTestFramework.NONE
+            }
+            +Module(
+                "desktop",
+                JvmSinglePlatformModuleConfigurator,
+                template = ComposeJvmDesktopTemplate(),
+                sourcesets = createDefaultSourcesets(),
+                subModules = emptyList(),
+                dependencies = mutableListOf(ModuleReference.ByModule(common))
+            ).withConfiguratorSettings(JvmSinglePlatformModuleConfigurator) {
+                ModuleConfiguratorWithTests.testFramework withValue KotlinTestFramework.NONE
+            }
+            +common
+        }
 }

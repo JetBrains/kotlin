@@ -108,7 +108,7 @@ val Reader.projectName
     get() = StructurePlugin.name.settingValue
 
 
-fun Writer.pomIR() = PomIR(
+fun Reader.pomIR() = PomIR(
     artifactId = StructurePlugin.artifactId.settingValue,
     groupId = StructurePlugin.groupId.settingValue,
     version = Version.fromString(StructurePlugin.version.settingValue)
