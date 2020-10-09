@@ -125,7 +125,7 @@ fun BodyResolveComponents.typeForQualifier(resolvedQualifier: FirResolvedQualifi
     val classSymbol = resolvedQualifier.symbol
     val resultType = resolvedQualifier.resultType
     if (classSymbol != null) {
-        classSymbol.ensureResolved(FirResolvePhase.STATUS, session)
+        classSymbol.ensureResolved(FirResolvePhase.DECLARATIONS, session)
         val declaration = classSymbol.fir
         if (declaration !is FirTypeAlias || resolvedQualifier.typeArguments.isEmpty()) {
             typeForQualifierByDeclaration(declaration, resultType, session)?.let { return it }

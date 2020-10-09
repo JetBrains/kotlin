@@ -59,8 +59,8 @@ fun ConeKotlinType.ensureResolvedTypeDeclaration(
 ) {
     if (this !is ConeClassLikeType) return
 
-    lookupTag.toSymbol(useSiteSession)?.ensureResolved(FirResolvePhase.STATUS, useSiteSession)
-    fullyExpandedType(useSiteSession).lookupTag.toSymbol(useSiteSession)?.ensureResolved(FirResolvePhase.STATUS, useSiteSession)
+    lookupTag.toSymbol(useSiteSession)?.ensureResolved(FirResolvePhase.DECLARATIONS, useSiteSession)
+    fullyExpandedType(useSiteSession).lookupTag.toSymbol(useSiteSession)?.ensureResolved(FirResolvePhase.DECLARATIONS, useSiteSession)
 }
 
 fun FirTypeRef.ensureResolvedTypeDeclaration(

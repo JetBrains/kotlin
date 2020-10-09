@@ -29,7 +29,7 @@ fun ConeKotlinType.scope(
     scopeSession: ScopeSession,
     fakeOverrideTypeCalculator: FakeOverrideTypeCalculator
 ): FirTypeScope? {
-    val scope = scope(useSiteSession, scopeSession, FirResolvePhase.STATUS) ?: return null
+    val scope = scope(useSiteSession, scopeSession, FirResolvePhase.DECLARATIONS) ?: return null
     if (fakeOverrideTypeCalculator == FakeOverrideTypeCalculator.DoNothing) return scope
     return FirScopeWithFakeOverrideTypeCalculator(scope, fakeOverrideTypeCalculator)
 }
