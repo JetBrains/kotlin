@@ -36,6 +36,9 @@ internal class FirFileBuilder(
         RawFirBuilder(cache.session, scopeProvider, stubMode = false, lazyBodiesMode = lazyBodiesMode).buildFirFile(ktFile)
     }
 
+    fun getBuiltFirFileOrNull(ktFile: KtFile, cache: ModuleFileCache): FirFile? =
+        cache.getCachedFirFile(ktFile)
+
     fun isFirFileBuilt(
         ktFile: KtFile,
         cache: ModuleFileCache

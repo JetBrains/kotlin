@@ -79,4 +79,8 @@ internal class FirModuleResolveStateForCompletion(
     override fun findNonLocalSourceFirDeclaration(ktDeclaration: KtDeclaration): FirDeclaration {
         error("Should not be used in completion")
     }
+
+    override fun getBuiltFirFileOrNull(ktFile: KtFile): FirFile? {
+        error("Should not be used in completion")
+    }
 }

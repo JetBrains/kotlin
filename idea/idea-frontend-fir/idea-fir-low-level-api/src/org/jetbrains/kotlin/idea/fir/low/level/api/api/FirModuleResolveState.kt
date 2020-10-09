@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.api
 
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
@@ -42,6 +43,9 @@ abstract class FirModuleResolveState {
     internal abstract fun getDiagnostics(element: KtElement): List<Diagnostic>
 
     internal abstract fun collectDiagnosticsForFile(ktFile: KtFile): Collection<Diagnostic>
+
+    @TestOnly
+    internal abstract fun getBuiltFirFileOrNull(ktFile: KtFile): FirFile?
 
     abstract fun findNonLocalSourceFirDeclaration(
         ktDeclaration: KtDeclaration,
