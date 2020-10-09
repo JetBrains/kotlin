@@ -217,7 +217,7 @@ internal val tailrecPhase = makeKonanFileLoweringPhase(
 
 internal val defaultParameterExtentPhase = makeKonanFileOpPhase(
         { context, irFile ->
-            DefaultArgumentStubGenerator(context, skipInlineMethods = false).lower(irFile)
+            KonanDefaultArgumentStubGenerator(context).lower(irFile)
             DefaultParameterCleaner(context, replaceDefaultValuesWithStubs = true).lower(irFile)
             KonanDefaultParameterInjector(context).lower(irFile)
         },
