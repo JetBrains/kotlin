@@ -608,6 +608,20 @@ __attribute__((swift_name("ThrowsEmptyKt")))
 @end;
 
 __attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TopLevelManglingAKt")))
+@interface KtTopLevelManglingAKt : KtBase
++ (NSString *)foo __attribute__((swift_name("foo()")));
+@property (class, readonly) NSString *bar __attribute__((swift_name("bar")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TopLevelManglingBKt")))
+@interface KtTopLevelManglingBKt : KtBase
++ (NSString *)foo __attribute__((swift_name("foo()")));
+@property (class, readonly) NSString *bar __attribute__((swift_name("bar")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("DelegateClass")))
 @interface KtDelegateClass : KtBase <KtKotlinReadWriteProperty>
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));

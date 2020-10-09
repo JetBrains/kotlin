@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
+import org.jetbrains.kotlin.backend.common.serialization.findSourceFile
 import org.jetbrains.kotlin.backend.konan.cKeywords
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 
 internal interface ObjCExportNameTranslator {
@@ -791,7 +793,7 @@ private fun ObjCExportMapper.canBeInheritedBySameClass(
 ): Boolean {
     if (this.isTopLevel(first) || this.isTopLevel(second)) {
         return this.isTopLevel(first) && this.isTopLevel(second) &&
-                first.source.containingFile == second.source.containingFile
+                first.propertyIfAccessor.findSourceFile() == second.propertyIfAccessor.findSourceFile()
     }
 
     val firstClass = this.getClassIfCategory(first) ?: first.containingDeclaration as ClassDescriptor
