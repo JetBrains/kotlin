@@ -84,14 +84,9 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
         reader: Reader,
         configurationData: ModulesToIrConversionData,
         module: Module
-    ): List<BuildSystemIR> =
-        buildList {
-            +ArtifactBasedLibraryDependencyIR(
-                MavenArtifact(DefaultRepository.GOOGLE, "com.google.android.material", "material"),
-                version = Versions.ANDROID.ANDROID_MATERIAL,
-                dependencyType = DependencyType.MAIN
-            )
-        }
+    ): List<BuildSystemIR> = buildList {
+        +DEPENDENCIES.MATERIAL
+    }
 
 
     override fun createStdlibType(configurationData: ModulesToIrConversionData, module: Module): StdlibType? =
@@ -116,6 +111,15 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
         fun mainActivityKt(javaPackage: JavaPackage) = FileTemplateDescriptor(
             "android/MainActivity.kt.vm",
             "src" / "main" / "java" / javaPackage.asPath() / "MainActivity.kt"
+        )
+    }
+
+    object DEPENDENCIES {
+        const val KOTLIN_ANDROID_EXTENSIONS_NAME = "kotlin-android-extensions"
+        val MATERIAL = ArtifactBasedLibraryDependencyIR(
+            MavenArtifact(DefaultRepository.GOOGLE, "com.google.android.material", "material"),
+            version = Versions.ANDROID.ANDROID_MATERIAL,
+            dependencyType = DependencyType.MAIN
         )
     }
 
@@ -185,11 +189,6 @@ object AndroidTargetConfigurator : TargetConfigurator,
         buildList {
             +super<ModuleConfiguratorWithTests>.createModuleIRs(reader, configurationData, module)
             +super<AndroidModuleConfigurator>.createModuleIRs(reader, configurationData, module)
-            +ArtifactBasedLibraryDependencyIR(
-                MavenArtifact(DefaultRepository.MAVEN_CENTRAL, "junit", "junit"),
-                version = Versions.JUNIT,
-                dependencyType = DependencyType.TEST
-            )
         }
 
     override fun createBuildFileIRs(reader: Reader, configurationData: ModulesToIrConversionData, module: Module): List<BuildSystemIR> =

@@ -29,7 +29,7 @@ abstract class AbstractAsyncStackTraceTest : KotlinDescriptorTestCaseWithSteppin
             val frameProxy = this.frameProxy
             if (frameProxy != null) {
                 try {
-                    val sem = frameProxy.location().isPreFlight()
+                  /*  val sem = frameProxy.location().isPreFlight()
                     val coroutineInfoData = if (sem.isCoroutineFound())
                         CoroutineFrameBuilder.lookupContinuation(this, frameProxy, sem)?.coroutineInfoData
                     else
@@ -38,7 +38,7 @@ abstract class AbstractAsyncStackTraceTest : KotlinDescriptorTestCaseWithSteppin
                         print(renderAsyncStackTrace(coroutineInfoData.stackTrace), ProcessOutputTypes.SYSTEM)
                     } else {
                         println("No async stack trace available", ProcessOutputTypes.SYSTEM)
-                    }
+                    }*/
                 } catch (e: Throwable) {
                     val stackTrace = e.stackTraceAsString()
                     System.err.println("Exception occurred on calculating async stack traces: $stackTrace")

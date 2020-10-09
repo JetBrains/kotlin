@@ -28,13 +28,20 @@ sealed class FilePath {
 data class SrcFilePath(override val sourcesetType: SourcesetType) : FilePath()
 data class ResourcesFilePath(override val sourcesetType: SourcesetType) : FilePath()
 
-data class FileTemplateDescriptorWithPath(val descriptor: FileDescriptor, val path: FilePath)
+data class FileTemplateDescriptorWithPath(
+    val descriptor: FileDescriptor,
+    val path: FilePath,
+    val data: Map<String, Any> = emptyMap(),
+)
 
 infix fun FileDescriptor.asResourceOf(sourcesetType: SourcesetType) =
     FileTemplateDescriptorWithPath(this, ResourcesFilePath(sourcesetType))
 
 infix fun FileDescriptor.asSrcOf(sourcesetType: SourcesetType) =
     FileTemplateDescriptorWithPath(this, SrcFilePath(sourcesetType))
+
+infix fun FileTemplateDescriptorWithPath.withSettings(setting: Pair<String, String>) =
+    copy(data = data + setting)
 
 
 data class FileTemplate(

@@ -27,7 +27,7 @@ data class ModuleDependencyIR(
     override fun withDependencyType(type: DependencyType): DependencyIR = copy(dependencyType = type)
 
     override fun BuildFilePrinter.render() = when (this) {
-        is GradlePrinter -> call(dependencyType.getGradleName()) {
+        is GradlePrinter -> call(dependencyType.getGradleName(DependencyKind.implementation)) {
             call("project", forceBrackets = true) {
                 +path.parts.joinToString(separator = "") { ":$it" }.quotified
             }
@@ -64,19 +64,21 @@ fun SourcesetType.toDependencyType() = when (this) {
     SourcesetType.test -> DependencyType.TEST
 }
 
-fun DependencyType.getGradleName(type: String = "implementation") = when (this) {
-    DependencyType.MAIN -> type
-    DependencyType.TEST -> "test${type.capitalize(Locale.US)}"
+fun DependencyType.getGradleName(kind: DependencyKind) = when (this) {
+    DependencyType.MAIN -> kind.text
+    DependencyType.TEST -> "test${kind.text.capitalize(Locale.US)}"
 }
 
 data class ArtifactBasedLibraryDependencyIR(
     override val artifact: LibraryArtifact,
     override val version: Version,
     override val dependencyType: DependencyType,
-    val dependencyKind: String = "implementation"
+    val dependencyKind: DependencyKind = DependencyKind.implementation
 ) : LibraryDependencyIR {
     override fun withDependencyType(type: DependencyType): ArtifactBasedLibraryDependencyIR =
         copy(dependencyType = type)
+
+    fun withDependencyKind(kind: DependencyKind): ArtifactBasedLibraryDependencyIR = copy(dependencyKind = kind)
 
     override fun BuildFilePrinter.render() = when (this) {
         is GradlePrinter -> call(dependencyType.getGradleName(dependencyKind)) {
@@ -126,7 +128,7 @@ abstract class KotlinLibraryDependencyIR(
 
     override fun BuildFilePrinter.render() {
         when (this) {
-            is GradlePrinter -> call(dependencyType.getGradleName()) {
+            is GradlePrinter -> call(dependencyType.getGradleName(DependencyKind.implementation)) {
                 if (GradlePrinter.GradleDsl.KOTLIN == dsl || isInMppModule) {
                     +"kotlin("
                     +artifactName.quotified
@@ -170,15 +172,23 @@ data class KotlinArbitraryDependencyIR(
 
 data class CustomGradleDependencyDependencyIR(
     val dependency: String,
-    override val dependencyType: DependencyType
+    override val dependencyType: DependencyType,
+    val dependencyKind: DependencyKind
 ) : DependencyIR, GradleIR {
     override fun withDependencyType(type: DependencyType): CustomGradleDependencyDependencyIR = copy(dependencyType = type)
 
     override fun GradlePrinter.renderGradle() {
-        call(dependencyType.getGradleName()) {
+        call(dependencyType.getGradleName(dependencyKind)) {
             +dependency
         }
     }
+}
+
+enum class DependencyKind(val text: String) {
+    implementation("implementation"),
+    api("api"),
+    runtimeOnly("runtimeOnly"),
+    compileOnly("compileOnly")
 }
 
 enum class StdlibType(val artifact: String) {

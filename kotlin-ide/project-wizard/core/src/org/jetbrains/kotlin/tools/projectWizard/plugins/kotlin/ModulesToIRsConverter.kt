@@ -285,6 +285,9 @@ class ModulesToIRsConverter(
     ): TaskResult<Unit> = with(module.configurator) {
         compute {
             rootBuildFileIrs += createRootBuildFileIrs(data)
+            module.template?.let { template ->
+                rootBuildFileIrs += with(template) { createRootBuildFileIrs() }
+            }
             runArbitraryTask(data, module, modulePath).ensure()
             TemplatesPlugin.addFileTemplates.execute(createTemplates(data, module, modulePath)).ensure()
             if (this@with is GradleModuleConfigurator) {
@@ -321,5 +324,8 @@ class ModulesToIRsConverter(
             }
         addIfNotNull(kotlinPlugin)
         +with(module.configurator) { createBuildFileIRs(this@createBuildFileIRs, data, module) }
+            .let {
+                module.template?.run { updateBuildFileIRs(it) } ?: it
+            }
     }
 }

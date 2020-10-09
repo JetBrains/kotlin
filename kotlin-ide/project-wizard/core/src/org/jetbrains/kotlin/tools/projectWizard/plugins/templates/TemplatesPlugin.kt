@@ -139,12 +139,12 @@ class TemplatesPlugin(context: Context) : Plugin(context) {
                 putAll(interceptionPointSettings.mapKeys { it.key.name })
                 putAll(defaultSettings(module))
             }
-            return with(template) { getFileTemplates(module) }.mapNotNull { (fileTemplateDescriptor, filePath) ->
+            return with(template) { getFileTemplates(module) }.mapNotNull { (fileTemplateDescriptor, filePath, settings) ->
                 val path = generatePathForFileTemplate(module, filePath) ?: return@mapNotNull null
                 val fileTemplate = FileTemplate(
                     fileTemplateDescriptor,
                     module.path / path,
-                    allSettings
+                    allSettings + settings
                 )
                 with(templateEngine) { writeTemplate(fileTemplate) }
             }.sequenceIgnore()

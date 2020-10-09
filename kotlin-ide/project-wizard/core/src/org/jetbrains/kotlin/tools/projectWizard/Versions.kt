@@ -20,6 +20,7 @@ object Versions {
         val ANDROID_MATERIAL = version("1.2.1")
         val ANDROIDX_APPCOMPAT = version("1.2.0")
         val ANDROIDX_CONSTRAINTLAYOUT = version("2.0.2")
+        val ANDROIDX_KTX = version("1.3.1")
     }
 
     object KOTLINX {

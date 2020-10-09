@@ -181,8 +181,6 @@ fun MultiplatformModulesStructureIR.updateSourceSets(
     return copy(modules = newModules)
 }
 
-
-
 data class SingleplatformModulesStructureWithSingleModuleIR(
     val module: SingleplatformModuleIR,
     override val irs: PersistentList<BuildSystemIR>

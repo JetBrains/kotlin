@@ -1,0 +1,11 @@
+#if ($package)
+package ${package}
+#end
+#if ($sharedPackage)
+import ${sharedPackage}.App
+#end
+import androidx.compose.desktop.Window
+
+fun main() = Window {
+    App()
+}

@@ -21,7 +21,6 @@ inline fun <I : IrsOwner> I.withoutIrs(filterNot: (BuildSystemIR) -> Boolean): I
     withReplacedIrs(irs = this.irs.filterNot(filterNot).toPersistentList()) as I
 
 
-
 inline fun <reified I : BuildSystemIR> IrsOwner.irsOfType(): List<I> =
     irs.filterIsInstance<I>().let { irs ->
         if (irs.all { it is BuildSystemIRWithPriority })

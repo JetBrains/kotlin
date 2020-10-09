@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.tools.projectWizard.settings
 
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.PomIR
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.TargetConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import java.nio.file.Paths
 
@@ -20,5 +21,10 @@ class JavaPackage(val parts: List<String>) {
     }
 }
 
-fun Module.javaPackage(pomIr: PomIR) =
-    JavaPackage.fromCodeRepresentation(pomIr.groupId, name)
+fun Module.javaPackage(pomIr: PomIR): JavaPackage {
+    val moduleName = when (configurator) {
+        is TargetConfigurator -> parent!!.name
+        else -> name
+    }
+    return JavaPackage.fromCodeRepresentation(pomIr.groupId, moduleName)
+}
