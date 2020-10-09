@@ -9,7 +9,7 @@
   "description": "TestData geomMean",
   "title": "TestData geomMean",
   "width": 800,
-  "height": 400,
+  "height": 500,
   "padding": 5,
   "autosize": {"type": "pad", "resize": true},
   "signals": [
@@ -130,7 +130,8 @@
               ]
             }
           },
-          "_source": ["build_id", "benchmark", "build.timestamp", "geomMean"]
+          "_source": ["build_id", "benchmark", "build.timestamp", "geomMean"],
+          "sort": [{"build.timestamp": {"order": "asc"}}]
         }
       },
       "format": {"property": "hits.hits"},

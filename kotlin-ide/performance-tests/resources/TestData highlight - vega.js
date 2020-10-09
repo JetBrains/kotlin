@@ -177,7 +177,8 @@
             "metrics.metric_name",
             "metrics.metric_value",
             "metrics.metric_error"
-          ]
+          ],
+          "sort": [{"build.timestamp": {"order": "asc"}}]
         }
       },
       "format": {"property": "hits.hits"},
