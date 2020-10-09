@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.util.findImplementationFromInterface
 val JVM_DEFAULT_FQ_NAME = FqName("kotlin.jvm.JvmDefault")
 val JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME = FqName("kotlin.jvm.JvmDefaultWithoutCompatibility")
 val JVM_OVERLOADS_FQ_NAME = FqName("kotlin.jvm.JvmOverloads")
+
+@JvmField
 val JVM_SYNTHETIC_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmSynthetic")
 
 @JvmField
