@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrDoWhileLoopImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrWhileLoopImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -145,8 +146,8 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
                 inductionVariable.symbol, irCallOp(
                     plusFun.symbol, plusFun.returnType,
                     irGet(inductionVariable),
-                    stepExpression
-                )
+                    stepExpression, IrStatementOrigin.PLUSEQ
+                ), IrStatementOrigin.PLUSEQ
             )
         }
     }

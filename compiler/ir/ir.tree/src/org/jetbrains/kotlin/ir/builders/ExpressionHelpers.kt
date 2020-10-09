@@ -152,8 +152,8 @@ fun IrBuilderWithScope.irGet(type: IrType, variable: IrValueSymbol) =
 
 fun IrBuilderWithScope.irGet(variable: IrValueDeclaration) = irGet(variable.type, variable.symbol)
 
-fun IrBuilderWithScope.irSet(variable: IrValueSymbol, value: IrExpression) =
-    IrSetValueImpl(startOffset, endOffset, context.irBuiltIns.unitType, variable, value, IrStatementOrigin.EQ)
+fun IrBuilderWithScope.irSet(variable: IrValueSymbol, value: IrExpression, origin: IrStatementOrigin = IrStatementOrigin.EQ) =
+    IrSetValueImpl(startOffset, endOffset, context.irBuiltIns.unitType, variable, value, origin)
 
 fun IrBuilderWithScope.irGetField(receiver: IrExpression?, field: IrField) =
     IrGetFieldImpl(startOffset, endOffset, field.symbol, field.type, receiver)
@@ -241,12 +241,14 @@ fun IrBuilderWithScope.irCall(
     callee: IrSimpleFunctionSymbol,
     type: IrType,
     valueArgumentsCount: Int = callee.owner.valueParameters.size,
-    typeArgumentsCount: Int = callee.owner.typeParameters.size
+    typeArgumentsCount: Int = callee.owner.typeParameters.size,
+    origin: IrStatementOrigin? = null
 ): IrCall =
     IrCallImpl(
         startOffset, endOffset, type, callee,
         typeArgumentsCount = typeArgumentsCount,
-        valueArgumentsCount = valueArgumentsCount
+        valueArgumentsCount = valueArgumentsCount,
+        origin = origin
     )
 
 fun IrBuilderWithScope.irCall(
@@ -298,9 +300,10 @@ fun IrBuilderWithScope.irCallOp(
     callee: IrSimpleFunctionSymbol,
     type: IrType,
     dispatchReceiver: IrExpression,
-    argument: IrExpression? = null
+    argument: IrExpression? = null,
+    origin: IrStatementOrigin? = null
 ): IrMemberAccessExpression<*> =
-    irCall(callee, type, valueArgumentsCount = if (argument != null) 1 else 0, typeArgumentsCount = 0).apply {
+    irCall(callee, type, valueArgumentsCount = if (argument != null) 1 else 0, typeArgumentsCount = 0, origin = origin).apply {
         this.dispatchReceiver = dispatchReceiver
         if (argument != null)
             putValueArgument(0, argument)

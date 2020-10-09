@@ -17,13 +17,5 @@ fun foo() {
 // 3 LLOAD
 // 1 MAXLOCALS = 10
 // 0 InlineMarker
-
-// JVM_TEMPLATES
-// fake inline variables occupy 7 ISTOREs.
 // 16 ISTORE
 // 11 ILOAD
-
-// JVM_IR_TEMPLATES
-// JVM_IR generates an extra induction variable in 'for (i in 1..2)' (see KT-36837)
-// 19 ISTORE
-// 14 ILOAD
