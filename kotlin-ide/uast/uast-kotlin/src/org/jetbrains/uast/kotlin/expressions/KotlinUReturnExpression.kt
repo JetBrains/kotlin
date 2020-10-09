@@ -19,12 +19,13 @@ package org.jetbrains.uast.kotlin
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kotlin.expressions.KotlinLocalFunctionULambdaExpression
 import org.jetbrains.uast.kotlin.internal.KotlinFakeUElement
 import org.jetbrains.uast.kotlin.internal.toSourcePsiFakeAware
 
 class KotlinUReturnExpression(
-        override val sourcePsi: KtReturnExpression,
-        givenParent: UElement?
+    override val sourcePsi: KtReturnExpression,
+    givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), UReturnExpression, KotlinUElementWithType {
     override val returnExpression by lz { KotlinConverter.convertOrNull(sourcePsi.returnedExpression, this) }
 
@@ -33,7 +34,11 @@ class KotlinUReturnExpression(
 
     override val jumpTarget: UElement?
         get() = generateSequence(uastParent) { it.uastParent }
-            .find { it is ULabeledExpression && it.label == label }
+            .find {
+                it is ULabeledExpression && it.label == label ||
+                        (it is UMethod || it is KotlinLocalFunctionULambdaExpression) && label == null ||
+                        it is ULambdaExpression && it.uastParent.let { parent -> parent is UCallExpression && parent.methodName == label }
+            }
 }
 
 class KotlinUImplicitReturnExpression(
