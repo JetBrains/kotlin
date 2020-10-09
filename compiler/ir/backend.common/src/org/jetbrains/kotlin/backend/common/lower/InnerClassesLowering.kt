@@ -31,9 +31,7 @@ interface InnerClassesSupport {
 }
 
 class InnerClassesLowering(val context: BackendContext, private val innerClassesSupport: InnerClassesSupport) : DeclarationTransformer {
-    override fun lower(irFile: IrFile) {
-        runPostfix(true).toFileLoweringPass().lower(irFile)
-    }
+    override val withLocalDeclarations: Boolean get() = true
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrClass && declaration.isInner) {

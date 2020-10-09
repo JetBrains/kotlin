@@ -194,105 +194,91 @@ fun FunctionLoweringPass.runOnFilePostfix(irFile: IrFile) {
 interface DeclarationTransformer : FileLoweringPass {
     fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>?
 
+    val withLocalDeclarations: Boolean
+        get() = false
+
     override fun lower(irFile: IrFile) {
-        runPostfix().toFileLoweringPass().lower(irFile)
-    }
-}
-
-fun DeclarationTransformer.transformFlatRestricted(declaration: IrDeclaration): List<IrDeclaration>? {
-    return stageController.restrictTo(declaration) {
-        transformFlat(declaration)
-    }
-}
-
-fun DeclarationTransformer.toFileLoweringPass(): FileLoweringPass {
-    return object : FileLoweringPass {
-        override fun lower(irFile: IrFile) {
-            irFile.declarations.transformFlat(this@toFileLoweringPass::transformFlat)
-        }
-    }
-}
-
-fun DeclarationTransformer.runPostfix(withLocalDeclarations: Boolean = false): DeclarationTransformer {
-    return object : DeclarationTransformer {
-        override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-            declaration.acceptVoid(PostfixDeclarationTransformer(withLocalDeclarations, this@runPostfix))
-
-            return this@runPostfix.transformFlatRestricted(declaration)
-        }
-    }
-}
-
-private class PostfixDeclarationTransformer(
-    private val withLocalDeclarations: Boolean,
-    private val transformer: DeclarationTransformer
-) : IrElementVisitorVoid {
-    override fun visitElement(element: IrElement) {
-        element.acceptChildrenVoid(this)
-    }
-
-    override fun visitBody(body: IrBody) {
-        if (withLocalDeclarations) {
-            super.visitBody(body)
-        }
-        // else stop
-    }
-
-    override fun visitFunction(declaration: IrFunction) {
-        declaration.acceptChildrenVoid(this)
-
-        for (v in declaration.valueParameters) {
-            val result = transformer.transformFlatRestricted(v)
-            if (result != null) error("Don't know how to add value parameters")
+        val visitor = Visitor(this)
+        irFile.declarations.transformFlat { declaration ->
+            declaration.acceptVoid(visitor)
+            transformFlatRestricted(declaration)
         }
     }
 
-    override fun visitProperty(declaration: IrProperty) {
-        // TODO This is a hack to allow lowering a getter separately from the enclosing property
+    private fun transformFlatRestricted(declaration: IrDeclaration): List<IrDeclaration>? {
+        return stageController.restrictTo(declaration) {
+            transformFlat(declaration)
+        }
+    }
 
-        val visitor = this
+    private class Visitor(private val transformer: DeclarationTransformer) : IrElementVisitorVoid {
+        override fun visitElement(element: IrElement) {
+            element.acceptChildrenVoid(this)
+        }
 
-        fun IrDeclaration.transform() {
+        override fun visitBody(body: IrBody) {
+            if (transformer.withLocalDeclarations) {
+                super.visitBody(body)
+            }
+            // else stop
+        }
 
-            acceptVoid(visitor)
+        override fun visitFunction(declaration: IrFunction) {
+            declaration.acceptChildrenVoid(this)
 
-            val result = transformer.transformFlatRestricted(this)
-            if (result != null) {
-                (parent as? IrDeclarationContainer)?.let {
-                    var index = it.declarations.indexOf(this)
-                    if (index == -1) {
-                        index = it.declarations.indexOf(declaration)
-                    } else {
-                        it.declarations.removeAt(index)
-                        --index
-                    }
-
-                    it.declarations.addAll(index + 1, result)
-                }
+            for (v in declaration.valueParameters) {
+                val result = transformer.transformFlatRestricted(v)
+                if (result != null) error("Don't know how to add value parameters")
             }
         }
 
-        declaration.backingField?.transform()
-        declaration.getter?.transform()
-        declaration.setter?.transform()
-    }
+        override fun visitProperty(declaration: IrProperty) {
+            // TODO This is a hack to allow lowering a getter separately from the enclosing property
 
-    override fun visitClass(declaration: IrClass) {
-        declaration.thisReceiver?.accept(this, null)
-        declaration.typeParameters.forEach { it.accept(this, null) }
-        ArrayList(declaration.declarations).forEach { it.accept(this, null) }
+            val visitor = this
 
-        declaration.declarations.transformFlat(transformer::transformFlatRestricted)
-    }
+            fun IrDeclaration.transform() {
 
-    override fun visitScript(declaration: IrScript) {
-        ArrayList(declaration.declarations).forEach { it.accept(this, null) }
-        declaration.declarations.transformFlat(transformer::transformFlatRestricted)
+                acceptVoid(visitor)
 
-        if (withLocalDeclarations) {
-            declaration.statements.forEach { it.accept(this, null) }
+                val result = transformer.transformFlatRestricted(this)
+                if (result != null) {
+                    (parent as? IrDeclarationContainer)?.let {
+                        var index = it.declarations.indexOf(this)
+                        if (index == -1) {
+                            index = it.declarations.indexOf(declaration)
+                        } else {
+                            it.declarations.removeAt(index)
+                            --index
+                        }
+
+                        it.declarations.addAll(index + 1, result)
+                    }
+                }
+            }
+
+            declaration.backingField?.transform()
+            declaration.getter?.transform()
+            declaration.setter?.transform()
         }
 
-        declaration.thisReceiver.accept(this, null)
+        override fun visitClass(declaration: IrClass) {
+            declaration.thisReceiver?.accept(this, null)
+            declaration.typeParameters.forEach { it.accept(this, null) }
+            ArrayList(declaration.declarations).forEach { it.accept(this, null) }
+
+            declaration.declarations.transformFlat(transformer::transformFlatRestricted)
+        }
+
+        override fun visitScript(declaration: IrScript) {
+            ArrayList(declaration.declarations).forEach { it.accept(this, null) }
+            declaration.declarations.transformFlat(transformer::transformFlatRestricted)
+
+            if (transformer.withLocalDeclarations) {
+                declaration.statements.forEach { it.accept(this, null) }
+            }
+
+            declaration.thisReceiver.accept(this, null)
+        }
     }
 }
