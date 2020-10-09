@@ -111,4 +111,6 @@ internal class FirErrorFunctionImpl(
         valueParameters.clear()
         valueParameters.addAll(newValueParameters)
     }
+
+    override fun replaceBody(newBody: FirBlock?) {}
 }

@@ -137,4 +137,8 @@ internal class FirConstructorImpl(
         valueParameters.clear()
         valueParameters.addAll(newValueParameters)
     }
+
+    override fun replaceBody(newBody: FirBlock?) {
+        body = newBody
+    }
 }

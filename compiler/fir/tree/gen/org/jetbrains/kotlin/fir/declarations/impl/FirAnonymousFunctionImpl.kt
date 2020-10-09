@@ -127,6 +127,10 @@ internal class FirAnonymousFunctionImpl(
         valueParameters.addAll(newValueParameters)
     }
 
+    override fun replaceBody(newBody: FirBlock?) {
+        body = newBody
+    }
+
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
     }

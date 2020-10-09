@@ -102,7 +102,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             parentArg(callableDeclaration, "F", "F")
             +symbol("FirFunctionSymbol", "F")
             +fieldList(valueParameter, withReplace = true).withTransform()
-            +body(nullable = true).withTransform()
+            +body(nullable = true, withReplace = true).withTransform()
         }
 
         errorFunction.configure {

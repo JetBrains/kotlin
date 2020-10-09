@@ -140,6 +140,10 @@ open class FirSimpleFunctionImpl @FirImplementationDetail constructor(
         valueParameters.addAll(newValueParameters)
     }
 
+    override fun replaceBody(newBody: FirBlock?) {
+        body = newBody
+    }
+
     override fun replaceContractDescription(newContractDescription: FirContractDescription) {
         contractDescription = newContractDescription
     }
