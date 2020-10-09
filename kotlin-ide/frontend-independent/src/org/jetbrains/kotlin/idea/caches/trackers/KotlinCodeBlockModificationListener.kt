@@ -257,7 +257,7 @@ class KotlinCodeBlockModificationListener(project: Project) : PsiTreeChangePrepr
         kotlinOutOfCodeBlockTrackerImpl = SimpleModificationTracker()
         kotlinOutOfCodeBlockTracker = kotlinOutOfCodeBlockTrackerImpl
         val model = PomManager.getModel(project)
-        val messageBusConnection = project.messageBus.connect(project)
+        val messageBusConnection = project.messageBus.connect()
 
         model.addModelListener(
             object : PomModelListener {
@@ -295,7 +295,8 @@ class KotlinCodeBlockModificationListener(project: Project) : PsiTreeChangePrepr
                         inBlockElements.forEach { it.containingKtFile.addInBlockModifiedItem(it) }
                     }
                 }
-            }
+            },
+            messageBusConnection,
         )
 
         (PsiManager.getInstance(project) as PsiManagerImpl).addTreeChangePreprocessor(this)
