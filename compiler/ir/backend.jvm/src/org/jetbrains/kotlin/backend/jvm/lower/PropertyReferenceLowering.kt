@@ -216,7 +216,7 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
         currentClassData = data.parent
 
         // Put the new field at the beginning so that static delegated properties with initializers work correctly.
-        // Since we do not cache property references, the new field does not reference anything else.
+        // Since we do not cache property references with bound receivers, the new field does not reference anything else.
         if (data.kProperties.isNotEmpty()) {
             declaration.declarations.add(0, data.kPropertiesField.apply {
                 parent = declaration
@@ -266,6 +266,9 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
     // does not support local variables or bound receivers (e.g. `Class()::field`) and is slower, but takes up less space.
     // Example: `C::property` -> `Reflection.property1(PropertyReference1Impl(C::class, "property", "getProperty()LType;"))`.
     private fun createReflectedKProperty(expression: IrCallableReference<*>): IrExpression {
+        assert(expression.dispatchReceiver == null && expression.extensionReceiver == null) {
+            "cannot create a reflected KProperty if the reference has a bound receiver: ${expression.render()}"
+        }
         val referenceKind = propertyReferenceKindFor(expression)
         return context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset).run {
             irCall(referenceKind.wrapper).apply {
@@ -291,6 +294,8 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
     // and then `C()::property` -> `C$property$0(C())`.
     //
     private fun createSpecializedKProperty(expression: IrCallableReference<*>): IrExpression {
+        // We do not reuse classes for non-reflective property references because they would not have
+        // a valid enclosing method if the same property is referenced at many points.
         val referenceClass = createKPropertySubclass(expression)
         return context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset).irBlock {
             +referenceClass
