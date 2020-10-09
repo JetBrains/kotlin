@@ -23,8 +23,7 @@ class KotlinNativeMetadataDecompiler : KlibMetadataDecompiler<KlibMetadataVersio
     KlibMetaFileType.STUB_VERSION
 ) {
     override fun doReadFile(file: VirtualFile): FileWithMetadata? {
-        val fragment = KlibLoadingMetadataCache
-            .getInstance().getCachedPackageFragment(file) ?: return null
-        return FileWithMetadata.Compatible(fragment, KlibMetadataSerializerProtocol) //todo: check version compatibility
+        val fragment = KlibLoadingMetadataCache.getInstance().getCachedPackageFragment(file) ?: return null
+        return FileWithMetadata.Compatible(fragment) //todo: check version compatibility
     }
 }

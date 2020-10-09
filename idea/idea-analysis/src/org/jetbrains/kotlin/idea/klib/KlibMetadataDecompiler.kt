@@ -80,9 +80,7 @@ abstract class KlibMetadataDecompiler<out V : BinaryVersion>(
     private fun buildDecompiledText(virtualFile: VirtualFile): DecompiledText {
         assert(virtualFile.fileType == fileType) { "Unexpected file type ${virtualFile.fileType}" }
 
-        val file = readFileSafely(virtualFile)
-
-        return when (file) {
+        return when (val file = readFileSafely(virtualFile)) {
             is FileWithMetadata.Incompatible -> createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion(), file.version)
             is FileWithMetadata.Compatible -> decompiledText(
                 file,
@@ -98,10 +96,7 @@ abstract class KlibMetadataDecompiler<out V : BinaryVersion>(
 sealed class FileWithMetadata {
     class Incompatible(val version: BinaryVersion) : FileWithMetadata()
 
-    open class Compatible(
-        val proto: ProtoBuf.PackageFragment,
-        serializerProtocol: SerializerExtensionProtocol // TODO: Is it required?
-    ) : FileWithMetadata() {
+    open class Compatible(val proto: ProtoBuf.PackageFragment) : FileWithMetadata() {
         val nameResolver = NameResolverImpl(proto.strings, proto.qualifiedNames)
         val packageFqName = FqName(proto.getExtension(KlibMetadataProtoBuf.fqName))
 
