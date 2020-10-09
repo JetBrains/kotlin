@@ -589,6 +589,8 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/jvm/jvm-analysis-tests-api/intellij.jvm.analysis.tests.iml" filepath="$PROJECT_DIR$/intellij/jvm/jvm-analysis-tests-api/intellij.jvm.analysis.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/laf/macos/intellij.laf.macos.iml" filepath="$PROJECT_DIR$/intellij/plugins/laf/macos/intellij.laf.macos.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/laf/win10/intellij.laf.win10.iml" filepath="$PROJECT_DIR$/intellij/plugins/laf/win10/intellij.laf.win10.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/lombok/intellij.lombok.iml" filepath="$PROJECT_DIR$/intellij/plugins/lombok/intellij.lombok.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/lombok/generated/intellij.lombok.generated.iml" filepath="$PROJECT_DIR$/intellij/plugins/lombok/generated/intellij.lombok.generated.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/markdown/intellij.markdown.iml" filepath="$PROJECT_DIR$/intellij/plugins/markdown/intellij.markdown.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/maven/intellij.maven.iml" filepath="$PROJECT_DIR$/intellij/plugins/maven/intellij.maven.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/maven/artifact-resolver/common/intellij.maven.artifactResolver.common.iml" filepath="$PROJECT_DIR$/intellij/plugins/maven/artifact-resolver/common/intellij.maven.artifactResolver.common.iml" />

@@ -2136,6 +2136,8 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/yaml/intellij.yaml.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/yaml/intellij.yaml.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/Yeoman/intellij.yeoman.iml" filepath="$PROJECT_DIR$/intellij/plugins/Yeoman/intellij.yeoman.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/zkm/intellij.zkm.iml" filepath="$PROJECT_DIR$/intellij/plugins/zkm/intellij.zkm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/lombok/intellij.lombok.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/lombok/intellij.lombok.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/lombok/generated/intellij.lombok.generated.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/lombok/generated/intellij.lombok.generated.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin-ultimate/appcode-native/kotlin-ultimate.appcode-native.iml" filepath="$PROJECT_DIR$/kotlin-ultimate/appcode-native/kotlin-ultimate.appcode-native.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin-ultimate/appcode-native/appcode-with-java/kotlin-ultimate.appcode-native.appcode-with-java.iml" filepath="$PROJECT_DIR$/kotlin-ultimate/appcode-native/appcode-with-java/kotlin-ultimate.appcode-native.appcode-with-java.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin-ultimate/cidr-gradle-tooling/kotlin-ultimate.cidr-gradle-tooling.iml" filepath="$PROJECT_DIR$/kotlin-ultimate/cidr-gradle-tooling/kotlin-ultimate.cidr-gradle-tooling.iml" />
