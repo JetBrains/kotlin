@@ -28,7 +28,7 @@ constructor(
         DukatExecutor(
             nodeJs,
             dts,
-            dukatMode,
+            externalsOutputFormat,
             compilation.npmProject,
             true,
             compareInputs = false

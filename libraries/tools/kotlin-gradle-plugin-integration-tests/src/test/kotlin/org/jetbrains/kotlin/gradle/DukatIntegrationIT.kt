@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.targets.js.dukat.DukatMode
+import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 import kotlin.test.assertTrue
@@ -103,7 +103,7 @@ class DukatIntegrationIT : BaseGradleIT() {
         project.setupWorkingDir()
         project.gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
         project.gradleProperties().modify {
-            "${DukatMode.dukatModeProperty}=${DukatMode.SOURCE}"
+            "${ExternalsOutputFormat.externalsOutputFormatProperty}=${ExternalsOutputFormat.SOURCE}"
         }
 
         val externalSrcs = "build/externals/$projectName/src"
@@ -158,7 +158,7 @@ class DukatIntegrationIT : BaseGradleIT() {
         project.setupWorkingDir()
         project.gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
         project.gradleProperties().modify {
-            "${DukatMode.dukatModeProperty}=${DukatMode.SOURCE}"
+            "${ExternalsOutputFormat.externalsOutputFormatProperty}=${ExternalsOutputFormat.SOURCE}"
         }
 
         val externalSrcs = "build/externals/$projectName/src"
@@ -233,7 +233,7 @@ class DukatIntegrationIT : BaseGradleIT() {
         project.gradleProperties().modify {
             """
                 kotlin.js.generate.externals=true
-                ${DukatMode.dukatModeProperty}=${DukatMode.SOURCE}
+                ${ExternalsOutputFormat.externalsOutputFormatProperty}=${ExternalsOutputFormat.SOURCE}
             """.trimIndent()
         }
 
@@ -262,7 +262,7 @@ class DukatIntegrationIT : BaseGradleIT() {
         project.setupWorkingDir()
         project.gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
         project.gradleProperties().modify {
-            "${DukatMode.dukatModeProperty}=${DukatMode.SOURCE}"
+            "${ExternalsOutputFormat.externalsOutputFormatProperty}=${ExternalsOutputFormat.SOURCE}"
         }
 
         val externalSrcs = "build/externals/both-jsIr/src"
@@ -346,7 +346,7 @@ class DukatIntegrationIT : BaseGradleIT() {
         project.gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
         project.gradleProperties().modify {
             """
-                ${DukatMode.dukatModeProperty}=${DukatMode.BINARY}
+                ${ExternalsOutputFormat.externalsOutputFormatProperty}=${ExternalsOutputFormat.BINARY}
             """.trimIndent()
         }
 
@@ -376,7 +376,7 @@ class DukatIntegrationIT : BaseGradleIT() {
         project.gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
         project.gradleProperties().modify {
             """
-                ${DukatMode.dukatModeProperty}=${DukatMode.SOURCE}
+                ${ExternalsOutputFormat.externalsOutputFormatProperty}=${ExternalsOutputFormat.SOURCE}
             """.trimIndent()
         }
 

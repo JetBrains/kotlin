@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.dukat
 
-enum class DukatMode {
+enum class ExternalsOutputFormat {
     SOURCE,
     BINARY;
 
     companion object {
-        fun byArgumentOrNull(argument: String): DukatMode? =
+        fun byArgumentOrNull(argument: String): ExternalsOutputFormat? =
             values().firstOrNull { it.name.equals(argument, ignoreCase = true) }
 
-        const val dukatModeProperty = "dukat.mode"
+        const val externalsOutputFormatProperty = "kotlin.js.externals.output.format"
     }
 }

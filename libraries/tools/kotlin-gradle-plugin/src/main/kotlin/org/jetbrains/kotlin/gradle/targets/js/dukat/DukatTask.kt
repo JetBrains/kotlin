@@ -29,10 +29,10 @@ abstract class DukatTask(
         get() = setOf(nodeJs.versions.dukat)
 
     /**
-     * [DukatMode] what to generate, sources or binaries
+     * [ExternalsOutputFormat] what to generate, sources or binaries
      */
     @Input
-    var dukatMode: DukatMode = DukatMode.SOURCE
+    var externalsOutputFormat: ExternalsOutputFormat = ExternalsOutputFormat.SOURCE
 
     @get:Internal
     val dts by lazy {
@@ -87,7 +87,7 @@ abstract class DukatTask(
         DukatRunner(
             compilation,
             dTsFiles,
-            dukatMode,
+            externalsOutputFormat,
             destinationDir,
             qualifiedPackageName,
             null,

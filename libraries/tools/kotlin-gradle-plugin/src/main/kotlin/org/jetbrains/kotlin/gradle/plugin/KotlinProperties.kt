@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.gradle.plugin.Kotlin2JsPlugin.Companion.NOWARN_2JS_F
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.Companion.jsCompilerProperty
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
-import org.jetbrains.kotlin.gradle.targets.js.dukat.DukatMode
-import org.jetbrains.kotlin.gradle.targets.js.dukat.DukatMode.Companion.dukatModeProperty
+import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat
+import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat.Companion.externalsOutputFormatProperty
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.CacheBuilder
@@ -221,8 +221,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
     /**
      * Default mode of generating of Dukat
      */
-    val dukatMode: DukatMode?
-        get() = property(dukatModeProperty)?.let { DukatMode.byArgumentOrNull(it) }
+    val externalsOutputFormat: ExternalsOutputFormat?
+        get() = property(externalsOutputFormatProperty)?.let { ExternalsOutputFormat.byArgumentOrNull(it) }
 
     /**
      * Use Kotlin/JS backend compiler type

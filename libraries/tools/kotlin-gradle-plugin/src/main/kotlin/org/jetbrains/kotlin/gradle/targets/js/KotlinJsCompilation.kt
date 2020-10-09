@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
-import org.jetbrains.kotlin.gradle.targets.js.dukat.DukatMode
+import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
@@ -34,10 +34,10 @@ open class KotlinJsCompilation(
 
     private val kotlinProperties = PropertiesProvider(target.project)
 
-    internal val dukatMode: DukatMode
-        get() = kotlinProperties.dukatMode ?: defaultDukatMode
+    internal val externalsOutputFormat: ExternalsOutputFormat
+        get() = kotlinProperties.externalsOutputFormat ?: defaultExternalsOutputFormat
 
-    internal open val defaultDukatMode: DukatMode = DukatMode.BINARY
+    internal open val defaultExternalsOutputFormat: ExternalsOutputFormat = ExternalsOutputFormat.BINARY
 
     override val kotlinOptions: KotlinJsOptions = KotlinJsOptionsImpl()
 

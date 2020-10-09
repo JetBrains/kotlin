@@ -29,9 +29,9 @@ internal class DukatCompilationResolverPlugin(
     val separateTaskName = npmProject.compilation.disambiguateName("generateExternals")
 
     init {
-        val dukatMode = compilation.dukatMode
+        val externalsOutputFormat = compilation.externalsOutputFormat
 
-        gradleModelPostProcess(dukatMode, npmProject)
+        gradleModelPostProcess(externalsOutputFormat, npmProject)
 
         val integratedTask = project.registerTask<IntegratedDukatTask>(
             integratedTaskName,
@@ -39,19 +39,19 @@ internal class DukatCompilationResolverPlugin(
         ) {
             it.group = DUKAT_TASK_GROUP
             it.description = "Integrated generation Kotlin/JS external declarations for .d.ts files in ${compilation}"
-            it.dukatMode = dukatMode
+            it.externalsOutputFormat = externalsOutputFormat
             it.dependsOn(nodeJs.npmInstallTaskProvider, npmProject.packageJsonTask)
         }
 
         val target = compilation.target
 
-        if (target is KotlinJsIrTarget || target is KotlinJsTarget && dukatMode != DukatMode.SOURCE) {
+        if (target is KotlinJsIrTarget || target is KotlinJsTarget && externalsOutputFormat != ExternalsOutputFormat.SOURCE) {
             compilation.compileKotlinTaskProvider.dependsOn(integratedTask)
         }
 
         if (target is KotlinJsIrTarget && target.legacyTarget != null) {
             target.legacyTarget?.compilations?.named(compilation.name) {
-                if (it.dukatMode == DukatMode.SOURCE) {
+                if (it.externalsOutputFormat == ExternalsOutputFormat.SOURCE) {
                     it.compileKotlinTaskProvider.dependsOn(integratedTask)
                 }
             }
@@ -86,15 +86,15 @@ internal class DukatCompilationResolverPlugin(
         val externalNpmDependencies = resolution[project][compilation].externalNpmDependencies
 
         val target = compilation.target
-        val dukatMode = compilation.dukatMode
-        if (target is KotlinJsTarget && dukatMode == DukatMode.SOURCE) {
+        val externalsOutputFormat = compilation.externalsOutputFormat
+        if (target is KotlinJsTarget && externalsOutputFormat == ExternalsOutputFormat.SOURCE) {
             return
         }
 
         DukatExecutor(
             nodeJs,
             DtsResolver(npmProject).getAllDts(externalNpmDependencies),
-            dukatMode,
+            externalsOutputFormat,
             npmProject,
             packageJsonIsUpdated,
             operation = compilation.name + " > " + DukatExecutor.OPERATION,
@@ -108,14 +108,14 @@ internal class DukatCompilationResolverPlugin(
 }
 
 internal fun gradleModelPostProcess(
-    dukatMode: DukatMode,
+    externalsOutputFormat: ExternalsOutputFormat,
     npmProject: NpmProject
 ) {
     val compilation = npmProject.compilation
     val project = npmProject.project
-    when (dukatMode) {
-        DukatMode.SOURCE -> compilation.defaultSourceSet.kotlin.srcDir(npmProject.externalsDir)
-        DukatMode.BINARY -> {
+    when (externalsOutputFormat) {
+        ExternalsOutputFormat.SOURCE -> compilation.defaultSourceSet.kotlin.srcDir(npmProject.externalsDir)
+        ExternalsOutputFormat.BINARY -> {
             npmProject.externalsDir
                 .listFiles()
                 ?.filter { it.isCompatibleArchive }
