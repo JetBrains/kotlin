@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
-import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyCopy
+import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
@@ -30,19 +30,9 @@ class FirObjectImportedCallableScope(
                 return@wrapper
             }
             val function = symbol.fir
-            val syntheticFunction = buildSimpleFunction {
-                source = function.source
-                session = function.session
+            val syntheticFunction = buildSimpleFunctionCopy(function) {
                 origin = FirDeclarationOrigin.ImportedFromObject
-                returnTypeRef = function.returnTypeRef
-                receiverTypeRef = function.receiverTypeRef
-                this.name = function.name
-                status = function.status
                 this.symbol = FirNamedFunctionSymbol(CallableId(importedClassId, name), overriddenSymbol = symbol)
-                resolvePhase = function.resolvePhase
-                typeParameters.addAll(function.typeParameters)
-                valueParameters.addAll(function.valueParameters)
-                annotations.addAll(function.annotations)
             }
             processor(syntheticFunction.symbol)
         }
@@ -55,20 +45,9 @@ class FirObjectImportedCallableScope(
                 return@wrapper
             }
             val property = symbol.fir
-            val syntheticFunction = buildProperty {
-                source = property.source
-                session = property.session
+            val syntheticFunction = buildPropertyCopy(property) {
                 origin = FirDeclarationOrigin.ImportedFromObject
-                returnTypeRef = property.returnTypeRef
-                receiverTypeRef = property.receiverTypeRef
-                this.name = property.name
-                status = property.status
-                isVar = property.isVar
-                isLocal = property.isLocal
                 this.symbol = FirPropertySymbol(CallableId(importedClassId, name), overriddenSymbol = symbol)
-                resolvePhase = property.resolvePhase
-                typeParameters.addAll(property.typeParameters)
-                annotations.addAll(property.annotations)
             }
             processor(syntheticFunction.symbol)
         }
