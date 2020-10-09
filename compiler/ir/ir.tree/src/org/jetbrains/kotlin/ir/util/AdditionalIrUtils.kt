@@ -85,11 +85,21 @@ fun IrSimpleFunction.overrides(other: IrSimpleFunction): Boolean {
 private val IrConstructorCall.annotationClass
     get() = this.symbol.owner.constructedClass
 
+val IrClass.packageFqName
+    get() = parent.getPackageFragment()?.fqName
+
+tailrec fun IrDeclarationWithName.hasEqualFqName(fqName: FqName): Boolean {
+    val comparisonResult = this.name == fqName.shortName()
+    if (!comparisonResult || (parent is IrPackageFragment && (parent as IrPackageFragment).fqName == fqName.parent()))
+        return comparisonResult
+    return (parent as? IrDeclarationWithName)?.hasEqualFqName(fqName.parent()) ?: false
+}
+
 fun List<IrConstructorCall>.hasAnnotation(fqName: FqName): Boolean =
-    any { it.annotationClass.fqNameWhenAvailable == fqName }
+    any { it.annotationClass.hasEqualFqName(fqName) }
 
 fun List<IrConstructorCall>.findAnnotation(fqName: FqName): IrConstructorCall? =
-    firstOrNull { it.annotationClass.fqNameWhenAvailable == fqName }
+    firstOrNull { it.annotationClass.hasEqualFqName(fqName) }
 
 val IrDeclaration.fileEntry: SourceManager.FileEntry
     get() = parent.let {

@@ -285,7 +285,7 @@ fun IrAnnotationContainer.getAnnotation(name: FqName): IrConstructorCall? =
 
 fun IrAnnotationContainer.hasAnnotation(name: FqName) =
     annotations.any {
-        it.symbol.owner.parentAsClass.fqNameWhenAvailable == name
+        it.symbol.owner.parentAsClass.hasEqualFqName(name)
     }
 
 fun IrAnnotationContainer.hasAnnotation(symbol: IrClassSymbol) =
