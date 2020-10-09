@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.executeWithoutPCE
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
@@ -29,6 +30,9 @@ internal class FirPhaseRunner(val transformerProvider: FirTransformerProvider) {
 
     private fun runPhaseWithoutLock(firFile: FirFile, phase: FirResolvePhase) {
         val phaseProcessor = transformerProvider.getTransformerForPhase(firFile.session, phase)
-        executeWithoutPCE { phaseProcessor.processFile(firFile) }
+        executeWithoutPCE {
+            FirLazyBodiesCalculator.calculateLazyBodiesIfPhaseRequires(firFile, phase)
+            phaseProcessor.processFile(firFile)
+        }
     }
 }

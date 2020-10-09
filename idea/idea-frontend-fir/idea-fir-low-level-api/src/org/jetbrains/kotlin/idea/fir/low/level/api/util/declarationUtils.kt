@@ -32,7 +32,7 @@ internal fun KtDeclaration.findSourceNonLocalFirDeclaration(
                 containerClassFir.declarations
             } else {
                 val ktFile = containingKtFile
-                val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile, moduleFileCache)
+                val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile, moduleFileCache, lazyBodiesMode = true)
                 firFile.declarations
             }
             val original = originalDeclaration

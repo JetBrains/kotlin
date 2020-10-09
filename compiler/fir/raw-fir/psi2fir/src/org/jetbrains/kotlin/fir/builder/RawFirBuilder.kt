@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
-import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.builder.*
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
@@ -50,7 +49,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class RawFirBuilder(
-    session: FirSession, val baseScopeProvider: FirScopeProvider, val stubMode: Boolean
+    session: FirSession, val baseScopeProvider: FirScopeProvider, val stubMode: Boolean, val lazyBodiesMode: Boolean = false
 ) : BaseFirBuilder<PsiElement>(session) {
 
     fun buildFirFile(file: KtFile): FirFile {
@@ -62,16 +61,22 @@ class RawFirBuilder(
     }
 
     fun buildFunctionWithBody(function: KtNamedFunction): FirFunction<*> {
-        assert(!stubMode) { "Building FIR function with body isn't supported in stub mode" }
-        setupContextForPosition(function)
-        return function.accept(Visitor(), Unit) as FirFunction<*>
+        return buildDeclaration(function) as FirFunction<*>
+    }
+
+    fun buildSecondaryConstructor(secondaryConstructor: KtSecondaryConstructor): FirConstructor {
+        return buildDeclaration(secondaryConstructor) as FirConstructor
     }
 
     fun buildPropertyWithBody(property: KtProperty): FirProperty {
         require(!property.isLocal) { "Should not be used to build local properties (variables)" }
-        assert(!stubMode) { "Building FIR function with body isn't supported in stub mode" }
-        setupContextForPosition(property)
-        return property.accept(Visitor(), Unit) as FirProperty
+        return buildDeclaration(property) as FirProperty
+    }
+
+    private fun buildDeclaration(declaration: KtDeclaration): FirDeclaration {
+        assert(!stubMode) { "Building FIR declarations isn't supported in stub mode" }
+        setupContextForPosition(declaration)
+        return declaration.accept(Visitor(), Unit) as FirDeclaration
     }
 
     private fun setupContextForPosition(position: KtElement) {
@@ -253,6 +258,13 @@ class RawFirBuilder(
             when {
                 !hasBody() ->
                     null to null
+                lazyBodiesMode -> {
+                    val block = buildLazyBlock {
+                        source = bodyExpression?.toFirSourceElement()
+                            ?: error("hasBody() == true but body is null")
+                    }
+                    block to null
+                }
                 hasBlockBody() -> if (!stubMode) {
                     val block = bodyBlockExpression?.accept(this@Visitor, Unit) as? FirBlock
                     if (hasContractEffectList()) {
@@ -1144,6 +1156,8 @@ class RawFirBuilder(
                 extractAnnotationsTo(this)
                 typeParameters += constructorTypeParametersFromConstructedClass(ownerTypeParameters)
                 extractValueParametersTo(this)
+
+
                 val (body, _) = buildFirBody()
                 this.body = body
                 this@RawFirBuilder.context.firFunctionTargets.removeLast()

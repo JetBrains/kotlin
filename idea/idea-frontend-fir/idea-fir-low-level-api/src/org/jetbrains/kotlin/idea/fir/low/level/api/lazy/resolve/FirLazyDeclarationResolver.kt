@@ -38,8 +38,12 @@ internal class FirLazyDeclarationResolver(
             ?: error("FirFile was not found for\n${declaration.render()}")
         val provider = firFile.session.firIdeProvider
         val fromPhase = if (reresolveFile) declaration.resolvePhase else minOf(firFile.resolvePhase, declaration.resolvePhase)
+
         if (checkPCE) {
             firFileBuilder.runCustomResolveWithPCECheck(firFile, moduleFileCache) {
+                executeWithoutPCE {
+                    calculateLazyBodies(declaration)
+                }
                 runLazyResolveWithoutLock(
                     declaration,
                     moduleFileCache,
@@ -54,6 +58,7 @@ internal class FirLazyDeclarationResolver(
         } else {
             firFileBuilder.runCustomResolveUnderLock(firFile, moduleFileCache) {
                 executeWithoutPCE {
+                    calculateLazyBodies(declaration)
                     runLazyResolveWithoutLock(
                         declaration,
                         moduleFileCache,
@@ -67,6 +72,10 @@ internal class FirLazyDeclarationResolver(
                 }
             }
         }
+    }
+
+    private fun calculateLazyBodies(firDeclaration: FirDeclaration) {
+        FirLazyBodiesCalculator.calculateLazyBodiesInside(firDeclaration)
     }
 
     fun runLazyResolveWithoutLock(
