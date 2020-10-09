@@ -136,8 +136,9 @@ abstract class BridgesConstruction(val context: JsCommonBackendContext) : Declar
         }.apply {
             parent = function.parent
             copyTypeParametersFrom(bridge)
-            copyReceiverParametersFrom(bridge)
-            valueParameters += bridge.valueParameters.map { p -> p.copyTo(this) }
+            val substitutionMap = makeTypeParameterSubstitutionMap(bridge, this)
+            copyReceiverParametersFrom(bridge, substitutionMap)
+            valueParameters += bridge.valueParameters.map { p -> p.copyTo(this, type = p.type.substitute(substitutionMap)) }
             annotations += bridge.annotations
             overriddenSymbols += delegateTo.overriddenSymbols
             overriddenSymbols += bridge.symbol
