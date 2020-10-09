@@ -649,6 +649,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/constructorsWithDefaultParameterValues.kt");
         }
 
+        @TestMetadata("inlineCharSequence.kt")
+        public void testInlineCharSequence() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCharSequence.kt");
+        }
+
         @TestMetadata("inlineClassMembersVisibility.kt")
         public void testInlineClassMembersVisibility() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineClassMembersVisibility.kt");
@@ -1099,6 +1104,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/specialBridges"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("charSequence.kt")
+        public void testCharSequence() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/specialBridges/charSequence.kt");
+        }
+
         @TestMetadata("contains.kt")
         public void testContains() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/specialBridges/contains.kt");
@@ -1122,6 +1132,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         @TestMetadata("noSpecialBridgeIfPresentInSuperClass.kt")
         public void testNoSpecialBridgeIfPresentInSuperClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/specialBridges/noSpecialBridgeIfPresentInSuperClass.kt");
+        }
+
+        @TestMetadata("number.kt")
+        public void testNumber() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/specialBridges/number.kt");
         }
 
         @TestMetadata("redundantStubForSize.kt")
