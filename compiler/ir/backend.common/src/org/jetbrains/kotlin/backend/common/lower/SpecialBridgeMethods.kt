@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.name.Name
 data class SpecialMethodWithDefaultInfo(
     val defaultValueGenerator: (IrSimpleFunction) -> IrExpression,
     val argumentsToCheck: Int,
-    val needsArgumentBoxing: Boolean = false,
     val needsGenericSignature: Boolean = false,
 )
 
@@ -67,7 +66,7 @@ class SpecialBridgeMethods(val context: CommonBackendContext) {
         makeDescription(StandardNames.FqNames.collection, "contains", 1) to
                 SpecialMethodWithDefaultInfo(::constFalse, 1),
         makeDescription(StandardNames.FqNames.mutableCollection, "remove", 1) to
-                SpecialMethodWithDefaultInfo(::constFalse, 1, needsArgumentBoxing = false),
+                SpecialMethodWithDefaultInfo(::constFalse, 1),
         makeDescription(StandardNames.FqNames.map, "containsKey", 1) to
                 SpecialMethodWithDefaultInfo(::constFalse, 1),
         makeDescription(StandardNames.FqNames.map, "containsValue", 1) to
