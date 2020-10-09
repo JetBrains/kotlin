@@ -77,7 +77,6 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
 
     override fun Reader.createSettingsGradleIRs(module: Module) = buildList<BuildSystemIR> {
         +createRepositories(KotlinPlugin.version.propertyValue).map { PluginManagementRepositoryIR(RepositoryIR(it)) }
-        +AndroidResolutionStrategyIR(Versions.GRADLE_PLUGINS.ANDROID)
     }
 
     override fun createModuleIRs(
