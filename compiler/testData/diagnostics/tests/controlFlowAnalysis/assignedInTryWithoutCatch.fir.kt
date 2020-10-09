@@ -4,7 +4,7 @@ fun foo() {
         a = 42
     } finally {
     }
-    <!UNINITIALIZED_VARIABLE!>a<!>.hashCode()
+    a.hashCode()
 }
 
 fun sideEffectBeforeAssignmentInTry(s: Any) {
@@ -14,7 +14,7 @@ fun sideEffectBeforeAssignmentInTry(s: Any) {
         a = 42
     } finally {
     }
-    <!UNINITIALIZED_VARIABLE!>a<!>.hashCode()
+    a.hashCode()
 }
 
 fun assignedInTryAndFinally() {

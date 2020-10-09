@@ -27,7 +27,7 @@ fun assignedInTryAndCatch() {
         a = 41
     } finally {
     }
-    <!UNINITIALIZED_VARIABLE!>a<!>.hashCode()
+    a.hashCode()
 }
 
 fun sideEffectBeforeAssignedInTryAndCatch(s: Any) {
@@ -40,7 +40,7 @@ fun sideEffectBeforeAssignedInTryAndCatch(s: Any) {
         a = 41
     } finally {
     }
-    <!UNINITIALIZED_VARIABLE!>a<!>.hashCode()
+    a.hashCode()
 }
 
 fun assignedAtAll() {
