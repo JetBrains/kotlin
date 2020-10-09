@@ -611,6 +611,8 @@ __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("TopLevelManglingAKt")))
 @interface KtTopLevelManglingAKt : KtBase
 + (NSString *)foo __attribute__((swift_name("foo()")));
++ (int32_t)sameNumberValue:(int32_t)value __attribute__((swift_name("sameNumber(value:)")));
++ (int64_t)sameNumberValue:(int64_t)value __attribute__((swift_name("sameNumber(value:)")));
 @property (class, readonly) NSString *bar __attribute__((swift_name("bar")));
 @end;
 
