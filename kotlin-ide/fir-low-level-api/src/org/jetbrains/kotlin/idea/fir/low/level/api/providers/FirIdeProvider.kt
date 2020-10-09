@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
-import org.jetbrains.kotlin.fir.dependenciesWithoutSelf
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -24,11 +23,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper
-import org.jetbrains.kotlin.idea.fir.low.level.api.PackageExistenceCheckerForMultipleModules
 import org.jetbrains.kotlin.idea.fir.low.level.api.PackageExistenceCheckerForSingleModule
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.collectTransitiveDependenciesWithSelf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -40,7 +37,7 @@ internal class FirIdeProvider(
     project: Project,
     val session: FirSession,
     moduleInfo: ModuleSourceInfo,
-    private val kotlinScopeProvider: KotlinScopeProvider,
+    val kotlinScopeProvider: KotlinScopeProvider,
     firFileBuilder: FirFileBuilder,
     val cache: ModuleFileCache,
     searchScope: GlobalSearchScope,

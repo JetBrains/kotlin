@@ -49,7 +49,7 @@ internal class FirModuleResolveStateImpl(
         elementBuilder.getOrBuildFirFor(element, rootModuleSession.cache, fileStructureCache)
 
     override fun getFirFile(ktFile: KtFile): FirFile =
-        firFileBuilder.buildRawFirFileWithCaching(ktFile, rootModuleSession.cache)
+        firFileBuilder.buildRawFirFileWithCaching(ktFile, rootModuleSession.cache, lazyBodiesMode = false)
 
     override fun getDiagnostics(element: KtElement): List<Diagnostic> =
         diagnosticsCollector.getDiagnosticsFor(element)

@@ -28,7 +28,11 @@ internal class FirDesignatedBodyResolveTransformerForIDE(
     phase = phase,
     implicitTypeOnly = phase == FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
     scopeSession = scopeSession,
-    returnTypeCalculator = createReturnTypeCalculatorForIDE(session, scopeSession)
+    returnTypeCalculator = createReturnTypeCalculatorForIDE(
+        session,
+        scopeSession,
+        ::FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
+    )
 ) {
 
     override fun onBeforeDeclarationContentResolve(declaration: FirDeclaration) {
