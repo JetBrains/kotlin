@@ -76,29 +76,37 @@ fun FileLoweringPass.lower(moduleFragment: IrModuleFragment) = moduleFragment.fi
 //}
 
 fun ClassLoweringPass.runOnFilePostfix(irFile: IrFile) {
-    irFile.acceptVoid(object : IrElementVisitorVoid {
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
-        }
+    irFile.acceptVoid(ClassLoweringVisitor(this))
+}
 
-        override fun visitClass(declaration: IrClass) {
-            declaration.acceptChildrenVoid(this)
-            lower(declaration)
-        }
-    })
+private class ClassLoweringVisitor(
+    private val loweringPass: ClassLoweringPass
+) : IrElementVisitorVoid {
+    override fun visitElement(element: IrElement) {
+        element.acceptChildrenVoid(this)
+    }
+
+    override fun visitClass(declaration: IrClass) {
+        declaration.acceptChildrenVoid(this)
+        loweringPass.lower(declaration)
+    }
 }
 
 fun ScriptLoweringPass.runOnFilePostfix(irFile: IrFile) {
-    irFile.acceptVoid(object : IrElementVisitorVoid {
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
-        }
+    irFile.acceptVoid(ScriptLoweringVisitor(this))
+}
 
-        override fun visitScript(declaration: IrScript) {
-            declaration.acceptChildrenVoid(this)
-            lower(declaration)
-        }
-    })
+private class ScriptLoweringVisitor(
+    private val loweringPass: ScriptLoweringPass
+) : IrElementVisitorVoid {
+    override fun visitElement(element: IrElement) {
+        element.acceptChildrenVoid(this)
+    }
+
+    override fun visitScript(declaration: IrScript) {
+        declaration.acceptChildrenVoid(this)
+        loweringPass.lower(declaration)
+    }
 }
 
 fun DeclarationContainerLoweringPass.asClassLoweringPass() = object : ClassLoweringPass {
@@ -125,42 +133,48 @@ fun BodyLoweringPass.runOnFilePostfix(
     withLocalDeclarations: Boolean = false,
     allowDeclarationModification: Boolean = false
 ) {
-    ArrayList(irFile.declarations).forEach {
-        it.accept(object : IrElementVisitor<Unit, IrDeclaration?> {
-            override fun visitElement(element: IrElement, data: IrDeclaration?) {
-                element.acceptChildren(this, data)
-            }
+    val visitor = BodyLoweringVisitor(this, withLocalDeclarations, allowDeclarationModification)
+    for (declaration in ArrayList(irFile.declarations)) {
+        declaration.accept(visitor, null)
+    }
+}
 
-            override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclaration?) {
-                declaration.acceptChildren(this, declaration)
-            }
+private class BodyLoweringVisitor(
+    private val loweringPass: BodyLoweringPass,
+    private val withLocalDeclarations: Boolean,
+    private val allowDeclarationModification: Boolean,
+) : IrElementVisitor<Unit, IrDeclaration?> {
+    override fun visitElement(element: IrElement, data: IrDeclaration?) {
+        element.acceptChildren(this, data)
+    }
 
-            override fun visitClass(declaration: IrClass, data: IrDeclaration?) {
-                declaration.thisReceiver?.accept(this, declaration)
-                declaration.typeParameters.forEach { it.accept(this, declaration) }
-                ArrayList(declaration.declarations).forEach { it.accept(this, declaration) }
-            }
+    override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclaration?) {
+        declaration.acceptChildren(this, declaration)
+    }
 
-            override fun visitBody(body: IrBody, data: IrDeclaration?) {
-                if (withLocalDeclarations) body.acceptChildren(this, null)
-                if (allowDeclarationModification) {
-                    lower(body, data!!)
-                } else {
-                    stageController.bodyLowering {
-                        lower(body, data!!)
-                    }
-                }
-            }
+    override fun visitClass(declaration: IrClass, data: IrDeclaration?) {
+        declaration.thisReceiver?.accept(this, declaration)
+        declaration.typeParameters.forEach { it.accept(this, declaration) }
+        ArrayList(declaration.declarations).forEach { it.accept(this, declaration) }
+    }
 
-            override fun visitScript(declaration: IrScript, data: IrDeclaration?) {
-                ArrayList(declaration.declarations).forEach { it.accept(this, declaration) }
-                if (withLocalDeclarations) {
-                    declaration.statements.forEach { it.accept(this, null) }
-                }
-                declaration.thisReceiver.accept(this, declaration)
+    override fun visitBody(body: IrBody, data: IrDeclaration?) {
+        if (withLocalDeclarations) body.acceptChildren(this, null)
+        if (allowDeclarationModification) {
+            loweringPass.lower(body, data!!)
+        } else {
+            stageController.bodyLowering {
+                loweringPass.lower(body, data!!)
             }
+        }
+    }
 
-        }, null)
+    override fun visitScript(declaration: IrScript, data: IrDeclaration?) {
+        ArrayList(declaration.declarations).forEach { it.accept(this, declaration) }
+        if (withLocalDeclarations) {
+            declaration.statements.forEach { it.accept(this, null) }
+        }
+        declaration.thisReceiver.accept(this, declaration)
     }
 }
 
