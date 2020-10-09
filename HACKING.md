@@ -62,6 +62,8 @@ There are several gradle flags one can use for Konan build.
 
  ## Testing
 
+ ### Compiler integration tests
+
 To run blackbox compiler tests from JVM Kotlin use (takes time):
 
     ./gradlew run_external
@@ -99,6 +101,30 @@ and then a final native binary is produced from this klibrary using the -Xinclud
 
         ./gradlew -Ptest_two_stage backend.native:tests:array0
        
+ ### Runtime unit tests
+ 
+To run runtime unit tests on the host machine for both mimalloc and the standard allocator:
+
+    ./gradlew hostRuntimeTests
+       
+To run tests for only one of these two allocators, run `hostStdAllocRuntimeTests` or `hostMimallocRuntimeTests`.
+
+We use [Google Test](https://github.com/google/googletest) to execute the runtime unit tests. The build automatically fetches
+the specified Google Test revision to `runtime/googletest`. It is possible to manually modify the downloaded GTest sources for debug
+purposes; the build will not overwrite them by default.
+
+To forcibly redownload Google Test when running tests, use the corresponding project property:
+
+     ./gradlew hostRuntimeTests -Prefresh-gtest
+
+or run the `downloadGTest` task directly with the `--refresh` CLI key:
+
+    ./gradlew downloadGTest --refresh
+    
+To use a local GTest copy instead of the downloaded one, add the following line to `runtime/build.gradle.kts`:
+
+    googletest.useLocalSources("<path to local GTest sources>")
+
  ## Performance measurement
   
  Firstly, it's necessary to build analyzer tool to have opportunity to compare different performance results:
