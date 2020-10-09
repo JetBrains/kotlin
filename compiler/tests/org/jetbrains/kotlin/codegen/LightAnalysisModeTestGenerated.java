@@ -27370,6 +27370,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class LocalDelegated extends AbstractLightAnalysisModeTest {
+                @TestMetadata("inLambdaInInline.kt")
+                public void ignoreInLambdaInInline() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/properties/localDelegated/inLambdaInInline.kt");
+                }
+
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
                 }
@@ -27381,6 +27386,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 @TestMetadata("defaultImpls.kt")
                 public void testDefaultImpls() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/properties/localDelegated/defaultImpls.kt");
+                }
+
+                @TestMetadata("inLambda.kt")
+                public void testInLambda() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/properties/localDelegated/inLambda.kt");
                 }
 
                 @TestMetadata("inlineFun.kt")

@@ -29749,6 +29749,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     runTest("compiler/testData/codegen/box/reflection/properties/localDelegated/defaultImpls.kt");
                 }
 
+                @TestMetadata("inLambda.kt")
+                public void testInLambda() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/properties/localDelegated/inLambda.kt");
+                }
+
+                @TestMetadata("inLambdaInInline.kt")
+                public void testInLambdaInInline() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/properties/localDelegated/inLambdaInInline.kt");
+                }
+
                 @TestMetadata("inlineFun.kt")
                 public void testInlineFun() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/properties/localDelegated/inlineFun.kt");

@@ -53,10 +53,6 @@ internal val propertyReferencePhase = makeIrFilePhase(
 )
 
 private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
-    // Reflection metadata for local properties is serialized under the signature "<v#$N>" attached to the containing class.
-    // This maps properties to values of N.
-    private val localPropertyIndices = mutableMapOf<IrSymbol, Int>()
-
     // TODO: join IrLocalDelegatedPropertyReference and IrPropertyReference via the class hierarchy?
     private val IrMemberAccessExpression<*>.getter: IrSimpleFunctionSymbol?
         get() = (this as? IrPropertyReference)?.getter ?: (this as? IrLocalDelegatedPropertyReference)?.getter
@@ -86,12 +82,11 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
         context.state.generateOptimizedCallableReferenceSuperClasses
 
     private val IrMemberAccessExpression<*>.propertyContainer: IrDeclarationParent
-        get() {
-            var current: IrDeclaration = getter?.owner ?: field?.owner ?: error("Property without getter or field: ${dump()}")
-            while (current.parent is IrFunction)
-                current = current.parent as IrFunction // Local delegated property.
-            return current.parent
-        }
+        get() = if (this is IrLocalDelegatedPropertyReference)
+            currentClassData?.localPropertyOwner(getter)
+                ?: throw AssertionError("local property reference before declaration: ${render()}")
+        else
+            getter?.owner?.parent ?: field?.owner?.parent ?: error("Property without getter or field: ${dump()}")
 
     // Plain Java fields do not have a getter, but can be referenced nonetheless. The signature should be the one
     // that a getter would have, if it existed.
@@ -101,7 +96,8 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
     private fun IrBuilderWithScope.computeSignatureString(expression: IrMemberAccessExpression<*>): IrExpression {
         if (expression is IrLocalDelegatedPropertyReference) {
             // Local delegated properties are stored as a plain list, and the runtime library extracts the index from this string:
-            val index = localPropertyIndices[expression.getter] ?: throw AssertionError("no index for ${expression.render()}")
+            val index = currentClassData?.localPropertyIndex(expression.getter)
+                ?: throw AssertionError("local property reference before declaration: ${expression.render()}")
             return irString("<v#$index>")
         }
         val getter = expression.getter ?: return irString(expression.field!!.owner.fakeGetterSignature)
@@ -178,7 +174,7 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
 
     private data class PropertyInstance(val initializer: IrExpression, val index: Int)
 
-    private inner class ClassData {
+    private inner class ClassData(val irClass: IrClass, val parent: ClassData?) {
         val kProperties = mutableMapOf<IrSymbol, PropertyInstance>()
         val kPropertiesField = context.irFactory.buildField {
             name = Name.identifier(JvmAbi.DELEGATED_PROPERTIES_ARRAY_NAME)
@@ -188,7 +184,24 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
             isStatic = true
             visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
         }
-        var localPropertiesInClass = 0
+
+        val localProperties = mutableListOf<IrLocalDelegatedPropertySymbol>()
+        val localPropertyIndices = mutableMapOf<IrSymbol, Int>()
+        val isSynthetic = irClass.metadata !is MetadataSource.File && irClass.metadata !is MetadataSource.Class
+
+        fun localPropertyIndex(getter: IrSymbol): Int? =
+            localPropertyIndices[getter] ?: parent?.localPropertyIndex(getter)
+
+        fun localPropertyOwner(getter: IrSymbol): IrClass? =
+            if (getter in localPropertyIndices) irClass else parent?.localPropertyOwner(getter)
+
+        fun rememberLocalProperty(property: IrLocalDelegatedProperty) {
+            // Prefer to attach metadata to non-synthetic classes, because it won't be serialized otherwise;
+            // if not possible, though, putting it right here will at least allow non-reflective uses.
+            val metadataOwner = generateSequence(this) { it.parent }.find { !it.isSynthetic } ?: this
+            metadataOwner.localPropertyIndices[property.getter.symbol] = metadataOwner.localProperties.size
+            metadataOwner.localProperties.add(property.symbol)
+        }
     }
 
     private var currentClassData: ClassData? = null
@@ -197,11 +210,10 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
         irFile.transformChildrenVoid()
 
     override fun visitClassNew(declaration: IrClass): IrStatement {
-        val data = ClassData()
-        val parentClassData = currentClassData
+        val data = ClassData(declaration, currentClassData)
         currentClassData = data
         declaration.transformChildrenVoid()
-        currentClassData = parentClassData
+        currentClassData = data.parent
 
         // Put the new field at the beginning so that static delegated properties with initializers work correctly.
         // Since we do not cache property references, the new field does not reference anything else.
@@ -213,15 +225,15 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
                     irExprBody(irArrayOf(kPropertiesFieldType, initializers))
                 }
             })
-
-            context.localDelegatedProperties[declaration.attributeOwnerId] =
-                data.kProperties.keys.filterIsInstance<IrLocalDelegatedPropertySymbol>()
+        }
+        if (data.localProperties.isNotEmpty()) {
+            context.localDelegatedProperties[declaration.attributeOwnerId] = data.localProperties
         }
         return declaration
     }
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrStatement {
-        localPropertyIndices[declaration.getter.symbol] = currentClassData!!.localPropertiesInClass++
+        currentClassData!!.rememberLocalProperty(declaration)
         return super.visitLocalDelegatedProperty(declaration)
     }
 
