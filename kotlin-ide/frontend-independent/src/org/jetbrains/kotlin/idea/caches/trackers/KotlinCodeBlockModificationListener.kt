@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.caches.trackers
 
 import com.intellij.lang.ASTNode
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.ModificationTracker
@@ -40,7 +41,7 @@ val KOTLIN_CONSOLE_KEY = Key.create<Boolean>("kotlin.console")
 /**
  * Tested in OutOfBlockModificationTestGenerated
  */
-class KotlinCodeBlockModificationListener(project: Project) : PsiTreeChangePreprocessor {
+class KotlinCodeBlockModificationListener(project: Project) : PsiTreeChangePreprocessor, Disposable {
     private val modificationTrackerImpl: PsiModificationTrackerImpl =
         PsiModificationTracker.SERVICE.getInstance(project) as PsiModificationTrackerImpl
 
@@ -257,13 +258,11 @@ class KotlinCodeBlockModificationListener(project: Project) : PsiTreeChangePrepr
         kotlinOutOfCodeBlockTrackerImpl = SimpleModificationTracker()
         kotlinOutOfCodeBlockTracker = kotlinOutOfCodeBlockTrackerImpl
         val model = PomManager.getModel(project)
-        val messageBusConnection = project.messageBus.connect()
+        val messageBusConnection = project.messageBus.connect(this)
 
         model.addModelListener(
             object : PomModelListener {
-                override fun isAspectChangeInteresting(aspect: PomModelAspect): Boolean {
-                    return aspect == treeAspect
-                }
+                override fun isAspectChangeInteresting(aspect: PomModelAspect): Boolean = aspect == treeAspect
 
                 override fun modelChanged(event: PomModelEvent) {
                     val changeSet = event.getChangeSet(treeAspect) as TreeChangeEvent? ?: return
@@ -313,6 +312,8 @@ class KotlinCodeBlockModificationListener(project: Project) : PsiTreeChangePrepr
             perModuleOutOfCodeBlockTrackerUpdater.onPsiModificationTrackerUpdate()
         })
     }
+
+    override fun dispose() = Unit
 }
 
 private val PER_FILE_MODIFICATION_TRACKER = Key<SimpleModificationTracker>("FILE_OUT_OF_BLOCK_MODIFICATION_COUNT")
