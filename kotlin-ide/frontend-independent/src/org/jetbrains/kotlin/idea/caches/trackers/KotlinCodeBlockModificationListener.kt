@@ -135,7 +135,7 @@ class KotlinCodeBlockModificationListener(project: Project) : PsiTreeChangePrepr
             }
 
             val blockDeclaration = KtPsiUtil.getTopmostParentOfTypes(element, *BLOCK_DECLARATION_TYPES) as? KtDeclaration ?: return null
-//                KtPsiUtil.getTopmostParentOfType<KtClassOrObject>(element) as? KtDeclaration ?: return null
+            //                KtPsiUtil.getTopmostParentOfType<KtClassOrObject>(element) as? KtDeclaration ?: return null
 
             // should not be local declaration
             if (KtPsiUtil.isLocal(blockDeclaration))
@@ -143,11 +143,11 @@ class KotlinCodeBlockModificationListener(project: Project) : PsiTreeChangePrepr
 
             when (blockDeclaration) {
                 is KtNamedFunction -> {
-//                    if (blockDeclaration.visibilityModifierType()?.toVisibility() == Visibilities.PRIVATE) {
-//                        topClassLikeDeclaration(blockDeclaration)?.let {
-//                            return BlockModificationScopeElement(it, it)
-//                        }
-//                    }
+                    //                    if (blockDeclaration.visibilityModifierType()?.toVisibility() == Visibilities.PRIVATE) {
+                    //                        topClassLikeDeclaration(blockDeclaration)?.let {
+                    //                            return BlockModificationScopeElement(it, it)
+                    //                        }
+                    //                    }
                     if (blockDeclaration.hasBlockBody()) {
                         // case like `fun foo(): String {...<caret>...}`
                         return blockDeclaration.bodyExpression
@@ -162,11 +162,11 @@ class KotlinCodeBlockModificationListener(project: Project) : PsiTreeChangePrepr
                 }
 
                 is KtProperty -> {
-//                    if (blockDeclaration.visibilityModifierType()?.toVisibility() == Visibilities.PRIVATE) {
-//                        topClassLikeDeclaration(blockDeclaration)?.let {
-//                            return BlockModificationScopeElement(it, it)
-//                        }
-//                    }
+                    //                    if (blockDeclaration.visibilityModifierType()?.toVisibility() == Visibilities.PRIVATE) {
+                    //                        topClassLikeDeclaration(blockDeclaration)?.let {
+                    //                            return BlockModificationScopeElement(it, it)
+                    //                        }
+                    //                    }
 
                     if (blockDeclaration.typeReference != null) {
 
@@ -220,15 +220,15 @@ class KotlinCodeBlockModificationListener(project: Project) : PsiTreeChangePrepr
                         }
                     }
                 }
-//                is KtClassOrObject -> {
-//                    return when (element) {
-//                        is KtProperty, is KtNamedFunction -> {
-//                            if ((element as? KtModifierListOwner)?.visibilityModifierType()?.toVisibility() == Visibilities.PRIVATE)
-//                                BlockModificationScopeElement(blockDeclaration, blockDeclaration) else null
-//                        }
-//                        else -> null
-//                    }
-//                }
+                //                is KtClassOrObject -> {
+                //                    return when (element) {
+                //                        is KtProperty, is KtNamedFunction -> {
+                //                            if ((element as? KtModifierListOwner)?.visibilityModifierType()?.toVisibility() == Visibilities.PRIVATE)
+                //                                BlockModificationScopeElement(blockDeclaration, blockDeclaration) else null
+                //                        }
+                //                        else -> null
+                //                    }
+                //                }
 
                 else -> throw IllegalStateException()
             }
@@ -259,42 +259,44 @@ class KotlinCodeBlockModificationListener(project: Project) : PsiTreeChangePrepr
         val model = PomManager.getModel(project)
         val messageBusConnection = project.messageBus.connect(project)
 
-        model.addModelListener(object : PomModelListener {
-            override fun isAspectChangeInteresting(aspect: PomModelAspect): Boolean {
-                return aspect == treeAspect
-            }
-
-            override fun modelChanged(event: PomModelEvent) {
-                val changeSet = event.getChangeSet(treeAspect) as TreeChangeEvent? ?: return
-                val ktFile = changeSet.rootElement.psi.containingFile as? KtFile ?: return
-
-                incFileModificationCount(ktFile)
-
-                val changedElements = changeSet.changedElements
-
-                // skip change if it contains only virtual/fake change
-                if (changedElements.isNotEmpty()) {
-                    // ignore formatting (whitespaces etc)
-                    if (isFormattingChange(changeSet) || isCommentChange(changeSet)) return
+        model.addModelListener(
+            object : PomModelListener {
+                override fun isAspectChangeInteresting(aspect: PomModelAspect): Boolean {
+                    return aspect == treeAspect
                 }
 
-                val inBlockElements = inBlockModifications(changedElements)
+                override fun modelChanged(event: PomModelEvent) {
+                    val changeSet = event.getChangeSet(treeAspect) as TreeChangeEvent? ?: return
+                    val ktFile = changeSet.rootElement.psi.containingFile as? KtFile ?: return
 
-                val physical = ktFile.isPhysical
-                if (inBlockElements.isEmpty()) {
-                    messageBusConnection.deliverImmediately()
+                    incFileModificationCount(ktFile)
 
-                    if (physical && !isReplLine(ktFile.virtualFile) && ktFile !is KtTypeCodeFragment) {
-                        kotlinOutOfCodeBlockTrackerImpl.incModificationCount()
-                        perModuleOutOfCodeBlockTrackerUpdater.onKotlinPhysicalFileOutOfBlockChange(ktFile, true)
+                    val changedElements = changeSet.changedElements
+
+                    // skip change if it contains only virtual/fake change
+                    if (changedElements.isNotEmpty()) {
+                        // ignore formatting (whitespaces etc)
+                        if (isFormattingChange(changeSet) || isCommentChange(changeSet)) return
                     }
 
-                    ktFile.incOutOfBlockModificationCount()
-                } else if (physical) {
-                    inBlockElements.forEach { it.containingKtFile.addInBlockModifiedItem(it) }
+                    val inBlockElements = inBlockModifications(changedElements)
+
+                    val physical = ktFile.isPhysical
+                    if (inBlockElements.isEmpty()) {
+                        messageBusConnection.deliverImmediately()
+
+                        if (physical && !isReplLine(ktFile.virtualFile) && ktFile !is KtTypeCodeFragment) {
+                            kotlinOutOfCodeBlockTrackerImpl.incModificationCount()
+                            perModuleOutOfCodeBlockTrackerUpdater.onKotlinPhysicalFileOutOfBlockChange(ktFile, true)
+                        }
+
+                        ktFile.incOutOfBlockModificationCount()
+                    } else if (physical) {
+                        inBlockElements.forEach { it.containingKtFile.addInBlockModifiedItem(it) }
+                    }
                 }
             }
-        })
+        )
 
         (PsiManager.getInstance(project) as PsiManagerImpl).addTreeChangePreprocessor(this)
 
