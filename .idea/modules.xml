@@ -1828,6 +1828,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/community/python/intellij.pycharm.community.main.iml" filepath="$PROJECT_DIR$/intellij/community/python/intellij.pycharm.community.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/python/ds/intellij.pycharm.ds.iml" filepath="$PROJECT_DIR$/intellij/python/ds/intellij.pycharm.ds.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/python/ds/build/intellij.pycharm.ds.build.iml" filepath="$PROJECT_DIR$/intellij/python/ds/build/intellij.pycharm.ds.build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/python/ds/completion-ml-ranking/intellij.pycharm.ds.completionMlRanking.iml" filepath="$PROJECT_DIR$/intellij/python/ds/completion-ml-ranking/intellij.pycharm.ds.completionMlRanking.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/python/ds/core-api/intellij.pycharm.ds.core.iml" filepath="$PROJECT_DIR$/intellij/python/ds/core-api/intellij.pycharm.ds.core.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/python/ds/core-impl/intellij.pycharm.ds.core.impl.iml" filepath="$PROJECT_DIR$/intellij/python/ds/core-impl/intellij.pycharm.ds.core.impl.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/python/ds/intellij.pycharm.ds.customization.iml" filepath="$PROJECT_DIR$/intellij/python/ds/intellij.pycharm.ds.customization.iml" />
