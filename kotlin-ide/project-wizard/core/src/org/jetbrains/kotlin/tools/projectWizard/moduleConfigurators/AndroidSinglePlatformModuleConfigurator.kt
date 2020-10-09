@@ -11,10 +11,12 @@ import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.Versions
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.AndroidConfigIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.BuildScriptDependencyIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.BuildScriptRepositoryIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.irsList
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.AndroidTargetConfigurator.createAndroidPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle.GradlePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
@@ -60,6 +62,19 @@ object AndroidSinglePlatformModuleConfigurator :
         }.forEach {
             +BuildScriptDependencyIR(it)
         }
+    }
+
+    override fun createBuildFileIRs(reader: Reader, configurationData: ModulesToIrConversionData, module: Module) = irsList {
+        +super<AndroidModuleConfigurator>.createBuildFileIRs(reader, configurationData, module)
+        +AndroidConfigIR(
+            javaPackage = when (reader.createAndroidPlugin(module)) {
+                AndroidGradlePlugin.APPLICATION -> module.javaPackage(configurationData.pomIr)
+                AndroidGradlePlugin.LIBRARY -> null
+            },
+            newManifestPath = getNewAndroidManifestPath(module),
+            printVersionCode = true,
+            printBuildTypes = true,
+        )
     }
 
     override fun createKotlinPluginIR(configurationData: ModulesToIrConversionData, module: Module): KotlinBuildSystemPluginIR? =
