@@ -1,4 +1,4 @@
-var String.foo: Int
+var foo: Int
     set(value) {}
 <caret>
 

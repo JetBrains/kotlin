@@ -1,5 +1,5 @@
 var String.foo: Int
     get() = length
-    <caret>
+<caret>
 
 // WITHOUT_CUSTOM_LINE_INDENT_PROVIDER
