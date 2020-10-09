@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.testing.native
 
+import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
@@ -100,10 +101,18 @@ open class GoogleTestExtension @Inject constructor(private val project: Project)
      */
     var repository: String = "https://github.com/google/googletest.git"
 
+    private var _revision: String? = null
+
     /**
      * A particular revision in the [repository] to be fetched. It can be a branch, a tag or a commit hash.
      */
-    var revision: String = "master"
+    var revision: String
+        get() = _revision
+                ?: throw InvalidUserDataException(
+                        "No value provided for property '${RuntimeTestingPlugin.GOOGLE_TEST_EXTENSION_NAME}.revision'. " +
+                        "Please specify it in the buildscript."
+                )
+        set(value) { _revision = value }
 
     /**
      * Fetch the [revision] even if the [fetchDirectory] already contains it. Overwrite all changes manually made in the output directory.
