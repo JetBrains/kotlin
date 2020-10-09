@@ -41,13 +41,14 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
 
     protected fun createEnvironment(
         file: File,
-        files: List<F>
+        files: List<F>,
+        additionalClasspath: File? = null
     ): KotlinCoreEnvironment {
         val configuration = createConfiguration(
             extractConfigurationKind(files),
             getTestJdkKind(files),
             backend,
-            getClasspath(file),
+            if (additionalClasspath == null) getClasspath(file) else getClasspath(file) + additionalClasspath,
             if (isJavaSourceRootNeeded()) listOf(javaFilesDir) else emptyList(),
             files
         )

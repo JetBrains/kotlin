@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.generators.tests
 import org.jetbrains.kotlin.checkers.AbstractForeignJava8AnnotationsNoAnnotationInClasspathTest
 import org.jetbrains.kotlin.checkers.AbstractForeignJava8AnnotationsNoAnnotationInClasspathWithPsiClassReadingTest
 import org.jetbrains.kotlin.checkers.AbstractForeignJava8AnnotationsTest
+import org.jetbrains.kotlin.checkers.AbstractJspecifyAnnotationsTest
 import org.jetbrains.kotlin.checkers.javac.AbstractJavacForeignJava8AnnotationsTest
 import org.jetbrains.kotlin.generators.tests.generator.testGroupSuite
 import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJava8Test
@@ -32,11 +33,11 @@ fun main(args: Array<String>) {
     testGroupSuite(args) {
         testGroup("compiler/tests-java8/tests", "compiler/testData") {
             testClass<AbstractForeignJava8AnnotationsTest> {
-                model("foreignAnnotationsJava8/tests")
+                model("foreignAnnotationsJava8/tests", excludeDirs = listOf("jspecify"))
             }
 
             testClass<AbstractJavacForeignJava8AnnotationsTest> {
-                model("foreignAnnotationsJava8/tests")
+                model("foreignAnnotationsJava8/tests", excludeDirs = listOf("jspecify"))
             }
 
             testClass<AbstractForeignJava8AnnotationsNoAnnotationInClasspathTest> {
@@ -45,6 +46,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractForeignJava8AnnotationsNoAnnotationInClasspathWithPsiClassReadingTest> {
                 model("foreignAnnotationsJava8/tests", excludeDirs = listOf("jspecify"))
+            }
+
+            testClass<AbstractJspecifyAnnotationsTest> {
+                model("foreignAnnotationsJava8/tests/jspecify/kotlin")
             }
 
             testClass<AbstractLoadJava8Test> {
