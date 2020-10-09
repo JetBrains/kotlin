@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="libraryTable">
   <library name="space-idea-sdk" type="repository">
-    <properties maven-id="com.jetbrains:space-idea-sdk:1.1.54911">
+    <properties maven-id="com.jetbrains:space-idea-sdk:1.1.56438">
       <exclude>
         <dependency maven-id="org.jetbrains.kotlin:kotlin-stdlib" />
+        <dependency maven-id="org.jetbrains.kotlin:kotlin-reflect" />
         <dependency maven-id="com.fasterxml.jackson.core:jackson-core" />
         <dependency maven-id="com.fasterxml.jackson.core:jackson-databind" />
         <dependency maven-id="com.fasterxml.jackson.dataformat:jackson-dataformat-xml" />
         <dependency maven-id="com.fasterxml.jackson.module:jackson-module-kotlin" />
-        <dependency maven-id="org.jetbrains.kotlinx:kotlinx-coroutines-core-common" />
         <dependency maven-id="org.jetbrains.kotlinx:kotlinx-coroutines-core" />
+        <dependency maven-id="org.jetbrains:kotlin-css" />
+        <dependency maven-id="org.jetbrains.kotlin:kotlin-stdlib-common" />
+        <dependency maven-id="org.jetbrains.kotlin:kotlin-stdlib-jdk7" />
         <dependency maven-id="org.jetbrains.kotlinx:kotlinx-coroutines-slf4j" />
         <dependency maven-id="org.jetbrains.kotlinx:kotlinx-coroutines-io-jvm" />
         <dependency maven-id="commons-io:commons-io" />
@@ -25,15 +28,12 @@
         <dependency maven-id="com.fasterxml.jackson.datatype:jackson-datatype-joda" />
         <dependency maven-id="com.google.guava:guava" />
         <dependency maven-id="org.slf4j:jul-to-slf4j" />
-        <dependency maven-id="org.jetbrains.kotlin:kotlin-reflect" />
-        <dependency maven-id="org.jetbrains.kotlin:kotlin-stdlib-common" />
-        <dependency maven-id="org.jetbrains.kotlin:kotlin-stdlib-jdk7" />
-        <dependency maven-id="org.jetbrains.kotlin:kotlin-stdlib-jdk8" />
         <dependency maven-id="org.apache.ivy:ivy" />
+        <dependency maven-id="org.jetbrains.kotlin:kotlin-stdlib-jdk8" />
       </exclude>
     </properties>
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/space-idea-sdk/1.1.54911/space-idea-sdk-1.1.54911.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/space-idea-sdk/1.1.56438/space-idea-sdk-1.1.56438.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/io/reactivex/rxkotlin/0.55.0/rxkotlin-0.55.0.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/io/reactivex/rxjava/1.1.1/rxjava-1.1.1.jar!/" />
     </CLASSES>
