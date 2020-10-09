@@ -2107,6 +2107,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/forLoop/forIntInDownTo.kt");
         }
 
+        @TestMetadata("iincGeneration.kt")
+        public void testIincGeneration() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/forLoop/iincGeneration.kt");
+        }
+
         @TestMetadata("intrinsicArrayConstructorsUseCounterLoop.kt")
         public void testIntrinsicArrayConstructorsUseCounterLoop() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/forLoop/intrinsicArrayConstructorsUseCounterLoop.kt");

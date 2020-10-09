@@ -18,13 +18,5 @@ fun test() {
 // 1 MAXLOCALS = 3
 // 1 MAXLOCALS = 4
 // 0 InlineMarker
-
-// JVM_TEMPLATES
-// fake inline variables occupy 7 ISTOREs.
 // 14 ISTORE
 // 7 ILOAD
-
-// JVM_IR_TEMPLATES
-// JVM_IR generates an extra induction variable in 'for (i in 1..2)' (see KT-36837)
-// 17 ISTORE
-// 10 ILOAD
