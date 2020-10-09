@@ -830,6 +830,45 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
         }
     }
 
+    /**
+     * Test for b/169071070
+     */
+    @Test
+    fun testCrossModule_ComposableInterfaceFunctionWithInlineClasses(): Unit = ensureSetup {
+        compile(
+            mapOf(
+                "library module" to mapOf (
+                    "x/Library.kt" to """
+                    package x
+
+                    import androidx.compose.runtime.Composable
+
+                    inline class InlineClass(val value: Float)
+
+                    interface Foo {
+                        @Composable
+                        fun apply(value: InlineClass)
+                    }
+                    """.trimIndent()
+                ),
+                "Main" to mapOf(
+                    "y/Impl.kt" to """
+                    package y
+
+                    import androidx.compose.runtime.Composable
+                    import x.Foo
+                    import x.InlineClass
+
+                    object Bar : Foo {
+                        @Composable
+                        override fun apply(value: InlineClass) {}
+                    }
+                    """.trimIndent()
+                )
+            )
+        )
+    }
+
     fun compile(
         modules: Map<String, Map<String, String>>,
         dumpClasses: Boolean = false,

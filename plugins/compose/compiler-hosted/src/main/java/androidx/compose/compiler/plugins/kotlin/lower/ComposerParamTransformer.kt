@@ -500,7 +500,10 @@ class ComposerParamTransformer(
                     type = newType, varargElementType = param.varargElementType,
                     isCrossinline = param.isCrossinline,
                     isNoinline = param.isNoinline
-                ).also { it.defaultValue = param.defaultValue }
+                ).also {
+                    it.defaultValue = param.defaultValue
+                    it.parent = param.parent
+                }
             }
 
             val valueParametersMapping = explicitParameters
