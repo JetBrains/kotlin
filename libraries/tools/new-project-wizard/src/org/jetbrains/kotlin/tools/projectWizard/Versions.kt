@@ -10,15 +10,15 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 @Suppress("ClassName", "SpellCheckingInspection")
 object Versions {
     val KOTLIN = version("1.4.10") // used as fallback version
-    val GRADLE = version("6.3")
+    val GRADLE = version("6.6.1")
     val KTOR = version("1.4.0")
-    val JUNIT = version("4.12")
+    val JUNIT = version("4.13")
     val JUNIT5 = version("5.6.0")
 
     object ANDROID {
-        val ANDROID_MATERIAL = version("1.2.0")
+        val ANDROID_MATERIAL = version("1.2.1")
         val ANDROIDX_APPCOMPAT = version("1.2.0")
-        val ANDROIDX_CONSTRAINTLAYOUT = version("1.1.3")
+        val ANDROIDX_CONSTRAINTLAYOUT = version("2.0.2")
     }
 
     object KOTLINX {
