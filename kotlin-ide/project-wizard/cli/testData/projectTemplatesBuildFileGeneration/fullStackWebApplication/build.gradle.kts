@@ -9,19 +9,19 @@ group = "me.user"
 version = "1.0-SNAPSHOT"
 
 repositories {
-    mavenCentral()
     jcenter()
-    maven {
-        url = uri("https://dl.bintray.com/kotlin/ktor")
-    }
+    mavenCentral()
     maven {
         url = uri("KOTLIN_REPO")
+    }
+    maven {
+        url = uri("https://dl.bintray.com/kotlin/kotlin-js-wrappers")
     }
     maven {
         url = uri("https://dl.bintray.com/kotlin/kotlinx")
     }
     maven {
-        url = uri("https://dl.bintray.com/kotlin/kotlin-js-wrappers")
+        url = uri("https://dl.bintray.com/kotlin/ktor")
     }
 }
 

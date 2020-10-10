@@ -1,17 +1,15 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle
 
 
+import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.kotlin.tools.projectWizard.Versions
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.PipelineTask
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.properties.Property
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.PluginSetting
 import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.PluginManagementRepositoryIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.RepositoryIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.SettingsGradleFileIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.render
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.*
@@ -21,6 +19,9 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.printBuildFile
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectPath
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repository
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.updateBuildFiles
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.updateModules
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplate
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplateDescriptor
 
@@ -103,6 +104,44 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
             }
         }
 
+        val mergeCommonRepositories by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
+            runBefore(createModules)
+            runAfter(takeRepositoriesFromDependencies)
+            runAfter(KotlinPlugin.createPluginRepositories)
+
+            isAvailable = isGradle
+
+            withAction {
+                val buildFiles = buildFiles.propertyValue
+                if (buildFiles.size == 1) return@withAction UNIT_SUCCESS
+                val moduleRepositories = buildFiles.mapNotNull { buildFileIR ->
+                    if (buildFileIR.isRoot) null
+                    else buildFileIR.irs.mapNotNull { it.safeAs<RepositoryIR>()?.repository }
+                }
+
+                val allRepositories = moduleRepositories.flatMapTo(hashSetOf()) { it }
+
+                val commonRepositories = allRepositories.filterTo(
+                    hashSetOf(KotlinPlugin.version.propertyValue.repository)
+                ) { repo ->
+                    moduleRepositories.all { repo in it }
+                }
+
+                updateBuildFiles { buildFile ->
+                    buildFile.withReplacedIrs(
+                        buildFile.irs
+                            .filterNot { it.safeAs<RepositoryIR>()?.repository in commonRepositories }
+                            .toPersistentList()
+                    ).let {
+                        if (it.isRoot && commonRepositories.isNotEmpty()) {
+                            val repositories = commonRepositories.map(::RepositoryIR).distinctAndSorted()
+                            it.withIrs(AllProjectsRepositoriesIR(repositories))
+                        } else it
+                    }.asSuccess()
+                }
+            }
+        }
+
 
         val createSettingsFileTask by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
             runAfter(KotlinPlugin.createModules)
@@ -143,6 +182,7 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
                 createLocalPropertiesFile,
                 initGradleWrapperTask,
                 createSettingsFileTask,
+                mergeCommonRepositories,
             )
     override val properties: List<Property<*>> = super.properties +
             listOf(

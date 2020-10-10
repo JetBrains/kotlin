@@ -23,7 +23,8 @@ data class BuildFileIR(
     val modules: ModulesStructureIR,
     val fromModules: List<Module>,
     val pom: PomIR,
-    override val irs: PersistentList<BuildSystemIR>
+    val isRoot: Boolean,
+    override val irs: PersistentList<BuildSystemIR>,
 ) : FileIR {
     override fun withReplacedIrs(irs: PersistentList<BuildSystemIR>): BuildFileIR = copy(irs = irs)
 
@@ -57,9 +58,10 @@ data class BuildFileIR(
             }
             sectionCall("plugins", irsOfType<BuildSystemPluginIR>()); nl(lineBreaks = 2)
             pom.render(this); nl()
-
-            sectionCall("repositories", distinctRepositories())
-            nl(lineBreaks = 2)
+            distinctRepositories().takeIf { it.isNotEmpty() }?.let { repositories ->
+                sectionCall("repositories", repositories)
+                nl(lineBreaks = 2)
+            }
             modules.render(this)
             irsOfTypeOrNull<FreeIR>()?.let { freeIrs ->
                 nl(2)
