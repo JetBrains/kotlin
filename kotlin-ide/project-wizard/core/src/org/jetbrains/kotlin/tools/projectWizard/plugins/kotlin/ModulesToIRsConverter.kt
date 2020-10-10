@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardKotlinVersion
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
+import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.buildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle.GradlePlugin
@@ -102,7 +103,7 @@ class ModulesToIRsConverter(
         }
     }
 
-    private fun createRootBuildFile(): BuildFileIR = with(data) {
+    private fun Reader.createRootBuildFile(): BuildFileIR = with(data) {
         BuildFileIR(
             projectName,
             projectPath,
@@ -110,6 +111,7 @@ class ModulesToIRsConverter(
             emptyList(),
             pomIr,
             isRoot = true,
+            renderPomIr = StructurePlugin.renderPomIR.settingValue,
             rootBuildFileIrs.toPersistentList()
         )
     }
@@ -191,6 +193,7 @@ class ModulesToIRsConverter(
                 listOf(module),
                 data.pomIr.copy(artifactId = module.name),
                 isRoot = false, /* TODO */
+                renderPomIr = StructurePlugin.renderPomIR.settingValue,
                 createBuildFileIRs(module, state)
             ).also {
                 moduleToBuildFile[module] = it
@@ -233,6 +236,7 @@ class ModulesToIRsConverter(
             module.subModules + module,
             pomIr,
             isRoot = false,
+            renderPomIr = StructurePlugin.renderPomIR.settingValue,
             buildPersistenceList {
                 +createBuildFileIRs(module, state)
                 module.subModules.forEach { +createBuildFileIRs(it, state) }
