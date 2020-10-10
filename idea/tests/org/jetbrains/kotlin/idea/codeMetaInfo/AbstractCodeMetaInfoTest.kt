@@ -32,13 +32,12 @@ import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest
 import org.jetbrains.kotlin.checkers.diagnostics.SyntaxErrorDiagnostic
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.checkers.utils.DiagnosticsRenderingConfiguration
+import org.jetbrains.kotlin.daemon.common.OSKind
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.AbstractDiagnostic
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.codeMetaInfo.models.CodeMetaInfoFactory
-import org.jetbrains.kotlin.idea.codeMetaInfo.models.DiagnosticCodeMetaInfo
-import org.jetbrains.kotlin.idea.codeMetaInfo.models.HighlightingCodeMetaInfo
-import org.jetbrains.kotlin.idea.codeMetaInfo.models.ICodeMetaInfo
+import org.jetbrains.kotlin.idea.codeMetaInfo.models.*
 import org.jetbrains.kotlin.idea.codeMetaInfo.renderConfigurations.AbstractCodeMetaInfoRenderConfiguration
 import org.jetbrains.kotlin.idea.codeMetaInfo.renderConfigurations.DiagnosticCodeMetaInfoRenderConfiguration
 import org.jetbrains.kotlin.idea.codeMetaInfo.renderConfigurations.HighlightingRenderConfiguration
@@ -53,12 +52,15 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import java.nio.file.Paths
 
-class CodeMetaInfoTestCase(val codeMetaInfoTypes: Collection<AbstractCodeMetaInfoRenderConfiguration>) : DaemonAnalyzerTestCase() {
+class CodeMetaInfoTestCase(
+    val codeMetaInfoTypes: Collection<AbstractCodeMetaInfoRenderConfiguration>,
+    val checkNoDiagnosticError: Boolean = false
+) : DaemonAnalyzerTestCase() {
 
     fun getDiagnosticCodeMetaInfos(
-        configuration: DiagnosticCodeMetaInfoRenderConfiguration?,
+        configuration: DiagnosticCodeMetaInfoRenderConfiguration = DiagnosticCodeMetaInfoRenderConfiguration(),
         parseDirective: Boolean = true
-    ): Collection<ICodeMetaInfo> {
+    ): List<CodeMetaInfo> {
         val tempSourceKtFile = PsiManager.getInstance(project).findFile(file.virtualFile) as KtFile
         val resolutionFacade = tempSourceKtFile.getResolutionFacade()
         val (bindingContext, moduleDescriptor) = resolutionFacade.analyzeWithAllCompilerChecks(listOf(tempSourceKtFile))
@@ -77,23 +79,23 @@ class CodeMetaInfoTestCase(val codeMetaInfoTypes: Collection<AbstractCodeMetaInf
             dataFlowValueFactory = resolutionFacade.getDataFlowValueFactory(),
             moduleDescriptor = moduleDescriptor as ModuleDescriptorImpl
         ).map { it.diagnostic }.filter { !parseDirective || diagnosticsFilter.value(it) }
-        configuration?.renderParams = directives.contains(BaseDiagnosticsTest.RENDER_DIAGNOSTICS_MESSAGES)
-        return CodeMetaInfoFactory.getCodeMetaInfo(diagnostics, configuration)
+        configuration.renderParams = directives.contains(BaseDiagnosticsTest.RENDER_DIAGNOSTICS_MESSAGES)
+        return getCodeMetaInfo(diagnostics, configuration)
     }
 
-    fun getLineMarkerCodeMetaInfos(configuration: LineMarkerRenderConfiguration): Collection<ICodeMetaInfo> {
+    fun getLineMarkerCodeMetaInfos(configuration: LineMarkerRenderConfiguration): Collection<CodeMetaInfo> {
         if ("!CHECK_HIGHLIGHTING" in file.text)
             return emptyList()
 
         CodeInsightTestFixtureImpl.instantiateAndRun(file, editor, TIntArrayList().toNativeArray(), false)
         val lineMarkers = DaemonCodeAnalyzerImpl.getLineMarkers(getDocument(file), project)
-        return CodeMetaInfoFactory.getCodeMetaInfo(lineMarkers, configuration)
+        return getCodeMetaInfo(lineMarkers, configuration)
     }
 
-    fun getHighlightingCodeMetaInfos(configuration: HighlightingRenderConfiguration?): Collection<ICodeMetaInfo> {
+    fun getHighlightingCodeMetaInfos(configuration: HighlightingRenderConfiguration): Collection<CodeMetaInfo> {
         val infos = CodeInsightTestFixtureImpl.instantiateAndRun(file, editor, TIntArrayList().toNativeArray(), false)
 
-        return CodeMetaInfoFactory.getCodeMetaInfo(infos, configuration)
+        return getCodeMetaInfo(infos, configuration)
     }
 
     fun checkFile(expectedFile: File, project: Project, editor: Editor) {
@@ -113,8 +115,7 @@ class CodeMetaInfoTestCase(val codeMetaInfoTypes: Collection<AbstractCodeMetaInf
     }
 
     fun check(expectedFile: File) {
-
-        val codeMetaInfoForCheck = mutableListOf<ICodeMetaInfo>()
+        val codeMetaInfoForCheck = mutableListOf<CodeMetaInfo>()
         PsiDocumentManager.getInstance(myProject).commitAllDocuments()
 
         //to load text
@@ -144,22 +145,46 @@ class CodeMetaInfoTestCase(val codeMetaInfoTypes: Collection<AbstractCodeMetaInf
             !codeMetaInfoTypes.any { it is HighlightingRenderConfiguration }
         ) {
             checkHighlightErrorItemsInDiagnostics(
-                getDiagnosticCodeMetaInfos(null, false).filterIsInstance<DiagnosticCodeMetaInfo>()
+                getDiagnosticCodeMetaInfos(DiagnosticCodeMetaInfoRenderConfiguration(), false).filterIsInstance<DiagnosticCodeMetaInfo>()
             )
         }
-
+        val parsedMetaInfo = CodeMetaInfoParser.getCodeMetaInfoFromText(expectedFile.readText()).toMutableList()
+        codeMetaInfoForCheck.forEach { codeMetaInfo ->
+            val correspondingParsed = parsedMetaInfo.firstOrNull { it == codeMetaInfo }
+            if (correspondingParsed != null) {
+                parsedMetaInfo.remove(correspondingParsed)
+                codeMetaInfo.platforms.addAll(correspondingParsed.platforms)
+                if (correspondingParsed.platforms.isNotEmpty() && OSKind.current.toString() !in correspondingParsed.platforms)
+                    codeMetaInfo.platforms.add(OSKind.current.toString())
+            }
+        }
+        if (parsedMetaInfo.isNotEmpty())
+            parsedMetaInfo.forEach {
+                if (it.platforms.isNotEmpty() && OSKind.current.toString() !in it.platforms) codeMetaInfoForCheck.add(
+                    it
+                )
+            }
         val textWithCodeMetaInfo = CodeMetaInfoRenderer.renderTagsToText(codeMetaInfoForCheck, myEditor.document.text)
         KotlinTestUtils.assertEqualsToFile(
             expectedFile,
             textWithCodeMetaInfo.toString()
         )
+
+        if (checkNoDiagnosticError) {
+            val diagnosticsErrors =
+                getDiagnosticCodeMetaInfos().filter { (it as DiagnosticCodeMetaInfo).diagnostic.severity == Severity.ERROR }
+            assertTrue(
+                "Diagnostics with severity ERROR were found: ${diagnosticsErrors.joinToString { it.asString() }}",
+                diagnosticsErrors.isEmpty()
+            )
+        }
     }
 
     private fun checkHighlightErrorItemsInDiagnostics(
         diagnostics: Collection<DiagnosticCodeMetaInfo>
     ) {
-        val highlightItems: List<ICodeMetaInfo> =
-            getHighlightingCodeMetaInfos(null).filter { (it as HighlightingCodeMetaInfo).highlightingInfo.severity == HighlightSeverity.ERROR }
+        val highlightItems: List<CodeMetaInfo> =
+            getHighlightingCodeMetaInfos(HighlightingRenderConfiguration()).filter { (it as HighlightingCodeMetaInfo).highlightingInfo.severity == HighlightSeverity.ERROR }
 
         highlightItems.forEach { highlightingCodeMetaInfo ->
             assert(
@@ -201,7 +226,7 @@ abstract class AbstractHighlightingCodeMetaInfoTest : AbstractCodeMetaInfoTest()
 }
 
 abstract class AbstractCodeMetaInfoTest : AbstractMultiModuleTest() {
-
+    open val checkNoDiagnosticError get() = false
     open fun getConfigurations() = listOf(
         DiagnosticCodeMetaInfoRenderConfiguration(),
         LineMarkerRenderConfiguration(),
@@ -218,7 +243,7 @@ abstract class AbstractCodeMetaInfoTest : AbstractMultiModuleTest() {
 
     fun doTest(testDataPath: String) {
         val testRoot = File(testDataPath)
-        val checker = CodeMetaInfoTestCase(getConfigurations())
+        val checker = CodeMetaInfoTestCase(getConfigurations(), checkNoDiagnosticError)
         setupProject(testDataPath)
 
         for (module in ModuleManager.getInstance(project).modules) {
@@ -237,16 +262,13 @@ abstract class AbstractCodeMetaInfoTest : AbstractMultiModuleTest() {
         val tempRootPath = Paths.get(containingRoot.path)
         val tempProjectDirPath = tempRootPath.parent
         val tempSourcePath = Paths.get(path)
-
         val relativeToProjectRootPath = tempProjectDirPath.relativize(tempSourcePath)
-
         val testSourcesProjectDirPath = testDir.toPath()
         val testSourcePath = testSourcesProjectDirPath.resolve(relativeToProjectRootPath)
 
         require(testSourcePath.exists()) {
             "Can't find file in testdata for copied file $this: checked at path ${testSourcePath.toAbsolutePath()}"
         }
-
         return testSourcePath.toFile()
     }
 }
