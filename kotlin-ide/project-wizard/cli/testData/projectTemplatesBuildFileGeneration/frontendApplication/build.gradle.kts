@@ -8,9 +8,7 @@ version = "1.0-SNAPSHOT"
 repositories {
     jcenter()
     mavenCentral()
-    maven {
-        url = uri("KOTLIN_REPO")
-    }
+    maven("KOTLIN_REPO")
 }
 
 dependencies {
