@@ -14,8 +14,6 @@ buildscript {
 group = "me.user"
 version = "1.0-SNAPSHOT"
 
-
-
 allprojects {
     repositories {
         google()
