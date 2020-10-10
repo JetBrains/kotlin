@@ -59,3 +59,29 @@ FILE: abstractSuperCall.kt
         }
 
     }
+    public abstract interface PsiVariable : R|kotlin/Any| {
+        public abstract fun getInitializer(): R|kotlin/Any?|
+
+    }
+    public abstract interface UVariable : R|PsiVariable| {
+        public open override fun getInitializer(): R|kotlin/Any?| {
+            ^getInitializer Null(null)
+        }
+
+    }
+    public abstract class AbstractKotlinUVariable : R|PsiVariable|, R|UVariable| {
+        public constructor(): R|AbstractKotlinUVariable| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class KotlinUVariable : R|AbstractKotlinUVariable|, R|UVariable|, R|PsiVariable| {
+        public constructor(): R|KotlinUVariable| {
+            super<R|AbstractKotlinUVariable|>()
+        }
+
+        public final override fun getInitializer(): R|kotlin/Any?| {
+            ^getInitializer this@R|/KotlinUVariable|.super<R|AbstractKotlinUVariable|>.R|/PsiVariable.getInitializer|()
+        }
+
+    }

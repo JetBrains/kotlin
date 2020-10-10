@@ -39,3 +39,24 @@ abstract class J : A() {
         super.<!ABSTRACT_SUPER_CALL!>y<!>
     }
 }
+
+// KT-42352
+
+interface PsiVariable {
+    fun getInitializer(): Any?
+}
+
+interface UVariable : PsiVariable {
+    override fun getInitializer(): Any? {
+        return null
+    }
+}
+
+abstract class AbstractKotlinUVariable : PsiVariable, UVariable {
+}
+
+class KotlinUVariable : AbstractKotlinUVariable(), UVariable, PsiVariable {
+    override fun getInitializer(): Any? {
+        return super<AbstractKotlinUVariable>.getInitializer()
+    }
+}

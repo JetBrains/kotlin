@@ -1,6 +1,16 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -ABSTRACT_SUPER_CALL
 
-abstract class A {
+interface I {
+    fun bar(): Any?
+}
+
+interface EI : I {
+    override fun bar(): Any? {
+        throw UnsupportedOperationException()
+    }
+}
+
+abstract class A : I, EI {
     open fun foo(a: String = "default") {
     }
 
@@ -10,7 +20,7 @@ abstract class A {
     abstract fun foo3(a: String = "default")
 }
 
-open class B : A() {
+class B(i: I) : A(), EI, I by i {
     fun test() {
         super.foo("123")
         super.<!SUPER_CALL_WITH_DEFAULT_PARAMETERS!>foo<!>()
@@ -24,5 +34,9 @@ open class B : A() {
 
     override fun foo3(a: String) {
         throw UnsupportedOperationException()
+    }
+
+    override fun bar(): Any? {
+        return super<A>.bar()
     }
 }
