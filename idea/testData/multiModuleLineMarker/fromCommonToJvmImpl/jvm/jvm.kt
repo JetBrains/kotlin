@@ -1,11 +1,11 @@
-actual class <lineMarker>Header</lineMarker> {
-    actual fun <lineMarker>foo</lineMarker>() = 42
+actual class <!LINE_MARKER("descr='Has declaration in common module'")!>Header<!> {
+    actual fun <!LINE_MARKER("descr='Has declaration in common module'")!>foo<!>() = 42
 }
 
-actual class <lineMarker>Incomplete</lineMarker>
+actual class <!LINE_MARKER("descr='Has declaration in common module'")!>Incomplete<!>
 
-actual fun <lineMarker>foo</lineMarker>(arg: Int) = arg.toString()
+actual fun <!LINE_MARKER("descr='Has declaration in common module'")!>foo<!>(arg: Int) = arg.toString()
 
-actual val <lineMarker>flag</lineMarker> = true
+actual val <!LINE_MARKER("descr='Has declaration in common module'")!>flag<!> = true
 
 

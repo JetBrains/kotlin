@@ -1,4 +1,4 @@
-actual class <lineMarker descr="Has declaration in common module">WithConstructor</lineMarker> actual constructor(actual val x: Int, actual val s: String)
+actual class <!LINE_MARKER("descr='Has declaration in common module'")!>WithConstructor<!> actual constructor(actual val x: Int, actual val s: String)
 
 /*
 LINEMARKER: Has declaration in common module

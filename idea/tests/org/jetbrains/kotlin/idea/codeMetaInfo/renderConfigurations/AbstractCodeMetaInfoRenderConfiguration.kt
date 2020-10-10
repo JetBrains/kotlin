@@ -17,14 +17,17 @@ import org.jetbrains.kotlin.idea.codeMetaInfo.models.LineMarkerCodeMetaInfo
 
 
 abstract class AbstractCodeMetaInfoRenderConfiguration(var renderParams: Boolean = true) {
-
+    private val clickOrPressRegex = "Click or press (.*)to navigate".toRegex() //We have different hotkeys on different platforms
     open fun asString(codeMetaInfo: CodeMetaInfo) = codeMetaInfo.getTag() + getPlatformsString(codeMetaInfo)
 
     open fun getAdditionalParams(codeMetaInfo: CodeMetaInfo) = ""
 
     protected fun sanitizeLineMarkerTooltip(originalText: String?): String {
         if (originalText == null) return "null"
-        val noHtmlTags = StringUtil.removeHtmlTags(originalText).replace(" ", "")
+        val noHtmlTags = StringUtil.removeHtmlTags(originalText)
+            .replace(" ", "")
+            .replace(clickOrPressRegex, "")
+            .trim()
         return sanitizeLineBreaks(noHtmlTags)
     }
 
@@ -79,15 +82,16 @@ open class DiagnosticCodeMetaInfoRenderConfiguration(
     }
 }
 
-open class LineMarkerRenderConfiguration(val renderDescription: Boolean = true) : AbstractCodeMetaInfoRenderConfiguration() {
+open class LineMarkerRenderConfiguration(var renderDescription: Boolean = true) : AbstractCodeMetaInfoRenderConfiguration() {
     override fun asString(codeMetaInfo: CodeMetaInfo): String {
         if (codeMetaInfo !is LineMarkerCodeMetaInfo) return ""
-        return getTag() + if (renderParams) "(\"${getParamsString(codeMetaInfo)}\")" else ""
+        return getTag() + getParamsString(codeMetaInfo)
     }
 
     fun getTag() = "LINE_MARKER"
 
     private fun getParamsString(lineMarkerCodeMetaInfo: LineMarkerCodeMetaInfo): String {
+        if (!renderParams) return ""
         val params = mutableListOf<String>()
 
         if (renderDescription)
@@ -95,7 +99,8 @@ open class LineMarkerRenderConfiguration(val renderDescription: Boolean = true) 
 
         params.add(getAdditionalParams(lineMarkerCodeMetaInfo))
 
-        return params.filter { it.isNotEmpty() }.joinToString("; ")
+        val paramsString = params.filter { it.isNotEmpty() }.joinToString("; ")
+        return if (paramsString.isEmpty()) "" else "(\"$paramsString\")"
     }
 }
 
@@ -107,14 +112,15 @@ open class HighlightingRenderConfiguration(
 
     override fun asString(codeMetaInfo: CodeMetaInfo): String {
         if (codeMetaInfo !is HighlightingCodeMetaInfo) return ""
-        return getTag() + if (renderParams) "(${getParamsString(codeMetaInfo)})" else ""
+        return getTag() + getParamsString(codeMetaInfo)
     }
 
     fun getTag() = "HIGHLIGHTING"
 
     private fun getParamsString(highlightingCodeMetaInfo: HighlightingCodeMetaInfo): String {
-        val params = mutableListOf<String>()
+        if (!renderParams) return ""
 
+        val params = mutableListOf<String>()
         if (renderSeverity)
             params.add("severity='${highlightingCodeMetaInfo.highlightingInfo.severity}'")
         if (renderDescription)
@@ -123,7 +129,8 @@ open class HighlightingRenderConfiguration(
             params.add("textAttributesKey='${highlightingCodeMetaInfo.highlightingInfo.forcedTextAttributesKey}'")
 
         params.add(getAdditionalParams(highlightingCodeMetaInfo))
+        val paramsString = params.filter { it.isNotEmpty() }.joinToString("; ")
 
-        return params.filter { it.isNotEmpty() }.joinToString("; ")
+        return if (paramsString.isEmpty()) "" else "(\"$paramsString\")"
     }
 }
