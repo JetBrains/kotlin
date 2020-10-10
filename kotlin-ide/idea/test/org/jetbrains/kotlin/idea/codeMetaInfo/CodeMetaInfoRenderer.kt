@@ -7,13 +7,12 @@ package org.jetbrains.kotlin.idea.codeMetaInfo
 
 import com.intellij.util.containers.Stack
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
-import org.jetbrains.kotlin.idea.codeMetaInfo.models.ICodeMetaInfo
+import org.jetbrains.kotlin.idea.codeMetaInfo.models.CodeMetaInfo
 import java.io.File
 
 object CodeMetaInfoRenderer {
-
     fun renderTagsToText(
-        codeMetaInfos: List<ICodeMetaInfo>,
+        codeMetaInfos: List<CodeMetaInfo>,
         originalText: String
     ): StringBuffer {
         val result = StringBuffer()
@@ -22,25 +21,18 @@ object CodeMetaInfoRenderer {
             return result
         }
         val sortedMetaInfos = getSortedCodeMetaInfos(codeMetaInfos)
-        val opened = Stack<ICodeMetaInfo>()
+        val opened = Stack<CodeMetaInfo>()
 
-        for (i in originalText.indices) {
-            val c = originalText[i]
-            var prev: ICodeMetaInfo? = null
-
-            while (!opened.isEmpty() && i == opened.peek().end) {
-                if (prev == null || prev.start != opened.peek().start)
-                    closeString(result)
-                prev = opened.pop()
-            }
-            if (sortedMetaInfos.any { it.start == i }) {
+        for ((i, c) in originalText.withIndex()) {
+            checkOpenedAndCloseStringIfNeeded(opened, i, result)
+            val matchedCodeMetaInfos = sortedMetaInfos.filter { it.start == i }
+            if (matchedCodeMetaInfos.isNotEmpty()) {
                 openStartTag(result)
-                val matchedCodeMetaInfos = sortedMetaInfos.filter { it.start == i }.toMutableList()
                 val iterator = matchedCodeMetaInfos.listIterator()
-                var current: ICodeMetaInfo? = iterator.next()
+                var current: CodeMetaInfo? = iterator.next()
 
                 while (current != null) {
-                    val next: ICodeMetaInfo? = if (iterator.hasNext()) iterator.next() else null
+                    val next: CodeMetaInfo? = if (iterator.hasNext()) iterator.next() else null
                     opened.push(current)
                     result.append(current.asString())
                     when {
@@ -56,30 +48,27 @@ object CodeMetaInfoRenderer {
             }
             result.append(c)
         }
-        var prev: ICodeMetaInfo? = null
-
-        while (!opened.isEmpty() && originalText.length == opened.peek().end) {
-            if (prev == null || prev.start != opened.peek().start)
-                closeString(result)
-            prev = opened.pop()
-        }
+        checkOpenedAndCloseStringIfNeeded(opened, originalText.length, result)
         return result
     }
 
-    private fun getSortedCodeMetaInfos(
-        metaInfos: Collection<ICodeMetaInfo>,
-    ): MutableList<ICodeMetaInfo> {
-        val result = metaInfos.toMutableList()
-        result.sortWith(Comparator { d1: ICodeMetaInfo, d2: ICodeMetaInfo ->
-            if (d1.start != d2.start) d1.start - d2.start else d2.end - d1.end
-        })
-        return result
+    private fun getSortedCodeMetaInfos(metaInfos: Collection<CodeMetaInfo>): List<CodeMetaInfo> {
+        return metaInfos.sortedWith(compareBy<CodeMetaInfo> { it.start }.then(compareByDescending { it.end }))
     }
 
     private fun closeString(result: StringBuffer) = result.append("<!>")
     private fun openStartTag(result: StringBuffer) = result.append("<!")
     private fun closeStartTag(result: StringBuffer) = result.append("!>")
     private fun closeStartAndOpenNewTag(result: StringBuffer) = result.append("!><!")
+
+    private fun checkOpenedAndCloseStringIfNeeded(opened: Stack<CodeMetaInfo>, end: Int, result: StringBuffer) {
+        var prev: CodeMetaInfo? = null
+        while (!opened.isEmpty() && end == opened.peek().end) {
+            if (prev == null || prev.start != opened.peek().start)
+                closeString(result)
+            prev = opened.pop()
+        }
+    }
 }
 
 fun clearFileFromDiagnosticMarkup(file: File) {
