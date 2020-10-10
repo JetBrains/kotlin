@@ -57,17 +57,19 @@ data class BuildFileIR(
                     sectionCall("dependencies", buildScriptIrs.filterIsInstance<BuildScriptDependencyIR>())
                 }
             }
-            sectionCall("plugins", irsOfType<BuildSystemPluginIR>()); nl(lineBreaks = 2)
+            sectionCall("plugins", irsOfType<BuildSystemPluginIR>()); nl(lineBreaks = 1)
             if (renderPomIr) {
-                pom.render(this); nl()
+                nl()
+                pom.render(this)
             }
             distinctRepositories().takeIf { it.isNotEmpty() }?.let { repositories ->
+                nl()
                 sectionCall("repositories", repositories)
-                nl(lineBreaks = 2)
+                nl()
             }
             modules.render(this)
             irsOfTypeOrNull<FreeIR>()?.let { freeIrs ->
-                nl(2)
+                nl()
                 freeIrs.listNl(lineBreaks = 2)
             }.ignore()
         }
@@ -145,6 +147,7 @@ data class MultiplatformModulesStructureIR(
     override fun withReplacedIrs(irs: PersistentList<BuildSystemIR>): MultiplatformModulesStructureIR = copy(irs = irs)
 
     override fun GradlePrinter.renderGradle() {
+        nl()
         sectionCall("kotlin") {
             targets.filterNot {
                 it.safeAs<DefaultTargetConfigurationIR>()?.targetAccess?.type == ModuleSubType.common
@@ -154,6 +157,7 @@ data class MultiplatformModulesStructureIR(
                 modules.listNl()
             }
         }
+        nl()
     }
 }
 
@@ -182,7 +186,9 @@ data class SingleplatformModulesStructureWithSingleModuleIR(
         copy(module = modules.single() as SingleplatformModuleIR)
 
     override fun BuildFilePrinter.render() {
+        nl()
         module.render(this)
+        nl()
     }
 }
 
