@@ -16,9 +16,14 @@ buildscript {
 group = 'me.user'
 version = '1.0-SNAPSHOT'
 
-repositories {
-    mavenCentral()
-    maven {
-        url 'KOTLIN_REPO'
+
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url 'KOTLIN_REPO'
+        }
     }
 }

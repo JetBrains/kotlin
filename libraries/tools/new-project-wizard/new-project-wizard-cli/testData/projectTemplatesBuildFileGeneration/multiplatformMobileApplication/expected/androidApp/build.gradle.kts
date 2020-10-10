@@ -7,16 +7,6 @@ plugins {
 group = "me.user"
 version = "1.0-SNAPSHOT"
 
-repositories {
-    gradlePluginPortal()
-    google()
-    jcenter()
-    mavenCentral()
-    maven {
-        url = uri("KOTLIN_REPO")
-    }
-}
-
 dependencies {
     implementation(project(":shared"))
     implementation("com.google.android.material:material:1.2.0")

@@ -70,7 +70,6 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
         +GradleOnlyPluginByNameIR(reader.createAndroidPlugin(module).pluginName, priority = 1)
 
         +GradleOnlyPluginByNameIR("kotlin-android-extensions", priority = 3)
-        +createRepositories(configurationData.kotlinVersion).map(::RepositoryIR)
     }
 
     fun Reader.createAndroidPlugin(module: Module): AndroidGradlePlugin

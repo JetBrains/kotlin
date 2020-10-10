@@ -109,6 +109,7 @@ class ModulesToIRsConverter(
             RootFileModuleStructureIR(persistentListOf()),
             emptyList(),
             pomIr,
+            isRoot = true,
             rootBuildFileIrs.toPersistentList()
         )
     }
@@ -189,6 +190,7 @@ class ModulesToIRsConverter(
                 ),
                 listOf(module),
                 data.pomIr.copy(artifactId = module.name),
+                isRoot = false, /* TODO */
                 createBuildFileIRs(module, state)
             ).also {
                 moduleToBuildFile[module] = it
@@ -230,6 +232,7 @@ class ModulesToIRsConverter(
             ),
             module.subModules + module,
             pomIr,
+            isRoot = false,
             buildPersistenceList {
                 +createBuildFileIRs(module, state)
                 module.subModules.forEach { +createBuildFileIRs(it, state) }
