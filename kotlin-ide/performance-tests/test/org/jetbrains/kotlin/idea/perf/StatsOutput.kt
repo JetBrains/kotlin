@@ -81,7 +81,7 @@ private fun Metric.toJson(prefix: String): String =
             measurementError?.let {
                 append(",\"metric_error\":").append(it)
             }
-            append(",\"legacy_name\":").append("\"${s.jsonValue()}\"")
+            //append(",\"legacy_name\":").append("\"${s.jsonValue()}\"")
             commaRequired = true
         }
 
