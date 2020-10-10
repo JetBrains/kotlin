@@ -2,9 +2,7 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         mavenCentral()
-        maven {
-            url = uri("KOTLIN_REPO")
-        }
+        maven("KOTLIN_REPO")
     }
 
 }
