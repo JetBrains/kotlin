@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.hash.GlobalHash
 import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
@@ -638,4 +639,4 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val llvmVector128 = vector128Type
 }
 
-class IrStaticInitializer(val file: IrFile, val initializer: LLVMValueRef)
+class IrStaticInitializer(val module: ModuleDescriptor, val initializer: LLVMValueRef)

@@ -4208,6 +4208,15 @@ dynamicTest("interop_concurrentRuntime") {
     expectedExitStatus = 99
 }
 
+dynamicTest("interop_kt42397") {
+    disabled = (project.testTarget != null && project.testTarget != project.hostName) ||
+            project.globalTestArgs.contains('-opt')
+    source = "interop/kt42397/knlibrary.kt"
+    cSource = "$projectDir/interop/kt42397/test.cpp"
+    clangTool = "clang++"
+    flags = ['-g']
+}
+
 task library_mismatch(type: KonanDriverTest) {
     // Does not work for cross targets yet.
     enabled = !(project.testTarget != null && project.target.name != project.hostName)
@@ -4466,6 +4475,15 @@ if (isAppleTarget(project)) {
             library = 'objcGh3343'
         }
         swiftSources = ['framework/gh3343/']
+    }
+
+    frameworkTest("testKt42397Framework") {
+        enabled = !project.globalTestArgs.contains('-opt')
+        framework("Kt42397") {
+            sources = ['framework/kt42397']
+            opts = ['-g']
+        }
+        swiftSources = ['framework/kt42397']
     }
 }
 
