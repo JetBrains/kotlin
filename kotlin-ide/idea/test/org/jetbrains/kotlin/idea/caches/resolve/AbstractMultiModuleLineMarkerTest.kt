@@ -5,21 +5,10 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromDirStructure
 import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
+import org.jetbrains.kotlin.idea.codeMetaInfo.AbstractLineMarkerCodeMetaInfoTest
 import java.io.File
 
-abstract class AbstractMultiModuleLineMarkerTest : AbstractMultiModuleHighlightingTest() {
+abstract class AbstractMultiModuleLineMarkerTest : AbstractLineMarkerCodeMetaInfoTest() {
     override fun getTestDataDirectory() = IDEA_TEST_DATA_DIR.resolve("multiModuleLineMarker")
-
-    override val shouldCheckLineMarkers = true
-
-    override val shouldCheckResult = false
-
-    override fun doTestLineMarkers() = true
-
-    protected fun doTest(path: String) {
-        setupMppProjectFromDirStructure(File(path))
-        checkLineMarkersInProject()
-    }
 }
