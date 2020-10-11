@@ -242,7 +242,10 @@ class EffectsExtractingVisitor(
     private fun ValueArgument.toComputation(): Computation? {
         return when (this) {
             is KtLambdaArgument -> getLambdaExpression()?.let { ESLambda(it) }
-            is KtValueArgument -> getArgumentExpression()?.let { extractOrGetCached(it) }
+            is KtValueArgument -> getArgumentExpression()?.let {
+                if (it is KtLambdaExpression) ESLambda(it)
+                else extractOrGetCached(it)
+            }
             else -> null
         }
     }

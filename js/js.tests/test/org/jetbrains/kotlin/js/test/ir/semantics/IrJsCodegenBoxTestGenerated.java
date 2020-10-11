@@ -4239,6 +4239,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/contracts/exception.kt");
         }
 
+        @TestMetadata("fieldInConstructorParens.kt")
+        public void testFieldInConstructorParens() throws Exception {
+            runTest("compiler/testData/codegen/box/contracts/fieldInConstructorParens.kt");
+        }
+
         @TestMetadata("fieldReadInConstructor.kt")
         public void testFieldReadInConstructor() throws Exception {
             runTest("compiler/testData/codegen/box/contracts/fieldReadInConstructor.kt");
