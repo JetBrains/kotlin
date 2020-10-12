@@ -1,173 +1,172 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.text
 
-/**
- * Represents the character general category in the Unicode specification.
- */
-public enum class CharCategory(public val value: Int, public val code: String) {
+public actual enum class CharCategory(internal val value: Int, public actual val code: String) {
     /**
      * General category "Cn" in the Unicode specification.
      */
-    UNASSIGNED(Character.UNASSIGNED.toInt(), "Cn"),
+    UNASSIGNED(0, "Cn"),
 
     /**
      * General category "Lu" in the Unicode specification.
      */
-    UPPERCASE_LETTER(Character.UPPERCASE_LETTER.toInt(), "Lu"),
+    UPPERCASE_LETTER(1, "Lu"),
 
     /**
      * General category "Ll" in the Unicode specification.
      */
-    LOWERCASE_LETTER(Character.LOWERCASE_LETTER.toInt(), "Ll"),
+    LOWERCASE_LETTER(2, "Ll"),
 
     /**
      * General category "Lt" in the Unicode specification.
      */
-    TITLECASE_LETTER(Character.TITLECASE_LETTER.toInt(), "Lt"),
+    TITLECASE_LETTER(3, "Lt"),
 
     /**
      * General category "Lm" in the Unicode specification.
      */
-    MODIFIER_LETTER(Character.MODIFIER_LETTER.toInt(), "Lm"),
+    MODIFIER_LETTER(4, "Lm"),
 
     /**
      * General category "Lo" in the Unicode specification.
      */
-    OTHER_LETTER(Character.OTHER_LETTER.toInt(), "Lo"),
+    OTHER_LETTER(5, "Lo"),
 
     /**
      * General category "Mn" in the Unicode specification.
      */
-    NON_SPACING_MARK(Character.NON_SPACING_MARK.toInt(), "Mn"),
+    NON_SPACING_MARK(6, "Mn"),
 
     /**
      * General category "Me" in the Unicode specification.
      */
-    ENCLOSING_MARK(Character.ENCLOSING_MARK.toInt(), "Me"),
+    ENCLOSING_MARK(7, "Me"),
 
     /**
      * General category "Mc" in the Unicode specification.
      */
-    COMBINING_SPACING_MARK(Character.COMBINING_SPACING_MARK.toInt(), "Mc"),
+    COMBINING_SPACING_MARK(8, "Mc"),
 
     /**
      * General category "Nd" in the Unicode specification.
      */
-    DECIMAL_DIGIT_NUMBER(Character.DECIMAL_DIGIT_NUMBER.toInt(), "Nd"),
+    DECIMAL_DIGIT_NUMBER(9, "Nd"),
 
     /**
      * General category "Nl" in the Unicode specification.
      */
-    LETTER_NUMBER(Character.LETTER_NUMBER.toInt(), "Nl"),
+    LETTER_NUMBER(10, "Nl"),
 
     /**
      * General category "No" in the Unicode specification.
      */
-    OTHER_NUMBER(Character.OTHER_NUMBER.toInt(), "No"),
+    OTHER_NUMBER(11, "No"),
 
     /**
      * General category "Zs" in the Unicode specification.
      */
-    SPACE_SEPARATOR(Character.SPACE_SEPARATOR.toInt(), "Zs"),
+    SPACE_SEPARATOR(12, "Zs"),
 
     /**
      * General category "Zl" in the Unicode specification.
      */
-    LINE_SEPARATOR(Character.LINE_SEPARATOR.toInt(), "Zl"),
+    LINE_SEPARATOR(13, "Zl"),
 
     /**
      * General category "Zp" in the Unicode specification.
      */
-    PARAGRAPH_SEPARATOR(Character.PARAGRAPH_SEPARATOR.toInt(), "Zp"),
+    PARAGRAPH_SEPARATOR(14, "Zp"),
 
     /**
      * General category "Cc" in the Unicode specification.
      */
-    CONTROL(Character.CONTROL.toInt(), "Cc"),
+    CONTROL(15, "Cc"),
 
     /**
      * General category "Cf" in the Unicode specification.
      */
-    FORMAT(Character.FORMAT.toInt(), "Cf"),
+    FORMAT(16, "Cf"),
 
     /**
      * General category "Co" in the Unicode specification.
      */
-    PRIVATE_USE(Character.PRIVATE_USE.toInt(), "Co"),
+    PRIVATE_USE(18, "Co"),
 
     /**
      * General category "Cs" in the Unicode specification.
      */
-    SURROGATE(Character.SURROGATE.toInt(), "Cs"),
+    SURROGATE(19, "Cs"),
 
     /**
      * General category "Pd" in the Unicode specification.
      */
-    DASH_PUNCTUATION(Character.DASH_PUNCTUATION.toInt(), "Pd"),
+    DASH_PUNCTUATION(20, "Pd"),
 
     /**
      * General category "Ps" in the Unicode specification.
      */
-    START_PUNCTUATION(Character.START_PUNCTUATION.toInt(), "Ps"),
+    START_PUNCTUATION(21, "Ps"),
 
     /**
      * General category "Pe" in the Unicode specification.
      */
-    END_PUNCTUATION(Character.END_PUNCTUATION.toInt(), "Pe"),
+    END_PUNCTUATION(22, "Pe"),
 
     /**
      * General category "Pc" in the Unicode specification.
      */
-    CONNECTOR_PUNCTUATION(Character.CONNECTOR_PUNCTUATION.toInt(), "Pc"),
+    CONNECTOR_PUNCTUATION(23, "Pc"),
 
     /**
      * General category "Po" in the Unicode specification.
      */
-    OTHER_PUNCTUATION(Character.OTHER_PUNCTUATION.toInt(), "Po"),
+    OTHER_PUNCTUATION(24, "Po"),
 
     /**
      * General category "Sm" in the Unicode specification.
      */
-    MATH_SYMBOL(Character.MATH_SYMBOL.toInt(), "Sm"),
+    MATH_SYMBOL(25, "Sm"),
 
     /**
      * General category "Sc" in the Unicode specification.
      */
-    CURRENCY_SYMBOL(Character.CURRENCY_SYMBOL.toInt(), "Sc"),
+    CURRENCY_SYMBOL(26, "Sc"),
 
     /**
      * General category "Sk" in the Unicode specification.
      */
-    MODIFIER_SYMBOL(Character.MODIFIER_SYMBOL.toInt(), "Sk"),
+    MODIFIER_SYMBOL(27, "Sk"),
 
     /**
      * General category "So" in the Unicode specification.
      */
-    OTHER_SYMBOL(Character.OTHER_SYMBOL.toInt(), "So"),
+    OTHER_SYMBOL(28, "So"),
 
     /**
      * General category "Pi" in the Unicode specification.
      */
-    INITIAL_QUOTE_PUNCTUATION(Character.INITIAL_QUOTE_PUNCTUATION.toInt(), "Pi"),
+    INITIAL_QUOTE_PUNCTUATION(29, "Pi"),
 
     /**
      * General category "Pf" in the Unicode specification.
      */
-    FINAL_QUOTE_PUNCTUATION(Character.FINAL_QUOTE_PUNCTUATION.toInt(), "Pf");
+    FINAL_QUOTE_PUNCTUATION(30, "Pf");
 
     /**
      * Returns `true` if [char] character belongs to this category.
      */
-    public operator fun contains(char: Char): Boolean = Character.getType(char) == this.value
+    public actual operator fun contains(char: Char): Boolean = char.getCategoryValue() == this.value
 
-
-    public companion object {
-        private val categoryMap by lazy { CharCategory.values().associateBy { it.value } }
-
-        public fun valueOf(category: Int): CharCategory = categoryMap[category] ?: throw IllegalArgumentException("Category #$category is not defined.")
+    companion object {
+        internal fun valueOf(category: Int): CharCategory =
+            when (category) {
+                in 0..16 -> values()[category]
+                in 18..30 -> values()[category - 1]
+                else -> throw IllegalArgumentException("Category #$category is not defined.")
+            }
     }
 }
