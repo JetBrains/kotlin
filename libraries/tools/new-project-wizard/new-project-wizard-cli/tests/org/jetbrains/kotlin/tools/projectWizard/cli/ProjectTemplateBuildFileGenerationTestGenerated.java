@@ -33,6 +33,16 @@ public class ProjectTemplateBuildFileGenerationTestGenerated extends AbstractPro
         runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/backendApplication/");
     }
 
+    @TestMetadata("composeDesktopApplication")
+    public void testComposeDesktopApplication() throws Exception {
+        runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/composeDesktopApplication/");
+    }
+
+    @TestMetadata("composeMultiplatformApplication")
+    public void testComposeMultiplatformApplication() throws Exception {
+        runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/composeMultiplatformApplication/");
+    }
+
     @TestMetadata("consoleApplication")
     public void testConsoleApplication() throws Exception {
         runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/consoleApplication/");
@@ -71,15 +81,5 @@ public class ProjectTemplateBuildFileGenerationTestGenerated extends AbstractPro
     @TestMetadata("nativeApplication")
     public void testNativeApplication() throws Exception {
         runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/nativeApplication/");
-    }
-
-    @TestMetadata("сomposeMultiplatformApplication")
-    public void testComposeMultiplatformApplication() throws Exception {
-        runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/composeMultiplatformApplication/");
-    }
-
-    @TestMetadata("composeDesktopApplication")
-    public void testComposeDesktopApplication() throws Exception {
-        runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/composeDesktopApplication/");
     }
 }
