@@ -3,7 +3,7 @@ buildscript {
         gradlePluginPortal()
         jcenter()
         google()
-        maven('KOTLIN_REPO')
+        maven { url 'KOTLIN_REPO' }
     }
     dependencies {
         classpath('org.jetbrains.kotlin:kotlin-gradle-plugin:KOTLIN_VERSION')
@@ -18,6 +18,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven('KOTLIN_REPO')
+        maven { url 'KOTLIN_REPO' }
     }
 }

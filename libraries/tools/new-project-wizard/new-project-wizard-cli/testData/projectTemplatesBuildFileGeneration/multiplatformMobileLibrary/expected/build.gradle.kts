@@ -10,7 +10,7 @@ version = "1.0-SNAPSHOT"
 repositories {
     google()
     mavenCentral()
-    maven("KOTLIN_REPO")
+    maven { url = uri("KOTLIN_REPO") }
 }
 
 kotlin {
