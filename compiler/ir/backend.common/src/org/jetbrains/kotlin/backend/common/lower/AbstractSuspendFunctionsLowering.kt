@@ -82,7 +82,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
     protected fun IrCall.isReturnIfSuspendedCall() =
         symbol.owner.run {
             parent.getPackageFragment()?.fqName == context.internalPackageFqn &&
-                    name == Name.identifier("returnIfSuspended")
+                    name.asString() == "returnIfSuspended"
         }
 
     private fun tryTransformSuspendFunction(element: IrElement) =
