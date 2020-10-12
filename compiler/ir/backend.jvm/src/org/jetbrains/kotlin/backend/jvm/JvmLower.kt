@@ -339,6 +339,7 @@ private val jvmFilePhases = listOf(
 
     interfacePhase,
     inheritedDefaultMethodsOnClassesPhase,
+    replaceDefaultImplsOverriddenSymbolsPhase,
     interfaceSuperCallsPhase,
     interfaceDefaultCallsPhase,
     interfaceObjectCallsPhase,
