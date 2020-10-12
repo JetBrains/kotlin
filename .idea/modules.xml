@@ -2040,6 +2040,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/swift-package-manager/intellij.swift.packageManager.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/swift-package-manager/intellij.swift.packageManager.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/swift-testFramework/intellij.swift.testFramework.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/swift-testFramework/intellij.swift.testFramework.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/swift-tests/intellij.swift.tests.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/swift-tests/intellij.swift.tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/tailwindcss/intellij.tailwindcss.iml" filepath="$PROJECT_DIR$/intellij/plugins/tailwindcss/intellij.tailwindcss.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/tasks/tasks-api/intellij.tasks.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/tasks/tasks-api/intellij.tasks.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/tasks/tasks-compatibility/intellij.tasks.compatibility.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/tasks/tasks-compatibility/intellij.tasks.compatibility.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/tasks/tasks-core/intellij.tasks.core.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/tasks/tasks-core/intellij.tasks.core.iml" />
@@ -2135,6 +2136,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/xslt-debugger/engine/intellij.xslt.debugger.rt.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/xslt-debugger/engine/intellij.xslt.debugger.rt.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/yaml/intellij.yaml.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/yaml/intellij.yaml.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/Yeoman/intellij.yeoman.iml" filepath="$PROJECT_DIR$/intellij/plugins/Yeoman/intellij.yeoman.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/styled-components/intellij.styled.components.iml" filepath="$PROJECT_DIR$/intellij/plugins/styled-components/intellij.styled.components.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/zkm/intellij.zkm.iml" filepath="$PROJECT_DIR$/intellij/plugins/zkm/intellij.zkm.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/lombok/intellij.lombok.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/lombok/intellij.lombok.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/lombok/generated/intellij.lombok.generated.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/lombok/generated/intellij.lombok.generated.iml" />
