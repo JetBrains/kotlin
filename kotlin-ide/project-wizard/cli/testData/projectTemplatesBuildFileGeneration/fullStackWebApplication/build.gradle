@@ -11,10 +11,10 @@ version = '1.0-SNAPSHOT'
 repositories {
     jcenter()
     mavenCentral()
-    maven('KOTLIN_REPO')
-    maven('https://dl.bintray.com/kotlin/kotlin-js-wrappers')
-    maven('https://dl.bintray.com/kotlin/kotlinx')
-    maven('https://dl.bintray.com/kotlin/ktor')
+    maven { url 'KOTLIN_REPO' }
+    maven { url 'https://dl.bintray.com/kotlin/kotlin-js-wrappers' }
+    maven { url 'https://dl.bintray.com/kotlin/kotlinx' }
+    maven { url 'https://dl.bintray.com/kotlin/ktor' }
 }
 
 kotlin {
