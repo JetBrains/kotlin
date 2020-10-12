@@ -33,6 +33,16 @@ public class ProjectTemplateNewWizardProjectImportTestGenerated extends Abstract
             runTest("../cli/testData/projectTemplatesBuildFileGeneration/backendApplication/");
         }
 
+        @TestMetadata("composeDesktopApplication")
+        public void testComposeDesktopApplication() throws Exception {
+            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/composeDesktopApplication/");
+        }
+
+        @TestMetadata("composeMultiplatformApplication")
+        public void testComposeMultiplatformApplication() throws Exception {
+            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/composeMultiplatformApplication/");
+        }
+
         @TestMetadata("consoleApplication")
         public void testConsoleApplication() throws Exception {
             runTest("../cli/testData/projectTemplatesBuildFileGeneration/consoleApplication/");
@@ -86,6 +96,16 @@ public class ProjectTemplateNewWizardProjectImportTestGenerated extends Abstract
             runTest("../cli/testData/projectTemplatesBuildFileGeneration/backendApplication/");
         }
 
+        @TestMetadata("composeDesktopApplication")
+        public void testComposeDesktopApplication() throws Exception {
+            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/composeDesktopApplication/");
+        }
+
+        @TestMetadata("composeMultiplatformApplication")
+        public void testComposeMultiplatformApplication() throws Exception {
+            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/composeMultiplatformApplication/");
+        }
+
         @TestMetadata("consoleApplication")
         public void testConsoleApplication() throws Exception {
             runTest("../cli/testData/projectTemplatesBuildFileGeneration/consoleApplication/");
@@ -137,6 +157,16 @@ public class ProjectTemplateNewWizardProjectImportTestGenerated extends Abstract
         @TestMetadata("backendApplication")
         public void testBackendApplication() throws Exception {
             runTest("../cli/testData/projectTemplatesBuildFileGeneration/backendApplication/");
+        }
+
+        @TestMetadata("composeDesktopApplication")
+        public void testComposeDesktopApplication() throws Exception {
+            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/composeDesktopApplication/");
+        }
+
+        @TestMetadata("composeMultiplatformApplication")
+        public void testComposeMultiplatformApplication() throws Exception {
+            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/composeMultiplatformApplication/");
         }
 
         @TestMetadata("consoleApplication")
