@@ -292,11 +292,7 @@ class NewJ2kWithProgressProcessor(
         throw AbstractMethodError("Should not be called for new J2K")
     }
 
-    override fun <T> process(action: () -> T): T {
-        var result: T? = null
-        ProgressManager.getInstance().runProcess({ result = action() }, progress)
-        return result!!
-    }
+    override fun <T> process(action: () -> T): T = action()
 
 }
 
