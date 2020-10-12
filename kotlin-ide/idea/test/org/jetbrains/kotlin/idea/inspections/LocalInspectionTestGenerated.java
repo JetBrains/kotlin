@@ -8393,12 +8393,12 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
 
         @TestMetadata("startOfLine.kt")
         public void testStartOfLine() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantSemicolon/startOfLine.kt");
+            runTest("testData/inspectionsLocal/redundantSemicolon/startOfLine.kt");
         }
 
         @TestMetadata("startOfLine2.kt")
         public void testStartOfLine2() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantSemicolon/startOfLine2.kt");
+            runTest("testData/inspectionsLocal/redundantSemicolon/startOfLine2.kt");
         }
     }
 
@@ -8582,32 +8582,32 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
 
         @TestMetadata("dynamic.kt")
         public void testDynamic() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/dynamic.kt");
+            runTest("testData/inspectionsLocal/redundantUnitExpression/dynamic.kt");
         }
 
         @TestMetadata("dynamic2.kt")
         public void testDynamic2() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/dynamic2.kt");
+            runTest("testData/inspectionsLocal/redundantUnitExpression/dynamic2.kt");
         }
 
         @TestMetadata("dynamic3.kt")
         public void testDynamic3() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/dynamic3.kt");
+            runTest("testData/inspectionsLocal/redundantUnitExpression/dynamic3.kt");
         }
 
         @TestMetadata("dynamic4.kt")
         public void testDynamic4() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/dynamic4.kt");
+            runTest("testData/inspectionsLocal/redundantUnitExpression/dynamic4.kt");
         }
 
         @TestMetadata("dynamic5.kt")
         public void testDynamic5() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/dynamic5.kt");
+            runTest("testData/inspectionsLocal/redundantUnitExpression/dynamic5.kt");
         }
 
         @TestMetadata("dynamic6.kt")
         public void testDynamic6() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/dynamic6.kt");
+            runTest("testData/inspectionsLocal/redundantUnitExpression/dynamic6.kt");
         }
 
         @TestMetadata("labeledReturnAny.kt")
@@ -13347,22 +13347,22 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
 
         @TestMetadata("anonymousFunction.kt")
         public void testAnonymousFunction() throws Exception {
-            runTest("idea/testData/inspectionsLocal/unusedReceiverParameter/anonymousFunction.kt");
+            runTest("testData/inspectionsLocal/unusedReceiverParameter/anonymousFunction.kt");
         }
 
         @TestMetadata("anonymousFunctionCall.kt")
         public void testAnonymousFunctionCall() throws Exception {
-            runTest("idea/testData/inspectionsLocal/unusedReceiverParameter/anonymousFunctionCall.kt");
+            runTest("testData/inspectionsLocal/unusedReceiverParameter/anonymousFunctionCall.kt");
         }
 
         @TestMetadata("anonymousFunctionCallWithReceiver.kt")
         public void testAnonymousFunctionCallWithReceiver() throws Exception {
-            runTest("idea/testData/inspectionsLocal/unusedReceiverParameter/anonymousFunctionCallWithReceiver.kt");
+            runTest("testData/inspectionsLocal/unusedReceiverParameter/anonymousFunctionCallWithReceiver.kt");
         }
 
         @TestMetadata("anonymousFunctionCallWithReceiver2.kt")
         public void testAnonymousFunctionCallWithReceiver2() throws Exception {
-            runTest("idea/testData/inspectionsLocal/unusedReceiverParameter/anonymousFunctionCallWithReceiver2.kt");
+            runTest("testData/inspectionsLocal/unusedReceiverParameter/anonymousFunctionCallWithReceiver2.kt");
         }
 
         @TestMetadata("companion.kt")

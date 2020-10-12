@@ -38,12 +38,12 @@ public class PerformanceTypingIndentationTestGenerated extends AbstractPerforman
 
     @TestMetadata("AfterExtensionPropertyGetter.kt")
     public void testAfterExtensionPropertyGetter() throws Exception {
-        runTest("idea/testData/indentationOnNewline/AfterExtensionPropertyGetter.kt");
+        runTest("../idea/testData/indentationOnNewline/AfterExtensionPropertyGetter.kt");
     }
 
     @TestMetadata("AfterExtensionPropertySetter.kt")
     public void testAfterExtensionPropertySetter() throws Exception {
-        runTest("idea/testData/indentationOnNewline/AfterExtensionPropertySetter.kt");
+        runTest("../idea/testData/indentationOnNewline/AfterExtensionPropertySetter.kt");
     }
 
     @TestMetadata("AfterFinally.kt")
@@ -58,12 +58,12 @@ public class PerformanceTypingIndentationTestGenerated extends AbstractPerforman
 
     @TestMetadata("AfterPropertyGetter.kt")
     public void testAfterPropertyGetter() throws Exception {
-        runTest("idea/testData/indentationOnNewline/AfterPropertyGetter.kt");
+        runTest("../idea/testData/indentationOnNewline/AfterPropertyGetter.kt");
     }
 
     @TestMetadata("AfterPropertySetter.kt")
     public void testAfterPropertySetter() throws Exception {
-        runTest("idea/testData/indentationOnNewline/AfterPropertySetter.kt");
+        runTest("../idea/testData/indentationOnNewline/AfterPropertySetter.kt");
     }
 
     @TestMetadata("AfterTry.kt")

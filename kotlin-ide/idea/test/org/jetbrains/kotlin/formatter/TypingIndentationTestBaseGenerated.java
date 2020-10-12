@@ -40,12 +40,12 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
 
         @TestMetadata("AfterExtensionPropertyGetter.after.kt")
         public void testAfterExtensionPropertyGetter() throws Exception {
-            runTest("idea/testData/indentationOnNewline/AfterExtensionPropertyGetter.after.kt");
+            runTest("testData/indentationOnNewline/AfterExtensionPropertyGetter.after.kt");
         }
 
         @TestMetadata("AfterExtensionPropertySetter.after.kt")
         public void testAfterExtensionPropertySetter() throws Exception {
-            runTest("idea/testData/indentationOnNewline/AfterExtensionPropertySetter.after.kt");
+            runTest("testData/indentationOnNewline/AfterExtensionPropertySetter.after.kt");
         }
 
         @TestMetadata("AfterFinally.after.kt")
@@ -60,12 +60,12 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
 
         @TestMetadata("AfterPropertyGetter.after.kt")
         public void testAfterPropertyGetter() throws Exception {
-            runTest("idea/testData/indentationOnNewline/AfterPropertyGetter.after.kt");
+            runTest("testData/indentationOnNewline/AfterPropertyGetter.after.kt");
         }
 
         @TestMetadata("AfterPropertySetter.after.kt")
         public void testAfterPropertySetter() throws Exception {
-            runTest("idea/testData/indentationOnNewline/AfterPropertySetter.after.kt");
+            runTest("testData/indentationOnNewline/AfterPropertySetter.after.kt");
         }
 
         @TestMetadata("AfterTry.after.kt")
