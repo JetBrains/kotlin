@@ -1752,6 +1752,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         public void testSubstituteStubTypeIntolambdaParameterDescriptor() throws Exception {
             runTest("compiler/testData/codegen/box/builderInference/substituteStubTypeIntolambdaParameterDescriptor.kt");
         }
+
+        @TestMetadata("substituteTypeVariableIntolambdaParameterDescriptor.kt")
+        public void testSubstituteTypeVariableIntolambdaParameterDescriptor() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/substituteTypeVariableIntolambdaParameterDescriptor.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/builtinStubMethods")

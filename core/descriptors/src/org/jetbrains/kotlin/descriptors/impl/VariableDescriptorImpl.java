@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.StubType;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -50,7 +50,7 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRoo
     }
 
     public void setOutType(KotlinType outType) {
-        assert this.outType == null || this.outType instanceof StubType;
+        assert this.outType == null || TypeUtilsKt.shouldBeSubstituted(this.outType);
         this.outType = outType;
     }
 

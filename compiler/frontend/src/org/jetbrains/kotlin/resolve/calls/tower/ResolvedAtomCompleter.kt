@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.types.typeUtil.shouldBeSubstituted
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ResolvedAtomCompleter(
@@ -212,15 +213,14 @@ class ResolvedAtomCompleter(
             resultSubstitutor.safeSubstitute(lambda.returnType)
         }
 
-        val approximatedValueParameterTypes = lambda.parameters.map {
-            // Do substitution and approximation only for stub types, which can appear from builder inference (as postponed variables)
-            if (it is StubType) {
+        val approximatedValueParameterTypes = lambda.parameters.map { parameterType ->
+            if (parameterType.shouldBeSubstituted()) {
                 typeApproximator.approximateDeclarationType(
-                    resultSubstitutor.safeSubstitute(it),
+                    resultSubstitutor.safeSubstitute(parameterType),
                     local = true,
                     languageVersionSettings = topLevelCallContext.languageVersionSettings
                 )
-            } else it
+            } else parameterType
         }
 
         val approximatedReturnType =
@@ -277,8 +277,7 @@ class ResolvedAtomCompleter(
         functionDescriptor.setReturnType(returnType)
 
         for ((i, valueParameter) in functionDescriptor.valueParameters.withIndex()) {
-            if (valueParameter !is ValueParameterDescriptorImpl || valueParameter.type !is StubType)
-                continue
+            if (valueParameter !is ValueParameterDescriptorImpl || !valueParameter.type.shouldBeSubstituted()) continue
             valueParameter.setOutType(valueParameters[i])
         }
 
