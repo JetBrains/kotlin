@@ -6,59 +6,34 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.FunctionLoweringPass
-import org.jetbrains.kotlin.backend.common.lower.at
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.irBlock
-import org.jetbrains.kotlin.ir.util.isSimpleTypeWithQuestionMark
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.ir.containsNull
 import org.jetbrains.kotlin.backend.konan.ir.isSubtypeOf
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.irCall
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.util.isSimpleTypeWithQuestionMark
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
 
-/**
- * This lowering pass lowers some [IrTypeOperatorCall]s.
- */
-internal class TypeOperatorLowering(val context: CommonBackendContext) : FunctionLoweringPass {
-    override fun lower(irFunction: IrFunction) {
-        val transformer = TypeOperatorTransformer(context, irFunction.symbol)
-        irFunction.transformChildrenVoid(transformer)
-    }
-}
-
-
-private class TypeOperatorTransformer(val context: CommonBackendContext, val function: IrFunctionSymbol) : IrElementTransformerVoid() {
-
-    private val builder = context.createIrBuilder(function)
-
-    val throwNullPointerException = context.ir.symbols.throwNullPointerException
-
-    override fun visitFunction(declaration: IrFunction): IrStatement {
-        // ignore inner functions during this pass
-        return declaration
+internal class TypeOperatorLowering(val context: CommonBackendContext) : FileLoweringPass, IrBuildingTransformer(context) {
+    override fun lower(irFile: IrFile) {
+        irFile.transformChildren(this, null)
     }
 
     private fun IrType.erasure(): IrType {
         if (this !is IrSimpleType) return this
 
-        val classifier = this.classifier
-        return when (classifier) {
+        return when (val classifier = classifier) {
             is IrClassSymbol -> this
             is IrTypeParameterSymbol -> {
                 val upperBound = classifier.owner.superTypes.firstOrNull() ?:
@@ -87,7 +62,7 @@ private class TypeOperatorTransformer(val context: CommonBackendContext, val fun
             expression.argument.type.isSubtypeOf(typeOperand) -> expression.argument
 
             expression.argument.type.containsNull() -> {
-                with (builder) {
+                with(builder) {
                     irLetS(expression.argument) { argument ->
                         irIfThenElse(
                                 type = expression.type,
@@ -96,7 +71,7 @@ private class TypeOperatorTransformer(val context: CommonBackendContext, val fun
                                 thenPart = if (typeOperand.isSimpleTypeWithQuestionMark)
                                     irNull()
                                 else
-                                    irCall(throwNullPointerException.owner),
+                                    irCall(this@TypeOperatorLowering.context.ir.symbols.throwNullPointerException.owner),
 
                                 elsePart = irAs(irGet(argument.owner), typeOperand.makeNotNull())
                         )
@@ -111,8 +86,6 @@ private class TypeOperatorTransformer(val context: CommonBackendContext, val fun
             else -> builder.irAs(expression.argument, typeOperand)
         }
     }
-
-    private fun KotlinType.isNullable() = TypeUtils.isNullableType(this)
 
     private fun lowerSafeCast(expression: IrTypeOperatorCall): IrExpression {
         val typeOperand = expression.typeOperand.erasure()
