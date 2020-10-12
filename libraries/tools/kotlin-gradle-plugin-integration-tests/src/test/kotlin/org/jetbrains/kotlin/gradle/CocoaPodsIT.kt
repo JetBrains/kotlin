@@ -158,7 +158,7 @@ class CocoaPodsIT : BaseGradleIT() {
     fun testXcodeUseFrameworksMultiple() = doTestXcode(
         cocoapodsMultipleKtPods,
         ImportMode.FRAMEWORKS,
-        "ios-app",
+        null,
         mapOf("kotlin-library" to null, "second-library" to null)
     )
 
@@ -166,7 +166,7 @@ class CocoaPodsIT : BaseGradleIT() {
     fun testXcodeUseFrameworksWithCustomFrameworkNameMultiple() = doTestXcode(
         cocoapodsMultipleKtPods,
         ImportMode.FRAMEWORKS,
-        "ios-app",
+        null,
         mapOf("kotlin-library" to "FirstMultiplatformLibrary", "second-library" to "SecondMultiplatformLibrary")
     )
 
@@ -174,7 +174,7 @@ class CocoaPodsIT : BaseGradleIT() {
     fun testXcodeUseModularHeadersMultiple() = doTestXcode(
         cocoapodsMultipleKtPods,
         ImportMode.MODULAR_HEADERS,
-        "ios-app",
+        null,
         mapOf("kotlin-library" to null, "second-library" to null)
     )
 
@@ -182,7 +182,7 @@ class CocoaPodsIT : BaseGradleIT() {
     fun testXcodeUseModularHeadersWithCustomFrameworkNameMultiple() = doTestXcode(
         cocoapodsMultipleKtPods,
         ImportMode.MODULAR_HEADERS,
-        "ios-app",
+        null,
         mapOf("kotlin-library" to "FirstMultiplatformLibrary", "second-library" to "SecondMultiplatformLibrary")
     )
 
@@ -278,7 +278,10 @@ class CocoaPodsIT : BaseGradleIT() {
     fun warnIfDeprecatedPodspecPathIsUsed() {
         project = getProjectByName(cocoapodsSingleKtPod)
         hooks.addHook {
-            assertContains("Please use directory with podspec file, not podspec file itself")
+            assertContains(
+                listOf("Deprecated DSL found on ${project.projectDir.absolutePath}", "kotlin-library", "build.gradle.kts")
+                    .joinToString(separator = File.separator)
+            )
         }
         project.test(":kotlin-library:podDownload")
     }
@@ -1061,12 +1064,6 @@ class CocoaPodsIT : BaseGradleIT() {
         assumeTrue(HostManager.hostIsMac)
         val gradleProject = transformProjectWithPluginsDsl(projectName, gradleVersion)
 
-        gradleProject.build(":podspec") {
-            assertSuccessful()
-            assertTasksSkipped(":podspec")
-            assertNoSuchFile("cocoapods.podspec")
-        }
-
         for ((subproject, frameworkName) in subprojectsToFrameworkNamesMap) {
             frameworkName?.let {
                 gradleProject.useCustomFrameworkName(subproject, it)
@@ -1133,7 +1130,7 @@ class CocoaPodsIT : BaseGradleIT() {
     private fun doTestXcode(
         projectName: String,
         mode: ImportMode,
-        iosAppLocation: String,
+        iosAppLocation: String?,
         subprojectsToFrameworkNamesMap: Map<String, String?>
     ) {
         assumeTrue(HostManager.hostIsMac)
@@ -1150,35 +1147,30 @@ class CocoaPodsIT : BaseGradleIT() {
                 }
 
                 // Generate podspec.
-                gradleProject.build(":$subproject:podspec", "-Pkotlin.native.cocoapods.generate.wrapper=true") {
+                build(":$subproject:podspec", "-Pkotlin.native.cocoapods.generate.wrapper=true") {
                     assertSuccessful()
                 }
-            }
+                iosAppLocation?.also {
+                    // Set import mode for Podfile.
+                    preparePodfile(it, mode)
+                    // Install pods.
+                    build(":$subproject:podInstall", "-Pkotlin.native.cocoapods.generate.wrapper=true") {
+                        assertSuccessful()
+                    }
 
-            val iosAppDir = projectDir.resolve(iosAppLocation)
-
-            // Set import mode for Podfile.
-            iosAppDir.resolve("Podfile").modify {
-                it.replace(PODFILE_IMPORT_DIRECTIVE_PLACEHOLDER, mode.directive)
-            }
-
-            // Install pods.
-            gradleProject.build(":podInstall", "-Pkotlin.native.cocoapods.generate.wrapper=true") {
-                assertSuccessful()
-            }
-
-            // Run Xcode build.
-            runCommand(
-                iosAppDir, "xcodebuild",
-                "-sdk", "iphonesimulator",
-                "-arch", "arm64",
-                "-configuration", "Release",
-                "-workspace", "${iosAppDir.name}.xcworkspace",
-                "-scheme", iosAppDir.name,
-                inheritIO = true // Xcode doesn't finish the process if the PIPE redirect is used.
-            ) {
-                assertEquals(
-                    0, exitCode, """
+                    projectDir.resolve(it).apply {
+                        // Run Xcode build.
+                        runCommand(
+                            this, "xcodebuild",
+                            "-sdk", "iphonesimulator",
+                            "-arch", "x86_64",
+                            "-configuration", "Release",
+                            "-workspace", "$name.xcworkspace",
+                            "-scheme", name,
+                            inheritIO = true // Xcode doesn't finish the process if the PIPE redirect is used.
+                        ) {
+                            assertEquals(
+                                0, exitCode, """
                         |Exit code mismatch for `xcodebuild`.
                         |stdout:
                         |$stdOut
@@ -1186,8 +1178,12 @@ class CocoaPodsIT : BaseGradleIT() {
                         |stderr:
                         |$stdErr
                     """.trimMargin()
-                )
+                            )
+                        }
+                    }
+                }
             }
+
         }
     }
 
@@ -1195,7 +1191,7 @@ class CocoaPodsIT : BaseGradleIT() {
         val iosAppDir = projectDir.resolve(iosAppLocation)
 
         // Set import mode for Podfile.
-        iosAppDir.resolve("Podfile").modify {
+        iosAppDir.resolve("Podfile").takeIf { it.exists() }?.modify {
             it.replace(PODFILE_IMPORT_DIRECTIVE_PLACEHOLDER, mode.directive)
         }
     }

@@ -17,9 +17,4 @@ version = "1.0"
 
 kotlin {
     iosX64("iOS")
-
-    cocoapods {
-        noPodspec()
-        podfile = project.file("ios-app/Podfile")
-    }
 }
