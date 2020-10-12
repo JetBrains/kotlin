@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.*
+import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
@@ -304,3 +305,5 @@ private fun NewCapturedType.unCaptureTopLevelType(): UnwrappedType {
 
     return constructor.projection.type.unwrap()
 }
+
+fun KotlinType.shouldBeSubstituted() = contains { it is StubType || it.constructor is TypeVariableTypeConstructorMarker }
