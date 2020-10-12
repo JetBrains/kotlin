@@ -1166,6 +1166,21 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
                 runTest("compiler/testData/codegen/bytecodeListing/specialBridges/signatures/genericClass.kt");
             }
 
+            @TestMetadata("implementsJavaMap.kt")
+            public void testImplementsJavaMap() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/specialBridges/signatures/implementsJavaMap.kt");
+            }
+
+            @TestMetadata("implementsMap.kt")
+            public void testImplementsMap() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/specialBridges/signatures/implementsMap.kt");
+            }
+
+            @TestMetadata("implementsSortedMap.kt")
+            public void testImplementsSortedMap() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/specialBridges/signatures/implementsSortedMap.kt");
+            }
+
             @TestMetadata("nonGenericClass.kt")
             public void testNonGenericClass() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeListing/specialBridges/signatures/nonGenericClass.kt");

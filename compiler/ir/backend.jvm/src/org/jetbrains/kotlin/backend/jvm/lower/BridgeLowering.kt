@@ -424,6 +424,8 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
             name = Name.identifier(specialBridge.signature.name)
             returnType = specialBridge.substitutedReturnType ?: specialBridge.overridden.returnType.eraseTypeParameters()
         }.apply {
+            context.functionsWithSpecialBridges.add(target)
+
             copyParametersWithErasure(this@addSpecialBridge, specialBridge.overridden, specialBridge.substitutedParameterTypes)
 
             body = context.createIrBuilder(symbol, startOffset, endOffset).irBlockBody {

@@ -107,6 +107,7 @@ class JvmBackendContext(
 
     internal val collectionStubComputer = CollectionStubComputer(this)
     internal val bridgeLoweringCache = BridgeLowering.BridgeLoweringCache(this)
+    internal val functionsWithSpecialBridges: MutableSet<IrFunction> = HashSet()
 
     override var inVerbosePhase: Boolean = false
 

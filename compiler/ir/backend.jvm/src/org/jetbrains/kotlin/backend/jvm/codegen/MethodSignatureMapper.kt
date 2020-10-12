@@ -260,7 +260,9 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         val specialSignatureInfo =
             with(BuiltinMethodsWithSpecialGenericSignature) { function.toIrBasedDescriptor().getSpecialSignatureInfo() }
 
-        if (specialSignatureInfo != null) {
+        // Old back-end doesn't patch generic signatures if corresponding function had special bridges.
+        // See org.jetbrains.kotlin.codegen.FunctionCodegen#hasSpecialBridgeMethod and its usage.
+        if (specialSignatureInfo != null && function !in context.functionsWithSpecialBridges) {
             val newGenericSignature = specialSignatureInfo.replaceValueParametersIn(signature.genericsSignature)
             return JvmMethodGenericSignature(signature.asmMethod, signature.valueParameters, newGenericSignature)
         }
