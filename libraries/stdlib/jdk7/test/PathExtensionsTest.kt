@@ -7,6 +7,7 @@ package kotlin.jdk7.test
 
 import java.io.IOException
 import java.nio.file.*
+import kotlin.io.path.*
 import kotlin.test.*
 
 class PathExtensionsTest {

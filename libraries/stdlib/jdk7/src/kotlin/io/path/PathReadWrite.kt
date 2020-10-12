@@ -6,9 +6,8 @@
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER", "RedundantVisibilityModifier", "RedundantUnitReturnType", "SameParameterValue")
 @file:JvmMultifileClass
 @file:JvmName("PathsKt")
-@file:kotlin.jvm.JvmPackageName("kotlin.io.jdk7")
 
-package kotlin.io
+package kotlin.io.path
 
 import java.io.*
 import java.nio.charset.Charset
