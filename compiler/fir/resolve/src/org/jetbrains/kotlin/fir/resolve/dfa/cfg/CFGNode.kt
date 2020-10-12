@@ -232,7 +232,7 @@ class AnonymousObjectExitNode(owner: ControlFlowGraph, override val fir: FirAnon
 
 // ----------------------------------- Initialization -----------------------------------
 
-class PartOfClassInitializationNode(owner: ControlFlowGraph, override val fir: FirControlFlowGraphOwner, level: Int, id: Int) : CFGNodeWithCfgOwner<FirControlFlowGraphOwner>(owner, level, id), EnterNodeMarker {
+class PartOfClassInitializationNode(owner: ControlFlowGraph, override val fir: FirControlFlowGraphOwner, level: Int, id: Int) : CFGNodeWithCfgOwner<FirControlFlowGraphOwner>(owner, level, id) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitPartOfClassInitializationNode(this, data)
     }
