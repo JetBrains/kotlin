@@ -11639,6 +11639,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             public void testLocalVarNoExplicitType() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/local/localVarNoExplicitType.kt");
             }
+
+            @TestMetadata("useReflectionForLocalVarInLambda.kt")
+            public void testUseReflectionForLocalVarInLambda() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/local/useReflectionForLocalVarInLambda.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/delegatedProperty/optimizedDelegatedProperties")
