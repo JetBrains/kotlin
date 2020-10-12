@@ -102,7 +102,6 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
                 else -> receiverExpression?.let { it.text + "." } ?: ""
             }
 
-            val isExtension = matchingParameterIsExtension && resolvedCall?.resultingDescriptor?.isExtension == true
             val lambdaExpression = if (valueArgumentParent != null &&
                 lambdaParameterNamesAndTypes.size == 1 &&
                 receiverExpression?.text != "it"
@@ -111,11 +110,12 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
                     if (targetDescriptor is PropertyDescriptor) "it.$targetName"
                     else "it.$targetName()"
                 } else {
-                    "$receiverPrefix$targetName(${if (isExtension) "this" else "it"})"
+                    "$receiverPrefix$targetName(${if (matchingParameterIsExtension) "this" else "it"})"
                 }
 
                 factory.createLambdaExpression(parameters = "", body = body)
             } else {
+                val isExtension = matchingParameterIsExtension && resolvedCall?.resultingDescriptor?.isExtension == true
                 val (params, args) = if (isExtension) {
                     val thisArgument = if (parameterNamesAndTypes.isNotEmpty()) listOf("this") else emptyList()
                     lambdaParameterNamesAndTypes.drop(1) to (thisArgument + parameterNamesAndTypes.drop(1).map { it.first })

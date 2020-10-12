@@ -6188,6 +6188,11 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
         public void testWhen4() throws Exception {
             runTest("testData/intentions/convertReferenceToLambda/when4.kt");
         }
+
+        @TestMetadata("withReceiver.kt")
+        public void testWithReceiver() throws Exception {
+            runTest("testData/intentions/convertReferenceToLambda/withReceiver.kt");
+        }
     }
 
     @RunWith(JUnit3RunnerWithInners.class)
