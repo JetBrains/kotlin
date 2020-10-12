@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.mpp.applyMppStructure
 import org.jetbrains.kotlin.tools.projectWizard.mpp.mppSources
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
 import org.jetbrains.kotlin.tools.projectWizard.plugins.pomIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
@@ -38,8 +39,8 @@ class ComposeMppModuleTemplate : Template() {
     override val title: String = KotlinNewProjectWizardBundle.message("module.template.compose.mpp.title")
     override val description: String = KotlinNewProjectWizardBundle.message("module.template.compose.mpp.description")
 
-    override fun isSupportedByModuleType(module: Module): Boolean =
-        module.configurator == MppModuleConfigurator
+    override fun isSupportedByModuleType(module: Module, projectKind: ProjectKind): Boolean =
+        module.configurator == MppModuleConfigurator && projectKind == ProjectKind.COMPOSE
 
     override fun Writer.getIrsToAddToBuildFile(module: ModuleIR): List<BuildSystemIR> = irsList {
         +GradleImportIR("org.jetbrains.compose.compose")

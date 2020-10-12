@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep
 import com.intellij.ui.JBColor
 import com.intellij.ui.ScrollPaneFactory
 import com.intellij.ui.SeparatorWithText
+import com.intellij.ui.SimpleTextAttributes
 import com.intellij.util.ui.JBUI
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
@@ -40,6 +41,10 @@ class ProjectTemplateSettingComponent(
         render = { value ->
             icon = value.icon
             append(value.title)
+            value.projectKind.message?.let { message ->
+                append(" ")
+                append(message, SimpleTextAttributes.GRAYED_ATTRIBUTES)
+            }
         },
         onValueSelected = { value = it }
     )

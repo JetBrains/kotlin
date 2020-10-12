@@ -62,7 +62,7 @@ class KotlinPlugin(context: Context) : Plugin(context) {
             title = KotlinNewProjectWizardBundle.message("plugin.kotlin.downloading.kotlin.versions")
 
             withAction {
-                val version = service<KotlinVersionProviderService>().getKotlinVersion()
+                val version = service<KotlinVersionProviderService>().getKotlinVersion(projectKind.settingValue)
                 KotlinPlugin.version.update { version.asSuccess() }
             }
         }
@@ -194,12 +194,12 @@ class KotlinPlugin(context: Context) : Plugin(context) {
 
 }
 
-enum class ProjectKind(override val text: String) : DisplayableSettingItem {
+enum class ProjectKind(override val text: String, val message: String? = null) : DisplayableSettingItem {
     Singleplatform(KotlinNewProjectWizardBundle.message("project.kind.singleplatform")),
     Multiplatform(KotlinNewProjectWizardBundle.message("project.kind.multiplatform")),
     Android(KotlinNewProjectWizardBundle.message("project.kind.android")),
     Js(KotlinNewProjectWizardBundle.message("project.kind.kotlin.js")),
-    COMPOSE(KotlinNewProjectWizardBundle.message("project.kind.compose"))
+    COMPOSE(KotlinNewProjectWizardBundle.message("project.kind.compose"), message = "uses Kotlin ${Versions.KOTLIN_VERSION_FOR_COMPOSE}")
 }
 
 fun List<Module>.withAllSubModules(includeSourcesets: Boolean = false): List<Module> = buildList {
