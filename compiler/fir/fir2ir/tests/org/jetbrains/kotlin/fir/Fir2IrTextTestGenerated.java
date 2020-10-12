@@ -1723,6 +1723,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
         }
 
+        @TestMetadata("AbstractMutableMap.kt")
+        public void testAbstractMutableMap() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/AbstractMutableMap.kt");
+        }
+
         @TestMetadata("AllCandidates.kt")
         public void testAllCandidates() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/AllCandidates.kt");

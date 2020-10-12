@@ -152,7 +152,7 @@ FILE fqName:<root> fileName:/ClashResolutionDescriptor.kt
               BLOCK type=kotlin.collections.Collection<<root>.ComponentDescriptor> origin=ELVIS
                 VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.collections.Collection<<root>.ComponentDescriptor>? [val]
                   TYPE_OP type=kotlin.collections.Collection<<root>.ComponentDescriptor>? origin=SAFE_CAST typeOperand=kotlin.collections.Collection<<root>.ComponentDescriptor>
-                    CALL 'public open fun get (p0: kotlin.Any?): V of java.util.HashMap? [operator] declared in java.util.HashMap' type=kotlin.Any? origin=null
+                    CALL 'public open fun get (p0: K of java.util.HashMap?): V of java.util.HashMap? [operator] declared in java.util.HashMap' type=kotlin.Any? origin=null
                       $this: CALL 'private final fun <get-registrationMap> (): java.util.HashMap<java.lang.reflect.Type, kotlin.Any> declared in <root>' type=java.util.HashMap<java.lang.reflect.Type, kotlin.Any> origin=GET_PROPERTY
                       p0: CALL 'public final fun <get-applicableTo> (): java.lang.Class<E of <root>.PlatformExtensionsClashResolver> declared in <root>.PlatformExtensionsClashResolver' type=java.lang.Class<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out kotlin.Any?>>>>>> origin=GET_PROPERTY
                         $this: GET_VAR 'val resolver: <root>.PlatformExtensionsClashResolver<*> [val] declared in <root>.resolveClashesIfAny' type=<root>.PlatformExtensionsClashResolver<*> origin=null

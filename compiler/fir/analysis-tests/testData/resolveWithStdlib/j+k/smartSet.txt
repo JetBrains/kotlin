@@ -19,7 +19,7 @@ FILE: smartSet.kt
         public final override fun clear(): R|kotlin/Unit| {
         }
 
-        public final override fun contains(element: R|T|): R|kotlin/Boolean| {
+        public final override operator fun contains(element: R|T|): R|kotlin/Boolean| {
             ^contains Boolean(false)
         }
 

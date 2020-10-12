@@ -1722,6 +1722,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
+        @TestMetadata("AbstractMutableMap.kt")
+        public void testAbstractMutableMap() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/AbstractMutableMap.kt");
+        }
+
         @TestMetadata("AllCandidates.kt")
         public void testAllCandidates() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/AllCandidates.kt");
