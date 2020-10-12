@@ -5,6 +5,8 @@ extern BOOL deallocRetainReleaseDeallocated;
 @interface DeallocRetainRelease : NSObject
 @end;
 
+extern DeallocRetainRelease* globalDeallocRetainRelease;
+
 @protocol WeakReference
 @required
 @property (weak) id referent;

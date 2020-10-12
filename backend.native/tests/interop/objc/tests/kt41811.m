@@ -15,6 +15,8 @@ BOOL deallocRetainReleaseDeallocated = NO;
 }
 @end;
 
+DeallocRetainRelease* globalDeallocRetainRelease = nil;
+
 @implementation ObjCWeakReference
 @end;
 

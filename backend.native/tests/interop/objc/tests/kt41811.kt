@@ -81,3 +81,38 @@ private fun createGarbageDeallocLoadWeak(weakRef: WeakReferenceProtocol) {
         assertSame(obj, weakDeallocLoadWeak!!.referent)
     }
 }
+
+@Test
+fun testKT41811WithGlobal() {
+    // Attempt to make the state predictable:
+    kotlin.native.internal.GC.collect()
+
+    deallocRetainReleaseDeallocated = false
+    assertFalse(deallocRetainReleaseDeallocated)
+
+    autoreleasepool {
+        {
+            globalDeallocRetainRelease = object: DeallocRetainRelease() {}
+        }()
+    }
+
+    assertFalse(deallocRetainReleaseDeallocated)
+
+    // Clean up local DeallocRetainRelease on Kotlin side
+    kotlin.native.internal.GC.collect()
+
+    assertFalse(deallocRetainReleaseDeallocated)
+
+    // And drop the last reference to DeallocRetainRelease from ObjC global scope.
+    globalDeallocRetainRelease = null
+
+    assertFalse(deallocRetainReleaseDeallocated)
+
+    // This will dispose `DeallocRetainRelease` on Kotlin side, which will cause `dealloc`
+    // on ObjC side, which triggers `retain` and `release` of `self`. If these messages
+    // were to reach Kotlin side, the `release` would have immediately scheduled the
+    // second disposal of Kotlin object.
+    kotlin.native.internal.GC.collect()
+
+    assertTrue(deallocRetainReleaseDeallocated)
+}
