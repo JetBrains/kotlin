@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 
 val KOTLIN_CONSOLE_KEY = Key.create<Boolean>("kotlin.console")
 
+
 /**
  * Tested in OutOfBlockModificationTestGenerated
  */
