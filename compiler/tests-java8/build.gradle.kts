@@ -35,4 +35,15 @@ projectTest(parallel = true) {
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJava8TestsKt")
 val generateKotlinUseSiteFromJavaOnesForJspecifyTests by generator("org.jetbrains.kotlin.generators.tests.GenerateKotlinUseSitesFromJavaOnesForJspecifyTestsKt")
 
+val test: Test by tasks
+
+test.apply {
+    exclude("**/*JspecifyAnnotationsTestGenerated*")
+}
+
+task<Test>("jspecifyTests") {
+    workingDir(project.rootDir)
+    include("**/*JspecifyAnnotationsTestGenerated*")
+}
+
 testsJar()
