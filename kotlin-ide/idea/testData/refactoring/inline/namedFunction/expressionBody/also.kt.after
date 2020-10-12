@@ -1,0 +1,4 @@
+fun sayAndGetHelloWorld(): String {
+    println("Hello, World!")
+    return "Hello, World!"
+}

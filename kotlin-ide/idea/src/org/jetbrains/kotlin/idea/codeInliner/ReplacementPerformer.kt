@@ -10,10 +10,7 @@ import com.intellij.psi.PsiTreeChangeAdapter
 import com.intellij.psi.PsiTreeChangeEvent
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.core.canDropBraces
-import org.jetbrains.kotlin.idea.core.dropBraces
-import org.jetbrains.kotlin.idea.core.moveInsideParenthesesAndReplaceWith
-import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
@@ -159,7 +156,7 @@ internal class ExpressionReplacementPerformer(
             insertedStatements.add(inserted)
         }
 
-        val replaced: KtExpression? = when (val mainExpression = codeToInline.mainExpression) {
+        val replaced: KtExpression? = when (val mainExpression = codeToInline.mainExpression?.copied()) {
             is KtStringTemplateExpression -> elementToBeReplaced.replacedWithStringTemplate(mainExpression)
 
             is KtExpression -> elementToBeReplaced.replaced(mainExpression)

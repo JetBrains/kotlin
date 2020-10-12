@@ -1307,6 +1307,16 @@ public abstract class InlineTestGenerated extends AbstractInlineTest {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
+            @TestMetadata("also.kt")
+            public void testAlso() throws Exception {
+                runTest("testData/refactoring/inline/namedFunction/expressionBody/also.kt");
+            }
+
+            @TestMetadata("also2.kt")
+            public void testAlso2() throws Exception {
+                runTest("testData/refactoring/inline/namedFunction/expressionBody/also2.kt");
+            }
+
             @TestMetadata("ComplexArgumentNotUsed.kt")
             public void testComplexArgumentNotUsed() throws Exception {
                 runTest("testData/refactoring/inline/namedFunction/expressionBody/ComplexArgumentNotUsed.kt");
@@ -1440,6 +1450,11 @@ public abstract class InlineTestGenerated extends AbstractInlineTest {
             @TestMetadata("MethodReference.kt")
             public void testMethodReference() throws Exception {
                 runTest("testData/refactoring/inline/namedFunction/expressionBody/MethodReference.kt");
+            }
+
+            @TestMetadata("methodReferenceArgument.kt")
+            public void testMethodReferenceArgument() throws Exception {
+                runTest("testData/refactoring/inline/namedFunction/expressionBody/methodReferenceArgument.kt");
             }
 
             @TestMetadata("MultipleInComposition.kt")
