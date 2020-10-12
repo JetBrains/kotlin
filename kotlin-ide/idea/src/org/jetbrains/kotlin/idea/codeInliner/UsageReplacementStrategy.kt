@@ -151,6 +151,11 @@ fun unwrapSpecialUsageOrNull(
         }
 
         is KtCallElement -> {
+            for (valueArgument in usageParent.valueArguments.asReversed()) {
+                val callableReferenceExpression = valueArgument.getArgumentExpression() as? KtCallableReferenceExpression ?: continue
+                ConvertReferenceToLambdaIntention.applyTo(callableReferenceExpression)
+            }
+
             val lambdaExpressions = usageParent.valueArguments.mapNotNull { it.getArgumentExpression() as? KtLambdaExpression }
             if (lambdaExpressions.isEmpty()) return null
 

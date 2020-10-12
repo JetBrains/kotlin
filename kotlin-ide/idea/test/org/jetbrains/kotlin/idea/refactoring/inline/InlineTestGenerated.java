@@ -49,6 +49,11 @@ public abstract class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/anonymousFunction/lambdaWithReceiverAsParameter3.kt");
         }
 
+        @TestMetadata("methodReference.kt")
+        public void testMethodReference() throws Exception {
+            runTest("testData/refactoring/inline/anonymousFunction/methodReference.kt");
+        }
+
         @TestMetadata("withComment.kt")
         public void testWithComment() throws Exception {
             runTest("testData/refactoring/inline/anonymousFunction/withComment.kt");
@@ -1407,6 +1412,11 @@ public abstract class InlineTestGenerated extends AbstractInlineTest {
                 runTest("testData/refactoring/inline/namedFunction/expressionBody/LambdaGeneric.kt");
             }
 
+            @TestMetadata("LambdaWithReceiverAsMethodReference.kt")
+            public void testLambdaWithReceiverAsMethodReference() throws Exception {
+                runTest("testData/refactoring/inline/namedFunction/expressionBody/LambdaWithReceiverAsMethodReference.kt");
+            }
+
             @TestMetadata("LambdaWithReceiverAsParameter.kt")
             public void testLambdaWithReceiverAsParameter() throws Exception {
                 runTest("testData/refactoring/inline/namedFunction/expressionBody/LambdaWithReceiverAsParameter.kt");
@@ -1425,6 +1435,11 @@ public abstract class InlineTestGenerated extends AbstractInlineTest {
             @TestMetadata("ManyParams.kt")
             public void testManyParams() throws Exception {
                 runTest("testData/refactoring/inline/namedFunction/expressionBody/ManyParams.kt");
+            }
+
+            @TestMetadata("MethodReference.kt")
+            public void testMethodReference() throws Exception {
+                runTest("testData/refactoring/inline/namedFunction/expressionBody/MethodReference.kt");
             }
 
             @TestMetadata("MultipleInComposition.kt")

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInliner.CodeInliner
+import org.jetbrains.kotlin.idea.codeInliner.unwrapSpecialUsageOrNull
 import org.jetbrains.kotlin.idea.intentions.LambdaToAnonymousFunctionIntention
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class KotlinInlineAnonymousFunctionProcessor(
     function: KtFunction,
@@ -55,6 +57,10 @@ class KotlinInlineAnonymousFunctionProcessor(
                 is KtCallExpression -> OperatorToFunctionIntention.convert(usage).second.parent
                 else -> return
             } as KtCallExpression
+
+            invokeCallExpression.calleeExpression?.safeAs<KtReferenceExpression>()?.let {
+                unwrapSpecialUsageOrNull(it)
+            }
 
             val qualifiedExpression = invokeCallExpression.parent as KtQualifiedExpression
             val function = findFunction(qualifiedExpression) ?: return showErrorHint(
