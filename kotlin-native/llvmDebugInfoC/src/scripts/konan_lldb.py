@@ -41,7 +41,7 @@ def exelog(stmt):
 
 def lldb_val_to_ptr(lldb_val):
     addr = lldb_val.GetValueAsUnsigned()
-    return '((struct ObjHeader *) {:#x})'.format(addr)
+    return '((ObjHeader *) {:#x})'.format(addr)
 
 
 def evaluate(expr):
@@ -473,7 +473,7 @@ def __lldb_init_module(debugger, _):
         --no-value \
         --expand \
         --python-function konan_lldb.kotlin_object_type_summary \
-        "struct ObjHeader *" \
+        "ObjHeader *" \
         --category Kotlin\
     ')
     debugger.HandleCommand('\
