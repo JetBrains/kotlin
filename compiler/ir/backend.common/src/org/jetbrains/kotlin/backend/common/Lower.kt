@@ -61,14 +61,6 @@ interface BodyLoweringPass : FileLoweringPass {
 
 fun FileLoweringPass.lower(moduleFragment: IrModuleFragment) = moduleFragment.files.forEach { lower(it) }
 
-//fun FileLoweringPass.lower(modules: Iterable<IrModuleFragment>) {
-//    modules.forEach { module ->
-//        module.files.forEach {
-//            lower(it)
-//        }
-//    }
-//}
-
 fun ClassLoweringPass.runOnFilePostfix(irFile: IrFile) {
     irFile.acceptVoid(ClassLoweringVisitor(this))
 }
@@ -103,23 +95,27 @@ private class ScriptLoweringVisitor(
     }
 }
 
-fun DeclarationContainerLoweringPass.asClassLoweringPass() = object : ClassLoweringPass {
-    override fun lower(irClass: IrClass) {
-        this@asClassLoweringPass.lower(irClass)
-    }
-}
-
-fun DeclarationContainerLoweringPass.asScriptLoweringPass() = object : ScriptLoweringPass {
-    override fun lower(irScript: IrScript) {
-        this@asScriptLoweringPass.lower(irScript)
-    }
-}
-
 fun DeclarationContainerLoweringPass.runOnFilePostfix(irFile: IrFile) {
-    this.asClassLoweringPass().runOnFilePostfix(irFile)
-    this.asScriptLoweringPass().runOnFilePostfix(irFile)
+    irFile.acceptVoid(DeclarationContainerLoweringVisitor(this))
+    lower(irFile as IrDeclarationContainer)
+}
 
-    this.lower(irFile as IrDeclarationContainer)
+private class DeclarationContainerLoweringVisitor(
+    private val loweringPass: DeclarationContainerLoweringPass
+) : IrElementVisitorVoid {
+    override fun visitElement(element: IrElement) {
+        element.acceptChildrenVoid(this)
+    }
+
+    override fun visitClass(declaration: IrClass) {
+        declaration.acceptChildrenVoid(this)
+        loweringPass.lower(declaration)
+    }
+
+    override fun visitScript(declaration: IrScript) {
+        declaration.acceptChildrenVoid(this)
+        loweringPass.lower(declaration)
+    }
 }
 
 fun BodyLoweringPass.runOnFilePostfix(
