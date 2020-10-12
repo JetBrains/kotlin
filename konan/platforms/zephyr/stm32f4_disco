@@ -24,6 +24,10 @@ boardSpecificClangFlags.zephyr_stm32f4_disco = -mthumb
 targetCpu.zephyr_stm32f4_disco = cortex-m4
 targetAbi.zephyr_stm32f4_disco = aapcs
 clangFlags = -Os
+runtimeDefinitions.zephyr_stm32f4_disco = KONAN_ZEPHYR=1 KONAN_NO_FFI=1 \
+  KONAN_NO_THREADS=1 KONAN_NO_EXCEPTIONS=1 KONAN_NO_MATH=1 \
+  KONAN_INTERNAL_SNPRINTF=1 KONAN_INTERNAL_NOW=1 KONAN_NO_MEMMEM=1 \
+  KONAN_NO_CTORS_SECTION=1 KONAN_NO_UNALIGNED_ACCESS=1
 
 targetToolchain.linux_x64-zephyr_stm32f4_disco = gcc-arm-none-eabi-7-2017-q4-major-linux/arm-none-eabi
 dependencies.linux_x64-zephyr_stm32f4_disco = \

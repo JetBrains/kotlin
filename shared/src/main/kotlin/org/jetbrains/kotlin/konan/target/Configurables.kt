@@ -51,6 +51,8 @@ interface Configurables : TargetableExternalStorage {
     val absoluteTargetSysRoot get() = absolute(targetSysRoot)
     val absoluteTargetToolchain get() = absolute(targetToolchain)
     val absoluteLlvmHome get() = absolute(llvmHome)
+
+    val runtimeDefinitions get() = targetList("runtimeDefinitions")
 }
 
 interface TargetableConfigurables : Configurables {
