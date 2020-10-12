@@ -680,7 +680,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun KotlinTypeMarker.isExtensionFunctionType(): Boolean {
         require(this is KotlinType, this::errorMessage)
-        return this.isExtensionFunctionType
+        return this.isBuiltinExtensionFunctionalType
     }
 
     override fun KotlinTypeMarker.extractArgumentsForFunctionalTypeOrSubtype(): List<KotlinTypeMarker> {

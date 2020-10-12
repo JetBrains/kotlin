@@ -11499,6 +11499,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/inference/referenceToCatchParameterFromLambdaExpression.kt");
         }
 
+        @TestMetadata("suspendExtensionRecevierFromConstraint.kt")
+        public void testSuspendExtensionRecevierFromConstraint() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/suspendExtensionRecevierFromConstraint.kt");
+        }
+
         @TestMetadata("unsafeVarianceCodegen.kt")
         public void testUnsafeVarianceCodegen() throws Exception {
             runTest("compiler/testData/codegen/box/inference/unsafeVarianceCodegen.kt");
