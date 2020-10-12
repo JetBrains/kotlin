@@ -35,6 +35,20 @@ projectTest(parallel = true) {
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJava8TestsKt")
 val generateKotlinUseSiteFromJavaOnesForJspecifyTests by generator("org.jetbrains.kotlin.generators.tests.GenerateKotlinUseSitesFromJavaOnesForJspecifyTestsKt")
 
+task<Exec>("downloadJspecifyTests") {
+    val tmpDirPath = createTempDir().absolutePath
+    doFirst {
+        executable("git")
+        args("clone", "https://github.com/jspecify/jspecify/", tmpDirPath)
+    }
+    doLast {
+        copy {
+            from("$tmpDirPath/samples")
+            into("${project.rootDir}/compiler/testData/foreignAnnotationsJava8/tests/jspecify/java")
+        }
+    }
+}
+
 val test: Test by tasks
 
 test.apply {
