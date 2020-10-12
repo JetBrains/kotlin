@@ -53,12 +53,6 @@ interface DeclarationContainerLoweringPass : FileLoweringPass {
     override fun lower(irFile: IrFile) = runOnFilePostfix(irFile)
 }
 
-interface FunctionLoweringPass : FileLoweringPass {
-    fun lower(irFunction: IrFunction)
-
-    override fun lower(irFile: IrFile) = runOnFilePostfix(irFile)
-}
-
 interface BodyLoweringPass : FileLoweringPass {
     fun lower(irBody: IrBody, container: IrDeclaration)
 
@@ -176,19 +170,6 @@ private class BodyLoweringVisitor(
         }
         declaration.thisReceiver.accept(this, declaration)
     }
-}
-
-fun FunctionLoweringPass.runOnFilePostfix(irFile: IrFile) {
-    irFile.acceptVoid(object : IrElementVisitorVoid {
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
-        }
-
-        override fun visitFunction(declaration: IrFunction) {
-            declaration.acceptChildrenVoid(this)
-            lower(declaration)
-        }
-    })
 }
 
 interface DeclarationTransformer : FileLoweringPass {
