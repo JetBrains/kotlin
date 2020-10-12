@@ -7,7 +7,7 @@ package kotlin.jdk7.test
 
 import java.nio.file.Files
 import java.nio.file.StandardOpenOption
-import java.util.*
+import kotlin.io.path.*
 import kotlin.test.*
 
 class PathReadWriteTest {

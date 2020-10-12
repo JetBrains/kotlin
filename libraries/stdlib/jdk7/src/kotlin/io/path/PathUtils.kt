@@ -6,9 +6,8 @@
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER", "RedundantVisibilityModifier")
 @file:JvmMultifileClass
 @file:JvmName("PathsKt")
-@file:kotlin.jvm.JvmPackageName("kotlin.io.jdk7")
 
-package kotlin.io
+package kotlin.io.path
 
 import java.io.IOException
 import java.nio.file.*
