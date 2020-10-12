@@ -69,7 +69,9 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
     ) = buildList<BuildSystemIR> {
         +GradleOnlyPluginByNameIR(reader.createAndroidPlugin(module).pluginName, priority = 1)
 
-        +GradleOnlyPluginByNameIR("kotlin-android-extensions", priority = 3)
+        if (reader { AndroidPlugin.addAndroidExtensionPlugin.settingValue }) {
+            +GradleOnlyPluginByNameIR("kotlin-android-extensions", priority = 3)
+        }
     }
 
     fun Reader.createAndroidPlugin(module: Module): AndroidGradlePlugin
