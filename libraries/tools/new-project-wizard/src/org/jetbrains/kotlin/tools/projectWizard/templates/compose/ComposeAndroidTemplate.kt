@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.inContextOfM
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.moduleType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
 import org.jetbrains.kotlin.tools.projectWizard.plugins.pomIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.JavaPackage
@@ -39,8 +40,8 @@ class ComposeAndroidTemplate : Template() {
     override val description: String = KotlinNewProjectWizardBundle.message("module.template.compose.desktop.description")
 
 
-    override fun isSupportedByModuleType(module: Module): Boolean =
-        module.configurator.moduleType == ModuleType.android
+    override fun isSupportedByModuleType(module: Module, projectKind: ProjectKind): Boolean =
+        module.configurator.moduleType == ModuleType.android && projectKind == ProjectKind.COMPOSE
 
     override fun isApplicableTo(reader: Reader, module: Module): Boolean =
         module.kind == ModuleKind.singleplatformAndroid
@@ -78,7 +79,7 @@ class ComposeAndroidTemplate : Template() {
                 when {
                     descriptor == AndroidModuleConfigurator.FileTemplateDescriptors.activityMainXml
                             || descriptor == AndroidModuleConfigurator.FileTemplateDescriptors.colorsXml
-                            || descriptor == AndroidModuleConfigurator.FileTemplateDescriptors.stylesXml ->  null
+                            || descriptor == AndroidModuleConfigurator.FileTemplateDescriptors.stylesXml -> null
                     descriptor?.templateId == "android/MainActivity.kt.vm" -> {
                         template.copy(descriptor = mainActivityKt(module.originalModule.javaPackage(pomIR())))
                     }

@@ -15,12 +15,13 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatf
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.TemplateInterceptor
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.interceptTemplate
 
 abstract class JsClientTemplate : Template() {
-    override fun isSupportedByModuleType(module: Module): Boolean =
+    override fun isSupportedByModuleType(module: Module, projectKind: ProjectKind): Boolean =
         module.configurator.moduleType == ModuleType.js
 
     override fun isApplicableTo(

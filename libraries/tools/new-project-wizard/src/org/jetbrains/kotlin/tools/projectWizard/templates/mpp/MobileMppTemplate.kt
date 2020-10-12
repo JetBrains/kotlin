@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.MppModuleCon
 import org.jetbrains.kotlin.tools.projectWizard.mpp.applyMppStructure
 import org.jetbrains.kotlin.tools.projectWizard.mpp.mppSources
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
 import org.jetbrains.kotlin.tools.projectWizard.plugins.pomIR
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
@@ -33,7 +34,7 @@ class MobileMppTemplate : Template() {
     override val title: String = KotlinNewProjectWizardBundle.message("module.template.mpp.mobile.title")
     override val description: String = KotlinNewProjectWizardBundle.message("module.template.mpp.mobile.description")
 
-    override fun isSupportedByModuleType(module: Module): Boolean =
+    override fun isSupportedByModuleType(module: Module, projectKind: ProjectKind): Boolean =
         module.configurator == MppModuleConfigurator
 
 
