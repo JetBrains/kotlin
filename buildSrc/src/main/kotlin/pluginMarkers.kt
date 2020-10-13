@@ -20,6 +20,10 @@ internal const val PLUGIN_MARKER_SUFFIX = ".gradle.plugin"
 
 @UseExperimental(ExperimentalStdlibApi::class)
 fun Project.publishPluginMarkers(withEmptyJars: Boolean = true) {
+
+    fun Project.isSonatypePublish(): Boolean =
+        hasProperty("isSonatypePublish") && property("isSonatypePublish") as Boolean
+
     val pluginDevelopment = extensions.getByType<PluginBundleExtension>()
     val publishingExtension = extensions.getByType<PublishingExtension>()
     val mainPublication = publishingExtension.publications[KotlinBuildPublishingPlugin.PUBLICATION_NAME] as MavenPublication
@@ -32,7 +36,12 @@ fun Project.publishPluginMarkers(withEmptyJars: Boolean = true) {
 
         tasks.named<PublishToMavenRepository>(
             "publish${markerPublication.name.capitalize(Locale.ROOT)}PublicationTo${KotlinBuildPublishingPlugin.REPOSITORY_NAME}Repository"
-        ).configureRepository()
+        ).apply {
+            configureRepository()
+            configure {
+                onlyIf { !isSonatypePublish() }
+            }
+        }
     }
 }
 
