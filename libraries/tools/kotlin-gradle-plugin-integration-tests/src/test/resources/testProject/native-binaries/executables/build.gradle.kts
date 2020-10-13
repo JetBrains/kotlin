@@ -16,12 +16,10 @@ kotlin {
 
     <SingleNativeTarget>("host") {
         binaries {
-            executable()                       // Executable with default name.
-            executable("foo")                  // Custom binary name.
-            executable("bar", listOf(RELEASE)) // Custom build types.
+            executable() // Executable with default name.
 
             // Configure a binary.
-            executable("baz") {
+            executable("baz", listOf(DEBUG)) {
                 // Rename an output binary: baz.kexe -> my-baz.kexe.
                 baseName = "my-baz"
                 // Use a custom entry point.

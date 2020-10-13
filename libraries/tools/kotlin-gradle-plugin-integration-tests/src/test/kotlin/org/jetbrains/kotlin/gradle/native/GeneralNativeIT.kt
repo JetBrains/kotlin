@@ -147,17 +147,21 @@ class GeneralNativeIT : BaseGradleIT() {
         val sharedSuffix = CompilerOutputKind.DYNAMIC.suffix(HostManager.host)
         val sharedPaths = listOf(
             "build/bin/host/debugShared/$sharedPrefix$baseName$sharedSuffix",
+            "build/bin/host/releaseShared/$sharedPrefix$baseName$sharedSuffix",
         )
 
         val staticPrefix = CompilerOutputKind.STATIC.prefix(HostManager.host)
         val staticSuffix = CompilerOutputKind.STATIC.suffix(HostManager.host)
         val staticPaths = listOf(
             "build/bin/host/debugStatic/$staticPrefix$baseName$staticSuffix",
+            "build/bin/host/releaseStatic/$staticPrefix$baseName$staticSuffix",
         )
 
         val headerPaths = listOf(
             "build/bin/host/debugShared/$sharedPrefix${baseName}_api.h",
             "build/bin/host/debugStatic/$staticPrefix${baseName}_api.h",
+            "build/bin/host/releaseShared/$sharedPrefix${baseName}_api.h",
+            "build/bin/host/releaseStatic/$staticPrefix${baseName}_api.h",
         )
 
         val klibPrefix = CompilerOutputKind.LIBRARY.prefix(HostManager.host)
@@ -167,6 +171,8 @@ class GeneralNativeIT : BaseGradleIT() {
         val linkTasks = listOf(
             ":linkDebugSharedHost",
             ":linkDebugStaticHost",
+            ":linkReleaseSharedHost",
+            ":linkReleaseStaticHost",
         )
 
         val klibTask = ":compileKotlinHost"
@@ -201,10 +207,6 @@ class GeneralNativeIT : BaseGradleIT() {
             assertTasksExecuted(linkTasks[0])
         }
 
-        // Check that plugin doesn't allow exporting dependencies not added in the API configuration.
-        gradleBuildScript().modify {
-            it.replace("api(project(\":exported\"))", "")
-        }
         build(":assemble") {
             assertFailed()
             val failureMsg = "Following dependencies exported in the debugShared binary " +
@@ -214,35 +216,52 @@ class GeneralNativeIT : BaseGradleIT() {
     }
 
     @Test
-    fun testCanProduceNativeFrameworks() = with(transformNativeTestProjectWithPluginDsl("frameworks", directoryPrefix = "native-binaries")) {
+    fun testCanProduceNativeFrameworks() = with(
+        transformNativeTestProjectWithPluginDsl("frameworks", directoryPrefix = "native-binaries")
+    ) {
         Assume.assumeTrue(HostManager.hostIsMac)
+
+        data class BinaryMeta(val name: String, val isStatic: Boolean = false)
 
         val baseName = "main"
         val frameworkPrefix = CompilerOutputKind.FRAMEWORK.prefix(HostManager.host)
         val frameworkSuffix = CompilerOutputKind.FRAMEWORK.suffix(HostManager.host)
-        val frameworkPaths = listOf(
-            "build/bin/ios/mainDebugFramework/$frameworkPrefix$baseName$frameworkSuffix.dSYM",
-            "build/bin/ios/mainDebugFramework/$frameworkPrefix$baseName$frameworkSuffix",
-            "build/bin/ios/mainReleaseFramework/$frameworkPrefix$baseName$frameworkSuffix",
-            "build/bin/iosSim/mainDebugFramework/$frameworkPrefix$baseName$frameworkSuffix.dSYM",
-            "build/bin/iosSim/mainDebugFramework/$frameworkPrefix$baseName$frameworkSuffix",
-            "build/bin/iosSim/mainReleaseFramework/$frameworkPrefix$baseName$frameworkSuffix",
+        val targets = listOf("ios", "iosSim")
+        val binaries = mapOf(
+            "ios" to listOf(BinaryMeta("main"), BinaryMeta("custom", true)),
+            "iosSim" to listOf(BinaryMeta("main"))
         )
+        val frameworkPaths = targets.flatMap { target ->
+            binaries.getValue(target).flatMap {
+                val list = listOf(
+                    "build/bin/$target/${it.name}DebugFramework/$frameworkPrefix${it.name}$frameworkSuffix",
+                    "build/bin/$target/${it.name}ReleaseFramework/$frameworkPrefix${it.name}$frameworkSuffix",
+                )
+                if (it.isStatic) {
+                    list
+                } else {
+                    list + "build/bin/$target/${it.name}DebugFramework/$frameworkPrefix${it.name}$frameworkSuffix.dSYM"
+                }
+            }
+        }
 
-        val headerPaths = listOf(
-            "build/bin/ios/mainDebugFramework/$frameworkPrefix$baseName$frameworkSuffix/headers/$baseName.h",
-            "build/bin/ios/mainReleaseFramework/$frameworkPrefix$baseName$frameworkSuffix/headers/$baseName.h",
-            "build/bin/iosSim/mainDebugFramework/$frameworkPrefix$baseName$frameworkSuffix/headers/$baseName.h",
-            "build/bin/iosSim/mainReleaseFramework/$frameworkPrefix$baseName$frameworkSuffix/headers/$baseName.h",
-        )
+        val headerPaths = targets.flatMap { target ->
+            binaries.getValue(target).flatMap {
+                listOf(
+                    "build/bin/$target/${it.name}DebugFramework/$frameworkPrefix${it.name}$frameworkSuffix/headers/${it.name}.h",
+                    "build/bin/$target/${it.name}ReleaseFramework/$frameworkPrefix${it.name}$frameworkSuffix/headers/${it.name}.h",
+                )
+            }
+        }
 
-        val frameworkTasks = listOf(
-            ":linkMainDebugFrameworkIos",
-            ":linkMainReleaseFrameworkIos",
-            ":linkCustomDebugFrameworkIos",
-            ":linkMainDebugFrameworkIosSim",
-            ":linkMainReleaseFrameworkIosSim",
-        )
+        val frameworkTasks = targets.flatMap { target ->
+            binaries.getValue(target).flatMap {
+                listOf(
+                    ":link${it.name.capitalize()}DebugFramework${target.capitalize()}",
+                    ":link${it.name.capitalize()}ReleaseFramework${target.capitalize()}",
+                )
+            }
+        }
 
         // Check building
         // Check dependency exporting and bitcode embedding in frameworks.
@@ -263,6 +282,7 @@ class GeneralNativeIT : BaseGradleIT() {
                 assertTrue(it.contains("-Xembed-bitcode-marker"))
                 assertTrue(it.contains("-g"))
             }
+            // Check that bitcode can be disabled by setting custom compiler options
             checkNativeCommandLineFor(":linkCustomDebugFrameworkIos") {
                 assertTrue(it.contains("-linker-option -L."))
                 assertTrue(it.contains("-Xtime"))
@@ -325,10 +345,7 @@ class GeneralNativeIT : BaseGradleIT() {
         val binaries = mutableListOf(
             "debugExecutable" to "native-binary",
             "releaseExecutable" to "native-binary",
-            "fooDebugExecutable" to "foo",
-            "fooReleaseExecutable" to "foo",
-            "barReleaseExecutable" to "bar",
-            "bazReleaseExecutable" to "my-baz",
+            "bazDebugExecutable" to "my-baz",
         )
         val linkTasks = binaries.map { (name, _) -> "link${name.capitalize()}Host" }
         val outputFiles = binaries.map { (name, fileBaseName) ->
@@ -341,10 +358,7 @@ class GeneralNativeIT : BaseGradleIT() {
         val runTasks = listOf(
             "runDebugExecutable",
             "runReleaseExecutable",
-            "runFooDebugExecutable",
-            "runFooReleaseExecutable",
-            "runBarReleaseExecutable",
-            "runBazReleaseExecutable",
+            "runBazDebugExecutable",
         ).map { it + "Host" }.toMutableList()
 
         // Check building
@@ -371,7 +385,7 @@ class GeneralNativeIT : BaseGradleIT() {
             assertTrue(output.contains("<root>.main"))
         }
 
-        build("runBazReleaseExecutableHost") {
+        build("runBazDebugExecutableHost") {
             assertSuccessful()
             assertTrue(output.contains("foo.main"))
         }

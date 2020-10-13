@@ -17,10 +17,10 @@ kotlin {
 
     iosArm64("ios") {
         binaries {
-            framework("main", listOf(RELEASE, DEBUG)) {
+            framework("main") {
                 export(project(":exported"))
             }
-            framework("custom", listOf(DEBUG)) {
+            framework("custom") {
                 embedBitcode("disable")
                 linkerOpts = mutableListOf("-L.")
                 freeCompilerArgs = mutableListOf("-Xtime")
@@ -30,11 +30,8 @@ kotlin {
     }
 
     iosX64("iosSim") {
-        compilations["main"].defaultSourceSet {
-            dependsOn(sourceSets["iosMain"])
-        }
         binaries {
-            framework("main", listOf(RELEASE, DEBUG)) {
+            framework("main") {
                 export(project(":exported"))
             }
         }
