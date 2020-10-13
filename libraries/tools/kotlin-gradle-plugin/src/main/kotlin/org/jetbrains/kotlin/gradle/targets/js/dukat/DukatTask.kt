@@ -15,9 +15,11 @@ import java.io.File
 
 abstract class DukatTask(
     @Internal
+    @Transient
     override val compilation: KotlinJsCompilation
 ) : DefaultTask(), RequiresNpmDependencies {
     @get:Internal
+    @Transient
     protected val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
     @get:Internal
@@ -35,6 +37,7 @@ abstract class DukatTask(
     var externalsOutputFormat: ExternalsOutputFormat = ExternalsOutputFormat.SOURCE
 
     @get:Internal
+    @delegate:Transient
     val dts by lazy {
         val resolvedCompilation = nodeJs.npmResolutionManager.requireInstalled()[project][compilation]
         val dtsResolver = DtsResolver(resolvedCompilation.npmProject)

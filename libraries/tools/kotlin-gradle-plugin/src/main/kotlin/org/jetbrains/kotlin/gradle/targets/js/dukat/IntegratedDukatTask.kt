@@ -24,6 +24,7 @@ constructor(
     override val destinationDir: File
         get() = compilation.npmProject.externalsDir
 
+    @delegate:Transient
     private val executor by lazy {
         DukatExecutor(
             nodeJs,

@@ -35,8 +35,10 @@ open class KotlinWebpack
 @Inject
 constructor(
     @Internal
+    @Transient
     override val compilation: KotlinJsCompilation
 ) : DefaultTask(), RequiresNpmDependencies {
+    @Transient
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
     private val versions = nodeJs.versions
 
