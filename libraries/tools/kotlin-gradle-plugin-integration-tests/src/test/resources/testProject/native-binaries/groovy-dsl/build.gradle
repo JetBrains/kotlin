@@ -74,23 +74,5 @@ kotlin {
             // Using a typed getter:
             println("Check run task: ${binaries.getExecutable("foo", RELEASE).runTask.name}")
         }
-        iosArm64("ios") {
-            binaries {
-                framework {
-                    export project(':exported')
-                }
-                framework('custom', [RELEASE]) {
-                    embedBitcode = 'DISABLE'
-                    linkerOpts = ['-L.']
-                    freeCompilerArgs = ["-Xtime"]
-                    isStatic = true
-                }
-            }
-        }
-        iosX64("iosSim") {
-            binaries {
-                framework()
-            }
-        }
     }
 }

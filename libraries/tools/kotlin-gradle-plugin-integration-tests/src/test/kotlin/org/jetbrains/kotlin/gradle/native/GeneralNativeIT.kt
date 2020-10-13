@@ -618,13 +618,9 @@ class GeneralNativeIT : BaseGradleIT() {
         // Check that test binaries can be accessed in a buildscript.
         build("checkNewGetters") {
             assertSuccessful()
-            val suffixes = listOf("kexe")
+            val suffix = if (HostManager.hostIsMingw) "exe" else "kexe"
             val names = listOf("test", "another")
-            val files = names.flatMap { name ->
-                suffixes.map { suffix ->
-                    "$name.$suffix"
-                }
-            }
+            val files = names.map { "$it.$suffix" }
 
             files.forEach {
                 assertContains("Get test: $it")
