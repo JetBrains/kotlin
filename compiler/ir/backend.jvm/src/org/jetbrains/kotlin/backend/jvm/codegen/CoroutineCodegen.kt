@@ -55,12 +55,12 @@ internal fun MethodNode.acceptWithStateMachine(
         val irFile = irFunction.file
         if (irFunction.startOffset >= 0) {
             // if it suspend function like `suspend fun foo(...)`
-            irFile.fileEntry.getLineNumber(irFunction.startOffset)
+            irFile.fileEntry.getLineNumber(irFunction.startOffset) + 1
         } else {
             val klass = classCodegen.irClass
             if (klass.startOffset >= 0) {
                 // if it suspend lambda transformed into class `runSuspend { .... }`
-                irFile.fileEntry.getLineNumber(klass.startOffset)
+                irFile.fileEntry.getLineNumber(klass.startOffset) + 1
             } else 0
         }
     } else element?.let { CodegenUtil.getLineNumberForElement(it, false) } ?: 0
