@@ -103,6 +103,7 @@ fun <F : FirClass<F>> F.runContractAndBodiesResolutionForLocalClass(
 fun createReturnTypeCalculatorForIDE(
     session: FirSession,
     scopeSession: ScopeSession,
+    implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession,
     createTransformer: (
         designation: Iterator<FirElement>,
         FirSession,
@@ -112,7 +113,7 @@ fun createReturnTypeCalculatorForIDE(
         BodyResolveContext?
     ) -> FirDesignatedBodyResolveTransformerForReturnTypeCalculator
 ): ReturnTypeCalculator =
-    ReturnTypeCalculatorWithJump(session, scopeSession, ImplicitBodyResolveComputationSession(), createTransformer = createTransformer)
+    ReturnTypeCalculatorWithJump(session, scopeSession, implicitBodyResolveComputationSession, createTransformer = createTransformer)
 
 open class FirImplicitAwareBodyResolveTransformer(
     session: FirSession,
