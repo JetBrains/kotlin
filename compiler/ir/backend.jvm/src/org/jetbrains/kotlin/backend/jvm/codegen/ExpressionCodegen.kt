@@ -213,6 +213,10 @@ class ExpressionCodegen(
     fun generate() {
         mv.visitCode()
         val startLabel = markNewLabel()
+        if (irFunction.origin == JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE) {
+            // Multifile bridges need to have line number 1 to be filtered out by the intellij debugging filters.
+            mv.visitLineNumber(1, startLabel)
+        }
         val info = BlockInfo()
         val body = irFunction.body!!
         generateNonNullAssertions()

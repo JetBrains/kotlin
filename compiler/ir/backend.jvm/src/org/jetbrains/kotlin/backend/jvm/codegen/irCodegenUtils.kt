@@ -90,7 +90,6 @@ fun JvmBackendContext.getSourceMapper(declaration: IrClass): SourceMapper {
     val fileEntry = sourceManager.getFileEntry(declaration.fileParent)
     // NOTE: apparently inliner requires the source range to cover the
     //       whole file the class is declared in rather than the class only.
-    // TODO: revise
     val endLineNumber = when (fileEntry) {
         is MultifileFacadeFileEntry -> 0
         else -> fileEntry?.getSourceRangeInfo(0, fileEntry.maxOffset)?.endLineNumber ?: 0
