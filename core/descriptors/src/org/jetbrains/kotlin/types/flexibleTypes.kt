@@ -26,13 +26,12 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
-
 fun KotlinType.isFlexible(): Boolean = unwrap() is FlexibleType
 fun KotlinType.asFlexibleType(): FlexibleType = unwrap() as FlexibleType
 
 fun KotlinType.isNullabilityFlexible(): Boolean {
     val flexibility = unwrap() as? FlexibleType ?: return false
-    return TypeUtils.isNullableType(flexibility.lowerBound) != TypeUtils.isNullableType(flexibility.upperBound)
+    return flexibility.lowerBound.isMarkedNullable != flexibility.upperBound.isMarkedNullable
 }
 
 // This function is intended primarily for sets: since KotlinType.equals() represents _syntactical_ equality of types,

@@ -137,12 +137,12 @@ FILE fqName:<root> fileName:/receiverOfIntersectionType.kt
         WHEN type=@[FlexibleNullability] <root>.K? origin=IF
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: CALL 'public open fun id <T> (x: T of <root>.Java.id?): T of <root>.Java.id? declared in <root>.Java' type=@[FlexibleNullability] <root>.A? origin=null
+            then: CALL 'public open fun id <T> (x: @[FlexibleNullability] T of <root>.Java.id?): @[FlexibleNullability] T of <root>.Java.id? declared in <root>.Java' type=@[FlexibleNullability] <root>.A? origin=null
               <T>: @[FlexibleNullability] <root>.A?
               x: GET_VAR 'a: <root>.A declared in <root>.testFlexible2' type=<root>.A origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: CALL 'public open fun id <T> (x: T of <root>.Java.id?): T of <root>.Java.id? declared in <root>.Java' type=@[FlexibleNullability] <root>.B? origin=null
+            then: CALL 'public open fun id <T> (x: @[FlexibleNullability] T of <root>.Java.id?): @[FlexibleNullability] T of <root>.Java.id? declared in <root>.Java' type=@[FlexibleNullability] <root>.B? origin=null
               <T>: @[FlexibleNullability] <root>.B?
               x: GET_VAR 'b: <root>.B declared in <root>.testFlexible2' type=<root>.B origin=null
       CALL 'public abstract fun ff (): kotlin.Unit declared in <root>.I' type=kotlin.Unit origin=null
