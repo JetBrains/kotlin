@@ -2055,6 +2055,8 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/swift-doc-plugin/intellij.swift.doc.plugin.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/swift-doc-plugin/intellij.swift.doc.plugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/swift/language/intellij.swift.language.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/swift/language/intellij.swift.language.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/swift-package-manager/intellij.swift.packageManager.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/swift-package-manager/intellij.swift.packageManager.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/apple-sdk/intellij.apple.sdk.iml" 
+              filepath="$PROJECT_DIR$/intellij/CIDR-appcode/apple-sdk/intellij.apple.sdk.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/swift-testFramework/intellij.swift.testFramework.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/swift-testFramework/intellij.swift.testFramework.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/swift-tests/intellij.swift.tests.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/swift-tests/intellij.swift.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/tailwindcss/intellij.tailwindcss.iml" filepath="$PROJECT_DIR$/intellij/plugins/tailwindcss/intellij.tailwindcss.iml" />
