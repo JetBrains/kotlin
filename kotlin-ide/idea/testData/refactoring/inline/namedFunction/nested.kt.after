@@ -1,0 +1,4 @@
+fun test() {
+    println("is print")
+    println(42)
+}

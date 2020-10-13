@@ -117,7 +117,7 @@ internal fun MutableCodeToInline.introduceValue(
     }
 }
 
-fun String.nameHasConflictsInScope(lexicalScope: LexicalScope) = lexicalScope.getAllAccessibleVariables(Name.identifier(this)).any {
+fun String.nameHasConflictsInScope(lexicalScope: LexicalScope): Boolean = lexicalScope.getAllAccessibleVariables(Name.identifier(this)).any {
     !it.isExtension && it.isVisible(lexicalScope.ownerDescriptor)
 }
 

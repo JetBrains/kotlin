@@ -81,7 +81,7 @@ fun UsageReplacementStrategy.replaceUsages(usages: Collection<KtReferenceExpress
         // we should delete imports later to not affect other usages
         val importsToDelete = mutableListOf<KtImportDirective>()
 
-        var usagesToProcess = usagesInFile.sortedBy { it.startOffset }
+        var usagesToProcess = usagesInFile
         while (usagesToProcess.isNotEmpty()) {
             if (processUsages(usagesToProcess, importsToDelete)) break
 
@@ -102,8 +102,16 @@ private fun UsageReplacementStrategy.processUsages(
     usages: List<KtReferenceExpression>,
     importsToDelete: MutableList<KtImportDirective>,
 ): Boolean {
+    val sortedUsages = usages.sortedWith { element1, element2 ->
+        if (element1.parent.textRange.intersects(element2.parent.textRange)) {
+            compareValuesBy(element2, element1) { it.startOffset }
+        } else {
+            compareValuesBy(element1, element2) { it.startOffset }
+        }
+    }
+
     var invalidUsagesFound = false
-    for (usage in usages) {
+    for (usage in sortedUsages) {
         try {
             if (!usage.isValid) {
                 invalidUsagesFound = true
