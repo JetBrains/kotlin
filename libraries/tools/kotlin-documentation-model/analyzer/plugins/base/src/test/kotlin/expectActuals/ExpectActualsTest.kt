@@ -143,27 +143,27 @@ class ExpectActualsTest : AbstractCoreTest() {
         ) {
             pagesTransformationStage = {
                 val allChildren = it.withDescendants().filterIsInstance<ClasslikePageNode>().toList()
-                val commonJ = allChildren.filter { it.name == "A(jvm, js)" }
-                val commonN1 = allChildren.filter { it.name == "A(mingwX64, linuxX64)" }
-                val commonN2 = allChildren.filter { it.name == "A(iosX64, iosArm64)" }
+                val commonJ = allChildren.filter { it.name == "[jvm, js]A" }
+                val commonN1 = allChildren.filter { it.name == "[mingwX64, linuxX64]A" }
+                val commonN2 = allChildren.filter { it.name == "[iosX64, iosArm64]A" }
                 val noClass = allChildren.filter { it.name == "A" }
-                assertTrue(commonJ.size == 1) { "There can be only one A(jvm, js) page" }
+                assertTrue(commonJ.size == 1) { "There can be only one [jvm, js]A page" }
                 assertTrue(
                     commonJ.first().documentable?.sourceSets?.map { it.displayName }
                         ?.containsAll(listOf("commonJ", "js", "jvm")) ?: false
                 ) { "A(jvm, js)should have commonJ, js, jvm sources" }
 
-                assertTrue(commonN1.size == 1) { "There can be only one A(mingwX64, linuxX64) page" }
+                assertTrue(commonN1.size == 1) { "There can be only one [mingwX64, linuxX64]A page" }
                 assertTrue(
                     commonN1.first().documentable?.sourceSets?.map { it.displayName }
                         ?.containsAll(listOf("commonN1", "linuxX64", "mingwX64")) ?: false
-                ) { "A(mingwX64, linuxX64) should have commonN1, linuxX64, mingwX64 sources" }
+                ) { "[mingwX64, linuxX64]A should have commonN1, linuxX64, mingwX64 sources" }
 
-                assertTrue(commonN2.size == 1) { "There can be only one A(iosX64, iosArm64) page" }
+                assertTrue(commonN2.size == 1) { "There can be only one [iosX64, iosArm64]A page" }
                 assertTrue(
                     commonN2.first().documentable?.sourceSets?.map { it.displayName }
                         ?.containsAll(listOf("commonN2", "iosArm64", "iosX64")) ?: false
-                ) { "A(iosX64, iosArm64) should have commonN2, iosArm64, iosX64 sources" }
+                ) { "[iosX64, iosArm64]A should have commonN2, iosArm64, iosX64 sources" }
 
                 assertTrue(noClass.isEmpty()) { "There can't be any A page" }
             }
