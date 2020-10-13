@@ -8,15 +8,15 @@
         <dependency maven-id="com.fasterxml.jackson.core:jackson-core" />
         <dependency maven-id="org.apache.commons:commons-compress" />
         <dependency maven-id="commons-io:commons-io" />
+        <dependency maven-id="com.fasterxml.jackson.core:jackson-annotations" />
+        <dependency maven-id="com.fasterxml.jackson.core:jackson-databind" />
       </exclude>
     </properties>
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/com/github/docker-java/docker-java-core/3.2.5/docker-java-core-3.2.5.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/github/docker-java/docker-java-api/3.2.5/docker-java-api-3.2.5.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-annotations/2.10.3/jackson-annotations-2.10.3.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/github/docker-java/docker-java-transport/3.2.5/docker-java-transport-3.2.5.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/commons-lang/commons-lang/2.6/commons-lang-2.6.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-databind/2.10.3/jackson-databind-2.10.3.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/bouncycastle/bcpkix-jdk15on/1.64/bcpkix-jdk15on-1.64.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/bouncycastle/bcprov-jdk15on/1.64/bcprov-jdk15on-1.64.jar!/" />
     </CLASSES>
@@ -24,10 +24,8 @@
     <SOURCES>
       <root url="jar://$MAVEN_REPOSITORY$/com/github/docker-java/docker-java-core/3.2.5/docker-java-core-3.2.5-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/github/docker-java/docker-java-api/3.2.5/docker-java-api-3.2.5-sources.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-annotations/2.10.3/jackson-annotations-2.10.3-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/github/docker-java/docker-java-transport/3.2.5/docker-java-transport-3.2.5-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/commons-lang/commons-lang/2.6/commons-lang-2.6-sources.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-databind/2.10.3/jackson-databind-2.10.3-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/bouncycastle/bcpkix-jdk15on/1.64/bcpkix-jdk15on-1.64-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/bouncycastle/bcprov-jdk15on/1.64/bcprov-jdk15on-1.64-sources.jar!/" />
     </SOURCES>
