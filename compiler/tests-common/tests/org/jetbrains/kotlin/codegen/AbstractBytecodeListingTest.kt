@@ -21,7 +21,13 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
         val actualTxt = BytecodeListingTextCollectingVisitor.getText(
             classFileFactory,
             withSignatures = isWithSignatures(wholeFile),
-            withAnnotations = isWithAnnotations(wholeFile)
+            withAnnotations = isWithAnnotations(wholeFile),
+            filter = object : BytecodeListingTextCollectingVisitor.Filter {
+                override fun shouldWriteClass(access: Int, name: String): Boolean = !name.startsWith("helpers/")
+                override fun shouldWriteMethod(access: Int, name: String, desc: String): Boolean = true
+                override fun shouldWriteField(access: Int, name: String, desc: String): Boolean = true
+                override fun shouldWriteInnerClass(name: String): Boolean = true
+            }
         )
 
         val prefixes = when {

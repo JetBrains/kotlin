@@ -28,22 +28,37 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 
-fun getGeneratedClass(classLoader: ClassLoader, className: String): Class<*> {
+private fun ClassLoader.loadClassOrNull(name: String): Class<*>? =
     try {
-        return classLoader.loadClass(className)
+        loadClass(name)
+    } catch (e: ClassNotFoundException) {
+        null
     }
-    catch (e: ClassNotFoundException) {
-        error("No class file was generated for: " + className)
-    }
-}
 
-fun getBoxMethodOrNull(aClass: Class<*>): Method? {
+private fun Class<*>.getMethodOrNull(name: String, vararg parameterTypes: Class<*>): Method? =
     try {
-        return aClass.getMethod("box")
+        getMethod(name, *parameterTypes)
+    } catch (e: NoSuchMethodException) {
+        null
     }
-    catch (e: NoSuchMethodException) {
-        return null
+
+fun getGeneratedClass(classLoader: ClassLoader, className: String): Class<*> =
+    classLoader.loadClassOrNull(className) ?: error("No class file was generated for: $className")
+
+fun getBoxMethodOrNull(aClass: Class<*>): Method? =
+    aClass.getMethodOrNull("box")
+        ?: aClass.classLoader.loadClassOrNull("kotlin.coroutines.Continuation")?.let { aClass.getMethodOrNull("box", it) }
+        ?: aClass.classLoader.loadClassOrNull("kotlin.coroutines.experimental.Continuation")?.let { aClass.getMethodOrNull("box", it) }
+
+fun runBoxMethod(method: Method): String? {
+    if (method.parameterTypes.isEmpty()) {
+        return method.invoke(null) as? String
     }
+    val emptyContinuationClass = method.declaringClass.classLoader.loadClass("helpers.ResultContinuation")
+    val emptyContinuation = emptyContinuationClass.declaredConstructors.single().newInstance()
+    val result = method.invoke(null, emptyContinuation)
+    val resultAfterSuspend = emptyContinuationClass.getField("result").get(emptyContinuation)
+    return (resultAfterSuspend ?: result) as? String
 }
 
 //Use only JDK 1.6 compatible api
@@ -149,7 +164,7 @@ private class ServerTest(val clientSocket: Socket, val suppressOutput: Boolean) 
 
     fun executeTest(classLoader: ClassLoader): String {
         val clazz = getGeneratedClass(classLoader, className)
-        return getBoxMethodOrNull(clazz)!!.invoke(null) as String
+        return runBoxMethod(getBoxMethodOrNull(clazz)!!) as String
     }
 
     companion object {
