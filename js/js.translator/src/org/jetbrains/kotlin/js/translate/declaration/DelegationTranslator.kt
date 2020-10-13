@@ -194,6 +194,7 @@ class DelegationTranslator(
         }
         else {
             val literal = JsObjectLiteral(true)
+            literal.propertyInitializers += JsPropertyInitializer(JsStringLiteral("configurable"), JsBooleanLiteral(true))
             literal.propertyInitializers.addGetterAndSetter(descriptor, ::generateDelegateGetter, ::generateDelegateSetter)
             context().addAccessorsToPrototype(classDescriptor, descriptor, literal)
         }
