@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.copyAnnotationsFrom
 import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
@@ -219,10 +220,10 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
         }
     }
 
+    function.copyAnnotationsFrom(target)
     function.copyParameterDeclarationsFrom(target)
     function.returnType = target.returnType.substitute(target.typeParameters, function.typeParameters.map { it.defaultType })
     function.parent = facadeClass
-    function.annotations = target.annotations.map { it.deepCopyWithSymbols() }
 
     if (shouldGeneratePartHierarchy) {
         function.origin = IrDeclarationOrigin.FAKE_OVERRIDE

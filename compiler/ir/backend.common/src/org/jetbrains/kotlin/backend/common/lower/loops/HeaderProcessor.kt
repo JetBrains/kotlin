@@ -13,15 +13,13 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrLoop
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrDoWhileLoopImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrWhileLoopImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /**
@@ -68,14 +66,13 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
     val inductionVariable: IrVariable
 
     protected val stepVariable: IrVariable?
-    val stepExpression: IrExpression
-        // Always copy `stepExpression` is it may be used multiple times.
-        get() = field.deepCopyWithSymbols()
+    val stepExpression: IrExpressionWithCopy
 
     protected val lastVariableIfCanCacheLast: IrVariable?
     protected val lastExpression: IrExpression
-        // Always copy `lastExpression` is it may be used in multiple conditions.
-        get() = field.deepCopyWithSymbols()
+        // If this is not `IrExpressionWithCopy`, then it is `<IrGetValue>.getSize()` built in `IndexedGetIterationHandler`.
+        // It is therefore safe to deep-copy as it does not contain any functions or classes.
+        get() = if (field is IrExpressionWithCopy) field.copy() else field.deepCopyWithSymbols()
 
     protected val symbols = context.ir.symbols
 
@@ -105,11 +102,14 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
                 // TODO: Confirm if casting to non-nullable is still necessary
                 val last = headerInfo.last.asElementType()
 
-                lastVariableIfCanCacheLast = if (headerInfo.canCacheLast) {
-                    scope.createTmpVariable(last, nameHint = "last")
-                } else null
-
-                lastExpression = if (headerInfo.canCacheLast) irGet(lastVariableIfCanCacheLast!!) else last
+                if (headerInfo.canCacheLast) {
+                    val (variable, expression) = createTemporaryVariableIfNecessary(last, nameHint = "last")
+                    lastVariableIfCanCacheLast = variable
+                    lastExpression = expression.copy()
+                } else {
+                    lastVariableIfCanCacheLast = null
+                    lastExpression = last
+                }
 
                 val (tmpStepVar, tmpStepExpression) =
                     createTemporaryVariableIfNecessary(
@@ -146,7 +146,7 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
                 inductionVariable.symbol, irCallOp(
                     plusFun.symbol, plusFun.returnType,
                     irGet(inductionVariable),
-                    stepExpression, IrStatementOrigin.PLUSEQ
+                    stepExpression.copy(), IrStatementOrigin.PLUSEQ
                 ), IrStatementOrigin.PLUSEQ
             )
         }
@@ -225,14 +225,14 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
                         context.oror(
                             context.andand(
                                 irCall(builtIns.greaterFunByOperandType.getValue(stepClass.symbol)).apply {
-                                    putValueArgument(0, stepExpression)
+                                    putValueArgument(0, stepExpression.copy())
                                     putValueArgument(1, zeroStepExpression())
                                 },
                                 conditionForIncreasing()
                             ),
                             context.andand(
                                 irCall(builtIns.lessFunByOperandType.getValue(stepClass.symbol)).apply {
-                                    putValueArgument(0, stepExpression)
+                                    putValueArgument(0, stepExpression.copy())
                                     putValueArgument(1, zeroStepExpression())
                                 },
                                 conditionForDecreasing()
@@ -351,19 +351,17 @@ internal class ProgressionLoopHeader(
         }
 }
 
-private class InitializerCallReplacer(symbolRemapper: SymbolRemapper, typeRemapper: TypeRemapper, val replacementCall: IrCall) :
-    DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper) {
+private class InitializerCallReplacer(val replacementCall: IrCall) : IrElementTransformerVoid() {
     var initializerCall: IrCall? = null
 
     override fun visitCall(expression: IrCall): IrCall {
-        if (initializerCall == null) {
-            initializerCall = expression
-            return replacementCall
-        } else {
+        if (initializerCall != null) {
             throw IllegalStateException(
                 "Multiple initializer calls found. First: ${initializerCall!!.render()}\nSecond: ${expression.render()}"
             )
         }
+        initializerCall = expression
+        return replacementCall
     }
 }
 
@@ -390,9 +388,7 @@ internal class IndexedGetLoopHeader(
             }
             // The call could be wrapped in an IMPLICIT_NOTNULL type-cast (see comment in ForLoopsLowering.gatherLoopVariableInfo()).
             // Find and replace the call to preserve any type-casts.
-            loopVariable?.initializer = loopVariable?.initializer?.deepCopyWithSymbols { symbolRemapper, typeRemapper ->
-                InitializerCallReplacer(symbolRemapper, typeRemapper, get)
-            }
+            loopVariable?.initializer = loopVariable?.initializer?.transform(InitializerCallReplacer(get), null)
             // Even if there is no loop variable, we always want to call `get()` as it may have side-effects.
             // The un-lowered loop always calls `get()` on each iteration.
             listOf(loopVariable ?: get) + incrementInductionVariable(this)
@@ -589,9 +585,7 @@ internal class IterableLoopHeader(
                 }
             // The call could be wrapped in an IMPLICIT_NOTNULL type-cast (see comment in ForLoopsLowering.gatherLoopVariableInfo()).
             // Find and replace the call to preserve any type-casts.
-            loopVariable?.initializer = loopVariable?.initializer?.deepCopyWithSymbols { symbolRemapper, typeRemapper ->
-                InitializerCallReplacer(symbolRemapper, typeRemapper, next)
-            }
+            loopVariable?.initializer = loopVariable?.initializer?.transform(InitializerCallReplacer(next), null)
             // Even if there is no loop variable, we always want to call `next()` for iterables and sequences.
             listOf(loopVariable ?: next.coerceToUnitIfNeeded(next.type, context.irBuiltIns))
         }
