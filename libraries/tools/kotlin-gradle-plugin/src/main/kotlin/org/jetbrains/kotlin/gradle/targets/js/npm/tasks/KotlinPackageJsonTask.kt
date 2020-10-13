@@ -21,7 +21,10 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import java.io.File
 
 open class KotlinPackageJsonTask : DefaultTask() {
+    @Transient
     private lateinit var nodeJs: NodeJsRootExtension
+
+    @Transient
     private lateinit var compilation: KotlinJsCompilation
 
     private val compilationResolver
