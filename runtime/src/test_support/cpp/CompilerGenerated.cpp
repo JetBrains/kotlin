@@ -3,7 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-#include "CompilerGenerated.h"
 #include "Types.h"
 
 namespace {
@@ -70,15 +69,15 @@ OBJ_GETTER0(TheEmptyString) {
 }
 
 RUNTIME_NORETURN OBJ_GETTER(makeWeakReferenceCounter, void*) {
-    THROW_NOT_IMPLEMENTED
+    throw std::runtime_error("Not implemented for tests");
 }
 
 RUNTIME_NORETURN OBJ_GETTER(makePermanentWeakReferenceImpl, void*) {
-    THROW_NOT_IMPLEMENTED
+    throw std::runtime_error("Not implemented for tests");
 }
 
 RUNTIME_NORETURN OBJ_GETTER(makeObjCWeakReferenceImpl, void*) {
-    THROW_NOT_IMPLEMENTED
+    throw std::runtime_error("Not implemented for tests");
 }
 
 void checkRangeIndexes(KInt from, KInt to, KInt size) {
@@ -93,67 +92,67 @@ void checkRangeIndexes(KInt from, KInt to, KInt size) {
 }
 
 RUNTIME_NORETURN OBJ_GETTER(WorkerLaunchpad, KRef) {
-    THROW_NOT_IMPLEMENTED
+    throw std::runtime_error("Not implemented for tests");
 }
 
 void RUNTIME_NORETURN ThrowWorkerInvalidState() {
-    THROW_NOT_IMPLEMENTED
+    throw std::runtime_error("Not implemented for tests");
 }
 
 void RUNTIME_NORETURN ThrowNullPointerException() {
-    THROW_NOT_IMPLEMENTED
+    throw std::runtime_error("Not implemented for tests");
 }
 
 void RUNTIME_NORETURN ThrowArrayIndexOutOfBoundsException() {
-    THROW_NOT_IMPLEMENTED
+    throw std::runtime_error("Not implemented for tests");
 }
 
 void RUNTIME_NORETURN ThrowClassCastException(const ObjHeader* instance, const TypeInfo* type_info) {
-    THROW_NOT_IMPLEMENTED
+    throw std::runtime_error("Not implemented for tests");
 }
 
 void RUNTIME_NORETURN ThrowArithmeticException() {
-    THROW_NOT_IMPLEMENTED
+    throw std::runtime_error("Not implemented for tests");
 }
 
 void RUNTIME_NORETURN ThrowNumberFormatException() {
-    THROW_NOT_IMPLEMENTED
+    throw std::runtime_error("Not implemented for tests");
 }
 
 void RUNTIME_NORETURN ThrowOutOfMemoryError() {
-    THROW_NOT_IMPLEMENTED
+    throw std::runtime_error("Not implemented for tests");
 }
 
 void RUNTIME_NORETURN ThrowNotImplementedError() {
-    THROW_NOT_IMPLEMENTED
+    throw std::runtime_error("Not implemented for tests");
 }
 
 void RUNTIME_NORETURN ThrowCharacterCodingException() {
-    THROW_NOT_IMPLEMENTED
+    throw std::runtime_error("Not implemented for tests");
 }
 
 void RUNTIME_NORETURN ThrowIllegalArgumentException() {
-    THROW_NOT_IMPLEMENTED
+    throw std::runtime_error("Not implemented for tests");
 }
 
 void RUNTIME_NORETURN ThrowIllegalStateException() {
-    THROW_NOT_IMPLEMENTED
+    throw std::runtime_error("Not implemented for tests");
 }
 
 void RUNTIME_NORETURN ThrowInvalidMutabilityException(KConstRef where) {
-    THROW_NOT_IMPLEMENTED
+    throw std::runtime_error("Not implemented for tests");
 }
 
 void RUNTIME_NORETURN ThrowIncorrectDereferenceException() {
-    THROW_NOT_IMPLEMENTED
+    throw std::runtime_error("Not implemented for tests");
 }
 
 void RUNTIME_NORETURN ThrowIllegalObjectSharingException(KConstNativePtr typeInfo, KConstNativePtr address) {
-    THROW_NOT_IMPLEMENTED
+    throw std::runtime_error("Not implemented for tests");
 }
 
 void RUNTIME_NORETURN ThrowFreezingException(KRef toFreeze, KRef blocker) {
-    THROW_NOT_IMPLEMENTED
+    throw std::runtime_error("Not implemented for tests");
 }
 
 void ReportUnhandledException(KRef throwable) {
@@ -161,15 +160,15 @@ void ReportUnhandledException(KRef throwable) {
 }
 
 RUNTIME_NORETURN OBJ_GETTER(DescribeObjectForDebugging, KConstNativePtr typeInfo, KConstNativePtr address) {
-    THROW_NOT_IMPLEMENTED
+    throw std::runtime_error("Not implemented for tests");
 }
 
 void ExceptionReporterLaunchpad(KRef reporter, KRef throwable) {
-    THROW_NOT_IMPLEMENTED
+    throw std::runtime_error("Not implemented for tests");
 }
 
 void Kotlin_WorkerBoundReference_freezeHook(KRef thiz) {
-    THROW_NOT_IMPLEMENTED
+    throw std::runtime_error("Not implemented for tests");
 }
 
 extern const KBoolean BOOLEAN_RANGE_FROM = false;
@@ -228,7 +227,7 @@ extern KBox<KLong> LONG_CACHE[] = {
 };
 
 RUNTIME_NORETURN OBJ_GETTER(Kotlin_Throwable_getMessage, KRef throwable) {
-    THROW_NOT_IMPLEMENTED
+    throw std::runtime_error("Not implemented for tests");
 }
 
 } // extern "C"
