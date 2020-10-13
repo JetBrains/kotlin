@@ -28,6 +28,25 @@ internal class FirPhaseRunner(val transformerProvider: FirTransformerProvider) {
         }
     }
 
+    inline fun runPhaseWithCustomResolve(phase: FirResolvePhase, crossinline resolve: () -> Unit) = when (phase) {
+        FirResolvePhase.SUPER_TYPES -> superTypesBodyResolveLock.withLock {
+            runPhaseWithCustomResolveWithoutLock(resolve)
+        }
+        FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> implicitTypesResolveLock.withLock {
+            runPhaseWithCustomResolveWithoutLock(resolve)
+        }
+        else -> {
+            runPhaseWithCustomResolveWithoutLock(resolve)
+        }
+    }
+
+    private inline fun runPhaseWithCustomResolveWithoutLock(crossinline resolve: () -> Unit) {
+        executeWithoutPCE {
+            resolve()
+        }
+    }
+
+
     private fun runPhaseWithoutLock(firFile: FirFile, phase: FirResolvePhase) {
         val phaseProcessor = transformerProvider.getTransformerForPhase(firFile.session, phase)
         executeWithoutPCE {

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.createReturnTypeCalculatorForIDE
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.checkCanceled
@@ -26,6 +27,7 @@ internal abstract class AbstractFirIdeDiagnosticsCollector(
     returnTypeCalculator = createReturnTypeCalculatorForIDE(
         session,
         ScopeSession(),
+        ImplicitBodyResolveComputationSession(),
         ::FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
     )
 ) {
