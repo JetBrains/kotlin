@@ -33,8 +33,10 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
@@ -93,37 +95,40 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
             }
             else -> error("unknown kind of file entry: $fileEntry")
         }
+        val isMultifilePart = fileClassInfo.withJvmMultifileClass
         return IrClassImpl(
             0, fileEntry.maxOffset,
-            if (!fileClassInfo.withJvmMultifileClass || context.state.languageVersionSettings.getFlag(JvmAnalysisFlags.inheritMultifileParts))
+            if (!isMultifilePart || context.state.languageVersionSettings.getFlag(JvmAnalysisFlags.inheritMultifileParts))
                 IrDeclarationOrigin.FILE_CLASS else IrDeclarationOrigin.SYNTHETIC_FILE_CLASS,
             symbol = IrClassSymbolImpl(descriptor),
             name = fileClassInfo.fileClassFqName.shortName(),
             kind = ClassKind.CLASS,
-            visibility = if (!fileClassInfo.withJvmMultifileClass) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY,
+            visibility = if (!isMultifilePart) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY,
             modality = Modality.FINAL
         ).apply {
             descriptor.bind(this)
-            superTypes += context.irBuiltIns.anyType
+            superTypes = listOf(context.irBuiltIns.anyType)
             parent = irFile
             declarations.addAll(fileClassMembers)
             createImplicitParameterDeclarationWithWrappedDescriptor()
-            fileClassMembers.forEach {
-                it.parent = this
-                if (it is IrProperty) {
-                    it.getter?.let { it.parent = this }
-                    it.setter?.let { it.parent = this }
-                    it.backingField?.let { it.parent = this }
+            for (member in fileClassMembers) {
+                member.parent = this
+                if (member is IrProperty) {
+                    member.getter?.let { it.parent = this }
+                    member.setter?.let { it.parent = this }
+                    member.backingField?.let { it.parent = this }
                 }
             }
 
-            annotations += irFile.annotations
+            annotations =
+                if (isMultifilePart) irFile.annotations.filterNot { it.symbol.owner.parentAsClass.symbol.signature == JVM_NAME }
+                else irFile.annotations
 
             metadata = irFile.metadata
 
             val partClassType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(fileClassInfo.fileClassFqName)
             val facadeClassType =
-                if (fileClassInfo.withJvmMultifileClass) AsmUtil.asmTypeByFqNameWithoutInnerClasses(fileClassInfo.facadeClassFqName)
+                if (isMultifilePart) AsmUtil.asmTypeByFqNameWithoutInnerClasses(fileClassInfo.facadeClassFqName)
                 else null
             context.state.factory.packagePartRegistry.addPart(irFile.fqName, partClassType.internalName, facadeClassType?.internalName)
 
@@ -136,5 +141,9 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
                 context.multifileFacadesToAdd.getOrPut(jvmClassName) { ArrayList() }.add(this)
             }
         }
+    }
+
+    private companion object {
+        private val JVM_NAME = IdSignature.PublicSignature("kotlin.jvm", "JvmName", null, 0)
     }
 }
