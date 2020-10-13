@@ -130,7 +130,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
     private fun IrSimpleFunction.getInternalFunctionForManglingIfNeeded(): IrSimpleFunction? {
         if (origin != JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR &&
             visibility == DescriptorVisibilities.INTERNAL &&
-            !isPublishedApi()
+            !isPublishedApi() &&
+            !isSyntheticMethodForProperty
         ) {
             return this
         }

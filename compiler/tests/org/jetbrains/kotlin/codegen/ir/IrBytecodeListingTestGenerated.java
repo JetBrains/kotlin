@@ -166,6 +166,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             runTest("compiler/testData/codegen/bytecodeListing/annotations/deprecatedJvmOverloads.kt");
         }
 
+        @TestMetadata("internalProperty.kt")
+        public void testInternalProperty() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/annotations/internalProperty.kt");
+        }
+
         @TestMetadata("JvmSynthetic.kt")
         public void testJvmSynthetic() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/annotations/JvmSynthetic.kt");

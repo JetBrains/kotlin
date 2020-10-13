@@ -17,4 +17,7 @@ class C {
 
     @Anno
     val returnType: Z get() = Z(0)
+
+    @Anno
+    internal val Z.internal: Int get() = 0
 }
