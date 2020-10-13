@@ -54,26 +54,27 @@ internal object FirLazyBodiesCalculator {
 
         val rawFirBuilder = createRawFirBuilder(firProperty)
         val newProperty = rawFirBuilder.buildPropertyWithBody(firProperty.psi as KtProperty)
-        newProperty.apply {
-            getter?.takeIf { it.body is FirLazyBlock }?.let { getter ->
-                val newGetter = newProperty.getter!!
-                getter.replaceBody(newGetter.body)
-                getter.replaceContractDescription(newGetter.contractDescription)
-            }
-            setter?.takeIf { it.body is FirLazyBlock }?.let { setter ->
-                val newSetter = newProperty.setter!!
-                setter.replaceBody(newSetter.body)
-                setter.replaceContractDescription(newSetter.contractDescription)
-            }
-            if (firProperty.initializer is FirLazyExpression) {
-                firProperty.replaceInitializer(newProperty.initializer)
-            }
 
-            val delegate = firProperty.delegate
-            if (delegate is FirWrappedDelegateExpression && delegate.expression is FirLazyExpression) {
-                val newDelegate = newProperty.delegate as FirWrappedDelegateExpression
-                delegate.replaceExpression(newDelegate.expression)
-            }
+        firProperty.getter?.takeIf { it.body is FirLazyBlock }?.let { getter ->
+            val newGetter = newProperty.getter!!
+            getter.replaceBody(newGetter.body)
+            getter.replaceContractDescription(newGetter.contractDescription)
+        }
+
+        firProperty.setter?.takeIf { it.body is FirLazyBlock }?.let { setter ->
+            val newSetter = newProperty.setter!!
+            setter.replaceBody(newSetter.body)
+            setter.replaceContractDescription(newSetter.contractDescription)
+        }
+
+        if (firProperty.initializer is FirLazyExpression) {
+            firProperty.replaceInitializer(newProperty.initializer)
+        }
+
+        val delegate = firProperty.delegate
+        if (delegate is FirWrappedDelegateExpression && delegate.expression is FirLazyExpression) {
+            val newDelegate = newProperty.delegate as FirWrappedDelegateExpression
+            delegate.replaceExpression(newDelegate.expression)
         }
     }
 
