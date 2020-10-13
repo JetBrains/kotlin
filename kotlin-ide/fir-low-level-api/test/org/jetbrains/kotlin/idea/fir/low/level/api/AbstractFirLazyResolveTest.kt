@@ -13,6 +13,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.testFramework.LightProjectDescriptor
 import junit.framework.TestCase
+import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.render
@@ -81,7 +82,7 @@ abstract class AbstractFirLazyResolveTest : KotlinLightCodeInsightFixtureTestCas
                     append(name)
                 }
             }
-            else -> firElement.render()
+            else -> firElement.render(FirRenderer.RenderMode.WithResolvePhases)
         }
         KotlinTestUtils.assertEqualsToFile(File(testFile.parent, "results.txt"), resultsDump)
 
@@ -105,7 +106,7 @@ abstract class AbstractFirLazyResolveTest : KotlinLightCodeInsightFixtureTestCas
             val session = resolveState.rootModuleSession
             val firProvider = session.firIdeProvider
             val firFile = firProvider.cache.getCachedFirFile(psiFile) ?: continue
-            KotlinTestUtils.assertEqualsToFile(File(expectedTxtPath(file)), firFile.render())
+            KotlinTestUtils.assertEqualsToFile(File(expectedTxtPath(file)), firFile.render(FirRenderer.RenderMode.WithResolvePhases))
         }
     }
 }
