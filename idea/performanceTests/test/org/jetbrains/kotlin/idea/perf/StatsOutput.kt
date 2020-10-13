@@ -27,7 +27,7 @@ internal fun List<Metric>.writeCSV(name: String, header: Array<String>) {
     }
 }
 
-internal fun Metric.writeTeamCityStats(name: String, rawMeasurementName: String = "raw_metrics", rawMetrics: Boolean = false) {
+internal fun Metric.writeTeamCityStats(name: String, rawMeasurementName: String = "rawMetrics", rawMetrics: Boolean = false) {
     fun Metric.append(prefix: String, depth: Int) {
         val s = if (this.name.isEmpty()) {
             prefix
@@ -74,15 +74,22 @@ private fun Metric.toJson(prefix: String): String =
             "$prefix $name${if (prefix.isEmpty()) ":" else ""}".trim()
         }
 
+
         var commaRequired = false
-        if (value != null) {
-            append("\"metric_name\":\"").append(nm).append("\"")
-            append(",\"metric_value\":").append(value)
-            measurementError?.let {
-                append(",\"metric_error\":").append(it)
-            }
-            //append(",\"legacy_name\":").append("\"${s.jsonValue()}\"")
+        if (value != null || hasError) {
+            append("\"metricName\":\"").append(nm).append("\"")
             commaRequired = true
+        }
+
+        if (value != null) {
+            append(",\"metricValue\":").append(value)
+            measurementError?.let {
+                append(",\"metricError\":").append(it)
+            }
+            //append(",\"legacyName\":").append("\"${s.jsonValue()}\"")
+        }
+        if (hasError) {
+            append(",\"hasError\": $hasError")
         }
 
         if (properties != null) {
