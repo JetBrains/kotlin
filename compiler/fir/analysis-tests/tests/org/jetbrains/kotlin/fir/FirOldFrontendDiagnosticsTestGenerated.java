@@ -21915,6 +21915,16 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
                 runTest("compiler/testData/diagnostics/tests/smartCasts/castchecks/basicOn.kt");
             }
 
+            @TestMetadata("castInTryWithCatch.kt")
+            public void testCastInTryWithCatch() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/castchecks/castInTryWithCatch.kt");
+            }
+
+            @TestMetadata("castInTryWithoutCatch.kt")
+            public void testCastInTryWithoutCatch() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/castchecks/castInTryWithoutCatch.kt");
+            }
+
             @TestMetadata("impossible.kt")
             public void testImpossible() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/castchecks/impossible.kt");
