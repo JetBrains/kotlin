@@ -240,7 +240,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(element)]
 
 KtFirFunctionSymbol:
-  callableIdIfNonLocal: kotlin.collections.List.isEmpty
+  callableIdIfNonLocal: kotlin.collections.MutableList.isEmpty
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -293,7 +293,7 @@ KtFirPropertySymbol:
   type: kotlin/Int
 
 KtFirFunctionSymbol:
-  callableIdIfNonLocal: kotlin.Any.equals
+  callableIdIfNonLocal: kotlin.collections.MutableList.equals
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -307,7 +307,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  callableIdIfNonLocal: kotlin.Any.hashCode
+  callableIdIfNonLocal: kotlin.collections.MutableList.hashCode
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -321,7 +321,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  callableIdIfNonLocal: kotlin.Any.toString
+  callableIdIfNonLocal: kotlin.collections.MutableList.toString
   isExtension: false
   isOperator: false
   isSuspend: false
