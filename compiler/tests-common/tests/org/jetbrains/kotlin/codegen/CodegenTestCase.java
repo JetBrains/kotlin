@@ -65,6 +65,7 @@ import static org.jetbrains.kotlin.codegen.TestUtilsKt.extractUrls;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar;
 import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getBoxMethodOrNull;
 import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getGeneratedClass;
+import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.runBoxMethod;
 
 public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.TestFile> {
     private static final String DEFAULT_TEST_FILE_NAME = "a_test";
@@ -679,7 +680,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
                 Thread.currentThread().setContextClassLoader(classLoader);
             }
             try {
-                result = (String) method.invoke(null);
+                result = runBoxMethod(method);
             }
             finally {
                 if (savedClassLoader != classLoader) {
