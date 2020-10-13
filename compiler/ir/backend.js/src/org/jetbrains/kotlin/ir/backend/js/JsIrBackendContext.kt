@@ -162,6 +162,7 @@ class JsIrBackendContext(
     override val sharedVariablesManager = JsSharedVariablesManager(this)
 
     override val internalPackageFqn = JS_PACKAGE_FQNAME
+    override val returnIfSuspendedSignature = IdSignature.PublicSignature(internalPackageFqn.asString(), "returnIfSuspended", null, 0)
 
     private val operatorMap = referenceOperators()
 

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
 
@@ -55,6 +56,7 @@ class WasmBackendContext(
 
     val objectToGetInstanceFunction = mutableMapOf<IrClassSymbol, IrSimpleFunction>()
     override val internalPackageFqn = FqName("kotlin.wasm")
+    override val returnIfSuspendedSignature = IdSignature.PublicSignature(internalPackageFqn.asString(), "returnIfSuspended", null, 0)
 
     private val internalPackageFragment = IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(
         builtIns.builtInsModule, FqName("kotlin.wasm.internal")

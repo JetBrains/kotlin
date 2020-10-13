@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi2ir.PsiErrorBuilder
@@ -114,6 +115,7 @@ class JvmBackendContext(
     override val configuration get() = state.configuration
 
     override val internalPackageFqn = FqName("kotlin.jvm")
+    override val returnIfSuspendedSignature = IdSignature.PublicSignature(internalPackageFqn.asString(), "returnIfSuspended", null, 0)
 
     val suspendLambdaToOriginalFunctionMap = mutableMapOf<IrFunctionReference, IrFunction>()
     val suspendFunctionOriginalToView = mutableMapOf<IrFunction, IrFunction>()

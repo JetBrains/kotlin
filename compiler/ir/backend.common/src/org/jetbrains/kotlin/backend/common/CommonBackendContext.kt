@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.util.IdSignature
 
 interface LoggingContext {
     var inVerbosePhase: Boolean
@@ -26,6 +27,7 @@ interface CommonBackendContext : BackendContext, LoggingContext {
 
     val configuration: CompilerConfiguration
     val scriptMode: Boolean
+    val returnIfSuspendedSignature: IdSignature.PublicSignature
 
     fun throwUninitializedPropertyAccessException(builder: IrBuilderWithScope, name: String): IrExpression {
         val throwErrorFunction = ir.symbols.throwUninitializedPropertyAccessException.owner
