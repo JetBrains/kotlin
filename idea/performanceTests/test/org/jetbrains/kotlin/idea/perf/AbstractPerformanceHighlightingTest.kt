@@ -12,6 +12,7 @@ import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl.ensur
 import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.WARM_UP
+import org.jetbrains.kotlin.idea.perf.util.removeInfoMarkers
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.testFramework.commitAllDocuments
 
@@ -62,6 +63,7 @@ abstract class AbstractPerformanceHighlightingTest : KotlinLightCodeInsightFixtu
 
             val project = myFixture.project
             commitAllDocuments()
+            removeInfoMarkers()
 
             val file = myFixture.file
             val offset = file.textOffset
