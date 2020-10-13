@@ -18481,6 +18481,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             runTest("compiler/testData/codegen/box/multifileClasses/multifileClassWithPrivate.kt");
         }
 
+        @TestMetadata("namesInMetadataAreSorted.kt")
+        public void testNamesInMetadataAreSorted() throws Exception {
+            runTest("compiler/testData/codegen/box/multifileClasses/namesInMetadataAreSorted.kt");
+        }
+
         @TestMetadata("privateConstVal.kt")
         public void testPrivateConstVal() throws Exception {
             runTest("compiler/testData/codegen/box/multifileClasses/privateConstVal.kt");
@@ -18551,6 +18556,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             @TestMetadata("internalFunction.kt")
             public void testInternalFunction() throws Exception {
                 runTest("compiler/testData/codegen/box/multifileClasses/optimized/internalFunction.kt");
+            }
+
+            @TestMetadata("namesInMetadataAreSorted.kt")
+            public void testNamesInMetadataAreSorted() throws Exception {
+                runTest("compiler/testData/codegen/box/multifileClasses/optimized/namesInMetadataAreSorted.kt");
             }
 
             @TestMetadata("overlappingFuns.kt")
