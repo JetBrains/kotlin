@@ -173,6 +173,7 @@ internal object FirIdeSessionFactory {
     fun createBuiltinsAndCloneableSession(project: Project, builtinTypes: BuiltinTypes): FirIdeBuiltinsAndCloneableSession {
         return FirIdeBuiltinsAndCloneableSession(project, builtinTypes).apply {
             registerCommonComponents()
+            registerIdeComponents()
 
             val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
             register(
