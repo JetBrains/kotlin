@@ -337,6 +337,19 @@ open class KotlinAndroid36GradleIT : KotlinAndroid33GradleIT() {
             assertTasksExecuted(lintTask) // Check that the lint task ran successfully, KT-27170
         }
     }
+
+    @Test
+    fun testJvmWithJava() = with(Project("mppJvmWithJava")) {
+        setupWorkingDir()
+
+        build("build") {
+            assertSuccessful()
+        }
+
+        build("assemble") {
+            assertSuccessful()
+        }
+    }
 }
 
 open class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT() {
