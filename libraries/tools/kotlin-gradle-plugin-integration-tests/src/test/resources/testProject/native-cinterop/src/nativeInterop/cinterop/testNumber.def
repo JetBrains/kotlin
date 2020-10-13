@@ -1,0 +1,7 @@
+compilerOpts.osx = -D_ANSI_SOURCE
+---
+
+int getTestNumber()
+{
+    return 5;
+}

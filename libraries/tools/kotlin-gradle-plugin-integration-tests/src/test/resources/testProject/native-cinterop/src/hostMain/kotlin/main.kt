@@ -5,8 +5,12 @@
 
 package example.cinterop.project
 
-import example.cinterop.project.*
+import library.cinterop.project.*
 
-fun answer(): Int {
-    return getNumber() * 2
+fun libraryAnswer(): Int {
+    return publishedAnswer() + projectAnswer()
+}
+
+fun selfCalculatedAnswer(): Int {
+    return getNumber() * 2 + getAnotherNumber() * 2
 }

@@ -687,24 +687,27 @@ class GeneralNativeIT : BaseGradleIT() {
     }
 
     @Test
-    fun testCinterop() {
-        with(transformNativeTestProjectWithPluginDsl("native-cinterop")) {
-            build(":build") {
-                assertSuccessful()
-                assertFileExists("build/libs/host/main/native-cinterop-cinterop-number.klib")
-                assertFileExists("build/classes/kotlin/host/main/native-cinterop-cinterop-number.klib")
-                assertFileExists("build/classes/kotlin/host/test/native-cinterop_test.klib")
-            }
+    fun testCinterop() = with(transformNativeTestProjectWithPluginDsl("native-cinterop")) {
+        fun libraryFiles(projectName: String, cinteropName: String) = listOf(
+            "$projectName/build/classes/kotlin/host/main/${projectName}-cinterop-$cinteropName.klib",
+            "$projectName/build/classes/kotlin/host/main/${projectName}.klib",
+            "$projectName/build/classes/kotlin/host/test/${projectName}_test.klib",
+        )
 
-            // Check that changing the compiler version in properties causes interop reprocessing and source recompilation.
-            val hostLibraryTasks = listOf(
-                ":cinteropNumberHost",
-                ":compileKotlinHost"
-            )
-            build(":build") {
-                assertSuccessful()
-                assertTasksUpToDate(hostLibraryTasks)
-            }
+        build(":projectLibrary:build") {
+            assertSuccessful()
+            assertTasksExecuted(":projectLibrary:cinteropAnotherNumberHost")
+            libraryFiles("projectLibrary", "anotherNumber").forEach { assertFileExists(it) }
+        }
+
+        build(":publishedLibrary:build", ":publishedLibrary:publish") {
+            assertSuccessful()
+            assertTasksExecuted(":publishedLibrary:cinteropNumberHost")
+            libraryFiles("publishedLibrary", "number").forEach { assertFileExists(it) }
+        }
+
+        build(":build") {
+            assertSuccessful()
         }
     }
 

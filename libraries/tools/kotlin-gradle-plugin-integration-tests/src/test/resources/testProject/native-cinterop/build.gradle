@@ -5,12 +5,22 @@ plugins {
 repositories {
     mavenLocal()
     jcenter()
+    maven { url 'repo' }
 }
 
 kotlin {
+    sourceSets {
+        hostMain {
+            dependencies {
+                implementation project(':projectLibrary')
+                implementation 'org.example:publishedLibrary:1.0'
+            }
+        }
+    }
+
     <SingleNativeTarget>("host") {
-        compilations.main.cinterops {
-            number {
+        compilations.test.cinterops {
+            testNumber {
                 packageName 'example.cinterop.project'
                 extraOpts '-nodefaultlibs'
                 compilerOpts '-DEVEN_NUMBER'
