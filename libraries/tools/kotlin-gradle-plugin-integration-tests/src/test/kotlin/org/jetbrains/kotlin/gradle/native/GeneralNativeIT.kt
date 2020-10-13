@@ -686,11 +686,28 @@ class GeneralNativeIT : BaseGradleIT() {
                 assertSuccessful()
                 assertTasksUpToDate(hostLibraryTasks)
             }
+        }
+    }
 
-            build(*hostLibraryTasks.toTypedArray(), "-Porg.jetbrains.kotlin.native.version=1.3.70-dev-13258") {
-                assertSuccessful()
-                assertTasksExecuted(hostLibraryTasks)
-            }
+    @Test
+    fun testCompilerVersionChange() = with(transformNativeTestProjectWithPluginDsl("native-compiler-version")) {
+        val compileTasks = listOf(":compileKotlinHost")
+        val compileTasksArray = compileTasks.toTypedArray()
+
+        build(*compileTasksArray) {
+            assertSuccessful()
+            assertTasksExecuted(compileTasks)
+        }
+
+        build(*compileTasksArray) {
+            assertSuccessful()
+            assertTasksUpToDate(compileTasks)
+        }
+
+        // Check that changing K/N version lead to tasks rerun
+        build(*compileTasksArray, "-Porg.jetbrains.kotlin.native.version=1.4.20-dev-16314") {
+            assertSuccessful()
+            assertTasksExecuted(compileTasks)
         }
     }
 
