@@ -47,20 +47,25 @@ class Stats(
         val calcMean = calcMean(timingsMs)
 
         val metricChildren = mutableListOf<Metric>()
-        val metric = Metric(id, calcMean.mean.toLong(), measurementError = calcMean.stdDev.toLong(), children = metricChildren)
+        val hasError = rawMetricChildren.any { it.hasError }
+        val metric = Metric(
+            id, value = calcMean.mean.toLong(), measurementError = calcMean.stdDev.toLong(),
+            hasError = hasError, children = metricChildren
+        )
         metrics.add(metric)
 
         metricChildren.add(
             Metric(
                 "", calcMean.mean.toLong(),
+                hasError = hasError,
                 measurementError = calcMean.stdDev.toLong(),
-                childrenName = "raw_metrics", children = rawMetricChildren
+                childrenName = "rawMetrics", children = rawMetricChildren
             )
         )
         metricChildren.add(Metric("mean", calcMean.mean.toLong()))
         // keep geomMean for bwc
         metricChildren.add(Metric(GEOM_MEAN, calcMean.geomMean.toLong()))
-        metricChildren.add(Metric("std_dev", calcMean.stdDev.toLong()))
+        metricChildren.add(Metric("stdDev", calcMean.stdDev.toLong()))
 
         statInfosArray.filterNotNull()
             .map { it.keys }
@@ -132,34 +137,43 @@ class Stats(
         )
         val block = {
             val metricChildren = mutableListOf<Metric>()
-            warmUpPhase(warmPhaseData, metricChildren)
-            val statInfoArray = mainPhase(mainPhaseData, metricChildren)
+            try {
+                warmUpPhase(warmPhaseData, metricChildren)
+                val statInfoArray = mainPhase(mainPhaseData, metricChildren)
 
-            assertEquals(iterations, statInfoArray.size)
-            if (testName != WARM_UP) {
-                // do not estimate stability for warm-up
-                if (!testName.contains(WARM_UP)) {
-                    val calcMean = calcMean(statInfoArray)
-                    val stabilityPercentage = round(calcMean.stdDev * 100.0 / calcMean.mean).toInt()
-                    logMessage { "$testName stability is $stabilityPercentage %" }
-                    val stabilityName = "$name: $testName stability"
+                assertEquals(iterations, statInfoArray.size)
+                if (testName != WARM_UP) {
+                    // do not estimate stability for warm-up
+                    if (!testName.contains(WARM_UP)) {
+                        val calcMean = calcMean(statInfoArray)
+                        val stabilityPercentage = round(calcMean.stdDev * 100.0 / calcMean.mean).toInt()
+                        logMessage { "$testName stability is $stabilityPercentage %" }
+                        val stabilityName = "$name: $testName stability"
 
-                    val stable = stabilityPercentage <= acceptanceStabilityLevel
+                        val stable = stabilityPercentage <= acceptanceStabilityLevel
 
-                    val error = if (stable or !checkStability) {
-                        null
-                    } else {
-                        "$testName stability is $stabilityPercentage %, above accepted level of $acceptanceStabilityLevel %"
+                        val error = if (stable or !checkStability) {
+                            null
+                        } else {
+                            "$testName stability is $stabilityPercentage %, above accepted level of $acceptanceStabilityLevel %"
+                        }
+
+                        TeamCity.test(stabilityName, errorDetails = error, includeStats = false) {
+                            metricChildren.add(Metric("stability", stabilityPercentage))
+                        }
                     }
 
-                    TeamCity.test(stabilityName, errorDetails = error, includeStats = false) {
-                        metricChildren.add(Metric("stability", stabilityPercentage))
-                    }
+                    processTimings(testName, statInfoArray, metricChildren)
+                } else {
+                    convertStatInfoIntoMetrics(
+                        testName,
+                        printOnlyErrors = true,
+                        statInfoArray = statInfoArray,
+                        metricChildren = metricChildren
+                    )
                 }
-
-                processTimings(testName, statInfoArray, metricChildren)
-            } else {
-                convertStatInfoIntoMetrics(testName, printOnlyErrors = true, statInfoArray = statInfoArray, metricChildren = metricChildren)
+            } catch (e: Exception) {
+                processTimings(testName, emptyArray(), metricChildren)
             }
         }
 
@@ -188,6 +202,7 @@ class Stats(
             val t = statInfo[ERROR_KEY] as? Throwable
             if (t != null) {
                 TeamCity.test(n, errors = listOf(t)) {}
+                metricChildren.add(Metric(attemptString, value = null, hasError = true))
             } else if (!printOnlyErrors) {
                 val durationMs = (statInfo[TEST_KEY] as Long).nsToMs
                 TeamCity.test(n, durationMs = durationMs, includeStats = false) {
@@ -215,8 +230,11 @@ class Stats(
         statInfosArray: Array<StatInfos>,
         metricChildren: MutableList<Metric>
     ) {
-        convertStatInfoIntoMetrics(prefix, statInfosArray, metricChildren = metricChildren)
-        calcAndProcessMetrics(prefix, statInfosArray, metricChildren)
+        try {
+            convertStatInfoIntoMetrics(prefix, statInfosArray, metricChildren = metricChildren)
+        } finally {
+            calcAndProcessMetrics(prefix, statInfosArray, metricChildren)
+        }
     }
 
     private fun <SV, TV> warmUpPhase(phaseData: PhaseData<SV, TV>, metricChildren: MutableList<Metric>) {
@@ -351,24 +369,24 @@ class Stats(
 
         val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
         simpleDateFormat.timeZone = TimeZone.getTimeZone("UTC")
-//        properties["build_timestamp"] = simpleDateFormat.format(Date())
-//        properties["build_id"] = 87015694
-//        properties["build_branch"] = "rr/perf/json-output"
-//        properties["agent_name"] = "kotlin-linux-perf-unit879"
+//        properties["buildTimestamp"] = simpleDateFormat.format(Date())
+//        properties["buildId"] = 87015694
+//        properties["buildBranch"] = "rr/perf/json-output"
+//        properties["agentName"] = "kotlin-linux-perf-unit879"
 
         System.getenv("TEAMCITY_BUILD_PROPERTIES_FILE")?.let { teamcityConfig ->
             val buildProperties = Properties()
             buildProperties.load(FileInputStream(teamcityConfig))
 
-            properties["build.timestamp"] = simpleDateFormat.format(Date())
+            properties["buildTimestamp"] = simpleDateFormat.format(Date())
             for ((name, key) in
             mapOf(
-                "build_id" to "teamcity.build.id",
-                "build_branch" to "teamcity.build.branch",
-                "agent_name" to "agent.name",
+                "buildId" to "teamcity.build.id",
+                "buildBranch" to "teamcity.build.branch",
+                "agentName" to "agent.name",
             )) {
                 val property = buildProperties.getProperty(key)
-                properties[name] = if (name == "build_id") property.toLong() else property
+                properties[name] = if (name == "buildId") property.toLong() else property
             }
         }
         if (perfTestRawDataMs.isNotEmpty()) {
@@ -404,6 +422,7 @@ class Stats(
 data class Metric(
     val name: String,
     val value: Number?,
+    val hasError: Boolean = false,
     val measurementError: Number? = null,
     val childrenName: String = "metrics",
     val children: MutableList<Metric> = mutableListOf(),
