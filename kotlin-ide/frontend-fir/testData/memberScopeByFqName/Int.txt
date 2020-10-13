@@ -814,7 +814,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  callableIdIfNonLocal: kotlin.Any.equals
+  callableIdIfNonLocal: kotlin.Int.equals
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -828,7 +828,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  callableIdIfNonLocal: kotlin.Any.hashCode
+  callableIdIfNonLocal: kotlin.Int.hashCode
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -842,7 +842,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  callableIdIfNonLocal: kotlin.Any.toString
+  callableIdIfNonLocal: kotlin.Int.toString
   isExtension: false
   isOperator: false
   isSuspend: false

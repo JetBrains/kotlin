@@ -836,3 +836,12 @@ KtFirFunctionSymbol:
   type: kotlin/Char
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(index)]
+
+KtFirClassOrObjectSymbol:
+  classIdIfNonLocal: java/lang/String.CaseInsensitiveComparator
+  classKind: CLASS
+  modality: OPEN
+  name: CaseInsensitiveComparator
+  origin: JAVA
+  symbolKind: MEMBER
+  typeParameters: []
