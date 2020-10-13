@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.perf.Stats
 import org.jetbrains.kotlin.idea.perf.TestData
 import org.jetbrains.kotlin.idea.perf.performanceTest
+import org.jetbrains.kotlin.idea.perf.util.removeInfoMarkers
 import org.jetbrains.kotlin.idea.testFramework.commitAllDocuments
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.io.File
@@ -78,13 +79,6 @@ abstract class AbstractFirHighlightingPerformanceTest : AbstractHighlightingTest
         }
     }
 
-    private fun removeInfoMarkers() {
-        ExpectedHighlightingData(editor.document, true, true).init()
-
-        EdtTestUtil.runInEdtAndWait {
-            PsiDocumentManager.getInstance(project).commitAllDocuments()
-        }
-    }
 
     private fun innerPerfTest(name: String, setUpBody: (TestData<Unit, MutableList<HighlightInfo>>) -> Unit) {
         performanceTest<Unit, MutableList<HighlightInfo>> {
