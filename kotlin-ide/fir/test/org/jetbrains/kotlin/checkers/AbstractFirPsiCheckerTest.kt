@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.checkers
 
 import com.intellij.rt.execution.junit.FileComparisonFailure
+import org.jetbrains.kotlin.idea.completion.FIR_COMPARISON
+import org.jetbrains.kotlin.idea.completion.runTestWithCustomEnableDirective
 import org.jetbrains.kotlin.idea.test.withCustomCompilerOptions
 import org.jetbrains.kotlin.idea.withPossiblyDisabledDuplicatedFirSourceElementsException
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -17,8 +19,10 @@ abstract class AbstractFirPsiCheckerTest : AbstractPsiCheckerTest() {
     override fun isFirPlugin(): Boolean = true
 
     override fun doTest(filePath: String) {
-        myFixture.configureByFile(fileName())
-        checkHighlighting(checkWarnings = false, checkInfos = false, checkWeakWarnings = false)
+        runTestWithCustomEnableDirective(FIR_COMPARISON, testDataFile()) {
+            myFixture.configureByFile(fileName())
+            checkHighlighting(checkWarnings = false, checkInfos = false, checkWeakWarnings = false)
+        }
     }
 
     override fun checkHighlighting(
@@ -26,22 +30,14 @@ abstract class AbstractFirPsiCheckerTest : AbstractPsiCheckerTest() {
         checkInfos: Boolean,
         checkWeakWarnings: Boolean
     ): Long {
-        val file = file
         val fileText = file.text
         return withCustomCompilerOptions(fileText, project, module) {
-            val doComparison = InTextDirectivesUtils.isDirectiveDefined(myFixture.file.text, "FIR_COMPARISON")
             try {
                 withPossiblyDisabledDuplicatedFirSourceElementsException(fileText) {
                     myFixture.checkHighlighting(checkWarnings, checkInfos, checkWeakWarnings)
                 }
             } catch (e: FileComparisonFailure) {
-                if (doComparison) {
-                    // Even this is very partial check (only error compatibility, no warnings / infos)
-                    throw FileComparisonFailure(e.message, e.expected, e.actual, File(e.filePath).absolutePath)
-                } else {
-                    // Here we just check that we haven't crashed due to exception
-                    0
-                }
+                throw FileComparisonFailure(e.message, e.expected, e.actual, File(e.filePath).absolutePath)
             }
         }
     }
