@@ -38,6 +38,7 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
     lateinit var session: FirSession
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     lateinit var origin: FirDeclarationOrigin
+    var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var returnTypeRef: FirTypeRef
     lateinit var name: Name
     lateinit var symbol: FirVariableSymbol<FirEnumEntry>
@@ -53,6 +54,7 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
             session,
             resolvePhase,
             origin,
+            attributes,
             returnTypeRef,
             name,
             symbol,

@@ -38,6 +38,7 @@ open class FirFieldBuilder : FirAnnotationContainerBuilder {
     open lateinit var session: FirSession
     open var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     open lateinit var origin: FirDeclarationOrigin
+    open var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     open lateinit var returnTypeRef: FirTypeRef
     open lateinit var name: Name
     open lateinit var symbol: FirVariableSymbol<FirField>
@@ -53,6 +54,7 @@ open class FirFieldBuilder : FirAnnotationContainerBuilder {
             session,
             resolvePhase,
             origin,
+            attributes,
             returnTypeRef,
             name,
             symbol,

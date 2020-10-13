@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -39,6 +40,7 @@ abstract class FirDefaultPropertyAccessor(
     session,
     resolvePhase = FirResolvePhase.RAW_FIR,
     origin,
+    FirDeclarationAttributes(),
     propertyTypeRef,
     valueParameters,
     body = null,

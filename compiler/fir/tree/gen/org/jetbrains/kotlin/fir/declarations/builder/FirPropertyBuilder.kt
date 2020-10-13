@@ -41,6 +41,7 @@ class FirPropertyBuilder : FirTypeParametersOwnerBuilder, FirAnnotationContainer
     lateinit var session: FirSession
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     lateinit var origin: FirDeclarationOrigin
+    var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var returnTypeRef: FirTypeRef
     var receiverTypeRef: FirTypeRef? = null
     lateinit var name: Name
@@ -63,6 +64,7 @@ class FirPropertyBuilder : FirTypeParametersOwnerBuilder, FirAnnotationContainer
             session,
             resolvePhase,
             origin,
+            attributes,
             returnTypeRef,
             receiverTypeRef,
             name,
@@ -101,6 +103,7 @@ inline fun buildPropertyCopy(original: FirProperty, init: FirPropertyBuilder.() 
     copyBuilder.session = original.session
     copyBuilder.resolvePhase = original.resolvePhase
     copyBuilder.origin = original.origin
+    copyBuilder.attributes = original.attributes
     copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.receiverTypeRef = original.receiverTypeRef
     copyBuilder.name = original.name

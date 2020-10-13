@@ -33,6 +33,7 @@ internal class FirPrimaryConstructor(
     override val session: FirSession,
     override var resolvePhase: FirResolvePhase,
     override val origin: FirDeclarationOrigin,
+    override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
     override var receiverTypeRef: FirTypeRef?,
     override val typeParameters: MutableList<FirTypeParameterRef>,
@@ -44,7 +45,6 @@ internal class FirPrimaryConstructor(
     override var delegatedConstructor: FirDelegatedConstructorCall?,
     override var body: FirBlock?,
 ) : FirConstructor() {
-    override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
     override val isPrimary: Boolean get() = true
 

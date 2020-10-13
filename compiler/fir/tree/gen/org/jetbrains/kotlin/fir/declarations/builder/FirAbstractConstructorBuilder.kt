@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -35,6 +36,7 @@ interface FirAbstractConstructorBuilder : FirFunctionBuilder {
     abstract override val annotations: MutableList<FirAnnotationCall>
     abstract override var session: FirSession
     abstract override var origin: FirDeclarationOrigin
+    abstract override var attributes: FirDeclarationAttributes
     abstract override var returnTypeRef: FirTypeRef
     abstract override val valueParameters: MutableList<FirValueParameter>
     abstract override var body: FirBlock?

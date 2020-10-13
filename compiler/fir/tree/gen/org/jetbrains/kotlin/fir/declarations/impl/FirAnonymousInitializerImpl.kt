@@ -26,10 +26,10 @@ internal class FirAnonymousInitializerImpl(
     override val session: FirSession,
     override var resolvePhase: FirResolvePhase,
     override val origin: FirDeclarationOrigin,
+    override val attributes: FirDeclarationAttributes,
     override var body: FirBlock?,
     override val symbol: FirAnonymousInitializerSymbol,
 ) : FirAnonymousInitializer() {
-    override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
 
     init {

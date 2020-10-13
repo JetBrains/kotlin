@@ -32,6 +32,7 @@ open class FirValueParameterImpl @FirImplementationDetail constructor(
     override val session: FirSession,
     override var resolvePhase: FirResolvePhase,
     override val origin: FirDeclarationOrigin,
+    override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
     override val name: Name,
     override val symbol: FirVariableSymbol<FirValueParameter>,
@@ -41,7 +42,6 @@ open class FirValueParameterImpl @FirImplementationDetail constructor(
     override val isNoinline: Boolean,
     override val isVararg: Boolean,
 ) : FirValueParameter() {
-    override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override val receiverTypeRef: FirTypeRef? get() = null
     override val initializer: FirExpression? get() = null
     override val delegate: FirExpression? get() = null

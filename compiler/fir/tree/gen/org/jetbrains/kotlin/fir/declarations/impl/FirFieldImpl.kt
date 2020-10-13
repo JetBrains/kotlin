@@ -33,6 +33,7 @@ internal class FirFieldImpl(
     override val session: FirSession,
     override var resolvePhase: FirResolvePhase,
     override val origin: FirDeclarationOrigin,
+    override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
     override val name: Name,
     override val symbol: FirVariableSymbol<FirField>,
@@ -42,7 +43,6 @@ internal class FirFieldImpl(
     override var status: FirDeclarationStatus,
     override val containerSource: DeserializedContainerSource?,
 ) : FirField() {
-    override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override val receiverTypeRef: FirTypeRef? get() = null
     override val initializer: FirExpression? get() = null
     override val delegate: FirExpression? get() = null

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -25,6 +26,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     source: FirSourceElement?,
     session: FirSession,
     resolvePhase: FirResolvePhase,
+    attributes: FirDeclarationAttributes,
     returnTypeRef: FirTypeRef,
     name: Name,
     symbol: FirVariableSymbol<FirValueParameter>,
@@ -38,6 +40,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     session,
     resolvePhase,
     FirDeclarationOrigin.Java,
+    attributes,
     returnTypeRef,
     name,
     symbol,
@@ -56,6 +59,7 @@ class FirJavaValueParameterBuilder : FirValueParameterBuilder() {
             source,
             session,
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
+            attributes,
             returnTypeRef,
             name,
             symbol = FirVariableSymbol(name),
