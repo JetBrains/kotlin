@@ -1,0 +1,27 @@
+@kotlin.Metadata
+public abstract class<Ljava/lang/Object;Ljava/util/Collection<Ljava/lang/Double;>;Lkotlin/jvm/internal/markers/KMutableCollection;>  DoubleMutableCollection {
+    // source: 'mutableCollection.kt'
+    public <<T:Ljava/lang/Object;>([TT;)[TT;> method toArray(p0: java.lang.Object[]): java.lang.Object[]
+    public <null> method <init>(): void
+    public abstract <null> method contains(p0: double): boolean
+    public bridge final <null> method contains(p0: java.lang.Object): boolean
+    public abstract <null> method getSize(): int
+    public abstract <null> method remove(p0: double): boolean
+    public bridge final <null> method remove(p0: java.lang.Object): boolean
+    public bridge final <null> method size(): int
+    public <null> method toArray(): java.lang.Object[]
+}
+
+@kotlin.Metadata
+public abstract class<Ljava/lang/Object;Ljava/util/Collection<Ljava/lang/String;>;Lkotlin/jvm/internal/markers/KMutableCollection;>  StringMutableCollection {
+    // source: 'mutableCollection.kt'
+    public <<T:Ljava/lang/Object;>([TT;)[TT;> method toArray(p0: java.lang.Object[]): java.lang.Object[]
+    public <null> method <init>(): void
+    public bridge final <null> method contains(p0: java.lang.Object): boolean
+    public abstract <null> method contains(p0: java.lang.String): boolean
+    public abstract <null> method getSize(): int
+    public bridge final <null> method remove(p0: java.lang.Object): boolean
+    public abstract <null> method remove(p0: java.lang.String): boolean
+    public bridge final <null> method size(): int
+    public <null> method toArray(): java.lang.Object[]
+}

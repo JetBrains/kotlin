@@ -266,6 +266,9 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
             val newGenericSignature = specialSignatureInfo.replaceValueParametersIn(signature.genericsSignature)
             return JvmMethodGenericSignature(signature.asmMethod, signature.valueParameters, newGenericSignature)
         }
+        if (function.origin == JvmLoweredDeclarationOrigin.ABSTRACT_BRIDGE_STUB) {
+            return JvmMethodGenericSignature(signature.asmMethod, signature.valueParameters, null)
+        }
 
         return signature
     }

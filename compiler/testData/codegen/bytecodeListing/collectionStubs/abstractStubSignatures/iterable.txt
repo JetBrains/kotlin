@@ -1,0 +1,20 @@
+@kotlin.Metadata
+public abstract class<Ljava/lang/Object;Ljava/lang/Iterable<Ljava/lang/Double;>;Lkotlin/jvm/internal/markers/KMappedMarker;>  DoubleIterable {
+    // source: 'iterable.kt'
+    public <()Ljava/util/Iterator<Ljava/lang/Double;>;> method iterator(): java.util.Iterator
+    public <null> method <init>(): void
+}
+
+@kotlin.Metadata
+public abstract class<<T:Ljava/lang/Object;>Ljava/lang/Object;Ljava/lang/Iterable<TT;>;Lkotlin/jvm/internal/markers/KMappedMarker;>  GenericIterable {
+    // source: 'iterable.kt'
+    public <()Ljava/util/Iterator<TT;>;> method iterator(): java.util.Iterator
+    public <null> method <init>(): void
+}
+
+@kotlin.Metadata
+public abstract class<Ljava/lang/Object;Ljava/lang/Iterable<Ljava/lang/String;>;Lkotlin/jvm/internal/markers/KMappedMarker;>  StringIterable {
+    // source: 'iterable.kt'
+    public <()Ljava/util/Iterator<Ljava/lang/String;>;> method iterator(): java.util.Iterator
+    public <null> method <init>(): void
+}
