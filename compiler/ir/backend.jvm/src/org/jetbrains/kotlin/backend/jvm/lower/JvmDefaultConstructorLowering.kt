@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.copyAnnotationsFrom
 import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
@@ -17,7 +18,6 @@ import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.hasDefaultValue
 
 internal val jvmDefaultConstructorPhase = makeIrFilePhase(
@@ -53,7 +53,7 @@ private class JvmDefaultConstructorLowering(val context: JvmBackendContext) : Cl
             visibility = primaryConstructor.visibility
         }.apply {
             val irBuilder = context.createIrBuilder(this.symbol, startOffset, endOffset)
-            annotations += primaryConstructor.annotations.map { it.deepCopyWithSymbols(this) }
+            copyAnnotationsFrom(primaryConstructor)
             body = irBuilder.irBlockBody {
                 +irDelegatingConstructorCall(primaryConstructor).apply {
                     passTypeArgumentsFrom(irClass)

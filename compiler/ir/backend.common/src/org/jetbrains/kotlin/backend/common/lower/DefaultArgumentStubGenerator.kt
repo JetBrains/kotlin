@@ -606,7 +606,7 @@ private fun IrFunction.generateDefaultsFunctionImpl(
     }
 
     // TODO some annotations are needed (e.g. @JvmStatic), others need different values (e.g. @JvmName), the rest are redundant.
-    newFunction.annotations = annotations.map { it.deepCopyWithSymbols() }
+    newFunction.copyAnnotationsFrom(this)
     return newFunction
 }
 

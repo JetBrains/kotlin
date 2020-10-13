@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
-import org.jetbrains.kotlin.backend.common.ir.copyTo
-import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
-import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
+import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
@@ -79,9 +76,9 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
                         returnType = jvmStaticFunction.returnType
                     }.apply {
                         copyTypeParametersFrom(jvmStaticFunction)
+                        copyAnnotationsFrom(jvmStaticFunction)
                         extensionReceiverParameter = jvmStaticFunction.extensionReceiverParameter?.copyTo(this)
                         valueParameters = jvmStaticFunction.valueParameters.map { it.copyTo(this) }
-                        annotations = jvmStaticFunction.annotations.map { it.deepCopyWithSymbols() }
                     }
                     companion.declarations.remove(jvmStaticFunction)
                     companion.addProxy(staticExternal, companion, isStatic = false)
@@ -106,12 +103,12 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
             isSuspend = target.isSuspend
         }.apply {
             copyTypeParametersFrom(target)
+            copyAnnotationsFrom(target)
             if (!isStatic) {
                 dispatchReceiverParameter = thisReceiver?.copyTo(this, type = defaultType)
             }
             extensionReceiverParameter = target.extensionReceiverParameter?.copyTo(this)
             valueParameters = target.valueParameters.map { it.copyTo(this) }
-            annotations = target.annotations.map { it.deepCopyWithSymbols() }
 
             val proxy = this
             val companionInstanceField = context.cachedDeclarations.getFieldForObjectInstance(companion)
