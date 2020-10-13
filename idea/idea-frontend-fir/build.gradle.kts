@@ -22,6 +22,7 @@ dependencies {
     compile(project(":idea:idea-core"))
 // </temp>
 
+    testCompile(project(":idea:idea-fir"))
     testCompile(intellijDep())
     testCompile(intellijCoreDep())
     testCompile(toolsJar())
