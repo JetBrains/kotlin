@@ -301,7 +301,7 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
                 it.replace("'com.example:sample-lib:1.0'", "project('${libProject.projectName}')")
             }
 
-            listOf("jvm6" to "Classpath", "nodeJs" to "Classpath", "wasm32" to "Klibraries").forEach { (target, suffix) ->
+            listOf("jvm6" to "Classpath", "nodeJs" to "Classpath").forEach { (target, suffix) ->
                 build("dependencyInsight", "--configuration", "${target}Compile$suffix", "--dependency", "sample-lib") {
                     assertSuccessful()
                     assertContains("variant \"${target}ApiElements\" [")
