@@ -311,7 +311,28 @@ class GeneralNativeIT : BaseGradleIT() {
     }
 
     @Test
-    fun testExportApiOnlyToLibraries() = with(transformNativeTestProjectWithPluginDsl("libraries", directoryPrefix = "native-binaries")) {
+    fun testExportApiOnlyToLibraries() {
+        val project = transformNativeTestProjectWithPluginDsl("libraries", directoryPrefix = "native-binaries")
+
+        testExportApi(project, listOf(
+            ExportApiTestData("linkDebugSharedHost", "debugShared"),
+            ExportApiTestData("linkDebugStaticHost", "debugStatic"),
+        ))
+    }
+
+    @Test
+    fun testExportApiOnlyToFrameworks() {
+        Assume.assumeTrue(HostManager.hostIsMac)
+        val project = transformNativeTestProjectWithPluginDsl("frameworks", directoryPrefix = "native-binaries")
+
+        testExportApi(project, listOf(
+            ExportApiTestData("linkMainDebugFrameworkIos", "mainDebugFramework")
+        ))
+    }
+
+    private data class ExportApiTestData(val taskName: String, val binaryName: String)
+
+    private fun testExportApi(project: Project, testData: List<ExportApiTestData>) = with(project) {
         // Check that plugin doesn't allow exporting dependencies not added in the API configuration.
         gradleBuildScript().modify {
             it.replace("api(project(\":exported\"))", "")
@@ -320,13 +341,11 @@ class GeneralNativeIT : BaseGradleIT() {
         fun failureMsgFor(binaryName: String) =
             "Following dependencies exported in the $binaryName binary are not specified as API-dependencies of a corresponding source set"
 
-        build("linkDebugSharedHost") {
-            assertFailed()
-            assertContains(failureMsgFor("debugShared"))
-        }
-        build("linkDebugStaticHost") {
-            assertFailed()
-            assertContains(failureMsgFor("debugStatic"))
+        testData.forEach {
+            build(it.taskName) {
+                assertFailed()
+                assertContains(failureMsgFor(it.binaryName))
+            }
         }
     }
 
