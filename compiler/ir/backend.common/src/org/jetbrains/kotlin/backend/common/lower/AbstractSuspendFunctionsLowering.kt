@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
@@ -30,7 +29,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
-@ObsoleteDescriptorBasedAPI
 abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val context: C) : FileLoweringPass {
 
     protected object STATEMENT_ORIGIN_COROUTINE_IMPL : IrStatementOriginImpl("COROUTINE_IMPL")
@@ -115,7 +113,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 val coroutine = builtCoroutines[expression.symbol.owner]
                     ?: throw Error("Non-local callable reference to suspend lambda: $expression")
                 val constructorParameters = coroutine.coroutineConstructor.valueParameters
-                val expressionArguments = expression.getArguments().map { it.second }
+                val expressionArguments = expression.getArgumentsWithIr().map { it.second }
                 assert(constructorParameters.size == expressionArguments.size) {
                     "Inconsistency between callable reference to suspend lambda and the corresponding coroutine"
                 }
