@@ -206,13 +206,6 @@ class GeneralNativeIT : BaseGradleIT() {
             assertTasksUpToDate(klibTask)
             assertTasksExecuted(linkTasks[0])
         }
-
-        build(":assemble") {
-            assertFailed()
-            val failureMsg = "Following dependencies exported in the debugShared binary " +
-                    "are not specified as API-dependencies of a corresponding source set"
-            assertTrue(output.contains(failureMsg))
-        }
     }
 
     @Test
