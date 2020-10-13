@@ -32,18 +32,17 @@ abstract class KotlinFixtureCompletionBaseTestCase : KotlinLightCodeInsightFixtu
         withCustomCompilerOptions(fileText, project, module) {
             assertTrue("\"<caret>\" is missing in file \"$actualTestPath\"", fileText.contains("<caret>"))
 
-            if (ExpectedCompletionUtils.shouldRunHighlightingBeforeCompletion(fileText)) {
-                myFixture.doHighlighting()
-            }
-
             executeTest {
+                if (ExpectedCompletionUtils.shouldRunHighlightingBeforeCompletion(fileText)) {
+                    myFixture.doHighlighting()
+                }
                 testCompletion(
-                        fileText,
-                        getPlatform(),
-                        { completionType, count -> complete(completionType, count) },
-                        defaultCompletionType(),
-                        defaultInvocationCount(),
-                        additionalValidDirectives = CompilerTestDirectives.ALL_COMPILER_TEST_DIRECTIVES
+                    fileText,
+                    getPlatform(),
+                    { completionType, count -> complete(completionType, count) },
+                    defaultCompletionType(),
+                    defaultInvocationCount(),
+                    additionalValidDirectives = CompilerTestDirectives.ALL_COMPILER_TEST_DIRECTIVES
                 )
             }
         }
