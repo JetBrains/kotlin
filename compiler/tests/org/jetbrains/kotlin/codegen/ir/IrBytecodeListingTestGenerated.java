@@ -777,6 +777,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("annotatedPropertyWithInlineClassTypeInSignature.kt")
+        public void testAnnotatedPropertyWithInlineClassTypeInSignature() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/annotatedPropertyWithInlineClassTypeInSignature.kt");
+        }
+
         @TestMetadata("annotationsOnHiddenConstructor.kt")
         public void testAnnotationsOnHiddenConstructor() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/annotationsOnHiddenConstructor.kt");

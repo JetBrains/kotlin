@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.needsAccessor
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.hasMangledReturnType
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.requiresMangling
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -143,9 +145,17 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
     private fun computeSyntheticMethodName(property: IrProperty): String {
         val baseName =
             if (backendContext.state.languageVersionSettings.supportsFeature(LanguageFeature.UseGetterNameForPropertyAnnotationsMethodOnJvm)) {
-                property.getter?.let { getter ->
-                    backendContext.methodSignatureMapper.mapFunctionName(getter)
-                } ?: JvmAbi.getterName(property.name.asString())
+                val getter = property.getter
+                if (getter != null) {
+                    val needsMangling =
+                        getter.extensionReceiverParameter?.type?.requiresMangling == true ||
+                                (backendContext.state.functionsWithInlineClassReturnTypesMangled && getter.hasMangledReturnType)
+
+                    backendContext.methodSignatureMapper.mapFunctionName(
+                        if (needsMangling) backendContext.inlineClassReplacements.getReplacementFunction(getter) ?: getter
+                        else getter
+                    )
+                } else JvmAbi.getterName(property.name.asString())
             } else {
                 property.name.asString()
             }
