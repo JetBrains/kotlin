@@ -29,14 +29,6 @@ class JavaOverrideChecker internal constructor(
         if (candidateType is ConeClassLikeType && baseType is ConeClassLikeType) {
             return candidateType.lookupTag.classId.let { it.readOnlyToMutable() ?: it } == baseType.lookupTag.classId.let { it.readOnlyToMutable() ?: it }
         }
-        if (candidateType is ConeClassLikeType && baseType is ConeTypeParameterType) {
-            val boundType = baseType.lookupTag.typeParameterSymbol.fir.bounds.singleOrNull()?.toConeKotlinTypeProbablyFlexible(
-                session, javaTypeParameterStack
-            )
-            if (boundType != null) {
-                return isEqualTypes(candidateType, boundType, substitutor)
-            }
-        }
         return with(context) {
             areEqualTypeConstructors(
                 substitutor.substituteOrSelf(candidateType).typeConstructor(),
