@@ -2,6 +2,7 @@
 
 ## 0.1.1
 
+- Breaking change: `KotlinClassMetadata.*.Writer.write` no longer accept `bytecodeVersion`.
 - [`KT-42429`](https://youtrack.jetbrains.com/issue/KT-42429) Wrong interpretation of Flag.Constructor.IS_PRIMARY
     - Breaking change: `Flag.Constructor.IS_PRIMARY` is deprecated, use `Flag.Constructor.IS_SECONDARY` instead
 - [`KT-37421`](https://youtrack.jetbrains.com/issue/KT-37421) Add Flag.Class.IS_FUN for functional interfaces
