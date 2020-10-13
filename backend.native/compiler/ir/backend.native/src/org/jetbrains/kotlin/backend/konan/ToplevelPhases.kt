@@ -380,6 +380,7 @@ internal val bitcodePhase = NamedCompilerPhase(
         lower = contextLLVMSetupPhase then
                 buildDFGPhase then
                 devirtualizationPhase then
+                redundantCoercionsCleaningPhase then
                 dcePhase then
                 createLLVMDeclarationsPhase then
                 ghaPhase then

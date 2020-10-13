@@ -12,13 +12,13 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaserState
 import org.jetbrains.kotlin.backend.common.phaser.namedUnitPhase
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysis
+import org.jetbrains.kotlin.backend.konan.lower.RedundantCoercionsCleaner
 import org.jetbrains.kotlin.backend.konan.optimizations.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
@@ -107,6 +107,12 @@ internal val devirtualizationPhase = makeKonanModuleOpPhase(
                     irModule, context, context.moduleDFG!!, ExternalModulesDFG(emptyList(), emptyMap(), emptyMap(), emptyMap())
             )
         }
+)
+
+internal val redundantCoercionsCleaningPhase = makeKonanModuleOpPhase(
+        name = "RedundantCoercionsCleaning",
+        description = "Redundant coercions cleaning",
+        op = { context, irModule -> irModule.files.forEach { RedundantCoercionsCleaner(context).lower(it) } }
 )
 
 internal val ghaPhase = makeKonanModuleOpPhase(
