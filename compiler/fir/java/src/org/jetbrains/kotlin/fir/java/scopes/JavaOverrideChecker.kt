@@ -44,20 +44,48 @@ class JavaOverrideChecker internal constructor(
             substitutor
         )
 
+    private fun Collection<FirTypeParameterRef>.buildErasure() = associate {
+        val symbol = it.symbol
+        val firstBound = symbol.fir.bounds.first() // Note that in Java type parameter typed arguments always erased to first bound
+        symbol to firstBound.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack)
+    }
+
+    private fun FirTypeRef?.isTypeParameterDependent(): Boolean =
+        this is FirResolvedTypeRef && type.lowerBoundIfFlexible() is ConeTypeParameterType
+
+    private fun FirCallableMemberDeclaration<*>.isTypeParameterDependent(): Boolean =
+        typeParameters.isNotEmpty() || returnTypeRef.isTypeParameterDependent() ||
+                receiverTypeRef.isTypeParameterDependent() ||
+                this is FirSimpleFunction && valueParameters.any { it.returnTypeRef.isTypeParameterDependent() }
+
+    private fun FirTypeRef.extractTypeParametersTo(result: MutableCollection<FirTypeParameterRef>) {
+        if (this is FirResolvedTypeRef) {
+            (type.lowerBoundIfFlexible() as? ConeTypeParameterType)?.lookupTag?.typeParameterSymbol?.fir?.let {
+                result += it
+            }
+        }
+    }
+
+    private fun FirCallableMemberDeclaration<*>.extractTypeParametersTo(result: MutableCollection<FirTypeParameterRef>) {
+        result += typeParameters
+        returnTypeRef.extractTypeParametersTo(result)
+        receiverTypeRef?.extractTypeParametersTo(result)
+        if (this is FirSimpleFunction) {
+            this.valueParameters.forEach { it.returnTypeRef.extractTypeParametersTo(result) }
+        }
+    }
+
     override fun buildTypeParametersSubstitutorIfCompatible(
         overrideCandidate: FirCallableMemberDeclaration<*>,
         baseDeclaration: FirCallableMemberDeclaration<*>
     ): ConeSubstitutor? {
-
-        if (overrideCandidate.typeParameters.isEmpty() && baseDeclaration.typeParameters.isEmpty()) return ConeSubstitutor.Empty
-
-        val typeParametersErasure =
-            (overrideCandidate.typeParameters + baseDeclaration.typeParameters).associate {
-                val symbol = it.symbol
-                val firstBound = symbol.fir.bounds.first() // Note that in Java type parameter typed arguments always erased to first bound
-                symbol to firstBound.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack)
-            }
-        return substitutorByMap(typeParametersErasure)
+        if (!overrideCandidate.isTypeParameterDependent() && !baseDeclaration.isTypeParameterDependent()) {
+            return ConeSubstitutor.Empty
+        }
+        val typeParameters = linkedSetOf<FirTypeParameterRef>()
+        overrideCandidate.extractTypeParametersTo(typeParameters)
+        baseDeclaration.extractTypeParametersTo(typeParameters)
+        return substitutorByMap(typeParameters.buildErasure())
     }
 
     override fun isOverriddenFunction(overrideCandidate: FirSimpleFunction, baseDeclaration: FirSimpleFunction): Boolean {
