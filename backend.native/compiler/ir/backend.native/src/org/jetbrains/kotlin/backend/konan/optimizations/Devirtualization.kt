@@ -1617,6 +1617,13 @@ internal object Devirtualization {
                 error("Unexpected coercion: ${this.dump()}")
             }
 
+            fun IrExpression.unwrapImplicitCasts(): IrExpression {
+                var expression = this
+                while (expression is IrTypeOperatorCall && expression.operator == IrTypeOperator.IMPLICIT_CAST)
+                    expression = expression.argument
+                return expression
+            }
+
             fun fold(expression: IrExpression, coercion: IrCall, cast: IrTypeOperatorCall?,
                      transformRecursively: Boolean): PossiblyFoldedExpression {
 
@@ -1629,14 +1636,15 @@ internal object Devirtualization {
                         if (transformRecursively) this.transform(transformer, data = null) else this
 
                 val coercionDeclaringClass = coercion.symbol.owner.getCoercedClass()
-                if (expression.isBoxOrUnboxCall()) {
-                    expression as IrCall
-                    val result =
-                            if (coercionDeclaringClass == expression.symbol.owner.getCoercedClass())
-                                expression.getArguments().single().second
-                            else expression
+                expression.unwrapImplicitCasts().let {
+                    if (it.isBoxOrUnboxCall()) {
+                        val result =
+                                if (coercionDeclaringClass == (it as IrCall).symbol.owner.getCoercedClass())
+                                    it.getArguments().single().second
+                                else expression
 
-                    return PossiblyFoldedExpression(result.transformIfAsked(), result != expression)
+                        return PossiblyFoldedExpression(result.transformIfAsked(), result != expression)
+                    }
                 }
                 return when (expression) {
                     is IrReturnableBlock -> {
