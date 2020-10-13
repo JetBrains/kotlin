@@ -173,9 +173,8 @@ fun IrExpression.coerceToUnitIfNeeded(valueType: IrType, irBuiltIns: IrBuiltIns)
         )
 }
 
-@ObsoleteDescriptorBasedAPI
-fun IrMemberAccessExpression<*>.usesDefaultArguments(): Boolean =
-    (symbol.descriptor as CallableDescriptor).valueParameters.any { this.getValueArgument(it) == null }
+fun IrFunctionAccessExpression.usesDefaultArguments(): Boolean =
+    symbol.owner.valueParameters.any { this.getValueArgument(it.index) == null }
 
 val IrClass.functions: Sequence<IrSimpleFunction>
     get() = declarations.asSequence().filterIsInstance<IrSimpleFunction>()
