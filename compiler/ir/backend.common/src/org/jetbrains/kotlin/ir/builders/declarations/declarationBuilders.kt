@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.builders.declarations
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunction
@@ -168,9 +169,13 @@ fun IrClass.addFunction(
         isStatic: Boolean = false,
         isSuspend: Boolean = false,
         isFakeOverride: Boolean = false,
-        origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
+        origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED,
+        startOffset: Int = UNDEFINED_OFFSET,
+        endOffset: Int = UNDEFINED_OFFSET
 ): IrSimpleFunction =
     addFunction {
+        this.startOffset = startOffset
+        this.endOffset = endOffset
         this.name = Name.identifier(name)
         this.returnType = returnType
         this.modality = modality
