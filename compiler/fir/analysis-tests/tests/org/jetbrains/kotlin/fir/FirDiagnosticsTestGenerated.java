@@ -208,6 +208,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         runTest("compiler/fir/analysis-tests/testData/resolve/genericReceiverPropertyOverride.kt");
     }
 
+    @TestMetadata("implicitTypeInFakeOverride.kt")
+    public void testImplicitTypeInFakeOverride() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/implicitTypeInFakeOverride.kt");
+    }
+
     @TestMetadata("incorrectSuperCall.kt")
     public void testIncorrectSuperCall() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/incorrectSuperCall.kt");
