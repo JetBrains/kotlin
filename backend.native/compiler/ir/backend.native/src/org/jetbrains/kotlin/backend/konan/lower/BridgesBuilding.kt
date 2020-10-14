@@ -113,13 +113,12 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
                         overriddenFunction = overriddenJobDescriptor,
                         targetSymbol = jobFunction.symbol)
                 bridges += bridge
-                expression.putValueArgument(3, IrFunctionReferenceImpl(
+                expression.putValueArgument(3, IrFunctionReferenceImpl.fromSymbolDescriptor(
                         startOffset   = job.startOffset,
                         endOffset     = job.endOffset,
                         type          = job.type,
                         symbol        = bridge.symbol,
                         typeArgumentsCount = 0,
-                        valueArgumentsCount = bridge.symbol.owner.valueParameters.size,
                         reflectionTarget = null)
                 )
                 return expression

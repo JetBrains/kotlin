@@ -524,13 +524,12 @@ internal fun KotlinStubs.generateCFunctionPointer(
     )
     addKotlin(fakeFunction)
 
-    return IrFunctionReferenceImpl(
+    return IrFunctionReferenceImpl.fromSymbolDescriptor(
             expression.startOffset,
             expression.endOffset,
             expression.type,
             fakeFunction.symbol,
             typeArgumentsCount = 0,
-            fakeFunction.valueParameters.size,
             reflectionTarget = null
     )
 }
