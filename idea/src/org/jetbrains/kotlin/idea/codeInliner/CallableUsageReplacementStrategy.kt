@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.idea.intentions.isInvokeOperator
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getPossiblyQualifiedCallExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -37,7 +38,9 @@ class CallableUsageReplacementStrategy(
         val callElement = when (resolvedCall) {
             is VariableAsFunctionResolvedCall -> {
                 val callElement = resolvedCall.variableCall.call.callElement
-                if (resolvedCall.resultingDescriptor.isInvokeOperator) {
+                if (resolvedCall.resultingDescriptor.isInvokeOperator &&
+                    replacement.mainExpression?.getPossiblyQualifiedCallExpression() != null
+                ) {
                     callElement.parent as? KtCallExpression ?: callElement
                 } else {
                     callElement

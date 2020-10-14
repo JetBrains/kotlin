@@ -139,8 +139,7 @@ class CodeInliner<TCallElement : KtElement>(
         val replacementPerformer = when (elementToBeReplaced) {
             is KtExpression -> {
                 if (descriptor.isInvokeOperator) {
-                    val call = elementToBeReplaced as? KtCallExpression
-                        ?: (elementToBeReplaced as? KtDotQualifiedExpression)?.selectorExpression as? KtCallExpression
+                    val call = elementToBeReplaced.getPossiblyQualifiedCallExpression()
                     val callee = call?.calleeExpression
                     if (callee != null && callee.text != OperatorNameConventions.INVOKE.asString()) {
                         val receiverExpression = (codeToInline.mainExpression as? KtQualifiedExpression)?.receiverExpression
