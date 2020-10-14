@@ -172,7 +172,7 @@ class Stats(
                         metricChildren = metricChildren
                     )
                 }
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 processTimings(testName, emptyArray(), metricChildren)
             }
         }
