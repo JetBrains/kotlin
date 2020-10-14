@@ -158,7 +158,7 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
         val backendContext = context
         val invokeSuspend = context.ir.symbols.continuationImplClass.owner.functions
             .single { it.name == Name.identifier(INVOKE_SUSPEND_METHOD_NAME) }
-        addFunctionOverride(invokeSuspend) { function ->
+        addFunctionOverride(invokeSuspend, irFunction.startOffset, irFunction.endOffset) { function ->
             +irSetField(irGet(function.dispatchReceiverParameter!!), resultField, irGet(function.valueParameters[0]))
             // There can be three kinds of suspend function call:
             // 1) direct call from another suspend function/lambda

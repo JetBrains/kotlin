@@ -73,17 +73,21 @@ private fun IrFunction.capturesCrossinline(): Boolean {
 }
 
 internal abstract class SuspendLoweringUtils(protected val context: JvmBackendContext) {
-    protected fun IrClass.addFunctionOverride(function: IrSimpleFunction): IrSimpleFunction =
-        addFunction(function.name.asString(), function.returnType).apply {
+    protected fun IrClass.addFunctionOverride(
+        function: IrSimpleFunction, startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET
+    ): IrSimpleFunction =
+        addFunction(function.name.asString(), function.returnType, startOffset = startOffset, endOffset = endOffset).apply {
             overriddenSymbols = listOf(function.symbol)
             valueParameters = function.valueParameters.map { it.copyTo(this) }
         }
 
     protected fun IrClass.addFunctionOverride(
         function: IrSimpleFunction,
+        startOffset: Int = UNDEFINED_OFFSET,
+        endOffset: Int = UNDEFINED_OFFSET,
         makeBody: IrBlockBodyBuilder.(IrFunction) -> Unit
     ): IrSimpleFunction =
-        addFunctionOverride(function).apply {
+        addFunctionOverride(function, startOffset, endOffset).apply {
             body = context.createIrBuilder(symbol).irBlockBody { makeBody(this@apply) }
         }
 
@@ -196,7 +200,7 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
             it.owner.name.asString() == INVOKE_SUSPEND_METHOD_NAME && it.owner.valueParameters.size == 1 &&
                     it.owner.valueParameters[0].type.isKotlinResult()
         }.owner
-        return addFunctionOverride(superMethod).apply {
+        return addFunctionOverride(superMethod, irFunction.startOffset, irFunction.endOffset).apply {
             body = irFunction.moveBodyTo(this, mapOf())?.transform(object : IrElementTransformerVoid() {
                 override fun visitGetValue(expression: IrGetValue): IrExpression {
                     val parameter = (expression.symbol.owner as? IrValueParameter)?.takeIf { it.parent == irFunction }
