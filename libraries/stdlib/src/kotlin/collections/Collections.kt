@@ -189,7 +189,7 @@ internal expect inline fun <E> buildListInternal(builderAction: MutableList<E>.(
  *
  * @throws IllegalArgumentException if the given [capacity] is negative.
  *
- * @sample samples.collections.Builders.Lists.buildListSample
+ * @sample samples.collections.Builders.Lists.buildListSampleWithCapacity
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
