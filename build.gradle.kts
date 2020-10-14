@@ -793,6 +793,17 @@ tasks {
         )
     }
 
+    register("idea-fir-plugin-tests") {
+        dependsOn("dist")
+        dependsOn(
+            ":idea:idea-fir:test",
+            ":idea:idea-frontend-api:test",
+            ":idea:idea-frontend-fir:test",
+            ":idea:idea-frontend-fir:idea-fir-low-level-api:test"
+        )
+    }
+
+
     register("android-ide-tests") {
         dependsOn("dist")
         dependsOn(
