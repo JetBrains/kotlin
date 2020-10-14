@@ -36,7 +36,11 @@ kotlin {
                 api("androidx.core:core-ktx:1.3.1")
             }
         }
-        val androidTest by getting
+        val androidTest by getting {
+            dependencies {
+                implementation("junit:junit:4.13")
+            }
+        }
         val desktopMain by getting
         val desktopTest by getting
     }

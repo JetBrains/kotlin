@@ -207,6 +207,11 @@ object AndroidTargetConfigurator : TargetConfigurator,
         buildList {
             +super<ModuleConfiguratorWithTests>.createModuleIRs(reader, configurationData, module)
             +super<AndroidModuleConfigurator>.createModuleIRs(reader, configurationData, module)
+            +ArtifactBasedLibraryDependencyIR(
+                MavenArtifact(DefaultRepository.MAVEN_CENTRAL, "junit", "junit"),
+                version = Versions.JUNIT,
+                dependencyType = DependencyType.TEST
+            )
         }
 
     override fun createBuildFileIRs(reader: Reader, configurationData: ModulesToIrConversionData, module: Module): List<BuildSystemIR> =
