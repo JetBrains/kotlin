@@ -26422,6 +26422,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 runTest("compiler/testData/codegen/box/reflection/classLiterals/genericClass.kt");
             }
 
+            @TestMetadata("lambdaClass.kt")
+            public void testLambdaClass() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/classLiterals/lambdaClass.kt");
+            }
+
             @TestMetadata("reifiedTypeClassLiteral.kt")
             public void testReifiedTypeClassLiteral() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/classLiterals/reifiedTypeClassLiteral.kt");
