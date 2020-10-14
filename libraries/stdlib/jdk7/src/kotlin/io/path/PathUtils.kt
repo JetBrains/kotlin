@@ -18,7 +18,7 @@ import java.nio.file.NoSuchFileException
  * Returns the extension of this path (not including the dot), or an empty string if it doesn't have one.
  */
 @SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@ExperimentalPathApi
 public val Path.extension: String
     get() = fileName?.toString()?.substringAfterLast('.', "") ?: ""
 
@@ -27,7 +27,7 @@ public val Path.extension: String
  * separate the names in the name sequence.
  */
 @SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@ExperimentalPathApi
 public val Path.invariantSeparatorsPath: String
     get() {
         val separator = fileSystem.separator
@@ -39,7 +39,7 @@ public val Path.invariantSeparatorsPath: String
  * this path has zero elements.
  */
 @SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@ExperimentalPathApi
 public val Path.nameWithoutExtension: String
     get() = fileName?.toString()?.substringBeforeLast(".") ?: ""
 
@@ -53,7 +53,7 @@ public val Path.nameWithoutExtension: String
  * @throws IllegalArgumentException if this and base paths have different roots.
  */
 @SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@ExperimentalPathApi
 public fun Path.relativeTo(base: Path): Path = try {
     PathRelativizer.tryRelativeTo(this, base)
 } catch (e: IllegalArgumentException) {
@@ -68,7 +68,7 @@ public fun Path.relativeTo(base: Path): Path = try {
  * @return Path with relative path from [base] to this, or `this` if this and base paths have different roots.
  */
 @SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@ExperimentalPathApi
 public fun Path.relativeToOrSelf(base: Path): Path =
     relativeToOrNull(base) ?: this
 
@@ -80,7 +80,7 @@ public fun Path.relativeToOrSelf(base: Path): Path =
  * @return Path with relative path from [base] to this, or `null` if this and base paths have different roots.
  */
 @SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@ExperimentalPathApi
 public fun Path.relativeToOrNull(base: Path): Path? = try {
     PathRelativizer.tryRelativeTo(this, base)
 } catch (e: IllegalArgumentException) {
@@ -143,7 +143,7 @@ internal object PathRelativizer {
  * @throws IOException if any errors occur while copying.
  */
 @SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@ExperimentalPathApi
 public fun Path.copyTo(target: Path, overwrite: Boolean = false): Path {
     val options = if (overwrite) arrayOf(StandardCopyOption.REPLACE_EXISTING) else emptyArray()
     return copyTo(target, *options)
@@ -179,7 +179,7 @@ public fun Path.copyTo(target: Path, overwrite: Boolean = false): Path {
  * @throws IOException if any errors occur while copying.
  */
 @SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@ExperimentalPathApi
 public fun Path.copyTo(target: Path, vararg options: CopyOption): Path {
     return Files.copy(this, target, *options)
 }
@@ -190,7 +190,7 @@ public fun Path.copyTo(target: Path, vararg options: CopyOption): Path {
  * @param options Options to control how symbolic links are handled.
  */
 @SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@ExperimentalPathApi
 @kotlin.internal.InlineOnly
 public inline fun Path.exists(vararg options: LinkOption): Boolean = Files.exists(this, *options)
 
@@ -200,7 +200,7 @@ public inline fun Path.exists(vararg options: LinkOption): Boolean = Files.exist
  * @param options Options to control how symbolic links are handled.
  */
 @SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@ExperimentalPathApi
 @kotlin.internal.InlineOnly
 public inline fun Path.notExists(vararg options: LinkOption): Boolean = Files.notExists(this, *options)
 
@@ -210,7 +210,7 @@ public inline fun Path.notExists(vararg options: LinkOption): Boolean = Files.no
  * @param options Options to control how symbolic links are handled.
  */
 @SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@ExperimentalPathApi
 @kotlin.internal.InlineOnly
 public inline fun Path.isRegularFile(vararg options: LinkOption): Boolean = Files.isRegularFile(this, *options)
 
@@ -222,7 +222,7 @@ public inline fun Path.isRegularFile(vararg options: LinkOption): Boolean = File
  * @param options Options to control how symbolic links are handled.
  */
 @SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@ExperimentalPathApi
 @kotlin.internal.InlineOnly
 public inline fun Path.isDirectory(vararg options: LinkOption): Boolean = Files.isDirectory(this, *options)
 
@@ -230,7 +230,7 @@ public inline fun Path.isDirectory(vararg options: LinkOption): Boolean = Files.
  * Check if this path exists and is a symbolic link.
  */
 @SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@ExperimentalPathApi
 @kotlin.internal.InlineOnly
 public inline fun Path.isSymbolicLink(): Boolean = Files.isSymbolicLink(this)
 
@@ -238,7 +238,7 @@ public inline fun Path.isSymbolicLink(): Boolean = Files.isSymbolicLink(this)
  * Check if this path exists and is executable.
  */
 @SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@ExperimentalPathApi
 @kotlin.internal.InlineOnly
 public inline fun Path.isExecutable(): Boolean = Files.isExecutable(this)
 
@@ -249,7 +249,7 @@ public inline fun Path.isExecutable(): Boolean = Files.isExecutable(this)
  * path is considered hidden if its name begins with a dot. On Windows, file attributes are checked.
  */
 @SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@ExperimentalPathApi
 @kotlin.internal.InlineOnly
 public inline fun Path.isHidden(): Boolean = Files.isHidden(this)
 
@@ -257,7 +257,7 @@ public inline fun Path.isHidden(): Boolean = Files.isHidden(this)
  * Check if this path exists and is readable.
  */
 @SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@ExperimentalPathApi
 @kotlin.internal.InlineOnly
 public inline fun Path.isReadable(): Boolean = Files.isReadable(this)
 
@@ -265,7 +265,7 @@ public inline fun Path.isReadable(): Boolean = Files.isReadable(this)
  * Check that this path exists and is writable.
  */
 @SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@ExperimentalPathApi
 @kotlin.internal.InlineOnly
 public inline fun Path.isWritable(): Boolean = Files.isWritable(this)
 
@@ -273,7 +273,7 @@ public inline fun Path.isWritable(): Boolean = Files.isWritable(this)
  * Check if this path points to the same file or directory as [other].
  */
 @SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@ExperimentalPathApi
 @kotlin.internal.InlineOnly
 public inline fun Path.isSameFile(other: Path): Boolean = Files.isSameFile(this, other)
 
@@ -284,7 +284,7 @@ public inline fun Path.isSameFile(other: Path): Boolean = Files.isSameFile(this,
  * @throws IOException If an I/O error occurs
  */
 @SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@ExperimentalPathApi
 public fun Path.listDirectoryEntries(): List<Path> {
     return Files.newDirectoryStream(this).use { it.toList() }
 }
@@ -297,7 +297,7 @@ public fun Path.listDirectoryEntries(): List<Path> {
  * @return the value returned by [block]
  */
 @SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@ExperimentalPathApi
 public fun <T> Path.useDirectoryEntries(block: (Sequence<Path>) -> T): T {
     return Files.newDirectoryStream(this).use { block(it.asSequence()) }
 }
@@ -309,7 +309,7 @@ public fun <T> Path.useDirectoryEntries(block: (Sequence<Path>) -> T): T {
  * @throws IOException If an I/O error occurs
  */
 @SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@ExperimentalPathApi
 public fun Path.forEachDirectoryEntry(action: (Path) -> Unit) {
     return Files.newDirectoryStream(this).use { it.forEach(action) }
 }
