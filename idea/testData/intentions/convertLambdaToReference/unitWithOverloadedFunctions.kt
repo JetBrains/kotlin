@@ -1,5 +1,4 @@
 // IS_APPLICABLE: false
-// COMPILER_ARGUMENTS: -XXLanguage:-FunctionReferenceWithDefaultValueAsOtherType
 
 class Random {
     fun nextInt(): Int {

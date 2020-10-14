@@ -112,17 +112,23 @@ open class ConvertLambdaToReferenceIntention(textGetter: () -> String) : SelfTar
             ) return false
         } else {
             if (calleeDescriptor.valueParameters.size != callableArgumentsCount) return false
-            val lambdaParent = lambdaExpression.parent
-            val specifiedType = if (lambdaParent is KtProperty) {
-                lambdaParent.typeReference?.let { lambdaParent.analyze(BodyResolveMode.PARTIAL)[TYPE, it] }
-            } else {
-                lambdaParameterType
-            }
-            if (specifiedType?.isFunctionType == true && specifiedType.getReturnTypeFromFunctionType().isUnit()) {
+            val lambdaMustReturnUnit =
+                if (lambdaParameterType?.isFunctionType == true) lambdaParameterType.getReturnTypeFromFunctionType().isUnit() else false
+            if (lambdaMustReturnUnit) {
                 calleeDescriptor.returnType.let {
                     // If Unit required, no references to non-Unit callables
                     if (it == null || !it.isUnit()) return false
                 }
+            }
+        }
+
+        if ((calleeDescriptor as? FunctionDescriptor)?.overloadedFunctions().orEmpty().size > 1) {
+            if (context[EXPRESSION_TYPE_INFO, lambdaExpression]?.type?.arguments?.lastOrNull()?.type != calleeDescriptor.returnType) {
+                return false
+            }
+            val property = lambdaExpression.getStrictParentOfType<KtProperty>()
+            if (property != null && property.initializer != lambdaExpression) {
+                return false
             }
         }
 

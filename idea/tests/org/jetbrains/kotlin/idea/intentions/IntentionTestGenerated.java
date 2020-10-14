@@ -5315,6 +5315,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertLambdaToReference/overloadedFunctions3.kt");
         }
 
+        @TestMetadata("overloadedFunctions4.kt")
+        public void testOverloadedFunctions4() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToReference/overloadedFunctions4.kt");
+        }
+
         @TestMetadata("platformType.kt")
         public void testPlatformType() throws Exception {
             runTest("idea/testData/intentions/convertLambdaToReference/platformType.kt");
