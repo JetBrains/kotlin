@@ -5,7 +5,7 @@
 
 {
   "note": "May https://vega.github.io/vega/docs/ be with you",
-  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "$schema": "https://vega.github.io/schema/vega/v4.3.0.json",
   "description": "TestData highlight",
   "title": "TestData highlight",
   "width": 800,
@@ -99,55 +99,55 @@
           "hits" : [
             {
               "_source" : {
-                "build_id" : 87834896,
-                "build.timestamp" : "2020-09-21T21:00:31+0000",
+                "buildId" : 87834896,
+                "buildTimestamp" : "2020-09-21T21:00:31+0000",
                 "metrics" : [
-                  {"metric_name" : "NonNullAssertion", "metric_value" : 31, "metric_error" : 1 },
-                  {"metric_name" : "PropertiesWithPropertyDeclarations", "metric_value" : 191, "metric_error" : 4 }
+                  {"metricName" : "NonNullAssertion", "metricValue" : 31, "metricError" : 1 },
+                  {"metricName" : "PropertiesWithPropertyDeclarations", "metricValue" : 191, "metricError" : 4 }
                 ],
                 "benchmark" : "highlight"
               }
             },
             {
               "_source" : {
-                "build_id" : 87783396,
-                "build.timestamp" : "2020-09-21T12:34:19+0000",
+                "buildId" : 87783396,
+                "buildTimestamp" : "2020-09-21T12:34:19+0000",
                 "metrics" : [
-                  {"metric_name" : "NonNullAssertion", "metric_value" : 32, "metric_error" : 1 },
-                  {"metric_name" : "PropertiesWithPropertyDeclarations", "metric_value" : 189, "metric_error" : 4 }
+                  {"metricName" : "NonNullAssertion", "metricValue" : 32, "metricError" : 1 },
+                  {"metricName" : "PropertiesWithPropertyDeclarations", "metricValue" : 189, "metricError" : 4 }
                 ],
                 "benchmark" : "highlight"
               }
             },
             {
               "_source" : {
-                "build_id" : 87809918,
-                "build.timestamp" : "2020-09-21T16:47:11+0000",
+                "buildId" : 87809918,
+                "buildTimestamp" : "2020-09-21T16:47:11+0000",
                 "metrics" : [
-                  {"metric_name" : "NonNullAssertion", "metric_value" : 30, "metric_error" : 1 },
-                  {"metric_name" : "PropertiesWithPropertyDeclarations", "metric_value" : 188, "metric_error" : 4 }
+                  {"metricName" : "NonNullAssertion", "metricValue" : 30, "metricError" : 1 },
+                  {"metricName" : "PropertiesWithPropertyDeclarations", "metricValue" : 188, "metricError" : 4 }
                 ],
                 "benchmark" : "highlight"
               }
             },
             {
               "_source" : {
-                "build_id" : 87905203,
-                "build.timestamp" : "2020-09-22T13:23:44+0000",
+                "buildId" : 87905203,
+                "buildTimestamp" : "2020-09-22T13:23:44+0000",
                 "metrics" : [
-                  {"metric_name" : "NonNullAssertion", "metric_value" : 30, "metric_error" : 1 },
-                  {"metric_name" : "PropertiesWithPropertyDeclarations", "metric_value" : 180, "metric_error" : 4 }
+                  {"metricName" : "NonNullAssertion", "metricValue" : 30, "metricError" : 1 },
+                  {"metricName" : "PropertiesWithPropertyDeclarations", "metricValue" : 180, "metricError" : 4 }
                 ],
                 "benchmark" : "highlight"
               }
             },
             {
               "_source" : {
-                "build_id" : 87894638,
-                "build.timestamp" : "2020-09-22T09:12:16+0000",
+                "buildId" : 87894638,
+                "buildTimestamp" : "2020-09-22T09:12:16+0000",
                 "metrics" : [
-                  {"metric_name" : "NonNullAssertion", "metric_value" : 32, "metric_error" : 1 },
-                  {"metric_name" : "PropertiesWithPropertyDeclarations", "metric_value" : 193, "metric_error" : 4 }
+                  {"metricName" : "NonNullAssertion", "metricValue" : 32, "metricError" : 1 },
+                  {"metricName" : "PropertiesWithPropertyDeclarations", "metricValue" : 193, "metricError" : 4 }
                 ],
                 "benchmark" : "highlight"
               }
@@ -156,58 +156,58 @@
         }
       },
       "url": {
-        "comment": "source index pattern",
+        //"comment": "source index pattern",
         "index": "kotlin_ide_benchmarks*",
-        "comment": "it's a body of ES _search query to check query place it into `POST /kotlin_ide_benchmarks*/_search`",
-        "comment": "it uses Kibana specific %timefilter% for time frame selection",
+        //"comment": "it's a body of ES _search query to check query place it into `POST /kotlin_ide_benchmarks*/_search`",
+        //"comment": "it uses Kibana specific %timefilter% for time frame selection",
         "body": {
           "size": 1000,
           "query": {
             "bool": {
               "must": [
                 {"term": {"benchmark.keyword": "highlight"}},
-                {"range": {"build.timestamp": {"%timefilter%": true}}}
+                {"range": {"buildTimestamp": {"%timefilter%": true}}}
               ]
             }
           },
           "_source": [
-            "build_id",
+            "buildId",
             "benchmark",
-            "build.timestamp",
-            "metrics.metric_name",
-            "metrics.metric_value",
-            "metrics.metric_error"
+            "buildTimestamp",
+            "metrics.metricName",
+            "metrics.metricValue",
+            "metrics.metricError"
           ],
-          "sort": [{"build.timestamp": {"order": "asc"}}]
+          "sort": [{"buildTimestamp": {"order": "asc"}}]
         }
       },
       "format": {"property": "hits.hits"},
-      "comment": "we need to have follow data: \"build_id\", \"metric_name\", \"metric_value\" and \"metric_error\"",
-      "comment": "so it has to be array of {\"build_id\": \"...\", \"metric_name\": \"...\", \"metric_value\": ..., \"metric_error\": ...}",
+      "comment": "we need to have follow data: \"buildId\", \"metricName\", \"metricValue\" and \"metricError\"",
+      "comment": "so it has to be array of {\"buildId\": \"...\", \"metricName\": \"...\", \"metricValue\": ..., \"metricError\": ...}",
       "transform": [
-        {"type": "collect","sort": {"field": "_source.build\\.timestamp"}},
+        {"type": "collect","sort": {"field": "_source.buildTimestamp"}},
         {"type": "flatten", "fields": ["_source.metrics"], "as": ["metrics"]},
         {
           "type": "project",
           "fields": [
-            "_source.build_id",
-            "_source.build\\.timestamp",
-            "metrics.metric_name",
-            "metrics.metric_value",
-            "metrics.metric_error"
+            "_source.buildId",
+            "_source.buildTimestamp",
+            "metrics.metricName",
+            "metrics.metricValue",
+            "metrics.metricError"
           ],
-          "as": ["build_id", "build_timestamp", "metric_name", "metric_value", "metric_error"]
+          "as": ["buildId", "buildTimestamp", "metricName", "metricValue", "metricError"]
         },
         {
           "type": "formula",
           "as": "timestamp",
-          "expr": "timeFormat(toDate(datum.build_timestamp), '%Y-%m-%d %H:%M')"
+          "expr": "timeFormat(toDate(datum.buildTimestamp), '%Y-%m-%d %H:%M')"
         },
         {
           "comment": "create `url` value that points to TC build",
           "type": "formula",
           "as": "url",
-          "expr": "'https://buildserver.labs.intellij.net/buildConfiguration/Kotlin_Benchmarks_PluginPerformanceTests_IdeaPluginPerformanceTests/' + datum.build_id"
+          "expr": "'https://buildserver.labs.intellij.net/buildConfiguration/Kotlin_Benchmarks_PluginPerformanceTests_IdeaPluginPerformanceTests/' + datum.buildId"
         }
       ]
     },
@@ -229,7 +229,7 @@
       "orient": "bottom",
       "labelAngle": -20,
       "labelAlign": "right",
-      "title": {"signal": "timestamp ? 'timestamp' : 'build_id'"},
+      "title": {"signal": "timestamp ? 'timestamp' : 'buildId'"},
       "titlePadding": 10,
       "tickCount": 5,
       "encode": {
@@ -255,7 +255,7 @@
       "name": "x",
       "type": "point",
       "range": "width",
-      "domain": {"data": "table", "field": {"signal": "timestamp ? 'timestamp' : 'build_id'"}}
+      "domain": {"data": "table", "field": {"signal": "timestamp ? 'timestamp' : 'buildId'"}}
     },
     {
       "name": "y",
@@ -263,13 +263,13 @@
       "range": "height",
       "nice": true,
       "zero": true,
-      "domain": {"data": "table", "field": "metric_value"}
+      "domain": {"data": "table", "field": "metricValue"}
     },
     {
       "name": "color",
       "type": "ordinal",
       "range": "category",
-      "domain": {"data": "table", "field": "metric_name"}
+      "domain": {"data": "table", "field": "metricName"}
     },
     {
       "name": "size",
@@ -277,7 +277,7 @@
       "round": true,
       "nice": false,
       "zero": true,
-      "domain": {"data": "table", "field": "metric_error"},
+      "domain": {"data": "table", "field": "metricError"},
       "range": [1, 100]
     }
   ],
@@ -328,7 +328,7 @@
     {
       "type": "group",
       "from": {
-        "facet": {"name": "series", "data": "table", "groupby": "metric_name"}
+        "facet": {"name": "series", "data": "table", "groupby": "metricName"}
       },
       "marks": [
         {
@@ -337,21 +337,21 @@
           "encode": {
             "hover": {"opacity": {"value": 1}, "strokeWidth": {"value": 4}},
             "update": {
-              "x": {"scale": "x", "field": {"signal": "timestamp ? 'timestamp' : 'build_id'"}},
-              "y": {"scale": "y", "field": "metric_value"},
+              "x": {"scale": "x", "field": {"signal": "timestamp ? 'timestamp' : 'buildId'"}},
+              "y": {"scale": "y", "field": "metricValue"},
               "strokeWidth": {"value": 2},
               "opacity": [
                 {
-                  "test": "(!domain || inrange(datum.build_id, domain)) && (!length(data('selected')) || indata('selected', 'value', datum.metric_name))",
+                  "test": "(!domain || inrange(datum.buildId, domain)) && (!length(data('selected')) || indata('selected', 'value', datum.metricName))",
                   "value": 0.7
                 },
                 {"value": 0.15}
               ],
               "stroke": [
                 {
-                  "test": "(!domain || inrange(datum.build_id, domain)) && (!length(data('selected')) || indata('selected', 'value', datum.metric_name))",
+                  "test": "(!domain || inrange(datum.buildId, domain)) && (!length(data('selected')) || indata('selected', 'value', datum.metricName))",
                   "scale": "color",
-                  "field": "metric_name"
+                  "field": "metricName"
                 },
                 {"value": "#ccc"}
               ]
@@ -364,20 +364,20 @@
           "encode": {
             "enter": {
               "tooltip": {
-                "signal": "datum.metric_name + ': ' + datum.metric_value + ' ms'"
+                "signal": "datum.metricName + ': ' + datum.metricValue + ' ms'"
               },
               "href": {"field": "url"},
               "cursor": {"value": "pointer"},
-              "size": {"scale": "size", "field": "metric_error"},
-              "x": {"scale": "x", "field": {"signal": "timestamp ? 'timestamp' : 'build_id'"}},
-              "y": {"scale": "y", "field": "metric_value"},
+              "size": {"scale": "size", "field": "metricError"},
+              "x": {"scale": "x", "field": {"signal": "timestamp ? 'timestamp' : 'buildId'"}},
+              "y": {"scale": "y", "field": "metricValue"},
               "strokeWidth": {"value": 1},
-              "fill": {"scale": "color", "field": "metric_name"}
+              "fill": {"scale": "color", "field": "metricName"}
             },
             "update": {
               "opacity": [
                 {
-                  "test": "(!domain || inrange(datum.build_id, domain)) && (!length(data('selected')) || indata('selected', 'value', datum.metric_name))",
+                  "test": "(!domain || inrange(datum.buildId, domain)) && (!length(data('selected')) || indata('selected', 'value', datum.metricName))",
                   "value": 1
                 },
                 {"value": 0.15}
