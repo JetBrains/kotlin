@@ -33,3 +33,4 @@ compileKotlin {
     ]
 }
 
+configureJvmIrBackend(project)

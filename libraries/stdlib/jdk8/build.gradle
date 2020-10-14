@@ -84,6 +84,8 @@ compileTestKotlin {
     ]
 }
 
+configureJvmIrBackend(project)
+
 compileJava9Sources(project, 'kotlin.stdlib.jdk8')
 
 test {
