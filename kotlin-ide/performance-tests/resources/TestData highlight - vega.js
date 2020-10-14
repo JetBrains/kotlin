@@ -94,7 +94,7 @@
     {
       "name": "table",
       "comment": "To test chart in VEGA editor https://vega.github.io/editor/#/ change `_values` to `values` and rename `url` property",
-      "_values" : {
+      "_values": {
         "hits" : {
           "hits" : [
             {
@@ -174,6 +174,7 @@
             "buildId",
             "benchmark",
             "buildTimestamp",
+            "metrics.hasError",
             "metrics.metricName",
             "metrics.metricValue",
             "metrics.metricError"
@@ -192,11 +193,12 @@
           "fields": [
             "_source.buildId",
             "_source.buildTimestamp",
+            "metrics.hasError",
             "metrics.metricName",
             "metrics.metricValue",
             "metrics.metricError"
           ],
-          "as": ["buildId", "buildTimestamp", "metricName", "metricValue", "metricError"]
+          "as": ["buildId", "buildTimestamp", "hasError", "metricName", "metricValue", "metricError"]
         },
         {
           "type": "formula",
@@ -357,6 +359,38 @@
               ]
             }
           }
+        },
+        {
+          "type": "symbol",
+          "from": {"data": "series"},
+          "encode": {
+            "enter": {
+              "fill": {"value": "#B00"},
+              "size": [{ "test": "datum.hasError", "value": 250 }, {"value": 0}],
+              "shape": {"value": "cross"},
+              "angle": {"value": 45},
+              "x": {"scale": "x", "field": {"signal": "timestamp ? 'timestamp' : 'buildId'"}},
+              "y": {"scale": "y", "field": "metricValue"},
+              "strokeWidth": {"value": 1},
+              "opacity": [
+                {
+                  "test": "(!domain || inrange(datum.buildId, domain)) && datum.hasError && (!length(data('selected')) || indata('selected', 'value', datum.metricName))",
+                  "value": 1
+                },
+                {"value": 0.15}
+              ]
+            },
+            "update": {
+              "opacity": [
+                {
+                  "test": "(!domain || inrange(datum.buildId, domain))  && datum.hasError && (!length(data('selected')) || indata('selected', 'value', datum.metricName))",
+                  "value": 1
+                },
+                {"value": 0.15}
+              ]
+            }
+          },
+          "zindex": 1
         },
         {
           "type": "symbol",
