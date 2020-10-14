@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardKotlinVersion
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.AndroidConfigIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.irsList
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.AndroidPlugin
@@ -76,8 +77,13 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
 
     fun Reader.createAndroidPlugin(module: Module): AndroidGradlePlugin
 
-    override fun Reader.createSettingsGradleIRs(module: Module) = buildList<BuildSystemIR> {
-        +createRepositories(KotlinPlugin.version.propertyValue).map { PluginManagementRepositoryIR(RepositoryIR(it)) }
+    override fun createSettingsGradleIRs(
+        reader: Reader,
+        module: Module,
+        data: ModulesToIrConversionData
+    ) = buildList<BuildSystemIR> {
+        +createRepositories(reader { KotlinPlugin.version.propertyValue })
+            .map { PluginManagementRepositoryIR(RepositoryIR(it)) }
     }
 
     override fun createModuleIRs(
@@ -181,6 +187,18 @@ object AndroidTargetConfigurator : TargetConfigurator,
         )
 
         GradlePlugin.gradleProperties.addValues("android.useAndroidX" to true)
+    }
+
+    override fun createSettingsGradleIRs(
+        reader: Reader,
+        module: Module,
+        data: ModulesToIrConversionData
+    ): List<BuildSystemIR> = irsList {
+        +super.createSettingsGradleIRs(reader, module, data)
+        val containsAndroidSingleplatformModule = data.allModules.any { it.configurator is AndroidSinglePlatformModuleConfigurator }
+        if (!containsAndroidSingleplatformModule) {
+            +AndroidResolutionStrategyIR(Versions.GRADLE_PLUGINS.ANDROID)
+        }
     }
 
     override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JUNIT4

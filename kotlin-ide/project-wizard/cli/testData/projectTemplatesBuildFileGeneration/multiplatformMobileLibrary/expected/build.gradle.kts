@@ -9,6 +9,7 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     google()
+    jcenter()
     mavenCentral()
     maven { url = uri("KOTLIN_REPO") }
 }
