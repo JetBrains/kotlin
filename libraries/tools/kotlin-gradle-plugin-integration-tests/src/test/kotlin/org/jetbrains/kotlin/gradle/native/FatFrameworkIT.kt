@@ -26,7 +26,7 @@ class FatFrameworkIT : BaseGradleIT() {
         Assume.assumeTrue(HostManager.hostIsMac)
         transformProjectWithPluginsDsl(
             "smoke",
-            directoryPrefix = "new-mpp-fat-framework"
+            directoryPrefix = "native-fat-framework"
         ).build("fat") {
             checkSmokeBuild(
                 archs = listOf("x64", "arm64", "arm32"),
@@ -47,7 +47,7 @@ class FatFrameworkIT : BaseGradleIT() {
     @Test
     fun smokeWatchos() {
         Assume.assumeTrue(HostManager.hostIsMac)
-        with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "new-mpp-fat-framework")) {
+        with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "native-fat-framework")) {
 
             gradleBuildScript().modify {
                 it.checkedReplace("iosArm32()", "watchosArm32()")
@@ -114,7 +114,7 @@ class FatFrameworkIT : BaseGradleIT() {
     @Test
     fun testDuplicatedArchitecture() {
         Assume.assumeTrue(HostManager.hostIsMac)
-        with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "new-mpp-fat-framework")) {
+        with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "native-fat-framework")) {
             gradleBuildScript().modify {
                 it + """
                 val anotherDeviceTarget = kotlin.iosArm64("another") {
@@ -133,7 +133,7 @@ class FatFrameworkIT : BaseGradleIT() {
     @Test
     fun testIncorrectFamily() {
         Assume.assumeTrue(HostManager.hostIsMac)
-        with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "new-mpp-fat-framework")) {
+        with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "native-fat-framework")) {
             gradleBuildScript().modify {
                 it + """
                 val macos = kotlin.macosX64 {

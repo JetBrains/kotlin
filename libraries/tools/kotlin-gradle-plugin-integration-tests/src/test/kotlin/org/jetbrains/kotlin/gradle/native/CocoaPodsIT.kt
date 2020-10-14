@@ -38,10 +38,10 @@ class CocoaPodsIT : BaseGradleIT() {
 
     val PODFILE_IMPORT_DIRECTIVE_PLACEHOLDER = "<import_mode_directive>"
 
-    private val cocoapodsSingleKtPod = "new-mpp-cocoapods-single"
-    private val cocoapodsMultipleKtPods = "new-mpp-cocoapods-multiple"
-    private val templateProjectName = "new-mpp-cocoapods-template"
-    private val groovyTemplateProjectName = "new-mpp-cocoapods-template-groovy"
+    private val cocoapodsSingleKtPod = "native-cocoapods-single"
+    private val cocoapodsMultipleKtPods = "native-cocoapods-multiple"
+    private val templateProjectName = "native-cocoapods-template"
+    private val groovyTemplateProjectName = "native-cocoapods-template-groovy"
 
     private val dummyTaskName = ":$DUMMY_FRAMEWORK_TASK_NAME"
     private val podspecTaskName = ":$POD_SPEC_TASK_NAME"

@@ -21,7 +21,7 @@ class CommonNativeIT : BaseGradleIT() {
         projectName: String,
         libTargets: List<String>,
         appTargets: List<String>
-    ) = with(transformProjectWithPluginsDsl(projectName, directoryPrefix = "new-mpp-common-native")) {
+    ) = with(transformProjectWithPluginsDsl(projectName, directoryPrefix = "native-apple-devices-common")) {
         configureMemoryInGradleProperties()
 
         val libCompileTasks = libTargets.map { ":lib:compileKotlin${it.capitalize()}" }
