@@ -95,13 +95,14 @@ class JvmSharedVariablesManager(
             typeArguments.forEachIndexed(::putTypeArgument)
         }
         return with(originalDeclaration) {
+            val descriptor = WrappedVariableDescriptor()
             IrVariableImpl(
-                startOffset, endOffset, origin, IrVariableSymbolImpl(WrappedVariableDescriptor()), name, refType,
+                startOffset, endOffset, origin, IrVariableSymbolImpl(descriptor), name, refType,
                 isVar = false, // writes are remapped to field stores
                 isConst = false, // const vals could not possibly require ref wrappers
                 isLateinit = false
             ).apply {
-                (descriptor as WrappedVariableDescriptor).bind(this)
+                descriptor.bind(this)
                 initializer = refConstructorCall
             }
         }

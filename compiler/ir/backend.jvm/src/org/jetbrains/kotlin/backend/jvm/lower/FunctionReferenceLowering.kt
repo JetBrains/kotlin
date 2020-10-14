@@ -476,7 +476,8 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     //don't pass receivers otherwise LocalDeclarationLowering will create additional captured parameters
                     IrFunctionReferenceImpl(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunctionReference.type, target,
-                        irFunctionReference.typeArgumentsCount, irFunctionReference.reflectionTarget, null
+                        irFunctionReference.typeArgumentsCount, target.owner.valueParameters.size,
+                        irFunctionReference.reflectionTarget, null
                     ).apply {
                         copyTypeArgumentsFrom(irFunctionReference)
                     }

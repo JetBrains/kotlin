@@ -424,7 +424,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
                 accessorSymbol as IrConstructorSymbol, oldExpression.typeArgumentsCount
             )
             is IrConstructorCall ->
-                IrConstructorCallImpl.fromSymbolDescriptor(
+                IrConstructorCallImpl.fromSymbolOwner(
                     oldExpression.startOffset, oldExpression.endOffset,
                     oldExpression.type,
                     accessorSymbol as IrConstructorSymbol

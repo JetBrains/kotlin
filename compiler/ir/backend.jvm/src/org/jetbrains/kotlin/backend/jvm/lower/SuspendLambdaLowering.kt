@@ -123,7 +123,7 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
 
     private fun generateAnonymousObjectForLambda(reference: IrFunctionReference, parent: IrDeclarationParent) =
         context.createIrBuilder(reference.symbol).irBlock(reference.startOffset, reference.endOffset) {
-            assert(reference.getArguments().isEmpty()) { "lambda with bound arguments: ${reference.render()}" }
+            assert(reference.getArgumentsWithIr().isEmpty()) { "lambda with bound arguments: ${reference.render()}" }
             val continuation = generateContinuationClassForLambda(reference, parent)
             +continuation
             +irCall(continuation.constructors.single().symbol).apply {

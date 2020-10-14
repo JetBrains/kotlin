@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.incremental.components.LocationInfo
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.Position
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBasedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
@@ -119,6 +120,7 @@ class IrSourceCompilerForInline(
             it.finallyDepth = curFinallyDepth
         }
 
+    @ObsoleteDescriptorBasedAPI
     override fun isCallInsideSameModuleAsDeclared(functionDescriptor: FunctionDescriptor): Boolean {
         require(functionDescriptor is IrBasedSimpleFunctionDescriptor) {
             "expected an IrBasedSimpleFunctionDescriptor, got $functionDescriptor"

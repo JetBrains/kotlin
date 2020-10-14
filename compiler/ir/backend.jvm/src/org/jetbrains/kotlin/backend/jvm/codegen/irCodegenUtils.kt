@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
@@ -411,9 +412,11 @@ val IrFunction.functionDeprecationFlags: Int
         return originFlags or propertyFlags or callableDeprecationFlags
     }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 val IrDeclaration.psiElement: PsiElement?
     get() = (descriptor as? DeclarationDescriptorWithSource)?.psiElement
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 val IrMemberAccessExpression<*>.psiElement: PsiElement?
     get() = (symbol.descriptor.original as? DeclarationDescriptorWithSource)?.psiElement
 
