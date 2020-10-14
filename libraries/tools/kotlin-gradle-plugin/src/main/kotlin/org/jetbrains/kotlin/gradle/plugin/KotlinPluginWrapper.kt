@@ -225,7 +225,7 @@ open class KotlinMultiplatformPluginWrapper @Inject constructor(
             throw GradleException(
                 """
                 Please initialize at least one Kotlin target in '${project.name} (${project.path})'.
-                Read more https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#setting-up-targets
+                Read more https://kotlinlang.org/docs/reference/mpp-set-up-targets.html
                 """.trimIndent()
             )
         }
