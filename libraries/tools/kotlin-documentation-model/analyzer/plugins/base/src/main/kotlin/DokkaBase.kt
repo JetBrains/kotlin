@@ -121,7 +121,7 @@ class DokkaBase : DokkaPlugin() {
     }
 
     val docTagToContentConverter by extending {
-        commentsToContentConverter with DocTagToContentConverter
+        commentsToContentConverter with DocTagToContentConverter()
     }
 
     val pageMerger by extending {
