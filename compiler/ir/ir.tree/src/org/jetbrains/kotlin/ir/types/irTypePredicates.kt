@@ -137,7 +137,7 @@ fun IrType.isDoubleArray(): Boolean = isNotNullClassType(primitiveArrayTypesSign
 //  Need to refactor declarationBuilders.kt: visibilty is known, need to add info about package in IrFactory.buildClass (similar to name).
 fun IrType.isClassType(fqName: FqNameUnsafe, hasQuestionMark: Boolean): Boolean {
     if (this !is IrSimpleType) return false
-    if (hasQuestionMark != null && this.hasQuestionMark != hasQuestionMark) return false
+    if (this.hasQuestionMark != hasQuestionMark) return false
     return classifier.isClassWithFqName(fqName)
 }
 
