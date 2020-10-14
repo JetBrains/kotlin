@@ -46,7 +46,8 @@ class KtTypeRendererTest : KotlinLightCodeInsightFixtureTestCase() {
         val property = fakeKtFile.declarations.single() as KtProperty
         val renderedType = executeOnPooledThreadInReadAction {
             analyze(fakeKtFile) {
-                val ktType = property.getReturnKtType()
+                val ktType = property.initializer?.getKtType()
+                    ?: error("fake property should have initializer")
                 ktType.render(rendererOptions)
             }
         }
