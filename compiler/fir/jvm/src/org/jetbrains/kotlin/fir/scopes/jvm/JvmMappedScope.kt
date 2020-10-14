@@ -22,10 +22,7 @@ class JvmMappedScope(
         val visibleMethods = signatures.visibleMethodSignaturesByName[name]
             ?: return declaredMemberScope.processFunctionsByName(name, processor)
         javaMappedClassUseSiteScope.processFunctionsByName(name) { symbol ->
-            val jvmSignature = symbol.fir.computeJvmDescriptor()
-                .replace("kotlin/Any", "java/lang/Object")
-                .replace("kotlin/String", "java/lang/String")
-                .replace("kotlin/Throwable", "java/lang/Throwable")
+            val jvmSignature = symbol.fir.computeJvmDescriptorReplacingKotlinToJava()
             if (jvmSignature in visibleMethods) {
                 processor(symbol)
             }
@@ -43,10 +40,7 @@ class JvmMappedScope(
         val hiddenConstructors = signatures.hiddenConstructors
         if (hiddenConstructors.isNotEmpty()) {
             javaMappedClassUseSiteScope.processDeclaredConstructors { symbol ->
-                val jvmSignature = symbol.fir.computeJvmDescriptor()
-                    .replace("kotlin/Any", "java/lang/Object")
-                    .replace("kotlin/String", "java/lang/String")
-                    .replace("kotlin/Throwable", "java/lang/Throwable")
+                val jvmSignature = symbol.fir.computeJvmDescriptorReplacingKotlinToJava()
                 if (jvmSignature !in hiddenConstructors) {
                     processor(symbol)
                 }

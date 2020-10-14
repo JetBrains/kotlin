@@ -18,6 +18,12 @@ import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
+fun FirFunction<*>.computeJvmDescriptorReplacingKotlinToJava(): String =
+    computeJvmDescriptor()
+        .replace("kotlin/Any", "java/lang/Object")
+        .replace("kotlin/String", "java/lang/String")
+        .replace("kotlin/Throwable", "java/lang/Throwable")
+
 fun FirFunction<*>.computeJvmDescriptor(): String = buildString {
     if (this@computeJvmDescriptor is FirSimpleFunction) {
         append(name.asString())
