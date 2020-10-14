@@ -1098,7 +1098,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                             returnTypeRef = propertyReturnTypeRef
                             name = propertyName
                             symbol = FirVariableSymbol(propertyName)
-                            defaultValue = generateComponentAccess(parameterSource, firProperty, propertyReturnTypeRef, classTypeRef)
+                            defaultValue = generateComponentAccess(parameterSource, firProperty, classTypeRef, propertyReturnTypeRef)
                             isCrossinline = false
                             isNoinline = false
                             isVararg = false
