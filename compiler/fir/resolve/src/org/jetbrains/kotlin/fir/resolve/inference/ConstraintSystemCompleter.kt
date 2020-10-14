@@ -37,6 +37,7 @@ class ConstraintSystemCompleter(private val components: BodyResolveComponents) {
         collectVariablesFromContext: Boolean = false,
         analyze: (PostponedResolvedAtom) -> Unit
     ) = with(c) {
+        val topLevelTypeVariables = candidateReturnType.extractTypeVariables()
 
         completion@ while (true) {
             val postponedArguments = getOrderedNotAnalyzedPostponedArguments(topLevelAtoms)
@@ -62,7 +63,11 @@ class ConstraintSystemCompleter(private val components: BodyResolveComponents) {
 
             // Stage 2
             val newExpectedTypeWasBuilt = postponedArgumentsInputTypesResolver.collectParameterTypesAndBuildNewExpectedTypes(
-                asConstraintSystemCompletionContext(), postponedArgumentsWithRevisableType, completionMode, dependencyProvider
+                asConstraintSystemCompletionContext(),
+                postponedArgumentsWithRevisableType,
+                completionMode,
+                dependencyProvider,
+                topLevelTypeVariables
             )
 
             if (newExpectedTypeWasBuilt)

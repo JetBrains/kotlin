@@ -66,6 +66,8 @@ class KotlinConstraintSystemCompleter(
         collectVariablesFromContext: Boolean,
         analyze: (PostponedResolvedAtom) -> Unit
     ) {
+        val topLevelTypeVariables = topLevelType.extractTypeVariables()
+
         completion@ while (true) {
             // TODO
             val postponedArguments = getOrderedNotAnalyzedPostponedArguments(topLevelAtoms)
@@ -89,7 +91,11 @@ class KotlinConstraintSystemCompleter(
 
             // Stage 2: collect parameter types for postponed arguments
             val wasBuiltNewExpectedTypeForSomeArgument = postponedArgumentInputTypesResolver.collectParameterTypesAndBuildNewExpectedTypes(
-                asConstraintSystemCompletionContext(), postponedArgumentsWithRevisableType, completionMode, dependencyProvider
+                asConstraintSystemCompletionContext(),
+                postponedArgumentsWithRevisableType,
+                completionMode,
+                dependencyProvider,
+                topLevelTypeVariables
             )
 
             if (wasBuiltNewExpectedTypeForSomeArgument)
