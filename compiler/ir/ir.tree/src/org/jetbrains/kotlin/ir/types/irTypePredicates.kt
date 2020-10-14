@@ -38,7 +38,7 @@ object IdSignatureValues {
     @JvmField val string = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"String")
     @JvmField val array = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"Array")
     @JvmField val collection = getPublicSignature(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, "Collection")
-    @JvmField val kClass = getPublicSignature(StandardNames.KOTLIN_REFLECT_FQ_NAME, "KClass")
+    @JvmField val kClass = IdSignature.PublicSignature(StandardNames.KOTLIN_REFLECT_FQ_NAME.asString(), "KClass", null, 1)
     @JvmField val comparable = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"Comparable")
     @JvmField val charSequence = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"CharSequence")
     @JvmField val iterable = getPublicSignature(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, "Iterable")
