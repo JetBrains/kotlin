@@ -492,7 +492,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
         origin: IrStatementOrigin?
     ): IrFunctionReference =
-        IrFunctionReferenceImpl(
+        IrFunctionReferenceImpl.fromSymbolDescriptor(
             startOffset, endOffset, type.toIrType(),
             symbol,
             typeArgumentsCount = descriptor.typeParametersCount,

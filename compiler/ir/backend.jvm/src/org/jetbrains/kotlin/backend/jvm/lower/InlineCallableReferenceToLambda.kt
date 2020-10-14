@@ -110,7 +110,7 @@ private class InlineCallableReferenceToLambdaTransformer(
             }
 
             +function
-            +IrFunctionReferenceImpl(
+            +IrFunctionReferenceImpl.fromSymbolOwner(
                 expression.startOffset,
                 expression.endOffset,
                 field.type,
@@ -190,7 +190,7 @@ private class InlineCallableReferenceToLambdaTransformer(
             }
 
             +function
-            +IrFunctionReferenceImpl(
+            +IrFunctionReferenceImpl.fromSymbolOwner(
                 expression.startOffset,
                 expression.endOffset,
                 function.returnType,

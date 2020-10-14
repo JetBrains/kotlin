@@ -69,7 +69,7 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
                 // The only references not yet transformed into objects are inline lambdas; the continuation
                 // for those will be taken from the inline functions they are passed to, not the enclosing scope.
                 return transformed.retargetToSuspendView(context, null) {
-                    IrFunctionReferenceImpl(startOffset, endOffset, type, it, typeArgumentsCount, reflectionTarget, origin)
+                    IrFunctionReferenceImpl.fromSymbolOwner(startOffset, endOffset, type, it, typeArgumentsCount, reflectionTarget, origin)
                 }
             }
 

@@ -113,7 +113,8 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
                 // Internal underlying vals of inline classes have no getter method
                 getter.owner.isInlineClassFieldGetter && getter.owner.visibility == DescriptorVisibilities.INTERNAL
         val origin = if (needsDummySignature) InlineClassAbi.UNMANGLED_FUNCTION_REFERENCE else null
-        val reference = IrFunctionReferenceImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, expression.type, getter, 0, getter, origin)
+        val reference =
+            IrFunctionReferenceImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, expression.type, getter, 0, getter, origin)
         return irCall(signatureStringIntrinsic).apply { putValueArgument(0, reference) }
     }
 
