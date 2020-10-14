@@ -491,6 +491,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
                 runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/set.kt");
             }
 
+            @TestMetadata("specializedGenericMap.kt")
+            public void testSpecializedGenericMap() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/specializedGenericMap.kt");
+            }
+
             @TestMetadata("stringGenericMap.kt")
             public void testStringGenericMap() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/stringGenericMap.kt");
