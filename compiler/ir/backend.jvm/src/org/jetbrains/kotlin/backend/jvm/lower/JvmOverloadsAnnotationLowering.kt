@@ -58,7 +58,9 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
 
         val call = when (target) {
             is IrConstructor ->
-                IrDelegatingConstructorCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.unitType, target.symbol)
+                IrDelegatingConstructorCallImpl.fromSymbolOwner(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.unitType, target.symbol
+                )
             is IrSimpleFunction ->
                 IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target.returnType, target.symbol)
             else ->

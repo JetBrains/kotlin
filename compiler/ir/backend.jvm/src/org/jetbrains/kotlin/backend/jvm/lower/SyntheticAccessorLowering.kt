@@ -279,7 +279,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
     }
 
     private fun createConstructorCall(accessor: IrConstructor, targetSymbol: IrConstructorSymbol) =
-        IrDelegatingConstructorCallImpl(
+        IrDelegatingConstructorCallImpl.fromSymbolOwner(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             context.irBuiltIns.unitType,
             targetSymbol, targetSymbol.owner.parentAsClass.typeParameters.size + targetSymbol.owner.typeParameters.size
@@ -418,7 +418,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
                 accessorSymbol as IrSimpleFunctionSymbol, oldExpression.typeArgumentsCount,
                 origin = oldExpression.origin
             )
-            is IrDelegatingConstructorCall -> IrDelegatingConstructorCallImpl(
+            is IrDelegatingConstructorCall -> IrDelegatingConstructorCallImpl.fromSymbolOwner(
                 oldExpression.startOffset, oldExpression.endOffset,
                 context.irBuiltIns.unitType,
                 accessorSymbol as IrConstructorSymbol, oldExpression.typeArgumentsCount

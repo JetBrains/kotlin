@@ -165,7 +165,7 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
             // generate call to primary ctor to init serialClassDesc and super()
             val primaryCtor = irClass.constructors.find { it.isPrimary }
                 ?: throw AssertionError("Serializer class must have primary constructor")
-            +IrDelegatingConstructorCallImpl(
+            +IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
                 startOffset,
                 endOffset,
                 compilerContext.irBuiltIns.unitType,

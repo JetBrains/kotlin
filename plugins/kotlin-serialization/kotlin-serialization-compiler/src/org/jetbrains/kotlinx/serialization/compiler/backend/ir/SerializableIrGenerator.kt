@@ -121,7 +121,7 @@ class SerializableIrGenerator(
             ?: error("Non-serializable parent of serializable $serializableDescriptor must have no arg constructor")
 
 
-        val call = IrDelegatingConstructorCallImpl(
+        val call = IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
             startOffset,
             endOffset,
             compilerContext.irBuiltIns.unitType,
@@ -153,7 +153,7 @@ class SerializableIrGenerator(
         val arguments = allValueParameters.subList(0, superSlots) +
                     allValueParameters.subList(propertiesStart, propertiesStart + superProperties.size) +
                     allValueParameters.last() // SerializationConstructorMarker
-        val call = IrDelegatingConstructorCallImpl(
+        val call = IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
             startOffset,
             endOffset,
             compilerContext.irBuiltIns.unitType,

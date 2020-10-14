@@ -258,7 +258,7 @@ class BodyGenerator(
     private fun generateAnySuperConstructorCall(body: IrBlockBody, ktElement: KtPureElement) {
         val anyConstructor = context.builtIns.any.constructors.single()
         body.statements.add(
-            IrDelegatingConstructorCallImpl(
+            IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
                 ktElement.pureStartOffset, ktElement.pureEndOffset,
                 context.irBuiltIns.unitType,
                 context.symbolTable.referenceConstructor(anyConstructor)
