@@ -28,6 +28,14 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
+private val String.validFrameworkName: String
+    get() = replace('-', '_')
+private val invalidTaskNameCharacters = "[/\\\\:<>\"?*|]".toRegex()
+
+private val String.validTaskName
+    get() = replace(invalidTaskNameCharacters, "_")
+
+
 class CocoaPodsIT : BaseGradleIT() {
 
     override val defaultGradleVersion: GradleVersionRequired
@@ -218,6 +226,15 @@ class CocoaPodsIT : BaseGradleIT() {
     @Test
     fun testPodDownloadGitBranch() {
         doTestGit(branch = "2974")
+    }
+
+    @Test
+    fun testPodDownloadGitSubspec() {
+        doTestGit(
+            repo = "https://github.com/SDWebImage/SDWebImage.git",
+            pod = "SDWebImage/MapKit",
+            tag = "5.9.2"
+        )
     }
 
     @Test
@@ -931,10 +948,11 @@ class CocoaPodsIT : BaseGradleIT() {
         branchName: String? = null,
         commitName: String? = null,
         tagName: String? = null,
-        aPodDownloadName: String = defaultPodName
+        aPodDownloadName: String = defaultPodName,
+        podspecName: String = aPodDownloadName.split("/")[0]
     ) {
-        val gitDir = git().resolve(aPodDownloadName)
-        val podspecFile = gitDir.resolve("$aPodDownloadName.podspec")
+        val gitDir = git().resolve(aPodDownloadName.validTaskName)
+        val podspecFile = gitDir.resolve("$podspecName.podspec")
         assertTrue(podspecFile.exists())
         if (tagName != null) {
             checkTag(gitDir, tagName)
@@ -1199,8 +1217,6 @@ class CocoaPodsIT : BaseGradleIT() {
         }
     }
 
-    private val String.validFrameworkName: String
-        get() = replace('-', '_')
 
     private fun kotlinLibraryPodspecContent(frameworkName: String? = null) = """
                 Pod::Spec.new do |spec|
