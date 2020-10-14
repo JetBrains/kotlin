@@ -94,7 +94,7 @@
     {
       "name": "table",
       "comment": "To test chart in VEGA editor https://vega.github.io/editor/#/ change `_values` to `values` and rename `url` property",
-      "_values" : {
+      "_values": {
           "hits" : {
             "hits" : [
               {
@@ -130,7 +130,7 @@
               ]
             }
           },
-          "_source": ["buildId", "benchmark", "buildTimestamp", "geomMean"],
+          "_source": ["buildId", "benchmark", "buildTimestamp", "metrics.hasError", "geomMean"],
           "sort": [{"buildTimestamp": {"order": "asc"}}]
         }
       },
@@ -161,7 +161,13 @@
           "comment": "define metricError",
           "type": "formula",
           "as": "metricError",
-          "expr": "0"
+          "expr": "1"
+        },
+        {
+          "comment": "make alias: _source.metrics[0].hasError -> hasError",
+          "type": "formula",
+          "as": "hasError",
+          "expr": "datum._source.metrics ? datum._source.metrics[0].hasError : false"
         },
         {
           "type": "formula",
@@ -322,6 +328,38 @@
               ]
             }
           }
+        },
+        {
+          "type": "symbol",
+          "from": {"data": "series"},
+          "encode": {
+            "enter": {
+              "fill": {"value": "#B00"},
+              "size": [{ "test": "datum.hasError", "value": 250 }, {"value": 0}],
+              "shape": {"value": "cross"},
+              "angle": {"value": 45},
+              "x": {"scale": "x", "field": {"signal": "timestamp ? 'timestamp' : 'buildId'"}},
+              "y": {"scale": "y", "field": "metricValue"},
+              "strokeWidth": {"value": 1},
+              "opacity": [
+                {
+                  "test": "(!domain || inrange(datum.buildId, domain)) && datum.hasError && (!length(data('selected')) || indata('selected', 'value', datum.metricName))",
+                  "value": 1
+                },
+                {"value": 0.15}
+              ]
+            },
+            "update": {
+              "opacity": [
+                {
+                  "test": "(!domain || inrange(datum.buildId, domain))  && datum.hasError && (!length(data('selected')) || indata('selected', 'value', datum.metricName))",
+                  "value": 1
+                },
+                {"value": 0.15}
+              ]
+            }
+          },
+          "zindex": 1
         },
         {
           "type": "symbol",

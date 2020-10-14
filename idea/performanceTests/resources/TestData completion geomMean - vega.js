@@ -93,6 +93,75 @@
   "data": [
     {
       "name": "table",
+      "comment": "To test chart in VEGA editor https://vega.github.io/editor/#/ change `_values` to `values` and rename `url` property",
+      "_values": {
+       "hits" : {
+         "hits" : [
+           {
+             "_source" : {
+               "buildTimestamp" : "2020-10-14T15:12:14+0000",
+               "buildId" : 90615916,
+               "metrics" : [
+                 {
+                   "hasError" : true
+                 }
+               ],
+               "geomMean" : 157,
+               "benchmark" : "completion-basic"
+             }
+           },
+           {
+             "_source" : {
+               "buildTimestamp" : "2020-10-14T13:15:31+0000",
+               "buildId" : 90615916,
+               "geomMean" : 80,
+               "benchmark" : "completion-basic-charFilter"
+             }
+           },
+           {
+             "_source" : {
+               "buildTimestamp" : "2020-10-14T10:53:52+0000",
+               "buildId" : 90597868,
+               "geomMean" : 160,
+               "benchmark" : "completion-basic"
+             }
+           },
+           {
+             "_source" : {
+               "buildTimestamp" : "2020-10-14T08:57:05+0000",
+               "buildId" : 90597868,
+               "geomMean" : 79,
+               "benchmark" : "completion-basic-charFilter"
+             }
+           },
+           {
+             "_source" : {
+               "buildTimestamp" : "2020-10-14T03:04:10+0000",
+               "buildId" : 90570192,
+               "geomMean" : 79,
+               "benchmark" : "completion-basic-charFilter"
+             }
+           },
+           {
+             "_source" : {
+               "buildTimestamp" : "2020-10-14T03:04:09+0000",
+               "buildId" : 90570192,
+               "geomMean" : 60,
+               "benchmark" : "completion-basic"
+             }
+           },
+           {
+             "_source" : {
+               "buildTimestamp" : "2020-10-14T00:42:58+0000",
+               "buildId" : 90546466,
+               "geomMean" : 158,
+               "benchmark" : "completion-basic"
+             }
+           }
+         ]
+       }
+     },
+
       "url": {
         //"comment": "source index pattern",
         "index": "kotlin_ide_benchmarks*",
@@ -126,7 +195,7 @@
               ]
             }
           },
-          "_source": ["buildId", "benchmark", "buildTimestamp", "geomMean"],
+          "_source": ["buildId", "benchmark", "buildTimestamp", "metrics.hasError", "geomMean"],
           "sort": [{"buildTimestamp": {"order": "asc"}}]
         }
       },
@@ -158,6 +227,12 @@
           "type": "formula",
           "as": "metricError",
           "expr": "1"
+        },
+        {
+          "comment": "make alias: _source.metrics[0].hasError -> hasError",
+          "type": "formula",
+          "as": "hasError",
+          "expr": "datum._source.metrics ? datum._source.metrics[0].hasError : false"
         },
         {
           "type": "formula",
@@ -318,6 +393,38 @@
               ]
             }
           }
+        },
+        {
+          "type": "symbol",
+          "from": {"data": "series"},
+          "encode": {
+            "enter": {
+              "fill": {"value": "#B00"},
+              "size": [{ "test": "datum.hasError", "value": 250 }, {"value": 0}],
+              "shape": {"value": "cross"},
+              "angle": {"value": 45},
+              "x": {"scale": "x", "field": {"signal": "timestamp ? 'timestamp' : 'buildId'"}},
+              "y": {"scale": "y", "field": "metricValue"},
+              "strokeWidth": {"value": 1},
+              "opacity": [
+                {
+                  "test": "(!domain || inrange(datum.buildId, domain)) && datum.hasError && (!length(data('selected')) || indata('selected', 'value', datum.metricName))",
+                  "value": 1
+                },
+                {"value": 0.15}
+              ]
+            },
+            "update": {
+              "opacity": [
+                {
+                  "test": "(!domain || inrange(datum.buildId, domain))  && datum.hasError && (!length(data('selected')) || indata('selected', 'value', datum.metricName))",
+                  "value": 1
+                },
+                {"value": 0.15}
+              ]
+            }
+          },
+          "zindex": 1
         },
         {
           "type": "symbol",
