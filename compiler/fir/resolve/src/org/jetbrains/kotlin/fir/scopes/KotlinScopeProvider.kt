@@ -150,8 +150,8 @@ private fun FirClass<*>.scopeForClassImpl(
         this, ConeSubstitutionScopeKey(containingClassForAdditionalMembers.classId, isFromExpectClass, substitutor)
     ) {
         FirClassSubstitutionScope(
-            useSiteSession, basicScope, scopeSession, substitutor,
-            skipPrivateMembers, containingClassForAdditionalMembers.classId, makeExpect = isFromExpectClass
+            useSiteSession, basicScope, substitutor, skipPrivateMembers,
+            containingClassForAdditionalMembers.classId, makeExpect = isFromExpectClass
         )
     }
 }

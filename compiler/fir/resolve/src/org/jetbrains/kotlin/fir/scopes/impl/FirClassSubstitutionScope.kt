@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.chain
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.name.Name
 class FirClassSubstitutionScope(
     private val session: FirSession,
     private val useSiteMemberScope: FirTypeScope,
-    scopeSession: ScopeSession,
     private val substitutor: ConeSubstitutor,
     private val skipPrivateMembers: Boolean,
     private val derivedClassId: ClassId? = null,
@@ -44,10 +42,12 @@ class FirClassSubstitutionScope(
     private val fakeOverrideVariables = mutableMapOf<FirVariableSymbol<*>, FirVariableSymbol<*>>()
 
     constructor(
-        session: FirSession, useSiteMemberScope: FirTypeScope, scopeSession: ScopeSession,
+        session: FirSession,
+        useSiteMemberScope: FirTypeScope,
         substitution: Map<FirTypeParameterSymbol, ConeKotlinType>,
-        skipPrivateMembers: Boolean, derivedClassId: ClassId?
-    ) : this(session, useSiteMemberScope, scopeSession, substitutorByMap(substitution), skipPrivateMembers, derivedClassId)
+        skipPrivateMembers: Boolean,
+        derivedClassId: ClassId?
+    ) : this(session, useSiteMemberScope, substitutorByMap(substitution), skipPrivateMembers, derivedClassId)
 
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
         useSiteMemberScope.processFunctionsByName(name) process@{ original ->
