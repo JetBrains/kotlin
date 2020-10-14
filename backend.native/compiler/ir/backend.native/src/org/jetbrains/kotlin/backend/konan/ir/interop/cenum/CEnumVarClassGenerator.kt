@@ -81,7 +81,7 @@ internal class CEnumVarClassGenerator(
         val superConstructorSymbol = symbolTable.referenceConstructor(interopBuiltIns.cPrimitiveVarType.unsubstitutedPrimaryConstructor!!)
         return createConstructor(companionObjectDescriptor.unsubstitutedPrimaryConstructor!!).also {
             it.body = irBuilder(irBuiltIns, it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
-                +IrDelegatingConstructorCallImpl(
+                +IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
                         startOffset, endOffset, context.irBuiltIns.unitType,
                         superConstructorSymbol,
                         superConstructorSymbol.owner.typeParameters.size,

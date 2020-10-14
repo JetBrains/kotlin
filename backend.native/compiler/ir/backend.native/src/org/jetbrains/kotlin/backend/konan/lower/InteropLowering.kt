@@ -496,7 +496,7 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
 
             return builder.irBlock(expression) {
                 // Required for the IR to be valid, will be ignored in codegen:
-                +IrDelegatingConstructorCallImpl(
+                +IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
                         startOffset,
                         endOffset,
                         context.irBuiltIns.unitType,

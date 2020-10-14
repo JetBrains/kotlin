@@ -52,7 +52,7 @@ internal class CEnumCompanionGenerator(
         val superConstructorSymbol = symbolTable.referenceConstructor(anyPrimaryConstructor)
         return createConstructor(companionObjectDescriptor.unsubstitutedPrimaryConstructor!!).also {
             it.body = irBuilder(irBuiltIns, it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
-                +IrDelegatingConstructorCallImpl(
+                +IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
                         startOffset, endOffset, context.irBuiltIns.unitType,
                         superConstructorSymbol,
                         superConstructorSymbol.owner.typeParameters.size,

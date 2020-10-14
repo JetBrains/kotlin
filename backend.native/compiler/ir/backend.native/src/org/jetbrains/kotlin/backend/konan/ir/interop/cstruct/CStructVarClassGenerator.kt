@@ -62,7 +62,7 @@ internal class CStructVarClassGenerator(
         )
         return createConstructor(irClass.descriptor.unsubstitutedPrimaryConstructor!!).also { irConstructor ->
             irConstructor.body = irBuilder(irBuiltIns, irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
-                +IrDelegatingConstructorCallImpl(
+                +IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
                         startOffset, endOffset,
                         context.irBuiltIns.unitType, enumVarConstructorSymbol,
                         irConstructor.typeParameters.size,

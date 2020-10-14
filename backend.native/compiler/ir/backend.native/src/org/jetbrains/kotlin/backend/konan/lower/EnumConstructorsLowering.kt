@@ -176,7 +176,7 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
                 val endOffset = enumConstructorCall.endOffset
                 val origin = enumConstructorCall.origin
 
-                val result = IrDelegatingConstructorCallImpl(
+                val result = IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
                         startOffset, endOffset,
                         context.irBuiltIns.unitType,
                         enumConstructorCall.symbol,
@@ -213,7 +213,7 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
                     throw AssertionError("Constructor called in enum entry initializer should've been lowered: $delegatingConstructor")
                 }
 
-                val result = IrDelegatingConstructorCallImpl(
+                val result = IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
                         startOffset, endOffset,
                         context.irBuiltIns.unitType,
                         loweredDelegatingConstructor.symbol,

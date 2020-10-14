@@ -46,7 +46,7 @@ internal class CStructVarCompanionGenerator(
         val superConstructorSymbol = symbolTable.referenceConstructor(interopBuiltIns.cStructVarType.unsubstitutedPrimaryConstructor!!)
         return createConstructor(companionObjectDescriptor.unsubstitutedPrimaryConstructor!!).also { irConstructor ->
             irConstructor.body = irBuilder(irBuiltIns, irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
-                +IrDelegatingConstructorCallImpl(
+                +IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
                         startOffset, endOffset, context.irBuiltIns.unitType,
                         superConstructorSymbol,
                         irConstructor.typeParameters.size,
