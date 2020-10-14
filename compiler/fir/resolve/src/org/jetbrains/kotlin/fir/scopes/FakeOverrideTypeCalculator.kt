@@ -10,28 +10,32 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataKey
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry
 import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 abstract class FakeOverrideTypeCalculator {
-    abstract fun computeReturnType(declaration: FirTypedDeclaration): ConeKotlinType?
+    abstract fun computeReturnType(declaration: FirTypedDeclaration): FirTypeRef
 
-    class DoNothing : FakeOverrideTypeCalculator() {
-        override fun computeReturnType(declaration: FirTypedDeclaration): ConeKotlinType? {
-            return declaration.returnTypeRef.coneTypeSafe()
+    object DoNothing : FakeOverrideTypeCalculator() {
+        override fun computeReturnType(declaration: FirTypedDeclaration): FirTypeRef {
+            return declaration.returnTypeRef
         }
     }
 }
 
-class ForcedFakeOverrideTypeCalculator : FakeOverrideTypeCalculator() {
-    override fun computeReturnType(declaration: FirTypedDeclaration): ConeKotlinType {
-        declaration.returnTypeRef.coneTypeSafe<ConeKotlinType>()?.let { return it }
+object ForcedFakeOverrideTypeCalculator : FakeOverrideTypeCalculator() {
+    override fun computeReturnType(declaration: FirTypedDeclaration): FirResolvedTypeRef {
+        (declaration.returnTypeRef as? FirResolvedTypeRef)?.let { return it }
         val (substitutor, baseSymbol) = declaration.attributes.fakeOverrideSubstitution ?: error("")
         val baseDeclaration = baseSymbol.fir as FirTypedDeclaration
-        val returnType = computeReturnType(baseDeclaration)
+        val baseReturnType = computeReturnType(baseDeclaration).type
         declaration.attributes.fakeOverrideSubstitution = null
-        return substitutor.substituteOrSelf(returnType)
+        val coneType = substitutor.substituteOrSelf(baseReturnType)
+        val returnType = declaration.returnTypeRef.resolvedTypeFromPrototype(coneType)
+        declaration.replaceReturnTypeRef(returnType)
+        return returnType
     }
 }
 

@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForLocalClass
+import org.jetbrains.kotlin.fir.scopes.ForcedFakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.symbols.PossiblyFirFakeOverrideSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
@@ -25,6 +27,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 @OptIn(AdapterForResolveProcessor::class)
 class FirImplicitTypeBodyResolveProcessor(
@@ -214,6 +217,13 @@ private class ReturnTypeCalculatorWithJump(
             val result = tryCalculateReturnType(declaration.symbol.overriddenSymbol!!.fir)
             declaration.replaceReturnTypeRef(result)
             return result
+        }
+
+        runIf(declaration.origin == FirDeclarationOrigin.FakeOverride) {
+            val possiblyFirFakeOverrideSymbol = declaration.symbol as PossiblyFirFakeOverrideSymbol<*, *>
+            val overriddenDeclaration = possiblyFirFakeOverrideSymbol.overriddenSymbol?.fir as FirTypedDeclaration? ?: return@runIf
+            tryCalculateReturnType(overriddenDeclaration)
+            return ForcedFakeOverrideTypeCalculator.computeReturnType(declaration)
         }
 
         return when (val status = implicitBodyResolveComputationSession.getStatus(declaration.symbol)) {

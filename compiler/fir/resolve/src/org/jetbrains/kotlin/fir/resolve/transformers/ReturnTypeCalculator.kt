@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.ForcedFakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 
