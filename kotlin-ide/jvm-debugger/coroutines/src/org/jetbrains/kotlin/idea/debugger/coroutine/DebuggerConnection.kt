@@ -13,6 +13,7 @@ import com.intellij.execution.ui.RunnerLayoutUi
 import com.intellij.execution.ui.layout.PlaceInGrid
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JdkUtil
 import com.intellij.openapi.util.Disposer
@@ -37,17 +38,20 @@ class DebuggerConnection(
     modifyArgs: Boolean = true
 ) : XDebuggerManagerListener, Disposable {
     var connection: MessageBusConnection? = null
+    private var coroutineAgentAttached: Boolean = false
     private val log by logger
 
     init {
         if (params is JavaParameters && modifyArgs) {
             // gradle related logic in KotlinGradleCoroutineDebugProjectResolver
             val kotlinxCoroutinesCore = params.classPath?.pathList?.firstOrNull { it.contains("kotlinx-coroutines-core") }
-
             if (kotlinxCoroutinesCore != null) {
                 val mode = determineCoreVersionMode(kotlinxCoroutinesCore)
                 when (mode) {
-                    CoroutineDebuggerMode.VERSION_1_3_8_AND_UP -> initializeCoroutineAgent(params, kotlinxCoroutinesCore)
+                    CoroutineDebuggerMode.VERSION_1_3_8_AND_UP -> {
+                        initializeCoroutineAgent(params, kotlinxCoroutinesCore)
+                        coroutineAgentAttached = true
+                    }
                     else -> log.debug("CoroutineDebugger disabled.")
                 }
             }
@@ -91,7 +95,7 @@ class DebuggerConnection(
     override fun processStarted(debugProcess: XDebugProcess) {
         DebuggerInvocationUtil.swingInvokeLater(project) {
             if (debugProcess is JavaDebugProcess) {
-                if (!Disposer.isDisposed(this)) {
+                if (!Disposer.isDisposed(this) && coroutinesPanelShouldBeShown()) {
                     registerXCoroutinesPanel(debugProcess.session)?.let {
                         Disposer.register(this, it)
                     }
@@ -116,6 +120,8 @@ class DebuggerConnection(
         session.rebuildViews()
         return xCoroutineThreadView
     }
+
+    private fun coroutinesPanelShouldBeShown() = configuration is ExternalSystemRunConfiguration || coroutineAgentAttached
 
     private fun createContent(ui: RunnerLayoutUi, createContentParamProvider: CreateContentParamsProvider): Content {
         val param = createContentParamProvider.createContentParams()
