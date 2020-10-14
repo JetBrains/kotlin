@@ -22,14 +22,11 @@ kotlin {
 	// Check the new preset functions:
 	jvm('jvm6') { }
     js('nodeJs')
-    targetFromPreset(presets.wasm32) { println targetName }
     targetFromPreset(presets.jvm, 'jvm6') { println targetName } // access existing target
     
     targets {
     	// Also check that the old DSL (fromPreset) works:
         fromPreset(presets.linuxX64, 'linux64')
-        fromPreset(presets.mingwX64, 'mingw64')
-        fromPreset(presets.macosX64, 'macos64')
 
         // Check the DSL constructs in the Groovy DSL:
         fromPreset(presets.jvm, 'jvm6') {

@@ -22,7 +22,6 @@ kotlin {
 	// Check the new preset functions:
 	jvm('jvm6') { }
     js('nodeJs')
-    targetFromPreset(presets.wasm32) { println targetName }
     targetFromPreset(presets.jvm, 'jvm6') { println targetName } // access existing target
     
     targets {
@@ -30,7 +29,7 @@ kotlin {
         fromPreset(presets.linuxX64, 'linux64')
         fromPreset(presets.mingwX64, 'mingw64')
         fromPreset(presets.macosX64, 'macos64')
-        
+
         // We use this library in the cinterop test which includes a Windows x86 target.
         fromPreset(presets.mingwX86, 'mingw86')
 

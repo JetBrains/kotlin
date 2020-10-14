@@ -31,10 +31,10 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class NewMultiplatformIT : BaseGradleIT() {
-    val gradleVersion = GradleVersionRequired.FOR_MPP_SUPPORT
+    private val gradleVersion = GradleVersionRequired.FOR_MPP_SUPPORT
 
-    val nativeHostTargetName = MPPNativeTargets.current
-    val unsupportedNativeTargets = MPPNativeTargets.unsupported
+    private val nativeHostTargetName = MPPNativeTargets.current
+    private val unsupportedNativeTargets = MPPNativeTargets.unsupported
 
     private fun Project.targetClassesDir(targetName: String, sourceSetName: String = "main") =
         classesDir(sourceSet = "$targetName/$sourceSetName")
@@ -60,7 +60,7 @@ class NewMultiplatformIT : BaseGradleIT() {
         val oldStyleAppProject = Project("sample-old-style-app", directoryPrefix = "new-mpp-lib-and-app")
 
         val compileTasksNames =
-            listOf("Jvm6", "NodeJs", "Metadata", nativeHostTargetName.capitalize()).map { ":compileKotlin$it" }
+            listOf("Jvm6", "NodeJs", "Metadata", "Linux64").map { ":compileKotlin$it" }
 
         with(libProject) {
             build(
@@ -74,8 +74,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 val jsExtension = "jar"
                 val jsJarName = "sample-lib-nodejs/1.0/sample-lib-nodejs-1.0.$jsExtension"
                 val metadataJarName = "sample-lib/1.0/sample-lib-1.0.jar"
-                val wasmKlibName = "sample-lib-wasm32/1.0/sample-lib-wasm32-1.0.klib"
-                val nativeKlibName = "sample-lib-$nativeHostTargetName/1.0/sample-lib-$nativeHostTargetName-1.0.klib"
+                val nativeKlibName = "sample-lib-linux64/1.0/sample-lib-linux64-1.0.klib"
 
                 listOf(jvmJarName, jsJarName, metadataJarName, "sample-lib/1.0/sample-lib-1.0.module").forEach {
                     Assert.assertTrue("$it should exist", groupDir.resolve(it).exists())
@@ -84,7 +83,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 val gradleMetadata = groupDir.resolve("sample-lib/1.0/sample-lib-1.0.module").readText()
                 assertFalse(gradleMetadata.contains(ProjectLocalConfigurations.ATTRIBUTE.name))
 
-                listOf(jvmJarName, jsJarName, wasmKlibName, nativeKlibName).forEach {
+                listOf(jvmJarName, jsJarName, nativeKlibName).forEach {
                     val pom = groupDir.resolve(it.replaceAfterLast('.', "pom"))
                     Assert.assertTrue(
                         "$pom should contain a name section.",
@@ -110,7 +109,6 @@ class NewMultiplatformIT : BaseGradleIT() {
                 val metadataJarEntries = ZipFile(groupDir.resolve(metadataJarName)).entries().asSequence().map { it.name }.toSet()
                 Assert.assertTrue("com/example/lib/CommonKt.kotlin_metadata" in metadataJarEntries)
 
-                Assert.assertTrue(groupDir.resolve(wasmKlibName).exists())
                 Assert.assertTrue(groupDir.resolve(nativeKlibName).exists())
             }
         }
@@ -155,15 +153,8 @@ class NewMultiplatformIT : BaseGradleIT() {
                     Assert.assertTrue(contains("function nodeJsMain("))
                 }
 
-                projectDir.resolve(targetClassesDir("wasm32")).run {
-                    Assert.assertTrue(resolve("sample-app.klib").exists())
-                }
-
-                assertFileExists("build/bin/wasm32/mainDebugExecutable/main.wasm.js")
-                assertFileExists("build/bin/wasm32/mainDebugExecutable/main.wasm")
-
                 val nativeExeName = if (isWindows) "main.exe" else "main.kexe"
-                assertFileExists("build/bin/$nativeHostTargetName/mainDebugExecutable/$nativeExeName")
+                assertFileExists("build/bin/linux64/mainDebugExecutable/$nativeExeName")
 
                 // Check that linker options were correctly passed to the K/N compiler.
                 checkProgramCompilationCommandLine {
@@ -418,7 +409,7 @@ class NewMultiplatformIT : BaseGradleIT() {
 
     @Test
     fun testResourceProcessing() = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
-        val targetsWithResources = listOf("jvm6", "nodeJs", "wasm32", nativeHostTargetName)
+        val targetsWithResources = listOf("jvm6", "nodeJs", "linux64")
         val processResourcesTasks =
             targetsWithResources.map { ":${it}ProcessResources" }
 
@@ -716,7 +707,7 @@ class NewMultiplatformIT : BaseGradleIT() {
         )
 
         listOf(
-            "compileKotlinMetadata", "compileKotlinJvm6", "compileKotlinNodeJs", "compileKotlin${nativeHostTargetName.capitalize()}"
+            "compileKotlinMetadata", "compileKotlinJvm6", "compileKotlinNodeJs", "compileKotlinLinux64"
         ).forEach {
             build(it) {
                 assertSuccessful()
@@ -998,7 +989,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             """.trimIndent()
         )
 
-        build("compileKotlinJvmWithoutJava", "compileKotlin${nativeHostTargetName.capitalize()}") {
+        build("compileKotlinJvmWithoutJava", "compileKotlinLinux64") {
             assertSuccessful()
             assertFileExists(targetClassesDir("jvmWithoutJava") + "OptionalCommonUsage.class")
         }
@@ -1015,12 +1006,12 @@ class NewMultiplatformIT : BaseGradleIT() {
             assertContains("Declaration annotated with '@OptionalExpectation' can only be used in common module sources", ignoreCase = true)
         }
 
-        projectDir.resolve("src/${nativeHostTargetName}Main/kotlin/").also {
+        projectDir.resolve("src/linux64Main/kotlin/").also {
             it.mkdirs()
             it.resolve("OptionalImpl.kt").writeText(optionalImplText)
         }
 
-        build("compileKotlin${nativeHostTargetName.capitalize()}") {
+        build("compileKotlinLinux64") {
             assertFailed()
             assertContains("Declaration annotated with '@OptionalExpectation' can only be used in common module sources", ignoreCase = true)
         }
@@ -1034,7 +1025,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             assertSuccessful()
 
             val groupDir = projectDir.resolve("repo/com/example/")
-            val targetArtifactIdAppendices = listOf("metadata", "jvm6", "nodejs", "wasm32", nativeHostTargetName)
+            val targetArtifactIdAppendices = listOf("metadata", "jvm6", "nodejs", "linux64")
 
             val sourceJarSourceRoots = targetArtifactIdAppendices.associate { artifact ->
                 val sourcesJar = JarFile(groupDir.resolve("sample-lib-$artifact/1.0/sample-lib-$artifact-1.0-sources.jar"))
@@ -1045,8 +1036,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             assertEquals(setOf("commonMain"), sourceJarSourceRoots["metadata"])
             assertEquals(setOf("commonMain", "jvm6Main"), sourceJarSourceRoots["jvm6"])
             assertEquals(setOf("commonMain", "nodeJsMain"), sourceJarSourceRoots["nodejs"])
-            assertEquals(setOf("commonMain", "wasm32Main"), sourceJarSourceRoots["wasm32"])
-            assertEquals(setOf("commonMain", "${nativeHostTargetName}Main"), sourceJarSourceRoots[nativeHostTargetName])
+            assertEquals(setOf("commonMain", "linux64Main"), sourceJarSourceRoots["linux64"])
         }
     }
 
@@ -1273,7 +1263,7 @@ class NewMultiplatformIT : BaseGradleIT() {
 
         build("assemble", printOptionsTaskName) {
             assertSuccessful()
-            assertTasksExecuted(*listOf("Jvm6", "NodeJs", nativeHostTargetName.capitalize()).map { ":compileKotlin$it" }.toTypedArray())
+            assertTasksExecuted(*listOf("Jvm6", "NodeJs", "Linux64").map { ":compileKotlin$it" }.toTypedArray())
             assertFileExists("build/classes/kotlin/jvm6/main/com/example/Annotated.class")
             assertFileExists("build/classes/kotlin/jvm6/main/com/example/Override.class")
             assertFileContains("build/classes/kotlin/nodeJs/main/sample-lib.js", "Override")
@@ -1368,7 +1358,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             }
 
             val expectedDefaultSourceSets = listOf(
-                "jvm6", "nodeJs", "wasm32", "mingw64", "mingw86", "linux64", "macos64"
+                "jvm6", "nodeJs", "mingw64", "mingw86", "linux64", "macos64"
             ).flatMapTo(mutableSetOf()) { target ->
                 listOf("main", "test").map { compilation ->
                     Triple(target, compilation, "$target${compilation.capitalize()}")
@@ -1587,7 +1577,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             setupWorkingDir()
             gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
 
-            val tasks = listOf("jvm", "js", nativeHostTargetName).map { ":compileIntegrationTestKotlin${it.capitalize()}" }
+            val tasks = listOf("jvm", "js", "linux64").map { ":compileIntegrationTestKotlin${it.capitalize()}" }
 
             build(
                 *tasks.toTypedArray()
@@ -1609,7 +1599,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 )
 
                 // Native:
-                assertFileExists("build/classes/kotlin/$nativeHostTargetName/integrationTest/new-mpp-associate-compilations_integrationTest.klib")
+                assertFileExists("build/classes/kotlin/linux64/integrationTest/new-mpp-associate-compilations_integrationTest.klib")
             }
 
             gradleBuildScript().appendText(
