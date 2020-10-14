@@ -39,6 +39,11 @@ object FirDeclarationDataRegistry : TypeRegistry<FirDeclarationDataKey, Any>() {
         return DeclarationDataAccessor(generateNullableAccessor(kClass), kClass)
     }
 
+    fun <K : FirDeclarationDataKey, V : Any> attributesAccessor(key: K): ReadWriteProperty<FirDeclarationAttributes, V?> {
+        val kClass = key::class
+        return AttributeDataAccessor(generateNullableAccessor(kClass), kClass)
+    }
+
     private class DeclarationDataAccessor<V : Any>(
         val dataAccessor: NullableArrayMapAccessor<FirDeclarationDataKey, Any, V>,
         val key: KClass<out FirDeclarationDataKey>
@@ -49,6 +54,19 @@ object FirDeclarationDataRegistry : TypeRegistry<FirDeclarationDataKey, Any>() {
 
         override fun setValue(thisRef: FirDeclaration, property: KProperty<*>, value: V?) {
             thisRef.attributes[key] = value
+        }
+    }
+
+    private class AttributeDataAccessor<V : Any>(
+        val dataAccessor: NullableArrayMapAccessor<FirDeclarationDataKey, Any, V>,
+        val key: KClass<out FirDeclarationDataKey>
+    ) : ReadWriteProperty<FirDeclarationAttributes, V?> {
+        override fun getValue(thisRef: FirDeclarationAttributes, property: KProperty<*>): V? {
+            return dataAccessor.getValue(thisRef, property)
+        }
+
+        override fun setValue(thisRef: FirDeclarationAttributes, property: KProperty<*>, value: V?) {
+            thisRef[key] = value
         }
     }
 }
