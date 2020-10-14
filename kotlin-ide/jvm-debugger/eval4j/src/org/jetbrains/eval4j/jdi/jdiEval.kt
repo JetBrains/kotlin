@@ -45,7 +45,7 @@ open class JDIEval(
     }
 
     private fun loadClass(classType: Type, classLoader: ClassLoaderReference?): Value {
-        val loadedClasses = vm.classesByName(classType.internalName)
+        val loadedClasses = vm.classesByName(classType.jdiName)
         if (loadedClasses.isNotEmpty()) {
             for (loadedClass in loadedClasses) {
                 if (loadedClass.isPrepared && (classType.descriptor in BOOTSTRAP_CLASS_DESCRIPTORS || loadedClass.classLoader() == classLoader)) {
@@ -61,7 +61,7 @@ open class JDIEval(
                     "(Ljava/lang/String;)Ljava/lang/Class;",
                     true
                 ),
-                listOf(vm.mirrorOf(classType.internalName.replace('/', '.')).asValue())
+                listOf(vm.mirrorOf(classType.jdiName).asValue())
             )
         } else {
             return invokeStaticMethod(
@@ -72,7 +72,7 @@ open class JDIEval(
                     true
                 ),
                 listOf(
-                    vm.mirrorOf(classType.internalName.replace('/', '.')).asValue(),
+                    vm.mirrorOf(classType.jdiName).asValue(),
                     boolean(true),
                     classLoader.asValue()
                 )
@@ -495,6 +495,9 @@ open class JDIEval(
         }
     }
 }
+
+internal val Type.jdiName: String
+    get() = internalName.replace('/', '.')
 
 @Suppress("unused")
 private sealed class JdiOperationResult<T> {

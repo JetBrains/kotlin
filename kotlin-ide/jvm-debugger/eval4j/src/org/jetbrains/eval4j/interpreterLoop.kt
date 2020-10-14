@@ -17,6 +17,7 @@
 package org.jetbrains.eval4j
 
 import org.jetbrains.eval4j.ExceptionThrown.ExceptionKind
+import org.jetbrains.eval4j.jdi.jdiName
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -123,7 +124,7 @@ fun interpreterLoop(
             try {
                 val exceptionClass = exception::class.java
                 val clazz = Class.forName(
-                    exceptionType.internalName.replace('/', '.'),
+                    exceptionType.jdiName,
                     true,
                     exceptionClass.classLoader
                 )
