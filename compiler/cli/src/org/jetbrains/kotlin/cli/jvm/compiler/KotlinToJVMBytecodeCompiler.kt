@@ -50,6 +50,8 @@ import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.GenerationStateEventCallback
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.container.get
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fir.FirPsiSourceElement
@@ -73,10 +75,12 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.diagnostics.SimpleDiagnostics
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
+import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
 import java.io.File
 
@@ -377,9 +381,17 @@ object KotlinToJVMBytecodeCompiler {
             val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
             val codegenFactory = JvmIrCodegenFactory(moduleConfiguration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases))
+
+            // Create and initialize the module and its dependencies
+            val container = TopDownAnalyzerFacadeForJVM.createContainer(
+                project, ktFiles, NoScopeRecordCliBindingTrace(), environment.configuration, environment::createPackagePartProvider,
+                ::FileBasedDeclarationProviderFactory, CompilerEnvironment,
+                TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, ktFiles), emptyList()
+            )
+
             val generationState = GenerationState.Builder(
                 environment.project, ClassBuilderFactories.BINARIES,
-                moduleFragment.descriptor, dummyBindingContext, ktFiles,
+                container.get<ModuleDescriptor>(), dummyBindingContext, ktFiles,
                 moduleConfiguration
             ).codegenFactory(
                 codegenFactory
