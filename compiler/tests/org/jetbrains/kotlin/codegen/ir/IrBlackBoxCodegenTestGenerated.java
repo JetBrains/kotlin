@@ -2023,6 +2023,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/callableReference/genericConstructorReference.kt");
         }
 
+        @TestMetadata("javaField.kt")
+        public void testJavaField() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/javaField.kt");
+        }
+
         @TestMetadata("kt37604.kt")
         public void testKt37604() throws Exception {
             runTest("compiler/testData/codegen/box/callableReference/kt37604.kt");
