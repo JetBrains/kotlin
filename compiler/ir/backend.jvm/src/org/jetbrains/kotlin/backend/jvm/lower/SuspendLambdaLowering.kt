@@ -214,7 +214,7 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
             INVOKE_SUSPEND_METHOD_NAME + FOR_INLINE_SUFFIX,
             context.irBuiltIns.anyNType,
             Modality.FINAL,
-            origin = JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE
+            origin = JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
         ).apply {
             copyAttributes(invokeSuspend)
             generateErrorForInlineBody()

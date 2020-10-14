@@ -248,6 +248,7 @@ class ExpressionCodegen(
     }
 
     private fun generateFakeContinuationConstructorIfNeeded() {
+        if (!irFunction.isSuspendCapturingCrossinline()) return
         val continuationClass = irFunction.continuationClass() ?: return
         val continuationType = typeMapper.mapClass(continuationClass)
         val continuationIndex = frameMap.getIndex(irFunction.continuationParameter()!!.symbol)
