@@ -443,6 +443,7 @@ allprojects {
 
             if (useJvmIrBackend) {
                 useIR = true
+                freeCompilerArgs += "-Xir-binary-with-stable-abi"
             }
         }
     }
