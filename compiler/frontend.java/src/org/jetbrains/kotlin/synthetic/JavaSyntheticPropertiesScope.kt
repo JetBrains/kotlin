@@ -162,7 +162,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
         return descriptor.valueParameters.isEmpty()
                 && descriptor.typeParameters.isEmpty()
                 && descriptor.visibility.isVisibleOutside()
-                && !descriptor.isHiddenForResolutionEverywhereBesideSupercalls
+                && !(descriptor.isHiddenForResolutionEverywhereBesideSupercalls && descriptor.name.asString() == "isEmpty") // CharSequence.isEmpty() from JDK15
     }
 
     private fun isGoodSetMethod(descriptor: FunctionDescriptor, getMethod: FunctionDescriptor): Boolean {
@@ -179,7 +179,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
         return parameter.varargElementType == null
                 && descriptor.typeParameters.isEmpty()
                 && descriptor.visibility.isVisibleOutside()
-                && !descriptor.isHiddenForResolutionEverywhereBesideSupercalls
+                && !(descriptor.isHiddenForResolutionEverywhereBesideSupercalls && descriptor.name.asString() == "isEmpty") // CharSequence.isEmpty() from JDK15
     }
 
     private fun FunctionDescriptor.findOverridden(condition: (FunctionDescriptor) -> Boolean): FunctionDescriptor? {

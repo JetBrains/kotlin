@@ -11045,6 +11045,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/enum/constructorWithReordering.kt");
         }
 
+        @TestMetadata("declaringClassOnEnumObject.kt")
+        public void testDeclaringClassOnEnumObject() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/declaringClassOnEnumObject.kt");
+        }
+
         @TestMetadata("deepInnerClassInEnumEntryClass.kt")
         public void testDeepInnerClassInEnumEntryClass() throws Exception {
             runTest("compiler/testData/codegen/box/enum/deepInnerClassInEnumEntryClass.kt");
