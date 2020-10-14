@@ -268,47 +268,6 @@ internal fun FirProperty.generateOverriddenAccessorSymbols(
     return overriddenSet.toList()
 }
 
-fun isOverriding(
-    irBuiltIns: IrBuiltIns,
-    target: IrDeclaration,
-    superCandidate: IrDeclaration
-): Boolean {
-    val typeCheckerContext = IrTypeCheckerContext(irBuiltIns) as AbstractTypeCheckerContext
-    fun equalTypes(first: IrType, second: IrType): Boolean {
-        if (first is IrErrorType || second is IrErrorType) return false
-        return AbstractTypeChecker.equalTypes(
-            typeCheckerContext, first, second
-        ) ||
-                // TODO: should pass type parameter cache, and make sure target type is indeed a matched type argument.
-                second.classifierOrNull is IrTypeParameterSymbol
-
-    }
-
-    return when {
-        target is IrFunction && superCandidate is IrFunction -> {
-            // Not checking the return type (they should match each other if everything other match, otherwise it's a compilation error)
-            target.name == superCandidate.name &&
-                    target.extensionReceiverParameter?.type?.let {
-                        val superCandidateReceiverType = superCandidate.extensionReceiverParameter?.type
-                        superCandidateReceiverType != null && equalTypes(it, superCandidateReceiverType)
-                    } != false &&
-                    target.valueParameters.size == superCandidate.valueParameters.size &&
-                    target.valueParameters.zip(superCandidate.valueParameters).all { (targetParameter, superCandidateParameter) ->
-                        equalTypes(targetParameter.type, superCandidateParameter.type)
-                    }
-        }
-        target is IrField && superCandidate is IrField -> {
-            // Not checking the field type (they should match each other if everything other match, otherwise it's a compilation error)
-            target.name == superCandidate.name
-        }
-        target is IrProperty && superCandidate is IrProperty -> {
-            // Not checking the property type (they should match each other if names match, otherwise it's a compilation error)
-            target.name == superCandidate.name
-        }
-        else -> false
-    }
-}
-
 private val nameToOperationConventionOrigin = mutableMapOf(
     OperatorNameConventions.PLUS to IrStatementOrigin.PLUS,
     OperatorNameConventions.MINUS to IrStatementOrigin.MINUS,

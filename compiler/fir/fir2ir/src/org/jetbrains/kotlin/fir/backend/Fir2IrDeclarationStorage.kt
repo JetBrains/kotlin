@@ -776,20 +776,6 @@ class Fir2IrDeclarationStorage(
         return irField
     }
 
-    internal fun findOverriddenFirFunction(irFunction: IrSimpleFunction, superClassId: ClassId): FirFunction<*>? {
-        val functions = getFirClassByFqName(superClassId)?.declarations?.filter {
-            it is FirFunction<*> && functionCache.containsKey(it) && irFunction.overrides(functionCache[it]!!)
-        }
-        return if (functions.isNullOrEmpty()) null else functions.first() as FirFunction<*>
-    }
-
-    internal fun findOverriddenFirProperty(irProperty: IrProperty, superClassId: ClassId): FirProperty? {
-        val properties = getFirClassByFqName(superClassId)?.declarations?.filter {
-            it is FirProperty && it.name == irProperty.name
-        }
-        return if (properties.isNullOrEmpty()) null else properties.first() as FirProperty
-    }
-
     private fun getFirClassByFqName(classId: ClassId): FirClass<*>? {
         val declaration = firSymbolProvider.getClassLikeSymbolByFqName(classId)
         return declaration?.fir as? FirClass<*>
