@@ -68,6 +68,8 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
             runBefore(TemplatesPlugin.renderFileTemplates)
             isAvailable = isGradle
             withAction {
+                val properties = localProperties.propertyValue
+                if (properties.isEmpty()) return@withAction UNIT_SUCCESS
                 TemplatesPlugin.addFileTemplate.execute(
                     FileTemplate(
                         FileTemplateDescriptor(
