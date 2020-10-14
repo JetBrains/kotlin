@@ -340,5 +340,9 @@ interface ModuleConfigurator : DisplayableSettingItem, EntitiesOwnerDescriptor {
 }
 
 interface GradleModuleConfigurator : ModuleConfigurator {
-    fun Reader.createSettingsGradleIRs(module: Module): List<BuildSystemIR> = emptyList()
+    fun createSettingsGradleIRs(
+        reader: Reader,
+        module: Module,
+        data: ModulesToIrConversionData
+    ): List<BuildSystemIR> = emptyList()
 }

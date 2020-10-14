@@ -392,6 +392,7 @@ object MultiplatformMobileLibraryProjectTemplate : ProjectTemplate() {
             KotlinPlugin.modules.reference withValue listOf(
                 MultiplatformModule(
                     "library",
+                    template = MobileMppTemplate(),
                     targets = listOf(
                         ModuleType.common.createDefaultTarget(),
                         Module(
