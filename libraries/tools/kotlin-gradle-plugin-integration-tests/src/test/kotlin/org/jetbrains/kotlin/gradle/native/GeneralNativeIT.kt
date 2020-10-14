@@ -47,15 +47,15 @@ internal object MPPNativeTargets {
     val supported = listOf("linux64", "macos64", "mingw64").filter { !unsupported.contains(it) }
 }
 
-private fun BaseGradleIT.transformNativeTestProject(projectName: String, directoryPrefix: String? = null): BaseGradleIT.Project {
-    val project = Project(projectName, directoryPrefix = directoryPrefix)
+internal fun BaseGradleIT.transformNativeTestProject(projectName: String, wrapperVersion: GradleVersionRequired = defaultGradleVersion, directoryPrefix: String? = null): BaseGradleIT.Project {
+    val project = Project(projectName, wrapperVersion, directoryPrefix = directoryPrefix)
     project.setupWorkingDir()
     project.configureSingleNativeTarget()
     project.configureMemoryInGradleProperties()
     return project
 }
 
-fun BaseGradleIT.transformNativeTestProjectWithPluginDsl(projectName: String, wrapperVersion: GradleVersionRequired = defaultGradleVersion, directoryPrefix: String? = null): BaseGradleIT.Project {
+internal fun BaseGradleIT.transformNativeTestProjectWithPluginDsl(projectName: String, wrapperVersion: GradleVersionRequired = defaultGradleVersion, directoryPrefix: String? = null): BaseGradleIT.Project {
     val project = transformProjectWithPluginsDsl(projectName, wrapperVersion, directoryPrefix = directoryPrefix)
     project.configureSingleNativeTarget()
     project.configureMemoryInGradleProperties()
@@ -63,14 +63,11 @@ fun BaseGradleIT.transformNativeTestProjectWithPluginDsl(projectName: String, wr
 }
 
 internal fun BaseGradleIT.Project.configureMemoryInGradleProperties() {
-    val files = projectDir.walk()
-        .filter { it.isFile && (it.name == "gradle.properties") }.toMutableList()
-    if (files.isEmpty()) {
-        files.add(projectDir.resolve("gradle.properties").also { it.createNewFile() })
+    val file = projectDir.resolve("gradle.properties")
+    if (file.exists()) {
+        file.createNewFile()
     }
-    files.forEach { file ->
-        file.appendText("\norg.gradle.jvmargs=-Xmx1g\n")
-    }
+    file.appendText("\norg.gradle.jvmargs=-Xmx1g\n")
 }
 
 private const val SINGLE_NATIVE_TARGET_PLACEHOLDER = "<SingleNativeTarget>"
