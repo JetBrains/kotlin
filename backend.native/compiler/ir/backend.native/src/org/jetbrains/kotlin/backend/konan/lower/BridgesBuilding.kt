@@ -234,7 +234,7 @@ private fun Context.buildBridge(startOffset: Int, endOffset: Int,
         val typeSafeBarrierDescription = BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(overriddenFunction.overriddenFunction.descriptor)
         typeSafeBarrierDescription?.let { buildTypeSafeBarrier(bridge, overriddenFunction.function, it) }
 
-        val delegatingCall = IrCallImpl(
+        val delegatingCall = IrCallImpl.fromSymbolDescriptor(
                 startOffset,
                 endOffset,
                 targetSymbol.owner.returnType,

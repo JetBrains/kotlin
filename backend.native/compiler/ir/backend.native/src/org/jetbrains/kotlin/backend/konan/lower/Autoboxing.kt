@@ -93,7 +93,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     override fun IrExpression.useAs(type: IrType): IrExpression {
         if (this.isNullConst() && type.isNullablePointer()) {
             // TODO: consider using IrConst with proper type.
-            return IrCallImpl(
+            return IrCallImpl.fromSymbolDescriptor(
                     startOffset,
                     endOffset,
                     symbols.getNativeNullPtr.owner.returnType,

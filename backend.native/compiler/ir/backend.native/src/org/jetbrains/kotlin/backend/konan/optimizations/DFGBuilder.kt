@@ -332,7 +332,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
             if (expression is IrCall && expression.symbol == executeImplSymbol) {
                 // Producer and job of executeImpl are called externally, we need to reflect this somehow.
-                val producerInvocation = IrCallImpl(expression.startOffset, expression.endOffset,
+                val producerInvocation = IrCallImpl.fromSymbolDescriptor(expression.startOffset, expression.endOffset,
                         executeImplProducerInvoke.returnType,
                         executeImplProducerInvoke.symbol,
                         executeImplProducerInvoke.symbol.owner.typeParameters.size,
@@ -343,7 +343,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
                 val jobFunctionReference = expression.getValueArgument(3) as? IrFunctionReference
                         ?: error("A function reference expected")
-                val jobInvocation = IrCallImpl(expression.startOffset, expression.endOffset,
+                val jobInvocation = IrCallImpl.fromSymbolDescriptor(expression.startOffset, expression.endOffset,
                         jobFunctionReference.symbol.owner.returnType,
                         jobFunctionReference.symbol as IrSimpleFunctionSymbol,
                         jobFunctionReference.symbol.owner.typeParameters.size,
@@ -357,7 +357,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
             // See ObjC instanceOf code generation for details.
             if (expression is IrTypeOperatorCall && expression.operator.callsInstanceOf()
                     && expression.typeOperand.isObjCObjectType()) {
-                val objcObjGetter = IrCallImpl(expression.startOffset, expression.endOffset,
+                val objcObjGetter = IrCallImpl.fromSymbolDescriptor(expression.startOffset, expression.endOffset,
                         objCObjectRawValueGetter.owner.returnType,
                         objCObjectRawValueGetter,
                         objCObjectRawValueGetter.owner.typeParameters.size,

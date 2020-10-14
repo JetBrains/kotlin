@@ -239,7 +239,7 @@ fun IrBuilderWithScope.irCall(irFunction: IrFunction, typeArguments: List<IrType
         irCall(irFunction.symbol, typeArguments)
 
 internal fun irCall(startOffset: Int, endOffset: Int, irFunction: IrSimpleFunction, typeArguments: List<IrType>): IrCall =
-        IrCallImpl(
+        IrCallImpl.fromSymbolDescriptor(
                 startOffset, endOffset, irFunction.substitutedReturnType(typeArguments),
                 irFunction.symbol, typeArguments.size, irFunction.valueParameters.size
         ).apply {

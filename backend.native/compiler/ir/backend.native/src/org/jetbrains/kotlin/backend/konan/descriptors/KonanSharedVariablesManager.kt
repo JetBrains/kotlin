@@ -66,7 +66,6 @@ internal class KonanSharedVariablesManager(val context: KonanBackendContext) : S
                 IrCallImpl(initializer.startOffset, initializer.endOffset,
                         context.irBuiltIns.unitType, elementProperty.setter!!.symbol,
                         elementProperty.setter!!.typeParameters.size, elementProperty.setter!!.valueParameters.size)
-
         sharedVariableInitialization.dispatchReceiver =
                 IrGetValueImpl(initializer.startOffset, initializer.endOffset,
                         sharedVariableDeclaration.type, sharedVariableDeclaration.symbol)
