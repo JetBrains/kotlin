@@ -37,9 +37,7 @@ class FirImplicitTypeBodyResolveProcessor(
 @AdapterForResolveProcessor
 class FirImplicitTypeBodyResolveTransformerAdapter(session: FirSession, scopeSession: ScopeSession) : FirTransformer<Nothing?>() {
     private val implicitBodyResolveComputationSession = ImplicitBodyResolveComputationSession()
-    private val returnTypeCalculator = ReturnTypeCalculatorWithJump(session, scopeSession, implicitBodyResolveComputationSession).also {
-        scopeSession.returnTypeCalculator = it
-    }
+    private val returnTypeCalculator = ReturnTypeCalculatorWithJump(session, scopeSession, implicitBodyResolveComputationSession)
 
     private val transformer = FirImplicitAwareBodyResolveTransformer(
         session,

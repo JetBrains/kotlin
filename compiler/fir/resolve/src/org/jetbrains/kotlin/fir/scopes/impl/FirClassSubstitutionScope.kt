@@ -119,9 +119,6 @@ class FirClassSubstitutionScope(
         }
     }
 
-    private val typeCalculator =
-        (scopeSession.returnTypeCalculator as ReturnTypeCalculator?) ?: ReturnTypeCalculatorForFullBodyResolve()
-
     private fun ConeKotlinType.substitute(): ConeKotlinType? {
         return substitutor.substituteOrNull(this)
     }
@@ -227,7 +224,7 @@ class FirClassSubstitutionScope(
         val receiverType = member.receiverTypeRef?.coneType
         val newReceiverType = receiverType?.substitute(substitutor)
 
-        val returnType = typeCalculator.tryCalculateReturnType(member).type
+        val returnType = member.returnTypeRef.coneType
         val newReturnType = returnType.substitute(substitutor)
         return SubstitutedData(newTypeParameters, newReceiverType, newReturnType, substitutor)
     }
@@ -237,7 +234,7 @@ class FirClassSubstitutionScope(
         val member = original.fir
         if (skipPrivateMembers && member.visibility == Visibilities.Private) return original
 
-        val returnType = typeCalculator.tryCalculateReturnType(member).type
+        val returnType = member.returnTypeRef.coneType
         val newReturnType = returnType.substitute() ?: return original
 
         return createFakeOverrideField(session, member, original, newReturnType, derivedClassId)
@@ -248,7 +245,7 @@ class FirClassSubstitutionScope(
         val member = original.fir as FirSyntheticProperty
         if (skipPrivateMembers && member.visibility == Visibilities.Private) return original
 
-        val returnType = typeCalculator.tryCalculateReturnType(member).type
+        val returnType = member.returnTypeRef.coneType
         val newReturnType = returnType.substitute()
 
         val newParameterTypes = member.getter.valueParameters.map {
