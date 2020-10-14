@@ -260,7 +260,8 @@ FILE fqName:<root> fileName:/propertyReferences.kt
   PROPERTY name:test_J_CONST visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test_J_CONST type:kotlin.reflect.KProperty0<kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
-        ERROR_CALL 'Unsupported callable reference: Q|J|::R|/J.CONST|' type=kotlin.reflect.KProperty0<kotlin.Int>
+        PROPERTY_REFERENCE 'public final CONST: kotlin.Int [val]' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:CONST type:kotlin.Int visibility:public [final,static]' getter=null setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=null
+          <1>: <none>
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_J_CONST> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KProperty0<kotlin.Int>
       correspondingProperty: PROPERTY name:test_J_CONST visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -269,7 +270,8 @@ FILE fqName:<root> fileName:/propertyReferences.kt
   PROPERTY name:test_J_nonConst visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test_J_nonConst type:kotlin.reflect.KMutableProperty0<kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
-        ERROR_CALL 'Unsupported callable reference: Q|J|::R|/J.nonConst|' type=kotlin.reflect.KMutableProperty0<kotlin.Int>
+        PROPERTY_REFERENCE 'public open nonConst: kotlin.Int [var]' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nonConst type:kotlin.Int visibility:public [static]' getter=null setter=null type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+          <1>: <none>
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_J_nonConst> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KMutableProperty0<kotlin.Int>
       correspondingProperty: PROPERTY name:test_J_nonConst visibility:public modality:FINAL [val]
       BLOCK_BODY

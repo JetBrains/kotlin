@@ -636,7 +636,7 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    internal val FirProperty.fieldVisibility: Visibility
+    private val FirProperty.fieldVisibility: Visibility
         get() = when {
             isLateInit -> setter?.visibility ?: status.visibility
             isConst -> status.visibility
@@ -660,7 +660,7 @@ class Fir2IrDeclarationStorage(
         return symbolTable.declareProperty(signature, { Fir2IrPropertySymbol(signature, containerSource) }, factory)
     }
 
-    fun getOrCreateProperty(
+    fun getOrCreateIrProperty(
         property: FirProperty,
         irParent: IrDeclarationParent?,
         isLocal: Boolean = false,
