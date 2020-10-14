@@ -37,30 +37,31 @@ class DebuggerConnection(
     val params: JavaParameters?,
     modifyArgs: Boolean = true
 ) : XDebuggerManagerListener, Disposable {
-    var connection: MessageBusConnection? = null
-    private var coroutineAgentAttached: Boolean = false
+    private var connection: MessageBusConnection? = null
+    private val coroutineAgentAttached: Boolean
     private val log by logger
 
     init {
+        var agentAttached = false
         if (params is JavaParameters && modifyArgs) {
             // gradle related logic in KotlinGradleCoroutineDebugProjectResolver
             val kotlinxCoroutinesCore = params.classPath?.pathList?.firstOrNull { it.contains("kotlinx-coroutines-core") }
             if (kotlinxCoroutinesCore != null) {
-                val mode = determineCoreVersionMode(kotlinxCoroutinesCore)
-                when (mode) {
+                when (determineCoreVersionMode(kotlinxCoroutinesCore)) {
                     CoroutineDebuggerMode.VERSION_1_3_8_AND_UP -> {
                         initializeCoroutineAgent(params, kotlinxCoroutinesCore)
-                        coroutineAgentAttached = true
+                        agentAttached = true
                     }
                     else -> log.debug("CoroutineDebugger disabled.")
                 }
             }
         }
+        coroutineAgentAttached = agentAttached
         connect()
     }
 
     private fun determineCoreVersionMode(kotlinxCoroutinesCore: String): CoroutineDebuggerMode {
-        val regex = Regex(""".+\Wkotlinx-coroutines-core(\-jvm)?-(\d[\w\.\-]+)?\.jar""")
+        val regex = Regex(""".+\Wkotlinx-coroutines-core(-jvm)?-(\d[\w.\-]+)?\.jar""")
         val matchResult = regex.matchEntire(kotlinxCoroutinesCore) ?: return CoroutineDebuggerMode.DISABLED
         val versionToCompareTo = DefaultArtifactVersion("1.3.7-255")
 
@@ -77,8 +78,7 @@ class DebuggerConnection(
         // If classpathFile used in run configuration - kotlin-stdlib should be included in the -classpath
         if (params.isClasspathFile) {
             params.classPath.rootDirs.filter { it.isKotlinStdlib() }.forEach {
-                val fs = it.fileSystem
-                val path = when (fs) {
+                val path = when (val fs = it.fileSystem) {
                     is ArchiveFileSystem -> fs.getLocalByEntry(it)?.path
                     else -> it.path
                 }
