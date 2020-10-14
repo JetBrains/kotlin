@@ -19,8 +19,6 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.chain
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
-import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.CallableId
@@ -285,10 +283,10 @@ class FirClassSubstitutionScope(
             fakeOverrideSymbol: FirFunctionSymbol<FirSimpleFunction>,
             session: FirSession,
             baseFunction: FirSimpleFunction,
-            newReceiverType: ConeKotlinType? = null,
-            newReturnType: ConeKotlinType? = null,
-            newParameterTypes: List<ConeKotlinType?>? = null,
-            newTypeParameters: List<FirTypeParameter>? = null,
+            newReceiverType: ConeKotlinType?,
+            newReturnType: ConeKotlinType?,
+            newParameterTypes: List<ConeKotlinType?>?,
+            newTypeParameters: List<FirTypeParameter>?,
             isExpect: Boolean = baseFunction.isExpect,
         ): FirSimpleFunction {
             // TODO: consider using here some light-weight functions instead of pseudo-real FirMemberFunctionImpl
@@ -338,10 +336,10 @@ class FirClassSubstitutionScope(
             fakeOverrideSymbol: FirConstructorSymbol,
             session: FirSession,
             baseConstructor: FirConstructor,
-            newReturnType: ConeKotlinType? = null,
-            newParameterTypes: List<ConeKotlinType?>? = null,
-            newTypeParameters: List<FirTypeParameterRef>? = null,
-            isExpect: Boolean = baseConstructor.isExpect
+            newReturnType: ConeKotlinType?,
+            newParameterTypes: List<ConeKotlinType?>?,
+            newTypeParameters: List<FirTypeParameterRef>?,
+            isExpect: Boolean
         ): FirConstructor {
             // TODO: consider using here some light-weight functions instead of pseudo-real FirMemberFunctionImpl
             // As second alternative, we can invent some light-weight kind of FirRegularClass
@@ -355,7 +353,7 @@ class FirClassSubstitutionScope(
                 resolvePhase = baseConstructor.resolvePhase
 
                 typeParameters += configureAnnotationsTypeParametersAndSignature(
-                    session, baseConstructor, newParameterTypes, newTypeParameters, null, newReturnType
+                    session, baseConstructor, newParameterTypes, newTypeParameters, newReceiverType = null, newReturnType
                 )
             }
         }
@@ -365,8 +363,8 @@ class FirClassSubstitutionScope(
             baseFunction: FirFunction<*>,
             newParameterTypes: List<ConeKotlinType?>?,
             newTypeParameters: List<FirTypeParameterRef>?,
-            newReceiverType: ConeKotlinType? = null,
-            newReturnType: ConeKotlinType? = null
+            newReceiverType: ConeKotlinType?,
+            newReturnType: ConeKotlinType?
         ): List<FirTypeParameterRef> {
             return when {
                 baseFunction.typeParameters.isEmpty() -> {
@@ -397,8 +395,8 @@ class FirClassSubstitutionScope(
             session: FirSession,
             baseFunction: FirFunction<*>,
             newParameterTypes: List<ConeKotlinType?>?,
-            newReceiverType: ConeKotlinType? = null,
-            newReturnType: ConeKotlinType? = null
+            newReceiverType: ConeKotlinType?,
+            newReturnType: ConeKotlinType?
         ) {
             annotations += baseFunction.annotations
             returnTypeRef = replaceReturnTypeIfResolved(baseFunction, newReturnType)
@@ -420,7 +418,7 @@ class FirClassSubstitutionScope(
         private fun replaceReturnTypeIfResolved(
             base: FirCallableDeclaration<*>,
             newReturnType: ConeKotlinType?
-        ) = if (base.returnTypeRef is FirResolvedTypeRef)
+        ): FirTypeRef = if (base.returnTypeRef is FirResolvedTypeRef)
             base.returnTypeRef.withReplacedConeType(newReturnType)
         else
             base.returnTypeRef
@@ -480,8 +478,8 @@ class FirClassSubstitutionScope(
         private fun FirPropertyBuilder.configureAnnotationsTypeParametersAndSignature(
             baseProperty: FirProperty,
             newTypeParameters: List<FirTypeParameter>?,
-            newReceiverType: ConeKotlinType? = null,
-            newReturnType: ConeKotlinType? = null
+            newReceiverType: ConeKotlinType?,
+            newReturnType: ConeKotlinType?
         ): List<FirTypeParameter> {
             return when {
                 baseProperty.typeParameters.isEmpty() -> {
@@ -526,20 +524,20 @@ class FirClassSubstitutionScope(
 
         private fun FirPropertyBuilder.configureAnnotationsAndSignature(
             baseProperty: FirProperty,
-            newReceiverType: ConeKotlinType? = null,
-            newReturnType: ConeKotlinType? = null
+            newReceiverType: ConeKotlinType?,
+            newReturnType: ConeKotlinType?
         ) {
             annotations += baseProperty.annotations
             returnTypeRef = replaceReturnTypeIfResolved(baseProperty, newReturnType)
             receiverTypeRef = baseProperty.receiverTypeRef?.withReplacedConeType(newReceiverType)
         }
 
-        fun createFakeOverrideField(
+        private fun createFakeOverrideField(
             session: FirSession,
             baseField: FirField,
             baseSymbol: FirFieldSymbol,
-            newReturnType: ConeKotlinType? = null,
-            derivedClassId: ClassId? = null
+            newReturnType: ConeKotlinType?,
+            derivedClassId: ClassId?
         ): FirFieldSymbol {
             val symbol = FirFieldSymbol(
                 CallableId(derivedClassId ?: baseSymbol.callableId.classId!!, baseField.name)
@@ -564,12 +562,18 @@ class FirClassSubstitutionScope(
             session: FirSession,
             baseProperty: FirSyntheticProperty,
             baseSymbol: FirAccessorSymbol,
-            newReturnType: ConeKotlinType? = null,
-            newParameterTypes: List<ConeKotlinType?>? = null
+            newReturnType: ConeKotlinType?,
+            newParameterTypes: List<ConeKotlinType?>?
         ): FirAccessorSymbol {
             val functionSymbol = FirNamedFunctionSymbol(baseSymbol.accessorId)
             val function = createFakeOverrideFunction(
-                functionSymbol, session, baseProperty.getter.delegate, null, newReturnType, newParameterTypes
+                functionSymbol,
+                session,
+                baseProperty.getter.delegate,
+                newReceiverType = null,
+                newReturnType,
+                newParameterTypes,
+                newTypeParameters = null
             )
             return buildSyntheticProperty {
                 this.session = session
