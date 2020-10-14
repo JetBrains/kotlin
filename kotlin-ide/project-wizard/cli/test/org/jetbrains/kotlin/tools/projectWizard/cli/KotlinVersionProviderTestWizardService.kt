@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.cli
 
+import org.jetbrains.kotlin.tools.projectWizard.Versions
 import org.jetbrains.kotlin.tools.projectWizard.core.service.EapVersionDownloader
 import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardKotlinVersion
 import org.jetbrains.kotlin.tools.projectWizard.core.service.KotlinVersionKind
@@ -20,7 +21,12 @@ class KotlinVersionProviderTestWizardService() : KotlinVersionProviderService(),
 
 
     override fun getKotlinVersion(projectKind: ProjectKind): WizardKotlinVersion =
-        kotlinVersionWithDefaultValues(TEST_KOTLIN_VERSION)
+        kotlinVersionWithDefaultValues(
+            when (projectKind) {
+                ProjectKind.COMPOSE -> Versions.KOTLIN_VERSION_FOR_COMPOSE
+                else -> TEST_KOTLIN_VERSION
+            }
+        )
 
     override fun getKotlinVersionRepository(versionKind: KotlinVersionKind): Repository = if (useCacheRedirector) {
         getKotlinVersionRepositoryWithCacheRedirector(versionKind)

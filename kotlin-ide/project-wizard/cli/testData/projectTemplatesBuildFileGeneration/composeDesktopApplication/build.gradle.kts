@@ -2,7 +2,7 @@ import org.jetbrains.compose.compose
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "KOTLIN_VERSION"
+    kotlin("jvm") version "1.4.0"
     id("org.jetbrains.compose") version "0.1.0-build63"
     application
 }
@@ -13,7 +13,6 @@ version = "1.0-SNAPSHOT"
 repositories {
     jcenter()
     mavenCentral()
-    maven { url = uri("KOTLIN_REPO") }
     maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
 }
 
