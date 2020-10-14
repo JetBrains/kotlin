@@ -12,6 +12,30 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 
 interface PluginManagementIR : GradleIR
 
+data class AndroidResolutionStrategyIR(
+    val androidGradlePluginVersion: Version
+) : PluginManagementIR, FreeIR, SingleIR {
+    override fun GradlePrinter.renderGradle() {
+        sectionCall("resolutionStrategy", needIndent = true) {
+            sectionCall("eachPlugin", needIndent = true) {
+                sectionCall(
+                    "if (requested.id.namespace == ${"com.android".quotified} || requested.id.name == ${"kotlin-android-extensions".quotified})",
+                    needIndent = true
+                ) {
+                    call("useModule", forceBrackets = true) {
+                        when (dsl) {
+                            GradlePrinter.GradleDsl.KOTLIN ->
+                                +"com.android.tools.build:gradle:${androidGradlePluginVersion}".quotified
+                            GradlePrinter.GradleDsl.GROOVY ->
+                                +"com.android.tools.build:gradle:$androidGradlePluginVersion".quotified
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 data class PluginManagementRepositoryIR(val repositoryIR: RepositoryIR) : PluginManagementIR, RepositoryWrapper {
     override fun GradlePrinter.renderGradle() {
         repositoryIR.render(this)
