@@ -60,7 +60,7 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
             is IrConstructor ->
                 IrDelegatingConstructorCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.unitType, target.symbol)
             is IrSimpleFunction ->
-                IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target.returnType, target.symbol)
+                IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target.returnType, target.symbol)
             else ->
                 error("unknown function kind: ${target.render()}")
         }

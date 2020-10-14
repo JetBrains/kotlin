@@ -143,7 +143,7 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
             val isExhaustive = whenExpression.isExhaustiveWhen()
 
             if (isExhaustive) {
-                val call = IrCallImpl(
+                val call = IrCallImpl.fromSymbolDescriptor(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                     context.irBuiltIns.nothingType,
                     context.irBuiltIns.noWhenBranchMatchedExceptionSymbol

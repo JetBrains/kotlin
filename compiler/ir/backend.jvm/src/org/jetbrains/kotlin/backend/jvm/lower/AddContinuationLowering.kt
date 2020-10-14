@@ -76,7 +76,10 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
             override fun visitCall(expression: IrCall): IrExpression {
                 val transformed = super.visitCall(expression) as IrCall
                 return transformed.retargetToSuspendView(context, functionStack.peek() ?: return transformed) {
-                    IrCallImpl(startOffset, endOffset, type, it, origin, superQualifierSymbol)
+                    IrCallImpl.fromSymbolOwner(
+                            startOffset, endOffset, type, it,
+                            origin = origin, superQualifierSymbol = superQualifierSymbol
+                    )
                 }
             }
         })

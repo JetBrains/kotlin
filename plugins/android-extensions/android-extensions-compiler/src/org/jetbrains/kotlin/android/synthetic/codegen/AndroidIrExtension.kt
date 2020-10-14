@@ -220,7 +220,7 @@ private fun FqName.child(name: String) = child(Name.identifier(name))
 
 @ObsoleteDescriptorBasedAPI
 private fun IrSimpleFunction.callWithRanges(source: IrExpression) =
-    IrCallImpl(source.startOffset, source.endOffset, returnType, symbol)
+    IrCallImpl.fromSymbolDescriptor(source.startOffset, source.endOffset, returnType, symbol)
 
 private val AndroidContainerType.fqName: FqName
     get() = FqName(internalClassName.replace("/", "."))

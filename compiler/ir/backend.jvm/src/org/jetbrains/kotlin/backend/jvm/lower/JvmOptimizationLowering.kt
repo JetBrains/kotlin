@@ -204,7 +204,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                                 "Failing expression: ${expression.dump()}"
                     }
                     // Replace conjunction condition with intrinsic "and" function call
-                    return IrCallImpl(
+                    return IrCallImpl.fromSymbolOwner(
                         expression.startOffset,
                         expression.endOffset,
                         context.irBuiltIns.booleanType,
@@ -225,7 +225,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                                 "and an 'if true then b' body on its second branch. " +
                                 "Failing expression: ${expression.dump()}"
                     }
-                    return IrCallImpl(
+                    return IrCallImpl.fromSymbolOwner(
                         expression.startOffset,
                         expression.endOffset,
                         context.irBuiltIns.booleanType,

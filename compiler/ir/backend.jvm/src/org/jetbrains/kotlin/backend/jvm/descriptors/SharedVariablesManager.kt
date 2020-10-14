@@ -127,7 +127,7 @@ class JvmSharedVariablesManager(
     }
 
     private fun unsafeCoerce(value: IrExpression, from: IrType, to: IrType): IrExpression =
-        IrCallImpl(value.startOffset, value.endOffset, to, symbols.unsafeCoerceIntrinsic).apply {
+        IrCallImpl.fromSymbolOwner(value.startOffset, value.endOffset, to, symbols.unsafeCoerceIntrinsic).apply {
             putTypeArgument(0, from)
             putTypeArgument(1, to)
             putValueArgument(0, value)

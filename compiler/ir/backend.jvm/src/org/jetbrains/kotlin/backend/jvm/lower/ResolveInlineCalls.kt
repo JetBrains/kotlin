@@ -49,6 +49,7 @@ class ResolveInlineCalls(val context: JvmBackendContext) : IrElementTransformerV
                 type,
                 resolved.symbol,
                 expression.typeArgumentsCount,
+                expression.valueArgumentsCount,
                 expression.origin,
                 superQualifierSymbol
             ).apply {

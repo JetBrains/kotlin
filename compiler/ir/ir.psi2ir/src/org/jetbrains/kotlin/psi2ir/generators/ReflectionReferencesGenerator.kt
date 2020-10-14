@@ -202,7 +202,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
             is IrConstructorSymbol ->
                 IrConstructorCallImpl.fromSymbolDescriptor(startOffset, endOffset, irType, adapteeSymbol)
             is IrSimpleFunctionSymbol ->
-                IrCallImpl(startOffset, endOffset, irType, adapteeSymbol, origin = null, superQualifierSymbol = null)
+                IrCallImpl.fromSymbolDescriptor(startOffset, endOffset, irType, adapteeSymbol)
             else -> error("Unknown symbol kind $adapteeSymbol")
         }
 

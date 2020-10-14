@@ -124,7 +124,7 @@ fun IrType.defaultValue(startOffset: Int, endOffset: Int, context: JvmBackendCon
 
     val underlyingType = unboxInlineClass()
     val defaultValueForUnderlyingType = IrConstImpl.defaultValueForType(startOffset, endOffset, underlyingType)
-    return IrCallImpl(startOffset, endOffset, this, context.ir.symbols.unsafeCoerceIntrinsic).also {
+    return IrCallImpl.fromSymbolOwner(startOffset, endOffset, this, context.ir.symbols.unsafeCoerceIntrinsic).also {
         it.putTypeArgument(0, underlyingType) // from
         it.putTypeArgument(1, this) // to
         it.putValueArgument(0, defaultValueForUnderlyingType)
