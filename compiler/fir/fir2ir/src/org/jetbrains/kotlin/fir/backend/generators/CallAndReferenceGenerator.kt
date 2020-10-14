@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.backend.generators
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.psi
@@ -53,6 +54,11 @@ class CallAndReferenceGenerator(
     ): IrExpression {
         val symbol = callableReferenceAccess.calleeReference.toSymbol(session, classifierStorage, declarationStorage, conversionScope)
         val type = callableReferenceAccess.typeRef.toIrType()
+        fun propertyOrigin(): IrStatementOrigin? =
+            when (callableReferenceAccess.source?.psi?.parent) {
+                is KtPropertyDelegate -> IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE
+                else -> null
+            }
         return callableReferenceAccess.convertWithOffsets { startOffset, endOffset ->
             when (symbol) {
                 is IrPropertySymbol -> {
@@ -62,17 +68,13 @@ class CallAndReferenceGenerator(
                         referencedPropertyGetter != null -> null
                         else -> referencedProperty.backingField?.symbol
                     }
-                    val origin = when (callableReferenceAccess.source?.psi?.parent) {
-                        is KtPropertyDelegate -> IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE
-                        else -> null
-                    }
                     IrPropertyReferenceImpl(
                         startOffset, endOffset, type, symbol,
                         typeArgumentsCount = referencedPropertyGetter?.typeParameters?.size ?: 0,
                         backingFieldSymbol,
                         referencedPropertyGetter?.symbol,
                         referencedProperty.setter?.symbol,
-                        origin
+                        propertyOrigin()
                     )
                 }
                 is IrLocalDelegatedPropertySymbol -> {
@@ -82,6 +84,28 @@ class CallAndReferenceGenerator(
                         symbol.owner.getter.symbol as IrSimpleFunctionSymbol,
                         symbol.owner.setter?.symbol as IrSimpleFunctionSymbol?,
                         IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE
+                    )
+                }
+                is IrFieldSymbol -> {
+                    val referencedField = symbol.owner
+                    val propertySymbol = referencedField.correspondingPropertySymbol
+                        ?: run {
+                            // In case of [IrField] without the corresponding property, we've created it directly from [FirField].
+                            // Since it's used as a field reference, we need a bogus property as a placeholder.
+                            val firSymbol =
+                                (callableReferenceAccess.calleeReference as FirResolvedNamedReference).resolvedSymbol as FirFieldSymbol
+                            declarationStorage.getOrCreateIrProperty(
+                                firSymbol.fir.toProperty(), referencedField.parent
+                            ).symbol
+                        }
+                    IrPropertyReferenceImpl(
+                        startOffset, endOffset, type,
+                        propertySymbol,
+                        typeArgumentsCount = (type as? IrSimpleType)?.arguments?.size ?: 0,
+                        symbol,
+                        getter = if (referencedField.isStatic) null else propertySymbol.owner.getter?.symbol,
+                        setter = if (referencedField.isStatic) null else propertySymbol.owner.setter?.symbol,
+                        propertyOrigin()
                     )
                 }
                 is IrConstructorSymbol -> {
@@ -122,6 +146,21 @@ class CallAndReferenceGenerator(
             }
         }.applyTypeArguments(callableReferenceAccess).applyReceivers(callableReferenceAccess, explicitReceiverExpression)
     }
+
+    private fun FirField.toProperty(): FirProperty =
+        buildProperty {
+            source = this@toProperty.source
+            session = this@toProperty.session
+            origin = this@toProperty.origin
+            returnTypeRef = this@toProperty.returnTypeRef
+            name = this@toProperty.name
+            isVar = this@toProperty.isVar
+            getter = this@toProperty.getter
+            setter = this@toProperty.setter
+            symbol = FirPropertySymbol(this@toProperty.symbol.callableId)
+            isLocal = false
+            status = this@toProperty.status
+        }
 
     private fun FirQualifiedAccess.tryConvertToSamConstructorCall(type: IrType): IrTypeOperatorCall? {
         val calleeReference = calleeReference as? FirResolvedNamedReference ?: return null
