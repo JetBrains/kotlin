@@ -169,6 +169,7 @@ public class DefaultErrorMessages {
         MAP.put(EXPERIMENTAL_UNSIGNED_LITERALS_ERROR, "{0}", STRING);
 
         MAP.put(NON_PARENTHESIZED_ANNOTATIONS_ON_FUNCTIONAL_TYPES, "Non-parenthesized annotations on function types without receiver aren't yet supported (see KT-31734 for details)");
+        MAP.put(JVM_STATIC_IN_PRIVATE_COMPANION, "@JvmStatic is prohibited in private companion objects. This warning will become an error in the next major version");
 
         MAP.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present", TO_STRING, TO_STRING);
         MAP.put(REDUNDANT_OPEN_IN_INTERFACE, "Modifier 'open' is redundant for abstract interface members");

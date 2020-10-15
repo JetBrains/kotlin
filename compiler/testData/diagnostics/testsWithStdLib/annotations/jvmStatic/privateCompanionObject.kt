@@ -1,30 +1,29 @@
 // Issue: KT-25114
-// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 class WithPrivateCompanion {
     private companion object {
-        @JvmStatic
+        <!JVM_STATIC_IN_PRIVATE_COMPANION!>@JvmStatic<!>
         val staticVal1: Int = 42
 
         val staticVal2: Int
-            @JvmStatic get() = 42
+            <!JVM_STATIC_IN_PRIVATE_COMPANION!>@JvmStatic<!> get() = 42
 
-        @get:JvmStatic
+        <!JVM_STATIC_IN_PRIVATE_COMPANION!>@get:JvmStatic<!>
         val staticVal3: Int = 42
 
-        @JvmStatic
+        <!JVM_STATIC_IN_PRIVATE_COMPANION!>@JvmStatic<!>
         var staticVar1: Int = 42
 
         var staticVar2: Int
-            @JvmStatic get() = 42
-            @JvmStatic set(value) {}
+            <!JVM_STATIC_IN_PRIVATE_COMPANION!>@JvmStatic<!> get() = 42
+            <!JVM_STATIC_IN_PRIVATE_COMPANION!>@JvmStatic<!> set(value) {}
 
-        @get: JvmStatic
-        @set: JvmStatic
+        <!JVM_STATIC_IN_PRIVATE_COMPANION!>@get: JvmStatic<!>
+        <!JVM_STATIC_IN_PRIVATE_COMPANION!>@set: JvmStatic<!>
         var staticVar3: Int = 42
 
-        @JvmStatic
+        <!JVM_STATIC_IN_PRIVATE_COMPANION!>@JvmStatic<!>
         fun staticFunction() {}
     }
 }
