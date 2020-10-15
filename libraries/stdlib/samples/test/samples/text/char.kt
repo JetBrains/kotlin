@@ -123,21 +123,4 @@ class Chars {
         assertFalse('a'.equals('A', false))
         assertTrue('a'.equals('A', true))
     }
-
-    @sample
-    fun last() {
-	    val chars = listOf('a', 'z', '1', '2')
-	    val empty = listOf()
-	    val last = chars.last()
-	    val predLast = chars.last{it > '1'}
-	    assertPrints(last, '2')
-	    assertPrints(predLast, '2')
-	    assertPrints(chars.last{it > 'a'}, 'z')
-	    assertFailsWith<NoSuchElementException>{
-	        empty.last()
-	    }
-	    assertFailsWith<NoSuchElementException>{
-	        chars.last{it > 'z'}
-	    }
-    }
 }

@@ -408,4 +408,18 @@ class Strings {
         assertPrints(matchDetails(inputString, toFind, 2), "Searching for 'ever' in 'Never ever give up' starting at position 2: Found at 6")
         assertPrints(matchDetails(inputString, toFind, 10), "Searching for 'ever' in 'Never ever give up' starting at position 10: Not found")
     }
+
+    @Sample
+    fun last() {
+        val str0 = "Sample String 0"
+        val str1 = ""
+        assertEquals('0', str0.last())
+        assertEquals('g', str0.last( {it.isLetter()} ))
+        assertFailsWith<NoSuchElementException>{
+            str1.last()
+        }
+        assertFailsWith<NoSuchElementException>{
+            str0.last( {it > 'z'} )
+        }
+    }
 }
