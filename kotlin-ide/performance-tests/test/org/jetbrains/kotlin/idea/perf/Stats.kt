@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.idea.perf
 
 import org.jetbrains.kotlin.idea.perf.WholeProjectPerformanceTest.Companion.nsToMs
 import org.jetbrains.kotlin.idea.perf.profilers.*
-import org.jetbrains.kotlin.idea.perf.util.TeamCity
-import org.jetbrains.kotlin.idea.perf.util.logMessage
+import org.jetbrains.kotlin.idea.perf.util.*
 import org.jetbrains.kotlin.idea.testFramework.suggestOsNeutralFileName
 import org.jetbrains.kotlin.test.KotlinRoot
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -29,13 +28,11 @@ typealias StatInfos = Map<String, Any>?
 class Stats(
     val name: String = "",
     private val profilerConfig: ProfilerConfig = ProfilerConfig(),
-    private val header: Array<String> = arrayOf("Name", "ValueMS", "StdDev"),
     private val acceptanceStabilityLevel: Int = 25
 ) : AutoCloseable {
 
     private val perfTestRawDataMs = mutableListOf<Long>()
-
-    private val metrics = mutableListOf<Metric>()
+    private var metric: Metric? = null
 
     init {
         PerformanceCounter.setTimeCounterEnabled(true)
@@ -47,25 +44,25 @@ class Stats(
         val calcMean = calcMean(timingsMs)
 
         val metricChildren = mutableListOf<Metric>()
-        val hasError = rawMetricChildren.any { it.hasError }
-        val metric = Metric(
-            id, value = calcMean.mean.toLong(), measurementError = calcMean.stdDev.toLong(),
-            hasError = hasError, children = metricChildren
+        val hasError = if (rawMetricChildren.any { it.hasError == true }) true else null
+        metric = Metric(
+            id, metricValue = calcMean.mean.toLong(), metricError = calcMean.stdDev.toLong(),
+            hasError = hasError, metrics = metricChildren
         )
-        metrics.add(metric)
+        // TODO:
 
         metricChildren.add(
             Metric(
-                "", calcMean.mean.toLong(),
+                "", metricValue = calcMean.mean.toLong(),
                 hasError = hasError,
-                measurementError = calcMean.stdDev.toLong(),
-                childrenName = "rawMetrics", children = rawMetricChildren
+                metricError = calcMean.stdDev.toLong(),
+                rawMetrics = rawMetricChildren
             )
         )
-        metricChildren.add(Metric("mean", calcMean.mean.toLong()))
+        metricChildren.add(Metric("mean", metricValue = calcMean.mean.toLong()))
         // keep geomMean for bwc
-        metricChildren.add(Metric(GEOM_MEAN, calcMean.geomMean.toLong()))
-        metricChildren.add(Metric("stdDev", calcMean.stdDev.toLong()))
+        metricChildren.add(Metric(GEOM_MEAN, metricValue = calcMean.geomMean.toLong()))
+        metricChildren.add(Metric("stdDev", metricValue = calcMean.stdDev.toLong()))
 
         statInfosArray.filterNotNull()
             .map { it.keys }
@@ -81,35 +78,19 @@ class Stats(
                 val shortName = if (perfCounterName.endsWith(": time")) n.removeSuffix(": time") else null
                 val metricShortName = if (perfCounterName.endsWith(": time")) perfCounterName.removeSuffix(": time") else perfCounterName
 
-                metricChildren.add(Metric(": $metricShortName", mean))
+                metricChildren.add(Metric(": $metricShortName", metricValue = mean))
 
                 TeamCity.test(shortName, durationMs = mean) {}
             }
 
         perfTestRawDataMs.addAll(timingsMs.toList())
-        metric.writeTeamCityStats(name)
+        metric!!.writeTeamCityStats(name)
     }
 
     private fun toTimingsMs(statInfosArray: Array<StatInfos>) =
         statInfosArray.map { info -> info?.let { it[TEST_KEY] as? Long }?.nsToMs ?: 0L }.toLongArray()
 
     private fun calcMean(statInfosArray: Array<StatInfos>): Mean = calcMean(toTimingsMs(statInfosArray))
-
-    private fun calcMean(values: LongArray): Mean {
-        val mean = values.average()
-
-        val stdDev = if (values.size > 1) (sqrt(
-            values.fold(0.0,
-                        { accumulator, next -> accumulator + (1.0 * (next - mean)).pow(2) })
-        ) / (values.size - 1))
-        else 0.0
-
-        val geomMean = geomMean(values.toList())
-
-        return Mean(mean, stdDev, geomMean)
-    }
-
-    data class Mean(val mean: Double, val stdDev: Double, val geomMean: Double)
 
     fun <SV, TV> perfTest(
         testName: String,
@@ -120,7 +101,6 @@ class Stats(
         tearDown: (TestData<SV, TV>) -> Unit = { },
         checkStability: Boolean = true
     ) {
-
         val warmPhaseData = PhaseData(
             iterations = warmUpIterations,
             testName = testName,
@@ -159,7 +139,7 @@ class Stats(
                         }
 
                         TeamCity.test(stabilityName, errorDetails = error, includeStats = false) {
-                            metricChildren.add(Metric("stability", stabilityPercentage))
+                            metricChildren.add(Metric("stability", metricValue = stabilityPercentage.toLong()))
                         }
                     }
 
@@ -202,19 +182,20 @@ class Stats(
             val t = statInfo[ERROR_KEY] as? Throwable
             if (t != null) {
                 TeamCity.test(n, errors = listOf(t)) {}
-                metricChildren.add(Metric(attemptString, value = null, hasError = true))
+                //logMessage { "metricChildren.add(Metric('$attemptString', value = null, hasError = true))" }
+                metricChildren.add(Metric(attemptString, metricValue = null, hasError = true))
             } else if (!printOnlyErrors) {
                 val durationMs = (statInfo[TEST_KEY] as Long).nsToMs
                 TeamCity.test(n, durationMs = durationMs, includeStats = false) {
                     for ((k, v) in statInfo) {
                         if (k == TEST_KEY) continue
                         (v as? Number)?.let {
-                            childrenMetrics.add(Metric(k, v))
+                            childrenMetrics.add(Metric(k, metricValue = v.toLong()))
                             //TeamCity.metadata(n, k, it)
                         }
                     }
                 }
-                metricChildren.add(Metric(attemptString, durationMs, children = childrenMetrics))
+                metricChildren.add(Metric(attemptString, metricValue = durationMs, metrics = childrenMetrics))
             }
         }
     }
@@ -355,18 +336,11 @@ class Stats(
         }
     }
 
-    private fun geomMean(data: List<Long>) = exp(data.fold(0.0, { mul, next -> mul + ln(1.0 * next) }) / data.size)
-
     override fun close() {
         flush()
     }
 
     fun flush() {
-        val children = metrics.toMutableList()
-
-        val properties = mutableMapOf<String, Any>()
-        properties[BENCHMARK] = name
-
         val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
         simpleDateFormat.timeZone = TimeZone.getTimeZone("UTC")
 //        properties["buildTimestamp"] = simpleDateFormat.format(Date())
@@ -374,31 +348,68 @@ class Stats(
 //        properties["buildBranch"] = "rr/perf/json-output"
 //        properties["agentName"] = "kotlin-linux-perf-unit879"
 
+        var buildId: Int? = null
+        var agentName: String? = null
+        var buildBranch: String? = null
+
         System.getenv("TEAMCITY_BUILD_PROPERTIES_FILE")?.let { teamcityConfig ->
             val buildProperties = Properties()
             buildProperties.load(FileInputStream(teamcityConfig))
 
-            properties["buildTimestamp"] = simpleDateFormat.format(Date())
-            for ((name, key) in
-            mapOf(
-                "buildId" to "teamcity.build.id",
-                "buildBranch" to "teamcity.build.branch",
-                "agentName" to "agent.name",
-            )) {
-                val property = buildProperties.getProperty(key)
-                properties[name] = if (name == "buildId") property.toLong() else property
-            }
+            buildId = buildProperties["teamcity.build.id"]?.toString()?.toInt()
+            agentName = buildProperties["agent.name"]?.toString()
+            buildBranch = buildProperties["teamcity.build.branch"]?.toString()
         }
+
         if (perfTestRawDataMs.isNotEmpty()) {
             val geomMeanMs = geomMean(perfTestRawDataMs.toList()).toLong()
-            Metric(GEOM_MEAN, geomMeanMs).writeTeamCityStats(name)
-            properties[GEOM_MEAN] = geomMeanMs
+            Metric(GEOM_MEAN, metricValue = geomMeanMs).writeTeamCityStats(name)
         }
 
-        val metric = Metric(name, null, children = children, properties = properties)
+        try {
+            metric?.let {
+                val benchmark = Benchmark(
+                    agentName = agentName,
+                    buildBranch = buildBranch,
+                    buildId = buildId,
+                    benchmark = name,
+                    name = it.metricName,
+                    metricValue = it.metricValue,
+                    metricError = it.metricError,
+                    buildTimestamp = simpleDateFormat.format(Date()),
+                    metrics = it.metrics ?: emptyList()
+                )
 
-        metric.writeJson()
-        metrics.writeCSV(name, header)
+                if (benchmark.name == "ParameterNameAndType - TypeParameter") {
+                    println(benchmark)
+                }
+
+                benchmark.writeJson()
+
+                with(
+                    Benchmark(
+                        agentName = agentName,
+                        buildBranch = buildBranch,
+                        buildId = buildId,
+                        benchmark = name,
+                        synthetic = true,
+                        name = "geomMean",
+                        buildTimestamp = simpleDateFormat.format(Date())
+                    )
+                ) {
+                    loadJson()
+                    merge(benchmark)
+
+                    if (benchmark.name == "ParameterNameAndType - TypeParameter") {
+                        println(this)
+                    }
+                    writeJson()
+                }
+            }
+        } finally {
+            metric = null
+        }
+        //metrics.writeCSV(name, header)
     }
 
     companion object {
@@ -407,7 +418,8 @@ class Stats(
 
         const val WARM_UP = "warm-up"
         const val GEOM_MEAN = "geomMean"
-        const val BENCHMARK = "benchmark"
+
+        internal val extraMetricNames = setOf("", GEOM_MEAN, "mean", "stdDev")
 
         inline fun runAndMeasure(note: String, block: () -> Unit) {
             val openProjectMillis = measureTimeMillis {
@@ -419,15 +431,23 @@ class Stats(
 
 }
 
-data class Metric(
-    val name: String,
-    val value: Number?,
-    val hasError: Boolean = false,
-    val measurementError: Number? = null,
-    val childrenName: String = "metrics",
-    val children: MutableList<Metric> = mutableListOf(),
-    val properties: Map<String, Any>? = null
-)
+internal fun calcMean(values: LongArray): Mean {
+    val mean = values.average()
+
+    val stdDev = if (values.size > 1) (sqrt(
+        values.fold(0.0,
+                    { accumulator, next -> accumulator + (1.0 * (next - mean)).pow(2) })
+    ) / (values.size - 1))
+    else 0.0
+
+    val geomMean = geomMean(values.toList())
+
+    return Mean(mean, stdDev, geomMean)
+}
+
+private fun geomMean(data: List<Long>) = exp(data.fold(0.0, { mul, next -> mul + ln(1.0 * next) }) / data.size)
+
+internal data class Mean(val mean: Double, val stdDev: Double, val geomMean: Double)
 
 data class PhaseData<SV, TV>(
     val iterations: Int,

@@ -42,5 +42,8 @@
     <orderEntry type="module" module-name="intellij.platform.analysis.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.vcs.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.gradle.common" scope="TEST" />
+    <orderEntry type="library" scope="TEST" name="jackson-databind" level="project" />
+    <orderEntry type="library" scope="TEST" name="jackson" level="project" />
+    <orderEntry type="library" scope="TEST" name="jackson-module-kotlin" level="project" />
   </component>
 </module>
