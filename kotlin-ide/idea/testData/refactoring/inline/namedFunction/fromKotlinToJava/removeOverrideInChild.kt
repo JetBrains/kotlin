@@ -13,6 +13,10 @@ open class B2: A() {
     fun c() = a()
 }
 
+class B3 : A() {
+    final override fun a() = Unit
+}
+
 class C : B() {
     override fun a() = Unit
 }
@@ -41,6 +45,10 @@ abstract class B5 : A() {
 
 class C3 : B5() {
     override fun a() = Unit
+}
+
+class C4 : B5() {
+    final override fun a() = Unit
 }
 
 class B6 : A() {

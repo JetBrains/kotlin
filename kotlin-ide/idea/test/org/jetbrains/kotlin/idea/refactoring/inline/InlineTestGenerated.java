@@ -772,6 +772,11 @@ public abstract class InlineTestGenerated extends AbstractInlineTest {
                 runTest("testData/refactoring/inline/inlineVariableOrProperty/property/removeImport.kt");
             }
 
+            @TestMetadata("removeOverrideInChild.kt")
+            public void testRemoveOverrideInChild() throws Exception {
+                runTest("testData/refactoring/inline/inlineVariableOrProperty/property/removeOverrideInChild.kt");
+            }
+
             @TestMetadata("returnNull.kt")
             public void testReturnNull() throws Exception {
                 runTest("testData/refactoring/inline/inlineVariableOrProperty/property/returnNull.kt");

@@ -24,6 +24,7 @@ class KotlinOverrideMethodsProcessor : OverrideMethodsProcessor {
 
         kotlinElement.addOpenModifierIfNeeded()
         kotlinElement.removeModifier(KtTokens.OVERRIDE_KEYWORD)
+        kotlinElement.removeModifier(KtTokens.FINAL_KEYWORD)
 
         return true
     }
