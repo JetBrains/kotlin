@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
-import org.jetbrains.kotlin.serialization.DescriptorSerializer
+import org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.SerializationPluginDeclarationChecker
 
@@ -30,6 +30,8 @@ class SerializationComponentRegistrar : ComponentRegistrar {
     }
 
     companion object {
+        internal val serializationDescriptorSerializer = SerializationDescriptorPluginForKotlinxSerialization()
+
         fun registerExtensions(project: Project) {
             SyntheticResolveExtension.registerExtension(project, SerializationResolveExtension())
 
@@ -39,13 +41,12 @@ class SerializationComponentRegistrar : ComponentRegistrar {
 
             StorageComponentContainerContributor.registerExtension(project, SerializationPluginComponentContainerContributor())
 
+            DescriptorSerializerPlugin.registerExtension(project, serializationDescriptorSerializer)
             registerProtoExtensions()
         }
 
-        internal val serializationDescriptorSerializer = SerializationDescriptorPluginForKotlinxSerialization()
 
         private fun registerProtoExtensions() {
-            DescriptorSerializer.registerSerializerPlugin(serializationDescriptorSerializer)
             SerializationPluginMetadataExtensions.registerAllExtensions(JvmProtoBufUtil.EXTENSION_REGISTRY)
             SerializationPluginMetadataExtensions.registerAllExtensions(JsSerializerProtocol.extensionRegistry)
             SerializationPluginMetadataExtensions.registerAllExtensions(KlibMetadataSerializerProtocol.extensionRegistry)

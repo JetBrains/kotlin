@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.serialization.js
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -61,10 +62,11 @@ object KotlinJavascriptSerializationUtil {
         bindingContext: BindingContext,
         jsDescriptor: JsModuleDescriptor<ModuleDescriptor>,
         languageVersionSettings: LanguageVersionSettings,
-        metadataVersion: JsMetadataVersion
+        metadataVersion: JsMetadataVersion,
+        project: Project
     ): SerializedMetadata {
         val serializedFragments =
-            emptyMap<FqName, ByteArray>().missingMetadata(bindingContext, jsDescriptor.data, languageVersionSettings, metadataVersion)
+            emptyMap<FqName, ByteArray>().missingMetadata(bindingContext, jsDescriptor.data, languageVersionSettings, metadataVersion, project)
 
         return SerializedMetadata(serializedFragments, jsDescriptor, languageVersionSettings, metadataVersion)
     }
@@ -160,6 +162,7 @@ object KotlinJavascriptSerializationUtil {
         scope: Collection<DeclarationDescriptor>,
         fqName: FqName,
         languageVersionSettings: LanguageVersionSettings,
+        project: Project,
         metadataVersion: BinaryVersion
     ): ProtoBuf.PackageFragment {
         val builder = ProtoBuf.PackageFragment.newBuilder()
@@ -184,7 +187,7 @@ object KotlinJavascriptSerializationUtil {
             for (descriptor in descriptors) {
                 if (descriptor !is ClassDescriptor || skip(descriptor)) continue
 
-                val serializer = DescriptorSerializer.create(descriptor, extension, parentSerializer)
+                val serializer = DescriptorSerializer.create(descriptor, extension, parentSerializer, project)
                 serializeClasses(descriptor.unsubstitutedInnerClassesScope.getContributedDescriptors(), serializer)
                 val classProto = serializer.classProto(descriptor).build() ?: error("Class not serialized: $descriptor")
                 builder.addClass_(classProto)
@@ -305,7 +308,8 @@ fun Map<FqName, ByteArray>.missingMetadata(
     bindingContext: BindingContext,
     moduleDescriptor: ModuleDescriptor,
     languageVersionSettings: LanguageVersionSettings,
-    metadataVersion: JsMetadataVersion
+    metadataVersion: JsMetadataVersion,
+    project: Project
 ): Map<FqName, ByteArray> {
     val serializedFragments = HashMap<FqName, ByteArray>()
 
@@ -317,7 +321,7 @@ fun Map<FqName, ByteArray>.missingMetadata(
             moduleDescriptor.packageFragmentProviderForModuleContentWithoutDependencies.packageFragments(fqName).flatMap {
                 it.getMemberScope().getContributedDescriptors()
             },
-            fqName, languageVersionSettings, metadataVersion
+            fqName, languageVersionSettings, project, metadataVersion
         )
 
         if (!fragment.isEmpty()) {

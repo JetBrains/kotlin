@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.metadata
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.serialization.isExpectMember
 import org.jetbrains.kotlin.backend.common.serialization.isSerializableExpectClass
 import org.jetbrains.kotlin.config.AnalysisFlags
@@ -31,6 +32,7 @@ internal fun <T, R> Iterable<T>.maybeChunked(size: Int?, transform: (List<T>) ->
 abstract class KlibMetadataSerializer(
     val languageVersionSettings: LanguageVersionSettings,
     val metadataVersion: BinaryVersion,
+    val project: Project?,
     val skipExpects: Boolean = false,
     val includeOnlyModuleContent: Boolean = false,
     private val allowErrorTypes: Boolean
@@ -93,7 +95,7 @@ abstract class KlibMetadataSerializer(
         with(serializerContext) {
             val previousSerializer = classSerializer
 
-            classSerializer = DescriptorSerializer.create(classDescriptor, serializerExtension, classSerializer)
+            classSerializer = DescriptorSerializer.create(classDescriptor, serializerExtension, classSerializer, project)
             val classProto = classSerializer.classProto(classDescriptor).build() ?: error("Class not serialized: $classDescriptor")
             //builder.addClass(classProto)
 

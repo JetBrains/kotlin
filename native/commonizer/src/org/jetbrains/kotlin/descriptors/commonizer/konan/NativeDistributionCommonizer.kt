@@ -189,7 +189,8 @@ class NativeDistributionCommonizer(
                 val serializer = KlibMetadataMonolithicSerializer(
                     languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
                     metadataVersion = KlibMetadataVersion.INSTANCE,
-                    skipExpects = false
+                    skipExpects = false,
+                    project = null
                 )
 
                 // 'targetsToCopy' are some targets with empty set of platform libraries

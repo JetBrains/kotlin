@@ -475,6 +475,7 @@ class GenerateIrRuntime {
         val tmpKlibDir = createTempDir().also { it.deleteOnExit() }
         serializeModuleIntoKlib(
             moduleName,
+            project,
             configuration,
             bindingContext,
             files,

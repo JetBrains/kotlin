@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.serialization
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
@@ -755,13 +756,6 @@ class DescriptorSerializer private constructor(
     )
 
     companion object {
-        private val plugins: MutableSet<DescriptorSerializerPlugin> = mutableSetOf()
-
-        @JvmStatic
-        fun registerSerializerPlugin(plugin: DescriptorSerializerPlugin) {
-            plugins.add(plugin)
-        }
-
         @JvmStatic
         fun createTopLevel(extension: SerializerExtension): DescriptorSerializer =
             DescriptorSerializer(
@@ -778,13 +772,15 @@ class DescriptorSerializer private constructor(
         fun create(
             descriptor: ClassDescriptor,
             extension: SerializerExtension,
-            parentSerializer: DescriptorSerializer?
+            parentSerializer: DescriptorSerializer?,
+            project: Project? = null
         ): DescriptorSerializer {
             val container = descriptor.containingDeclaration
             val parent = if (container is ClassDescriptor)
-                parentSerializer ?: create(container, extension, null)
+                parentSerializer ?: create(container, extension, null, project)
             else
                 createTopLevel(extension)
+            val plugins = project?.let { DescriptorSerializerPlugin.getInstances(it) }.orEmpty()
 
             // Calculate type parameter ids for the outer class beforehand, as it would've had happened if we were always
             // serializing outer classes before nested classes.
@@ -797,7 +793,7 @@ class DescriptorSerializer private constructor(
                 if (container is ClassDescriptor && !isVersionRequirementTableWrittenCorrectly(extension.metadataVersion))
                     parent.versionRequirementTable else MutableVersionRequirementTable(),
                 serializeTypeTableToFunction = false,
-                plugins.toList()
+                plugins
             )
             for (typeParameter in descriptor.declaredTypeParameters) {
                 serializer.typeParameters.intern(typeParameter)
