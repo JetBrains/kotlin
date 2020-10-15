@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
@@ -153,8 +154,10 @@ class KotlinGradleProjectDataService : AbstractProjectDataService<ModuleData, Vo
             GradleProjectImportHandler.getInstances(project).forEach { it.importByModule(kotlinFacet, moduleNode) }
         }
 
-        val codeStyleStr = GradlePropertiesFileFacade.forProject(project).readProperty(KOTLIN_CODE_STYLE_GRADLE_SETTING)
-        ProjectCodeStyleImporter.apply(project, codeStyleStr)
+        runReadAction {
+            val codeStyleStr = GradlePropertiesFileFacade.forProject(project).readProperty(KOTLIN_CODE_STYLE_GRADLE_SETTING)
+            ProjectCodeStyleImporter.apply(project, codeStyleStr)
+        }
 
         ApplicationManager.getApplication().executeOnPooledThread {
             KotlinGradleFUSLogger.reportStatistics()

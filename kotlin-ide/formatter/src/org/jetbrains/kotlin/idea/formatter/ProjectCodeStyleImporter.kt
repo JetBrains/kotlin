@@ -41,5 +41,6 @@ object ProjectCodeStyleImporter {
 
         predefinedCodeStyle.apply(projectSettingsUpdated)
         CodeStyle.setMainProjectSettings(project, projectSettingsUpdated)
+        settingsManager.notifyCodeStyleSettingsChanged()
     }
 }
