@@ -460,32 +460,40 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
         }
     }
 
-    @Test fun genericAnnotationClass() {
+    @Test
+    fun genericAnnotationClass() {
         inlineModelTest(
             """annotation class Foo<A,B,C,D:Number>() {}"""
         ) {
-            with((this / "classes" / "Foo").cast<DAnnotation>()){
-                generics.map { it.name to it.bounds.first().name } equals listOf("A" to "Any", "B" to "Any", "C" to "Any", "D" to "Number")
+            with((this / "classes" / "Foo").cast<DAnnotation>()) {
+                generics.map { it.name to it.bounds.first().name } equals listOf(
+                    "A" to "Any",
+                    "B" to "Any",
+                    "C" to "Any",
+                    "D" to "Number"
+                )
             }
         }
     }
 
-    @Test fun nestedGenericClasses(){
+    @Test
+    fun nestedGenericClasses() {
         inlineModelTest(
             """
             |class Outer<OUTER> {
             |   inner class Inner<INNER, T : OUTER> { }
             |}
         """.trimMargin()
-        ){
-            with((this / "classes" / "Outer").cast<DClass>()){
+        ) {
+            with((this / "classes" / "Outer").cast<DClass>()) {
                 val inner = classlikes.single().cast<DClass>()
                 inner.generics.map { it.name to it.bounds.first().name } equals listOf("INNER" to "Any", "T" to "OUTER")
             }
         }
     }
 
-    @Test fun allImplementedInterfaces() {
+    @Test
+    fun allImplementedInterfaces() {
         inlineModelTest(
             """
                 | interface Highest { }
@@ -494,14 +502,16 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
                 | interface LowerImplInterface: Lower { }
                 | class Tested : HighestImpl(), LowerImplInterface { }
             """.trimIndent()
-        ){
-            with((this / "classes" / "Tested").cast<DClass>()){
-                extra[ImplementedInterfaces]?.interfaces?.entries?.single()?.value?.map { it.dri.sureClassNames }?.sorted() equals listOf("Highest", "Lower", "LowerImplInterface").sorted()
+        ) {
+            with((this / "classes" / "Tested").cast<DClass>()) {
+                extra[ImplementedInterfaces]?.interfaces?.entries?.single()?.value?.map { it.dri.sureClassNames }
+                    ?.sorted() equals listOf("Highest", "Lower", "LowerImplInterface").sorted()
             }
         }
     }
 
-    @Test fun multipleClassInheritance() {
+    @Test
+    fun multipleClassInheritance() {
         inlineModelTest(
             """
                 | open class A { }
@@ -515,7 +525,8 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
         }
     }
 
-    @Test fun multipleClassInheritanceWithInterface(){
+    @Test
+    fun multipleClassInheritanceWithInterface() {
         inlineModelTest(
             """
                | open class A { }
@@ -524,9 +535,30 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
                | interface Y : X { }
                | class Tested : B(), Y { }
             """.trimIndent()
-        ){
+        ) {
             with((this / "classes" / "Tested").cast<DClass>()) {
-                supertypes.entries.single().value.map { it.typeConstructor.dri.sureClassNames to it.kind }.sortedBy { it.first } equals listOf("B" to KotlinClassKindTypes.CLASS, "Y" to KotlinClassKindTypes.INTERFACE)
+                supertypes.entries.single().value.map { it.typeConstructor.dri.sureClassNames to it.kind }
+                    .sortedBy { it.first } equals listOf(
+                    "B" to KotlinClassKindTypes.CLASS,
+                    "Y" to KotlinClassKindTypes.INTERFACE
+                )
+            }
+        }
+    }
+
+    @Test
+    fun doublyTypealiasedException() {
+        inlineModelTest(
+            """
+               | typealias B = RuntimeException
+               | typealias A = B
+            """.trimMargin()
+        ) {
+            with((this / "classes" / "A").cast<DTypeAlias>()) {
+                extra[ExceptionInSupertypes].assertNotNull("Typealias A should have ExceptionInSupertypes in its extra field")
+            }
+            with((this / "classes" / "B").cast<DTypeAlias>()) {
+                extra[ExceptionInSupertypes].assertNotNull("Typealias B should have ExceptionInSupertypes in its extra field")
             }
         }
     }
