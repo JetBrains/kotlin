@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -200,7 +201,11 @@ class JvmDefaultChecker(val jvmTarget: JvmTarget, project: Project) : Declaratio
         val classMembers =
             inheritedFun.overriddenDescriptors.filter { !isInterface(it.containingDeclaration) && !isAnnotationClass(it.containingDeclaration) }
         val implicitDefaultImplsDelegate =
-            classMembers.firstOrNull { getNonPrivateTraitMembersForDelegation(it, true)?.isCompiledToJvmDefaultWithProperMode(jvmDefaultMode) == false }
+            classMembers.firstOrNull {
+                //TODO: additional processing for platform dependent method is required (https://youtrack.jetbrains.com/issue/KT-42697)
+                it !is JavaCallableMemberDescriptor &&
+                        getNonPrivateTraitMembersForDelegation(it, true)?.isCompiledToJvmDefaultWithProperMode(jvmDefaultMode) == false
+            }
         if (implicitDefaultImplsDelegate != null) return implicitDefaultImplsDelegate
         return classMembers.firstNotNullResult { findPossibleClashMember(it, jvmDefaultMode) }
     }
