@@ -48,7 +48,7 @@ private fun trimWhitespaces() {
 
     assertEquals(expected = "String", actual = "\u0020 \u202FString\u2028\u2029".trim(),
             message = "Trim special whitespaces")
-    assertEquals(expected = "\u1FFFString", actual = "\u0085  \u1FFFString".trim(),
+    assertEquals(expected = "\u1FFFString", actual = "\u00A0  \u1FFFString".trim(),
             message = "Trim special whitespace but should left a unicode symbol")
     assertEquals(expected = "String\tSTR", actual = " \nString\tSTR  ".trim(), message = "Trim newline")
 }

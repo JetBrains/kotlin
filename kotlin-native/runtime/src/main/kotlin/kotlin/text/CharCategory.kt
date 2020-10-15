@@ -1,13 +1,13 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package kotlin.text
 
 /**
  * Represents the character general category in the Unicode specification.
  */
-public enum class CharCategory(public val value: Int, public val code: String) {
+public actual enum class CharCategory(public val value: Int, public actual val code: String) {
     /**
      * General category "Cn" in the Unicode specification.
      */
@@ -161,14 +161,14 @@ public enum class CharCategory(public val value: Int, public val code: String) {
     /**
      * Returns `true` if [char] character belongs to this category.
      */
-    public operator fun contains(char: Char): Boolean = char.getType() == this.value
+    public actual operator fun contains(char: Char): Boolean = char.getCategoryValue() == this.value
 
     public companion object {
         public fun valueOf(category: Int): CharCategory =
-            when {
-                category >=0 && category <= 16 -> values()[category]
-                category >= 18 && category <= 30 -> values()[category - 1]
-                else -> throw IllegalArgumentException("Category #$category is not defined.")
-            }
+                when (category) {
+                    in 0..16 -> values()[category]
+                    in 18..30 -> values()[category - 1]
+                    else -> throw IllegalArgumentException("Category #$category is not defined.")
+                }
     }
 }
