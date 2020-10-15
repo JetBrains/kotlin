@@ -1199,6 +1199,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/DeepCopyIrTree.kt");
         }
 
+        @TestMetadata("EnumMapGet.kt")
+        public void testEnumMapGet() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/EnumMapGet.kt");
+        }
+
         @TestMetadata("invokePriority.kt")
         public void testInvokePriority() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/invokePriority.kt");
