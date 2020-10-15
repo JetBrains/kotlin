@@ -40,22 +40,23 @@ fun ClassLoweringPass.runOnFileInOrder(irFile: IrFile) {
 typealias SerializationPluginContext = IrPluginContext
 
 private class SerializerClassLowering(
-    val context: SerializationPluginContext
+    val context: SerializationPluginContext,
+    val metadataPlugin: SerializationDescriptorSerializerPlugin?
 ) :
     IrElementTransformerVoid(), ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         SerializableIrGenerator.generate(irClass, context, context.bindingContext)
-        SerializerIrGenerator.generate(irClass, context, context.bindingContext)
+        SerializerIrGenerator.generate(irClass, context, context.bindingContext, metadataPlugin)
         SerializableCompanionIrGenerator.generate(irClass, context, context.bindingContext)
     }
 }
 
-open class SerializationLoweringExtension : IrGenerationExtension {
+open class SerializationLoweringExtension @JvmOverloads constructor(val metadataPlugin: SerializationDescriptorSerializerPlugin? = null) : IrGenerationExtension {
     override fun generate(
         moduleFragment: IrModuleFragment,
         pluginContext: IrPluginContext
     ) {
-        val serializerClassLowering = SerializerClassLowering(pluginContext)
+        val serializerClassLowering = SerializerClassLowering(pluginContext, metadataPlugin)
         for (file in moduleFragment.files)
             serializerClassLowering.runOnFileInOrder(file)
     }

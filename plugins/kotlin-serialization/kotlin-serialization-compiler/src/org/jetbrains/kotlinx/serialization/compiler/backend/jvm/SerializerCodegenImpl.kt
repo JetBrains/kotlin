@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializerCodegen
+import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationDescriptorSerializerPlugin
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.typeArgPrefix
 import org.jetbrains.org.objectweb.asm.Label
@@ -21,8 +22,9 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 open class SerializerCodegenImpl(
     protected val codegen: ImplementationBodyCodegen,
-    serializableClass: ClassDescriptor
-) : SerializerCodegen(codegen.descriptor, codegen.bindingContext) {
+    serializableClass: ClassDescriptor,
+    metadataPlugin: SerializationDescriptorSerializerPlugin?
+) : SerializerCodegen(codegen.descriptor, codegen.bindingContext, metadataPlugin) {
 
 
     private val serialDescField = "\$\$serialDesc"
@@ -34,12 +36,12 @@ open class SerializerCodegenImpl(
     private val staticDescriptor = serializableDescriptor.declaredTypeParameters.isEmpty()
 
     companion object {
-        fun generateSerializerExtensions(codegen: ImplementationBodyCodegen) {
+        fun generateSerializerExtensions(codegen: ImplementationBodyCodegen, metadataPlugin: SerializationDescriptorSerializerPlugin?) {
             val serializableClass = getSerializableClassDescriptorBySerializer(codegen.descriptor) ?: return
             val serializerCodegen = if (serializableClass.isSerializableEnum()) {
                 SerializerForEnumsCodegen(codegen, serializableClass)
             } else {
-                SerializerCodegenImpl(codegen, serializableClass)
+                SerializerCodegenImpl(codegen, serializableClass, metadataPlugin)
             }
             serializerCodegen.generate()
         }

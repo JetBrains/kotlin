@@ -29,7 +29,7 @@ class SerializerForEnumsGenerator(
     compilerContext: SerializationPluginContext,
     bindingContext: BindingContext
 ) :
-    SerializerIrGenerator(irClass, compilerContext, bindingContext) {
+    SerializerIrGenerator(irClass, compilerContext, bindingContext, null) {
 
     override fun generateSave(function: FunctionDescriptor) = irClass.contributeFunction(function) { saveFunc ->
         fun irThis(): IrExpression =

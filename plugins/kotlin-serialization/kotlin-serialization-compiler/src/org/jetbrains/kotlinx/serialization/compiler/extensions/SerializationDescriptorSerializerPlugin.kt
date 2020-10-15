@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.serialization.SerializerExtension
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializableProperties
 import org.jetbrains.kotlinx.serialization.compiler.resolve.isInternalSerializable
 
-class SerializationDescriptorPluginForKotlinxSerialization : DescriptorSerializerPlugin {
+class SerializationDescriptorSerializerPlugin : DescriptorSerializerPlugin {
     private val descriptorMetadataMap: MutableMap<ClassDescriptor, SerializableProperties> = hashMapOf()
 
     private val ClassDescriptor.needSaveProgramOrder: Boolean

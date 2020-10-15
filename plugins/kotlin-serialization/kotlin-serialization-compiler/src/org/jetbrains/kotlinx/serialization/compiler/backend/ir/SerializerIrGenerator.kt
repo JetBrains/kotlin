@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializerCodegen
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.getSerialTypeInfo
+import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationDescriptorSerializerPlugin
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.DECODER_CLASS
@@ -44,15 +45,20 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.UN
 // Is creating synthetic origin is a good idea or not?
 object SERIALIZABLE_PLUGIN_ORIGIN : IrDeclarationOriginImpl("SERIALIZER")
 
-open class SerializerIrGenerator(val irClass: IrClass, final override val compilerContext: SerializationPluginContext, bindingContext: BindingContext) :
-    SerializerCodegen(irClass.descriptor, bindingContext), IrBuilderExtension {
+open class SerializerIrGenerator(
+    val irClass: IrClass,
+    final override val compilerContext: SerializationPluginContext,
+    bindingContext: BindingContext,
+    metadataPlugin: SerializationDescriptorSerializerPlugin?
+) :
+    SerializerCodegen(irClass.descriptor, bindingContext, metadataPlugin), IrBuilderExtension {
 
     protected val serializableIrClass = compilerContext.symbolTable.referenceClass(serializableDescriptor).owner
     protected val irAnySerialDescProperty = anySerialDescProperty?.let { compilerContext.symbolTable.referenceProperty(it) }
 
 
     protected open val serialDescImplClass: ClassDescriptor = serializerDescriptor
-            .getClassFromInternalSerializationPackage(SERIAL_DESCRIPTOR_CLASS_IMPL)
+        .getClassFromInternalSerializationPackage(SERIAL_DESCRIPTOR_CLASS_IMPL)
 
     override fun generateSerialDesc() {
         val desc: PropertyDescriptor = generatedSerialDescPropertyDescriptor ?: return
@@ -493,13 +499,14 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
         fun generate(
             irClass: IrClass,
             context: SerializationPluginContext,
-            bindingContext: BindingContext
+            bindingContext: BindingContext,
+            metadataPlugin: SerializationDescriptorSerializerPlugin?
         ) {
             val serializableDesc = getSerializableClassDescriptorBySerializer(irClass.symbol.descriptor) ?: return
             if (serializableDesc.isSerializableEnum()) {
                 SerializerForEnumsGenerator(irClass, context, bindingContext).generate()
             } else {
-                SerializerIrGenerator(irClass, context, bindingContext).generate()
+                SerializerIrGenerator(irClass, context, bindingContext, metadataPlugin).generate()
             }
             irClass.patchDeclarationParents(irClass.parent)
         }
