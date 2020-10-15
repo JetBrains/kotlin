@@ -3172,6 +3172,10 @@ task inlineClass_defaultEquals(type: KonanLocalTest) {
     source = "codegen/inlineClass/defaultEquals.kt"
 }
 
+task inlineClass_secondaryConstructorWithGenerics(type: KonanLocalTest) {
+    source = "codegen/inlineClass/secondaryConstructorWithGenerics.kt"
+}
+
 task deserialized_inline0(type: KonanLocalTest) {
     source = "serialization/deserialized_inline0.kt"
 }

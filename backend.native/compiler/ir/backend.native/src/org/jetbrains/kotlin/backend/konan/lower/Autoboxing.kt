@@ -519,6 +519,13 @@ private val Context.getLoweredInlineClassConstructor: (IrConstructor) -> IrSimpl
     ).apply {
         descriptor.bind(this)
         parent = irConstructor.parent
-        valueParameters += irConstructor.valueParameters.map { it.copyTo(this) }
+
+        // Note: technically speaking, this function doesn't have access to class type parameters (since it is "static").
+        // But, technically speaking, otherwise we would have to remap types in the entire IR subtree,
+        // which is an overkill here, because type parameters don't matter at this phase of compilation and later.
+        // So it is just a trick to make [copyTo] happy:
+        val remapTypeMap = irConstructor.constructedClass.typeParameters.associateBy { it }
+
+        valueParameters += irConstructor.valueParameters.map { it.copyTo(this, remapTypeMap = remapTypeMap) }
     }
 }
