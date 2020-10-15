@@ -267,8 +267,8 @@ private fun IrFunction.findBaseFunctionWithDefaultArguments(skipInlineMethods: B
         if (skipExternalMethods && isExternalOrInheritedFromExternal()) return null
 
         if (this is IrSimpleFunction) {
-            overriddenSymbols.forEach {
-                val base = it.owner
+            overriddenSymbols.forEach { overridden ->
+                val base = overridden.owner
                 if (base !in visited) base.dfsImpl()?.let { return it }
             }
         }
@@ -485,12 +485,12 @@ class DefaultParameterPatchOverridenSymbolsLowering(
 }
 
 private fun IrFunction.generateDefaultsFunction(
-        context: CommonBackendContext,
-        skipInlineMethods: Boolean,
-        skipExternalMethods: Boolean,
-        forceSetOverrideSymbols: Boolean,
-        visibility: DescriptorVisibility,
-        useConstructorMarker: Boolean
+    context: CommonBackendContext,
+    skipInlineMethods: Boolean,
+    skipExternalMethods: Boolean,
+    forceSetOverrideSymbols: Boolean,
+    visibility: DescriptorVisibility,
+    useConstructorMarker: Boolean
 ): IrFunction? {
     if (skipInlineMethods && isInline) return null
     if (skipExternalMethods && isExternalOrInheritedFromExternal()) return null
@@ -499,12 +499,14 @@ private fun IrFunction.generateDefaultsFunction(
     if (this is IrSimpleFunction) {
         // If this is an override of a function with default arguments, produce a fake override of a default stub.
         if (overriddenSymbols.any { it.owner.findBaseFunctionWithDefaultArguments(skipInlineMethods, skipExternalMethods) != null })
-            return generateDefaultsFunctionImpl(context, IrDeclarationOrigin.FAKE_OVERRIDE, visibility, true, useConstructorMarker).also {
-                context.mapping.defaultArgumentsDispatchFunction[this] = it
-                context.mapping.defaultArgumentsOriginalFunction[it] = this
+            return generateDefaultsFunctionImpl(
+                context, IrDeclarationOrigin.FAKE_OVERRIDE, visibility, true, useConstructorMarker
+            ).also { defaultsFunction ->
+                context.mapping.defaultArgumentsDispatchFunction[this] = defaultsFunction
+                context.mapping.defaultArgumentsOriginalFunction[defaultsFunction] = this
 
                 if (forceSetOverrideSymbols) {
-                    (it as IrSimpleFunction).overriddenSymbols += overriddenSymbols.mapNotNull {
+                    (defaultsFunction as IrSimpleFunction).overriddenSymbols += overriddenSymbols.mapNotNull {
                         it.owner.generateDefaultsFunction(
                             context,
                             skipInlineMethods,
@@ -539,11 +541,11 @@ private fun IrFunction.generateDefaultsFunction(
 }
 
 private fun IrFunction.generateDefaultsFunctionImpl(
-        context: CommonBackendContext,
-        newOrigin: IrDeclarationOrigin,
-        newVisibility: DescriptorVisibility,
-        isFakeOverride: Boolean,
-        useConstructorMarker: Boolean
+    context: CommonBackendContext,
+    newOrigin: IrDeclarationOrigin,
+    newVisibility: DescriptorVisibility,
+    isFakeOverride: Boolean,
+    useConstructorMarker: Boolean
 ): IrFunction {
     val newFunction = when (this) {
         is IrConstructor ->

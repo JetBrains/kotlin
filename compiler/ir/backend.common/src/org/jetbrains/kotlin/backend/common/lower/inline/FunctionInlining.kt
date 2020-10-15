@@ -81,7 +81,7 @@ class FunctionInlining(
     val inlineFunctionResolver: InlineFunctionResolver
 ) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
 
-    constructor(context: CommonBackendContext): this(context, DefaultInlineFunctionResolver(context))
+    constructor(context: CommonBackendContext) : this(context, DefaultInlineFunctionResolver(context))
 
     private var containerScope: ScopeWithIr? = null
 
@@ -263,7 +263,14 @@ class FunctionInlining(
                                 )
                             }
                             is IrSimpleFunction ->
-                                IrCallImpl(startOffset, endOffset, function.returnType, function.symbol, function.typeParameters.size, function.valueParameters.size)
+                                IrCallImpl(
+                                    startOffset,
+                                    endOffset,
+                                    function.returnType,
+                                    function.symbol,
+                                    function.typeParameters.size,
+                                    function.valueParameters.size
+                                )
                             else ->
                                 error("Unknown function kind : ${function.render()}")
                         }
@@ -308,7 +315,11 @@ class FunctionInlining(
                                 function.extensionReceiverParameter ->
                                     this.extensionReceiver = argument.implicitCastIfNeededTo(function.extensionReceiverParameter!!.type)
 
-                                else -> putValueArgument(parameter.index, argument.implicitCastIfNeededTo(function.valueParameters[parameter.index].type))
+                                else ->
+                                    putValueArgument(
+                                        parameter.index,
+                                        argument.implicitCastIfNeededTo(function.valueParameters[parameter.index].type)
+                                    )
                             }
                         }
                         assert(unboundIndex == valueParameters.size) { "Not all arguments of the callee are used" }
@@ -367,8 +378,8 @@ class FunctionInlining(
                                 || argumentExpression is IrFunctionExpression)
 
             val isImmutableVariableLoad: Boolean
-                get() = argumentExpression.let {
-                    it is IrGetValue && !it.symbol.owner.let { it is IrVariable && it.isVar }
+                get() = argumentExpression.let { argument ->
+                    argument is IrGetValue && !argument.symbol.owner.let { it is IrVariable && it.isVar }
                 }
         }
 
@@ -487,28 +498,30 @@ class FunctionInlining(
             val arguments = buildParameterToArgument(callSite, callee)
             val evaluationStatements = mutableListOf<IrStatement>()
             val substitutor = ParameterSubstitutor()
-            arguments.forEach {
+            arguments.forEach { argument ->
                 /*
                  * We need to create temporary variable for each argument except inlinable lambda arguments.
                  * For simplicity and to produce simpler IR we don't create temporaries for every immutable variable,
                  * not only for those referring to inlinable lambdas.
                  */
-                if (it.isInlinableLambdaArgument) {
-                    substituteMap[it.parameter] = it.argumentExpression
-                    (it.argumentExpression as? IrFunctionReference)?.let { evaluationStatements += evaluateArguments(it) }
+                if (argument.isInlinableLambdaArgument) {
+                    substituteMap[argument.parameter] = argument.argumentExpression
+                    (argument.argumentExpression as? IrFunctionReference)?.let { evaluationStatements += evaluateArguments(it) }
                     return@forEach
                 }
 
-                if (it.isImmutableVariableLoad) {
-                    substituteMap[it.parameter] =
-                        it.argumentExpression.transform( // Arguments may reference the previous ones - substitute them.
+                if (argument.isImmutableVariableLoad) {
+                    substituteMap[argument.parameter] =
+                        argument.argumentExpression.transform( // Arguments may reference the previous ones - substitute them.
                             substitutor,
                             data = null
                         )
                     return@forEach
                 }
 
-                val variableInitializer = it.argumentExpression.transform(substitutor, data = null) // Arguments may reference the previous ones - substitute them.
+                // Arguments may reference the previous ones - substitute them.
+                val variableInitializer = argument.argumentExpression.transform(substitutor, data = null)
+
                 val newVariable =
                     currentScope.scope.createTemporaryVariableWithWrappedDescriptor(
                         irExpression = IrBlockImpl(
@@ -524,7 +537,7 @@ class FunctionInlining(
                     )
 
                 evaluationStatements.add(newVariable)
-                substituteMap[it.parameter] = IrGetValueWithoutLocation(newVariable.symbol)
+                substituteMap[argument.parameter] = IrGetValueWithoutLocation(newVariable.symbol)
             }
             return evaluationStatements
         }
@@ -556,7 +569,8 @@ class FunctionInlining(
 }
 
 class InlinerExpressionLocationHint(val inlineAtSymbol: IrSymbol) : IrStatementOrigin {
-    override fun toString(): String = "(${this.javaClass.simpleName} : $functionNameOrDefaultToString @${functionFileOrNull?.fileEntry?.name})"
+    override fun toString(): String =
+        "(${this.javaClass.simpleName} : $functionNameOrDefaultToString @${functionFileOrNull?.fileEntry?.name})"
 
     private val functionFileOrNull: IrFile?
         get() = (inlineAtSymbol as? IrFunction)?.file

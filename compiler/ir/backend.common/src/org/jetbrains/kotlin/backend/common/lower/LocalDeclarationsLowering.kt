@@ -119,6 +119,7 @@ class LocalDeclarationsLowering(
 
     private abstract class LocalContext {
         val capturedTypeParameterToTypeParameter: MutableMap<IrTypeParameter, IrTypeParameter> = mutableMapOf()
+
         // By the time typeRemapper is used, the map will be already filled
         val typeRemapper = IrTypeParameterRemapper(capturedTypeParameterToTypeParameter)
 
@@ -698,7 +699,9 @@ class LocalDeclarationsLowering(
                 throw AssertionError("Local class constructor can't have extension receiver: ${ir2string(oldDeclaration)}")
             }
 
-            newDeclaration.valueParameters += createTransformedValueParameters(capturedValues, localClassContext, oldDeclaration, newDeclaration)
+            newDeclaration.valueParameters += createTransformedValueParameters(
+                capturedValues, localClassContext, oldDeclaration, newDeclaration
+            )
             newDeclaration.recordTransformedValueParameters(constructorContext)
 
             newDeclaration.metadata = oldDeclaration.metadata
@@ -708,13 +711,13 @@ class LocalDeclarationsLowering(
         }
 
         private fun createFieldForCapturedValue(
-                startOffset: Int,
-                endOffset: Int,
-                name: Name,
-                visibility: DescriptorVisibility,
-                parent: IrClass,
-                fieldType: IrType,
-                isCrossinline: Boolean
+            startOffset: Int,
+            endOffset: Int,
+            name: Name,
+            visibility: DescriptorVisibility,
+            parent: IrClass,
+            fieldType: IrType,
+            isCrossinline: Boolean
         ): IrField =
             context.irFactory.buildField {
                 this.startOffset = startOffset
