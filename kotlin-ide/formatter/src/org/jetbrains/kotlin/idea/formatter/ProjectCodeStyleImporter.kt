@@ -11,18 +11,18 @@ import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 
 object ProjectCodeStyleImporter {
-    fun apply(project: Project, codeStyleStr: String?): Boolean {
-        return when (codeStyleStr) {
-            KotlinObsoleteCodeStyle.CODE_STYLE_SETTING -> {
-                apply(project, KotlinObsoleteCodeStyle.INSTANCE)
-                true
-            }
-            KotlinStyleGuideCodeStyle.CODE_STYLE_SETTING -> {
-                apply(project, KotlinStyleGuideCodeStyle.INSTANCE)
-                true
-            }
-            else -> false
+    fun apply(project: Project, codeStyleStr: String?): Boolean = when (codeStyleStr) {
+        KotlinObsoleteCodeStyle.CODE_STYLE_SETTING -> {
+            apply(project, KotlinObsoleteCodeStyle.INSTANCE)
+            true
         }
+
+        KotlinStyleGuideCodeStyle.CODE_STYLE_SETTING -> {
+            apply(project, KotlinStyleGuideCodeStyle.INSTANCE)
+            true
+        }
+
+        else -> false
     }
 
     fun apply(project: Project, predefinedCodeStyle: KotlinPredefinedCodeStyle) {
