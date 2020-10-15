@@ -14,7 +14,6 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.*;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.RawCommandLineEditor;
@@ -33,8 +32,8 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants;
 import org.jetbrains.kotlin.config.*;
-import org.jetbrains.kotlin.idea.PluginStartupApplicationService;
 import org.jetbrains.kotlin.idea.KotlinBundle;
+import org.jetbrains.kotlin.idea.PluginStartupApplicationService;
 import org.jetbrains.kotlin.idea.facet.DescriptionListCellRenderer;
 import org.jetbrains.kotlin.idea.facet.KotlinFacet;
 import org.jetbrains.kotlin.idea.roots.RootUtilsKt;
@@ -50,17 +49,14 @@ import org.jetbrains.kotlin.platform.jvm.JdkPlatform;
 
 import javax.swing.*;
 import java.util.*;
-import java.util.List;
 
-public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
+public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Disposable {
     private static final Map<String, String> moduleKindDescriptions = new LinkedHashMap<>();
     private static final Map<String, String> soruceMapSourceEmbeddingDescriptions = new LinkedHashMap<>();
     private static final List<LanguageFeature.State> languageFeatureStates = Arrays.asList(
             LanguageFeature.State.ENABLED, LanguageFeature.State.ENABLED_WITH_WARNING, LanguageFeature.State.ENABLED_WITH_ERROR
     );
     private static final int MAX_WARNING_SIZE = 75;
-
-    private static final Disposable validatorsDisposable = Disposer.newDisposable();
 
     static {
         moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_PLAIN, KotlinBundle.message("configuration.description.plain.put.to.global.scope"));
@@ -213,6 +209,11 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
         }
 
         updateOutputDirEnabled();
+    }
+
+    @Override
+    public void dispose() {
+
     }
 
     private static int calculateNameCountToShowInWarning(List<String> allNames) {
@@ -761,8 +762,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
         };
     }
 
-    private static void createVersionValidator(JComboBox<VersionView> component, String messageKey) {
-        new ComponentValidator(validatorsDisposable)
+    private void createVersionValidator(JComboBox<VersionView> component, String messageKey) {
+        new ComponentValidator(this)
                 .withValidator(() -> {
                     VersionView selectedItem = (VersionView) component.getSelectedItem();
                     if (selectedItem == null) return null;
