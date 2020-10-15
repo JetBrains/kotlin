@@ -73,7 +73,7 @@ class KotlinConfigurationCheckerService(val project: Project) {
                 }
 
                 val totalModules = modules.size
-
+                indicator.isIndeterminate = false
                 for ((index, module) in modules.withIndex()) {
                     indicator.fraction = index * 1.0 / totalModules
 
