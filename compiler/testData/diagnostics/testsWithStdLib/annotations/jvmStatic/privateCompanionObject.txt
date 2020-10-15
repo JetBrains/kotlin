@@ -1,0 +1,22 @@
+package
+
+public final class WithPrivateCompanion {
+    public constructor WithPrivateCompanion()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    private companion object Companion {
+        private constructor Companion()
+        @kotlin.jvm.JvmStatic public final val staticVal1: kotlin.Int = 42
+        @get:kotlin.jvm.JvmStatic public final val staticVal2: kotlin.Int
+        @get:kotlin.jvm.JvmStatic public final val staticVal3: kotlin.Int = 42
+        @kotlin.jvm.JvmStatic public final var staticVar1: kotlin.Int
+        @get:kotlin.jvm.JvmStatic @set:kotlin.jvm.JvmStatic public final var staticVar2: kotlin.Int
+        @get:kotlin.jvm.JvmStatic @set:kotlin.jvm.JvmStatic public final var staticVar3: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        @kotlin.jvm.JvmStatic public final fun staticFunction(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
