@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.*
@@ -200,7 +199,6 @@ class LocalDeclarationsLowering(
         body.remapTypes(typeRemapper)
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private inner class LocalDeclarationsTransformer(
         val irElement: IrElement, val container: IrDeclaration, val classesToLower: Set<IrClass>?
     ) {

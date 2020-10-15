@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -539,7 +538,6 @@ private fun IrFunction.generateDefaultsFunction(
     return null
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 private fun IrFunction.generateDefaultsFunctionImpl(
         context: CommonBackendContext,
         newOrigin: IrDeclarationOrigin,

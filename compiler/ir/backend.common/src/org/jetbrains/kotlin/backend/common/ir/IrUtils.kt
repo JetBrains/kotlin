@@ -164,7 +164,6 @@ fun IrTypeParameter.copyToWithoutSuperTypes(
     this.index = index
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrFunction.copyReceiverParametersFrom(from: IrFunction) {
     dispatchReceiverParameter = from.dispatchReceiverParameter?.run {
         val newDescriptor = WrappedReceiverParameterDescriptor()
