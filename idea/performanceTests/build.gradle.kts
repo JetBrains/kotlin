@@ -36,6 +36,9 @@ dependencies {
     testImplementation(projectTests(":idea"))
     testImplementation(project(":idea:idea-gradle")) { isTransitive = false }
     testImplementation(commonDep("junit:junit"))
+    testImplementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.11.+")
+    testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.+")
+
 
     Platform[192].orHigher {
         testCompileOnly(intellijPluginDep("java"))
