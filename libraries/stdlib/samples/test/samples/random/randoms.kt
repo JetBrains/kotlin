@@ -41,62 +41,62 @@ class Randoms {
 
     @Sample
     fun nextBits() {
-	// always generates a 0
-	println(Random.nextBits(0))
-	// get a random 1 bit value
-	println(Random.nextBits(1))
-	// get a random 8 bit value
-	println(Random.nextBits(8))
-	// get a random 16 bit value
-	println(Random.nextBits(16))
-	// get a random 32 bit value
-	println(Random.nextBits(32))
+		// always generates a 0
+		println(Random.nextBits(0))
+		// get a random 1 bit value
+		println(Random.nextBits(1))
+		// get a random 8 bit value
+		println(Random.nextBits(8))
+		// get a random 16 bit value
+		println(Random.nextBits(16))
+		// get a random 32 bit value
+		println(Random.nextBits(32))
     }
 
     @Sample
     fun nextBoolean() {
-	// get a random Boolean value
-	println(Random.nextBoolean())
+		// get a random Boolean value
+		println(Random.nextBoolean())
     }
 
     @Sample
     fun nextBytes() {
-	var bytes = ByteArray(4)
-	assertPrints(bytes[0], "0")
-	assertPrints(bytes[1], "0")
-	assertPrints(bytes[2], "0")
-	assertPrints(bytes[3], "0")
-	Random.nextBytes(bytes, 1, 3)
-	for(i in 1..2)println("bytes[${i}]: ${bytes[i]}")
-	Random,nextBytes(bytes)
-	for(i in 0..3)println("bytes[${i}]: ${bytes[i]}")
-	val new_bytes = Random.nextBytes(3)
-	for(i in 0..2)println("new_bytes[${i}]: ${new_bytes[i]}")
+		var bytes = ByteArray(4)
+		assertPrints(bytes[0], "0")
+		assertPrints(bytes[1], "0")
+		assertPrints(bytes[2], "0")
+		assertPrints(bytes[3], "0")
+		Random.nextBytes(bytes, 1, 3)
+		for(i in 1..2)println("bytes[${i}]: ${bytes[i]}")
+		Random,nextBytes(bytes)
+		for(i in 0..3)println("bytes[${i}]: ${bytes[i]}")
+		val new_bytes = Random.nextBytes(3)
+		for(i in 0..2)println("new_bytes[${i}]: ${new_bytes[i]}")
     }
 
     @Sample
     fun nextDouble() {
-	println(Random.nextDouble())
-	println(Random.nextDouble(133.7))
-	println(Random.nextDouble(-42.0, 133.7))
+		println(Random.nextDouble())
+		println(Random.nextDouble(133.7))
+		println(Random.nextDouble(-42.0, 133.7))
     }
 
     @Sample
     fun nextFloat() {
-	println(Random.nextFloat())
+		println(Random.nextFloat())
     }
 
     @Sample
     fun nextInt() {
-	println(Random.nextInt())
-	println(Random.nextInt(64))
-	println(Random.nextInt(101, 837))
+		println(Random.nextInt())
+		println(Random.nextInt(64))
+		println(Random.nextInt(101, 837))
     }
 
     @Sample
     fun nextLong() {
-	println(Random.nextLong())
-	println(Random.nextLong(3000000000))
-	println(Random.nextLong(-4000000000, 4000000000))
+		println(Random.nextLong())
+		println(Random.nextLong(3000000000))
+		println(Random.nextLong(-4000000000, 4000000000))
     }
 }
