@@ -88,9 +88,6 @@ sealed class IdSignature {
             other is PublicSignature && packageFqName == other.packageFqName && declarationFqName == other.declarationFqName &&
                     id == other.id && mask == other.mask
 
-        fun equalsWithNames(other: Any?): Boolean =
-            other is PublicSignature && packageFqName == other.packageFqName && declarationFqName == other.declarationFqName
-
         override fun hashCode(): Int =
             ((packageFqName.hashCode() * 31 + declarationFqName.hashCode()) * 31 + id.hashCode()) * 31 + mask.hashCode()
     }

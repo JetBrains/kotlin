@@ -27,7 +27,6 @@ interface CommonBackendContext : BackendContext, LoggingContext {
 
     val configuration: CompilerConfiguration
     val scriptMode: Boolean
-    val returnIfSuspendedSignature: IdSignature.PublicSignature
 
     fun throwUninitializedPropertyAccessException(builder: IrBuilderWithScope, name: String): IrExpression {
         val throwErrorFunction = ir.symbols.throwUninitializedPropertyAccessException.owner

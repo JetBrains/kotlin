@@ -115,7 +115,6 @@ class JvmBackendContext(
     override val configuration get() = state.configuration
 
     override val internalPackageFqn = FqName("kotlin.jvm")
-    override val returnIfSuspendedSignature = IdSignature.PublicSignature(internalPackageFqn.asString(), "returnIfSuspended", null, 0)
 
     val suspendLambdaToOriginalFunctionMap = mutableMapOf<IrFunctionReference, IrFunction>()
     val suspendFunctionOriginalToView = mutableMapOf<IrFunction, IrFunction>()

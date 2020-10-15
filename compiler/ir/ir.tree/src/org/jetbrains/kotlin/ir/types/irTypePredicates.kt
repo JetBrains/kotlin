@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 
+@Suppress("ObjectPropertyName")
 object IdSignatureValues {
     @JvmField val any = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Any")
     @JvmField val nothing = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"Nothing")
@@ -57,7 +58,7 @@ private fun IrType.isClassType(signature: IdSignature.PublicSignature, hasQuesti
     if (this !is IrSimpleType) return false
     if (hasQuestionMark != null && this.hasQuestionMark != hasQuestionMark) return false
     if (!classifier.isPublicApi || !classifier.signature.isPublic) return false
-    return signature.equalsWithNames(classifier.signature)
+    return signature == classifier.signature
 }
 
 fun IrClassifierSymbol.isClassWithFqName(fqName: FqNameUnsafe): Boolean =
@@ -75,7 +76,7 @@ private val idSignatureToPrimitiveType: Map<IdSignature.PublicSignature, Primiti
         }
     }
 
-private val primitiveArrayTypesSignatures: Map<PrimitiveType, IdSignature.PublicSignature> =
+val primitiveArrayTypesSignatures: Map<PrimitiveType, IdSignature.PublicSignature> =
     newHashMapWithExpectedSize<PrimitiveType, IdSignature.PublicSignature>(PrimitiveType.values().size).apply {
         for (primitiveType in PrimitiveType.values()) {
             this[primitiveType] =
@@ -96,10 +97,12 @@ fun IrType.isArray(): Boolean = isNotNullClassType(IdSignatureValues.array)
 fun IrType.isNullableArray(): Boolean = isNullableClassType(IdSignatureValues.array)
 fun IrType.isCollection(): Boolean = isNotNullClassType(IdSignatureValues.collection)
 fun IrType.isNothing(): Boolean = isNotNullClassType(IdSignatureValues.nothing)
-fun IrType.isKClass(): Boolean = isNotNullClassType(IdSignatureValues.kClass)
 
-fun IrType.isPrimitiveType(): Boolean = idSignatureToPrimitiveType.keys.any { isNotNullClassType(it) }
-fun IrType.isNullablePrimitiveType(): Boolean = idSignatureToPrimitiveType.keys.any { isNullableClassType(it) }
+fun IrType.isPrimitiveType(hasQuestionMark: Boolean = false): Boolean =
+        (this is IrSimpleType && hasQuestionMark == this.hasQuestionMark) &&
+                classOrNull?.takeIf(IrClassSymbol::isPublicApi)?.signature in idSignatureToPrimitiveType
+
+fun IrType.isNullablePrimitiveType(): Boolean = isPrimitiveType(true)
 
 fun IrType.isMarkedNullable() = (this as? IrSimpleType)?.hasQuestionMark ?: false
 
@@ -144,3 +147,6 @@ fun IrType.isClassType(fqName: FqNameUnsafe, hasQuestionMark: Boolean): Boolean 
 fun IrType.isKotlinResult(): Boolean = isClassType(StandardNames.RESULT_FQ_NAME.toUnsafe(), false)
 
 fun IrType.isNullableContinuation(): Boolean = isClassType(StandardNames.CONTINUATION_INTERFACE_FQ_NAME_RELEASE.toUnsafe(), true)
+
+// FIR and backend instances have different mask.
+fun IrType.isKClass(): Boolean = isClassType(StandardNames.FqNames.kClass, false)

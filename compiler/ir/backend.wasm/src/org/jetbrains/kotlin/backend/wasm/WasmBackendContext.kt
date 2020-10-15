@@ -56,7 +56,6 @@ class WasmBackendContext(
 
     val objectToGetInstanceFunction = mutableMapOf<IrClassSymbol, IrSimpleFunction>()
     override val internalPackageFqn = FqName("kotlin.wasm")
-    override val returnIfSuspendedSignature = IdSignature.PublicSignature(internalPackageFqn.asString(), "returnIfSuspended", null, 0)
 
     private val internalPackageFragment = IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(
         builtIns.builtInsModule, FqName("kotlin.wasm.internal")
