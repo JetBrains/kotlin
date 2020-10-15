@@ -543,3 +543,12 @@ val EXPERIMENTAL_CONTINUATION_ASM_TYPE = StandardNames.CONTINUATION_INTERFACE_FQ
 
 @JvmField
 val RELEASE_CONTINUATION_ASM_TYPE = StandardNames.CONTINUATION_INTERFACE_FQ_NAME_RELEASE.topLevelClassAsmType()
+
+fun FunctionDescriptor.isInvokeSuspendOfLambda(): Boolean {
+    if (this !is SimpleFunctionDescriptor) return false
+    if (valueParameters.size != 1 ||
+        valueParameters[0].name.asString() != SUSPEND_CALL_RESULT_NAME ||
+        name.asString() != "invokeSuspend"
+    ) return false
+    return containingDeclaration is SyntheticClassDescriptorForLambda
+}
