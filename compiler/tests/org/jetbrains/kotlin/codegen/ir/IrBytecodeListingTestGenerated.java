@@ -1027,6 +1027,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
                 runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollectionOfInlineClass/mutableSet.kt");
             }
 
+            @TestMetadata("mutableSet2.kt")
+            public void testMutableSet2() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollectionOfInlineClass/mutableSet2.kt");
+            }
+
             @TestMetadata("set.kt")
             public void testSet() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollectionOfInlineClass/set.kt");
@@ -1275,6 +1280,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         @TestMetadata("kt41123.kt")
         public void testKt41123() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/specialBridges/kt41123.kt");
+        }
+
+        @TestMetadata("mutableCollectionOfPrimitive.kt")
+        public void testMutableCollectionOfPrimitive() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/specialBridges/mutableCollectionOfPrimitive.kt");
         }
 
         @TestMetadata("mutableListOfPrimitive.kt")

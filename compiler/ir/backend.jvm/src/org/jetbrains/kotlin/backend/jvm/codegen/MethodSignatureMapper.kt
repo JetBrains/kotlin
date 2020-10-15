@@ -11,10 +11,8 @@ import org.jetbrains.kotlin.backend.common.ir.isTopLevel
 import org.jetbrains.kotlin.backend.common.lower.parentsWithSelf
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.ir.getJvmNameFromAnnotation
-import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
-import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
-import org.jetbrains.kotlin.backend.jvm.ir.propertyIfAccessor
+import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
@@ -246,7 +244,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
                 else -> JvmMethodParameterKind.VALUE
             }
             val type =
-                if (function.name.asString() == "remove" && forceSingleValueParameterBoxing(function.toIrBasedDescriptor()))
+                if (shouldBoxSingleValueParameterForSpecialCaseOfRemove(function))
                     parameter.type.makeNullable()
                 else parameter.type
             writeParameter(sw, kind, type, function)
@@ -272,6 +270,18 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         }
 
         return signature
+    }
+
+    // Boxing is only necessary for 'remove(E): Boolean' of a MutableCollection<Int> implementation.
+    // Otherwise this method might clash with 'remove(I): E' defined in the java.util.List JDK interface (mapped to kotlin 'removeAt').
+    internal fun shouldBoxSingleValueParameterForSpecialCaseOfRemove(irFunction: IrFunction): Boolean {
+        if (irFunction !is IrSimpleFunction) return false
+        if (irFunction.name.asString() != "remove" && !irFunction.name.asString().startsWith("remove-")) return false
+        if (irFunction.isFromJava()) return false
+        if (irFunction.valueParameters.size != 1) return false
+        val valueParameterType = irFunction.valueParameters[0].type
+        if (!valueParameterType.unboxInlineClass().isInt()) return false
+        return irFunction.allOverridden(false).any { it.parent.kotlinFqName == StandardNames.FqNames.mutableCollection }
     }
 
     private fun writeParameter(sw: JvmSignatureWriter, kind: JvmMethodParameterKind, type: IrType, function: IrFunction) {

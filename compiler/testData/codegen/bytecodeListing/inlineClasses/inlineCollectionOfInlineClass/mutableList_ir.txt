@@ -64,7 +64,7 @@ public final class InlineMutableList {
     public static method listIterator-impl(p0: java.util.List, p1: int): java.util.ListIterator
     public synthetic bridge method remove(p0: int): java.lang.Object
     public bridge final method remove(p0: int): long
-    public synthetic bridge method remove(p0: java.lang.Object): boolean
+    public bridge final method remove(p0: java.lang.Object): boolean
     public static method remove-jHY5zpA(p0: java.util.List, p1: long): boolean
     public method remove-jHY5zpA(p0: long): boolean
     public method removeAll(p0: java.util.Collection): boolean

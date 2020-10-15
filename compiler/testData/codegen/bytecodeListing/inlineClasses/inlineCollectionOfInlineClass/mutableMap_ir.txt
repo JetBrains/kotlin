@@ -71,6 +71,7 @@ public final class InlineMutableMap {
     public static method put-pjrbk2k(p0: java.util.Map, p1: int, p2: double): IV
     public method putAll(p0: java.util.Map): void
     public static method putAll-impl(p0: java.util.Map, p1: java.util.Map): void
+    public bridge final method remove(p0: java.lang.Object): IV
     public synthetic bridge method remove(p0: java.lang.Object): java.lang.Object
     public method remove-FSIWiWE(p0: int): IV
     public static method remove-FSIWiWE(p0: java.util.Map, p1: int): IV

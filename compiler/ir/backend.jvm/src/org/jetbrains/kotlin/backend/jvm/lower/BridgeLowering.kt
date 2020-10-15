@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.ir.copyCorrespondingPropertyFrom
 import org.jetbrains.kotlin.backend.jvm.ir.eraseTypeParameters
+import org.jetbrains.kotlin.backend.jvm.ir.isFromJava
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmAbstract
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.codegen.AsmUtil
@@ -118,7 +119,8 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 internal val bridgePhase = makeIrFilePhase(
     ::BridgeLowering,
     name = "Bridge",
-    description = "Generate bridges"
+    description = "Generate bridges",
+    prerequisite = setOf(jvmInlineClassPhase)
 )
 
 internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoid() {
@@ -195,6 +197,24 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
             // were to override several interface methods the frontend would require a separate implementation.
             return !irFunction.isFakeOverride || irFunction.resolvesToClass()
         })
+
+        if (declaration.isInline) {
+            // Inline class (implementing 'MutableCollection<T>', where T is Int or an inline class mapped to Int)
+            // can contain a static replacement for a function 'remove', which forces value parameter boxing
+            // in order to avoid signature clash with 'remove(int)' method in 'java.util.List'.
+            // We should rewrite this static replacement as well ('remove' function itself is handled during special bridge processing).
+            for (irFunction in declaration.functions) {
+                val originalFunction = context.inlineClassReplacements.originalFunctionForStaticReplacement[irFunction]
+                    ?: continue
+                if (context.methodSignatureMapper.shouldBoxSingleValueParameterForSpecialCaseOfRemove(originalFunction)) {
+                    val oldValueParameter1 = irFunction.valueParameters[1]
+                    val newValueParameter1 = oldValueParameter1.copyTo(irFunction, type = oldValueParameter1.type.makeNullable())
+                    irFunction.valueParameters = listOf(irFunction.valueParameters[0], newValueParameter1)
+                    irFunction.body?.transform(VariableRemapper(mapOf(oldValueParameter1 to newValueParameter1)), null)
+                    break
+                }
+            }
+        }
 
         return super.visitClass(declaration)
     }
@@ -351,7 +371,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         //
         // This matches the behavior of the JVM backend, but it's probably a bad idea since this is an
         // opportunity for a Java and Kotlin implementation of the same interface to go out of sync.
-        if (it.parentAsClass.isInterface || it.comesFromJava())
+        if (it.parentAsClass.isInterface || it.isFromJava())
             null
         else
             it.specialBridgeOrNull?.signature?.takeIf { bridgeSignature -> bridgeSignature != it.jvmMethod }
@@ -361,7 +381,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
     private fun IrSimpleFunction.overriddenSpecialBridges(): List<SpecialBridge> {
         val targetJvmMethod = context.methodSignatureMapper.mapCalleeToAsmMethod(this)
         return allOverridden()
-            .filter { it.parentAsClass.isInterface || it.comesFromJava() }
+            .filter { it.parentAsClass.isInterface || it.isFromJava() }
             .mapNotNull { it.specialBridgeOrNull }
             .filter { it.signature != targetJvmMethod }
             .map { it.copy(isFinal = false, isSynthetic = true, methodInfo = null) }
@@ -568,8 +588,11 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
             if (correspondingProperty != null) {
                 if (correspondingProperty.owner.name !in specialBridgeMethods.specialPropertyNames) return null
             } else {
-                // 'removeAt' function can be mangled by inline class rules
-                if (function.name !in specialBridgeMethods.specialMethodNames && !function.name.asString().startsWith("removeAt-")) {
+                // 'remove' and 'removeAt' functions can be mangled by inline class rules
+                if (function.name !in specialBridgeMethods.specialMethodNames &&
+                    !function.name.asString().startsWith("removeAt-") &&
+                    !function.name.asString().startsWith("remove-")
+                ) {
                     return null
                 }
             }
@@ -621,8 +644,6 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         }
     }
 }
-
-private fun IrDeclaration.comesFromJava() = parentAsClass.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
 
 // Check whether a fake override will resolve to an implementation in class, not an interface.
 private fun IrSimpleFunction.resolvesToClass(): Boolean {

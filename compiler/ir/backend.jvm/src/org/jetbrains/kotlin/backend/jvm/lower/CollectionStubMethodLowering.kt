@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
+import org.jetbrains.kotlin.backend.jvm.ir.isFromJava
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
@@ -420,12 +421,10 @@ internal class CollectionStubComputer(val context: JvmBackendContext) {
 
     fun stubsForCollectionClasses(irClass: IrClass): Collection<StubsForCollectionClass> =
         stubsCache.getOrPut(irClass) {
-            if (irClass.comesFromJava()) emptySet()
+            if (irClass.isFromJava()) emptySet()
             else preComputedStubs.filter { (readOnlyClass, mutableClass) ->
                 !irClass.symbol.isSubtypeOfClass(mutableClass) &&
                         irClass.superTypes.any { it.isSubtypeOfClass(readOnlyClass) }
             }
         }
-
-    private fun IrClass.comesFromJava() = origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
 }

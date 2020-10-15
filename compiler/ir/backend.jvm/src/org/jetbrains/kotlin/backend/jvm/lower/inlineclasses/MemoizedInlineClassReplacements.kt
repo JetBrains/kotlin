@@ -37,6 +37,8 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, pr
     private val storageManager = LockBasedStorageManager("inline-class-replacements")
     private val propertyMap = mutableMapOf<IrPropertySymbol, IrProperty>()
 
+    internal val originalFunctionForStaticReplacement: MutableMap<IrFunction, IrFunction> = HashMap()
+
     /**
      * Get a replacement for a function or a constructor.
      */
@@ -166,6 +168,8 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, pr
 
     private fun createStaticReplacement(function: IrFunction): IrSimpleFunction =
         buildReplacement(function, JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT, noFakeOverride = true) {
+            originalFunctionForStaticReplacement[this] = function
+
             val newValueParameters = mutableListOf<IrValueParameter>()
             if (function.dispatchReceiverParameter != null) {
                 // FAKE_OVERRIDEs have broken dispatch receivers
