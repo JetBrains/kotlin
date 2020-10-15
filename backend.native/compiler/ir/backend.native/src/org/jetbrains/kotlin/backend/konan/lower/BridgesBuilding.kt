@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
+import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
 
 internal class WorkersBridgesBuilding(val context: Context) : DeclarationContainerLoweringPass, IrElementTransformerVoid() {
 
@@ -200,7 +201,7 @@ private fun IrBuilderWithScope.irConst(value: Any?) = when (value) {
 
 private fun IrBlockBodyBuilder.buildTypeSafeBarrier(function: IrFunction,
                                                     originalFunction: IrFunction,
-                                                    typeSafeBarrierDescription: BuiltinMethodsWithSpecialGenericSignature.TypeSafeBarrierDescription) {
+                                                    typeSafeBarrierDescription: SpecialGenericSignatures.TypeSafeBarrierDescription) {
     val valueParameters = function.valueParameters
     val originalValueParameters = originalFunction.valueParameters
     for (i in valueParameters.indices) {
@@ -209,7 +210,7 @@ private fun IrBlockBodyBuilder.buildTypeSafeBarrier(function: IrFunction,
         val type = originalValueParameters[i].type
         if (!type.isNullableAny()) {
             +returnIfBadType(irGet(valueParameters[i]), type,
-                    if (typeSafeBarrierDescription == BuiltinMethodsWithSpecialGenericSignature.TypeSafeBarrierDescription.MAP_GET_OR_DEFAULT)
+                    if (typeSafeBarrierDescription == SpecialGenericSignatures.TypeSafeBarrierDescription.MAP_GET_OR_DEFAULT)
                         irGet(valueParameters[2])
                     else irConst(typeSafeBarrierDescription.defaultValue)
             )
