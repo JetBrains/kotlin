@@ -19,12 +19,12 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.ui.GuiUtils
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.intentions.ConvertReferenceToLambdaIntention
 import org.jetbrains.kotlin.idea.intentions.SpecifyExplicitLambdaSignatureIntention
 import org.jetbrains.kotlin.idea.references.KtSimpleReference
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
@@ -180,7 +180,7 @@ private fun UsageReplacementStrategy.doRefactoringInside(
 ) {
     element.forEachDescendantOfType<KtSimpleNameExpression> { usage ->
         if (usage.isValid && usage.getReferencedName() == targetName) {
-            if (targetDescriptor == usage.resolveToCall()?.candidateDescriptor) {
+            if (targetDescriptor == (usage.mainReference.resolve() as? KtDeclaration)?.descriptor) {
                 createReplacer(usage)?.invoke()
             }
         }
