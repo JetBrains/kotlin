@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacade
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.psi.KtElement
 
 internal class KtFirAnalysisSession
 private constructor(
-    private val element: KtElement,
+    private val project: Project,
     val firResolveState: FirModuleResolveState,
     internal val firSymbolBuilder: KtSymbolByFirBuilder,
     token: ValidityToken,
@@ -34,8 +35,6 @@ private constructor(
     init {
         assertIsValid()
     }
-
-    private val project = element.project
 
     override val smartCastProvider: KtSmartCastProvider = KtFirSmartcastProvider(this, token)
     override val typeProvider: KtTypeProvider = KtFirTypeProvider(this, token)
@@ -51,9 +50,9 @@ private constructor(
 
     override fun createContextDependentCopy(): KtAnalysisSession {
         check(!isContextSession) { "Cannot create context-dependent copy of KtAnalysis session from a context dependent one" }
-        val contextResolveState = LowLevelFirApiFacadeForCompletion.getResolveStateForCompletion(element, firResolveState)
+        val contextResolveState = LowLevelFirApiFacadeForCompletion.getResolveStateForCompletion(firResolveState)
         return KtFirAnalysisSession(
-            element,
+            project,
             contextResolveState,
             firSymbolBuilder.createReadOnlyCopy(contextResolveState),
             token,
@@ -65,7 +64,12 @@ private constructor(
         @Deprecated("Please use org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProviderKt.analyze")
         internal fun createForElement(element: KtElement): KtFirAnalysisSession {
             val firResolveState = LowLevelFirApiFacade.getResolveStateFor(element)
-            val project = element.project
+            return createAnalysisSessionByResolveState(firResolveState)
+        }
+
+        @Deprecated("Please use org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProviderKt.analyze")
+        internal fun createAnalysisSessionByResolveState(firResolveState: FirModuleResolveState): KtFirAnalysisSession {
+            val project = firResolveState.project
             val token = ReadActionConfinementValidityToken(project)
             val firSymbolBuilder = KtSymbolByFirBuilder(
                 firResolveState,
@@ -73,7 +77,7 @@ private constructor(
                 token
             )
             return KtFirAnalysisSession(
-                element,
+                project,
                 firResolveState,
                 firSymbolBuilder,
                 token,
