@@ -144,6 +144,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("remap file source paths in debug info")
         val PRE_LINK_CACHES: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("perform compiler caches pre-link")
+        val OVERRIDE_KONAN_PROPERTIES: CompilerConfigurationKey<Map<String, String>>
+                = CompilerConfigurationKey.create("override konan.properties values")
     }
 }
 

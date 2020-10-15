@@ -278,6 +278,16 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     )
     var preLinkCaches: String? = null
 
+    // We use `;` as delimiter because properties may contain comma-separated values.
+    // For example, target cpu features.
+    @Argument(
+            value = "-Xoverride-konan-properties",
+            valueDescription = "key1=value1;key2=value2;...",
+            description = "Override konan.properties.values",
+            delimiter = ";"
+    )
+    var overrideKonanProperties: Array<String>? = null
+
     override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> =
             super.configureAnalysisFlags(collector).also {
                 val useExperimental = it[AnalysisFlags.useExperimental] as List<*>

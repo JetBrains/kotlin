@@ -252,6 +252,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 }
                 put(DISABLE_FAKE_OVERRIDE_VALIDATOR, arguments.disableFakeOverrideValidator)
                 putIfNotNull(PRE_LINK_CACHES, parsePreLinkCachesValue(configuration, arguments.preLinkCaches))
+                putIfNotNull(OVERRIDE_KONAN_PROPERTIES, parseOverrideKonanProperties(arguments, configuration))
             }
         }
     }
@@ -454,6 +455,24 @@ private fun parseDebugPrefixMap(
         libraryAndCache[0] to libraryAndCache[1]
     }
 }.toMap()
+
+private fun parseOverrideKonanProperties(
+        arguments: K2NativeCompilerArguments,
+        configuration: CompilerConfiguration
+): Map<String, String>? =
+        arguments.overrideKonanProperties?.mapNotNull {
+            val keyValueSeparatorIndex = it.indexOf('=')
+            if (keyValueSeparatorIndex > 0) {
+                it.substringBefore('=') to it.substringAfter('=')
+            } else {
+                configuration.report(
+                        ERROR,
+                        "incorrect property format: expected '<key>=<value>', got '$it'"
+                )
+                null
+            }
+        }?.toMap()
+
 
 
 fun main(args: Array<String>) = K2Native.main(args)
