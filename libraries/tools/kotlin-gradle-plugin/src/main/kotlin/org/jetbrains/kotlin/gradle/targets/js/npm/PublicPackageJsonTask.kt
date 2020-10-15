@@ -23,9 +23,8 @@ constructor(
     @Transient
     private val compilation: KotlinJsCompilation
 ) : DefaultTask() {
-
+    @Transient
     private val npmProject = compilation.npmProject
-
     private val nodeJs = npmProject.nodeJs
 
     private val compilationResolution

@@ -19,7 +19,6 @@ abstract class DukatTask(
     override val compilation: KotlinJsCompilation
 ) : DefaultTask(), RequiresNpmDependencies {
     @get:Internal
-    @Transient
     protected val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
     @get:Internal
