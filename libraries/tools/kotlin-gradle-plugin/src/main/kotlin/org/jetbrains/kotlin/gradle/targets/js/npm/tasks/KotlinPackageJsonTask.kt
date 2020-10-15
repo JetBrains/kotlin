@@ -33,8 +33,11 @@ open class KotlinPackageJsonTask : DefaultTask() {
     @Transient
     private lateinit var compilation: KotlinJsCompilation
 
+    @Input
+    val projectPath = project.path
+
     private val compilationResolver
-        get() = nodeJs.npmResolutionManager.resolver[project][compilation]
+        get() = nodeJs.npmResolutionManager.resolver[projectPath][compilation]
 
     private val producer: KotlinCompilationNpmResolver.PackageJsonProducer
         get() = compilationResolver.packageJsonProducer

@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.plugins.BasePlugin
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension.Companion.EXTENSION_NAME
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PACKAGE_JSON_UMBRELLA_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
@@ -34,13 +36,15 @@ open class NodeJsRootPlugin : Plugin<Project> {
 
         val rootClean = project.rootProject.tasks.named(BasePlugin.CLEAN_TASK_NAME)
 
-        tasks.register(KotlinNpmInstallTask.NAME, KotlinNpmInstallTask::class.java) {
+        registerTask<KotlinNpmInstallTask>(KotlinNpmInstallTask.NAME) {
             it.dependsOn(setupTask)
             it.group = TASKS_GROUP_NAME
             it.description = "Find, download and link NPM dependencies and projects"
 
             it.mustRunAfter(rootClean)
         }
+
+        registerTask<Task>(PACKAGE_JSON_UMBRELLA_TASK_NAME)
 
         YarnPlugin.apply(project)
 
