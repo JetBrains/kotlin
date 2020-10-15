@@ -18,14 +18,16 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class JvmStaticInPrivateCompanionChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
+        val containingDeclaration = descriptor.containingDeclaration
 
-        descriptor.containingDeclaration.safeAs<ClassDescriptor>()?.takeIf {
-            it.isCompanionObject && Visibilities.isPrivate(it.visibility.delegate)
-        } ?: return
+        if (containingDeclaration !is ClassDescriptor
+            || !containingDeclaration.isCompanionObject
+            || !Visibilities.isPrivate(containingDeclaration.visibility.delegate)
+        ) return
 
         val jvmStaticAnnotation = descriptor.annotations.findAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) ?: return
 
-        val reportTarget = jvmStaticAnnotation.source.safeAs<KotlinSourceElement>()?.psi ?: declaration
+        val reportTarget = jvmStaticAnnotation.source.safeAs<KotlinSourceElement>()?.psi ?: return
         context.trace.report(JVM_STATIC_IN_PRIVATE_COMPANION.on(reportTarget))
     }
 }
