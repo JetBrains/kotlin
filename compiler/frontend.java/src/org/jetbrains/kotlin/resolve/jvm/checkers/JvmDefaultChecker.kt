@@ -68,7 +68,7 @@ class JvmDefaultChecker(val jvmTarget: JvmTarget, project: Project) : Declaratio
         }
 
 
-        if (isInterface(descriptor.containingDeclaration)) {
+        if (!jvmDefaultMode.forAllMethodsWithBody && isInterface(descriptor.containingDeclaration)) {
             val memberDescriptor = descriptor as? CallableMemberDescriptor ?: return
             if (descriptor is PropertyAccessorDescriptor) return
 

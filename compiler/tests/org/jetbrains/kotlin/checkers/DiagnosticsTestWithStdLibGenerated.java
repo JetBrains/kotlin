@@ -493,6 +493,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/javaOverride.kt");
             }
 
+            @TestMetadata("javaOverrideAll.kt")
+            public void testJavaOverrideAll() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/javaOverrideAll.kt");
+            }
+
             @TestMetadata("jvmDefaultInInheritance.kt")
             public void testJvmDefaultInInheritance() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/jvmDefaultInInheritance.kt");
