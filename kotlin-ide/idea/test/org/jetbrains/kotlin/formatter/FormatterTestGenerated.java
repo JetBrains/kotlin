@@ -853,6 +853,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             runTest("testData/formatter/WhenComment.after.kt");
         }
 
+        @TestMetadata("WhenEntry.after.kt")
+        public void testWhenEntry() throws Exception {
+            runTest("testData/formatter/WhenEntry.after.kt");
+        }
+
         @TestMetadata("WhenEntryExpr.after.kt")
         public void testWhenEntryExpr() throws Exception {
             runTest("testData/formatter/WhenEntryExpr.after.kt");
@@ -1710,6 +1715,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("WhenArrow.after.inv.kt")
         public void testWhenArrow() throws Exception {
             runTest("testData/formatter/WhenArrow.after.inv.kt");
+        }
+
+        @TestMetadata("WhenEntry.after.inv.kt")
+        public void testWhenEntry() throws Exception {
+            runTest("testData/formatter/WhenEntry.after.inv.kt");
         }
 
         @TestMetadata("WhenLineBreak.after.inv.kt")

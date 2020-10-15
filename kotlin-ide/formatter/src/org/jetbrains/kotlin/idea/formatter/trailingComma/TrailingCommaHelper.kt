@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.idea.util.leafIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
+import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
 import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -51,6 +52,19 @@ object TrailingCommaHelper {
         return lastChild.getPrevSiblingIgnoringWhitespaceAndComments(withSelf)?.takeIf {
             PsiUtil.getElementType(it) !in LEFT_BARRIERS
         }?.takeIfIsNotError()
+    }
+
+    /**
+     * @return true if [commaOwner] has a trailing comma and hasn't a line break before the first or after the last element
+     */
+    fun lineBreakIsMissing(commaOwner: KtElement): Boolean {
+        if (!trailingCommaExists(commaOwner)) return false
+
+        val first = elementBeforeFirstElement(commaOwner)
+        if (first?.nextLeaf(true)?.isLineBreak() == false) return true
+
+        val last = elementAfterLastElement(commaOwner)
+        return last?.prevLeaf(true)?.isLineBreak() == false
     }
 
     fun elementBeforeFirstElement(commaOwner: KtElement): PsiElement? = when (commaOwner) {

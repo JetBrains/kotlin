@@ -17,6 +17,7 @@ import com.intellij.psi.impl.source.codeStyle.PostFormatProcessor
 import com.intellij.psi.impl.source.codeStyle.PostFormatProcessorHelper
 import org.jetbrains.kotlin.idea.formatter.trailingComma.TrailingCommaContext
 import org.jetbrains.kotlin.idea.formatter.trailingComma.TrailingCommaHelper.findInvalidCommas
+import org.jetbrains.kotlin.idea.formatter.trailingComma.TrailingCommaHelper.lineBreakIsMissing
 import org.jetbrains.kotlin.idea.formatter.trailingComma.TrailingCommaHelper.trailingCommaOrLastElement
 import org.jetbrains.kotlin.idea.formatter.trailingComma.TrailingCommaState
 import org.jetbrains.kotlin.idea.formatter.trailingComma.addTrailingCommaIsAllowedFor
@@ -57,38 +58,49 @@ private class TrailingCommaPostFormatVisitor(private val settings: CodeStyleSett
             when {
                 state == TrailingCommaState.MISSING && settings.kotlinCustomSettings.addTrailingCommaIsAllowedFor(ktElement) -> {
                     // add a missing comma
-                    if (trailingCommaAllowedInModule(ktElement)) {
+                    val hasChange = if (trailingCommaAllowedInModule(ktElement)) {
                         lastElementOrComma.addCommaAfter(KtPsiFactory(ktElement))
+                        true
+                    } else {
+                        false
                     }
 
-                    correctCommaPosition(ktElement)
+                    correctCommaPosition(ktElement) || hasChange
                 }
+
                 state == TrailingCommaState.EXISTS -> {
                     correctCommaPosition(ktElement)
                 }
+
                 state == TrailingCommaState.REDUNDANT -> {
                     // remove redundant comma
                     lastElementOrComma.delete()
+                    true
                 }
-                else -> Unit
+
+                else -> false
             }
         }
     }
 
-    private fun updatePsi(element: KtElement, block: () -> Unit) {
+    private fun updatePsi(element: KtElement, updater: () -> Boolean) {
         val oldLength = element.parent.textLength
-        block()
+        if (!updater()) return
 
         val resultElement = CodeStyleManager.getInstance(element.project).reformat(element, true)
         myPostProcessor.updateResultRange(oldLength, resultElement.parent.textLength)
     }
 
-    private fun correctCommaPosition(parent: KtElement) {
+    private fun correctCommaPosition(parent: KtElement): Boolean {
+        var hasChange = false
         for (pointerToComma in findInvalidCommas(parent).map { it.createSmartPointer() }) {
             pointerToComma.element?.let {
                 correctComma(it)
+                hasChange = true
             }
         }
+
+        return hasChange || lineBreakIsMissing(parent)
     }
 
     fun process(formatted: PsiElement): PsiElement {

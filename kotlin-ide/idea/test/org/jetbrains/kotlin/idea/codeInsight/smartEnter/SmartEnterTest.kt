@@ -938,7 +938,7 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             }
             """,
         """
-            some { (p: Int): Int ->
+            some { (p: Int) : Int ->
                 <caret>
             }
             """
@@ -951,7 +951,8 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             }
             """,
         """
-            some { (p: Int): Int ->
+            some {
+                (p: Int) : Int ->
                 <caret>
             }
             """
