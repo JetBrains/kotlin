@@ -45,7 +45,6 @@ internal class KotlinProjectNpmResolver(
     init {
         addContainerListeners()
 
-
         project.whenEvaluated {
             val nodeJs = resolver.nodeJs
             project.tasks.implementing(RequiresNpmDependencies::class)

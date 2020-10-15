@@ -49,25 +49,24 @@ internal class KotlinRootNpmResolver internal constructor(
 
     val gradleNodeModules = GradleNodeModulesCache(nodeJs)
     val compositeNodeModules = CompositeNodeModulesCache(nodeJs)
-    val packageJsonUmbrella = rootProject.registerTask(PACKAGE_JSON_UMBRELLA_TASK_NAME, Task::class.java) {}
-    val projectResolvers = mutableMapOf<Project, KotlinProjectNpmResolver>()
+    val projectResolvers = mutableMapOf<String, KotlinProjectNpmResolver>()
 
     fun alreadyResolvedMessage(action: String) = "Cannot $action. NodeJS projects already resolved."
 
     @Synchronized
     fun addProject(target: Project) {
         check(state == State.CONFIGURING) { alreadyResolvedMessage("add new project: $target") }
-        projectResolvers[target] = KotlinProjectNpmResolver(target, this)
+        projectResolvers[target.path] = KotlinProjectNpmResolver(target, this)
     }
 
-    operator fun get(project: Project) = projectResolvers[project] ?: error("$project is not configured for JS usage")
+    operator fun get(projectPath: String) = projectResolvers[projectPath] ?: error("$projectPath is not configured for JS usage")
 
     val compilations: Collection<KotlinJsCompilation>
         get() = projectResolvers.values.flatMap { it.compilationResolvers.map { it.compilation } }
 
     fun findDependentResolver(src: Project, target: Project): List<KotlinCompilationNpmResolver>? {
         // todo: proper finding using KotlinTargetComponent.findUsageContext
-        val targetResolver = this[target]
+        val targetResolver = this[target.path]
         val mainCompilations = targetResolver.compilationResolvers.filter { it.compilation.isMain() }
 
         return if (mainCompilations.isNotEmpty()) {
