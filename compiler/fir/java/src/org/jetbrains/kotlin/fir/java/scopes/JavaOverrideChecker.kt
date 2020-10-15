@@ -37,7 +37,7 @@ class JavaOverrideChecker internal constructor(
         }
     }
 
-    override fun isEqualTypes(candidateTypeRef: FirTypeRef, baseTypeRef: FirTypeRef, substitutor: ConeSubstitutor) =
+    private fun isEqualTypes(candidateTypeRef: FirTypeRef, baseTypeRef: FirTypeRef, substitutor: ConeSubstitutor) =
         isEqualTypes(
             candidateTypeRef.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack),
             baseTypeRef.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack),
