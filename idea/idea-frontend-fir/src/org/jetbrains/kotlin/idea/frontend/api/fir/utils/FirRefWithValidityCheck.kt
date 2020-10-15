@@ -21,10 +21,11 @@ internal class FirRefWithValidityCheck<D : FirDeclaration>(fir: D, resolveState:
     inline fun <R> withFir(phase: FirResolvePhase = FirResolvePhase.RAW_FIR, action: (fir: D) -> R): R {
         token.assertIsValid()
         val fir = firWeakRef.get() ?: error("FirElement was garbage collected while analysis session is still valid")
-        val resolveState =
-            resolveStateWeakRef.get() ?: error("FirModuleResolveState was garbage collected while analysis session is still valid")
         return action(LowLevelFirApiFacade.resolvedFirToPhase(fir, phase, resolveState))
     }
+
+    val resolveState
+        get() = resolveStateWeakRef.get() ?: error("FirModuleResolveState was garbage collected while analysis session is still valid")
 
     inline fun <R> withFirAndCache(phase: FirResolvePhase = FirResolvePhase.RAW_FIR, crossinline createValue: (fir: D) -> R) =
         ValidityAwareCachedValue(token) {
