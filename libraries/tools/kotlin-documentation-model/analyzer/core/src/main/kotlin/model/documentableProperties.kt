@@ -25,3 +25,12 @@ data class ImplementedInterfaces(val interfaces: SourceSetDependent<List<TypeCon
 
     override val key: ExtraProperty.Key<Documentable, *> = ImplementedInterfaces
 }
+
+data class ExceptionInSupertypes(val exceptions: SourceSetDependent<List<TypeConstructor>>): ExtraProperty<Documentable> {
+    companion object : ExtraProperty.Key<Documentable, ExceptionInSupertypes> {
+        override fun mergeStrategyFor(left: ExceptionInSupertypes, right: ExceptionInSupertypes) =
+            MergeStrategy.Replace(ExceptionInSupertypes(left.exceptions + right.exceptions))
+    }
+
+    override val key: ExtraProperty.Key<Documentable, *> = ExceptionInSupertypes
+}
