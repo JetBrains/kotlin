@@ -2,6 +2,7 @@ package org.jetbrains.dokka.base.transformers.documentables
 
 import org.jetbrains.dokka.model.Annotations
 import org.jetbrains.dokka.model.Documentable
+import org.jetbrains.dokka.model.ExceptionInSupertypes
 import org.jetbrains.dokka.model.WithSupertypes
 import org.jetbrains.dokka.model.properties.WithExtraProperties
 
@@ -16,9 +17,5 @@ val <T> T.deprecatedAnnotation where T : WithExtraProperties<out Documentable>
         }
     }
 
-val WithSupertypes.isException: Boolean
-    get() = supertypes.values.flatten().any {
-        val dri = it.typeConstructor.dri.toString()
-        dri == "kotlin/Exception///PointingToDeclaration/" ||
-                dri == "java.lang/Exception///PointingToDeclaration/"
-    }
+val <T : WithExtraProperties<out Documentable>> T.isException: Boolean
+    get() = extra[ExceptionInSupertypes] != null
