@@ -18,7 +18,7 @@ data class PropertyContainer<C : Any> internal constructor(
 
     companion object {
         fun <T : Any> empty(): PropertyContainer<T> = PropertyContainer(emptyMap())
-        fun <T : Any> withAll(vararg extras: ExtraProperty<T>) = empty<T>().addAll(extras.toList())
+        fun <T : Any> withAll(vararg extras: ExtraProperty<T>?) = empty<T>().addAll(extras.filterNotNull())
         fun <T : Any> withAll(extras: Collection<ExtraProperty<T>>) = empty<T>().addAll(extras)
     }
 }
