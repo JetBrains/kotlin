@@ -88,6 +88,7 @@ abstract class AbstractNewWizardProjectImportTest : PlatformTestCase() {
 
         val parameters = DefaultTestParameters.fromTestDataOrDefault(directory)
         if (!parameters.runForMaven && buildSystem == BuildSystem.MAVEN) return
+        if (!parameters.runForGradleGroovy && buildSystem == BuildSystem.GRADLE_GROOVY_DSL) return
 
         val tempDirectory = Files.createTempDirectory(null)
         if (buildSystem.isGradle) {
