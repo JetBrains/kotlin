@@ -80,14 +80,13 @@ internal abstract class ObsoleteCodeInWholeProjectFix : LocalQuickFix {
         val cleanupScope = AnalysisScope(kotlinSourcesScope, project)
 
         val cleanupToolProfile = runInInspectionProfileInitMode { RunInspectionIntention.createProfile(toolWrapper, managerEx, null) }
-        managerEx.createNewGlobalContext(false)
-            .codeCleanup(
-                cleanupScope,
-                cleanupToolProfile,
-                KotlinBundle.message("apply.in.the.project.0", toolWrapper.displayName),
-                null,
-                false
-            )
+        managerEx.createNewGlobalContext().codeCleanup(
+            cleanupScope,
+            cleanupToolProfile,
+            KotlinBundle.message("apply.in.the.project.0", toolWrapper.displayName),
+            null,
+            false
+        )
     }
 
     // Overcome failure during profile creating because of absent tools in tests
