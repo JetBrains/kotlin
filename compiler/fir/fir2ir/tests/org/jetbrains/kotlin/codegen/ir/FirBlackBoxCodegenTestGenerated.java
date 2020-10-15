@@ -16127,6 +16127,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 runTest("compiler/testData/codegen/box/jvm8/defaults/kt40920.kt");
             }
 
+            @TestMetadata("kt42674.kt")
+            public void testKt42674() throws Exception {
+                runTest("compiler/testData/codegen/box/jvm8/defaults/kt42674.kt");
+            }
+
             @TestMetadata("oneImplementation.kt")
             public void testOneImplementation() throws Exception {
                 runTest("compiler/testData/codegen/box/jvm8/defaults/oneImplementation.kt");
@@ -16289,6 +16294,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                     runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/kt14243_2.kt");
                 }
 
+                @TestMetadata("kt42674.kt")
+                public void testKt42674() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/kt42674.kt");
+                }
+
                 @TestMetadata("privateFunInInterface.kt")
                 public void testPrivateFunInInterface() throws Exception {
                     runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/privateFunInInterface.kt");
@@ -16398,6 +16408,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 @TestMetadata("interfaceExtension.kt")
                 public void testInterfaceExtension() throws Exception {
                     runTest("compiler/testData/codegen/box/jvm8/defaults/compatibility/interfaceExtension.kt");
+                }
+
+                @TestMetadata("kt42674.kt")
+                public void testKt42674() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/compatibility/kt42674.kt");
                 }
 
                 @TestMetadata("propertyAnnotation.kt")
@@ -16559,6 +16574,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 @TestMetadata("kt40920.kt")
                 public void testKt40920() throws Exception {
                     runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/kt40920.kt");
+                }
+
+                @TestMetadata("kt42674.kt")
+                public void testKt42674() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/kt42674.kt");
                 }
 
                 @TestMetadata("privateFunInInterface.kt")
