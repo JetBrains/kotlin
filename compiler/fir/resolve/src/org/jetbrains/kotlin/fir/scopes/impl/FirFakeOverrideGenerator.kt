@@ -68,7 +68,7 @@ object FirFakeOverrideGenerator {
             fakeOverrideSymbol,
             baseFunction,
             session,
-            FirDeclarationOrigin.FakeOverride,
+            FirDeclarationOrigin.SubstitutionOverride,
             isExpect,
             newParameterTypes,
             newTypeParameters,
@@ -123,7 +123,7 @@ object FirFakeOverrideGenerator {
         return buildConstructor {
             source = baseConstructor.source
             this.session = session
-            origin = FirDeclarationOrigin.FakeOverride
+            origin = FirDeclarationOrigin.SubstitutionOverride
             receiverTypeRef = baseConstructor.receiverTypeRef?.withReplacedConeType(null)
             status = baseConstructor.status.updatedStatus(isExpect)
             symbol = fakeOverrideSymbol
@@ -224,7 +224,7 @@ object FirFakeOverrideGenerator {
             newParameterTypes ?: List(baseFunction.valueParameters.size) { null }
         ) { valueParameter, newType ->
             buildValueParameterCopy(valueParameter) {
-                origin = FirDeclarationOrigin.FakeOverride
+                origin = FirDeclarationOrigin.SubstitutionOverride
                 returnTypeRef = valueParameter.returnTypeRef.withReplacedConeType(newType)
                 symbol = FirVariableSymbol(valueParameter.symbol.callableId)
             }
@@ -269,7 +269,7 @@ object FirFakeOverrideGenerator {
         return buildProperty {
             source = baseProperty.source
             this.session = session
-            origin = FirDeclarationOrigin.FakeOverride
+            origin = FirDeclarationOrigin.SubstitutionOverride
             name = baseProperty.name
             isVar = baseProperty.isVar
             this.symbol = newSymbol
@@ -375,7 +375,7 @@ object FirFakeOverrideGenerator {
         buildField {
             source = baseField.source
             this.session = session
-            origin = FirDeclarationOrigin.FakeOverride
+            origin = FirDeclarationOrigin.SubstitutionOverride
             resolvePhase = baseField.resolvePhase
             returnTypeRef = baseField.returnTypeRef.withReplacedConeType(newReturnType)
             name = baseField.name
@@ -442,7 +442,7 @@ object FirFakeOverrideGenerator {
             FirTypeParameterBuilder().apply {
                 source = typeParameter.source
                 session = typeParameter.session
-                origin = FirDeclarationOrigin.FakeOverride
+                origin = FirDeclarationOrigin.SubstitutionOverride
                 name = typeParameter.name
                 symbol = FirTypeParameterSymbol()
                 variance = typeParameter.variance

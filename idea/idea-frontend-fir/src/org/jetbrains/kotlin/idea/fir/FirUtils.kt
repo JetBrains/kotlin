@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.fir
 
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -16,15 +15,9 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.PossiblyFirFakeOverrideSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacade
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import kotlin.reflect.KClass
-
-
 
 
 fun FirFunctionCall.isImplicitFunctionCall(): Boolean {
@@ -58,5 +51,5 @@ internal inline fun <reified D> D.unrollFakeOverrides(): D where D : FirDeclarat
 private inline val FirBasedSymbol<*>.isFakeOrIntersectionOverride: Boolean
     get() {
         val origin = (fir as? FirDeclaration)?.origin ?: return false
-        return origin == FirDeclarationOrigin.FakeOverride || origin == FirDeclarationOrigin.IntersectionOverride
+        return origin == FirDeclarationOrigin.SubstitutionOverride || origin == FirDeclarationOrigin.IntersectionOverride
     }

@@ -219,7 +219,7 @@ private class ReturnTypeCalculatorWithJump(
             return result
         }
 
-        runIf(declaration.origin == FirDeclarationOrigin.FakeOverride) {
+        runIf(declaration.origin == FirDeclarationOrigin.SubstitutionOverride) {
             val possiblyFirFakeOverrideSymbol = declaration.symbol as PossiblyFirFakeOverrideSymbol<*, *>
             val overriddenDeclaration = possiblyFirFakeOverrideSymbol.overriddenSymbol?.fir as FirTypedDeclaration? ?: return@runIf
             tryCalculateReturnType(overriddenDeclaration)

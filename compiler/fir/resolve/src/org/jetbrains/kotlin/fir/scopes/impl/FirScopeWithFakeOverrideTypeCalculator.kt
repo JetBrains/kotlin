@@ -73,7 +73,7 @@ class FirScopeWithFakeOverrideTypeCalculator(
     }
 
     private fun updateReturnType(declaration: FirTypedDeclaration) {
-        if (declaration.origin == FirDeclarationOrigin.FakeOverride || declaration.origin == FirDeclarationOrigin.IntersectionOverride) {
+        if (declaration.origin == FirDeclarationOrigin.SubstitutionOverride || declaration.origin == FirDeclarationOrigin.IntersectionOverride) {
             fakeOverrideTypeCalculator.computeReturnType(declaration)
         }
     }
