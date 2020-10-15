@@ -17,9 +17,8 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
-import org.jetbrains.kotlin.ir.builders.irBlockBody
-import org.jetbrains.kotlin.ir.builders.irDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
@@ -34,6 +33,8 @@ import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 internal val scriptToClassPhase = makeIrModulePhase(
     ::ScriptToClassLowering,
@@ -101,12 +102,18 @@ private class ScriptToClassLowering(val context: JvmBackendContext) : FileLoweri
                     )
                 }
             }
+            var hasMain = false
             irScript.statements.forEach { scriptStatement ->
                 when (scriptStatement) {
                     is IrVariable -> irScriptClass.addSimplePropertyFrom(scriptStatement)
                     is IrDeclaration -> {
                         val copy = scriptStatement.transform(scriptTransformer, null) as IrDeclaration
                         irScriptClass.declarations.add(copy)
+                        // temporary way to avoid name clashes
+                        // TODO: remove as soon as main generation become an explicit configuration option
+                        if (copy is IrSimpleFunction && copy.name.asString() == "main") {
+                            hasMain = true
+                        }
                     }
                     else -> {
                         val transformedStatement = scriptStatement.transformStatement(scriptTransformer)
@@ -124,12 +131,79 @@ private class ScriptToClassLowering(val context: JvmBackendContext) : FileLoweri
                     }
                 }
             }
+            if (!hasMain) {
+                irScriptClass.addScriptMainFun()
+            }
+
             irScriptClass.annotations += irFile.annotations
             irScriptClass.metadata = irFile.metadata
 
             irScript.resultProperty?.owner?.let { irResultProperty ->
                 context.state.scriptSpecific.resultFieldName = irResultProperty.name.identifier
                 context.state.scriptSpecific.resultTypeString = irResultProperty.backingField?.type?.render()
+            }
+        }
+    }
+
+    private val scriptingJvmPackage by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(context.state.module, FqName("kotlin.script.experimental.jvm"))
+    }
+
+    private fun IrClass.addScriptMainFun() {
+        val javaLangClass = context.ir.symbols.javaLangClass
+        val kClassJava = context.ir.symbols.kClassJava
+
+        val scriptRunnerPackageClass: IrClassSymbol = context.irFactory.buildClass {
+            name = Name.identifier("RunnerKt")
+            kind = ClassKind.CLASS
+            modality = Modality.FINAL
+            isInline = false
+        }.apply {
+            parent = scriptingJvmPackage
+            createImplicitParameterDeclarationWithWrappedDescriptor()
+            addFunction("runCompiledScript", context.irBuiltIns.unitType, isStatic = true).apply {
+                addValueParameter("scriptClass", javaLangClass.starProjectedType)
+                addValueParameter {
+                    name = Name.identifier("args")
+                    type = context.irBuiltIns.arrayClass.typeWith(context.irBuiltIns.stringType)
+                    origin = IrDeclarationOrigin.DEFINED
+                    varargElementType = context.irBuiltIns.anyNType
+                }
+            }
+        }.symbol
+
+        val scriptRunHelper: IrSimpleFunctionSymbol =
+            scriptRunnerPackageClass.functions.single { it.owner.name.asString() == "runCompiledScript" }
+
+        val scriptClassRef = IrClassReferenceImpl(
+            startOffset, endOffset, context.irBuiltIns.kClassClass.starProjectedType, context.irBuiltIns.kClassClass, this.defaultType
+        )
+
+        addFunction {
+            name = Name.identifier("main")
+            visibility = DescriptorVisibilities.PUBLIC
+            returnType = context.irBuiltIns.unitType
+            modality = Modality.FINAL
+        }.also { mainFun ->
+            val args = mainFun.addValueParameter {
+                name = Name.identifier("args")
+                type = context.irBuiltIns.arrayClass.typeWith(context.irBuiltIns.stringType)
+            }
+            mainFun.body = context.createIrBuilder(mainFun.symbol).run {
+                irExprBody(
+                    irCall(scriptRunHelper).apply {
+                        putValueArgument(
+                            0,
+                            irGet(javaLangClass.starProjectedType, null, kClassJava.owner.getter!!.symbol).apply {
+                                extensionReceiver = scriptClassRef
+                            }
+                        )
+                        putValueArgument(
+                            1,
+                            IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, args.type, args.symbol)
+                        )
+                    }
+                )
             }
         }
     }
