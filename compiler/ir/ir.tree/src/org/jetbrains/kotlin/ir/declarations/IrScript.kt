@@ -24,9 +24,11 @@ abstract class IrScript :
 
     abstract var explicitCallParameters: List<IrValueParameter>
 
-    abstract var implicitReceivers: List<IrValueParameter>
+    abstract var implicitReceiversParameters: List<IrValueParameter>
 
-    abstract var providedProperties: List<IrPropertySymbol>
+    abstract var providedProperties: List<Pair<IrValueParameter, IrPropertySymbol>>
 
     abstract var resultProperty: IrPropertySymbol?
+
+    abstract var earlierScripts: List<IrScriptSymbol>?
 }

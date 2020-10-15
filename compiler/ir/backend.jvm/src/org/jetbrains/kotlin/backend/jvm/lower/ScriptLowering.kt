@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
+import org.jetbrains.kotlin.backend.common.phaser.makeCustomPhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -36,23 +35,40 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-internal val scriptToClassPhase = makeIrModulePhase(
-    ::ScriptToClassLowering,
-    name = "ScriptToClass",
-    description = "Put script declarations into a class",
-    stickyPostconditions = setOf(::checkAllFileLevelDeclarationsAreClasses)
+internal val scriptsToClassesPhase = makeCustomPhase<JvmBackendContext, IrModuleFragment>(
+    name = "ScriptsToClasses",
+    description = "Put script declarations into classes",
+    op = { context, input ->
+        ScriptsToClassesLowering(context).lower(input)
+   }
 )
 
-private class ScriptToClassLowering(val context: JvmBackendContext) : FileLoweringPass {
 
-    override fun lower(irFile: IrFile) {
-        irFile.declarations.replaceAll { declaration ->
-            if (declaration is IrScript) makeScriptClass(irFile, declaration)
-            else declaration
+private class ScriptsToClassesLowering(val context: JvmBackendContext) {
+
+    fun lower(module: IrModuleFragment) {
+        val scriptsToClasses = mutableMapOf<IrScript, IrClass>()
+
+        for (irFile in module.files) {
+            val iterator = irFile.declarations.listIterator()
+            while (iterator.hasNext()) {
+                val declaration = iterator.next()
+                if (declaration is IrScript) {
+                    val scriptClass = prepareScriptClass(irFile, declaration)
+                    scriptsToClasses[declaration] = scriptClass
+                    iterator.set(scriptClass)
+                }
+            }
+        }
+
+        val symbolRemapper = ScriptsToClassesSymbolRemapper(scriptsToClasses)
+
+        for ((irScript, irScriptClass) in scriptsToClasses) {
+            finalizeScriptClass(irScriptClass, irScript, symbolRemapper)
         }
     }
 
-    private fun makeScriptClass(irFile: IrFile, irScript: IrScript): IrClass {
+    private fun prepareScriptClass(irFile: IrFile, irScript: IrScript): IrClass {
         val fileEntry = irFile.fileEntry
         return context.irFactory.buildClass {
             startOffset = 0
@@ -65,83 +81,93 @@ private class ScriptToClassLowering(val context: JvmBackendContext) : FileLoweri
         }.also { irScriptClass ->
             irScriptClass.superTypes += context.irBuiltIns.anyType
             irScriptClass.parent = irFile
-            irScriptClass.createImplicitParameterDeclarationWithWrappedDescriptor()
-            val symbolRemapper = ScriptToClassSymbolRemapper(irScript.symbol, irScriptClass.symbol)
-            val typeRemapper = ScriptTypeRemapper(symbolRemapper)
-            val scriptTransformer = ScriptToClassTransformer(irScript, irScriptClass, symbolRemapper, typeRemapper)
-            irScriptClass.thisReceiver = irScript.thisReceiver.run {
-                transform(scriptTransformer, null)
-            }
-            irScriptClass.addConstructor {
-                isPrimary = true
-            }.also { irConstructor ->
-                irScript.explicitCallParameters.forEach { scriptCallParameter ->
-                    val callParameter = irConstructor.addValueParameter {
-                        updateFrom(scriptCallParameter)
-                        name = scriptCallParameter.name
-                    }
+        }
+    }
+
+    private fun finalizeScriptClass(irScriptClass: IrClass, irScript: IrScript, symbolRemapper: ScriptsToClassesSymbolRemapper) {
+        val typeRemapper = ScriptTypeRemapper(symbolRemapper)
+        val scriptTransformer = ScriptToClassTransformer(irScript, irScriptClass, symbolRemapper, typeRemapper)
+        irScriptClass.thisReceiver = irScript.thisReceiver.run {
+            transform(scriptTransformer, null)
+        }
+
+        irScriptClass.addConstructor {
+            isPrimary = true
+        }.also { irConstructor ->
+
+            fun addConstructorParameter(valueParameter: IrValueParameter, createCorrespondingProperty: Boolean) {
+                valueParameter.type = typeRemapper.remapType(valueParameter.type)
+                if (valueParameter.varargElementType != null) {
+                    valueParameter.varargElementType = typeRemapper.remapType(valueParameter.varargElementType!!)
+                }
+                irConstructor.valueParameters = irConstructor.valueParameters + valueParameter
+                if (createCorrespondingProperty) {
                     irScriptClass.addSimplePropertyFrom(
-                        callParameter,
+                        valueParameter,
                         IrExpressionBodyImpl(
                             IrGetValueImpl(
-                                callParameter.startOffset, callParameter.endOffset,
-                                callParameter.type,
-                                callParameter.symbol,
+                                valueParameter.startOffset, valueParameter.endOffset,
+                                valueParameter.type,
+                                valueParameter.symbol,
                                 IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
                             )
                         )
                     )
                 }
-
-                irConstructor.body = context.createIrBuilder(irConstructor.symbol).irBlockBody {
-                    +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
-                    +IrInstanceInitializerCallImpl(
-                        irScript.startOffset, irScript.endOffset,
-                        irScriptClass.symbol,
-                        context.irBuiltIns.unitType
-                    )
-                }
             }
-            var hasMain = false
-            irScript.statements.forEach { scriptStatement ->
-                when (scriptStatement) {
-                    is IrVariable -> irScriptClass.addSimplePropertyFrom(scriptStatement)
-                    is IrDeclaration -> {
-                        val copy = scriptStatement.transform(scriptTransformer, null) as IrDeclaration
-                        irScriptClass.declarations.add(copy)
-                        // temporary way to avoid name clashes
-                        // TODO: remove as soon as main generation become an explicit configuration option
-                        if (copy is IrSimpleFunction && copy.name.asString() == "main") {
-                            hasMain = true
-                        }
+
+            irScript.explicitCallParameters.forEach { addConstructorParameter(it, true) }
+            irScript.implicitReceiversParameters.forEach { addConstructorParameter(it, false) }
+            irScript.providedProperties.forEach { addConstructorParameter(it.first, false) }
+
+            irConstructor.body = context.createIrBuilder(irConstructor.symbol).irBlockBody {
+                +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
+                +IrInstanceInitializerCallImpl(
+                    irScript.startOffset, irScript.endOffset,
+                    irScriptClass.symbol,
+                    context.irBuiltIns.unitType
+                )
+            }
+        }
+        var hasMain = false
+        irScript.statements.forEach { scriptStatement ->
+            when (scriptStatement) {
+                is IrVariable -> irScriptClass.addSimplePropertyFrom(scriptStatement)
+                is IrDeclaration -> {
+                    val copy = scriptStatement.transform(scriptTransformer, null) as IrDeclaration
+                    irScriptClass.declarations.add(copy)
+                    // temporary way to avoid name clashes
+                    // TODO: remove as soon as main generation become an explicit configuration option
+                    if (copy is IrSimpleFunction && copy.name.asString() == "main") {
+                        hasMain = true
                     }
-                    else -> {
-                        val transformedStatement = scriptStatement.transformStatement(scriptTransformer)
-                        irScriptClass.addAnonymousInitializer().also { irInitializer ->
-                            irInitializer.body =
-                                context.createIrBuilder(irInitializer.symbol).irBlockBody {
-                                    if (transformedStatement is IrComposite) {
-                                        for (statement in transformedStatement.statements)
-                                            +statement
-                                    } else {
-                                        +transformedStatement
-                                    }
+                }
+                else -> {
+                    val transformedStatement = scriptStatement.transformStatement(scriptTransformer)
+                    irScriptClass.addAnonymousInitializer().also { irInitializer ->
+                        irInitializer.body =
+                            context.createIrBuilder(irInitializer.symbol).irBlockBody {
+                                if (transformedStatement is IrComposite) {
+                                    for (statement in transformedStatement.statements)
+                                        +statement
+                                } else {
+                                    +transformedStatement
                                 }
-                        }
+                            }
                     }
                 }
             }
-            if (!hasMain) {
-                irScriptClass.addScriptMainFun()
-            }
+        }
+        if (!hasMain) {
+            irScriptClass.addScriptMainFun()
+        }
 
-            irScriptClass.annotations += irFile.annotations
-            irScriptClass.metadata = irFile.metadata
+        irScriptClass.annotations += (irScriptClass.parent as IrFile).annotations
+        irScriptClass.metadata = (irScriptClass.parent as IrFile).metadata
 
-            irScript.resultProperty?.owner?.let { irResultProperty ->
-                context.state.scriptSpecific.resultFieldName = irResultProperty.name.identifier
-                context.state.scriptSpecific.resultTypeString = irResultProperty.backingField?.type?.render()
-            }
+        irScript.resultProperty?.owner?.let { irResultProperty ->
+            context.state.scriptSpecific.resultFieldName = irResultProperty.name.identifier
+            context.state.scriptSpecific.resultTypeString = irResultProperty.backingField?.type?.render()
         }
     }
 
@@ -261,8 +287,8 @@ private class ScriptToClassLowering(val context: JvmBackendContext) : FileLoweri
 private class ScriptToClassTransformer(
     val irScript: IrScript,
     val irScriptClass: IrClass,
-    val symbolRemapper: SymbolRemapper = ScriptToClassSymbolRemapper(irScript.symbol, irScriptClass.symbol),
-    val typeRemapper: TypeRemapper = ScriptTypeRemapper(symbolRemapper)
+    val symbolRemapper: SymbolRemapper,
+    val typeRemapper: TypeRemapper
 ) : IrElementTransformerVoid() {
 
     private fun IrType.remapType() = typeRemapper.remapType(this)
@@ -389,16 +415,14 @@ private class ScriptToClassTransformer(
     }
 }
 
-private class ScriptToClassSymbolRemapper(
-    val irScriptSymbol: IrScriptSymbol,
-    val irScriptClassSymbol: IrClassSymbol
+private class ScriptsToClassesSymbolRemapper(
+    val scriptsToClasses: Map<IrScript, IrClass>
 ) : SymbolRemapper.Empty() {
     override fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol =
-        if (symbol != irScriptSymbol) symbol
-        else irScriptClassSymbol
+        (symbol.owner as? IrScript)?.let { scriptsToClasses[it] }?.symbol ?: symbol
 }
 
-class ScriptTypeRemapper(
+private class ScriptTypeRemapper(
     private val symbolRemapper: SymbolRemapper
 ) : TypeRemapper {
 

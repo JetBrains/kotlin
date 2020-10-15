@@ -389,7 +389,7 @@ val jvmPhases = NamedCompilerPhase(
     lower = validateIrBeforeLowering then
             processOptionalAnnotationsPhase then
             expectDeclarationsRemovingPhase then
-            scriptToClassPhase then
+            scriptsToClassesPhase then
             fileClassPhase then
             performByIrFile(lower = jvmFilePhases) then
             generateMultifileFacadesPhase then
