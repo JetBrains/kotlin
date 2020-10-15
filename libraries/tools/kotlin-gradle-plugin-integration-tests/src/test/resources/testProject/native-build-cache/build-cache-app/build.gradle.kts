@@ -8,13 +8,18 @@ repositories {
 }
 
 kotlin {
-    <SingleNativeTarget>("host")
+    linuxX64("host") {
+        binaries {
+            sharedLib(listOf(DEBUG))
+            staticLib(listOf(DEBUG))
+        }
+    }
 
     sourceSets {
         val hostMain by getting {
             dependencies {
                 implementation("com.example:build-cache-lib:1.0")
-                api(project(":lib-module"))
+                api(project(":build-cache-app:lib-module"))
             }
         }
     }

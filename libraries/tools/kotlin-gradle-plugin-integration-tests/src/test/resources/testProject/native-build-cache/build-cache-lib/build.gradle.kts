@@ -12,11 +12,11 @@ repositories {
 }
 
 kotlin {
-    <SingleNativeTarget>("host")
+    linuxX64("host")
 }
 
 publishing {
     repositories {
-        maven(url = "file://${projectDir.absolutePath.replace('\\', '/')}/repo")
+        maven(url = "file://${projectDir.absolutePath.replace('\\', '/')}/../repo")
     }
 }

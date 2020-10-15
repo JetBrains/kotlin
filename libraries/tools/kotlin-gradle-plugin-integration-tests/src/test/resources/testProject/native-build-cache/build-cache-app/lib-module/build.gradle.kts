@@ -8,5 +8,5 @@ repositories {
 }
 
 kotlin {
-    <SingleNativeTarget>("host")
+    linuxX64("host")
 }
