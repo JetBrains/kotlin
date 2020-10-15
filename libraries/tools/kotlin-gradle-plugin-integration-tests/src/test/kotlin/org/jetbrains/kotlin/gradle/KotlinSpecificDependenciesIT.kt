@@ -297,7 +297,7 @@ fun BaseGradleIT.Project.checkTaskCompileClasspath(
     val subproject = taskPath.substringBeforeLast(":").takeIf { it.isNotEmpty() && it != taskPath }
     val taskName = taskPath.removePrefix(subproject.orEmpty())
     val taskClass = if (isNative) "org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile<*, *>" else "AbstractCompile"
-    val expression = """(tasks.getByName("$taskName") as $taskClass).classpath.toList()"""
+    val expression = """(tasks.getByName("$taskName") as $taskClass).${if (isNative) "libraries" else "classpath"}.toList()"""
     checkPrintedItems(subproject, expression, checkModulesInClasspath, checkModulesNotInClasspath)
 }
 

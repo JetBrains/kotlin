@@ -146,6 +146,7 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions, K : Abst
     }
 
     @get:Internal
+    @get:Deprecated("Use libraries instead", ReplaceWith("libraries"))
     val classpath: FileCollection
         get() = libraries
 
@@ -543,7 +544,6 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile<KotlinCommonToolOption
     val processTests: Boolean
         @Input get() = binary is TestExecutable
 
-    @get:InputFiles
     @get:Classpath
     val exportLibraries: FileCollection
         get() = binary.let {
@@ -926,10 +926,6 @@ open class CInteropProcess : DefaultTask() {
     @OutputFile
     val outputFileProvider: Provider<File> =
         project.provider { destinationDir.get().resolve(outputFileName) }
-
-    @OutputDirectory
-    val outputDirectoryProvider: Provider<File> =
-        project.provider { destinationDir.get().resolve("$outputFileName-build") }
 
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
