@@ -2,7 +2,7 @@
   <profile version="1.0" is_locked="true">
     <option name="myName" value="idea.i18n" />
     <inspection_tool class="HardCodedStringLiteral" enabled="true" level="WARNING" enabled_by_default="true">
-      <scope name="legacy plugins" level="WARNING" enabled="false">
+      <scope name="i18n inspections ignored plugins" level="WARNING" enabled="false">
         <option name="ignoreForAssertStatements" value="true" />
         <option name="ignoreForExceptionConstructors" value="true" />
         <option name="ignoreForSpecifiedExceptionConstructors" value="" />
@@ -82,25 +82,25 @@
       <option name="nonNlsLiteralPattern" value="((?i)https?://.+)|\w*(\.\w+)+|\w*[$]\w*|((?i)&lt;/?(html|b|i|body|br|li|ol|ul)/?&gt;)*|&amp;\w+;|[A-Z]?[a-z0-9]+([A-Z]+[a-z0-9]*)+|[A-Z]{5,}|[A-Z]+(_[A-Z]+)+|[a-z]+(_[a-z]+)+|\S*[\\/-][a-z]\S*[\\/-]\S*|\S*[%*+#@|]\S*|-\S*|\S*[)}&gt;\],:?!;=]\S+|\S*[0-9]{3,}\S*" />
     </inspection_tool>
     <inspection_tool class="I18nForm" enabled="true" level="WARNING" enabled_by_default="true">
-      <scope name="legacy plugins" level="WARNING" enabled="false" />
+      <scope name="i18n inspections ignored plugins" level="WARNING" enabled="false" />
       <scope name="Tests" level="WARNING" enabled="false" />
       <scope name="test-framework" level="WARNING" enabled="false" />
       <scope name="android" level="WARNING" enabled="false" />
     </inspection_tool>
     <inspection_tool class="InvalidPropertyKeyForm" enabled="true" level="WARNING" enabled_by_default="true">
-      <scope name="legacy plugins" level="WARNING" enabled="false" />
+      <scope name="i18n inspections ignored plugins" level="WARNING" enabled="false" />
       <scope name="Tests" level="WARNING" enabled="false" />
       <scope name="test-framework" level="WARNING" enabled="false" />
       <scope name="android" level="WARNING" enabled="false" />
     </inspection_tool>
     <inspection_tool class="PluginXmlI18n" enabled="true" level="WARNING" enabled_by_default="true">
-      <scope name="legacy plugins" level="WARNING" enabled="false" />
+      <scope name="i18n inspections ignored plugins" level="WARNING" enabled="false" />
       <scope name="Tests" level="WARNING" enabled="false" />
       <scope name="test-framework" level="WARNING" enabled="false" />
       <scope name="android" level="WARNING" enabled="false" />
     </inspection_tool>
     <inspection_tool class="UnresolvedPropertyKey" enabled="true" level="ERROR" enabled_by_default="true">
-      <scope name="legacy plugins" level="ERROR" enabled="false" />
+      <scope name="i18n inspections ignored plugins" level="ERROR" enabled="false" />
       <scope name="Tests" level="ERROR" enabled="false" />
       <scope name="test-framework" level="ERROR" enabled="false" />
       <scope name="android" level="ERROR" enabled="false" />
