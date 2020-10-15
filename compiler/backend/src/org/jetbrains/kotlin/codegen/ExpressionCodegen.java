@@ -1708,17 +1708,23 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 // This is inline lambda. Find inline-site and check, whether it is suspend functions returning unboxed inline class
                 CodegenContext<?> inlineSiteContext = this.context.getFirstCrossInlineOrNonInlineContext();
                 KotlinType originalInlineClass = null;
+                boolean invokeSuspendOfLambda = false;
+                FunctionDescriptor inlineSiteDescriptor = null;
                 if (inlineSiteContext instanceof MethodContext) {
-                     originalInlineClass = CoroutineCodegenUtilKt
-                            .originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass(
-                                    ((MethodContext) inlineSiteContext).getFunctionDescriptor(), typeMapper);
+                    inlineSiteDescriptor = ((MethodContext) inlineSiteContext).getFunctionDescriptor();
+                    originalInlineClass = CoroutineCodegenUtilKt
+                            .originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass(inlineSiteDescriptor, typeMapper);
+                    invokeSuspendOfLambda = CoroutineCodegenUtilKt.isInvokeSuspendOfLambda(inlineSiteDescriptor);
                 }
                 if (originalInlineClass != null) {
                     returnType = typeMapper.mapType(originalInlineClass);
                     returnKotlinType = originalInlineClass;
-                } else {
+                } else if (!invokeSuspendOfLambda) {
                     returnType = nonLocalReturn.returnType.getType();
                     returnKotlinType = nonLocalReturn.returnType.getKotlinType();
+                } else {
+                    returnType = OBJECT_TYPE;
+                    returnKotlinType = inlineSiteDescriptor.getReturnType();
                 }
             }
             else {
