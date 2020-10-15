@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -86,7 +87,7 @@ class FirTowerResolver(
         context: ResolutionContext
     ): CandidateCollector {
         val outerType = components.outerClassManager.outerType(constructedType)
-        val scope = constructedType.scope(components.session, components.scopeSession) ?: return collector
+        val scope = constructedType.scope(components.session, components.scopeSession, FakeOverrideTypeCalculator.DoNothing) ?: return collector
 
         val dispatchReceiver =
             if (outerType != null)

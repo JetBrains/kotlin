@@ -260,7 +260,12 @@ private fun argumentTypeWithSuspendConversion(
     // We want to check the argument type against non-suspend functional type.
     val expectedFunctionalType = expectedType.suspendFunctionTypeToFunctionType(session)
     if (argumentType.isSubtypeOfFunctionalType(session, expectedFunctionalType)) {
-        return argumentType.findContributedInvokeSymbol(session, scopeSession, expectedFunctionalType)?.let { invokeSymbol ->
+        return argumentType.findContributedInvokeSymbol(
+            session,
+            scopeSession,
+            expectedFunctionalType,
+            shouldCalculateReturnTypesOfFakeOverrides = false
+        )?.let { invokeSymbol ->
             createFunctionalType(
                 invokeSymbol.fir.valueParameters.map { it.returnTypeRef.coneType },
                 null,

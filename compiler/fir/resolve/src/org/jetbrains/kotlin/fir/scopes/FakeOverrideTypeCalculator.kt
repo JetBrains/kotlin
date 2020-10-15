@@ -23,19 +23,19 @@ abstract class FakeOverrideTypeCalculator {
             return declaration.returnTypeRef
         }
     }
-}
 
-object ForcedFakeOverrideTypeCalculator : FakeOverrideTypeCalculator() {
-    override fun computeReturnType(declaration: FirTypedDeclaration): FirResolvedTypeRef {
-        (declaration.returnTypeRef as? FirResolvedTypeRef)?.let { return it }
-        val (substitutor, baseSymbol) = declaration.attributes.fakeOverrideSubstitution ?: error("")
-        val baseDeclaration = baseSymbol.fir as FirTypedDeclaration
-        val baseReturnType = computeReturnType(baseDeclaration).type
-        declaration.attributes.fakeOverrideSubstitution = null
-        val coneType = substitutor.substituteOrSelf(baseReturnType)
-        val returnType = declaration.returnTypeRef.resolvedTypeFromPrototype(coneType)
-        declaration.replaceReturnTypeRef(returnType)
-        return returnType
+    object Forced : FakeOverrideTypeCalculator() {
+        override fun computeReturnType(declaration: FirTypedDeclaration): FirResolvedTypeRef {
+            (declaration.returnTypeRef as? FirResolvedTypeRef)?.let { return it }
+            val (substitutor, baseSymbol) = declaration.attributes.fakeOverrideSubstitution ?: error("")
+            val baseDeclaration = baseSymbol.fir as FirTypedDeclaration
+            val baseReturnType = computeReturnType(baseDeclaration).type
+            declaration.attributes.fakeOverrideSubstitution = null
+            val coneType = substitutor.substituteOrSelf(baseReturnType)
+            val returnType = declaration.returnTypeRef.resolvedTypeFromPrototype(coneType)
+            declaration.replaceReturnTypeRef(returnType)
+            return returnType
+        }
     }
 }
 

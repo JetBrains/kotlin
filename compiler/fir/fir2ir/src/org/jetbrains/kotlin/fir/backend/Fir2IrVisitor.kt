@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.isIteratorNext
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -445,7 +446,7 @@ class Fir2IrVisitor(
     private fun ConeKotlinType.doesContainReferencedSymbolInScope(
         referencedSymbol: AbstractFirBasedSymbol<*>, name: Name
     ): Boolean {
-        val scope = scope(session, components.scopeSession) ?: return false
+        val scope = scope(session, components.scopeSession, FakeOverrideTypeCalculator.Forced) ?: return false
         var result = false
         val processor = { it: FirCallableSymbol<*> ->
             if (!result && it == referencedSymbol) {

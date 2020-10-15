@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForLocalClass
-import org.jetbrains.kotlin.fir.scopes.ForcedFakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.PossiblyFirFakeOverrideSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -223,7 +223,7 @@ private class ReturnTypeCalculatorWithJump(
             val possiblyFirFakeOverrideSymbol = declaration.symbol as PossiblyFirFakeOverrideSymbol<*, *>
             val overriddenDeclaration = possiblyFirFakeOverrideSymbol.overriddenSymbol?.fir as FirTypedDeclaration? ?: return@runIf
             tryCalculateReturnType(overriddenDeclaration)
-            return ForcedFakeOverrideTypeCalculator.computeReturnType(declaration)
+            return FakeOverrideTypeCalculator.Forced.computeReturnType(declaration)
         }
 
         return when (val status = implicitBodyResolveComputationSession.getStatus(declaration.symbol)) {
