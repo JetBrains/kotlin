@@ -9,9 +9,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
-import org.gradle.api.Project
-import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.internal.hash.FileHasher
+import org.gradle.api.logging.Logger
 import java.io.File
 
 /**
@@ -24,14 +22,15 @@ import java.io.File
  *
  * @param version When updating logic in `compute`, `version` should be increased to invalidate cache
  */
+// CHECK
 internal open class ProcessedFilesCache(
-    val project: Project,
+    val logger: Logger,
+//    val hasher: FileHasher,
+    val projectDir: File,
     val targetDir: File,
     stateFileName: String,
     val version: String
 ) : AutoCloseable {
-    private val hasher = (project as ProjectInternal).services.get(FileHasher::class.java)
-    private val gson = GsonBuilder().setPrettyPrinting().create()
 
     private fun readFrom(json: JsonReader): State? {
         val result = State()
@@ -72,7 +71,7 @@ internal open class ProcessedFilesCache(
             json.name("items")
             json.obj {
                 byHash.forEach {
-                    json.name(it.key.contents.toHex())
+                    json.name(it.key.toHex())
                     json.obj {
                         json.name("src").value(it.value.src)
                         json.name("target")
@@ -96,26 +95,12 @@ internal open class ProcessedFilesCache(
         endObject()
     }
 
-    fun ByteArray.toHex(): String {
-        val result = CharArray(size * 2) { ' ' }
-        var i = 0
-        forEach {
-            val n = it.toInt()
-            result[i++] = Character.forDigit(n shr 4 and 0xF, 16)
-            result[i++] = Character.forDigit(n and 0xF, 16)
-        }
-        return String(result)
+    fun Int.toHex(): String {
+        return toString(16)
     }
 
-    private fun decodeHexString(hexString: String): ByteArray {
-        check(hexString.length % 2 == 0)
-        val bytes = ByteArray(hexString.length / 2)
-        var i = 0
-        var o = 0
-        while (i < hexString.length) {
-            bytes[o++] = hexToByte(hexString[i++], hexString[i++])
-        }
-        return bytes
+    private fun decodeHexString(hexString: String): Int {
+        return Integer.parseInt(hexString, 16)
     }
 
     private fun hexToByte(a: Char, b: Char): Byte = ((a.toDigit() shl 4) + b.toDigit()).toByte()
@@ -140,13 +125,13 @@ internal open class ProcessedFilesCache(
     }
 
     private class State {
-        val byHash = mutableMapOf<ByteArrayWrapper, Element>()
+        val byHash = mutableMapOf<Int, Element>()
         val byTarget = mutableMapOf<String, Element>()
 
-        operator fun get(elementHash: ByteArray) = byHash[ByteArrayWrapper(elementHash)]
+        operator fun get(elementHash: Int) = byHash[elementHash]
 
-        operator fun set(elementHash: ByteArray, element: Element) {
-            byHash[ByteArrayWrapper(elementHash)] = element
+        operator fun set(elementHash: Int, element: Element) {
+            byHash[elementHash] = element
             val target = element.target
             if (target != null) {
                 byTarget[target] = element
@@ -175,9 +160,9 @@ internal open class ProcessedFilesCache(
 
         state = (if (stateFile.exists()) {
             try {
-                gson.newJsonReader(stateFile.reader()).use { readFrom(it) }
+                GsonBuilder().setPrettyPrinting().create().newJsonReader(stateFile.reader()).use { readFrom(it) }
             } catch (e: Throwable) {
-                project.logger.warn("Cannot read $stateFile", e)
+                logger.warn("Cannot read $stateFile", e)
                 if (targetDir.exists()) {
                     targetDir.deleteRecursively()
                 }
@@ -195,19 +180,19 @@ internal open class ProcessedFilesCache(
         file: File,
         compute: () -> File?
     ): String? {
-        val hash = hasher.hash(file).toByteArray()
+        val hash = file.hashCode()
         val old = state[hash]
 
         if (old != null) {
             if (checkTarget(old.target)) return old.target
-            else project.logger.warn("Cannot find ${File(targetDir.relativeTo(project.projectDir), old.target!!)}, rebuilding")
+            else logger.warn("Cannot find ${File(targetDir.relativeTo(projectDir), old.target!!)}, rebuilding")
         }
 
         val key = compute()?.relativeTo(targetDir)?.toString()
         val existedTarget = state.byTarget[key]
         if (key != null && existedTarget != null) {
             if (!File(existedTarget.src).exists()) {
-                project.logger.warn("Removing cache for removed source `${existedTarget.src}`")
+                logger.warn("Removing cache for removed source `${existedTarget.src}`")
                 state.remove(existedTarget)
             }
         }
@@ -223,7 +208,7 @@ internal open class ProcessedFilesCache(
 
     override fun close() {
         stateFile.parentFile.mkdirs()
-        gson.newJsonWriter(stateFile.writer()).use {
+        GsonBuilder().setPrettyPrinting().create().newJsonWriter(stateFile.writer()).use {
             state.writeTo(it)
         }
     }

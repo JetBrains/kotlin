@@ -17,7 +17,7 @@ internal class CompositeNodeModulesCache(nodeJs: NodeJsRootExtension) : Abstract
         version: String,
         file: File
     ): File? {
-        val module = CompositeNodeModuleBuilder(project, file, this)
+        val module = CompositeNodeModuleBuilder(file, dir)
         return module.rebuild()
     }
 }
