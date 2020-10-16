@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.configuration
 
 import com.google.common.graph.GraphBuilder
 import com.google.common.graph.Graphs
-import com.intellij.ide.plugins.PluginManager
+import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
@@ -72,17 +72,14 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
         }
     }
 
-    override fun getToolingExtensionsClasses(): Set<Class<out Any>> {
-        return setOf(KotlinMPPGradleModelBuilder::class.java, Unit::class.java)
-    }
+    override fun getToolingExtensionsClasses(): Set<Class<out Any>> = setOf(KotlinMPPGradleModelBuilder::class.java, Unit::class.java)
 
-    override fun getExtraProjectModelClasses(): Set<Class<out Any>> {
-        return setOf(KotlinMPPGradleModel::class.java)
-    }
+    override fun getExtraProjectModelClasses(): Set<Class<out Any>> = setOf(KotlinMPPGradleModel::class.java)
 
-    override fun getExtraCommandLineArgs(): List<String> {
-        return if (!androidPluginPresent) listOf("-Pkotlin.include.android.dependencies=true") else emptyList()
-    }
+    override fun getExtraCommandLineArgs(): List<String> = if (!androidPluginPresent)
+        listOf("-Pkotlin.include.android.dependencies=true")
+    else
+        emptyList()
 
     override fun populateModuleExtraModels(gradleModule: IdeaModule, ideModule: DataNode<ModuleData>) {
         if (ExternalSystemApiUtil.find(ideModule, BuildScriptClasspathData.KEY) == null) {
@@ -153,8 +150,10 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             resolverCtx.getExtraProject(gradleModule, ExternalProject::class.java)?.sourceSets?.values?.forEach { sourceSet ->
                 sourceSet.dependencies.modifyDependenciesOnMppModules(ideProject, resolverCtx)
             }
+
             super.populateModuleDependencies(gradleModule, ideModule, ideProject)//TODO add dependencies on mpp module
         }
+
         populateModuleDependencies(gradleModule, ideProject, ideModule, resolverCtx)
     }
 
@@ -197,7 +196,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                 by NotNullableCopyableDataNodeUserDataProperty(Key.create<Boolean>("IS_MPP_DATA_INITIALIZED"), false)
 
         private var nativeDebugAdvertised = false
-        private val androidPluginPresent = PluginManager.getPlugin(PluginId.findId("org.jetbrains.android"))?.isEnabled ?: false
+        private val androidPluginPresent = PluginManagerCore.getPlugin(PluginId.findId("org.jetbrains.android"))?.isEnabled ?: false
 
         private fun ExternalDependency.getDependencyArtifacts(): Collection<File> =
             when (this) {
@@ -252,11 +251,13 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                     ArrayList<File>(this.projectDependencyArtifacts).also {
                         it.add(file)
                     }
+
                 is ExternalProjectDependency -> try {
                     this.projectDependencyArtifacts.add(file)
                 } catch (_: Exception) {
                     // ignore
                 }
+
                 is FileCollectionDependency -> this.files.add(file)
             }
         }
@@ -341,6 +342,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                             KotlinCompilation.MAIN_COMPILATION_NAME -> {
                                 it.publication = ProjectId(externalProject.group, externalProject.name, externalProject.version)
                             }
+
                             KotlinCompilation.TEST_COMPILATION_NAME -> {
                                 it.productionModuleId = getInternalModuleName(
                                     gradleModule,
@@ -877,12 +879,10 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
         private fun gradlePathToQualifiedName(
             rootName: String,
             gradlePath: String
-        ): String? {
-            return ((if (gradlePath.startsWith(":")) "$rootName." else "")
+        ): String = ((if (gradlePath.startsWith(":")) "$rootName." else "")
                     + Arrays.stream(gradlePath.split(":".toRegex()).toTypedArray())
                 .filter { s: String -> s.isNotEmpty() }
                 .collect(Collectors.joining(".")))
-        }
 
         private fun getInternalModuleName(
             gradleModule: IdeaModule,
