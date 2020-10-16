@@ -40,6 +40,11 @@ class ComposeErrorMessages : DefaultErrorMessages.Extension {
         )
 
         MAP.put(
+            ComposeErrors.COMPOSABLE_FUNCTION_REFERENCE,
+            "Function References of @Composable functions are not currently supported"
+        )
+
+        MAP.put(
             ComposeErrors.CAPTURED_COMPOSABLE_INVOCATION,
             "Composable calls are not allowed inside the {0} parameter of {1}",
             Renderers.NAME,

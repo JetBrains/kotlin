@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtAnnotatedExpression
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
@@ -167,6 +168,10 @@ open class ComposableCallChecker :
                     }
                     return
                 }
+                is KtCallableReferenceExpression -> {
+                    illegalComposableFunctionReference(context, node)
+                    return
+                }
                 is KtFile -> {
                     // if we've made it this far, the call was made in a non-composable context.
                     illegalCall(context, reportOn)
@@ -191,6 +196,13 @@ open class ComposableCallChecker :
         if (functionEl != null) {
             context.trace.report(ComposeErrors.COMPOSABLE_EXPECTED.on(functionEl))
         }
+    }
+
+    private fun illegalComposableFunctionReference(
+        context: CallCheckerContext,
+        refExpr: KtCallableReferenceExpression
+    ) {
+        context.trace.report(ComposeErrors.COMPOSABLE_FUNCTION_REFERENCE.on(refExpr))
     }
 
     override fun checkType(

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -38,6 +39,12 @@ object ComposeErrors {
     @JvmField
     val COMPOSABLE_EXPECTED =
         DiagnosticFactory0.create<PsiElement>(
+            Severity.ERROR
+        )
+
+    @JvmField
+    val COMPOSABLE_FUNCTION_REFERENCE =
+        DiagnosticFactory0.create<KtCallableReferenceExpression>(
             Severity.ERROR
         )
 
