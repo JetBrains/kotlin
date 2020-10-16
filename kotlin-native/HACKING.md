@@ -271,8 +271,15 @@ instead of provided one.
 `llvmHome.<HOST_NAME>` variable in `<distribution_location>/konan/konan.properties` controls 
 which LLVM distribution Kotlin/Native will use in its compilation pipeline. 
 You can replace its value with either `$llvm.<HOST_NAME>.{dev, user}` to use one of predefined distributions
-or pass an absolute to your own distribution. 
+or pass an absolute to your own distribution.
 Don't forget to set `llvmVersion.<HOST_NAME>` to the version of your LLVM distribution.
+
+#### Example. Using LLVM from an absolute path.
+Assuming LLVM distribution is installed at `/usr` path, one can specify a path to it 
+with the `-Xoverride-konan-properties` option:
+```
+konanc main.kt -Xoverride-konan-properties=llvmHome.linux_x64=/usr
+```
 
 ### Playing with compilation pipeline.
 
@@ -284,17 +291,17 @@ Following compiler phases control different parts of LLVM pipeline:
 For example, pass `-Xdisable-phases=BitcodeOptimization` to skip optimization pipeline.
 Note that disabling `LinkBitcodeDependencies` or `ObjectFiles` will break compilation pipeline.
 
-By default, compiler takes options for Clang from [konan.properties](konan/konan.properties) file
-by combining `clangFlags.<TARGET>` and `clang<Noopt/Opt/Debug>Flags.<TARGET>` properties.
-To override this behaviour, one can specify flag `-Xoverride-clang-options=<arg1, ..., argN>`.
+Compiler takes options for Clang from [konan.properties](konan/konan.properties) file
+by combining `clangFlags.<TARGET>` and `clang<Noopt/Opt/Debug>Flags.<TARGET>` properties. 
+Use `-Xoverride-konan-properties=<key_1=value_1; ...;key_n=value_n>` flag to override default values.
 
 Please note:
 1. Kotlin Native passes bitcode files to Clang instead of C or C++, so many flags won't work.
-2. `-c` should be passed because Kotlin/Native calls linker by itself.
-
+2. `-cc1 -emit-obj` should be passed because Kotlin/Native calls linker by itself.
+3. Use `clang -cc1 -help` to see a list of available options.
+ 
 Another useful compiler option is `-Xtemporary-files-dir=<PATH>` which allows
 to specify a directory for intermediate compiler artifacts like bitcode and object files.
-
 
 #### Example 1. Bitcode right after IR to Bitcode translation.
 ```shell script
@@ -309,7 +316,8 @@ konanc main.kt -Xtemporary-files-dir=<PATH> -o <OUTPUT_NAME>
 
 #### Example 3. Replace predefined LLVM pipeline with Clang options.
 ```shell script
-konanc main.kt -Xdisable-phases=BitcodeOptimization -Xoverride-clang-options=-c,-O2
+CLANG_FLAGS="clangFlags.macos_x64=-cc1 -emit-obj;clangNooptFlags.macos_x64=-O2"
+konanc main.kt -Xdisable-phases=BitcodeOptimization -Xoverride-konan-properties="$CLANG_FLAGS"
 ```
 
 ## Running Clang the same way Kotlin/Native compiler does
