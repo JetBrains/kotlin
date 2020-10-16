@@ -4767,6 +4767,29 @@ standaloneTest("local_ea_arraysfieldwrite") {
     source = "codegen/localEscapeAnalysis/arraysFieldWrite.kt"
 }
 
+task override_konan_properties0(type: KonanDriverTest) {
+
+    def overrides = PlatformInfo.isWindows()
+            ? '-Xoverride-konan-properties="llvmInlineThreshold=76"'
+            : '-Xoverride-konan-properties=llvmInlineThreshold=76'
+    flags = [
+            "-opt",
+            "-Xverbose-phases=BitcodeOptimization",
+            overrides
+    ]
+    compilerMessages = true
+    source = "link/ir_providers/hello.kt"
+    def messages =
+            "inline_threshold: 76\n" +
+            "hello\n"
+    goldValue = PlatformInfo.isWindows() ? messages.replaceAll('\\/', '\\\\') : messages
+    outputChecker = { out ->
+        goldValue.split("\n")
+                .collect { line -> out.contains(line) }
+                .every { it == true }
+    }
+}
+
 /**
  * Creates tasks to build and execute stdlib tests.
  */
