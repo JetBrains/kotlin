@@ -1211,6 +1211,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/edu/pycharm/intellij.edu.pycharm.customization.iml" filepath="$PROJECT_DIR$/intellij/edu/pycharm/intellij.edu.pycharm.customization.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/edu/pycharm/intellij.edu.pycharm.main.iml" filepath="$PROJECT_DIR$/intellij/edu/pycharm/intellij.edu.pycharm.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/EJS/intellij.ejs.iml" filepath="$PROJECT_DIR$/intellij/plugins/EJS/intellij.ejs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/emojipicker/intellij.emojipicker.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/emojipicker/intellij.emojipicker.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/error-prone/intellij.errorProne.iml" filepath="$PROJECT_DIR$/intellij/contrib/error-prone/intellij.errorProne.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/error-prone/jps-plugin/intellij.errorProne.jps.iml" filepath="$PROJECT_DIR$/intellij/contrib/error-prone/jps-plugin/intellij.errorProne.jps.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/exception-analyzer/intellij.exceptionAnalyzer.iml" filepath="$PROJECT_DIR$/intellij/plugins/exception-analyzer/intellij.exceptionAnalyzer.iml" />
