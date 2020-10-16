@@ -292,7 +292,8 @@ extra["compilerModules"] = arrayOf(
     ":compiler:fir:jvm",
     ":compiler:fir:checkers",
     ":compiler:fir:entrypoint",
-    ":compiler:fir:analysis-tests"
+    ":compiler:fir:analysis-tests",
+    ":wasm:wasm.ir"
 )
 
 extra["compilerModulesForJps"] = listOf(
@@ -650,8 +651,8 @@ tasks {
     }
 
     register("wasmCompilerTest") {
-//  TODO: fix once
-//        dependsOn(":js:js.tests:wasmTest")
+        dependsOn(":js:js.tests:wasmTest")
+        dependsOn(":wasm:wasm.ir:test")
     }
 
     register("nativeCompilerTest") {
