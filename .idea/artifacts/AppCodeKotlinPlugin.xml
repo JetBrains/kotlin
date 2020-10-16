@@ -22,7 +22,7 @@
           <element id="module-output" name="kotlin-ultimate.common-cidr-swift-native" />
           <element id="module-output" name="kotlin-ultimate.common-native" />
         </element>
-        <element id="library" level="module" name="org.jetbrains.konan:backend.native:1.4.10-rc1-19-mobile" module-name="kotlin-ultimate.common-cidr-swift-native" />
+        <element id="library" level="module" name="org.jetbrains.konan:backend.native:mobile" module-name="kotlin-ultimate.common-cidr-swift-native" />
       </element>
       <element id="directory" name="templates">
         <element id="dir-copy" path="$PROJECT_DIR$/kotlin-ultimate/appcode-native/templates" />
