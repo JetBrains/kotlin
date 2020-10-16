@@ -70,24 +70,24 @@ constructor(
     fun resolve() {
         val compilation = npmProject.compilation
 
-        packageJson(npmProject, realExternalDependencies).let { packageJson ->
-            packageJson.main = "${npmProject.name}.js"
-
-            if (compilation is KotlinJsIrCompilation) {
-                packageJson.types = "${npmProject.name}.d.ts"
-            }
-
-            packageJson.apply {
-                listOf(
-                    dependencies,
-                    devDependencies,
-                    peerDependencies,
-                    optionalDependencies
-                ).forEach { it.processDependencies() }
-            }
-
-            packageJson.saveTo(this@PublicPackageJsonTask.packageJsonFile)
-        }
+//        packageJson(npmProject, realExternalDependencies).let { packageJson ->
+//            packageJson.main = "${npmProject.name}.js"
+//
+//            if (compilation is KotlinJsIrCompilation) {
+//                packageJson.types = "${npmProject.name}.d.ts"
+//            }
+//
+//            packageJson.apply {
+//                listOf(
+//                    dependencies,
+//                    devDependencies,
+//                    peerDependencies,
+//                    optionalDependencies
+//                ).forEach { it.processDependencies() }
+//            }
+//
+//            packageJson.saveTo(this@PublicPackageJsonTask.packageJsonFile)
+//        }
     }
 
     private fun MutableMap<String, String>.processDependencies() {

@@ -64,6 +64,22 @@ internal class KotlinCompilationNpmResolver(
     @Transient
     val npmProject = compilation.npmProject
 
+    val npmName by lazy {
+        npmProject.name
+    }
+
+    val npmVersion by lazy {
+        project.version.toString()
+    }
+
+    val npmMain by lazy {
+        npmProject.main
+    }
+
+    val prePackageJsonFile by lazy {
+        npmProject.prePackageJsonFile
+    }
+
     val nodeJs get() = resolver.nodeJs
 
     val target get() = compilation.target
@@ -413,7 +429,9 @@ internal class KotlinCompilationNpmResolver(
             val allNpmDependencies = externalNpmDependencies/* + toolsNpmDependencies*/
 
             val packageJson = packageJson(
-                npmProject,
+                npmName,
+                npmVersion,
+                npmMain,
                 allNpmDependencies
             )
 
@@ -429,17 +447,17 @@ internal class KotlinCompilationNpmResolver(
                 packageJson.dependencies[it.name] = fileVersion(it.path)
             }
 
-            compilation.packageJsonHandlers.forEach {
-                it(packageJson)
-            }
+//            compilation.packageJsonHandlers.forEach {
+//                it(packageJson)
+//            }
 
             if (!skipWriting) {
-                packageJson.saveTo(npmProject.prePackageJsonFile)
+                packageJson.saveTo(prePackageJsonFile)
             }
 
             return KotlinCompilationNpmResolution(
-                project,
-                npmProject,
+                if (compilation != null) project else null,
+                if (compilation != null) npmProject else null,
                 resolvedInternalDependencies,
                 compositeDependencies,
                 importedExternalGradleDependencies,
