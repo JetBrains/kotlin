@@ -2,9 +2,13 @@ class: kotlin/collections/MutableList
 
 // SYMBOLS:
 KtFirFunctionSymbol:
+  annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.add
   isExtension: false
+  isExternal: false
+  isInline: false
   isOperator: false
+  isOverride: false
   isSuspend: false
   modality: ABSTRACT
   name: add
@@ -14,11 +18,16 @@ KtFirFunctionSymbol:
   type: kotlin/Boolean
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(element)]
+  visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.add
   isExtension: false
+  isExternal: false
+  isInline: false
   isOperator: false
+  isOverride: false
   isSuspend: false
   modality: ABSTRACT
   name: add
@@ -28,11 +37,16 @@ KtFirFunctionSymbol:
   type: kotlin/Unit
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(index), KtFirFunctionValueParameterSymbol(element)]
+  visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.addAll
   isExtension: false
+  isExternal: false
+  isInline: false
   isOperator: false
+  isOverride: false
   isSuspend: false
   modality: ABSTRACT
   name: addAll
@@ -42,11 +56,16 @@ KtFirFunctionSymbol:
   type: kotlin/Boolean
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(index), KtFirFunctionValueParameterSymbol(elements)]
+  visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.addAll
   isExtension: false
+  isExternal: false
+  isInline: false
   isOperator: false
+  isOverride: false
   isSuspend: false
   modality: ABSTRACT
   name: addAll
@@ -56,11 +75,16 @@ KtFirFunctionSymbol:
   type: kotlin/Boolean
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(elements)]
+  visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.clear
   isExtension: false
+  isExternal: false
+  isInline: false
   isOperator: false
+  isOverride: false
   isSuspend: false
   modality: ABSTRACT
   name: clear
@@ -70,11 +94,16 @@ KtFirFunctionSymbol:
   type: kotlin/Unit
   typeParameters: []
   valueParameters: []
+  visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.listIterator
   isExtension: false
+  isExternal: false
+  isInline: false
   isOperator: false
+  isOverride: false
   isSuspend: false
   modality: ABSTRACT
   name: listIterator
@@ -84,11 +113,16 @@ KtFirFunctionSymbol:
   type: kotlin/collections/MutableListIterator<E>
   typeParameters: []
   valueParameters: []
+  visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.listIterator
   isExtension: false
+  isExternal: false
+  isInline: false
   isOperator: false
+  isOverride: false
   isSuspend: false
   modality: ABSTRACT
   name: listIterator
@@ -98,11 +132,16 @@ KtFirFunctionSymbol:
   type: kotlin/collections/MutableListIterator<E>
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(index)]
+  visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.remove
   isExtension: false
+  isExternal: false
+  isInline: false
   isOperator: false
+  isOverride: false
   isSuspend: false
   modality: ABSTRACT
   name: remove
@@ -112,11 +151,16 @@ KtFirFunctionSymbol:
   type: kotlin/Boolean
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(element)]
+  visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.removeAll
   isExtension: false
+  isExternal: false
+  isInline: false
   isOperator: false
+  isOverride: false
   isSuspend: false
   modality: ABSTRACT
   name: removeAll
@@ -126,11 +170,16 @@ KtFirFunctionSymbol:
   type: kotlin/Boolean
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(elements)]
+  visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.removeAt
   isExtension: false
+  isExternal: false
+  isInline: false
   isOperator: false
+  isOverride: false
   isSuspend: false
   modality: ABSTRACT
   name: removeAt
@@ -140,11 +189,16 @@ KtFirFunctionSymbol:
   type: E
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(index)]
+  visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.retainAll
   isExtension: false
+  isExternal: false
+  isInline: false
   isOperator: false
+  isOverride: false
   isSuspend: false
   modality: ABSTRACT
   name: retainAll
@@ -154,11 +208,16 @@ KtFirFunctionSymbol:
   type: kotlin/Boolean
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(elements)]
+  visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.set
   isExtension: false
+  isExternal: false
+  isInline: false
   isOperator: true
+  isOverride: false
   isSuspend: false
   modality: ABSTRACT
   name: set
@@ -168,11 +227,16 @@ KtFirFunctionSymbol:
   type: E
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(index), KtFirFunctionValueParameterSymbol(element)]
+  visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.subList
   isExtension: false
+  isExternal: false
+  isInline: false
   isOperator: false
+  isOverride: false
   isSuspend: false
   modality: ABSTRACT
   name: subList
@@ -182,11 +246,16 @@ KtFirFunctionSymbol:
   type: kotlin/collections/MutableList<E>
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(fromIndex), KtFirFunctionValueParameterSymbol(toIndex)]
+  visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.contains
   isExtension: false
+  isExternal: false
+  isInline: false
   isOperator: true
+  isOverride: false
   isSuspend: false
   modality: ABSTRACT
   name: contains
@@ -196,11 +265,16 @@ KtFirFunctionSymbol:
   type: kotlin/Boolean
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(element)]
+  visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.containsAll
   isExtension: false
+  isExternal: false
+  isInline: false
   isOperator: false
+  isOverride: false
   isSuspend: false
   modality: ABSTRACT
   name: containsAll
@@ -210,11 +284,16 @@ KtFirFunctionSymbol:
   type: kotlin/Boolean
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(elements)]
+  visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.get
   isExtension: false
+  isExternal: false
+  isInline: false
   isOperator: true
+  isOverride: false
   isSuspend: false
   modality: ABSTRACT
   name: get
@@ -224,11 +303,16 @@ KtFirFunctionSymbol:
   type: E
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(index)]
+  visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.indexOf
   isExtension: false
+  isExternal: false
+  isInline: false
   isOperator: false
+  isOverride: false
   isSuspend: false
   modality: ABSTRACT
   name: indexOf
@@ -238,11 +322,16 @@ KtFirFunctionSymbol:
   type: kotlin/Int
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(element)]
+  visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.isEmpty
   isExtension: false
+  isExternal: false
+  isInline: false
   isOperator: false
+  isOverride: false
   isSuspend: false
   modality: ABSTRACT
   name: isEmpty
@@ -252,11 +341,16 @@ KtFirFunctionSymbol:
   type: kotlin/Boolean
   typeParameters: []
   valueParameters: []
+  visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.iterator
   isExtension: false
+  isExternal: false
+  isInline: false
   isOperator: true
+  isOverride: false
   isSuspend: false
   modality: ABSTRACT
   name: iterator
@@ -266,11 +360,16 @@ KtFirFunctionSymbol:
   type: kotlin/collections/MutableIterator<E>
   typeParameters: []
   valueParameters: []
+  visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.lastIndexOf
   isExtension: false
+  isExternal: false
+  isInline: false
   isOperator: false
+  isOverride: false
   isSuspend: false
   modality: ABSTRACT
   name: lastIndexOf
@@ -280,22 +379,34 @@ KtFirFunctionSymbol:
   type: kotlin/Int
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(element)]
+  visibility: PUBLIC
 
 KtFirPropertySymbol:
+  annotations: []
   callableIdIfNonLocal: kotlin.collections.List.size
+  getter: null
+  hasBackingField: false
+  isConst: false
   isExtension: false
+  isOverride: false
   isVal: true
   modality: ABSTRACT
   name: size
   origin: LIBRARY
   receiverType: null
+  setter: null
   symbolKind: MEMBER
   type: kotlin/Int
+  visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.equals
   isExtension: false
+  isExternal: false
+  isInline: false
   isOperator: true
+  isOverride: false
   isSuspend: false
   modality: OPEN
   name: equals
@@ -305,11 +416,16 @@ KtFirFunctionSymbol:
   type: kotlin/Boolean
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.hashCode
   isExtension: false
+  isExternal: false
+  isInline: false
   isOperator: false
+  isOverride: false
   isSuspend: false
   modality: OPEN
   name: hashCode
@@ -319,11 +435,16 @@ KtFirFunctionSymbol:
   type: kotlin/Int
   typeParameters: []
   valueParameters: []
+  visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.toString
   isExtension: false
+  isExternal: false
+  isInline: false
   isOperator: false
+  isOverride: false
   isSuspend: false
   modality: OPEN
   name: toString
@@ -333,3 +454,4 @@ KtFirFunctionSymbol:
   type: kotlin/String
   typeParameters: []
   valueParameters: []
+  visibility: PUBLIC

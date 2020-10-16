@@ -26,6 +26,11 @@ public class SymbolsByPsiBuildingTestGenerated extends AbstractSymbolsByPsiBuild
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
+    @TestMetadata("annotations.kt")
+    public void testAnnotations() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/symbolsByPsi/annotations.kt");
+    }
+
     @TestMetadata("class.kt")
     public void testClass() throws Exception {
         runTest("testData/symbolsByPsi/class.kt");

@@ -2,10 +2,16 @@ class: kotlin/collections/MutableMap.MutableEntry
 
 // SYMBOLS:
 KtFirClassOrObjectSymbol:
+  annotations: []
   classIdIfNonLocal: kotlin/collections/MutableMap.MutableEntry
   classKind: INTERFACE
+  companionObject: null
+  isInner: false
   modality: ABSTRACT
   name: MutableEntry
   origin: LIBRARY
+  primaryConstructor: null
+  superTypes: [kotlin/collections/Map.Entry<K, V>]
   symbolKind: MEMBER
   typeParameters: [KtFirTypeParameterSymbol(K), KtFirTypeParameterSymbol(V)]
+  visibility: PUBLIC

@@ -3,9 +3,13 @@ fun foo(): Int = 10
 // SYMBOLS:
 /*
 KtFirFunctionSymbol:
+  annotations: []
   callableIdIfNonLocal: foo
   isExtension: false
+  isExternal: false
+  isInline: false
   isOperator: false
+  isOverride: false
   isSuspend: false
   modality: FINAL
   name: foo
@@ -15,4 +19,5 @@ KtFirFunctionSymbol:
   type: kotlin/Int
   typeParameters: []
   valueParameters: []
+  visibility: PUBLIC
 */
