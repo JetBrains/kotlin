@@ -408,8 +408,8 @@ fun runTest() {
 
     static def excludeList = [
             "external/compiler/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt", // KT-36880
-            "external/compiler/compileKotlinAgainstKotlin/specialBridgesInDependencies.kt",         // FIXME: inherits final class
-            "external/compiler/codegen/box/collections/kt41123.kt",                                 // FIXME: inherits final HashMap
+            "external/compiler/compileKotlinAgainstKotlin/specialBridgesInDependencies.kt",         // KT-42723
+            "external/compiler/codegen/box/collections/kt41123.kt",                                 // KT-42723
             "external/compiler/codegen/box/multiplatform/multiModule/expectActualTypealiasLink.kt", // KT-40137
             "external/compiler/codegen/box/multiplatform/multiModule/expectActualMemberLink.kt",    // KT-33091
             "external/compiler/codegen/box/multiplatform/multiModule/expectActualLink.kt",          // KT-41901
