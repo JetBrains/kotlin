@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.openapi.updateSettings.impl.UpdateChecker;
@@ -45,8 +46,7 @@ public class PluginStartupActivity implements StartupActivity {
         }
         catch (Throwable throwable) {
             LOG.debug("Excluding Kotlin plugin updates using old API", throwable);
-            //UpdateChecker.getDisabledToUpdate().add(PluginId.getId("org.jetbrains.kotlin"));
-            UpdateChecker.getDisabledToUpdatePlugins().add("org.jetbrains.kotlin");
+            UpdateChecker.getDisabledToUpdate().add(PluginId.getId("org.jetbrains.kotlin"));
         }
 
         KotlinPluginCompatibilityVerifier.checkCompatibility();
