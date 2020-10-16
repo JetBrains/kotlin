@@ -120,7 +120,7 @@ internal class CEnumClassGenerator(
                 SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
                 IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, entryDescriptor
         ).also { enumEntry ->
-            enumEntry.initializerExpression = IrExpressionBodyImpl(IrEnumConstructorCallImpl(
+            enumEntry.initializerExpression = IrExpressionBodyImpl(IrEnumConstructorCallImpl.fromSymbolDescriptor(
                     SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
                     type = irBuiltIns.unitType,
                     symbol = symbolTable.referenceConstructor(enumDescriptor.unsubstitutedPrimaryConstructor!!),
@@ -147,7 +147,7 @@ internal class CEnumClassGenerator(
         val irConstructor = createConstructor(descriptor.unsubstitutedPrimaryConstructor!!)
         val enumConstructor = context.builtIns.enum.constructors.single()
         irConstructor.body = irBuilder(irBuiltIns, irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
-            +IrEnumConstructorCallImpl(
+            +IrEnumConstructorCallImpl.fromSymbolDescriptor(
                     startOffset, endOffset,
                     context.irBuiltIns.unitType,
                     symbolTable.referenceConstructor(enumConstructor),
