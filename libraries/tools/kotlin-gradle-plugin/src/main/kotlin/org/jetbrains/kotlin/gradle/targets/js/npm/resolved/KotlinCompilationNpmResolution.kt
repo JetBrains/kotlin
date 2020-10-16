@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.resolved
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.targets.js.npm.GradleNodeModule
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
-import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
+import org.jetbrains.kotlin.gradle.targets.js.npm.*
 
 /**
  * Resolved [NpmProject]
@@ -22,11 +19,23 @@ class KotlinCompilationNpmResolution(
     val internalDependencies: Collection<KotlinCompilationNpmResolution>,
     val internalCompositeDependencies: Collection<GradleNodeModule>,
     val externalGradleDependencies: Collection<GradleNodeModule>,
-    val externalNpmDependencies: Collection<NpmDependency>,
+    private val _externalNpmDependencies: Collection<NpmDependencyDeclaration>,
     val packageJson: PackageJson
 ) {
     val project
         get() = _project!!
     val npmProject
         get() = _npmProject!!
+
+    val externalNpmDependencies
+        get() = _externalNpmDependencies
+            .map {
+                NpmDependency(
+                    project = project,
+                    name = it.name,
+                    version = it.version,
+                    scope = it.scope,
+                    generateExternals = it.generateExternals
+                )
+            }
 }

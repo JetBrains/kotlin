@@ -64,6 +64,8 @@ internal class KotlinCompilationNpmResolver(
     @Transient
     val npmProject = compilation.npmProject
 
+    val compilationName = compilation.name
+
     val npmName by lazy {
         npmProject.name
     }
@@ -81,6 +83,10 @@ internal class KotlinCompilationNpmResolver(
     }
 
     val nodeJs get() = resolver.nodeJs
+
+    val taskRequirements by lazy {
+        nodeJs.taskRequirements
+    }
 
     val target get() = compilation.target
 
@@ -423,10 +429,10 @@ internal class KotlinCompilationNpmResolver(
             }
                 .filterNotNull()
 
-//            val toolsNpmDependencies = nodeJs.taskRequirements
-//                .getCompilationNpmRequirements(compilation)
+            val toolsNpmDependencies = taskRequirements
+                .getCompilationNpmRequirements(compilationName)
 
-            val allNpmDependencies = externalNpmDependencies/* + toolsNpmDependencies*/
+            val allNpmDependencies = externalNpmDependencies.map { it.toDeclaration() } + toolsNpmDependencies
 
             val packageJson = packageJson(
                 npmName,
