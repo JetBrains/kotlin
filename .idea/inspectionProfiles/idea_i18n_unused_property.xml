@@ -5,6 +5,7 @@
       <scope name="Tests" level="WARNING" enabled="false" />
       <scope name="test-framework" level="WARNING" enabled="false" />
       <scope name="android" level="WARNING" enabled="false" />
+      <scope name="i18n inspections ignored plugins" level="WARNING" enabled="false" />
       <option name="fileNameMask" value=".*Bundle\.properties" />
     </inspection_tool>
   </profile>
