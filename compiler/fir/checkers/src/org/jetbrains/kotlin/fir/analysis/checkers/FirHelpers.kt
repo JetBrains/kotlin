@@ -208,7 +208,8 @@ fun FirSimpleFunction.overriddenFunctions(
 ): List<FirFunctionSymbol<*>> {
     val firTypeScope = containingClass.unsubstitutedScope(
         context.sessionHolder.session,
-        context.sessionHolder.scopeSession
+        context.sessionHolder.scopeSession,
+        withForcedTypeCalculator = true
     )
 
     val overriddenFunctions = mutableListOf<FirFunctionSymbol<*>>()

@@ -230,7 +230,7 @@ internal fun FirSimpleFunction.generateOverriddenFunctionSymbols(
     scopeSession: ScopeSession,
     declarationStorage: Fir2IrDeclarationStorage
 ): List<IrSimpleFunctionSymbol> {
-    val scope = containingClass.unsubstitutedScope(session, scopeSession)
+    val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
     scope.processFunctionsByName(name) {}
     val overriddenSet = mutableSetOf<IrSimpleFunctionSymbol>()
     scope.processDirectlyOverriddenFunctions(symbol) {
@@ -251,7 +251,7 @@ internal fun FirProperty.generateOverriddenAccessorSymbols(
     scopeSession: ScopeSession,
     declarationStorage: Fir2IrDeclarationStorage
 ): List<IrSimpleFunctionSymbol> {
-    val scope = containingClass.unsubstitutedScope(session, scopeSession)
+    val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
     scope.processPropertiesByName(name) {}
     val overriddenSet = mutableSetOf<IrSimpleFunctionSymbol>()
     scope.processDirectlyOverriddenProperties(symbol) {

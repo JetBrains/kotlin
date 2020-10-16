@@ -85,7 +85,11 @@ fun ConeClassLikeType.findBaseInvokeSymbol(session: FirSession, scopeSession: Sc
     require(this.isBuiltinFunctionalType(session))
     val functionN = (lookupTag.toSymbol(session)?.fir as? FirClass<*>) ?: return null
     var baseInvokeSymbol: FirFunctionSymbol<*>? = null
-    functionN.unsubstitutedScope(session, scopeSession).processFunctionsByName(OperatorNameConventions.INVOKE) { functionSymbol ->
+    functionN.unsubstitutedScope(
+        session,
+        scopeSession,
+        withForcedTypeCalculator = false
+    ).processFunctionsByName(OperatorNameConventions.INVOKE) { functionSymbol ->
         baseInvokeSymbol = functionSymbol
         return@processFunctionsByName
     }

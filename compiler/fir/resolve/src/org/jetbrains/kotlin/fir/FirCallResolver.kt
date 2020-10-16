@@ -386,7 +386,11 @@ class FirCallResolver(
         callInfo: CallInfo
     ): ResolutionResult? {
         var constructorSymbol: FirConstructorSymbol? = null
-        annotationClassSymbol.fir.unsubstitutedScope(session, components.scopeSession).processDeclaredConstructors {
+        annotationClassSymbol.fir.unsubstitutedScope(
+            session,
+            components.scopeSession,
+            withForcedTypeCalculator = false
+        ).processDeclaredConstructors {
             if (it.fir.isPrimary && constructorSymbol == null) {
                 constructorSymbol = it
             }

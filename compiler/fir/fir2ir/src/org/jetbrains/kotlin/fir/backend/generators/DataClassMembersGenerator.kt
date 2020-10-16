@@ -146,7 +146,11 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                 @OptIn(ExperimentalStdlibApi::class)
                 buildMap<Name, FirSimpleFunction> {
                     for (name in listOf(equalsName, hashCodeName, toStringName)) {
-                        klass.unsubstitutedScope(components.session, components.scopeSession).processFunctionsByName(name) {
+                        klass.unsubstitutedScope(
+                            components.session,
+                            components.scopeSession,
+                            withForcedTypeCalculator = true
+                        ).processFunctionsByName(name) {
                             val declaration = it.fir
                             if (declaration is FirSimpleFunction &&
                                 declaration.matchesDataClassSyntheticMemberSignatures
