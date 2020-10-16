@@ -3470,6 +3470,11 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
             runTest("js/js.translator/testData/box/inheritance/baseClassDefinedAfterDerived.kt");
         }
 
+        @TestMetadata("childPrototype.kt")
+        public void testChildPrototype() throws Exception {
+            runTest("js/js.translator/testData/box/inheritance/childPrototype.kt");
+        }
+
         @TestMetadata("complexInitializationOrder.kt")
         public void testComplexInitializationOrder() throws Exception {
             runTest("js/js.translator/testData/box/inheritance/complexInitializationOrder.kt");

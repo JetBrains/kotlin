@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.utils.*
@@ -142,6 +143,10 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         return this.overriddenSymbols.any { it.owner.overridesExternal() }
     }
 
+    private fun IrClass.shouldCopyFrom(): Boolean {
+        return isInterface && !isEffectivelyExternal()
+    }
+
     private fun generateMemberFunction(declaration: IrSimpleFunction): Pair<JsNameRef, JsFunction?> {
         val memberName = context.getNameForMemberFunction(declaration.realOverrideTarget)
         val memberRef = JsNameRef(memberName, classPrototypeRef)
@@ -158,10 +163,10 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         // interface II : I
         // II.prototype.foo = I.prototype.foo
         if (!irClass.isInterface) {
-            declaration.realOverrideTarget.let { it ->
+            declaration.realOverrideTarget.let {
                 val implClassDeclaration = it.parent as IrClass
 
-                if (!implClassDeclaration.defaultType.isAny() && !it.isEffectivelyExternal()) {
+                if (implClassDeclaration.shouldCopyFrom()) {
                     val implMethodName = context.getNameForMemberFunction(it)
                     val implClassName = context.getNameForClass(implClassDeclaration)
 
