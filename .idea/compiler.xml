@@ -31,9 +31,6 @@
       <entry name="!*.gant" />
       <entry name="!*.bnf" />
     </wildcardResourcePatterns>
-    <bytecodeTargetLevel>
-      <module name="intellij.java.jshell.frontend" target="1.8" />
-    </bytecodeTargetLevel>
   </component>
   <component name="EclipseCompilerSettings">
     <option name="GENERATE_NO_WARNINGS" value="true" />
