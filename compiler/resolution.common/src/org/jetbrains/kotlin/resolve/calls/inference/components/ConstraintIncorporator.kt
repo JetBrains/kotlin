@@ -40,15 +40,19 @@ class ConstraintIncorporator(
         fun addNewIncorporatedConstraint(typeVariable: TypeVariableMarker, type: KotlinTypeMarker, constraintContext: ConstraintContext)
     }
 
-    fun incorporateIntoOtherConstraints(c: Context, typeVariable: TypeVariableMarker, constraint: Constraint) {
+    fun incorporateEqualityConstraint(c: Context, typeVariable: TypeVariableMarker, constraint: Constraint) = with(c) {
         // we shouldn't incorporate recursive constraint -- It is too dangerous
         if (c.areThereRecursiveConstraints(typeVariable, constraint)) return
 
+        c.directWithVariable(typeVariable, constraint)
+        if (constraint.type.contains { it is TypeVariableTypeConstructorMarker }) {
+            c.otherInsideMyConstraint(typeVariable, constraint)
+        }
         c.insideOtherConstraint(typeVariable, constraint)
     }
 
     // \alpha is typeVariable, \beta -- other type variable registered in ConstraintStorage
-    fun incorporate(c: Context, typeVariable: TypeVariableMarker, constraint: Constraint) {
+    fun incorporateSubtypeConstraint(c: Context, typeVariable: TypeVariableMarker, constraint: Constraint) {
         // we shouldn't incorporate recursive constraint -- It is too dangerous
         if (c.areThereRecursiveConstraints(typeVariable, constraint)) return
 

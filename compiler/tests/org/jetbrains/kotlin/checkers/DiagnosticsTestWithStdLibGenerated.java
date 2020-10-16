@@ -3173,6 +3173,29 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             runTest("compiler/testData/diagnostics/testsWithStdLib/inference/recursiveFlexibleAssertions.kt");
         }
 
+        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/addEqualityConstraintsWithoutSubtyping")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class AddEqualityConstraintsWithoutSubtyping extends AbstractDiagnosticsTestWithStdLib {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInAddEqualityConstraintsWithoutSubtyping() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inference/addEqualityConstraintsWithoutSubtyping"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @TestMetadata("kt41741.kt")
+            public void testKt41741() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/inference/addEqualityConstraintsWithoutSubtyping/kt41741.kt");
+            }
+
+            @TestMetadata("kt42195.kt")
+            public void testKt42195() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/inference/addEqualityConstraintsWithoutSubtyping/kt42195.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
