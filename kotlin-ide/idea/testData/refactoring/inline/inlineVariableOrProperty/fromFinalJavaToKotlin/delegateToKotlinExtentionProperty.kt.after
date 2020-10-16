@@ -1,0 +1,102 @@
+val JavaClass.propertyFromKotlin: Int get() = 42
+
+fun a() {
+    JavaClass().propertyFromKotlin
+
+    val d = JavaClass()
+    d.propertyFromKotlin
+
+    d.let {
+        it.propertyFromKotlin
+    }
+
+    d.also {
+        it.propertyFromKotlin
+    }
+
+    with(d) {
+        propertyFromKotlin
+    }
+
+    with(d) out@{
+        with(4) {
+            this@out.propertyFromKotlin
+        }
+    }
+}
+
+fun a2() {
+    val d: JavaClass? = null
+    d?.propertyFromKotlin
+
+    d?.let {
+        it.propertyFromKotlin
+    }
+
+    d?.also {
+        it.propertyFromKotlin
+    }
+
+    with(d) {
+        this?.propertyFromKotlin
+    }
+
+    with(d) out@{
+        with(4) {
+            this@out?.propertyFromKotlin
+        }
+    }
+}
+
+fun a3() {
+    val d: JavaClass? = null
+    val a1 = d?.propertyFromKotlin
+
+    val a2 = d?.let {
+        it.propertyFromKotlin
+    }
+
+    val a3 = d?.also {
+        it.propertyFromKotlin
+    }
+
+    val a4 = with(d) {
+        this?.propertyFromKotlin
+    }
+
+    val a5 = with(d) out@{
+        with(4) {
+            this@out?.propertyFromKotlin
+        }
+    }
+}
+
+fun a4() {
+    val d: JavaClass? = null
+    d?.propertyFromKotlin?.dec()
+
+    val a2 = d?.let {
+        it.propertyFromKotlin
+    }
+    a2?.toLong()
+
+    d?.also {
+        it.propertyFromKotlin
+    }?.propertyFromKotlin?.and(4)
+
+    val a4 = with(d) {
+        this?.propertyFromKotlin
+    }
+
+    val a5 = with(d) out@{
+        with(4) {
+            this@out?.propertyFromKotlin
+        }
+    }
+
+    val a6 = a4?.let { out -> a5?.let { out + it } }
+}
+
+fun JavaClass.b(): Int? = propertyFromKotlin
+fun JavaClass.c(): Int = this.propertyFromKotlin
+fun d(d: JavaClass) = d.propertyFromKotlin

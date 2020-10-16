@@ -1,0 +1,4 @@
+public final class JavaClass {
+
+    public int field = 42;
+}

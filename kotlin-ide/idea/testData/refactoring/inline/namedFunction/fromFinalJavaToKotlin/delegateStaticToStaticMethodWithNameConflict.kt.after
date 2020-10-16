@@ -1,0 +1,55 @@
+import JavaClass.staticMethod
+
+fun staticMethod() = Unit //KT-40835
+
+fun a() {
+    staticMethod()
+
+    val d = JavaClass()
+    staticMethod()
+
+    d.let {
+        staticMethod()
+    }
+
+    d.also {
+        staticMethod()
+    }
+
+    with(d) {
+        staticMethod()
+    }
+
+    with(d) out@{
+        with(4) {
+            staticMethod()
+        }
+    }
+}
+
+fun a2() {
+    val d: JavaClass? = null
+    d?.a()
+
+    d?.let {
+        staticMethod()
+    }
+
+    d?.also {
+        staticMethod()
+    }
+
+    with(d) {
+        staticMethod()
+    }
+
+    with(d) out@{
+        with(4) {
+            staticMethod()
+        }
+    }
+}
+
+fun JavaClass.b(): Int? = a()
+fun JavaClass.c(): Int = staticMethod()
+fun d(d: JavaClass) = staticMethod()
