@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import com.google.gson.GsonBuilder
-import org.gradle.api.Project
-import org.gradle.api.artifacts.ResolvedDependency
+import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.internal.hash.FileHasher
 import org.jetbrains.kotlin.gradle.internal.ProcessedFilesCache
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import java.io.File
@@ -15,14 +15,20 @@ import java.io.File
 /**
  * Cache for storing already created [GradleNodeModule]s
  */
-internal abstract class AbstractNodeModulesCache(val nodeJs: NodeJsRootExtension) : AutoCloseable {
+internal abstract class AbstractNodeModulesCache(nodeJs: NodeJsRootExtension) : AutoCloseable {
     companion object {
         const val STATE_FILE_NAME = ".visited"
     }
 
-    val project: Project get() = nodeJs.rootProject
     internal val dir = nodeJs.nodeModulesGradleCacheDir
-    private val cache = ProcessedFilesCache(project, dir, STATE_FILE_NAME, "9")
+    private val cache = ProcessedFilesCache(
+        nodeJs.rootProject.logger,
+//        (nodeJs.rootProject as ProjectInternal).services.get(FileHasher::class.java),
+        nodeJs.rootProject.projectDir,
+        dir,
+        STATE_FILE_NAME,
+        "9"
+    )
 
     @Synchronized
     fun get(

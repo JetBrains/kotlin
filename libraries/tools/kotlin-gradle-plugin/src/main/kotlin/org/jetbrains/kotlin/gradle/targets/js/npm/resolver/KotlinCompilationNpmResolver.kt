@@ -51,6 +51,14 @@ internal class KotlinCompilationNpmResolver(
     @Transient
     val resolver = projectResolver.resolver
 
+    private val gradleNodeModules by lazy {
+        resolver.gradleNodeModules
+    }
+
+    private val compositeNodeModules by lazy {
+        resolver.compositeNodeModules
+    }
+
     @Transient
     val npmProject = compilation.npmProject
 
@@ -365,13 +373,13 @@ internal class KotlinCompilationNpmResolver(
                     ?: error("Unresolved dependent npm package: ${this@KotlinCompilationNpmResolver} -> $it")
             }
             val importedExternalGradleDependencies = fileExternalGradleDependencies.mapNotNull {
-                resolver.gradleNodeModules.get(it.dependencyName, it.dependencyVersion, it.file)
+                gradleNodeModules.get(it.dependencyName, it.dependencyVersion, it.file)
             } + fileCollectionDependencies.flatMap { dependency ->
                 dependency.files
                     // Gradle can hash with FileHasher only files and only existed files
                     .filter { it.isFile }
                     .map { file ->
-                        resolver.gradleNodeModules.get(
+                        gradleNodeModules.get(
                             file.name,
                             dependency.version ?: "0.0.1",
                             file
@@ -382,7 +390,7 @@ internal class KotlinCompilationNpmResolver(
             val compositeDependencies = internalCompositeDependencies.flatMap { dependency ->
                 dependency.getPackages()
                     .map { file ->
-                        resolver.compositeNodeModules.get(
+                        compositeNodeModules.get(
                             dependency.dependency.moduleName,
                             dependency.dependency.moduleVersion,
                             file
@@ -391,10 +399,10 @@ internal class KotlinCompilationNpmResolver(
             }
                 .filterNotNull()
 
-            val toolsNpmDependencies = nodeJs.taskRequirements
-                .getCompilationNpmRequirements(compilation)
+//            val toolsNpmDependencies = nodeJs.taskRequirements
+//                .getCompilationNpmRequirements(compilation)
 
-            val allNpmDependencies = externalNpmDependencies + toolsNpmDependencies
+            val allNpmDependencies = externalNpmDependencies/* + toolsNpmDependencies*/
 
             val packageJson = packageJson(
                 npmProject,
