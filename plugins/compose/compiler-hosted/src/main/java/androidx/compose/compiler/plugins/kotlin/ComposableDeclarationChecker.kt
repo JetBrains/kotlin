@@ -49,10 +49,11 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
         descriptor: DeclarationDescriptor,
         context: DeclarationCheckerContext
     ) {
-        if (!descriptor.hasComposableAnnotation()) return
-        when (declaration) {
-            is KtProperty -> checkProperty(declaration, descriptor as PropertyDescriptor, context)
-            is KtFunction -> checkFunction(declaration, descriptor as FunctionDescriptor, context)
+        when {
+            declaration is KtProperty &&
+                descriptor is PropertyDescriptor -> checkProperty(declaration, descriptor, context)
+            declaration is KtFunction &&
+                descriptor is FunctionDescriptor -> checkFunction(declaration, descriptor, context)
         }
     }
 
@@ -61,7 +62,19 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
         descriptor: FunctionDescriptor,
         context: DeclarationCheckerContext
     ) {
-        if (descriptor.isSuspend) {
+        val hasComposableAnnotation = descriptor.hasComposableAnnotation()
+        if (descriptor.overriddenDescriptors.isNotEmpty()) {
+            val override = descriptor.overriddenDescriptors.first()
+            if (override.hasComposableAnnotation() != hasComposableAnnotation) {
+                context.trace.report(
+                    ComposeErrors.CONFLICTING_OVERLOADS.on(
+                        declaration,
+                        listOf(descriptor, override)
+                    )
+                )
+            }
+        }
+        if (descriptor.isSuspend && hasComposableAnnotation) {
             context.trace.report(
                 COMPOSABLE_SUSPEND_FUN.on(declaration.nameIdentifier ?: declaration)
             )
@@ -73,6 +86,19 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
         descriptor: PropertyDescriptor,
         context: DeclarationCheckerContext
     ) {
+        val hasComposableAnnotation = descriptor.hasComposableAnnotation()
+        if (descriptor.overriddenDescriptors.isNotEmpty()) {
+            val override = descriptor.overriddenDescriptors.first()
+            if (override.hasComposableAnnotation() != hasComposableAnnotation) {
+                context.trace.report(
+                    ComposeErrors.CONFLICTING_OVERLOADS.on(
+                        declaration,
+                        listOf(descriptor, override)
+                    )
+                )
+            }
+        }
+        if (!hasComposableAnnotation) return
         val initializer = declaration.initializer
         val name = declaration.nameIdentifier
         if (initializer != null && name != null) {

@@ -80,4 +80,28 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
         """
         )
     }
+
+    fun testMissingComposableOnOverride() {
+        doTest(
+            """
+            import androidx.compose.runtime.Composable
+
+            interface Foo {
+                @Composable
+                fun composableFunction(param: Boolean): Boolean
+                @Composable
+                val composableProperty: Boolean
+                fun nonComposableFunction(param: Boolean): Boolean
+                val nonComposableProperty: Boolean
+            }
+
+            object FakeFoo : Foo {
+                <!CONFLICTING_OVERLOADS!>override fun composableFunction(param: Boolean)<!> = true
+                <!CONFLICTING_OVERLOADS!>override val composableProperty: Boolean<!> get() = true
+                <!CONFLICTING_OVERLOADS!>@Composable override fun nonComposableFunction(param: Boolean)<!> = true
+                <!CONFLICTING_OVERLOADS!>@Composable override val nonComposableProperty: Boolean<!> get() = true
+            }
+        """
+        )
+    }
 }

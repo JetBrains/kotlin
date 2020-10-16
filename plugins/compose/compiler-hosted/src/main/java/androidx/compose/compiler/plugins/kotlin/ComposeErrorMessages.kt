@@ -52,6 +52,14 @@ class ComposeErrorMessages : DefaultErrorMessages.Extension {
         )
 
         MAP.put(
+            ComposeErrors.CONFLICTING_OVERLOADS,
+            "Conflicting overloads: {0}",
+            Renderers.commaSeparated(
+                Renderers.FQ_NAMES_IN_TYPES_WITH_ANNOTATIONS
+            )
+        )
+
+        MAP.put(
             ComposeErrors.COMPOSABLE_VAR,
             "Composable properties are not able to have backing fields"
         )
