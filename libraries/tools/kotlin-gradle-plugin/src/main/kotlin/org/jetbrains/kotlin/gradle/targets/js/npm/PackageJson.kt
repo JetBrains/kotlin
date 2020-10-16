@@ -125,17 +125,18 @@ fun fromSrcPackageJson(packageJson: File?): PackageJson? =
     }
 
 fun packageJson(
-    npmProject: NpmProject,
+    name: String,
+    version: String,
+    main: String,
     npmDependencies: Collection<NpmDependency>
 ): PackageJson {
-    val compilation = npmProject.compilation
 
     val packageJson = PackageJson(
-        npmProject.name,
-        fixSemver(compilation.target.project.version.toString())
+        name,
+        fixSemver(version)
     )
 
-    packageJson.main = npmProject.main
+    packageJson.main = main
 
     val dependencies = mutableMapOf<String, String>()
 
@@ -154,9 +155,9 @@ fun packageJson(
         }
     }
 
-    compilation.packageJsonHandlers.forEach {
-        it(packageJson)
-    }
+//    compilation.packageJsonHandlers.forEach {
+//        it(packageJson)
+//    }
 
     return packageJson
 }

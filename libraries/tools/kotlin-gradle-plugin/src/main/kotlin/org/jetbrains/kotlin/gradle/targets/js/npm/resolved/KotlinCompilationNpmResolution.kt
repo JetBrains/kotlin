@@ -16,12 +16,17 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
  */
 class KotlinCompilationNpmResolution(
     @Transient
-    val project: Project,
+    private val _project: Project?,
     @Transient
-    val npmProject: NpmProject,
+    private val _npmProject: NpmProject?,
     val internalDependencies: Collection<KotlinCompilationNpmResolution>,
     val internalCompositeDependencies: Collection<GradleNodeModule>,
     val externalGradleDependencies: Collection<GradleNodeModule>,
     val externalNpmDependencies: Collection<NpmDependency>,
     val packageJson: PackageJson
-)
+) {
+    val project
+        get() = _project!!
+    val npmProject
+        get() = _npmProject!!
+}
