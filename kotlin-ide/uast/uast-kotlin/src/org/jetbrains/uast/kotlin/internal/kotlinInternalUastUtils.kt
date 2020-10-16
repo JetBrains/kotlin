@@ -402,6 +402,7 @@ internal fun DeclarationDescriptor.toSource(): PsiElement? {
         DescriptorToSourceUtils.getEffectiveReferencedDescriptors(this)
             .asSequence()
             .mapNotNull { DescriptorToSourceUtils.getSourceFromDescriptor(it) }
+            .filter { it.isValid }
             .firstOrNull()
     } catch (e: ProcessCanceledException) {
         throw e
