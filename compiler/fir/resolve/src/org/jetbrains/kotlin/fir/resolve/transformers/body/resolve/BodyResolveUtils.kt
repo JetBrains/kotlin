@@ -11,11 +11,13 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildVarargArgumentsExpression
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import kotlin.math.min
+import org.jetbrains.kotlin.name.ClassId
 
 inline fun <reified T : FirElement> FirBasedSymbol<*>.firUnsafe(): T {
     val fir = this.fir
@@ -96,5 +98,33 @@ fun FirBlock.writeResultType(session: FirSession) {
                 diagnostic = ConeSimpleDiagnostic("No type for block", DiagnosticKind.InferenceError)
             }
         }
+    }
+}
+
+fun FirConstKind<*>.expectedConeType(session: FirSession): ConeKotlinType {
+    fun constructLiteralType(classId: ClassId, isNullable: Boolean = false): ConeKotlinType {
+        val symbol = session.firSymbolProvider.getClassLikeSymbolByFqName(classId)
+            ?: return ConeClassErrorType(ConeSimpleDiagnostic("Missing stdlib class: $classId", DiagnosticKind.MissingStdlibClass))
+        return symbol.toLookupTag().constructClassType(emptyArray(), isNullable)
+    }
+    return when (this) {
+        FirConstKind.Null -> session.builtinTypes.nullableNothingType.type
+        FirConstKind.Boolean -> session.builtinTypes.booleanType.type
+        FirConstKind.Char -> constructLiteralType(StandardClassIds.Char)
+        FirConstKind.Byte -> constructLiteralType(StandardClassIds.Byte)
+        FirConstKind.Short -> constructLiteralType(StandardClassIds.Short)
+        FirConstKind.Int -> constructLiteralType(StandardClassIds.Int)
+        FirConstKind.Long -> constructLiteralType(StandardClassIds.Long)
+        FirConstKind.String -> constructLiteralType(StandardClassIds.String)
+        FirConstKind.Float -> constructLiteralType(StandardClassIds.Float)
+        FirConstKind.Double -> constructLiteralType(StandardClassIds.Double)
+
+        FirConstKind.UnsignedByte -> constructLiteralType(StandardClassIds.UByte)
+        FirConstKind.UnsignedShort -> constructLiteralType(StandardClassIds.UShort)
+        FirConstKind.UnsignedInt -> constructLiteralType(StandardClassIds.UInt)
+        FirConstKind.UnsignedLong -> constructLiteralType(StandardClassIds.ULong)
+
+        FirConstKind.IntegerLiteral -> constructLiteralType(StandardClassIds.Int)
+        FirConstKind.UnsignedIntegerLiteral -> constructLiteralType(StandardClassIds.UInt)
     }
 }

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredCallableSymbols
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.expectedConeType
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
@@ -519,6 +520,9 @@ private fun <T> List<T>.createArrayOfCall(session: FirSession, @Suppress("UNUSED
                 arguments += element.createConstantOrError(session)
             }
         }
+        typeRef = buildResolvedTypeRef {
+            type = kind.expectedConeType(session).createArrayType()
+        }
     }
 }
 
@@ -530,15 +534,15 @@ internal fun Any?.createConstantOrError(session: FirSession): FirExpression {
 
 internal fun Any?.createConstantIfAny(session: FirSession): FirExpression? {
     return when (this) {
-        is Byte -> buildConstExpression(null, FirConstKind.Byte, this)
-        is Short -> buildConstExpression(null, FirConstKind.Short, this)
-        is Int -> buildConstExpression(null, FirConstKind.Int, this)
-        is Long -> buildConstExpression(null, FirConstKind.Long, this)
-        is Char -> buildConstExpression(null, FirConstKind.Char, this)
-        is Float -> buildConstExpression(null, FirConstKind.Float, this)
-        is Double -> buildConstExpression(null, FirConstKind.Double, this)
-        is Boolean -> buildConstExpression(null, FirConstKind.Boolean, this)
-        is String -> buildConstExpression(null, FirConstKind.String, this)
+        is Byte -> buildConstExpression(null, FirConstKind.Byte, this).setProperType(session)
+        is Short -> buildConstExpression(null, FirConstKind.Short, this).setProperType(session)
+        is Int -> buildConstExpression(null, FirConstKind.Int, this).setProperType(session)
+        is Long -> buildConstExpression(null, FirConstKind.Long, this).setProperType(session)
+        is Char -> buildConstExpression(null, FirConstKind.Char, this).setProperType(session)
+        is Float -> buildConstExpression(null, FirConstKind.Float, this).setProperType(session)
+        is Double -> buildConstExpression(null, FirConstKind.Double, this).setProperType(session)
+        is Boolean -> buildConstExpression(null, FirConstKind.Boolean, this).setProperType(session)
+        is String -> buildConstExpression(null, FirConstKind.String, this).setProperType(session)
         is ByteArray -> toList().createArrayOfCall(session, FirConstKind.Byte)
         is ShortArray -> toList().createArrayOfCall(session, FirConstKind.Short)
         is IntArray -> toList().createArrayOfCall(session, FirConstKind.Int)
@@ -547,10 +551,18 @@ internal fun Any?.createConstantIfAny(session: FirSession): FirExpression? {
         is FloatArray -> toList().createArrayOfCall(session, FirConstKind.Float)
         is DoubleArray -> toList().createArrayOfCall(session, FirConstKind.Double)
         is BooleanArray -> toList().createArrayOfCall(session, FirConstKind.Boolean)
-        null -> buildConstExpression(null, FirConstKind.Null, null)
+        null -> buildConstExpression(null, FirConstKind.Null, null).setProperType(session)
 
         else -> null
     }
+}
+
+private fun FirConstExpression<*>.setProperType(session: FirSession): FirConstExpression<*> {
+    val typeRef = buildResolvedTypeRef {
+        type = kind.expectedConeType(session)
+    }
+    replaceTypeRef(typeRef)
+    return this
 }
 
 private fun JavaType.toFirResolvedTypeRef(
