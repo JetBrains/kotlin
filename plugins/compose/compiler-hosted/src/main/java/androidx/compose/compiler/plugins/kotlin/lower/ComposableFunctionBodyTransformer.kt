@@ -2995,18 +2995,18 @@ class ComposableFunctionBodyTransformer(
             resultScopes.add(Scope.BranchScope())
             transformed.branches.add(
                 IrElseBranchImpl(
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
+                    expression.endOffset,
+                    expression.endOffset,
                     condition = IrConstImpl(
-                        UNDEFINED_OFFSET,
-                        UNDEFINED_OFFSET,
+                        expression.endOffset,
+                        expression.endOffset,
                         context.irBuiltIns.booleanType,
                         IrConstKind.Boolean,
                         true
                     ),
                     result = IrBlockImpl(
-                        UNDEFINED_OFFSET,
-                        UNDEFINED_OFFSET,
+                        expression.endOffset,
+                        expression.endOffset,
                         context.irBuiltIns.unitType,
                         null,
                         emptyList()
