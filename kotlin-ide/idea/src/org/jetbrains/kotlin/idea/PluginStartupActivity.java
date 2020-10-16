@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.idea;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.openapi.updateSettings.impl.UpdateChecker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.idea.configuration.ui.notifications.NewCodeStyleNotificationKt;
 import org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter;
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm;
@@ -52,6 +52,8 @@ public class PluginStartupActivity implements StartupActivity {
         KotlinPluginCompatibilityVerifier.checkCompatibility();
 
         KotlinReportSubmitter.Companion.setupReportingFromRelease();
+
+        NewCodeStyleNotificationKt.notifyKotlinStyleUpdateIfNeeded(project);
 
         //todo[Sedunov]: wait for fix in platform to avoid misunderstood from Java newbies (also ConfigureKotlinInTempDirTest)
         //KotlinSdkType.Companion.setUpIfNeeded();

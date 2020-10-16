@@ -13,7 +13,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.idea.KotlinJvmBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
 import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter
@@ -44,12 +44,12 @@ fun notifyKotlinStyleUpdateIfNeeded(project: Project) {
 
 private fun createNotification(): Notification = Notification(
     KOTLIN_UPDATE_CODE_STYLE_GROUP_ID,
-    KotlinJvmBundle.message("kotlin.code.style"),
-    KotlinJvmBundle.htmlMessage("notification.update.code.style.to.official"),
+    KotlinBundle.message("configuration.kotlin.code.style"),
+    KotlinBundle.htmlMessage("configuration.notification.update.code.style.to.official"),
     NotificationType.WARNING
 ).apply {
     val notificationAction = NotificationAction.create(
-        KotlinJvmBundle.message("apply.new.code.style")
+        KotlinBundle.message("configuration.apply.new.code.style")
     ) { e: AnActionEvent, notification: Notification ->
         notification.expire()
 
@@ -61,7 +61,7 @@ private fun createNotification(): Notification = Notification(
     }
 
     val disableAction = NotificationAction.create(
-        KotlinJvmBundle.message("do.not.suggest.new.code.style")
+        KotlinBundle.message("configuration.do.not.suggest.new.code.style")
     ) { e: AnActionEvent, notification: Notification ->
         notification.expire()
 
