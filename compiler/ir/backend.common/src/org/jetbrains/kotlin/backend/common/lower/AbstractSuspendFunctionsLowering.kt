@@ -80,9 +80,10 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
     // Suppress since it is used in native
     @Suppress("MemberVisibilityCanBePrivate")
     protected fun IrCall.isReturnIfSuspendedCall() =
-        symbol.owner.run { fqNameWhenAvailable == context.internalPackageFqn.child(Name.identifier("returnIfSuspended")) }
+        symbol.isPublicApi && context.ir.symbols.returnIfSuspended.signature == symbol.signature
 
     private fun tryTransformSuspendFunction(element: IrElement) =
+
         if (element is IrSimpleFunction && element.isSuspend && element.modality != Modality.ABSTRACT)
             transformSuspendFunction(element, suspendLambdas[element])
         else null
