@@ -13,5 +13,6 @@
     <plugin id="com.jetbrains.intellij.api.watcher" min-version="6.41.0" />
     <plugin id="jetbrains.team.auth" />
     <plugin id="org.intellij.groovy" />
+    <plugin id="com.intellij.configurationScript" />
   </component>
 </project>
