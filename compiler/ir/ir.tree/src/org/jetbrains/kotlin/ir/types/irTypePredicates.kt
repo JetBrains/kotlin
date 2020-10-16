@@ -51,7 +51,7 @@ object IdSignatureValues {
 private fun IrType.isNotNullClassType(signature: IdSignature.PublicSignature) = isClassType(signature, hasQuestionMark = false)
 private fun IrType.isNullableClassType(signature: IdSignature.PublicSignature) = isClassType(signature, hasQuestionMark = true)
 
-private fun getPublicSignature(packageFqName: FqName, name: String) =
+fun getPublicSignature(packageFqName: FqName, name: String) =
     IdSignature.PublicSignature(packageFqName.asString(), name, null, 0)
 
 private fun IrType.isClassType(signature: IdSignature.PublicSignature, hasQuestionMark: Boolean? = null): Boolean {
