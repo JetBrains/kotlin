@@ -33,7 +33,8 @@ import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 
 class ComposeIrGenerationExtension(
     @Suppress("unused") private val liveLiteralsEnabled: Boolean = false,
-    private val sourceInformationEnabled: Boolean = true
+    private val sourceInformationEnabled: Boolean = true,
+    private val intrinsicRememberEnabled: Boolean = false,
 ) : IrGenerationExtension {
     override fun generate(
         moduleFragment: IrModuleFragment,
@@ -84,7 +85,8 @@ class ComposeIrGenerationExtension(
             pluginContext,
             symbolRemapper,
             bindingTrace,
-            sourceInformationEnabled
+            sourceInformationEnabled,
+            intrinsicRememberEnabled
         ).lower(moduleFragment)
 
         generateSymbols(pluginContext)
