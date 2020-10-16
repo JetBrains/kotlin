@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="junixsocket-core" type="repository">
+    <properties maven-id="com.kohlschutter.junixsocket:junixsocket-core:2.3.2" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/kohlschutter/junixsocket/junixsocket-core/2.3.2/junixsocket-core-2.3.2.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/kohlschutter/junixsocket/junixsocket-native-common/2.3.2/junixsocket-native-common-2.3.2.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/kohlschutter/junixsocket/junixsocket-common/2.3.2/junixsocket-common-2.3.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/kohlschutter/junixsocket/junixsocket-core/2.3.2/junixsocket-core-2.3.2-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/kohlschutter/junixsocket/junixsocket-native-common/2.3.2/junixsocket-native-common-2.3.2-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/kohlschutter/junixsocket/junixsocket-common/2.3.2/junixsocket-common-2.3.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
