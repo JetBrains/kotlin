@@ -19,8 +19,10 @@ package androidx.compose.compiler.plugins.kotlin
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.types.KotlinType
@@ -63,6 +65,16 @@ object ComposeErrors {
     val CAPTURED_COMPOSABLE_INVOCATION =
         DiagnosticFactory2.create<PsiElement, DeclarationDescriptor, DeclarationDescriptor>(
             Severity.ERROR
+        )
+
+    // This error matches Kotlin's CONFLICTING_OVERLOADS error, except that it renders the
+    // annotations with the descriptor. This is important to use for errors where the
+    // only difference is whether or not it is annotated with @Composable or not.
+    @JvmField
+    var CONFLICTING_OVERLOADS: DiagnosticFactory1<PsiElement, Collection<DeclarationDescriptor>> =
+        DiagnosticFactory1.create(
+            Severity.ERROR,
+            DECLARATION_SIGNATURE_OR_DEFAULT
         )
 
     @JvmField
