@@ -1,5 +1,6 @@
 // ERROR_POLICY: SEMANTIC
 
+// MODULE: lib
 // FILE: t.kt
 
 var storage = ""
@@ -15,6 +16,7 @@ fun foo2() {
     bar("FAIL2", "FAIL2", "FAIL2", "FAIL2")
 }
 
+// MODULE: main(lib)
 // FILE: b.kt
 
 fun box(): String {

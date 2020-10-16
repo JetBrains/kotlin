@@ -27,8 +27,6 @@ open class IrTypeCheckerContext(override val irBuiltIns: IrBuiltIns) : IrTypeSys
         }
     }
 
-    override fun areEqualTypeConstructors(a: TypeConstructorMarker, b: TypeConstructorMarker) = super.isEqualTypeConstructors(a, b)
-
     override val isErrorTypeEqualsToAnything get() = false
     override val isStubTypeEqualsToAnything get() = false
 

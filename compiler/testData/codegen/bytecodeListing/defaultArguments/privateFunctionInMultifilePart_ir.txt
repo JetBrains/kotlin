@@ -5,7 +5,6 @@ public final class A {
 }
 
 @kotlin.Metadata
-@kotlin.jvm.JvmName
 synthetic final class A__PrivateFunctionInMultifilePartKt {
     // source: 'privateFunctionInMultifilePart.kt'
     synthetic static method foo$A__PrivateFunctionInMultifilePartKt$default(p0: java.lang.String, p1: int, p2: java.lang.Object): void

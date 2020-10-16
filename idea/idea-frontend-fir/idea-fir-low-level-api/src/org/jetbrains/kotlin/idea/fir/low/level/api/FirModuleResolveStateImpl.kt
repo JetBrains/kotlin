@@ -49,13 +49,18 @@ internal class FirModuleResolveStateImpl(
         elementBuilder.getOrBuildFirFor(element, rootModuleSession.cache, fileStructureCache)
 
     override fun getFirFile(ktFile: KtFile): FirFile =
-        firFileBuilder.buildRawFirFileWithCaching(ktFile, rootModuleSession.cache)
+        firFileBuilder.buildRawFirFileWithCaching(ktFile, rootModuleSession.cache, lazyBodiesMode = false)
 
     override fun getDiagnostics(element: KtElement): List<Diagnostic> =
         diagnosticsCollector.getDiagnosticsFor(element)
 
     override fun collectDiagnosticsForFile(ktFile: KtFile): Collection<Diagnostic> =
         diagnosticsCollector.collectDiagnosticsForFile(ktFile)
+
+    override fun getBuiltFirFileOrNull(ktFile: KtFile): FirFile? {
+        val cache = sessionProvider.getModuleCache(ktFile.getModuleInfo() as ModuleSourceInfo)
+        return firFileBuilder.getBuiltFirFileOrNull(ktFile, cache)
+    }
 
     override fun recordPsiToFirMappingsForCompletionFrom(fir: FirDeclaration, firFile: FirFile, ktFile: KtFile) {
         error("Should be called only from FirModuleResolveStateForCompletion")
@@ -68,6 +73,12 @@ internal class FirModuleResolveStateImpl(
         rootModuleSession.firIdeProvider.symbolProvider,
         sessionProvider.getModuleCache(ktDeclaration.getModuleInfo() as ModuleSourceInfo)
     )
+
+    override fun isFirFileBuilt(ktFile: KtFile): Boolean {
+        val moduleSourceInfo = ktFile.getModuleInfo() as? ModuleSourceInfo ?: return true
+        val cache = sessionProvider.getModuleCache(moduleSourceInfo)
+        return firFileBuilder.isFirFileBuilt(ktFile, cache)
+    }
 
     override fun <D : FirDeclaration> resolvedFirToPhase(declaration: D, toPhase: FirResolvePhase): D {
         val fileCache = when (val session = declaration.session) {

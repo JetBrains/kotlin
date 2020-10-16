@@ -11,7 +11,6 @@ import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.targets.js.ir.GENERATE_D_TS
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
 import org.jetbrains.kotlin.gradle.utils.property
@@ -21,11 +20,11 @@ import javax.inject.Inject
 open class PublicPackageJsonTask
 @Inject
 constructor(
+    @Transient
     private val compilation: KotlinJsCompilation
 ) : DefaultTask() {
-
+    @Transient
     private val npmProject = compilation.npmProject
-
     private val nodeJs = npmProject.nodeJs
 
     private val compilationResolution

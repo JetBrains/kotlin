@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
+import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -32,7 +33,7 @@ interface ReceiverValue : Receiver {
     val receiverExpression: FirExpression
 
     fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? =
-        type.scope(useSiteSession, scopeSession)
+        type.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)
 }
 
 // TODO: should inherit just Receiver, not ReceiverValue
@@ -63,7 +64,7 @@ sealed class ImplicitReceiverValue<S : AbstractFirBasedSymbol<*>>(
     final override var type: ConeKotlinType = type
         private set
 
-    var implicitScope: FirTypeScope? = type.scope(useSiteSession, scopeSession)
+    var implicitScope: FirTypeScope? = type.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)
         private set
 
     override fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? = implicitScope
@@ -87,7 +88,7 @@ sealed class ImplicitReceiverValue<S : AbstractFirBasedSymbol<*>>(
                 typesFromSmartCast = listOf(type)
             }
         }
-        implicitScope = type.scope(useSiteSession, scopeSession)
+        implicitScope = type.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)
     }
 }
 

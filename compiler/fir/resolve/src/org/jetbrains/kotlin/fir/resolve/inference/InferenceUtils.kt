@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -84,7 +85,11 @@ fun ConeClassLikeType.findBaseInvokeSymbol(session: FirSession, scopeSession: Sc
     require(this.isBuiltinFunctionalType(session))
     val functionN = (lookupTag.toSymbol(session)?.fir as? FirClass<*>) ?: return null
     var baseInvokeSymbol: FirFunctionSymbol<*>? = null
-    functionN.unsubstitutedScope(session, scopeSession).processFunctionsByName(OperatorNameConventions.INVOKE) { functionSymbol ->
+    functionN.unsubstitutedScope(
+        session,
+        scopeSession,
+        withForcedTypeCalculator = false
+    ).processFunctionsByName(OperatorNameConventions.INVOKE) { functionSymbol ->
         baseInvokeSymbol = functionSymbol
         return@processFunctionsByName
     }
@@ -94,11 +99,17 @@ fun ConeClassLikeType.findBaseInvokeSymbol(session: FirSession, scopeSession: Sc
 fun ConeKotlinType.findContributedInvokeSymbol(
     session: FirSession,
     scopeSession: ScopeSession,
-    expectedFunctionalType: ConeClassLikeType
+    expectedFunctionalType: ConeClassLikeType,
+    shouldCalculateReturnTypesOfFakeOverrides: Boolean
 ): FirFunctionSymbol<*>? {
     val baseInvokeSymbol = expectedFunctionalType.findBaseInvokeSymbol(session, scopeSession) ?: return null
 
-    val scope = scope(session, scopeSession) ?: return null
+    val fakeOverrideTypeCalculator = if (shouldCalculateReturnTypesOfFakeOverrides) {
+        FakeOverrideTypeCalculator.Forced
+    } else {
+        FakeOverrideTypeCalculator.DoNothing
+    }
+    val scope = scope(session, scopeSession, fakeOverrideTypeCalculator) ?: return null
     var declaredInvoke: FirFunctionSymbol<*>? = null
     scope.processFunctionsByName(OperatorNameConventions.INVOKE) { functionSymbol ->
         if (functionSymbol.fir.valueParameters.size == baseInvokeSymbol.fir.valueParameters.size) {

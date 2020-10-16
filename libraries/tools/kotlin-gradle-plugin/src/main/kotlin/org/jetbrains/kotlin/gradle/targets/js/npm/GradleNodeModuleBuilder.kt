@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.ResolvedDependency
 import org.jetbrains.kotlin.gradle.targets.js.JS
 import org.jetbrains.kotlin.gradle.targets.js.JS_MAP
 import org.jetbrains.kotlin.gradle.targets.js.META_JS
@@ -18,7 +17,8 @@ import java.io.File
  */
 internal class GradleNodeModuleBuilder(
     val project: Project,
-    val dependency: ResolvedDependency,
+    val moduleName: String,
+    val moduleVersion: String,
     val srcFiles: Collection<File>,
     val cache: GradleNodeModulesCache
 ) {
@@ -45,8 +45,8 @@ internal class GradleNodeModuleBuilder(
         val packageJson = fromSrcPackageJson(srcPackageJsonFile)?.apply {
             // Gson set nulls reflectively no matter on default values and non-null types
             @Suppress("USELESS_ELVIS")
-            version = version ?: dependency.moduleVersion
-        } ?: PackageJson(dependency.moduleName, dependency.moduleVersion)
+            version = version ?: moduleVersion
+        } ?: PackageJson(moduleName, moduleVersion)
 
         val metaFiles = files.filter { it.name.endsWith(".$META_JS") }
         if (metaFiles.size == 1) {
@@ -70,7 +70,7 @@ internal class GradleNodeModuleBuilder(
     }
 }
 
-private val File.isCompatibleArchive
+internal val File.isCompatibleArchive
     get() = isFile
             && (extension == "jar"
             || extension == "zip"

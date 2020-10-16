@@ -62,9 +62,12 @@ abstract class AbstractDiagnosticCollector(
         componentsInitialized = true
     }
 
+    protected open fun beforeCollecting() {}
+
     private inner class Visitor : FirDefaultVisitor<Unit, Nothing?>() {
         private fun <T : FirElement> T.runComponents() {
             components.forEach {
+                beforeCollecting()
                 this.accept(it, context)
             }
         }

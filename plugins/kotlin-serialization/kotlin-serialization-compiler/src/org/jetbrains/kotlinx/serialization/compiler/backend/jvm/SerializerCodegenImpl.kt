@@ -334,7 +334,7 @@ open class SerializerCodegenImpl(
             propVar = propsStartVar
             for ((index, property) in serializableProperties.withIndex()) {
                 val propertyType = codegen.typeMapper.mapType(property.type)
-                callReadProperty(property, propertyType, index, inputVar, descVar, -1, propVar)
+                callReadProperty(property, propertyType, index, inputVar, descVar, propVar)
                 propVar += propertyType.size
             }
             // set all bit masks to true
@@ -373,7 +373,7 @@ open class SerializerCodegenImpl(
                     val propertyAddressInBitMask = bitMaskOff(index)
                     // labelI:
                     visitLabel(labels[labelNum + 1])
-                    callReadProperty(property, propertyType, index, inputVar, descVar, propertyAddressInBitMask, propVar)
+                    callReadProperty(property, propertyType, index, inputVar, descVar, propVar)
 
                     // mark read bit in mask
                     // bitMask = bitMask | 1 << index
@@ -454,7 +454,6 @@ open class SerializerCodegenImpl(
         index: Int,
         inputVar: Int,
         descriptorVar: Int,
-        propertyAddressInBitMask: Int,
         propertyVar: Int
     ) {
         // propX := input.readXxxValue(value)
@@ -482,12 +481,12 @@ open class SerializerCodegenImpl(
             )
         }
 
-        val isUpdatable = useSerializer && propertyAddressInBitMask != -1
-        if (isUpdatable) {
+        if (useSerializer) {
+            // then it is not a primitive and can be updated via `oldValue` parameter in decodeSerializableElement
             load(propertyVar, propertyType)
             StackValue.coerce(propertyType, sti.type, this)
         }
-        produceCall(isUpdatable)
+        produceCall(useSerializer)
 
         StackValue.coerce(sti.type, propertyType, this)
         store(propertyVar, propertyType)

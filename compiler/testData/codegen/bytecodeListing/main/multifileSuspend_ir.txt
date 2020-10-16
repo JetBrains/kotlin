@@ -17,7 +17,6 @@ synthetic final class Hello/Foo__MultifileSuspendKt$main$2 {
 }
 
 @kotlin.Metadata
-@kotlin.jvm.JvmName
 synthetic final class Hello/Foo__MultifileSuspendKt {
     // source: 'multifileSuspend.kt'
     inner (anonymous) class Hello/Foo__MultifileSuspendKt$main$2

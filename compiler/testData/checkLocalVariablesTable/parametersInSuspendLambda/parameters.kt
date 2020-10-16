@@ -20,6 +20,7 @@ suspend fun foo(data: Data, body: suspend Long.(String, Data, Int) -> Unit) {
 // JVM_TEMPLATES
 // VARIABLE : NAME=$this$foo TYPE=J INDEX=2
 // VARIABLE : NAME=str TYPE=Ljava/lang/String; INDEX=4
+// VARIABLE : NAME=$dstr$x$_u24__u24$z TYPE=LData; INDEX=5
 // VARIABLE : NAME=i TYPE=I INDEX=6
 // VARIABLE : NAME=x TYPE=Ljava/lang/String; INDEX=7
 // VARIABLE : NAME=z TYPE=I INDEX=8

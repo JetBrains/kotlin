@@ -207,7 +207,7 @@ class Fir2IrConverter(
                 )
             }
             is FirProperty -> {
-                declarationStorage.getOrCreateProperty(
+                declarationStorage.getOrCreateIrProperty(
                     declaration, parent, isLocal = isLocal
                 )
             }

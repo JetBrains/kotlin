@@ -5,11 +5,11 @@
 
 {
   "note": "May https://vega.github.io/vega/docs/ be with you",
-  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "$schema": "https://vega.github.io/schema/vega/v4.3.0.json",
   "description": "TestData completion geomMean",
   "title": "TestData completion geomMean",
   "width": 800,
-  "height": 400,
+  "height": 500,
   "padding": 5,
   "autosize": {"type": "pad", "resize": true},
   "signals": [
@@ -87,22 +87,92 @@
           "update": "span(brush) ? invert('x', brush) : null"
         }
       ]
-    }
+    },
+    {"name": "timestamp", "value": true, "bind": {"input": "checkbox"}}
   ],
   "data": [
     {
       "name": "table",
+      "comment": "To test chart in VEGA editor https://vega.github.io/editor/#/ change `_values` to `values` and rename `url` property",
+      "_values": {
+       "hits" : {
+         "hits" : [
+           {
+             "_source" : {
+               "buildTimestamp" : "2020-10-14T15:12:14+0000",
+               "buildId" : 90615916,
+               "metrics" : [
+                 {
+                   "hasError" : true
+                 }
+               ],
+               "geomMean" : 157,
+               "benchmark" : "completion-basic"
+             }
+           },
+           {
+             "_source" : {
+               "buildTimestamp" : "2020-10-14T13:15:31+0000",
+               "buildId" : 90615916,
+               "geomMean" : 80,
+               "benchmark" : "completion-basic-charFilter"
+             }
+           },
+           {
+             "_source" : {
+               "buildTimestamp" : "2020-10-14T10:53:52+0000",
+               "buildId" : 90597868,
+               "geomMean" : 160,
+               "benchmark" : "completion-basic"
+             }
+           },
+           {
+             "_source" : {
+               "buildTimestamp" : "2020-10-14T08:57:05+0000",
+               "buildId" : 90597868,
+               "geomMean" : 79,
+               "benchmark" : "completion-basic-charFilter"
+             }
+           },
+           {
+             "_source" : {
+               "buildTimestamp" : "2020-10-14T03:04:10+0000",
+               "buildId" : 90570192,
+               "geomMean" : 79,
+               "benchmark" : "completion-basic-charFilter"
+             }
+           },
+           {
+             "_source" : {
+               "buildTimestamp" : "2020-10-14T03:04:09+0000",
+               "buildId" : 90570192,
+               "geomMean" : 60,
+               "benchmark" : "completion-basic"
+             }
+           },
+           {
+             "_source" : {
+               "buildTimestamp" : "2020-10-14T00:42:58+0000",
+               "buildId" : 90546466,
+               "geomMean" : 158,
+               "benchmark" : "completion-basic"
+             }
+           }
+         ]
+       }
+     },
+
       "url": {
-        "comment": "source index pattern",
+        //"comment": "source index pattern",
         "index": "kotlin_ide_benchmarks*",
-        "comment": "it's a body of ES _search query to check query place it into `POST /kotlin_ide_benchmarks*/_search`",
-        "comment": "it uses Kibana specific %timefilter% for time frame selection"
+        //"comment": "it's a body of ES _search query to check query place it into `POST /kotlin_ide_benchmarks*/_search`",
+        //"comment": "it uses Kibana specific %timefilter% for time frame selection",
         "body": {
           "size": 1000,
           "query": {
             "bool": {
               "must": [
-                {"range": {"build.timestamp": {"%timefilter%": true}}},
+                {"range": {"buildTimestamp": {"%timefilter%": true}}},
                 {
                   "bool": {
                     "should": [
@@ -125,42 +195,55 @@
               ]
             }
           },
-          "_source": ["build_id", "benchmark", "build.timestamp", "geomMean"]
+          "_source": ["buildId", "benchmark", "buildTimestamp", "metrics.hasError", "geomMean"],
+          "sort": [{"buildTimestamp": {"order": "asc"}}]
         }
       },
       "format": {"property": "hits.hits"},
-      "comment": "we need to have follow data: \"build_id\", \"metric_name\", \"metric_value\" and \"metric_error\"",
-      "comment": "so it has to be array of {\"build_id\": \"...\", \"metric_name\": \"...\", \"metric_value\": ..., \"metric_error\": ...}",
+      "comment": "we need to have follow data: \"buildId\", \"metricName\", \"metricValue\" and \"metricError\"",
+      "comment": "so it has to be array of {\"buildId\": \"...\", \"metricName\": \"...\", \"metricValue\": ..., \"metricError\": ...}",
       "transform": [
+        {"type": "collect","sort": {"field": "_source.buildTimestamp"}},
         {
-          "comment": "make alias: _source.build_id -> build_id",
+          "comment": "make alias: _source.buildId -> buildId",
           "type": "formula",
-          "as": "build_id",
-          "expr": "datum._source.build_id"
+          "as": "buildId",
+          "expr": "datum._source.buildId"
         },
         {
-          "comment": "make alias: _source.benchmark -> metric_name",
+          "comment": "make alias: _source.benchmark -> metricName",
           "type": "formula",
-          "as": "metric_name",
+          "as": "metricName",
           "expr": "datum._source.benchmark"
         },
         {
-          "comment": "make alias: _source.geomMean -> metric_value",
+          "comment": "make alias: _source.geomMean -> metricValue",
           "type": "formula",
-          "as": "metric_value",
+          "as": "metricValue",
           "expr": "datum._source.geomMean"
         },
         {
-          "comment": "define metric_error",
+          "comment": "define metricError",
           "type": "formula",
-          "as": "metric_error",
-          "expr": "0"
+          "as": "metricError",
+          "expr": "1"
+        },
+        {
+          "comment": "make alias: _source.metrics[0].hasError -> hasError",
+          "type": "formula",
+          "as": "hasError",
+          "expr": "datum._source.metrics ? datum._source.metrics[0].hasError : false"
+        },
+        {
+          "type": "formula",
+          "as": "timestamp",
+          "expr": "timeFormat(toDate(datum._source.buildTimestamp), '%Y-%m-%d %H:%M')"
         },
         {
           "comment": "create `url` value that points to TC build",
           "type": "formula",
           "as": "url",
-          "expr": "'https://buildserver.labs.intellij.net/buildConfiguration/Kotlin_Benchmarks_PluginPerformanceTests_IdeaPluginPerformanceTests/' + datum._source.build_id"
+          "expr": "'https://buildserver.labs.intellij.net/buildConfiguration/Kotlin_Benchmarks_PluginPerformanceTests_IdeaPluginPerformanceTests/' + datum._source.buildId"
         }
       ]
     },
@@ -182,7 +265,7 @@
       "orient": "bottom",
       "labelAngle": -20,
       "labelAlign": "right",
-      "title": "build_id",
+      "title": {"signal": "timestamp ? 'timestamp' : 'buildId'"},
       "titlePadding": 10,
       "tickCount": 5,
       "encode": {
@@ -208,7 +291,7 @@
       "name": "x",
       "type": "point",
       "range": "width",
-      "domain": {"data": "table", "field": "build_id"}
+      "domain": {"data": "table", "field": {"signal": "timestamp ? 'timestamp' : 'buildId'"}}
     },
     {
       "name": "y",
@@ -216,13 +299,13 @@
       "range": "height",
       "nice": true,
       "zero": true,
-      "domain": {"data": "table", "field": "metric_value"}
+      "domain": {"data": "table", "field": "metricValue"}
     },
     {
       "name": "color",
       "type": "ordinal",
       "range": "category",
-      "domain": {"data": "table", "field": "metric_name"}
+      "domain": {"data": "table", "field": "metricName"}
     },
     {
       "name": "size",
@@ -230,8 +313,8 @@
       "round": true,
       "nice": false,
       "zero": true,
-      "domain": {"data": "table", "field": "metric_error"},
-      "range": [1, 100]
+      "domain": {"data": "table", "field": "metricError"},
+      "range": [0, 100]
     }
   ],
   "legends": [
@@ -281,7 +364,7 @@
     {
       "type": "group",
       "from": {
-        "facet": {"name": "series", "data": "table", "groupby": "metric_name"}
+        "facet": {"name": "series", "data": "table", "groupby": "metricName"}
       },
       "marks": [
         {
@@ -290,21 +373,21 @@
           "encode": {
             "hover": {"opacity": {"value": 1}, "strokeWidth": {"value": 4}},
             "update": {
-              "x": {"scale": "x", "field": "build_id"},
-              "y": {"scale": "y", "field": "metric_value"},
+              "x": {"scale": "x", "field": {"signal": "timestamp ? 'timestamp' : 'buildId'"}},
+              "y": {"scale": "y", "field": "metricValue"},
               "strokeWidth": {"value": 2},
               "opacity": [
                 {
-                  "test": "(!domain || inrange(datum.build_id, domain)) && (!length(data('selected')) || indata('selected', 'value', datum.metric_name))",
+                  "test": "(!domain || inrange(datum.buildId, domain)) && (!length(data('selected')) || indata('selected', 'value', datum.metricName))",
                   "value": 0.7
                 },
                 {"value": 0.15}
               ],
               "stroke": [
                 {
-                  "test": "(!domain || inrange(datum.build_id, domain)) && (!length(data('selected')) || indata('selected', 'value', datum.metric_name))",
+                  "test": "(!domain || inrange(datum.buildId, domain)) && (!length(data('selected')) || indata('selected', 'value', datum.metricName))",
                   "scale": "color",
-                  "field": "metric_name"
+                  "field": "metricName"
                 },
                 {"value": "#ccc"}
               ]
@@ -316,21 +399,53 @@
           "from": {"data": "series"},
           "encode": {
             "enter": {
-              "tooltip": {
-                "signal": "datum.metric_name + ': ' + datum.metric_value + ' ms'"
-              },
-              "href": {"field": "url"},
-              "cursor": {"value": "pointer"},
-              "size": {"scale": "size", "field": "metric_error"},
-              "x": {"scale": "x", "field": "build_id"},
-              "y": {"scale": "y", "field": "metric_value"},
+              "fill": {"value": "#B00"},
+              "size": [{ "test": "datum.hasError", "value": 250 }, {"value": 0}],
+              "shape": {"value": "cross"},
+              "angle": {"value": 45},
+              "x": {"scale": "x", "field": {"signal": "timestamp ? 'timestamp' : 'buildId'"}},
+              "y": {"scale": "y", "field": "metricValue"},
               "strokeWidth": {"value": 1},
-              "fill": {"scale": "color", "field": "metric_name"}
+              "opacity": [
+                {
+                  "test": "(!domain || inrange(datum.buildId, domain)) && datum.hasError && (!length(data('selected')) || indata('selected', 'value', datum.metricName))",
+                  "value": 1
+                },
+                {"value": 0.15}
+              ]
             },
             "update": {
               "opacity": [
                 {
-                  "test": "(!domain || inrange(datum.build_id, domain)) && (!length(data('selected')) || indata('selected', 'value', datum.metric_name))",
+                  "test": "(!domain || inrange(datum.buildId, domain))  && datum.hasError && (!length(data('selected')) || indata('selected', 'value', datum.metricName))",
+                  "value": 1
+                },
+                {"value": 0.15}
+              ]
+            }
+          },
+          "zindex": 1
+        },
+        {
+          "type": "symbol",
+          "from": {"data": "series"},
+          "encode": {
+            "enter": {
+              "tooltip": {
+                "signal": "datum.metricName + ': ' + datum.metricValue + ' ms'"
+              },
+              "href": {"field": "url"},
+              "cursor": {"value": "pointer"},
+              "size": {"scale": "size", "field": "metricError"},
+              "x": {"scale": "x", "field": {"signal": "timestamp ? 'timestamp' : 'buildId'"}},
+              "y": {"scale": "y", "field": "metricValue"},
+              "strokeWidth": {"value": 1},
+              "fill": {"scale": "color", "field": "metricName"}
+            },
+            "update": {
+              "opacity": [
+                {
+                  "test": "(!domain || inrange(datum.buildId, domain)) && (!length(data('selected')) || indata('selected', 'value', datum.metricName))",
                   "value": 1
                 },
                 {"value": 0.15}

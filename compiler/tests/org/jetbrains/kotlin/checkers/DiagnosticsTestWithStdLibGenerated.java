@@ -493,6 +493,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/javaOverride.kt");
             }
 
+            @TestMetadata("javaOverrideAll.kt")
+            public void testJavaOverrideAll() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/javaOverrideAll.kt");
+            }
+
             @TestMetadata("jvmDefaultInInheritance.kt")
             public void testJvmDefaultInInheritance() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/jvmDefaultInInheritance.kt");
@@ -797,6 +802,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             @TestMetadata("mainInObject.kt")
             public void testMainInObject() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/mainInObject.kt");
+            }
+
+            @TestMetadata("privateCompanionObject.kt")
+            public void testPrivateCompanionObject() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/privateCompanionObject.kt");
             }
 
             @TestMetadata("property.kt")
@@ -3378,6 +3388,49 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 @TestMetadata("suspendFunctions.kt")
                 public void testSuspendFunctions() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis/suspendFunctions.kt");
+                }
+
+                @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis/performance")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Performance extends AbstractDiagnosticsTestWithStdLib {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInPerformance() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis/performance"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+
+                    @TestMetadata("reuseBuiltFunctionalTypesForIdLambdas.kt")
+                    public void testReuseBuiltFunctionalTypesForIdLambdas() throws Exception {
+                        runTest("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis/performance/reuseBuiltFunctionalTypesForIdLambdas.kt");
+                    }
+
+                    @TestMetadata("reuseBuiltFunctionalTypesForLambdas.kt")
+                    public void testReuseBuiltFunctionalTypesForLambdas() throws Exception {
+                        runTest("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis/performance/reuseBuiltFunctionalTypesForLambdas.kt");
+                    }
+
+                    @TestMetadata("reuseBuiltFunctionalTypesForPairOfLambdas.kt")
+                    public void testReuseBuiltFunctionalTypesForPairOfLambdas() throws Exception {
+                        runTest("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis/performance/reuseBuiltFunctionalTypesForPairOfLambdas.kt");
+                    }
+
+                    @TestMetadata("reuseBuiltFunctionalTypesForPairsOfDeepLambdas.kt")
+                    public void testReuseBuiltFunctionalTypesForPairsOfDeepLambdas() throws Exception {
+                        runTest("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis/performance/reuseBuiltFunctionalTypesForPairsOfDeepLambdas.kt");
+                    }
+
+                    @TestMetadata("reuseBuiltFunctionalTypesForPairsOfDeepMixedLambdas.kt")
+                    public void testReuseBuiltFunctionalTypesForPairsOfDeepMixedLambdas() throws Exception {
+                        runTest("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis/performance/reuseBuiltFunctionalTypesForPairsOfDeepMixedLambdas.kt");
+                    }
+
+                    @TestMetadata("reuseBuiltFunctionalTypesForPairsOfIdLambdas.kt")
+                    public void testReuseBuiltFunctionalTypesForPairsOfIdLambdas() throws Exception {
+                        runTest("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis/performance/reuseBuiltFunctionalTypesForPairsOfIdLambdas.kt");
+                    }
                 }
             }
         }

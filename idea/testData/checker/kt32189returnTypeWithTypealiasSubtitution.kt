@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 class B {
     class Builder
 }

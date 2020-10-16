@@ -1,0 +1,21 @@
+FILE: super.kt
+    public? final? interface A : R|kotlin/Any| {
+        public? final? fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public? final? interface B : R|kotlin/Any| {
+        public? final? fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? fun bar(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public? final? class C : A, B {
+        public? constructor(): R|C| {
+            super<<implicit>>()
+        }
+
+        public? open? override fun bar(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? open? override fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }

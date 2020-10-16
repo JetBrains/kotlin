@@ -130,6 +130,10 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {}
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {}
+
+    override fun replaceBody(newBody: FirBlock?) {
+        error("Body cannot be replaced for FirJavaConstructor")
+    }
 }
 
 @FirBuilderDsl

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.ir.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.AbstractPartialRawFirBuilderTestCase
+import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderLazyBodiesTestCase
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderSourceElementMappingTestCase
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.fir.java.AbstractFirOldFrontendLightClassesTest
@@ -581,6 +582,10 @@ fun main(args: Array<String>) {
                 model("rawBuilder", testMethod = "doRawFirTest")
             }
 
+            testClass<AbstractRawFirBuilderLazyBodiesTestCase> {
+                model("rawBuilder", testMethod = "doRawFirTest")
+            }
+
             testClass<AbstractRawFirBuilderSourceElementMappingTestCase> {
                 model("sourceElementMapping", testMethod = "doRawFirTest")
             }
@@ -606,6 +611,11 @@ fun main(args: Array<String>) {
             testClass<AbstractFirDiagnosticsWithLightTreeTest> {
                 model("resolve", pattern = KT_WITHOUT_DOTS_IN_NAME)
             }
+
+            testClass<AbstractLazyBodyIsNotTouchedTilContractsPhaseTest> {
+                model("resolve", pattern = KT_WITHOUT_DOTS_IN_NAME)
+            }
+
         }
 
         testGroup("compiler/fir/analysis-tests/tests", "compiler/fir/analysis-tests/testData") {

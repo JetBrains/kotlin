@@ -79,6 +79,10 @@ class FirSyntheticPropertyAccessor(
         contractDescription.accept(visitor, data)
     }
 
+    override fun replaceBody(newBody: FirBlock?) {
+        throw AssertionError("Transformation of synthetic property accessor isn't supported")
+    }
+
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
         throw AssertionError("Transformation of synthetic property accessor isn't supported")
     }

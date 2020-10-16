@@ -1,3 +1,5 @@
+// IGNORE_FIR
+
 <info textAttributesKey="KOTLIN_BUILTIN_ANNOTATION">open</info> class <info textAttributesKey="KOTLIN_CLASS">Foo</info> {
     <info textAttributesKey="KOTLIN_KEYWORD">constructor</info>(<warning descr="[UNUSED_PARAMETER] Parameter 'i' is never used" textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES"><info textAttributesKey="KOTLIN_PARAMETER">i</info></warning>: <info textAttributesKey="KOTLIN_CLASS">Int</info>)
 }

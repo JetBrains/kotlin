@@ -48,6 +48,8 @@ compileTestKotlin {
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
 }
 
+configureJvmIrBackend(project)
+
 if (includeJava9) {
     compileJava9Sources(project, 'kotlin.test.junit5')
 }

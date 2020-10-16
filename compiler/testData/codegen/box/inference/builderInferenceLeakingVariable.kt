@@ -1,6 +1,7 @@
 // Issues: KT-33542, KT-33544
 // WITH_RUNTIME
 // KJS_WITH_FULL_RUNTIME
+// IGNORE_BACKEND_FIR: JVM_IR
 // !LANGUAGE: +NewInference
 
 import kotlin.experimental.ExperimentalTypeInference

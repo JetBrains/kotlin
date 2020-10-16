@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.gradle.targets.js.yarn.Yarn
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import java.io.File
 
-open class NodeJsRootExtension(val rootProject: Project) : ConfigurationPhaseAware<NodeJsEnv>() {
+open class NodeJsRootExtension(@Transient val rootProject: Project) : ConfigurationPhaseAware<NodeJsEnv>() {
     init {
         check(rootProject.rootProject == rootProject)
     }
@@ -41,6 +41,7 @@ open class NodeJsRootExtension(val rootProject: Project) : ConfigurationPhaseAwa
 
     var packageManager: NpmApi by Property(Yarn())
 
+    @Transient
     private val projectProperties = PropertiesProvider(rootProject)
 
     inner class Experimental {
@@ -50,6 +51,7 @@ open class NodeJsRootExtension(val rootProject: Project) : ConfigurationPhaseAwa
 
     val experimental = Experimental()
 
+    @Transient
     val taskRequirements = TasksRequirements()
 
     val nodeJsSetupTaskProvider: TaskProvider<out NodeJsSetupTask>
@@ -117,6 +119,8 @@ open class NodeJsRootExtension(val rootProject: Project) : ConfigurationPhaseAwa
     }
 
     val versions = NpmVersions()
+
+    @Transient
     internal val npmResolutionManager = KotlinNpmResolutionManager(this)
 
     companion object {

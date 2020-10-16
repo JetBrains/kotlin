@@ -126,7 +126,7 @@ object BuiltinMethodsWithSpecialGenericSignature {
     }
 
     val Name.sameAsBuiltinMethodWithErasedValueParameters: Boolean
-        get () = this in ERASED_VALUE_PARAMETERS_SHORT_NAMES
+        get() = this in ERASED_VALUE_PARAMETERS_SHORT_NAMES
 
     enum class SpecialSignatureInfo(val valueParametersSignature: String?, val isObjectReplacedWithTypeParameter: Boolean) {
         ONE_COLLECTION_PARAMETER("Ljava/util/Collection<+Ljava/lang/Object;>;", false),
@@ -150,10 +150,10 @@ object BuiltinMethodsWithSpecialGenericSignature {
 
         val defaultValue = SIGNATURE_TO_DEFAULT_VALUES_MAP.getValue(builtinSignature)
 
-        return if (defaultValue == TypeSafeBarrierDescription.NULL)
+        return if (defaultValue == TypeSafeBarrierDescription.NULL) {
             // return type is some generic type as 'Map.get'
             SpecialSignatureInfo.OBJECT_PARAMETER_GENERIC
-        else
+        } else
             SpecialSignatureInfo.OBJECT_PARAMETER_NON_GENERIC
     }
 }

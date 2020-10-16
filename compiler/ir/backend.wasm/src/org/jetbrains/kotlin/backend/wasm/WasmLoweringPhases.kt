@@ -228,7 +228,7 @@ private val initializersLoweringPhase = makeWasmModulePhase(
     ::InitializersLowering,
     name = "InitializersLowering",
     description = "Merge init block and field initializers into [primary] constructor",
-    prerequisite = setOf(primaryConstructorLoweringPhase)
+    prerequisite = setOf(primaryConstructorLoweringPhase, localClassExtractionPhase)
 )
 
 private val initializersCleanupLoweringPhase = makeWasmModulePhase(

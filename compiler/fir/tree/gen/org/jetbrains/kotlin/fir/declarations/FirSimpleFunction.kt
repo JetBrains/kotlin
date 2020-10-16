@@ -54,6 +54,8 @@ abstract class FirSimpleFunction : FirPureAbstractElement(), FirFunction<FirSimp
 
     abstract override fun replaceValueParameters(newValueParameters: List<FirValueParameter>)
 
+    abstract override fun replaceBody(newBody: FirBlock?)
+
     abstract override fun replaceContractDescription(newContractDescription: FirContractDescription)
 
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirSimpleFunction

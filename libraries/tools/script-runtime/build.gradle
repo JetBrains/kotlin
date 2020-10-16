@@ -39,3 +39,5 @@ compileKotlin {
             "-module-name", project.name
     ]
 }
+
+configureJvmIrBackend(project)

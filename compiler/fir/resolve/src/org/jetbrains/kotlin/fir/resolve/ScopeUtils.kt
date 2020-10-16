@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolved
+import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirScopeWithFakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScope
 import org.jetbrains.kotlin.fir.scopes.scopeForClass
@@ -22,11 +24,15 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 
-fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? =
-    scope(useSiteSession, scopeSession, FirResolvePhase.STATUS)
-
-fun ConeKotlinType.scopeForStatusResolve(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? =
-    scope(useSiteSession, scopeSession, FirResolvePhase.TYPES)
+fun ConeKotlinType.scope(
+    useSiteSession: FirSession,
+    scopeSession: ScopeSession,
+    fakeOverrideTypeCalculator: FakeOverrideTypeCalculator
+): FirTypeScope? {
+    val scope = scope(useSiteSession, scopeSession, FirResolvePhase.STATUS) ?: return null
+    if (fakeOverrideTypeCalculator == FakeOverrideTypeCalculator.DoNothing) return scope
+    return FirScopeWithFakeOverrideTypeCalculator(scope, fakeOverrideTypeCalculator)
+}
 
 private fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession, requiredPhase: FirResolvePhase): FirTypeScope? {
     return when (this) {

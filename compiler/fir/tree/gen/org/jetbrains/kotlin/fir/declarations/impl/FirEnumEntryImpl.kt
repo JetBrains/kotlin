@@ -33,6 +33,7 @@ internal class FirEnumEntryImpl(
     override val session: FirSession,
     override var resolvePhase: FirResolvePhase,
     override val origin: FirDeclarationOrigin,
+    override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
     override val name: Name,
     override val symbol: FirVariableSymbol<FirEnumEntry>,
@@ -42,7 +43,6 @@ internal class FirEnumEntryImpl(
     override var status: FirDeclarationStatus,
     override val containerSource: DeserializedContainerSource?,
 ) : FirEnumEntry() {
-    override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override val receiverTypeRef: FirTypeRef? get() = null
     override val delegate: FirExpression? get() = null
     override val delegateFieldSymbol: FirDelegateFieldSymbol<FirEnumEntry>? get() = null
@@ -128,4 +128,8 @@ internal class FirEnumEntryImpl(
     }
 
     override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {}
+
+    override fun replaceInitializer(newInitializer: FirExpression?) {
+        initializer = newInitializer
+    }
 }

@@ -96,8 +96,14 @@ data class ConeSubstitutionScopeKey(
 
 data class DelegatedMemberScopeKey(val callableId: CallableId) : ScopeSessionKey<FirField, FirDelegatedMemberScope>()
 
-fun FirClass<*>.unsubstitutedScope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope {
-    return scopeProvider.getUseSiteMemberScope(this, useSiteSession, scopeSession)
+fun FirClass<*>.unsubstitutedScope(
+    useSiteSession: FirSession,
+    scopeSession: ScopeSession,
+    withForcedTypeCalculator: Boolean
+): FirTypeScope {
+    val scope = scopeProvider.getUseSiteMemberScope(this, useSiteSession, scopeSession)
+    if (withForcedTypeCalculator) return FirScopeWithFakeOverrideTypeCalculator(scope, FakeOverrideTypeCalculator.Forced)
+    return scope
 }
 
 fun FirClass<*>.scopeForClass(
@@ -143,15 +149,15 @@ private fun FirClass<*>.scopeForClassImpl(
     containingClassForAdditionalMembers: ConeClassLikeLookupTag,
     isFromExpectClass: Boolean
 ): FirTypeScope {
-    val basicScope = unsubstitutedScope(useSiteSession, scopeSession)
+    val basicScope = unsubstitutedScope(useSiteSession, scopeSession, withForcedTypeCalculator = false)
     if (substitutor == ConeSubstitutor.Empty) return basicScope
 
     return scopeSession.getOrBuild(
         this, ConeSubstitutionScopeKey(containingClassForAdditionalMembers.classId, isFromExpectClass, substitutor)
     ) {
         FirClassSubstitutionScope(
-            useSiteSession, basicScope, scopeSession, substitutor,
-            skipPrivateMembers, containingClassForAdditionalMembers.classId, makeExpect = isFromExpectClass
+            useSiteSession, basicScope, substitutor, skipPrivateMembers,
+            containingClassForAdditionalMembers.classId, makeExpect = isFromExpectClass
         )
     }
 }

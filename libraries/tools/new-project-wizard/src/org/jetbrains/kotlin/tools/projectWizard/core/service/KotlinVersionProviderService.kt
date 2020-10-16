@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.TaskResult
 import org.jetbrains.kotlin.tools.projectWizard.core.asNullable
 import org.jetbrains.kotlin.tools.projectWizard.core.compute
 import org.jetbrains.kotlin.tools.projectWizard.core.safe
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repositories
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repository
@@ -23,7 +24,7 @@ import java.util.stream.Collectors
 data class WizardKotlinVersion(val version: Version, val kind: KotlinVersionKind, val repository: Repository)
 
 abstract class KotlinVersionProviderService : WizardService {
-    abstract fun getKotlinVersion(): WizardKotlinVersion
+    abstract fun getKotlinVersion(projectKind: ProjectKind): WizardKotlinVersion
 
     protected fun kotlinVersionWithDefaultValues(version: Version) = WizardKotlinVersion(
         version,
@@ -52,7 +53,7 @@ abstract class KotlinVersionProviderService : WizardService {
 
 
 class KotlinVersionProviderServiceImpl : KotlinVersionProviderService(), IdeaIndependentWizardService {
-    override fun getKotlinVersion(): WizardKotlinVersion =
+    override fun getKotlinVersion(projectKind: ProjectKind): WizardKotlinVersion =
         kotlinVersionWithDefaultValues(Versions.KOTLIN)
 }
 

@@ -1,0 +1,3 @@
+FILE: namedArgument.kt
+    public? final? fun foo(first: String = String(), second: Boolean = Boolean(true), third: Double = Double(3.1415)): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? fun test(): R|kotlin/Unit| { LAZY_BLOCK }

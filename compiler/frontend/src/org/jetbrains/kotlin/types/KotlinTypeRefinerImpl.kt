@@ -67,7 +67,8 @@ class KotlinTypeRefinerImpl(
                 val cached = refinedTypeCache.computeIfAbsent(type.constructor) {
                     type.constructor.declarationDescriptor!!.defaultType.refine(this)
                 }
-                cached.replace(type.arguments)
+
+                cached.restoreAdditionalTypeInformation(type)
             }
             else -> type.refine(this)
         }
@@ -146,3 +147,7 @@ private val TypeConstructor.allDependentTypeConstructors: Collection<TypeConstru
 
 private fun TypeConstructor.isExpectClass() =
     declarationDescriptor?.safeAs<ClassDescriptor>()?.isExpect == true
+
+private fun KotlinType.restoreAdditionalTypeInformation(prototype: KotlinType): KotlinType {
+    return TypeUtils.makeNullableAsSpecified(this, prototype.isMarkedNullable).replace(prototype.arguments)
+}

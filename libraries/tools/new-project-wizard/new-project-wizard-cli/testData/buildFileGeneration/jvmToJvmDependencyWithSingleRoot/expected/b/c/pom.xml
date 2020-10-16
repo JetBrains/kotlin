@@ -70,6 +70,7 @@
             </plugin>
         </plugins>
     </build>
+
     <dependencies>
         <dependency>
             <artifactId>b</artifactId>
@@ -88,4 +89,5 @@
             <version>KOTLIN_VERSION</version>
         </dependency>
     </dependencies>
+
 </project>

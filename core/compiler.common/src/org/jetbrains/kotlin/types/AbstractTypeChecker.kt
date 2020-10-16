@@ -18,8 +18,6 @@ abstract class AbstractTypeCheckerContext : TypeSystemContext {
 
     abstract fun substitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy
 
-    abstract fun areEqualTypeConstructors(a: TypeConstructorMarker, b: TypeConstructorMarker): Boolean
-
     override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
         return type
     }
@@ -309,7 +307,7 @@ object AbstractTypeChecker {
 
         val superConstructor = superType.typeConstructor()
 
-        if (isEqualTypeConstructors(subType.typeConstructor(), superConstructor) && superConstructor.parametersCount() == 0) return true
+        if (areEqualTypeConstructors(subType.typeConstructor(), superConstructor) && superConstructor.parametersCount() == 0) return true
         if (superType.typeConstructor().isAnyConstructor()) return true
 
         val supertypesWithSameConstructor = findCorrespondingSupertypes(subType, superConstructor)
@@ -611,7 +609,7 @@ object AbstractNullabilityChecker {
 
         if (isStubTypeEqualsToAnything && type.isStubType()) return true
 
-        return isEqualTypeConstructors(type.typeConstructor(), end)
+        return areEqualTypeConstructors(type.typeConstructor(), end)
     }
 }
 

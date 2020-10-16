@@ -36,7 +36,7 @@ internal class DelegatedMemberGenerator(
     fun generate(irField: IrField, firField: FirField, firSubClass: FirClass<*>, subClass: IrClass) {
         val subClassLookupTag = firSubClass.symbol.toLookupTag()
 
-        val subClassScope = firSubClass.unsubstitutedScope(session, scopeSession)
+        val subClassScope = firSubClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
         subClassScope.processAllFunctions { functionSymbol ->
             if (functionSymbol !is FirNamedFunctionSymbol) return@processAllFunctions
 

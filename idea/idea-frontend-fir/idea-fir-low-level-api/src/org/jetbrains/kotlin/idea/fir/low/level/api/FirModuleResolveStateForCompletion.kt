@@ -46,6 +46,10 @@ internal class FirModuleResolveStateForCompletion(
     override fun getFirFile(ktFile: KtFile): FirFile =
         originalState.getFirFile(ktFile)
 
+    override fun isFirFileBuilt(ktFile: KtFile): Boolean {
+        error("Should not be called in in completion")
+    }
+
     override fun recordPsiToFirMappingsForCompletionFrom(fir: FirDeclaration, firFile: FirFile, ktFile: KtFile) {
         fir.accept(FirElementsRecorder(), completionMapping)
     }
@@ -73,6 +77,10 @@ internal class FirModuleResolveStateForCompletion(
     }
 
     override fun findNonLocalSourceFirDeclaration(ktDeclaration: KtDeclaration): FirDeclaration {
+        error("Should not be used in completion")
+    }
+
+    override fun getBuiltFirFileOrNull(ktFile: KtFile): FirFile? {
         error("Should not be used in completion")
     }
 }

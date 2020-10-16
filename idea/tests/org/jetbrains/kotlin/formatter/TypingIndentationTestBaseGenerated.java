@@ -56,6 +56,16 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
             runTest("idea/testData/indentationOnNewline/AfterImport.after.kt");
         }
 
+        @TestMetadata("AfterPropertyGetter.after.kt")
+        public void testAfterPropertyGetter() throws Exception {
+            runTest("idea/testData/indentationOnNewline/AfterPropertyGetter.after.kt");
+        }
+
+        @TestMetadata("AfterPropertySetter.after.kt")
+        public void testAfterPropertySetter() throws Exception {
+            runTest("idea/testData/indentationOnNewline/AfterPropertySetter.after.kt");
+        }
+
         @TestMetadata("AfterTry.after.kt")
         public void testAfterTry() throws Exception {
             runTest("idea/testData/indentationOnNewline/AfterTry.after.kt");

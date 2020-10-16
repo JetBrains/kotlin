@@ -72,20 +72,20 @@ private val Family.toPodGenTaskName: String
 
 private fun String.toSetupBuildTaskName(pod: CocoapodsDependency): String = lowerCamelCaseName(
     KotlinCocoapodsPlugin.POD_SETUP_BUILD_TASK_NAME,
-    pod.schemeName,
+    pod.name.asValidTaskName(),
     this
 )
 
 private fun String.toBuildDependenciesTaskName(pod: CocoapodsDependency): String = lowerCamelCaseName(
     KotlinCocoapodsPlugin.POD_BUILD_TASK_NAME,
-    pod.schemeName,
+    pod.name.asValidTaskName(),
     this
 )
 
 private val CocoapodsDependency.toPodDownloadTaskName: String
     get() = lowerCamelCaseName(
         KotlinCocoapodsPlugin.POD_DOWNLOAD_TASK_NAME,
-        name
+        name.asValidTaskName()
     )
 
 open class KotlinCocoapodsPlugin : Plugin<Project> {
@@ -375,11 +375,11 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             val podSource = pod.source
             val downloadPodTask = when (podSource) {
                 is Git -> project.tasks.register(pod.toPodDownloadTaskName, PodDownloadGitTask::class.java) {
-                    it.podName = project.provider { pod.name }
+                    it.podName = project.provider { pod.name.asValidTaskName() }
                     it.podSource = project.provider { podSource as Git }
                 }
                 is Url -> project.tasks.register(pod.toPodDownloadTaskName, PodDownloadUrlTask::class.java) {
-                    it.podName = project.provider { pod.name }
+                    it.podName = project.provider { pod.name.asValidTaskName() }
                     it.podSource = project.provider { podSource as Url }
                 }
                 else -> return@all

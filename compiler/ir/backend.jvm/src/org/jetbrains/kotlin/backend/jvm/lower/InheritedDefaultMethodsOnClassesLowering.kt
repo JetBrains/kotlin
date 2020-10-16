@@ -34,10 +34,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal val inheritedDefaultMethodsOnClassesPhase = makeIrFilePhase(
@@ -46,37 +43,15 @@ internal val inheritedDefaultMethodsOnClassesPhase = makeIrFilePhase(
     description = "Add bridge-implementations in classes that inherit default implementations from interfaces"
 )
 
-private class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendContext) : IrElementVisitorVoid, ClassLoweringPass {
-
-    override fun visitElement(element: IrElement) {
-        element.acceptChildrenVoid(this)
-    }
-
+private class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
-        if (!irClass.isJvmInterface)
-            generateInterfaceMethods(irClass)
-
-        super.visitClass(irClass)
-    }
-
-    private fun generateInterfaceMethods(irClass: IrClass) {
-        irClass.declarations.transformInPlace { declaration ->
-            (declaration as? IrSimpleFunction)?.findInterfaceImplementation(context.state.jvmDefaultMode)?.let { implementation ->
-                generateDelegationToDefaultImpl(implementation, declaration)
-            } ?: declaration
+        if (!irClass.isJvmInterface) {
+            irClass.declarations.transformInPlace { declaration ->
+                (declaration as? IrSimpleFunction)?.findInterfaceImplementation(context.state.jvmDefaultMode)?.let { implementation ->
+                    generateDelegationToDefaultImpl(implementation, declaration)
+                } ?: declaration
+            }
         }
-    }
-
-    // Functions introduced by this lowering may be inherited lower in the hierarchy.
-    // Here we use the same logic as the delegation itself (`getTargetForRedirection`) to determine
-    // if the overriden symbol has been, or will be, replaced and patch it accordingly.
-    override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-        declaration.overriddenSymbols = declaration.overriddenSymbols.map { symbol ->
-            if (symbol.owner.findInterfaceImplementation(context.state.jvmDefaultMode) != null)
-                context.cachedDeclarations.getDefaultImplsRedirection(symbol.owner).symbol
-            else symbol
-        }
-        super.visitSimpleFunction(declaration)
     }
 
     private fun generateDelegationToDefaultImpl(
@@ -107,6 +82,34 @@ private class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendCo
         }
 
         return irFunction
+    }
+}
+
+internal val replaceDefaultImplsOverriddenSymbolsPhase = makeIrFilePhase(
+    ::ReplaceDefaultImplsOverriddenSymbols,
+    name = "ReplaceDefaultImplsOverriddenSymbols",
+    description = "Replace overridden symbols for methods inherited from interfaces to classes"
+)
+
+private class ReplaceDefaultImplsOverriddenSymbols(private val context: JvmBackendContext) : FileLoweringPass, IrElementVisitorVoid {
+    override fun lower(irFile: IrFile) {
+        irFile.acceptVoid(this)
+    }
+
+    override fun visitElement(element: IrElement) {
+        element.acceptChildrenVoid(this)
+    }
+
+    // Functions introduced by InheritedDefaultMethodsOnClassesLowering may be inherited lower in the hierarchy.
+    // Here we use the same logic as the delegation itself (`getTargetForRedirection`) to determine
+    // if the overridden symbol has been, or will be, replaced and patch it accordingly.
+    override fun visitSimpleFunction(declaration: IrSimpleFunction) {
+        declaration.overriddenSymbols = declaration.overriddenSymbols.map { symbol ->
+            if (symbol.owner.findInterfaceImplementation(context.state.jvmDefaultMode) != null)
+                context.cachedDeclarations.getDefaultImplsRedirection(symbol.owner).symbol
+            else symbol
+        }
+        super.visitSimpleFunction(declaration)
     }
 }
 
@@ -228,10 +231,10 @@ private class InterfaceObjectCallsLowering(val context: JvmBackendContext) : IrE
  * override of any interface implementation or such method was already generated into the superclass or is a method from Any.
  */
 private fun isDefaultImplsBridge(f: IrSimpleFunction) =
-        f.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE ||
-        f.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY ||
-        f.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC ||
-        f.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY_SYNTHETIC
+    f.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE ||
+            f.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY ||
+            f.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC ||
+            f.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY_SYNTHETIC
 
 internal fun IrSimpleFunction.findInterfaceImplementation(jvmDefaultMode: JvmDefaultMode): IrSimpleFunction? {
     if (!isFakeOverride) return null

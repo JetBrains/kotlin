@@ -242,9 +242,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             )
         }
 
-        KotlinTestUtils.assertEqualsToFile(getExpectedDiagnosticsFile(testDataFile), actualText.cleanupInferenceDiagnostics()) { s ->
-            s.replace("COROUTINES_PACKAGE", coroutinesPackage)
-        }
+        checkDiagnostics(actualText.cleanupInferenceDiagnostics(), testDataFile)
 
         assertTrue("Diagnostics mismatch. See the output above", ok)
 
@@ -258,6 +256,12 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         )
         if (shouldValidateFirTestData(testDataFile)) {
             checkFirTestdata(testDataFile, files)
+        }
+    }
+
+    protected open fun checkDiagnostics(actualText: String, testDataFile: File) {
+        KotlinTestUtils.assertEqualsToFile(getExpectedDiagnosticsFile(testDataFile), actualText) { s ->
+            s.replace("COROUTINES_PACKAGE", coroutinesPackage)
         }
     }
 

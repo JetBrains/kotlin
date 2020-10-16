@@ -29,7 +29,7 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
     class Class internal constructor(header: KotlinClassHeader) : KotlinClassMetadata(header) {
         private val classData by lazy(PUBLICATION) {
             val data1 = (header.data1.takeIf(Array<*>::isNotEmpty)
-                    ?: throw InconsistentKotlinMetadataException("data1 must not be empty"))
+                ?: throw InconsistentKotlinMetadataException("data1 must not be empty"))
             JvmProtoBufUtil.readClassDataFrom(data1, header.data2)
         }
 
@@ -57,23 +57,22 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
              * Returns the metadata of the class that was written with this writer.
              *
              * @param metadataVersion metadata version to be written to the metadata (see [KotlinClassHeader.metadataVersion]),
-             *   [KotlinClassHeader.COMPATIBLE_METADATA_VERSION] by default
-             * @param bytecodeVersion bytecode version to be written to the metadata (see [KotlinClassHeader.bytecodeVersion]),
-             *   [KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION] by default
+             *   [KotlinClassHeader.COMPATIBLE_METADATA_VERSION] by default. Cannot be less (lexicographically) than `[1, 4]`
              * @param extraInt the value of the class-level flags to be written to the metadata (see [KotlinClassHeader.extraInt]),
              *   0 by default
              */
             @JvmOverloads
             fun write(
                 metadataVersion: IntArray = KotlinClassHeader.COMPATIBLE_METADATA_VERSION,
-                bytecodeVersion: IntArray = KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION,
                 extraInt: Int = 0
-            ): KotlinClassMetadata.Class {
+            ): Class {
+                checkMetadataVersion(metadataVersion)
                 val (d1, d2) = writeProtoBufData(t.build(), c)
                 val metadata = KotlinClassHeader(
-                    KotlinClassHeader.CLASS_KIND, metadataVersion, bytecodeVersion, d1, d2, null, null, extraInt
+                    KotlinClassHeader.CLASS_KIND, metadataVersion, KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION,
+                    d1, d2, null, null, extraInt
                 )
-                return KotlinClassMetadata.Class(metadata)
+                return Class(metadata)
             }
         }
     }
@@ -84,7 +83,7 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
     class FileFacade internal constructor(header: KotlinClassHeader) : KotlinClassMetadata(header) {
         private val packageData by lazy(PUBLICATION) {
             val data1 = (header.data1.takeIf(Array<*>::isNotEmpty)
-                    ?: throw InconsistentKotlinMetadataException("data1 must not be empty"))
+                ?: throw InconsistentKotlinMetadataException("data1 must not be empty"))
             JvmProtoBufUtil.readPackageDataFrom(data1, header.data2)
         }
 
@@ -112,23 +111,22 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
              * Returns the metadata of the file facade that was written with this writer.
              *
              * @param metadataVersion metadata version to be written to the metadata (see [KotlinClassHeader.metadataVersion]),
-             *   [KotlinClassHeader.COMPATIBLE_METADATA_VERSION] by default
-             * @param bytecodeVersion bytecode version to be written to the metadata (see [KotlinClassHeader.bytecodeVersion]),
-             *   [KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION] by default
+             *   [KotlinClassHeader.COMPATIBLE_METADATA_VERSION] by default. Cannot be less (lexicographically) than `[1, 4]`
              * @param extraInt the value of the class-level flags to be written to the metadata (see [KotlinClassHeader.extraInt]),
              *   0 by default
              */
             @JvmOverloads
             fun write(
                 metadataVersion: IntArray = KotlinClassHeader.COMPATIBLE_METADATA_VERSION,
-                bytecodeVersion: IntArray = KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION,
                 extraInt: Int = 0
-            ): KotlinClassMetadata.FileFacade {
+            ): FileFacade {
+                checkMetadataVersion(metadataVersion)
                 val (d1, d2) = writeProtoBufData(t.build(), c)
                 val metadata = KotlinClassHeader(
-                    KotlinClassHeader.FILE_FACADE_KIND, metadataVersion, bytecodeVersion, d1, d2, null, null, extraInt
+                    KotlinClassHeader.FILE_FACADE_KIND, metadataVersion, KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION,
+                    d1, d2, null, null, extraInt
                 )
-                return KotlinClassMetadata.FileFacade(metadata)
+                return FileFacade(metadata)
             }
         }
     }
@@ -185,26 +183,25 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
              * Returns the metadata of the synthetic class that was written with this writer.
              *
              * @param metadataVersion metadata version to be written to the metadata (see [KotlinClassHeader.metadataVersion]),
-             *   [KotlinClassHeader.COMPATIBLE_METADATA_VERSION] by default
-             * @param bytecodeVersion bytecode version to be written to the metadata (see [KotlinClassHeader.bytecodeVersion]),
-             *   [KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION] by default
+             *   [KotlinClassHeader.COMPATIBLE_METADATA_VERSION] by default. Cannot be less (lexicographically) than `[1, 4]`
              * @param extraInt the value of the class-level flags to be written to the metadata (see [KotlinClassHeader.extraInt]),
              *   0 by default
              */
             @JvmOverloads
             fun write(
                 metadataVersion: IntArray = KotlinClassHeader.COMPATIBLE_METADATA_VERSION,
-                bytecodeVersion: IntArray = KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION,
                 extraInt: Int = 0
-            ): KotlinClassMetadata.SyntheticClass {
+            ): SyntheticClass {
+                checkMetadataVersion(metadataVersion)
                 val proto = t?.build()
                 val (d1, d2) =
-                        if (proto != null) writeProtoBufData(proto, c)
-                        else Pair(emptyArray(), emptyArray())
+                    if (proto != null) writeProtoBufData(proto, c)
+                    else Pair(emptyArray(), emptyArray())
                 val metadata = KotlinClassHeader(
-                    KotlinClassHeader.SYNTHETIC_CLASS_KIND, metadataVersion, bytecodeVersion, d1, d2, null, null, extraInt
+                    KotlinClassHeader.SYNTHETIC_CLASS_KIND, metadataVersion, KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION,
+                    d1, d2, null, null, extraInt
                 )
-                return KotlinClassMetadata.SyntheticClass(metadata)
+                return SyntheticClass(metadata)
             }
         }
     }
@@ -229,9 +226,7 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
              *
              * @param partClassNames JVM internal names of the part classes which this multi-file class combines
              * @param metadataVersion metadata version to be written to the metadata (see [KotlinClassHeader.metadataVersion]),
-             *   [KotlinClassHeader.COMPATIBLE_METADATA_VERSION] by default
-             * @param bytecodeVersion bytecode version to be written to the metadata (see [KotlinClassHeader.bytecodeVersion]),
-             *   [KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION] by default
+             *   [KotlinClassHeader.COMPATIBLE_METADATA_VERSION] by default. Cannot be less (lexicographically) than `[1, 4]`
              * @param extraInt the value of the class-level flags to be written to the metadata (see [KotlinClassHeader.extraInt]),
              *   0 by default
              */
@@ -239,14 +234,14 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
             fun write(
                 partClassNames: List<String>,
                 metadataVersion: IntArray = KotlinClassHeader.COMPATIBLE_METADATA_VERSION,
-                bytecodeVersion: IntArray = KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION,
                 extraInt: Int = 0
-            ): KotlinClassMetadata.MultiFileClassFacade {
+            ): MultiFileClassFacade {
+                checkMetadataVersion(metadataVersion)
                 val metadata = KotlinClassHeader(
-                    KotlinClassHeader.MULTI_FILE_CLASS_FACADE_KIND, metadataVersion, bytecodeVersion, partClassNames.toTypedArray(),
-                    null, null, null, extraInt
+                    KotlinClassHeader.MULTI_FILE_CLASS_FACADE_KIND, metadataVersion, KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION,
+                    partClassNames.toTypedArray(), null, null, null, extraInt
                 )
-                return KotlinClassMetadata.MultiFileClassFacade(metadata)
+                return MultiFileClassFacade(metadata)
             }
         }
     }
@@ -260,7 +255,7 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
     class MultiFileClassPart internal constructor(header: KotlinClassHeader) : KotlinClassMetadata(header) {
         private val packageData by lazy(PUBLICATION) {
             val data1 = (header.data1.takeIf(Array<*>::isNotEmpty)
-                    ?: throw InconsistentKotlinMetadataException("data1 must not be empty"))
+                ?: throw InconsistentKotlinMetadataException("data1 must not be empty"))
             JvmProtoBufUtil.readPackageDataFrom(data1, header.data2)
         }
 
@@ -295,9 +290,7 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
              *
              * @param facadeClassName JVM internal name of the corresponding multi-file class facade
              * @param metadataVersion metadata version to be written to the metadata (see [KotlinClassHeader.metadataVersion]),
-             *   [KotlinClassHeader.COMPATIBLE_METADATA_VERSION] by default
-             * @param bytecodeVersion bytecode version to be written to the metadata (see [KotlinClassHeader.bytecodeVersion]),
-             *   [KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION] by default
+             *   [KotlinClassHeader.COMPATIBLE_METADATA_VERSION] by default. Cannot be less (lexicographically) than `[1, 4]`
              * @param extraInt the value of the class-level flags to be written to the metadata (see [KotlinClassHeader.extraInt]),
              *   0 by default
              */
@@ -305,14 +298,15 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
             fun write(
                 facadeClassName: String,
                 metadataVersion: IntArray = KotlinClassHeader.COMPATIBLE_METADATA_VERSION,
-                bytecodeVersion: IntArray = KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION,
                 extraInt: Int = 0
-            ): KotlinClassMetadata.MultiFileClassPart {
+            ): MultiFileClassPart {
+                checkMetadataVersion(metadataVersion)
                 val (d1, d2) = writeProtoBufData(t.build(), c)
                 val metadata = KotlinClassHeader(
-                    KotlinClassHeader.MULTI_FILE_CLASS_PART_KIND, metadataVersion, bytecodeVersion, d1, d2, facadeClassName, null, extraInt
+                    KotlinClassHeader.MULTI_FILE_CLASS_PART_KIND, metadataVersion, KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION,
+                    d1, d2, facadeClassName, null, extraInt
                 )
-                return KotlinClassMetadata.MultiFileClassPart(metadata)
+                return MultiFileClassPart(metadata)
             }
         }
     }
@@ -335,7 +329,6 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
          */
         @JvmStatic
         fun read(header: KotlinClassHeader): KotlinClassMetadata? {
-            // We only support metadata of version 1.1.* (this is Kotlin from 1.0 until today)
             if (!JvmMetadataVersion(
                     header.metadataVersion,
                     (header.extraInt and (1 shl 3)/* see JvmAnnotationNames.METADATA_STRICT_VERSION_SEMANTICS_FLAG */) != 0
@@ -344,17 +337,24 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
 
             return try {
                 when (header.kind) {
-                    KotlinClassHeader.CLASS_KIND -> KotlinClassMetadata.Class(header)
-                    KotlinClassHeader.FILE_FACADE_KIND -> KotlinClassMetadata.FileFacade(header)
-                    KotlinClassHeader.SYNTHETIC_CLASS_KIND -> KotlinClassMetadata.SyntheticClass(header)
-                    KotlinClassHeader.MULTI_FILE_CLASS_FACADE_KIND -> KotlinClassMetadata.MultiFileClassFacade(header)
-                    KotlinClassHeader.MULTI_FILE_CLASS_PART_KIND -> KotlinClassMetadata.MultiFileClassPart(header)
-                    else -> KotlinClassMetadata.Unknown(header)
+                    KotlinClassHeader.CLASS_KIND -> Class(header)
+                    KotlinClassHeader.FILE_FACADE_KIND -> FileFacade(header)
+                    KotlinClassHeader.SYNTHETIC_CLASS_KIND -> SyntheticClass(header)
+                    KotlinClassHeader.MULTI_FILE_CLASS_FACADE_KIND -> MultiFileClassFacade(header)
+                    KotlinClassHeader.MULTI_FILE_CLASS_PART_KIND -> MultiFileClassPart(header)
+                    else -> Unknown(header)
                 }
             } catch (e: InconsistentKotlinMetadataException) {
                 throw e
             } catch (e: Throwable) {
                 throw InconsistentKotlinMetadataException("Exception occurred when reading Kotlin metadata", e)
+            }
+        }
+
+        private fun checkMetadataVersion(version: IntArray) {
+            require(version.size >= 2 && version[0] >= 1 && (version[0] > 1 || version[1] >= 4)) {
+                "This version of kotlinx-metadata-jvm doesn't support writing Kotlin metadata of version earlier than 1.4. " +
+                        "Please change the version from ${version.toList()} to at least [1, 4]."
             }
         }
     }

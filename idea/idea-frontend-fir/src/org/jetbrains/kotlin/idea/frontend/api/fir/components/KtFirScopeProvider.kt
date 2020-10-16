@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.*
@@ -58,7 +59,11 @@ internal class KtFirScopeProvider(
             val firScope =
                 classSymbol.firRef.withFir(FirResolvePhase.SUPER_TYPES) { fir ->
                     val firSession = fir.session
-                    fir.unsubstitutedScope(firSession, firResolveState.firTransformerProvider.getScopeSession(firSession))
+                    fir.unsubstitutedScope(
+                        firSession,
+                        firResolveState.firTransformerProvider.getScopeSession(firSession),
+                        withForcedTypeCalculator = false
+                    )
                 }.also(firScopeStorage::register)
             KtFirMemberScope(classSymbol, firScope, token, builder)
         }
@@ -91,8 +96,11 @@ internal class KtFirScopeProvider(
     override fun getTypeScope(type: KtType): KtScope? {
         check(type is KtFirType) { "KtFirScopeProvider can only work with KtFirType, but ${type::class} was provided" }
         val firSession = firResolveState.rootModuleSession
-        val firTypeScope = type.coneType.scope(firSession, firResolveState.firTransformerProvider.getScopeSession(firSession))
-            ?: return null
+        val firTypeScope = type.coneType.scope(
+            firSession,
+            firResolveState.firTransformerProvider.getScopeSession(firSession),
+            FakeOverrideTypeCalculator.Forced
+        ) ?: return null
         return convertToKtScope(firTypeScope)
     }
 

@@ -178,6 +178,11 @@ public class JvmOldAgainstIrBoxTestGenerated extends AbstractJvmOldAgainstIrBoxT
         runTest("compiler/testData/compileKotlinAgainstKotlin/internalSetterOverridden.kt");
     }
 
+    @TestMetadata("internalWithDefaultArgs.kt")
+    public void testInternalWithDefaultArgs() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/internalWithDefaultArgs.kt");
+    }
+
     @TestMetadata("internalWithOtherModuleName.kt")
     public void testInternalWithOtherModuleName() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/internalWithOtherModuleName.kt");

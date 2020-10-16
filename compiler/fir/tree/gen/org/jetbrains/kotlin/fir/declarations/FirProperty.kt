@@ -56,6 +56,8 @@ abstract class FirProperty : FirVariable<FirProperty>(), FirTypeParametersOwner,
 
     abstract override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
 
+    abstract override fun replaceInitializer(newInitializer: FirExpression?)
+
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirProperty

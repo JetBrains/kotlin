@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -287,9 +288,11 @@ internal open class FirTowerResolveTask(
         superTypeRef: FirTypeRef
     ) {
         val scope = when (superTypeRef) {
-            is FirResolvedTypeRef -> superTypeRef.type.scope(session, components.scopeSession)
+            is FirResolvedTypeRef -> superTypeRef.type.scope(session, components.scopeSession, FakeOverrideTypeCalculator.DoNothing)
             is FirComposedSuperTypeRef -> FirCompositeScope(
-                superTypeRef.superTypeRefs.mapNotNull { it.type.scope(session, components.scopeSession) }
+                superTypeRef.superTypeRefs.mapNotNull {
+                    it.type.scope(session, components.scopeSession, FakeOverrideTypeCalculator.DoNothing)
+                }
             )
             else -> null
         } ?: return

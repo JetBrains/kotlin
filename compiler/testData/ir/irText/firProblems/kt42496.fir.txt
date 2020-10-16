@@ -1,0 +1,11 @@
+FILE fqName:<root> fileName:/kt42496.kt
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:javaClass type:<root>.JavaClass2 [val]
+        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.JavaClass2' type=<root>.JavaClass2 origin=null
+      CALL 'public open fun setSomething (value: kotlin.Any?): kotlin.Unit declared in <root>.JavaClass1' type=kotlin.Unit origin=EQ
+        $this: GET_VAR 'val javaClass: <root>.JavaClass2 [val] declared in <root>.box' type=<root>.JavaClass2 origin=null
+        value: CONST String type=kotlin.String value="OK"
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CALL 'public open fun getSomething (): kotlin.String? declared in <root>.JavaClass2' type=kotlin.String? origin=GET_PROPERTY
+          $this: GET_VAR 'val javaClass: <root>.JavaClass2 [val] declared in <root>.box' type=<root>.JavaClass2 origin=null

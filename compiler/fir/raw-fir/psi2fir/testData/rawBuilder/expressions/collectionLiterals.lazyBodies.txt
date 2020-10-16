@@ -1,0 +1,52 @@
+FILE: collectionLiterals.kt
+    public? final? annotation class Ann1 : R|kotlin/Annotation| {
+        public? constructor(arr: IntArray): R|Ann1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? val arr: IntArray = R|<local>/arr|
+            public? get(): IntArray
+
+    }
+    public? final? annotation class Ann2 : R|kotlin/Annotation| {
+        public? constructor(arr: DoubleArray): R|Ann2| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? val arr: DoubleArray = R|<local>/arr|
+            public? get(): DoubleArray
+
+    }
+    public? final? annotation class Ann3 : R|kotlin/Annotation| {
+        public? constructor(arr: Array<String>): R|Ann3| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? val arr: Array<String> = R|<local>/arr|
+            public? get(): Array<String>
+
+    }
+    @Ann1(<implicitArrayOf>()) @Ann2(<implicitArrayOf>()) @Ann3(<implicitArrayOf>()) public? final? class Zero : R|kotlin/Any| {
+        public? constructor(): R|Zero| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @Ann1(<implicitArrayOf>(IntegerLiteral(1), IntegerLiteral(2))) public? final? class First : R|kotlin/Any| {
+        public? constructor(): R|First| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @Ann2(<implicitArrayOf>(Double(3.14))) public? final? class Second : R|kotlin/Any| {
+        public? constructor(): R|Second| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @Ann3(<implicitArrayOf>(String(Alpha), String(Omega))) public? final? class Third : R|kotlin/Any| {
+        public? constructor(): R|Third| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

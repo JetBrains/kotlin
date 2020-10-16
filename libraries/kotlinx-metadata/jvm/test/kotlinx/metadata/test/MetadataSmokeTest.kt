@@ -14,6 +14,7 @@ import org.junit.Test
 import java.net.URLClassLoader
 import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.full.primaryConstructor
+import kotlin.test.assertFailsWith
 
 class MetadataSmokeTest {
     private fun Class<*>.readMetadata(): KotlinClassHeader {
@@ -172,7 +173,7 @@ class MetadataSmokeTest {
 
     @Test
     fun unstableParameterNames() {
-        @Suppress("unused")
+        @Suppress("unused", "UNUSED_PARAMETER")
         class Test(a: String, b: Int, c: Boolean) {
             fun foo(a: String, b: Int, c: Boolean) = Unit
         }
@@ -202,5 +203,17 @@ class MetadataSmokeTest {
 
         classWithUnstableParameterNames.constructors.forEach { assertTrue(Flag.Constructor.HAS_NON_STABLE_PARAMETER_NAMES(it.flags)) }
         classWithUnstableParameterNames.functions.forEach { assertTrue(Flag.Function.HAS_NON_STABLE_PARAMETER_NAMES(it.flags)) }
+    }
+
+    @Test
+    fun metadataVersionEarlierThan1_4() {
+        val mv = intArrayOf(1, 3)
+        assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.Class.Writer().write(mv) }
+        assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.FileFacade.Writer().write(mv) }
+        assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.MultiFileClassFacade.Writer().write(listOf("A"), mv) }
+        assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.MultiFileClassPart.Writer().write("A", mv) }
+        assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.SyntheticClass.Writer().write(mv) }
+
+        KotlinModuleMetadata.Writer().write(mv)
     }
 }

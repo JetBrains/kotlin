@@ -452,7 +452,7 @@ internal class AdapterGenerator(
             return if (argumentType.isBuiltinFunctionalType(session)) {
                 argumentType.findBaseInvokeSymbol(session, scopeSession)
             } else {
-                argumentType.findContributedInvokeSymbol(session, scopeSession, expectedFunctionalType)
+                argumentType.findContributedInvokeSymbol(session, scopeSession, expectedFunctionalType, shouldCalculateReturnTypesOfFakeOverrides = true)
             }?.let {
                 declarationStorage.getIrFunctionSymbol(it) as? IrSimpleFunctionSymbol
             }

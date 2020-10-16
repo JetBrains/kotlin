@@ -39,6 +39,7 @@ open class FirConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotationC
     override lateinit var session: FirSession
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override lateinit var origin: FirDeclarationOrigin
+    override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override lateinit var returnTypeRef: FirTypeRef
     override var receiverTypeRef: FirTypeRef? = null
     override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
@@ -56,6 +57,7 @@ open class FirConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotationC
             session,
             resolvePhase,
             origin,
+            attributes,
             returnTypeRef,
             receiverTypeRef,
             typeParameters,
@@ -84,4 +86,28 @@ inline fun buildConstructor(init: FirConstructorBuilder.() -> Unit): FirConstruc
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
     return FirConstructorBuilder().apply(init).build()
+}
+
+@OptIn(ExperimentalContracts::class)
+inline fun buildConstructorCopy(original: FirConstructor, init: FirConstructorBuilder.() -> Unit): FirConstructor {
+    contract {
+        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+    }
+    val copyBuilder = FirConstructorBuilder()
+    copyBuilder.source = original.source
+    copyBuilder.session = original.session
+    copyBuilder.resolvePhase = original.resolvePhase
+    copyBuilder.origin = original.origin
+    copyBuilder.attributes = original.attributes
+    copyBuilder.returnTypeRef = original.returnTypeRef
+    copyBuilder.receiverTypeRef = original.receiverTypeRef
+    copyBuilder.typeParameters.addAll(original.typeParameters)
+    copyBuilder.valueParameters.addAll(original.valueParameters)
+    copyBuilder.status = original.status
+    copyBuilder.containerSource = original.containerSource
+    copyBuilder.annotations.addAll(original.annotations)
+    copyBuilder.symbol = original.symbol
+    copyBuilder.delegatedConstructor = original.delegatedConstructor
+    copyBuilder.body = original.body
+    return copyBuilder.apply(init).build()
 }

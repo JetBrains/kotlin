@@ -42,4 +42,8 @@ internal class FirLambdaArgumentExpressionImpl(
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
+
+    override fun replaceExpression(newExpression: FirExpression) {
+        expression = newExpression
+    }
 }

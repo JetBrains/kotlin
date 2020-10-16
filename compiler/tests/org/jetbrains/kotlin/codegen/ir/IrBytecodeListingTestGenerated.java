@@ -166,6 +166,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             runTest("compiler/testData/codegen/bytecodeListing/annotations/deprecatedJvmOverloads.kt");
         }
 
+        @TestMetadata("internalProperty.kt")
+        public void testInternalProperty() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/annotations/internalProperty.kt");
+        }
+
         @TestMetadata("JvmSynthetic.kt")
         public void testJvmSynthetic() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/annotations/JvmSynthetic.kt");
@@ -357,6 +362,154 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         @TestMetadata("stubsFromSuperclassNoBridges.kt")
         public void testStubsFromSuperclassNoBridges() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/stubsFromSuperclassNoBridges.kt");
+        }
+
+        @TestMetadata("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class AbstractStubSignatures extends AbstractIrBytecodeListingTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInAbstractStubSignatures() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @TestMetadata("byteShortMap.kt")
+            public void testByteShortMap() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/byteShortMap.kt");
+            }
+
+            @TestMetadata("byteShortMutableMap.kt")
+            public void testByteShortMutableMap() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/byteShortMutableMap.kt");
+            }
+
+            @TestMetadata("collection.kt")
+            public void testCollection() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/collection.kt");
+            }
+
+            @TestMetadata("genericCollection.kt")
+            public void testGenericCollection() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/genericCollection.kt");
+            }
+
+            @TestMetadata("genericMap.kt")
+            public void testGenericMap() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/genericMap.kt");
+            }
+
+            @TestMetadata("genericMutableCollection.kt")
+            public void testGenericMutableCollection() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/genericMutableCollection.kt");
+            }
+
+            @TestMetadata("genericMutableList.kt")
+            public void testGenericMutableList() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/genericMutableList.kt");
+            }
+
+            @TestMetadata("genericMutableMap.kt")
+            public void testGenericMutableMap() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/genericMutableMap.kt");
+            }
+
+            @TestMetadata("genericStringMap.kt")
+            public void testGenericStringMap() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/genericStringMap.kt");
+            }
+
+            @TestMetadata("genericStringMutableMap.kt")
+            public void testGenericStringMutableMap() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/genericStringMutableMap.kt");
+            }
+
+            @TestMetadata("iterable.kt")
+            public void testIterable() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/iterable.kt");
+            }
+
+            @TestMetadata("iterator.kt")
+            public void testIterator() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/iterator.kt");
+            }
+
+            @TestMetadata("list.kt")
+            public void testList() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/list.kt");
+            }
+
+            @TestMetadata("listIterator.kt")
+            public void testListIterator() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/listIterator.kt");
+            }
+
+            @TestMetadata("mapEntry.kt")
+            public void testMapEntry() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/mapEntry.kt");
+            }
+
+            @TestMetadata("mutableCollection.kt")
+            public void testMutableCollection() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/mutableCollection.kt");
+            }
+
+            @TestMetadata("mutableIterable.kt")
+            public void testMutableIterable() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/mutableIterable.kt");
+            }
+
+            @TestMetadata("mutableIterator.kt")
+            public void testMutableIterator() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/mutableIterator.kt");
+            }
+
+            @TestMetadata("mutableList.kt")
+            public void testMutableList() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/mutableList.kt");
+            }
+
+            @TestMetadata("mutableListIterator.kt")
+            public void testMutableListIterator() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/mutableListIterator.kt");
+            }
+
+            @TestMetadata("mutableMapEntry.kt")
+            public void testMutableMapEntry() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/mutableMapEntry.kt");
+            }
+
+            @TestMetadata("numberStringMap.kt")
+            public void testNumberStringMap() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/numberStringMap.kt");
+            }
+
+            @TestMetadata("numberStringMutableMap.kt")
+            public void testNumberStringMutableMap() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/numberStringMutableMap.kt");
+            }
+
+            @TestMetadata("set.kt")
+            public void testSet() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/set.kt");
+            }
+
+            @TestMetadata("specializedGenericMap.kt")
+            public void testSpecializedGenericMap() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/specializedGenericMap.kt");
+            }
+
+            @TestMetadata("stringGenericMap.kt")
+            public void testStringGenericMap() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/stringGenericMap.kt");
+            }
+
+            @TestMetadata("stringGenericMutableMap.kt")
+            public void testStringGenericMutableMap() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/stringGenericMutableMap.kt");
+            }
         }
     }
 
@@ -629,6 +782,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("annotatedPropertyWithInlineClassTypeInSignature.kt")
+        public void testAnnotatedPropertyWithInlineClassTypeInSignature() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/annotatedPropertyWithInlineClassTypeInSignature.kt");
+        }
+
         @TestMetadata("annotationsOnHiddenConstructor.kt")
         public void testAnnotationsOnHiddenConstructor() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/annotationsOnHiddenConstructor.kt");
@@ -649,9 +807,9 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/constructorsWithDefaultParameterValues.kt");
         }
 
-        @TestMetadata("inlineClassImplementingCollection.kt")
-        public void testInlineClassImplementingCollection() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineClassImplementingCollection.kt");
+        @TestMetadata("inlineCharSequence.kt")
+        public void testInlineCharSequence() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCharSequence.kt");
         }
 
         @TestMetadata("inlineClassMembersVisibility.kt")
@@ -707,6 +865,89 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         @TestMetadata("shapeOfInlineClassWithPrimitive.kt")
         public void testShapeOfInlineClassWithPrimitive() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/shapeOfInlineClassWithPrimitive.kt");
+        }
+
+        @TestMetadata("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class InlineCollection extends AbstractIrBytecodeListingTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInInlineCollection() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @TestMetadata("collection.kt")
+            public void testCollection() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection/collection.kt");
+            }
+
+            @TestMetadata("iterable.kt")
+            public void testIterable() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection/iterable.kt");
+            }
+
+            @TestMetadata("iterator.kt")
+            public void testIterator() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection/iterator.kt");
+            }
+
+            @TestMetadata("list.kt")
+            public void testList() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection/list.kt");
+            }
+
+            @TestMetadata("map.kt")
+            public void testMap() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection/map.kt");
+            }
+
+            @TestMetadata("mapEntry.kt")
+            public void testMapEntry() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection/mapEntry.kt");
+            }
+
+            @TestMetadata("mutableCollection.kt")
+            public void testMutableCollection() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection/mutableCollection.kt");
+            }
+
+            @TestMetadata("mutableIterable.kt")
+            public void testMutableIterable() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection/mutableIterable.kt");
+            }
+
+            @TestMetadata("mutableIterator.kt")
+            public void testMutableIterator() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection/mutableIterator.kt");
+            }
+
+            @TestMetadata("mutableList.kt")
+            public void testMutableList() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection/mutableList.kt");
+            }
+
+            @TestMetadata("mutableMap.kt")
+            public void testMutableMap() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection/mutableMap.kt");
+            }
+
+            @TestMetadata("mutableMapEntry.kt")
+            public void testMutableMapEntry() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection/mutableMapEntry.kt");
+            }
+
+            @TestMetadata("mutableSet.kt")
+            public void testMutableSet() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection/mutableSet.kt");
+            }
+
+            @TestMetadata("set.kt")
+            public void testSet() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection/set.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollectionOfInlineClass")
@@ -784,6 +1025,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             @TestMetadata("mutableSet.kt")
             public void testMutableSet() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollectionOfInlineClass/mutableSet.kt");
+            }
+
+            @TestMetadata("mutableSet2.kt")
+            public void testMutableSet2() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollectionOfInlineClass/mutableSet2.kt");
             }
 
             @TestMetadata("set.kt")
@@ -997,6 +1243,16 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             runTest("compiler/testData/codegen/bytecodeListing/specialBridges/abstractListsWithJavaBase.kt");
         }
 
+        @TestMetadata("abstractMutableCollectionOfPrimitive.kt")
+        public void testAbstractMutableCollectionOfPrimitive() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/specialBridges/abstractMutableCollectionOfPrimitive.kt");
+        }
+
+        @TestMetadata("abstractMutableListOfPrimitive.kt")
+        public void testAbstractMutableListOfPrimitive() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/specialBridges/abstractMutableListOfPrimitive.kt");
+        }
+
         @TestMetadata("abstractMutableLists.kt")
         public void testAbstractMutableLists() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/specialBridges/abstractMutableLists.kt");
@@ -1011,6 +1267,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/specialBridges"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("charSequence.kt")
+        public void testCharSequence() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/specialBridges/charSequence.kt");
+        }
+
         @TestMetadata("contains.kt")
         public void testContains() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/specialBridges/contains.kt");
@@ -1021,6 +1282,16 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             runTest("compiler/testData/codegen/bytecodeListing/specialBridges/kt41123.kt");
         }
 
+        @TestMetadata("mutableCollectionOfPrimitive.kt")
+        public void testMutableCollectionOfPrimitive() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/specialBridges/mutableCollectionOfPrimitive.kt");
+        }
+
+        @TestMetadata("mutableListOfPrimitive.kt")
+        public void testMutableListOfPrimitive() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/specialBridges/mutableListOfPrimitive.kt");
+        }
+
         @TestMetadata("noDefaultImplsOnEmptySubInterface.kt")
         public void testNoDefaultImplsOnEmptySubInterface() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/specialBridges/noDefaultImplsOnEmptySubInterface.kt");
@@ -1029,6 +1300,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         @TestMetadata("noSpecialBridgeIfPresentInSuperClass.kt")
         public void testNoSpecialBridgeIfPresentInSuperClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/specialBridges/noSpecialBridgeIfPresentInSuperClass.kt");
+        }
+
+        @TestMetadata("number.kt")
+        public void testNumber() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/specialBridges/number.kt");
         }
 
         @TestMetadata("redundantStubForSize.kt")
@@ -1056,6 +1332,21 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             @TestMetadata("genericClass.kt")
             public void testGenericClass() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeListing/specialBridges/signatures/genericClass.kt");
+            }
+
+            @TestMetadata("implementsJavaMap.kt")
+            public void testImplementsJavaMap() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/specialBridges/signatures/implementsJavaMap.kt");
+            }
+
+            @TestMetadata("implementsMap.kt")
+            public void testImplementsMap() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/specialBridges/signatures/implementsMap.kt");
+            }
+
+            @TestMetadata("implementsSortedMap.kt")
+            public void testImplementsSortedMap() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/specialBridges/signatures/implementsSortedMap.kt");
             }
 
             @TestMetadata("nonGenericClass.kt")

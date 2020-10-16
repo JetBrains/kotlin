@@ -16,11 +16,11 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrExpressionWithCopy
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.isInt
 import org.jetbrains.kotlin.ir.types.isLong
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.name.FqName
 import kotlin.math.absoluteValue
@@ -46,6 +46,14 @@ internal class StepHandler(
             val nestedInfo = expression.extensionReceiver!!.accept(visitor, null) as? ProgressionHeaderInfo
                 ?: return null
 
+            if (!nestedInfo.isLastInclusive) {
+                // To compute the new "last" value for a stepped progression (see call to getProgressionLastElement() below) where the
+                // underlying progression is last-exclusive, we must decrement the nested "last" by the step. However, this can cause
+                // underflow if "last" is MIN_VALUE. We will not support fully optimizing this scenario (e.g., `for (i in A until B step C`)
+                // for now. It will be partly optimized via DefaultProgressionHandler.
+                return null
+            }
+
             val stepArg = expression.getValueArgument(0)!!
             // We can return the nested info if its step is constant and its absolute value is the same as the step argument. Examples:
             //
@@ -67,12 +75,11 @@ internal class StepHandler(
             // We insert a similar check in the lowered form only if necessary.
             val stepType = data.stepClass.defaultType
             val stepCompFun = context.irBuiltIns.lessOrEqualFunByOperandType.getValue(data.stepClass.symbol)
-            val zeroStep = data.run { zeroStepExpression() }
             val throwIllegalStepExceptionCall = {
                 irCall(context.irBuiltIns.illegalArgumentExceptionSymbol).apply {
                     val exceptionMessage = irConcat()
                     exceptionMessage.addArgument(irString("Step must be positive, was: "))
-                    exceptionMessage.addArgument(stepArgExpression.deepCopyWithSymbols())
+                    exceptionMessage.addArgument(stepArgExpression.copy())
                     exceptionMessage.addArgument(irString("."))
                     putValueArgument(0, exceptionMessage)
                 }
@@ -82,8 +89,8 @@ internal class StepHandler(
                 stepArgValueAsLong == null -> {
                     // Step argument is not a constant. In this case, we check if step <= 0.
                     val stepNonPositiveCheck = irCall(stepCompFun).apply {
-                        putValueArgument(0, stepArgExpression.deepCopyWithSymbols())
-                        putValueArgument(1, zeroStep.deepCopyWithSymbols())
+                        putValueArgument(0, stepArgExpression.copy())
+                        putValueArgument(1, data.run { zeroStepExpression() })
                     }
                     irIfThen(
                         context.irBuiltIns.unitType,
@@ -111,7 +118,8 @@ internal class StepHandler(
                 ProgressionDirection.INCREASING -> stepArgExpression
                 ProgressionDirection.DECREASING -> {
                     if (stepArgVar == null) {
-                        stepArgExpression.negate()
+                        stepNegation = scope.createTmpVariable(stepArgExpression.copy().negate())
+                        irGet(stepNegation)
                     } else {
                         // Step is already stored in a variable, just negate it.
                         stepNegation = irSet(stepArgVar.symbol, irGet(stepArgVar).negate())
@@ -125,8 +133,8 @@ internal class StepHandler(
                     val (tmpNestedStepVar, nestedStepExpression) = createTemporaryVariableIfNecessary(nestedStep, "nestedStep")
                     nestedStepVar = tmpNestedStepVar
                     val nestedStepNonPositiveCheck = irCall(stepCompFun).apply {
-                        putValueArgument(0, nestedStepExpression)
-                        putValueArgument(1, zeroStep.deepCopyWithSymbols())
+                        putValueArgument(0, nestedStepExpression.copy())
+                        putValueArgument(1, data.run { zeroStepExpression() })
                     }
                     if (stepArgVar == null) {
                         // Create a temporary variable for the possibly-negated step, so we don't have to re-check every time step is used.
@@ -134,8 +142,8 @@ internal class StepHandler(
                             irIfThenElse(
                                 stepType,
                                 nestedStepNonPositiveCheck,
-                                stepArgExpression.deepCopyWithSymbols().negate(),
-                                stepArgExpression.deepCopyWithSymbols()
+                                stepArgExpression.copy().negate(),
+                                stepArgExpression.copy()
                             ),
                             nameHint = "maybeNegatedStep"
                         )
@@ -264,25 +272,24 @@ internal class StepHandler(
 
             return ProgressionHeaderInfo(
                 data,
-                first = nestedFirstExpression,
+                first = nestedFirstExpression.copy(),
                 last = recalculatedLast,
-                step = finalStepExpression,
+                step = finalStepExpression.copy(),
                 isReversed = nestedInfo.isReversed,
                 additionalStatements = additionalStatements,
-                additionalNotEmptyCondition = nestedInfo.additionalNotEmptyCondition,
                 direction = nestedInfo.direction
             )
         }
 
     private fun DeclarationIrBuilder.callGetProgressionLastElementIfNecessary(
         progressionType: ProgressionType,
-        first: IrExpression,
-        last: IrExpression,
-        step: IrExpression
+        first: IrExpressionWithCopy,
+        last: IrExpressionWithCopy,
+        step: IrExpressionWithCopy
     ): IrExpression {
         // Calling getProgressionLastElement() is not needed if step == 1 or -1; the "last" value is unchanged in such cases.
         if (step.constLongValue?.absoluteValue == 1L) {
-            return last
+            return last.copy()
         }
 
         // Call `getProgressionLastElement(first, last, step)`. The following overloads are present in the stdlib:
@@ -297,17 +304,17 @@ internal class StepHandler(
                 // Bounds are signed for unsigned progressions but `getProgressionLastElement` expects unsigned.
                 // The return value is finally converted back to signed since it will be assigned back to `last`.
                 irCall(getProgressionLastElementFun).apply {
-                    putValueArgument(0, first.deepCopyWithSymbols().asElementType().asUnsigned())
-                    putValueArgument(1, last.deepCopyWithSymbols().asElementType().asUnsigned())
-                    putValueArgument(2, step.deepCopyWithSymbols().asStepType())
+                    putValueArgument(0, first.copy().asElementType().asUnsigned())
+                    putValueArgument(1, last.copy().asElementType().asUnsigned())
+                    putValueArgument(2, step.copy().asStepType())
                 }.asSigned()
             } else {
                 irCall(getProgressionLastElementFun).apply {
                     // Step type is used for casting because it works for all signed progressions. In particular,
                     // getProgressionLastElement(Int, Int, Int) is called for CharProgression, which uses an Int step.
-                    putValueArgument(0, first.deepCopyWithSymbols().asStepType())
-                    putValueArgument(1, last.deepCopyWithSymbols().asStepType())
-                    putValueArgument(2, step.deepCopyWithSymbols().asStepType())
+                    putValueArgument(0, first.copy().asStepType())
+                    putValueArgument(1, last.copy().asStepType())
+                    putValueArgument(2, step.copy().asStepType())
                 }
             }
         }

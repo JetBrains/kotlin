@@ -11,9 +11,9 @@ sealed class FirDeclarationOrigin(val fromSupertypes: Boolean = false) {
     object Java : FirDeclarationOrigin()
     object Synthetic : FirDeclarationOrigin()
     object SamConstructor : FirDeclarationOrigin()
-    object FakeOverride : FirDeclarationOrigin(fromSupertypes = true)
     object Enhancement : FirDeclarationOrigin()
     object ImportedFromObject : FirDeclarationOrigin()
+    object SubstitutionOverride : FirDeclarationOrigin(fromSupertypes = true)
     object IntersectionOverride : FirDeclarationOrigin(fromSupertypes = true)
     object Delegated : FirDeclarationOrigin()
 

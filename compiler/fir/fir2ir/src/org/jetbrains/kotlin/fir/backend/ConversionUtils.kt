@@ -230,7 +230,7 @@ internal fun FirSimpleFunction.generateOverriddenFunctionSymbols(
     scopeSession: ScopeSession,
     declarationStorage: Fir2IrDeclarationStorage
 ): List<IrSimpleFunctionSymbol> {
-    val scope = containingClass.unsubstitutedScope(session, scopeSession)
+    val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
     scope.processFunctionsByName(name) {}
     val overriddenSet = mutableSetOf<IrSimpleFunctionSymbol>()
     scope.processDirectlyOverriddenFunctions(symbol) {
@@ -251,7 +251,7 @@ internal fun FirProperty.generateOverriddenAccessorSymbols(
     scopeSession: ScopeSession,
     declarationStorage: Fir2IrDeclarationStorage
 ): List<IrSimpleFunctionSymbol> {
-    val scope = containingClass.unsubstitutedScope(session, scopeSession)
+    val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
     scope.processPropertiesByName(name) {}
     val overriddenSet = mutableSetOf<IrSimpleFunctionSymbol>()
     scope.processDirectlyOverriddenProperties(symbol) {
@@ -266,47 +266,6 @@ internal fun FirProperty.generateOverriddenAccessorSymbols(
         ProcessorAction.NEXT
     }
     return overriddenSet.toList()
-}
-
-fun isOverriding(
-    irBuiltIns: IrBuiltIns,
-    target: IrDeclaration,
-    superCandidate: IrDeclaration
-): Boolean {
-    val typeCheckerContext = IrTypeCheckerContext(irBuiltIns) as AbstractTypeCheckerContext
-    fun equalTypes(first: IrType, second: IrType): Boolean {
-        if (first is IrErrorType || second is IrErrorType) return false
-        return AbstractTypeChecker.equalTypes(
-            typeCheckerContext, first, second
-        ) ||
-                // TODO: should pass type parameter cache, and make sure target type is indeed a matched type argument.
-                second.classifierOrNull is IrTypeParameterSymbol
-
-    }
-
-    return when {
-        target is IrFunction && superCandidate is IrFunction -> {
-            // Not checking the return type (they should match each other if everything other match, otherwise it's a compilation error)
-            target.name == superCandidate.name &&
-                    target.extensionReceiverParameter?.type?.let {
-                        val superCandidateReceiverType = superCandidate.extensionReceiverParameter?.type
-                        superCandidateReceiverType != null && equalTypes(it, superCandidateReceiverType)
-                    } != false &&
-                    target.valueParameters.size == superCandidate.valueParameters.size &&
-                    target.valueParameters.zip(superCandidate.valueParameters).all { (targetParameter, superCandidateParameter) ->
-                        equalTypes(targetParameter.type, superCandidateParameter.type)
-                    }
-        }
-        target is IrField && superCandidate is IrField -> {
-            // Not checking the field type (they should match each other if everything other match, otherwise it's a compilation error)
-            target.name == superCandidate.name
-        }
-        target is IrProperty && superCandidate is IrProperty -> {
-            // Not checking the property type (they should match each other if names match, otherwise it's a compilation error)
-            target.name == superCandidate.name
-        }
-        else -> false
-    }
 }
 
 private val nameToOperationConventionOrigin = mutableMapOf(
@@ -389,7 +348,7 @@ fun Fir2IrComponents.createSafeCallConstruction(
     val startOffset = expressionOnNotNull.startOffset
     val endOffset = expressionOnNotNull.endOffset
 
-    val resultType = expressionOnNotNull.type.let { if (isReceiverNullable) it.makeNullable() else it }
+    val resultType = expressionOnNotNull.type.makeNullable()
     return IrBlockImpl(startOffset, endOffset, resultType, IrStatementOrigin.SAFE_CALL).apply {
         statements += receiverVariable
         statements += IrWhenImpl(startOffset, endOffset, resultType).apply {

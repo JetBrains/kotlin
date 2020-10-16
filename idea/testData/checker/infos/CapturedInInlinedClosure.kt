@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 <info descr="null">inline</info> fun <T> run(f: () -> T) = f()
 fun run2(f: () -> Unit) = f()
 

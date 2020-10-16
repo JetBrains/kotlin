@@ -35,6 +35,16 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
                 .sure { "No testData file exists: ${wholeFile.nameWithoutExtension}.txt" }
 
         KotlinTestUtils.assertEqualsToFile(txtFile, actualTxt)
+
+        if (backend.isIR) {
+            val jvmGoldenFile = File(wholeFile.parentFile, wholeFile.nameWithoutExtension + ".txt")
+            val jvmIrGoldenFile = File(wholeFile.parentFile, wholeFile.nameWithoutExtension + "_ir.txt")
+            if (jvmGoldenFile.exists() && jvmIrGoldenFile.exists()) {
+                if (jvmGoldenFile.readText() == jvmIrGoldenFile.readText()) {
+                    fail("JVM and JVM_IR golden files are identical. Remove $jvmIrGoldenFile.")
+                }
+            }
+        }
     }
 
     private fun isWithSignatures(wholeFile: File): Boolean =

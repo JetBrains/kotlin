@@ -269,7 +269,7 @@ class FirTypeIntersectionScope private constructor(
                 isIntersectionOverride = true
             )
         val mostSpecificFunction = mostSpecific.fir
-        FirClassSubstitutionScope.createCopyForFirFunction(
+        FirFakeOverrideGenerator.createCopyForFirFunction(
             newSymbol,
             mostSpecificFunction, session, FirDeclarationOrigin.IntersectionOverride,
             mostSpecificFunction.isExpect,
@@ -286,7 +286,7 @@ class FirTypeIntersectionScope private constructor(
     ): FirPropertySymbol {
         val newSymbol = FirPropertySymbol(mostSpecific.callableId, mostSpecific.isFakeOverride, mostSpecific, isIntersectionOverride = true)
         val mostSpecificProperty = mostSpecific.fir
-        FirClassSubstitutionScope.createCopyForFirProperty(
+        FirFakeOverrideGenerator.createCopyForFirProperty(
             newSymbol, mostSpecificProperty, mostSpecificProperty.session,
             newModality = newModality,
             newVisibility = newVisibility,

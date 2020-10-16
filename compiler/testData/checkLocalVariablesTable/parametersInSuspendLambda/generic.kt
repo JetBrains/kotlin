@@ -15,6 +15,7 @@ suspend fun test() = foo(A("OK", 1)) { (x_param, y_param) ->
 // METHOD : GenericKt$test$2.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
 
 // JVM_TEMPLATES
+// VARIABLE : NAME=$dstr$x_param$y_param TYPE=LA; INDEX=2
 // VARIABLE : NAME=x_param TYPE=Ljava/lang/String; INDEX=3
 // VARIABLE : NAME=y_param TYPE=I INDEX=4
 // VARIABLE : NAME=this TYPE=LGenericKt$test$2; INDEX=0

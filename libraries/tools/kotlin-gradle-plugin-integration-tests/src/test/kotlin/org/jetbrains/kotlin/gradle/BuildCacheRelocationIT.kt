@@ -25,11 +25,13 @@ import org.junit.runners.Parameterized
 import java.io.File
 import kotlin.test.assertEquals
 
+private val DEFAULT_GRADLE_VERSION = GradleVersionRequired.AtLeast("5.6.4")
+
 @RunWith(Parameterized::class)
 class BuildCacheRelocationIT : BaseGradleIT() {
 
     override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("5.6.4")
+        get() = DEFAULT_GRADLE_VERSION
 
     override fun defaultBuildOptions(): BuildOptions =
         super.defaultBuildOptions().copy(
@@ -51,7 +53,7 @@ class BuildCacheRelocationIT : BaseGradleIT() {
 
         val (firstProject, secondProject) = (0..1).map { id ->
             workingDir = workingDirs[id]
-            Project(projectName, directoryPrefix = projectDirectoryPrefix).apply {
+            Project(projectName, directoryPrefix = projectDirectoryPrefix, gradleVersionRequirement = gradleVersionRequired).apply {
                 setupWorkingDir()
                 initProject()
                 prepareLocalBuildCache(localBuildCacheDirectory)
@@ -69,7 +71,13 @@ class BuildCacheRelocationIT : BaseGradleIT() {
             }
 
             workingDir = workingDirs[1]
-            secondProject.build(*testCase.taskToExecute) {
+            val alternateBuildEnvOptions = if (withAnotherGradleHome) {
+                val alternateGradleHome = File(firstProject.projectDir.parentFile, "gradleUserHome")
+                defaultBuildOptions().copy(gradleUserHome = alternateGradleHome)
+            } else {
+                defaultBuildOptions()
+            }
+            secondProject.build(*testCase.taskToExecute, options = alternateBuildEnvOptions) {
                 assertSuccessful()
                 val secondOutputHashes = hashOutputFiles(outputRoots)
                 assertEquals(firstOutputHashes, secondOutputHashes)
@@ -86,8 +94,10 @@ class BuildCacheRelocationIT : BaseGradleIT() {
         val cacheableTaskNames: List<String>,
         val projectDirectoryPrefix: String? = null,
         val outputRootPaths: List<String> = listOf("build"),
-        val initProject: Project.() -> Unit = { },
-        val taskToExecute: Array<String>
+        val initProject: Project.() -> Unit = {},
+        val taskToExecute: Array<String>,
+        val withAnotherGradleHome: Boolean = false,
+        val gradleVersionRequired: GradleVersionRequired = DEFAULT_GRADLE_VERSION
     ) {
 
         override fun toString(): String = (projectDirectoryPrefix?.plus("/") ?: "") + projectName
@@ -158,7 +168,24 @@ class BuildCacheRelocationIT : BaseGradleIT() {
                      },
                      outputRootPaths = listOf("app/build"),
                      initProject = { File(projectDir, "app/build.gradle").appendText("\nkapt.useBuildCache = true") }
-            )
+            ),
+            TestCase("native-build-cache",
+                     taskToExecute = arrayOf("build-cache-lib:publish", "build-cache-app:assemble"),
+                     cacheableTaskNames = listOf("build-cache-lib:compileKotlinHost", "build-cache-app:compileKotlinHost",
+                                                 "build-cache-app:lib-module:compileKotlinHost",
+                                                 "build-cache-app:linkDebugStaticHost", "build-cache-app:linkDebugSharedHost"),
+                     outputRootPaths = listOf("build-cache-app/build", "build-cache-lib/build", "build-cache-app/lib-module/build"),
+                     initProject = {
+                         val localRepoUri = projectDir.resolve("repo").toURI()
+                         val buildKtsApp = projectDir.resolve("build-cache-app").resolve("build.gradle.kts")
+                         val buildKtsLib = projectDir.resolve("build-cache-lib").resolve("build.gradle.kts")
+                         buildKtsApp.appendText("\nrepositories { maven { setUrl(\"$localRepoUri\") } }")
+                         buildKtsApp.modify(::transformBuildScriptWithPluginsDsl)
+                         buildKtsLib.modify(::transformBuildScriptWithPluginsDsl)
+                     },
+                     withAnotherGradleHome = true,
+                     gradleVersionRequired = GradleVersionRequired.FOR_MPP_SUPPORT
+            ),
         ).map { arrayOf(it) }
     }
 

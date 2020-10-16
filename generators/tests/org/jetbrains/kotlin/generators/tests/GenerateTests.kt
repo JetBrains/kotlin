@@ -84,6 +84,7 @@ import org.jetbrains.kotlin.idea.filters.AbstractKotlinExceptionFilterTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyResolveTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirMultiModuleResolveTest
 import org.jetbrains.kotlin.idea.fir.AbstractKtDeclarationAndFirDeclarationEqualityChecker
+import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyDeclarationResolveTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirMultiModuleLazyResolveTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
 import org.jetbrains.kotlin.idea.frontend.api.fir.AbstractResolveCallTest
@@ -1035,6 +1036,9 @@ fun main(args: Array<String>) {
             testClass<AbstractFirMultiModuleLazyResolveTest> {
                 model("multiModuleLazyResolve", recursive = false, extension = null)
             }
+            testClass<AbstractFirLazyDeclarationResolveTest> {
+                model("lazyResolve")
+            }
         }
 
         testGroup("idea/idea-fir/tests", "idea") {
@@ -1047,6 +1051,12 @@ fun main(args: Array<String>) {
         testGroup("idea/idea-fir-performance-tests/tests", "idea") {
             testClass<AbstractFirHighlightingPerformanceTest> {
                 model("testData/highlighter")
+            }
+        }
+
+        testGroup("idea/idea-fir-performance-tests/tests", "idea/idea-completion/testData") {
+            testClass<AbstractHighLevelPerformanceBasicCompletionHandlerTest> {
+                model("handlers/basic", testMethod = "doPerfTest", pattern = KT_WITHOUT_DOTS_IN_NAME)
             }
         }
 

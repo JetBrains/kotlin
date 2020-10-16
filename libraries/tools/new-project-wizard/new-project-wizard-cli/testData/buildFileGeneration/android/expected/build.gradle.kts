@@ -3,9 +3,7 @@ buildscript {
         gradlePluginPortal()
         jcenter()
         google()
-        maven {
-            url = uri("KOTLIN_REPO")
-        }
+        maven { url = uri("KOTLIN_REPO") }
     }
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:KOTLIN_VERSION")
@@ -16,9 +14,11 @@ buildscript {
 group = "testGroupId"
 version = "1.0-SNAPSHOT"
 
-repositories {
-    mavenCentral()
-    maven {
-        url = uri("KOTLIN_REPO")
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        mavenCentral()
+        maven { url = uri("KOTLIN_REPO") }
     }
 }

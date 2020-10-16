@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.config
 
-import org.jetbrains.kotlin.utils.Jsr305State
+import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
 import kotlin.reflect.KProperty
 
 object JvmAnalysisFlags {
@@ -13,7 +13,7 @@ object JvmAnalysisFlags {
     val strictMetadataVersionSemantics by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
-    val jsr305 by Delegates.Jsr305StateWarnByDefault
+    val javaTypeEnhancementState by AnalysisFlag.Delegates.JavaTypeEnhancementStateWarnByDefault
 
     @JvmStatic
     val jvmDefaultMode by Delegates.JvmDefaultModeDisabledByDefault
@@ -35,8 +35,8 @@ object JvmAnalysisFlags {
 
     private object Delegates {
         object Jsr305StateWarnByDefault {
-            operator fun provideDelegate(instance: Any?, property: KProperty<*>): AnalysisFlag.Delegate<Jsr305State> =
-                AnalysisFlag.Delegate(property.name, Jsr305State.DEFAULT)
+            operator fun provideDelegate(instance: Any?, property: KProperty<*>): AnalysisFlag.Delegate<JavaTypeEnhancementState> =
+                AnalysisFlag.Delegate(property.name, JavaTypeEnhancementState.DEFAULT)
         }
 
         object JvmDefaultModeDisabledByDefault {

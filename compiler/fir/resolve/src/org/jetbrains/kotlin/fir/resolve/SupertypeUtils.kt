@@ -104,13 +104,13 @@ fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
             val platformTypeParameters = platformClass.typeParameters
             val platformSubstitution = createSubstitution(platformTypeParameters, this, session)
             FirClassSubstitutionScope(
-                session, useSiteMemberScope, builder, originalSubstitution + platformSubstitution,
-                skipPrivateMembers = true, derivedClassId = derivedClassId
+                session, useSiteMemberScope, originalSubstitution + platformSubstitution, skipPrivateMembers = true,
+                derivedClassId = derivedClassId
             )
         } else {
             FirClassSubstitutionScope(
-                session, useSiteMemberScope, builder, originalSubstitution,
-                skipPrivateMembers = true, derivedClassId = derivedClassId
+                session, useSiteMemberScope, originalSubstitution, skipPrivateMembers = true,
+                derivedClassId = derivedClassId
             )
         }
     }

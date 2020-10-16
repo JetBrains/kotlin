@@ -303,4 +303,30 @@ public interface IrOperationOrBuilder extends
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionExpression function_expression = 33;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionExpression getFunctionExpression();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorExpression error_expression = 34;</code>
+   *
+   * <pre>
+   * Error code
+   * </pre>
+   */
+  boolean hasErrorExpression();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorExpression error_expression = 34;</code>
+   *
+   * <pre>
+   * Error code
+   * </pre>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorExpression getErrorExpression();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorCallExpression error_call_expression = 35;</code>
+   */
+  boolean hasErrorCallExpression();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorCallExpression error_call_expression = 35;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorCallExpression getErrorCallExpression();
 }

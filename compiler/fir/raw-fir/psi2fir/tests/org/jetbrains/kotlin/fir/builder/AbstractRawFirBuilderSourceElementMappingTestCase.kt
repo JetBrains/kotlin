@@ -39,7 +39,7 @@ abstract class AbstractRawFirBuilderSourceElementMappingTestCase : AbstractRawFi
             }
             elements.single() as KtElement
         }
-        val firFile = ktFile.toFirFile(stubMode = false)
+        val firFile = ktFile.toFirFile()
         val foundElement = run {
             val foundElements = FindElementVisitor.find(firFile, selectedExpression)
             if (foundElements.size != 1) {

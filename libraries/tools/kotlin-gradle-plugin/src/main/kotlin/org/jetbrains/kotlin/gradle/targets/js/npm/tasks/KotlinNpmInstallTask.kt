@@ -24,7 +24,7 @@ open class KotlinNpmInstallTask : DefaultTask() {
         }
     }
 
-    private val nodeJs get() = NodeJsRootPlugin.apply(project.rootProject)
+    private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
     private val resolutionManager get() = nodeJs.npmResolutionManager
 
     @Input

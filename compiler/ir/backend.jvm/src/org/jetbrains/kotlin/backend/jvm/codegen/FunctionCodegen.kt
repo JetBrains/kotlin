@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.codegen.mangleNameIfNeeded
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.visitAnnotableParameterCount
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
@@ -70,16 +70,7 @@ class FunctionCodegen(
             generateParameterNames(irFunction, methodVisitor, signature, context.state)
         }
 
-        if (irFunction.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER &&
-            irFunction.origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR &&
-            irFunction.origin != IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER &&
-            irFunction.origin != IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER &&
-            irFunction.origin != IrDeclarationOrigin.BRIDGE &&
-            irFunction.origin != IrDeclarationOrigin.BRIDGE_SPECIAL &&
-            irFunction.origin != JvmLoweredDeclarationOrigin.ABSTRACT_BRIDGE_STUB &&
-            irFunction.origin != JvmLoweredDeclarationOrigin.TO_ARRAY &&
-            irFunction.origin != IrDeclarationOrigin.IR_BUILTINS_STUB
-        ) {
+        if (irFunction.origin !in methodOriginsWithoutAnnotations) {
             val skipNullabilityAnnotations = flags and Opcodes.ACC_PRIVATE != 0 || flags and Opcodes.ACC_SYNTHETIC != 0
             object : AnnotationCodegen(classCodegen, context, skipNullabilityAnnotations) {
                 override fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor {
@@ -280,6 +271,21 @@ class FunctionCodegen(
                 }.genAnnotations(annotated, parameterSignature.asmType, annotated.type)
             }
         }
+    }
+
+    companion object {
+        internal val methodOriginsWithoutAnnotations =
+            setOf(
+                IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
+                JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
+                IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
+                IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER,
+                IrDeclarationOrigin.BRIDGE,
+                IrDeclarationOrigin.BRIDGE_SPECIAL,
+                JvmLoweredDeclarationOrigin.ABSTRACT_BRIDGE_STUB,
+                JvmLoweredDeclarationOrigin.TO_ARRAY,
+                IrDeclarationOrigin.IR_BUILTINS_STUB,
+            )
     }
 }
 

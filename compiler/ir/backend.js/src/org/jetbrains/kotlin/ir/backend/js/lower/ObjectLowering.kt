@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
@@ -47,6 +44,7 @@ class ObjectDeclarationLowering(
             name = Name.identifier(declaration.name.asString() + "_instance")
             type = declaration.defaultType.makeNullable()
             isStatic = true
+            origin = IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE
         }.apply {
             parent = declaration.parent
             initializer = null  // Initialized with 'undefined'

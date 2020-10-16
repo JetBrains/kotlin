@@ -35,6 +35,7 @@ open class KotlinWebpack
 @Inject
 constructor(
     @Internal
+    @Transient
     override val compilation: KotlinJsCompilation
 ) : DefaultTask(), RequiresNpmDependencies {
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
@@ -213,6 +214,8 @@ constructor(
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         @Internal get() = createRunner().config.getRequiredDependencies(versions)
 
+    private val isContinuous = project.gradle.startParameter.isContinuous
+
     @TaskAction
     fun doExecute() {
         nodeJs.npmResolutionManager.checkRequiredDependencies(this)
@@ -224,13 +227,11 @@ constructor(
             return
         }
 
-        if (project.gradle.startParameter.isContinuous) {
-            val continuousRunner = runner
-
+        if (isContinuous) {
             val deploymentRegistry = services.get(DeploymentRegistry::class.java)
             val deploymentHandle = deploymentRegistry.get("webpack", Handle::class.java)
             if (deploymentHandle == null) {
-                deploymentRegistry.start("webpack", DeploymentRegistry.ChangeBehavior.BLOCK, Handle::class.java, continuousRunner)
+                deploymentRegistry.start("webpack", DeploymentRegistry.ChangeBehavior.BLOCK, Handle::class.java, runner)
             }
         } else {
             runner.copy(

@@ -291,7 +291,7 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
                             if (view.isInline) JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE
                             else JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
                     }.apply {
-                        annotations += view.annotations.map { it.deepCopyWithSymbols(this) }
+                        copyAnnotationsFrom(view)
                         copyParameterDeclarationsFrom(view)
                         copyAttributes(view)
                         generateErrorForInlineBody()

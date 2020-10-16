@@ -31,6 +31,7 @@ internal class FirDefaultSetterValueParameter(
     override val session: FirSession,
     override var resolvePhase: FirResolvePhase,
     override val origin: FirDeclarationOrigin,
+    override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
     override var receiverTypeRef: FirTypeRef?,
     override val symbol: FirVariableSymbol<FirValueParameter>,
@@ -47,7 +48,6 @@ internal class FirDefaultSetterValueParameter(
     override val isNoinline: Boolean,
     override val isVararg: Boolean,
 ) : FirValueParameter() {
-    override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override val name: Name = Name.identifier("value")
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
 
@@ -131,6 +131,10 @@ internal class FirDefaultSetterValueParameter(
 
     override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {
         receiverTypeRef = newReceiverTypeRef
+    }
+
+    override fun replaceInitializer(newInitializer: FirExpression?) {
+        initializer = newInitializer
     }
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {

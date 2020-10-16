@@ -149,7 +149,7 @@ fun IrValueParameter.copyTo(
         descriptor.bind(it)
         it.parent = irFunction
         it.defaultValue = defaultValueCopy
-        it.annotations = annotations.map { it.deepCopyWithSymbols() }
+        it.copyAnnotationsFrom(this)
     }
 }
 
@@ -227,6 +227,10 @@ private fun IrTypeParameter.copySuperTypesFrom(source: IrTypeParameter, srcToDst
     target.superTypes = source.superTypes.map {
         it.remapTypeParameters(sourceParent, targetParent, srcToDstParameterMap)
     }
+}
+
+fun IrMutableAnnotationContainer.copyAnnotationsFrom(source: IrAnnotationContainer) {
+    annotations += source.annotations.map { it.deepCopyWithSymbols(this as? IrDeclarationParent) }
 }
 
 // Copy value parameters, dispatch receiver, and extension receiver from source to value parameters of this function.

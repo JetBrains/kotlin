@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
+import org.jetbrains.kotlin.ir.types.isInt
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
@@ -35,6 +36,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, private val irFactory: IrFactory) {
     private val storageManager = LockBasedStorageManager("inline-class-replacements")
     private val propertyMap = mutableMapOf<IrPropertySymbol, IrProperty>()
+
+    internal val originalFunctionForStaticReplacement: MutableMap<IrFunction, IrFunction> = HashMap()
 
     /**
      * Get a replacement for a function or a constructor.
@@ -57,11 +60,11 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, pr
 
                 // Mangle all functions in the body of an inline class
                 it.parent.safeAs<IrClass>()?.isInline == true ->
-                    when (it.origin) {
-                        IrDeclarationOrigin.IR_BUILTINS_STUB ->
-                            createMethodReplacement(it)
-                        IrDeclarationOrigin.BRIDGE_SPECIAL ->
+                    when {
+                        it.isRemoveAtSpecialBuiltinStub() ->
                             null
+                        it.origin == IrDeclarationOrigin.IR_BUILTINS_STUB ->
+                            createMethodReplacement(it)
                         else ->
                             createStaticReplacement(it)
                     }
@@ -77,6 +80,12 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, pr
                     null
             }
         }
+
+    private fun IrFunction.isRemoveAtSpecialBuiltinStub() =
+        origin == IrDeclarationOrigin.IR_BUILTINS_STUB &&
+                name.asString() == "remove" &&
+                valueParameters.size == 1 &&
+                valueParameters[0].type.isInt()
 
     /**
      * Get the box function for an inline class. Concretely, this is a synthetic
@@ -159,6 +168,8 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, pr
 
     private fun createStaticReplacement(function: IrFunction): IrSimpleFunction =
         buildReplacement(function, JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT, noFakeOverride = true) {
+            originalFunctionForStaticReplacement[this] = function
+
             val newValueParameters = mutableListOf<IrValueParameter>()
             if (function.dispatchReceiverParameter != null) {
                 // FAKE_OVERRIDEs have broken dispatch receivers
@@ -220,7 +231,7 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, pr
             val propertySymbol = function.correspondingPropertySymbol
             if (propertySymbol != null) {
                 val property = propertyMap.getOrPut(propertySymbol) {
-                    irFactory.buildProperty() {
+                    irFactory.buildProperty {
                         name = propertySymbol.owner.name
                         updateFrom(propertySymbol.owner)
                     }.apply {

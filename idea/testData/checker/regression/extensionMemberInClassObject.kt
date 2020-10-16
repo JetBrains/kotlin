@@ -1,5 +1,3 @@
-// FIR_COMPARISON
-
 interface Bar {
     fun <T> T.bar() {}
 }

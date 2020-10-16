@@ -98,7 +98,7 @@ dependencies {
     implementation(kotlin("stdlib", embeddedKotlinVersion))
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
     implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.20")
-    implementation("com.gradle.publish:plugin-publish-plugin:0.11.0")
+    implementation("com.gradle.publish:plugin-publish-plugin:0.12.0")
 
     implementation("net.rubygrapefruit:native-platform:${property("versions.native-platform")}")
     implementation("net.rubygrapefruit:native-platform-windows-amd64:${property("versions.native-platform")}")

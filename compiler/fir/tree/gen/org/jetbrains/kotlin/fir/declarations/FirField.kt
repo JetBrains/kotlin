@@ -51,6 +51,8 @@ abstract class FirField : FirVariable<FirField>(), FirTypeParametersOwner, FirCa
 
     abstract override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
 
+    abstract override fun replaceInitializer(newInitializer: FirExpression?)
+
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirField
 
     abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirField

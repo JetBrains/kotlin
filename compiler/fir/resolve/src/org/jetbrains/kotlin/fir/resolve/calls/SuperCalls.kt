@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.unwrapSubstitutionOverrides
@@ -119,18 +120,20 @@ private inline fun BodyResolveComponents.resolveSupertypesByMembers(
 }
 
 @OptIn(ExperimentalStdlibApi::class)
-private fun BodyResolveComponents.getFunctionMembers(type: ConeKotlinType, name: Name): Collection<FirCallableMemberDeclaration<*>> = buildList {
-    type.scope(session, scopeSession)?.processFunctionsByName(name) {
-        addIfNotNull(it.fir as? FirSimpleFunction)
+private fun BodyResolveComponents.getFunctionMembers(type: ConeKotlinType, name: Name): Collection<FirCallableMemberDeclaration<*>> =
+    buildList {
+        type.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing)?.processFunctionsByName(name) {
+            addIfNotNull(it.fir as? FirSimpleFunction)
+        }
     }
-}
 
 @OptIn(ExperimentalStdlibApi::class)
-private fun BodyResolveComponents.getPropertyMembers(type: ConeKotlinType, name: Name): Collection<FirCallableMemberDeclaration<*>> = buildList {
-    type.scope(session, scopeSession)?.processPropertiesByName(name) {
-        addIfNotNull(it.fir as? FirProperty)
+private fun BodyResolveComponents.getPropertyMembers(type: ConeKotlinType, name: Name): Collection<FirCallableMemberDeclaration<*>> =
+    buildList {
+        type.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing)?.processPropertiesByName(name) {
+            addIfNotNull(it.fir as? FirProperty)
+        }
     }
-}
 
 
 private fun BodyResolveComponents.isConcreteMember(supertype: ConeKotlinType, member: FirCallableMemberDeclaration<*>): Boolean {

@@ -499,7 +499,7 @@ open class PackageWriter(stringTable: StringTable, contextExtensions: List<Write
 
 open class ModuleFragmentWriter(stringTable: StringTable, contextExtensions: List<WriteContextExtension> = emptyList()) :
     KmModuleFragmentVisitor() {
-    protected val t = ProtoBuf.PackageFragment.newBuilder()
+    protected val t = ProtoBuf.PackageFragment.newBuilder()!!
     protected val c: WriteContext = WriteContext(stringTable, contextExtensions)
 
     override fun visitPackage(): KmPackageVisitor? = object : PackageWriter(c.strings, c.contextExtensions) {

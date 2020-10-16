@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -85,7 +87,10 @@ class FirTypeResolveTransformer(
     }
 
     override fun transformEnumEntry(enumEntry: FirEnumEntry, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-        return transformDeclaration(enumEntry, data)
+        enumEntry.transformReturnTypeRef(this, data)
+        enumEntry.transformTypeParameters(this, data)
+        enumEntry.transformAnnotations(this, data)
+        return enumEntry.compose()
     }
 
     override fun transformProperty(property: FirProperty, data: Nothing?): CompositeTransformResult<FirDeclaration> {
@@ -97,6 +102,7 @@ class FirTypeResolveTransformer(
                 .transformReceiverTypeRef(this, data)
                 .transformGetter(this, data)
                 .transformSetter(this, data)
+                .transformAnnotations(this, data)
             if (property.isFromVararg == true) {
                 property.transformTypeToArrayType()
                 property.getter?.transformReturnTypeRef(StoreType, property.returnTypeRef)
@@ -155,12 +161,29 @@ class FirTypeResolveTransformer(
     }
 
     override fun transformValueParameter(valueParameter: FirValueParameter, data: Nothing?): CompositeTransformResult<FirStatement> {
-        val result = transformDeclaration(valueParameter, data).single as FirValueParameter
-        result.transformVarargTypeToArrayType()
-        return result.compose()
+        valueParameter.transformReturnTypeRef(this, data)
+        valueParameter.transformAnnotations(this, data)
+        valueParameter.transformVarargTypeToArrayType()
+        return valueParameter.compose()
     }
 
     override fun transformBlock(block: FirBlock, data: Nothing?): CompositeTransformResult<FirStatement> {
         return block.compose()
+    }
+
+    override fun transformDelegatedConstructorCall(
+        delegatedConstructorCall: FirDelegatedConstructorCall,
+        data: Nothing?
+    ): CompositeTransformResult<FirStatement> {
+        delegatedConstructorCall.replaceConstructedTypeRef(
+            delegatedConstructorCall.constructedTypeRef.transform<FirTypeRef, Nothing?>(this, data).single
+        )
+        delegatedConstructorCall.transformCalleeReference(this, data)
+        return delegatedConstructorCall.compose()
+    }
+
+    override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: Nothing?): CompositeTransformResult<FirStatement> {
+        annotationCall.transformAnnotationTypeRef(this, data)
+        return annotationCall.compose()
     }
 }

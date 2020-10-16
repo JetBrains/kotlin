@@ -112,6 +112,10 @@ class FirJavaField @FirImplementationDetail constructor(
         return this
     }
 
+    override fun replaceInitializer(newInitializer: FirExpression?) {
+        initializer = newInitializer
+    }
+
     override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirField {
         typeParameters.transformInplace(transformer, data)
         return this

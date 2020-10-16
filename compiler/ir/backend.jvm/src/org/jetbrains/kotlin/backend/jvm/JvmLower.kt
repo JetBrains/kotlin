@@ -102,6 +102,12 @@ internal val propertiesPhase = makeIrFilePhase(
     stickyPostconditions = setOf((PropertiesLowering)::checkNoProperties)
 )
 
+internal val IrClass.isGeneratedLambdaClass: Boolean
+    get() = origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL ||
+            origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA ||
+            origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL ||
+            origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
+
 internal val localDeclarationsPhase = makeIrFilePhase(
     { context ->
         LocalDeclarationsLowering(
@@ -111,12 +117,10 @@ internal val localDeclarationsPhase = makeIrFilePhase(
                     NameUtils.sanitizeAsJavaIdentifier(super.localName(declaration))
             },
             object : VisibilityPolicy {
+                // Note: any condition that results in non-`LOCAL` visibility here should be duplicated in `JvmLocalClassPopupLowering`,
+                // else it won't detect the class as local.
                 override fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): DescriptorVisibility =
-                    if (declaration.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL ||
-                        declaration.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA ||
-                        declaration.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL ||
-                        declaration.origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
-                    ) {
+                    if (declaration.isGeneratedLambdaClass) {
                         scopedVisibility(inInlineFunctionScope)
                     } else {
                         declaration.visibility
@@ -335,6 +339,7 @@ private val jvmFilePhases = listOf(
 
     interfacePhase,
     inheritedDefaultMethodsOnClassesPhase,
+    replaceDefaultImplsOverriddenSymbolsPhase,
     interfaceSuperCallsPhase,
     interfaceDefaultCallsPhase,
     interfaceObjectCallsPhase,

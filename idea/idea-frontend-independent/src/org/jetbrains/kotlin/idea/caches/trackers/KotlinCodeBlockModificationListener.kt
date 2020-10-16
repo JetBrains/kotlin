@@ -8,10 +8,8 @@ package org.jetbrains.kotlin.idea.caches.trackers
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SimpleModificationTracker
 import com.intellij.pom.tree.TreeAspect
-import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.util.application.getServiceSafe
-import org.jetbrains.kotlin.psi.KtFile
 
 /**
  * Tested in OutOfBlockModificationTestGenerated

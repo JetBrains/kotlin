@@ -35,7 +35,7 @@ fun wrapScopeWithJvmMapped(
         ?: return declaredMemberScope
     val preparedSignatures = JvmMappedScope.prepareSignatures(javaClass)
     return if (preparedSignatures.isNotEmpty()) {
-        javaClass.unsubstitutedScope(useSiteSession, scopeSession).let { javaClassUseSiteScope ->
+        javaClass.unsubstitutedScope(useSiteSession, scopeSession, withForcedTypeCalculator = false).let { javaClassUseSiteScope ->
             val jvmMappedScope = JvmMappedScope(declaredMemberScope, javaClassUseSiteScope, preparedSignatures)
             if (klass !is FirRegularClass) {
                 jvmMappedScope

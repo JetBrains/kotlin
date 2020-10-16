@@ -55,3 +55,18 @@ package
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+
+@kotlin.contracts.ExperimentalContracts public final class Test5 {
+    public constructor Test5()
+    public final val a: kotlin.String
+    public final val aInit: kotlin.Unit
+    public final val b: kotlin.String
+    public final val bInit: kotlin.Unit
+    public final val c: kotlin.String
+    public final val cInit: kotlin.Unit
+    public final val d: kotlin.String
+    public final val dInit: kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

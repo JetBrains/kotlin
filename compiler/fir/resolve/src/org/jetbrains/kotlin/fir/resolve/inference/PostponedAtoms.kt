@@ -17,12 +17,16 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.resolve.calls.model.LambdaWithTypeVariableAsExpectedTypeMarker
+import org.jetbrains.kotlin.resolve.calls.model.PostponedCallableReferenceMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
 //  --------------------------- Variables ---------------------------
 
 class ConeTypeVariableForLambdaReturnType(val argument: FirAnonymousFunction, name: String) : ConeTypeVariable(name)
+class ConeTypeVariableForPostponedAtom(name: String) : ConeTypeVariable(name)
 
 //  -------------------------- Atoms --------------------------
 
@@ -30,7 +34,7 @@ sealed class PostponedResolvedAtom : PostponedResolvedAtomMarker {
     abstract override val inputTypes: Collection<ConeKotlinType>
     abstract override val outputType: ConeKotlinType?
     override var analyzed: Boolean = false
-    abstract val expectedType: ConeKotlinType?
+    abstract override val expectedType: ConeKotlinType?
 }
 
 //  ------------- Lambdas -------------
@@ -59,26 +63,46 @@ class ResolvedLambdaAtom(
 
 class LambdaWithTypeVariableAsExpectedTypeAtom(
     val atom: FirAnonymousFunction,
-    override val expectedType: ConeKotlinType,
+    private val initialExpectedTypeType: ConeKotlinType,
     val expectedTypeRef: FirTypeRef,
-    val candidateOfOuterCall: Candidate
-) : PostponedResolvedAtom() {
+    val candidateOfOuterCall: Candidate,
+) : PostponedResolvedAtom(), LambdaWithTypeVariableAsExpectedTypeMarker {
     init {
         candidateOfOuterCall.postponedAtoms += this
     }
 
-    override val inputTypes: Collection<ConeKotlinType> get() = listOf(expectedType)
+    override var parameterTypesFromDeclaration: List<ConeKotlinType?>? = null
+        private set
+
+    override fun updateParameterTypesFromDeclaration(types: List<KotlinTypeMarker?>?) {
+        @Suppress("UNCHECKED_CAST")
+        types as List<ConeKotlinType?>?
+        parameterTypesFromDeclaration = types
+    }
+
+    override val expectedType: ConeKotlinType
+        get() = revisedExpectedType ?: initialExpectedTypeType
+
+    override val inputTypes: Collection<ConeKotlinType> get() = listOf(initialExpectedTypeType)
     override val outputType: ConeKotlinType? get() = null
+    override var revisedExpectedType: ConeKotlinType? = null
+        private set
+
+    override fun reviseExpectedType(expectedType: KotlinTypeMarker) {
+        require(expectedType is ConeKotlinType)
+        revisedExpectedType = expectedType
+    }
 }
 
 //  ------------- References -------------
 
 class ResolvedCallableReferenceAtom(
     val reference: FirCallableReferenceAccess,
-    override val expectedType: ConeKotlinType?,
+    private val initialExpectedType: ConeKotlinType?,
     val lhs: DoubleColonLHS?,
     private val session: FirSession
-) : PostponedResolvedAtom() {
+) : PostponedResolvedAtom(), PostponedCallableReferenceMarker {
+    // TODO: in several places atoms are filtered by the marker interface - potential overhead/errors
     var postponed: Boolean = false
 
     var resultingCandidate: Pair<Candidate, CandidateApplicability>? = null
@@ -94,6 +118,22 @@ class ResolvedCallableReferenceAtom(
             if (!postponed) return null
             return extractInputOutputTypesFromCallableReferenceExpectedType(expectedType, session)?.outputType
         }
+
+    override val expectedType: ConeKotlinType?
+        get() = if (!postponed)
+            initialExpectedType
+        else
+            revisedExpectedType ?: initialExpectedType
+
+    override var revisedExpectedType: ConeKotlinType? = null
+        get() = if (postponed) field else expectedType
+        private set
+
+    override fun reviseExpectedType(expectedType: KotlinTypeMarker) {
+        if (!postponed) return
+        require(expectedType is ConeKotlinType)
+        revisedExpectedType = expectedType
+    }
 }
 
 //  -------------------------- Utils --------------------------

@@ -17,6 +17,11 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.templates.*
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JvmSinglePlatformModuleConfigurator
+import org.jetbrains.kotlin.tools.projectWizard.templates.compose.ComposeAndroidTemplate
+import org.jetbrains.kotlin.tools.projectWizard.templates.compose.ComposeJvmDesktopTemplate
+import org.jetbrains.kotlin.tools.projectWizard.templates.compose.ComposeMppModuleTemplate
+import org.jetbrains.kotlin.tools.projectWizard.templates.mpp.MobileMppTemplate
 
 sealed class ProjectTemplate : DisplayableSettingItem {
     abstract val title: String
@@ -79,7 +84,9 @@ sealed class ProjectTemplate : DisplayableSettingItem {
             FrontendApplicationProjectTemplate,
             ReactApplicationProjectTemplate,
             FullStackWebApplicationProjectTemplate,
-            NodeJsApplicationProjectTemplate
+            NodeJsApplicationProjectTemplate,
+            ComposeDesktopApplicationProjectTemplate,
+            ComposeMultiplatformApplicationProjectTemplate,
         )
 
         fun byId(id: String): ProjectTemplate? = ALL.firstOrNull {
@@ -165,7 +172,7 @@ object MultiplatformApplicationProjectTemplate : ProjectTemplate() {
     override val setsPluginSettings: List<SettingWithValue<*, *>>
         get() = listOf(
             KotlinPlugin.modules.reference withValue listOf(
-                MultiplatformModule("mainModule", listOf(ModuleType.common.createDefaultTarget()))
+                MultiplatformModule("mainModule", targets = listOf(ModuleType.common.createDefaultTarget()))
             )
         )
 }
@@ -206,7 +213,7 @@ object MultiplatformLibraryProjectTemplate : ProjectTemplate() {
             KotlinPlugin.modules.reference withValue listOf(
                 MultiplatformModule(
                     "library",
-                    listOf(
+                    targets = listOf(
                         ModuleType.common.createDefaultTarget(),
                         ModuleType.jvm.createDefaultTarget(),
                         ModuleType.js.createDefaultTarget().withConfiguratorSettings(JsBrowserTargetConfigurator) {
@@ -231,7 +238,7 @@ object FullStackWebApplicationProjectTemplate : ProjectTemplate() {
         KotlinPlugin.modules.reference withValue listOf(
             MultiplatformModule(
                 "application",
-                listOf(
+                targets = listOf(
                     ModuleType.common.createDefaultTarget(),
                     ModuleType.jvm.createDefaultTarget().apply {
                         withTemplate(KtorServerTemplate()) {
@@ -336,7 +343,8 @@ object MultiplatformMobileApplicationProjectTemplate : ProjectTemplate() {
     override val setsModules: List<Module> = buildList {
         val shared = MultiplatformModule(
             "shared",
-            listOf(
+            template = MobileMppTemplate(),
+            targets = listOf(
                 ModuleType.common.createDefaultTarget(),
                 Module(
                     "android",
@@ -390,7 +398,8 @@ object MultiplatformMobileLibraryProjectTemplate : ProjectTemplate() {
             KotlinPlugin.modules.reference withValue listOf(
                 MultiplatformModule(
                     "library",
-                    listOf(
+                    template = MobileMppTemplate(),
+                    targets = listOf(
                         ModuleType.common.createDefaultTarget(),
                         Module(
                             "android",
@@ -441,4 +450,94 @@ object NodeJsApplicationProjectTemplate : ProjectTemplate() {
                 )
             )
         )
+}
+
+object ComposeDesktopApplicationProjectTemplate : ProjectTemplate() {
+    override val title = KotlinNewProjectWizardBundle.message("project.template.compose.desktop.title")
+    override val description = KotlinNewProjectWizardBundle.message("project.template.compose.desktop.description")
+    override val id = "composeDesktopApplication"
+
+    @NonNls
+    override val suggestedProjectName = "myComposeDesktopApplication"
+    override val projectKind = ProjectKind.COMPOSE
+
+    override val setsPluginSettings: List<SettingWithValue<*, *>>
+        get() = listOf(
+            KotlinPlugin.modules.reference withValue listOf(
+                Module(
+                    "compose",
+                    JvmSinglePlatformModuleConfigurator,
+                    template = ComposeJvmDesktopTemplate(),
+                    sourcesets = SourcesetType.ALL.map { type ->
+                        Sourceset(type, dependencies = emptyList())
+                    },
+                    subModules = emptyList()
+                ).withConfiguratorSettings(JvmSinglePlatformModuleConfigurator) {
+                    ModuleConfiguratorWithTests.testFramework withValue KotlinTestFramework.NONE
+                }
+            )
+        )
+}
+
+object ComposeMultiplatformApplicationProjectTemplate : ProjectTemplate() {
+    override val title = KotlinNewProjectWizardBundle.message("project.template.compose.multiplatform.title")
+    override val description = KotlinNewProjectWizardBundle.message("project.template.compose.multiplatform.description")
+    override val id = "composeMultiplatformApplication"
+
+    @NonNls
+    override val suggestedProjectName = "myComposeMultiplatformApplication"
+    override val projectKind = ProjectKind.COMPOSE
+
+    override val setsModules: List<Module>
+        get() = buildList {
+            val common = MultiplatformModule(
+                "common",
+                template = ComposeMppModuleTemplate(),
+                listOf(
+                    ModuleType.common.createDefaultTarget().withConfiguratorSettings(CommonTargetConfigurator) {
+                        ModuleConfiguratorWithTests.testFramework withValue KotlinTestFramework.NONE
+                    },
+                    Module(
+                        "android",
+                        AndroidTargetConfigurator,
+                        template = null,
+                        sourcesets = createDefaultSourcesets(),
+                        subModules = emptyList()
+                    ).withConfiguratorSettings(AndroidTargetConfigurator) {
+                        configurator.androidPlugin withValue AndroidGradlePlugin.LIBRARY
+                        ModuleConfiguratorWithTests.testFramework withValue KotlinTestFramework.NONE
+                    },
+                    Module(
+                        "desktop",
+                        JvmTargetConfigurator,
+                        template = null,
+                        sourcesets = createDefaultSourcesets(),
+                        subModules = emptyList()
+                    ).withConfiguratorSettings(JvmTargetConfigurator) {
+                        ModuleConfiguratorWithTests.testFramework withValue KotlinTestFramework.NONE
+                    }
+                )
+            )
+            +Module(
+                "android",
+                AndroidSinglePlatformModuleConfigurator,
+                template = ComposeAndroidTemplate(),
+                sourcesets = createDefaultSourcesets(),
+                subModules = emptyList(),
+                dependencies = mutableListOf(ModuleReference.ByModule(common))
+            ).withConfiguratorSettings(AndroidSinglePlatformModuleConfigurator) {
+                ModuleConfiguratorWithTests.testFramework withValue KotlinTestFramework.NONE
+            }
+            +Module(
+                "desktop",
+                JvmSinglePlatformModuleConfigurator,
+                template = ComposeJvmDesktopTemplate(),
+                sourcesets = createDefaultSourcesets(),
+                subModules = emptyList(),
+                dependencies = mutableListOf(ModuleReference.ByModule(common))
+            ).withConfiguratorSettings(JvmSinglePlatformModuleConfigurator) {
+                ModuleConfiguratorWithTests.testFramework withValue KotlinTestFramework.NONE
+            }
+            +common
+        }
 }

@@ -16,6 +16,7 @@ dependencies {
     Platform[192].orHigher {
         testRuntimeOnly(intellijPluginDep("java"))
     }
+    if (System.getProperty("idea.active") != null) testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
 }
 
 sourceSets {
@@ -32,5 +33,31 @@ projectTest(parallel = true) {
 }
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJava8TestsKt")
+val generateKotlinUseSiteFromJavaOnesForJspecifyTests by generator("org.jetbrains.kotlin.generators.tests.GenerateKotlinUseSitesFromJavaOnesForJspecifyTestsKt")
+
+task<Exec>("downloadJspecifyTests") {
+    val tmpDirPath = createTempDir().absolutePath
+    doFirst {
+        executable("git")
+        args("clone", "https://github.com/jspecify/jspecify/", tmpDirPath)
+    }
+    doLast {
+        copy {
+            from("$tmpDirPath/samples")
+            into("${project.rootDir}/compiler/testData/foreignAnnotationsJava8/tests/jspecify/java")
+        }
+    }
+}
+
+val test: Test by tasks
+
+test.apply {
+    exclude("**/*JspecifyAnnotationsTestGenerated*")
+}
+
+task<Test>("jspecifyTests") {
+    workingDir(project.rootDir)
+    include("**/*JspecifyAnnotationsTestGenerated*")
+}
 
 testsJar()

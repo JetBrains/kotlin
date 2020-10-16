@@ -75,7 +75,7 @@ abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
             sessions += session
 
             val firProvider = (session.firProvider as FirProviderImpl)
-            val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, stubMode = false)
+            val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider)
             val psiManager = PsiManager.getInstance(project)
 
             val ideaModuleInfo = session.moduleInfo.cast<IdeaModuleInfo>()

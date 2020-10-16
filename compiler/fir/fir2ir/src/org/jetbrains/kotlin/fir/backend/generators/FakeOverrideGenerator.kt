@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
-import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.PossiblyFirFakeOverrideSymbol
@@ -73,7 +73,7 @@ class FakeOverrideGenerator(
 
     fun IrClass.getFakeOverrides(klass: FirClass<*>, realDeclarations: Collection<FirDeclaration>): List<IrDeclaration> {
         val result = mutableListOf<IrDeclaration>()
-        val useSiteMemberScope = klass.unsubstitutedScope(session, scopeSession)
+        val useSiteMemberScope = klass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
         val superTypesCallableNames = useSiteMemberScope.getCallableNames()
         val realDeclarationSymbols = realDeclarations.filterIsInstance<FirSymbolOwner<*>>().mapTo(mutableSetOf(), FirSymbolOwner<*>::symbol)
         for (name in superTypesCallableNames) {
@@ -84,7 +84,7 @@ class FakeOverrideGenerator(
                     declarationStorage::getCachedIrFunction,
                     declarationStorage::createIrFunction,
                     createFakeOverrideSymbol = { firFunction, callableSymbol ->
-                        FirClassSubstitutionScope.createFakeOverrideFunction(
+                        FirFakeOverrideGenerator.createFakeOverrideFunction(
                             session, firFunction, callableSymbol,
                             derivedClassId = klass.symbol.classId,
                             isExpect = (klass as? FirRegularClass)?.isExpect == true
@@ -107,7 +107,7 @@ class FakeOverrideGenerator(
                     declarationStorage::getCachedIrProperty,
                     declarationStorage::createIrProperty,
                     createFakeOverrideSymbol = { firProperty, callableSymbol ->
-                        FirClassSubstitutionScope.createFakeOverrideProperty(
+                        FirFakeOverrideGenerator.createFakeOverrideProperty(
                             session, firProperty, callableSymbol,
                             derivedClassId = klass.symbol.classId,
                             isExpect = (klass as? FirRegularClass)?.isExpect == true

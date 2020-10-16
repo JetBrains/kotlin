@@ -17,9 +17,9 @@ import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.*
+import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningExtension
 import org.gradle.plugins.signing.SigningPlugin
-import java.net.URI
 import java.util.*
 import javax.inject.Inject
 
@@ -108,13 +108,19 @@ class KotlinBuildPublishingPlugin @Inject constructor(
             }
         }
 
-        configure<SigningExtension> {
-            setRequired(provider {
-                project.findProperty("signingRequired")?.toString()?.toBoolean()
-                    ?: project.property("isSonatypeRelease") as Boolean
-            })
+        val signingRequired = provider {
+            project.findProperty("signingRequired")?.toString()?.toBoolean()
+                ?: project.property("isSonatypeRelease") as Boolean
+        }
 
+        configure<SigningExtension> {
+            setRequired(signingRequired)
             sign(extensions.getByType<PublishingExtension>().publications[PUBLICATION_NAME])
+            useGpgCmd()
+        }
+
+        tasks.withType<Sign>().configureEach {
+            setOnlyIf { signingRequired.get() }
         }
 
         tasks.register("install") {

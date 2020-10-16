@@ -1,12 +1,10 @@
 pluginManagement {
     repositories {
-        mavenCentral()
-        gradlePluginPortal()
         google()
         jcenter()
-        maven {
-            url 'KOTLIN_REPO'
-        }
+        gradlePluginPortal()
+        mavenCentral()
+        maven { url 'KOTLIN_REPO' }
     }
     resolutionStrategy {
         eachPlugin {

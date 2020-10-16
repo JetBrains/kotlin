@@ -145,6 +145,8 @@ compileLongRunningTestKotlin {
     kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.ExperimentalStdlibApi"
 }
 
+configureJvmIrBackend(project)
+
 task longRunningTest(type: Test, dependsOn: longRunningTestClasses) {
     group = "verification"
     testClassesDirs = sourceSets.longRunningTest.output.classesDirs

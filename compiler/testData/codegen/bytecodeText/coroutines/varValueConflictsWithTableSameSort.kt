@@ -42,8 +42,8 @@ fun box(): String {
 }
 
 // 1 LOCALVARIABLE i Ljava/lang/String; L.* 3
-// From liveness point of view, 's' is dead between 'println' and 's == "OK"', thus the range is split
-// 2 LOCALVARIABLE s Ljava/lang/String; L.* 3
+// We merge LVT records for two consequent branches.
+// 1 LOCALVARIABLE s Ljava/lang/String; L.* 3
 // 1 PUTFIELD VarValueConflictsWithTableSameSortKt\$box\$1.L\$0 : Ljava/lang/Object;
 /* 1 load in the catch (e: Throwable) { throw e } block which is implicitly wrapped around try/finally */
 // 1 ALOAD 3\s+ATHROW

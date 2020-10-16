@@ -77,7 +77,7 @@ class ProjectSettingsComponent(ideWizard: IdeWizard) : DynamicComponent(ideWizar
     ).asSubComponent()
 
     override val component: JComponent by lazy(LazyThreadSafetyMode.NONE) {
-        val panel = panel {
+        panel {
             row {
                 nameAndLocationComponent.component(growX)
             }
@@ -85,9 +85,6 @@ class ProjectSettingsComponent(ideWizard: IdeWizard) : DynamicComponent(ideWizar
                 buildSystemAdditionalSettingsComponent.component(growX)
             }
         }.addBorder(JBUI.Borders.emptyRight(UIConstants.PADDING))
-        ScrollPaneFactory.createScrollPane(panel, true).apply {
-            viewport.background = JBColor.PanelBackground
-        }
     }
 
     override fun onValueUpdated(reference: SettingReference<*, *>?) {

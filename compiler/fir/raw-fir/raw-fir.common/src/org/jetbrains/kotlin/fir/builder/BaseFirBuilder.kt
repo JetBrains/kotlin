@@ -325,6 +325,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
 
     fun Array<out T?>.toInterpolatingCall(
         base: T,
+        getElementType: (T) -> IElementType = { it.elementType },
         convertTemplateEntry: T?.(String) -> FirExpression
     ): FirExpression {
         return buildStringConcatenationCall {
@@ -333,7 +334,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             argumentList = buildArgumentList {
                 L@ for (entry in this@toInterpolatingCall) {
                     if (entry == null) continue
-                    arguments += when (entry.elementType) {
+                    arguments += when (getElementType(entry)) {
                         OPEN_QUOTE, CLOSING_QUOTE -> continue@L
                         LITERAL_STRING_TEMPLATE_ENTRY -> {
                             sb.append(entry.asText)
@@ -1097,7 +1098,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                             returnTypeRef = propertyReturnTypeRef
                             name = propertyName
                             symbol = FirVariableSymbol(propertyName)
-                            defaultValue = generateComponentAccess(parameterSource, firProperty, propertyReturnTypeRef, classTypeRef)
+                            defaultValue = generateComponentAccess(parameterSource, firProperty, classTypeRef, propertyReturnTypeRef)
                             isCrossinline = false
                             isNoinline = false
                             isVararg = false

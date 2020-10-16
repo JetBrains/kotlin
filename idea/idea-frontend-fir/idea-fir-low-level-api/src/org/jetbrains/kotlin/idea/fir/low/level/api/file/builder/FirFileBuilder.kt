@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.file.builder
 
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
+import org.jetbrains.kotlin.fir.builder.RawFirBuilderMode
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
 import org.jetbrains.kotlin.psi.KtFile
@@ -31,10 +31,19 @@ internal class FirFileBuilder(
      */
     fun buildRawFirFileWithCaching(
         ktFile: KtFile,
-        cache: ModuleFileCache
+        cache: ModuleFileCache,
+        lazyBodiesMode: Boolean
     ): FirFile = cache.fileCached(ktFile) {
-        RawFirBuilder(cache.session, scopeProvider, stubMode = false).buildFirFile(ktFile)
+        RawFirBuilder(cache.session, scopeProvider, RawFirBuilderMode.lazyBodies(lazyBodiesMode)).buildFirFile(ktFile)
     }
+
+    fun getBuiltFirFileOrNull(ktFile: KtFile, cache: ModuleFileCache): FirFile? =
+        cache.getCachedFirFile(ktFile)
+
+    fun isFirFileBuilt(
+        ktFile: KtFile,
+        cache: ModuleFileCache
+    ): Boolean = cache.getCachedFirFile(ktFile) != null
 
     fun getFirFileResolvedToPhaseWithCaching(
         ktFile: KtFile,
@@ -42,8 +51,9 @@ internal class FirFileBuilder(
         @Suppress("SameParameterValue") toPhase: FirResolvePhase,
         checkPCE: Boolean
     ): FirFile {
-        val firFile = buildRawFirFileWithCaching(ktFile, cache)
-        if (toPhase > FirResolvePhase.RAW_FIR) {
+        val needResolve = toPhase > FirResolvePhase.RAW_FIR
+        val firFile = buildRawFirFileWithCaching(ktFile, cache, lazyBodiesMode = !needResolve)
+        if (needResolve) {
             cache.firFileLockProvider.withLock(firFile) {
                 if (firFile.resolvePhase >= toPhase) return@withLock
                 runResolveWithoutLock(firFile, fromPhase = firFile.resolvePhase, toPhase = toPhase, checkPCE = checkPCE)

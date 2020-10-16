@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.FixVariableConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 /*
@@ -19,4 +23,18 @@ interface ConstraintSystemUtilContext {
     fun KotlinTypeMarker.unCapture(): KotlinTypeMarker
     fun TypeVariableMarker.isReified(): Boolean
     fun KotlinTypeMarker.refineType(): KotlinTypeMarker
+
+    // PostponedArgumentInputTypesResolver
+    fun <T> createArgumentConstraintPosition(argument: T): ArgumentConstraintPosition<T>
+    fun <T> createFixVariableConstraintPosition(variable: TypeVariableMarker, atom: T): FixVariableConstraintPosition<T>
+    fun extractLambdaParameterTypesFromDeclaration(declaration: PostponedAtomWithRevisableExpectedType): List<KotlinTypeMarker?>?
+    fun PostponedAtomWithRevisableExpectedType.isAnonymousFunction(): Boolean
+    fun PostponedAtomWithRevisableExpectedType.isFunctionExpressionWithReceiver(): Boolean
+    fun createTypeVariableForLambdaReturnType(): TypeVariableMarker
+    fun createTypeVariableForLambdaParameterType(argument: PostponedAtomWithRevisableExpectedType, index: Int): TypeVariableMarker
+    fun createTypeVariableForCallableReferenceReturnType(): TypeVariableMarker
+    fun createTypeVariableForCallableReferenceParameterType(
+        argument: PostponedAtomWithRevisableExpectedType,
+        index: Int
+    ): TypeVariableMarker
 }

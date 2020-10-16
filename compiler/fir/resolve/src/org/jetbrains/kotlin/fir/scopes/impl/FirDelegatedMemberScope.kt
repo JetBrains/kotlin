@@ -38,7 +38,7 @@ class FirDelegatedMemberScope(
                 val newSymbol = FirNamedFunctionSymbol(
                     functionSymbol.callableId,
                 )
-                FirClassSubstitutionScope.createCopyForFirFunction(
+                FirFakeOverrideGenerator.createCopyForFirFunction(
                     newSymbol,
                     original,
                     session,
@@ -64,7 +64,7 @@ class FirDelegatedMemberScope(
                 return@processor
             }
             val delegatedSymbol = delegatedPropertyCache.getOrPut(propertySymbol) {
-                FirClassSubstitutionScope.createCopyForFirProperty(
+                FirFakeOverrideGenerator.createCopyForFirProperty(
                     FirPropertySymbol(
                         propertySymbol.callableId,
                         overriddenSymbol = propertySymbol

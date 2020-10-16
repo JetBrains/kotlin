@@ -188,7 +188,7 @@ extra["versions.kotlinx-collections-immutable-jvm"] = immutablesVersion
 extra["versions.ktor-network"] = "1.0.1"
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.4.20-dev-16314"
+    extra["versions.kotlin-native"] = "1.4.30-dev-16766"
 }
 
 val intellijUltimateEnabled by extra(project.kotlinBuildProperties.intellijUltimateEnabled)
@@ -443,6 +443,7 @@ allprojects {
 
             if (useJvmIrBackend) {
                 useIR = true
+                freeCompilerArgs += "-Xir-binary-with-stable-abi"
             }
         }
     }
@@ -792,6 +793,17 @@ tasks {
             ":idea:idea-fir-performance-tests:ideaFirPerformanceTest"
         )
     }
+
+    register("idea-fir-plugin-tests") {
+        dependsOn("dist")
+        dependsOn(
+            ":idea:idea-fir:test",
+            ":idea:idea-frontend-api:test",
+            ":idea:idea-frontend-fir:test",
+            ":idea:idea-frontend-fir:idea-fir-low-level-api:test"
+        )
+    }
+
 
     register("android-ide-tests") {
         dependsOn("dist")

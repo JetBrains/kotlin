@@ -15,6 +15,7 @@ import java.io.File
 
 abstract class DukatTask(
     @Internal
+    @Transient
     override val compilation: KotlinJsCompilation
 ) : DefaultTask(), RequiresNpmDependencies {
     @get:Internal
@@ -28,7 +29,14 @@ abstract class DukatTask(
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         get() = setOf(nodeJs.versions.dukat)
 
+    /**
+     * [ExternalsOutputFormat] what to generate, sources or binaries
+     */
+    @Input
+    var externalsOutputFormat: ExternalsOutputFormat = ExternalsOutputFormat.SOURCE
+
     @get:Internal
+    @delegate:Transient
     val dts by lazy {
         val resolvedCompilation = nodeJs.npmResolutionManager.requireInstalled()[project][compilation]
         val dtsResolver = DtsResolver(resolvedCompilation.npmProject)
@@ -81,6 +89,7 @@ abstract class DukatTask(
         DukatRunner(
             compilation,
             dTsFiles,
+            externalsOutputFormat,
             destinationDir,
             qualifiedPackageName,
             null,

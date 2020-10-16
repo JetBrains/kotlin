@@ -1,0 +1,18 @@
+FILE: delegates.kt
+    public? final? val x: Intby LAZY_EXPRESSION
+        public? get(): <implicit> {
+            ^ D|/x|.getValue#(Null(null), ::R|/x|)
+        }
+    public? final? val delegate: <implicit> = LAZY_EXPRESSION
+        public? get(): <implicit>
+    public? final? val value: <implicit>by LAZY_EXPRESSION
+        public? get(): <implicit> {
+            ^ D|/value|.getValue#(Null(null), ::R|/value|)
+        }
+    public? final? var variable: <implicit>by LAZY_EXPRESSION
+        public? get(): <implicit> {
+            ^ D|/variable|.getValue#(Null(null), ::R|/variable|)
+        }
+        public? set(<set-?>: <implicit>): R|kotlin/Unit| {
+            D|/variable|.setValue#(Null(null), ::R|/variable|, R|<local>/variable|)
+        }

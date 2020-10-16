@@ -9,6 +9,7 @@ repositories {
 
 kotlin {
     js {
+        useCommonJs()
         nodejs()
     }
 

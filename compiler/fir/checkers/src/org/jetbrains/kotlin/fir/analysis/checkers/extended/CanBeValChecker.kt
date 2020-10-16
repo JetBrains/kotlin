@@ -5,16 +5,12 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
-
 import com.intellij.lang.LighterASTNode
 import com.intellij.openapi.util.Ref
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationChecker
-import org.jetbrains.kotlin.fir.analysis.cfa.PropertyInitializationInfo
-import org.jetbrains.kotlin.fir.analysis.cfa.TraverseDirection
-import org.jetbrains.kotlin.fir.analysis.cfa.traverse
+import org.jetbrains.kotlin.fir.analysis.cfa.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
@@ -23,12 +19,11 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.lexer.KtTokens
 
-
 object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
     override fun analyze(
         graph: ControlFlowGraph,
         reporter: DiagnosticReporter,
-        data: Map<CFGNode<*>, PropertyInitializationInfo>,
+        data: Map<CFGNode<*>, PathAwarePropertyInitializationInfo>,
         properties: Set<FirPropertySymbol>
     ) {
         val unprocessedProperties = mutableSetOf<FirPropertySymbol>()
@@ -75,7 +70,7 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
         value in canBeValOccurrenceRanges && symbol.fir.isVar
 
     private class UninitializedPropertyReporter(
-        val data: Map<CFGNode<*>, PropertyInitializationInfo>,
+        val data: Map<CFGNode<*>, PathAwarePropertyInitializationInfo>,
         val localProperties: Set<FirPropertySymbol>,
         val unprocessedProperties: MutableSet<FirPropertySymbol>,
         val propertiesCharacteristics: MutableMap<FirPropertySymbol, EventOccurrencesRange>
@@ -89,7 +84,8 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
             unprocessedProperties.remove(symbol)
 
             val currentCharacteristic = propertiesCharacteristics.getOrDefault(symbol, EventOccurrencesRange.ZERO)
-            propertiesCharacteristics[symbol] = currentCharacteristic.or(data.getValue(node)[symbol] ?: EventOccurrencesRange.ZERO)
+            val info = data.getValue(node)
+            propertiesCharacteristics[symbol] = currentCharacteristic.or(info.infoAtNormalPath[symbol] ?: EventOccurrencesRange.ZERO)
         }
 
         override fun visitVariableDeclarationNode(node: VariableDeclarationNode) {

@@ -1,8 +1,6 @@
 // IGNORE_ANNOTATIONS
-// IGNORE_BACKEND: JVM_IR
-// ^ TODO: special bridges <-> inline classes interaction
 
-inline class IT(val x: Int)
+inline class IT(val x: Long)
 
 inline class InlineMutableList(private val mlist: MutableList<IT>) : MutableList<IT> {
     override val size: Int get() = mlist.size

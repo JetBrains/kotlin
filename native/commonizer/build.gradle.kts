@@ -31,8 +31,8 @@ dependencies {
     testImplementation(projectTests(":compiler:tests-common"))
 }
 
-val runCommonizer by tasks.registering(NoDebugJavaExec::class) {
-    classpath(sourceSets.main.get().runtimeClasspath)
+val runCommonizer by tasks.registering(JavaExec::class) {
+    classpath(configurations.compileOnly, sourceSets.main.get().runtimeClasspath)
     main = "org.jetbrains.kotlin.descriptors.commonizer.cli.CommonizerCLI"
 }
 

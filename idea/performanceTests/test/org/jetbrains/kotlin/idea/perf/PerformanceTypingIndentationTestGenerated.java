@@ -54,6 +54,16 @@ public class PerformanceTypingIndentationTestGenerated extends AbstractPerforman
         runTest("idea/testData/indentationOnNewline/AfterImport.kt");
     }
 
+    @TestMetadata("AfterPropertyGetter.kt")
+    public void testAfterPropertyGetter() throws Exception {
+        runTest("idea/testData/indentationOnNewline/AfterPropertyGetter.kt");
+    }
+
+    @TestMetadata("AfterPropertySetter.kt")
+    public void testAfterPropertySetter() throws Exception {
+        runTest("idea/testData/indentationOnNewline/AfterPropertySetter.kt");
+    }
+
     @TestMetadata("AfterTry.kt")
     public void testAfterTry() throws Exception {
         runTest("idea/testData/indentationOnNewline/AfterTry.kt");
