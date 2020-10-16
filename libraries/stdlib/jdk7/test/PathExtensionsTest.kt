@@ -201,6 +201,9 @@ class PathExtensionsTest {
         Files.createFile(file)
         assertEquals(listOf(file), dir.listDirectoryEntries())
 
+        val fileTxt = createTempFile(dir, suffix = ".txt")
+        assertEquals(listOf(fileTxt), dir.listDirectoryEntries("*.txt"))
+
         assertFailsWith<NotDirectoryException> { file.listDirectoryEntries() }
     }
 
@@ -213,23 +216,25 @@ class PathExtensionsTest {
         Files.createFile(file)
         assertEquals(listOf(file), dir.useDirectoryEntries { it.toList() })
 
-        assertFailsWith<NotDirectoryException> { file.useDirectoryEntries { it.toList() } }
+        val fileTxt = createTempFile(dir, suffix = ".txt")
+        assertEquals(listOf(fileTxt), dir.useDirectoryEntries("*.txt") { it.toList() })
+
+        assertFailsWith<NotDirectoryException> { file.useDirectoryEntries { error("shouldn't get here") } }
     }
 
     @Test
     fun testForEachDirectoryEntry() {
         val dir = Files.createTempDirectory(null)
-        val entries = mutableListOf<Path>()
-
-        dir.forEachDirectoryEntry { entries.add(it) }
-        assertTrue(entries.isEmpty())
+        dir.forEachDirectoryEntry { error("shouldn't get here, but received $it") }
 
         val file = dir.resolve("f1")
         Files.createFile(file)
-        dir.forEachDirectoryEntry { entries.add(it) }
-        assertEquals(listOf(file), entries)
+        dir.forEachDirectoryEntry { assertEquals(file, it) }
 
-        assertFailsWith<NotDirectoryException> { file.forEachDirectoryEntry { } }
+        val fileTxt = createTempFile(dir, suffix = ".txt")
+        dir.forEachDirectoryEntry("*.txt") { assertEquals(fileTxt, it) }
+
+        assertFailsWith<NotDirectoryException> { file.forEachDirectoryEntry { error("shouldn't get here, but received $it") } }
     }
 
 
