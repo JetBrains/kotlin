@@ -7,6 +7,7 @@
       <w>buildfiles</w>
       <w>eslint</w>
       <w>gjslint</w>
+      <w>interop</w>
       <w>iojs</w>
       <w>jsbt</w>
       <w>jscs</w>
