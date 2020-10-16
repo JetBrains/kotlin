@@ -428,7 +428,8 @@ class ComposableFunctionBodyTransformer(
     context: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
     bindingTrace: BindingTrace,
-    sourceInformationEnabled: Boolean
+    sourceInformationEnabled: Boolean,
+    private val intrinsicRememberEnabled: Boolean
 ) :
     AbstractComposeLowering(context, symbolRemapper, bindingTrace),
     FileLoweringPass,
@@ -2441,8 +2442,13 @@ class ComposableFunctionBodyTransformer(
 
     private fun visitComposableCall(expression: IrCall): IrExpression {
         return when (expression.symbol.descriptor.fqNameSafe) {
-            // TODO: re-enable this once b/162464429 is addressed
-            // ComposeFqNames.remember -> visitRememberCall(expression)
+            ComposeFqNames.remember -> {
+                if (intrinsicRememberEnabled) {
+                    visitRememberCall(expression)
+                } else {
+                    visitNormalComposableCall(expression)
+                }
+            }
             ComposeFqNames.key -> visitKeyCall(expression)
             else -> visitNormalComposableCall(expression)
         }

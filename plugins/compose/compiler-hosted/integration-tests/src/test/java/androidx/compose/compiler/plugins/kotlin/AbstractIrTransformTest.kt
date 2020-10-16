@@ -57,9 +57,11 @@ import java.io.File
 abstract class ComposeIrTransformTest : AbstractIrTransformTest() {
     open val liveLiteralsEnabled get() = false
     open val sourceInformationEnabled get() = true
+    open val intrinsicRememberEnabled get() = false
     private val extension = ComposeIrGenerationExtension(
         liveLiteralsEnabled,
-        sourceInformationEnabled
+        sourceInformationEnabled,
+        intrinsicRememberEnabled
     )
     override fun postProcessingStep(
         module: IrModuleFragment,
