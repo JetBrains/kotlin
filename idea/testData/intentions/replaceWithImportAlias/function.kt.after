@@ -1,0 +1,10 @@
+package foo
+
+import foo.foo as bar
+
+fun foo() {}
+
+fun main() {
+    bar()
+    bar()
+}

@@ -1,0 +1,5 @@
+import foo.Foo as Bar
+
+fun main() {
+    foo.Foo()
+}
