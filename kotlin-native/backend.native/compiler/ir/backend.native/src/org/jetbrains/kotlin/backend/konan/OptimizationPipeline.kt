@@ -110,7 +110,17 @@ private class LlvmPipelineConfiguration(context: Context) {
 internal fun runLlvmOptimizationPipeline(context: Context) {
     val llvmModule = context.llvmModule!!
     val config = LlvmPipelineConfiguration(context)
-
+    context.log {
+        """
+            Running LLVM optimizations with the following parameters:
+            target_triple: ${config.targetTriple}
+            cpu_model: ${config.cpuModel}
+            cpu_features: ${config.cpuFeatures}
+            optimization_level: ${config.optimizationLevel.value}
+            size_level: ${config.sizeLevel.value}
+            inline_threshold: ${config.customInlineThreshold ?: "default"}
+        """.trimIndent()
+    }
     memScoped {
         LLVMKotlinInitializeTargets()
 
