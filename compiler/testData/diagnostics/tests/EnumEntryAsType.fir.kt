@@ -48,7 +48,7 @@ fun <T> bar(a: Any): T = a as T
 
 fun <T> foo() {
     foo<<!UNRESOLVED_REFERENCE!>Color.RED<!>>()
-    foo<RedAlias>()
+    foo<<!UPPER_BOUND_VIOLATED!>RedAlias<!>>()
     <!INAPPLICABLE_CANDIDATE!>bar<!><<!UNRESOLVED_REFERENCE!>Color.RED<!>>(Color.RED)
 }
 

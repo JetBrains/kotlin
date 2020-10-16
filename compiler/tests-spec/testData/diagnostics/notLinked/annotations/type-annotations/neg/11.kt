@@ -29,7 +29,7 @@ fun case_3(a: Any) {
 // TESTCASE NUMBER: 4
 open class TypeToken<T>
 
-val case_4 = object : TypeToken<@<!OI;DEBUG_INFO_MISSING_UNRESOLVED!>Ann<!>(10) String>() {}
+val case_4 = object : TypeToken<@<!DEBUG_INFO_MISSING_UNRESOLVED!>Ann<!>(10) String>() {}
 
 // TESTCASE NUMBER: 5
 fun case_5(a: Any) {
