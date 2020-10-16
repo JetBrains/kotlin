@@ -48,7 +48,6 @@ org.jetbrains.kotlin.util.KotlinVersionsTest.testVersionsAreConsistent, KT-35567
 org.jetbrains.kotlin.jvm.compiler.CompileKotlinAgainstJavaTestGenerated.WithAPT.testClassWithTypeParameter, KT-36448,,
 org.jetbrains.kotlin.jvm.compiler.CompileKotlinAgainstJavaTestGenerated.WithoutAPT.testClassWithTypeParameter, KT-36448,,
 org.jetbrains.kotlin.idea.debugger.test.AsyncStackTraceTestGenerated.testAsyncLambdas, redesign test AsyncStackTraces,,
-org.jetbrains.kotlin.idea.debugger.test.KotlinSteppingTestGenerated.StepOver.testStepOverInlinedLambdaStdlib, fails after advancing bootstrap KT-37879,,
 org.jetbrains.kotlin.incremental.IncrementalJsKlibCompilerRunnerTestGenerated.ClassHierarchyAffected.testMethodRemoved, full fledged FO in klib required,,
 org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.ConvertToAnonymousObject.testHasConcreateMember2, Unprocessed,,
 org.jetbrains.uast.test.kotlin.KotlinUastTypesTest.testEa101715, Unprocessed,,
