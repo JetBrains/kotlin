@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 KotlinFieldBreakpoint created at fwBackingField.kt:5
 KotlinFieldBreakpoint created at fwBackingField.kt:8
 KotlinFieldBreakpoint created at fwBackingField.kt:18
