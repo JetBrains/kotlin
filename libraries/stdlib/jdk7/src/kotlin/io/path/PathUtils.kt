@@ -278,38 +278,54 @@ public inline fun Path.isWritable(): Boolean = Files.isWritable(this)
 public inline fun Path.isSameFile(other: Path): Boolean = Files.isSameFile(this, other)
 
 /**
- * Return a list of the entries in this directory.
+ * Return a list of the entries in this directory optionally filtered by matching against the specified [glob] pattern.
  *
+ * @param glob the globbing pattern. The syntax is specified by the [FileSystem.getPathMatcher] method.
+ *
+ * @throws java.util.regex.PatternSyntaxException if the glob pattern is invalid.
  * @throws NotDirectoryException If this path does not refer to a directory
  * @throws IOException If an I/O error occurs
+ *
+ * @see Files.newDirectoryStream
  */
 @SinceKotlin("1.4")
 @ExperimentalPathApi
-public fun Path.listDirectoryEntries(): List<Path> {
-    return Files.newDirectoryStream(this).use { it.toList() }
+public fun Path.listDirectoryEntries(glob: String = "*"): List<Path> {
+    return Files.newDirectoryStream(this, glob).use { it.toList() }
 }
 
 /**
- * Call the [block] callback with a sequence of all entries in this directory.
+ * Call the [block] callback with a sequence of all entries in this directory
+ * optionally filtered by matching against the specified [glob] pattern.
  *
+ * @param glob the globbing pattern. The syntax is specified by the [FileSystem.getPathMatcher] method.
+ *
+ * @throws java.util.regex.PatternSyntaxException if the glob pattern is invalid.
  * @throws NotDirectoryException If this path does not refer to a directory
  * @throws IOException If an I/O error occurs
  * @return the value returned by [block]
+ *
+ * @see Files.newDirectoryStream
  */
 @SinceKotlin("1.4")
 @ExperimentalPathApi
-public fun <T> Path.useDirectoryEntries(block: (Sequence<Path>) -> T): T {
-    return Files.newDirectoryStream(this).use { block(it.asSequence()) }
+public fun <T> Path.useDirectoryEntries(glob: String = "*", block: (Sequence<Path>) -> T): T {
+    return Files.newDirectoryStream(this, glob).use { block(it.asSequence()) }
 }
 
 /**
- * Perform the given [action] on each entry in this directory.
+ * Perform the given [action] on each entry in this directory optionally filtered by matching against the specified [glob] pattern.
  *
+ * @param glob the globbing pattern. The syntax is specified by the [FileSystem.getPathMatcher] method.
+ *
+ * @throws java.util.regex.PatternSyntaxException if the glob pattern is invalid.
  * @throws NotDirectoryException If this path does not refer to a directory
  * @throws IOException If an I/O error occurs
+ *
+ * @see Files.newDirectoryStream
  */
 @SinceKotlin("1.4")
 @ExperimentalPathApi
-public fun Path.forEachDirectoryEntry(action: (Path) -> Unit) {
-    return Files.newDirectoryStream(this).use { it.forEach(action) }
+public fun Path.forEachDirectoryEntry(glob: String = "*", action: (Path) -> Unit) {
+    return Files.newDirectoryStream(this, glob).use { it.forEach(action) }
 }
