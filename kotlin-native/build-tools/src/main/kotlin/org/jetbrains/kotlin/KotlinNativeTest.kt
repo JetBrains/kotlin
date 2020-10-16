@@ -380,7 +380,7 @@ open class KonanDriverTest : KonanStandaloneTest() {
             it.print("Konanc compiler execution:")
             project.file("$executable.compilation.log").run {
                 writeText(it.stdOut)
-                writeText(it.stdErr)
+                appendText(it.stdErr)
             }
             check(it.exitCode == 0) { "Compiler failed with exit code ${it.exitCode}" }
         }
