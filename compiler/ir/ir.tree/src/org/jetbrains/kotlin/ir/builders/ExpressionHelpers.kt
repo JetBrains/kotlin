@@ -49,7 +49,7 @@ fun <T : IrElement> IrStatementsBuilder<T>.irTemporary(
     typeHint: KotlinType? = null,
     irType: IrType? = null
 ): IrVariable {
-    val temporary = scope.createTemporaryVariable(value, nameHint, type = typeHint, irType = irType)
+    val temporary = scope.createTemporaryVariable(value, nameHint, irType = irType)
     +temporary
     return temporary
 }
@@ -67,9 +67,9 @@ fun <T : IrElement> IrStatementsBuilder<T>.irTemporaryVarDeclaration(
 fun <T : IrElement> IrStatementsBuilder<T>.irTemporaryVar(
     value: IrExpression,
     nameHint: String? = null,
-    typeHint: KotlinType? = null
+    irType: IrType? = null
 ): IrVariable {
-    val temporary = scope.createTemporaryVariable(value, nameHint, isMutable = true, type = typeHint)
+    val temporary = scope.createTemporaryVariable(value, nameHint, isMutable = true)
     +temporary
     return temporary
 }

@@ -375,19 +375,6 @@ val IrDeclaration.isTopLevel: Boolean
         return parentClass?.isFileClass == true && parentClass.parent is IrPackageFragment
     }
 
-fun Scope.createTemporaryVariableWithWrappedDescriptor(
-    irExpression: IrExpression,
-    nameHint: String? = null,
-    isMutable: Boolean = false,
-    origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
-): IrVariable {
-
-    val descriptor = WrappedVariableDescriptor()
-    return createTemporaryVariableWithGivenDescriptor(
-        irExpression, nameHint, isMutable, origin, descriptor
-    ).apply { descriptor.bind(this) }
-}
-
 fun IrClass.createImplicitParameterDeclarationWithWrappedDescriptor() {
     thisReceiver = buildReceiverParameter(this, IrDeclarationOrigin.INSTANCE_RECEIVER, symbol.typeWithParameters(typeParameters))
 }

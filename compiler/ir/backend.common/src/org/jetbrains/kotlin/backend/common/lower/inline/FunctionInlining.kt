@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.common.lower.inline
 
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.Symbols
-import org.jetbrains.kotlin.backend.common.ir.createTemporaryVariableWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.getNewWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -472,7 +471,7 @@ class FunctionInlining(
                     )
                 } else {
                     val newVariable =
-                        currentScope.scope.createTemporaryVariableWithWrappedDescriptor(
+                        currentScope.scope.createTemporaryVariable(
                             irExpression = it.argumentExpression.transform( // Arguments may reference the previous ones - substitute them.
                                 substitutor,
                                 data = null
@@ -523,7 +522,7 @@ class FunctionInlining(
                 val variableInitializer = argument.argumentExpression.transform(substitutor, data = null)
 
                 val newVariable =
-                    currentScope.scope.createTemporaryVariableWithWrappedDescriptor(
+                    currentScope.scope.createTemporaryVariable(
                         irExpression = IrBlockImpl(
                             variableInitializer.startOffset,
                             variableInitializer.endOffset,
