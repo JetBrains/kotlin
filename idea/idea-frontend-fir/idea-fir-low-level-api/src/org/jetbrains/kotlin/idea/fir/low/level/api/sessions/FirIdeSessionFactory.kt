@@ -171,6 +171,7 @@ internal object FirIdeSessionFactory {
                     }
                 )
             )
+            register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
         }
     }
 
@@ -190,6 +191,7 @@ internal object FirIdeSessionFactory {
                     )
                 )
             )
+            register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
         }
     }
 

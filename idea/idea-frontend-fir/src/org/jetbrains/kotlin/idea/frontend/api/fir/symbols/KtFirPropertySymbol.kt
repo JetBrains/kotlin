@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.hasBackingField
+import org.jetbrains.kotlin.fir.declarations.isExternal
 import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
@@ -16,9 +18,13 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirMemberPropertySymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.createSignature
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertyGetterSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySetterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotationCall
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtCommonSymbolModality
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
@@ -43,6 +49,7 @@ internal class KtFirPropertySymbol(
     override val type: KtType by firRef.withFirAndCache(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) { fir -> builder.buildKtType(fir.returnTypeRef) }
     override val receiverType: KtType? by firRef.withFirAndCache(FirResolvePhase.TYPES) { fir -> fir.receiverTypeRef?.let(builder::buildKtType) }
     override val isExtension: Boolean get() = firRef.withFir { it.receiverTypeRef != null }
+
     override val symbolKind: KtSymbolKind
         get() = firRef.withFir { fir ->
             when (fir.symbol.callableId.classId) {
@@ -52,10 +59,27 @@ internal class KtFirPropertySymbol(
         }
     override val modality: KtCommonSymbolModality get() = getModality()
 
+    override val visibility: KtSymbolVisibility get() = getVisibility()
+
+
+    override val annotations: List<KtAnnotationCall> by firRef.withFirAndCache(FirResolvePhase.TYPES) {
+        KtFirAnnotationCall.convertFrom(it)
+    }
+
     override val callableIdIfNonLocal: FqName?
         get() = firRef.withFir { fir ->
             fir.symbol.callableId.takeUnless { fir.isLocal }?.asFqNameForDebugInfo()
         }
+
+    override val getter: KtPropertyGetterSymbol? by firRef.withFirAndCache(FirResolvePhase.RAW_FIR) { property ->
+        property.getter?.let { builder.buildPropertyAccessorSymbol(it) } as? KtPropertyGetterSymbol
+    }
+
+    override val setter: KtPropertySetterSymbol? by firRef.withFirAndCache(FirResolvePhase.RAW_FIR) { property ->
+        property.getter?.let { builder.buildPropertyAccessorSymbol(it) } as? KtPropertySetterSymbol
+    }
+
+    override val hasBackingField: Boolean get() = firRef.withFir { it.hasBackingField }
 
     override fun createPointer(): KtSymbolPointer<KtPropertySymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }

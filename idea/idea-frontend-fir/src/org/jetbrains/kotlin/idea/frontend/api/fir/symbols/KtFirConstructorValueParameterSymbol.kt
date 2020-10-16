@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotationCall
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
@@ -39,6 +40,10 @@ internal class KtFirConstructorValueParameterSymbol(
             }
         }
 
+    override val annotations: List<KtAnnotationCall> by firRef.withFirAndCache(FirResolvePhase.TYPES) {
+        KtFirAnnotationCall.convertFrom(it)
+    }
+
     override val constructorParameterKind: KtConstructorParameterSymbolKind
         get() = firRef.withFir { fir ->
             when {
@@ -49,6 +54,8 @@ internal class KtFirConstructorValueParameterSymbol(
         }
 
     override val hasDefaultValue: Boolean get() = firRef.withFir { it.defaultValue != null }
+
+    override val isVararg: Boolean get() = firRef.withFir { it.isVararg }
 
     override fun createPointer(): KtSymbolPointer<KtConstructorParameterSymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }

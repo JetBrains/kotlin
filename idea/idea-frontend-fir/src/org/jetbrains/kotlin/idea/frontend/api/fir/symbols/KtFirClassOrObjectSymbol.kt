@@ -15,11 +15,15 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirClassOrObjectInLibrarySymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotationCall
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolModality
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
+import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
@@ -38,6 +42,24 @@ internal class KtFirClassOrObjectSymbol(
         }
 
     override val modality: KtSymbolModality get() = getModality()
+
+    override val visibility: KtSymbolVisibility get() = getVisibility()
+
+    override val annotations: List<KtAnnotationCall> by firRef.withFirAndCache(FirResolvePhase.TYPES) {
+        KtFirAnnotationCall.convertFrom(it)
+    }
+
+    override val isInner: Boolean get() = firRef.withFir(FirResolvePhase.STATUS) { it.isInner }
+
+    override val companionObject: KtClassOrObjectSymbol? by firRef.withFirAndCache(FirResolvePhase.RAW_FIR) { fir ->
+        fir.companionObject?.let { builder.buildClassSymbol(it) }
+    }
+
+    override val superTypes: List<KtType> by firRef.withFirAndCache(FirResolvePhase.SUPER_TYPES) { fir ->
+        fir.superConeTypes.map {
+            builder.buildKtType(it)
+        }
+    }
 
     override val typeParameters by firRef.withFirAndCache {
         fir.typeParameters.map { typeParameter ->

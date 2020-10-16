@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirConstruc
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.createSignature
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotationCall
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
@@ -40,6 +42,12 @@ internal class KtFirConstructorSymbol(
             check(valueParameter is FirValueParameterImpl)
             builder.buildFirConstructorParameter(valueParameter)
         }
+    }
+
+    override val visibility: KtSymbolVisibility get() = getVisibility()
+
+    override val annotations: List<KtAnnotationCall> by firRef.withFirAndCache(FirResolvePhase.TYPES) {
+        KtFirAnnotationCall.convertFrom(it)
     }
 
     override val containingClassIdIfNonLocal: ClassId?

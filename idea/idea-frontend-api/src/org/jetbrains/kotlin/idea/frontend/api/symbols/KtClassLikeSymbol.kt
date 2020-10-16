@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.idea.frontend.api.symbols
 
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
+import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.name.ClassId
 
 sealed class KtClassifierSymbol : KtSymbol, KtNamedSymbol
@@ -31,8 +33,16 @@ abstract class KtTypeAliasSymbol : KtClassLikeSymbol() {
 
 abstract class KtClassOrObjectSymbol : KtClassLikeSymbol(),
     KtSymbolWithTypeParameters,
-    KtSymbolWithModality<KtSymbolModality> {
+    KtSymbolWithModality<KtSymbolModality>,
+    KtSymbolWithVisibility,
+    KtAnnotatedSymbol {
     abstract val classKind: KtClassKind
+
+    abstract val isInner: Boolean
+
+    abstract val companionObject: KtClassOrObjectSymbol?
+
+    abstract val superTypes: List<KtType>
 
     abstract override fun createPointer(): KtSymbolPointer<KtClassOrObjectSymbol>
 }

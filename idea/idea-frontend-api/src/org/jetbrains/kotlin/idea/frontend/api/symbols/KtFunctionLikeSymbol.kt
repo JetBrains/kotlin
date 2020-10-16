@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-sealed class KtFunctionLikeSymbol : KtCallableSymbol(), KtTypedSymbol, KtSymbolWithKind {
+abstract class KtFunctionLikeSymbol : KtCallableSymbol(), KtTypedSymbol, KtSymbolWithKind {
     abstract val valueParameters: List<KtParameterSymbol>
 
     abstract override fun createPointer(): KtSymbolPointer<KtFunctionLikeSymbol>
@@ -26,18 +26,21 @@ abstract class KtFunctionSymbol : KtFunctionLikeSymbol(),
     KtNamedSymbol,
     KtPossibleExtensionSymbol,
     KtSymbolWithTypeParameters,
-    KtSymbolWithModality<KtCommonSymbolModality> {
+    KtSymbolWithModality<KtCommonSymbolModality>,
+    KtSymbolWithVisibility,
+    KtAnnotatedSymbol {
     abstract val callableIdIfNonLocal: FqName?
 
     abstract val isSuspend: Boolean
     abstract val isOperator: Boolean
+    abstract val isExternal: Boolean
 
     abstract override val valueParameters: List<KtFunctionParameterSymbol>
 
     abstract override fun createPointer(): KtSymbolPointer<KtFunctionSymbol>
 }
 
-abstract class KtConstructorSymbol : KtFunctionLikeSymbol() {
+abstract class KtConstructorSymbol : KtFunctionLikeSymbol(), KtAnnotatedSymbol, KtSymbolWithVisibility {
     abstract val isPrimary: Boolean
     abstract val containingClassIdIfNonLocal: ClassId?
 
