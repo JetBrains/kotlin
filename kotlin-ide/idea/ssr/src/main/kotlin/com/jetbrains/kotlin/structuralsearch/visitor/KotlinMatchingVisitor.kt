@@ -734,7 +734,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     private fun matchTypeAgainstElement(
         type: String,
         element: PsiElement,
-        other: PsiElement?
+        other: PsiElement
     ): Boolean {
         return when (val predicate = (getHandler(element) as? SubstitutionHandler)?.findRegExpPredicate()) {
             null -> element.text == type
@@ -775,7 +775,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         var matchNameIdentifiers = matchTextOrVariable(identifier, otherIdentifier)
 
         // Possible match if "within hierarchy" is set
-        if (!matchNameIdentifiers && identifier != null) {
+        if (!matchNameIdentifiers && identifier != null && otherIdentifier != null) {
             val identifierHandler = getHandler(identifier)
             val checkHierarchyDown = identifierHandler.withinHierarchyTextFilterSet
 
@@ -786,7 +786,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                         matchTypeAgainstElement(renderedType, identifier, otherIdentifier)
                     }
                 }
-            } else if (identifier.getUserData(KotlinCompilingVisitor.WITHIN_HIERARCHY) == true && otherIdentifier != null) {
+            } else if (identifier.getUserData(KotlinCompilingVisitor.WITHIN_HIERARCHY) == true) {
                 // Check hierarchy up (up of pattern element = inheritors of code element)
                 matchNameIdentifiers = HierarchySearchRequest(
                     other,
