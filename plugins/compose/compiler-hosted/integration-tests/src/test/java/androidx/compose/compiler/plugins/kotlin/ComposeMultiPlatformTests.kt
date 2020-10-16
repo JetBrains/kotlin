@@ -17,11 +17,10 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.junit.Ignore
-import org.junit.Test
 
 class ComposeMultiPlatformTests : AbstractMultiPlatformIntegrationTest() {
     @Ignore("b/171000611")
-    @Test
+    // @Test
     fun testBasicMpp() = ensureSetup {
         multiplatform(
             """
@@ -41,7 +40,7 @@ class ComposeMultiPlatformTests : AbstractMultiPlatformIntegrationTest() {
     }
 
     @Ignore("b/171000611")
-    @Test
+    // @Test
     fun testBasicComposable() = ensureSetup {
         multiplatform(
             """
