@@ -15,6 +15,7 @@ dependencies {
     compile(project(":js:js.ast"))
     compile(project(":js:js.frontend"))
     compile(project(":compiler:backend.js"))
+    compile(project(":wasm:wasm.ir"))
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }

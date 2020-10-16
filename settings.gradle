@@ -302,7 +302,9 @@ include ":benchmarks",
         ":kotlinx-serialization-compiler-plugin",
         ":kotlinx-serialization-ide-plugin",
         ":kotlin-serialization",
-        ":kotlin-serialization-unshaded"
+        ":kotlin-serialization-unshaded",
+        ":wasm:wasm.ir"
+
 
 include ":compiler:fir:cones",
         ":compiler:fir:tree",
