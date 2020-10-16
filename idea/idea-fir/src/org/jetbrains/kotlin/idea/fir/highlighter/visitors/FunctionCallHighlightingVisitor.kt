@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.idea.fir.highlighter.visitors
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import org.jetbrains.kotlin.idea.frontend.api.*
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtAnonymousFunctionSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -66,6 +64,7 @@ internal class FunctionCallHighlightingVisitor(
                 function.symbolKind == KtSymbolKind.TOP_LEVEL -> Colors.PACKAGE_FUNCTION_CALL
                 else -> Colors.FUNCTION_CALL
             }
+            else -> Colors.FUNCTION_CALL //TODO ()
         }
         callInfo is VariableAsFunctionCallInfo -> Colors.VARIABLE_AS_FUNCTION_CALL
         callInfo is VariableAsFunctionLikeCallInfo -> Colors.VARIABLE_AS_FUNCTION_LIKE_CALL
