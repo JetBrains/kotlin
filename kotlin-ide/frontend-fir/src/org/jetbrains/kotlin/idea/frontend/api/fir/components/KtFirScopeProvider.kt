@@ -69,7 +69,12 @@ internal class KtFirScopeProvider(
             check(classSymbol is KtFirClassOrObjectSymbol)
             val firScope =
                 classSymbol.firRef.withFir(FirResolvePhase.SUPER_TYPES) { fir ->
-                    fir.unsubstitutedScope(fir.session, ScopeSession())
+                    val firSession = fir.session
+                    fir.unsubstitutedScope(
+                        firSession,
+                        firResolveState.firTransformerProvider.getScopeSession(firSession),
+                        withForcedTypeCalculator = false
+                    )
                 }.also(firScopeStorage::register)
             KtFirMemberScope(classSymbol, firScope, token, builder)
         }
