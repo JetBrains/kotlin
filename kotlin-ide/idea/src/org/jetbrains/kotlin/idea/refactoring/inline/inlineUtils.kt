@@ -27,13 +27,15 @@ internal fun buildCodeToInline(
     declaration: KtDeclaration,
     bodyOrInitializer: KtExpression,
     isBlockBody: Boolean,
-    editor: Editor?
+    editor: Editor?,
+    fallbackToSuperCall: Boolean,
 ): CodeToInline? {
     val descriptor = declaration.unsafeResolveToDescriptor()
     val builder = CodeToInlineBuilder(
         targetCallable = descriptor as CallableDescriptor,
         resolutionFacade = declaration.getResolutionFacade(),
         originalDeclaration = declaration,
+        fallbackToSuperCall = fallbackToSuperCall,
     )
 
     val expressionMapper: (KtExpression) -> Pair<KtExpression?, List<KtExpression>>? = if (isBlockBody) {

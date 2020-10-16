@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.refactoring.inline
 
 import com.intellij.lang.java.JavaLanguage
+import com.intellij.lang.jvm.JvmModifier
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.Key
@@ -168,7 +169,8 @@ internal class J2KInlineCache(private val strategy: UsageReplacementStrategy, pr
 
             return createUsageReplacementStrategyForNamedDeclaration(
                 declaration,
-                javaMember.findExistingEditor()
+                javaMember.findExistingEditor(),
+                fallbackToSuperCall = javaMember.containingClass?.hasModifier(JvmModifier.FINAL) ?: false,
             )?.also { javaMember.setUsageReplacementStrategy(it) }
         }
     }
@@ -176,9 +178,21 @@ internal class J2KInlineCache(private val strategy: UsageReplacementStrategy, pr
 
 private fun createUsageReplacementStrategyForNamedDeclaration(
     namedDeclaration: KtNamedDeclaration,
-    editor: Editor?
+    editor: Editor?,
+    fallbackToSuperCall: Boolean,
 ): UsageReplacementStrategy? = when (namedDeclaration) {
-    is KtNamedFunction -> createUsageReplacementStrategyForFunction(namedDeclaration, editor)
-    is KtProperty -> createReplacementStrategyForProperty(namedDeclaration, editor, namedDeclaration.project)
+    is KtNamedFunction -> createUsageReplacementStrategyForFunction(
+        function = namedDeclaration,
+        editor = editor,
+        fallbackToSuperCall = fallbackToSuperCall,
+    )
+
+    is KtProperty -> createReplacementStrategyForProperty(
+        property = namedDeclaration,
+        editor = editor,
+        project = namedDeclaration.project,
+        fallbackToSuperCall = fallbackToSuperCall,
+    )
+
     else -> null
 }

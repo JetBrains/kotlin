@@ -149,7 +149,12 @@ class KotlinInlinePropertyProcessor(
     }
 }
 
-fun createReplacementStrategyForProperty(property: KtProperty, editor: Editor?, project: Project): UsageReplacementStrategy? {
+fun createReplacementStrategyForProperty(
+    property: KtProperty,
+    editor: Editor?,
+    project: Project,
+    fallbackToSuperCall: Boolean = false,
+): UsageReplacementStrategy? {
     val getter = property.getter?.takeIf { it.hasBody() }
     val setter = property.setter?.takeIf { it.hasBody() }
 
@@ -163,7 +168,8 @@ fun createReplacementStrategyForProperty(property: KtProperty, editor: Editor?, 
             declaration = property,
             bodyOrInitializer = value,
             isBlockBody = false,
-            editor = editor
+            editor = editor,
+            fallbackToSuperCall = fallbackToSuperCall,
         ) ?: return null
 
         writeReplacement = null
@@ -173,7 +179,8 @@ fun createReplacementStrategyForProperty(property: KtProperty, editor: Editor?, 
                 declaration = getter,
                 bodyOrInitializer = getter.bodyExpression!!,
                 isBlockBody = getter.hasBlockBody(),
-                editor = editor
+                editor = editor,
+                fallbackToSuperCall = fallbackToSuperCall,
             ) ?: return null
         }
 
@@ -182,7 +189,8 @@ fun createReplacementStrategyForProperty(property: KtProperty, editor: Editor?, 
                 declaration = setter,
                 bodyOrInitializer = setter.bodyExpression!!,
                 isBlockBody = setter.hasBlockBody(),
-                editor = editor
+                editor = editor,
+                fallbackToSuperCall = fallbackToSuperCall,
             ) ?: return null
         }
     }

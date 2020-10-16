@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.codeInliner
 
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.util.elementType
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.isAnonymousFunction
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -50,6 +52,7 @@ class CodeToInlineBuilder(
     private val targetCallable: CallableDescriptor,
     private val resolutionFacade: ResolutionFacade,
     private val originalDeclaration: KtDeclaration?,
+    private val fallbackToSuperCall: Boolean = false,
 ) {
     private val psiFactory = KtPsiFactory(resolutionFacade.project)
 
@@ -324,7 +327,8 @@ class CodeToInlineBuilder(
         codeToInline.forEachDescendantOfType<KtSimpleNameExpression> { expression ->
             val parent = expression.parent
             if (parent is KtValueArgumentName || parent is KtCallableReferenceExpression) return@forEachDescendantOfType
-            val (bindingContext, target) = findDescriptorAndContext(expression, analyze) ?: return@forEachDescendantOfType
+            val (bindingContext, target) = findDescriptorAndContext(expression, analyze)
+                ?: return@forEachDescendantOfType addFakeSuperReceiver(codeToInline, expression)
 
             //TODO: other types of references ('[]' etc)
             if (expression.canBeResolvedViaImport(target, bindingContext)) {
@@ -404,6 +408,24 @@ class CodeToInlineBuilder(
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private fun addFakeSuperReceiver(codeToInline: MutableCodeToInline, expression: KtExpression) {
+        if (!fallbackToSuperCall || expression !is KtNameReferenceExpression) return
+
+        val parent = expression.parent
+        val prevSiblingElementType = expression.getPrevSiblingIgnoringWhitespaceAndComments()?.elementType
+        if (prevSiblingElementType != KtTokens.SAFE_ACCESS && prevSiblingElementType != KtTokens.DOT) {
+            val expressionToReplace = if (parent is KtCallExpression) parent else expression
+            codeToInline.addPreCommitAction(expressionToReplace) { referenceExpression ->
+                val qualifierExpression = codeToInline.replaceExpression(
+                    referenceExpression,
+                    psiFactory.createExpressionByPattern("super.$0", referenceExpression),
+                ) as? KtDotQualifiedExpression
+
+                qualifierExpression?.receiverExpression?.putCopyableUserData(CodeToInline.FAKE_SUPER_CALL_KEY, Unit)
             }
         }
     }

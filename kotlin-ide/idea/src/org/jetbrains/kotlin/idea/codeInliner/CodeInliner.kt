@@ -101,11 +101,12 @@ class CodeInliner<TCallElement : KtElement>(
         receiver?.mark(RECEIVER_VALUE_KEY)
 
         if (receiver != null) {
-            for (thisExpression in codeToInline.collectDescendantsOfType<KtThisExpression> {
+            for (instanceExpression in codeToInline.collectDescendantsOfType<KtInstanceExpressionWithLabel> {
                 // for this@ClassName we have only option to keep it as is (although it's sometimes incorrect but we have no other options)
-                !it[CodeToInline.SIDE_RECEIVER_USAGE_KEY] && it.labelQualifier == null
+                it is KtThisExpression && !it[CodeToInline.SIDE_RECEIVER_USAGE_KEY] && it.labelQualifier == null ||
+                        it is KtSuperExpression && it[CodeToInline.FAKE_SUPER_CALL_KEY]
             }) {
-                codeToInline.replaceExpression(thisExpression, receiver)
+                codeToInline.replaceExpression(instanceExpression, receiver)
             }
         }
 
@@ -527,6 +528,7 @@ class CodeInliner<TCallElement : KtElement>(
                 it.clear(USER_CODE_KEY)
                 it.clear(CodeToInline.PARAMETER_USAGE_KEY)
                 it.clear(CodeToInline.TYPE_PARAMETER_USAGE_KEY)
+                it.clear(CodeToInline.FAKE_SUPER_CALL_KEY)
                 it.clear(PARAMETER_VALUE_KEY)
                 it.clear(RECEIVER_VALUE_KEY)
                 it.clear(WAS_FUNCTION_LITERAL_ARGUMENT_KEY)

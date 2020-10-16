@@ -2,6 +2,7 @@ val JavaClass.propertyFromKotlin: Int get() = 42
 
 fun a() {
     JavaClass().field
+    JavaClass().field.let(::println)
 
     val d = JavaClass()
     d.field
@@ -28,6 +29,7 @@ fun a() {
 fun a2() {
     val d: JavaClass? = null
     d?.field
+    d?.field?.let(::println)
 
     d?.let {
         it.field
@@ -35,6 +37,10 @@ fun a2() {
 
     d?.also {
         it.field
+    }
+
+    d?.also {
+        it.field.let(::println)
     }
 
     with(d) {

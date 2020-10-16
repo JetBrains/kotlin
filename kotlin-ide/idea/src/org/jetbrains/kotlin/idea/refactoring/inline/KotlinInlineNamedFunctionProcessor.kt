@@ -31,14 +31,23 @@ class KotlinInlineFunctionProcessor(
     override fun createReplacementStrategy(): UsageReplacementStrategy? = createUsageReplacementStrategyForFunction(declaration, editor)
 }
 
-fun createUsageReplacementStrategyForFunction(function: KtNamedFunction, editor: Editor?): UsageReplacementStrategy? {
-    val codeToInline = createCodeToInlineForFunction(function, editor) ?: return null
+fun createUsageReplacementStrategyForFunction(
+    function: KtNamedFunction,
+    editor: Editor?,
+    fallbackToSuperCall: Boolean = false,
+): UsageReplacementStrategy? {
+    val codeToInline = createCodeToInlineForFunction(function, editor, fallbackToSuperCall = fallbackToSuperCall) ?: return null
     return CallableUsageReplacementStrategy(codeToInline, inlineSetter = false)
 }
 
-fun createCodeToInlineForFunction(function: KtNamedFunction, editor: Editor?): CodeToInline? = buildCodeToInline(
+fun createCodeToInlineForFunction(
+    function: KtNamedFunction,
+    editor: Editor?,
+    fallbackToSuperCall: Boolean = false,
+): CodeToInline? = buildCodeToInline(
     function,
     function.bodyExpression!!,
     function.hasBlockBody(),
-    editor
+    editor,
+    fallbackToSuperCall,
 )

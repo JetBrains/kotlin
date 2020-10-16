@@ -32,5 +32,8 @@ class CodeToInline(
         val PARAMETER_USAGE_KEY: Key<Name> = Key("PARAMETER_USAGE")
         val TYPE_PARAMETER_USAGE_KEY: Key<Name> = Key("TYPE_PARAMETER_USAGE")
         val SIDE_RECEIVER_USAGE_KEY: Key<Unit> = Key("SIDE_RECEIVER_USAGE")
+
+        // hack to fix Java resolve (KTIJ-245)
+        val FAKE_SUPER_CALL_KEY: Key<Unit> = Key("FAKE_SUPER_CALL")
     }
 }
