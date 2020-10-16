@@ -31,7 +31,10 @@ fun ConeClassLikeType.isLong(): Boolean = lookupTag.classId == StandardClassIds.
 fun ConeClassLikeType.isInt(): Boolean = lookupTag.classId == StandardClassIds.Int
 fun ConeClassLikeType.isShort(): Boolean = lookupTag.classId == StandardClassIds.Short
 fun ConeClassLikeType.isByte(): Boolean = lookupTag.classId == StandardClassIds.Byte
+fun ConeClassLikeType.isBoolean(): Boolean = lookupTag.classId == StandardClassIds.Boolean
+fun ConeClassLikeType.isChar(): Boolean = lookupTag.classId == StandardClassIds.Char
 
+fun ConeClassLikeType.isPrimitiveType(): Boolean = isPrimitiveNumberOrUnsignedNumberType() || isBoolean() || isByte() || isShort()
 fun ConeClassLikeType.isPrimitiveNumberType(): Boolean = lookupTag.classId in PRIMITIVE_NUMBER_CLASS_IDS
 fun ConeClassLikeType.isPrimitiveUnsignedNumberType(): Boolean = lookupTag.classId in PRIMITIVE_UNSIGNED_NUMBER_CLASS_IDS
 fun ConeClassLikeType.isPrimitiveNumberOrUnsignedNumberType(): Boolean = isPrimitiveNumberType() || isPrimitiveUnsignedNumberType()

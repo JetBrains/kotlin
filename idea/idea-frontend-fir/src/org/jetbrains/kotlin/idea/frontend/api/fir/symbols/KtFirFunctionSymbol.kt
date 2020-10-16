@@ -15,10 +15,13 @@ import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirMemberFunctionSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.createSignature
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.convertAnnotation
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotationCall
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtCommonSymbolModality
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
@@ -48,9 +51,16 @@ internal class KtFirFunctionSymbol(
         }
     }
 
+    override val annotations: List<KtAnnotationCall> by firRef.withFirAndCache(FirResolvePhase.TYPES) {
+        convertAnnotation(it)
+    }
+
     override val isSuspend: Boolean get() = firRef.withFir { it.isSuspend }
+    override val isOverride: Boolean get() = firRef.withFir { it.isOverride }
     override val receiverType: KtType? by firRef.withFirAndCache(FirResolvePhase.TYPES) { fir -> fir.receiverTypeRef?.let(builder::buildKtType) }
     override val isOperator: Boolean get() = firRef.withFir { it.isOperator }
+    override val isExternal: Boolean get() = firRef.withFir { it.isExternal }
+    override val isInline: Boolean get() = firRef.withFir { it.isInline }
     override val isExtension: Boolean get() = firRef.withFir { it.receiverTypeRef != null }
     override val callableIdIfNonLocal: FqName?
         get() = firRef.withFir { fir ->
@@ -65,6 +75,8 @@ internal class KtFirFunctionSymbol(
             }
         }
     override val modality: KtCommonSymbolModality get() = getModality()
+
+    override val visibility: KtSymbolVisibility get() = getVisibility()
 
     override fun createPointer(): KtSymbolPointer<KtFunctionSymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }

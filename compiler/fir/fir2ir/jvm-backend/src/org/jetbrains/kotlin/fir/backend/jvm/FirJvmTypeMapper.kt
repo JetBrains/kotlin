@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.backend.jvm
 
+import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.inference.isKClassType
@@ -17,11 +17,11 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.load.kotlin.JvmDescriptorTypeWriter
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeMapper
 import org.jetbrains.kotlin.types.TypeMappingContext
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
@@ -35,8 +35,8 @@ import org.jetbrains.org.objectweb.asm.Type
 class FirJvmTypeMapper(val session: FirSession) : TypeMappingContext<JvmDescriptorTypeWriter<Type>>, FirSessionComponent {
     override val typeContext = ConeTypeSystemCommonBackendContextForTypeMapping(session.typeContext)
 
-    fun mapType(type: ConeKotlinType, mode: TypeMappingMode = TypeMappingMode.DEFAULT): Type {
-        return AbstractTypeMapper.mapType(this, type, mode)
+    fun mapType(type: ConeKotlinType, mode: TypeMappingMode = TypeMappingMode.DEFAULT, sw: JvmDescriptorTypeWriter<Type>? = null): Type {
+        return AbstractTypeMapper.mapType(this, type, mode, sw)
     }
 
     override fun getClassInternalName(typeConstructor: TypeConstructorMarker): String {
@@ -45,7 +45,8 @@ class FirJvmTypeMapper(val session: FirSession) : TypeMappingContext<JvmDescript
     }
 
     override fun JvmDescriptorTypeWriter<Type>.writeGenericType(type: SimpleTypeMarker, asmType: Type, mode: TypeMappingMode) {
-        error("Should not be called")
+        //TODO Make correct implementation
+        (this as JvmSignatureWriter).writeAsmType(asmType)
     }
 }
 

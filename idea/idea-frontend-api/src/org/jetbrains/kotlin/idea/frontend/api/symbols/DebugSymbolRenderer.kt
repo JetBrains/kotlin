@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.symbols
 
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -35,6 +35,7 @@ object DebugSymbolRenderer {
         null -> "null"
         is String -> value
         is Boolean -> value.toString()
+        is Long -> value.toString()
         is Name -> value.asString()
         is FqName -> value.asString()
         is ClassId -> value.asString()
@@ -51,10 +52,17 @@ object DebugSymbolRenderer {
                 is KtFunctionSymbol -> renderValue(value.callableIdIfNonLocal ?: "<local>/${value.name}")
                 is KtConstructorSymbol -> "<constructor>"
                 is KtNamedSymbol -> renderValue(value.name)
+                is KtPropertyGetterSymbol -> "<getter>"
+                is KtPropertySetterSymbol -> "<setter>"
                 else -> TODO(value::class.toString())
             }
             "${value::class.simpleName!!}($symbolTag)"
         }
+        is KtSimpleConstantValue<*> -> renderValue(value.constant)
+        is KtNamedConstantValue -> "${renderValue(value.name)} = ${renderValue(value.expression)}"
+        is KtAnnotationCall ->
+            "${renderValue(value.classId)}${value.arguments.joinToString(prefix = "(", postfix = ")") { renderValue(it) }}"
+
         else -> value::class.simpleName!!
     }
 
