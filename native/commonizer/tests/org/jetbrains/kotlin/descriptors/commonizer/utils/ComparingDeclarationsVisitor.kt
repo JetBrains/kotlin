@@ -16,8 +16,9 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.types.AbbreviatedType
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.getAbbreviation
+import org.jetbrains.kotlin.types.SimpleType
 import kotlin.contracts.ExperimentalContracts
 import kotlin.reflect.KCallable
 import kotlin.test.fail
@@ -467,40 +468,63 @@ internal class ComparingDeclarationsVisitor(
 
         check(actual != null && expected != null)
 
-        visitAnnotations(
-            expected.annotations,
-            actual.annotations,
-            context.nextLevel("Type annotations")
-        )
-
-        val expectedUnwrapped = expected.getAbbreviation() ?: expected.unwrap()
-        val actualUnwrapped = actual.getAbbreviation() ?: actual.unwrap()
+        val expectedUnwrapped = expected.unwrap()
+        val actualUnwrapped = actual.unwrap()
 
         if (expectedUnwrapped === actualUnwrapped) return
 
-        visitAnnotations(
-            expectedUnwrapped.annotations,
-            actualUnwrapped.annotations,
-            context.nextLevel("Unwrapped/unabbreviated type annotations")
-        )
+        val expectedAbbreviated = expectedUnwrapped as? AbbreviatedType
+        val actualAbbreviated = actualUnwrapped as? AbbreviatedType
 
-        val expectedId = expectedUnwrapped.declarationDescriptor.run { classId?.asString() ?: name.asString() }
-        val actualId = actualUnwrapped.declarationDescriptor.run { classId?.asString() ?: name.asString() }
+        context.assertEquals(!expectedAbbreviated.isNull(), !actualAbbreviated.isNull(), "type is abbreviated")
 
-        context.assertEquals(expectedId, actualId, "type class ID / name")
+        if (expectedAbbreviated != null && actualAbbreviated != null) {
+            fun extractExpandedType(abbreviated: AbbreviatedType): SimpleType { // eliminate unnecessary repeated abbreviations
+                var expanded = abbreviated.expandedType
+                while (expanded is AbbreviatedType) {
+                    if (expanded.abbreviation.declarationDescriptor !== abbreviated.abbreviation.declarationDescriptor)
+                        break
+                    else
+                        expanded = expanded.expandedType
+                }
+                return expanded
+            }
 
-        val expectedArguments = expectedUnwrapped.arguments
-        val actualArguments = actualUnwrapped.arguments
+            visitType(
+                expectedAbbreviated.abbreviation,
+                actualAbbreviated.abbreviation,
+                context.nextLevel("Abbreviation type")
+            )
+            visitType(
+                extractExpandedType(expectedAbbreviated),
+                extractExpandedType(actualAbbreviated),
+                context.nextLevel("Expanded type")
+            )
+        } else {
+            visitAnnotations(
+                expectedUnwrapped.annotations,
+                actualUnwrapped.annotations,
+                context.nextLevel("Type annotations")
+            )
 
-        context.assertEquals(expectedArguments.size, actualArguments.size, "size of type arguments list")
+            val expectedId = expectedUnwrapped.declarationDescriptor.run { classId?.asString() ?: name.asString() }
+            val actualId = actualUnwrapped.declarationDescriptor.run { classId?.asString() ?: name.asString() }
 
-        expectedArguments.forEachIndexed { index, expectedArgument ->
-            val actualArgument = actualArguments[index]
+            context.assertEquals(expectedId, actualId, "type class ID / name")
 
-            context.assertFieldsEqual(expectedArgument::isStarProjection, actualArgument::isStarProjection)
-            if (!expectedArgument.isStarProjection) {
-                context.assertFieldsEqual(expectedArgument::getProjectionKind, actualArgument::getProjectionKind)
-                visitType(expectedArgument.type, actualArgument.type, context.nextLevel("Type argument type"))
+            val expectedArguments = expectedUnwrapped.arguments
+            val actualArguments = actualUnwrapped.arguments
+
+            context.assertEquals(expectedArguments.size, actualArguments.size, "size of type arguments list")
+
+            expectedArguments.forEachIndexed { index, expectedArgument ->
+                val actualArgument = actualArguments[index]
+
+                context.assertFieldsEqual(expectedArgument::isStarProjection, actualArgument::isStarProjection)
+                if (!expectedArgument.isStarProjection) {
+                    context.assertFieldsEqual(expectedArgument::getProjectionKind, actualArgument::getProjectionKind)
+                    visitType(expectedArgument.type, actualArgument.type, context.nextLevel("Type argument type"))
+                }
             }
         }
     }
@@ -509,7 +533,7 @@ internal class ComparingDeclarationsVisitor(
         if (expected != actual)
             fail(
                 buildString {
-                    append("Comparing $subject:\n")
+                    append("Comparing <$subject>:\n")
                     append("\"$expected\" is not equal to \"$actual\"\n")
                 }
             )

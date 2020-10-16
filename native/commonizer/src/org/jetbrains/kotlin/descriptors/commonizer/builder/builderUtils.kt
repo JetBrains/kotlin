@@ -87,18 +87,20 @@ internal fun buildDispatchReceiver(callableDescriptor: CallableDescriptor) =
 
 internal fun CirType.buildType(
     targetComponents: TargetDeclarationsBuilderComponents,
-    typeParameterResolver: TypeParameterResolver
+    typeParameterResolver: TypeParameterResolver,
+    expandTypeAliases: Boolean = true
 ): UnwrappedType = when (this) {
-    is CirSimpleType -> buildType(targetComponents, typeParameterResolver)
+    is CirSimpleType -> buildType(targetComponents, typeParameterResolver, expandTypeAliases)
     is CirFlexibleType -> flexibleType(
-        lowerBound = lowerBound.buildType(targetComponents, typeParameterResolver),
-        upperBound = upperBound.buildType(targetComponents, typeParameterResolver)
+        lowerBound = lowerBound.buildType(targetComponents, typeParameterResolver, expandTypeAliases),
+        upperBound = upperBound.buildType(targetComponents, typeParameterResolver, expandTypeAliases)
     )
 }
 
 internal fun CirSimpleType.buildType(
     targetComponents: TargetDeclarationsBuilderComponents,
-    typeParameterResolver: TypeParameterResolver
+    typeParameterResolver: TypeParameterResolver,
+    expandTypeAliases: Boolean
 ): SimpleType {
     val classifier: ClassifierDescriptor = when (val classifierId = classifierId) {
         is CirClassifierId.Class -> {
@@ -122,17 +124,23 @@ internal fun CirSimpleType.buildType(
         }
     }
 
+    val arguments = arguments.map { it.buildArgument(targetComponents, typeParameterResolver, expandTypeAliases) }
     val simpleType = simpleType(
         annotations = Annotations.EMPTY,
         constructor = classifier.typeConstructor,
-        arguments = arguments.map { it.buildArgument(targetComponents, typeParameterResolver) },
+        arguments = arguments,
         nullable = isMarkedNullable,
         kotlinTypeRefiner = null
     )
 
-    return if (classifier is TypeAliasDescriptor)
-        classifier.underlyingType.makeNullableAsSpecified(simpleType.isMarkedNullable).withAbbreviation(simpleType)
-    else
+    return if (expandTypeAliases && classifier is TypeAliasDescriptor) {
+        val expandedType = TypeAliasExpander.NON_REPORTING.expandWithoutAbbreviation(
+            TypeAliasExpansion.create(null, classifier, arguments),
+            Annotations.EMPTY
+        )
+
+        expandedType.makeNullableAsSpecified(simpleType.isMarkedNullable).withAbbreviation(simpleType)
+    } else
         simpleType
 }
 
@@ -143,10 +151,11 @@ private inline fun <reified T : ClassifierDescriptorWithTypeParameters> Classifi
 
 private fun CirTypeProjection.buildArgument(
     targetComponents: TargetDeclarationsBuilderComponents,
-    typeParameterResolver: TypeParameterResolver
+    typeParameterResolver: TypeParameterResolver,
+    expandTypeAliases: Boolean
 ): TypeProjection =
     if (isStarProjection) {
         StarProjectionForAbsentTypeParameter(targetComponents.builtIns)
     } else {
-        TypeProjectionImpl(projectionKind, type.buildType(targetComponents, typeParameterResolver))
+        TypeProjectionImpl(projectionKind, type.buildType(targetComponents, typeParameterResolver, expandTypeAliases))
     }

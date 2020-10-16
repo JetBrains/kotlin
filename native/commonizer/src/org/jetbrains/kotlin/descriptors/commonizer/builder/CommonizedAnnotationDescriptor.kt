@@ -17,7 +17,7 @@ class CommonizedAnnotationDescriptor(
     cirAnnotation: CirAnnotation
 ) : AnnotationDescriptor {
     override val type by targetComponents.storageManager.createLazyValue {
-        cirAnnotation.type.buildType(targetComponents, TypeParameterResolver.EMPTY)
+        cirAnnotation.type.buildType(targetComponents, TypeParameterResolver.EMPTY, expandTypeAliases = true)
     }
 
     override val allValueArguments by targetComponents.storageManager.createLazyValue {
