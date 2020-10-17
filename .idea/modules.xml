@@ -1003,6 +1003,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/appcode/intellij.appcode.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/appcode/intellij.appcode.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/appcode-build/intellij.appcode.build.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/appcode-build/intellij.appcode.build.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/appcode-guitests/intellij.appcode.guiTests.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/appcode-guitests/intellij.appcode.guiTests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/appcode/main/intellij.appcode.main.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/appcode/main/intellij.appcode.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/appcode-reveal/intellij.appcode.reveal.iml" filepath="$PROJECT_DIR$/intellij/contrib/appcode-reveal/intellij.appcode.reveal.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/appcode-test-boost/intellij.appcode.test.boost.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/appcode-test-boost/intellij.appcode.test.boost.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/appcode-test-catch/intellij.appcode.test.catch.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/appcode-test-catch/intellij.appcode.test.catch.iml" />
@@ -1016,11 +1017,14 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/phpstorm/behat/intellij.behat.iml" filepath="$PROJECT_DIR$/intellij/phpstorm/behat/intellij.behat.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/phpstorm/blade/intellij.blade.iml" filepath="$PROJECT_DIR$/intellij/phpstorm/blade/intellij.blade.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-lang/intellij.c.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-lang/intellij.c.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-lang/clangd/intellij.c.clangd.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-lang/clangd/intellij.c.clangd.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-lang/debugger/intellij.c.debugger.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-lang/debugger/intellij.c.debugger.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-lang-dfa/intellij.c.dfa.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-lang-dfa/intellij.c.dfa.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/doxygen/intellij.c.doxygen.iml" filepath="$PROJECT_DIR$/intellij/CIDR/doxygen/intellij.c.doxygen.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-lang/plugin/intellij.c.plugin.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-lang/plugin/intellij.c.plugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/CFML/intellij.cfml.iml" filepath="$PROJECT_DIR$/intellij/contrib/CFML/intellij.cfml.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/charts/intellij.charts.iml" filepath="$PROJECT_DIR$/intellij/plugins/charts/intellij.charts.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-base/intellij.cidr.base.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-base/intellij.cidr.base.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-clang-format/intellij.cidr.clangFormat.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-clang-format/intellij.cidr.clangFormat.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/cocoa/intellij.cidr.cocoa.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/cocoa/intellij.cidr.cocoa.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/cocoa-common/intellij.cidr.cocoaCommon.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/cocoa-common/intellij.cidr.cocoaCommon.iml" />
@@ -1036,10 +1040,12 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-execution/intellij.cidr.execution.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-execution/intellij.cidr.execution.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-external-system/intellij.cidr.externalSystem.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-external-system/intellij.cidr.externalSystem.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-ide/intellij.cidr.ide.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-ide/intellij.cidr.ide.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-lang-base/intellij.cidr.lang.base.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-lang-base/intellij.cidr.lang.base.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-IntelliLang/intellij.cidr.langInjection.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-IntelliLang/intellij.cidr.langInjection.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-markdown/intellij.cidr.markdown.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-markdown/intellij.cidr.markdown.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-modulemap-language/intellij.cidr.modulemap.language.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-modulemap-language/intellij.cidr.modulemap.language.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-projectModel/intellij.cidr.projectModel.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-projectModel/intellij.cidr.projectModel.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-resources/intellij.cidr.resources.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-resources/intellij.cidr.resources.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/strings/intellij.cidr.strings.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/strings/intellij.cidr.strings.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-test-boost/intellij.cidr.test.boost.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-test-boost/intellij.cidr.test.boost.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-test-catch/intellij.cidr.test.catch.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-test-catch/intellij.cidr.test.catch.iml" />
@@ -1051,7 +1057,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-util/serializer/intellij.cidr.util.serializer.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-util/serializer/intellij.cidr.util.serializer.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-util/ui/intellij.cidr.util.ui.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-util/ui/intellij.cidr.util.ui.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-workspaceModel/intellij.cidr.workspaceModel.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-workspaceModel/intellij.cidr.workspaceModel.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-workspaceModelBridge/intellij.cidr.workspaceModelBridge.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-workspaceModelBridge/intellij.cidr.workspaceModelBridge.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-workspaceModel/ide/intellij.cidr.workspaceModel.ide.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-workspaceModel/ide/intellij.cidr.workspaceModel.ide.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/xcode-model-core/intellij.cidr.xcodeModel.core.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/xcode-model-core/intellij.cidr.xcodeModel.core.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/xctest/intellij.cidr.xctest.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/xctest/intellij.cidr.xctest.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/intellij-client/intellij.client.iml" filepath="$PROJECT_DIR$/intellij/platform/intellij-client/intellij.client.iml" />
@@ -1067,6 +1073,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-build/intellij.clion.build.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-build/intellij.clion.build.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-cmake/intellij.clion.cmake.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-cmake/intellij.clion.cmake.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-compdb/intellij.clion.compdb.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-compdb/intellij.clion.compdb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-coverage/intellij.clion.coverage.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-coverage/intellij.clion.coverage.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-ctest/intellij.clion.ctest.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-ctest/intellij.clion.ctest.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/cpp-diagnostics/intellij.clion.diagnostics.iml" filepath="$PROJECT_DIR$/intellij/contrib/cpp-diagnostics/intellij.clion.diagnostics.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-embedded/intellij.clion.embedded.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-embedded/intellij.clion.embedded.iml" />
@@ -1074,14 +1081,17 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-execution/intellij.clion.execution.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-execution/intellij.clion.execution.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-gradle/intellij.clion.gradle.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-gradle/intellij.clion.gradle.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-guitests/intellij.clion.guiTests.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-guitests/intellij.clion.guiTests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion/main/intellij.clion.main.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion/main/intellij.clion.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-makefile/intellij.clion.makefile.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-makefile/intellij.clion.makefile.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-plugin/intellij.clion.plugin.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-plugin/intellij.clion.plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-profiling/intellij.clion.profiling.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-profiling/intellij.clion.profiling.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-swift/intellij.clion.swift.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-swift/intellij.clion.swift.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-test-boost/intellij.clion.test.boost.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-test-boost/intellij.clion.test.boost.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-test-catch/intellij.clion.test.catch.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-test-catch/intellij.clion.test.catch.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-test-doctest/intellij.clion.test.doctest.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-test-doctest/intellij.clion.test.doctest.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-test-google/intellij.clion.test.google.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-test-google/intellij.clion.test.google.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-testFramework/intellij.clion.testFramework.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-testFramework/intellij.clion.testFramework.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-toolchains/intellij.clion.toolchains.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-toolchains/intellij.clion.toolchains.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-webDeployment/intellij.clion.webDeployment.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-webDeployment/intellij.clion.webDeployment.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/cloud-config/intellij.cloudConfig.iml" filepath="$PROJECT_DIR$/intellij/plugins/cloud-config/intellij.cloudConfig.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/CloudFormation/intellij.cloudFormation.iml" filepath="$PROJECT_DIR$/intellij/contrib/CloudFormation/intellij.cloudFormation.iml" />
@@ -1587,6 +1597,8 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/lightEdit/build/intellij.lightEdit.build.iml" filepath="$PROJECT_DIR$/intellij/lightEdit/build/intellij.lightEdit.build.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/lightEdit/intellij.lightEdit.main.iml" filepath="$PROJECT_DIR$/intellij/lightEdit/intellij.lightEdit.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/liquid/intellij.liquid.iml" filepath="$PROJECT_DIR$/intellij/plugins/liquid/intellij.liquid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/lombok/intellij.lombok.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/lombok/intellij.lombok.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/lombok/generated/intellij.lombok.generated.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/lombok/generated/intellij.lombok.generated.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/markdown/intellij.markdown.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/markdown/intellij.markdown.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/marketplace/intellij.marketplace.iml" filepath="$PROJECT_DIR$/intellij/plugins/marketplace/intellij.marketplace.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/marketplace/bootstrap/intellij.marketplace.bootstrap.iml" filepath="$PROJECT_DIR$/intellij/plugins/marketplace/bootstrap/intellij.marketplace.bootstrap.iml" />
@@ -1615,6 +1627,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/microservices/microservices-uast/intellij.microservices.uast.iml" filepath="$PROJECT_DIR$/intellij/plugins/microservices/microservices-uast/intellij.microservices.uast.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/microservices/microservices-ui/intellij.microservices.ui.iml" filepath="$PROJECT_DIR$/intellij/plugins/microservices/microservices-ui/intellij.microservices.ui.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/mobile-ide/intellij.mobile.ide.iml" filepath="$PROJECT_DIR$/intellij/mobile-ide/intellij.mobile.ide.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/mobile-ide/main/intellij.mobile.ide.main.iml" filepath="$PROJECT_DIR$/intellij/mobile-ide/main/intellij.mobile.ide.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/mobile-ide/build/intellij.mobile.ide.build.iml" filepath="$PROJECT_DIR$/intellij/mobile-ide/build/intellij.mobile.ide.build.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/native/debugger/cdb/intellij.native.debugger.cdb.iml" filepath="$PROJECT_DIR$/intellij/native/debugger/cdb/intellij.native.debugger.cdb.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/nativeDebug-plugin/intellij.nativeDebug.plugin.iml" filepath="$PROJECT_DIR$/intellij/CIDR/nativeDebug-plugin/intellij.nativeDebug.plugin.iml" />
@@ -1626,8 +1639,6 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/built-in-server/client/node-rpc-client/intellij.nodeRpcClient.iml" filepath="$PROJECT_DIR$/intellij/community/platform/built-in-server/client/node-rpc-client/intellij.nodeRpcClient.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/osmorc/intellij.osgi.iml" filepath="$PROJECT_DIR$/intellij/contrib/osmorc/intellij.osgi.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/osmorc/osmorc-jps-plugin/intellij.osgi.jps.iml" filepath="$PROJECT_DIR$/intellij/contrib/osmorc/osmorc-jps-plugin/intellij.osgi.jps.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/package-search/intellij.packageSearch.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/package-search/intellij.packageSearch.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/package-search/pkgs-tests/intellij.packageSearch.tests.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/package-search/pkgs-tests/intellij.packageSearch.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/performanceTesting/intellij.performanceTesting.iml" filepath="$PROJECT_DIR$/intellij/plugins/performanceTesting/intellij.performanceTesting.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/performanceTesting/maven/intellij.performanceTesting.maven.iml" filepath="$PROJECT_DIR$/intellij/plugins/performanceTesting/maven/intellij.performanceTesting.maven.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/phpstorm/phing/intellij.phing.iml" filepath="$PROJECT_DIR$/intellij/phpstorm/phing/intellij.phing.iml" />
@@ -2034,6 +2045,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/struts2/plugin/intellij.struts2.iml" filepath="$PROJECT_DIR$/intellij/contrib/struts2/plugin/intellij.struts2.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/struts2/dom-api/intellij.struts2.dom.iml" filepath="$PROJECT_DIR$/intellij/contrib/struts2/dom-api/intellij.struts2.dom.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/struts2/ognl/intellij.struts2.ognl.iml" filepath="$PROJECT_DIR$/intellij/contrib/struts2/ognl/intellij.struts2.ognl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/styled-components/intellij.styled.components.iml" filepath="$PROJECT_DIR$/intellij/plugins/styled-components/intellij.styled.components.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/stylus/intellij.stylus.iml" filepath="$PROJECT_DIR$/intellij/plugins/stylus/intellij.stylus.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/frameworks/swagger/swagger-core/intellij.swagger.iml" filepath="$PROJECT_DIR$/intellij/plugins/frameworks/swagger/swagger-core/intellij.swagger.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/swift/intellij.swift.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/swift/intellij.swift.iml" />
@@ -2139,10 +2151,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/xslt-debugger/engine/intellij.xslt.debugger.rt.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/xslt-debugger/engine/intellij.xslt.debugger.rt.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/yaml/intellij.yaml.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/yaml/intellij.yaml.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/Yeoman/intellij.yeoman.iml" filepath="$PROJECT_DIR$/intellij/plugins/Yeoman/intellij.yeoman.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/styled-components/intellij.styled.components.iml" filepath="$PROJECT_DIR$/intellij/plugins/styled-components/intellij.styled.components.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/zkm/intellij.zkm.iml" filepath="$PROJECT_DIR$/intellij/plugins/zkm/intellij.zkm.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/lombok/intellij.lombok.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/lombok/intellij.lombok.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/lombok/generated/intellij.lombok.generated.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/lombok/generated/intellij.lombok.generated.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin-ultimate/appcode-native/kotlin-ultimate.appcode-native.iml" filepath="$PROJECT_DIR$/kotlin-ultimate/appcode-native/kotlin-ultimate.appcode-native.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin-ultimate/appcode-native/appcode-with-java/kotlin-ultimate.appcode-native.appcode-with-java.iml" filepath="$PROJECT_DIR$/kotlin-ultimate/appcode-native/appcode-with-java/kotlin-ultimate.appcode-native.appcode-with-java.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin-ultimate/cidr-gradle-tooling/kotlin-ultimate.cidr-gradle-tooling.iml" filepath="$PROJECT_DIR$/kotlin-ultimate/cidr-gradle-tooling/kotlin-ultimate.cidr-gradle-tooling.iml" />
