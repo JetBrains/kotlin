@@ -9,6 +9,11 @@
     <option name="LINE_SEPARATOR" value="&#10;" />
     <option name="RIGHT_MARGIN" value="140" />
     <option name="FORMATTER_TAGS_ENABLED" value="true" />
+    <option name="DO_NOT_FORMAT">
+      <list>
+        <fileSet type="namedScope" name="Ruby Test Data Files" pattern="file[intellij.ruby.tests]:org//*.rb||file[intellij.ruby.tests]:features//*.rb||file[intellij.ruby.tests]:org//*.erb||file[intellij.ruby.tests]:features//*.erb" />
+      </list>
+    </option>
     <GroovyCodeStyleSettings>
       <option name="STATIC_METHODS_ORDER_WEIGHT" value="5" />
       <option name="METHODS_ORDER_WEIGHT" value="4" />
@@ -52,13 +57,6 @@
       <option name="TERNARY_OPERATION_SIGNS_ON_NEXT_LINE" value="true" />
       <option name="FOR_STATEMENT_WRAP" value="5" />
       <option name="ASSIGNMENT_WRAP" value="1" />
-    </codeStyleSettings>
-    <codeStyleSettings language="CSS">
-      <indentOptions>
-        <option name="INDENT_SIZE" value="2" />
-        <option name="CONTINUATION_INDENT_SIZE" value="2" />
-        <option name="TAB_SIZE" value="2" />
-      </indentOptions>
     </codeStyleSettings>
     <codeStyleSettings language="ECMA Script Level 4">
       <option name="ELSE_ON_NEW_LINE" value="true" />
