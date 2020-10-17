@@ -2,17 +2,17 @@ package samples.system.timing
 
 import samples.*
 import kotlin.system.*
-import kotlin.test.*
 
 class Timings {
 
     @Sample
     fun measureBlockTimeMillis() {
         val timeInMillis = measureTimeMillis {
-            (0..10).reduce(Int::plus)
+            val numbers = (0..100).toMutableList()
+            numbers.shuffle()
+            numbers.sort()
         }
-        assertTrue(timeInMillis >= 0)
-        assertTrue(timeInMillis < 1e9)
+        println("The operation took $timeInMillis ms")
     }
 
     @Sample
@@ -20,7 +20,6 @@ class Timings {
         val timeInNanos = measureNanoTime {
             (0..5).map { it * 2 }
         }
-        assertTrue(timeInNanos >= 0)
-        assertTrue(timeInNanos < 1e12)
+        println("The operation took $timeInNanos ns")
     }
 }
