@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.idea.perf.util
 
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.testFramework.EdtTestUtil
 import com.intellij.testFramework.ExpectedHighlightingData
+import com.intellij.testFramework.runInEdtAndWait
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 
 fun KotlinLightCodeInsightFixtureTestCase.removeInfoMarkers() {
     ExpectedHighlightingData(editor.document, true, true).init()
 
-    EdtTestUtil.runInEdtAndWait {
+    runInEdtAndWait {
         PsiDocumentManager.getInstance(project).commitAllDocuments()
     }
 }
