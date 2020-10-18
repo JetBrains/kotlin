@@ -1,3 +1,6 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: EXCEPTIONS_NOT_IMPLEMENTED
+
 sealed class Result {
     class Failure(val exception: Exception) : Result()
     class Success(val message: String) : Result()

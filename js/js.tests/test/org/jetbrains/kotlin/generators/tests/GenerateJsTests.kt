@@ -77,6 +77,33 @@ fun main(args: Array<String>) {
                 model("codegen/boxError", targetBackend = TargetBackend.JS_IR)
             }
 
+            testClass<AbstractIrCodegenBoxWasmTest> {
+                model(
+                    "codegen/box", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.WASM, excludeDirs = listOf(
+                        
+                        // TODO: Support reflection
+                        "toArray", "classLiteral", "reflection",
+
+                        // TODO: Add stdlib
+                        "contracts", "platformTypes",
+
+                        // TODO: ArrayList
+                        "ranges/stepped/unsigned",
+
+                        // TODO: Support coroutines
+                        "coroutines", "parametersMetadata",
+
+                        // TODO: Support exceptions
+                        "finally", "deadCodeElimination", "controlStructures/tryCatchInExpressions",
+
+                        // TODO: Support delegated properties
+                        "delegatedProperty",
+
+                        "oldLanguageVersions"
+                    )
+                )
+            }
+
             testClass<AbstractIrJsCodegenBoxES6Test> {
                 model("codegen/box", targetBackend = TargetBackend.JS_IR_ES6)
             }

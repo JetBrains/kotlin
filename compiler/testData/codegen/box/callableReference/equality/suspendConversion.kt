@@ -1,3 +1,5 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: COROUTINES
 // !LANGUAGE: +SuspendConversion
 // FILE: suspendCovnersion.kt
 
