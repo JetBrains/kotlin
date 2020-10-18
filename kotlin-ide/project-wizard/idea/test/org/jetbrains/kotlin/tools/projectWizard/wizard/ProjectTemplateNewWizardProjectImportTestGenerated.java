@@ -35,12 +35,12 @@ public class ProjectTemplateNewWizardProjectImportTestGenerated extends Abstract
 
         @TestMetadata("composeDesktopApplication")
         public void testComposeDesktopApplication() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/composeDesktopApplication/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/composeDesktopApplication/");
         }
 
         @TestMetadata("composeMultiplatformApplication")
         public void testComposeMultiplatformApplication() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/composeMultiplatformApplication/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/composeMultiplatformApplication/");
         }
 
         @TestMetadata("consoleApplication")
@@ -98,12 +98,12 @@ public class ProjectTemplateNewWizardProjectImportTestGenerated extends Abstract
 
         @TestMetadata("composeDesktopApplication")
         public void testComposeDesktopApplication() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/composeDesktopApplication/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/composeDesktopApplication/");
         }
 
         @TestMetadata("composeMultiplatformApplication")
         public void testComposeMultiplatformApplication() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/composeMultiplatformApplication/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/composeMultiplatformApplication/");
         }
 
         @TestMetadata("consoleApplication")
@@ -161,12 +161,12 @@ public class ProjectTemplateNewWizardProjectImportTestGenerated extends Abstract
 
         @TestMetadata("composeDesktopApplication")
         public void testComposeDesktopApplication() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/composeDesktopApplication/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/composeDesktopApplication/");
         }
 
         @TestMetadata("composeMultiplatformApplication")
         public void testComposeMultiplatformApplication() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/composeMultiplatformApplication/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/composeMultiplatformApplication/");
         }
 
         @TestMetadata("consoleApplication")

@@ -33,12 +33,12 @@ public class ProjectTemplateBuildFileGenerationTestGenerated extends AbstractPro
 
     @TestMetadata("composeDesktopApplication")
     public void testComposeDesktopApplication() throws Exception {
-        runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/composeDesktopApplication/");
+        runTest("testData/projectTemplatesBuildFileGeneration/composeDesktopApplication/");
     }
 
     @TestMetadata("composeMultiplatformApplication")
     public void testComposeMultiplatformApplication() throws Exception {
-        runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/composeMultiplatformApplication/");
+        runTest("testData/projectTemplatesBuildFileGeneration/composeMultiplatformApplication/");
     }
 
     @TestMetadata("consoleApplication")
