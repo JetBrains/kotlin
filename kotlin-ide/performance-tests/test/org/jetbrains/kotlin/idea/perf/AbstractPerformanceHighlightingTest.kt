@@ -56,8 +56,18 @@ abstract class AbstractPerformanceHighlightingTest : KotlinLightCodeInsightFixtu
         }
     }
 
-    protected fun doPerfTest(unused: String) {
+    private fun testName(): String {
+        val javaClass = this.javaClass
         val testName = getTestName(false)
+        return if (javaClass.isMemberClass) {
+            "${javaClass.simpleName} - $testName"
+        } else {
+            testName
+        }
+    }
+
+    protected fun doPerfTest(unused: String) {
+        val testName = testName()
         innerPerfTest(testName) {
             myFixture.configureByFile(fileName())
 
