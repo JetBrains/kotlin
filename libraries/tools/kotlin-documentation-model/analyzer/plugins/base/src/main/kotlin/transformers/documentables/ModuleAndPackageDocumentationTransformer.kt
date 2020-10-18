@@ -4,11 +4,14 @@ import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.SourceSetDependent
 import org.jetbrains.dokka.model.doc.DocumentationNode
+import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.transformers.documentation.PreMergeDocumentableTransformer
 
 internal class ModuleAndPackageDocumentationTransformer(
     private val moduleAndPackageDocumentationReader: ModuleAndPackageDocumentationReader
 ) : PreMergeDocumentableTransformer {
+
+    constructor(context: DokkaContext) : this(ModuleAndPackageDocumentationReader(context))
 
     override fun invoke(modules: List<DModule>): List<DModule> {
         return modules.map { module ->
