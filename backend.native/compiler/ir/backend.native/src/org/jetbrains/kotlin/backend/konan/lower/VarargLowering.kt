@@ -103,18 +103,19 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
                     val arrayHandle = arrayType(expression.type)
 
                     val vars = expression.elements.map {
-                        it to irTemporaryVar(
+                        it to irTemporary(
                                 (it as? IrSpreadElement)?.expression ?: it as IrExpression,
-                                "elem".synthesizedString
+                                "elem".synthesizedString,
+                                isMutable = true
                         )
                     }.toMap()
                     val arraySize = calculateArraySize(arrayHandle, hasSpreadElement, scope, expression, vars)
                     val array = arrayHandle.createArray(this, expression.varargElementType, arraySize)
 
-                    val arrayTmpVariable = irTemporaryVar(array, "array".synthesizedString)
+                    val arrayTmpVariable = irTemporary(array, "array".synthesizedString, isMutable = true)
                     lateinit var indexTmpVariable: IrVariable
                     if (hasSpreadElement)
-                        indexTmpVariable = irTemporaryVar(kIntZero, "index".synthesizedString)
+                        indexTmpVariable = irTemporary(kIntZero, "index".synthesizedString, isMutable = true)
                     expression.elements.forEachIndexed { i, element ->
                         irBuilder.at(element.startOffset, element.endOffset)
                         log { "element:$i> ${ir2string(element)}" }

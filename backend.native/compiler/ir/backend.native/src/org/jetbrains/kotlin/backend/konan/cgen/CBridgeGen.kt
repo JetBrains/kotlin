@@ -319,8 +319,9 @@ internal fun KotlinStubs.generateObjCCall(
 
     val callBuilder = KotlinToCCallBuilder(builder, this@generateObjCCall, isObjCMethod = true, exceptionMode)
 
-    val superClass = irTemporaryVar(
-            superQualifier?.let { getObjCClass(symbols, it) } ?: irNullNativePtr(symbols)
+    val superClass = irTemporary(
+            superQualifier?.let { getObjCClass(symbols, it) } ?: irNullNativePtr(symbols),
+            isMutable = true
     )
 
     val messenger = irCall(if (isStret) {

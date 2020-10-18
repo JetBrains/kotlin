@@ -52,8 +52,8 @@ internal class CEnumByValueFunctionGenerator(
         // throw NPE
         byValueIrFunction.body = irBuilder(irBuiltIns, byValueIrFunction.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
             +irReturn(irBlock {
-                val values = irTemporaryVar(irCall(valuesIrFunctionSymbol))
-                val inductionVariable = irTemporaryVar(irInt(0))
+                val values = irTemporary(irCall(valuesIrFunctionSymbol), isMutable = true)
+                val inductionVariable = irTemporary(irInt(0), isMutable = true)
                 val arrayClass = values.type.classOrNull!!
                 val valuesSize = irCall(symbols.arraySize.getValue(arrayClass), irBuiltIns.intType).also { irCall ->
                     irCall.dispatchReceiver = irGet(values)
@@ -67,10 +67,10 @@ internal class CEnumByValueFunctionGenerator(
                         irCall.putValueArgument(1, valuesSize)
                     }
                     loop.body = irBlock {
-                        val entry = irTemporaryVar(irCall(getElementFn, byValueIrFunction.returnType).also { irCall ->
+                        val entry = irTemporary(irCall(getElementFn, byValueIrFunction.returnType).also { irCall ->
                             irCall.dispatchReceiver = irGet(values)
                             irCall.putValueArgument(0, irGet(inductionVariable))
-                        })
+                        }, isMutable = true)
                         val valueGetter = entry.type.getClass()!!.getPropertyGetter("value")!!
                         val entryValue = irGet(irValueParameter.type, irGet(entry), valueGetter)
                         +irIfThenElse(

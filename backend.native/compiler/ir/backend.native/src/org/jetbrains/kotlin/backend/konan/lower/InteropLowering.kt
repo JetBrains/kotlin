@@ -767,7 +767,8 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
             // Special case: bridge from Objective-C method implementation template to Kotlin method;
             // handled in CodeGeneratorVisitor.callVirtual.
             val useKotlinDispatch = isInteropStubsFile &&
-                    builder.scope.scopeOwner.annotations.hasAnnotation(FqName("kotlin.native.internal.ExportForCppRuntime"))
+                    (builder.scope.scopeOwnerSymbol.owner as? IrAnnotationContainer)
+                            ?.hasAnnotation(FqName("kotlin.native.internal.ExportForCppRuntime")) == true
 
             if (!useKotlinDispatch) {
                 val arguments = callee.valueParameters.map { expression.getValueArgument(it.index) }
