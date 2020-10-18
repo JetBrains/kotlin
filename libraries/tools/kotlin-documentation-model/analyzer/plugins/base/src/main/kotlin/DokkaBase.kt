@@ -24,7 +24,6 @@ import org.jetbrains.dokka.base.transformers.pages.samples.DefaultSamplesTransfo
 import org.jetbrains.dokka.base.transformers.pages.sourcelinks.SourceLinksTransformer
 import org.jetbrains.dokka.base.translators.descriptors.DefaultDescriptorToDocumentableTranslator
 import org.jetbrains.dokka.base.translators.documentables.DefaultDocumentableToPageTranslator
-import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
 import org.jetbrains.dokka.base.translators.psi.DefaultPsiToDocumentableTranslator
 import org.jetbrains.dokka.plugability.DokkaPlugin
 import org.jetbrains.dokka.transformers.pages.PageTransformer
@@ -42,15 +41,11 @@ class DokkaBase : DokkaPlugin() {
 
 
     val descriptorToDocumentableTranslator by extending {
-        CoreExtensions.sourceToDocumentableTranslator providing { ctx ->
-            DefaultDescriptorToDocumentableTranslator(ctx.single(kotlinAnalysis))
-        }
+        CoreExtensions.sourceToDocumentableTranslator providing ::DefaultDescriptorToDocumentableTranslator
     }
 
     val psiToDocumentableTranslator by extending {
-        CoreExtensions.sourceToDocumentableTranslator providing { ctx ->
-            DefaultPsiToDocumentableTranslator(ctx.single(kotlinAnalysis))
-        }
+        CoreExtensions.sourceToDocumentableTranslator providing ::DefaultPsiToDocumentableTranslator
     }
 
     val documentableMerger by extending {
@@ -80,17 +75,11 @@ class DokkaBase : DokkaPlugin() {
     }
 
     val modulesAndPackagesDocumentation by extending {
-        CoreExtensions.preMergeDocumentableTransformer providing { ctx ->
-            ModuleAndPackageDocumentationTransformer(
-                ModuleAndPackageDocumentationReader(ctx, ctx.single(kotlinAnalysis))
-            )
-        }
+        CoreExtensions.preMergeDocumentableTransformer providing ::ModuleAndPackageDocumentationTransformer
     }
 
     val kotlinSignatureProvider by extending {
-        signatureProvider providing { ctx ->
-            KotlinSignatureProvider(ctx.single(commentsToContentConverter), ctx.logger)
-        }
+        signatureProvider providing ::KotlinSignatureProvider
     }
 
     val sinceKotlinTransformer by extending {
@@ -111,13 +100,7 @@ class DokkaBase : DokkaPlugin() {
     }
 
     val documentableToPageTranslator by extending {
-        CoreExtensions.documentableToPageTranslator providing { ctx ->
-            DefaultDocumentableToPageTranslator(
-                ctx.single(commentsToContentConverter),
-                ctx.single(signatureProvider),
-                ctx.logger
-            )
-        }
+        CoreExtensions.documentableToPageTranslator providing ::DefaultDocumentableToPageTranslator
     }
 
     val docTagToContentConverter by extending {
@@ -125,7 +108,7 @@ class DokkaBase : DokkaPlugin() {
     }
 
     val pageMerger by extending {
-        CoreExtensions.pageTransformer providing { ctx -> PageMerger(ctx[pageMergerStrategy]) }
+        CoreExtensions.pageTransformer providing ::PageMerger
     }
 
     val sourceSetMerger by extending {
@@ -182,16 +165,7 @@ class DokkaBase : DokkaPlugin() {
     }
 
     val sourceLinksTransformer by extending {
-        htmlPreprocessors providing {
-            SourceLinksTransformer(
-                it,
-                PageContentBuilder(
-                    it.single(commentsToContentConverter),
-                    it.single(signatureProvider),
-                    it.logger
-                )
-            )
-        } order { after(rootCreator) }
+        htmlPreprocessors providing ::SourceLinksTransformer order { after(rootCreator) }
     }
 
     val navigationPageInstaller by extending {
