@@ -10,9 +10,11 @@ import org.jetbrains.dokka.utilities.DokkaConsoleLogger
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import testApi.testRunner.TestDokkaConfigurationBuilder
 import testApi.testRunner.dModule
 import testApi.testRunner.dPackage
+import java.lang.IllegalStateException
 
 class ContextModuleAndPackageDocumentationReaderTest1 : AbstractContextModuleAndPackageDocumentationReaderTest() {
 
@@ -110,13 +112,11 @@ class ContextModuleAndPackageDocumentationReaderTest1 : AbstractContextModuleAnd
 
     @Test
     fun `assert moduleA with unknown source set`() {
-        val documentation = reader[
-                dModule("moduleA", sourceSets = setOf(configurationBuilder.unattachedSourceSet { name = "unknown" }))
-        ]
-        assertEquals(
-            emptyMap<DokkaSourceSet, DocumentationNode>(), documentation,
+        assertThrows<IllegalStateException>(
             "Expected no documentation received for module with unknown sourceSet"
-        )
+        ) { reader[
+                dModule("moduleA", sourceSets = setOf(configurationBuilder.unattachedSourceSet { name = "unknown" }))
+        ]}
     }
 
     @Test
