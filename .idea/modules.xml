@@ -1627,8 +1627,8 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/microservices/microservices-uast/intellij.microservices.uast.iml" filepath="$PROJECT_DIR$/intellij/plugins/microservices/microservices-uast/intellij.microservices.uast.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/microservices/microservices-ui/intellij.microservices.ui.iml" filepath="$PROJECT_DIR$/intellij/plugins/microservices/microservices-ui/intellij.microservices.ui.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/mobile-ide/intellij.mobile.ide.iml" filepath="$PROJECT_DIR$/intellij/mobile-ide/intellij.mobile.ide.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/mobile-ide/main/intellij.mobile.ide.main.iml" filepath="$PROJECT_DIR$/intellij/mobile-ide/main/intellij.mobile.ide.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/mobile-ide/build/intellij.mobile.ide.build.iml" filepath="$PROJECT_DIR$/intellij/mobile-ide/build/intellij.mobile.ide.build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/mobile-ide/main/intellij.mobile.ide.main.iml" filepath="$PROJECT_DIR$/intellij/mobile-ide/main/intellij.mobile.ide.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/native/debugger/cdb/intellij.native.debugger.cdb.iml" filepath="$PROJECT_DIR$/intellij/native/debugger/cdb/intellij.native.debugger.cdb.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/nativeDebug-plugin/intellij.nativeDebug.plugin.iml" filepath="$PROJECT_DIR$/intellij/CIDR/nativeDebug-plugin/intellij.nativeDebug.plugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/no-code/code/intellij.noCode.iml" filepath="$PROJECT_DIR$/intellij/plugins/no-code/code/intellij.noCode.iml" />
