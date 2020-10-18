@@ -308,7 +308,7 @@ fun IrTypeParameter.toIrBasedDescriptor() = IrBasedTypeParameterDescriptor(this)
 
 open class IrBasedVariableDescriptor(owner: IrVariable) : VariableDescriptor, IrBasedCallableDescriptor<IrVariable>(owner) {
 
-    override fun getContainingDeclaration() = (owner.parent as IrFunction).toIrBasedDescriptor()
+    override fun getContainingDeclaration() = (owner.parent as IrDeclaration).toIrBasedDescriptor()
     override fun getType() = owner.type.toIrBasedKotlinType()
     override fun getReturnType() = getType()
     override fun getName() = owner.name

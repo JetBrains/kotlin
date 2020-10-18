@@ -303,7 +303,7 @@ open class WrappedTypeParameterDescriptor : TypeParameterDescriptor, WrappedDecl
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WrappedVariableDescriptor : VariableDescriptor, WrappedCallableDescriptor<IrVariable>() {
 
-    override fun getContainingDeclaration() = (owner.parent as IrFunction).descriptor
+    override fun getContainingDeclaration() = (owner.parent as IrDeclaration).descriptor
     override fun getType() = owner.type.toKotlinType()
     override fun getReturnType() = getType()
     override fun getName() = owner.name
