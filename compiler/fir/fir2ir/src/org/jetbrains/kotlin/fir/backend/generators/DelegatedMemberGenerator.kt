@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.PossiblyFirFakeOverrideSymbol
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -49,7 +50,12 @@ internal class DelegatedMemberGenerator(
                 declarationStorage.getIrFunctionSymbol(unwrapped.symbol).owner as? IrSimpleFunction
                     ?: return@processAllFunctions
 
-            if (isJavaDefault(unwrapped)) return@processAllFunctions
+            if (isJavaDefault(unwrapped)) {
+                return@processAllFunctions
+            }
+            if (firSubClass is FirRegularClass && firSubClass.isData && unwrapped.symbol.callableId.classId == StandardClassIds.Any) {
+                return@processAllFunctions
+            }
 
             val irSubFunction = generateDelegatedFunction(
                 subClass, firSubClass, irField, member, functionSymbol.fir
