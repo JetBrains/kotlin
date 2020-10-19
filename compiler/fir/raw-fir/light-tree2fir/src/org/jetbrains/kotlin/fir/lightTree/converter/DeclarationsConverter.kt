@@ -1510,6 +1510,7 @@ class DeclarationsConverter(
                     }
                 rValue = firExpression!!
                 dispatchReceiver = buildThisReceiverExpression {
+                    source = firExpression!!.source
                     calleeReference = buildImplicitThisReference {
                         boundSymbol = containerSymbol
                     }

@@ -561,11 +561,13 @@ class RawFirBuilder(
                                 source = delegateSource
                                 calleeReference =
                                     buildResolvedNamedReference {
+                                        source = delegateSource
                                         name = delegateName
                                         resolvedSymbol = delegateField.symbol
                                     }
                                 rValue = delegateExpression
                                 dispatchReceiver = buildThisReceiverExpression {
+                                    source = delegateSource
                                     calleeReference = buildImplicitThisReference {
                                         boundSymbol = containerSymbol
                                     }
@@ -1533,6 +1535,7 @@ class RawFirBuilder(
                 }
                 if (expression.elseKeyword != null) {
                     branches += buildWhenBranch {
+                        source = expression.elseKeyword?.toFirPsiSourceElement()
                         condition = buildElseIfTrueCondition()
                         result = expression.`else`.toFirBlock()
                     }
