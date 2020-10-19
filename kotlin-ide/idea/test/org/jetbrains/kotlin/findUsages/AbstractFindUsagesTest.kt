@@ -32,7 +32,6 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.usageView.UsageInfo
 import com.intellij.usages.TextChunk
 import com.intellij.usages.UsageInfo2UsageAdapter
-import com.intellij.usages.UsageViewPresentation
 import com.intellij.usages.impl.rules.UsageType
 import com.intellij.usages.impl.rules.UsageTypeProvider
 import com.intellij.usages.rules.UsageFilteringRule
@@ -184,8 +183,6 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
     companion object {
         val SUPPORTED_EXTENSIONS = setOf("kt", "kts", "java", "xml", "properties", "txt", "groovy")
 
-        val USAGE_VIEW_PRESENTATION = UsageViewPresentation()
-
         internal fun getUsageAdapters(
             filters: Collection<UsageFilteringRule>,
             usageInfos: Collection<UsageInfo>
@@ -274,7 +271,7 @@ internal fun <T : PsiElement> findUsagesAndCheckResults(
         }
 
         val usageType = AbstractFindUsagesTest.getUsageType(usageAdapter.element)
-        val usageTypeAsString = usageType?.toString(AbstractFindUsagesTest.USAGE_VIEW_PRESENTATION) ?: "null"
+        val usageTypeAsString = usageType?.toString() ?: "null"
 
         val usageChunks = ArrayList<TextChunk>()
         usageChunks.addAll(usageAdapter.presentation.text.asList())
