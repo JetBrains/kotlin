@@ -14,9 +14,11 @@ enum class KotlinValVar(val keywordName: String) {
     None("none") {
         override fun createKeyword(factory: KtPsiFactory): PsiElement? = null
     },
+
     Val("val") {
         override fun createKeyword(factory: KtPsiFactory): PsiElement = factory.createValKeyword()
     },
+
     Var("var") {
         override fun createKeyword(factory: KtPsiFactory): PsiElement = factory.createVarKeyword()
     };

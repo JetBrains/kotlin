@@ -25,6 +25,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.VerticalFlowLayout
+import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiCodeFragment
 import com.intellij.psi.PsiDocumentManager
@@ -68,7 +69,7 @@ class KotlinChangeSignatureDialog(
     project: Project,
     methodDescriptor: KotlinMethodDescriptor,
     context: PsiElement,
-    private val commandName: String?
+    @NlsContexts.Command private val commandName: String?
 ) : ChangeSignatureDialogBase<
         KotlinParameterInfo,
         PsiElement,
@@ -240,22 +241,14 @@ class KotlinChangeSignatureDialog(
                 }
             }
 
-            override fun getValue(): JBTableRow {
-                return JBTableRow { column ->
-                    val columnInfo = parametersTableModel.columnInfos[column]
-
-                    when {
-                        KotlinPrimaryConstructorParameterTableModel.isValVarColumn(columnInfo) ->
-                            (components[column] as @Suppress("NO_TYPE_ARGUMENTS_ON_RHS") JComboBox).selectedItem
-                        KotlinCallableParameterTableModel.isTypeColumn(columnInfo) ->
-                            item.typeCodeFragment
-                        KotlinCallableParameterTableModel.isNameColumn(columnInfo) ->
-                            (components[column] as EditorTextField).text
-                        KotlinCallableParameterTableModel.isDefaultValueColumn(columnInfo) ->
-                            item.defaultValueCodeFragment
-                        else ->
-                            null
-                    }
+            override fun getValue(): JBTableRow = JBTableRow { column ->
+                val columnInfo = parametersTableModel.columnInfos[column]
+                when {
+                    KotlinPrimaryConstructorParameterTableModel.isValVarColumn(columnInfo) -> (components[column] as JComboBox<*>).selectedItem
+                    KotlinCallableParameterTableModel.isTypeColumn(columnInfo) -> item.typeCodeFragment
+                    KotlinCallableParameterTableModel.isNameColumn(columnInfo) -> (components[column] as EditorTextField).text
+                    KotlinCallableParameterTableModel.isDefaultValueColumn(columnInfo) -> item.defaultValueCodeFragment
+                    else -> null
                 }
             }
 
@@ -355,6 +348,7 @@ class KotlinChangeSignatureDialog(
                     KotlinBundle.message("text.parameter.0", item.parameter.name)
                 else
                     KotlinBundle.message("text.receiver")
+
                 if (Messages.showOkCancelDialog(
                         myProject,
                         KotlinBundle.message(
@@ -372,6 +366,7 @@ class KotlinChangeSignatureDialog(
                 }
             }
         }
+
         return null
     }
 
@@ -410,6 +405,7 @@ class KotlinChangeSignatureDialog(
             myDefaultValueContext,
             false
         )
+
         changeInfo.primaryPropagationTargets = myMethodsToPropagateParameters ?: emptyList()
         changeInfo.checkUnusedParameter = true
         return KotlinChangeSignatureProcessor(myProject, changeInfo, commandName ?: title)
@@ -417,10 +413,11 @@ class KotlinChangeSignatureDialog(
 
     private fun getMethodDescriptor(): KotlinMethodDescriptor = myMethod
 
-    override fun getSelectedIdx(): Int {
-        return myMethod.parameters.withIndex().firstOrNull { it.value.isNewParameter }?.index
-            ?: super.getSelectedIdx()
-    }
+    override fun getSelectedIdx(): Int = myMethod.parameters
+        .withIndex()
+        .firstOrNull { it.value.isNewParameter }
+        ?.index
+        ?: super.getSelectedIdx()
 
     companion object {
         private fun createParametersInfoModel(
@@ -435,26 +432,28 @@ class KotlinChangeSignatureDialog(
             }
         }
 
-        fun getTypeCodeFragmentContext(startFrom: PsiElement): KtElement {
-            return startFrom.parentsWithSelf.mapNotNull {
-                when {
-                    it is KtNamedFunction -> it.bodyExpression ?: it.valueParameterList
-                    it is KtPropertyAccessor -> it.bodyExpression
-                    it is KtDeclaration && KtPsiUtil.isLocal(it) -> null
-                    it is KtConstructor<*> -> it
-                    it is KtClassOrObject -> it
-                    it is KtFile -> it
-                    else -> null
-                }
-            }.first()
-        }
+        fun getTypeCodeFragmentContext(startFrom: PsiElement): KtElement = startFrom.parentsWithSelf.mapNotNull {
+            when {
+                it is KtNamedFunction -> it.bodyExpression ?: it.valueParameterList
+                it is KtPropertyAccessor -> it.bodyExpression
+                it is KtDeclaration && KtPsiUtil.isLocal(it) -> null
+                it is KtConstructor<*> -> it
+                it is KtClassOrObject -> it
+                it is KtFile -> it
+                else -> null
+            }
+        }.first()
 
-        private fun createReturnTypeCodeFragment(project: Project, method: KotlinMethodDescriptor) =
-            KtPsiFactory(project).createTypeCodeFragment(method.returnTypeInfo.render(), getTypeCodeFragmentContext(method.baseDeclaration))
+        private fun createReturnTypeCodeFragment(project: Project, method: KotlinMethodDescriptor): KtTypeCodeFragment {
+            return KtPsiFactory(project).createTypeCodeFragment(
+                method.returnTypeInfo.render(),
+                getTypeCodeFragmentContext(method.baseDeclaration)
+            )
+        }
 
         fun createRefactoringProcessorForSilentChangeSignature(
             project: Project,
-            commandName: String,
+            @NlsContexts.Command commandName: String,
             method: KotlinMethodDescriptor,
             defaultValueContext: PsiElement
         ): BaseRefactoringProcessor {
@@ -469,6 +468,7 @@ class KotlinChangeSignatureDialog(
                 defaultValueContext,
                 false
             )
+
             return KotlinChangeSignatureProcessor(project, changeInfo, commandName)
         }
 

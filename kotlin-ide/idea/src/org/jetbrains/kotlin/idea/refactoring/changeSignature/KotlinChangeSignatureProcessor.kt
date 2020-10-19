@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinImplic
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinUsageInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinWrapperForJavaUsageInfos
 import org.jetbrains.kotlin.psi.KtCallExpression
-import java.util.LinkedHashSet
 
 class KotlinChangeSignatureProcessor(
     project: Project,
@@ -69,6 +68,7 @@ class KotlinChangeSignatureProcessor(
             KotlinBundle.message("text.constructor")
         else
             KotlinBundle.message("text.function")
+
         return KotlinUsagesViewDescriptor(myChangeInfo.method, RefactoringBundle.message("0.to.change.signature", subject))
     }
 
@@ -96,7 +96,7 @@ class KotlinChangeSignatureProcessor(
 
         if (!usageProcessors.all { it.setupDefaultValues(myChangeInfo, refUsages, myProject) }) return false
 
-        val conflictDescriptions =  object : MultiMap<PsiElement, String>() {
+        val conflictDescriptions = object : MultiMap<PsiElement, String>() {
             override fun createCollection() = LinkedHashSet<String>()
         }
 
@@ -126,26 +126,22 @@ class KotlinChangeSignatureProcessor(
 
     override fun getCommandName() = commandName
 
-    override fun performRefactoring(usages: Array<out UsageInfo>) {
-        try {
-            super.performRefactoring(usages)
-            usages.forEach {
-                val callExpression = it.element as? KtCallExpression ?: return@forEach
-                if (callExpression.canMoveLambdaOutsideParentheses()) {
-                    callExpression.moveFunctionLiteralOutsideParentheses()
-                }
+    override fun performRefactoring(usages: Array<out UsageInfo>) = try {
+        super.performRefactoring(usages)
+        usages.forEach {
+            val callExpression = it.element as? KtCallExpression ?: return@forEach
+            if (callExpression.canMoveLambdaOutsideParentheses()) {
+                callExpression.moveFunctionLiteralOutsideParentheses()
             }
-            performDelayedRefactoringRequests(myProject)
-        } finally {
-            changeInfo.invalidate()
         }
+        performDelayedRefactoringRequests(myProject)
+    } finally {
+        changeInfo.invalidate()
     }
 
-    override fun doRun() {
-        try {
-            super.doRun()
-        } finally {
-            broadcastRefactoringExit(myProject, refactoringId!!)
-        }
+    override fun doRun() = try {
+        super.doRun()
+    } finally {
+        broadcastRefactoringExit(myProject, refactoringId!!)
     }
 }
