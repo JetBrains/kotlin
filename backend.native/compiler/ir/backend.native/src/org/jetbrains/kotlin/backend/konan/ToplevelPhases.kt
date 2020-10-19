@@ -164,7 +164,7 @@ internal val copyDefaultValuesToActualPhase = konanUnitPhase(
 
 internal val serializerPhase = konanUnitPhase(
         op = {
-            val expectActualLinker = config.configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER)?:false
+            val expectActualLinker = config.configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER) ?: false
 
             serializedIr = irModule?.let { ir ->
                 KonanIrModuleSerializer(
@@ -175,6 +175,7 @@ internal val serializerPhase = konanUnitPhase(
             val serializer = KlibMetadataMonolithicSerializer(
                 this.config.configuration.languageVersionSettings,
                 config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!,
+                config.project,
                 !expectActualLinker)
             serializedMetadata = serializer.serializeModule(moduleDescriptor)
         },
