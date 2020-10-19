@@ -1009,6 +1009,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/appcode-test-catch/intellij.appcode.test.catch.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/appcode-test-catch/intellij.appcode.test.catch.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/appcode-test-google/intellij.appcode.test.google.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/appcode-test-google/intellij.appcode.test.google.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/appcode-testFramework/intellij.appcode.testFramework.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/appcode-testFramework/intellij.appcode.testFramework.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/apple-sdk/intellij.apple.sdk.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/apple-sdk/intellij.apple.sdk.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/asp/intellij.asp.iml" filepath="$PROJECT_DIR$/intellij/plugins/asp/intellij.asp.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/aspectj/core/intellij.aspectj.iml" filepath="$PROJECT_DIR$/intellij/plugins/aspectj/core/intellij.aspectj.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/aspectj/jps/intellij.aspectj.jps.iml" filepath="$PROJECT_DIR$/intellij/plugins/aspectj/jps/intellij.aspectj.jps.iml" />
