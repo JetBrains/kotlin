@@ -1,0 +1,1 @@
+val a = <warning descr="SSR">1 + 2 - 3</warning>

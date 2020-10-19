@@ -1,0 +1,1 @@
+val a = <warning descr="SSR">true</warning>

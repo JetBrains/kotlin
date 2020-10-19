@@ -1,0 +1,1 @@
+<warning descr="SSR">fun x(vararg y: Int) { println(y) }</warning>
