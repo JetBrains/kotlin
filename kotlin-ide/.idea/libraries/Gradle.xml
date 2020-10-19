@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="libraryTable">
   <library name="Gradle" type="repository">
-    <properties maven-id="org.jetbrains.intellij.deps:gradle-api:6.5.1-java7-sp2" />
+    <properties maven-id="org.jetbrains.intellij.deps:gradle-api:6.7" />
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/gradle-api/6.5.1-java7-sp2/gradle-api-6.5.1-java7-sp2.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/gradle-api-impldep/6.5.1-java7-sp2/gradle-api-impldep-6.5.1-java7-sp2.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/gradle-wrapper/6.5.1-java7-sp2/gradle-wrapper-6.5.1-java7-sp2.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/gradle-launcher/6.5.1-java7-sp2/gradle-launcher-6.5.1-java7-sp2.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/gradle-api/6.7/gradle-api-6.7.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/gradle-api-impldep/6.7/gradle-api-impldep-6.7.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/gradle-wrapper/6.7/gradle-wrapper-6.7.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/gradle-launcher/6.7/gradle-launcher-6.7.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

@@ -491,7 +491,6 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/gradle/tooling-extension-api/intellij.gradle.toolingExtension.iml" filepath="$PROJECT_DIR$/intellij/plugins/gradle/tooling-extension-api/intellij.gradle.toolingExtension.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/gradle/tooling-extension-impl/intellij.gradle.toolingExtension.impl.iml" filepath="$PROJECT_DIR$/intellij/plugins/gradle/tooling-extension-impl/intellij.gradle.toolingExtension.impl.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/gradle/tooling-extension-impl/intellij.gradle.toolingExtension.tests.iml" filepath="$PROJECT_DIR$/intellij/plugins/gradle/tooling-extension-impl/intellij.gradle.toolingExtension.tests.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/gradle/tooling-loader-rt/intellij.gradle.toolingLoaderRt.iml" filepath="$PROJECT_DIR$/intellij/plugins/gradle/tooling-loader-rt/intellij.gradle.toolingLoaderRt.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/grazie/intellij.grazie.iml" filepath="$PROJECT_DIR$/intellij/plugins/grazie/intellij.grazie.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/grazie/src/test/intellij.grazie.tests.iml" filepath="$PROJECT_DIR$/intellij/plugins/grazie/src/test/intellij.grazie.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/groovy/intellij.groovy.iml" filepath="$PROJECT_DIR$/intellij/plugins/groovy/intellij.groovy.iml" />
