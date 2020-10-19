@@ -364,7 +364,9 @@ class KonanArraySyntheticProvider(KonanHelperProvider):
         return result
 
     def to_string(self):
-        return [self._deref_or_obj_summary(i, self._internal_dict.copy()) for i in range(min(ARRAY_TO_STRING_LIMIT, self._children_count))]
+        internal_dict = self._internal_dict.copy()
+        internal_dict["to_string_depth"] = self._to_string_depth - 1
+        return [self._deref_or_obj_summary(i, internal_dict) for i in range(min(ARRAY_TO_STRING_LIMIT, self._children_count))]
 
 
 class KonanProxyTypeProvider:
