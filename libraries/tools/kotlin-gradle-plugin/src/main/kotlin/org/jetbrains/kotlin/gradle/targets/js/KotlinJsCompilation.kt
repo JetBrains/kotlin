@@ -34,10 +34,10 @@ open class KotlinJsCompilation(
 
     private val kotlinProperties = PropertiesProvider(target.project)
 
-    internal val externalsOutputFormat: ExternalsOutputFormat
+    internal open val externalsOutputFormat: ExternalsOutputFormat
         get() = kotlinProperties.externalsOutputFormat ?: defaultExternalsOutputFormat
 
-    internal open val defaultExternalsOutputFormat: ExternalsOutputFormat = ExternalsOutputFormat.BINARY
+    internal open val defaultExternalsOutputFormat: ExternalsOutputFormat = ExternalsOutputFormat.SOURCE
 
     override val kotlinOptions: KotlinJsOptions = KotlinJsOptionsImpl()
 

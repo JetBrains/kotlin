@@ -17,8 +17,7 @@ class KotlinJsIrCompilation(
     name: String
 ) : KotlinJsCompilation(target, name) {
 
-    override val defaultExternalsOutputFormat: ExternalsOutputFormat
-        get() = ExternalsOutputFormat.SOURCE
+    override val externalsOutputFormat: ExternalsOutputFormat = ExternalsOutputFormat.SOURCE
 
     internal val allSources: MutableSet<SourceDirectorySet> = mutableSetOf()
 

@@ -45,7 +45,9 @@ internal class DukatCompilationResolverPlugin(
 
         val target = compilation.target
 
-        if (target is KotlinJsIrTarget || target is KotlinJsTarget && externalsOutputFormat != ExternalsOutputFormat.SOURCE) {
+        val legacyTargetNotReuseIrTask =
+            target is KotlinJsTarget && (target.irTarget == null || externalsOutputFormat != ExternalsOutputFormat.SOURCE)
+        if (target is KotlinJsIrTarget || legacyTargetNotReuseIrTask) {
             compilation.compileKotlinTaskProvider.dependsOn(integratedTask)
         }
 

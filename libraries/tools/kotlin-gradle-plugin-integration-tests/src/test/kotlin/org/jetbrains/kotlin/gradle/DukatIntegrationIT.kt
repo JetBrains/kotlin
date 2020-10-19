@@ -107,7 +107,7 @@ class DukatIntegrationIT : BaseGradleIT() {
         }
 
         val externalSrcs = "build/externals/$projectName/src"
-        project.build("generateExternalsIntegrated") {
+        project.build("compileKotlinJs") {
             assertSuccessful()
 
             assertSingleFileExists(externalSrcs, "index.module_decamelize.kt")
@@ -162,7 +162,7 @@ class DukatIntegrationIT : BaseGradleIT() {
         }
 
         val externalSrcs = "build/externals/$projectName/src"
-        project.build("generateExternalsIntegrated") {
+        project.build("compileKotlinJs") {
             assertSuccessful()
 
             assertSingleFileExists(externalSrcs, "index.module_decamelize.kt")
