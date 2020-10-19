@@ -73,16 +73,6 @@ public inline fun Path.bufferedWriter(
 }
 
 /**
- * Returns a new [PrintWriter] for writing the content of this file.
- */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
-@kotlin.internal.InlineOnly
-public inline fun Path.printWriter(charset: Charset = Charsets.UTF_8, vararg options: OpenOption): PrintWriter {
-    return PrintWriter(bufferedWriter(charset, options = options))
-}
-
-/**
  * Gets the entire content of this file as a byte array.
  *
  * This method is not recommended on huge files. It has an internal limitation of 2 GB byte array size.

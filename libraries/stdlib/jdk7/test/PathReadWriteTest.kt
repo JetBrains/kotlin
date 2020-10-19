@@ -92,35 +92,6 @@ class PathReadWriteTest {
     }
 
     @Test
-    fun testPrintWriter() {
-        val file = Files.createTempFile(null, null)
-
-        val writer = file.printWriter()
-        val str1 = "Hello, world!"
-        val str2 = "Everything is wonderful!"
-        writer.println(str1)
-        writer.println(str2)
-        writer.close()
-
-        val writer2 = file.printWriter(options = arrayOf(StandardOpenOption.APPEND))
-        val str3 = "Hello again!"
-        writer2.println(str3)
-        writer2.close()
-
-        val writer3 = file.printWriter(Charsets.UTF_8, StandardOpenOption.APPEND)
-        val str4 = "Hello one last time!"
-        writer3.println(str4)
-        writer3.close()
-
-        file.bufferedReader().use { reader ->
-            assertEquals(str1, reader.readLine())
-            assertEquals(str2, reader.readLine())
-            assertEquals(str3, reader.readLine())
-            assertEquals(str4, reader.readLine())
-        }
-    }
-
-    @Test
     fun testWriteBytes() {
         val file = Files.createTempFile(null, null)
         file.writeBytes("Hello".encodeToByteArray())
