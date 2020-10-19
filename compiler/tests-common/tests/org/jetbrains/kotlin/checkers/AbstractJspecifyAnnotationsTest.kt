@@ -7,8 +7,21 @@ package org.jetbrains.kotlin.checkers
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
+import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.diagnostics.Errors.NULL_FOR_NONNULL_TYPE
+import org.jetbrains.kotlin.diagnostics.Errors.TYPE_MISMATCH
+import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
+import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
+import org.jetbrains.kotlin.utils.ReportLevel
 import java.io.File
 import java.util.*
 import java.util.regex.Pattern
@@ -17,6 +30,8 @@ const val JSPECIFY_NULLNESS_MISMATCH_MARK = "jspecify_nullness_mismatch"
 
 const val JSPECIFY_NULLABLE_ANNOTATION = "@Nullable"
 const val JSPECIFY_NULLNESS_UNSPECIFIED_ANNOTATION = "@NullnessUnspecified"
+
+private const val JSPECIFY_STATE_SPECIAL_DIRECTIVE = "JSPECIFY_STATE"
 
 abstract class AbstractJspecifyAnnotationsTest : AbstractDiagnosticsTest() {
     override fun doMultiFileTest(
@@ -27,6 +42,24 @@ abstract class AbstractJspecifyAnnotationsTest : AbstractDiagnosticsTest() {
             wholeFile,
             files,
             MockLibraryUtil.compileJavaFilesLibraryToJar(FOREIGN_ANNOTATIONS_SOURCES_PATH, "foreign-annotations")
+        )
+    }
+
+    override fun loadLanguageVersionSettings(module: List<TestFile>): LanguageVersionSettings {
+        val analysisFlags = mapOf<AnalysisFlag<*>, Any?>(
+            JvmAnalysisFlags.javaTypeEnhancementState to JavaTypeEnhancementState(
+                ReportLevel.STRICT,
+                null,
+                mapOf(),
+                jspecifyReportLevel = module.getDirectiveValue(JSPECIFY_STATE_SPECIAL_DIRECTIVE) ?: ReportLevel.WARN
+            )
+        )
+
+        return CompilerTestLanguageVersionSettings(
+            DEFAULT_DIAGNOSTIC_TESTS_FEATURES,
+            ApiVersion.LATEST_STABLE,
+            LanguageVersion.LATEST_STABLE,
+            analysisFlags = analysisFlags
         )
     }
 
@@ -69,13 +102,14 @@ abstract class AbstractJspecifyAnnotationsTest : AbstractDiagnosticsTest() {
     private fun checkIfAllJspecifyMarksByDiagnosticsArePresent(
         diagnosedRanges: List<DiagnosedRange>,
         lineIndexesByRanges: TreeMap<Int, Int>,
-        textLines: List<String>
+        textLines: List<String>,
+        compilerDiagnosticsToJspecifyMarksMap: Map<String, String>
     ) {
         for (diagnosticRange in diagnosedRanges) {
             val lineIndex = lineIndexesByRanges.floorEntry(diagnosticRange.start).value
 
             for (diagnostic in diagnosticRange.getDiagnostics()) {
-                val requiredJspecifyMark = diagnosticsToJspecifyMarksMap[diagnostic.name] ?: continue
+                val requiredJspecifyMark = compilerDiagnosticsToJspecifyMarksMap[diagnostic.name] ?: continue
 
                 fun getErrorMessage(lineIndex: Int) =
                     "Jspecify mark '$requiredJspecifyMark' not found for diagnostic '${diagnostic}' at ${lineIndex + 1} line.\n" +
@@ -93,11 +127,12 @@ abstract class AbstractJspecifyAnnotationsTest : AbstractDiagnosticsTest() {
     private fun checkIfAllDiagnosticsByJspecifyMarksArePresent(
         diagnosedRanges: List<DiagnosedRange>,
         lineIndexesByRanges: TreeMap<Int, Int>,
-        textLines: List<String>
+        textLines: List<String>,
+        compilerDiagnosticsToJspecifyMarksMap: Map<String, String>
     ) {
-        for ((diagnostic, jspecifyMark) in diagnosticsToJspecifyMarksMap) {
+        for ((diagnostic, jspecifyMark) in compilerDiagnosticsToJspecifyMarksMap) {
             val diagnosticRanges = diagnosedRanges.filter { diagnostics ->
-                diagnostic.name in diagnostics.getDiagnostics().map { it.name }
+                diagnostic in diagnostics.getDiagnostics().map { it.name }
             }.map { it.start }
             val lineIndexesWithJspecifyMarks =
                 textLines.mapIndexedNotNull { index, it -> getJspecifyMarkRegex(jspecifyMark).find(it)?.let { index } }
@@ -116,7 +151,7 @@ abstract class AbstractJspecifyAnnotationsTest : AbstractDiagnosticsTest() {
         }
     }
 
-    override fun checkDiagnostics(actualText: String, testDataFile: File) {
+    override fun checkDiagnostics(actualText: String, testDataFile: File, testFiles: List<BaseDiagnosticsTest.TestFile>) {
         val mergedTestFilePath = originalKtFileRegex.matcher(actualText).also { it.find() }.group(1)
             ?: throw Exception("Path for original kt file in the merged file not found")
 
@@ -132,11 +167,28 @@ abstract class AbstractJspecifyAnnotationsTest : AbstractDiagnosticsTest() {
             }
         }
 
-        checkIfAllJspecifyMarksByDiagnosticsArePresent(diagnosedRanges, lineIndexesByRanges, textLines)
+        val jspecifyMode = testFiles.getDirectiveValue(JSPECIFY_STATE_SPECIAL_DIRECTIVE)
+            ?: JavaTypeEnhancementState.DEFAULT_REPORT_LEVEL_FOR_JSPECIFY
+        val compilerDiagnosticsToJspecifyMarksMap = when (jspecifyMode) {
+            ReportLevel.WARN -> diagnosticsToJspecifyMarksMapForWarnMode
+            ReportLevel.STRICT -> diagnosticsToJspecifyMarksMapForStrictMode
+            ReportLevel.IGNORE -> mapOf()
+        }
 
-        checkIfAllDiagnosticsByJspecifyMarksArePresent(diagnosedRanges, lineIndexesByRanges, textLines)
+        super.checkDiagnostics(textWithDiagnostics, File(mergedTestFilePath), testFiles)
 
-        super.checkDiagnostics(textWithDiagnostics, File(mergedTestFilePath))
+        checkIfAllJspecifyMarksByDiagnosticsArePresent(
+            diagnosedRanges,
+            lineIndexesByRanges,
+            textLines,
+            compilerDiagnosticsToJspecifyMarksMap
+        )
+        checkIfAllDiagnosticsByJspecifyMarksArePresent(
+            diagnosedRanges,
+            lineIndexesByRanges,
+            textLines,
+            compilerDiagnosticsToJspecifyMarksMap
+        )
     }
 
     override fun getExpectedDescriptorFile(testDataFile: File, files: List<TestFile>): File {
@@ -154,8 +206,13 @@ abstract class AbstractJspecifyAnnotationsTest : AbstractDiagnosticsTest() {
         private val originalKtFileRegex = Pattern.compile("""// ORIGINAL_KT_FILE: (.*?\.kts?)\n""")
         private val javaSourcesPathRegex = Pattern.compile("""// JAVA_SOURCES: (.*?(?:\.java)?)\n""")
 
-        val diagnosticsToJspecifyMarksMap = mapOf(
-            NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS to "jspecify_nullness_mismatch"
+        val diagnosticsToJspecifyMarksMapForWarnMode = mapOf(
+            NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS.name to "jspecify_nullness_mismatch"
+        )
+
+        val diagnosticsToJspecifyMarksMapForStrictMode = mapOf(
+            TYPE_MISMATCH.name to "jspecify_nullness_mismatch",
+            NULL_FOR_NONNULL_TYPE.name to "jspecify_nullness_mismatch",
         )
 
         private val importSectionRegex = Regex("""((?:import .*?;\n)+)""")

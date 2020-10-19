@@ -1,11 +1,12 @@
 // JAVA_SOURCES: Simple.java
+// JSPECIFY_STATE strict
 
 fun main(a: Simple, x: Derived): Unit {
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo(x, null)<!>.foo()
+    a.foo(x, null)<!UNSAFE_CALL!>.<!>foo()
     // jspecify_nullness_mismatch
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, x)<!>.foo()
+    a.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>, x)<!UNSAFE_CALL!>.<!>foo()
 
     a.bar().foo()
 
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.field<!>.foo()
+    a.field<!UNSAFE_CALL!>.<!>foo()
 }

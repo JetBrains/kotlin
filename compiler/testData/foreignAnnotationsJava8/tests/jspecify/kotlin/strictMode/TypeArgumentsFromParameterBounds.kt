@@ -1,4 +1,5 @@
 // JAVA_SOURCES: TypeArgumentsFromParameterBounds.java
+// JSPECIFY_STATE strict
 
 fun main(
             aNotNullNotNullNotNull: TypeArgumentsFromParameterBounds<Test, Test, Test>,
@@ -8,25 +9,25 @@ fun main(
             a: A, b: B, c: C
 ): Unit {
     // jspecify_nullness_mismatch
-    a.bar(aNotNullNotNullNotNull)
+    a.bar(<!TYPE_MISMATCH!>aNotNullNotNullNotNull<!>)
     // jspecify_nullness_mismatch
-    a.bar(aNotNullNotNullNull)
+    a.bar(<!TYPE_MISMATCH!>aNotNullNotNullNull<!>)
     // jspecify_nullness_mismatch
-    a.bar(aNotNullNullNotNull)
+    a.bar(<!TYPE_MISMATCH!>aNotNullNullNotNull<!>)
     a.bar(aNotNullNullNull)
 
     b.bar(aNotNullNotNullNotNull)
     // jspecify_nullness_mismatch
-    b.bar(aNotNullNotNullNull)
+    b.bar(<!TYPE_MISMATCH!>aNotNullNotNullNull<!>)
     // jspecify_nullness_mismatch
-    b.bar(aNotNullNullNotNull)
+    b.bar(<!TYPE_MISMATCH!>aNotNullNullNotNull<!>)
     // jspecify_nullness_mismatch
-    b.bar(aNotNullNullNull)
+    b.bar(<!TYPE_MISMATCH!>aNotNullNullNull<!>)
 
     // jspecify_nullness_mismatch
-    c.bar(aNotNullNotNullNotNull)
+    c.bar(<!TYPE_MISMATCH!>aNotNullNotNullNotNull<!>)
     // jspecify_nullness_mismatch
-    c.bar(aNotNullNotNullNull)
+    c.bar(<!TYPE_MISMATCH!>aNotNullNotNullNull<!>)
     c.bar(aNotNullNullNotNull)
     c.bar(aNotNullNullNull)
 }

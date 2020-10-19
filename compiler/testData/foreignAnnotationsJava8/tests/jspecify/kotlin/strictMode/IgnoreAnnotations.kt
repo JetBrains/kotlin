@@ -1,17 +1,18 @@
 // JAVA_SOURCES: IgnoreAnnotations.java
+// JSPECIFY_STATE strict
 
 fun main(a: IgnoreAnnotations, x: Derived): Unit {
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo(x, null)<!>.foo()
+    a.foo(x, null)<!UNSAFE_CALL!>.<!>foo()
     // jspecify_nullness_mismatch
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, x)<!>.foo()
+    a.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>, x)<!UNSAFE_CALL!>.<!>foo()
 
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.field<!>.foo()
+    a.field<!UNSAFE_CALL!>.<!>foo()
 
     // jspecify_nullness_mismatch
-    a.everythingNotNullable(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>).foo()
+    a.everythingNotNullable(<!NULL_FOR_NONNULL_TYPE!>null<!>).foo()
     a.everythingNotNullable(x).foo()
 
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.everythingNullable(null)<!>.foo()
+    a.everythingNullable(null)<!UNSAFE_CALL!>.<!>foo()
 
     a.everythingUnknown(null).foo()
 }

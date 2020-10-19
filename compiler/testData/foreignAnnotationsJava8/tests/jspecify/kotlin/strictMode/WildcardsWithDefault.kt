@@ -1,4 +1,5 @@
 // JAVA_SOURCES: WildcardsWithDefault.java
+// JSPECIFY_STATE strict
 
 fun main(
             aNotNullNotNullNotNull: A<Any, Any, Any>,
@@ -11,9 +12,9 @@ fun main(
     b.noBoundsNotNull(aNotNullNotNullNotNull)
     b.noBoundsNotNull(aNotNullNotNullNull)
     // jspecify_nullness_mismatch
-    b.noBoundsNotNull(aNotNullNullNotNull)
+    b.noBoundsNotNull(<!TYPE_MISMATCH!>aNotNullNullNotNull<!>)
     // jspecify_nullness_mismatch
-    b.noBoundsNotNull(aNotNullNullNull)
+    b.noBoundsNotNull(<!TYPE_MISMATCH!>aNotNullNullNull<!>)
 
     b.noBoundsNullable(aNotNullNotNullNotNull)
     b.noBoundsNullable(aNotNullNotNullNull)

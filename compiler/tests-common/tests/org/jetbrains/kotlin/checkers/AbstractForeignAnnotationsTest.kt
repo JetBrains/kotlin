@@ -88,8 +88,8 @@ abstract class AbstractForeignAnnotationsTest : AbstractDiagnosticsTest() {
             )
         )
     }
-
-    private fun List<TestFile>.getDirectiveValue(directive: String): ReportLevel? = mapNotNull {
-        InTextDirectivesUtils.findLinesWithPrefixesRemoved(it.expectedText, directive).firstOrNull()
-    }.firstOrNull().let { ReportLevel.findByDescription(it) }
 }
+
+fun List<BaseDiagnosticsTest.TestFile>.getDirectiveValue(directive: String): ReportLevel? = mapNotNull {
+    InTextDirectivesUtils.findLinesWithPrefixesRemoved(it.expectedText, directive).firstOrNull()
+}.firstOrNull().let { ReportLevel.findByDescription(it) }

@@ -1,4 +1,5 @@
 // JAVA_SOURCES: AnnotatedBoundsOfWildcard.java
+// JSPECIFY_STATE strict
 
 fun main(
             aNotNullNotNullNotNull: Test<Derived, Derived, Derived>,
@@ -26,13 +27,13 @@ fun main(
     b.superNotNull(aAnyNotNullNullNull)
 
     // jspecify_nullness_mismatch
-    b.superNullable(aAnyNotNullNotNullNotNull)
+    b.superNullable(<!TYPE_MISMATCH!>aAnyNotNullNotNullNotNull<!>)
     // jspecify_nullness_mismatch
-    b.superNullable(aAnyNotNullNotNullNull)
+    b.superNullable(<!TYPE_MISMATCH!>aAnyNotNullNotNullNull<!>)
     // jspecify_nullness_mismatch
-    b.superNullable(aAnyNotNullNullNotNull)
+    b.superNullable(<!TYPE_MISMATCH!>aAnyNotNullNullNotNull<!>)
     // jspecify_nullness_mismatch
-    b.superNullable(aAnyNotNullNullNull)
+    b.superNullable(<!TYPE_MISMATCH!>aAnyNotNullNullNull<!>)
 
     b.extendsAsIs(aNotNullNotNullNotNull)
     b.extendsAsIs(aNotNullNotNullNull)
@@ -41,11 +42,11 @@ fun main(
 
     b.extendsNotNull(aNotNullNotNullNotNull)
     // jspecify_nullness_mismatch
-    b.extendsNotNull(aNotNullNotNullNull)
+    b.extendsNotNull(<!TYPE_MISMATCH!>aNotNullNotNullNull<!>)
     // jspecify_nullness_mismatch
-    b.extendsNotNull(aNotNullNullNotNull)
+    b.extendsNotNull(<!TYPE_MISMATCH!>aNotNullNullNotNull<!>)
     // jspecify_nullness_mismatch
-    b.extendsNotNull(aNotNullNullNull)
+    b.extendsNotNull(<!TYPE_MISMATCH!>aNotNullNullNull<!>)
 
     b.extendsNullable(aNotNullNotNullNotNull)
     b.extendsNullable(aNotNullNotNullNull)

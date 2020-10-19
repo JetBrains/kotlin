@@ -1,4 +1,5 @@
 // JAVA_SOURCES: SelfType.java
+// JSPECIFY_STATE strict
 
 fun main(ak: AK, akn: AKN, bk: BK, ck: CK, ckn: CKN): Unit {
     ak.foo(ak)
