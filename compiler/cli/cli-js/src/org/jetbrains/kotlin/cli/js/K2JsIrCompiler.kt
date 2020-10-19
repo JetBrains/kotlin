@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.cli.js
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
+import org.jetbrains.kotlin.backend.wasm.compileWasm
+import org.jetbrains.kotlin.backend.wasm.wasmPhases
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.ExitCode.COMPILATION_ERROR
 import org.jetbrains.kotlin.cli.common.ExitCode.OK
@@ -34,6 +37,7 @@ import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.util.Logger
@@ -214,6 +218,34 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 MainModule.Klib(mainLib)
             } else {
                 MainModule.SourceFiles(sourcesFiles)
+            }
+
+            if (arguments.wasm) {
+                val res = compileWasm(
+                    projectJs,
+                    mainModule,
+                    AnalyzerWithCompilerReport(config.configuration),
+                    config.configuration,
+                    PhaseConfig(wasmPhases),
+                    allDependencies = resolvedLibraries,
+                    friendDependencies = friendDependencies,
+                    exportedDeclarations = setOf(FqName("main"))
+                )
+                val outputWasmFile = outputFile.withReplacedExtensionOrNull(outputFile.extension, "wasm")!!
+                outputWasmFile.writeBytes(res.wasm)
+                val outputWatFile = outputFile.withReplacedExtensionOrNull(outputFile.extension, "wat")!!
+                outputWatFile.writeText(res.wat)
+
+                val runner = """
+            const wasmBinary = read(String.raw`${outputWasmFile.absoluteFile}`, 'binary');
+            const wasmModule = new WebAssembly.Module(wasmBinary);
+            const wasmInstance = new WebAssembly.Instance(wasmModule, { runtime });
+
+            wasmInstance.exports.main();
+        """.trimIndent()
+
+                outputFile.writeText(res.js + "\n" + runner)
+                return OK
             }
 
             val compiledModule = try {

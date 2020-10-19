@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.loadKlib
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.TranslationUnit
@@ -114,7 +115,7 @@ abstract class BasicWasmBoxTest(
         testFunction: String
     ) {
         val filesToCompile = units.map { (it as TranslationUnit.SourceFile).file }
-        val debugMode =getBoolean("kotlin.js.debugMode")
+        val debugMode = getBoolean("kotlin.js.debugMode")
 
         val phaseConfig = if (debugMode) {
             val allPhasesSet = wasmPhases.toPhaseMap().values.toSet()
@@ -137,7 +138,7 @@ abstract class BasicWasmBoxTest(
 
         val compilerResult = compileWasm(
             project = config.project,
-            files = filesToCompile,
+            mainModule = MainModule.SourceFiles(filesToCompile),
             analyzer = AnalyzerWithCompilerReport(config.configuration),
             configuration = config.configuration,
             phaseConfig = phaseConfig,
@@ -150,8 +151,6 @@ abstract class BasicWasmBoxTest(
         outputWatFile.write(compilerResult.wat)
         outputWasmFile.writeBytes(compilerResult.wasm)
 
-        val runtime = File("libraries/stdlib/wasm/runtime/runtime.js").readText()
-
         val testRunner = """
             const wasmBinary = read(String.raw`${outputWasmFile.absoluteFile}`, 'binary');
             const wasmModule = new WebAssembly.Module(wasmBinary);
@@ -162,7 +161,7 @@ abstract class BasicWasmBoxTest(
                 throw `Wrong box result '${'$'}{actualResult}'; Expected "OK"`;
         """.trimIndent()
 
-        outputJsFile.write(runtime + "\n" + compilerResult.js + "\n" + testRunner)
+        outputJsFile.write(compilerResult.js + "\n" + testRunner)
     }
 
 

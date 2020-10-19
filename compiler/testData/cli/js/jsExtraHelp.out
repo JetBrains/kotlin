@@ -21,6 +21,7 @@ where advanced options include:
   -Xir-produce-klib-file     Generate packed klib into file specified by -output. Disables pre-IR backend
   -Xmetadata-only            Generate *.meta.js and *.kjsm files only
   -Xtyped-arrays             Translate primitive arrays to JS typed arrays
+  -Xwasm                     Use experimental WebAssembly compiler backend
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info
   -Xallow-result-return-type Allow compiling code when `kotlin.Result` is used as a return type
   -Xcheck-phase-conditions   Check pre- and postconditions on phases

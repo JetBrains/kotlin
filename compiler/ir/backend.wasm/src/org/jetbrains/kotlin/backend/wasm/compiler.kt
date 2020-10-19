@@ -32,7 +32,7 @@ class WasmCompilerResult(val wat: String, val js: String, val wasm: ByteArray)
 
 fun compileWasm(
     project: Project,
-    files: List<KtFile>,
+    mainModule: MainModule,
     analyzer: AbstractAnalyzerWithCompilerReport,
     configuration: CompilerConfiguration,
     phaseConfig: PhaseConfig,
@@ -42,21 +42,26 @@ fun compileWasm(
 ): WasmCompilerResult {
     val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
         loadIr(
-            project, MainModule.SourceFiles(files), analyzer, configuration, allDependencies, friendDependencies,
+            project, mainModule, analyzer, configuration, allDependencies, friendDependencies,
             PersistentIrFactory
         )
+
+    val allModules = when (mainModule) {
+        is MainModule.SourceFiles -> dependencyModules + listOf(moduleFragment)
+        is MainModule.Klib -> dependencyModules
+    }
 
     val moduleDescriptor = moduleFragment.descriptor
     val context = WasmBackendContext(moduleDescriptor, irBuiltIns, symbolTable, moduleFragment, exportedDeclarations, configuration)
 
     // Load declarations referenced during `context` initialization
-    dependencyModules.forEach {
+    allModules.forEach {
         val irProviders = generateTypicalIrProviderList(it.descriptor, irBuiltIns, symbolTable, deserializer)
         ExternalDependenciesGenerator(symbolTable, irProviders, configuration.languageVersionSettings)
             .generateUnboundSymbolsAsDependencies()
     }
 
-    val irFiles = dependencyModules.flatMap { it.files } + moduleFragment.files
+    val irFiles = allModules.flatMap { it.files }
 
     moduleFragment.files.clear()
     moduleFragment.files += irFiles
@@ -77,13 +82,86 @@ fun compileWasm(
     watGenerator.appendWasmModule(linkedModule)
     val wat = watGenerator.toString()
 
+    val js = compiledWasmModule.generateJs()
+
     val os = ByteArrayOutputStream()
     WasmIrToBinary(os, linkedModule).appendWasmModule()
     val byteArray = os.toByteArray()
 
     return WasmCompilerResult(
-        wat,
-        generateStringLiteralsSupport(compiledWasmModule.stringLiterals),
+        wat = wat,
+        js = js,
         wasm = byteArray
     )
+}
+
+
+fun WasmCompiledModuleFragment.generateJs(): String {
+    val runtime = """
+    const runtime = {
+        String_plus(str1, str2) {
+            return str1 + String(str2);
+        },
+
+        String_getLength(str) {
+            return str.length;
+        },
+
+        String_getChar(str, index) {
+            return str.charCodeAt(index);
+        },
+
+        String_compareTo(str1, str2) {
+            if (str1 > str2) return 1;
+            if (str1 < str2) return -1;
+            return 0;
+        },
+
+        String_equals(str, other) {
+            return str === other;
+        },
+
+        String_subsequence(str, startIndex, endIndex) {
+            return str.substring(startIndex, endIndex);
+        },
+
+        String_getLiteral(index) {
+            return runtime.stringLiterals[index];
+        },
+
+        coerceToString(value) {
+            return String(value);
+        },
+
+        Char_toString(char) {
+            return String.fromCharCode(char)
+        },
+
+        JsArray_new(size) {
+            return new Array(size);
+        },
+
+        JsArray_get(array, index) {
+            return array[index];
+        },
+
+        JsArray_set(array, index, value) {
+            array[index] = value;
+        },
+
+        JsArray_getSize(array) {
+            return array.length;
+        },
+
+        identity(x) {
+            return x;
+        },
+
+        println(value) {
+            console.log(">>>  " + value)
+        }
+    };
+    """.trimIndent()
+
+    return runtime + generateStringLiteralsSupport(stringLiterals)
 }

@@ -178,6 +178,9 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xerror-tolerance-policy", description = "Set up error tolerance policy (NONE, SEMANTIC, SYNTAX, ALL)")
     var errorTolerancePolicy: String? by NullableStringFreezableVar(null)
 
+    @Argument(value = "-Xwasm", description = "Use experimental WebAssembly compiler backend")
+    var wasm: Boolean by FreezableVar(false)
+
     override fun checkIrSupport(languageVersionSettings: LanguageVersionSettings, collector: MessageCollector) {
         if (!isIrBackendEnabled()) return
 
@@ -196,4 +199,4 @@ fun K2JSCompilerArguments.isPreIrBackendDisabled(): Boolean =
     irOnly || irProduceJs || irProduceKlibFile
 
 fun K2JSCompilerArguments.isIrBackendEnabled(): Boolean =
-    irProduceKlibDir || irProduceJs || irProduceKlibFile
+    irProduceKlibDir || irProduceJs || irProduceKlibFile || wasm
