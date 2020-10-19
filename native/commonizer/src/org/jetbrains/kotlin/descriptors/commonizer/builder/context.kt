@@ -218,7 +218,10 @@ class LazyClassifierLookupTable(lazyModules: Map<String, List<ModuleDescriptor>>
 fun CirRootNode.createGlobalBuilderComponents(
     storageManager: StorageManager,
     parameters: CommonizerParameters
-): GlobalDeclarationsBuilderComponents {
+): GlobalDeclarationsBuilderComponents? {
+    if (!parameters.generateDescriptors)
+        return null
+
     val cache = DeclarationsBuilderCache(dimension)
 
     val lazyCommonDependeeModules = storageManager.createLazyValue {
