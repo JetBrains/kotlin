@@ -1640,6 +1640,8 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/built-in-server/client/node-rpc-client/intellij.nodeRpcClient.iml" filepath="$PROJECT_DIR$/intellij/community/platform/built-in-server/client/node-rpc-client/intellij.nodeRpcClient.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/osmorc/intellij.osgi.iml" filepath="$PROJECT_DIR$/intellij/contrib/osmorc/intellij.osgi.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/osmorc/osmorc-jps-plugin/intellij.osgi.jps.iml" filepath="$PROJECT_DIR$/intellij/contrib/osmorc/osmorc-jps-plugin/intellij.osgi.jps.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/package-search/intellij.packageSearch.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/package-search/intellij.packageSearch.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/package-search/pkgs-tests/intellij.packageSearch.tests.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/package-search/pkgs-tests/intellij.packageSearch.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/performanceTesting/intellij.performanceTesting.iml" filepath="$PROJECT_DIR$/intellij/plugins/performanceTesting/intellij.performanceTesting.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/performanceTesting/maven/intellij.performanceTesting.maven.iml" filepath="$PROJECT_DIR$/intellij/plugins/performanceTesting/maven/intellij.performanceTesting.maven.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/phpstorm/phing/intellij.phing.iml" filepath="$PROJECT_DIR$/intellij/phpstorm/phing/intellij.phing.iml" />
