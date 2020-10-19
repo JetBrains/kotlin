@@ -51,8 +51,9 @@ class ValueParameter(
             returnTypeRef = type.copyWithNewSourceKind(FirFakeSourceElementKind.PropertyFromParameter)
             this.name = name
             initializer = buildQualifiedAccessExpression {
+                source = firValueParameter.source
                 calleeReference = buildPropertyFromParameterResolvedNamedReference {
-                    this.name =  name
+                    this.name = name
                     resolvedSymbol = this@ValueParameter.firValueParameter.symbol
                 }
             }

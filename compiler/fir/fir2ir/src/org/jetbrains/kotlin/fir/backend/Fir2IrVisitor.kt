@@ -550,7 +550,11 @@ class Fir2IrVisitor(
             return this
         }
         // TODO: Other conditions to check?
-        if (expression.typeRef.coneTypeSafe<ConeKotlinType>()?.hasEnhancedNullability != true) {
+        // [TypeOperatorLowering] will retrieve the source (from start offset to end offset) as an assertion message.
+        // Avoid type casting if we can't determine the source for some reasons, e.g., implicit `this` receiver.
+        if (expression.source == null ||
+            expression.typeRef.coneTypeSafe<ConeKotlinType>()?.hasEnhancedNullability != true
+        ) {
             return this
         }
         return IrTypeOperatorCallImpl(

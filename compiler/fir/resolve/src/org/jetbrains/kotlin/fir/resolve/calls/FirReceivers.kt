@@ -94,6 +94,9 @@ sealed class ImplicitReceiverValue<S : AbstractFirBasedSymbol<*>>(
 
 private fun receiverExpression(symbol: AbstractFirBasedSymbol<*>, type: ConeKotlinType): FirThisReceiverExpression =
     buildThisReceiverExpression {
+        // NB: we can't use `symbol.fir.source` as the source of `this` receiver. For instance, if this is an implicit receiver for a class,
+        // the entire class itself will be set as a source. If combined with an implicit type operation, a certain assertion, like null
+        // check assertion, will retrieve source as an assertion message, which is literally the entire class (!).
         calleeReference = buildImplicitThisReference {
             boundSymbol = symbol
         }

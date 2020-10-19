@@ -57,6 +57,9 @@ internal fun remapArgumentsWithVararg(
                 (valueParameter.isVararg && arg !is FirNamedArgumentExpression)
             ) {
                 arguments += arg
+                if (this.source == null) {
+                    this.source = arg.source
+                }
             } else if (arguments.isEmpty()) {
                 // `arg` is BEFORE the vararg arguments.
                 newArgumentMapping[arg] = valueParameter
