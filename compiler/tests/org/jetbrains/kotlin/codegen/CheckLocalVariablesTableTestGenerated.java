@@ -109,6 +109,11 @@ public class CheckLocalVariablesTableTestGenerated extends AbstractCheckLocalVar
         runTest("compiler/testData/checkLocalVariablesTable/localFun.kt");
     }
 
+    @TestMetadata("objectInLocalPropertyDelegate.kt")
+    public void testObjectInLocalPropertyDelegate() throws Exception {
+        runTest("compiler/testData/checkLocalVariablesTable/objectInLocalPropertyDelegate.kt");
+    }
+
     @TestMetadata("receiverParameter.kt")
     public void testReceiverParameter() throws Exception {
         runTest("compiler/testData/checkLocalVariablesTable/receiverParameter.kt");
