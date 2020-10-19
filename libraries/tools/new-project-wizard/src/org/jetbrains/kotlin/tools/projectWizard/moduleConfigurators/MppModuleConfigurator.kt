@@ -49,5 +49,6 @@ object MppModuleConfigurator : ModuleConfigurator,
         modulePath: Path,
     ): TaskResult<Unit> = compute {
         GradlePlugin.gradleProperties.addValues("kotlin.mpp.enableGranularSourceSetsMetadata" to true)
+        GradlePlugin.gradleProperties.addValues("kotlin.native.enableDependencyPropagation" to false)
     }
 }
