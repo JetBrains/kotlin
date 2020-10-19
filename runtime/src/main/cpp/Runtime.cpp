@@ -16,6 +16,7 @@
 
 #include "Alloc.h"
 #include "Atomic.h"
+#include "Cleaner.h"
 #include "Exceptions.h"
 #include "KAssert.h"
 #include "Memory.h"
@@ -75,6 +76,7 @@ void InitOrDeinitGlobalVariables(int initialize, MemoryState* memory) {
 }
 
 KBoolean g_checkLeaks = KonanNeedDebugInfo;
+KBoolean g_checkLeakedCleaners = KonanNeedDebugInfo;
 
 constexpr RuntimeState* kInvalidRuntime = nullptr;
 
@@ -282,6 +284,18 @@ KBoolean Konan_Platform_getMemoryLeakChecker() {
 
 void Konan_Platform_setMemoryLeakChecker(KBoolean value) {
   g_checkLeaks = value;
+}
+
+bool Kotlin_cleanersLeakCheckerEnabled() {
+    return g_checkLeakedCleaners;
+}
+
+KBoolean Konan_Platform_getCleanersLeakChecker() {
+    return g_checkLeakedCleaners;
+}
+
+void Konan_Platform_setCleanersLeakChecker(KBoolean value) {
+    g_checkLeakedCleaners = value;
 }
 
 }  // extern "C"

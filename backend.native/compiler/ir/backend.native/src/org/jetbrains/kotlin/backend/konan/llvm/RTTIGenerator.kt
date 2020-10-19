@@ -70,6 +70,10 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             result = result or TF_SUSPEND_FUNCTION
         }
 
+        if (irClass.hasAnnotation(KonanFqNames.hasFinalizer)) {
+            result = result or TF_HAS_FINALIZER
+        }
+
         return result
     }
 
@@ -629,4 +633,5 @@ private const val TF_INTERFACE = 4
 private const val TF_OBJC_DYNAMIC = 8
 private const val TF_LEAK_DETECTOR_CANDIDATE = 16
 private const val TF_SUSPEND_FUNCTION = 32
+private const val TF_HAS_FINALIZER = 64
 

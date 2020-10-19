@@ -104,7 +104,9 @@ targetList.forEach { targetName ->
                 "${targetName}Release",
                 "${targetName}StdAlloc"
             )
-    )
+    ) {
+        includeRuntime()
+    }
 
     createTestTask(
             project,
@@ -116,7 +118,9 @@ targetList.forEach { targetName ->
                 "${targetName}Mimalloc",
                 "${targetName}OptAlloc"
             )
-    )
+    ) {
+        includeRuntime()
+    }
 
     tasks.register("${targetName}RuntimeTests") {
         dependsOn("${targetName}StdAllocRuntimeTests")

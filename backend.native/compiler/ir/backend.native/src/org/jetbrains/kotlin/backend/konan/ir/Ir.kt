@@ -239,6 +239,12 @@ internal class KonanSymbols(
                     .single()
     )
 
+    val createCleaner = symbolTable.referenceSimpleFunction(
+            builtIns.builtInsModule.getPackage(FqName("kotlin.native.internal")).memberScope
+                    .getContributedFunctions(Name.identifier("createCleaner"), NoLookupLocation.FROM_BACKEND)
+                    .single()
+    )
+
     val areEqualByValue = context.getKonanInternalFunctions("areEqualByValue").map {
         symbolTable.referenceSimpleFunction(it)
     }.associateBy { it.descriptor.valueParameters[0].type.computePrimitiveBinaryTypeOrNull()!! }

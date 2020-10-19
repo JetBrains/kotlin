@@ -132,3 +132,16 @@ annotation class Independent
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)
 public annotation class CanBePrecreated
+
+/**
+ * Marks a class that has a finalizer.
+ */
+@Target(AnnotationTarget.CLASS)
+internal annotation class HasFinalizer
+
+/**
+ * Marks a declaration that is internal for Kotlin/Native and shouldn't be used externally.
+ */
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
+@Retention(value = AnnotationRetention.BINARY)
+internal annotation class InternalForKotlinNative

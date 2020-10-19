@@ -30,4 +30,5 @@ object KonanFqNames {
     val canBePrecreated = FqName("kotlin.native.internal.CanBePrecreated")
     val typedIntrinsic = FqName("kotlin.native.internal.TypedIntrinsic")
     val objCMethod = FqName("kotlinx.cinterop.ObjCMethod")
+    val hasFinalizer = FqName("kotlin.native.internal.HasFinalizer")
 }

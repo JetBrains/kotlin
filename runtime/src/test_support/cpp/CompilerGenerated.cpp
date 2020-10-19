@@ -3,6 +3,8 @@
  * that can be found in the LICENSE file.
  */
 
+#include "TestSupportCompilerGenerated.hpp"
+
 #include "Types.h"
 
 namespace {
@@ -26,6 +28,7 @@ TypeInfo theStringTypeInfoImpl = {};
 TypeInfo theThrowableTypeInfoImpl = {};
 TypeInfo theUnitTypeInfoImpl = {};
 TypeInfo theWorkerBoundReferenceTypeInfoImpl = {};
+TypeInfo theCleanerImplTypeInfoImpl = {};
 
 ArrayHeader theEmptyStringImpl = { &theStringTypeInfoImpl, /* element count */ 0 };
 
@@ -34,6 +37,9 @@ struct KBox {
     ObjHeader header;
     const T value;
 };
+
+testing::StrictMock<testing::MockFunction<KInt()>>* createCleanerWorkerMock = nullptr;
+testing::StrictMock<testing::MockFunction<void(KInt, bool)>>* shutdownCleanerWorkerMock = nullptr;
 
 } // namespace
 
@@ -61,6 +67,7 @@ extern const TypeInfo* theStringTypeInfo = &theStringTypeInfoImpl;
 extern const TypeInfo* theThrowableTypeInfo = &theThrowableTypeInfoImpl;
 extern const TypeInfo* theUnitTypeInfo = &theUnitTypeInfoImpl;
 extern const TypeInfo* theWorkerBoundReferenceTypeInfo = &theWorkerBoundReferenceTypeInfoImpl;
+extern const TypeInfo* theCleanerImplTypeInfo = &theCleanerImplTypeInfoImpl;
 
 extern const ArrayHeader theEmptyArray = { &theArrayTypeInfoImpl, /* element count */0 };
 
@@ -230,4 +237,24 @@ RUNTIME_NORETURN OBJ_GETTER(Kotlin_Throwable_getMessage, KRef throwable) {
     throw std::runtime_error("Not implemented for tests");
 }
 
+void Kotlin_CleanerImpl_shutdownCleanerWorker(KInt worker, bool executeScheduledCleaners) {
+    if (!shutdownCleanerWorkerMock) throw std::runtime_error("Not implemented for tests");
+
+    return shutdownCleanerWorkerMock->Call(worker, executeScheduledCleaners);
+}
+
+KInt Kotlin_CleanerImpl_createCleanerWorker() {
+    if (!createCleanerWorkerMock) throw std::runtime_error("Not implemented for tests");
+
+    return createCleanerWorkerMock->Call();
+}
+
 } // extern "C"
+
+ScopedStrictMockFunction<KInt()> ScopedCreateCleanerWorkerMock() {
+    return ScopedStrictMockFunction<KInt()>(&createCleanerWorkerMock);
+}
+
+ScopedStrictMockFunction<void(KInt, bool)> ScopedShutdownCleanerWorkerMock() {
+    return ScopedStrictMockFunction<void(KInt, bool)>(&shutdownCleanerWorkerMock);
+}

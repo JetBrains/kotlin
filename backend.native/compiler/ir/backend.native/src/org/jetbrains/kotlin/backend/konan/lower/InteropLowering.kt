@@ -65,6 +65,33 @@ internal class InteropLowering(context: Context) : FileLoweringPass {
     }
 }
 
+private fun IrExpression.isNonCapturingFunction(): Boolean {
+    if (!type.isFunctionTypeOrSubtype())
+        return false
+
+    val fromContainerExpression = fun(expr: IrExpression): IrConstructorCall? {
+        if (expr !is IrContainerExpression)
+            return null
+        if (expr.statements.size != 2)
+            return null
+
+        val firstStatement = expr.statements[0]
+        if (firstStatement !is IrContainerExpression || firstStatement.statements.size != 0) {
+            return null
+        }
+
+        val secondStatement = expr.statements[1]
+
+        return secondStatement as? IrConstructorCall
+    }
+
+    val constructorCall = this as? IrConstructorCall
+            ?: fromContainerExpression(this)
+            ?: return false
+
+    return constructorCall.valueArgumentsCount == 0
+}
+
 private abstract class BaseInteropIrTransformer(private val context: Context) : IrBuildingTransformer(context) {
 
     protected inline fun <T> generateWithStubs(element: IrElement? = null, block: KotlinStubs.() -> T): T =
@@ -1203,6 +1230,17 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
                 builder.irCall(symbols.interopCPointerGetRawValue).apply {
                     extensionReceiver = expression.dispatchReceiver
                 }
+            // TODO: Move this check out of InteropLowering.
+            symbols.createCleaner.owner -> {
+                val irCallableReference = expression.getValueArgument(1)
+                if (irCallableReference == null || !irCallableReference.isNonCapturingFunction()) {
+                    context.reportCompilationError(
+                            "${function.fqNameForIrSerialization} must take an unbound, non-capturing function or lambda",
+                            irFile, expression
+                    )
+                }
+                expression
+            }
             else -> expression
         }
     }

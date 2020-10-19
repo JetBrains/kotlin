@@ -33,6 +33,7 @@
 #include "Alloc.h"
 #include "KAssert.h"
 #include "Atomic.h"
+#include "Cleaner.h"
 #if USE_CYCLIC_GC
 #include "CyclicCollector.h"
 #endif  // USE_CYCLIC_GC
@@ -1063,14 +1064,26 @@ void freeAggregatingFrozenContainer(ContainerHeader* container) {
   MEMORY_LOG("Freeing subcontainers done\n");
 }
 
+// Not inlining this call as it affects deallocation performance for
+// all types.
+NO_INLINE RUNTIME_NOTHROW void runFinalizers(ObjHeader* obj) {
+    auto* type_info = obj->type_info();
+    if (type_info == theCleanerImplTypeInfo) {
+        DisposeCleaner(obj);
+    }
+    if (type_info == theWorkerBoundReferenceTypeInfo) {
+        DisposeWorkerBoundReference(obj);
+    }
+}
+
 // This is called from 2 places where it's unconditionally called,
 // so better be inlined.
 ALWAYS_INLINE void runDeallocationHooks(ContainerHeader* container) {
   ObjHeader* obj = reinterpret_cast<ObjHeader*>(container + 1);
   for (uint32_t index = 0; index < container->objectCount(); index++) {
     auto* type_info = obj->type_info();
-    if (type_info == theWorkerBoundReferenceTypeInfo) {
-      DisposeWorkerBoundReference(obj);
+    if ((type_info->flags_ & TF_HAS_FINALIZER) != 0) {
+      runFinalizers(obj);
     }
 #if USE_CYCLIC_GC
     if ((type_info->flags_ & TF_LEAK_DETECTOR_CANDIDATE) != 0) {
@@ -3541,6 +3554,14 @@ void Kotlin_native_internal_GC_setCyclicCollector(KRef gc, KBoolean value) {
   if (value)
     ThrowIllegalArgumentException();
 #endif  // USE_CYCLIC_GC
+}
+
+bool Kotlin_Any_isShareable(KRef thiz) {
+    return thiz == nullptr || isShareable(thiz->container());
+}
+
+void PerformFullGC() {
+    garbageCollect(::memoryState, true);
 }
 
 } // extern "C"

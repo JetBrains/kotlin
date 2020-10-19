@@ -28,6 +28,7 @@ external private fun describeWorkerBoundReference(ref: NativePtr): String
  */
 @NoReorderFields
 @ExportTypeInfo("theWorkerBoundReferenceTypeInfo")
+@HasFinalizer
 public class WorkerBoundReference<out T : Any>(value: T) {
 
     private var ptr = NativePtr.NULL

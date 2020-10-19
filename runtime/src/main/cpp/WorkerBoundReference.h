@@ -9,9 +9,7 @@
 #include "Common.h"
 #include "Types.h"
 
-// Not inlining this call as it affects deallocation performance for
-// all types.
-RUNTIME_NOTHROW void DisposeWorkerBoundReference(KRef thiz) NO_INLINE;
+RUNTIME_NOTHROW void DisposeWorkerBoundReference(KRef thiz);
 
 RUNTIME_NOTHROW void WorkerBoundReferenceFreezeHook(KRef thiz);
 

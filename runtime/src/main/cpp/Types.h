@@ -106,6 +106,7 @@ extern const TypeInfo* theStringTypeInfo;
 extern const TypeInfo* theThrowableTypeInfo;
 extern const TypeInfo* theUnitTypeInfo;
 extern const TypeInfo* theWorkerBoundReferenceTypeInfo;
+extern const TypeInfo* theCleanerImplTypeInfo;
 
 KBoolean IsInstance(const ObjHeader* obj, const TypeInfo* type_info) RUNTIME_PURE;
 KBoolean IsInstanceOfClassFast(const ObjHeader* obj, int32_t lo, int32_t hi) RUNTIME_PURE;

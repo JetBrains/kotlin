@@ -14,6 +14,7 @@
   * limitations under the License.
   */
 
+#include "Cleaner.h"
 #include "Memory.h"
 #include "Natives.h"
 #include "Runtime.h"
@@ -57,9 +58,17 @@ extern "C" RUNTIME_USED int Init_and_run_start(int argc, const char** argv, int 
   KInt exitStatus = Konan_run_start(argc, argv);
 
   if (memoryDeInit) {
-    if (Kotlin_memoryLeakCheckerEnabled())
-      WaitNativeWorkersTermination();
-    Kotlin_deinitRuntimeIfNeeded();
+      if (Kotlin_cleanersLeakCheckerEnabled()) {
+          // Make sure to collect any lingering cleaners.
+          PerformFullGC();
+          // Execute all the cleaner blocks and stop the Cleaner worker.
+          ShutdownCleaners(true);
+      } else {
+          // Stop the cleaner worker without executing remaining cleaner blocks.
+          ShutdownCleaners(false);
+      }
+      if (Kotlin_memoryLeakCheckerEnabled()) WaitNativeWorkersTermination();
+      Kotlin_deinitRuntimeIfNeeded();
   }
 
   return exitStatus;

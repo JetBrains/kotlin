@@ -68,7 +68,7 @@ enum JobKind {
   // Order is important in sense that all job kinds after this one is considered
   // processed for APIs returning request process status.
   JOB_REGULAR = 2,
-  JOB_EXECUTE_AFTER = 3
+  JOB_EXECUTE_AFTER = 3,
 };
 
 enum class WorkerKind {
@@ -358,6 +358,23 @@ class State {
     return true;
   }
 
+  bool scheduleJobInWorkerUnlocked(KInt id, KNativePtr operationStablePtr) {
+      Worker* worker = nullptr;
+      Locker locker(&lock_);
+
+      auto it = workers_.find(id);
+      if (it == workers_.end()) {
+          return false;
+      }
+      worker = it->second;
+
+      Job job;
+      job.kind = JOB_EXECUTE_AFTER;
+      job.executeAfter.operation = operationStablePtr;
+      worker->putJob(job, false);
+      return true;
+  }
+
   // Returns `true` if something was indeed processed.
   bool processQueueUnlocked(KInt id) {
     // Can only process queue of the current worker.
@@ -456,23 +473,28 @@ class State {
     terminating_native_workers_.erase(it);
   }
 
-  void waitNativeWorkersTerminationUnlocked() {
-    std::vector<pthread_t> threadsToWait;
-    {
-      Locker locker(&lock_);
+  template <typename F>
+  void waitNativeWorkersTerminationUnlocked(F waitForWorker) {
+      std::vector<std::pair<KInt, pthread_t>> workersToWait;
+      {
+          Locker locker(&lock_);
 
-      checkNativeWorkersLeakLocked();
+          checkNativeWorkersLeakLocked();
 
-      for (auto& kvp : terminating_native_workers_) {
-        RuntimeAssert(!pthread_equal(kvp.second, pthread_self()), "Native worker is joining with itself");
-        threadsToWait.push_back(kvp.second);
+          for (auto& kvp : terminating_native_workers_) {
+              RuntimeAssert(!pthread_equal(kvp.second, pthread_self()), "Native worker is joining with itself");
+              if (waitForWorker(kvp.first)) {
+                  workersToWait.push_back(kvp);
+              }
+          }
+          for (auto worker : workersToWait) {
+              terminating_native_workers_.erase(worker.first);
+          }
       }
-      terminating_native_workers_.clear();
-    }
 
-    for (auto thread : threadsToWait) {
-      pthread_join(thread, nullptr);
-    }
+      for (auto worker : workersToWait) {
+          pthread_join(worker.second, nullptr);
+      }
   }
 
   void checkNativeWorkersLeakLocked() {
@@ -720,7 +742,13 @@ void WorkerDestroyThreadDataIfNeeded(KInt id) {
 
 void WaitNativeWorkersTermination() {
 #if WITH_WORKERS
-  theState()->waitNativeWorkersTerminationUnlocked();
+  theState()->waitNativeWorkersTerminationUnlocked([](KInt worker) { return true; });
+#endif
+}
+
+void WaitNativeWorkerTermination(KInt id) {
+#if WITH_WORKERS
+    theState()->waitNativeWorkersTerminationUnlocked([id](KInt worker) { return worker == id; });
 #endif
 }
 
@@ -738,6 +766,14 @@ void WorkerResume(Worker* worker) {
 #if WITH_WORKERS
   ::g_worker = worker;
 #endif  // WITH_WORKERS
+}
+
+bool WorkerSchedule(KInt id, KNativePtr jobStablePtr) {
+#if WITH_WORKERS
+    return theState()->scheduleJobInWorkerUnlocked(id, jobStablePtr);
+#else
+    return false;
+#endif // WITH_WORKERS
 }
 
 #if WITH_WORKERS

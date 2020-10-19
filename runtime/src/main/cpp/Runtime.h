@@ -55,6 +55,8 @@ void Kotlin_zeroOutTLSGlobals();
 
 bool Kotlin_memoryLeakCheckerEnabled();
 
+bool Kotlin_cleanersLeakCheckerEnabled();
+
 #ifdef __cplusplus
 }
 #endif

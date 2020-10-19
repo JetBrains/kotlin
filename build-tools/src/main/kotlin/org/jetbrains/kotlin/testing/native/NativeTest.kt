@@ -154,7 +154,8 @@ open class LinkNativeTest @Inject constructor(
 fun createTestTask(
         project: Project,
         testTaskName: String,
-        testedTaskNames: List<String>
+        testedTaskNames: List<String>,
+        configureCompileToBitcode: CompileToBitcode.() -> Unit = {},
 ): Task {
     val platformManager = project.rootProject.findProperty("platformManager") as PlatformManager
     val googleTestExtension = project.extensions.getByName(RuntimeTestingPlugin.GOOGLE_TEST_EXTENSION_NAME) as GoogleTestExtension
@@ -179,6 +180,7 @@ fun createTestTask(
                 dependsOn(it)
                 compilerArgs.addAll(it.compilerArgs)
                 headersDirs += googleTestExtension.headersDirs
+                this.configureCompileToBitcode()
             }
         if (task.inputFiles.count() == 0)
             null

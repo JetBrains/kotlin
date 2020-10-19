@@ -5,6 +5,8 @@
 
 #if KONAN_OBJC_INTEROP
 
+#include "TestSupportCompilerGenerated.hpp"
+
 #include <Foundation/NSObject.h>
 #include <objc/runtime.h>
 

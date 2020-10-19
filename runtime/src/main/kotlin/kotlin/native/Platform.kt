@@ -92,6 +92,10 @@ public object Platform {
     public var isMemoryLeakCheckerActive: Boolean
         get() = Platform_getMemoryLeakChecker()
         set(value) = Platform_setMemoryLeakChecker(value)
+
+    public var isCleanersLeakCheckerActive: Boolean
+        get() = Platform_getCleanersLeakChecker()
+        set(value) = Platform_setCleanersLeakChecker(value)
 }
 
 @SymbolName("Konan_Platform_canAccessUnaligned")
@@ -117,3 +121,9 @@ private external fun Platform_getMemoryLeakChecker(): Boolean
 
 @SymbolName("Konan_Platform_setMemoryLeakChecker")
 private external fun Platform_setMemoryLeakChecker(value: Boolean): Unit
+
+@SymbolName("Konan_Platform_getCleanersLeakChecker")
+private external fun Platform_getCleanersLeakChecker(): Boolean
+
+@SymbolName("Konan_Platform_setCleanersLeakChecker")
+private external fun Platform_setCleanersLeakChecker(value: Boolean): Unit
