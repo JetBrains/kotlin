@@ -66,6 +66,25 @@ class KotlinSSRClassReplaceTest : KotlinSSRReplaceTest() {
         )
     }
 
+    fun testClassSuperTypesFormatNoBodyCopy() {
+        doTest(
+            searchPattern = "class '_ID",
+            replacePattern = "class '_ID",
+            match = """
+                interface Foo
+                interface Bar
+
+                class FooBar  :  Foo  ,  Bar
+            """.trimIndent(),
+            result = """
+                interface Foo
+                interface Bar
+
+                class FooBar  :  Foo  ,  Bar
+            """.trimIndent()
+        )
+    }
+
     fun testAnnotatedClassCountFilter() {
         doTest(
             searchPattern = "@'_ANN* class '_ID('_PARAM : '_TYPE)",

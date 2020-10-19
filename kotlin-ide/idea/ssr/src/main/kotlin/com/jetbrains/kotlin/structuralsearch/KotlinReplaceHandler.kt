@@ -209,8 +209,8 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
                 }
             }
         }
+        getSuperTypeList()?.node?.lastChildNode?.psi?.let { if(it is PsiWhiteSpace) it.delete() }
         if (body == null && searchTemplate.body == null) match.body?.let { matchBody ->
-            getSuperTypeList()?.node?.lastChildNode?.psi?.let { if(it is PsiWhiteSpace) it.delete() }
             addFormatted(matchBody)
         }
         return this

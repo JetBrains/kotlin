@@ -65,24 +65,4 @@ class KotlinSSRFunctionReplaceTest : KotlinSSRReplaceTest() {
             result = "public fun foo(bar : Int = 0)  {}"
         )
     }
-
-// wait for kotlin compiler changes
-//    fun testSuperTypeFormatCopy() {
-//        doTest(
-//            searchPattern = "class '_ID",
-//            replacePattern = "class '_ID",
-//            match = """
-//                interface Foo
-//                interface Bar
-//
-//                class FooBar  :  Foo  ,  Bar
-//            """.trimIndent(),
-//            result = """
-//                interface Foo
-//                interface Bar
-//
-//                class FooBar  :  Foo  ,  Bar
-//            """.trimIndent()
-//        )
-//    }
 }
