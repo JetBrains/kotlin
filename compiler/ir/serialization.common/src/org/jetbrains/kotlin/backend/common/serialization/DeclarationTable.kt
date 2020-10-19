@@ -36,7 +36,7 @@ abstract class GlobalDeclarationTable(
     protected fun loadKnownBuiltins(builtIns: IrBuiltIns) {
         builtIns.knownBuiltins.forEach {
             val symbol = (it as IrSymbolOwner).symbol
-            table[it] = symbol.signature.also { id -> clashTracker.commit(it, id) }
+            table[it] = symbol.signature!!.also { id -> clashTracker.commit(it, id) }
         }
     }
 

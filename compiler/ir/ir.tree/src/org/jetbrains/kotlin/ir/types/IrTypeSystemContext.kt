@@ -347,7 +347,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? {
         if (this !is IrClassSymbol || !isPublicApi) return null
 
-        val signature = signature.asPublic()
+        val signature = signature?.asPublic()
         if (signature == null || signature.packageFqName != "kotlin") return null
 
         return PrimitiveType.getByShortName(signature.declarationFqName)
@@ -356,7 +356,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun TypeConstructorMarker.getPrimitiveArrayType(): PrimitiveType? {
         if (this !is IrClassSymbol || !isPublicApi) return null
 
-        val signature = signature.asPublic()
+        val signature = signature?.asPublic()
         if (signature == null || signature.packageFqName != "kotlin") return null
 
         return PrimitiveType.getByShortArrayName(signature.declarationFqName)

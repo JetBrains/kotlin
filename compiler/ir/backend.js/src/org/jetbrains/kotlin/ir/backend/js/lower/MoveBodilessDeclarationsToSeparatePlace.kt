@@ -62,8 +62,8 @@ private class DescriptorlessIrFileSymbol : IrFileSymbol {
     override val isPublicApi: Boolean
         get() = error("Operation is unsupported")
 
-    override val signature: IdSignature
-        get() = error("Operation is unsupported")
+    override val signature: IdSignature?
+        get() = null
 }
 
 private fun isBuiltInClass(declaration: IrDeclaration): Boolean =

@@ -21,7 +21,7 @@ abstract class IrDelegatingSymbol<S : IrBindableSymbol<D, B>, B : IrSymbolOwner,
     override val isPublicApi: Boolean
         get() = delegate.isPublicApi
 
-    override val signature: IdSignature
+    override val signature: IdSignature?
         get() = delegate.signature
 
     override fun bind(owner: B) = delegate.bind(owner)

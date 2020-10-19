@@ -76,8 +76,8 @@ class DeclarationStubGenerator(
         if (symbol is IrFieldSymbol && (symbol.descriptor as? WrappedPropertyDescriptor)?.isBound() == true) {
             return generateStubBySymbol(symbol, symbol.descriptor)
         }
-        val descriptor = if (symbol.descriptor is WrappedDeclarationDescriptor<*>)
-            findDescriptorBySignature(symbol.signature)
+        val descriptor = if (symbol.descriptor is WrappedDeclarationDescriptor<*> && symbol.signature != null)
+            findDescriptorBySignature(symbol.signature!!)
         else
             symbol.descriptor
         if (descriptor == null) return null
