@@ -139,6 +139,10 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
 
     <defaultLiveTemplates file="liveTemplates/Kotlin.xml"/>
 
+    <structuralsearch.profile implementation="org.jetbrains.kotlin.idea.structuralsearch.KotlinStructuralSearchProfile"/>
+    <structuralsearch.filter implementation="org.jetbrains.kotlin.idea.structuralsearch.filters.VarOnlyFilter"/>
+    <structuralsearch.filter implementation="org.jetbrains.kotlin.idea.structuralsearch.filters.ValOnlyFilter"/>
+
     <fileType name="Kotlin"
               implementationClass="org.jetbrains.kotlin.idea.KotlinFileType"
               fieldName="INSTANCE"
