@@ -173,6 +173,10 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
         CLASS_MODIFIERS.forEach { replaceModifier(searchTemplate, match, it) }
         fixModifierListFormatting(match)
 
+        if(primaryConstructor == null && searchTemplate.primaryConstructor == null) {
+            match.primaryConstructor?.let { addFormatted(it) }
+        }
+
         if(primaryConstructorModifierList == null && searchTemplate.primaryConstructorModifierList == null) {
             match.primaryConstructorModifierList?.let { matchModList ->
                 matchModList.visibilityModifierType()?.let { primaryConstructor?.addModifier(it) }
@@ -182,8 +186,9 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
 
         val searchParamList = searchTemplate.getPrimaryConstructorParameterList()
         val matchParamList = match.getPrimaryConstructorParameterList()
-        if(searchParamList != null && matchParamList != null) getPrimaryConstructorParameterList()
-            ?.replaceParameterList(searchParamList, matchParamList)
+        if(searchParamList != null && matchParamList != null) getPrimaryConstructorParameterList()?.replaceParameterList(
+            searchParamList, matchParamList
+        )
 
         if (getSuperTypeList() == null && searchTemplate.getSuperTypeList() == null) {
             // replace all entries

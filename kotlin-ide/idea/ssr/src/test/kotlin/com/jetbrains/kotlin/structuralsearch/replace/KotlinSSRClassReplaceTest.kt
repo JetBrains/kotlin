@@ -111,4 +111,21 @@ class KotlinSSRClassReplaceTest : KotlinSSRReplaceTest() {
             result = "class Foo() {}"
         )
     }
+
+    fun testSimpleClassReplacement() {
+        doTest(
+            searchPattern = "class '_ID",
+            replacePattern = "class '_ID",
+            match = """
+                class ReplaceExample(i: Int) {
+                    val v = "prop"
+                }
+            """.trimIndent(),
+            result = """
+                class ReplaceExample(i: Int) {
+                    val v = "prop"
+                }
+            """.trimIndent()
+        )
+    }
 }
