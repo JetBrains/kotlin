@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -67,6 +68,30 @@ interface IrBuilderExtension {
         ) { bodyGen(c) }
     }
 
+    // function will not be created in the real class
+    fun IrClass.createInlinedFunction(
+        name: Name,
+        visibility: DescriptorVisibility,
+        origin: IrDeclarationOrigin,
+        returnType: IrType,
+        bodyGen: IrBlockBodyBuilder.(IrFunction) -> Unit
+    ): IrSimpleFunction {
+        val function = factory.buildFun {
+            this.name = name
+            this.visibility = visibility
+            this.origin = origin
+            this.isInline = true
+            this.returnType = returnType
+        }
+        val functionSymbol = function.symbol
+        function.parent = this
+        function.body = DeclarationIrBuilder(compilerContext, functionSymbol, startOffset, endOffset).irBlockBody(
+            startOffset,
+            endOffset
+        ) { bodyGen(function) }
+        return function
+    }
+
     fun IrBuilderWithScope.irInvoke(
         dispatchReceiver: IrExpression? = null,
         callee: IrFunctionSymbol,
@@ -103,6 +128,19 @@ interface IrBuilderExtension {
         val arrayType = compilerContext.irBuiltIns.arrayClass.typeWith(arrayElementType)
         val arg0 = IrVarargImpl(startOffset, endOffset, arrayType, arrayElementType, arrayElements)
         val typeArguments = listOf(arrayElementType)
+
+        return irCall(compilerContext.symbols.arrayOf, arrayType, typeArguments = typeArguments).apply {
+            putValueArgument(0, arg0)
+        }
+    }
+
+    fun IrBuilderWithScope.createPrimitiveArrayOfExpression(
+        elementPrimitiveType: IrType,
+        arrayElements: List<IrExpression>
+    ): IrExpression {
+        val arrayType = compilerContext.irBuiltIns.primitiveArrayForType.getValue(elementPrimitiveType).defaultType
+        val arg0 = IrVarargImpl(startOffset, endOffset, arrayType, elementPrimitiveType, arrayElements)
+        val typeArguments = listOf(elementPrimitiveType)
 
         return irCall(compilerContext.symbols.arrayOf, arrayType, typeArguments = typeArguments).apply {
             putValueArgument(0, arg0)

@@ -8,24 +8,31 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.codegen.CompilationException
-import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.addField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.getAnnotation
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCodegen
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.serialName
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.serializableAnnotationIsUseless
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ARRAY_MASK_FIELD_MISSING_FUNC_FQ
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.MISSING_FIELD_EXC
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIAL_DESC_FIELD
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SINGLE_MASK_FIELD_MISSING_FUNC_FQ
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.initializedDescriptorFieldName
 
 class SerializableIrGenerator(
     val irClass: IrClass,
@@ -33,7 +40,20 @@ class SerializableIrGenerator(
     bindingContext: BindingContext
 ) : SerializableCodegen(irClass.descriptor, bindingContext), IrBuilderExtension {
 
+    private val descriptorGenerationFunctionName = "createInitializedDescriptor"
 
+    private val serialDescClass: ClassDescriptor = serializableDescriptor.module
+        .getClassFromSerializationDescriptorsPackage(SerialEntityNames.SERIAL_DESCRIPTOR_CLASS)
+
+    private val serialDescImplClass: ClassDescriptor = serializableDescriptor
+        .getClassFromInternalSerializationPackage(SerialEntityNames.SERIAL_DESCRIPTOR_CLASS_IMPL)
+
+    private val addElementFun = serialDescImplClass.findFunctionSymbol(CallingConventions.addElement)
+
+    val throwMissedFieldExceptionFunc =
+        if (useFieldMissingOptimization) compilerContext.referenceFunctions(SINGLE_MASK_FIELD_MISSING_FUNC_FQ).single() else null
+    val throwMissedFieldExceptionArrayFunc =
+        if (useFieldMissingOptimization) compilerContext.referenceFunctions(ARRAY_MASK_FIELD_MISSING_FUNC_FQ).single() else null
 
     private fun IrClass.hasSerializableAnnotationWithoutArgs(): Boolean {
         val annot = getAnnotation(SerializationAnnotations.serializableAnnotationFqName) ?: return false
@@ -64,6 +84,10 @@ class SerializableIrGenerator(
             val thiz = irClass.thisReceiver!!
             val superClass = irClass.getSuperClassOrAny()
             var startPropOffset: Int = 0
+
+            if (useFieldMissingOptimization) {
+                generateOptimizedGoldenMaskCheck(seenVars)
+            }
             when {
                 superClass.symbol == compilerContext.irBuiltIns.anyClass -> generateAnySuperConstructorCall(toBuilder = this@contributeConstructor)
                 superClass.isInternalSerializable -> {
@@ -83,7 +107,14 @@ class SerializableIrGenerator(
                         requireNotNull(transformFieldInitializer(prop.irField)) { "Optional value without an initializer" } // todo: filter abstract here
                     setProperty(irGet(thiz), prop.irProp, initializerBody)
                 } else {
-                    irThrow(irInvoke(null, exceptionCtorRef, irString(prop.name), typeHint = exceptionType))
+                    // property required
+                    if (useFieldMissingOptimization) {
+                        // field definitely not empty as it's checked before - no need another IF, only assign property from param
+                        +assignParamExpr
+                        continue
+                    } else {
+                        irThrow(irInvoke(null, exceptionCtorRef, irString(prop.name), typeHint = exceptionType))
+                    }
                 }
 
                 val propNotSeenTest =
@@ -115,6 +146,153 @@ class SerializableIrGenerator(
                     initializer.body.deepCopyWithVariables().statements.forEach { +it }
                 }
         }
+
+    private fun IrBlockBodyBuilder.generateOptimizedGoldenMaskCheck(seenVars: List<IrValueParameter>) {
+        if (serializableDescriptor.isAbstractSerializableClass() || serializableDescriptor.isSealedSerializableClass()) {
+            // for abstract classes fields MUST BE checked in child classes
+            return
+        }
+
+        val fieldsMissedTest: IrExpression
+        val throwErrorExpr: IrExpression
+
+        val maskSlotCount = seenVars.size
+        if (maskSlotCount == 1) {
+            val goldenMask = getGoldenMask()
+
+            throwErrorExpr = irInvoke(
+                null,
+                throwMissedFieldExceptionFunc!!,
+                irGet(seenVars[0]),
+                irInt(goldenMask),
+                getSerialDescriptorExpr(),
+                typeHint = compilerContext.irBuiltIns.unitType
+            )
+
+            fieldsMissedTest = irNotEquals(
+                irInt(goldenMask),
+                irBinOp(
+                    OperatorNameConventions.AND,
+                    irInt(goldenMask),
+                    irGet(seenVars[0])
+                )
+            )
+        } else {
+            val goldenMaskList = getGoldenMaskList()
+
+            var compositeExpression: IrExpression? = null
+            for (i in goldenMaskList.indices) {
+                val singleCheckExpr = irNotEquals(
+                    irInt(goldenMaskList[i]),
+                    irBinOp(
+                        OperatorNameConventions.AND,
+                        irInt(goldenMaskList[i]),
+                        irGet(seenVars[i])
+                    )
+                )
+
+                compositeExpression = if (compositeExpression == null) {
+                    singleCheckExpr
+                } else {
+                    irBinOp(
+                        OperatorNameConventions.OR,
+                        compositeExpression,
+                        singleCheckExpr
+                    )
+                }
+            }
+
+            fieldsMissedTest = compositeExpression!!
+
+            throwErrorExpr = irBlock {
+                +irInvoke(
+                    null,
+                    throwMissedFieldExceptionArrayFunc!!,
+                    createPrimitiveArrayOfExpression(compilerContext.irBuiltIns.intType, goldenMaskList.indices.map { irGet(seenVars[it]) }),
+                    createPrimitiveArrayOfExpression(compilerContext.irBuiltIns.intType, goldenMaskList.map { irInt(it) }),
+                    getSerialDescriptorExpr(),
+                    typeHint = compilerContext.irBuiltIns.unitType
+                )
+            }
+        }
+
+        +irIfThen(compilerContext.irBuiltIns.unitType, fieldsMissedTest, throwErrorExpr)
+    }
+
+    private fun IrBlockBodyBuilder.getSerialDescriptorExpr(): IrExpression {
+        return if (serializableDescriptor.shouldHaveGeneratedSerializer && staticDescriptor) {
+            val serializer = serializableDescriptor.classSerializer!!
+            val serialDescriptorGetter = compilerContext.referenceClass(serializer.fqNameSafe)!!.getPropertyGetter(SERIAL_DESC_FIELD)!!
+            irGet(
+                serialDescriptorGetter.owner.returnType,
+                irGetObject(serializer),
+                serialDescriptorGetter.owner.symbol
+            )
+        } else {
+            irGetField(null, generateStaticDescriptorField())
+        }
+    }
+
+    private fun IrBlockBodyBuilder.generateStaticDescriptorField(): IrField {
+        val serialDescItType = serialDescClass.defaultType.toIrType()
+
+        val function = irClass.createInlinedFunction(
+            Name.identifier(descriptorGenerationFunctionName),
+            DescriptorVisibilities.PRIVATE,
+            SERIALIZABLE_PLUGIN_ORIGIN,
+            serialDescItType
+        ) {
+            val serialDescVar = irTemporary(
+                getInstantiateDescriptorExpr(),
+                nameHint = "serialDesc"
+            )
+            for (property in properties.serializableProperties) {
+                +getAddElementToDescriptorExpr(property, serialDescVar)
+            }
+            +irReturn(irGet(serialDescVar))
+        }
+
+        return irClass.addField {
+            name = Name.identifier(initializedDescriptorFieldName)
+            visibility = DescriptorVisibilities.PRIVATE
+            origin = SERIALIZABLE_PLUGIN_ORIGIN
+            isFinal = true
+            isStatic = true
+            type = serialDescItType
+        }.apply { initializer = irClass.factory.createExpressionBody(irCall(function)) }
+    }
+
+    private fun IrBlockBodyBuilder.getInstantiateDescriptorExpr(): IrExpression {
+        val classConstructors = compilerContext.referenceConstructors(serialDescImplClass.fqNameSafe)
+        val serialClassDescImplCtor = classConstructors.single { it.owner.isPrimary }
+        return irInvoke(
+            null, serialClassDescImplCtor,
+            irString(serializableDescriptor.serialName()), irNull(), irInt(properties.serializableProperties.size)
+        )
+    }
+
+    private fun IrBlockBodyBuilder.getAddElementToDescriptorExpr(
+        property: SerializableProperty,
+        serialDescVar: IrVariable
+    ): IrExpression {
+        return irInvoke(
+            irGet(serialDescVar),
+            addElementFun,
+            irString(property.name),
+            irBoolean(property.optional),
+            typeHint = compilerContext.irBuiltIns.unitType
+        )
+    }
+
+    private inline fun ClassDescriptor.findFunctionSymbol(
+        functionName: String,
+        predicate: (IrSimpleFunction) -> Boolean = { true }
+    ): IrFunctionSymbol {
+        val irClass = compilerContext.referenceClass(fqNameSafe)?.owner ?: error("Couldn't load class $this")
+        val simpleFunctions = irClass.declarations.filterIsInstance<IrSimpleFunction>()
+
+        return simpleFunctions.filter { it.name.asString() == functionName }.single { predicate(it) }.symbol
+    }
 
     private fun IrBlockBodyBuilder.generateSuperNonSerializableCall(superClass: IrClass) {
         val ctorRef = superClass.declarations.filterIsInstance<IrConstructor>().singleOrNull { it.valueParameters.isEmpty() }
