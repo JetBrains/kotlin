@@ -82,7 +82,7 @@ private fun FirAnnotationCall.extractNullabilityTypeFromArgument(): NullabilityQ
 }
 
 private val NULLABLE_ANNOTATION_IDS = NULLABLE_ANNOTATIONS.map { ClassId.topLevel(it) }
-private val NOT_NULL_ANNOTATION_IDS = NOT_NULL_ANNOTATIONS.map { ClassId.topLevel(it) }
+val NOT_NULL_ANNOTATION_IDS = NOT_NULL_ANNOTATIONS.map { ClassId.topLevel(it) }
 private val JAVAX_NONNULL_ANNOTATION_ID = ClassId.topLevel(JAVAX_NONNULL_ANNOTATION)
 private val COMPATQUAL_NULLABLE_ANNOTATION_ID = ClassId.topLevel(COMPATQUAL_NULLABLE_ANNOTATION)
 private val COMPATQUAL_NONNULL_ANNOTATION_ID = ClassId.topLevel(COMPATQUAL_NONNULL_ANNOTATION)

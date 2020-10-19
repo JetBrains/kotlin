@@ -27,14 +27,16 @@ fun ConeClassifierLookupTag.constructType(
 fun ConeClassLikeLookupTag.constructClassType(
     typeArguments: Array<out ConeTypeProjection>,
     isNullable: Boolean,
+    attributes: ConeAttributes = ConeAttributes.Empty
 ): ConeClassLikeType {
-    return ConeClassLikeTypeImpl(this, typeArguments, isNullable)
+    return ConeClassLikeTypeImpl(this, typeArguments, isNullable, attributes)
 }
 
 fun ClassId.constructClassLikeType(
     typeArguments: Array<out ConeTypeProjection>,
     isNullable: Boolean,
+    attributes: ConeAttributes = ConeAttributes.Empty
 ): ConeClassLikeType {
-    return ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(this), typeArguments, isNullable)
+    return ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(this), typeArguments, isNullable, attributes)
 }
 

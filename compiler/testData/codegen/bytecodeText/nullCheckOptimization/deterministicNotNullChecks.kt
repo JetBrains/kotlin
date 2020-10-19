@@ -1,4 +1,7 @@
 // FILE: test/CallableDescriptor.java
+// IGNORE_BACKEND_FIR: JVM_IR
+// Here FIR adds implicit NOT_NULL cast for `origin`, resulting in an assertion being added,
+// which is the correct (yet mismatching) behavior, according to https://youtrack.jetbrains.com/issue/KT-35656
 
 // JVM_IR:
 // Here in 'original in emptySet<D>()' T = '@EnhancedNullability CallableDescriptor' is inferred for 'Iterable<T>.contains(T)'.

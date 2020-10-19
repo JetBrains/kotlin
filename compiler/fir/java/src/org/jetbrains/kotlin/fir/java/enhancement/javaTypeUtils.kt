@@ -13,14 +13,11 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
@@ -327,3 +324,11 @@ internal fun FirValueParameter.getDefaultValueFromAnnotation(): AnnotationDefaul
 private val DEFAULT_VALUE_ID = ClassId.topLevel(DEFAULT_VALUE_FQ_NAME)
 private val DEFAULT_NULL_ID = ClassId.topLevel(DEFAULT_NULL_FQ_NAME)
 
+internal fun List<FirAnnotationCall>.computeTypeAttributesForJavaType(): ConeAttributes =
+    computeTypeAttributes { classId ->
+        when (classId) {
+            CompilerConeAttributes.EnhancedNullability.ANNOTATION_CLASS_ID -> add(CompilerConeAttributes.EnhancedNullability)
+            // TODO: Need to handle others too? E.g., COMPATQUAL_NONNULL_ANNOTATION_ID
+            in NOT_NULL_ANNOTATION_IDS -> add(CompilerConeAttributes.EnhancedNullability)
+        }
+    }

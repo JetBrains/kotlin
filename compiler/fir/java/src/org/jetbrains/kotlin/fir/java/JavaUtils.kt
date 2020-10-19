@@ -61,10 +61,11 @@ internal val JavaClass.classKind: ClassKind
 
 internal fun ClassId.toConeKotlinType(
     typeArguments: Array<ConeTypeProjection>,
-    isNullable: Boolean
+    isNullable: Boolean,
+    attributes: ConeAttributes = ConeAttributes.Empty
 ): ConeLookupTagBasedType {
     val lookupTag = ConeClassLikeLookupTagImpl(this)
-    return ConeClassLikeTypeImpl(lookupTag, typeArguments, isNullable)
+    return ConeClassLikeTypeImpl(lookupTag, typeArguments, isNullable, attributes)
 }
 
 internal fun FirTypeRef.toConeKotlinTypeProbablyFlexible(
@@ -110,11 +111,17 @@ internal fun JavaType?.toConeKotlinTypeWithoutEnhancement(
     session: FirSession,
     javaTypeParameterStack: JavaTypeParameterStack,
     forAnnotationValueParameter: Boolean = false,
-    isForSupertypes: Boolean = false
+    isForSupertypes: Boolean = false,
+    attributes: ConeAttributes = ConeAttributes.Empty
 ): ConeKotlinType {
     return when (this) {
         is JavaClassifierType -> {
-            toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack, forAnnotationValueParameter = forAnnotationValueParameter)
+            toConeKotlinTypeWithoutEnhancement(
+                session,
+                javaTypeParameterStack,
+                forAnnotationValueParameter = forAnnotationValueParameter,
+                attributes = attributes
+            )
         }
         is JavaPrimitiveType -> {
             val primitiveType = type
@@ -124,14 +131,26 @@ internal fun JavaType?.toConeKotlinTypeWithoutEnhancement(
             }
 
             val classId = StandardClassIds.byName(kotlinPrimitiveName)
-            classId.toConeKotlinType(emptyArray(), isNullable = false)
+            classId.toConeKotlinType(emptyArray(), isNullable = false, attributes)
         }
         is JavaArrayType -> {
-            toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack, forAnnotationValueParameter, isForSupertypes)
+            toConeKotlinTypeWithoutEnhancement(
+                session,
+                javaTypeParameterStack,
+                forAnnotationValueParameter,
+                isForSupertypes,
+                attributes = attributes
+            )
         }
-        is JavaWildcardType -> bound?.toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack, isForSupertypes = isForSupertypes) ?: run {
-            StandardClassIds.Any.toConeFlexibleType(emptyArray())
-        }
+        is JavaWildcardType ->
+            bound?.toConeKotlinTypeWithoutEnhancement(
+                session,
+                javaTypeParameterStack,
+                isForSupertypes = isForSupertypes,
+                attributes = attributes
+            ) ?: run {
+                StandardClassIds.Any.toConeFlexibleType(emptyArray())
+            }
         null -> {
             StandardClassIds.Any.toConeFlexibleType(emptyArray())
         }
@@ -143,7 +162,8 @@ private fun JavaArrayType.toConeKotlinTypeWithoutEnhancement(
     session: FirSession,
     javaTypeParameterStack: JavaTypeParameterStack,
     forAnnotationValueParameter: Boolean = false,
-    isForSupertypes: Boolean
+    isForSupertypes: Boolean,
+    attributes: ConeAttributes = ConeAttributes.Empty
 ): ConeKotlinType {
     val componentType = componentType
     return if (componentType !is JavaPrimitiveType) {
@@ -152,11 +172,12 @@ private fun JavaArrayType.toConeKotlinTypeWithoutEnhancement(
             session, javaTypeParameterStack, forAnnotationValueParameter, isForSupertypes
         )
         if (forAnnotationValueParameter) {
-            classId.constructClassLikeType(arrayOf(argumentType), isNullable = false)
+            classId.constructClassLikeType(arrayOf(argumentType), isNullable = false, attributes = attributes)
         } else {
             classId.toConeFlexibleType(
                 arrayOf(argumentType),
-                typeArgumentsForUpper = arrayOf(ConeKotlinTypeProjectionOut(argumentType))
+                typeArgumentsForUpper = arrayOf(ConeKotlinTypeProjectionOut(argumentType)),
+                attributes = attributes
             )
         }
     } else {
@@ -164,19 +185,20 @@ private fun JavaArrayType.toConeKotlinTypeWithoutEnhancement(
         val classId = StandardClassIds.byName(javaComponentName + "Array")
 
         if (forAnnotationValueParameter) {
-            classId.constructClassLikeType(emptyArray(), isNullable = false)
+            classId.constructClassLikeType(emptyArray(), isNullable = false, attributes = attributes)
         } else {
-            classId.toConeFlexibleType(emptyArray())
+            classId.toConeFlexibleType(emptyArray(), attributes = attributes)
         }
     }
 }
 
 private fun ClassId.toConeFlexibleType(
     typeArguments: Array<ConeTypeProjection>,
-    typeArgumentsForUpper: Array<ConeTypeProjection> = typeArguments
+    typeArgumentsForUpper: Array<ConeTypeProjection> = typeArguments,
+    attributes: ConeAttributes = ConeAttributes.Empty
 ) = ConeFlexibleType(
-    toConeKotlinType(typeArguments, isNullable = false),
-    toConeKotlinType(typeArgumentsForUpper, isNullable = true)
+    toConeKotlinType(typeArguments, isNullable = false, attributes),
+    toConeKotlinType(typeArgumentsForUpper, isNullable = true, attributes)
 )
 
 private fun JavaClassifierType.toConeKotlinTypeWithoutEnhancement(
@@ -184,7 +206,8 @@ private fun JavaClassifierType.toConeKotlinTypeWithoutEnhancement(
     javaTypeParameterStack: JavaTypeParameterStack,
     forTypeParameterBounds: Boolean = false,
     isForSupertypes: Boolean = false,
-    forAnnotationValueParameter: Boolean = false
+    forAnnotationValueParameter: Boolean = false,
+    attributes: ConeAttributes = ConeAttributes.Empty
 ): ConeKotlinType {
     val lowerBound = toConeKotlinTypeForFlexibleBound(
         session,
@@ -192,7 +215,8 @@ private fun JavaClassifierType.toConeKotlinTypeWithoutEnhancement(
         isLowerBound = true,
         forTypeParameterBounds,
         isForSupertypes,
-        forAnnotationValueParameter = forAnnotationValueParameter
+        forAnnotationValueParameter = forAnnotationValueParameter,
+        attributes = attributes
     )
     if (forAnnotationValueParameter) {
         return lowerBound
@@ -205,7 +229,8 @@ private fun JavaClassifierType.toConeKotlinTypeWithoutEnhancement(
             forTypeParameterBounds,
             isForSupertypes,
             lowerBound,
-            forAnnotationValueParameter = forAnnotationValueParameter
+            forAnnotationValueParameter = forAnnotationValueParameter,
+            attributes = attributes
         )
 
     return if (isRaw) ConeRawType(lowerBound, upperBound) else ConeFlexibleType(lowerBound, upperBound)
@@ -308,7 +333,8 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
     forTypeParameterBounds: Boolean,
     isForSupertypes: Boolean,
     lowerBound: ConeLookupTagBasedType? = null,
-    forAnnotationValueParameter: Boolean = false
+    forAnnotationValueParameter: Boolean = false,
+    attributes: ConeAttributes = ConeAttributes.Empty
 ): ConeLookupTagBasedType {
     return when (val classifier = classifier) {
         is JavaClass -> {
@@ -357,7 +383,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
             }
 
             lookupTag.constructClassType(
-                mappedTypeArguments.toTypedArray(), isNullable = !isLowerBound
+                mappedTypeArguments.toTypedArray(), isNullable = !isLowerBound, attributes
             )
         }
         is JavaTypeParameter -> {
