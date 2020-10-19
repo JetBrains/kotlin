@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassifierId
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirAnnotationFactory
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassifierIdFactory
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.core.AnnotationsCommonizer.Companion.FALLBACK_MESSAGE
 import org.jetbrains.kotlin.descriptors.commonizer.utils.DEPRECATED_ANNOTATION_CID
@@ -38,9 +36,7 @@ class AnnotationsCommonizer : AbstractStandardCommonizer<List<CirAnnotation>, Li
     override fun initialize(first: List<CirAnnotation>) = Unit
 
     override fun doCommonizeWith(next: List<CirAnnotation>): Boolean {
-        val nextDeprecatedAnnotation = next.firstOrNull { annotation ->
-            (annotation.type.classifierId as? CirClassifierId.Class)?.classId == DEPRECATED_ANNOTATION_CID
-        } ?: return true
+        val nextDeprecatedAnnotation = next.firstOrNull { it.type.classifierId == DEPRECATED_ANNOTATION_CID } ?: return true
 
         val deprecatedAnnotationCommonizer = deprecatedAnnotationCommonizer
             ?: DeprecatedAnnotationCommonizer().also { this.deprecatedAnnotationCommonizer = it }
@@ -160,8 +156,9 @@ private class DeprecatedAnnotationCommonizer : Commonizer<CirAnnotation, CirAnno
             it.name to EnumValue(DEPRECATION_LEVEL_CID, Name.identifier(it.name).intern())
         }
 
-        private fun buildAnnotationType(classId: ClassId) = CirTypeFactory.create(
-            classifierId = CirClassifierIdFactory.createForClass(classId),
+        private fun buildAnnotationType(classId: ClassId) = CirTypeFactory.createClassType(
+            classId = classId,
+            outerType = null,
             visibility = DescriptorVisibilities.PUBLIC,
             arguments = emptyList(),
             isMarkedNullable = false

@@ -17,12 +17,12 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.asSimpleType
 
 class CommonizedTypeAliasDescriptor(
-        override val storageManager: StorageManager,
-        containingDeclaration: DeclarationDescriptor,
-        annotations: Annotations,
-        name: Name,
-        visibility: DescriptorVisibility,
-        private val isActual: Boolean
+    override val storageManager: StorageManager,
+    containingDeclaration: DeclarationDescriptor,
+    annotations: Annotations,
+    name: Name,
+    visibility: DescriptorVisibility,
+    private val isActual: Boolean
 ) : AbstractTypeAliasDescriptor(containingDeclaration, annotations, name, SourceElement.NO_SOURCE, visibility) {
 
     private lateinit var underlyingTypeImpl: NotNullLazyValue<SimpleType>

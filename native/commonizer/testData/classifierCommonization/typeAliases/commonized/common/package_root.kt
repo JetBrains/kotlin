@@ -42,3 +42,9 @@ typealias Y = V // TA at the RHS with the different nullability of own RHS
 
 // Supertypes:
 expect class FILE : kotlinx.cinterop.CStructVar
+
+typealias uuid_t = kotlinx.cinterop.CPointer<kotlinx.cinterop.UByteVarOf<kotlinx.cinterop.UByte>>
+//                                  ^^^ TODO: ideally, it should be CArrayPointer<UByteVar>
+typealias __darwin_uuid_t = kotlinx.cinterop.CArrayPointer<kotlinx.cinterop.UByteVar>
+
+expect val uuid: uuid_t

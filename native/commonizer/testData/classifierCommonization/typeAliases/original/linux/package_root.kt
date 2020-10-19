@@ -51,3 +51,8 @@ typealias Y = V // TA at the RHS with the different nullability of own RHS
 // Supertypes:
 typealias FILE = _IO_FILE
 final class _IO_FILE : kotlinx.cinterop.CStructVar {}
+
+typealias uuid_t = __darwin_uuid_t
+typealias __darwin_uuid_t = kotlinx.cinterop.CArrayPointer<kotlinx.cinterop.UByteVar>
+
+val uuid: uuid_t get() = TODO()

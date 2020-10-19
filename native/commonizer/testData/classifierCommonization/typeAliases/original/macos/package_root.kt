@@ -52,6 +52,11 @@ typealias Y = V // TA at the RHS with the different nullability of own RHS
 typealias FILE = __sFILE
 final class __sFILE : kotlinx.cinterop.CStructVar {}
 
+typealias uuid_t = __darwin_uuid_t
+typealias __darwin_uuid_t = kotlinx.cinterop.CArrayPointer<kotlinx.cinterop.UByteVar>
+
+val uuid: uuid_t get() = TODO()
+
 // Type alias chain that is present in one target only:
 class AA
 typealias BB = AA

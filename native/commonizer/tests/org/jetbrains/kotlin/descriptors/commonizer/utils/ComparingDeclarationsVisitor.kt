@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.AbbreviatedType
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.SimpleType
 import kotlin.contracts.ExperimentalContracts
 import kotlin.reflect.KCallable
 import kotlin.test.fail
@@ -479,17 +478,6 @@ internal class ComparingDeclarationsVisitor(
         context.assertEquals(!expectedAbbreviated.isNull(), !actualAbbreviated.isNull(), "type is abbreviated")
 
         if (expectedAbbreviated != null && actualAbbreviated != null) {
-            fun extractExpandedType(abbreviated: AbbreviatedType): SimpleType { // eliminate unnecessary repeated abbreviations
-                var expanded = abbreviated.expandedType
-                while (expanded is AbbreviatedType) {
-                    if (expanded.abbreviation.declarationDescriptor !== abbreviated.abbreviation.declarationDescriptor)
-                        break
-                    else
-                        expanded = expanded.expandedType
-                }
-                return expanded
-            }
-
             visitType(
                 expectedAbbreviated.abbreviation,
                 actualAbbreviated.abbreviation,

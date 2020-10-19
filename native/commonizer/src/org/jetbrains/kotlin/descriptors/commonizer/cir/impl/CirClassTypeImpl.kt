@@ -6,20 +6,24 @@
 package org.jetbrains.kotlin.descriptors.commonizer.cir.impl
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.descriptors.commonizer.cir.*
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassType
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeProjection
 import org.jetbrains.kotlin.descriptors.commonizer.utils.appendHashCode
 import org.jetbrains.kotlin.descriptors.commonizer.utils.hashCode
+import org.jetbrains.kotlin.name.ClassId
 
-data class CirSimpleTypeImpl(
-        override val classifierId: CirClassifierId,
-        override val visibility: DescriptorVisibility, // visibility of the classifier descriptor
-        override val arguments: List<CirTypeProjection>,
-        override val isMarkedNullable: Boolean
-) : CirSimpleType() {
+data class CirClassTypeImpl(
+    override val classifierId: ClassId,
+    override val outerType: CirClassType?,
+    override val visibility: DescriptorVisibility, // visibility of the class descriptor
+    override val arguments: List<CirTypeProjection>,
+    override val isMarkedNullable: Boolean,
+) : CirClassType() {
     // See also org.jetbrains.kotlin.types.KotlinType.cachedHashCode
     private var cachedHashCode = 0
 
     private fun computeHashCode() = hashCode(classifierId)
+        .appendHashCode(outerType)
         .appendHashCode(visibility)
         .appendHashCode(arguments)
         .appendHashCode(isMarkedNullable)
@@ -33,13 +37,14 @@ data class CirSimpleTypeImpl(
         return currentHashCode
     }
 
-    override fun equals(other: Any?) = when {
+    override fun equals(other: Any?): Boolean = when {
         other === this -> true
-        other is CirSimpleType -> {
-            isMarkedNullable == other.isMarkedNullable
-                    && classifierId == other.classifierId
+        other is CirClassType -> {
+            classifierId == other.classifierId
+                    && isMarkedNullable == other.isMarkedNullable
                     && visibility == other.visibility
                     && arguments == other.arguments
+                    && outerType == other.outerType
         }
         else -> false
     }
