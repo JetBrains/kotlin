@@ -5,19 +5,15 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.konan
 
-import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.backend.common.serialization.metadata.metadataVersion
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.*
 import org.jetbrains.kotlin.descriptors.commonizer.konan.NativeDistributionCommonizer.StatsType.*
 import org.jetbrains.kotlin.descriptors.commonizer.stats.AggregatedStatsCollector
 import org.jetbrains.kotlin.descriptors.commonizer.stats.FileStatsOutput
 import org.jetbrains.kotlin.descriptors.commonizer.stats.RawStatsCollector
 import org.jetbrains.kotlin.descriptors.commonizer.utils.ResettableClockMark
-import org.jetbrains.kotlin.descriptors.konan.NATIVE_STDLIB_MODULE_NAME
 import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -28,8 +24,6 @@ import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.KotlinLibraryLayoutForWriter
 import org.jetbrains.kotlin.library.impl.KotlinLibraryWriterImpl
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.serialization.konan.impl.KlibResolvedModuleDescriptorsFactoryImpl
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.util.Logger
 import java.io.File
@@ -186,13 +180,6 @@ class NativeDistributionCommonizer(
             }
 
             is CommonizerResult.Done -> {
-                val serializer = KlibMetadataMonolithicSerializer(
-                    languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
-                    metadataVersion = KlibMetadataVersion.INSTANCE,
-                    skipExpects = false,
-                    project = null
-                )
-
                 // 'targetsToCopy' are some targets with empty set of platform libraries
                 val targetsToCopy = originalLibraries.librariesByTargets.keys - result.leafTargets
                 if (targetsToCopy.isNotEmpty()) {
@@ -206,7 +193,7 @@ class NativeDistributionCommonizer(
                 val targetsToSerialize = result.leafTargets + result.sharedTarget
                 targetsToSerialize.forEach { target ->
                     val moduleResults: Collection<ModuleResult> = result.modulesByTargets.getValue(target)
-                    val newModules: Collection<ModuleDescriptor> = moduleResults.mapNotNull { (it as? ModuleResult.Commonized)?.module }
+                    val newLibraries: Collection<LibraryMetadata> = moduleResults.mapNotNull { (it as? ModuleResult.Commonized)?.metadata }
                     val missingModuleLocations: List<File> =
                         moduleResults.mapNotNull { (it as? ModuleResult.Missing)?.originalLocation }
 
@@ -224,7 +211,7 @@ class NativeDistributionCommonizer(
                     }
 
                     val targetName = leafTargetNames.joinToString { if (it == starredTarget) "$it(*)" else it }
-                    serializeTarget(target, targetName, newModules, missingModuleLocations, manifestProvider, serializer)
+                    serializeTarget(target, targetName, newLibraries, missingModuleLocations, manifestProvider)
                 }
             }
         }
@@ -268,27 +255,20 @@ class NativeDistributionCommonizer(
     private fun serializeTarget(
         target: CommonizerTarget,
         targetName: String,
-        newModules: Collection<ModuleDescriptor>,
+        newLibraries: Collection<LibraryMetadata>,
         missingModuleLocations: List<File>,
-        manifestProvider: NativeManifestDataProvider,
-        serializer: KlibMetadataMonolithicSerializer
+        manifestProvider: NativeManifestDataProvider
     ) {
         val librariesDestination = target.librariesDestination
         librariesDestination.mkdirs() // always create an empty directory even if there is nothing to copy
 
-        for (newModule in newModules) {
-            val libraryName = newModule.name
+        for (newLibrary in newLibraries) {
+            val libraryName = newLibrary.libraryName
 
-            if (!shouldBeSerialized(libraryName))
-                continue
+            val manifestData = manifestProvider.getManifest(libraryName)
+            val libraryDestination = librariesDestination.resolve(libraryName)
 
-            val metadata = serializer.serializeModule(newModule)
-            val plainName = libraryName.asString().removePrefix("<").removeSuffix(">")
-
-            val manifestData = manifestProvider.getManifest(plainName)
-            val libraryDestination = librariesDestination.resolve(plainName)
-
-            writeLibrary(metadata, manifestData, libraryDestination)
+            writeLibrary(newLibrary.metadata, manifestData, libraryDestination)
         }
 
         for (missingModuleLocation in missingModuleLocations) {
@@ -330,9 +310,4 @@ class NativeDistributionCommonizer(
             is LeafTarget -> destination.resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR).resolve(name)
             is SharedTarget -> destination.resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR)
         }
-
-    private companion object {
-        fun shouldBeSerialized(libraryName: Name) =
-            libraryName != NATIVE_STDLIB_MODULE_NAME && libraryName != KlibResolvedModuleDescriptorsFactoryImpl.FORWARD_DECLARATIONS_MODULE_NAME
-    }
 }

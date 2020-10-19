@@ -76,7 +76,7 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
 
         val sharedModuleAsExpected: ModuleDescriptor = analyzedModules.commonizedModules.getValue(sharedTarget)
         val sharedModuleByCommonizer: ModuleDescriptor =
-            (result.modulesByTargets.getValue(sharedTarget).single() as ModuleResult.Commonized).module
+            (result.modulesByTargets.getValue(sharedTarget).single() as ModuleResult.Commonized).module!!
 
         assertValidModule(sharedModuleAsExpected)
         assertValidModule(sharedModuleByCommonizer)
@@ -88,7 +88,7 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
         for (leafTarget in leafTargets) {
             val leafTargetModuleAsExpected: ModuleDescriptor = analyzedModules.commonizedModules.getValue(leafTarget)
             val leafTargetModuleByCommonizer: ModuleDescriptor =
-                (result.modulesByTargets.getValue(leafTarget).single() as ModuleResult.Commonized).module
+                (result.modulesByTargets.getValue(leafTarget).single() as ModuleResult.Commonized).module!!
 
             assertValidModule(leafTargetModuleAsExpected)
             assertValidModule(leafTargetModuleByCommonizer)
@@ -205,6 +205,7 @@ private class AnalyzedModules(
 
     fun toCommonizationParameters(): CommonizerParameters {
         val parameters = CommonizerParameters()
+        parameters.generateDescriptors = true
 
         leafTargets.forEach { leafTarget ->
             val originalModule = originalModules.getValue(leafTarget)
