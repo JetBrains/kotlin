@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.backend.generators.AnnotationGenerator
 import org.jetbrains.kotlin.fir.backend.generators.DelegatedMemberGenerator
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.descriptors.FirBuiltInsPackageFragment
@@ -77,6 +78,10 @@ class Fir2IrDeclarationStorage(
     private val initializerCache = mutableMapOf<FirAnonymousInitializer, IrAnonymousInitializer>()
 
     private val propertyCache = mutableMapOf<FirProperty, IrProperty>()
+
+    // For pure fields (from Java) only
+    private val fieldToPropertyCache = mutableMapOf<FirField, IrProperty>()
+
     private val delegatedReverseCache = mutableMapOf<IrDeclaration, FirDeclaration>()
 
     private val fieldCache = mutableMapOf<FirField, IrField>()
@@ -667,6 +672,33 @@ class Fir2IrDeclarationStorage(
     ): IrProperty {
         getCachedIrProperty(property)?.let { return it }
         return createIrProperty(property, irParent, isLocal = isLocal)
+    }
+
+    fun getOrCreateIrPropertyByPureField(
+        field: FirField,
+        irParent: IrDeclarationParent
+    ): IrProperty {
+        fieldToPropertyCache[field]?.let { return it }
+        return createIrProperty(field.toStubProperty(), irParent).apply {
+            fieldToPropertyCache[field] = this
+        }
+    }
+
+    private fun FirField.toStubProperty(): FirProperty {
+        val field = this
+        return buildProperty {
+            source = field.source
+            session = field.session
+            origin = field.origin
+            returnTypeRef = field.returnTypeRef
+            name = field.name
+            isVar = field.isVar
+            getter = field.getter
+            setter = field.setter
+            symbol = FirPropertySymbol(field.symbol.callableId)
+            isLocal = false
+            status = field.status
+        }
     }
 
     fun createIrProperty(
