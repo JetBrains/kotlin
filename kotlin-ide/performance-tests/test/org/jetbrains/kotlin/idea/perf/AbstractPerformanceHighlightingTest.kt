@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.perf
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl.ensureIndexesUpToDate
 import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -80,6 +81,7 @@ abstract class AbstractPerformanceHighlightingTest : KotlinLightCodeInsightFixtu
 
             // to load AST for changed files before it's prohibited by "fileTreeAccessFilter"
             ensureIndexesUpToDate(project)
+            ProjectRootManager.getInstance(project).incModificationCount()
         }
     }
 
