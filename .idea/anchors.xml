@@ -5,6 +5,7 @@
       <map>
         <entry key="kotlinc.kotlin-compiler" value="kotlin.util.compiler-classpath" />
         <entry key="kotlinc.kotlin-scripting-compiler-impl" value="kotlin.util.compiler-classpath" />
+        <entry key="kotlin-plugin-android-compile-deps" value="intellij.tools.dependencies.kotlin" />
       </map>
     </option>
   </component>
