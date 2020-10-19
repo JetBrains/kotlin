@@ -13,77 +13,66 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.idea.refactoring.changeSignature.ui
 
-package org.jetbrains.kotlin.idea.refactoring.changeSignature.ui;
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiCodeFragment
+import com.intellij.psi.PsiElement
+import com.intellij.refactoring.changeSignature.ParameterTableModelBase
+import com.intellij.refactoring.changeSignature.ParameterTableModelItemBase
+import com.intellij.util.ui.ColumnInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
+import org.jetbrains.kotlin.psi.KtPsiFactory
 
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiCodeFragment;
-import com.intellij.psi.PsiElement;
-import com.intellij.refactoring.changeSignature.ParameterTableModelBase;
-import com.intellij.refactoring.changeSignature.ParameterTableModelItemBase;
-import com.intellij.util.ui.ColumnInfo;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.*;
-import org.jetbrains.kotlin.psi.KtExpression;
-import org.jetbrains.kotlin.psi.KtPsiFactory;
-import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
+abstract class KotlinCallableParameterTableModel protected constructor(
+    private val methodDescriptor: KotlinMethodDescriptor,
+    typeContext: PsiElement,
+    defaultValueContext: PsiElement,
+    vararg columnInfos: ColumnInfo<*, *>?
+) : ParameterTableModelBase<KotlinParameterInfo, ParameterTableModelItemBase<KotlinParameterInfo>>(
+    typeContext,
+    defaultValueContext,
+    *columnInfos,
+) {
+    private val project: Project = typeContext.project
 
-public abstract class KotlinCallableParameterTableModel extends ParameterTableModelBase<KotlinParameterInfo, ParameterTableModelItemBase<KotlinParameterInfo>> {
-    private final Project project;
-    private final KotlinMethodDescriptor methodDescriptor;
+    open var receiver: KotlinParameterInfo? = null
 
-    protected KotlinCallableParameterTableModel(
-            KotlinMethodDescriptor methodDescriptor,
-            PsiElement typeContext,
-            PsiElement defaultValueContext,
-            ColumnInfo... columnInfos
-    ) {
-        super(typeContext, defaultValueContext, columnInfos);
-        this.methodDescriptor = methodDescriptor;
-        project = typeContext.getProject();
-    }
+    override fun createRowItem(parameterInfo: KotlinParameterInfo?): ParameterTableModelItemBase<KotlinParameterInfo> {
+        val resultParameterInfo = parameterInfo ?: KotlinParameterInfo(
+            methodDescriptor.baseDescriptor,
+            -1,
+            "",
+            KotlinTypeInfo(false, null, null),
+            null,
+            null,
+            KotlinValVar.None,
+            null
+        )
 
-    @Nullable
-    public KotlinParameterInfo getReceiver() {
-        return null;
-    }
+        val psiFactory = KtPsiFactory(project)
+        val paramTypeCodeFragment: PsiCodeFragment = psiFactory.createTypeCodeFragment(
+            resultParameterInfo.currentTypeInfo.render(),
+            myTypeContext,
+        )
 
-    @Override
-    protected ParameterTableModelItemBase<KotlinParameterInfo> createRowItem(@Nullable KotlinParameterInfo parameterInfo) {
-        if (parameterInfo == null) {
-            parameterInfo = new KotlinParameterInfo(methodDescriptor.getBaseDescriptor(),
-                                                    -1,
-                                                    "",
-                                                    new KotlinTypeInfo(false, null, null),
-                                                    null,
-                                                    null,
-                                                    KotlinValVar.None,
-                                                    null);
+        val defaultValueForCall = resultParameterInfo.defaultValueForCall
+        val defaultValueCodeFragment: PsiCodeFragment = psiFactory.createExpressionCodeFragment(
+            if (defaultValueForCall != null) defaultValueForCall.text else "",
+            myDefaultValueContext,
+        )
+
+        return object : ParameterTableModelItemBase<KotlinParameterInfo>(resultParameterInfo, paramTypeCodeFragment, defaultValueCodeFragment) {
+            override fun isEllipsisType(): Boolean = false
         }
-        KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(project);
-        PsiCodeFragment paramTypeCodeFragment = psiFactory.createTypeCodeFragment(KotlinTypeInfoKt.render(parameterInfo.getCurrentTypeInfo()), myTypeContext);
-        KtExpression defaultValueForCall = parameterInfo.getDefaultValueForCall();
-        PsiCodeFragment defaultValueCodeFragment = psiFactory.createExpressionCodeFragment(
-                defaultValueForCall != null ? defaultValueForCall.getText() : "",
-                myDefaultValueContext
-        );
-        return new ParameterTableModelItemBase<KotlinParameterInfo>(parameterInfo, paramTypeCodeFragment, defaultValueCodeFragment) {
-            @Override
-            public boolean isEllipsisType() {
-                return false;
-            }
-        };
     }
 
-    public static boolean isTypeColumn(ColumnInfo column) {
-        return column instanceof TypeColumn;
+    companion object {
+        fun isTypeColumn(column: ColumnInfo<*, *>?): Boolean = column is TypeColumn<*, *>
+
+        fun isNameColumn(column: ColumnInfo<*, *>?): Boolean = column is NameColumn<*, *>
+
+        fun isDefaultValueColumn(column: ColumnInfo<*, *>?): Boolean = column is DefaultValueColumn<*, *>
     }
 
-    public static boolean isNameColumn(ColumnInfo column) {
-        return column instanceof NameColumn;
-    }
-
-    public static boolean isDefaultValueColumn(ColumnInfo column) {
-        return column instanceof DefaultValueColumn;
-    }
 }
