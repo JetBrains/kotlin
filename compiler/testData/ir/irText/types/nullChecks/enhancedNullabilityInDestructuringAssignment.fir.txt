@@ -118,7 +118,8 @@ FILE fqName:<root> fileName:/enhancedNullabilityInDestructuringAssignment.kt
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.P [val]
-        CALL 'public open fun notNullP (): <root>.P declared in <root>.J' type=<root>.P origin=null
+        TYPE_OP type=<root>.P origin=IMPLICIT_NOTNULL typeOperand=<root>.P
+          CALL 'public open fun notNullP (): <root>.P declared in <root>.J' type=<root>.P origin=null
       VAR name:x type:kotlin.Int [val]
         CALL 'public final fun component1 (): kotlin.Int [operator] declared in <root>.P' type=kotlin.Int origin=null
           $this: GET_VAR 'val tmp_0: <root>.P [val] declared in <root>.test1' type=<root>.P origin=null

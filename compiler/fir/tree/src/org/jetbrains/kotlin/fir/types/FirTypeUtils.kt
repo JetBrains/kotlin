@@ -87,16 +87,19 @@ fun ConeClassLikeType.toConstKind(): FirConstKind<*>? = when (lookupTag.classId)
     else -> null
 }
 
-fun List<FirAnnotationCall>.computeTypeAttributes(): ConeAttributes {
+fun List<FirAnnotationCall>.computeTypeAttributes(
+    additionalProcessor: MutableList<ConeAttribute<*>>.(ClassId) -> Unit = {}
+): ConeAttributes {
     if (this.isEmpty()) return ConeAttributes.Empty
     val attributes = mutableListOf<ConeAttribute<*>>()
     for (annotation in this) {
         val type = annotation.annotationTypeRef.coneTypeSafe<ConeClassLikeType>() ?: continue
-        when (type.lookupTag.classId) {
+        when (val classId = type.lookupTag.classId) {
             CompilerConeAttributes.Exact.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.Exact
             CompilerConeAttributes.NoInfer.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.NoInfer
             CompilerConeAttributes.ExtensionFunctionType.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.ExtensionFunctionType
             CompilerConeAttributes.UnsafeVariance.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.UnsafeVariance
+            else -> additionalProcessor.invoke(attributes, classId)
         }
     }
     return ConeAttributes.create(attributes)

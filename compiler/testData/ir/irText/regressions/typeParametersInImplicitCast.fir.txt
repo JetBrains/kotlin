@@ -9,6 +9,7 @@ FILE fqName:<root> fileName:/typeParametersInImplicitCast.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.collections.List<kotlin.Any?>
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.collections.List<kotlin.Any?> declared in <root>.problematic'
-                  CALL 'public/*package*/ open fun id <T> (v: kotlin.collections.List<T of <root>.ListId.id?>?): kotlin.collections.List<T of <root>.ListId.id?> declared in <root>.ListId' type=kotlin.collections.List<kotlin.Any?> origin=null
-                    <T>: kotlin.Any?
-                    v: ERROR_CALL 'Unresolved reference: <Unresolved name: it>#' type=IrErrorType
+                  TYPE_OP type=kotlin.collections.List<kotlin.Any?> origin=IMPLICIT_NOTNULL typeOperand=kotlin.collections.List<kotlin.Any?>
+                    CALL 'public/*package*/ open fun id <T> (v: kotlin.collections.List<T of <root>.ListId.id?>?): kotlin.collections.List<T of <root>.ListId.id?> declared in <root>.ListId' type=kotlin.collections.List<kotlin.Any?> origin=null
+                      <T>: kotlin.Any?
+                      v: ERROR_CALL 'Unresolved reference: <Unresolved name: it>#' type=IrErrorType

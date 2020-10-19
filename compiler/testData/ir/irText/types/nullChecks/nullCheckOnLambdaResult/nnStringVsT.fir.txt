@@ -15,4 +15,5 @@ FILE fqName:<root> fileName:/nnStringVsT.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.testNoNullCheck'
-                  CALL 'public open fun notNullString (): kotlin.String declared in <root>.J' type=kotlin.String origin=null
+                  TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
+                    CALL 'public open fun notNullString (): kotlin.String declared in <root>.J' type=kotlin.String origin=null
