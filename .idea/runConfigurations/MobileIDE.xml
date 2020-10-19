@@ -4,7 +4,7 @@
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <log_file alias="idea.log" path="$PROJECT_DIR$/out/mobile-ide-system/log/idea.log" />
     <option name="MAIN_CLASS_NAME" value="com.intellij.idea.Main" />
-    <module name="intellij.mobile.ide" />
+    <module name="intellij.mobile.ide.main" />
     <selectedOptions>
       <option name="before.launch.openToolWindow" />
       <option name="beforeRunTasks" />
