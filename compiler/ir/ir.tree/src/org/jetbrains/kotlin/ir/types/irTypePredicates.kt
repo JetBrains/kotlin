@@ -57,7 +57,7 @@ fun getPublicSignature(packageFqName: FqName, name: String) =
 private fun IrType.isClassType(signature: IdSignature.PublicSignature, hasQuestionMark: Boolean? = null): Boolean {
     if (this !is IrSimpleType) return false
     if (hasQuestionMark != null && this.hasQuestionMark != hasQuestionMark) return false
-    return classifier.signature?.let { signature == it } ?: false
+    return signature == classifier.signature
 }
 
 fun IrClassifierSymbol.isClassWithFqName(fqName: FqNameUnsafe): Boolean =
