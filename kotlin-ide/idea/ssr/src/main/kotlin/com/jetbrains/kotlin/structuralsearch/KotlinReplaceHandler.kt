@@ -128,6 +128,13 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
             val atElement = modifierList?.children?.find { it is PsiErrorElement }
             atElement?.delete()
         }
+
+        match.annotationEntries.forEach { matchAnnotation ->
+            if(!annotationEntries.contains(matchAnnotation) && !searchTemplate.annotationEntries.contains(matchAnnotation)) {
+                addAnnotationEntry(matchAnnotation)
+            }
+        }
+
         fun KtDeclaration.replaceVisibilityModifiers(searchTemplate: KtDeclaration, match: KtDeclaration): PsiElement {
             if (visibilityModifierType() == null && searchTemplate.visibilityModifierType() == null) {
                 match.visibilityModifierType()?.let {

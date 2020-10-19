@@ -117,13 +117,13 @@ class KotlinSSRClassReplaceTest : KotlinSSRReplaceTest() {
             searchPattern = "class '_ID",
             replacePattern = "class '_ID",
             match = """
-                class ReplaceExample(i: Int) {
-                    val v = "prop"
+                class Foo(bar: Int) {
+                    val a = "prop"
                 }
             """.trimIndent(),
             result = """
-                class ReplaceExample(i: Int) {
-                    val v = "prop"
+                class Foo(bar: Int) {
+                    val a = "prop"
                 }
             """.trimIndent()
         )
