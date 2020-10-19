@@ -69,8 +69,6 @@ abstract class IrBindableSymbolBase<out D : DeclarationDescriptor, B : IrSymbolO
         }
     }
 
-    override val isPublicApi: Boolean = false
-
     override val signature: IdSignature?
         get() = null
 

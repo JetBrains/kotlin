@@ -35,6 +35,7 @@ interface IrSymbol {
     val signature: IdSignature?
 
     val isPublicApi: Boolean
+        get() = signature != null
 }
 
 interface IrBindableSymbol<out D : DeclarationDescriptor, B : IrSymbolOwner> : IrSymbol {

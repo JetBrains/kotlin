@@ -18,8 +18,6 @@ abstract class IrDelegatingSymbol<S : IrBindableSymbol<D, B>, B : IrSymbolOwner,
     override val descriptor: D get() = delegate.descriptor
 
     override val isBound: Boolean get() = delegate.isBound
-    override val isPublicApi: Boolean
-        get() = delegate.isPublicApi
 
     override val signature: IdSignature?
         get() = delegate.signature

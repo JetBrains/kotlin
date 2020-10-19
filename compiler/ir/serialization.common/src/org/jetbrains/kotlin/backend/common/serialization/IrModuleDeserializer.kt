@@ -37,9 +37,10 @@ abstract class IrModuleDeserializer(val moduleDescriptor: ModuleDescriptor) {
     abstract fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol
 
     open fun declareIrSymbol(symbol: IrSymbol) {
-        assert(symbol.signature != null && symbol.isPublicApi) { "Symbol is not public API: ${symbol.descriptor}" }
+        val signature = symbol.signature
+        require(signature != null) { "Symbol is not public API: ${symbol.descriptor}" }
         assert(symbol.descriptor !is WrappedDeclarationDescriptor<*>)
-        deserializeIrSymbol(symbol.signature!!, symbol.kind())
+        deserializeIrSymbol(signature, symbol.kind())
     }
 
     open val klib: IrLibrary get() = error("Unsupported operation")
@@ -166,8 +167,9 @@ class IrModuleDeserializerWithBuiltIns(
     }
 
     override fun declareIrSymbol(symbol: IrSymbol) {
-        if (symbol.signature != null && checkIsFunctionInterface(symbol.signature!!))
-            resolveFunctionalInterface(symbol.signature!!, symbol.kind())
+        val signature = symbol.signature
+        if (signature != null && checkIsFunctionInterface(symbol.signature!!))
+            resolveFunctionalInterface(signature, symbol.kind())
         else delegate.declareIrSymbol(symbol)
     }
 
