@@ -2554,4 +2554,56 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
             }
         """
     )
+
+    @Test
+    fun testSiblingIfsWithoutElseHaveUniqueKeys(): Unit = comparisonPropagation(
+        """
+            @Composable fun A(){}
+            @Composable fun B(){}
+        """,
+        """
+            @Composable
+            fun Test(cond: Boolean) {
+                if (cond) {
+                    A()
+                }
+                if (cond) {
+                    B()
+                }
+            }
+        """,
+        """
+            @Composable
+            fun Test(cond: Boolean, %composer: Composer<*>?, %changed: Int) {
+              %composer.startRestartGroup(<>, "C(Test):Test.kt")
+              val %dirty = %changed
+              if (%changed and 0b0110 === 0) {
+                %dirty = %dirty or if (%composer.changed(cond)) 0b0100 else 0b0010
+              }
+              if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+                if (cond) {
+                  %composer.startReplaceableGroup(<>, "<A()>")
+                  A(%composer, 0)
+                  %composer.endReplaceableGroup()
+                } else {
+                  %composer.startReplaceableGroup(<>)
+                  %composer.endReplaceableGroup()
+                }
+                if (cond) {
+                  %composer.startReplaceableGroup(<>, "<B()>")
+                  B(%composer, 0)
+                  %composer.endReplaceableGroup()
+                } else {
+                  %composer.startReplaceableGroup(<>)
+                  %composer.endReplaceableGroup()
+                }
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                Test(cond, %composer, %changed or 0b0001)
+              }
+            }
+        """
+    )
 }
