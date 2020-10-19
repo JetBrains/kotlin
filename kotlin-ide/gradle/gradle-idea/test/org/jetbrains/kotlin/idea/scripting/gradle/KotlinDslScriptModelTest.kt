@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle
 
+import org.gradle.api.internal.file.IdentityFileResolver
 import org.gradle.groovy.scripts.TextResourceScriptSource
 import org.gradle.internal.exceptions.LocationAwareException
 import org.gradle.internal.resource.UriTextResource
@@ -23,7 +24,7 @@ class KotlinDslScriptModelTest {
         val file = File(createTempDir("kotlinDslTest"), "build.gradle.kts")
         val line = 10
 
-        val mockScriptSource = TextResourceScriptSource(UriTextResource("build file", file))
+        val mockScriptSource = TextResourceScriptSource(UriTextResource("build file", file, IdentityFileResolver()))
         val mockException = LocationAwareException(RuntimeException(), mockScriptSource, line)
         val stringWriter = StringWriter()
         mockException.printStackTrace(PrintWriter(stringWriter))
