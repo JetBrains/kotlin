@@ -10,10 +10,10 @@ fun box() {
 }
 
 // LOCAL VARIABLES
-// TestKt:3:
-// TestKt:4:
-// TestKt:5: a:int=1:int
-// TestKt:6: a:int=0:int
-// TestKt:7:
-// TestKt:8: e:java.lang.Throwable=java.lang.ArithmeticException
-// TestKt:10:
+// test.kt:3 box:
+// test.kt:4 box:
+// test.kt:5 box: a:int=1:int
+// test.kt:6 box: a:int=0:int
+// test.kt:7 box:
+// test.kt:8 box: e:java.lang.Throwable=java.lang.ArithmeticException
+// test.kt:10 box:

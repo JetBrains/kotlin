@@ -103,5 +103,11 @@ public class LocalVariableTestGenerated extends AbstractLocalVariableTest {
         public void testSimple() throws Exception {
             runTest("compiler/testData/debug/localVariables/suspend/simple.kt");
         }
+
+        @Test
+        @TestMetadata("underscoreNames.kt")
+        public void testUnderscoreNames() throws Exception {
+            runTest("compiler/testData/debug/localVariables/suspend/underscoreNames.kt");
+        }
     }
 }

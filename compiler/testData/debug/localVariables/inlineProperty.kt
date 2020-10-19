@@ -11,11 +11,11 @@ fun box() {
 }
 
 // LOCAL VARIABLES
-// TestKt:8:
-// A:2:
-// TestKt:8:
-// TestKt:9: a:A=A
-// TestKt:4: a:A=A, this_$iv:A=A, $i$f$getS:int=0:int
-// TestKt:9: a:A=A
-// TestKt:10: a:A=A, y:int=1:int
-// TestKt:11: a:A=A, y:int=2:int
+// test.kt:8 box:
+// test.kt:2 <init>:
+// test.kt:8 box:
+// test.kt:9 box: a:A=A
+// test.kt:4 box: a:A=A, this_$iv:A=A, $i$f$getS:int=0:int
+// test.kt:9 box: a:A=A
+// test.kt:10 box: a:A=A, y:int=1:int
+// test.kt:11 box: a:A=A, y:int=2:int
