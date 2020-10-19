@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.cValuesOf
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.ir.fqNameForIrSerialization
 import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 
 private fun ConstPointer.add(index: Int): ConstPointer {
     return constPointer(LLVMConstGEP(llvm, cValuesOf(Int32(index).llvm), 1)!!)
@@ -86,22 +84,21 @@ internal fun StaticData.createInitializer(type: IrClass, vararg fields: ConstVal
 internal fun StaticData.createConstArrayList(array: ConstPointer, length: Int): ConstPointer {
     val arrayListClass = context.ir.symbols.arrayList.owner
 
-    val arrayListFqName = arrayListClass.fqNameForIrSerialization
     val arrayListFields = mapOf(
-        "$arrayListFqName.array" to array,
-        "$arrayListFqName.offset" to Int32(0),
-        "$arrayListFqName.length" to Int32(length),
-        "$arrayListFqName.backing" to NullPointer(kObjHeader))
+        "array" to array,
+        "offset" to Int32(0),
+        "length" to Int32(length),
+        "backing" to NullPointer(kObjHeader))
 
     // Now sort these values according to the order of fields returned by getFields()
     // to match the sorting order of the real ArrayList().
-    val sorted = linkedMapOf<String, ConstValue>()
+    val sorted = mutableListOf<ConstValue>()
     context.getLayoutBuilder(arrayListClass).fields.forEach {
-        val fqName = it.fqNameForIrSerialization.asString()
-        sorted.put(fqName, arrayListFields[fqName]!!)
+        require (it.parent == arrayListClass)
+        sorted.add(arrayListFields[it.name.asString()]!!)
     }
 
-    return createConstKotlinObject(arrayListClass, *sorted.values.toTypedArray())
+    return createConstKotlinObject(arrayListClass, *sorted.toTypedArray())
 }
 
 internal fun StaticData.createUniqueInstance(

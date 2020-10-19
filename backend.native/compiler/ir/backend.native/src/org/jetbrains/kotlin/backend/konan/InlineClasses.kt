@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.common.ir.isTopLevel
+import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
 import org.jetbrains.kotlin.backend.konan.ir.containsNull
 import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -18,9 +21,11 @@ import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.packageFqName
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
 import org.jetbrains.kotlin.types.KotlinType
@@ -39,6 +44,8 @@ fun IrType.getInlinedClassNative(): IrClass? = IrTypeInlineClassesSupport.getInl
  */
 fun IrType.isInlinedNative(): Boolean = IrTypeInlineClassesSupport.isInlined(this)
 fun IrClass.isInlined(): Boolean = IrTypeInlineClassesSupport.isInlined(this)
+fun IrClass.isNativePrimitiveType() = IrTypeInlineClassesSupport.isTopLevelClass(this) &&
+        KonanPrimitiveType.byFqNameParts[packageFqName]?.get(name) != null
 
 fun KotlinType.getInlinedClass(): ClassDescriptor? = KotlinTypeInlineClassesSupport.getInlinedClass(this)
 
@@ -96,7 +103,13 @@ enum class KonanPrimitiveType(val classId: ClassId, val binaryType: BinaryType.P
     val fqName: FqNameUnsafe get() = this.classId.asSingleFqName().toUnsafe()
 
     companion object {
-        val byFqName = KonanPrimitiveType.values().associateBy { it.fqName }
+        val byFqNameParts = KonanPrimitiveType.values().groupingBy {
+            assert(!it.classId.isNestedClass)
+            it.classId.packageFqName
+        }.fold({ _, _ -> mutableMapOf<Name, KonanPrimitiveType>() },
+                { _, accumulator, element ->
+                    accumulator.also { it[element.classId.shortClassName] = element }
+                })
     }
 }
 
@@ -105,10 +118,12 @@ internal abstract class InlineClassesSupport<Class : Any, Type : Any> {
     protected abstract fun makeNullable(type: Type): Type
     protected abstract fun erase(type: Type): Class
     protected abstract fun computeFullErasure(type: Type): Sequence<Class>
-    protected abstract fun getFqName(clazz: Class): FqNameUnsafe
     protected abstract fun hasInlineModifier(clazz: Class): Boolean
     protected abstract fun getNativePointedSuperclass(clazz: Class): Class?
     protected abstract fun getInlinedClassUnderlyingType(clazz: Class): Type
+    protected abstract fun getPackageFqName(clazz: Class): FqName?
+    protected abstract fun getName(clazz: Class): Name?
+    abstract fun isTopLevelClass(clazz: Class): Boolean
 
     @JvmName("classIsInlined")
     fun isInlined(clazz: Class): Boolean = getInlinedClass(clazz) != null
@@ -118,6 +133,16 @@ internal abstract class InlineClassesSupport<Class : Any, Type : Any> {
 
     fun getInlinedClass(type: Type): Class? =
             getInlinedClass(erase(type), isNullable(type))
+
+    protected fun getKonanPrimitiveType(clazz: Class): KonanPrimitiveType? =
+            if (isTopLevelClass(clazz))
+                KonanPrimitiveType.byFqNameParts[getPackageFqName(clazz)]?.get(getName(clazz))
+            else null
+
+    protected fun isImplicitInlineClass(clazz: Class): Boolean =
+        isTopLevelClass(clazz) && (getKonanPrimitiveType(clazz) != null ||
+                getName(clazz) == KonanFqNames.nativePtr.shortName() && getPackageFqName(clazz) == KonanFqNames.internalPackageName  ||
+                getName(clazz) == InteropFqNames.cPointer.shortName() && getPackageFqName(clazz) == InteropFqNames.cPointer.parent().toSafe())
 
     private fun getInlinedClass(erased: Class, isNullable: Boolean): Class? {
         val inlinedClass = getInlinedClass(erased) ?: return null
@@ -129,7 +154,7 @@ internal abstract class InlineClassesSupport<Class : Any, Type : Any> {
     }
 
     tailrec fun representationIsNonNullReferenceOrPointer(clazz: Class): Boolean {
-        val konanPrimitiveType = KonanPrimitiveType.byFqName[getFqName(clazz)]
+        val konanPrimitiveType = getKonanPrimitiveType(clazz)
         if (konanPrimitiveType != null) {
             return konanPrimitiveType == KonanPrimitiveType.NON_NULL_NATIVE_PTR
         }
@@ -146,7 +171,7 @@ internal abstract class InlineClassesSupport<Class : Any, Type : Any> {
 
     @JvmName("classGetInlinedClass")
     private fun getInlinedClass(clazz: Class): Class? =
-            if (hasInlineModifier(clazz) || getFqName(clazz) in implicitInlineClasses) {
+            if (hasInlineModifier(clazz) || isImplicitInlineClass(clazz)) {
                 clazz
             } else {
                 getNativePointedSuperclass(clazz)
@@ -168,7 +193,7 @@ internal abstract class InlineClassesSupport<Class : Any, Type : Any> {
 
             val nullable = isNullable(currentType)
 
-            KonanPrimitiveType.byFqName[getFqName(inlinedClass)]?.let { primitiveType ->
+           getKonanPrimitiveType(inlinedClass)?.let { primitiveType ->
                 return ifPrimitive(primitiveType, nullable)
             }
 
@@ -193,7 +218,7 @@ internal abstract class InlineClassesSupport<Class : Any, Type : Any> {
         val erased = erase(type)
         val inlinedClass = getInlinedClass(erased, isNullable(type)) ?: return createReferenceBinaryType(type)
 
-        KonanPrimitiveType.byFqName[getFqName(inlinedClass)]?.let {
+        getKonanPrimitiveType(inlinedClass)?.let {
             return it.binaryType
         }
 
@@ -208,11 +233,6 @@ internal abstract class InlineClassesSupport<Class : Any, Type : Any> {
     private fun createReferenceBinaryType(type: Type): BinaryType.Reference<Class> =
             BinaryType.Reference(computeFullErasure(type), true)
 }
-
-private val implicitInlineClasses =
-        (KonanPrimitiveType.values().map { it.fqName } +
-                KonanFqNames.nativePtr +
-                InteropFqNames.cPointer).toSet()
 
 internal object KotlinTypeInlineClassesSupport : InlineClassesSupport<ClassDescriptor, KotlinType>() {
 
@@ -233,7 +253,6 @@ internal object KotlinTypeInlineClassesSupport : InlineClassesSupport<ClassDescr
         else type.constructor.supertypes.asSequence().flatMap { computeFullErasure(it) }
     }
 
-    override fun getFqName(clazz: ClassDescriptor): FqNameUnsafe = clazz.fqNameUnsafe
     override fun hasInlineModifier(clazz: ClassDescriptor): Boolean = clazz.isInline
 
     override fun getNativePointedSuperclass(clazz: ClassDescriptor): ClassDescriptor? = clazz.getAllSuperClassifiers()
@@ -241,6 +260,14 @@ internal object KotlinTypeInlineClassesSupport : InlineClassesSupport<ClassDescr
 
     override fun getInlinedClassUnderlyingType(clazz: ClassDescriptor): KotlinType =
             clazz.unsubstitutedPrimaryConstructor!!.valueParameters.single().type
+
+    override fun getPackageFqName(clazz: ClassDescriptor) =
+            clazz.findPackage().fqName
+
+    override fun getName(clazz: ClassDescriptor) =
+            clazz.name
+
+    override fun isTopLevelClass(clazz: ClassDescriptor): Boolean = clazz.containingDeclaration is PackageFragmentDescriptor
 }
 
 private object IrTypeInlineClassesSupport : InlineClassesSupport<IrClass, IrType>() {
@@ -267,12 +294,11 @@ private object IrTypeInlineClassesSupport : InlineClassesSupport<IrClass, IrType
         }
     }
 
-    override fun getFqName(clazz: IrClass): FqNameUnsafe = clazz.descriptor.fqNameUnsafe
     override fun hasInlineModifier(clazz: IrClass): Boolean = clazz.descriptor.isInline
 
     override fun getNativePointedSuperclass(clazz: IrClass): IrClass? {
         var superClass: IrClass? = clazz
-        while (superClass != null && superClass.descriptor.fqNameUnsafe != InteropFqNames.nativePointed)
+        while (superClass != null && (!superClass.symbol.isPublicApi || InteropIdSignatures.nativePointed != superClass.symbol.signature))
             superClass = superClass.getSuperClassNotAny()
         return superClass
     }
@@ -280,4 +306,12 @@ private object IrTypeInlineClassesSupport : InlineClassesSupport<IrClass, IrType
     override fun getInlinedClassUnderlyingType(clazz: IrClass): IrType =
             clazz.constructors.firstOrNull { it.isPrimary }?.valueParameters?.single()?.type
                     ?: clazz.declarations.filterIsInstance<IrProperty>().single { it.backingField != null }.backingField!!.type
+
+    override fun getPackageFqName(clazz: IrClass) =
+            clazz.packageFqName
+
+    override fun getName(clazz: IrClass): Name? =
+            clazz.name
+
+    override fun isTopLevelClass(clazz: IrClass): Boolean = clazz.isTopLevel
 }

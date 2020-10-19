@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.getPublicSignature
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -34,13 +34,19 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 internal val interopPackageName = InteropFqNames.packageName
 internal val objCObjectFqName = interopPackageName.child(Name.identifier("ObjCObject"))
+internal val objCObjectIdSignature = getTopLevelPublicSignature(objCObjectFqName)
 private val objCClassFqName = interopPackageName.child(Name.identifier("ObjCClass"))
+private val objCClassIdSignature = getTopLevelPublicSignature(objCClassFqName)
 private val objCProtocolFqName = interopPackageName.child(Name.identifier("ObjCProtocol"))
+private val objCProtocolIdSignature = getTopLevelPublicSignature(objCProtocolFqName)
 internal val externalObjCClassFqName = interopPackageName.child(Name.identifier("ExternalObjCClass"))
 private val objCMethodFqName = interopPackageName.child(Name.identifier("ObjCMethod"))
 private val objCConstructorFqName = FqName("kotlinx.cinterop.ObjCConstructor")
 private val objCFactoryFqName = interopPackageName.child(Name.identifier("ObjCFactory"))
 private val objcnamesForwardDeclarationsPackageName = Name.identifier("objcnames")
+
+private fun getTopLevelPublicSignature(fqName: FqName): IdSignature.PublicSignature =
+        getPublicSignature(fqName.parent(), fqName.shortName().asString())
 
 fun ClassDescriptor.isObjCClass(): Boolean =
                 this.containingDeclaration.fqNameSafe != interopPackageName &&
@@ -55,8 +61,8 @@ private fun IrClass.selfOrAnySuperClass(pred: (IrClass) -> Boolean): Boolean {
     return superTypes.any { it.classOrNull!!.owner.selfOrAnySuperClass(pred) }
 }
 
-internal fun IrClass.isObjCClass() = this.parent.fqNameForIrSerialization != interopPackageName &&
-        selfOrAnySuperClass { it.fqNameForIrSerialization == objCObjectFqName }
+internal fun IrClass.isObjCClass() = this.packageFqName != interopPackageName &&
+        selfOrAnySuperClass { it.symbol.isPublicApi && objCObjectIdSignature == it.symbol.signature }
 
 fun ClassDescriptor.isExternalObjCClass(): Boolean = this.isObjCClass() &&
         this.parentsWithSelf.filterIsInstance<ClassDescriptor>().any {
@@ -75,11 +81,11 @@ fun ClassDescriptor.isObjCMetaClass(): Boolean = this.getAllSuperClassifiers().a
 }
 
 fun IrClass.isObjCMetaClass(): Boolean = selfOrAnySuperClass {
-    it.fqNameForIrSerialization == objCClassFqName
+    it.symbol.isPublicApi && objCClassIdSignature == it.symbol.signature
 }
 
 fun IrClass.isObjCProtocolClass(): Boolean =
-        this.fqNameForIrSerialization == objCProtocolFqName
+        symbol.isPublicApi && objCProtocolIdSignature == symbol.signature
 
 fun ClassDescriptor.isObjCProtocolClass(): Boolean =
         this.fqNameSafe == objCProtocolFqName

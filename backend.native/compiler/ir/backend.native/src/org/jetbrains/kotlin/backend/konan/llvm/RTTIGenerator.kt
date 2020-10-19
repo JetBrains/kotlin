@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.isExternalObjCClassMethod
+import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -162,18 +164,18 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     }
 
     private val arrayClasses = mapOf(
-            "kotlin.Array"              to kObjHeaderPtr,
-            "kotlin.ByteArray"          to int8Type,
-            "kotlin.CharArray"          to int16Type,
-            "kotlin.ShortArray"         to int16Type,
-            "kotlin.IntArray"           to int32Type,
-            "kotlin.LongArray"          to int64Type,
-            "kotlin.FloatArray"         to floatType,
-            "kotlin.DoubleArray"        to doubleType,
-            "kotlin.BooleanArray"       to int8Type,
-            "kotlin.String"             to int16Type,
-            "kotlin.native.ImmutableBlob" to int8Type,
-            "kotlin.native.internal.NativePtrArray" to kInt8Ptr
+            IdSignatureValues.array                                                       to kObjHeaderPtr,
+            primitiveArrayTypesSignatures[PrimitiveType.BYTE]                             to int8Type,
+            primitiveArrayTypesSignatures[PrimitiveType.CHAR]                             to int16Type,
+            primitiveArrayTypesSignatures[PrimitiveType.SHORT]                            to int16Type,
+            primitiveArrayTypesSignatures[PrimitiveType.INT]                              to int32Type,
+            primitiveArrayTypesSignatures[PrimitiveType.LONG]                             to int64Type,
+            primitiveArrayTypesSignatures[PrimitiveType.FLOAT]                            to floatType,
+            primitiveArrayTypesSignatures[PrimitiveType.DOUBLE]                           to doubleType,
+            primitiveArrayTypesSignatures[PrimitiveType.BOOLEAN]                          to int8Type,
+            IdSignatureValues.string                                                      to int16Type,
+            getPublicSignature(KonanFqNames.packageName, "ImmutableBlob")           to int8Type,
+            getPublicSignature(KonanFqNames.internalPackageName, "NativePtrArray")  to kInt8Ptr
     )
 
     // Keep in sync with Konan_RuntimeType.
@@ -190,8 +192,11 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             vector128Type to 10
     )
 
-    private fun getInstanceSize(classType: LLVMTypeRef?, className: FqName) : Int {
-        val elementType = arrayClasses.get(className.asString())
+    private fun getElementType(irClass: IrClass): LLVMTypeRef? =
+            if (irClass.symbol.isPublicApi) arrayClasses[irClass.symbol.signature as IdSignature.PublicSignature] else null
+
+    private fun getInstanceSize(classType: LLVMTypeRef?, irClass: IrClass) : Int {
+        val elementType = getElementType(irClass)
         // Check if it is an array.
         if (elementType != null) return -LLVMABISizeOfType(llvmTargetData, elementType).toInt()
         return LLVMStoreSizeOfType(llvmTargetData, classType).toInt()
@@ -219,7 +224,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
         val bodyType = llvmDeclarations.bodyType
 
-        val instanceSize = getInstanceSize(bodyType, className)
+        val instanceSize = getInstanceSize(bodyType, irClass)
 
         val superType = when {
             irClass.isAny() -> NullPointer(runtime.typeInfoType)
@@ -452,7 +457,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         val className = irClass.fqNameForIrSerialization.toString()
         val llvmDeclarations = context.llvmDeclarations.forClass(irClass)
         val bodyType = llvmDeclarations.bodyType
-        val elementType = arrayClasses[className]
+        val elementType = getElementType(irClass)
 
         val value = if (elementType != null) {
             // An array type.

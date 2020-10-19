@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.types.getPublicSignature
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -24,6 +25,10 @@ object InteropFqNames {
 
     val cPointer = packageName.child(Name.identifier(cPointerName)).toUnsafe()
     val nativePointed = packageName.child(Name.identifier(nativePointedName)).toUnsafe()
+}
+
+object InteropIdSignatures {
+    val nativePointed = getPublicSignature(InteropFqNames.packageName, InteropFqNames.nativePointedName)
 }
 
 internal class InteropBuiltIns(builtIns: KonanBuiltIns) {

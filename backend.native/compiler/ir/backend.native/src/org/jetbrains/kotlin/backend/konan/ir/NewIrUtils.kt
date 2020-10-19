@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.types.IdSignatureValues
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.util.*
@@ -27,17 +28,21 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-val IrField.fqNameForIrSerialization: FqName get() = this.parent.fqNameForIrSerialization.child(this.name)
+private fun IrClass.isClassTypeWithSignature(signature: IdSignature.PublicSignature): Boolean {
+    if (!symbol.isPublicApi) return false
+    return signature == symbol.signature
+}
 
-fun IrClass.isUnit() = this.fqNameForIrSerialization == StandardNames.FqNames.unit.toSafe()
+fun IrClass.isUnit() = this.isClassTypeWithSignature(IdSignatureValues.unit)
 
-fun IrClass.isKotlinArray() = this.fqNameForIrSerialization == StandardNames.FqNames.array.toSafe()
+fun IrClass.isKotlinArray() = this.isClassTypeWithSignature(IdSignatureValues.array)
 
 val IrClass.superClasses get() = this.superTypes.map { it.classifierOrFail as IrClassSymbol }
 fun IrClass.getSuperClassNotAny() = this.superClasses.map { it.owner }.atMostOne { !it.isInterface && !it.isAny() }
 
-fun IrClass.isAny() = this.fqNameForIrSerialization == StandardNames.FqNames.any.toSafe()
-fun IrClass.isNothing() = this.fqNameForIrSerialization == StandardNames.FqNames.nothing.toSafe()
+fun IrClass.isAny() = this.isClassTypeWithSignature(IdSignatureValues.any)
+
+fun IrClass.isNothing() = this.isClassTypeWithSignature(IdSignatureValues.nothing)
 
 fun IrClass.getSuperInterfaces() = this.superClasses.map { it.owner }.filter { it.isInterface }
 
