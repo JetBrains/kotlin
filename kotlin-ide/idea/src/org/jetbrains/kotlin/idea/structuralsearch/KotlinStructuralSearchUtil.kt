@@ -56,5 +56,5 @@ val MatchingHandler.withinHierarchyTextFilterSet: Boolean
 fun KtDeclaration.resolveKotlinType(): KotlinType? =
     (resolveToDescriptorIfAny() as? CallableDescriptor)?.returnType
 
-fun ClassDescriptor.toSimpleType(nullable: Boolean = true) =
+fun ClassDescriptor.toSimpleType(nullable: Boolean = false) =
     KotlinTypeFactory.simpleType(Annotations.EMPTY, this.typeConstructor, emptyList(), nullable)
