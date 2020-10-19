@@ -8,6 +8,6 @@ fun box() {
 }
 
 // LOCAL VARIABLES
-// TestKt:7:
-// TestKt:4: $this$test:java.lang.String="OK":java.lang.String
-// TestKt:8:
+// test.kt:7 box:
+// test.kt:4 test: $this$test:java.lang.String="OK":java.lang.String
+// test.kt:8 box:

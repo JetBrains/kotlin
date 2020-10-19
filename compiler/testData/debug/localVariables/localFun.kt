@@ -10,7 +10,7 @@ fun box() {
 }
 // IGNORE_BACKEND: JVM_IR
 // LOCAL VARIABLES
-// TestKt:9:
-// TestKt:4:
-// TestKt:6: $fun$bar$1:TestKt$foo$1=TestKt$foo$1
-// TestKt:10:
+// test.kt:9 box:
+// test.kt:4 foo:
+// test.kt:6 foo: $fun$bar$1:TestKt$foo$1=TestKt$foo$1
+// test.kt:10 box:

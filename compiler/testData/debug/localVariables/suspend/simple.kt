@@ -6,5 +6,5 @@ suspend fun box() {
 }
 
 // LOCAL VARIABLES
-// TestKt:5: $completion:kotlin.coroutines.Continuation=helpers.ResultContinuation
-// TestKt:6: $completion:kotlin.coroutines.Continuation=helpers.ResultContinuation, x:int=1:int
+// test.kt:5 box: $completion:kotlin.coroutines.Continuation=helpers.ResultContinuation
+// test.kt:6 box: $completion:kotlin.coroutines.Continuation=helpers.ResultContinuation, x:int=1:int

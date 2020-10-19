@@ -8,12 +8,11 @@ fun box() {
 }
 
 // LOCAL VARIABLES
-// TestKt:6:
-// someClass:3: a:double=1.0:double, b:double=2.0:double
-// TestKt:6:
-// TestKt:7: a:someClass=someClass
-// someClass:3: a:double=1.0:double, b:double=3.0:double
-// someClass.copy(double, double)+9: a:double=1.0:double, b:double=3.0:double
-// someClass.copy$default(someClass, double, double, int, java.lang.Object)+30:
-// TestKt:7: a:someClass=someClass
-// TestKt:8: a:someClass=someClass, b:someClass=someClass
+// test.kt:6 box:
+// test.kt:3 <init>: a:double=1.0:double, b:double=2.0:double
+// test.kt:6 box:
+// test.kt:7 box: a:someClass=someClass
+// test.kt:3 <init>: a:double=1.0:double, b:double=3.0:double
+// test.kt:-1 copy: a:double=1.0:double, b:double=3.0:double
+// test.kt:7 box: a:someClass=someClass
+// test.kt:8 box: a:someClass=someClass, b:someClass=someClass

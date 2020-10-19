@@ -10,10 +10,8 @@ fun box() {
 }
 
 // LOCAL VARIABLES
-// TestKt:9:
-// C:3:
-// TestKt:9:
-// C:4:
-// C:5: firstParam:int=4:int, secondParam:java.lang.String="":java.lang.String
-// C:4:
-// TestKt:10:
+// test.kt:9 box:
+// test.kt:3 <init>:
+// test.kt:9 box:
+// test.kt:5 foo: firstParam:int=4:int, secondParam:java.lang.String="":java.lang.String
+// test.kt:10 box:

@@ -72,19 +72,24 @@ abstract class AbstractLocalVariableTest : AbstractDebugTest() {
         }
     }
 
+    data class LVTStep(
+        val location : Location,
+        val visibleVars: Collection<LocalVariableRecord>
+    )
+
     override fun storeStep(loggedItems: ArrayList<Any>, event: Event) {
-        waitUntil { (event as LocatableEvent).thread().isSuspended }
-        val frame = (event as LocatableEvent).thread().frame(0)
-        try {
-            val visibleVars = frame
-                .visibleVariables()
-                .map { variable -> toRecord(frame, variable) }
-                .joinToString(", ")
-            loggedItems.add("${event.location()}: $visibleVars".trim())
+        val locatableEvent = event as LocatableEvent
+        waitUntil { locatableEvent.thread().isSuspended }
+        val location = locatableEvent.location()
+        if (location.method().isSynthetic) return
+        val frame = locatableEvent.thread().frame(0)
+        val visibleVars = try {
+            frame.visibleVariables().map { variable -> toRecord(frame, variable) }
         } catch (e: AbsentInformationException) {
             // LVT Completely absent - not distinguished from an empty table
-            loggedItems.add("${event.location()}:".trim())
+            listOf()
         }
+        loggedItems.add(LVTStep(location, visibleVars))
     }
 
     override fun checkResult(wholeFile: File, loggedItems: List<Any>) {
@@ -109,11 +114,14 @@ abstract class AbstractLocalVariableTest : AbstractDebugTest() {
                 continue
             }
             if (currentBackend == TargetBackend.ANY || currentBackend == backend) {
-                expectedLocalVariables.add(line.drop(3))
+                expectedLocalVariables.add(line)
             }
         }
 
-        val actualLocalVariables = loggedItems.joinToString("\n")
+        val compressedLog = compressRunsWithoutLinenumber(loggedItems as List<LVTStep>, LVTStep::location)
+        val actualLocalVariables = compressedLog.joinToString("\n") {
+            "// ${it.location.formatAsExpectation()}: ${it.visibleVars.joinToString(", ")}".trim()
+        }
 
         TestCase.assertEquals(expectedLocalVariables.joinToString("\n"), actualLocalVariables)
     }
