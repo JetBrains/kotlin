@@ -49,6 +49,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         runTest("compiler/testData/codegen/bytecodeListing/defaultImpls.kt");
     }
 
+    @TestMetadata("delegationToJavaInterfaceWithWildcardType.kt")
+    public void testDelegationToJavaInterfaceWithWildcardType() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/delegationToJavaInterfaceWithWildcardType.kt");
+    }
+
     @TestMetadata("emptyMultifileFacade.kt")
     public void testEmptyMultifileFacade() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/emptyMultifileFacade.kt");

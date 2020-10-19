@@ -2069,6 +2069,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/types/intersectionType3_OI.kt");
         }
 
+        @TestMetadata("javaWildcardType.kt")
+        public void testJavaWildcardType() throws Exception {
+            runTest("compiler/testData/ir/irText/types/javaWildcardType.kt");
+        }
+
         @TestMetadata("kt36143.kt")
         public void testKt36143() throws Exception {
             runTest("compiler/testData/ir/irText/types/kt36143.kt");

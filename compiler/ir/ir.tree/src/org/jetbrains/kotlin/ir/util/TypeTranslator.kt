@@ -83,55 +83,71 @@ class TypeTranslator(
         translateType(kotlinType, Variance.INVARIANT).type
 
     private fun translateType(kotlinType: KotlinType, variance: Variance): IrTypeProjection {
-        val flexibleApproximatedType = approximate(kotlinType)
+        val approximatedType = approximate(kotlinType)
 
         when {
-            flexibleApproximatedType.isError ->
-                return IrErrorTypeImpl(flexibleApproximatedType, translateTypeAnnotations(flexibleApproximatedType), variance)
-            flexibleApproximatedType.isDynamic() ->
-                return IrDynamicTypeImpl(flexibleApproximatedType, translateTypeAnnotations(flexibleApproximatedType), variance)
+            approximatedType.isError ->
+                return IrErrorTypeImpl(approximatedType, translateTypeAnnotations(approximatedType), variance)
+            approximatedType.isDynamic() ->
+                return IrDynamicTypeImpl(approximatedType, translateTypeAnnotations(approximatedType), variance)
         }
 
-        val approximatedType = flexibleApproximatedType.upperIfFlexible()
-
-        val ktTypeConstructor = approximatedType.constructor
-        val ktTypeDescriptor = ktTypeConstructor.declarationDescriptor
-            ?: throw AssertionError("No descriptor for type $approximatedType")
+        val upperType = approximatedType.upperIfFlexible()
+        val upperTypeDescriptor = upperType.constructor.declarationDescriptor
+            ?: throw AssertionError("No descriptor for type $upperType")
 
         if (erasureStack.isNotEmpty()) {
-            if (ktTypeDescriptor is TypeParameterDescriptor) {
-                if (ktTypeDescriptor.containingDeclaration in erasureStack) {
+            if (upperTypeDescriptor is TypeParameterDescriptor) {
+                if (upperTypeDescriptor.containingDeclaration in erasureStack) {
                     // This hack is about type parameter leak in case of generic delegated property
                     // Such code has to be prohibited since LV 1.5
                     // For more details see commit message or KT-24643
-                    return approximateUpperBounds(ktTypeDescriptor.upperBounds, variance)
+                    return approximateUpperBounds(upperTypeDescriptor.upperBounds, variance)
                 }
             }
         }
 
         return IrSimpleTypeBuilder().apply {
-            this.kotlinType = flexibleApproximatedType
-            this.hasQuestionMark = approximatedType.isMarkedNullable
+            this.kotlinType = approximatedType
+            this.hasQuestionMark = upperType.isMarkedNullable
             this.variance = variance
-            this.abbreviation = approximatedType.getAbbreviation()?.toIrTypeAbbreviation()
-            when (ktTypeDescriptor) {
+            this.abbreviation = upperType.getAbbreviation()?.toIrTypeAbbreviation()
+
+            when (upperTypeDescriptor) {
                 is TypeParameterDescriptor -> {
-                    classifier = resolveTypeParameter(ktTypeDescriptor)
-                    annotations = translateTypeAnnotations(approximatedType, flexibleApproximatedType)
+                    classifier = resolveTypeParameter(upperTypeDescriptor)
+                    annotations = translateTypeAnnotations(upperType, approximatedType)
                 }
 
                 is ClassDescriptor -> {
-                    classifier = symbolTable.referenceClass(ktTypeDescriptor)
-                    arguments =
-                        if (flexibleApproximatedType is RawType)
-                            translateTypeArguments(flexibleApproximatedType.arguments)
-                        else
+                    // Types such as 'java.util.Collection<? extends CharSequence>' are treated as
+                    // '( kotlin.collections.MutableCollection<out kotlin.CharSequence!>
+                    //   .. kotlin.collections.Collection<kotlin.CharSequence!>? )'
+                    // by the front-end.
+                    // When generating generic signatures, JVM BE uses generic arguments of lower bound,
+                    // thus producing 'java.util.Collection<? extends CharSequence>' from
+                    // 'kotlin.collections.MutableCollection<out kotlin.CharSequence!>'.
+                    // Construct equivalent type here.
+                    // NB the difference is observed only when lowerTypeDescriptor != upperTypeDescriptor,
+                    // which corresponds to mutability-flexible types such as mentioned above.
+                    val lowerType = approximatedType.lowerIfFlexible()
+                    val lowerTypeDescriptor =
+                        lowerType.constructor.declarationDescriptor as? ClassDescriptor
+                            ?: throw AssertionError("No class descriptor for lower type $lowerType of $approximatedType")
+                    classifier = symbolTable.referenceClass(lowerTypeDescriptor)
+                    arguments = when {
+                        approximatedType is RawType ->
                             translateTypeArguments(approximatedType.arguments)
-                    annotations = translateTypeAnnotations(approximatedType, flexibleApproximatedType)
+                        lowerTypeDescriptor != upperTypeDescriptor ->
+                            translateTypeArguments(lowerType.arguments)
+                        else ->
+                            translateTypeArguments(upperType.arguments)
+                    }
+                    annotations = translateTypeAnnotations(upperType, approximatedType)
                 }
 
                 else ->
-                    throw AssertionError("Unexpected type descriptor $ktTypeDescriptor :: ${ktTypeDescriptor::class}")
+                    throw AssertionError("Unexpected type descriptor $upperTypeDescriptor :: ${upperTypeDescriptor::class}")
             }
         }.buildTypeProjection()
     }
