@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -22,7 +23,13 @@ internal interface KtFirSymbol<F : FirDeclaration> : KtSymbol, ValidityTokenOwne
 
 
 private tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (origin) {
-    FirDeclarationOrigin.Source -> KtSymbolOrigin.SOURCE
+    FirDeclarationOrigin.Source -> {
+        if (source?.kind == FirFakeSourceElementKind.DataClassGeneratedMembers
+            || source?.kind == FirFakeSourceElementKind.EnumGeneratedDeclaration
+        ) {
+            KtSymbolOrigin.SOURCE_MEMBER_GENERATED
+        } else KtSymbolOrigin.SOURCE
+    }
     FirDeclarationOrigin.Library -> KtSymbolOrigin.LIBRARY
     FirDeclarationOrigin.Java -> KtSymbolOrigin.JAVA
     FirDeclarationOrigin.SamConstructor -> KtSymbolOrigin.SAM_CONSTRUCTOR

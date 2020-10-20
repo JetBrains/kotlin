@@ -6,13 +6,18 @@
 package org.jetbrains.kotlin.idea.references
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.fir.findReferencePsi
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtSymbolBasedReference
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 
 interface KtFirReference : KtReference, KtSymbolBasedReference {
     fun getResolvedToPsi(analysisSession: KtAnalysisSession): Collection<PsiElement> =
-        analysisSession.resolveToSymbols().mapNotNull(KtSymbol::psi)
+        analysisSession.resolveToSymbols().mapNotNull { symbol ->
+            (symbol as? KtFirSymbol<*>)?.firRef?.withFir { it.findReferencePsi() }
+                ?: symbol.psi
+        }
 
     override val resolver get() = KtFirReferenceResolver
 }
