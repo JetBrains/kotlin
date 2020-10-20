@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.dfa.symbol
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.LocalClassesNavigationInfo
@@ -147,6 +148,7 @@ private class FirDesignatedStatusResolveTransformer(
         data: FirResolvedDeclarationStatus?
     ): CompositeTransformResult<FirStatement> {
         if (shouldSkipClass(regularClass)) return regularClass.compose()
+        regularClass.symbol.ensureResolved(FirResolvePhase.TYPES, session)
         val classLocated = this.classLocated
         /*
          * In designated status resolve we should resolve status only of target class and it's members
