@@ -2161,6 +2161,69 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             public void testPlatformTypeReceiver() throws Exception {
                 runTest("compiler/testData/ir/irText/types/nullChecks/platformTypeReceiver.kt");
             }
+
+            @TestMetadata("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class NullCheckOnLambdaResult extends AbstractFir2IrTextTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
+                }
+
+                public void testAllFilesPresentInNullCheckOnLambdaResult() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                }
+
+                @TestMetadata("nnStringVsT.kt")
+                public void testNnStringVsT() throws Exception {
+                    runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult/nnStringVsT.kt");
+                }
+
+                @TestMetadata("nnStringVsTAny.kt")
+                public void testNnStringVsTAny() throws Exception {
+                    runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult/nnStringVsTAny.kt");
+                }
+
+                @TestMetadata("nnStringVsTConstrained.kt")
+                public void testNnStringVsTConstrained() throws Exception {
+                    runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult/nnStringVsTConstrained.kt");
+                }
+
+                @TestMetadata("nnStringVsTXArray.kt")
+                public void testNnStringVsTXArray() throws Exception {
+                    runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult/nnStringVsTXArray.kt");
+                }
+
+                @TestMetadata("nnStringVsTXString.kt")
+                public void testNnStringVsTXString() throws Exception {
+                    runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult/nnStringVsTXString.kt");
+                }
+
+                @TestMetadata("stringVsT.kt")
+                public void testStringVsT() throws Exception {
+                    runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult/stringVsT.kt");
+                }
+
+                @TestMetadata("stringVsTAny.kt")
+                public void testStringVsTAny() throws Exception {
+                    runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult/stringVsTAny.kt");
+                }
+
+                @TestMetadata("stringVsTConstrained.kt")
+                public void testStringVsTConstrained() throws Exception {
+                    runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult/stringVsTConstrained.kt");
+                }
+
+                @TestMetadata("stringVsTXArray.kt")
+                public void testStringVsTXArray() throws Exception {
+                    runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult/stringVsTXArray.kt");
+                }
+
+                @TestMetadata("stringVsTXString.kt")
+                public void testStringVsTXString() throws Exception {
+                    runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult/stringVsTXString.kt");
+                }
+            }
         }
     }
 }

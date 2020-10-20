@@ -17379,6 +17379,69 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/enhancedNullability/inTopLevelPropertyInitializer.kt");
                 }
             }
+
+            @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullCheckOnLambdaReturnValue")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class NullCheckOnLambdaReturnValue extends AbstractLightAnalysisModeTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInNullCheckOnLambdaReturnValue() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullCheckOnLambdaReturnValue"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                }
+
+                @TestMetadata("nnStringVsT.kt")
+                public void testNnStringVsT() throws Exception {
+                    runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullCheckOnLambdaReturnValue/nnStringVsT.kt");
+                }
+
+                @TestMetadata("nnStringVsTAny.kt")
+                public void testNnStringVsTAny() throws Exception {
+                    runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullCheckOnLambdaReturnValue/nnStringVsTAny.kt");
+                }
+
+                @TestMetadata("nnStringVsTConstrained.kt")
+                public void testNnStringVsTConstrained() throws Exception {
+                    runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullCheckOnLambdaReturnValue/nnStringVsTConstrained.kt");
+                }
+
+                @TestMetadata("nnStringVsTXArray.kt")
+                public void testNnStringVsTXArray() throws Exception {
+                    runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullCheckOnLambdaReturnValue/nnStringVsTXArray.kt");
+                }
+
+                @TestMetadata("nnStringVsTXString.kt")
+                public void testNnStringVsTXString() throws Exception {
+                    runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullCheckOnLambdaReturnValue/nnStringVsTXString.kt");
+                }
+
+                @TestMetadata("stringVsT.kt")
+                public void testStringVsT() throws Exception {
+                    runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullCheckOnLambdaReturnValue/stringVsT.kt");
+                }
+
+                @TestMetadata("stringVsTAny.kt")
+                public void testStringVsTAny() throws Exception {
+                    runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullCheckOnLambdaReturnValue/stringVsTAny.kt");
+                }
+
+                @TestMetadata("stringVsTConstrained.kt")
+                public void testStringVsTConstrained() throws Exception {
+                    runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullCheckOnLambdaReturnValue/stringVsTConstrained.kt");
+                }
+
+                @TestMetadata("stringVsTXArray.kt")
+                public void testStringVsTXArray() throws Exception {
+                    runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullCheckOnLambdaReturnValue/stringVsTXArray.kt");
+                }
+
+                @TestMetadata("stringVsTXString.kt")
+                public void testStringVsTXString() throws Exception {
+                    runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullCheckOnLambdaReturnValue/stringVsTXString.kt");
+                }
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/javaInterop/objectMethods")
