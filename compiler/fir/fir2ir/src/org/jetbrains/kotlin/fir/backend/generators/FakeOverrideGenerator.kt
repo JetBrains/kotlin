@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.backend.*
@@ -147,6 +148,7 @@ class FakeOverrideGenerator(
         val classId = klass.symbol.classId
         val originalDeclaration = originalSymbol.fir
         if (originalSymbol.callableId.classId == classId && !originalDeclaration.origin.fromSupertypes) return
+        if (originalDeclaration.visibility == Visibilities.Private) return
 
         val origin = IrDeclarationOrigin.FAKE_OVERRIDE
         val baseSymbol = originalSymbol.deepestOverriddenSymbol() as S
