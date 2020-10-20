@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
+import org.jetbrains.kotlin.gradle.utils.disableTaskOnConfigurationCacheBuild
 import java.io.File
 
 abstract class DukatTask(
@@ -20,6 +21,11 @@ abstract class DukatTask(
 ) : DefaultTask(), RequiresNpmDependencies {
     @get:Internal
     protected val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
+
+    init {
+        // TODO: temporary workaround for configuration cache enabled builds
+        disableTaskOnConfigurationCacheBuild { nodeJs.npmResolutionManager.toString() }
+    }
 
     @get:Internal
     override val nodeModulesRequired: Boolean

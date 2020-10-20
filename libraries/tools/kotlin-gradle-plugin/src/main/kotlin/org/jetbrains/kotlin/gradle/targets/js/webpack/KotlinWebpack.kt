@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
+import org.jetbrains.kotlin.gradle.utils.disableTaskOnConfigurationCacheBuild
 import org.jetbrains.kotlin.gradle.utils.injected
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import org.jetbrains.kotlin.gradle.utils.property
@@ -41,6 +42,11 @@ constructor(
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
     private val versions = nodeJs.versions
 
+    init {
+        // TODO: temporary workaround for configuration cache enabled builds
+        disableTaskOnConfigurationCacheBuild { nodeJs.npmResolutionManager.toString() }
+    }
+
     @get:Inject
     open val fileResolver: FileResolver
         get() = injected
@@ -50,11 +56,13 @@ constructor(
         get() = injected
 
     @Suppress("unused")
-    val compilationId: String
-        @Input get() = compilation.let {
+    @get:Input
+    val compilationId: String by lazy {
+        compilation.let {
             val target = it.target
             target.project.path + "@" + target.name + ":" + it.compilationName
         }
+    }
 
     @Input
     var mode: Mode = Mode.DEVELOPMENT
@@ -82,11 +90,15 @@ constructor(
     internal var resolveFromModulesFirst: Boolean = false
 
     @Suppress("unused")
-    val runtimeClasspath: FileCollection
-        @InputFiles get() = compilation.compileDependencyFiles
+    @get:InputFiles
+    val runtimeClasspath: FileCollection by lazy {
+        compilation.compileDependencyFiles
+    }
 
-    open val configFile: File
-        @OutputFile get() = compilation.npmProject.dir.resolve("webpack.config.js")
+    @get:OutputFile
+    open val configFile: File by lazy {
+        compilation.npmProject.dir.resolve("webpack.config.js")
+    }
 
     @Input
     var saveEvaluatedConfigFile: Boolean = true
@@ -134,12 +146,12 @@ constructor(
     open val reportDir: File
         @Internal get() = reportDirProvider.get()
 
-    open val reportDirProvider: Provider<File>
-        @OutputDirectory get() = entryProperty
-            .map { it.asFile.nameWithoutExtension }
-            .map {
-                project.reportsDir.resolve("webpack").resolve(it)
-            }
+    @OutputDirectory
+    open val reportDirProvider: Provider<File> = entryProperty
+        .map { it.asFile.nameWithoutExtension }
+        .map {
+            project.reportsDir.resolve("webpack").resolve(it)
+        }
 
     open val evaluatedConfigFile: File
         @Internal get() = evaluatedConfigFileProvider.get()

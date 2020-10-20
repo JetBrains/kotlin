@@ -13,6 +13,7 @@ import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
+import org.jetbrains.kotlin.gradle.utils.disableTaskOnConfigurationCacheBuild
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 import javax.inject.Inject
@@ -23,12 +24,16 @@ constructor(
     @Transient
     private val compilation: KotlinJsCompilation
 ) : DefaultTask() {
-    @Transient
     private val npmProject = compilation.npmProject
     private val nodeJs = npmProject.nodeJs
 
     private val compilationResolution
         get() = nodeJs.npmResolutionManager.requireInstalled()[project][npmProject.compilation]
+
+    init {
+        // TODO: temporary workaround for configuration cache enabled builds
+        disableTaskOnConfigurationCacheBuild { nodeJs.npmResolutionManager.toString() }
+    }
 
     @get:Input
     val packageJsonCustomFields: Map<String, Any?>
@@ -51,11 +56,13 @@ constructor(
     private val realExternalDependencies: Collection<NpmDependency>
         get() = compilationResolution.externalNpmDependencies
 
+    private val publicPackageJsonTaskName = npmProject.publicPackageJsonTaskName
+
     @get:OutputFile
     var packageJsonFile: File by property {
         project.buildDir
             .resolve("tmp")
-            .resolve(npmProject.publicPackageJsonTaskName)
+            .resolve(publicPackageJsonTaskName)
             .resolve(PACKAGE_JSON)
     }
 
