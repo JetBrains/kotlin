@@ -112,6 +112,11 @@ public class FirHighlightingTestGenerated extends AbstractFirHighlightingTest {
             runTest("idea/testData/highlighter/PropertiesWithPropertyDeclarations.kt");
         }
 
+        @TestMetadata("RecursiveTypes.kt")
+        public void testRecursiveTypes() throws Exception {
+            runTest("idea/testData/highlighter/RecursiveTypes.kt");
+        }
+
         @TestMetadata("SmartCast.kt")
         public void testSmartCast() throws Exception {
             runTest("idea/testData/highlighter/SmartCast.kt");
