@@ -2014,16 +2014,6 @@ void deinitMemory(MemoryState* memoryState) {
   ::memoryState = nullptr;
 }
 
-MemoryState* suspendMemory() {
-    auto result = ::memoryState;
-    ::memoryState = nullptr;
-    return result;
-}
-
-void resumeMemory(MemoryState* state) {
-    ::memoryState = state;
-}
-
 void makeShareable(ContainerHeader* container) {
   if (!container->frozen())
     container->makeShared();
@@ -3189,12 +3179,9 @@ void DeinitMemory(MemoryState* memoryState) {
   deinitMemory(memoryState);
 }
 
-MemoryState* SuspendMemory() {
-  return suspendMemory();
-}
-
-void ResumeMemory(MemoryState* state) {
-  resumeMemory(state);
+void RestoreMemory(MemoryState* memoryState) {
+    RuntimeAssert((::memoryState == nullptr) || (::memoryState == memoryState), "Must not replace with unrelated memory state");
+    ::memoryState = memoryState;
 }
 
 OBJ_GETTER(AllocInstanceStrict, const TypeInfo* type_info) {

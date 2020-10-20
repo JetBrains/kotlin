@@ -25,12 +25,6 @@
 #include "Runtime.h"
 #include "Worker.h"
 
-struct RuntimeState {
-  MemoryState* memoryState;
-  Worker* worker;
-  volatile int executionStatus;
-};
-
 typedef void (*Initializer)(int initialize, MemoryState* memory);
 struct InitNode {
   Initializer init;
@@ -42,30 +36,24 @@ namespace {
 InitNode* initHeadNode = nullptr;
 InitNode* initTailNode = nullptr;
 
+enum class RuntimeStatus {
+    kUninitialized,
+    kRunning,
+    kDestroying,
+};
+
+struct RuntimeState {
+    MemoryState* memoryState;
+    Worker* worker;
+    RuntimeStatus status = RuntimeStatus::kUninitialized;
+};
+
 enum {
   INIT_GLOBALS = 0,
   INIT_THREAD_LOCAL_GLOBALS = 1,
   DEINIT_THREAD_LOCAL_GLOBALS = 2,
   DEINIT_GLOBALS = 3
 };
-
-enum {
-  SUSPENDED = 0,
-  RUNNING,
-  DESTROYING
-};
-
-bool updateStatusIf(RuntimeState* state, int oldStatus, int newStatus) {
-#if KONAN_NO_THREADS
-    if (state->executionStatus == oldStatus) {
-        state->executionStatus = newStatus;
-        return true;
-    }
-    return false;
-#else
-    return __sync_bool_compare_and_swap(&state->executionStatus, oldStatus, newStatus);
-#endif
-}
 
 void InitOrDeinitGlobalVariables(int initialize, MemoryState* memory) {
   InitNode* currentNode = initHeadNode;
@@ -108,11 +96,16 @@ RuntimeState* initRuntime() {
     InitOrDeinitGlobalVariables(INIT_GLOBALS, result->memoryState);
   }
   InitOrDeinitGlobalVariables(INIT_THREAD_LOCAL_GLOBALS, result->memoryState);
+  RuntimeAssert(result->status == RuntimeStatus::kUninitialized, "Runtime must still be in the uninitialized state");
+  result->status = RuntimeStatus::kRunning;
   return result;
 }
 
 void deinitRuntime(RuntimeState* state) {
-  ResumeMemory(state->memoryState);
+  RuntimeAssert(state->status == RuntimeStatus::kRunning, "Runtime must be in the running state");
+  state->status = RuntimeStatus::kDestroying;
+  // This may be called after TLS is zeroed out, so ::memoryState in Memory cannot be trusted.
+  RestoreMemory(state->memoryState);
   bool lastRuntime = atomicAdd(&aliveRuntimesCount, -1) == 0;
   InitOrDeinitGlobalVariables(DEINIT_THREAD_LOCAL_GLOBALS, state->memoryState);
   if (lastRuntime)
@@ -126,7 +119,6 @@ void deinitRuntime(RuntimeState* state) {
 
 void Kotlin_deinitRuntimeCallback(void* argument) {
   auto* state = reinterpret_cast<RuntimeState*>(argument);
-  RuntimeCheck(updateStatusIf(state, RUNNING, DESTROYING), "Cannot transition state to DESTROYING");
   deinitRuntime(state);
 }
 
@@ -147,7 +139,6 @@ void AppendToInitializersTail(InitNode *next) {
 void Kotlin_initRuntimeIfNeeded() {
   if (!isValidRuntime()) {
     initRuntime();
-    RuntimeCheck(updateStatusIf(::runtimeState, SUSPENDED, RUNNING), "Cannot transition state to RUNNING for init");
     // Register runtime deinit function at thread cleanup.
     konan::onThreadExit(Kotlin_deinitRuntimeCallback, runtimeState);
   }
@@ -158,42 +149,6 @@ void Kotlin_deinitRuntimeIfNeeded() {
     deinitRuntime(::runtimeState);
     ::runtimeState = kInvalidRuntime;
   }
-}
-
-RuntimeState* Kotlin_createRuntime() {
-  return initRuntime();
-}
-
-void Kotlin_destroyRuntime(RuntimeState* state) {
- RuntimeCheck(updateStatusIf(state, SUSPENDED, DESTROYING), "Cannot transition state to DESTROYING");
- deinitRuntime(state);
-}
-
-RuntimeState* Kotlin_suspendRuntime() {
-    RuntimeCheck(isValidRuntime(), "Runtime must be active on the current thread");
-    auto result = ::runtimeState;
-    RuntimeCheck(updateStatusIf(result, RUNNING, SUSPENDED), "Cannot transition state to SUSPENDED for suspend");
-    result->memoryState = SuspendMemory();
-    result->worker = WorkerSuspend();
-    ::runtimeState = kInvalidRuntime;
-    return result;
-}
-
-void Kotlin_resumeRuntime(RuntimeState* state) {
-    RuntimeCheck(!isValidRuntime(), "Runtime must not be active on the current thread");
-    RuntimeCheck(updateStatusIf(state, SUSPENDED, RUNNING), "Cannot transition state to RUNNING for resume");
-    ::runtimeState = state;
-    ResumeMemory(state->memoryState);
-    WorkerResume(state->worker);
-}
-
-RuntimeState* Kotlin_getRuntime() {
-  RuntimeCheck(isValidRuntime(), "Runtime must be active on the current thread");
-  return ::runtimeState;
-}
-
-bool Kotlin_hasRuntime() {
-  return isValidRuntime();
 }
 
 void CheckIsMainThread() {

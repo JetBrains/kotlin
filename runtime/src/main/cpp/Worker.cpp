@@ -752,22 +752,6 @@ void WaitNativeWorkerTermination(KInt id) {
 #endif
 }
 
-Worker* WorkerSuspend() {
-#if WITH_WORKERS
-  auto* result = ::g_worker;
-  ::g_worker = nullptr;
-  return result;
-#else
-  return nullptr;
-#endif  // WITH_WORKERS
-}
-
-void WorkerResume(Worker* worker) {
-#if WITH_WORKERS
-  ::g_worker = worker;
-#endif  // WITH_WORKERS
-}
-
 bool WorkerSchedule(KInt id, KNativePtr jobStablePtr) {
 #if WITH_WORKERS
     return theState()->scheduleJobInWorkerUnlocked(id, jobStablePtr);
@@ -819,7 +803,9 @@ namespace {
 void* workerRoutine(void* argument) {
   Worker* worker = reinterpret_cast<Worker*>(argument);
 
-  WorkerResume(worker);
+  // Kotlin_initRuntimeIfNeeded calls WorkerInit that needs
+  // to see there's already a worker created for this thread.
+  ::g_worker = worker;
   Kotlin_initRuntimeIfNeeded();
 
   do {

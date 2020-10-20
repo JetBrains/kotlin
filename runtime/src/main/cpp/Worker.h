@@ -19,7 +19,4 @@ void WaitNativeWorkerTermination(KInt id);
 // Schedule the job without the result.
 bool WorkerSchedule(KInt id, KNativePtr jobStablePtr);
 
-Worker* WorkerSuspend();
-void WorkerResume(Worker* worker);
-
 #endif // RUNTIME_WORKER_H
