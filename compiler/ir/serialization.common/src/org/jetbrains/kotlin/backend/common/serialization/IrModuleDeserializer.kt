@@ -168,7 +168,7 @@ class IrModuleDeserializerWithBuiltIns(
 
     override fun declareIrSymbol(symbol: IrSymbol) {
         val signature = symbol.signature
-        if (signature != null && checkIsFunctionInterface(symbol.signature!!))
+        if (signature != null && checkIsFunctionInterface(signature))
             resolveFunctionalInterface(signature, symbol.kind())
         else delegate.declareIrSymbol(symbol)
     }
