@@ -1112,8 +1112,8 @@ fun SymbolTable.noUnboundLeft(message: String) {
     val unbound = this.allUnbound
     assert(unbound.isEmpty()) {
         "$message\n" +
-                unbound.map {
-                    "$it ${if (it.isPublicApi) it.signature.toString() else "NON-PUBLIC API $it"}"
-                }.joinToString("\n")
+                unbound.joinToString("\n") {
+                    "$it ${it.signature?.toString() ?: "NON-PUBLIC API $it"}"
+                }
     }
 }

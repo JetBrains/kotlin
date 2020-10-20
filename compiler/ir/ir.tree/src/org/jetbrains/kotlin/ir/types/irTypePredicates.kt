@@ -98,8 +98,8 @@ fun IrType.isCollection(): Boolean = isNotNullClassType(IdSignatureValues.collec
 fun IrType.isNothing(): Boolean = isNotNullClassType(IdSignatureValues.nothing)
 
 fun IrType.isPrimitiveType(hasQuestionMark: Boolean = false): Boolean =
-        (this is IrSimpleType && hasQuestionMark == this.hasQuestionMark) &&
-                classOrNull?.takeIf(IrClassSymbol::isPublicApi)?.signature in idSignatureToPrimitiveType
+    (this is IrSimpleType && hasQuestionMark == this.hasQuestionMark) &&
+            classOrNull?.signature in idSignatureToPrimitiveType
 
 fun IrType.isNullablePrimitiveType(): Boolean = isPrimitiveType(true)
 

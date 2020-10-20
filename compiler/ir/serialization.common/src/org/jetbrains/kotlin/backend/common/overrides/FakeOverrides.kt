@@ -29,13 +29,16 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.parentAsClass
 
-class FakeOverrideGlobalDeclarationTable(signatureSerializer: IdSignatureSerializer)
-    : GlobalDeclarationTable(signatureSerializer, signatureSerializer.mangler) {
-
+class FakeOverrideGlobalDeclarationTable(
+    signatureSerializer: IdSignatureSerializer
+) : GlobalDeclarationTable(signatureSerializer, signatureSerializer.mangler) {
     fun clear() = table.clear()
 }
+
 class FakeOverrideDeclarationTable(
     signatureSerializer: IdSignatureSerializer,
     globalTable: FakeOverrideGlobalDeclarationTable = FakeOverrideGlobalDeclarationTable(signatureSerializer)
