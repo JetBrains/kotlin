@@ -192,7 +192,11 @@ class ControlFlowGraphBuilder {
         }
 
         if (previousNode != null) {
-            addEdge(previousNode, enterNode, preferredKind = EdgeKind.DfgForward)
+            if (localFunctionNode == previousNode) {
+                addEdge(localFunctionNode, enterNode, preferredKind = EdgeKind.Forward)
+            } else {
+                addEdge(previousNode, enterNode, preferredKind = EdgeKind.DfgForward)
+            }
         }
 
         createFunctionExitNode(function).also {
