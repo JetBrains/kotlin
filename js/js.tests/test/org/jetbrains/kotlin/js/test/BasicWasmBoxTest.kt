@@ -115,7 +115,7 @@ abstract class BasicWasmBoxTest(
         testFunction: String
     ) {
         val filesToCompile = units.map { (it as TranslationUnit.SourceFile).file }
-        val debugMode = getBoolean("kotlin.js.debugMode")
+        val debugMode = getBoolean("kotlin.wasm.debugMode")
 
         val phaseConfig = if (debugMode) {
             val allPhasesSet = wasmPhases.toPhaseMap().values.toSet()
@@ -154,7 +154,7 @@ abstract class BasicWasmBoxTest(
         val testRunner = """
             const wasmBinary = read(String.raw`${outputWasmFile.absoluteFile}`, 'binary');
             const wasmModule = new WebAssembly.Module(wasmBinary);
-            const wasmInstance = new WebAssembly.Instance(wasmModule, { runtime });
+            const wasmInstance = new WebAssembly.Instance(wasmModule, { runtime, js_code });
 
             const actualResult = wasmInstance.exports.$testFunction();
             if (actualResult !== "OK")

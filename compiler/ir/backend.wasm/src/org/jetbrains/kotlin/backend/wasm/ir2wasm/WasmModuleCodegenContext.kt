@@ -22,6 +22,7 @@ interface WasmModuleCodegenContext : WasmBaseCodegenContext {
     fun defineStructType(irClass: IrClassSymbol, wasmStruct: WasmStructDeclaration)
     fun defineRTT(irClass: IrClassSymbol, wasmGlobal: WasmGlobal)
     fun defineFunctionType(irFunction: IrFunctionSymbol, wasmFunctionType: WasmFunctionType)
+    fun addJsFun(importName: String, jsCode: String)
 
     fun setStartFunction(wasmFunction: WasmFunction)
     fun addExport(wasmExport: WasmExport<*>)

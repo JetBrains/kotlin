@@ -99,14 +99,6 @@ fun compileWasm(
 fun WasmCompiledModuleFragment.generateJs(): String {
     val runtime = """
     const runtime = {
-        String_plus(str1, str2) {
-            return str1 + String(str2);
-        },
-
-        String_getLength(str) {
-            return str.length;
-        },
-
         String_getChar(str, index) {
             return str.charCodeAt(index);
         },
@@ -163,5 +155,8 @@ fun WasmCompiledModuleFragment.generateJs(): String {
     };
     """.trimIndent()
 
-    return runtime + generateStringLiteralsSupport(stringLiterals)
+    val jsCode =
+        "\nconst js_code = {${jsFuns.joinToString(",\n") { "\"" + it.importName + "\" : " + it.jsCode }}};"
+
+    return runtime + generateStringLiteralsSupport(stringLiterals) + jsCode
 }

@@ -208,7 +208,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
 
         // Return types of imported functions cannot have concrete struct/array references.
         // Non-primitive return types are represented as eqref which need to be casted back to expected type on call site.
-        if (function.getWasmImportAnnotation() != null) {
+        if (function.getWasmImportAnnotation() != null || function.getJsFunAnnotation() != null) {
             val resT = context.transformResultType(function.returnType)
             if (resT is WasmRefNullType) {
                 generateTypeRTT(function.returnType)

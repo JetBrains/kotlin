@@ -35,3 +35,6 @@ fun IrAnnotationContainer.getWasmImportAnnotation(): WasmImportPair? =
             (it.getValueArgument(1) as IrConst<*>).value as String
         )
     }
+
+fun IrAnnotationContainer.getJsFunAnnotation(): String? =
+    getAnnotation(FqName("kotlin.JsFun"))?.getSingleConstStringArgument()
