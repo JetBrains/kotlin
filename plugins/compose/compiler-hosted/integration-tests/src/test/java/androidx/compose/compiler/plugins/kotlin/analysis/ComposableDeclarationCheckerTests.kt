@@ -34,6 +34,44 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    fun testComposableFunctionReferences() {
+        doTest(
+            """
+            import androidx.compose.runtime.Composable
+
+            @Composable fun A() {}
+            val aCallable: () -> Unit = <!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>
+            val bCallable: @Composable () -> Unit = <!COMPOSABLE_FUNCTION_REFERENCE,TYPE_MISMATCH!>::A<!>
+            val cCallable = <!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>
+            fun doSomething(fn: () -> Unit) { print(fn) }
+            @Composable fun B(content: @Composable () -> Unit) {
+                content()
+                doSomething(<!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>)
+                B(<!COMPOSABLE_FUNCTION_REFERENCE,TYPE_MISMATCH!>::A<!>)
+            }
+        """
+        )
+    }
+
+    fun testNonComposableFunctionReferences() {
+        doTest(
+            """
+            import androidx.compose.runtime.Composable
+
+            fun A() {}
+            val aCallable: () -> Unit = ::A
+            val bCallable: @Composable () -> Unit = <!TYPE_MISMATCH!>::A<!>
+            val cCallable = ::A
+            fun doSomething(fn: () -> Unit) { print(fn) }
+            @Composable fun B(content: @Composable () -> Unit) {
+                content()
+                doSomething(::A)
+                B(<!TYPE_MISMATCH!>::A<!>)
+            }
+        """
+        )
+    }
+
     fun testPropertyWithJustGetter() {
         doTest(
             """
