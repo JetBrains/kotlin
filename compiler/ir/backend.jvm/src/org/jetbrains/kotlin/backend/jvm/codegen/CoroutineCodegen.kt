@@ -143,6 +143,7 @@ internal fun IrFunction.shouldContainSuspendMarkers(): Boolean = !isInvokeSuspen
         // These are tail-call bridges and do not require any bytecode modifications.
         origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER &&
         origin != JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER &&
+        origin != JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER &&
         origin != JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE &&
         origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR &&
         origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR &&
