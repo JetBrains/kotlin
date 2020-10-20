@@ -189,15 +189,16 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         project: Project,
         kotlinExtension: KotlinMultiplatformExtension
     ) = project.whenEvaluated {
-        val requestedTargetName = project.findProperty(TARGET_PROPERTY)?.toString() ?: return@whenEvaluated
+        val requestedTargetNames = project.findProperty(TARGET_PROPERTY)?.toString() ?: return@whenEvaluated
         val requestedBuildType = project.findProperty(CONFIGURATION_PROPERTY)?.toString()?.toUpperCase() ?: return@whenEvaluated
 
         // We create a fat framework only for device platforms which have several
         // device architectures: iosArm64, iosArm32, watchosArm32 and watchosArm64.
-        val frameworkPlatforms: List<KonanTarget> = when (requestedTargetName) {
+        val frameworkPlatforms: List<KonanTarget> = when (requestedTargetNames) {
             KOTLIN_TARGET_FOR_IOS_DEVICE -> listOf(IOS_ARM64, IOS_ARM32)
             KOTLIN_TARGET_FOR_WATCHOS_DEVICE -> listOf(WATCHOS_ARM32, WATCHOS_ARM64)
-            else -> listOf(HostManager().targetByName(requestedTargetName)) // A requested target doesn't require building a fat framework.
+            // A request parameter can be comma separated list of targets.
+            else -> requestedTargetNames.split(",").map { HostManager().targetByName(it) }.toList()
         }
 
         val frameworkTargets = frameworkPlatforms.flatMap { kotlinExtension.targetsForPlatform(it) }
@@ -565,7 +566,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
 
         // We don't move these properties in PropertiesProvider because
         // they are not intended to be overridden in local.properties.
-        const val TARGET_PROPERTY = "kotlin.native.cocoapods.target"
+        const val TARGET_PROPERTY = "kotlin.native.cocoapods.targets"
         const val CONFIGURATION_PROPERTY = "kotlin.native.cocoapods.configuration"
 
         const val CFLAGS_PROPERTY = "kotlin.native.cocoapods.cflags"
