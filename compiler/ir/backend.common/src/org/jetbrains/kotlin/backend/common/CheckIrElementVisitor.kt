@@ -44,7 +44,8 @@ class CheckIrElementVisitor(
 
     override fun visitElement(element: IrElement) {
         if (config.ensureAllNodesAreDifferent && !visitedElements.add(element)) {
-            reportError(element, "Duplicate IR node: ${element.render()}")
+            val renderString = if (element is IrTypeParameter) element.render() + " of " + element.parent.render() else element.render()
+            reportError(element, "Duplicate IR node: $renderString")
         }
     }
 
