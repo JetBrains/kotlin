@@ -291,6 +291,8 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     }
 
     arguments.declarationsOutputPath?.let { put(JVMConfigurationKeys.DECLARATIONS_JSON_PATH, it) }
+
+    put(CommonConfigurationKeys.RUN_LOWERINGS_IN_PARALLEL, arguments.runLoweringsInParallel)
 }
 
 fun CompilerConfiguration.configureKlibPaths(arguments: K2JVMCompilerArguments) {
