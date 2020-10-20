@@ -7,7 +7,7 @@ import org.jetbrains.annotations.PropertyKey
 import java.util.function.Supplier
 
 object KSSRBundle {
-    @NonNls private const val BUNDLE = "structuralsearch/KSSRBundle"
+    @NonNls private const val BUNDLE = "structuralsearch.KSSRBundle"
 
     private val dynamicBundle = object : DynamicBundle(BUNDLE) {}
 
