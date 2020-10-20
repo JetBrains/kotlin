@@ -26,6 +26,7 @@ import struct
 import re
 import sys
 import os
+import time
 
 NULL = 'null'
 
@@ -40,6 +41,10 @@ def exelog(stmt):
         f.write(stmt())
         f.write("\n")
         f.close()
+
+def bench(start, msg):
+    if True:
+        print("{}: {}".format(msg(), time.monotonic() - start))
 
 def evaluate(expr):
     result = lldb.debugger.GetSelectedTarget().EvaluateExpression(expr)
@@ -70,8 +75,10 @@ def is_instance_of(addr, typeinfo):
     return evaluate("(bool)IsInstance({:#x}, {:#x})".format(addr, typeinfo)).GetValue() == "true"
 
 def is_string_or_array(value):
+    start = time.monotonic()
     soa = evaluate("(int)IsInstance({0:#x}, {1:#x}) ? 1 : ((int)Konan_DebugIsArray({0:#x})) ? 2 : 0)".format(value.unsigned, _symbol_loaded_address('kclass:kotlin.String'))).unsigned
     log(lambda: "is_string_or_array:{:#x}:{}".format(value.unsigned, soa))
+    bench(start, lambda: f"is_string_or_array({value.unsigned:#x}) = {soa}")
     return soa
 
 def type_info(value):
@@ -96,29 +103,41 @@ ARRAY_TO_STRING_LIMIT = 10
 
 def kotlin_object_type_summary(lldb_val, internal_dict = {}):
     """Hook that is run by lldb to display a Kotlin object."""
+    start = time.monotonic()
     log(lambda: f"kotlin_object_type_summary({lldb_val.unsigned:#x}: {lldb_val.GetTypeName()})")
     fallback = lldb_val.GetValue()
     if lldb_val.GetTypeName() != "ObjHeader *":
         if lldb_val.GetValue() is None:
+            bench(start, lambda: "kotlin_object_type_summary:({:#x}) = NULL".format(lldb_val.unsigned))
             return NULL
-        return lldb_val.GetValueAsSigned()
+        bench(start, lambda: "kotlin_object_type_summary:({:#x}) = {}".format(lldb_val.unsigned, lldb_val.signed))
+        return lldb_val.signed
 
     if lldb_val.unsigned == 0:
+            bench(start, lambda: "kotlin_object_type_summary:({:#x}) = NULL".format(lldb_val.unsigned))
             return NULL
     tip = internal_dict["type_info"] if "type_info" in internal_dict.keys() else type_info(lldb_val)
 
     if not tip:
+        bench(start, lambda: "kotlin_object_type_summary:({0:#x}) = falback:{0:#x}".format(lldb_val.unsigned))
         return fallback
 
-    return select_provider(lldb_val, tip, internal_dict).to_string()
-
+    value = select_provider(lldb_val, tip, internal_dict)
+    bench(start, lambda: "kotlin_object_type_summary:({:#x}) = value:{:#x}".format(lldb_val.unsigned, value._valobj.unsigned))
+    start = time.monotonic()
+    str0 = str(value.to_string())
+    bench(start, lambda: "kotlin_object_type_summary:({:#x}) = str:'{}...'".format(lldb_val.unsigned, str0[:3]))
+    return str0
 
 def select_provider(lldb_val, tip, internal_dict):
+    start = time.monotonic()
     log(lambda : "select_provider: {:#x} name:{} tip:{:#x}".format(lldb_val.unsigned, lldb_val.name, tip))
     soa = is_string_or_array(lldb_val)
     log(lambda : "select_provider: {:#x} : soa: {}".format(lldb_val.unsigned, soa))
-    return __FACTORY['string'](lldb_val, tip, internal_dict) if soa == 1 else __FACTORY['array'](lldb_val, tip, internal_dict) if soa == 2 \
+    ret =   __FACTORY['string'](lldb_val, tip, internal_dict) if soa == 1 else __FACTORY['array'](lldb_val, tip, internal_dict) if soa == 2 \
         else __FACTORY['object'](lldb_val, tip, internal_dict)
+    bench(start, lambda: "select_provider({:#x})".format(lldb_val.unsigned))
+    return ret
 
 class KonanHelperProvider(lldb.SBSyntheticValueProvider):
     def __init__(self, valobj, amString, internal_dict = {}):
@@ -321,7 +340,6 @@ class KonanObjectSyntheticProvider(KonanHelperProvider):
             self._values[index] = result
         return result
 
-
     # TODO: fix cyclic structures stringification.
     def to_string(self):
         log(lambda:"to_string: {:#x}: _to_string_depth:{}".fromat(self._valobj.unsigned, self._to_string_depth))
@@ -349,7 +367,6 @@ class KonanArraySyntheticProvider(KonanHelperProvider):
         self._children = [MemberLayout(str(x), type, offset + x * size) for x in range(self.num_children())]
         self._values = [self._read_value(i) for i in range(min(ARRAY_TO_STRING_LIMIT, self._children_count))]
 
-
     def cap_children_count(self):
         return self._children_count
 
@@ -373,11 +390,13 @@ class KonanArraySyntheticProvider(KonanHelperProvider):
     def to_string(self):
         internal_dict = self._internal_dict.copy()
         internal_dict["to_string_depth"] = self._to_string_depth - 1
+        del internal_dict['provider']
         return [self._deref_or_obj_summary(i, internal_dict) for i in range(min(ARRAY_TO_STRING_LIMIT, self._children_count))]
 
 
 class KonanProxyTypeProvider:
     def __init__(self, valobj, internal_dict):
+        start = time.monotonic()
         log(lambda : "KonanProxyTypeProvider:{:#x}, name: {}".format(valobj.unsigned, valobj.name))
         tip = type_info(valobj)
 
@@ -385,6 +404,7 @@ class KonanProxyTypeProvider:
             return
         log(lambda : "KonanProxyTypeProvider:{:#x} tip: {:#x}".format(valobj.unsigned, tip))
         self._proxy = select_provider(valobj, tip, internal_dict)
+        bench(start, lambda: "KonanProxyTypeProvider({:#x})".format(valobj.unsigned))
         log(lambda: "KonanProxyTypeProvider:{:#x} _proxy: {}".format(valobj.unsigned, self._proxy.__class__.__name__))
         self.update()
 
