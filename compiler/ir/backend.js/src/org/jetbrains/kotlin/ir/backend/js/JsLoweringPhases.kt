@@ -341,12 +341,6 @@ private val rangeContainsLoweringPhase = makeBodyLoweringPhase(
     description = "[Optimization] Optimizes calls to contains() for ClosedRanges"
 )
 
-private val loopWithBreakingSwitchLowering = makeBodyLoweringPhase(
-    { LoopWithBreakingSwitchLowering() },
-    name = "LoopWithBreakingSwitchLowering",
-    description = "Transform statement-like-expression nodes into pure-statement to make it easily transform into JS",
-)
-
 private val forLoopsLoweringPhase = makeBodyLoweringPhase(
     ::ForLoopsLowering,
     name = "ForLoopsLowering",
@@ -718,7 +712,6 @@ val loweringList = listOf<Lowering>(
     interopCallableReferenceLoweringPhase,
     returnableBlockLoweringPhase,
     rangeContainsLoweringPhase,
-    loopWithBreakingSwitchLowering,
     forLoopsLoweringPhase,
     primitiveCompanionLoweringPhase,
     propertyAccessorInlinerLoweringPhase,
