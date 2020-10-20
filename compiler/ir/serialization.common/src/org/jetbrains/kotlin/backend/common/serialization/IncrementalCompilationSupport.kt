@@ -119,7 +119,7 @@ class CurrentModuleWithICDeserializer(
         symbolTable.forEachPublicSymbol {
             if (it.descriptor.isDirtyDescriptor()) { // public && non-deserialized should be dirty symbol
                 if (it !in knownBuiltIns) {
-                    dirtyDeclarations[it.signature] = it
+                    dirtyDeclarations[it.signature!!] = it
                 }
             }
         }

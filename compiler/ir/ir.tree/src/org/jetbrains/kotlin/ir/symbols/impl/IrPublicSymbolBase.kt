@@ -52,8 +52,6 @@ abstract class IrBindablePublicSymbolBase<out D : DeclarationDescriptor, B : IrS
         }
     }
 
-    override val isPublicApi: Boolean = true
-
     override val isBound: Boolean
         get() = _owner != null
 }

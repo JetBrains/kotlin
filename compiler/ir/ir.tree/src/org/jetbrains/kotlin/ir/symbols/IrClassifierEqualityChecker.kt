@@ -14,8 +14,8 @@ interface IrClassifierEqualityChecker {
 object FqNameEqualityChecker : IrClassifierEqualityChecker {
     override fun areEqual(left: IrClassifierSymbol, right: IrClassifierSymbol): Boolean =
         left === right ||
-                left.isPublicApi && right.isPublicApi && left.signature == right.signature
+                left.signature != null && left.signature == right.signature
 
     override fun getHashCode(symbol: IrClassifierSymbol): Int =
-        if (symbol.isPublicApi) symbol.signature.hashCode() else symbol.hashCode()
+        symbol.signature?.hashCode() ?: symbol.hashCode()
 }

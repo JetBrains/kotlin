@@ -86,7 +86,7 @@ private val IrConstructorCall.annotationClass
     get() = this.symbol.owner.constructedClass
 
 val IrClass.packageFqName: FqName?
-    get() = if (symbol.isPublicApi) symbol.signature.packageFqName() else parent.getPackageFragment()?.fqName
+    get() = symbol.signature?.packageFqName() ?: parent.getPackageFragment()?.fqName
 
 fun IrDeclarationWithName.hasEqualFqName(fqName: FqName): Boolean =
     name == fqName.shortName() && when (val parent = parent) {

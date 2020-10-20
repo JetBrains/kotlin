@@ -216,9 +216,9 @@ class SymbolTable(
         }
 
         override fun set(d: D, s: S) {
-            if (s.isPublicApi) {
-                idSigToSymbol[s.signature] = s
-            } else {
+            s.signature?.let {
+                idSigToSymbol[it] = s
+            } ?: run {
                 descriptorToSymbol[d] = s
             }
         }
@@ -264,10 +264,10 @@ class SymbolTable(
             fun getLocal(d: D) = descriptorToSymbol[d]
 
             operator fun set(d: D, s: S) {
-                if (s.isPublicApi) {
+                s.signature?.let {
                     require(d is TypeParameterDescriptor)
-                    idSigToSymbol[s.signature] = s
-                } else {
+                    idSigToSymbol[it] = s
+                } ?: run {
                     descriptorToSymbol[d] = s
                 }
             }
