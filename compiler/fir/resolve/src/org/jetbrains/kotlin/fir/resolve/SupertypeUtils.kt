@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.createSubstitutionForSupertype
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
@@ -97,22 +98,20 @@ fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
         val typeParameters = (declaration as? FirTypeParameterRefsOwner)?.typeParameters.orEmpty()
         val originalSubstitution = createSubstitution(typeParameters, this, session)
         val platformClass = session.platformClassMapper.getCorrespondingPlatformClass(declaration)
-        if (platformClass != null) {
+        val substitutor = if (platformClass != null) {
             // This kind of substitution is necessary when method which is mapped from Java (e.g. Java Map.forEach)
             // is called on an external type, like MyMap<String, String>,
             // to determine parameter types properly (e.g. String, String instead of K, V)
             val platformTypeParameters = platformClass.typeParameters
             val platformSubstitution = createSubstitution(platformTypeParameters, this, session)
-            FirClassSubstitutionScope(
-                session, useSiteMemberScope, originalSubstitution + platformSubstitution, skipPrivateMembers = true,
-                derivedClassId = derivedClassId
-            )
+            substitutorByMap(originalSubstitution + platformSubstitution)
         } else {
-            FirClassSubstitutionScope(
-                session, useSiteMemberScope, originalSubstitution, skipPrivateMembers = true,
-                derivedClassId = derivedClassId
-            )
+            substitutorByMap(originalSubstitution)
         }
+        FirClassSubstitutionScope(
+            session, useSiteMemberScope, substitutor,
+            skipPrivateMembers = true, derivedClassId = derivedClassId
+        )
     }
 }
 
