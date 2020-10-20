@@ -104,66 +104,6 @@ fun testCleanerDestroyWithChild() {
 }
 
 @Test
-fun testCleanerDestroyFrozenWithChild() {
-    val worker = Worker.start()
-
-    val called = AtomicBoolean(false);
-    var funBoxWeak: WeakReference<FunBox>? = null
-    var cleanerWeak: WeakReference<Cleaner>? = null
-    worker.execute(TransferMode.SAFE, {
-        val funBox = FunBox { called.value = true }.freeze()
-        funBoxWeak = WeakReference(funBox)
-        val cleaner = createCleaner(funBox) { it.call() }.freeze()
-        cleanerWeak = WeakReference(cleaner)
-        Pair(called, cleaner)
-    }) { (called, cleaner) ->
-        assertFalse(called.value)
-    }.result
-
-    GC.collect()
-    worker.requestTermination().result
-
-    tryWithTimeout(3) {
-        GC.collect()  // Collect local stack (from previous iteration)
-        performGCOnCleanerWorker()  // Collect cleaners stack
-
-        assertNull(cleanerWeak!!.value)
-        assertTrue(called.value)
-        assertNull(funBoxWeak!!.value)
-    }
-}
-
-@Test
-fun testCleanerDestroyFrozenInChild() {
-    val worker = Worker.start()
-
-    val called = AtomicBoolean(false);
-    var funBoxWeak: WeakReference<FunBox>? = null
-    var cleanerWeak: WeakReference<Cleaner>? = null
-    {
-        worker.execute(TransferMode.SAFE, {
-            val funBox = FunBox { called.value = true }.freeze()
-            funBoxWeak = WeakReference(funBox)
-            val cleaner = createCleaner(funBox) { it.call() }.freeze()
-            cleanerWeak = WeakReference(cleaner)
-            Pair(called, cleaner)
-        }) { (called, cleaner) ->
-            assertFalse(called.value)
-        }.result
-    }()
-
-    GC.collect()
-    worker.execute(TransferMode.SAFE, {}) { GC.collect() }.result
-    performGCOnCleanerWorker()
-
-    assertNull(cleanerWeak!!.value)
-    assertTrue(called.value)
-    assertNull(funBoxWeak!!.value)
-
-    worker.requestTermination().result
-}
-
-@Test
 fun testCleanerDestroyInMain() {
     val worker = Worker.start()
 
@@ -194,36 +134,6 @@ fun testCleanerDestroyInMain() {
 }
 
 @Test
-fun testCleanerDestroyFrozenInMain() {
-    val worker = Worker.start()
-
-    val called = AtomicBoolean(false);
-    var funBoxWeak: WeakReference<FunBox>? = null
-    var cleanerWeak: WeakReference<Cleaner>? = null
-    {
-        val result = worker.execute(TransferMode.SAFE, { called }) { called ->
-            val funBox = FunBox { called.value = true }.freeze()
-            val cleaner = createCleaner(funBox) { it.call() }.freeze()
-            Triple(cleaner, WeakReference(funBox), WeakReference(cleaner))
-        }.result
-        val cleaner = result.first
-        funBoxWeak = result.second
-        cleanerWeak = result.third
-        assertFalse(called.value)
-    }()
-
-    GC.collect()
-    worker.execute(TransferMode.SAFE, {}) { GC.collect() }.result
-    performGCOnCleanerWorker()
-
-    assertNull(cleanerWeak!!.value)
-    assertTrue(called.value)
-    assertNull(funBoxWeak!!.value)
-
-    worker.requestTermination().result
-}
-
-@Test
 fun testCleanerDestroyShared() {
     val worker = Worker.start()
 
@@ -234,7 +144,7 @@ fun testCleanerDestroyShared() {
     {
         val funBox = FunBox { called.value = true }.freeze()
         funBoxWeak = WeakReference(funBox)
-        val cleaner = createCleaner(funBox) { it.call() }.freeze()
+        val cleaner = createCleaner(funBox) { it.call() }
         cleanerWeak = WeakReference(cleaner)
         cleanerHolder.value = cleaner
         worker.execute(TransferMode.SAFE, { Pair(called, cleanerHolder) }) { (called, cleanerHolder) ->

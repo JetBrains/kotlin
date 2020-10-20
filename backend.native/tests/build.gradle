@@ -4295,6 +4295,7 @@ dynamicTest("interop_cleaners_main_thread") {
     cSource = "$projectDir/interop/cleaners/main_thread.cpp"
     clangTool = "clang++"
     goldValue = "42\n"
+    flags = ['-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
 dynamicTest("interop_cleaners_second_thread") {
@@ -4303,6 +4304,7 @@ dynamicTest("interop_cleaners_second_thread") {
     cSource = "$projectDir/interop/cleaners/second_thread.cpp"
     clangTool = "clang++"
     goldValue = "42\n"
+    flags = ['-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
 dynamicTest("interop_cleaners_leak") {
@@ -4311,6 +4313,7 @@ dynamicTest("interop_cleaners_leak") {
     cSource = "$projectDir/interop/cleaners/leak.cpp"
     clangTool = "clang++"
     goldValue = ""
+    flags = ['-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
 task library_mismatch(type: KonanDriverTest) {
