@@ -76,10 +76,11 @@ class DeclarationStubGenerator(
         if (symbol is IrFieldSymbol && (symbol.descriptor as? WrappedPropertyDescriptor)?.isBound() == true) {
             return generateStubBySymbol(symbol, symbol.descriptor)
         }
-        val signature = symbol.signature
-            ?: error("Symbol is not public API. Expected signature for symbol: ${symbol.descriptor}")
         val descriptor = if (symbol.descriptor is WrappedDeclarationDescriptor<*>)
-            findDescriptorBySignature(signature)
+            findDescriptorBySignature(
+                symbol.signature
+                    ?: error("Symbol is not public API. Expected signature for symbol: ${symbol.descriptor}")
+            )
         else
             symbol.descriptor
         if (descriptor == null) return null
