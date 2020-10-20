@@ -1,3 +1,4 @@
+// FIR_IGNORE
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.KtParameter
 // OPTIONS: usages
 package server
