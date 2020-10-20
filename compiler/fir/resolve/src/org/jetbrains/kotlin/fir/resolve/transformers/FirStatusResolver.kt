@@ -22,6 +22,19 @@ class FirStatusResolver(
     val session: FirSession,
     val scopeSession: ScopeSession
 ) {
+    companion object {
+        private val NOT_INHERITED_MODIFIERS: List<FirDeclarationStatusImpl.Modifier> = listOf(
+            FirDeclarationStatusImpl.Modifier.ACTUAL,
+            FirDeclarationStatusImpl.Modifier.EXPECT,
+            FirDeclarationStatusImpl.Modifier.CONST,
+            FirDeclarationStatusImpl.Modifier.LATEINIT,
+            FirDeclarationStatusImpl.Modifier.TAILREC,
+        )
+
+        private val MODIFIERS_FROM_OVERRIDDEN: List<FirDeclarationStatusImpl.Modifier> =
+            FirDeclarationStatusImpl.Modifier.values().toList() - NOT_INHERITED_MODIFIERS
+    }
+
     fun resolveStatus(declaration: FirDeclaration, containingClass: FirClass<*>?, isLocal: Boolean): FirResolvedDeclarationStatus {
         return when (declaration) {
             is FirProperty -> resolveStatus(declaration, containingClass, isLocal)
@@ -137,7 +150,7 @@ class FirStatusResolver(
             }
         } ?: resolveModality(declaration, containingClass)
         if (overriddenStatuses.isNotEmpty()) {
-            for (modifier in FirDeclarationStatusImpl.Modifier.values()) {
+            for (modifier in MODIFIERS_FROM_OVERRIDDEN) {
                 status[modifier] = status[modifier] || overriddenStatuses.fold(false) { acc, overriddenStatus ->
                     acc || overriddenStatus[modifier]
                 }
