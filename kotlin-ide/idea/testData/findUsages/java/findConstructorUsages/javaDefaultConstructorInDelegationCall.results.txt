@@ -1,4 +1,4 @@
 New instance creation 16 J()
 Supertype 11 class B: J() {
-Unclassified usage 2 constructor(i: Int): super() {
-Unclassified usage 6 constructor() {
+Unclassified 2 constructor(i: Int): super() {
+Unclassified 6 constructor() {

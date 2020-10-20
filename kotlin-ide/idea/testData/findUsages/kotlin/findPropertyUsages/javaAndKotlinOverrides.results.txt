@@ -1,4 +1,4 @@
-[javaAndKotlinOverrides.0.kt] Unclassified usage 25 override var foo: String = ""
-[javaAndKotlinOverrides.0.kt] Unclassified usage 8 override var foo: String
-[javaAndKotlinOverrides.1.java] Unclassified usage 12 public void setFoo(String s) {
-[javaAndKotlinOverrides.1.java] Unclassified usage 7 public String getFoo() {
+[javaAndKotlinOverrides.0.kt] Unclassified 25 override var foo: String = ""
+[javaAndKotlinOverrides.0.kt] Unclassified 8 override var foo: String
+[javaAndKotlinOverrides.1.java] Unclassified 12 public void setFoo(String s) {
+[javaAndKotlinOverrides.1.java] Unclassified 7 public String getFoo() {

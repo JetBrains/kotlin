@@ -1,1 +1,1 @@
-Unclassified usage 2 override fun baz(clazz: Foo2.X<*>?) = Unit
+Unclassified 2 override fun baz(clazz: Foo2.X<*>?) = Unit

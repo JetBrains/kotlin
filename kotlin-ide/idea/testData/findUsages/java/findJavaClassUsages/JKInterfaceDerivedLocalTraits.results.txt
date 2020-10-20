@@ -1,2 +1,2 @@
-Unclassified usage 4 interface T: A
-Unclassified usage 7 public interface Y: X
+Unclassified 4 interface T: A
+Unclassified 7 public interface Y: X

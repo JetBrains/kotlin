@@ -1,4 +1,4 @@
 New instance creation 15 A(1)
 Supertype 11 class C(): A(1)
-Unclassified usage 4 constructor(): this(1)
-Unclassified usage 8 constructor(n: Int): super(n)
+Unclassified 4 constructor(): this(1)
+Unclassified 8 constructor(n: Int): super(n)

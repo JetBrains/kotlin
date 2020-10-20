@@ -1,2 +1,2 @@
-Unclassified usage 6 interface T: A
-Unclassified usage 9 interface U: T
+Unclassified 6 interface T: A
+Unclassified 9 interface U: T

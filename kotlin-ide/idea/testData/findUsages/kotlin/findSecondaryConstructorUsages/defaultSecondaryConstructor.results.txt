@@ -1,8 +1,8 @@
 [defaultSecondaryConstructor.0.kt] New instance creation 28 B()
 [defaultSecondaryConstructor.0.kt] Supertype 23 class C : B() {
-[defaultSecondaryConstructor.0.kt] Unclassified usage 14 constructor(a: Int) : super() {
-[defaultSecondaryConstructor.0.kt] Unclassified usage 18 constructor() {
-[defaultSecondaryConstructor.0.kt] Unclassified usage 8 constructor(a: Int): this() {
+[defaultSecondaryConstructor.0.kt] Unclassified 14 constructor(a: Int) : super() {
+[defaultSecondaryConstructor.0.kt] Unclassified 18 constructor() {
+[defaultSecondaryConstructor.0.kt] Unclassified 8 constructor(a: Int): this() {
 [defaultSecondaryConstructor.1.java] New instance creation 11 new B();
-[defaultSecondaryConstructor.1.java] Unclassified usage 3 super();
-[defaultSecondaryConstructor.1.java] Unclassified usage 6 public J() {
+[defaultSecondaryConstructor.1.java] Unclassified 3 super();
+[defaultSecondaryConstructor.1.java] Unclassified 6 public J() {

@@ -6,11 +6,11 @@
 [javaPropertyUsagesK.0.kt] Value write 20 AA().p = 1
 [javaPropertyUsagesK.0.kt] Value write 23 J().p = 1
 [javaPropertyUsagesK.0.kt] Value write 26 B().p = 1
-[javaPropertyUsagesK.1.java] Unclassified usage 15 new A().getP();
-[javaPropertyUsagesK.1.java] Unclassified usage 16 new A().setP(1);
-[javaPropertyUsagesK.1.java] Unclassified usage 18 new AA().getP();
-[javaPropertyUsagesK.1.java] Unclassified usage 19 new AA().setP(1);
-[javaPropertyUsagesK.1.java] Unclassified usage 21 new J().getP();
-[javaPropertyUsagesK.1.java] Unclassified usage 22 new J().setP(1);
-[javaPropertyUsagesK.1.java] Unclassified usage 24 new B().getP();
-[javaPropertyUsagesK.1.java] Unclassified usage 25 new B().setP(1);
+[javaPropertyUsagesK.1.java] Unclassified 15 new A().getP();
+[javaPropertyUsagesK.1.java] Unclassified 16 new A().setP(1);
+[javaPropertyUsagesK.1.java] Unclassified 18 new AA().getP();
+[javaPropertyUsagesK.1.java] Unclassified 19 new AA().setP(1);
+[javaPropertyUsagesK.1.java] Unclassified 21 new J().getP();
+[javaPropertyUsagesK.1.java] Unclassified 22 new J().setP(1);
+[javaPropertyUsagesK.1.java] Unclassified 24 new B().getP();
+[javaPropertyUsagesK.1.java] Unclassified 25 new B().setP(1);

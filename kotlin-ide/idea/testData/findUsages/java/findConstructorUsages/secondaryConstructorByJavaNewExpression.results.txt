@@ -1,6 +1,6 @@
 [secondaryConstructorByJavaNewExpression.0.java] New instance creation 10 new B("");
-[secondaryConstructorByJavaNewExpression.0.java] Unclassified usage 6 super("");
+[secondaryConstructorByJavaNewExpression.0.java] Unclassified 6 super("");
 [secondaryConstructorByJavaNewExpression.1.kt] New instance creation 22 B("")
 [secondaryConstructorByJavaNewExpression.1.kt] Supertype 17 class C : B("") {
-[secondaryConstructorByJavaNewExpression.1.kt] Unclassified usage 12 constructor(a: Int) : super("") {
-[secondaryConstructorByJavaNewExpression.1.kt] Unclassified usage 2 constructor(): this("") {
+[secondaryConstructorByJavaNewExpression.1.kt] Unclassified 12 constructor(a: Int) : super("") {
+[secondaryConstructorByJavaNewExpression.1.kt] Unclassified 2 constructor(): this("") {

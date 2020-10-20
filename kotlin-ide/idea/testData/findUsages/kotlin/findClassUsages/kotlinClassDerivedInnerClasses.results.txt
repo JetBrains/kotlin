@@ -1,2 +1,2 @@
-Unclassified usage 17 class U: Z {
-Unclassified usage 4 open class B: A() {
+Unclassified 17 class U: Z {
+Unclassified 4 open class B: A() {

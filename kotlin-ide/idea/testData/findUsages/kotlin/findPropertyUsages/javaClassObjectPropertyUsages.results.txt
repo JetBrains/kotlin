@@ -1,4 +1,4 @@
-Unclassified usage 10 System.out.println("a.foo = " + A.foo);
-Unclassified usage 7 A.Companion.setFoo("a");
-Unclassified usage 8 A.foo = "a";
-Unclassified usage 9 System.out.println("a.foo = " + A.Companion.getFoo());
+Unclassified 10 System.out.println("a.foo = " + A.foo);
+Unclassified 7 A.Companion.setFoo("a");
+Unclassified 8 A.foo = "a";
+Unclassified 9 System.out.println("a.foo = " + A.Companion.getFoo());
