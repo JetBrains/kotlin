@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -474,8 +474,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             val dependsOnReverseGraph: MutableMap<String, MutableSet<KotlinSourceSet>> = HashMap()
             mppModel.targets.forEach { target ->
                 target.compilations.forEach { compilation ->
-                    val testRunTasks = target.testRunTasks
-                        .filter { task -> task.compilationName == compilation.name }
+                    val testRunTasks = target.testTasksFor(compilation)
                         .map {
                             ExternalSystemTestRunTask(
                                 it.taskName,
@@ -1098,6 +1097,13 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
 
         private fun delegateToAndroidPlugin(kotlinSourceSet: KotlinSourceSet): Boolean =
             androidPluginPresent && kotlinSourceSet.actualPlatforms.platforms.singleOrNull() == KotlinPlatform.ANDROID
+    }
+}
+
+private fun KotlinTarget.testTasksFor(compilation: KotlinCompilation) = testRunTasks.filter { task ->
+    when (name) {
+        "android" -> task.taskName.endsWith(compilation.name, true)
+        else -> task.compilationName == compilation.name
     }
 }
 
