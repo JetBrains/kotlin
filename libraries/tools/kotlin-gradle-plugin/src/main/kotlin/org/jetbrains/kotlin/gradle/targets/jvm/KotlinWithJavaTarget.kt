@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.file.Directory
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.Provider
 import org.gradle.jvm.tasks.Jar
@@ -52,6 +53,8 @@ open class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions>(
             val jarTask = project.tasks.getByName(artifactsTaskName) as Jar
             it.file("${sanitizeFileName(jarTask.archiveFileName.get())}-classes.txt").asFile
         }
+
+    internal val buildDir: Provider<Directory> = layout.buildDirectory.dir(KOTLIN_BUILD_DIR_NAME)
 }
 
 private fun sanitizeFileName(candidate: String): String = candidate.filter { it.isLetterOrDigit() }

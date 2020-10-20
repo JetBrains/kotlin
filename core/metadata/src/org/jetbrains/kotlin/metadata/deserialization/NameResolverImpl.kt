@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.QualifiedName
 import java.util.*
 
 class NameResolverImpl(
-    private val strings: ProtoBuf.StringTable,
-    private val qualifiedNames: ProtoBuf.QualifiedNameTable
+    val strings: ProtoBuf.StringTable,
+    val qualifiedNames: ProtoBuf.QualifiedNameTable
 ) : NameResolver {
     override fun getString(index: Int): String = strings.getString(index)
 

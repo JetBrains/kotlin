@@ -177,6 +177,9 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         @JvmStatic
         protected fun buildHistoryFile(cacheDir: File): File = File(cacheDir, "build-history.bin")
 
+        @JvmStatic
+        protected fun abiSnapshotFile(cacheDir: File): File = File(cacheDir, IncrementalCompilerRunner.ABI_SNAPSHOT_FILE_NAME)
+
         private const val ARGUMENTS_FILE_NAME = "args.txt"
 
         private fun parseAdditionalArgs(testDir: File): List<String> {

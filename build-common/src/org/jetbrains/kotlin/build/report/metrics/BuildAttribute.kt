@@ -17,6 +17,7 @@ enum class BuildAttributeKind : Serializable {
 
 enum class BuildAttribute(val kind: BuildAttributeKind) : Serializable {
     NO_BUILD_HISTORY(BuildAttributeKind.REBUILD_REASON),
+    NO_ABI_SNAPSHOT(BuildAttributeKind.REBUILD_REASON),
     CACHE_CORRUPTION(BuildAttributeKind.REBUILD_REASON),
     UNKNOWN_CHANGES_IN_GRADLE_INPUTS(BuildAttributeKind.REBUILD_REASON),
     JAVA_CHANGE_UNTRACKED_FILE_IS_REMOVED(BuildAttributeKind.REBUILD_REASON),

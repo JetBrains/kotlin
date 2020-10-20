@@ -255,22 +255,23 @@ fun withSubtypes(
     typeFqName: FqName,
     caches: Iterable<IncrementalCacheCommon>
 ): Set<FqName> {
-    val types = LinkedHashSet(listOf(typeFqName))
-    val subtypes = hashSetOf<FqName>()
+    val typesToProccess = LinkedHashSet(listOf(typeFqName))
+    val proccessedTypes = hashSetOf<FqName>()
 
-    while (types.isNotEmpty()) {
-        val iterator = types.iterator()
+
+    while (typesToProccess.isNotEmpty()) {
+        val iterator = typesToProccess.iterator()
         val unprocessedType = iterator.next()
         iterator.remove()
 
         caches.asSequence()
             .flatMap { it.getSubtypesOf(unprocessedType) }
-            .filter { it !in subtypes }
-            .forEach { types.add(it) }
+            .filter { it !in proccessedTypes }
+            .forEach { typesToProccess.add(it) }
 
-        subtypes.add(unprocessedType)
+        proccessedTypes.add(unprocessedType)
     }
 
-    return subtypes
+    return proccessedTypes
 }
 

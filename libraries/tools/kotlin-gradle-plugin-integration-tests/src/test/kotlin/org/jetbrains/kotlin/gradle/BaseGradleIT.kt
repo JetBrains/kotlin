@@ -251,6 +251,7 @@ abstract class BaseGradleIT {
         val useFir: Boolean = false,
         val customEnvironmentVariables: Map<String, String> = mapOf(),
         val dryRun: Boolean = false,
+        val abiSnapshot: Boolean = false,
     )
 
     enum class ConfigurationCacheProblems {
@@ -952,6 +953,9 @@ Finished executing task ':$taskName'|
 
             if (options.dryRun) {
                 add("--dry-run")
+            }
+            if (options.abiSnapshot) {
+                add("-Dkotlin.incremental.classpath.snapshot.enabled=true")
             }
 
             add("-Dorg.gradle.unsafe.configuration-cache=${options.configurationCache}")

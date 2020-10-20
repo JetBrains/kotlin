@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.isParentOf
 import org.jetbrains.kotlin.gradle.utils.pathsAsStringRelativeTo
 import org.jetbrains.kotlin.incremental.ChangedFiles
+import org.jetbrains.kotlin.incremental.IncrementalCompilerRunner
 import org.jetbrains.kotlin.library.impl.isKotlinLibrary
 import org.jetbrains.kotlin.utils.JsLibraryUtils
 import java.io.File
@@ -275,6 +276,16 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
     internal val moduleName: Property<String> = objects.property(String::class.java)
 
     @get:Internal
+    val abiSnapshotFile
+        get() = taskBuildDirectory.file(IncrementalCompilerRunner.ABI_SNAPSHOT_FILE_NAME)
+
+    @get:Input
+    val abiSnapshotRelativePath: Property<String> = objects.property(String::class.java).value(
+        //TODO update to support any jar changes
+        "$name/${IncrementalCompilerRunner.ABI_SNAPSHOT_FILE_NAME}"
+    )
+
+    @get:Internal
     internal val friendSourceSets = objects.listProperty(String::class.java)
 
     @get:Internal // takes part in the compiler arguments
@@ -300,34 +311,36 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
 
     @TaskAction
     fun execute(inputs: IncrementalTaskInputs) {
-        systemPropertiesService.get().startIntercept()
-        CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value = "true"
+        metrics.measure(BuildTime.GRADLE_TASK_ACTION) {
+            systemPropertiesService.get().startIntercept()
+            CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value = "true"
 
-        // If task throws exception, but its outputs are changed during execution,
-        // then Gradle forces next build to be non-incremental (see Gradle's DefaultTaskArtifactStateRepository#persistNewOutputs)
-        // To prevent this, we backup outputs before incremental build and restore when exception is thrown
-        val outputsBackup: TaskOutputsBackup? =
-            if (isIncrementalCompilationEnabled() && inputs.isIncremental)
-                metrics.measure(BuildTime.BACKUP_OUTPUT) {
-                    TaskOutputsBackup(allOutputFiles())
-                }
-            else null
+            // If task throws exception, but its outputs are changed during execution,
+            // then Gradle forces next build to be non-incremental (see Gradle's DefaultTaskArtifactStateRepository#persistNewOutputs)
+            // To prevent this, we backup outputs before incremental build and restore when exception is thrown
+            val outputsBackup: TaskOutputsBackup? =
+                if (isIncrementalCompilationEnabled() && inputs.isIncremental)
+                    metrics.measure(BuildTime.BACKUP_OUTPUT) {
+                        TaskOutputsBackup(allOutputFiles())
+                    }
+                else null
 
-        if (!isIncrementalCompilationEnabled()) {
-            clearLocalState("IC is disabled")
-        } else if (!inputs.isIncremental) {
-            clearLocalState("Task cannot run incrementally")
-        }
-
-        try {
-            executeImpl(inputs)
-        } catch (t: Throwable) {
-            if (outputsBackup != null) {
-                metrics.measure(BuildTime.RESTORE_OUTPUT_FROM_BACKUP) {
-                    outputsBackup.restoreOutputs()
-                }
+            if (!isIncrementalCompilationEnabled()) {
+                clearLocalState("IC is disabled")
+            } else if (!inputs.isIncremental) {
+                clearLocalState("Task cannot run incrementally")
             }
-            throw t
+
+            try {
+                executeImpl(inputs)
+            } catch (t: Throwable) {
+                if (outputsBackup != null) {
+                    metrics.measure(BuildTime.RESTORE_OUTPUT_FROM_BACKUP) {
+                        outputsBackup.restoreOutputs()
+                    }
+                }
+                throw t
+            }
         }
     }
 

@@ -190,6 +190,30 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
     }
 
     @Test
+    fun testAddNewMethodToLib() {
+        doTest(
+            options = defaultBuildOptions().copy(abiSnapshot = true),
+            { project ->
+                val aKt = project.projectDir.getFileByName("A.kt")
+                aKt.writeText(
+                    """
+package bar
+
+open class A {
+    fun a() {}
+    fun newA() {}
+}
+"""
+                )
+            },
+            //TODO for abi-snapshot "BB.kt" should not be recompiled
+            expectedAffectedFileNames = listOf(
+                "A.kt", "B.kt", "AA.kt", "BB.kt", "AAA.kt"
+            )
+        )
+    }
+
+    @Test
     fun testLibClassBecameFinal() {
         // TODO: fix fir IC and remove
         if (defaultBuildOptions().useFir) return
@@ -229,6 +253,8 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
         project.projectFile("BarDummy.kt").modify {
             it.replace("class BarDummy", "open class BarDummy")
         }
+
+        //don't need to recompile app classes because lib's proto stays the same
         project.build("build") {
             assertSuccessful()
             val affectedSources = project.projectDir.allKotlinFiles()
@@ -244,8 +270,66 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
         }
     }
 
+    @Test
+    fun testCleanBuildLibForAbiSnapshot() {
+        val options = defaultBuildOptions().copy(abiSnapshot = true)
+        val project = defaultProject()
+
+        project.build("build", options = options) {
+            assertSuccessful()
+        }
+
+        project.build(":lib:clean", options = options) {
+            assertSuccessful()
+        }
+
+        // Change file so Gradle won't skip :app:compile
+        project.projectFile("BarDummy.kt").modify {
+            it.replace("class BarDummy", "open class BarDummy")
+        }
+
+        //don't need to recompile app classes because lib's proto stays the same
+        project.build("build", options = options) {
+            val affectedSources = project.projectDir.allKotlinFiles()
+            val relativePaths = project.relativize(affectedSources)
+            assertCompiledKotlinSources(relativePaths)
+        }
+
+        val aaKt = project.projectFile("AA.kt")
+        aaKt.modify { "$it " }
+        project.build("build", options = options) {
+            assertSuccessful()
+            assertCompiledKotlinSources(project.relativize(aaKt))
+        }
+    }
+
     protected abstract val additionalLibDependencies: String
     protected abstract val compileKotlinTaskName: String
+
+    @Test
+    fun testAddMethodToLibForAbiSnapshot() {
+        val project = defaultProject()
+        val options = defaultBuildOptions().copy(abiSnapshot = true)
+
+        project.build("build", options = options) {
+            assertSuccessful()
+        }
+
+        // Change file so Gradle won't skip :app:compile
+        project.projectFile("BarDummy.kt").modify {
+            it.replace("class BarDummy", "open class BarDummy")
+        }
+
+        val barDummyClassFile = project.projectFile("BarDummy.kt")
+        barDummyClassFile.modify { "$it { fun m() = 42}" }
+
+        project.build("build", options = options) {
+            assertSuccessful()
+            val relativePaths = project.relativize(barDummyClassFile)
+            assertCompiledKotlinSources(relativePaths)
+        }
+
+    }
 
     @Test
     fun testAddDependencyToLib() {

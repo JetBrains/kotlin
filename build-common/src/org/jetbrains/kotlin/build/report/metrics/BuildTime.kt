@@ -9,6 +9,7 @@ import java.io.Serializable
 
 @Suppress("Reformat")
 enum class BuildTime(val parent: BuildTime? = null) : Serializable {
+    GRADLE_TASK_ACTION,
     GRADLE_TASK,
         CLEAR_OUTPUT(GRADLE_TASK),
         BACKUP_OUTPUT(GRADLE_TASK),
@@ -20,6 +21,10 @@ enum class BuildTime(val parent: BuildTime? = null) : Serializable {
             NON_INCREMENTAL_COMPILATION_OUT_OF_PROCESS(RUN_COMPILER),
             NON_INCREMENTAL_COMPILATION_DAEMON(RUN_COMPILER),
             INCREMENTAL_COMPILATION(RUN_COMPILER),
+                STORE_BUILD_INFO(INCREMENTAL_COMPILATION),
+                JAR_SNAPSHOT(INCREMENTAL_COMPILATION),
+                    SET_UP_ABI_SNAPSHOTS(JAR_SNAPSHOT),
+                    IC_ANALYZE_JAR_FILES(JAR_SNAPSHOT),
                 IC_CALCULATE_INITIAL_DIRTY_SET(INCREMENTAL_COMPILATION),
                     IC_ANALYZE_CHANGES_IN_DEPENDENCIES(IC_CALCULATE_INITIAL_DIRTY_SET),
                         IC_FIND_HISTORY_FILES(IC_ANALYZE_CHANGES_IN_DEPENDENCIES),

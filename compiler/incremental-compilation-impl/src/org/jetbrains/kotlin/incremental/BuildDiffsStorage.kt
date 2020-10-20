@@ -95,6 +95,23 @@ data class BuildDiffsStorage(val buildDiffs: List<BuildDifference>) {
         }
 
         private fun ObjectInputStream.readDirtyData(): DirtyData {
+            val lookupSymbols = readLookups()
+            val dirtyClassesFqNames = readFqNames()
+
+            return DirtyData(lookupSymbols, dirtyClassesFqNames)
+        }
+
+        fun ObjectInputStream.readFqNames(): ArrayList<FqName> {
+            val dirtyClassesSize = readInt()
+            val dirtyClassesFqNames = ArrayList<FqName>(dirtyClassesSize)
+            repeat(dirtyClassesSize) {
+                val fqNameString = readUTF()
+                dirtyClassesFqNames.add(FqName(fqNameString))
+            }
+            return dirtyClassesFqNames
+        }
+
+        fun ObjectInputStream.readLookups(): ArrayList<LookupSymbol> {
             val lookupSymbolSize = readInt()
             val lookupSymbols = ArrayList<LookupSymbol>(lookupSymbolSize)
             repeat(lookupSymbolSize) {
@@ -102,29 +119,26 @@ data class BuildDiffsStorage(val buildDiffs: List<BuildDifference>) {
                 val scope = readUTF()
                 lookupSymbols.add(LookupSymbol(name = name, scope = scope))
             }
-
-            val dirtyClassesSize = readInt()
-            val dirtyClassesFqNames = ArrayList<FqName>(dirtyClassesSize)
-            repeat(dirtyClassesSize) {
-                val fqNameString = readUTF()
-                dirtyClassesFqNames.add(FqName(fqNameString))
-            }
-
-            return DirtyData(lookupSymbols, dirtyClassesFqNames)
+            return lookupSymbols
         }
 
         private fun ObjectOutputStream.writeDirtyData(dirtyData: DirtyData) {
-            val lookupSymbols = dirtyData.dirtyLookupSymbols
+            writeLookups(dirtyData.dirtyLookupSymbols)
+            writeFqNames(dirtyData.dirtyClassesFqNames)
+        }
+
+        fun ObjectOutputStream.writeFqNames(dirtyClassesFqNames: Collection<FqName> ) {
+            writeInt(dirtyClassesFqNames.size)
+            for (fqName in dirtyClassesFqNames) {
+                writeUTF(fqName.asString())
+            }
+        }
+
+        fun ObjectOutputStream.writeLookups(lookupSymbols: Collection<LookupSymbol>) {
             writeInt(lookupSymbols.size)
             for ((name, scope) in lookupSymbols) {
                 writeUTF(name)
                 writeUTF(scope)
-            }
-
-            val dirtyClassesFqNames = dirtyData.dirtyClassesFqNames
-            writeInt(dirtyClassesFqNames.size)
-            for (fqName in dirtyClassesFqNames) {
-                writeUTF(fqName.asString())
             }
         }
 

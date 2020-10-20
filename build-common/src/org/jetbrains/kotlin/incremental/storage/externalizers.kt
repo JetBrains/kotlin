@@ -21,23 +21,49 @@ import com.intellij.util.io.DataExternalizer
 import com.intellij.util.io.EnumeratorStringDescriptor
 import com.intellij.util.io.IOUtil
 import com.intellij.util.io.KeyDescriptor
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
+import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import java.io.DataInput
 import java.io.DataInputStream
 import java.io.DataOutput
 import java.io.File
 import java.util.*
 
+/**
+ * Storage versioning:
+ * 0 - only name and value hashes are saved
+ * 1 - name and scope are saved
+ */
 object LookupSymbolKeyDescriptor : KeyDescriptor<LookupSymbolKey> {
     override fun read(input: DataInput): LookupSymbolKey {
-        val first = input.readInt()
-        val second = input.readInt()
-
-        return LookupSymbolKey(first, second)
+        val version = input.readByte()
+        return when (version.toInt()) {
+            0 -> {
+                val name = input.readUTF()
+                val scope = input.readUTF()
+                LookupSymbolKey(name.hashCode(), scope.hashCode(), name, scope)
+            }
+            1 -> {
+                val first = input.readInt()
+                val second = input.readInt()
+                LookupSymbolKey(first, second, "", "")
+            }
+            else -> throw RuntimeException("Unknown version of LookupSymbolKeyDescriptor=${version}")
+        }
     }
 
+    private val storeFullFqName = CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_CLASSPATH_SHAPSHOTS.value.toBooleanLenient() ?: false
+
     override fun save(output: DataOutput, value: LookupSymbolKey) {
-        output.writeInt(value.nameHash)
-        output.writeInt(value.scopeHash)
+        if (storeFullFqName) {
+            output.writeByte(0)
+            output.writeUTF(value.name)
+            output.writeUTF(value.scope)
+        } else {
+            output.writeByte(1)
+            output.writeInt(value.nameHash)
+            output.writeInt(value.scopeHash)
+        }
     }
 
     override fun getHashCode(value: LookupSymbolKey): Int = value.hashCode()
