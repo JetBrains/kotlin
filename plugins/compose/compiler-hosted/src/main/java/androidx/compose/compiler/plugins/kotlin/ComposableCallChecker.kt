@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
-import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -233,7 +232,7 @@ open class ComposableCallChecker :
                         expression.parent as KtExpression
                     else expression
                 c.trace.report(
-                    Errors.TYPE_MISMATCH.on(
+                    ComposeErrors.TYPE_MISMATCH.on(
                         reportOn,
                         expectedType,
                         expressionTypeWithSmartCast
@@ -263,7 +262,7 @@ open class ComposableCallChecker :
                         expression.parent as KtExpression
                     else expression
                 c.trace.report(
-                    Errors.TYPE_MISMATCH.on(
+                    ComposeErrors.TYPE_MISMATCH.on(
                         reportOn,
                         expectedType,
                         expressionTypeWithSmartCast

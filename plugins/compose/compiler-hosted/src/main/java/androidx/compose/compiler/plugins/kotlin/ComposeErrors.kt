@@ -84,6 +84,15 @@ object ComposeErrors {
             Severity.ERROR
         )
 
+    // This error matches Kotlin's TYPE_MISMATCH error, except that it renders the annotations
+    // with the types. This is important to use for type mismatch errors where the only
+    // difference is whether or not it is annotated with @Composable or not.
+    @JvmField
+    val TYPE_MISMATCH =
+        DiagnosticFactory2.create<KtExpression, KotlinType, KotlinType>(
+            Severity.ERROR
+        )
+
     init {
         Errors.Initializer.initializeFactoryNamesAndDefaultErrorMessages(
             ComposeErrors::class.java,
