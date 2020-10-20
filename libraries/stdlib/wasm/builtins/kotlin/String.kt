@@ -51,11 +51,11 @@ public class String constructor(public val string: String) : Comparable<String>,
     public override fun hashCode(): Int = 10
 }
 
-@WasmImport("runtime", "String_plus")
+@JsFun("(it, other) => it + String(other)")
 private fun stringPlusImpl(it: String, other: String): String =
     implementedAsIntrinsic
 
-@WasmImport("runtime", "String_getLength")
+@JsFun("(it) => it.length")
 private fun stringLengthImpl(it: String): Int =
     implementedAsIntrinsic
 

@@ -166,4 +166,9 @@ class WasmModuleCodegenContextImpl(
         val fieldId = metadata.fields.indexOf(field)
         return WasmSymbol(fieldId)
     }
+
+    override fun addJsFun(importName: String, jsCode: String) {
+        wasmFragment.jsFuns +=
+            WasmCompiledModuleFragment.JsCodeSnippet(importName = importName, jsCode = jsCode)
+    }
 }

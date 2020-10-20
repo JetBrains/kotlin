@@ -72,11 +72,11 @@ internal fun JsArray_set_WasmExternRef(array: WasmExternRef, index: Int, value: 
 internal fun JsArray_getSize(array: WasmExternRef): Int =
     implementedAsIntrinsic
 
-@WasmImport("runtime", "identity")
+@JsFun("(x) => x")
 internal fun Any?.toWasmExternRef(): WasmExternRef =
     implementedAsIntrinsic
 
-@WasmImport("runtime", "identity")
+@JsFun("(x) => x")
 internal fun WasmExternRefToAny(ref: WasmExternRef): Any? =
     implementedAsIntrinsic
 

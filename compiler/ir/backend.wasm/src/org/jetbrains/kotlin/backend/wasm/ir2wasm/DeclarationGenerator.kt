@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.common.ir.isOverridableOrOverrides
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.lower.wasmSignature
 import org.jetbrains.kotlin.backend.wasm.utils.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -35,12 +36,23 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
         // Type aliases are not material
     }
 
+    private fun jsCodeName(declaration: IrFunction): String {
+        return declaration.fqNameWhenAvailable!!.asString() + "_" + (declaration as IrSimpleFunction).wasmSignature(irBuiltIns).hashCode()
+    }
+
     override fun visitFunction(declaration: IrFunction) {
         // Inline class constructors are currently empty
         if (declaration is IrConstructor && backendContext.inlineClassesUtils.isClassInlineLike(declaration.parentAsClass))
             return
 
-        val importedName = declaration.getWasmImportAnnotation()
+        val jsCode = declaration.getJsFunAnnotation()
+        val importedName = if (jsCode != null) {
+            val jsCodeName = jsCodeName(declaration)
+            context.addJsFun(jsCodeName, jsCode)
+            WasmImportPair("js_code", jsCodeName(declaration))
+        } else {
+            declaration.getWasmImportAnnotation()
+        }
 
         val isIntrinsic = declaration.hasWasmReinterpretAnnotation() || declaration.getWasmOpAnnotation() != null
         if (isIntrinsic) {

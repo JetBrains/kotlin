@@ -46,7 +46,10 @@ class WasmCompiledModuleFragment {
         ReferencableAndDefinable<IrClassSymbol, ConstantDataElement>()
     val exports = mutableListOf<WasmExport<*>>()
 
-    //
+    class JsCodeSnippet(val importName: String, val jsCode: String)
+
+    val jsFuns = mutableListOf<JsCodeSnippet>()
+
     var startFunction: WasmFunction? = null
 
     open class ReferencableElements<Ir, Wasm : Any> {
