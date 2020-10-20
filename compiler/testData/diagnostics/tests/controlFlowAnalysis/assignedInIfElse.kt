@@ -14,4 +14,8 @@ fun foo(arg: Boolean) {
             x.hashCode()
         }
     }
+
+    fun local(): Int {
+        return x.hashCode()
+    }
 }

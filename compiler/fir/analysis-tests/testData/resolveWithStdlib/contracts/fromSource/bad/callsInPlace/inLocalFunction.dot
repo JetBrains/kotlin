@@ -31,8 +31,7 @@ digraph inLocalFunction_kt {
     }
     0 -> {1};
     1 -> {2};
-    2 -> {3};
-    2 -> {7} [color=red];
+    2 -> {7 3};
     2 -> {7} [style=dashed];
     3 -> {4};
     4 -> {5};
