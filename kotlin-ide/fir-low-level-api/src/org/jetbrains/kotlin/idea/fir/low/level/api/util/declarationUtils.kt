@@ -9,10 +9,12 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.util.classIdIfNonLocal
+import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
@@ -22,30 +24,53 @@ internal fun KtDeclaration.findSourceNonLocalFirDeclaration(
     firSymbolProvider: FirSymbolProvider,
     moduleFileCache: ModuleFileCache
 ): FirDeclaration {
-    require(!KtPsiUtil.isLocal(this))
-    return when {
+    //TODO test what way faster
+    findSourceNonLocalFirDeclarationByProvider(firFileBuilder, firSymbolProvider, moduleFileCache)?.let { return it }
+    findSourceOfNonLocalFirDeclarationByTraversingWholeTree(firFileBuilder, moduleFileCache)?.let { return it }
+    error("No fir element was found for\n${getElementTextInContext()}")
+}
+
+private fun KtDeclaration.findSourceOfNonLocalFirDeclarationByTraversingWholeTree(
+    firFileBuilder: FirFileBuilder,
+    moduleFileCache: ModuleFileCache,
+): FirDeclaration? {
+    val firFile = firFileBuilder.buildRawFirFileWithCaching(containingKtFile, moduleFileCache, lazyBodiesMode = true)
+    val originalDeclaration = originalDeclaration
+    return FirElementFinder.findElementIn(firFile, goInside = { it is FirRegularClass }) { firDeclaration ->
+        firDeclaration.psi == this || firDeclaration.psi == originalDeclaration
+    }
+}
+
+private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
+    firFileBuilder: FirFileBuilder,
+    firSymbolProvider: FirSymbolProvider,
+    moduleFileCache: ModuleFileCache
+): FirDeclaration? {
+    val candidate = when {
         this is KtClassOrObject -> findFir(firSymbolProvider)
         this is KtNamedDeclaration && (this is KtProperty || this is KtNamedFunction) -> {
             val containerClass = containingClassOrObject
             val declarations = if (containerClass != null) {
                 val containerClassFir = containerClass.findFir(firSymbolProvider)
-                containerClassFir.declarations
+                containerClassFir?.declarations
             } else {
                 val ktFile = containingKtFile
                 val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile, moduleFileCache, lazyBodiesMode = true)
                 firFile.declarations
             }
             val original = originalDeclaration
-            declarations.first { it.psi === this || it.psi == original }
+            declarations?.first { it.psi === this || it.psi == original }
         }
         this is KtConstructor<*> -> {
-            val containerClassFir = containingClassOrObject?.findFir(firSymbolProvider)
+            val containingClass = containingClassOrObject
                 ?: error("Container class should be not null for KtConstructor")
+            val containerClassFir = containingClass.findFir(firSymbolProvider) ?: return null
             containerClassFir.declarations.first { it.psi === this }
         }
         this is KtTypeAlias -> findFir(firSymbolProvider)
         else -> error("Invalid container $this::class")
     }
+    return candidate?.takeIf { it.realPsi == this }
 }
 
 val ORIGINAL_DECLARATION_KEY = com.intellij.openapi.util.Key<KtDeclaration>("ORIGINAL_DECLARATION_KEY")
@@ -53,9 +78,8 @@ val ORIGINAL_DECLARATION_KEY = com.intellij.openapi.util.Key<KtDeclaration>("ORI
 var KtDeclaration.originalDeclaration by UserDataProperty(ORIGINAL_DECLARATION_KEY)
 
 
-private fun KtClassOrObject.findFir(firSymbolProvider: FirSymbolProvider): FirRegularClass {
-    val classId = classIdIfNonLocal()
-        ?: error("Container classId should not be null for non-local declaration")
+private fun KtClassOrObject.findFir(firSymbolProvider: FirSymbolProvider): FirRegularClass? {
+    val classId = classIdIfNonLocal() ?: return null
     return executeWithoutPCE {
         firSymbolProvider.getClassLikeSymbolByFqName(classId)?.fir as? FirRegularClass
             ?: error("Could not find class $classId")
