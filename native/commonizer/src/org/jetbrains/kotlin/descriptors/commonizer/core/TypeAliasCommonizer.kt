@@ -45,6 +45,7 @@ class TypeAliasCommonizer(cache: CirClassifiersCache) : AbstractStandardCommoniz
 
 private class TypeAliasShortCircuitingCommonizer(cache: CirClassifiersCache) : AbstractStandardCommonizer<CirTypeAlias, CirTypeAlias>() {
     private lateinit var name: Name
+    private val typeParameters = TypeParameterListCommonizer(cache)
     private val expandedType = TypeCommonizer(cache)
     private val visibility = VisibilityCommonizer.lowering()
 
@@ -54,7 +55,7 @@ private class TypeAliasShortCircuitingCommonizer(cache: CirClassifiersCache) : A
         return CirTypeAliasFactory.create(
             annotations = emptyList(),
             name = name,
-            typeParameters = emptyList(),
+            typeParameters = typeParameters.result,
             visibility = visibility.result,
             underlyingType = expandedType, // pass expanded type as underlying type
             expandedType = expandedType
@@ -69,8 +70,7 @@ private class TypeAliasShortCircuitingCommonizer(cache: CirClassifiersCache) : A
     }
 
     override fun doCommonizeWith(next: CirTypeAlias) =
-        next.typeParameters.isEmpty() // short-circuiting of TAs with type parameters is too complex case, consider implementing it later
-                && next.expandedType.arguments.isEmpty() // short-circuiting of TAs with type arguments in expanded type is too complex case
+        typeParameters.commonizeWith(next.typeParameters)
                 && expandedType.commonizeWith(next.expandedType)
                 && visibility.commonizeWith(next)
 }
