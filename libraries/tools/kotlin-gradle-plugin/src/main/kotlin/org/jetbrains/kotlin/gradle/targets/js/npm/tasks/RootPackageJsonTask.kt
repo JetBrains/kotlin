@@ -10,6 +10,7 @@ import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
+import org.jetbrains.kotlin.gradle.utils.disableTaskOnConfigurationCacheBuild
 import java.io.File
 
 open class RootPackageJsonTask : DefaultTask() {
@@ -23,6 +24,11 @@ open class RootPackageJsonTask : DefaultTask() {
 
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
     private val resolutionManager get() = nodeJs.npmResolutionManager
+
+    init {
+        // TODO: temporary workaround for configuration cache enabled builds
+        disableTaskOnConfigurationCacheBuild { resolutionManager.toString() }
+    }
 
     @get:OutputFile
     val rootPackageJson: File

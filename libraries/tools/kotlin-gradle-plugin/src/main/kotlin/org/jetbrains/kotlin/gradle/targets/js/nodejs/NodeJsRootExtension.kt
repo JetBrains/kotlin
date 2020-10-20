@@ -66,8 +66,9 @@ open class NodeJsRootExtension(@Transient val rootProject: Project) : Configurat
     val rootPackageJsonTaskProvider: TaskProvider<RootPackageJsonTask>
         get() = rootProject.tasks.withType(RootPackageJsonTask::class.java).named(RootPackageJsonTask.NAME)
 
-    val rootPackageDir: File
-        get() = rootProject.buildDir.resolve("js")
+    val rootPackageDir: File by lazy {
+        rootProject.buildDir.resolve("js")
+    }
 
     internal val rootNodeModulesStateFile: File
         get() = rootPackageDir.resolve("node_modules.state")

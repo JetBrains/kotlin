@@ -21,8 +21,9 @@ constructor(
     override val considerGeneratingFlag: Boolean = true
 
     @get:OutputDirectory
-    override val destinationDir: File
-        get() = compilation.npmProject.externalsDir
+    override val destinationDir: File by lazy {
+        compilation.npmProject.externalsDir
+    }
 
     @delegate:Transient
     private val executor by lazy {
