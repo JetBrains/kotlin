@@ -25,8 +25,7 @@ internal class KtFirSymbolContainingDeclarationProvider(
         return when (symbol.origin) {
             KtSymbolOrigin.SOURCE, KtSymbolOrigin.SOURCE_MEMBER_GENERATED ->
                 getContainingDeclarationForKotlinInSourceSymbol(symbol)
-            KtSymbolOrigin.LIBRARY -> getContainingDeclarationForLibrarySymbol(symbol)
-            KtSymbolOrigin.JAVA -> TODO()
+            KtSymbolOrigin.LIBRARY, KtSymbolOrigin.JAVA -> getContainingDeclarationForLibrarySymbol(symbol)
             KtSymbolOrigin.SAM_CONSTRUCTOR -> TODO()
         }
     }
@@ -51,7 +50,7 @@ internal class KtFirSymbolContainingDeclarationProvider(
     }
 
     private fun getContainingDeclarationForLibrarySymbol(symbol: KtSymbolWithKind): KtSymbolWithKind = with(analysisSession) {
-        require(symbol.origin == KtSymbolOrigin.LIBRARY)
+        require(symbol.origin == KtSymbolOrigin.LIBRARY || symbol.origin == KtSymbolOrigin.JAVA)
         check(symbol.symbolKind == KtSymbolKind.MEMBER)
 
         val containingClassId = when (symbol) {
