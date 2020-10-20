@@ -77,7 +77,7 @@ class DeclarationStubGenerator(
             return generateStubBySymbol(symbol, symbol.descriptor)
         }
         val signature = symbol.signature
-        signature ?: error("Symbol is not public API. Expected signature for symbol: ${symbol.descriptor}")
+            ?: error("Symbol is not public API. Expected signature for symbol: ${symbol.descriptor}")
         val descriptor = if (symbol.descriptor is WrappedDeclarationDescriptor<*>)
             findDescriptorBySignature(signature)
         else
