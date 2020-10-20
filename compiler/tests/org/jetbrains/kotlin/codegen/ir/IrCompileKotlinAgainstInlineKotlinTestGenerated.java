@@ -1950,6 +1950,148 @@ public class IrCompileKotlinAgainstInlineKotlinTestGenerated extends AbstractIrC
         public void testWithReturnTypeManglingVal() throws Exception {
             runTest("compiler/testData/codegen/boxInline/inlineClasses/withReturnTypeManglingVal.kt");
         }
+
+        @TestMetadata("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class UnboxGenericParameter extends AbstractIrCompileKotlinAgainstInlineKotlinTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JVM_IR, testDataFilePath, "// IGNORE_BACKEND_MULTI_MODULE: ");
+            }
+
+            public void testAllFilesPresentInUnboxGenericParameter() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @TestMetadata("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/funInterface")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class FunInterface extends AbstractIrCompileKotlinAgainstInlineKotlinTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JVM_IR, testDataFilePath, "// IGNORE_BACKEND_MULTI_MODULE: ");
+                }
+
+                public void testAllFilesPresentInFunInterface() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/funInterface"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @TestMetadata("any.kt")
+                public void testAny() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/funInterface/any.kt");
+                }
+
+                @TestMetadata("anyN.kt")
+                public void testAnyN() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/funInterface/anyN.kt");
+                }
+
+                @TestMetadata("iface.kt")
+                public void testIface() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/funInterface/iface.kt");
+                }
+
+                @TestMetadata("ifaceChild.kt")
+                public void testIfaceChild() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/funInterface/ifaceChild.kt");
+                }
+
+                @TestMetadata("primitive.kt")
+                public void testPrimitive() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/funInterface/primitive.kt");
+                }
+
+                @TestMetadata("string.kt")
+                public void testString() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/funInterface/string.kt");
+                }
+            }
+
+            @TestMetadata("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/lambda")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Lambda extends AbstractIrCompileKotlinAgainstInlineKotlinTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JVM_IR, testDataFilePath, "// IGNORE_BACKEND_MULTI_MODULE: ");
+                }
+
+                public void testAllFilesPresentInLambda() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/lambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @TestMetadata("any.kt")
+                public void testAny() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/lambda/any.kt");
+                }
+
+                @TestMetadata("anyN.kt")
+                public void testAnyN() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/lambda/anyN.kt");
+                }
+
+                @TestMetadata("iface.kt")
+                public void testIface() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/lambda/iface.kt");
+                }
+
+                @TestMetadata("ifaceChild.kt")
+                public void testIfaceChild() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/lambda/ifaceChild.kt");
+                }
+
+                @TestMetadata("primitive.kt")
+                public void testPrimitive() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/lambda/primitive.kt");
+                }
+
+                @TestMetadata("string.kt")
+                public void testString() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/lambda/string.kt");
+                }
+            }
+
+            @TestMetadata("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/objectLiteral")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ObjectLiteral extends AbstractIrCompileKotlinAgainstInlineKotlinTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JVM_IR, testDataFilePath, "// IGNORE_BACKEND_MULTI_MODULE: ");
+                }
+
+                public void testAllFilesPresentInObjectLiteral() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/objectLiteral"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @TestMetadata("any.kt")
+                public void testAny() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/objectLiteral/any.kt");
+                }
+
+                @TestMetadata("anyN.kt")
+                public void testAnyN() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/objectLiteral/anyN.kt");
+                }
+
+                @TestMetadata("iface.kt")
+                public void testIface() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/objectLiteral/iface.kt");
+                }
+
+                @TestMetadata("ifaceChild.kt")
+                public void testIfaceChild() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/objectLiteral/ifaceChild.kt");
+                }
+
+                @TestMetadata("primitive.kt")
+                public void testPrimitive() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/objectLiteral/primitive.kt");
+                }
+
+                @TestMetadata("string.kt")
+                public void testString() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/objectLiteral/string.kt");
+                }
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/boxInline/innerClasses")

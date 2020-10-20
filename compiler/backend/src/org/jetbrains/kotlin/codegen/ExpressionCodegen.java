@@ -1995,6 +1995,21 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         StackValue localOrCaptured = findLocalOrCapturedValue(descriptor);
         if (localOrCaptured != null) {
+            if (descriptor instanceof ValueParameterDescriptor) {
+                KotlinType inlineClassType = ((ValueParameterDescriptor) descriptor).getType();
+                if (InlineClassesCodegenUtilKt.isInlineClassWithUnderlyingTypeAnyOrAnyN(inlineClassType) &&
+                    InlineClassesCodegenUtilKt.isGenericParameter((CallableDescriptor) descriptor) &&
+                    // TODO: HACK around bridgeGenerationCrossinline
+                    !(context instanceof InlineLambdaContext) &&
+                    // Do not unbox parameters of suspend lambda, they are unboxed in `invoke` method
+                    !CoroutineCodegenUtilKt.isInvokeSuspendOfLambda(context.getFunctionDescriptor())
+                ) {
+                    KotlinType underlyingType = InlineClassesUtilsKt.underlyingRepresentation(
+                            (ClassDescriptor) inlineClassType.getConstructor().getDeclarationDescriptor()).getType();
+                    return StackValue.underlyingValueOfInlineClass(
+                            typeMapper.mapType(underlyingType), underlyingType, localOrCaptured);
+                }
+            }
             return localOrCaptured;
         }
         throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
