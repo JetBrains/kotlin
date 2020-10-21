@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND_FIR: JVM_IR
 // FILE: nnStringVsTXString.kt
 fun <T> useTX(x: T, fn: () -> T) = fn()

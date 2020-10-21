@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -199,9 +198,7 @@ internal class InsertImplicitCasts(
             value = if (expression.returnTargetSymbol is IrConstructorSymbol) {
                 value.coerceToUnit()
             } else {
-                val returnTargetDescriptor = expression.returnTargetSymbol.descriptor
-                val isLambdaReturnValue = returnTargetDescriptor is AnonymousFunctionDescriptor
-                value.cast(returnTargetDescriptor.returnType, isLambdaReturnValue = isLambdaReturnValue)
+                value.cast(expression.returnTargetSymbol.descriptor.returnType)
             }
         }
 
@@ -327,8 +324,7 @@ internal class InsertImplicitCasts(
 
     private fun IrExpression.cast(
         possiblyNonDenotableExpectedType: KotlinType?,
-        originalExpectedType: KotlinType? = possiblyNonDenotableExpectedType,
-        isLambdaReturnValue: Boolean = false
+        originalExpectedType: KotlinType? = possiblyNonDenotableExpectedType
     ): IrExpression {
         if (possiblyNonDenotableExpectedType == null) return this
         if (possiblyNonDenotableExpectedType.isError) return this
@@ -356,7 +352,7 @@ internal class InsertImplicitCasts(
             valueType.isNullabilityFlexible() && valueType.containsNull() && !expectedType.acceptsNullValues() ->
                 implicitNonNull(valueType, expectedType)
 
-            (valueType.hasEnhancedNullability() && !isLambdaReturnValue) && !expectedType.acceptsNullValues() ->
+            valueType.hasEnhancedNullability() && !expectedType.acceptsNullValues() ->
                 implicitNonNull(valueType, expectedType)
 
             KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, expectedType.makeNullable()) ->

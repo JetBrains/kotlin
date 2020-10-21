@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND_FIR: JVM_IR
 // FILE: nnStringVsTConstrained.kt
 fun <T> useTConstrained(xs: Array<T>, fn: () -> T) = fn()
