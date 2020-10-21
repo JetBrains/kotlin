@@ -449,20 +449,16 @@ val IrFunction.allParameters: List<IrValueParameter>
 val IrFunction.allParametersCount: Int
     get() = if (this is IrConstructor) explicitParametersCount + 1 else explicitParametersCount
 
-private object FakeOverrideBuilder : FakeOverrideBuilderStrategy() {
-    override fun linkFakeOverride(fakeOverride: IrOverridableMember) {
-        when (fakeOverride) {
-            is IrFakeOverrideFunction -> linkFunctionFakeOverride(fakeOverride)
-            is IrFakeOverrideProperty -> linkPropertyFakeOverride(fakeOverride)
-            else -> error("Unexpected fake override: $fakeOverride")
-        }
-    }
+// This is essentially the same as FakeOverrideBuilder,
+// but it bypasses SymbolTable.
+// TODO: merge it with FakeOverrideBuilder.
+private object FakeOverrideBuilderForLowerings : FakeOverrideBuilderStrategy() {
 
-    private fun linkFunctionFakeOverride(declaration: IrFakeOverrideFunction) {
+    override fun linkFunctionFakeOverride(declaration: IrFakeOverrideFunction) {
         declaration.acquireSymbol(IrSimpleFunctionSymbolImpl(WrappedSimpleFunctionDescriptor()))
     }
 
-    private fun linkPropertyFakeOverride(declaration: IrFakeOverrideProperty) {
+    override fun linkPropertyFakeOverride(declaration: IrFakeOverrideProperty) {
         val propertySymbol = IrPropertySymbolImpl(WrappedPropertyDescriptor())
         declaration.getter?.let { it.correspondingPropertySymbol = propertySymbol }
         declaration.setter?.let { it.correspondingPropertySymbol = propertySymbol }
@@ -481,7 +477,7 @@ private object FakeOverrideBuilder : FakeOverrideBuilderStrategy() {
 }
 
 fun IrClass.addFakeOverrides(irBuiltIns: IrBuiltIns, implementedMembers: List<IrOverridableMember> = emptyList()) {
-    IrOverridingUtil(irBuiltIns, FakeOverrideBuilder)
+    IrOverridingUtil(irBuiltIns, FakeOverrideBuilderForLowerings)
         .buildFakeOverridesForClassUsingOverriddenSymbols(this, implementedMembers)
         .forEach { addChild(it) }
 }
