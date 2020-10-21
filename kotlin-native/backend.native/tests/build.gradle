@@ -2169,7 +2169,7 @@ standaloneTest("link_default_libs") {
 
 standaloneTest("link_testLib_explicitly") {
     // there are no testLibrary for cross targets yet.
-    enabled = project.testTarget == null || project.testTarget == project.hostName
+    enabled = project.target.name == project.hostName
 
     dependsOn 'installTestLibrary'
     goldValue = "This is a side effect of a test library linked into the binary.\nYou should not be seeing this.\n\nHello\n"
@@ -4272,7 +4272,7 @@ standaloneTest("interop_objc_illegal_sharing") {
 }
 
 dynamicTest("produce_dynamic") {
-    disabled = (project.testTarget != null && project.testTarget != project.hostName)
+    disabled = (project.target.name != project.hostName)
     source = "produce_dynamic/simple/hello.kt"
     cSource = "$projectDir/produce_dynamic/simple/main.c"
     goldValue = "Hello, dynamic!\n" +
@@ -4298,7 +4298,7 @@ dynamicTest("produce_dynamic") {
 }
 
 dynamicTest("interop_concurrentRuntime") {
-    disabled = (project.testTarget != null && project.testTarget != project.hostName)
+    disabled = (project.target.name != project.hostName)
     source = "interop/concurrentTerminate/reverseInterop.kt"
     cSource = "$projectDir/interop/concurrentTerminate/main.cpp"
     clangTool = "clang++"
@@ -4308,8 +4308,7 @@ dynamicTest("interop_concurrentRuntime") {
 }
 
 dynamicTest("interop_kt42397") {
-    disabled = (project.testTarget != null && project.testTarget != project.hostName) ||
-            project.globalTestArgs.contains('-opt')
+    disabled = project.target.name != project.hostName || project.globalTestArgs.contains('-opt')
     source = "interop/kt42397/knlibrary.kt"
     cSource = "$projectDir/interop/kt42397/test.cpp"
     clangTool = "clang++"
@@ -4317,7 +4316,7 @@ dynamicTest("interop_kt42397") {
 }
 
 dynamicTest("interop_cleaners_main_thread") {
-    disabled = (project.testTarget != null && project.testTarget != project.hostName)
+    disabled = (project.target.name != project.hostName)
     source = "interop/cleaners/cleaners.kt"
     cSource = "$projectDir/interop/cleaners/main_thread.cpp"
     clangTool = "clang++"
@@ -4326,7 +4325,7 @@ dynamicTest("interop_cleaners_main_thread") {
 }
 
 dynamicTest("interop_cleaners_second_thread") {
-    disabled = (project.testTarget != null && project.testTarget != project.hostName)
+    disabled = (project.target.name != project.hostName)
     source = "interop/cleaners/cleaners.kt"
     cSource = "$projectDir/interop/cleaners/second_thread.cpp"
     clangTool = "clang++"
@@ -4335,7 +4334,7 @@ dynamicTest("interop_cleaners_second_thread") {
 }
 
 dynamicTest("interop_cleaners_leak") {
-    disabled = (project.testTarget != null && project.testTarget != project.hostName)
+    disabled = (project.target.name != project.hostName)
     source = "interop/cleaners/cleaners.kt"
     cSource = "$projectDir/interop/cleaners/leak.cpp"
     clangTool = "clang++"
