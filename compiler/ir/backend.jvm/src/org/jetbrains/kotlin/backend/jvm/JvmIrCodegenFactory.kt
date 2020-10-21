@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.backend.jvm.codegen.DescriptorMetadataSerializer
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
+import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -39,8 +40,8 @@ import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
 
-object JvmBackendFacade {
-    fun doGenerateFiles(files: Collection<KtFile>, state: GenerationState, phaseConfig: PhaseConfig) {
+class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory {
+    override fun generateModule(state: GenerationState, files: Collection<KtFile>) {
         val extensions = JvmGeneratorExtensions()
         val mangler = JvmManglerDesc(MainFunctionDetector(state.bindingContext, state.languageVersionSettings))
         val psi2ir = Psi2IrTranslator(state.languageVersionSettings, Psi2IrConfiguration())
@@ -169,5 +170,23 @@ object JvmBackendFacade {
         // TODO: split classes into groups connected by inline calls; call this after every group
         //       and clear `JvmBackendContext.classCodegens`
         state.afterIndependentPart()
+    }
+
+    fun generateModuleInFrontendIRMode(
+        state: GenerationState,
+        irModuleFragment: IrModuleFragment,
+        symbolTable: SymbolTable,
+        sourceManager: PsiSourceManager,
+        serializerFactory: MetadataSerializerFactory,
+    ) {
+        irModuleFragment.irBuiltins.functionFactory = IrFunctionFactory(irModuleFragment.irBuiltins, symbolTable)
+        val extensions = JvmGeneratorExtensions()
+        val irProviders = generateTypicalIrProviderList(
+            irModuleFragment.descriptor, irModuleFragment.irBuiltins, symbolTable, extensions = extensions
+        )
+
+        doGenerateFilesInternal(
+            state, irModuleFragment, symbolTable, sourceManager, phaseConfig, irProviders, extensions, serializerFactory
+        )
     }
 }
