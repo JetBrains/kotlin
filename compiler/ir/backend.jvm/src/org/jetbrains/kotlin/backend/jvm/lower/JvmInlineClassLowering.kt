@@ -200,9 +200,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         replacement.body = context.createIrBuilder(replacement.symbol, replacement.startOffset, replacement.endOffset).irBlockBody(
             replacement
         ) {
-            val thisVar = irTemporaryVarDeclaration(
-                replacement.returnType, nameHint = "\$this", isMutable = false
-            )
+            val thisVar = irTemporary(irType = replacement.returnType, nameHint = "\$this")
             valueMap[constructor.constructedClass.thisReceiver!!.symbol] = thisVar
 
             constructor.body?.statements?.forEach { statement ->

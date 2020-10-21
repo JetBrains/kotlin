@@ -42,38 +42,17 @@ inline fun IrBuilderWithScope.irLetS(
     }
 }
 
-
 fun <T : IrElement> IrStatementsBuilder<T>.irTemporary(
-    value: IrExpression,
+    value: IrExpression? = null,
     nameHint: String? = null,
-    typeHint: KotlinType? = null,
-    irType: IrType? = null
+    irType: IrType = value?.type!!, // either value or irType should be supplied at callsite
+    isMutable: Boolean = false,
 ): IrVariable {
-    val temporary = scope.createTemporaryVariable(value, nameHint, irType = irType)
+    val temporary = scope.createTemporaryVariableDeclaration(irType, nameHint, isMutable)
+    value?.let { temporary.initializer = it }
     +temporary
     return temporary
 }
-
-fun <T : IrElement> IrStatementsBuilder<T>.irTemporaryVarDeclaration(
-    type: IrType,
-    nameHint: String? = null,
-    isMutable: Boolean = true
-): IrVariable {
-    val temporary = scope.createTemporaryVariableDeclaration(type, nameHint, isMutable = isMutable)
-    +temporary
-    return temporary
-}
-
-fun <T : IrElement> IrStatementsBuilder<T>.irTemporaryVar(
-    value: IrExpression,
-    nameHint: String? = null,
-    irType: IrType? = null
-): IrVariable {
-    val temporary = scope.createTemporaryVariable(value, nameHint, isMutable = true)
-    +temporary
-    return temporary
-}
-
 
 fun IrBuilderWithScope.irExprBody(value: IrExpression) =
     context.irFactory.createExpressionBody(startOffset, endOffset, value)
