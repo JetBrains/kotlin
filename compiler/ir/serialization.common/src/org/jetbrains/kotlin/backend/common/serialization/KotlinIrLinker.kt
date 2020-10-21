@@ -73,7 +73,6 @@ abstract class KotlinIrLinker(
     abstract val translationPluginContext: TranslationPluginContext?
 
     private val haveSeen = mutableSetOf<IrSymbol>()
-    private val fakeOverrideClassQueue = mutableListOf<IrClass>()
 
     private lateinit var linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>
 
@@ -234,7 +233,17 @@ abstract class KotlinIrLinker(
         deserializeFakeOverrides: Boolean,
         private val moduleDeserializer: IrModuleDeserializer,
         allowErrorNodes: Boolean
-    ) : IrFileDeserializer(logger, builtIns, symbolTable, !onlyHeaders, deserializeFakeOverrides, fakeOverrideClassQueue, allowErrorNodes) {
+    ) :
+        IrFileDeserializer(
+            logger,
+            builtIns,
+            symbolTable,
+            !onlyHeaders,
+            deserializeFakeOverrides,
+            fakeOverrideBuilder,
+            allowErrorNodes
+        )
+    {
 
         private var fileLoops = mutableMapOf<Int, IrLoop>()
 
@@ -600,12 +609,7 @@ abstract class KotlinIrLinker(
 
     override fun postProcess() {
         finalizeExpectActualLinker()
-        
-        while (fakeOverrideClassQueue.isNotEmpty()) {
-            val klass = fakeOverrideClassQueue.removeLast()
-            fakeOverrideBuilder.provideFakeOverrides(klass)
-        }
-
+        fakeOverrideBuilder.provideFakeOverrides()
         haveSeen.clear()
 
         // TODO: fix IrPluginContext to make it not produce additional external reference

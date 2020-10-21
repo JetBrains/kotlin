@@ -1245,9 +1245,8 @@ open class IrFileSerializer(
         assert(member.parent is IrClass)
         if (FakeOverrideControl.serializeFakeOverrides) return true
         if (backendSpecificSerializeAllMembers(member.parent as IrClass)) return true
-        // TODO: we can, probably, maintain a privacy bit while traversing the tree
-        // instead of running the parent hierarchy for isExported every time.
-        return !(member.isFakeOverride && declarationTable.isExportedDeclaration(member))
+
+        return (!member.isFakeOverride)
     }
 
     private fun fillPlatformExplicitlyExported(file: IrFile, proto: ProtoFile.Builder) {

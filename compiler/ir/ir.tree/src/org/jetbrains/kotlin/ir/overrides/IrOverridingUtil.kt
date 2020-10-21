@@ -101,26 +101,16 @@ class IrOverridingUtil(
             }
         }
 
-    // We need to get Any's members if all the parents are private.
-    private fun allPublicApiSuperTypesOrAny(clazz: IrClass): List<IrType> {
-        val superTypes = clazz.superTypes
-        val superClasses = superTypes.map { it.getClass() ?: error("Unexpected super type: $it") }
-        return if (superClasses.isEmpty() || superClasses.any { it.symbol.isPublicApi })
-            superTypes
-        else
-            listOf(irBuiltIns.anyType)
-    }
-
     fun buildFakeOverridesForClass(clazz: IrClass) {
-        val superTypes = allPublicApiSuperTypesOrAny(clazz)
+        val superTypes = clazz.superTypes
 
         @Suppress("UNCHECKED_CAST")
-        val fromCurrent = clazz.declarations.filter { it is IrOverridableMember && it.symbol.isPublicApi } as List<IrOverridableMember>
+        val fromCurrent = clazz.declarations.filter { it is IrOverridableMember } as List<IrOverridableMember>
 
         val allFromSuper = superTypes.flatMap { superType ->
             val superClass = superType.getClass() ?: error("Unexpected super type: $superType")
             superClass.declarations
-                .filter { it is IrOverridableMember && it.symbol.isPublicApi }
+                .filter { it.isOverridableMemberOrAccessor() }
                 .map {
                     val overridenMember = it as IrOverridableMember
                     val fakeOverride = fakeOverrideBuilder.fakeOverrideMember(superType, overridenMember, clazz)

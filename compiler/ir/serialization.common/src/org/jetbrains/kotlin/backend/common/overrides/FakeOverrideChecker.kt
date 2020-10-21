@@ -76,9 +76,6 @@ class FakeOverrideChecker(
                 validateFakeOverrides(declaration)
                 super.visitClass(declaration)
             }
-            override fun visitFunction(declaration: IrFunction) {
-                // Don't go for function local classes
-            }
         })
     }
 }
