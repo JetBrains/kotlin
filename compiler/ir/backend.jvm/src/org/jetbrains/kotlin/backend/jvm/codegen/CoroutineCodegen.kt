@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
-import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
 import org.jetbrains.kotlin.codegen.ClassBuilder
@@ -139,21 +138,26 @@ private fun IrFunction.isStaticInlineClassReplacementDelegatingCall(): Boolean =
             parentAsClass.declarations.find { it is IrAttributeContainer && it.attributeOwnerId == attributeOwnerId && it !== this }
                 ?.isStaticInlineClassReplacement == true
 
+// Tail-call optimization would remove the continuation in those functions anyway
+// because they only contain only one suspending call and it's at the very end.
+private val tailCallBridgeOrigins = setOf(
+    IrDeclarationOrigin.BRIDGE,
+    IrDeclarationOrigin.BRIDGE_SPECIAL,
+    IrDeclarationOrigin.DELEGATED_MEMBER,
+    IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
+    JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER,
+    JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER,
+    JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE,
+    JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
+    JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR,
+    JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE,
+    JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY,
+    JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC,
+    JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY_SYNTHETIC,
+)
+
 internal fun IrFunction.shouldContainSuspendMarkers(): Boolean = !isInvokeSuspendOfContinuation() &&
-        // These are tail-call bridges and do not require any bytecode modifications.
-        origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER &&
-        origin != JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER &&
-        origin != JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER &&
-        origin != JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE &&
-        origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR &&
-        origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR &&
-        origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE &&
-        origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY &&
-        origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC &&
-        origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY_SYNTHETIC &&
-        origin != IrDeclarationOrigin.BRIDGE &&
-        origin != IrDeclarationOrigin.BRIDGE_SPECIAL &&
-        origin != IrDeclarationOrigin.DELEGATED_MEMBER &&
+        origin !in tailCallBridgeOrigins &&
         !isInvokeOfSuspendCallableReference() &&
         !isBridgeToSuspendImplMethod() &&
         !isStaticInlineClassReplacementDelegatingCall()
