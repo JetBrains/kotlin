@@ -75,7 +75,12 @@ class JavaOverrideChecker internal constructor(
     }
 
     private fun FirTypeRef?.isTypeParameterDependent(): Boolean =
-        this is FirResolvedTypeRef && type.lowerBoundIfFlexible() is ConeTypeParameterType
+        this is FirResolvedTypeRef && type.lowerBoundIfFlexible().isTypeParameterDependent()
+
+    private fun ConeKotlinType.isTypeParameterDependent(): Boolean =
+        this is ConeTypeParameterType || this is ConeClassLikeType && typeArguments.any { argument ->
+            argument is ConeKotlinTypeProjection && argument.type.isTypeParameterDependent()
+        }
 
     private fun FirCallableMemberDeclaration<*>.isTypeParameterDependent(): Boolean =
         typeParameters.isNotEmpty() || returnTypeRef.isTypeParameterDependent() ||
@@ -84,8 +89,21 @@ class JavaOverrideChecker internal constructor(
 
     private fun FirTypeRef.extractTypeParametersTo(result: MutableCollection<FirTypeParameterRef>) {
         if (this is FirResolvedTypeRef) {
-            (type.lowerBoundIfFlexible() as? ConeTypeParameterType)?.lookupTag?.typeParameterSymbol?.fir?.let {
-                result += it
+            type.lowerBoundIfFlexible().extractTypeParametersTo(result)
+        }
+    }
+
+    private fun ConeKotlinType.extractTypeParametersTo(result: MutableCollection<FirTypeParameterRef>) {
+        when (this) {
+            is ConeTypeParameterType -> {
+                result += lookupTag.typeParameterSymbol.fir
+            }
+            is ConeClassLikeType -> typeArguments.forEach {
+                if (it is ConeKotlinTypeProjection) {
+                    it.type.extractTypeParametersTo(result)
+                }
+            }
+            else -> {
             }
         }
     }
