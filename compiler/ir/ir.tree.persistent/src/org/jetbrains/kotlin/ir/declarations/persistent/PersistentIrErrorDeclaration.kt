@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrErrorDeclaration
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
-import org.jetbrains.kotlin.ir.declarations.persistent.carriers.ErrorCarrier
+import org.jetbrains.kotlin.ir.declarations.persistent.carriers.ErrorDeclarationCarrier
 import org.jetbrains.kotlin.ir.declarations.stageController
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 
@@ -31,7 +31,7 @@ internal class PersistentIrErrorDeclaration(
     override val startOffset: Int,
     override val endOffset: Int,
     override val descriptor: DeclarationDescriptor
-) : PersistentIrDeclarationBase<ErrorCarrier>, IrErrorDeclaration(), ErrorCarrier {
+) : PersistentIrDeclarationBase<ErrorDeclarationCarrier>, IrErrorDeclaration(), ErrorDeclarationCarrier {
     override var lastModified: Int = stageController.currentStage
     override var loweredUpTo: Int = stageController.currentStage
     override var values: Array<Carrier>? = null
