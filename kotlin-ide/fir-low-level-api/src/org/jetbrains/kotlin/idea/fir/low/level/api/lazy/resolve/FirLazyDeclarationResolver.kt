@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.trasformers.FirDesignatedBodyResolveTransformerForIDE
@@ -37,6 +38,18 @@ internal class FirLazyDeclarationResolver(
         reresolveFile: Boolean = false,
     ) {
         if (declaration.resolvePhase >= toPhase) return
+
+        if (declaration is FirPropertyAccessor) {
+            val ktContainingProperty = when (val ktDeclaration = declaration.ktDeclaration) {
+                is KtPropertyAccessor -> ktDeclaration.property
+                is KtProperty -> ktDeclaration
+                else -> error("Invalid source of property accessor ${ktDeclaration::class}")
+            }
+            val containingProperty = ktContainingProperty
+                .findSourceNonLocalFirDeclaration(firFileBuilder, declaration.session.firSymbolProvider, moduleFileCache)
+            return lazyResolveDeclaration(containingProperty, moduleFileCache, toPhase, towerDataContextCollector)
+        }
+
         val firFile = declaration.getContainingFile()
             ?: error("FirFile was not found for\n${declaration.render()}")
         val provider = firFile.session.firIdeProvider
