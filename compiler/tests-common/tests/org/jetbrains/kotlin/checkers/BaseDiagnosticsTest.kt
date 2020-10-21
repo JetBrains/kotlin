@@ -34,10 +34,7 @@ import org.jetbrains.kotlin.checkers.diagnostics.factories.SyntaxErrorDiagnostic
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.checkers.utils.DiagnosticsRenderingConfiguration
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.*
@@ -269,6 +266,8 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                     platform = null,
                     withNewInference,
                     languageVersionSettings,
+                    // When using JVM IR, binding context is empty at the end of compilation, so debug info markers can't be computed.
+                    environment.configuration.getBoolean(JVMConfigurationKeys.IR),
                 ),
                 DataFlowValueFactoryImpl(languageVersionSettings),
                 moduleDescriptor,

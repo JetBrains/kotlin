@@ -108,6 +108,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var isIrWithStableAbi: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xir-do-not-clear-binding-context",
+        description = "When using the IR backend, do not clear BindingContext between psi2ir and lowerings"
+    )
+    var doNotClearBindingContext: Boolean by FreezableVar(false)
+
     @Argument(value = "-Xmodule-path", valueDescription = "<path>", description = "Paths where to find Java 9+ modules")
     var javaModulePath: String? by NullableStringFreezableVar(null)
 

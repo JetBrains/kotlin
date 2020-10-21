@@ -37,11 +37,9 @@ public class BindingTraceContext implements BindingTrace {
     /* package */ final static boolean TRACK_WITH_STACK_TRACES = true;
 
     private final MutableSlicedMap map;
-    @Nullable private final MutableDiagnosticsWithSuppression mutableDiagnostics;
-    @NotNull private final BindingTraceFilter filter;
+    private final MutableDiagnosticsWithSuppression mutableDiagnostics;
 
-    private final BindingContext bindingContext = new BindingContext() {
-
+    private final BindingContext bindingContext = new CleanableBindingContext() {
         @NotNull
         @Override
         public Diagnostics getDiagnostics() {
@@ -76,6 +74,11 @@ public class BindingTraceContext implements BindingTrace {
         public void addOwnDataTo(@NotNull BindingTrace trace, boolean commitDiagnostics) {
             BindingContextUtils.addOwnDataTo(trace, null, commitDiagnostics, map, mutableDiagnostics);
         }
+
+        @Override
+        public void clear() {
+            map.clear();
+        }
     };
 
     public BindingTraceContext() {
@@ -87,7 +90,6 @@ public class BindingTraceContext implements BindingTrace {
     }
 
     public BindingTraceContext(BindingTraceFilter filter, boolean allowSliceRewrite) {
-        //noinspection ConstantConditions
         this(TRACK_REWRITES && !allowSliceRewrite ? new TrackingSlicedMap(TRACK_WITH_STACK_TRACES) : new SlicedMapImpl(allowSliceRewrite), filter);
     }
 
@@ -97,7 +99,6 @@ public class BindingTraceContext implements BindingTrace {
         this.mutableDiagnostics = !filter.getIgnoreDiagnostics()
                                   ? new MutableDiagnosticsWithSuppression(bindingContext, Diagnostics.Companion.getEMPTY())
                                   : null;
-        this.filter = filter;
     }
 
     @TestOnly

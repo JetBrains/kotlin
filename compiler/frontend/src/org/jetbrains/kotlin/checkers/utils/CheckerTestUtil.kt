@@ -51,7 +51,8 @@ import java.util.regex.Pattern
 data class DiagnosticsRenderingConfiguration(
     val platform: String?,
     val withNewInference: Boolean,
-    val languageVersionSettings: LanguageVersionSettings?
+    val languageVersionSettings: LanguageVersionSettings?,
+    val skipDebugInfoDiagnostics: Boolean = false,
 )
 
 object CheckerTestUtil {
@@ -130,18 +131,20 @@ object CheckerTestUtil {
             diagnostics.add(ActualDiagnostic(SyntaxErrorDiagnostic(errorElement), configuration.platform, configuration.withNewInference))
         }
 
-        diagnostics.addAll(
-            getDebugInfoDiagnostics(
-                root,
-                bindingContext,
-                markDynamicCalls,
-                dynamicCallDescriptors,
-                configuration,
-                dataFlowValueFactory,
-                moduleDescriptor,
-                diagnosedRanges
+        if (!configuration.skipDebugInfoDiagnostics) {
+            diagnostics.addAll(
+                getDebugInfoDiagnostics(
+                    root,
+                    bindingContext,
+                    markDynamicCalls,
+                    dynamicCallDescriptors,
+                    configuration,
+                    dataFlowValueFactory,
+                    moduleDescriptor,
+                    diagnosedRanges
+                )
             )
-        )
+        }
 
         return diagnostics
     }

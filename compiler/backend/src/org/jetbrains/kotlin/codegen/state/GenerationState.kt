@@ -53,7 +53,7 @@ class GenerationState private constructor(
     val project: Project,
     builderFactory: ClassBuilderFactory,
     val module: ModuleDescriptor,
-    bindingContext: BindingContext,
+    val originalFrontendBindingContext: BindingContext,
     val files: List<KtFile>,
     val configuration: CompilerConfiguration,
     val generateDeclaredClassFilter: GenerateClassFilter,
@@ -178,7 +178,7 @@ class GenerationState private constructor(
     }
 
     val extraJvmDiagnosticsTrace: BindingTrace =
-        DelegatingBindingTrace(bindingContext, "For extra diagnostics in ${this::class.java}", false)
+        DelegatingBindingTrace(originalFrontendBindingContext, "For extra diagnostics in ${this::class.java}", false)
     private val interceptedBuilderFactory: ClassBuilderFactory
     private var used = false
 
@@ -199,13 +199,13 @@ class GenerationState private constructor(
     val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)
     val classBuilderMode: ClassBuilderMode = builderFactory.classBuilderMode
     val bindingTrace: BindingTrace = DelegatingBindingTrace(
-        bindingContext, "trace in GenerationState",
+        originalFrontendBindingContext, "trace in GenerationState",
         filter = if (wantsDiagnostics) BindingTraceFilter.ACCEPT_ALL else BindingTraceFilter.NO_DIAGNOSTICS
     )
     val bindingContext: BindingContext = bindingTrace.bindingContext
-    val mainFunctionDetector = MainFunctionDetector(bindingContext, languageVersionSettings)
+    val mainFunctionDetector = MainFunctionDetector(originalFrontendBindingContext, languageVersionSettings)
     val typeMapper: KotlinTypeMapper = KotlinTypeMapper(
-        this.bindingContext,
+        bindingContext,
         classBuilderMode,
         this.moduleName,
         languageVersionSettings,
@@ -311,7 +311,7 @@ class GenerationState private constructor(
                         it
                     else
                         BuilderFactoryForDuplicateSignatureDiagnostics(
-                            it, this.bindingContext, diagnostics, this.moduleName, this.languageVersionSettings,
+                            it, bindingContext, diagnostics, this.moduleName, languageVersionSettings,
                             shouldGenerate = { origin -> !shouldOnlyCollectSignatures(origin) },
                         ).apply { duplicateSignatureFactory = this }
                 },
@@ -322,7 +322,7 @@ class GenerationState private constructor(
                 }
             )
             .wrapWith(ClassBuilderInterceptorExtension.getInstances(project)) { classBuilderFactory, extension ->
-                extension.interceptClassBuilderFactory(classBuilderFactory, bindingContext, diagnostics)
+                extension.interceptClassBuilderFactory(classBuilderFactory, originalFrontendBindingContext, diagnostics)
             }
 
         this.factory = ClassFileFactory(this, interceptedBuilderFactory)
