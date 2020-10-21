@@ -168,6 +168,7 @@ class DebuggerTestCompilerFacility(
         val configuration = CompilerConfiguration()
         configuration.put(JVMConfigurationKeys.JVM_TARGET, jvmTarget)
         configuration.put(JVMConfigurationKeys.IR, useIrBackend)
+        configuration.put(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT, true)
 
         val state = GenerationUtils.generateFiles(project, files, configuration, ClassBuilderFactories.BINARIES, analysisResult) {
             generateDeclaredClassFilter(GenerationState.GenerateClassFilter.GENERATE_ALL)
