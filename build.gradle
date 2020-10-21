@@ -330,7 +330,7 @@ task detectJarCollision(type: CollisionDetector) {
                                                     "cli-js", "incremental-compilation-impl", "js.ast", "js.serializer",
                                                     "js.parser", "js.frontend", "js.translator", "js.dce", "metadata",
                                                     "metadata.jvm", "descriptors", "descriptors.jvm", "descriptors.runtime",
-                                                    "deserialization", "util.runtime", "type-system", "cones", "resolve",
+                                                    "deserialization", "util.runtime", "compiler.common", "type-system", "cones", "resolve",
                                                     "tree", "psi2fir", "fir2ir", "java", "kotlin-build-common", "lightTree",
                                                     "jvm", "checkers", "raw-fir.common", "light-tree2fir", 
                                                     "fir-serialization", "fir-deserialization", "entrypoint"])
