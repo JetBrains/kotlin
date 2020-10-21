@@ -104,7 +104,7 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
             @Composable suspend fun <!COMPOSABLE_SUSPEND_FUN!>Foo<!>() {}
 
             fun acceptSuspend(fn: suspend () -> Unit) { print(fn) }
-            fun acceptComposableSuspend(fn: @Composable suspend () -> Unit) { print(fn.hashCode()) }
+            fun acceptComposableSuspend(fn: <!COMPOSABLE_SUSPEND_FUN!>@Composable suspend () -> Unit<!>) { print(fn.hashCode()) }
 
             val foo: suspend () -> Unit = <!TYPE_MISMATCH!>@Composable {}<!>
             val bar: suspend () -> Unit = {}

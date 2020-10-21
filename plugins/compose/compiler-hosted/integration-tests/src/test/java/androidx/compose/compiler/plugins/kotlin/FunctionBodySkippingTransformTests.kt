@@ -165,6 +165,108 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
     )
 
     @Test
+    fun testFunInterfaces(): Unit = comparisonPropagation(
+        """
+            fun interface A {
+                @Composable fun compute(value: Int): Unit
+            }
+        """,
+        """
+            fun Example(a: A) {
+                Example { it -> a.compute(it) }
+            }
+        """,
+        """
+            fun Example(a: A) {
+              Example(class <no name provided> : A {
+                @Composable
+                override fun compute(it: Int, %composer: Composer<*>?, %changed: Int) {
+                  %composer.startRestartGroup(<>, "C(compute)<comput...>:Test.kt")
+                  val %dirty = %changed
+                  if (%changed and 0b0110 === 0) {
+                    %dirty = %dirty or if (%composer.changed(it)) 0b0100 else 0b0010
+                  }
+                  %dirty = %dirty or 0b00011000
+                  if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+                    a.compute(it, %composer, 0b0110 and %dirty)
+                  } else {
+                    %composer.skipToGroupEnd()
+                  }
+                  val tmp0_rcvr = <this>
+                  %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                    tmp0_rcvr.compute(it, %composer, %changed or 0b0001)
+                  }
+                }
+              }
+              <no name provided>())
+            }
+        """
+    )
+
+    @Test
+    fun testFunInterfaces2(): Unit = comparisonPropagation(
+        """
+            import androidx.compose.ui.graphics.Color
+
+            @Composable fun condition(): Boolean = true
+
+            fun interface ButtonColors {
+                @Composable fun getColor(): Color
+            }
+        """,
+        """
+            import androidx.compose.ui.graphics.Color
+            import androidx.compose.foundation.Text
+
+            @Composable
+            fun Button(colors: ButtonColors) {
+                Text("hello world", color = colors.getColor())
+            }
+            @Composable
+            fun Test() {
+                Button {
+                    if (condition()) Color.Red else Color.Blue
+                }
+            }
+        """,
+        """
+            @Composable
+            fun Button(colors: ButtonColors, %composer: Composer<*>?, %changed: Int) {
+              %composer.startRestartGroup(<>, "C(Button)<getCol...>,<Text("...>:Test.kt")
+              Text("hello world", null, colors.getColor(%composer, 0b0110 and %changed), TextUnit(0L), null, null, null, TextUnit(0L), null, null, TextUnit(0L), null, false, 0, null, null, %composer, 0b0110, 0, 0b1111111111111010)
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                Button(colors, %composer, %changed or 0b0001)
+              }
+            }
+            @Composable
+            fun Test(%composer: Composer<*>?, %changed: Int) {
+              %composer.startRestartGroup(<>, "C(Test)<Button>:Test.kt")
+              if (%changed !== 0 || !%composer.skipping) {
+                Button(class <no name provided> : ButtonColors {
+                  @Composable
+                  override fun getColor(%composer: Composer<*>?, %changed: Int): Color {
+                    %composer.startReplaceableGroup(<>, "C(getColor)<condit...>:Test.kt")
+                    val tmp0 = if (condition(%composer, 0)) {
+                      Companion.Red
+                    } else {
+                      Companion.Blue
+                    }
+                    %composer.endReplaceableGroup()
+                    return tmp0
+                  }
+                }
+                <no name provided>(), %composer, 0)
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                Test(%composer, %changed or 0b0001)
+              }
+            }
+        """
+    )
+
+    @Test
     fun testSimpleColumn(): Unit = comparisonPropagation(
         """
             import androidx.compose.runtime.Stable
