@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
@@ -423,8 +424,10 @@ class Fir2IrVisitor(
         return visitQualifiedAccessExpression(thisReceiverExpression, data)
     }
 
-    private fun implicitCastOrExpression(original: IrExpression, castType: IrType): IrExpression {
-        if (original.type == castType) return original
+    private fun implicitCastOrExpression(original: IrExpression, castType: IrType, isThisInLocalFun: Boolean = false): IrExpression {
+        // If the original is a "this" in a local function and original.type is the same as castType,
+        // we still want to keep the cast. See kt-42517
+        if (original.type == castType && !isThisInLocalFun) return original
         return IrTypeOperatorCallImpl(
             original.startOffset,
             original.endOffset,
@@ -485,7 +488,9 @@ class Fir2IrVisitor(
                 }
             }
         }
-        return implicitCastOrExpression(value, castTypeRef.toIrType())
+        val isLocalFun = ((value as? IrGetValue)?.symbol?.owner?.parent as? IrFunction)?.visibility == DescriptorVisibilities.LOCAL
+        return implicitCastOrExpression(value, castTypeRef.toIrType(),
+                                        isLocalFun && expressionWithSmartcast.originalExpression is FirThisReceiverExpression)
     }
 
     override fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: Any?): IrElement {
