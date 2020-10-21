@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
+import org.jetbrains.kotlin.idea.resolve.getLanguageVersionSettings
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinBaseTest.TestFile
 import org.jetbrains.kotlin.test.KotlinCompilerStandalone
@@ -196,7 +197,8 @@ class DebuggerTestCompilerFacility(
 
         state.factory.writeAllTo(classesDir)
 
-        return findMainClass(state, files)?.asString() ?: error("Cannot find main class name")
+        return findMainClass(bindingContext, resolutionFacade.getLanguageVersionSettings(), files)?.asString()
+            ?: error("Cannot find main class name")
     }
 
     private fun getClasspath(module: Module): List<String> {
