@@ -19,6 +19,8 @@ package androidx.compose.compiler.plugins.kotlin
 import androidx.compose.compiler.plugins.kotlin.ComposeErrors.COMPOSABLE_PROPERTY_BACKING_FIELD
 import androidx.compose.compiler.plugins.kotlin.ComposeErrors.COMPOSABLE_SUSPEND_FUN
 import androidx.compose.compiler.plugins.kotlin.ComposeErrors.COMPOSABLE_VAR
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -33,6 +35,7 @@ import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
+import org.jetbrains.kotlin.types.KotlinType
 
 class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContainerContributor {
     override fun registerModuleComponents(
@@ -77,6 +80,28 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
         if (descriptor.isSuspend && hasComposableAnnotation) {
             context.trace.report(
                 COMPOSABLE_SUSPEND_FUN.on(declaration.nameIdentifier ?: declaration)
+            )
+        }
+        val params = descriptor.valueParameters
+        val ktparams = declaration.valueParameters
+        if (params.size == ktparams.size) {
+            for ((param, ktparam) in params.zip(ktparams)) {
+                val typeRef = ktparam.typeReference
+                if (typeRef != null) {
+                    checkType(param.type, typeRef, context)
+                }
+            }
+        }
+    }
+
+    private fun checkType(
+        type: KotlinType,
+        element: PsiElement,
+        context: DeclarationCheckerContext
+    ) {
+        if (type.hasComposableAnnotation() && type.isSuspendFunctionType) {
+            context.trace.report(
+                COMPOSABLE_SUSPEND_FUN.on(element)
             )
         }
     }

@@ -1226,4 +1226,230 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
             }
         """
     )
+
+    @Test
+    fun testFunInterfaces(): Unit = checkApi(
+        """
+            fun interface A {
+                fun compute(value: Int): Unit
+            }
+            fun Example(a: A) {
+                a.compute(123)
+            }
+            fun Usage() {
+                Example { it -> it + 1 }
+            }
+        """,
+        """
+            public abstract interface A {
+              public abstract compute(I)V
+            }
+            public final class TestKt {
+              public final static Example(LA;)V
+              final static INNERCLASS TestKt%Usage%1 null null
+              public final static Usage()V
+            }
+            final class TestKt%Usage%1 implements A {
+              <init>()V
+              public final compute(I)V
+              public final static LTestKt%Usage%1; INSTANCE
+              static <clinit>()V
+              final static INNERCLASS TestKt%Usage%1 null null
+              OUTERCLASS TestKt Usage ()V
+            }
+        """
+    )
+
+    @Test
+    fun testComposableFunInterfaces(): Unit = checkApi(
+        """
+            fun interface A {
+                @Composable fun compute(value: Int): Unit
+            }
+            fun Example(a: A) {
+                Example { it -> a.compute(it) }
+            }
+        """,
+        """
+            public abstract interface A {
+              public abstract compute(ILandroidx/compose/runtime/Composer;I)V
+            }
+            public final class TestKt {
+              final static INNERCLASS TestKt%Example%1 null null
+              public final static Example(LA;)V
+            }
+            final class TestKt%Example%1 implements A {
+              <init>(LA;)V
+              final static INNERCLASS TestKt%Example%1%compute%1 null null
+              public final compute(ILandroidx/compose/runtime/Composer;I)V
+              private final synthetic LA; %a
+              final static INNERCLASS TestKt%Example%1 null null
+              OUTERCLASS TestKt Example (LA;)V
+            }
+            final class TestKt%Example%1%compute%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+              <init>(LTestKt%Example%1;II)V
+              public final invoke(Landroidx/compose/runtime/Composer;I)V
+              private final synthetic LTestKt%Example%1; %tmp0_rcvr
+              private final synthetic I %it
+              private final synthetic I %%changed
+              public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+              final static INNERCLASS TestKt%Example%1%compute%1 null null
+              final static INNERCLASS TestKt%Example%1 null null
+              OUTERCLASS TestKt%Example%1 compute (ILandroidx/compose/runtime/Composer;I)V
+            }
+        """
+    )
+
+    @Test
+    fun testFunInterfaceWithInlineReturnType(): Unit = checkApi(
+        """
+            inline class Color(val value: Int)
+            fun interface A {
+                fun compute(value: Int): Color
+            }
+            fun Example(a: A) {
+                Example { it -> Color(it) }
+            }
+        """,
+        """
+            public final class Color {
+              private final I value
+              public final getValue()I
+              public static toString-impl(I)Ljava/lang/String;
+              public toString()Ljava/lang/String;
+              public static hashCode-impl(I)I
+              public hashCode()I
+              public static equals-impl(ILjava/lang/Object;)Z
+              public equals(Ljava/lang/Object;)Z
+              private synthetic <init>(I)V
+              public static constructor-impl(I)I
+              public final static synthetic box-impl(I)LColor;
+              public final synthetic unbox-impl()I
+              public final static equals-impl0(II)Z
+            }
+            public abstract interface A {
+              public abstract compute-etMKIPo(I)I
+            }
+            public final class TestKt {
+              final static INNERCLASS TestKt%Example%1 null null
+              public final static Example(LA;)V
+            }
+            final class TestKt%Example%1 implements A {
+              <init>()V
+              public final compute-etMKIPo-etMKIPo(I)I
+              public final static LTestKt%Example%1; INSTANCE
+              public synthetic bridge compute-etMKIPo(I)I
+              static <clinit>()V
+              final static INNERCLASS TestKt%Example%1 null null
+              OUTERCLASS TestKt Example (LA;)V
+            }
+        """
+    )
+
+    @Test
+    fun testComposableFunInterfaceWithInlineReturnType(): Unit = checkApi(
+        """
+            inline class Color(val value: Int)
+            fun interface A {
+                @Composable fun compute(value: Int): Color
+            }
+            fun Example(a: A) {
+                Example { it -> Color(it) }
+            }
+        """,
+        """
+            public final class Color {
+              private final I value
+              public final getValue()I
+              public static toString-impl(I)Ljava/lang/String;
+              public toString()Ljava/lang/String;
+              public static hashCode-impl(I)I
+              public hashCode()I
+              public static equals-impl(ILjava/lang/Object;)Z
+              public equals(Ljava/lang/Object;)Z
+              private synthetic <init>(I)V
+              public static constructor-impl(I)I
+              public final static synthetic box-impl(I)LColor;
+              public final synthetic unbox-impl()I
+              public final static equals-impl0(II)Z
+            }
+            public abstract interface A {
+              public abstract compute-etMKIPo(ILandroidx/compose/runtime/Composer;I)I
+            }
+            public final class TestKt {
+              final static INNERCLASS TestKt%Example%1 null null
+              public final static Example(LA;)V
+            }
+            final class TestKt%Example%1 implements A {
+              <init>()V
+              public final compute-etMKIPo(ILandroidx/compose/runtime/Composer;I)I
+              public final static LTestKt%Example%1; INSTANCE
+              static <clinit>()V
+              final static INNERCLASS TestKt%Example%1 null null
+              OUTERCLASS TestKt Example (LA;)V
+            }
+        """
+    )
+
+    @Test
+    fun testComposableColorFunInterfaceExample(): Unit = checkApi(
+        """
+            import androidx.compose.ui.graphics.Color
+            import androidx.compose.foundation.Text
+
+            @Composable fun condition(): Boolean = true
+
+            fun interface ButtonColors {
+                @Composable fun getColor(): Color
+            }
+            @Composable
+            fun Button(colors: ButtonColors) {
+                Text("hello world", color = colors.getColor())
+            }
+            @Composable
+            fun Test() {
+                Button {
+                    if (condition()) Color.Red else Color.Blue
+                }
+            }
+        """,
+        """
+            public abstract interface ButtonColors {
+              public abstract getColor-0d7_KjU(Landroidx/compose/runtime/Composer;I)J
+            }
+            public final class TestKt {
+              public final static condition(Landroidx/compose/runtime/Composer;I)Z
+              final static INNERCLASS TestKt%Button%1 null null
+              public final static Button(LButtonColors;Landroidx/compose/runtime/Composer;I)V
+              final static INNERCLASS TestKt%Test%1 null null
+              final static INNERCLASS TestKt%Test%2 null null
+              public final static Test(Landroidx/compose/runtime/Composer;I)V
+            }
+            final class TestKt%Button%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+              <init>(LButtonColors;I)V
+              public final invoke(Landroidx/compose/runtime/Composer;I)V
+              private final synthetic LButtonColors; %colors
+              private final synthetic I %%changed
+              public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+              final static INNERCLASS TestKt%Button%1 null null
+              OUTERCLASS TestKt Button (LButtonColors;Landroidx/compose/runtime/Composer;I)V
+            }
+            final class TestKt%Test%1 implements ButtonColors {
+              <init>()V
+              public final getColor-0d7_KjU(Landroidx/compose/runtime/Composer;I)J
+              public final static LTestKt%Test%1; INSTANCE
+              static <clinit>()V
+              final static INNERCLASS TestKt%Test%1 null null
+              OUTERCLASS TestKt Test (Landroidx/compose/runtime/Composer;I)V
+            }
+            final class TestKt%Test%2 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+              <init>(I)V
+              public final invoke(Landroidx/compose/runtime/Composer;I)V
+              private final synthetic I %%changed
+              public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+              final static INNERCLASS TestKt%Test%2 null null
+              OUTERCLASS TestKt Test (Landroidx/compose/runtime/Composer;I)V
+            }
+        """
+    )
 }
