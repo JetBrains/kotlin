@@ -375,10 +375,11 @@ abstract class LibraryInfo(override val project: Project, val library: Library) 
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        return (other is LibraryInfo && library == other.library)
+        return other is LibraryInfo && library.hasSameContent(other.library)
     }
 
-    override fun hashCode(): Int = 43 * library.hashCode()
+    override fun hashCode(): Int =
+        library.calcHashCode()
 }
 
 data class LibrarySourceInfo(override val project: Project, val library: Library, override val binariesModuleInfo: BinaryModuleInfo) :
