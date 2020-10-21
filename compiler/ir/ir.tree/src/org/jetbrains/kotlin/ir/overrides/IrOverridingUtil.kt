@@ -51,8 +51,16 @@ abstract class FakeOverrideBuilderStrategy {
         return deepCopyFakeOverride
     }
 
-    // TODO: this one doesn't belong here. IrOverridingUtil shouldn't know about symbol table.
-    abstract fun linkFakeOverride(fakeOverride: IrOverridableMember)
+    fun linkFakeOverride(fakeOverride: IrOverridableMember) {
+        when (fakeOverride) {
+            is IrFakeOverrideFunction -> linkFunctionFakeOverride(fakeOverride)
+            is IrFakeOverrideProperty -> linkPropertyFakeOverride(fakeOverride)
+            else -> error("Unexpected fake override: $fakeOverride")
+        }
+    }
+
+    protected abstract fun linkFunctionFakeOverride(declaration: IrFakeOverrideFunction)
+    protected abstract fun linkPropertyFakeOverride(declaration: IrFakeOverrideProperty)
 
     // TODO: need to make IrProperty carry overriddenSymbols.
     val propertyOverriddenSymbols: MutableMap<IrOverridableMember, List<IrSymbol>> = mutableMapOf()
@@ -390,8 +398,8 @@ class IrOverridingUtil(
             fakeOverride.overriddenSymbols.isNotEmpty()
         ) { "Overridden symbols should be set for " + CallableMemberDescriptor.Kind.FAKE_OVERRIDE }
 
-        fakeOverrideBuilder.linkFakeOverride(fakeOverride)
         addedFakeOverrides.add(fakeOverride)
+        fakeOverrideBuilder.linkFakeOverride(fakeOverride)
     }
 
     private fun isVisibilityMoreSpecific(

@@ -72,6 +72,7 @@ object FakeOverrideControl {
 }
 
 class FakeOverrideBuilder(
+    val linker: FileLocalAwareLinker,
     val symbolTable: SymbolTable,
     val signaturer: IdSignatureSerializer,
     irBuiltIns: IrBuiltIns,
@@ -108,23 +109,12 @@ class FakeOverrideBuilder(
         irOverridingUtil.buildFakeOverridesForClass(clazz)
     }
 
-    override fun linkFakeOverride(fakeOverride: IrOverridableMember) {
-        when (fakeOverride) {
-            is IrFakeOverrideFunction -> linkFunctionFakeOverride(fakeOverride)
-            is IrFakeOverrideProperty -> linkPropertyFakeOverride(fakeOverride)
-            else -> error("Unexpected fake override: $fakeOverride")
-        }
+    override fun linkFunctionFakeOverride(declaration: IrFakeOverrideFunction) {
+        val signature = composeSignature(declaration)
+        declareFunctionFakeOverride(declaration, signature)
     }
 
-    private fun linkFunctionFakeOverride(declaration: IrFakeOverrideFunction) {
-        val signature = signaturer.composePublicIdSignature(declaration)
-
-        symbolTable.declareSimpleFunctionFromLinker(WrappedSimpleFunctionDescriptor(), signature) {
-            declaration.acquireSymbol(it)
-        }
-    }
-
-    private fun linkPropertyFakeOverride(declaration: IrFakeOverrideProperty) {
+    override fun linkPropertyFakeOverride(declaration: IrFakeOverrideProperty) {
         // To compute a signature for a property with type parameters,
         // we must have its accessor's correspondingProperty pointing to the property's symbol.
         // See IrMangleComputer.mangleTypeParameterReference() for details.
@@ -154,7 +144,30 @@ class FakeOverrideBuilder(
         }
     }
 
-    fun provideFakeOverrides(klass: IrClass) {
+    private fun composeSignature(declaration: IrDeclaration) =
+        signaturer.composeSignatureForDeclaration(declaration)
+
+    private fun declareFunctionFakeOverride(declaration: IrFakeOverrideFunction, signature: IdSignature) {
+        val parent = declaration.parentAsClass
+        val symbol = linker.tryReferencingSimpleFunctionByLocalSignature(parent, signature)
+        val descriptor = symbol?.descriptor ?: WrappedSimpleFunctionDescriptor()
+        symbolTable.declareSimpleFunctionFromLinker(descriptor, signature) {
+            assert(it === symbol || symbol == null)
+            declaration.acquireSymbol(it)
+        }
+    }
+
+    private fun declarePropertyFakeOverride(declaration: IrFakeOverrideProperty, signature: IdSignature) {
+        val parent = declaration.parentAsClass
+        val symbol = linker.tryReferencingPropertyByLocalSignature(parent, signature)
+        val descriptor = symbol?.descriptor ?: WrappedPropertyDescriptor()
+        symbolTable.declarePropertyFromLinker(descriptor, signature) {
+            assert(it === symbol || symbol == null)
+            declaration.acquireSymbol(it)
+        }
+    }
+
+    private fun provideFakeOverrides(klass: IrClass) {
         buildFakeOverrideChainsForClass(klass)
         propertyOverriddenSymbols.clear()
         irOverridingUtil.clear()
