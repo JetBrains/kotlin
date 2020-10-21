@@ -745,3 +745,18 @@ class IrOverridingUtil(
         }
     }
 }
+
+fun IrSimpleFunction.isOverridableFunction(): Boolean =
+    this.visibility != DescriptorVisibilities.PRIVATE &&
+    this.dispatchReceiverParameter != null
+
+fun IrProperty.isOverridableProperty(): Boolean =
+    this.visibility != DescriptorVisibilities.PRIVATE &&
+    (this.getter?.dispatchReceiverParameter != null ||
+     this.setter?.dispatchReceiverParameter != null)
+
+fun IrDeclaration.isOverridableMemberOrAccessor(): Boolean = when(this) {
+    is IrSimpleFunction -> isOverridableFunction()
+    is IrProperty -> isOverridableProperty()
+    else -> false
+}

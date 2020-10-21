@@ -135,9 +135,9 @@ sealed class IdSignature {
         override fun render(): String = "${container.render()}:$id"
 
         override fun equals(other: Any?): Boolean =
-            other is FileLocalSignature && id == other.id
+            other is FileLocalSignature && id == other.id && container == other.container
 
-        override fun hashCode(): Int = id.toInt()
+        override fun hashCode(): Int = container.hashCode() * 31 + id.hashCode()
     }
 
     // Used to reference local variable and value parameters in function

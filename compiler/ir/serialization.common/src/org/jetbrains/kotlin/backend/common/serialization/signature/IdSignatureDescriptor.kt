@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.serialization.signature
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.descriptors.WrappedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IdSignatureComposer
