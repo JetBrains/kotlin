@@ -917,6 +917,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/expressions/equals.kt");
         }
 
+        @TestMetadata("exhaustiveWhenElseBranch.kt")
+        public void testExhaustiveWhenElseBranch() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/exhaustiveWhenElseBranch.kt");
+        }
+
         @TestMetadata("extFunInvokeAsFun.kt")
         public void testExtFunInvokeAsFun() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/extFunInvokeAsFun.kt");

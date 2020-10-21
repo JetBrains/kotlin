@@ -4748,6 +4748,11 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/when/exhaustiveWhenReturn.kt");
         }
 
+        @TestMetadata("exhaustiveWhenSpecialCases.kt")
+        public void testExhaustiveWhenSpecialCases() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/when/exhaustiveWhenSpecialCases.kt");
+        }
+
         @TestMetadata("exhaustiveWhenUnit.kt")
         public void testExhaustiveWhenUnit() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/when/exhaustiveWhenUnit.kt");
