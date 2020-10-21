@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.linkage.IrDeserializer
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
@@ -29,7 +31,11 @@ import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.DFS
 
-internal fun Context.psiToIr(symbolTable: SymbolTable, isProducingLibrary: Boolean) {
+internal fun Context.psiToIr(
+        symbolTable: SymbolTable,
+        isProducingLibrary: Boolean,
+        useLinkerWhenProducingLibrary: Boolean
+) {
     // Translate AST to high level IR.
     val expectActualLinker = config.configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER)?:false
 
@@ -55,71 +61,81 @@ internal fun Context.psiToIr(symbolTable: SymbolTable, isProducingLibrary: Boole
     )
     val symbols = KonanSymbols(this, generatorContext.irBuiltIns, symbolTable, symbolTable.lazyWrapper, functionIrClassFactory)
 
-    val irProviderForCEnumsAndCStructs =
-            IrProviderForCEnumAndCStructStubs(generatorContext, interopBuiltIns, symbols)
+    val irDeserializer = if (isProducingLibrary && !useLinkerWhenProducingLibrary) {
+        // Enable lazy IR generation for newly-created symbols inside BE
+        stubGenerator.unboundSymbolGeneration = true
 
-    val deserializeFakeOverrides = config.configuration.getBoolean(CommonConfigurationKeys.DESERIALIZE_FAKE_OVERRIDES)
+        object : IrDeserializer {
+            override fun getDeclaration(symbol: IrSymbol) = stubGenerator.getDeclaration(symbol)
+        }
+    } else {
+        val irProviderForCEnumsAndCStructs =
+                IrProviderForCEnumAndCStructStubs(generatorContext, interopBuiltIns, symbols)
 
-    val translationContext = object : TranslationPluginContext {
-        override val moduleDescriptor: ModuleDescriptor
-            get() = generatorContext.moduleDescriptor
-        override val bindingContext: BindingContext
-            get() = generatorContext.bindingContext
-        override val symbolTable: ReferenceSymbolTable
-            get() = symbolTable
-        override val typeTranslator: TypeTranslator
-            get() = generatorContext.typeTranslator
-        override val irBuiltIns: IrBuiltIns
-            get() = generatorContext.irBuiltIns
-    }
+        val deserializeFakeOverrides = config.configuration.getBoolean(CommonConfigurationKeys.DESERIALIZE_FAKE_OVERRIDES)
 
-    val linker = KonanIrLinker(
-            moduleDescriptor,
-            functionIrClassFactory,
-            translationContext,
-            this as LoggingContext,
-            generatorContext.irBuiltIns,
-            symbolTable,
-            forwardDeclarationsModuleDescriptor,
-            stubGenerator,
-            irProviderForCEnumsAndCStructs,
-            exportedDependencies,
-            deserializeFakeOverrides,
-            config.cachedLibraries
-    )
-
-    // context.config.librariesWithDependencies could change at each iteration.
-    var dependenciesCount = 0
-    while (true) {
-        // context.config.librariesWithDependencies could change at each iteration.
-        val dependencies = moduleDescriptor.allDependencyModules.filter {
-            config.librariesWithDependencies(moduleDescriptor).contains(it.konanLibrary)
+        val translationContext = object : TranslationPluginContext {
+            override val moduleDescriptor: ModuleDescriptor
+                get() = generatorContext.moduleDescriptor
+            override val bindingContext: BindingContext
+                get() = generatorContext.bindingContext
+            override val symbolTable: ReferenceSymbolTable
+                get() = symbolTable
+            override val typeTranslator: TypeTranslator
+                get() = generatorContext.typeTranslator
+            override val irBuiltIns: IrBuiltIns
+                get() = generatorContext.irBuiltIns
         }
 
-        fun sortDependencies(dependencies: List<ModuleDescriptor>): Collection<ModuleDescriptor> {
-            return DFS.topologicalOrder(dependencies) {
-                it.allDependencyModules
-            }.reversed()
-        }
+        KonanIrLinker(
+                moduleDescriptor,
+                functionIrClassFactory,
+                translationContext,
+                this as LoggingContext,
+                generatorContext.irBuiltIns,
+                symbolTable,
+                forwardDeclarationsModuleDescriptor,
+                stubGenerator,
+                irProviderForCEnumsAndCStructs,
+                exportedDependencies,
+                deserializeFakeOverrides,
+                config.cachedLibraries
+        ).also { linker ->
 
-        for (dependency in sortDependencies(dependencies).filter { it != moduleDescriptor }) {
-            val kotlinLibrary = dependency.getCapability(KlibModuleOrigin.CAPABILITY)?.let {
-                (it as? DeserializedKlibModuleOrigin)?.library
+            // context.config.librariesWithDependencies could change at each iteration.
+            var dependenciesCount = 0
+            while (true) {
+                // context.config.librariesWithDependencies could change at each iteration.
+                val dependencies = moduleDescriptor.allDependencyModules.filter {
+                    config.librariesWithDependencies(moduleDescriptor).contains(it.konanLibrary)
+                }
+
+                fun sortDependencies(dependencies: List<ModuleDescriptor>): Collection<ModuleDescriptor> {
+                    return DFS.topologicalOrder(dependencies) {
+                        it.allDependencyModules
+                    }.reversed()
+                }
+
+                for (dependency in sortDependencies(dependencies).filter { it != moduleDescriptor }) {
+                    val kotlinLibrary = dependency.getCapability(KlibModuleOrigin.CAPABILITY)?.let {
+                        (it as? DeserializedKlibModuleOrigin)?.library
+                    }
+                    if (isProducingLibrary)
+                        linker.deserializeOnlyHeaderModule(dependency, kotlinLibrary)
+                    else
+                        linker.deserializeIrModuleHeader(dependency, kotlinLibrary)
+                }
+                if (dependencies.size == dependenciesCount) break
+                dependenciesCount = dependencies.size
             }
-            if (isProducingLibrary)
-                linker.deserializeOnlyHeaderModule(dependency, kotlinLibrary)
-            else
-                linker.deserializeIrModuleHeader(dependency, kotlinLibrary)
-        }
-        if (dependencies.size == dependenciesCount) break
-        dependenciesCount = dependencies.size
-    }
 
-    // We need to run `buildAllEnumsAndStructsFrom` before `generateModuleFragment` because it adds references to symbolTable
-    // that should be bound.
-    modulesWithoutDCE
-            .filter(ModuleDescriptor::isFromInteropLibrary)
-            .forEach(irProviderForCEnumsAndCStructs::referenceAllEnumsAndStructsFrom)
+            // We need to run `buildAllEnumsAndStructsFrom` before `generateModuleFragment` because it adds references to symbolTable
+            // that should be bound.
+            modulesWithoutDCE
+                    .filter(ModuleDescriptor::isFromInteropLibrary)
+                    .forEach(irProviderForCEnumsAndCStructs::referenceAllEnumsAndStructsFrom)
+        }
+    }
 
     translator.addPostprocessingStep { module ->
         val pluginContext = IrPluginContextImpl(
@@ -129,7 +145,7 @@ internal fun Context.psiToIr(symbolTable: SymbolTable, isProducingLibrary: Boole
                 generatorContext.symbolTable,
                 generatorContext.typeTranslator,
                 generatorContext.irBuiltIns,
-                linker
+                linker = irDeserializer
         )
         pluginExtensions.forEach { extension ->
             extension.generate(module, pluginContext)
@@ -140,7 +156,7 @@ internal fun Context.psiToIr(symbolTable: SymbolTable, isProducingLibrary: Boole
     val module = translator.generateModuleFragment(
             generatorContext,
             environment.getSourceFiles(),
-            irProviders = listOf(linker),
+            irProviders = listOf(irDeserializer),
             linkerExtensions = pluginExtensions,
             // TODO: This is a hack to allow platform libs to build in reasonable time.
             // referenceExpectsForUsedActuals() appears to be quadratic in time because of
@@ -149,7 +165,7 @@ internal fun Context.psiToIr(symbolTable: SymbolTable, isProducingLibrary: Boole
             expectDescriptorToSymbol = if (expectActualLinker) expectDescriptorToSymbol else null
     )
 
-    linker.postProcess()
+    irDeserializer.postProcess()
 
     // Enable lazy IR genration for newly-created symbols inside BE
     stubGenerator.unboundSymbolGeneration = true
@@ -158,7 +174,7 @@ internal fun Context.psiToIr(symbolTable: SymbolTable, isProducingLibrary: Boole
 
     module.acceptVoid(ManglerChecker(KonanManglerIr, Ir2DescriptorManglerAdapter(KonanManglerDesc)))
 
-    val modules = if (isProducingLibrary) emptyMap() else linker.modules
+    val modules = if (isProducingLibrary) emptyMap() else (irDeserializer as KonanIrLinker).modules
 
     if (!config.configuration.getBoolean(KonanConfigKeys.DISABLE_FAKE_OVERRIDE_VALIDATOR)) {
         val fakeOverrideChecker = FakeOverrideChecker(KonanManglerIr, KonanManglerDesc)

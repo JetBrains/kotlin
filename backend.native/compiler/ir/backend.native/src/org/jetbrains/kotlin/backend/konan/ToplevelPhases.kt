@@ -131,7 +131,11 @@ internal val buildCExportsPhase = konanUnitPhase(
 )
 
 internal val psiToIrPhase = konanUnitPhase(
-        op = { this.psiToIr(symbolTable!!, config.produce == CompilerOutputKind.LIBRARY) },
+        op = {
+            this.psiToIr(symbolTable!!,
+                    isProducingLibrary = config.produce == CompilerOutputKind.LIBRARY,
+                    useLinkerWhenProducingLibrary = false)
+        },
         name = "Psi2Ir",
         description = "Psi to IR conversion and klib linkage",
         prerequisite = setOf(createSymbolTablePhase)
