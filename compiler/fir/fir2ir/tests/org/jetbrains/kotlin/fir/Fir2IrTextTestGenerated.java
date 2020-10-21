@@ -1811,6 +1811,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         public void testV8ArrayToList() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/V8ArrayToList.kt");
         }
+
+        @TestMetadata("VarInInit.kt")
+        public void testVarInInit() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/VarInInit.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/ir/irText/lambdas")

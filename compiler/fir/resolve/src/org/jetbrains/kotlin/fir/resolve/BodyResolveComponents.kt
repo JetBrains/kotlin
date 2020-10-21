@@ -143,7 +143,8 @@ typealias TowerDataContextForAnonymousFunctions = Map<FirAnonymousFunctionSymbol
 class FirTowerDataContextsForClassParts(
     val forNestedClasses: FirTowerDataContext,
     val forConstructorHeaders: FirTowerDataContext,
-    val primaryConstructorParametersScope: FirLocalScope?,
+    val primaryConstructorPureParametersScope: FirLocalScope?,
+    val primaryConstructorAllParametersScope: FirLocalScope?,
 )
 
 // --------------------------------------- Utils ---------------------------------------

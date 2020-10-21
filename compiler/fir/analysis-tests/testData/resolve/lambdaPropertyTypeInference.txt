@@ -46,9 +46,9 @@ FILE: KotlinClass.kt
             public get(): R|JavaClass?|
 
         public final val x: R|(KotlinClass) -> kotlin/Boolean| = when () {
-            !=(R|<local>/javaClass|, Null(null)) ->  {
+            !=(this@R|/Case1|.R|/Case1.javaClass|, Null(null)) ->  {
                 fun <anonymous>(it: R|KotlinClass|): R|kotlin/Boolean| {
-                    ^ ==(R|<local>/it|, R|<local>/javaClass|)
+                    ^ ==(R|<local>/it|, this@R|/Case1|.R|/Case1.javaClass|)
                 }
 
             }
@@ -139,9 +139,9 @@ FILE: KotlinClass.kt
             public get(): R|KotlinClass?|
 
         public final val x: R|(KotlinClass) -> kotlin/Boolean| = when () {
-            !=(R|<local>/kotlinClass|, Null(null)) ->  {
+            !=(this@R|/Case2|.R|/Case2.kotlinClass|, Null(null)) ->  {
                 fun <anonymous>(it: R|KotlinClass|): R|kotlin/Boolean| {
-                    ^ ==(R|<local>/it|, R|<local>/kotlinClass|)
+                    ^ ==(R|<local>/it|, this@R|/Case2|.R|/Case2.kotlinClass|)
                 }
 
             }
