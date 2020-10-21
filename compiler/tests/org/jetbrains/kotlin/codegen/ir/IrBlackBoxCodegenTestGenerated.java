@@ -11761,6 +11761,16 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/fakeOverride/function.kt");
         }
 
+        @TestMetadata("privateFakeOverrides0.kt")
+        public void testPrivateFakeOverrides0() throws Exception {
+            runTest("compiler/testData/codegen/box/fakeOverride/privateFakeOverrides0.kt");
+        }
+
+        @TestMetadata("privateFakeOverrides1.kt")
+        public void testPrivateFakeOverrides1() throws Exception {
+            runTest("compiler/testData/codegen/box/fakeOverride/privateFakeOverrides1.kt");
+        }
+
         @TestMetadata("propertyGetter.kt")
         public void testPropertyGetter() throws Exception {
             runTest("compiler/testData/codegen/box/fakeOverride/propertyGetter.kt");
