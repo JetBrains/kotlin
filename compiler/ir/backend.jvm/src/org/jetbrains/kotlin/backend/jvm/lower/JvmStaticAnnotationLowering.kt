@@ -11,21 +11,19 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.ir.copyCorrespondingPropertyFrom
-import org.jetbrains.kotlin.backend.jvm.ir.isInCurrentModule
 import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -53,36 +51,35 @@ private class JvmStaticAnnotationLowering(val context: JvmBackendContext) : IrEl
         if (declaration.isCompanion) {
             // Leave the functions as-is, but add static bridges to the parent class.
             val parent = declaration.parent as IrClass
-            val needBridges = declaration.declarations.filter {
-                it.isJvmStaticFunction() && it.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER
-            }
-            for (member in needBridges) {
-                val function = member as IrSimpleFunction
-                if (function.isExternal) {
-                    // External functions are inverted, i.e. the actual code is in the static method of the parent class.
-                    val staticMethod = function.copyRemovingDispatchReceiver(parent)
+            declaration.declarations.transformInPlace {
+                if (it !is IrSimpleFunction || !it.isJvmStaticFunction() ||
+                    it.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER
+                ) return@transformInPlace it
+                val staticMethod = context.cachedDeclarations.getStaticMethod(it)
+                if (staticMethod != null) {
                     parent.declarations += staticMethod
-                    // TODO: calls pointing to `function` will reach the proxy at runtime - should the IR be remapped?
-                    declaration.declarations.remove(function)
-                    declaration.addProxy(staticMethod, null)
+                    declaration.buildProxy(staticMethod, null)
                 } else {
-                    parent.addProxy(function, context.cachedDeclarations.getFieldForObjectInstance(declaration))
+                    parent.declarations += parent.buildProxy(it, context.cachedDeclarations.getFieldForObjectInstance(declaration))
+                    it
                 }
             }
         } else if (declaration.isObject) {
-            for (member in declaration.declarations) {
-                if (!member.isJvmStaticFunction()) continue
-                val function = member as IrSimpleFunction
-                val receiver = function.dispatchReceiverParameter ?: continue
-                function.dispatchReceiverParameter = null
-                function.body = function.body?.replaceThisByStaticReference(context.cachedDeclarations, declaration, receiver)
+            declaration.declarations.transformInPlace {
+                if (it !is IrSimpleFunction || !it.isJvmStaticFunction()) return@transformInPlace it
+                val receiver = it.dispatchReceiverParameter ?: return@transformInPlace it
+                context.cachedDeclarations.getStaticMethod(it)?.apply {
+                    body = it.body
+                        ?.replaceThisByStaticReference(context.cachedDeclarations, declaration, receiver)
+                        ?.move(it, this, symbol, it.explicitParameters.drop(1).zip(explicitParameters).toMap())
+                } ?: it
             }
         }
         return declaration
     }
 
-    private fun IrClass.addProxy(target: IrSimpleFunction, receiver: IrField?) =
-        addFunction {
+    private fun IrClass.buildProxy(target: IrSimpleFunction, receiver: IrField?) =
+        factory.buildFun {
             returnType = target.returnType
             origin = JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER
             // The proxy needs to have the same name as what it is targeting. If that is a property accessor,
@@ -95,6 +92,7 @@ private class JvmStaticAnnotationLowering(val context: JvmBackendContext) : IrEl
             visibility = if (target.visibility == DescriptorVisibilities.INTERNAL) DescriptorVisibilities.PUBLIC else target.visibility
             isSuspend = target.isSuspend
         }.apply {
+            parent = this@buildProxy
             copyAnnotationsFrom(target)
             copyParameterDeclarationsFrom(target)
             dispatchReceiverParameter = if (receiver == null)
@@ -115,49 +113,31 @@ private class JvmStaticAnnotationLowering(val context: JvmBackendContext) : IrEl
             }
         }
 
-    override fun visitCall(expression: IrCall): IrExpression {
-        val callee = expression.symbol.owner
-        if (callee.isJvmStaticInSingleton() && expression.dispatchReceiver != null) {
-            return IrBlockImpl(expression.startOffset, expression.endOffset, expression.type, expression.origin).apply {
-                // Old receiver has to be evaluated for its side effects. TODO: what side effects do singleton object references have?
-                statements += super.visitExpression(expression.dispatchReceiver!!).coerceToUnit()
-                statements += super.visitCall(if (callee.isInCurrentModule()) {
-                    expression
-                } else {
-                    // Imported functions do not have their receiver parameter nulled by the code above, so we have to do it here.
-                    // TODO: would be better handled by lowering imported declarations; or at least cache the stubs.
-                    irCall(expression, callee.copyRemovingDispatchReceiver(callee.parent))
-                }.apply { dispatchReceiver = null })
-            }
+    private fun <T : IrMemberAccessExpression<IrFunctionSymbol>> T.transform(clone: T.(IrSimpleFunctionSymbol) -> T): IrExpression? {
+        if (!symbol.owner.isJvmStaticFunction()) return null
+        transformChildren(this@JvmStaticAnnotationLowering, null)
+        val staticMethod = context.cachedDeclarations.getStaticMethod(symbol.owner as IrSimpleFunction) ?: return null
+        val staticAccess = clone(staticMethod.symbol).apply {
+            copyTypeAndValueArgumentsFrom(this@transform)
+            dispatchReceiver = null
         }
-        return super.visitCall(expression)
+        return if (dispatchReceiver == null) staticAccess else IrBlockImpl(startOffset, endOffset, type, origin).apply {
+            // Old receiver has to be evaluated for its side effects. TODO: what side effects do singleton object references have?
+            statements += dispatchReceiver!!.coerceToUnit(context.irBuiltIns)
+            statements += staticAccess
+        }
     }
 
-    private fun IrExpression.coerceToUnit(): IrExpression = IrTypeOperatorCallImpl(
-        startOffset, endOffset, context.irBuiltIns.unitType, IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, context.irBuiltIns.unitType, this
-    )
+    override fun visitCall(expression: IrCall): IrExpression =
+        expression.transform { IrCallImpl(startOffset, endOffset, type, it, typeArgumentsCount, valueArgumentsCount, origin) }
+            ?: super.visitCall(expression)
 
-    private fun IrSimpleFunction.copyRemovingDispatchReceiver(parent: IrDeclarationParent): IrSimpleFunction =
-        factory.buildFun {
-            updateFrom(this@copyRemovingDispatchReceiver)
-            name = this@copyRemovingDispatchReceiver.name
-            returnType = this@copyRemovingDispatchReceiver.returnType
-        }.also {
-            it.parent = parent
-            it.copyAttributes(this)
-            it.copyAnnotationsFrom(this)
-            it.copyCorrespondingPropertyFrom(this)
-            it.copyParameterDeclarationsFrom(this)
-            it.dispatchReceiverParameter = null
-        }
+    override fun visitFunctionReference(expression: IrFunctionReference): IrExpression =
+        expression.transform { IrFunctionReferenceImpl(startOffset, endOffset, type, it, typeArgumentsCount, valueArgumentsCount) }
+            ?: super.visitFunctionReference(expression)
 }
 
 private fun IrDeclaration.isJvmStaticFunction(): Boolean =
     this is IrSimpleFunction && origin != JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS &&
             (hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) ||
                     correspondingPropertySymbol?.owner?.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) == true)
-
-private fun IrDeclaration.isJvmStaticInSingleton(): Boolean {
-    val parentClass = parent as? IrClass ?: return false
-    return isJvmStaticFunction() && parentClass.isObject && !parentClass.isCompanion
-}

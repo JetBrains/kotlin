@@ -40,6 +40,7 @@ class JvmCachedDeclarations(
     private val singletonFieldDeclarations = HashMap<IrSymbolOwner, IrField>()
     private val interfaceCompanionFieldDeclarations = HashMap<IrSymbolOwner, IrField>()
     private val staticBackingFields = HashMap<IrProperty, IrField>()
+    private val staticMethods = HashMap<IrSimpleFunction, IrSimpleFunction>()
 
     private val defaultImplsMethods = HashMap<IrSimpleFunction, IrSimpleFunction>()
     private val defaultImplsClasses = HashMap<IrClass, IrClass>()
@@ -126,11 +127,37 @@ class JvmCachedDeclarations(
                     oldParent.parentAsClass
                 else
                     oldParent
-                annotations += oldField.annotations
+                annotations = oldField.annotations
                 initializer = oldField.initializer
                     ?.replaceThisByStaticReference(this@JvmCachedDeclarations, oldParent, oldParent.thisReceiver!!)
                     ?.patchDeclarationParents(this) as IrExpressionBody?
                 origin = if (irProperty.parentAsClass.isCompanion) JvmLoweredDeclarationOrigin.COMPANION_PROPERTY_BACKING_FIELD else origin
+            }
+        }
+    }
+
+    fun getStaticMethod(irFunction: IrSimpleFunction): IrSimpleFunction? {
+        val parentClass = irFunction.parent as? IrClass ?: return null
+        // In non-companion named objects, @JvmStatic functions are transformed into static ones with no bridge.
+        // In companion objects, a static bridge is created in the parent class, but the calls still target the original;
+        // an exception is external functions, which link to the static version, and the bridge is in the companion.
+        if (!parentClass.isObject || (parentClass.isCompanion && !irFunction.isExternal)) return null
+        return staticMethods.getOrPut(irFunction) {
+            context.irFactory.buildFun {
+                updateFrom(irFunction)
+                name = irFunction.name
+                returnType = irFunction.returnType
+            }.apply {
+                parent = if (parentClass.isCompanion) parentClass.parent else parentClass
+                metadata = irFunction.metadata
+                annotations = irFunction.annotations
+                correspondingPropertySymbol = irFunction.correspondingPropertySymbol?.also {
+                    if (it.owner.getter == irFunction) it.owner.getter = this
+                    if (it.owner.setter == irFunction) it.owner.setter = this
+                }
+                copyAttributes(irFunction)
+                copyParameterDeclarationsFrom(irFunction)
+                dispatchReceiverParameter = null
             }
         }
     }
