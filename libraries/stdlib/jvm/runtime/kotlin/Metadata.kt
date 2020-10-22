@@ -76,6 +76,8 @@ public annotation class Metadata(
      * * 5 - this class file has stable metadata and ABI. This is used only for class files compiled with JVM IR (see flag #4) or FIR (#6),
      *   and prevents metadata incompatibility diagnostics from being reported where the class is used.
      * * 6 - this class file is compiled with the new Kotlin compiler frontend (FIR).
+     * * 7 - this class is used in the scope of an inline function and implicitly part of the public ABI. Only valid from
+     *   metadata version 1.6.0.
      */
     @SinceKotlin("1.1")
     @get:JvmName("xi")

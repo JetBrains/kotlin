@@ -69,7 +69,7 @@ class ScriptCodegen private constructor(
     override fun generateKotlinMetadataAnnotation() {
         val serializer = DescriptorSerializer.create(scriptDescriptor, JvmSerializerExtension(v.serializationBindings, state), null)
         val classProto = serializer.classProto(scriptDescriptor).build()
-        writeKotlinMetadata(v, state, KotlinClassHeader.Kind.CLASS, JvmAnnotationNames.METADATA_SCRIPT_FLAG) { av ->
+        writeKotlinMetadata(v, state, KotlinClassHeader.Kind.CLASS, false, JvmAnnotationNames.METADATA_SCRIPT_FLAG) { av ->
             DescriptorAsmUtil.writeAnnotationData(av, serializer, classProto)
         }
     }

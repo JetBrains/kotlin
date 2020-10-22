@@ -118,6 +118,10 @@ class AnonymousObjectTransformer(
 
             override fun visitEnd() {}
         }, ClassReader.SKIP_FRAMES)
+        val header = metadataReader.createHeader()
+        assert(isSameModule || (header != null && isPublicAbi(header))) {
+            "Trying to inline an anonymous object which is not part of the public ABI: ${oldObjectType.className}"
+        }
 
         // When regenerating objects in inline lambdas, keep the old SMAP and don't remap the line numbers to
         // save time. The result is effectively the same anyway.
@@ -198,7 +202,6 @@ class AnonymousObjectTransformer(
             visitor.visitInnerClass(node.name, node.outerName, node.innerName, node.access)
         }
 
-        val header = metadataReader.createHeader()
         if (header != null) {
             writeTransformedMetadata(header, classBuilder)
         }
@@ -229,7 +232,9 @@ class AnonymousObjectTransformer(
     }
 
     private fun writeTransformedMetadata(header: KotlinClassHeader, classBuilder: ClassBuilder) {
-        writeKotlinMetadata(classBuilder, state, header.kind, header.extraInt) action@{ av ->
+        // The transformed anonymous object becomes part of the public ABI if it is inside of a public inline function.
+        val publicAbi = inliningContext.callSiteInfo.isInPublicInlineScope
+        writeKotlinMetadata(classBuilder, state, header.kind, publicAbi, header.extraInt and JvmAnnotationNames.METADATA_PUBLIC_ABI_FLAG.inv()) action@{ av ->
             val (newProto, newStringTable) = transformMetadata(header) ?: run {
                 val data = header.data
                 val strings = header.strings
@@ -241,6 +246,11 @@ class AnonymousObjectTransformer(
             DescriptorAsmUtil.writeAnnotationData(av, newProto, newStringTable)
         }
     }
+
+    private fun isPublicAbi(header: KotlinClassHeader): Boolean =
+        // The public abi flag was only introduced in metadata version 1.6.0, before then we have to skip this check.
+        !header.metadataVersion.isAtLeast(1, 6, 0) ||
+                header.extraInt and JvmAnnotationNames.METADATA_PUBLIC_ABI_FLAG != 0
 
     private fun transformMetadata(header: KotlinClassHeader): Pair<MessageLite, JvmStringTable>? {
         val data = header.data ?: return null
@@ -317,7 +327,7 @@ class AnonymousObjectTransformer(
             InlineCallSiteInfo(
                 transformationInfo.oldClassName,
                 Method(sourceNode.name, if (isConstructor) transformationInfo.newConstructorDescriptor else sourceNode.desc),
-                inliningContext.callSiteInfo.isInlineOrInsideInline,
+                inliningContext.callSiteInfo.inlineScopeVisibility,
                 inliningContext.callSiteInfo.file,
                 inliningContext.callSiteInfo.lineNumber
             ),
