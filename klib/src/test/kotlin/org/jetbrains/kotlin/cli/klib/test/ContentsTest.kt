@@ -325,9 +325,9 @@ class ContentsTest {
     fun topLevelPropertiesWithClassesCustomPackage() = klibContents(testLibrary("TopLevelPropertiesWithClassesCustomPackage")) {
         """
         package custom.pkg {
+            typealias MyTransformer = (String) -> Int
             object Bar
             class Foo constructor()
-            typealias MyTransformer = (String) -> Int
         }
 
         package custom.pkg {
@@ -343,9 +343,9 @@ class ContentsTest {
     fun topLevelPropertiesWithClassesRootPackage() = klibContents(testLibrary("TopLevelPropertiesWithClassesRootPackage")) {
         """
         package <root> {
+            typealias MyTransformer = (String) -> Int
             object Bar
             class Foo constructor()
-            typealias MyTransformer = (String) -> Int
         }
 
         package <root> {
