@@ -873,7 +873,8 @@ class Fir2IrVisitor(
                 loopMap[whileLoop] = this
                 label = whileLoop.label?.name
                 condition = convertToIrExpression(whileLoop.condition)
-                body = whileLoop.block.convertToIrExpressionOrBlock(origin)
+                // NB: here we have strange origin logic, made to be compatible with FE 1.0
+                body = whileLoop.block.convertToIrExpressionOrBlock(origin.takeIf { it != IrStatementOrigin.WHILE_LOOP })
                 loopMap.remove(whileLoop)
             }
         }
