@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assume
+import org.junit.BeforeClass
 import org.junit.Test
 import kotlin.test.assertTrue
 
@@ -23,7 +24,6 @@ class FatFrameworkIT : BaseGradleIT() {
 
     @Test
     fun smokeIos() {
-        Assume.assumeTrue(HostManager.hostIsMac)
         transformProjectWithPluginsDsl(
             "smoke",
             directoryPrefix = "native-fat-framework"
@@ -46,7 +46,6 @@ class FatFrameworkIT : BaseGradleIT() {
 
     @Test
     fun smokeWatchos() {
-        Assume.assumeTrue(HostManager.hostIsMac)
         with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "native-fat-framework")) {
 
             gradleBuildScript().modify {
@@ -113,7 +112,6 @@ class FatFrameworkIT : BaseGradleIT() {
 
     @Test
     fun testDuplicatedArchitecture() {
-        Assume.assumeTrue(HostManager.hostIsMac)
         with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "native-fat-framework")) {
             gradleBuildScript().modify {
                 it + """
@@ -132,7 +130,6 @@ class FatFrameworkIT : BaseGradleIT() {
 
     @Test
     fun testIncorrectFamily() {
-        Assume.assumeTrue(HostManager.hostIsMac)
         with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "native-fat-framework")) {
             gradleBuildScript().modify {
                 it + """
@@ -146,6 +143,14 @@ class FatFrameworkIT : BaseGradleIT() {
                 assertFailed()
                 assertContains("Cannot add a binary with platform family 'osx' to the fat framework")
             }
+        }
+    }
+
+    companion object {
+        @BeforeClass
+        @JvmStatic
+        fun assumeItsMac() {
+            Assume.assumeTrue(HostManager.hostIsMac)
         }
     }
 }
