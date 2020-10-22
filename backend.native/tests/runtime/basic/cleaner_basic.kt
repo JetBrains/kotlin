@@ -2,7 +2,7 @@
  * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-@file:OptIn(ExperimentalTime::class, ExperimentalStdlibApi::class)
+@file:OptIn(ExperimentalStdlibApi::class)
 
 package runtime.basic.cleaner_basic
 
@@ -11,7 +11,6 @@ import kotlin.test.*
 import kotlin.native.internal.*
 import kotlin.native.concurrent.*
 import kotlin.native.ref.WeakReference
-import kotlin.time.*
 
 class AtomicBoolean(initialValue: Boolean) {
     private val impl = AtomicInt(if (initialValue) 1 else 0)
@@ -111,20 +110,6 @@ fun testCleanerFailWithNonShareableArgument() {
     }
 }
 
-inline fun tryWithTimeout(timeoutSeconds: Int, f: () -> Unit): Unit {
-    val timeout = TimeSource.Monotonic.markNow() + timeoutSeconds.seconds
-    while (true) {
-        try {
-            f()
-            return
-        } catch (e: Throwable) {
-            if (timeout.hasPassedNow()) {
-                throw e
-            }
-        }
-    }
-}
-
 @Test
 fun testCleanerCleansWithoutGC() {
     val called = AtomicBoolean(false);
@@ -145,12 +130,12 @@ fun testCleanerCleansWithoutGC() {
     GC.collect()
 
     assertNull(cleanerWeak!!.value)
-    tryWithTimeout(3) {
-        GC.collect()  // Collect local stack (from previous iteration)
-        assertTrue(called.value)
-        // If this fails, GC has somehow ran on the cleaners worker.
-        assertNotNull(funBoxWeak!!.value)
-    }
+
+    waitCleanerWorker()
+
+    assertTrue(called.value)
+    // If this fails, GC has somehow ran on the cleaners worker.
+    assertNotNull(funBoxWeak!!.value)
 }
 
 val globalInt = AtomicInt(0)

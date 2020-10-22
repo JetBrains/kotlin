@@ -2,7 +2,7 @@
  * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-@file:OptIn(ExperimentalTime::class, ExperimentalStdlibApi::class)
+@file:OptIn(ExperimentalStdlibApi::class)
 
 package runtime.basic.cleaner_workers
 
@@ -11,7 +11,6 @@ import kotlin.test.*
 import kotlin.native.internal.*
 import kotlin.native.concurrent.*
 import kotlin.native.ref.WeakReference
-import kotlin.time.*
 
 class AtomicBoolean(initialValue: Boolean) {
     private val impl = AtomicInt(if (initialValue) 1 else 0)
@@ -59,20 +58,6 @@ fun testCleanerDestroyInChild() {
     worker.requestTermination().result
 }
 
-inline fun tryWithTimeout(timeoutSeconds: Int, f: () -> Unit): Unit {
-    val timeout = TimeSource.Monotonic.markNow() + timeoutSeconds.seconds
-    while (true) {
-        try {
-            f()
-            return
-        } catch (e: Throwable) {
-            if (timeout.hasPassedNow()) {
-                throw e
-            }
-        }
-    }
-}
-
 @Test
 fun testCleanerDestroyWithChild() {
     val worker = Worker.start()
@@ -92,15 +77,13 @@ fun testCleanerDestroyWithChild() {
 
     GC.collect()
     worker.requestTermination().result
+    waitWorkerTermination(worker)
 
-    tryWithTimeout(3) {
-        GC.collect()  // Collect local stack (from previous iteration)
-        performGCOnCleanerWorker()  // Collect cleaners stack
+    performGCOnCleanerWorker()  // Collect cleaners stack
 
-        assertNull(cleanerWeak!!.value)
-        assertTrue(called.value)
-        assertNull(funBoxWeak!!.value)
-    }
+    assertNull(cleanerWeak!!.value)
+    assertTrue(called.value)
+    assertNull(funBoxWeak!!.value)
 }
 
 @Test

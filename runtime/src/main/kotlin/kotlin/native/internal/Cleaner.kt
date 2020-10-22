@@ -96,6 +96,15 @@ fun performGCOnCleanerWorker() =
         GC.collect()
     }.result
 
+/**
+ * Wait for a worker that executes Cleaner blocks to complete its scheduled tasks.
+ */
+@InternalForKotlinNative
+fun waitCleanerWorker() =
+    getCleanerWorker().execute(TransferMode.SAFE, {}) {
+        Unit
+    }.result
+
 @SymbolName("Kotlin_CleanerImpl_getCleanerWorker")
 external private fun getCleanerWorker(): Worker
 

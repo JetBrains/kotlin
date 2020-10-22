@@ -7,6 +7,7 @@ package kotlin.native.concurrent
 
 import kotlin.native.internal.DescribeObjectForDebugging
 import kotlin.native.internal.ExportForCppRuntime
+import kotlin.native.internal.InternalForKotlinNative
 import kotlin.native.internal.debugDescription
 import kotlin.native.identityHashCode
 import kotlin.reflect.KClass
@@ -100,3 +101,7 @@ internal fun ThrowIllegalObjectSharingException(typeInfo: NativePtr, address: Na
 
 @SymbolName("Kotlin_AtomicReference_checkIfFrozen")
 external internal fun checkIfFrozen(ref: Any?)
+
+@InternalForKotlinNative
+@SymbolName("Kotlin_Worker_waitTermination")
+external public fun waitWorkerTermination(worker: Worker)

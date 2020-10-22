@@ -474,12 +474,14 @@ class State {
   }
 
   template <typename F>
-  void waitNativeWorkersTerminationUnlocked(F waitForWorker) {
+  void waitNativeWorkersTerminationUnlocked(bool checkLeaks, F waitForWorker) {
       std::vector<std::pair<KInt, pthread_t>> workersToWait;
       {
           Locker locker(&lock_);
 
-          checkNativeWorkersLeakLocked();
+          if (checkLeaks) {
+              checkNativeWorkersLeakLocked();
+          }
 
           for (auto& kvp : terminating_native_workers_) {
               RuntimeAssert(!pthread_equal(kvp.second, pthread_self()), "Native worker is joining with itself");
@@ -742,13 +744,13 @@ void WorkerDestroyThreadDataIfNeeded(KInt id) {
 
 void WaitNativeWorkersTermination() {
 #if WITH_WORKERS
-  theState()->waitNativeWorkersTerminationUnlocked([](KInt worker) { return true; });
+    theState()->waitNativeWorkersTerminationUnlocked(true, [](KInt worker) { return true; });
 #endif
 }
 
 void WaitNativeWorkerTermination(KInt id) {
 #if WITH_WORKERS
-    theState()->waitNativeWorkersTerminationUnlocked([id](KInt worker) { return worker == id; });
+    theState()->waitNativeWorkersTerminationUnlocked(false, [id](KInt worker) { return worker == id; });
 #endif
 }
 
@@ -1058,6 +1060,10 @@ KBoolean Kotlin_Worker_isFrozenInternal(KRef object) {
 
 void Kotlin_Worker_ensureNeverFrozen(KRef object) {
   EnsureNeverFrozen(object);
+}
+
+void Kotlin_Worker_waitTermination(KInt id) {
+    WaitNativeWorkerTermination(id);
 }
 
 }  // extern "C"
