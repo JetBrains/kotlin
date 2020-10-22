@@ -188,10 +188,5 @@ public class IrCheckLocalVariablesTableTestGenerated extends AbstractIrCheckLoca
         public void testParameters() throws Exception {
             runTest("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda/parameters.kt");
         }
-
-        @TestMetadata("underscoreNames.kt")
-        public void testUnderscoreNames() throws Exception {
-            runTest("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda/underscoreNames.kt");
-        }
     }
 }
