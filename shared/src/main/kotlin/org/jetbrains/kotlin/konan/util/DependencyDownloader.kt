@@ -175,22 +175,31 @@ class DependencyDownloader(
 
         var attempt = 1
         var waitTime = 0L
+        val handleException = { e: Exception ->
+            if (attempt >= maxAttempts) {
+                throw e
+            }
+            attempt++
+            waitTime += attemptIntervalMs
+            println("Cannot download a dependency: $e\n" +
+                    "Waiting ${waitTime.toDouble() / 1000} sec and trying again (attempt: $attempt/$maxAttempts).")
+            // TODO: Wait better
+            Thread.sleep(waitTime)
+        }
         while (true) {
             try {
                 tryDownload(source, tmpFile)
                 break
             } catch (e: HTTPResponseException) {
-                throw e
-            } catch (e: IOException) {
-                if (attempt >= maxAttempts) {
+                if (e.responseCode >= 500) {
+                    // Retry server errors.
+                    handleException(e)
+                } else {
+                    // Do not retry client errors.
                     throw e
                 }
-                attempt++
-                waitTime += attemptIntervalMs
-                println("Cannot download a dependency: $e\n" +
-                        "Waiting ${waitTime.toDouble() / 1000} sec and trying again (attempt: $attempt/$maxAttempts).")
-                // TODO: Wait better
-                Thread.sleep(waitTime)
+            } catch (e: IOException) {
+                handleException(e)
             }
         }
 
