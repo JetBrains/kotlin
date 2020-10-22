@@ -1,3 +1,5 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: PROPERTY_REFERENCES
 import kotlin.reflect.KProperty
 
 public open class TestDelegate<T: Any>(private val initializer: () -> T) {

@@ -39,7 +39,62 @@ const runtime = {
         return 0;
     },
 
+    /**
+     * @return {boolean}
+     */
+    String_equals(str, other) {
+        // if (typeof str != "string") throw `Illegal argument str: ${str}`;
+        return str === other;
+    },
+
+    /**
+     * @return {string}
+     */
+    String_subsequence(str, startIndex, endIndex) {
+        return str.substring(startIndex, endIndex);
+    },
+    
     String_getLiteral(index) {
         return runtime.stringLiterals[index];
+    },
+
+    coerceToString(value) {
+        return String(value);
+    },
+
+    /**
+     * @return {string}
+     */
+    Char_toString(char) {
+        return String.fromCharCode(char)
+    },
+
+    JsArray_new(size) {
+        if (typeof size != "number") throw `Illegal argument size: ${size}`;
+        return new Array(size);
+    },
+
+    JsArray_get(array, index) {
+        if (typeof index != "number") throw `Illegal argument index: ${index}`;
+        if (array.length <= index) throw `Index out of bounds: index=${index} length=${array.length}`;
+        return array[index];
+    },
+
+    JsArray_set(array, index, value) {
+        if (typeof index != "number") throw `Illegal argument index: ${index}`;
+        if (array.length <= index) throw `Index out of bounds: index=${index} length=${array.length}`;
+        array[index] = value;
+    },
+
+    JsArray_getSize(array) {
+        return array.length;
+    },
+
+    identity(x) {
+        return x;
+    },
+
+    println(value) {
+        console.log(">>>  " + value)
     }
 };

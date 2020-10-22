@@ -1,3 +1,5 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: STDLIB_COLLECTIONS
 // KJS_WITH_FULL_RUNTIME
 public inline fun Int.times(body : () -> Unit) {
     var count = this;

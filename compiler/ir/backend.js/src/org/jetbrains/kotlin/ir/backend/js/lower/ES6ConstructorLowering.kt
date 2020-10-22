@@ -317,7 +317,7 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : BodyLoweringPass
             if (superCall.symbol.owner.valueParameters[i].origin === ES6_INIT_BOX_PARAMETER) {
                 result += JsIrBuilder.buildGetValue(boxSymbol!!)
             } else {
-                if (arg.type.getInlinedClass() != null) {
+                if (context.inlineClassesUtils.getInlinedClass(arg.type) != null) {
                     val any = context.irBuiltIns.anyNType
                     result += JsIrBuilder.buildTypeOperator(any, IrTypeOperator.REINTERPRET_CAST, arg, any)
                 } else {

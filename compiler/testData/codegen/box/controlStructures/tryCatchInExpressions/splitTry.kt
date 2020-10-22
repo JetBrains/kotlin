@@ -1,3 +1,5 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: EXCEPTIONS_NOT_IMPLEMENTED
 inline fun test(s: () -> Int): Int =
         try {
             val i = s()

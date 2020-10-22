@@ -1,3 +1,5 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: PROPERTY_REFERENCES
 var storage = 0
 
 var Int.foo: Int

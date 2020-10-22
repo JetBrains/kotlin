@@ -1,3 +1,5 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: PROPERTY_REFERENCES
 // !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
 import kotlin.test.assertEquals

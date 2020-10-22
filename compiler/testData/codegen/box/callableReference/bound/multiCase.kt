@@ -1,3 +1,5 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: BINDING_RECEIVERS
 // IGNORE_BACKEND: NATIVE
 class A(var v: Int) {
     fun f(x: Int) = x * v

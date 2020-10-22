@@ -1,3 +1,5 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: MINOR: CONST_EQUIVALENCE
 // !LANGUAGE: -NoConstantValueAttributeForNonConstVals
 // TODO: muted automatically, investigate should it be ran for JS or not
 // IGNORE_BACKEND: NATIVE

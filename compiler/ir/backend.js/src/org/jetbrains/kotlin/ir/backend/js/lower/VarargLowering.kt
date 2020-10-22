@@ -31,6 +31,8 @@ private class VarargTransformer(
     val context: JsIrBackendContext
 ) : IrElementTransformerVoid() {
 
+    fun IrType.getInlinedClass() = context.inlineClassesUtils.getInlinedClass(this)
+
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun List<IrExpression>.toArrayLiteral(type: IrType, varargElementType: IrType): IrExpression {
 

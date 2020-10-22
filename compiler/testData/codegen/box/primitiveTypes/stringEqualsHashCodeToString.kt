@@ -1,3 +1,5 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: String.hashCode()
 // IGNORE_BACKEND: NATIVE
 
 fun test(s: String) {

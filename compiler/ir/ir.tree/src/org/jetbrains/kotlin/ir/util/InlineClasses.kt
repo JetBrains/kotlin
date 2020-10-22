@@ -9,52 +9,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.types.isMarkedNullable
-
-
-/**
- * Returns inline class for given class or null of type is not inlined
- * TODO: Make this configurable for different backends (currently implements logic of JS BE)
- */
-fun IrType.getInlinedClass(): IrClass? {
-    if (this is IrSimpleType) {
-        val erased = erase(this) ?: return null
-        if (erased.isInline) {
-            if (this.isMarkedNullable()) {
-                var fieldType: IrType
-                var fieldInlinedClass = erased
-                while (true) {
-                    fieldType = getInlineClassUnderlyingType(fieldInlinedClass)
-                    if (fieldType.isMarkedNullable()) {
-                        return null
-                    }
-
-                    fieldInlinedClass = fieldType.getInlinedClass() ?: break
-                }
-            }
-
-            return erased
-        }
-    }
-    return null
-}
-
-fun IrType.isInlined(): Boolean = this.getInlinedClass() != null
-
-private tailrec fun erase(type: IrType): IrClass? {
-    val classifier = type.classifierOrFail
-
-    return when (classifier) {
-        is IrClassSymbol -> classifier.owner
-        is IrTypeParameterSymbol -> erase(classifier.owner.superTypes.first())
-        else -> error(classifier)
-    }
-}
 
 fun getInlineClassUnderlyingType(irClass: IrClass): IrType {
     for (declaration in irClass.declarations) {

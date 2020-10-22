@@ -1,3 +1,5 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: UNIT_ISSUES
 
 fun <T> myRun(action: () -> T): T = action()
 fun foo(): String = "foo"

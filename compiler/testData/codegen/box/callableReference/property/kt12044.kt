@@ -1,3 +1,5 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: PROPERTY_REFERENCES
 // KT-12044 Assertion "Rewrite at slice LEXICAL_SCOPE" for 'if' with property references
 
 fun box(): String {

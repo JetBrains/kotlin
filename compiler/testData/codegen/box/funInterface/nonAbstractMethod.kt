@@ -1,3 +1,5 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: SAM_CONVERSIONS
 
 interface I {
     fun inherited(s: String): String = privateInherited(s)

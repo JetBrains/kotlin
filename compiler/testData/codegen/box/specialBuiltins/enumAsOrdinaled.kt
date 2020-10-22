@@ -1,3 +1,5 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: BRIDGE_ISSUES
 interface Ordinaled {
     val ordinal: Int
 }

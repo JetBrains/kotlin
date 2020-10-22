@@ -1,3 +1,5 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: UNIT_ISSUES
 open class T(var value: Int) {}
 
 fun localExtensionOnNullableParameter(): T {

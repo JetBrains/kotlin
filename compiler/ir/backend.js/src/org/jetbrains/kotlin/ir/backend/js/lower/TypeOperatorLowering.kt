@@ -63,6 +63,8 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
     private val litFalse: IrExpression get() = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, false)
     private val litNull: IrExpression get() = JsIrBuilder.buildNull(context.irBuiltIns.nothingNType)
 
+    private val icUtils = context.inlineClassesUtils
+
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildren(object : IrElementTransformer<IrDeclarationParent> {
             override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent) =
@@ -101,7 +103,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
             }
 
             private fun needBoxingOrUnboxing(fromType: IrType, toType: IrType): Boolean {
-                return ((fromType.getInlinedClass() != null) xor (toType.getInlinedClass() != null)) || (fromType.isUnit() && !toType.isUnit())
+                return ((icUtils.getInlinedClass(fromType) != null) xor (icUtils.getInlinedClass(toType) != null)) || (fromType.isUnit() && !toType.isUnit())
             }
 
             private fun IrTypeOperatorCall.wrapWithUnsafeCast(arg: IrExpression): IrExpression {

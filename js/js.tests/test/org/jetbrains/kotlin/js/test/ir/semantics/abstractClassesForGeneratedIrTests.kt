@@ -19,11 +19,6 @@ abstract class AbstractIrJsCodegenBoxErrorTest : BasicIrBoxTest(
     "codegen/irBoxError/"
 )
 
-abstract class AbstractIrWasmBoxJsTest : BasicIrBoxTest(
-    TEST_DATA_DIR_PATH + "wasmBox/",
-    "irWasmBox/"
-)
-
 abstract class AbstractIrJsCodegenInlineTest : BasicIrBoxTest(
     "compiler/testData/codegen/boxInline/",
     "codegen/irBoxInline/"
