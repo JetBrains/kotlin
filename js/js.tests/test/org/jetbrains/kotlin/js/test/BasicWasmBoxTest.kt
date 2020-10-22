@@ -186,7 +186,7 @@ abstract class BasicWasmBoxTest(
     private fun createConfig(languageVersionSettings: LanguageVersionSettings?): JsConfig {
         val configuration = environment.configuration.copy()
         configuration.put(CommonConfigurationKeys.MODULE_NAME, TEST_MODULE)
-        configuration.languageVersionSettings = languageVersionSettings ?: LanguageVersionSettingsImpl(LanguageVersion.KOTLIN_1_4, ApiVersion.KOTLIN_1_4)
+        configuration.languageVersionSettings = languageVersionSettings ?: LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE)
         return JsConfig(project, configuration, null, null)
     }
 
