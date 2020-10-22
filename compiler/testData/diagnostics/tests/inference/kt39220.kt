@@ -114,7 +114,7 @@ fun <T : Foo, R: Number, D: Int> main() {
     bar7(Foo::resolve) // OK
 
     // with LHS and sentension function expected type
-    bar10<D>(<!TYPE_MISMATCH, TYPE_MISMATCH!>Int::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x1<!><!>) // ERROR before the fix in NI
+    bar10<D>(<!TYPE_MISMATCH!>Int::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x1<!><!>) // ERROR before the fix in NI
     bar10<Int>(Int::x1) // OK
     bar10(Int::x1) // OK
 
