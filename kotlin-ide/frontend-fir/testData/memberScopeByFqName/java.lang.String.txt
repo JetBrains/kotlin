@@ -203,7 +203,7 @@ KtFirFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
-  type: kotlin/ByteArray
+  type: @EnhancedNullability kotlin/ByteArray
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(charsetName)]
 
@@ -217,7 +217,7 @@ KtFirFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
-  type: kotlin/ByteArray
+  type: @EnhancedNullability kotlin/ByteArray
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(charset)]
 
@@ -231,7 +231,7 @@ KtFirFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
-  type: kotlin/ByteArray
+  type: @EnhancedNullability kotlin/ByteArray
   typeParameters: []
   valueParameters: []
 
@@ -553,7 +553,7 @@ KtFirFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
-  type: kotlin/String
+  type: @EnhancedNullability kotlin/String
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(beginIndex)]
 
@@ -567,7 +567,7 @@ KtFirFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
-  type: kotlin/String
+  type: @EnhancedNullability kotlin/String
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(beginIndex), KtFirFunctionValueParameterSymbol(endIndex)]
 
@@ -581,7 +581,7 @@ KtFirFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
-  type: kotlin/CharSequence
+  type: @EnhancedNullability kotlin/CharSequence
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(beginIndex), KtFirFunctionValueParameterSymbol(endIndex)]
 
@@ -595,7 +595,7 @@ KtFirFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
-  type: kotlin/String
+  type: @EnhancedNullability kotlin/String
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(str)]
 
@@ -609,7 +609,7 @@ KtFirFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
-  type: kotlin/String
+  type: @EnhancedNullability kotlin/String
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(oldChar), KtFirFunctionValueParameterSymbol(newChar)]
 
@@ -623,7 +623,7 @@ KtFirFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
-  type: kotlin/String
+  type: @EnhancedNullability kotlin/String
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(target), KtFirFunctionValueParameterSymbol(replacement)]
 
@@ -665,7 +665,7 @@ KtFirFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
-  type: kotlin/String
+  type: @EnhancedNullability kotlin/String
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(regex), KtFirFunctionValueParameterSymbol(replacement)]
 
@@ -679,7 +679,7 @@ KtFirFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
-  type: kotlin/String
+  type: @EnhancedNullability kotlin/String
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(regex), KtFirFunctionValueParameterSymbol(replacement)]
 
@@ -693,7 +693,7 @@ KtFirFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
-  type: ft<kotlin/Array<ft<kotlin/String, kotlin/String?>!>, kotlin/Array<out ft<kotlin/String, kotlin/String?>!>>
+  type: ft<@EnhancedNullability kotlin/Array<ft<kotlin/String, kotlin/String?>!>, kotlin/Array<out ft<kotlin/String, kotlin/String?>!>>
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(regex), KtFirFunctionValueParameterSymbol(limit)]
 
@@ -707,7 +707,7 @@ KtFirFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
-  type: ft<kotlin/Array<ft<kotlin/String, kotlin/String?>!>, kotlin/Array<out ft<kotlin/String, kotlin/String?>!>>
+  type: ft<@EnhancedNullability kotlin/Array<ft<kotlin/String, kotlin/String?>!>, kotlin/Array<out ft<kotlin/String, kotlin/String?>!>>
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(regex)]
 
@@ -721,7 +721,7 @@ KtFirFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
-  type: kotlin/String
+  type: @EnhancedNullability kotlin/String
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(locale)]
 
@@ -735,7 +735,7 @@ KtFirFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
-  type: kotlin/String
+  type: @EnhancedNullability kotlin/String
   typeParameters: []
   valueParameters: []
 
@@ -749,7 +749,7 @@ KtFirFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
-  type: kotlin/String
+  type: @EnhancedNullability kotlin/String
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(locale)]
 
@@ -763,7 +763,7 @@ KtFirFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
-  type: kotlin/String
+  type: @EnhancedNullability kotlin/String
   typeParameters: []
   valueParameters: []
 
@@ -777,7 +777,7 @@ KtFirFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
-  type: kotlin/String
+  type: @EnhancedNullability kotlin/String
   typeParameters: []
   valueParameters: []
 
@@ -805,7 +805,7 @@ KtFirFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
-  type: kotlin/CharArray
+  type: @EnhancedNullability kotlin/CharArray
   typeParameters: []
   valueParameters: []
 
@@ -819,7 +819,7 @@ KtFirFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
-  type: kotlin/String
+  type: @EnhancedNullability kotlin/String
   typeParameters: []
   valueParameters: []
 
