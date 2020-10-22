@@ -275,7 +275,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
         val klass = this.parentAsClass!!
         val newName = klass.name.asString() + "__" + name.asString() + INLINE_CLASS_IMPL_SUFFIX
         return when {
-            name.isSpecial -> Name.special("<" + newName)
+            name.isSpecial -> Name.special("<" + newName + ">")
             else -> Name.identifier(newName)
         }
     }
