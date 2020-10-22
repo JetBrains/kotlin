@@ -53,7 +53,7 @@ sealed class WasmFunction(
 }
 
 class WasmMemory(
-    val limits: WasmLimits = WasmLimits(1u, null),
+    val limits: WasmLimits,
     val importPair: WasmImportPair? = null,
 ) : WasmNamedModuleField()
 
