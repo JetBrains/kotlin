@@ -44,13 +44,13 @@ public class Boolean private constructor(private val value: Boolean) : Comparabl
         implementedAsIntrinsic
 
     public override fun compareTo(other: Boolean): Int =
-        wasm_i32_compareTo(this.asInt(), other.asInt())
+        wasm_i32_compareTo(this.toInt(), other.toInt())
 
     override fun toString(): String =
         if (this) "true" else "false"
 
     override fun hashCode(): Int =
-        if (this) 1 else 0
+        toInt()
 
     override fun equals(other: Any?): Boolean {
         return if (other !is Boolean) {
@@ -61,7 +61,7 @@ public class Boolean private constructor(private val value: Boolean) : Comparabl
     }
 
     @WasmReinterpret
-    internal fun asInt(): Int =
+    internal fun toInt(): Int =
         implementedAsIntrinsic
 
     @SinceKotlin("1.3")
