@@ -328,7 +328,9 @@ class WasmBinaryToIR(val b: MyByteReader) {
             elements = elements,
             data = data,
             dataCount = dataCount
-        )
+        ).also {
+            it.calculateIds()
+        }
     }
 
     private fun readLimits(): WasmLimits {

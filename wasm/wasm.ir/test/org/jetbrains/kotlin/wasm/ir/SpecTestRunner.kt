@@ -203,7 +203,6 @@ fun testWasmFile(wasmFile: File, dirName: String) {
 
     println("Testing wasm file : ${wasmFile.absolutePath} ... ")
     val module = fileToWasmModule(wasmFile)
-    module.calculateIds()
     val kotlinTextFormat = module.toTextFormat()
     val kotlinBinaryFormat = module.toBinaryFormat()
 
