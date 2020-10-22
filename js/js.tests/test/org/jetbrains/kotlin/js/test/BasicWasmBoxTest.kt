@@ -51,19 +51,12 @@ abstract class BasicWasmBoxTest(
 
     private val spiderMonkey by lazy { SpiderMonkeyEngine() }
 
-    private val runIgnoredWasmTests =
-        getBoolean("kotlin.wasm.run.ignored.tests")
-
     fun doTestWithCoroutinesPackageReplacement(filePath: String, coroutinesPackage: String) {
         TODO("TestWithCoroutinesPackageReplacement are not supported")
     }
 
     fun doTest(filePath: String) {
         val file = File(filePath)
-
-        val isIgnored = InTextDirectivesUtils.isIgnoredTarget(TargetBackend.WASM, file)
-        if (isIgnored && !runIgnoredWasmTests)
-            TestCase.fail("Wasm test is ignored")
 
         val outputDir = getOutputDir(file)
         val fileContent = KotlinTestUtils.doLoadFile(file)
