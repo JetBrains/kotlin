@@ -104,6 +104,7 @@ class RobolectricComposeTester internal constructor(
         fun setContent() {
             setContentMethod.invoke(composition, realComposable)
         }
+        scheduler.advanceToLastPostedRunnable()
         setContent()
         scheduler.advanceToLastPostedRunnable()
         block(activity)

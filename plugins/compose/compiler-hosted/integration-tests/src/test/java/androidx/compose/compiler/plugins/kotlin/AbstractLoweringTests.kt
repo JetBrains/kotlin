@@ -18,6 +18,8 @@ package androidx.compose.compiler.plugins.kotlin
 
 import android.view.View
 import androidx.compose.runtime.Composer
+import androidx.compose.runtime.ExperimentalComposeApi
+import androidx.compose.runtime.snapshots.Snapshot
 import org.robolectric.RuntimeEnvironment
 import java.net.URLClassLoader
 
@@ -43,10 +45,12 @@ abstract class AbstractLoweringTests : AbstractCodegenTest() {
     @Suppress("UNCHECKED_CAST")
     fun View.getComposedSet(tagId: Int): Set<String>? = getTag(tagId) as? Set<String>
 
+    @OptIn(ExperimentalComposeApi::class)
     protected fun execute(block: () -> Unit) {
         val scheduler = RuntimeEnvironment.getMasterScheduler()
         scheduler.pause()
         block()
+        Snapshot.sendApplyNotifications()
         scheduler.advanceToLastPostedRunnable()
     }
 
