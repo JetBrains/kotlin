@@ -7,11 +7,14 @@ package org.jetbrains.kotlin.scripting.resolve
 
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
+import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.MISSING_IMPORTED_SCRIPT_FILE
@@ -53,6 +56,7 @@ import kotlin.script.experimental.host.GetScriptingClass
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.getScriptingClass
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.script.experimental.jvm.util.toValidJvmIdentifier
 
 
 class LazyScriptDescriptor(
@@ -179,11 +183,11 @@ class LazyScriptDescriptor(
 
     private inner class ImportedScriptDescriptorsFinder {
 
-        val localFS by lazy {
+        val localFS: VirtualFileSystem by lazy(LazyThreadSafetyMode.PUBLICATION) {
             val fileManager = VirtualFileManager.getInstance()
             fileManager.getFileSystem(StandardFileSystems.FILE_PROTOCOL)
         }
-        val psiManager by lazy { PsiManager.getInstance(scriptInfo.script.project) }
+        val psiManager by lazy(LazyThreadSafetyMode.PUBLICATION) { PsiManager.getInstance(scriptInfo.script.project) }
 
         operator fun invoke(importedScript: SourceCode): ScriptDescriptor? {
             // Note: is not an error now - if import references other valid source file, it is simply compiled along with script
@@ -264,22 +268,93 @@ class LazyScriptDescriptor(
 
     override fun getImplicitReceivers(): List<ClassDescriptor> = scriptImplicitReceivers()
 
-    private val scriptProvidedProperties: () -> ScriptProvidedPropertiesDescriptor = resolveSession.storageManager.createLazyValue {
-        ScriptProvidedPropertiesDescriptor(this)
+    private val scriptProvidedProperties: () -> List<ScriptProvidedPropertyDescriptor> = resolveSession.storageManager.createLazyValue {
+        scriptCompilationConfiguration()[ScriptCompilationConfiguration.providedProperties].orEmpty()
+            .mapNotNull { (name, type) ->
+                findTypeDescriptor(getScriptingClass(type), Errors.MISSING_SCRIPT_PROVIDED_PROPERTY_CLASS)
+                    ?.let { name.toValidJvmIdentifier() to it }
+            }.map { (name, classDescriptor) ->
+                ScriptProvidedPropertyDescriptor(
+                    Name.identifier(name),
+                    classDescriptor,
+                    thisAsReceiverParameter,
+                    true,
+                    this
+                )
+            }
     }
 
-    override fun getScriptProvidedProperties(): List<PropertyDescriptor> = scriptProvidedProperties().properties()
+    override fun getScriptProvidedProperties(): List<PropertyDescriptor> = scriptProvidedProperties()
+
+    internal class ConstructorWithParams(
+        val constructor: ClassConstructorDescriptorImpl,
+        val explicitConstructorParameters: List<ValueParameterDescriptor>,
+        val implicitReceiversParameters: List<ValueParameterDescriptor>,
+        val scriptProvidedPropertiesParameters: List<ValueParameterDescriptor>
+    )
+
+    internal val scriptPrimaryConstructorWithParams: () -> ConstructorWithParams = resolveSession.storageManager.createLazyValue {
+        val baseConstructorDescriptor = baseClassDescriptor()?.unsubstitutedPrimaryConstructor
+        val inheritedAnnotations = baseConstructorDescriptor?.annotations ?: Annotations.EMPTY
+        val baseExplicitParameters = baseConstructorDescriptor?.valueParameters ?: emptyList()
+
+        val implicitReceiversParamTypes =
+            implicitReceivers.mapIndexed { idx, receiver ->
+                val receiverName =
+                    if (receiver is ScriptDescriptor) "${LazyScriptClassMemberScope.IMPORTED_SCRIPT_PARAM_NAME_PREFIX}${receiver.name}"
+                    else "${LazyScriptClassMemberScope.IMPLICIT_RECEIVER_PARAM_NAME_PREFIX}$idx"
+                receiverName to receiver.defaultType
+            }
+
+        val providedPropertiesParamTypes =
+            scriptProvidedProperties().map {
+                it.name.identifier to it.type
+            }
+        val constructorDescriptor = ClassConstructorDescriptorImpl.create(this, inheritedAnnotations, true, source)
+
+        var paramsIndexBase = baseExplicitParameters.lastIndex + 1
+
+        fun createValueParameter(param: Pair<String, org.jetbrains.kotlin.types.KotlinType>) =
+            ValueParameterDescriptorImpl(
+                constructorDescriptor,
+                null,
+                paramsIndexBase++,
+                Annotations.EMPTY,
+                Name.identifier(param.first),
+                param.second,
+                declaresDefaultValue = false, isCrossinline = false, isNoinline = false, varargElementType = null,
+                source = SourceElement.NO_SOURCE
+            )
+
+        val explicitParameters = baseExplicitParameters.map { it.copy(constructorDescriptor, it.name, it.index) }
+        val implicitReceiversParameters = implicitReceiversParamTypes.map(::createValueParameter)
+        val providedPropertiesParameters = providedPropertiesParamTypes.map(::createValueParameter)
+
+        constructorDescriptor.initialize(
+            explicitParameters + implicitReceiversParameters + providedPropertiesParameters, DescriptorVisibilities.PUBLIC
+        )
+        constructorDescriptor.returnType = defaultType()
+
+        ConstructorWithParams(
+            constructorDescriptor,
+            explicitConstructorParameters = explicitParameters,
+            implicitReceiversParameters = implicitReceiversParameters,
+            scriptProvidedPropertiesParameters = providedPropertiesParameters
+        )
+    }
+
+    override fun getExplicitConstructorParameters(): List<ValueParameterDescriptor> =
+        scriptPrimaryConstructorWithParams().explicitConstructorParameters
+
+    override fun getImplicitReceiversParameters(): List<ValueParameterDescriptor> =
+        scriptPrimaryConstructorWithParams().implicitReceiversParameters
+
+    override fun getScriptProvidedPropertiesParameters(): List<ValueParameterDescriptor> =
+        scriptPrimaryConstructorWithParams().scriptProvidedPropertiesParameters
 
     private val scriptOuterScope: () -> LexicalScope = resolveSession.storageManager.createLazyValue {
         var outerScope = super.getOuterScope()
-        val outerScopeReceivers = implicitReceivers.let {
-            if (scriptCompilationConfiguration()[ScriptCompilationConfiguration.providedProperties]?.isNotEmpty() == true) {
-                it + ScriptProvidedPropertiesDescriptor(this)
-            } else {
-                it
-            }
-        }
-        for (receiverClassDescriptor in outerScopeReceivers.asReversed()) {
+        for (receiverClassDescriptor in implicitReceivers.asReversed()) {
             outerScope = LexicalScopeImpl(
                 outerScope,
                 receiverClassDescriptor,
