@@ -5,11 +5,11 @@ FILE: concurrentMapOfAliases.kt
             super<R|kotlin/Any|>()
         }
 
-        private final val foo: R|java/util/concurrent/ConcurrentHashMap<ft<kotlin/String, kotlin/String?>!, ft<MyAlias, MyAlias?>!>| = Q|java/util/concurrent|.R|java/util/concurrent/ConcurrentHashMap.ConcurrentHashMap|<R|ft<kotlin/String, kotlin/String?>!|, R|ft<MyAlias, MyAlias?>!|>()
-            private get(): R|java/util/concurrent/ConcurrentHashMap<ft<kotlin/String, kotlin/String?>!, ft<MyAlias, MyAlias?>!>|
+        private final val foo: R|java/util/concurrent/ConcurrentHashMap<ft<kotlin/String, kotlin/String?>!, ft<kotlin/CharSequence, kotlin/CharSequence?>!>| = Q|java/util/concurrent|.R|java/util/concurrent/ConcurrentHashMap.ConcurrentHashMap|<R|ft<kotlin/String, kotlin/String?>!|, R|ft<kotlin/CharSequence, kotlin/CharSequence?>!|>()
+            private get(): R|java/util/concurrent/ConcurrentHashMap<ft<kotlin/String, kotlin/String?>!, ft<kotlin/CharSequence, kotlin/CharSequence?>!>|
 
         private final fun bar(): R|kotlin/Unit| {
-            this@R|/A|.R|/A.foo|.R|FakeOverride<java/util/concurrent/ConcurrentHashMap.get: R|MyAlias?|>|(String(dd))?.{ (this@R|/A|, $subj$).R|/A.baz|() }
+            this@R|/A|.R|/A.foo|.R|FakeOverride<java/util/concurrent/ConcurrentHashMap.get: R|kotlin/CharSequence?|>|(String(dd))?.{ (this@R|/A|, $subj$).R|/A.baz|() }
         }
 
         private final fun R|MyAlias|.baz(): R|kotlin/Unit| {
