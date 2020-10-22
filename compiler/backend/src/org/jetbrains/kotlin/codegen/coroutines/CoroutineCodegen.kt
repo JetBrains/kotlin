@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.indexOrMinusOne
+import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
@@ -742,7 +743,8 @@ class CoroutineCodegenForNamedFunction private constructor(
     }
 
     override fun generateKotlinMetadataAnnotation() {
-        writeKotlinMetadata(v, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, 0) { av ->
+        val publicAbi = InlineUtil.isInPublicInlineScope(classDescriptor)
+        writeKotlinMetadata(v, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, publicAbi, 0) { av ->
             val serializer = DescriptorSerializer.createForLambda(JvmSerializerExtension(v.serializationBindings, state))
             val functionProto =
                 serializer.functionProto(

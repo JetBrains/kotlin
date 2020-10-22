@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
@@ -287,7 +288,9 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         if (builder == null) return;
         ProtoBuf.Function functionProto = builder.build();
 
-        WriteAnnotationUtilKt.writeKotlinMetadata(v, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, 0, av -> {
+        boolean publicAbi = InlineUtil.isInPublicInlineScope(frontendFunDescriptor);
+
+        WriteAnnotationUtilKt.writeKotlinMetadata(v, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, publicAbi, 0, av -> {
             writeAnnotationData(av, serializer, functionProto);
             return Unit.INSTANCE;
         });

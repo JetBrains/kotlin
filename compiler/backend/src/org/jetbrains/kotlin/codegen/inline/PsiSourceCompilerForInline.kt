@@ -74,7 +74,7 @@ class PsiSourceCompilerForInline(
             return InlineCallSiteInfo(
                 parentCodegen.className,
                 signature.asmMethod,
-                context.functionDescriptor.isInlineOrInsideInline(),
+                context.functionDescriptor.getInlineCallSiteVisibility(),
                 callElement.containingFile,
                 CodegenUtil.getLineNumberForElement(callElement, false) ?: 0
             )
@@ -416,8 +416,11 @@ class PsiSourceCompilerForInline(
 }
 
 fun DeclarationDescriptor.isInlineOrInsideInline(): Boolean =
-    if (this is FunctionDescriptor && isInline) true
-    else containingDeclaration?.isInlineOrInsideInline() == true
+    getInlineCallSiteVisibility() != null
+
+fun DeclarationDescriptor.getInlineCallSiteVisibility(): DescriptorVisibility? =
+    if (this is FunctionDescriptor && isInline) visibility
+    else containingDeclaration?.getInlineCallSiteVisibility()
 
 fun getDeclarationLabels(lambdaOrFun: PsiElement?, descriptor: DeclarationDescriptor): Set<String> {
     val result = HashSet<String>()
