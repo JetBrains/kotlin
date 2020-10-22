@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.wasm.ir.*
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
 
-class WasmBinaryBuilder(outputStream: OutputStream, val module: WasmModule) {
+class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule) {
     var b: ByteWriter = ByteWriter.OutputStream(outputStream)
 
     fun appendWasmModule() {

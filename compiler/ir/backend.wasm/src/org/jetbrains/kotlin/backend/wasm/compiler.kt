@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.wasm.ir.convertors.WasmBinaryBuilder
-import org.jetbrains.kotlin.wasm.ir.convertors.WatBuilder
+import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
+import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToText
 import java.io.ByteArrayOutputStream
 
 class WasmCompilerResult(val wat: String, val js: String, val wasm: ByteArray)
@@ -73,12 +73,12 @@ fun compileWasm(
     codeGenerator.generateModule(moduleFragment)
 
     val linkedModule = compiledWasmModule.linkWasmCompiledFragments()
-    val watGenerator = WatBuilder()
+    val watGenerator = WasmIrToText()
     watGenerator.appendWasmModule(linkedModule)
     val wat = watGenerator.toString()
 
     val os = ByteArrayOutputStream()
-    WasmBinaryBuilder(os, linkedModule).appendWasmModule()
+    WasmIrToBinary(os, linkedModule).appendWasmModule()
     val byteArray = os.toByteArray()
 
     return WasmCompilerResult(

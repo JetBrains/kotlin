@@ -45,7 +45,7 @@ open class SExpressionBuilder {
 }
 
 
-class WatBuilder : SExpressionBuilder() {
+class WasmIrToText : SExpressionBuilder() {
     fun appendOffset(value: UInt) {
         if (value != 0u)
             appendElement("offset=$value")
