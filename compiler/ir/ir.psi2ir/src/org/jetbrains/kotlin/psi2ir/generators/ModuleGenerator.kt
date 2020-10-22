@@ -90,7 +90,10 @@ class ModuleGenerator(
         }
 
         irFile.acceptChildrenVoid(IrSyntheticDeclarationGenerator(context))
+
         insertImplicitCasts(irFile, context)
+        context.callToSubstitutedDescriptorMap.clear()
+
         irFile.acceptVoid(AnnotationGenerator(context))
 
         irFile.patchDeclarationParents()
