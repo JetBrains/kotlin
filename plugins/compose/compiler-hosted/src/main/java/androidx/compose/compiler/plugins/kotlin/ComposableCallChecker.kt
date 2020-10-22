@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -58,6 +59,7 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil.canBeInlineArgument
 import org.jetbrains.kotlin.resolve.inline.InlineUtil.isInline
 import org.jetbrains.kotlin.resolve.inline.InlineUtil.isInlineParameter
 import org.jetbrains.kotlin.resolve.inline.InlineUtil.isInlinedArgument
+import org.jetbrains.kotlin.resolve.sam.getSingleAbstractMethodOrNull
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.lowerIfFlexible
@@ -116,6 +118,17 @@ open class ComposableCallChecker :
                         )
                         return
                     }
+                    val argTypeDescriptor = arg
+                        ?.type
+                        ?.constructor
+                        ?.declarationDescriptor as? ClassDescriptor
+                    if (argTypeDescriptor != null) {
+                        val sam = getSingleAbstractMethodOrNull(argTypeDescriptor)
+                        if (sam != null && sam.hasComposableAnnotation()) {
+                            return
+                        }
+                    }
+
                     // TODO(lmr): in future, we should check for CALLS_IN_PLACE contract
                     val inlined = arg != null &&
                         canBeInlineArgument(node.functionLiteral) &&
@@ -226,6 +239,16 @@ open class ComposableCallChecker :
                     true
                 )
                 if (isInlineable) return
+
+                if (!expectedComposable && isComposable) {
+                    val inferred = c.trace.bindingContext[
+                        ComposeWritableSlices.INFERRED_COMPOSABLE_DESCRIPTOR,
+                        descriptor
+                    ] == true
+                    if (inferred) {
+                        return
+                    }
+                }
 
                 val reportOn =
                     if (expression.parent is KtAnnotatedExpression)
@@ -360,7 +383,7 @@ fun FunctionDescriptor.allowsComposableCalls(bindingContext: BindingContext): Bo
     ] == true
 }
 
-private fun getArgumentDescriptor(
+internal fun getArgumentDescriptor(
     argument: KtFunction,
     bindingContext: BindingContext
 ): ValueParameterDescriptor? {

@@ -18,6 +18,7 @@ package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.compiler.plugins.kotlin.lower.ComposableFunctionBodyTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.ComposerIntrinsicTransformer
+import androidx.compose.compiler.plugins.kotlin.lower.ComposableFunInterfaceLowering
 import androidx.compose.compiler.plugins.kotlin.lower.ComposerLambdaMemoization
 import androidx.compose.compiler.plugins.kotlin.lower.ComposerParamTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.DurableKeyVisitor
@@ -62,6 +63,8 @@ class ComposeIrGenerationExtension(
             symbolRemapper,
             bindingTrace
         ).lower(moduleFragment)
+
+        ComposableFunInterfaceLowering(pluginContext).lower(moduleFragment)
 
         // Memoize normal lambdas and wrap composable lambdas
         ComposerLambdaMemoization(pluginContext, symbolRemapper, bindingTrace).lower(moduleFragment)
