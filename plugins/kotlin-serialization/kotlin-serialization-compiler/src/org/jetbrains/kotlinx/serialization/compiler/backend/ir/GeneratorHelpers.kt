@@ -109,7 +109,8 @@ interface IrBuilderExtension {
     }
 
     fun IrBuilderWithScope.irBinOp(name: Name, lhs: IrExpression, rhs: IrExpression): IrExpression {
-        val symbol = compilerContext.symbols.getBinaryOperator(name, lhs.type, rhs.type)
+        val classFqName = (lhs.type as IrSimpleType).classOrNull!!.owner.fqNameWhenAvailable!!
+        val symbol = compilerContext.referenceFunctions(classFqName.child(name)).single()
         return irInvoke(lhs, symbol, rhs)
     }
 
