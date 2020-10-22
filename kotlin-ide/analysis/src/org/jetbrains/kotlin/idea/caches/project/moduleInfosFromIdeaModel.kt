@@ -13,6 +13,7 @@ import com.intellij.openapi.roots.JdkOrderEntry
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.caches.project.cacheInvalidatingOnRootModifications
@@ -67,25 +68,39 @@ private class LibraryWrapper(val library: Library) {
         if (this === other) return true
         if (other !is LibraryWrapper) return false
 
-        return library.hasSameContent(other.library)
+        if (library !is LibraryEx || other.library !is LibraryEx)
+            return library == other.library
+
+        return library.isEqual(other.library)
     }
 
     override fun hashCode(): Int {
-        return library.calcHashCode()
+        return when(library) {
+            is LibraryEx -> library.calcHashCode()
+            else -> library.hashCode()
+        }
     }
 }
 
 private fun Library.wrap() = LibraryWrapper(this)
 
-// The hashing logic of LibraryImpl is used here to match equality in terms of Library#hasSameContent
-internal fun Library.calcHashCode(): Int {
-    val allRoots = ArrayList<String>().apply {
+internal val LibraryEx.allRootUrls: Set<String>
+    get() = mutableSetOf<String>().apply {
         for (orderRootType in OrderRootType.getAllTypes()) {
             addAll(rootProvider.getUrls(orderRootType))
         }
     }
 
-    return 31 * (name?.hashCode() ?: 0) + allRoots.hashCode()
+internal fun LibraryEx.isEqual(other: LibraryEx): Boolean {
+    if (name != other.name) return false
+    if (allRootUrls != other.allRootUrls) return false
+    if (kind != other.kind) return false
+    if (properties != other.properties) return false
+    return excludedRootUrls.contentEquals(other.excludedRootUrls)
+}
+
+internal fun LibraryEx.calcHashCode(): Int {
+    return 31 * (name?.hashCode() ?: 0) + allRootUrls.hashCode()
 }
 
 private fun collectModuleInfosFromIdeaModel(
