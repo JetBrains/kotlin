@@ -14,22 +14,22 @@ import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.psi.PsiElement
 import com.sun.jdi.*
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass
 import org.jetbrains.kotlin.codegen.coroutines.DO_RESUME_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.continuationAsmTypes
 import org.jetbrains.kotlin.codegen.inline.KOTLIN_STRATA_NAME
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.KotlinFileTypeFactoryUtils
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.util.getLineEndOffset
 import org.jetbrains.kotlin.idea.core.util.getLineStartOffset
-import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import java.util.*
 
 fun Location.isInKotlinSources(): Boolean {
@@ -43,33 +43,27 @@ fun ReferenceType.isInKotlinSources(): Boolean {
 
 fun ReferenceType.containsKotlinStrata() = availableStrata().contains(KOTLIN_STRATA_NAME)
 
-fun isInsideInlineArgument(
-    inlineArgument: KtFunction,
-    location: Location,
-    debugProcess: DebugProcessImpl,
-    bindingContext: BindingContext = KotlinDebuggerCaches.getOrCreateTypeMapper(inlineArgument).bindingContext
-): Boolean {
+fun isInsideInlineArgument(inlineArgument: KtFunction, location: Location, debugProcess: DebugProcessImpl): Boolean {
     val visibleVariables = location.visibleVariables(debugProcess)
     val markerLocalVariables = visibleVariables.filter { it.name().startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT) }
 
-    val context = KotlinDebuggerCaches.getOrCreateTypeMapper(inlineArgument).bindingContext
-    val lambdaOrdinal = runReadAction { lambdaOrdinalByArgument(inlineArgument, context) }
-    val functionName = runReadAction { functionNameByArgument(inlineArgument, context) }
+    return runReadAction {
+        val lambdaOrdinal = lambdaOrdinalByArgument(inlineArgument)
+        val functionName = functionNameByArgument(inlineArgument, inlineArgument.analyze(BodyResolveMode.PARTIAL))
 
-    return markerLocalVariables
-        .map { it.name().drop(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT.length) }
-        .any { variableName ->
-            if (variableName.startsWith("-")) {
-                val lambdaClassName = asmTypeForAnonymousClass(bindingContext, inlineArgument)
-                    .internalName.substringAfterLast("/")
-
-                dropInlineSuffix(variableName) == "-$functionName-$lambdaClassName"
-            } else {
-                // For Kotlin up to 1.3.10
-                lambdaOrdinalByLocalVariable(variableName) == lambdaOrdinal
-                        && functionNameByLocalVariable(variableName) == functionName
+        markerLocalVariables
+            .map { it.name().drop(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT.length) }
+            .any { variableName ->
+                if (variableName.startsWith("-")) {
+                    val lambdaClassName = ClassNameCalculator.getClassNameCompat(inlineArgument)?.substringAfterLast('.') ?: return@any false
+                    dropInlineSuffix(variableName) == "-$functionName-$lambdaClassName"
+                } else {
+                    // For Kotlin up to 1.3.10
+                    lambdaOrdinalByLocalVariable(variableName) == lambdaOrdinal
+                            && functionNameByLocalVariable(variableName) == functionName
+                }
             }
-        }
+    }
 }
 
 fun <T : Any> DebugProcessImpl.invokeInManagerThread(f: (DebuggerContextImpl) -> T?): T? {
@@ -108,9 +102,9 @@ fun <T : Any> SuspendContextImpl.invokeInSuspendManagerThread(debugProcessImpl: 
     return result
 }
 
-private fun lambdaOrdinalByArgument(elementAt: KtFunction, context: BindingContext): Int {
-    val type = asmTypeForAnonymousClass(context, elementAt)
-    return type.className.substringAfterLast("$").toInt()
+private fun lambdaOrdinalByArgument(elementAt: KtFunction): Int {
+    val className = ClassNameCalculator.getClassNameCompat(elementAt) ?: return 0
+    return className.substringAfterLast("$").toInt()
 }
 
 private fun functionNameByArgument(elementAt: KtFunction, context: BindingContext): String {

@@ -21,11 +21,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClassOrNull
-import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.debugger.breakpoints.getLambdasAtLineIfAny
-import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.Companion.getOrComputeClassNames
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.ComputedClassNames
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.ComputedClassNames.Companion.Cached
@@ -38,9 +36,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import org.jetbrains.kotlin.psi.psiUtil.isTopLevelInFileOrScript
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
-import org.jetbrains.org.objectweb.asm.Type
 
 class DebuggerClassNameProvider(
     val project: Project, val searchScope: GlobalSearchScope,
@@ -118,7 +114,7 @@ class DebuggerClassNameProvider(
 
         return when (element) {
             is KtScript -> {
-                getClassType(element)?.let { return Cached(it) }
+                ClassNameCalculator.getClassNameCompat(element)?.let { return Cached(it) }
                 return EMPTY
             }
             is KtFile -> {
@@ -137,14 +133,14 @@ class DebuggerClassNameProvider(
                         // Guaranteed to be non-local class or object
                         element.readAction { _ ->
                             if (element is KtClass && runReadAction { element.isInterface() }) {
-                                val name = getNameForNonLocalClass(element)
+                                val name = ClassNameCalculator.getClassNameCompat(element)
 
                                 if (name != null)
                                     Cached(listOf(name, name + JvmAbi.DEFAULT_IMPLS_SUFFIX))
                                 else
                                     EMPTY
                             } else {
-                                getNameForNonLocalClass(element)?.let { Cached(it) } ?: EMPTY
+                              ClassNameCalculator.getClassNameCompat(element)?.let { Cached(it) } ?: EMPTY
                             }
                         }
                 }
@@ -193,7 +189,7 @@ class DebuggerClassNameProvider(
                 var nonInlineClasses: ComputedClassNames = classNamesOfContainingDeclaration
 
                 if (runReadAction { element.name == null || element.isLocal }) {
-                    val nameOfAnonymousClass = runReadAction { getClassType(element) }
+                    val nameOfAnonymousClass = runReadAction { ClassNameCalculator.getClassNameCompat(element) }
                     if (nameOfAnonymousClass != null) {
                         nonInlineClasses += Cached(nameOfAnonymousClass)
                     }
@@ -220,56 +216,21 @@ class DebuggerClassNameProvider(
                 getOuterClassNamesForElement(initializerOwner, alreadyVisited)
             }
             is KtFunctionLiteral -> {
-                val typeMapper = KotlinDebuggerCaches.getOrCreateTypeMapper(element)
-
                 val names = runReadAction {
-                    val name = asmTypeForAnonymousClassOrNull(typeMapper.bindingContext, element)?.internalName?.toJdiName()
+                    val name = ClassNameCalculator.getClassNameCompat(element)
                     if (name != null) Cached(name) else EMPTY
                 }
 
-                if (!names.isEmpty()
-                    && !alwaysReturnLambdaParentClass
-                    && !InlineUtil.isInlinedArgument(element, typeMapper.bindingContext, true)
-                ) {
-                    return names
+                if (!names.isEmpty() && !alwaysReturnLambdaParentClass) {
+                    if (!InlineUtil.isInlinedArgument(element, element.analyze(), true)) {
+                        return names
+                    }
                 }
 
                 names + getOuterClassNamesForElement(element.relevantParentInReadAction, alreadyVisited)
             }
             else -> getOuterClassNamesForElement(element.relevantParentInReadAction, alreadyVisited)
         }
-    }
-
-    // Should be called in a read action
-    private fun getClassType(element: KtElement): String? {
-        val typeMapper = KotlinDebuggerCaches.getOrCreateTypeMapper(element)
-        asmTypeForAnonymousClassOrNull(typeMapper.bindingContext, element)?.let { return it.className }
-
-        val descriptor = typeMapper.bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, element]
-        if (descriptor is ScriptDescriptor) {
-            return typeMapper.mapClass(descriptor).className
-        }
-
-        if (descriptor != null) {
-            val containingDeclaration = descriptor.containingDeclaration
-            if (containingDeclaration is ScriptDescriptor) {
-                return typeMapper.mapClass(containingDeclaration).className
-            }
-        }
-
-        return null
-    }
-
-    private fun getNameForNonLocalClass(nonLocalClassOrObject: KtClassOrObject): String? {
-        val typeMapper = KotlinDebuggerCaches.getOrCreateTypeMapper(nonLocalClassOrObject)
-        val descriptor = typeMapper.bindingContext[BindingContext.CLASS, nonLocalClassOrObject] ?: return null
-
-        val type = typeMapper.mapClass(descriptor)
-        if (type.sort != Type.OBJECT) {
-            return null
-        }
-
-        return type.className
     }
 
     private val KtDeclaration.isInlineInReadAction: Boolean

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.debugger
 
-import com.intellij.debugger.engine.DebugProcess
 import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
@@ -18,8 +17,8 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.xdebugger.impl.XDebuggerManagerImpl
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.debugger.DebuggerClassNameProvider.Companion.getRelevantElement
-import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.ComputedClassNames
 import org.jetbrains.kotlin.idea.search.isImportUsage
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
@@ -30,15 +29,15 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class InlineCallableUsagesSearcher(val project: Project, val searchScope: GlobalSearchScope) {
     fun findInlinedCalls(
         declaration: KtDeclaration,
         alreadyVisited: Set<PsiElement>,
-        bindingContext: BindingContext = KotlinDebuggerCaches.getOrCreateTypeMapper(declaration).bindingContext,
         transformer: (PsiElement, Set<PsiElement>) -> ComputedClassNames
     ): ComputedClassNames {
-        if (!checkIfInline(declaration, bindingContext)) {
+        if (!checkIfInline(declaration)) {
             return ComputedClassNames.EMPTY
         } else {
             val searchResult = hashSetOf<PsiElement>()
@@ -96,7 +95,8 @@ class InlineCallableUsagesSearcher(val project: Project, val searchScope: Global
         return if (shouldAnalyze) usage else null
     }
 
-    private fun checkIfInline(declaration: KtDeclaration, bindingContext: BindingContext): Boolean {
+    private fun checkIfInline(declaration: KtDeclaration): Boolean {
+        val bindingContext = declaration.analyze(BodyResolveMode.PARTIAL)
         val descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration) ?: return false
         return when (descriptor) {
             is FunctionDescriptor -> InlineUtil.isInline(descriptor)

@@ -158,6 +158,7 @@ class KotlinDebuggerCaches(project: Project) {
             return computedClassNames.classNames
         }
 
+        @Deprecated("Use `element.analyze()` or `ClassNameOracle.getJdiClassName()` instead.")
         fun getOrCreateTypeMapper(psiElement: PsiElement): KotlinTypeMapper {
             val project = runReadAction { psiElement.project }
             val cache = getInstance(project)

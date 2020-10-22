@@ -187,6 +187,10 @@
                    description="Continuation information provider possible values are: DISPATCHED_CONTINUATION, CANCELLABLE_CONTINUATION."
                    defaultValue="DISPATCHED_CONTINUATION"
                    restartRequired="false"/>
+      <registryKey key="kotlin.debugger.enable.class.name.oracle"
+                   description="Use heuristic-based name provider instead of utilizing backend for figuring out breakpoint class names."
+                   defaultValue="true"
+                   restartRequired="false"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.uast">

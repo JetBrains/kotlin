@@ -35,11 +35,11 @@ import com.sun.jdi.ReferenceType
 import com.sun.jdi.request.ClassPrepareRequest
 import org.jetbrains.kotlin.codegen.inline.KOTLIN_STRATA_NAME
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.KotlinFileTypeFactoryUtils
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.util.getLineStartOffset
 import org.jetbrains.kotlin.idea.debugger.breakpoints.getLambdasAtLineIfAny
-import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
 import org.jetbrains.kotlin.idea.debugger.stackFrame.KotlinStackFrame
 import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import java.util.ArrayList
 
 class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiRequestPositionManager, PositionManagerEx() {
@@ -208,15 +209,12 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         val literalsOrFunctions = getLambdasAtLineIfAny(file, lineNumber)
         if (literalsOrFunctions.isEmpty()) return null
 
-        val elementAt = file.findElementAt(start) ?: return null
-        val typeMapper = KotlinDebuggerCaches.getOrCreateTypeMapper(elementAt)
-
         val currentLocationClassName =
             JvmClassName.byFqNameWithoutInnerClasses(FqName(currentLocationFqName)).internalName.replace('/', '.')
 
         for (literal in literalsOrFunctions) {
-            if (InlineUtil.isInlinedArgument(literal, typeMapper.bindingContext, true)) {
-                if (isInsideInlineArgument(literal, location, myDebugProcess as DebugProcessImpl, typeMapper.bindingContext)) {
+            if (InlineUtil.isInlinedArgument(literal, literal.analyze(BodyResolveMode.PARTIAL), true)) {
+                if (isInsideInlineArgument(literal, location, myDebugProcess as DebugProcessImpl)) {
                     return literal
                 }
                 continue
