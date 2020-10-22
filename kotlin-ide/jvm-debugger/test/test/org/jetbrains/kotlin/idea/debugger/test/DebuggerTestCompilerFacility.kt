@@ -15,16 +15,12 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.ArchiveFileSystem
 import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
-import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.findMainClass
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
-import org.jetbrains.kotlin.codegen.DefaultCodegenFactory
-import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
+import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -169,25 +165,13 @@ class DebuggerTestCompilerFacility(
         val analysisResult = resolutionFacade.analyzeWithAllCompilerChecks(files)
         analysisResult.throwIfError()
 
-        val moduleDescriptor = resolutionFacade.moduleDescriptor
-        val bindingContext = analysisResult.bindingContext
-
         val configuration = CompilerConfiguration()
         configuration.put(JVMConfigurationKeys.JVM_TARGET, jvmTarget)
         configuration.put(JVMConfigurationKeys.IR, useIrBackend)
 
-        val state = GenerationState.Builder(project, ClassBuilderFactories.BINARIES, moduleDescriptor, bindingContext, files, configuration)
-            .generateDeclaredClassFilter(GenerationState.GenerateClassFilter.GENERATE_ALL)
-            .codegenFactory(
-                if (useIrBackend) {
-                    JvmIrCodegenFactory(PhaseConfig(jvmPhases))
-                } else {
-                    DefaultCodegenFactory
-                }
-            )
-            .build()
-
-        KotlinCodegenFacade.compileCorrectFiles(state)
+        val state = GenerationUtils.generateFiles(project, files, configuration, ClassBuilderFactories.BINARIES, analysisResult) {
+            generateDeclaredClassFilter(GenerationState.GenerateClassFilter.GENERATE_ALL)
+        }
 
         val extraDiagnostics = state.collectedExtraJvmDiagnostics
         if (!extraDiagnostics.isEmpty()) {
@@ -197,7 +181,7 @@ class DebuggerTestCompilerFacility(
 
         state.factory.writeAllTo(classesDir)
 
-        return findMainClass(bindingContext, resolutionFacade.getLanguageVersionSettings(), files)?.asString()
+        return findMainClass(analysisResult.bindingContext, resolutionFacade.getLanguageVersionSettings(), files)?.asString()
             ?: error("Cannot find main class name")
     }
 
