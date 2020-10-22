@@ -155,24 +155,7 @@ object ArrayOps : TemplateGroupBase() {
                 body { "return contentEqualsInternal(other)" }
             }
         }
-        on(Platform.Native) {
-            fun notEq(operand1: String, operand2: String) = when {
-                primitive?.isFloatingPoint() == true -> "!$operand1.equals($operand2)"
-                else -> "$operand1 != $operand2"
-            }
-            body {
-                """
-                if (this === other) return true
-                if (this === null || other === null) return false
-                if (size != other.size) return false
-                for (i in indices) {
-                    if (${notEq("this[i]", "other[i]")}) return false
-                }
-                return true
-                """
-            }
-        }
-        on(Platform.Wasm) {
+        on(Platform.Native, Platform.Wasm) {
             fun notEq(operand1: String, operand2: String) = when {
                 primitive?.isFloatingPoint() == true -> "!$operand1.equals($operand2)"
                 else -> "$operand1 != $operand2"
@@ -260,10 +243,7 @@ object ArrayOps : TemplateGroupBase() {
                 body { "return contentDeepEqualsImpl(other)" }
             }
         }
-        on(Platform.Native) {
-            body { "return contentDeepEqualsImpl(other)" }
-        }
-        on(Platform.Wasm) {
+        on(Platform.Native, Platform.Wasm) {
             body { "return contentDeepEqualsImpl(other)" }
         }
     }
@@ -320,10 +300,7 @@ object ArrayOps : TemplateGroupBase() {
                 body { """return this?.joinToString(", ", "[", "]") ?: "null"""" }
             }
         }
-        on(Platform.Native) {
-            body { """return this?.joinToString(", ", "[", "]") ?: "null"""" }
-        }
-        on(Platform.Wasm) {
+        on(Platform.Native, Platform.Wasm) {
             body { """return this?.joinToString(", ", "[", "]") ?: "null"""" }
         }
     }
@@ -388,10 +365,7 @@ object ArrayOps : TemplateGroupBase() {
                 body { "return contentDeepToStringImpl()" }
             }
         }
-        on(Platform.Native) {
-            body { "return contentDeepToStringImpl()" }
-        }
-        on(Platform.Wasm) {
+        on(Platform.Native, Platform.Wasm) {
             body { "return contentDeepToStringImpl()" }
         }
     }
@@ -442,18 +416,7 @@ object ArrayOps : TemplateGroupBase() {
                 body { "return contentHashCodeInternal()" }
             }
         }
-        on(Platform.Native) {
-            body {
-                """
-                if (this === null) return 0
-                var result = 1
-                for (element in this)
-                    result = 31 * result + element.hashCode()
-                return result
-                """
-            }
-        }
-        on(Platform.Wasm) {
+        on(Platform.Native, Platform.Wasm) {
             body {
                 """
                 if (this === null) return 0
@@ -522,10 +485,7 @@ object ArrayOps : TemplateGroupBase() {
                 body { "return contentDeepHashCodeInternal()" }
             }
         }
-        on(Platform.Native) {
-            body { "return contentDeepHashCodeImpl()" }
-        }
-        on(Platform.Wasm) {
+        on(Platform.Native, Platform.Wasm) {
             body { "return contentDeepHashCodeImpl()" }
         }
     }
@@ -1613,10 +1573,7 @@ object ArrayOps : TemplateGroupBase() {
                 }
             }
         }
-        on(Platform.Native) {
-            body { objectLiteralImpl }
-        }
-        on(Platform.Wasm) {
+        on(Platform.Native, Platform.Wasm) {
             body { objectLiteralImpl }
         }
     }

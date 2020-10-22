@@ -149,9 +149,11 @@ class MemberBuilder(
     }
 
 
-    fun on(platform: Platform, action: () -> Unit) {
-        require(platform in allowedPlatforms) { "Platform $platform is not in the list of allowed platforms $allowedPlatforms" }
-        if (target.platform == platform)
+    fun on(vararg platforms: Platform, action: () -> Unit) {
+        for (platform in platforms) {
+            require(platform in allowedPlatforms) { "Platform $platform is not in the list of allowed platforms $allowedPlatforms" }
+        }
+        if (target.platform in platforms)
             action()
         else {
             hasPlatformSpecializations = true
