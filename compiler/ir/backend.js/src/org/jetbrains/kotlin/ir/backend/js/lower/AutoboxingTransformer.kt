@@ -121,7 +121,7 @@ class AutoboxingTransformer(context: JsCommonBackendContext) : AbstractValueUsag
     override fun IrExpression.useExpressionAsType(actualType: IrType, expectedType: IrType): IrExpression {
         // // TODO: Default parameters are passed as nulls and they need not to be unboxed. Fix this
 
-        if (expectedType.isNothing())
+        if (actualType.makeNotNull().isNothing())
             return this
 
         if (actualType.isUnit() && !expectedType.isUnit()) {
@@ -187,7 +187,7 @@ class AutoboxingTransformer(context: JsCommonBackendContext) : AbstractValueUsag
             val tmp = buildVar(actualType, parent = null, initializer = arg)
             val nullCheck = buildIfElse(
                 type = resultType,
-                cond = buildCall(irBuiltIns.eqeqeqSymbol).apply {
+                cond = buildCall(irBuiltIns.eqeqSymbol).apply {
                     putValueArgument(0, buildGetValue(tmp.symbol))
                     putValueArgument(1, buildNull(irBuiltIns.nothingNType))
                 },
