@@ -80,10 +80,7 @@ fun main(args: Array<String>) {
             testClass<AbstractIrCodegenBoxWasmTest> {
                 model(
                     "codegen/box", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.WASM, excludeDirs = listOf(
-
-                        // JVM-specific
-                        "assert", "builtinStubMethods",
-
+                        
                         // TODO: Support reflection
                         "toArray", "classLiteral", "reflection",
 
