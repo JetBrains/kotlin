@@ -44,7 +44,7 @@ private fun IrClassifierSymbol.asString() = when (this) {
 /**
  * Returns inline class for given class or null of type is not inlined
  */
-fun IrType.getInlinedClass(): IrClass? {
+fun IrType.getJsInlinedClass(): IrClass? {
     if (this is IrSimpleType) {
         val erased = erase(this) ?: return null
         if (erased.isInline) {
@@ -57,7 +57,7 @@ fun IrType.getInlinedClass(): IrClass? {
                         return null
                     }
 
-                    fieldInlinedClass = fieldType.getInlinedClass() ?: break
+                    fieldInlinedClass = fieldType.getJsInlinedClass() ?: break
                 }
             }
 

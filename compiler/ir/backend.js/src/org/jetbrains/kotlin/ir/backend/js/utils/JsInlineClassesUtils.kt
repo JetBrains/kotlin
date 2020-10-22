@@ -19,26 +19,8 @@ class JsInlineClassesUtils(val context: JsIrBackendContext) : InlineClassesUtils
         return getInlinedClass(type) != null
     }
 
-    override fun getInlinedClass(type: IrType): IrClass? {
-        if (type !is IrSimpleType) return null
-
-        val erased = erase(type) ?: return null
-        if (erased.isInline) {
-            if (type.isMarkedNullable()) {
-                var fieldType: IrType
-                var fieldInlinedClass = erased
-                while (true) {
-                    fieldType = getInlineClassUnderlyingType(fieldInlinedClass)
-                    if (fieldType.isMarkedNullable()) {
-                        return null
-                    }
-                    fieldInlinedClass = fieldType.getInlinedClass() ?: break
-                }
-            }
-            return erased
-        }
-        return null
-    }
+    override fun getInlinedClass(type: IrType): IrClass? =
+        type.getJsInlinedClass()
 
     override fun isClassInlineLike(klass: IrClass): Boolean =
         klass.isInline

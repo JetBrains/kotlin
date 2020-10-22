@@ -139,7 +139,7 @@ fun jsFunctionSignature(declaration: IrFunction): Signature {
     declaration.returnType.let {
         // Return type is only used in signature for inline class and Unit types because
         // they are binary incompatible with supertypes.
-        if (it.getInlinedClass() != null || it.isUnit()) {
+        if (it.getJsInlinedClass() != null || it.isUnit()) {
             nameBuilder.append("_ret$${it.asString()}")
         }
     }
