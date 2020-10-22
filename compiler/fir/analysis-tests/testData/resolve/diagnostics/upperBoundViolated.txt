@@ -26,8 +26,8 @@ FILE: upperBoundViolated.kt
         lval b5: R|B<A>| = R|/B.B|<<ERROR TYPE REF: Symbol not found, for `UnexistingType`>>()
         R|/fest|<R|kotlin/Boolean|>()
         R|/fest|<R|C|>()
-        R|/fest|<R|HHH|>()
-        R|/fest|<R|JJJ|>()
+        R|/fest|<R|C|>()
+        R|/fest|<R|B<C>|>()
     }
     public open class S<F, G : R|F|> : R|kotlin/Any| {
         public constructor<F, G : R|F|>(): R|S<F, G>| {
