@@ -73,10 +73,9 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
         if (commandCount >= MAX_COMMANDS) InterpreterTimeOutError().throwAsUserException()
     }
 
-    fun interpret(expression: IrExpression, parentFile: IrFile? = null): IrExpression {
-        stack.clean()
-        val result = stack.withEntryPoint(irFile = parentFile) { expression.interpret() }
-        return when (val returnLabel = result.returnLabel) {
+    fun interpret(expression: IrExpression, rootFile: IrFile? = null): IrExpression {
+        stack.clean(rootFile)
+        return when (val returnLabel = expression.interpret().returnLabel) {
             ReturnLabel.REGULAR -> stack.popReturnValue().toIrExpression(expression)
             ReturnLabel.EXCEPTION -> {
                 val message = (stack.popReturnValue() as ExceptionState).getFullDescription()
@@ -377,12 +376,12 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
 
         val irClass = owner.parent as IrClass
         if (irClass.hasAnnotation(evaluateIntrinsicAnnotation) || irClass.fqNameWhenAvailable!!.startsWith(Name.identifier("java"))) {
-            return stack.newFrame(initPool = valueArguments) { Wrapper.getConstructorMethod(owner).invokeMethod(owner) }
+            return stack.newFrame(owner, initPool = valueArguments) { Wrapper.getConstructorMethod(owner).invokeMethod(owner) }
         }
 
         if (irClass.defaultType.isArray() || irClass.defaultType.isPrimitiveArray()) {
             // array constructor doesn't have body so must be treated separately
-            return stack.newFrame(initPool = valueArguments) { handleIntrinsicMethods(owner) }
+            return stack.newFrame(owner, initPool = valueArguments) { handleIntrinsicMethods(owner) }
                 .apply {
                     val array = stack.popReturnValue() as Primitive<*>
                     stack.pushReturnValue(Primitive(array.value, constructorCall.type))
@@ -413,7 +412,7 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
         }
 
         valueArguments.add(Variable(constructorCall.getThisReceiver(), state)) //used to set up fields in body
-        return stack.newFrame(initPool = valueArguments) {
+        return stack.newFrame(owner, initPool = valueArguments) {
             val statements = constructorCall.getBody()!!.statements
             when (val irStatement = statements[0]) {
                 is IrTypeOperatorCall -> {

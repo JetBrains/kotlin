@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.ir.util.isLocal
 internal interface Stack {
     fun newFrame(asSubFrame: Boolean = false, initPool: List<Variable> = listOf(), block: () -> ExecutionResult): ExecutionResult
     fun newFrame(irFunction: IrFunction, initPool: List<Variable> = listOf(), block: () -> ExecutionResult): ExecutionResult
+    fun newFrame(irFile: IrFile?, initPool: List<Variable> = listOf(), block: () -> ExecutionResult): ExecutionResult
 
     fun fixCallEntryPoint(irExpression: IrExpression)
-    fun withEntryPoint(irFunction: IrFunction? = null, irFile: IrFile? = null, block: () -> ExecutionResult): ExecutionResult
     fun getStackTrace(): List<String>
     fun getStackCount(): Int
 
-    fun clean()
+    fun clean(rootFile: IrFile?)
     fun addVar(variable: Variable)
     fun addAll(variables: List<Variable>)
     fun getVariable(symbol: IrSymbol): Variable
@@ -41,16 +41,21 @@ internal interface Stack {
 }
 
 internal class StackImpl : Stack {
-    private val frameList = mutableListOf(FrameContainer()) // first frame is default, it is easier to work when last() is not null
+    private val frameList = mutableListOf<FrameContainer>()
     private fun getCurrentFrame() = frameList.last()
     private var stackCount = 0
 
-    override fun newFrame(asSubFrame: Boolean, initPool: List<Variable>, block: () -> ExecutionResult): ExecutionResult {
+    private fun addNewFrame(asSubFrame: Boolean, initPool: List<Variable>, irFunction: IrFunction? = null, irFile: IrFile? = null) {
         val typeArgumentsPool = initPool.filter { it.symbol is IrTypeParameterSymbol }
         val valueArguments = initPool.filter { it.symbol !is IrTypeParameterSymbol }
         val newFrame = InterpreterFrame(valueArguments.toMutableList(), typeArgumentsPool)
-        if (asSubFrame) getCurrentFrame().addSubFrame(newFrame) else frameList.add(FrameContainer(newFrame))
+        when {
+            asSubFrame -> getCurrentFrame().addSubFrame(newFrame)
+            else -> frameList.add(FrameContainer(irFile, irFunction, newFrame))
+        }
+    }
 
+    private fun withStackIncrement(asSubFrame: Boolean, block: () -> ExecutionResult): ExecutionResult {
         return try {
             stackCount++
             block()
@@ -60,13 +65,20 @@ internal class StackImpl : Stack {
         }
     }
 
+    override fun newFrame(asSubFrame: Boolean, initPool: List<Variable>, block: () -> ExecutionResult): ExecutionResult {
+        addNewFrame(asSubFrame, initPool, null, null)
+        return withStackIncrement(asSubFrame, block)
+    }
+
     override fun newFrame(irFunction: IrFunction, initPool: List<Variable>, block: () -> ExecutionResult): ExecutionResult {
         val asSubFrame = irFunction.isInline || irFunction.isLocal
-        return newFrame(asSubFrame, initPool) {
-            withEntryPoint(irFunction, irFunction.fileOrNull) {
-                block()
-            }
-        }
+        addNewFrame(asSubFrame, initPool, irFunction, irFunction.fileOrNull)
+        return withStackIncrement(asSubFrame, block)
+    }
+
+    override fun newFrame(irFile: IrFile?, initPool: List<Variable>, block: () -> ExecutionResult): ExecutionResult {
+        addNewFrame(false, initPool, null, irFile)
+        return withStackIncrement(false, block)
     }
 
     private fun removeLastFrame() {
@@ -75,16 +87,9 @@ internal class StackImpl : Stack {
     }
 
     override fun fixCallEntryPoint(irExpression: IrExpression) {
-        val fileEntry = getCurrentFrame().entryPoint?.irFile?.fileEntry ?: return
+        val fileEntry = getCurrentFrame().irFile?.fileEntry ?: return
         val lineNum = fileEntry.getLineNumber(irExpression.startOffset) + 1
-        getCurrentFrame().entryPoint?.lineNumber = lineNum
-    }
-
-    // TODO remove method and create EntryPoint in frame constructor
-    override fun withEntryPoint(irFunction: IrFunction?, irFile: IrFile?, block: () -> ExecutionResult): ExecutionResult {
-        val frame = getCurrentFrame()
-        if (frame.entryPoint == null && irFile != null) frame.entryPoint = FrameContainer.Companion.EntryPoint(irFunction, irFile)
-        return block()
+        getCurrentFrame().lineNumber = lineNum
     }
 
     override fun getStackTrace(): List<String> {
@@ -94,10 +99,10 @@ internal class StackImpl : Stack {
 
     override fun getStackCount(): Int = stackCount
 
-    override fun clean() {
+    override fun clean(rootFile: IrFile?) {
         stackCount = 0
         frameList.clear()
-        frameList.add(FrameContainer())
+        rootFile?.let { frameList.add(FrameContainer(rootFile)) }
     }
 
     override fun addVar(variable: Variable) {
@@ -137,16 +142,10 @@ internal class StackImpl : Stack {
     }
 }
 
-private class FrameContainer(current: Frame = InterpreterFrame()) {
-    var entryPoint: EntryPoint? = null
+private class FrameContainer(val irFile: IrFile? = null, private val entryPoint: IrFunction? = null, current: Frame = InterpreterFrame()) {
+    var lineNumber: Int = -1
     private val innerStack = mutableListOf(current)
     private fun getTopFrame() = innerStack.first()
-
-    companion object {
-        class EntryPoint(val irFunction: IrFunction?, val irFile: IrFile) {
-            var lineNumber: Int = -1
-        }
-    }
 
     fun addSubFrame(frame: Frame) {
         innerStack.add(0, frame)
@@ -173,9 +172,9 @@ private class FrameContainer(current: Frame = InterpreterFrame()) {
     fun peekReturnValue() = getTopFrame().peekReturnValue()
 
     override fun toString(): String {
-        entryPoint?.irFile ?: return "Not defined"
-        val fileNameCapitalized = entryPoint!!.irFile.name.replace(".kt", "Kt").capitalize()
-        val lineNum = if (entryPoint?.lineNumber != -1) ":${entryPoint?.lineNumber}" else ""
-        return "at $fileNameCapitalized.${entryPoint?.irFunction?.fqNameWhenAvailable ?: "<clinit>"}(${entryPoint!!.irFile.name}$lineNum)"
+        irFile ?: return "Not defined"
+        val fileNameCapitalized = irFile.name.replace(".kt", "Kt").capitalize()
+        val lineNum = if (lineNumber != -1) ":$lineNumber" else ""
+        return "at $fileNameCapitalized.${entryPoint?.fqNameWhenAvailable ?: "<clinit>"}(${irFile.name}$lineNum)"
     }
 }
