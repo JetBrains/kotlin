@@ -95,6 +95,11 @@ class EnumClassConstructorLowering(val context: JsCommonBackendContext) : Declar
     private var IrClass.correspondingEntry by context.mapping.enumClassToCorrespondingEnumEntry
     private var IrValueDeclaration.valueParameter by context.mapping.enumConstructorOldToNewValueParameters
 
+    private val additionalParameters = listOf(
+        "name" to context.irBuiltIns.stringType,
+        "ordinal" to context.irBuiltIns.intType
+    )
+
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         (declaration.parent as? IrClass)?.let { irClass ->
             if (!irClass.isEnumClass || irClass.isExpect || irClass.isEffectivelyExternal()) return null
@@ -120,8 +125,9 @@ class EnumClassConstructorLowering(val context: JsCommonBackendContext) : Declar
             returnType = enumConstructor.returnType
         }.apply {
             parent = enumClass
-            valueParameters += JsIrBuilder.buildValueParameter(this, "name", 0, context.irBuiltIns.stringType)
-            valueParameters += JsIrBuilder.buildValueParameter(this, "ordinal", 1, context.irBuiltIns.intType)
+            additionalParameters.forEachIndexed { index, (name, type) ->
+                valueParameters += JsIrBuilder.buildValueParameter(this, name, index, type)
+            }
             copyParameterDeclarationsFrom(enumConstructor)
 
             val newConstructor = this
@@ -143,8 +149,7 @@ class EnumClassConstructorLowering(val context: JsCommonBackendContext) : Declar
             val oldParameters = enumConstructor.valueParameters
             val newParameters = valueParameters
             oldParameters.forEach { old ->
-                // TODO Match by index?
-                val new = newParameters.single { it.name == old.name }
+                val new = newParameters.single { it.index == old.index + additionalParameters.size }
                 old.valueParameter = new
 
                 old.defaultValue?.let { default ->
@@ -235,7 +240,7 @@ class EnumClassConstructorBodyTransformer(val context: JsCommonBackendContext) :
             }
 
         override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
-            val delegatingConstructor = expression.symbol.owner. let { it.newConstructor ?: it }
+            val delegatingConstructor = expression.symbol.owner.let { it.newConstructor ?: it }
 
             return builder.irDelegatingConstructorCall(delegatingConstructor).apply {
                 var valueArgIdx = 0
@@ -426,7 +431,7 @@ class EnumClassCreateInitializerLowering(val context: JsIrBackendContext) : Decl
         }
 }
 
-class EnumEntryCreateGetInstancesFunsLowering(val context: JsIrBackendContext): DeclarationTransformer {
+class EnumEntryCreateGetInstancesFunsLowering(val context: JsIrBackendContext) : DeclarationTransformer {
 
     private var IrEnumEntry.correspondingField by context.mapping.enumEntryToCorrespondingField
     private var IrClass.initEntryInstancesFun: IrSimpleFunction? by context.mapping.enumClassToInitEntryInstancesFun
@@ -472,7 +477,7 @@ class EnumEntryCreateGetInstancesFunsLowering(val context: JsIrBackendContext): 
         }
 }
 
-class EnumSyntheticFunctionsLowering(val context: JsIrBackendContext): DeclarationTransformer {
+class EnumSyntheticFunctionsLowering(val context: JsIrBackendContext) : DeclarationTransformer {
 
     private var IrEnumEntry.getInstanceFun by context.mapping.enumEntryToGetInstanceFun
 
