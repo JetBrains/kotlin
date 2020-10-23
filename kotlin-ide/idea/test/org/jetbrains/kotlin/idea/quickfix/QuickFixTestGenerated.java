@@ -2439,26 +2439,6 @@ public abstract class QuickFixTestGenerated extends AbstractQuickFixTest {
         public void testNormal() throws Exception {
             runTest("testData/quickfix/changeToLabeledReturn/normal.kt");
         }
-
-        @TestMetadata("nullForNonnullType.kt")
-        public void testNullForNonnullType() throws Exception {
-            runTest("idea/testData/quickfix/changeToLabeledReturn/nullForNonnullType.kt");
-        }
-
-        @TestMetadata("nullForNonnullType2.kt")
-        public void testNullForNonnullType2() throws Exception {
-            runTest("idea/testData/quickfix/changeToLabeledReturn/nullForNonnullType2.kt");
-        }
-
-        @TestMetadata("typeMismatch.kt")
-        public void testTypeMismatch() throws Exception {
-            runTest("idea/testData/quickfix/changeToLabeledReturn/typeMismatch.kt");
-        }
-
-        @TestMetadata("typeMismatch2.kt")
-        public void testTypeMismatch2() throws Exception {
-            runTest("idea/testData/quickfix/changeToLabeledReturn/typeMismatch2.kt");
-        }
     }
 
     @RunWith(JUnit3RunnerWithInners.class)
