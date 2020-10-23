@@ -17,16 +17,16 @@ import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.runner.RunWith
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
-class KotlinCleanupInspectionTest : KotlinLightCodeInsightFixtureTestCase() {
+class KotlinCleanupInspectionTest() : KotlinLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath(): String = PluginTestCaseBase.getTestDataPathBase() + "/inspections/cleanup"
 
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
-    private fun doTest(dir: String, result: String, vararg files: String) {
+    private fun doTest(result: String, vararg files: String) {
         myFixture.enableInspections(KotlinCleanupInspection::class.java)
         myFixture.enableInspections(SortModifiersInspection::class.java)
         myFixture.enableInspections(RedundantModalityModifierInspection::class.java)
-        myFixture.configureByFiles(*files.map { "$dir/$it" }.toTypedArray())
+        myFixture.configureByFiles(*files)
 
         val project = myFixture.project
         val managerEx = InspectionManager.getInstance(project)
@@ -35,19 +35,10 @@ class KotlinCleanupInspectionTest : KotlinLightCodeInsightFixtureTestCase() {
         val profile = InspectionProjectProfileManager.getInstance(project).currentProfile
         globalContext.codeCleanup(analysisScope, profile, "Cleanup", null, true)
 
-        myFixture.checkResultByFile("$dir/$result")
+        myFixture.checkResultByFile(result)
     }
 
-    fun testBasic() {
-        doTest("basic", "basic.kt.after", "basic.kt", "JavaAnn.java", "deprecatedSymbols.kt")
-    }
-
-    fun testFileWithAnnotationToSuppressDeprecation() {
-        doTest(
-            "fileWithAnnotationToSuppressDeprecation",
-            "fileWithAnnotationToSuppressDeprecation.kt.after",
-            "fileWithAnnotationToSuppressDeprecation.kt",
-            "deprecatedSymbols.kt"
-        )
+    fun testCleanup() {
+        doTest("cleanup.kt.after", "cleanup.kt", "JavaAnn.java", "deprecatedSymbols.kt")
     }
 }
