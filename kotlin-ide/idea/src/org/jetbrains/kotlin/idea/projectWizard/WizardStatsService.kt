@@ -128,6 +128,9 @@ class WizardStatsService : CounterUsagesCollector() {
                 *uiEditorUsageStats.toPairs().toTypedArray(),
                 pluginInfoField
             )
+            projectCreationStats.moduleTemplates.forEach { moduleTemplateId ->
+                logModuleTemplateCreation(projectCreationStats.projectTemplateId, moduleTemplateId)
+            }
         }
 
         fun logWizardOpenByHyperlink(templateId: String?) {
@@ -137,11 +140,10 @@ class WizardStatsService : CounterUsagesCollector() {
             )
         }
 
-        // TODO call this function in places of module templates creation
-        fun logModuleTemplateCreation(projectTemplateId: String?, moduleTemplateId: String?) {
+        private fun logModuleTemplateCreation(projectTemplateId: String, moduleTemplateId: String) {
             moduleTemplateCreatedEvent.log(
-                projectTemplateField.with(projectTemplateId ?: "none"),
-                moduleTemplateField.with(moduleTemplateId ?: "none"),
+                projectTemplateField.with(projectTemplateId),
+                moduleTemplateField.with(moduleTemplateId),
                 pluginInfoField
             )
         }
@@ -150,7 +152,8 @@ class WizardStatsService : CounterUsagesCollector() {
     data class ProjectCreationStats(
         val group: String,
         val projectTemplateId: String,
-        val buildSystemType: String
+        val buildSystemType: String,
+        val moduleTemplates: List<String>,
     ) : WizardStats {
         override fun toPairs(): ArrayList<EventPair<*>> = arrayListOf(
             groupField.with(group),

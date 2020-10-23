@@ -31,7 +31,9 @@ import org.jetbrains.kotlin.tools.projectWizard.core.onFailure
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.Plugins
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
+import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.projectTemplates.ProjectTemplate
 import org.jetbrains.kotlin.tools.projectWizard.wizard.service.IdeaJpsWizardService
 import org.jetbrains.kotlin.tools.projectWizard.wizard.service.IdeaServices
@@ -103,15 +105,7 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
             Messages.showErrorDialog(project, errorMessages, KotlinNewProjectWizardUIBundle.message("error.generation"))
         }.isSuccess
         if (success) {
-            val projectCreationStats = ProjectCreationStats(
-                KotlinTemplatesFactory.KOTLIN_GROUP_NAME,
-                wizard.projectTemplate!!.id,
-                wizard.buildSystemType!!.id
-            )
-            WizardStatsService.logDataOnProjectGenerated(
-                projectCreationStats,
-                uiEditorUsagesStats
-            )
+            logToFUS()
         }
         return when {
             !success -> null
@@ -120,6 +114,24 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
             }
             else -> emptyList()
         }
+    }
+
+    private fun logToFUS() {
+        val moduleTemplates = wizard.context.read {
+            KotlinPlugin.modules.reference.settingValue.map { module ->
+                module.template?.id ?: "none"
+            }
+        }
+        val projectCreationStats = ProjectCreationStats(
+            KotlinTemplatesFactory.KOTLIN_GROUP_NAME,
+            wizard.projectTemplate!!.id,
+            wizard.buildSystemType!!.id,
+            moduleTemplates,
+        )
+        WizardStatsService.logDataOnProjectGenerated(
+            projectCreationStats,
+            uiEditorUsagesStats
+        )
     }
 
     private fun clickFinishButton() {
