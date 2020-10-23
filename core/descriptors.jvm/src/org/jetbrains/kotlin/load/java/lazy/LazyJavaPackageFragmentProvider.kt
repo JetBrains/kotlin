@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.load.java.lazy
 
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.PackageFragmentProviderOptimized
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 class LazyJavaPackageFragmentProvider(
     components: JavaResolverComponents
-) : PackageFragmentProvider {
+) : PackageFragmentProviderOptimized {
 
     private val c = LazyJavaResolverContext(components, TypeParameterResolver.EMPTY, lazyOf(null))
 
