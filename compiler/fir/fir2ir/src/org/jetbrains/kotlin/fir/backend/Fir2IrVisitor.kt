@@ -84,11 +84,7 @@ class Fir2IrVisitor(
             file.declarations.forEach {
                 it.toIrDeclaration()
             }
-
-            annotations = file.annotations.mapNotNull {
-                it.accept(this@Fir2IrVisitor, data) as? IrConstructorCall
-            }
-
+            annotationGenerator.generate(this, file)
             metadata = FirMetadataSource.File(file)
         }
     }
