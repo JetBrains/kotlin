@@ -7,17 +7,21 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.util.addAnnotation
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiFactory
 
 open class AddAnnotationFix(
     element: KtDeclaration,
     private val annotationFqName: FqName,
     private val kind: Kind = Kind.Self,
-    private val argumentClassFqName: FqName? = null
+    private val argumentClassFqName: FqName? = null,
+    private val existingAnnotationEntry: SmartPsiElementPointer<KtAnnotationEntry>? = null
 ) : KotlinQuickFixAction<KtDeclaration>(element) {
     override fun getText(): String {
         val annotationArguments = (argumentClassFqName?.shortName()?.let { "($it::class)" } ?: "")
@@ -32,7 +36,17 @@ open class AddAnnotationFix(
     override fun getFamilyName(): String = KotlinBundle.message("fix.add.annotation.family")
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        element?.addAnnotation(annotationFqName, annotationInnerText = argumentClassFqName?.let { "$it::class" })
+        val declaration = element ?: return
+        val annotationEntry = existingAnnotationEntry?.element
+        val annotationInnerText = argumentClassFqName?.let { "$it::class" }
+        if (annotationEntry != null) {
+            if (annotationInnerText == null) return
+            val psiFactory = KtPsiFactory(declaration)
+            annotationEntry.valueArgumentList?.addArgument(psiFactory.createArgument(annotationInnerText))
+                ?: annotationEntry.addAfter(psiFactory.createCallArguments("($annotationInnerText)"), annotationEntry.lastChild)
+        } else {
+            declaration.addAnnotation(annotationFqName, annotationInnerText = annotationInnerText)
+        }
     }
 
     sealed class Kind {

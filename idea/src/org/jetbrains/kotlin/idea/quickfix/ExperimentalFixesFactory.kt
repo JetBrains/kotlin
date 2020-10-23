@@ -15,11 +15,13 @@ import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.toDescriptor
+import org.jetbrains.kotlin.idea.util.findAnnotation
 import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
 import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
@@ -72,7 +74,8 @@ object ExperimentalFixesFactory : KotlinIntentionActionsFactory() {
             }
             result.add(
                 AddAnnotationFix(
-                    containingDeclaration, moduleDescriptor.OPT_IN_FQ_NAME, kind, annotationFqName
+                    containingDeclaration, moduleDescriptor.OPT_IN_FQ_NAME, kind, annotationFqName,
+                    containingDeclaration.findAnnotation(moduleDescriptor.OPT_IN_FQ_NAME)?.createSmartPointer()
                 )
             )
         }
@@ -85,7 +88,8 @@ object ExperimentalFixesFactory : KotlinIntentionActionsFactory() {
                 } else {
                     result.add(
                         AddAnnotationFix(
-                            containingClassOrObject, moduleDescriptor.OPT_IN_FQ_NAME, kind, annotationFqName
+                            containingClassOrObject, moduleDescriptor.OPT_IN_FQ_NAME, kind, annotationFqName,
+                            containingDeclaration.findAnnotation(moduleDescriptor.OPT_IN_FQ_NAME)?.createSmartPointer()
                         )
                     )
                 }
