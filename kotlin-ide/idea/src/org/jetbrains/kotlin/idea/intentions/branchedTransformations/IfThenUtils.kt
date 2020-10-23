@@ -260,7 +260,7 @@ data class IfThenToSelectData(
                         val call = replaced.callExpression
                         val callee = call?.calleeExpression
                         if (callee != null && call.isCallingInvokeFunction(context)) {
-                            replaced = factory.createExpressionByPattern("$0?.$1?.invoke()", replaced.receiverExpression, callee)
+                            replaced = factory.createExpressionByPattern("$0?.${callee.text}?.invoke()", replaced.receiverExpression)
                         }
                     }
                     replaced
