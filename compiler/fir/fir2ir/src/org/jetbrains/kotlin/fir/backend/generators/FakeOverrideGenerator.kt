@@ -149,16 +149,16 @@ class FakeOverrideGenerator(
         scope: FirTypeScope,
     ) where S : FirCallableSymbol<D>, S : PossiblyFirFakeOverrideSymbol<D, S> {
         if (originalSymbol !is S || originalSymbol in realDeclarationSymbols) return
-        val classId = klass.symbol.classId
+        val classLookupTag = klass.symbol.toLookupTag()
         val originalDeclaration = originalSymbol.fir
-        if (originalSymbol.callableId.classId == classId && !originalDeclaration.origin.fromSupertypes) return
+        if (originalSymbol.dispatchReceiverClassOrNull() == classLookupTag && !originalDeclaration.origin.fromSupertypes) return
         if (originalDeclaration.visibility == Visibilities.Private) return
 
         val origin = IrDeclarationOrigin.FAKE_OVERRIDE
         val baseSymbol = originalSymbol.deepestOverriddenSymbol() as S
 
         if ((originalSymbol.isFakeOverride || originalSymbol.isIntersectionOverride) &&
-            originalSymbol.callableId.classId == classId
+            originalSymbol.dispatchReceiverClassOrNull() == classLookupTag
         ) {
             // Substitution case
             // NB: see comment above about substituted function' parent
@@ -170,7 +170,7 @@ class FakeOverrideGenerator(
                     isLocal
                 )
             irDeclaration.parent = irClass
-            baseSymbols[irDeclaration] = computeBaseSymbols(originalSymbol, baseSymbol, computeDirectOverridden, scope, classId)
+            baseSymbols[irDeclaration] = computeBaseSymbols(originalSymbol, baseSymbol, computeDirectOverridden, scope, classLookupTag)
             result += irDeclaration
         } else if (originalDeclaration.allowsToHaveFakeOverrideIn(klass)) {
             // Trivial fake override case
@@ -189,7 +189,7 @@ class FakeOverrideGenerator(
                 return
             }
             irDeclaration.parent = irClass
-            baseSymbols[irDeclaration] = computeBaseSymbols(originalSymbol, baseSymbol, computeDirectOverridden, scope, classId)
+            baseSymbols[irDeclaration] = computeBaseSymbols(originalSymbol, baseSymbol, computeDirectOverridden, scope, classLookupTag)
             result += irDeclaration
         }
     }
@@ -199,12 +199,12 @@ class FakeOverrideGenerator(
         basedSymbol: S,
         directOverridden: FirTypeScope.(S) -> List<S>,
         scope: FirTypeScope,
-        containingClassId: ClassId,
+        containingClass: ConeClassLikeLookupTag,
     ): List<S> {
         if (!symbol.isIntersectionOverride) return listOf(basedSymbol)
         return scope.directOverridden(symbol).map {
             @Suppress("UNCHECKED_CAST")
-            if (it is PossiblyFirFakeOverrideSymbol<*, *> && it.isFakeOverride && it.callableId.classId == containingClassId)
+            if (it is PossiblyFirFakeOverrideSymbol<*, *> && it.isFakeOverride && it.dispatchReceiverClassOrNull() == containingClass)
                 it.overriddenSymbol!! as S
             else
                 it

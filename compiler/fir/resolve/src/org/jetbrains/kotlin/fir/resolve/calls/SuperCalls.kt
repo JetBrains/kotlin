@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.modality
+import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.references.FirNamedReference
@@ -146,5 +147,5 @@ private fun BodyResolveComponents.isConcreteMember(supertype: ConeKotlinType, me
     val classSymbol =
         (supertype as? ConeClassLikeType)?.lookupTag?.toSymbol(session) as? FirRegularClassSymbol ?: return true
     if (classSymbol.fir.classKind != ClassKind.INTERFACE) return true
-    return member.symbol.unwrapSubstitutionOverrides().callableId.classId != StandardClassIds.Any
+    return member.symbol.unwrapSubstitutionOverrides().dispatchReceiverClassOrNull()?.classId != StandardClassIds.Any
 }

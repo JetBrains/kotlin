@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.SyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.scopes.processDirectlyOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.processDirectlyOverriddenProperties
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
@@ -218,7 +219,9 @@ internal tailrec fun FirCallableSymbol<*>.deepestOverriddenSymbol(): FirCallable
 
 internal tailrec fun FirCallableSymbol<*>.deepestMatchingOverriddenSymbol(root: FirCallableSymbol<*> = this): FirCallableSymbol<*> {
     if (isIntersectionOverride) return this
-    val overriddenSymbol = overriddenSymbol?.takeIf { it.callableId == root.callableId } ?: return this
+    val overriddenSymbol = overriddenSymbol?.takeIf {
+        it.containingClass() == root.containingClass()
+    } ?: return this
     return overriddenSymbol.deepestMatchingOverriddenSymbol(this)
 }
 
@@ -235,7 +238,11 @@ internal fun FirSimpleFunction.generateOverriddenFunctionSymbols(
         if ((it.fir as FirSimpleFunction).visibility == Visibilities.Private) {
             return@processDirectlyOverriddenFunctions ProcessorAction.NEXT
         }
-        val overridden = declarationStorage.getIrFunctionSymbol(it.unwrapSubstitutionOverrides())
+
+        val unwrapped =
+            it.fir.delegatedWrapperData?.takeIf { it.containingClass == containingClass.symbol.toLookupTag() }?.wrapped?.symbol ?: it
+
+        val overridden = declarationStorage.getIrFunctionSymbol(unwrapped.unwrapSubstitutionOverrides())
         overriddenSet += overridden as IrSimpleFunctionSymbol
         ProcessorAction.NEXT
     }

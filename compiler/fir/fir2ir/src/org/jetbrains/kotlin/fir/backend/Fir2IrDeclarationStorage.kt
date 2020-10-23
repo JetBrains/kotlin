@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAMES
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.generators.AnnotationGenerator
 import org.jetbrains.kotlin.fir.backend.generators.DelegatedMemberGenerator
 import org.jetbrains.kotlin.fir.declarations.*
@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
@@ -236,7 +235,7 @@ class Fir2IrDeclarationStorage(
     internal fun findIrParent(callableDeclaration: FirCallableDeclaration<*>): IrDeclarationParent? {
         val firBasedSymbol = callableDeclaration.symbol
         val callableId = firBasedSymbol.callableId
-        return findIrParent(callableId.packageName, callableId.classId, firBasedSymbol)
+        return findIrParent(callableId.packageName, callableDeclaration.containingClass()?.classId, firBasedSymbol)
     }
 
     private fun IrDeclaration.setAndModifyParent(irParent: IrDeclarationParent?) {
@@ -977,7 +976,8 @@ class Fir2IrDeclarationStorage(
         val firConstructor = firConstructorSymbol.fir
         getCachedIrConstructor(firConstructor)?.let { return it.symbol }
         val signature = signatureComposer.composeSignature(firConstructor)
-        val irParent = findIrParent(firConstructor) as IrClass
+        val irParent = findIrParent(firConstructor) as? IrClass
+            ?: error("sadsad")
         val parentOrigin = irParent.origin
         if (signature != null) {
             symbolTable.referenceConstructorIfAny(signature)?.let { irConstructorSymbol ->
@@ -1100,7 +1100,7 @@ class Fir2IrDeclarationStorage(
                     symbolTable.declareProperty(signature, { symbol }) {
                         val isFakeOverride =
                             firPropertySymbol.isFakeOverride &&
-                                    firPropertySymbol.callableId != firPropertySymbol.overriddenSymbol?.callableId
+                                    firPropertySymbol.dispatchReceiverClassOrNull() != firPropertySymbol.overriddenSymbol?.dispatchReceiverClassOrNull()
                         Fir2IrLazyProperty(
                             components, startOffset, endOffset, declarationOrigin, fir, irParent.fir, symbol, isFakeOverride
                         ).apply {
@@ -1154,7 +1154,7 @@ class Fir2IrDeclarationStorage(
             is FirEnumEntry -> {
                 classifierStorage.getCachedIrEnumEntry(firDeclaration)?.let { return it.symbol }
                 val containingFile = firProvider.getFirCallableContainerFile(firVariableSymbol)
-                val irParentClass = firVariableSymbol.callableId.classId?.let { findIrClass(it) }
+                val irParentClass = firDeclaration.containingClass()?.classId?.let { findIrClass(it) }
                 classifierStorage.createIrEnumEntry(
                     firDeclaration,
                     irParent = irParentClass,

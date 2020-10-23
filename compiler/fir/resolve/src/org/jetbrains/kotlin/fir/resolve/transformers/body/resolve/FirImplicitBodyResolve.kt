@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.firProvider
@@ -245,7 +243,7 @@ private class ReturnTypeCalculatorWithJump(
         } else {
             val file = provider.getFirCallableContainerFile(symbol)
 
-            val outerClasses = generateSequence(id.classId) { classId ->
+            val outerClasses = generateSequence(symbol.containingClass()?.classId) { classId ->
                 classId.outerClassId
             }.mapTo(mutableListOf()) { provider.getFirClassifierByFqName(it) }
 

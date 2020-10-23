@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.backend.generators
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.psi
@@ -401,9 +402,9 @@ class CallAndReferenceGenerator(
                     return null
                 }
                 val resolvedReference = callableReferenceAccess.calleeReference as FirResolvedNamedReference
-                val callableId = (resolvedReference.resolvedSymbol as FirCallableSymbol<*>).callableId
+                val firCallableSymbol = resolvedReference.resolvedSymbol as FirCallableSymbol<*>
                 // Make sure the reference indeed refers to a member of that companion
-                if (callableId.classId != classSymbol.classId) {
+                if (firCallableSymbol.dispatchReceiverClassOrNull() != classSymbol.toLookupTag()) {
                     return null
                 }
             }

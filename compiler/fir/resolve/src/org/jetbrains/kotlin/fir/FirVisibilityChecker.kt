@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.PossiblyFirFakeOverrideSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -38,11 +39,17 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         }
     }
 
-    fun isVisible(
-        declaration: FirMemberDeclaration,
-        symbol: AbstractFirBasedSymbol<*>,
+    fun <T> isVisible(
+        declaration: T,
         candidate: Candidate
-    ): Boolean {
+    ): Boolean where T : FirMemberDeclaration, T : FirSymbolOwner<*> {
+        val symbol = declaration.symbol
+
+        if (symbol is PossiblyFirFakeOverrideSymbol<*, *> && symbol.overriddenSymbol != null) {
+            @Suppress("UNCHECKED_CAST")
+            return isVisible(symbol.overriddenSymbol!!.fir as T, candidate)
+        }
+
         val callInfo = candidate.callInfo
         val useSiteFile = callInfo.containingFile
         val containingDeclarations = callInfo.containingDeclarations
@@ -174,7 +181,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
                     ownerId
                 }
             }
-            is FirCallableSymbol<*> -> callableId.classId
+            is FirCallableSymbol<*> -> containingClass()?.classId
             else -> error("Unsupported owner search for ${fir.javaClass}: ${fir.render()}")
         }
     }

@@ -9,9 +9,7 @@ import com.intellij.lang.LighterASTNode
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirLightSourceElement
-import org.jetbrains.kotlin.fir.FirPsiSourceElement
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
@@ -20,7 +18,6 @@ import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.types.classId
@@ -41,7 +38,7 @@ object CanBeReplacedWithOperatorAssignmentChecker : FirExpressionChecker<FirVari
         val rValueClassId = rValue.explicitReceiver?.typeRef?.coneType?.classId
         if (rValueClassId !in StandardClassIds.primitiveTypes) return
         val rValueResolvedSymbol = rValue.toResolvedCallableSymbol() ?: return
-        if (rValueResolvedSymbol.callableId.classId !in StandardClassIds.primitiveTypes) return
+        if (rValueResolvedSymbol.dispatchReceiverClassOrNull()?.classId !in StandardClassIds.primitiveTypes) return
 
         var needToReport = false
         val assignmentSource = expression.source

@@ -9,22 +9,21 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.isInner
+import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
-import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
-import org.jetbrains.kotlin.fir.resolve.typeForQualifier
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectClassId
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeNullability
-import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.withNullability
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -190,13 +189,13 @@ class ScopeTowerLevel(
         }
 
     private fun dispatchReceiverValue(candidate: FirCallableSymbol<*>): ReceiverValue? {
-        val holderId = candidate.callableId.classId
-        if (holderId != null && candidate.fir.origin == FirDeclarationOrigin.ImportedFromObject) {
-            val symbol = session.firSymbolProvider.getClassLikeSymbolByFqName(holderId)
+        val lookupTag = candidate.dispatchReceiverClassOrNull()
+        candidate.fir.importedFromObjectClassId?.let { objectClassId ->
+            val symbol = session.firSymbolProvider.getClassLikeSymbolByFqName(objectClassId)
             if (symbol is FirRegularClassSymbol) {
                 val resolvedQualifier = buildResolvedQualifier {
-                    packageFqName = holderId.packageFqName
-                    relativeClassFqName = holderId.relativeClassName
+                    packageFqName = objectClassId.packageFqName
+                    relativeClassFqName = objectClassId.relativeClassName
                     this.symbol = symbol
                 }.apply {
                     resultType = bodyResolveComponents.typeForQualifier(this)
@@ -206,9 +205,9 @@ class ScopeTowerLevel(
         }
         return when {
             candidate !is FirBackingFieldSymbol -> null
-            candidate.callableId.classId != null -> {
+            lookupTag != null -> {
                 bodyResolveComponents.implicitReceiverStack.lastDispatchReceiver { implicitReceiverValue ->
-                    implicitReceiverValue.type.classId == holderId
+                    (implicitReceiverValue.type as? ConeClassLikeType)?.fullyExpandedType(session)?.lookupTag == lookupTag
                 }
             }
             else -> {

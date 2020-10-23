@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.file.structure
 
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
@@ -74,9 +76,9 @@ internal class FileStructure(
         val declarations = if (from.symbol.callableId.className == null) {
             firFile.declarations as MutableList<FirDeclaration>
         } else {
-            val classId = from.symbol.callableId.classId
+            val classLikeLookupTag = from.containingClass()
                 ?: error("Class name should not be null for non-top-level & non-local declarations")
-            val containingClass = firIdeProvider.getFirClassifierByFqName(classId) as FirRegularClass
+            val containingClass = classLikeLookupTag.toSymbol(firFile.session)?.fir as FirRegularClass
             containingClass.declarations as MutableList<FirDeclaration>
         }
         declarations.replaceFirst(from, to)

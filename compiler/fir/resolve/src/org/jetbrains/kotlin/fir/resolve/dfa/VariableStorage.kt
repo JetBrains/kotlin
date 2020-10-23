@@ -8,11 +8,10 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.modality
+import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirThisReference
@@ -164,14 +163,14 @@ class VariableStorage(private val session: FirSession) {
             property.getter.let { it != null && it !is FirDefaultPropertyAccessor } -> false
             property.modality != Modality.FINAL -> {
                 val dispatchReceiver = (originalFir as? FirQualifiedAccess)?.dispatchReceiver ?: return false
-                val propertyClassName = (this as FirPropertySymbol).let { it.overriddenSymbol ?: it }.callableId.classId
+                val propertyClassLookupTag = (this as FirPropertySymbol).let { it.overriddenSymbol ?: it }.dispatchReceiverClassOrNull()
                 val receiverType = dispatchReceiver.typeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session) ?: return false
                 val receiverSymbol = receiverType.fullyExpandedType(session).lookupTag.toSymbol(session) ?: return false
-                val receiverClassName = receiverSymbol.classId
-                if (propertyClassName != receiverClassName) {
+                val receiverClassLookupTag = receiverSymbol.toLookupTag()
+                if (propertyClassLookupTag != receiverClassLookupTag) {
                     when (val receiverFir = receiverSymbol.fir) {
-                        is FirAnonymousObject -> true
-                        is FirRegularClass -> receiverFir.modality == Modality.FINAL
+                        is org.jetbrains.kotlin.fir.declarations.FirAnonymousObject -> true
+                        is org.jetbrains.kotlin.fir.declarations.FirRegularClass -> receiverFir.modality == Modality.FINAL
                         else -> throw IllegalStateException("Should not be here: $receiverFir")
                     }
                 } else false

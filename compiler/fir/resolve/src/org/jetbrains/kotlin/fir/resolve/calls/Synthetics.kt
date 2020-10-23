@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.isStatic
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
+import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -74,7 +75,7 @@ class FirSyntheticPropertiesScope(
                     val parameter = setter.valueParameters.singleOrNull() ?: return
                     if (setter.typeParameters.isNotEmpty() || setter.isStatic) return
                     val parameterType = (parameter.returnTypeRef as? FirResolvedTypeRef)?.type ?: return
-                    if (getter.symbol.callableId.classId == setter.symbol.callableId.classId) {
+                    if (getter.symbol.dispatchReceiverClassOrNull() == setter.symbol.dispatchReceiverClassOrNull()) {
                         if (getterReturnType.withNullability(NOT_NULL) != parameterType.withNullability(NOT_NULL)) {
                             return
                         }
@@ -102,12 +103,16 @@ class FirSyntheticPropertiesScope(
             }
         }
 
+        val classLookupTag = getterSymbol.dispatchReceiverClassOrNull()
+        val packageName = classLookupTag?.classId?.packageFqName ?: getterSymbol.callableId.packageName
+        val className = classLookupTag?.classId?.relativeClassName
+
         val property = buildSyntheticProperty {
             session = this@FirSyntheticPropertiesScope.session
             name = propertyName
             symbol = SyntheticPropertySymbol(
                 accessorId = getterSymbol.callableId,
-                callableId = CallableId(getterSymbol.callableId.packageName, getterSymbol.callableId.className, propertyName)
+                callableId = CallableId(packageName, className, propertyName)
             )
             delegateGetter = getter
             delegateSetter = matchingSetter

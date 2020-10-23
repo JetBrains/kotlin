@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.inference.*
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -226,33 +225,31 @@ internal object CheckVisibility : CheckerStage() {
         val symbol = candidate.symbol
         val declaration = symbol.fir
         if (declaration is FirMemberDeclaration) {
-            if (!checkVisibility(declaration, symbol, sink, candidate, visibilityChecker)) {
+            if (!checkVisibility(declaration, sink, candidate, visibilityChecker)) {
                 return
             }
         }
 
         if (declaration is FirConstructor) {
-            val ownerClassId = declaration.symbol.callableId.classId!!
-            val provider = declaration.session.firSymbolProvider
-            val classSymbol = provider.getClassLikeSymbolByFqName(ownerClassId)
+            // TODO: Should be some other form
+            val classSymbol = declaration.returnTypeRef.coneTypeUnsafe<ConeClassLikeType>().lookupTag.toSymbol(declaration.session)
 
             if (classSymbol is FirRegularClassSymbol) {
                 if (classSymbol.fir.classKind.isSingleton) {
                     sink.yieldDiagnostic(HiddenCandidate)
                 }
-                checkVisibility(classSymbol.fir, classSymbol, sink, candidate, visibilityChecker)
+                checkVisibility(classSymbol.fir, sink, candidate, visibilityChecker)
             }
         }
     }
 
-    private suspend fun checkVisibility(
-        declaration: FirMemberDeclaration,
-        symbol: AbstractFirBasedSymbol<*>,
+    private suspend fun <T> checkVisibility(
+        declaration: T,
         sink: CheckerSink,
         candidate: Candidate,
         visibilityChecker: FirVisibilityChecker
-    ): Boolean {
-        if (!visibilityChecker.isVisible(declaration, symbol, candidate)) {
+    ): Boolean where T : FirMemberDeclaration, T : FirSymbolOwner<*> {
+        if (!visibilityChecker.isVisible(declaration, candidate)) {
             sink.yieldDiagnostic(HiddenCandidate)
             return false
         }
