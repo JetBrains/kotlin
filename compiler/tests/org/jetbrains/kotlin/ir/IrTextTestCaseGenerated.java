@@ -1751,6 +1751,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/firProblems/ClashResolutionDescriptor.kt");
         }
 
+        @TestMetadata("coercionToUnitForNestedWhen.kt")
+        public void testCoercionToUnitForNestedWhen() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/coercionToUnitForNestedWhen.kt");
+        }
+
         @TestMetadata("DeepCopyIrTree.kt")
         public void testDeepCopyIrTree() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/DeepCopyIrTree.kt");
