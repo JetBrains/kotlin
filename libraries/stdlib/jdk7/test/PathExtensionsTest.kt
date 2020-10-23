@@ -12,7 +12,7 @@ import kotlin.io.path.*
 import kotlin.random.Random
 import kotlin.test.*
 
-class PathExtensionsTest {
+class PathExtensionsTest : AbstractPathTest() {
     private val isCaseInsensitiveFileSystem = Path("C:/") == Path("c:/")
     private val isBackslashSeparator = FileSystems.getDefault().separator == "\\"
 
@@ -46,7 +46,7 @@ class PathExtensionsTest {
 
     @Test
     fun createNewFile() {
-        val dir = createTempDirectory()
+        val dir = createTempDirectory().cleanupRecursively()
 
         val file = dir / "new-file"
 
@@ -61,163 +61,152 @@ class PathExtensionsTest {
 
     @Test
     fun copyTo() {
-        val srcFile = createTempFile()
-        val dstFile = createTempFile()
-        try {
-            srcFile.writeText("Hello, World!")
-            assertFailsWith<FileAlreadyExistsException>("copy do not overwrite existing file") {
-                srcFile.copyTo(dstFile)
-            }
+        val root = createTempDirectory("copyTo-root").cleanupRecursively()
+        val srcFile = createTempFile(root, "src")
+        val dstFile = createTempFile(root, "dst")
 
-            var dst = srcFile.copyTo(dstFile, overwrite = true)
-            assertSame(dst, dstFile)
-            compareFiles(srcFile, dst, "copy with overwrite over existing file")
+        srcFile.writeText("Hello, World!")
+        assertFailsWith<FileAlreadyExistsException>("copy do not overwrite existing file") {
+            srcFile.copyTo(dstFile)
+        }
 
-            srcFile.copyTo(srcFile)
-            srcFile.copyTo(srcFile, overwrite = true)
-            compareFiles(dst, srcFile, "copying file to itself leaves it intact")
+        var dst = srcFile.copyTo(dstFile, overwrite = true)
+        assertSame(dst, dstFile)
+        compareFiles(srcFile, dst, "copy with overwrite over existing file")
 
-            assertTrue(dstFile.deleteIfExists())
-            dst = srcFile.copyTo(dstFile)
-            compareFiles(srcFile, dst, "copy to new file")
+        srcFile.copyTo(srcFile)
+        srcFile.copyTo(srcFile, overwrite = true)
+        compareFiles(dst, srcFile, "copying file to itself leaves it intact")
 
-            val subDst = dstFile.resolve("foo/bar")
-            assertFailsWith<FileSystemException> { srcFile.copyTo(subDst) }
-            assertFailsWith<FileSystemException> { srcFile.copyTo(subDst, overwrite = true) }
-            assertTrue(dstFile.deleteIfExists())
-            assertFailsWith<FileSystemException> { srcFile.copyTo(subDst) }
+        assertTrue(dstFile.deleteIfExists())
+        dst = srcFile.copyTo(dstFile)
+        compareFiles(srcFile, dst, "copy to new file")
 
-            dstFile.createDirectory()
-            val child = dstFile.resolve("child").createFile()
-            assertFailsWith<DirectoryNotEmptyException>("copy with overwrite do not overwrite non-empty dir") {
-                srcFile.copyTo(dstFile, overwrite = true)
-            }
-            child.deleteExisting()
+        val subDst = dstFile.resolve("foo/bar")
+        assertFailsWith<FileSystemException> { srcFile.copyTo(subDst) }
+        assertFailsWith<FileSystemException> { srcFile.copyTo(subDst, overwrite = true) }
+        assertTrue(dstFile.deleteIfExists())
+        assertFailsWith<FileSystemException> { srcFile.copyTo(subDst) }
 
+        dstFile.createDirectory()
+        val child = dstFile.resolve("child").createFile()
+        assertFailsWith<DirectoryNotEmptyException>("copy with overwrite do not overwrite non-empty dir") {
             srcFile.copyTo(dstFile, overwrite = true)
-            assertEquals(srcFile.readText(), dstFile.readText(), "copy with overwrite over empty dir")
+        }
+        child.deleteExisting()
 
-            assertTrue(srcFile.deleteIfExists())
-            assertTrue(dstFile.deleteIfExists())
+        srcFile.copyTo(dstFile, overwrite = true)
+        assertEquals(srcFile.readText(), dstFile.readText(), "copy with overwrite over empty dir")
 
-            assertFailsWith<NoSuchFileException> {
-                srcFile.copyTo(dstFile)
-            }
+        assertTrue(srcFile.deleteIfExists())
+        assertTrue(dstFile.deleteIfExists())
 
-            srcFile.createDirectory()
-            srcFile.resolve("somefile").writeText("some content")
-            dstFile.writeText("")
-            assertFailsWith<FileAlreadyExistsException>("copy dir do not overwrite file") {
-                srcFile.copyTo(dstFile)
-            }
+        assertFailsWith<NoSuchFileException> {
+            srcFile.copyTo(dstFile)
+        }
+
+        srcFile.createDirectory()
+        srcFile.resolve("somefile").writeText("some content")
+        dstFile.writeText("")
+        assertFailsWith<FileAlreadyExistsException>("copy dir do not overwrite file") {
+            srcFile.copyTo(dstFile)
+        }
+        srcFile.copyTo(dstFile, overwrite = true)
+        assertTrue(dstFile.isDirectory())
+        assertTrue(dstFile.listDirectoryEntries().isEmpty(), "only directory is copied, but not its content")
+
+        assertFailsWith<FileAlreadyExistsException>("copy dir do not overwrite dir") {
+            srcFile.copyTo(dstFile)
+        }
+
+        srcFile.copyTo(dstFile, overwrite = true)
+        assertTrue(dstFile.isDirectory())
+        assertTrue(dstFile.listDirectoryEntries().isEmpty(), "only directory is copied, but not its content")
+
+        dstFile.resolve("somefile2").writeText("some content2")
+        assertFailsWith<DirectoryNotEmptyException>("copy dir do not overwrite non-empty dir") {
             srcFile.copyTo(dstFile, overwrite = true)
-            assertTrue(dstFile.isDirectory())
-            assertTrue(dstFile.listDirectoryEntries().isEmpty(), "only directory is copied, but not its content")
-
-            assertFailsWith<FileAlreadyExistsException>("copy dir do not overwrite dir") {
-                srcFile.copyTo(dstFile)
-            }
-
-            srcFile.copyTo(dstFile, overwrite = true)
-            assertTrue(dstFile.isDirectory())
-            assertTrue(dstFile.listDirectoryEntries().isEmpty(), "only directory is copied, but not its content")
-
-            dstFile.resolve("somefile2").writeText("some content2")
-            assertFailsWith<DirectoryNotEmptyException>("copy dir do not overwrite non-empty dir") {
-                srcFile.copyTo(dstFile, overwrite = true)
-            }
-        } finally {
-            srcFile.toFile().deleteRecursively()
-            dstFile.toFile().deleteRecursively()
         }
     }
 
     @Test
     fun copyToNameWithoutParent() {
         val currentDir = Path("").toAbsolutePath()
-        val srcFile = createTempFile()
-        val dstFile = createTempFile(directory = currentDir)
-        try {
-            srcFile.writeText("Hello, World!", Charsets.UTF_8)
-            dstFile.deleteExisting()
+        val srcFile = createTempFile().cleanup()
+        val dstFile = createTempFile(directory = currentDir).cleanup()
 
-            val dstRelative = Path(dstFile.name)
+        srcFile.writeText("Hello, World!", Charsets.UTF_8)
+        dstFile.deleteExisting()
 
-            srcFile.copyTo(dstRelative)
+        val dstRelative = Path(dstFile.name)
 
-            assertEquals(srcFile.readText(), dstFile.readText())
-        } finally {
-            dstFile.deleteExisting()
-            srcFile.deleteExisting()
-        }
+        srcFile.copyTo(dstRelative)
+
+        assertEquals(srcFile.readText(), dstFile.readText())
     }
 
     @Test
     fun moveTo() {
-        val original = createTempFile()
-        val srcFile = createTempFile()
-        val dstFile = createTempFile()
+        val root = createTempDirectory("moveTo-root").cleanupRecursively()
+        val original = createTempFile(root, "original")
+        val srcFile = createTempFile(root, "src")
+        val dstFile = createTempFile(root, "dst")
         fun restoreSrcFile() { original.copyTo(srcFile, overwrite = true) }
-        try {
-            original.writeText("Hello, World!")
-            restoreSrcFile()
+        original.writeText("Hello, World!")
+        restoreSrcFile()
 
-            assertFailsWith<FileAlreadyExistsException>("do not overwrite existing file") {
-                srcFile.moveTo(dstFile)
-            }
-
-            var dst = srcFile.moveTo(dstFile, overwrite = true)
-            assertSame(dst, dstFile)
-            compareFiles(original, dst, "move with overwrite over existing file")
-            assertTrue(srcFile.notExists())
-
-            restoreSrcFile()
-            srcFile.moveTo(srcFile)
-            srcFile.moveTo(srcFile, overwrite = true)
-
-            compareFiles(original, srcFile, "move file to itself leaves it intact")
-
-            assertTrue(dstFile.deleteIfExists())
-            dst = srcFile.moveTo(dstFile)
-            compareFiles(original, dst, "move to new file")
-
-            restoreSrcFile()
-            val subDst = dstFile.resolve("foo/bar")
-            assertFailsWith<FileSystemException> { srcFile.moveTo(subDst) }
-            assertFailsWith<FileSystemException> { srcFile.moveTo(subDst, overwrite = true) }
-            assertTrue(dstFile.deleteIfExists())
-            assertFailsWith<FileSystemException> { srcFile.moveTo(subDst) }
-
-            dstFile.createDirectory()
-            val child = dstFile.resolve("child").createFile()
-            assertFailsWith<DirectoryNotEmptyException>("move with overwrite do not overwrite non-empty dir") {
-                srcFile.moveTo(dstFile, overwrite = true)
-            }
-            child.deleteExisting()
-
-            srcFile.moveTo(dstFile, overwrite = true)
-            compareFiles(original, dstFile, "move with overwrite over empty dir")
-
-            assertTrue(srcFile.notExists())
-            assertTrue(dstFile.deleteIfExists())
-
-            assertFailsWith<NoSuchFileException> {
-                srcFile.moveTo(dstFile)
-            }
-
-            srcFile.createDirectory()
-            srcFile.resolve("somefile").writeText("some content")
-            dstFile.writeText("")
-            assertFailsWith<FileAlreadyExistsException>("move dir do not overwrite file") {
-                srcFile.moveTo(dstFile)
-            }
-            srcFile.moveTo(dstFile, overwrite = true)
-            assertTrue(dstFile.isDirectory())
-            assertEquals(listOf(dstFile / "somefile"), dstFile.listDirectoryEntries(), "directory is moved with its content")
-        } finally {
-            srcFile.toFile().deleteRecursively()
-            dstFile.toFile().deleteRecursively()
+        assertFailsWith<FileAlreadyExistsException>("do not overwrite existing file") {
+            srcFile.moveTo(dstFile)
         }
+
+        var dst = srcFile.moveTo(dstFile, overwrite = true)
+        assertSame(dst, dstFile)
+        compareFiles(original, dst, "move with overwrite over existing file")
+        assertTrue(srcFile.notExists())
+
+        restoreSrcFile()
+        srcFile.moveTo(srcFile)
+        srcFile.moveTo(srcFile, overwrite = true)
+
+        compareFiles(original, srcFile, "move file to itself leaves it intact")
+
+        assertTrue(dstFile.deleteIfExists())
+        dst = srcFile.moveTo(dstFile)
+        compareFiles(original, dst, "move to new file")
+
+        restoreSrcFile()
+        val subDst = dstFile.resolve("foo/bar")
+        assertFailsWith<FileSystemException> { srcFile.moveTo(subDst) }
+        assertFailsWith<FileSystemException> { srcFile.moveTo(subDst, overwrite = true) }
+        assertTrue(dstFile.deleteIfExists())
+        assertFailsWith<FileSystemException> { srcFile.moveTo(subDst) }
+
+        dstFile.createDirectory()
+        val child = dstFile.resolve("child").createFile()
+        assertFailsWith<DirectoryNotEmptyException>("move with overwrite do not overwrite non-empty dir") {
+            srcFile.moveTo(dstFile, overwrite = true)
+        }
+        child.deleteExisting()
+
+        srcFile.moveTo(dstFile, overwrite = true)
+        compareFiles(original, dstFile, "move with overwrite over empty dir")
+
+        assertTrue(srcFile.notExists())
+        assertTrue(dstFile.deleteIfExists())
+
+        assertFailsWith<NoSuchFileException> {
+            srcFile.moveTo(dstFile)
+        }
+
+        srcFile.createDirectory()
+        srcFile.resolve("somefile").writeText("some content")
+        dstFile.writeText("")
+        assertFailsWith<FileAlreadyExistsException>("move dir do not overwrite file") {
+            srcFile.moveTo(dstFile)
+        }
+        srcFile.moveTo(dstFile, overwrite = true)
+        assertTrue(dstFile.isDirectory())
+        assertEquals(listOf(dstFile / "somefile"), dstFile.listDirectoryEntries(), "directory is moved with its content")
     }
 
     private fun compareFiles(src: Path, dst: Path, message: String? = null) {
@@ -231,7 +220,7 @@ class PathExtensionsTest {
 
     @Test
     fun fileSize() {
-        val file = createTempFile()
+        val file = createTempFile().cleanup()
         assertEquals(0, file.fileSize())
 
         file.writeBytes(ByteArray(100))
@@ -246,29 +235,29 @@ class PathExtensionsTest {
 
     @Test
     fun deleteExisting() {
-        val file = createTempFile()
+        val file = createTempFile().cleanup()
         file.deleteExisting()
         assertFailsWith<NoSuchFileException> { file.deleteExisting() }
 
-        val dir = createTempDirectory()
+        val dir = createTempDirectory().cleanup()
         dir.deleteExisting()
         assertFailsWith<NoSuchFileException> { dir.deleteExisting() }
     }
 
     @Test
     fun deleteIfExists() {
-        val file = createTempFile()
+        val file = createTempFile().cleanup()
         assertTrue(file.deleteIfExists())
         assertFalse(file.deleteIfExists())
 
-        val dir = createTempDirectory()
+        val dir = createTempDirectory().cleanup()
         assertTrue(dir.deleteIfExists())
         assertFalse(dir.deleteIfExists())
     }
 
     @Test
     fun attributeGettersOnFile() {
-        val file = createTempFile("temp", ".file")
+        val file = createTempFile("temp", ".file").cleanup()
         assertTrue(file.exists())
         assertFalse(file.notExists())
         assertTrue(file.isRegularFile())
@@ -282,12 +271,11 @@ class PathExtensionsTest {
         // they don't throw an exception.
         file.isExecutable()
         file.isHidden()
-        file.deleteExisting()
     }
 
     @Test
     fun attributeGettersOnDirectory() {
-        val file = createTempDirectory(".tmpdir")
+        val file = createTempDirectory(".tmpdir").cleanup()
         assertTrue(file.exists())
         assertFalse(file.notExists())
         assertFalse(file.isRegularFile())
@@ -299,12 +287,11 @@ class PathExtensionsTest {
 
         file.isExecutable()
         file.isHidden()
-        file.deleteExisting()
     }
 
     @Test
     fun attributeGettersOnNonExistentPath() {
-        val file = createTempDirectory().resolve("foo")
+        val file = createTempDirectory().cleanup().resolve("foo")
         assertFalse(file.exists())
         assertTrue(file.notExists())
         assertFalse(file.isRegularFile())
@@ -321,7 +308,6 @@ class PathExtensionsTest {
             assertFalse(file.isHidden())
         } catch (e: IOException) {
         }
-        file.parent.deleteExisting()
     }
 
     private interface SpecialFileAttributesView : FileAttributeView
@@ -329,7 +315,7 @@ class PathExtensionsTest {
 
     @Test
     fun readWriteAttributes() {
-        val file = createTempFile()
+        val file = createTempFile().cleanup()
         val modifiedTime = file.getLastModifiedTime()
         assertEquals(modifiedTime, file.getAttribute("lastModifiedTime"))
         assertEquals(modifiedTime, file.getAttribute("basic:lastModifiedTime"))
@@ -358,13 +344,11 @@ class PathExtensionsTest {
 
         file.setAttribute("lastModifiedTime", null)
         assertEquals(newTime3, file.getLastModifiedTime())
-
-        file.deleteExisting()
     }
 
     @Test
     fun links() {
-        val dir = createTempDirectory()
+        val dir = createTempDirectory().cleanupRecursively()
         val original = createTempFile(dir)
         original.writeBytes(Random.nextBytes(100))
 
@@ -385,7 +369,7 @@ class PathExtensionsTest {
 
     @Test
     fun symlinks() {
-        val dir = createTempDirectory()
+        val dir = createTempDirectory().cleanupRecursively()
         val original = createTempFile(dir)
         original.writeBytes(Random.nextBytes(100))
 
@@ -406,7 +390,7 @@ class PathExtensionsTest {
 
     @Test
     fun directoryEntriesList() {
-        val dir = createTempDirectory()
+        val dir = createTempDirectory().cleanupRecursively()
         assertEquals(0, dir.listDirectoryEntries().size)
 
         val file = dir.resolve("f1").createFile()
@@ -420,7 +404,7 @@ class PathExtensionsTest {
 
     @Test
     fun directoryEntriesUseSequence() {
-        val dir = createTempDirectory()
+        val dir = createTempDirectory().cleanupRecursively()
         assertEquals(0, dir.useDirectoryEntries { it.toList() }.size)
 
         val file = dir.resolve("f1").createFile()
@@ -434,7 +418,7 @@ class PathExtensionsTest {
 
     @Test
     fun directoryEntriesForEach() {
-        val dir = createTempDirectory()
+        val dir = createTempDirectory().cleanupRecursively()
         dir.forEachDirectoryEntry { error("shouldn't get here, but received $it") }
 
         val file = createTempFile(dir)
