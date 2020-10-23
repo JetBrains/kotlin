@@ -8,6 +8,9 @@
 #include <thread>
 
 int main() {
+    // Make sure runtime is initialized on the main thread, so that secondary thread death
+    // doesn't destroy the entire runtime.
+    testlib_symbols()->kotlin.root.ensureInitialized();
     std::thread t([]() { testlib_symbols()->kotlin.root.createCleaner(); });
     t.join();
     testlib_symbols()->kotlin.root.performGC();
