@@ -8208,14 +8208,6 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("testData/intentions/destructuringVariables/classProperty.kt");
         }
 
-<<<<<<< HEAD
-        @TestMetadata("hasShadowedVariable.kt")
-        public void testHasShadowedVariable() throws Exception {
-            runTest("idea/testData/intentions/destructuringVariables/hasShadowedVariable.kt");
-        }
-
-=======
->>>>>>> 8e5f3cebd69... Revert ""Use destructuring declaration": fix it works correctly if variable name is shadowed"
         @TestMetadata("noInitializer.kt")
         public void testNoInitializer() throws Exception {
             runTest("testData/intentions/destructuringVariables/noInitializer.kt");
@@ -12849,11 +12841,14 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("testData/intentions/removeBraces/ifLambda2.kt");
         }
 
+<<<<<<< HEAD
         @TestMetadata("ifLong.kt")
         public void testIfLong() throws Exception {
             runTest("idea/testData/intentions/removeBraces/ifLong.kt");
         }
 
+=======
+>>>>>>> 6bdf719e0df... Revert "RemoveBracesIntention: add new line for long expression"
         @TestMetadata("ifWithComment.kt")
         public void testIfWithComment() throws Exception {
             runTest("testData/intentions/removeBraces/ifWithComment.kt");
@@ -12899,11 +12894,14 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("testData/intentions/removeBraces/whenLambda3.kt");
         }
 
+<<<<<<< HEAD
         @TestMetadata("whenLong.kt")
         public void testWhenLong() throws Exception {
             runTest("idea/testData/intentions/removeBraces/whenLong.kt");
         }
 
+=======
+>>>>>>> 6bdf719e0df... Revert "RemoveBracesIntention: add new line for long expression"
         @TestMetadata("whenMultiple.kt")
         public void testWhenMultiple() throws Exception {
             runTest("testData/intentions/removeBraces/whenMultiple.kt");
