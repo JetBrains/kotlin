@@ -12095,6 +12095,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                     runTest("compiler/testData/diagnostics/tests/inference/reportingImprovements/inferTypeFromUnresolvedArgument.kt");
                 }
 
+                @TestMetadata("kt42620.kt")
+                public void testKt42620() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/reportingImprovements/kt42620.kt");
+                }
+
                 @TestMetadata("NoAmbiguityForDifferentFunctionTypes.kt")
                 public void testNoAmbiguityForDifferentFunctionTypes() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/reportingImprovements/NoAmbiguityForDifferentFunctionTypes.kt");
