@@ -52,8 +52,20 @@ class WizardStatsService : CounterUsagesCollector() {
             "nodejsApplication",
             "none"
         )
-        // TODO the list of templates
-        private val allowedModuleTemplates = listOf("TODO")
+        private val allowedModuleTemplates = listOf(
+            "composeAndroid",
+            "composeDesktopTemplate",
+            "composeMppModule",
+            "consoleJvmApp",
+            "ktorServer",
+            "mobileMppModule",
+            "nativeConsoleApp",
+            "reactJsClient",
+            "simpleJsClient",
+            "simpleNodeJs",
+            "none",
+        )
+
         private val allowedWizardsGroups = listOf("Java", "Kotlin", "Gradle")
         private val allowedBuildSystems = listOf(
             "gradleKotlin",
