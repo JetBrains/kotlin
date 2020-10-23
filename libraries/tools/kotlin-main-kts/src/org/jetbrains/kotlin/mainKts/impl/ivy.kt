@@ -16,15 +16,14 @@ import org.apache.ivy.core.settings.IvySettings
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter
 import org.apache.ivy.plugins.resolver.ChainResolver
 import org.apache.ivy.plugins.resolver.IBiblioResolver
-import org.apache.ivy.plugins.resolver.URLResolver
 import org.apache.ivy.util.DefaultMessageLogger
 import org.apache.ivy.util.Message
 import java.io.File
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.dependencies.ExternalDependenciesResolver
 import kotlin.script.experimental.dependencies.RepositoryCoordinates
-import kotlin.script.experimental.dependencies.impl.toRepositoryUrlOrNull
 import kotlin.script.experimental.dependencies.impl.dependencyScopes
+import kotlin.script.experimental.dependencies.impl.toRepositoryUrlOrNull
 import kotlin.script.experimental.dependencies.impl.transitive
 
 class IvyResolver : ExternalDependenciesResolver {
@@ -64,7 +63,7 @@ class IvyResolver : ExternalDependenciesResolver {
         }
     }
 
-    private val ivyResolvers = arrayListOf<URLResolver>()
+    private val ivyResolvers = arrayListOf<IBiblioResolver>()
 
     private fun resolveArtifact(
         groupId: String,
@@ -153,13 +152,26 @@ class IvyResolver : ExternalDependenciesResolver {
         val url = repositoryCoordinates.toRepositoryUrlOrNull()
             ?: return false.asSuccess()
 
-        ivyResolvers.add(
-            IBiblioResolver().apply {
-                isM2compatible = true
-                name = url.host
-                root = url.toExternalForm()
-            }
-        )
+        val root = url.toExternalForm()
+
+        // Check whether this repository was already added
+        val prevRepoIndex = ivyResolvers.indexOfFirst { it.root == root }
+        if (prevRepoIndex != -1) {
+            // If yes, move it to the end of the list.
+            // It will decrease its resolution priority
+            val resolver = ivyResolvers[prevRepoIndex]
+            ivyResolvers.removeAt(prevRepoIndex)
+            ivyResolvers.add(resolver)
+        } else {
+            ivyResolvers.add(
+                IBiblioResolver().apply {
+                    isM2compatible = true
+                    name = url.host
+                    this.root = root
+                }
+            )
+        }
+
         return true.asSuccess()
     }
 
