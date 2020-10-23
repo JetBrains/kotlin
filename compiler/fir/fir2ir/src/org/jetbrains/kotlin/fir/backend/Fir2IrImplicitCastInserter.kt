@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -18,10 +19,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.types.ConeIntersectionType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.*
@@ -41,6 +39,29 @@ class Fir2IrImplicitCastInserter(
 
     override fun visitElement(element: FirElement, data: IrElement): IrElement {
         TODO("Should not be here: ${element.render()}")
+    }
+
+    // TODO: can be private once this visitor becomes more comprehensive, also generalized
+    internal fun IrExpression.insertImplicitNotNullCastIfNeeded(expression: FirExpression): IrExpression {
+        if (this is IrTypeOperatorCall && this.operator == IrTypeOperator.IMPLICIT_NOTNULL) {
+            return this
+        }
+        // TODO: Other conditions to check?
+        // [TypeOperatorLowering] will retrieve the source (from start offset to end offset) as an assertion message.
+        // Avoid type casting if we can't determine the source for some reasons, e.g., implicit `this` receiver.
+        if (expression.source == null ||
+            expression.typeRef.coneTypeSafe<ConeKotlinType>()?.hasEnhancedNullability != true
+        ) {
+            return this
+        }
+        return IrTypeOperatorCallImpl(
+            this.startOffset,
+            this.endOffset,
+            this.type,
+            IrTypeOperator.IMPLICIT_NOTNULL,
+            this.type,
+            this
+        )
     }
 
     // TODO: can be private once this visitor becomes more comprehensive
