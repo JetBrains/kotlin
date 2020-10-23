@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
@@ -33,6 +30,8 @@ class FirObjectImportedCallableScope(
             val syntheticFunction = buildSimpleFunctionCopy(function) {
                 origin = FirDeclarationOrigin.ImportedFromObject
                 this.symbol = FirNamedFunctionSymbol(CallableId(importedClassId, name), overriddenSymbol = symbol)
+            }.apply {
+                importedFromObjectClassId = importedClassId
             }
             processor(syntheticFunction.symbol)
         }
@@ -48,6 +47,8 @@ class FirObjectImportedCallableScope(
             val syntheticFunction = buildPropertyCopy(property) {
                 origin = FirDeclarationOrigin.ImportedFromObject
                 this.symbol = FirPropertySymbol(CallableId(importedClassId, name), overriddenSymbol = symbol)
+            }.apply {
+                importedFromObjectClassId = importedClassId
             }
             processor(syntheticFunction.symbol)
         }
@@ -57,3 +58,7 @@ class FirObjectImportedCallableScope(
 
     override fun getClassifierNames(): Set<Name> = emptySet()
 }
+
+private object ImportedFromObjectClassIdKey : FirDeclarationDataKey()
+var <D : FirCallableDeclaration<*>>
+        D.importedFromObjectClassId: ClassId? by FirDeclarationDataRegistry.data(ImportedFromObjectClassIdKey)
