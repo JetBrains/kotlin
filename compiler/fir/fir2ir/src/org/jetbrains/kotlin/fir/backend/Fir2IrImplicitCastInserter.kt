@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.coerceToUnitIfNeeded
 import org.jetbrains.kotlin.name.Name
 
 class Fir2IrImplicitCastInserter(
@@ -41,6 +41,35 @@ class Fir2IrImplicitCastInserter(
 
     override fun visitElement(element: FirElement, data: IrElement): IrElement {
         TODO("Should not be here: ${element.render()}")
+    }
+
+    // TODO: can be private once this visitor becomes more comprehensive
+    internal fun IrContainerExpression.insertImplicitCasts(): IrContainerExpression {
+        if (statements.isEmpty()) return this
+
+        val lastIndex = statements.lastIndex
+        statements.forEachIndexed { i, irStatement ->
+            if (irStatement !is IrErrorCallExpression && irStatement is IrExpression) {
+                if (i != lastIndex) {
+                    statements[i] = irStatement.coerceToUnitIfNeeded(irStatement.type, irBuiltIns)
+                } else {
+                    // TODO: for the last statement, need to cast to the return type if mismatched
+                }
+            }
+        }
+
+        return this
+    }
+
+    internal fun IrBlockBody.insertImplicitCasts(): IrBlockBody {
+        if (statements.isEmpty()) return this
+
+        statements.forEachIndexed { i, irStatement ->
+            if (irStatement !is IrErrorCallExpression && irStatement is IrExpression) {
+                statements[i] = irStatement.coerceToUnitIfNeeded(irStatement.type, irBuiltIns)
+            }
+        }
+        return this
     }
 
     override fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: IrElement): IrExpression {
