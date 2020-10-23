@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
@@ -82,6 +83,7 @@ class RedundantNullableReturnTypeInspection : AbstractKotlinInspection() {
         }
     }
 
+    @OptIn(FrontendInternals::class)
     private fun KtExpression.actualReturnTypes(declaration: KtDeclaration): List<KotlinType> {
         val context = analyze()
         val declarationDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration] ?: return emptyList()

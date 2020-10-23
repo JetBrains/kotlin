@@ -150,7 +150,7 @@ class IDELightClassGenerationSupport(project: Project) : LightClassGenerationSup
 
     override fun analyze(element: KtElement) = element.analyze(BodyResolveMode.PARTIAL)
 
-    fun analyzeAnnotation(element: KtAnnotationEntry): AnnotationDescriptor? = element.resolveToDescriptorIfAny()
+    override fun analyzeAnnotation(element: KtAnnotationEntry): AnnotationDescriptor? = element.resolveToDescriptorIfAny()
 
     override fun analyzeWithContent(element: KtClassOrObject) = element.analyzeWithContent()
 }
