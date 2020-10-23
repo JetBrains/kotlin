@@ -8115,21 +8115,6 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("testData/intentions/destructuringInLambda/fold.kt");
         }
 
-        @TestMetadata("hasSameNameParameter.kt")
-        public void testHasSameNameParameter() throws Exception {
-            runTest("idea/testData/intentions/destructuringInLambda/hasSameNameParameter.kt");
-        }
-
-        @TestMetadata("hasShadowedVariable.kt")
-        public void testHasShadowedVariable() throws Exception {
-            runTest("idea/testData/intentions/destructuringInLambda/hasShadowedVariable.kt");
-        }
-
-        @TestMetadata("hasShadowedVariable2.kt")
-        public void testHasShadowedVariable2() throws Exception {
-            runTest("idea/testData/intentions/destructuringInLambda/hasShadowedVariable2.kt");
-        }
-
         @TestMetadata("invisible.kt")
         public void testInvisible() throws Exception {
             runTest("testData/intentions/destructuringInLambda/invisible.kt");
@@ -8223,11 +8208,14 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("testData/intentions/destructuringVariables/classProperty.kt");
         }
 
+<<<<<<< HEAD
         @TestMetadata("hasShadowedVariable.kt")
         public void testHasShadowedVariable() throws Exception {
             runTest("idea/testData/intentions/destructuringVariables/hasShadowedVariable.kt");
         }
 
+=======
+>>>>>>> 8e5f3cebd69... Revert ""Use destructuring declaration": fix it works correctly if variable name is shadowed"
         @TestMetadata("noInitializer.kt")
         public void testNoInitializer() throws Exception {
             runTest("testData/intentions/destructuringVariables/noInitializer.kt");

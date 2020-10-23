@@ -59,13 +59,9 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
     override fun applyTo(element: KtDeclaration, editor: Editor?) {
         val (usagesToRemove, removeSelectorInLoopRange) = collectUsagesToRemove(element) ?: return
         val factory = KtPsiFactory(element)
-        val parent = element.parent
-        val (container, anchor) = if (parent is KtParameterList) parent.parent to null else parent to element
         val validator = NewDeclarationNameValidator(
-            container = container, anchor = anchor, target = NewDeclarationNameValidator.Target.VARIABLES,
-            excludedDeclarations = usagesToRemove.map {
-                (it.declarationToDrop as? KtDestructuringDeclaration)?.entries ?: listOfNotNull(it.declarationToDrop)
-            }.flatten()
+            container = element.parent, anchor = element, target = NewDeclarationNameValidator.Target.VARIABLES,
+            excludedDeclarations = usagesToRemove.map { listOfNotNull(it.declarationToDrop) }.flatten()
         )
 
         val names = ArrayList<String>()
@@ -80,7 +76,7 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
                 if (usagesToReplace.isEmpty() && variableToDrop == null && underscoreSupported && !allUnused) {
                     "_"
                 } else {
-                    KotlinNameSuggester.suggestNameByName(name ?: descriptor.name.asString(), validator)
+                    name ?: KotlinNameSuggester.suggestNameByName(descriptor.name.asString(), validator)
                 }
 
             runWriteAction {
