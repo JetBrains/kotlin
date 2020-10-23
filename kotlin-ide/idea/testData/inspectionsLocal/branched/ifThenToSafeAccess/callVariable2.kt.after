@@ -1,5 +1,0 @@
-class Foo(val f: () -> Unit)
-
-fun test(foo: Foo?) {
-    foo?.f?.invoke()
-}
