@@ -146,8 +146,7 @@ class AddFunctionParametersFix(
                             argument,
                             validator
                         )
-                        val receiverCount = if (descriptor.receiver != null) 1 else 0
-                        descriptor.addParameter(argumentIndex + receiverCount, parameterInfo)
+                        descriptor.addParameter(argumentIndex, parameterInfo)
                         return
                     }
 
