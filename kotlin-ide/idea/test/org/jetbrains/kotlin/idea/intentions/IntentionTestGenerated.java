@@ -3411,36 +3411,6 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
-            @TestMetadata("onNestedArgumentList.kt")
-            public void testOnNestedArgumentList() throws Exception {
-                runTest("idea/testData/intentions/chop/argumentList/onNestedArgumentList.kt");
-            }
-
-            @TestMetadata("onNestedArgumentList2.kt")
-            public void testOnNestedArgumentList2() throws Exception {
-                runTest("idea/testData/intentions/chop/argumentList/onNestedArgumentList2.kt");
-            }
-
-            @TestMetadata("onNestedArgumentList3.kt")
-            public void testOnNestedArgumentList3() throws Exception {
-                runTest("idea/testData/intentions/chop/argumentList/onNestedArgumentList3.kt");
-            }
-
-            @TestMetadata("onNestedArgumentList4.kt")
-            public void testOnNestedArgumentList4() throws Exception {
-                runTest("idea/testData/intentions/chop/argumentList/onNestedArgumentList4.kt");
-            }
-
-            @TestMetadata("onRightParenthesis.kt")
-            public void testOnRightParenthesis() throws Exception {
-                runTest("idea/testData/intentions/chop/argumentList/onRightParenthesis.kt");
-            }
-
-            @TestMetadata("leftParOnSameLine.kt")
-            public void testLeftParOnSameLine() throws Exception {
-                runTest("testData/intentions/chop/argumentList/leftParOnSameLine.kt");
-            }
-
             @TestMetadata("leftParOnSameLine.kt")
             public void testLeftParOnSameLine() throws Exception {
                 runTest("idea/testData/intentions/chop/argumentList/leftParOnSameLine.kt");
@@ -9926,6 +9896,7 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("testData/intentions/joinArgumentList/noLineBreak.kt");
         }
 
+<<<<<<< HEAD
         @TestMetadata("onNestedArgumentList.kt")
         public void testOnNestedArgumentList() throws Exception {
             runTest("idea/testData/intentions/joinArgumentList/onNestedArgumentList.kt");
@@ -9951,6 +9922,8 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/joinArgumentList/onRightParenthesis.kt");
         }
 
+=======
+>>>>>>> 4d098c532d3... Revert ""Put/Join arguments/parameters" intention: don't suggest on nested argument list"
         @TestMetadata("oneArg.kt")
         public void testOneArg() throws Exception {
             runTest("testData/intentions/joinArgumentList/oneArg.kt");
