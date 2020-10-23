@@ -183,7 +183,7 @@ public class UltraLightClassLoadingTestGenerated extends AbstractUltraLightClass
 
     @TestMetadata("typeAnnotations.kt")
     public void testTypeAnnotations() throws Exception {
-        runTest("compiler/testData/asJava/ultraLightClasses/typeAnnotations.kt");
+        runTest("testData/compiler/asJava/ultraLightClasses/typeAnnotations.kt");
     }
 
     @TestMetadata("wildcardOptimization.kt")

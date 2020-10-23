@@ -416,9 +416,8 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         runTest("testData/resolve/references/WrongNumberOfTypeArgumentsInSupertype.kt");
     }
 
-    @TestMetadata("idea/testData/resolve/references/arrayAccess")
-    @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
+    @TestMetadata("testData/resolve/references/arrayAccess")
     public static class ArrayAccess extends AbstractReferenceResolveTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
@@ -426,18 +425,17 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
 
         @TestMetadata("get.kt")
         public void testGet() throws Exception {
-            runTest("idea/testData/resolve/references/arrayAccess/get.kt");
+            runTest("testData/resolve/references/arrayAccess/get.kt");
         }
 
         @TestMetadata("set.kt")
         public void testSet() throws Exception {
-            runTest("idea/testData/resolve/references/arrayAccess/set.kt");
+            runTest("testData/resolve/references/arrayAccess/set.kt");
         }
     }
 
-    @TestMetadata("idea/testData/resolve/references/constructorDelegatingReference")
-    @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
+    @TestMetadata("testData/resolve/references/constructorDelegatingReference")
     public static class ConstructorDelegatingReference extends AbstractReferenceResolveTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
@@ -445,12 +443,12 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
 
         @TestMetadata("toPrimary.kt")
         public void testToPrimary() throws Exception {
-            runTest("idea/testData/resolve/references/constructorDelegatingReference/toPrimary.kt");
+            runTest("testData/resolve/references/constructorDelegatingReference/toPrimary.kt");
         }
 
         @TestMetadata("toSecondary.kt")
         public void testToSecondary() throws Exception {
-            runTest("idea/testData/resolve/references/constructorDelegatingReference/toSecondary.kt");
+            runTest("testData/resolve/references/constructorDelegatingReference/toSecondary.kt");
         }
     }
 

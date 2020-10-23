@@ -38,7 +38,7 @@ public class PerformanceHighlightingTestGenerated extends AbstractPerformanceHig
 
     @TestMetadata("DelegatingCtor.kt")
     public void testDelegatingCtor() throws Exception {
-        runTest("idea/testData/highlighter/DelegatingCtor.kt");
+        runTest("../idea/testData/highlighter/DelegatingCtor.kt");
     }
 
     @TestMetadata("Destructuring.kt")

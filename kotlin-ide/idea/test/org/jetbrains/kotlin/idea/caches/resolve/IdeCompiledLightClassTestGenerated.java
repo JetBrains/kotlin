@@ -38,7 +38,7 @@ public class IdeCompiledLightClassTestGenerated extends AbstractIdeCompiledLight
 
     @TestMetadata("AnnotatedPropertyWithSites.kt")
     public void testAnnotatedPropertyWithSites() throws Exception {
-        runTest("compiler/testData/asJava/lightClasses/AnnotatedPropertyWithSites.kt");
+        runTest("testData/compiler/asJava/lightClasses/AnnotatedPropertyWithSites.kt");
     }
 
     @TestMetadata("AnnotationClass.kt")
