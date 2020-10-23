@@ -12846,14 +12846,6 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("testData/intentions/removeBraces/ifLambda2.kt");
         }
 
-<<<<<<< HEAD
-        @TestMetadata("ifLong.kt")
-        public void testIfLong() throws Exception {
-            runTest("idea/testData/intentions/removeBraces/ifLong.kt");
-        }
-
-=======
->>>>>>> 6bdf719e0df... Revert "RemoveBracesIntention: add new line for long expression"
         @TestMetadata("ifWithComment.kt")
         public void testIfWithComment() throws Exception {
             runTest("testData/intentions/removeBraces/ifWithComment.kt");
@@ -12899,14 +12891,6 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("testData/intentions/removeBraces/whenLambda3.kt");
         }
 
-<<<<<<< HEAD
-        @TestMetadata("whenLong.kt")
-        public void testWhenLong() throws Exception {
-            runTest("idea/testData/intentions/removeBraces/whenLong.kt");
-        }
-
-=======
->>>>>>> 6bdf719e0df... Revert "RemoveBracesIntention: add new line for long expression"
         @TestMetadata("whenMultiple.kt")
         public void testWhenMultiple() throws Exception {
             runTest("testData/intentions/removeBraces/whenMultiple.kt");
@@ -14519,16 +14503,6 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("testData/intentions/replaceWithOrdinaryAssignment/complexRightExpression.kt");
         }
 
-        @TestMetadata("minusAssignOperatorFun.kt")
-        public void testMinusAssignOperatorFun() throws Exception {
-            runTest("idea/testData/intentions/replaceWithOrdinaryAssignment/minusAssignOperatorFun.kt");
-        }
-
-        @TestMetadata("mutableList.kt")
-        public void testMutableList() throws Exception {
-            runTest("idea/testData/intentions/replaceWithOrdinaryAssignment/mutableList.kt");
-        }
-
         @TestMetadata("nonAssignmentExpression.kt")
         public void testNonAssignmentExpression() throws Exception {
             runTest("testData/intentions/replaceWithOrdinaryAssignment/nonAssignmentExpression.kt");
@@ -14537,16 +14511,6 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("nonAugmentedAssign.kt")
         public void testNonAugmentedAssign() throws Exception {
             runTest("testData/intentions/replaceWithOrdinaryAssignment/nonAugmentedAssign.kt");
-        }
-
-        @TestMetadata("plusAssignOperatorFun.kt")
-        public void testPlusAssignOperatorFun() throws Exception {
-            runTest("idea/testData/intentions/replaceWithOrdinaryAssignment/plusAssignOperatorFun.kt");
-        }
-
-        @TestMetadata("qualifiedExpression.kt")
-        public void testQualifiedExpression() throws Exception {
-            runTest("idea/testData/intentions/replaceWithOrdinaryAssignment/qualifiedExpression.kt");
         }
 
         @TestMetadata("simple.kt")
