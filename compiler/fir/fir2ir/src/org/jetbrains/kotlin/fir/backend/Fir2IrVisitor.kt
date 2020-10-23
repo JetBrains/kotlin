@@ -469,29 +469,12 @@ class Fir2IrVisitor(
                     expression.accept(this, null) as IrExpression
                 }
             }
-        }.insertImplicitNotNullCastIfNeeded(expression)
-    }
-
-    private fun IrExpression.insertImplicitNotNullCastIfNeeded(expression: FirExpression): IrExpression {
-        if (this is IrTypeOperatorCall && this.operator == IrTypeOperator.IMPLICIT_NOTNULL) {
-            return this
+        }.let {
+            // TODO: expression(implicitCastInserter, it) as IrExpression
+            with(implicitCastInserter) {
+                it.insertImplicitNotNullCastIfNeeded(expression)
+            }
         }
-        // TODO: Other conditions to check?
-        // [TypeOperatorLowering] will retrieve the source (from start offset to end offset) as an assertion message.
-        // Avoid type casting if we can't determine the source for some reasons, e.g., implicit `this` receiver.
-        if (expression.source == null ||
-            expression.typeRef.coneTypeSafe<ConeKotlinType>()?.hasEnhancedNullability != true
-        ) {
-            return this
-        }
-        return IrTypeOperatorCallImpl(
-            this.startOffset,
-            this.endOffset,
-            this.type,
-            IrTypeOperator.IMPLICIT_NOTNULL,
-            this.type,
-            this
-        )
     }
 
     private fun convertToIrReceiverExpression(
