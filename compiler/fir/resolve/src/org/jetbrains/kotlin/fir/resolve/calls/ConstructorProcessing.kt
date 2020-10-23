@@ -124,8 +124,11 @@ private fun FirTypeAliasSymbol.findSAMConstructorForTypeAlias(
         session
     ) { newReturnType, newParameterTypes, newTypeParameters ->
         FirFakeOverrideGenerator.createFakeOverrideFunction(
-            session, this, namedSymbol, null,
-            newReturnType, newParameterTypes, newTypeParameters
+            session, this, namedSymbol,
+            newDispatchReceiverType = null,
+            newReceiverType = null,
+            newReturnType, newParameterTypes, newTypeParameters,
+            expansionRegularClass.classId,
         ).fir
     } ?: return null
 
@@ -263,6 +266,7 @@ private fun prepareSubstitutingScopeForTypeAliasConstructors(
                 valueParameters += this@factory.valueParameters
             }
             this.typeParameters += newTypeParameters
+            this.attributes = this@factory.attributes.copy()
         }
     }
 

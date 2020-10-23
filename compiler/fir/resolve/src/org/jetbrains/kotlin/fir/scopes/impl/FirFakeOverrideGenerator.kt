@@ -32,6 +32,7 @@ object FirFakeOverrideGenerator {
         session: FirSession,
         baseFunction: FirSimpleFunction,
         baseSymbol: FirNamedFunctionSymbol,
+        newDispatchReceiverType: ConeKotlinType?,
         newReceiverType: ConeKotlinType? = null,
         newReturnType: ConeKotlinType? = null,
         newParameterTypes: List<ConeKotlinType?>? = null,
@@ -45,7 +46,7 @@ object FirFakeOverrideGenerator {
             isFakeOverride = true, overriddenSymbol = baseSymbol
         )
         createFakeOverrideFunction(
-            symbol, session, baseFunction, newReceiverType, newReturnType,
+            symbol, session, baseFunction, newDispatchReceiverType, newReceiverType, newReturnType,
             newParameterTypes, newTypeParameters, isExpect, fakeOverrideSubstitution
         )
         return symbol
@@ -55,6 +56,7 @@ object FirFakeOverrideGenerator {
         fakeOverrideSymbol: FirFunctionSymbol<FirSimpleFunction>,
         session: FirSession,
         baseFunction: FirSimpleFunction,
+        newDispatchReceiverType: ConeKotlinType?,
         newReceiverType: ConeKotlinType?,
         newReturnType: ConeKotlinType?,
         newParameterTypes: List<ConeKotlinType?>?,
@@ -70,6 +72,7 @@ object FirFakeOverrideGenerator {
             session,
             FirDeclarationOrigin.SubstitutionOverride,
             isExpect,
+            newDispatchReceiverType,
             newParameterTypes,
             newTypeParameters,
             newReceiverType,
@@ -84,6 +87,7 @@ object FirFakeOverrideGenerator {
         session: FirSession,
         origin: FirDeclarationOrigin,
         isExpect: Boolean = baseFunction.isExpect,
+        newDispatchReceiverType: ConeKotlinType?,
         newParameterTypes: List<ConeKotlinType?>? = null,
         newTypeParameters: List<FirTypeParameter>? = null,
         newReceiverType: ConeKotlinType? = null,
@@ -101,6 +105,8 @@ object FirFakeOverrideGenerator {
             symbol = newSymbol
             resolvePhase = baseFunction.resolvePhase
 
+            dispatchReceiverType = newDispatchReceiverType
+            attributes = baseFunction.attributes.copy()
             typeParameters += configureAnnotationsTypeParametersAndSignature(
                 session, baseFunction, newParameterTypes,
                 newTypeParameters, newReceiverType, newReturnType, fakeOverrideSubstitution
@@ -112,6 +118,7 @@ object FirFakeOverrideGenerator {
         fakeOverrideSymbol: FirConstructorSymbol,
         session: FirSession,
         baseConstructor: FirConstructor,
+        newDispatchReceiverType: ConeKotlinType?,
         newReturnType: ConeKotlinType?,
         newParameterTypes: List<ConeKotlinType?>?,
         newTypeParameters: List<FirTypeParameterRef>?,
@@ -121,17 +128,21 @@ object FirFakeOverrideGenerator {
         // TODO: consider using here some light-weight functions instead of pseudo-real FirMemberFunctionImpl
         // As second alternative, we can invent some light-weight kind of FirRegularClass
         return buildConstructor {
-            source = baseConstructor.source
             this.session = session
             origin = FirDeclarationOrigin.SubstitutionOverride
             receiverTypeRef = baseConstructor.receiverTypeRef?.withReplacedConeType(null)
             status = baseConstructor.status.updatedStatus(isExpect)
             symbol = fakeOverrideSymbol
-            resolvePhase = baseConstructor.resolvePhase
 
             typeParameters += configureAnnotationsTypeParametersAndSignature(
                 session, baseConstructor, newParameterTypes, newTypeParameters, newReceiverType = null, newReturnType, fakeOverrideSubstitution
             )
+
+            dispatchReceiverType = newDispatchReceiverType
+
+            resolvePhase = baseConstructor.resolvePhase
+            source = baseConstructor.source
+            attributes = baseConstructor.attributes.copy()
         }
     }
 
@@ -235,6 +246,7 @@ object FirFakeOverrideGenerator {
         session: FirSession,
         baseProperty: FirProperty,
         baseSymbol: FirPropertySymbol,
+        newDispatchReceiverType: ConeKotlinType?,
         newReceiverType: ConeKotlinType? = null,
         newReturnType: ConeKotlinType? = null,
         newTypeParameters: List<FirTypeParameter>? = null,
@@ -248,7 +260,7 @@ object FirFakeOverrideGenerator {
         )
         createCopyForFirProperty(
             symbol, baseProperty, session, isExpect,
-            newTypeParameters, newReceiverType, newReturnType,
+            newDispatchReceiverType, newTypeParameters, newReceiverType, newReturnType,
             fakeOverrideSubstitution = fakeOverrideSubstitution
         )
         return symbol
@@ -259,6 +271,7 @@ object FirFakeOverrideGenerator {
         baseProperty: FirProperty,
         session: FirSession,
         isExpect: Boolean = baseProperty.isExpect,
+        newDispatchReceiverType: ConeKotlinType?,
         newTypeParameters: List<FirTypeParameter>? = null,
         newReceiverType: ConeKotlinType? = null,
         newReturnType: ConeKotlinType? = null,
@@ -277,6 +290,8 @@ object FirFakeOverrideGenerator {
             status = baseProperty.status.updatedStatus(isExpect, newModality, newVisibility)
 
             resolvePhase = baseProperty.resolvePhase
+            dispatchReceiverType = newDispatchReceiverType
+            attributes = baseProperty.attributes.copy()
             typeParameters += configureAnnotationsTypeParametersAndSignature(
                 baseProperty,
                 newTypeParameters,
@@ -373,17 +388,20 @@ object FirFakeOverrideGenerator {
             CallableId(derivedClassId ?: baseSymbol.callableId.classId!!, baseField.name)
         )
         buildField {
-            source = baseField.source
             this.session = session
-            origin = FirDeclarationOrigin.SubstitutionOverride
-            resolvePhase = baseField.resolvePhase
-            returnTypeRef = baseField.returnTypeRef.withReplacedConeType(newReturnType)
-            name = baseField.name
             this.symbol = symbol
+            origin = FirDeclarationOrigin.SubstitutionOverride
+            returnTypeRef = baseField.returnTypeRef.withReplacedConeType(newReturnType)
+
+            source = baseField.source
+            resolvePhase = baseField.resolvePhase
+            name = baseField.name
             isVar = baseField.isVar
             status = baseField.status
             resolvePhase = baseField.resolvePhase
             annotations += baseField.annotations
+            attributes = baseField.attributes.copy()
+            dispatchReceiverType = baseField.dispatchReceiverType
         }
         return symbol
     }
@@ -392,6 +410,7 @@ object FirFakeOverrideGenerator {
         session: FirSession,
         baseProperty: FirSyntheticProperty,
         baseSymbol: FirAccessorSymbol,
+        newDispatchReceiverType: ConeKotlinType?,
         newReturnType: ConeKotlinType?,
         newParameterTypes: List<ConeKotlinType?>?,
         fakeOverrideSubstitution: FakeOverrideSubstitution?
@@ -401,6 +420,7 @@ object FirFakeOverrideGenerator {
             functionSymbol,
             session,
             baseProperty.getter.delegate,
+            newDispatchReceiverType,
             newReceiverType = null,
             newReturnType,
             newParameterTypes,

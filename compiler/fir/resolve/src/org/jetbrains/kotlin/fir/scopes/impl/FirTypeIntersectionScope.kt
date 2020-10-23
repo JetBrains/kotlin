@@ -10,16 +10,13 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.PossiblyFirFakeOverrideSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeFlexibleType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeTypeCheckerContext
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
@@ -30,7 +27,7 @@ class FirTypeIntersectionScope private constructor(
     session: FirSession,
     overrideChecker: FirOverrideChecker,
     private val scopes: List<FirTypeScope>,
-    private val derivedClassId: ClassId?,
+    private val dispatchReceiverType: ConeKotlinType,
 ) : AbstractFirOverrideScope(session, overrideChecker) {
     private val absentFunctions: MutableSet<Name> = mutableSetOf()
     private val absentProperties: MutableSet<Name> = mutableSetOf()
@@ -261,9 +258,13 @@ class FirTypeIntersectionScope private constructor(
         newModality: Modality,
         newVisibility: Visibility,
     ): FirNamedFunctionSymbol {
+
         val newSymbol =
             FirNamedFunctionSymbol(
-                CallableId(derivedClassId ?: mostSpecific.callableId.classId!!, mostSpecific.fir.name),
+                CallableId(
+                    dispatchReceiverType.classId ?: mostSpecific.dispatchReceiverClassOrNull()?.classId!!,
+                    mostSpecific.fir.name
+                ),
                 mostSpecific.isFakeOverride,
                 mostSpecific,
                 isIntersectionOverride = true
@@ -273,6 +274,7 @@ class FirTypeIntersectionScope private constructor(
             newSymbol,
             mostSpecificFunction, session, FirDeclarationOrigin.IntersectionOverride,
             mostSpecificFunction.isExpect,
+            newDispatchReceiverType = dispatchReceiverType,
             newModality = newModality,
             newVisibility = newVisibility,
         )
@@ -290,6 +292,7 @@ class FirTypeIntersectionScope private constructor(
             newSymbol, mostSpecificProperty, mostSpecificProperty.session,
             newModality = newModality,
             newVisibility = newVisibility,
+            newDispatchReceiverType = dispatchReceiverType,
         )
         return newSymbol
     }
@@ -486,10 +489,10 @@ class FirTypeIntersectionScope private constructor(
             session: FirSession,
             overrideChecker: FirOverrideChecker,
             scopes: List<FirTypeScope>,
-            derivedClassId: ClassId? = null,
+            dispatchReceiverType: ConeKotlinType,
         ): FirTypeScope {
             scopes.singleOrNull()?.let { return it }
-            return FirTypeIntersectionScope(session, overrideChecker, scopes, derivedClassId)
+            return FirTypeIntersectionScope(session, overrideChecker, scopes, dispatchReceiverType)
         }
     }
 }

@@ -122,7 +122,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val symbolProvider: FirSymbolProvider = session.firSymbolProvider
 
         override val resolutionStageRunner: ResolutionStageRunner = ResolutionStageRunner()
-        override val samResolver: FirSamResolver = FirSamResolverImpl(session, scopeSession)
+
         private val qualifiedResolver: FirQualifiedNameResolver = FirQualifiedNameResolver(this)
         override val callResolver: FirCallResolver = FirCallResolver(
             this,
@@ -137,5 +137,6 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val syntheticCallGenerator: FirSyntheticCallGenerator = FirSyntheticCallGenerator(this)
         override val doubleColonExpressionResolver: FirDoubleColonExpressionResolver = FirDoubleColonExpressionResolver(session)
         override val outerClassManager: FirOuterClassManager = FirOuterClassManager(session, context.outerLocalClassForNested)
+        override val samResolver: FirSamResolver = FirSamResolverImpl(session, scopeSession, outerClassManager)
     }
 }

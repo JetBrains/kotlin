@@ -12,13 +12,11 @@ import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.chain
-import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideSubstitution
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -26,14 +24,16 @@ class FirClassSubstitutionScope(
     private val session: FirSession,
     private val useSiteMemberScope: FirTypeScope,
     private val substitutor: ConeSubstitutor,
+    private val dispatchReceiverTypeForSubstitutedMembers: ConeClassLikeType,
     private val skipPrivateMembers: Boolean,
-    private val derivedClassId: ClassId? = null,
     private val makeExpect: Boolean = false
 ) : FirTypeScope() {
 
     private val fakeOverrideFunctions = mutableMapOf<FirFunctionSymbol<*>, FirFunctionSymbol<*>>()
     private val fakeOverrideConstructors = mutableMapOf<FirConstructorSymbol, FirConstructorSymbol>()
     private val fakeOverrideVariables = mutableMapOf<FirVariableSymbol<*>, FirVariableSymbol<*>>()
+
+    private val newOwnerClassId = dispatchReceiverTypeForSubstitutedMembers.lookupTag.classId
 
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
         useSiteMemberScope.processFunctionsByName(name) process@{ original ->
@@ -139,11 +139,12 @@ class FirClassSubstitutionScope(
             session,
             member,
             original,
+            dispatchReceiverTypeForSubstitutedMembers,
             newReceiverType,
             newReturnType,
             newParameterTypes,
             newTypeParameters as List<FirTypeParameter>,
-            derivedClassId,
+            newOwnerClassId,
             makeExpect,
             fakeOverrideSubstitution
         )
@@ -163,7 +164,8 @@ class FirClassSubstitutionScope(
         }
         return FirFakeOverrideGenerator.createFakeOverrideConstructor(
             FirConstructorSymbol(original.callableId, overriddenSymbol = original),
-            session, constructor, newReturnType, newParameterTypes, newTypeParameters, makeExpect, fakeOverrideSubstitution
+            session, constructor, dispatchReceiverTypeForSubstitutedMembers,
+            newReturnType, newParameterTypes, newTypeParameters, makeExpect, fakeOverrideSubstitution
         ).symbol
     }
 
@@ -184,10 +186,11 @@ class FirClassSubstitutionScope(
             session,
             member,
             original,
+            dispatchReceiverTypeForSubstitutedMembers,
             newReceiverType,
             newReturnType,
             newTypeParameters as List<FirTypeParameter>,
-            derivedClassId,
+            newOwnerClassId,
             makeExpect,
             fakeOverrideSubstitution
         )
@@ -205,7 +208,7 @@ class FirClassSubstitutionScope(
         val (newTypeParameters, substitutor) = FirFakeOverrideGenerator.createNewTypeParametersAndSubstitutor(
             member as FirTypeParameterRefsOwner,
             substitutor,
-            forceTypeParametersRecreation = derivedClassId != null && derivedClassId != member.symbol.callableId.classId
+            forceTypeParametersRecreation = dispatchReceiverTypeForSubstitutedMembers.lookupTag != member.dispatchReceiverClassOrNull()
         )
 
         val receiverType = member.receiverTypeRef?.coneType
@@ -226,7 +229,7 @@ class FirClassSubstitutionScope(
         // TODO: do we have fields with implicit type?
         val newReturnType = returnType?.substitute() ?: return original
 
-        return FirFakeOverrideGenerator.createFakeOverrideField(session, member, original, newReturnType, derivedClassId)
+        return FirFakeOverrideGenerator.createFakeOverrideField(session, member, original, newReturnType, newOwnerClassId)
     }
 
     private fun createFakeOverrideAccessor(original: FirAccessorSymbol): FirAccessorSymbol {
@@ -250,6 +253,7 @@ class FirClassSubstitutionScope(
             session,
             member,
             original,
+            dispatchReceiverTypeForSubstitutedMembers,
             newReturnType,
             newParameterTypes,
             fakeOverrideSubstitution

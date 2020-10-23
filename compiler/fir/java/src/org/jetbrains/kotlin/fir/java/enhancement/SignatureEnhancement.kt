@@ -95,14 +95,18 @@ class FirSignatureEnhancement(
                     session = this@FirSignatureEnhancement.session
                     this.symbol = symbol
                     this.name = name
+                    returnTypeRef = newReturnTypeRef
+
+                    // TODO: Use some kind of copy mechanism
                     visibility = firElement.visibility
                     modality = firElement.modality
-                    returnTypeRef = newReturnTypeRef
                     isVar = firElement.isVar
                     isStatic = firElement.isStatic
                     annotations += firElement.annotations
                     status = firElement.status
                     initializer = firElement.initializer
+                    dispatchReceiverType = firElement.dispatchReceiverType
+                    attributes = firElement.attributes.copy()
                 }
                 return symbol
             }
@@ -221,12 +225,16 @@ class FirSignatureEnhancement(
                             isInner = firMethod.isInner
                         }
                         this.symbol = symbol
+                        dispatchReceiverType = firMethod.dispatchReceiverType
+                        attributes = firMethod.attributes.copy()
                     }
                 } else {
                     FirConstructorBuilder().apply {
                         returnTypeRef = newReturnTypeRef
                         status = firMethod.status
                         this.symbol = symbol
+                        dispatchReceiverType = firMethod.dispatchReceiverType
+                        attributes = firMethod.attributes.copy()
                     }
                 }.apply {
                     source = firMethod.source
@@ -250,6 +258,8 @@ class FirSignatureEnhancement(
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                     valueParameters += newValueParameters
                     typeParameters += firMethod.typeParameters
+                    dispatchReceiverType = firMethod.dispatchReceiverType
+                    attributes = firMethod.attributes.copy()
                 }
             }
             else -> throw AssertionError("Unknown Java method to enhance: ${firMethod.render()}")

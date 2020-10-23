@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -17,11 +18,12 @@ import org.jetbrains.kotlin.name.Name
 class FirDelegatedMemberScope(
     private val useSiteScope: FirTypeScope,
     private val session: FirSession,
-    private val containingClass: ConeClassLikeLookupTag,
+    private val containingClass: FirClass<*>,
     private val delegateField: FirField,
 ) : FirTypeScope() {
     private val delegatedFunctionCache = mutableMapOf<FirNamedFunctionSymbol, FirNamedFunctionSymbol>()
     private val delegatedPropertyCache = mutableMapOf<FirPropertySymbol, FirPropertySymbol>()
+    private val dispatchReceiverType = containingClass.defaultType()
 
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
         useSiteScope.processFunctionsByName(name) processor@{ functionSymbol ->
@@ -43,9 +45,10 @@ class FirDelegatedMemberScope(
                     original,
                     session,
                     FirDeclarationOrigin.Delegated,
+                    newDispatchReceiverType = dispatchReceiverType,
                     newModality = Modality.OPEN,
                 ).apply {
-                    delegatedWrapperData = DelegatedWrapperData(functionSymbol.fir, containingClass, delegateField)
+                    delegatedWrapperData = DelegatedWrapperData(functionSymbol.fir, containingClass.symbol.toLookupTag(), delegateField)
                 }.symbol as FirNamedFunctionSymbol
             }
             processor(delegatedSymbol)
@@ -72,8 +75,9 @@ class FirDelegatedMemberScope(
                     original,
                     session,
                     newModality = Modality.OPEN,
+                    newDispatchReceiverType = dispatchReceiverType,
                 ).apply {
-                    delegatedWrapperData = DelegatedWrapperData(propertySymbol.fir, containingClass, delegateField)
+                    delegatedWrapperData = DelegatedWrapperData(propertySymbol.fir, containingClass.symbol.toLookupTag(), delegateField)
                 }.symbol
             }
             processor(delegatedSymbol)
@@ -105,7 +109,7 @@ class FirDelegatedMemberScope(
     ): ProcessorAction {
         val wrappedData = (symbol.fir as? FirCallableMemberDeclaration<*>)?.delegatedWrapperData
         return when {
-            wrappedData == null || wrappedData.containingClass != containingClass -> {
+            wrappedData == null || wrappedData.containingClass != containingClass.symbol.toLookupTag() -> {
                 useSiteScope.processDirectOverriddenCallablesWithBaseScope(symbol, processor)
             }
             else -> processor(wrappedData.wrapped.symbol as D, useSiteScope)

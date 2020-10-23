@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.fir.java.declarations
 
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirFieldBuilder
@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -42,6 +43,8 @@ class FirJavaField @FirImplementationDetail constructor(
     override val annotations: MutableList<FirAnnotationCall>,
     override val typeParameters: MutableList<FirTypeParameter>,
     override var initializer: FirExpression?,
+    override val dispatchReceiverType: ConeKotlinType?,
+    override val attributes: FirDeclarationAttributes,
 ) : FirField() {
     init {
         symbol.bind(this)
@@ -54,8 +57,6 @@ class FirJavaField @FirImplementationDetail constructor(
 
     override val origin: FirDeclarationOrigin
         get() = FirDeclarationOrigin.Java
-
-    override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
 
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirField {
         returnTypeRef = returnTypeRef.transformSingle(transformer, data)
@@ -163,6 +164,8 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
             annotations,
             typeParameters,
             initializer,
+            dispatchReceiverType,
+            attributes,
         )
     }
 

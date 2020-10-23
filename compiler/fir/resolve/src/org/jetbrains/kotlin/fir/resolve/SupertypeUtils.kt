@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.model.CaptureStatus
 
 abstract class SupertypeSupplier {
@@ -91,7 +90,7 @@ fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
     useSiteMemberScope: FirTypeScope,
     declaration: FirClassLikeDeclaration<*>,
     builder: ScopeSession,
-    derivedClassId: ClassId?
+    derivedClass: FirRegularClass
 ): FirTypeScope {
     if (this.typeArguments.isEmpty()) return useSiteMemberScope
     return builder.getOrBuild(declaration.symbol, SubstitutionScopeKey(this)) {
@@ -110,7 +109,8 @@ fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
         }
         FirClassSubstitutionScope(
             session, useSiteMemberScope, substitutor,
-            skipPrivateMembers = true, derivedClassId = derivedClassId
+            dispatchReceiverTypeForSubstitutedMembers = derivedClass.defaultType(),
+            skipPrivateMembers = true,
         )
     }
 }

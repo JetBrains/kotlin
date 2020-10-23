@@ -104,7 +104,8 @@ class JavaClassMembersEnhancementScope(
                     FirDeclarationOrigin.Enhancement,
                     newParameterTypes = valueParameters.zip(newParameterTypes).map { (valueParameter, newType) ->
                         newType ?: valueParameter.returnTypeRef.coneType
-                    }
+                    },
+                    newDispatchReceiverType = dispatchReceiverType,
                 )
             }
         }

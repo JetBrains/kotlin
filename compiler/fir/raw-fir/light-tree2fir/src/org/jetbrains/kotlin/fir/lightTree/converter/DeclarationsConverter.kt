@@ -415,7 +415,7 @@ class DeclarationsConverter(
                     addCapturedTypeParameters(firTypeParameters)
 
                     val selfType = classNode.toDelegatedSelfType(this)
-
+                    registerSelfType(selfType)
 
                     val delegationSpecifiers = superTypeList?.let { convertDelegationSpecifiers(it, symbol, selfType) }
                     var delegatedSuperTypeRef: FirTypeRef? = delegationSpecifiers?.delegatedSuperTypeRef
@@ -500,8 +500,18 @@ class DeclarationsConverter(
                     }
 
                     if (modifiers.isEnum()) {
-                        generateValuesFunction(baseSession, context.packageFqName, context.className, modifiers.hasExpect())
-                        generateValueOfFunction(baseSession, context.packageFqName, context.className, modifiers.hasExpect())
+                        generateValuesFunction(
+                            baseSession,
+                            context.packageFqName,
+                            context.className,
+                            modifiers.hasExpect()
+                        )
+                        generateValueOfFunction(
+                            baseSession,
+                            context.packageFqName,
+                            context.className,
+                            modifiers.hasExpect()
+                        )
                     }
                 }
             }
@@ -523,6 +533,7 @@ class DeclarationsConverter(
                 symbol = FirAnonymousObjectSymbol()
                 typeParameters += context.capturedTypeParameters.map { buildOuterClassTypeParameterRef { this.symbol = it } }
                 val delegatedSelfType = objectLiteral.toDelegatedSelfType(this)
+                registerSelfType(delegatedSelfType)
 
                 var modifiers = Modifier()
                 var primaryConstructor: LighterASTNode? = null
@@ -637,7 +648,7 @@ class DeclarationsConverter(
                                 emptyArray(),
                                 isNullable = false
                             )
-                        },
+                        }.also { registerSelfType(it) },
                         delegatedSuperTypeRef = classWrapper.delegatedSelfTypeRef,
                         superTypeCallEntry = enumSuperTypeCallEntry
                     )
@@ -743,6 +754,8 @@ class DeclarationsConverter(
                 this.valueParameters += valueParameters.map { it.firValueParameter }
                 delegatedConstructor = firDelegatedCall
                 this.body = body
+            }.apply {
+                containingClassAttr = currentDispatchReceiverType()!!.lookupTag
             }, valueParameters
         )
     }
@@ -814,6 +827,7 @@ class DeclarationsConverter(
             this.body = body
             context.firFunctionTargets.removeLast()
         }.also {
+            it.containingClassAttr = currentDispatchReceiverType()!!.lookupTag
             target.bind(it)
         }
     }
@@ -969,6 +983,7 @@ class DeclarationsConverter(
                 this.isLocal = false
                 receiverTypeRef = receiverType
                 symbol = FirPropertySymbol(callableIdForName(propertyName))
+                dispatchReceiverType = currentDispatchReceiverType()
                 withCapturedTypeParameters {
                     typeParameters += firTypeParameters
                     addCapturedTypeParameters(firTypeParameters)
@@ -1292,6 +1307,7 @@ class DeclarationsConverter(
                 }
 
                 symbol = FirNamedFunctionSymbol(callableIdForName(functionName, isLocal))
+                dispatchReceiverType = currentDispatchReceiverType()
             }
         }
 

@@ -10,13 +10,16 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
 import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.PossiblyFirFakeOverrideSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -30,7 +33,6 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
-import org.jetbrains.kotlin.name.ClassId
 
 class FakeOverrideGenerator(
     private val session: FirSession,
@@ -87,6 +89,7 @@ class FakeOverrideGenerator(
                     createFakeOverrideSymbol = { firFunction, callableSymbol ->
                         FirFakeOverrideGenerator.createFakeOverrideFunction(
                             session, firFunction, callableSymbol,
+                            newDispatchReceiverType = klass.defaultType(),
                             derivedClassId = klass.symbol.classId,
                             isExpect = (klass as? FirRegularClass)?.isExpect == true
                         )
@@ -110,6 +113,7 @@ class FakeOverrideGenerator(
                     createFakeOverrideSymbol = { firProperty, callableSymbol ->
                         FirFakeOverrideGenerator.createFakeOverrideProperty(
                             session, firProperty, callableSymbol,
+                            newDispatchReceiverType = klass.defaultType(),
                             derivedClassId = klass.symbol.classId,
                             isExpect = (klass as? FirRegularClass)?.isExpect == true
                         )
