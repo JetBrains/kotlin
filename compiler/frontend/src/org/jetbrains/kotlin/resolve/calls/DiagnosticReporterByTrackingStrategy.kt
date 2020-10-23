@@ -159,7 +159,11 @@ class DiagnosticReporterByTrackingStrategy(
 
             CallableReferenceCandidatesAmbiguity::class.java -> {
                 val ambiguityDiagnostic = diagnostic as CallableReferenceCandidatesAmbiguity
-                val expression = ambiguityDiagnostic.argument.psiExpression.safeAs<KtCallableReferenceExpression>()
+                val expression = when (val psiExpression = ambiguityDiagnostic.argument.psiExpression) {
+                    is KtPsiUtil.KtExpressionWrapper -> psiExpression.baseExpression
+                    else -> psiExpression
+                }.safeAs<KtCallableReferenceExpression>()
+
                 val candidates = ambiguityDiagnostic.candidates.map { it.candidate }
                 if (expression != null) {
                     trace.reportDiagnosticOnce(CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY.on(expression.callableReference, candidates))
