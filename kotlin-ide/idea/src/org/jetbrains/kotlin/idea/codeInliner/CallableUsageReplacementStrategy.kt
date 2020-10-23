@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.codeInliner
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
-import org.jetbrains.kotlin.idea.intentions.isInvokeOperator
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
@@ -40,14 +39,7 @@ class CallableUsageReplacementStrategy(
         if (!resolvedCall.status.isSuccess) return null
 
         val callElement = when (resolvedCall) {
-            is VariableAsFunctionResolvedCall -> {
-                val callElement = resolvedCall.variableCall.call.callElement
-                if (resolvedCall.resultingDescriptor.isInvokeOperator) {
-                    callElement.parent as? KtCallExpression ?: callElement
-                } else {
-                    callElement
-                }
-            }
+            is VariableAsFunctionResolvedCall -> resolvedCall.variableCall.call.callElement
             else -> resolvedCall.call.callElement
         }
 
