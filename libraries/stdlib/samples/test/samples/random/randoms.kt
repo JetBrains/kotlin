@@ -43,13 +43,13 @@ class Randoms {
     fun nextBits() {
         // always generates a 0
         println(Random.nextBits(0))
-        // get a random 1 bit value
+        // randomly generates a 0 or 1
         println(Random.nextBits(1))
-        // get a random 8 bit value
+        // generates a random positive int less than 256
         println(Random.nextBits(8))
-        // get a random 16 bit value
+        // generates a random signed short
         println(Random.nextBits(16))
-        // get a random 32 bit value
+        // generates a random signed int
         println(Random.nextBits(32))
     }
 
