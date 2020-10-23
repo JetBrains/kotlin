@@ -50,6 +50,8 @@ class WizardStatsService : CounterUsagesCollector() {
             "frontendApplication",
             "fullStackWebApplication",
             "nodejsApplication",
+            "composeDesktopApplication",
+            "composeMultiplatformApplication",
             "none"
         )
         private val allowedModuleTemplates = listOf(
