@@ -10,7 +10,6 @@ import com.intellij.debugger.NoDataException
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.DebugProcess
 import com.intellij.debugger.engine.DebugProcessImpl
-import com.intellij.debugger.engine.DebuggerUtils.*
 import com.intellij.debugger.engine.PositionManagerEx
 import com.intellij.debugger.engine.evaluation.EvaluationContext
 import com.intellij.debugger.impl.DebuggerUtilsEx
@@ -377,7 +376,7 @@ private fun DebugProcess.findTargetClasses(outerClass: ReferenceType, lineAt: In
 
             if (lineAt == locationLine) {
                 val method = location.method()
-                if (method == null || isSynthetic(method) || method.isBridge) {
+                if (method == null || com.intellij.debugger.engine.DebuggerUtils.isSynthetic(method) || method.isBridge) {
                     // skip synthetic methods
                     continue
                 }
