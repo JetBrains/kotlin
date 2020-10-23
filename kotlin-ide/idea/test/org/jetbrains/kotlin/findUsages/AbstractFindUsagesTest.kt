@@ -302,7 +302,7 @@ internal fun <T : PsiElement> findUsagesAndCheckResults(
             AbstractFindUsagesTest.getUsageType(usageAdapter.element)
         }
 
-        val usageTypeAsString = usageType?.toString(AbstractFindUsagesTest.USAGE_VIEW_PRESENTATION) ?: "null"
+        val usageTypeAsString = usageType?.toString() ?: "null"
 
         val usageChunks = ArrayList<TextChunk>()
         usageChunks.addAll(usageAdapter.presentation.text.asList())
