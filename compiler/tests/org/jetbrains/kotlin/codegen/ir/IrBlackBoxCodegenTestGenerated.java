@@ -20762,6 +20762,26 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/properties/accessToPrivateSetter.kt");
         }
 
+        @TestMetadata("accessorForProtectedPropertyWithPrivateSetter.kt")
+        public void testAccessorForProtectedPropertyWithPrivateSetter() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/accessorForProtectedPropertyWithPrivateSetter.kt");
+        }
+
+        @TestMetadata("accessorForProtectedPropertyWithPrivateSetterInObjectLiteral.kt")
+        public void testAccessorForProtectedPropertyWithPrivateSetterInObjectLiteral() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/accessorForProtectedPropertyWithPrivateSetterInObjectLiteral.kt");
+        }
+
+        @TestMetadata("accessorForProtectedPropertyWithPrivateSetterViaSuper.kt")
+        public void testAccessorForProtectedPropertyWithPrivateSetterViaSuper() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/accessorForProtectedPropertyWithPrivateSetterViaSuper.kt");
+        }
+
+        @TestMetadata("accessorForProtectedPropertyWithPrivateSetterWithIntermediateClass.kt")
+        public void testAccessorForProtectedPropertyWithPrivateSetterWithIntermediateClass() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/accessorForProtectedPropertyWithPrivateSetterWithIntermediateClass.kt");
+        }
+
         public void testAllFilesPresentInProperties() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }

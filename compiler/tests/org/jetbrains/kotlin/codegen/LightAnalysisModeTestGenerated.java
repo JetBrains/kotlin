@@ -14799,11 +14799,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/inlineClasses/anySuperCall.kt");
         }
 
-        @TestMetadata("fieldNameClash.kt")
-        public void ignoreFieldNameClash() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/fieldNameClash.kt");
-        }
-
         @TestMetadata("inlineClassWithCustomEquals.kt")
         public void ignoreInlineClassWithCustomEquals() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassWithCustomEquals.kt");
@@ -15105,6 +15100,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("extLambdaInInlineClassFun2.kt")
         public void testExtLambdaInInlineClassFun2() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/extLambdaInInlineClassFun2.kt");
+        }
+
+        @TestMetadata("fieldNameClash.kt")
+        public void testFieldNameClash() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/fieldNameClash.kt");
         }
 
         @TestMetadata("genericInlineClassSynthMembers.kt")
@@ -22546,6 +22546,26 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("accessToPrivateSetter.kt")
         public void testAccessToPrivateSetter() throws Exception {
             runTest("compiler/testData/codegen/box/properties/accessToPrivateSetter.kt");
+        }
+
+        @TestMetadata("accessorForProtectedPropertyWithPrivateSetter.kt")
+        public void testAccessorForProtectedPropertyWithPrivateSetter() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/accessorForProtectedPropertyWithPrivateSetter.kt");
+        }
+
+        @TestMetadata("accessorForProtectedPropertyWithPrivateSetterInObjectLiteral.kt")
+        public void testAccessorForProtectedPropertyWithPrivateSetterInObjectLiteral() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/accessorForProtectedPropertyWithPrivateSetterInObjectLiteral.kt");
+        }
+
+        @TestMetadata("accessorForProtectedPropertyWithPrivateSetterViaSuper.kt")
+        public void testAccessorForProtectedPropertyWithPrivateSetterViaSuper() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/accessorForProtectedPropertyWithPrivateSetterViaSuper.kt");
+        }
+
+        @TestMetadata("accessorForProtectedPropertyWithPrivateSetterWithIntermediateClass.kt")
+        public void testAccessorForProtectedPropertyWithPrivateSetterWithIntermediateClass() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/accessorForProtectedPropertyWithPrivateSetterWithIntermediateClass.kt");
         }
 
         public void testAllFilesPresentInProperties() throws Exception {

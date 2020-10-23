@@ -925,6 +925,8 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
             }
 
             if (accessor.isVar() && accessor.isWithSyntheticSetterAccessor()) {
+                if (isProhibitedAccessorToPrivatePropertySetter(original)) return;
+
                 PropertySetterDescriptor setter = accessor.getSetter();
                 assert setter != null;
 
@@ -935,6 +937,20 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         else {
             throw new UnsupportedOperationException();
         }
+    }
+
+    private boolean isProhibitedAccessorToPrivatePropertySetter(PropertyDescriptor original) {
+        // Property setter might be less visible than the property itself.
+        // We can generate accessor for a private setter only if we are in the same class
+        // or in a class for the containing companion object (see KT-22465).
+        // NB we don't allow private or protected interface members in Kotlin (so far),
+        // so a property that might require an accessor can't be declared in an interface.
+        PropertyDescriptor overriddenProperty = DescriptorUtils.unwrapFakeOverride(original);
+        PropertySetterDescriptor overriddenSetter = overriddenProperty.getSetter();
+        if (overriddenSetter == null || !DescriptorVisibilities.isPrivate(overriddenSetter.getVisibility())) return false;
+        DeclarationDescriptor contextDescriptor = context.getContextDescriptor();
+        return contextDescriptor != overriddenProperty.getContainingDeclaration() &&
+               contextDescriptor != DescriptorUtils.getContainingClass(overriddenProperty);
     }
 
     protected StackValue generateMethodCallTo(
