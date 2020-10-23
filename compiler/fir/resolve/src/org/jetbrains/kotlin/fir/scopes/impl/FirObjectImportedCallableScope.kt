@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
@@ -47,6 +47,7 @@ class FirObjectImportedCallableScope(
             val syntheticFunction = buildPropertyCopy(property) {
                 origin = FirDeclarationOrigin.ImportedFromObject
                 this.symbol = FirPropertySymbol(CallableId(importedClassId, name), overriddenSymbol = symbol)
+                this.delegateFieldSymbol = null
             }.apply {
                 importedFromObjectClassId = importedClassId
             }
