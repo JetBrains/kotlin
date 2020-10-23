@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.isIteratorNext
-import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
@@ -57,13 +54,13 @@ class Fir2IrVisitor(
 
     private val annotationGenerator = AnnotationGenerator(this)
 
+    private val implicitCastInserter = Fir2IrImplicitCastInserter(components, this)
+
     private val memberGenerator = ClassMemberGenerator(components, this, conversionScope)
 
     private val operatorGenerator = OperatorExpressionGenerator(components, this, conversionScope)
 
     private fun FirTypeRef.toIrType(): IrType = with(typeConverter) { toIrType() }
-
-    private fun ConeKotlinType.toIrType(): IrType = with(typeConverter) { toIrType() }
 
     private fun <T : IrDeclaration> applyParentFromStackTo(declaration: T): T = conversionScope.applyParentFromStackTo(declaration)
 
@@ -419,87 +416,10 @@ class Fir2IrVisitor(
         return visitQualifiedAccessExpression(thisReceiverExpression, data)
     }
 
-    private fun implicitCastOrExpression(original: IrExpression, castType: ConeKotlinType): IrExpression {
-        return implicitCastOrExpression(original, castType.toIrType())
-    }
-
-    private fun implicitCastOrExpression(original: IrExpression, castType: FirTypeRef): IrExpression {
-        return implicitCastOrExpression(original, castType.toIrType())
-    }
-
-    private fun implicitCastOrExpression(original: IrExpression, castType: IrType): IrExpression {
-        return original.takeIf { it.type == castType } ?: implicitCast(original, castType)
-    }
-
-    private fun implicitCast(original: IrExpression, castType: IrType): IrExpression {
-        return IrTypeOperatorCallImpl(
-            original.startOffset,
-            original.endOffset,
-            castType,
-            IrTypeOperator.IMPLICIT_CAST,
-            castType,
-            original
-        )
-    }
-
-    private fun ConeKotlinType.doesContainReferencedSymbolInScope(
-        referencedSymbol: AbstractFirBasedSymbol<*>, name: Name
-    ): Boolean {
-        val scope = scope(session, components.scopeSession, FakeOverrideTypeCalculator.Forced) ?: return false
-        var result = false
-        val processor = { it: FirCallableSymbol<*> ->
-            if (!result && it == referencedSymbol) {
-                result = true
-            }
-        }
-        when (referencedSymbol) {
-            is FirPropertySymbol -> scope.processPropertiesByName(name, processor)
-            is FirFunctionSymbol -> scope.processFunctionsByName(name, processor)
-        }
-        return result
-    }
-
-    private fun convertToImplicitCastExpression(
-        expressionWithSmartcast: FirExpressionWithSmartcast, calleeReference: FirReference
-    ): IrExpression {
-        val originalExpression = expressionWithSmartcast.originalExpression
-        val value = convertToIrExpression(originalExpression)
-        val castTypeRef = expressionWithSmartcast.typeRef
-        if (calleeReference !is FirResolvedNamedReference) {
-            return implicitCastOrExpression(value, castTypeRef)
-        }
-        val referencedSymbol = calleeReference.resolvedSymbol
-        if (referencedSymbol !is FirPropertySymbol && referencedSymbol !is FirFunctionSymbol) {
-            return implicitCastOrExpression(value, castTypeRef)
-        }
-
-        val originalTypeRef = expressionWithSmartcast.originalType
-        if (castTypeRef is FirResolvedTypeRef && originalTypeRef is FirResolvedTypeRef) {
-            val castType = castTypeRef.type
-            if (castType is ConeIntersectionType) {
-                val unwrappedSymbol = (referencedSymbol as? FirCallableSymbol)?.overriddenSymbol ?: referencedSymbol
-                castType.intersectedTypes.forEach {
-                    if (it.doesContainReferencedSymbolInScope(unwrappedSymbol, calleeReference.name)) {
-                        return implicitCastOrExpression(value, it)
-                    }
-                }
-            }
-        }
-        return if (originalExpression is FirThisReceiverExpression &&
-            originalExpression.calleeReference.boundSymbol is FirAnonymousFunctionSymbol
-        ) {
-            // If the original is a "this" in a local function and original.type is the same as castType,
-            // we still want to keep the cast. See kt-42517
-            implicitCast(value, castTypeRef.toIrType())
-        } else {
-            implicitCastOrExpression(value, castTypeRef.toIrType())
-        }
-    }
-
     override fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: Any?): IrElement {
         // Generate the expression with the original type and then cast it to the smart cast type.
         val value = convertToIrExpression(expressionWithSmartcast.originalExpression)
-        return implicitCastOrExpression(value, expressionWithSmartcast.typeRef)
+        return implicitCastInserter.visitExpressionWithSmartcast(expressionWithSmartcast, value)
     }
 
     override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: Any?): IrElement {
@@ -583,7 +503,7 @@ class Fir2IrVisitor(
         return when (expression) {
             null -> null
             is FirResolvedQualifier -> callGenerator.convertToGetObject(expression, callableReferenceAccess)
-            is FirExpressionWithSmartcast -> convertToImplicitCastExpression(expression, calleeReference)
+            is FirExpressionWithSmartcast -> implicitCastInserter.convertToImplicitCastExpression(expression, calleeReference)
             is FirFunctionCall, is FirThisReceiverExpression, is FirCallableReferenceAccess -> convertToIrExpression(expression)
             else -> if (expression is FirQualifiedAccessExpression && expression.explicitReceiver == null) {
                 val variableAsFunctionMode = calleeReference is FirResolvedNamedReference &&
@@ -735,7 +655,7 @@ class Fir2IrVisitor(
                     if (notNullType == originalType) {
                         irGetLhsValue()
                     } else {
-                        implicitCastOrExpression(
+                        implicitCastInserter.implicitCastOrExpression(
                             irGetLhsValue(),
                             firLhsVariable.returnTypeRef.resolvedTypeFromPrototype(notNullType).toIrType()
                         )
