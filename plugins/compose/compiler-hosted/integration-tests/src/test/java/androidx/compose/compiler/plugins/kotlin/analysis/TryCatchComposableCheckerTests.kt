@@ -93,4 +93,27 @@ class TryCatchComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """
         )
     }
+
+    fun testTryCatchReporting005() {
+        doTest(
+            """
+            import androidx.compose.runtime.*
+            var globalContent = emptyContent()
+            fun setContent(content: @Composable () -> Unit) {
+                globalContent = content
+            }
+            @Composable fun A() {}
+
+            fun test() {
+                try {
+                    setContent {
+                        A()
+                    }
+                } finally {
+                    print("done")
+                }
+            }
+        """
+        )
+    }
 }

@@ -133,10 +133,6 @@ class ComposeComponentRegistrar : ComponentRegistrar {
                 project,
                 UnionAnnotationCheckerProvider()
             )
-            StorageComponentContainerContributor.registerExtension(
-                project,
-                TryCatchComposableChecker()
-            )
             ComposeDiagnosticSuppressor.registerExtension(
                 project,
                 ComposeDiagnosticSuppressor()

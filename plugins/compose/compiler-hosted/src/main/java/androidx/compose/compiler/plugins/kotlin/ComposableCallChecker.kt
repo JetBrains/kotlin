@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.psi.KtTryExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentForExpression
@@ -144,6 +145,17 @@ open class ComposableCallChecker :
                             ComposeWritableSlices.LAMBDA_CAPABLE_OF_COMPOSER_CAPTURE,
                             descriptor,
                             true
+                        )
+                    }
+                }
+                is KtTryExpression -> {
+                    val tryKeyword = node.tryKeyword
+                    if (
+                        node.tryBlock.textRange.contains(reportOn.textRange) &&
+                        tryKeyword != null
+                    ) {
+                        context.trace.report(
+                            ComposeErrors.ILLEGAL_TRY_CATCH_AROUND_COMPOSABLE.on(tryKeyword)
                         )
                     }
                 }
