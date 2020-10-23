@@ -5,28 +5,26 @@
 
 package kotlin.jdk7.test
 
-import java.nio.file.Files
 import java.nio.file.StandardOpenOption
 import kotlin.io.path.*
 import kotlin.random.Random
 import kotlin.test.*
 
-class PathReadWriteTest {
+class PathReadWriteTest : AbstractPathTest() {
     @Test
     fun appendText() {
-        val file = createTempFile()
+        val file = createTempFile().cleanup()
         file.writeText("Hello\n")
         file.appendText("World\n")
         file.writeText("Again", Charsets.US_ASCII, StandardOpenOption.APPEND)
 
         assertEquals("Hello\nWorld\nAgain", file.readText())
         assertEquals(listOf("Hello", "World", "Again"), file.readLines(Charsets.UTF_8))
-        file.deleteExisting()
     }
 
     @Test
     fun file() {
-        val file = createTempFile()
+        val file = createTempFile().cleanup()
         val writer = file.outputStream().writer().buffered()
 
         writer.write("Hello")
@@ -68,13 +66,11 @@ class PathReadWriteTest {
         c = 0
         file.forEachLine { c++ }
         assertEquals(2, c)
-
-        file.toFile().deleteOnExit()
     }
 
     @Test
     fun bufferedReader() {
-        val file = createTempFile()
+        val file = createTempFile().cleanup()
         val lines = listOf("line1", "line2")
         file.writeLines(lines)
 
@@ -84,7 +80,7 @@ class PathReadWriteTest {
 
     @Test
     fun bufferedWriter() {
-        val file = createTempFile()
+        val file = createTempFile().cleanup()
 
         file.bufferedWriter().use { it.write("line1\n") }
         file.bufferedWriter(Charsets.UTF_8, 1024, StandardOpenOption.APPEND).use { it.write("line2\n") }
@@ -94,7 +90,7 @@ class PathReadWriteTest {
 
     @Test
     fun writeBytes() {
-        val file = createTempFile()
+        val file = createTempFile().cleanup()
         file.writeBytes("Hello".encodeToByteArray())
         file.appendBytes(" world!".encodeToByteArray())
         assertEquals(file.readText(), "Hello world!")
@@ -107,7 +103,7 @@ class PathReadWriteTest {
 
     @Test
     fun writeLines() {
-        val file = createTempFile()
+        val file = createTempFile().cleanup()
         val lines = listOf("first line", "second line")
         file.writeLines(lines)
         assertEquals(lines, file.readLines())
