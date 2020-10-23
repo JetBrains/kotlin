@@ -108,7 +108,7 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
 
     @TestMetadata("RecursiveTypes.kt")
     public void testRecursiveTypes() throws Exception {
-        runTest("idea/testData/highlighter/RecursiveTypes.kt");
+        runTest("testData/highlighter/RecursiveTypes.kt");
     }
 
     @TestMetadata("SmartCast.kt")
