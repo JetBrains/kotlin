@@ -98,7 +98,7 @@ inline fun buildPropertyAccessorCopy(original: FirPropertyAccessor, init: FirPro
     copyBuilder.session = original.session
     copyBuilder.resolvePhase = original.resolvePhase
     copyBuilder.origin = original.origin
-    copyBuilder.attributes = original.attributes
+    copyBuilder.attributes = original.attributes.copy()
     copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.valueParameters.addAll(original.valueParameters)
     copyBuilder.body = original.body

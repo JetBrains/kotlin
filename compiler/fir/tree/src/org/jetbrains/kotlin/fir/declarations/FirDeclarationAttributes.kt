@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.fir.utils.ArrayMap
 import org.jetbrains.kotlin.fir.utils.AttributeArrayOwner
 import org.jetbrains.kotlin.fir.utils.NullableArrayMapAccessor
 import org.jetbrains.kotlin.fir.utils.TypeRegistry
@@ -14,9 +15,12 @@ import kotlin.reflect.KProperty
 
 abstract class FirDeclarationDataKey
 
-class FirDeclarationAttributes : AttributeArrayOwner<FirDeclarationDataKey, Any>() {
+class FirDeclarationAttributes : AttributeArrayOwner<FirDeclarationDataKey, Any> {
     override val typeRegistry: TypeRegistry<FirDeclarationDataKey, Any>
         get() = FirDeclarationDataRegistry
+
+    constructor() : super()
+    private constructor(arrayMap: ArrayMap<Any>) : super(arrayMap)
 
     internal operator fun set(key: KClass<out FirDeclarationDataKey>, value: Any?) {
         if (value == null) {
@@ -25,6 +29,8 @@ class FirDeclarationAttributes : AttributeArrayOwner<FirDeclarationDataKey, Any>
             registerComponent(key, value)
         }
     }
+
+    fun copy(): FirDeclarationAttributes = FirDeclarationAttributes(arrayMap.copy())
 }
 
 /*

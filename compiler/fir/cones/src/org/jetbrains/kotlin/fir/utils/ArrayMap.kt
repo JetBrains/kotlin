@@ -10,6 +10,8 @@ sealed class ArrayMap<T : Any> : Iterable<T> {
 
     abstract operator fun set(index: Int, value: T)
     abstract operator fun get(index: Int): T?
+
+    abstract fun copy(): ArrayMap<T>
 }
 
 fun ArrayMap<*>.isEmpty(): Boolean = size == 0
@@ -26,6 +28,8 @@ internal object EmptyArrayMap : ArrayMap<Nothing>() {
     override fun get(index: Int): Nothing? {
         return null
     }
+
+    override fun copy(): ArrayMap<Nothing> = this
 
     override fun iterator(): Iterator<Nothing> {
         return object : Iterator<Nothing> {
@@ -48,6 +52,8 @@ internal class OneElementArrayMap<T : Any>(val value: T, val index: Int) : Array
         return if (index == this.index) value else null
     }
 
+    override fun copy(): ArrayMap<T> = OneElementArrayMap(value, index)
+
     override fun iterator(): Iterator<T> {
         return object : Iterator<T> {
             private var notVisited = true
@@ -68,16 +74,20 @@ internal class OneElementArrayMap<T : Any>(val value: T, val index: Int) : Array
     }
 }
 
-internal class ArrayMapImpl<T : Any> : ArrayMap<T>() {
+internal class ArrayMapImpl<T : Any> private constructor(
+    private var data: Array<Any?>
+) : ArrayMap<T>() {
     companion object {
         private const val DEFAULT_SIZE = 20
         private const val INCREASE_K = 2
     }
 
+    constructor() : this(arrayOfNulls<Any>(DEFAULT_SIZE))
+
     override var size: Int = 0
         private set
 
-    private var data = arrayOfNulls<Any>(DEFAULT_SIZE)
+
     private fun ensureCapacity(index: Int) {
         if (data.size <= index) {
             data = data.copyOf(data.size * INCREASE_K)
@@ -96,6 +106,8 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T>() {
         @Suppress("UNCHECKED_CAST")
         return data.getOrNull(index) as T?
     }
+
+    override fun copy(): ArrayMap<T> = ArrayMapImpl(data.copyOf())
 
     override fun iterator(): Iterator<T> {
         return object : AbstractIterator<T>() {

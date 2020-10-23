@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
+import org.jetbrains.kotlin.fir.tree.generator.declarationAttributesType
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import java.io.File
 
@@ -294,8 +295,9 @@ private fun SmartPrinter.printDslBuildCopyFunction(
         println("}")
         println("val copyBuilder = $builderType()")
         for (field in builder.allFields) {
-            when (field.origin) {
-                is FieldList -> println("copyBuilder.${field.name}.addAll(original.${field.name})")
+            when {
+                field.origin is FieldList -> println("copyBuilder.${field.name}.addAll(original.${field.name})")
+                field.type == declarationAttributesType.type -> println("copyBuilder.${field.name} = original.${field.name}.copy()")
                 else -> println("copyBuilder.${field.name} = original.${field.name}")
             }
         }
