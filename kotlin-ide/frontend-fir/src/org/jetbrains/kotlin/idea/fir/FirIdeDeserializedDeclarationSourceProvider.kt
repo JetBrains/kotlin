@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSession
@@ -116,7 +117,7 @@ object FirIdeDeserializedDeclarationSourceProvider {
     }
 
     private fun FirCallableDeclaration<*>.containingKtClass(project: Project): KtClassOrObject? =
-        unrollFakeOverrides().symbol.callableId.classId?.let { classByClassId(it, scope(project), project) }
+        unrollFakeOverrides().containingClass()?.classId?.let { classByClassId(it, scope(project), project) }
 
     private fun classByClassId(classId: ClassId, scope: GlobalSearchScope, project: Project): KtClassOrObject? {
         val fqName = classId.asStringForUsingInIndexes().let { classIdMapping[it] ?: it }
