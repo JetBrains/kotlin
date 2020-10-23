@@ -1227,6 +1227,8 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/error-prone/intellij.errorProne.iml" filepath="$PROJECT_DIR$/intellij/contrib/error-prone/intellij.errorProne.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/error-prone/jps-plugin/intellij.errorProne.jps.iml" filepath="$PROJECT_DIR$/intellij/contrib/error-prone/jps-plugin/intellij.errorProne.jps.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/exception-analyzer/intellij.exceptionAnalyzer.iml" filepath="$PROJECT_DIR$/intellij/plugins/exception-analyzer/intellij.exceptionAnalyzer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/dependency-updater/intellij.externalSystem.dependencyUpdater.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/dependency-updater/intellij.externalSystem.dependencyUpdater.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/dependency-updater/intellij.externalSystem.dependencyUpdater.tests.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/dependency-updater/intellij.externalSystem.dependencyUpdater.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/ide-features-trainer/intellij.featuresTrainer.iml" filepath="$PROJECT_DIR$/intellij/contrib/ide-features-trainer/intellij.featuresTrainer.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/filePrediction/intellij.filePrediction.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/filePrediction/intellij.filePrediction.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/fileWatcher/intellij.fileWatcher.iml" filepath="$PROJECT_DIR$/intellij/plugins/fileWatcher/intellij.fileWatcher.iml" />
@@ -1261,9 +1263,11 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go-tools/intellij.goland.tools.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go-tools/intellij.goland.tools.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/gradle/intellij.gradle.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/gradle/intellij.gradle.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/gradle/intellij.gradle.common.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/gradle/intellij.gradle.common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/gradle/gradle-dependency-updater/intellij.gradle.dependencyUpdater.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/gradle/gradle-dependency-updater/intellij.gradle.dependencyUpdater.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/gradle-dsl/intellij.gradle.dsl.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/gradle-dsl/intellij.gradle.dsl.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/gradle-dsl-impl/intellij.gradle.dsl.impl.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/gradle-dsl-impl/intellij.gradle.dsl.impl.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/gradle-dsl-impl/intellij.gradle.dsl.impl.tests.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/gradle-dsl-impl/intellij.gradle.dsl.impl.tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/gradle-dsl-kotlin-impl/intellij.gradle.dsl.kotlin.impl.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/gradle-dsl-kotlin-impl/intellij.gradle.dsl.kotlin.impl.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/gradle-ext/intellij.gradle.ext.iml" filepath="$PROJECT_DIR$/intellij/plugins/gradle-ext/intellij.gradle.ext.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/gradle-ext/profiler-tooling/intellij.gradle.ext.profiler.tooling.iml" filepath="$PROJECT_DIR$/intellij/plugins/gradle-ext/profiler-tooling/intellij.gradle.ext.profiler.tooling.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/gradle/java/intellij.gradle.java.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/gradle/java/intellij.gradle.java.iml" />
