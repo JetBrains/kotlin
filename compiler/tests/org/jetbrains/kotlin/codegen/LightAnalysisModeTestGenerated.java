@@ -14799,11 +14799,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/inlineClasses/anySuperCall.kt");
         }
 
-        @TestMetadata("fieldNameClash.kt")
-        public void ignoreFieldNameClash() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/fieldNameClash.kt");
-        }
-
         @TestMetadata("inlineClassWithCustomEquals.kt")
         public void ignoreInlineClassWithCustomEquals() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassWithCustomEquals.kt");
@@ -28773,6 +28768,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
 
         public void testAllFilesPresentInSafeCall() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/safeCall"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+        }
+
+        @TestMetadata("coercionToUnit.kt")
+        public void testCoercionToUnit() throws Exception {
+            runTest("compiler/testData/codegen/box/safeCall/coercionToUnit.kt");
         }
 
         @TestMetadata("genericNull.kt")

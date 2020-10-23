@@ -31141,6 +31141,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/safeCall"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }
 
+        @TestMetadata("coercionToUnit.kt")
+        public void testCoercionToUnit() throws Exception {
+            runTest("compiler/testData/codegen/box/safeCall/coercionToUnit.kt");
+        }
+
         @TestMetadata("genericNull.kt")
         public void testGenericNull() throws Exception {
             runTest("compiler/testData/codegen/box/safeCall/genericNull.kt");
