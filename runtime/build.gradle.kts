@@ -97,6 +97,7 @@ bitcode {
 targetList.forEach { targetName ->
     createTestTask(
             project,
+            "StdAlloc",
             "${targetName}StdAllocRuntimeTests",
             listOf(
                 "${targetName}Runtime",
@@ -110,6 +111,7 @@ targetList.forEach { targetName ->
 
     createTestTask(
             project,
+            "Mimalloc",
             "${targetName}MimallocRuntimeTests",
             listOf(
                 "${targetName}Runtime",

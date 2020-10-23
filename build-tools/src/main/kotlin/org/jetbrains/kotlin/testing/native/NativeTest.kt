@@ -153,6 +153,7 @@ open class LinkNativeTest @Inject constructor(
 
 fun createTestTask(
         project: Project,
+        testName: String,
         testTaskName: String,
         testedTaskNames: List<String>,
         configureCompileToBitcode: CompileToBitcode.() -> Unit = {},
@@ -239,6 +240,15 @@ fun createTestTask(
 
         doFirst {
             workingDir.mkdirs()
+        }
+
+        doLast {
+            // TODO: Better to use proper XML parsing.
+            var contents = xmlReport.readText()
+            contents = contents.replace("<testsuite name=\"", "<testsuite name=\"${testName}.")
+            contents = contents.replace("classname=\"", "classname=\"${testName}.")
+            val rewrittenReport = workingDir.resolve("report-with-prefixes.xml")
+            rewrittenReport.writeText(contents)
         }
     }
 }
