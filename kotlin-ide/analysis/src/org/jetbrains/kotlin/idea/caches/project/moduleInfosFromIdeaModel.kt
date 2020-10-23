@@ -71,12 +71,12 @@ private class LibraryWrapper(val library: Library) {
         if (library !is LibraryEx || other.library !is LibraryEx)
             return library == other.library
 
-        return library.isEqual(other.library)
+        return library.equalsIgnoreNames(other.library)
     }
 
     override fun hashCode(): Int {
         return when(library) {
-            is LibraryEx -> library.calcHashCode()
+            is LibraryEx -> library.rootBasedHashCode()
             else -> library.hashCode()
         }
     }
@@ -91,16 +91,15 @@ internal val LibraryEx.allRootUrls: Set<String>
         }
     }
 
-internal fun LibraryEx.isEqual(other: LibraryEx): Boolean {
-    if (name != other.name) return false
+internal fun LibraryEx.equalsIgnoreNames(other: LibraryEx): Boolean {
     if (allRootUrls != other.allRootUrls) return false
     if (kind != other.kind) return false
     if (properties != other.properties) return false
     return excludedRootUrls.contentEquals(other.excludedRootUrls)
 }
 
-internal fun LibraryEx.calcHashCode(): Int {
-    return 31 * (name?.hashCode() ?: 0) + allRootUrls.hashCode()
+internal fun LibraryEx.rootBasedHashCode(): Int {
+    return 31 + allRootUrls.hashCode()
 }
 
 private fun collectModuleInfosFromIdeaModel(

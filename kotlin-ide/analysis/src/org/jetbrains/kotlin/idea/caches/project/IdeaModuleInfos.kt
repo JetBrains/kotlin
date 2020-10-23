@@ -380,11 +380,11 @@ abstract class LibraryInfo(override val project: Project, val library: Library) 
         if (library !is LibraryEx || other.library !is LibraryEx)
             return library == other.library
 
-        return library.isEqual(other.library)
+        return library.equalsIgnoreNames(other.library)
     }
 
     override fun hashCode(): Int = when(library) {
-        is LibraryEx -> library.calcHashCode()
+        is LibraryEx -> library.rootBasedHashCode()
         else -> library.hashCode()
     }
 }

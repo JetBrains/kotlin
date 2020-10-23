@@ -132,8 +132,8 @@ class IdeaModuleInfoTest : ModuleTestCase() {
     fun testSeveralModulesExportLibs() {
         val (a, b, c) = modules()
 
-        val lib1 = projectLibrary("lib1")
-        val lib2 = projectLibrary("lib2")
+        val lib1 = projectLibraryWithFakeRoot("lib1")
+        val lib2 = projectLibraryWithFakeRoot("lib2")
 
         a.addDependency(lib1, exported = true)
         b.addDependency(lib2, exported = true)
@@ -241,8 +241,8 @@ class IdeaModuleInfoTest : ModuleTestCase() {
     }
 
     fun testLibraryDependency1() {
-        val lib1 = projectLibrary("lib1")
-        val lib2 = projectLibrary("lib2")
+        val lib1 = projectLibraryWithFakeRoot("lib1")
+        val lib2 = projectLibraryWithFakeRoot("lib2")
 
         val module = module("module")
         module.addDependency(lib1)
@@ -253,9 +253,9 @@ class IdeaModuleInfoTest : ModuleTestCase() {
     }
 
     fun testLibraryDependency2() {
-        val lib1 = projectLibrary("lib1")
-        val lib2 = projectLibrary("lib2")
-        val lib3 = projectLibrary("lib3")
+        val lib1 = projectLibraryWithFakeRoot("lib1")
+        val lib2 = projectLibraryWithFakeRoot("lib2")
+        val lib3 = projectLibraryWithFakeRoot("lib3")
 
         val (a, b, c) = modules()
         a.addDependency(lib1)
@@ -271,9 +271,9 @@ class IdeaModuleInfoTest : ModuleTestCase() {
     }
 
     fun testLibraryDependency3() {
-        val lib1 = projectLibrary("lib1")
-        val lib2 = projectLibrary("lib2")
-        val lib3 = projectLibrary("lib3")
+        val lib1 = projectLibraryWithFakeRoot("lib1")
+        val lib2 = projectLibraryWithFakeRoot("lib2")
+        val lib3 = projectLibraryWithFakeRoot("lib3")
 
         val (a, b) = modules()
         a.addDependency(lib1)
@@ -493,6 +493,10 @@ class IdeaModuleInfoTest : ModuleTestCase() {
       KotlinArtifacts.instance.kotlinStdlibJs.jarRoot,
       kind = JSLibraryKind
     )
+
+    private fun projectLibraryWithFakeRoot(name: String): LibraryEx {
+        return projectLibrary(name, sourcesRoot = createFileInProject(name))
+    }
 
     override fun setUp() {
         super.setUp()
