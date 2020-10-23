@@ -381,7 +381,7 @@ class NameTables(
 
         override fun visitBreak(jump: IrBreak) {
             val loop = jump.loop
-            if (loop != breakableDeque.firstOrNull()) {
+            if (loop.label == null && loop != breakableDeque.firstOrNull()) {
                 persistLoopName(SYNTHETIC_LOOP_LABEL, loop)
             }
 
