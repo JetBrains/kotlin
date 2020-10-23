@@ -104,8 +104,6 @@ private fun IfThenToSelectData.clausesReplaceableBySafeCall(): Boolean = when {
     context.diagnostics.forElement(condition)
         .any { it.factory == Errors.SENSELESS_COMPARISON || it.factory == Errors.USELESS_IS_CHECK } -> false
     baseClause.evaluatesTo(receiverExpression) -> true
-    (baseClause as? KtCallExpression)?.calleeExpression?.evaluatesTo(receiverExpression) == true
-            && baseClause.isCallingInvokeFunction(context) -> true
     baseClause.hasFirstReceiverOf(receiverExpression) -> withoutResultInCallChain(baseClause, context)
     baseClause.anyArgumentEvaluatesTo(receiverExpression) -> true
     receiverExpression is KtThisExpression -> getImplicitReceiver()?.let { it.type == receiverExpression.getType(context) } == true
