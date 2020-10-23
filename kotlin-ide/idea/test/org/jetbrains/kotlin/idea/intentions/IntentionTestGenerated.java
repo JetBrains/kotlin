@@ -3441,6 +3441,11 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
                 runTest("testData/intentions/chop/argumentList/leftParOnSameLine.kt");
             }
 
+            @TestMetadata("leftParOnSameLine.kt")
+            public void testLeftParOnSameLine() throws Exception {
+                runTest("idea/testData/intentions/chop/argumentList/leftParOnSameLine.kt");
+            }
+
             @TestMetadata("parOnSameLine.kt")
             public void testParOnSameLine() throws Exception {
                 runTest("testData/intentions/chop/argumentList/parOnSameLine.kt");
