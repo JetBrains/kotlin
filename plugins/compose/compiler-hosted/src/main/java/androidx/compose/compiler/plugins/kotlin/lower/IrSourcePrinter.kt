@@ -17,9 +17,10 @@
 package androidx.compose.compiler.plugins.kotlin.lower
 
 import androidx.compose.compiler.plugins.kotlin.KtxNameConventions
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
@@ -38,7 +39,7 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltInOperator
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBranch
@@ -72,7 +73,7 @@ import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.IrSetField
-import org.jetbrains.kotlin.ir.expressions.IrSetVariable
+import org.jetbrains.kotlin.ir.expressions.IrSetValue
 import org.jetbrains.kotlin.ir.expressions.IrSpreadElement
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
@@ -196,8 +197,8 @@ private class IrSourcePrinterVisitor(
             print("override ")
         } else {
             if (
-                declaration.visibility != Visibilities.PUBLIC &&
-                declaration.visibility != Visibilities.LOCAL
+                declaration.visibility != DescriptorVisibilities.PUBLIC &&
+                declaration.visibility != DescriptorVisibilities.LOCAL
             ) {
                 print(declaration.visibility.toString().toLowerCase(Locale.ROOT))
                 print(" ")
@@ -258,11 +259,12 @@ private class IrSourcePrinterVisitor(
 
     private var isInNotCall = false
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun visitCall(expression: IrCall) {
         val function = expression.symbol.owner
         val name = function.name.asString()
         val descriptor = function.descriptor
-        val isOperator = descriptor.isOperator || function is IrBuiltInOperator
+        val isOperator = descriptor.isOperator || function.origin == IrBuiltIns.BUILTIN_OPERATOR
         val isInfix = descriptor.isInfix
         if (isOperator) {
             if (name == "not") {
@@ -274,7 +276,7 @@ private class IrSourcePrinterVisitor(
                 val arg = expression.dispatchReceiver!!
                 if (arg is IrCall) {
                     val fn = arg.symbol.owner
-                    if (fn is IrBuiltInOperator) {
+                    if (fn.origin == IrBuiltIns.BUILTIN_OPERATOR) {
                         when (fn.name.asString()) {
                             "equals",
                             "EQEQ",
@@ -573,6 +575,7 @@ private class IrSourcePrinterVisitor(
         println(")")
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun visitConstructorCall(expression: IrConstructorCall) {
         val constructedClass = expression.symbol.descriptor.constructedClass
         val name = constructedClass.name
@@ -736,10 +739,11 @@ private class IrSourcePrinterVisitor(
         println("}")
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun visitReturn(expression: IrReturn) {
         val value = expression.value
         // only print the return statement directly if it is not a lambda
-        if (expression.returnTarget.name.asString() != "<anonymous>") {
+        if (expression.returnTargetSymbol.descriptor.name.asString() != "<anonymous>") {
             print("return ")
         }
         if (expression.type.isUnit() || value.type.isUnit()) {
@@ -753,6 +757,7 @@ private class IrSourcePrinterVisitor(
         }
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun visitBlock(expression: IrBlock) {
         when (expression.origin) {
             IrStatementOrigin.POSTFIX_INCR -> {
@@ -823,8 +828,8 @@ private class IrSourcePrinterVisitor(
 
     override fun visitField(declaration: IrField) {
         if (
-            declaration.visibility != Visibilities.PUBLIC &&
-            declaration.visibility != Visibilities.LOCAL
+            declaration.visibility != DescriptorVisibilities.PUBLIC &&
+            declaration.visibility != DescriptorVisibilities.LOCAL
         ) {
             print(declaration.visibility.toString().toLowerCase(Locale.ROOT))
             print(" ")
@@ -874,7 +879,7 @@ private class IrSourcePrinterVisitor(
         print(expression.symbol.owner.name)
     }
 
-    override fun visitSetVariable(expression: IrSetVariable) {
+    override fun visitSetValue(expression: IrSetValue) {
         print(expression.symbol.owner.name)
         print(" = ")
         expression.value.print()
@@ -995,8 +1000,8 @@ private class IrSourcePrinterVisitor(
         val primaryConstructor = declaration.primaryConstructor
         declaration.printAnnotations(onePerLine = true)
         if (
-            declaration.visibility != Visibilities.PUBLIC &&
-            declaration.visibility != Visibilities.LOCAL
+            declaration.visibility != DescriptorVisibilities.PUBLIC &&
+            declaration.visibility != DescriptorVisibilities.LOCAL
         ) {
             print(declaration.visibility.toString().toLowerCase(Locale.ROOT))
             print(" ")
@@ -1214,6 +1219,7 @@ private class IrSourcePrinterVisitor(
     private fun IrType.renderSrc() =
         "${renderTypeAnnotations(annotations)}${renderTypeInner()}"
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun IrType.renderTypeInner() =
         when (this) {
             is IrDynamicType -> "dynamic"
@@ -1311,6 +1317,7 @@ private class IrSourcePrinterVisitor(
         append(")")
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun IrTypeAliasSymbol.renderTypeAliasFqn(): String =
         if (isBound)
             StringBuilder().also { owner.renderDeclarationFqn(it) }.toString()
@@ -1340,7 +1347,7 @@ private class IrSourcePrinterVisitor(
         }
     }
 
-    private fun IrMemberAccessExpression.getValueParameterNamesForDebug(): List<String> {
+    private fun IrMemberAccessExpression<*>.getValueParameterNamesForDebug(): List<String> {
         val expectedCount = valueArgumentsCount
         return if (symbol.isBound) {
             val owner = symbol.owner

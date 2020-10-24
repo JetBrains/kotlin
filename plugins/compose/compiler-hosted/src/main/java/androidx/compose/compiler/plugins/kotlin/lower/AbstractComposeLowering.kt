@@ -29,26 +29,31 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.builtins.extractParameterNameFromFunctionTypeArgument
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
+import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
+import org.jetbrains.kotlin.cfg.index
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.fir.java.topLevelName
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
 import org.jetbrains.kotlin.ir.builders.IrBlockBodyBuilder
@@ -95,7 +100,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrIfThenElseImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrSetVariableImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrWhenImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrWhileLoopImpl
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
@@ -107,6 +112,8 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -120,24 +127,27 @@ import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.TypeTranslator
-import org.jetbrains.kotlin.ir.util.endOffset
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.util.getPrimitiveArrayElementType
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.ir.util.isFunction
+import org.jetbrains.kotlin.ir.util.isCrossinline
 import org.jetbrains.kotlin.ir.util.isInlined
+import org.jetbrains.kotlin.ir.util.isNoinline
 import org.jetbrains.kotlin.ir.util.primaryConstructor
-import org.jetbrains.kotlin.ir.util.startOffset
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
+import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.DFS
 
@@ -148,6 +158,7 @@ abstract class AbstractComposeLowering(
     val bindingTrace: BindingTrace
 ) : IrElementTransformerVoid() {
 
+    @ObsoleteDescriptorBasedAPI
     protected val typeTranslator =
         TypeTranslator(
             context.symbolTable,
@@ -231,6 +242,7 @@ abstract class AbstractComposeLowering(
         )
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun KotlinType.toIrType(): IrType = typeTranslator.translateType(this)
 
     fun IrType.unboxInlineClass() = unboxType() ?: this
@@ -301,9 +313,11 @@ abstract class AbstractComposeLowering(
         return annotations.hasAnnotation(ComposeFqNames.Composable)
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun List<IrConstructorCall>.hasAnnotation(fqName: FqName): Boolean =
         any { it.symbol.descriptor.constructedClass.fqNameSafe == fqName }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun IrCall.isInvoke(): Boolean {
         return origin == IrStatementOrigin.INVOKE || symbol.descriptor is FunctionInvokeDescriptor
     }
@@ -316,6 +330,7 @@ abstract class AbstractComposeLowering(
         return context.irTrace[ComposeWritableSlices.IS_SYNTHETIC_COMPOSABLE_CALL, this] == true
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun IrFunction.isInlinedLambda(): Boolean {
         descriptor.findPsi()?.let { psi ->
             (psi as? KtFunctionLiteral)?.let {
@@ -372,25 +387,33 @@ abstract class AbstractComposeLowering(
     fun KotlinType.isFinal(): Boolean = (constructor.declarationDescriptor as? ClassDescriptor)
         ?.modality == Modality.FINAL
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun FunctionDescriptor.isComposableCallable(): Boolean {
         return isComposableCallable(context.bindingContext)
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun FunctionDescriptor.allowsComposableCalls(): Boolean {
         return allowsComposableCalls(context.bindingContext)
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun IrFunctionExpression.allowsComposableCalls(): Boolean =
         function.descriptor.allowsComposableCalls(context.bindingContext)
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun IrFunction.createParameterDeclarations() {
         fun ParameterDescriptor.irValueParameter() = IrValueParameterImpl(
             this.startOffset ?: UNDEFINED_OFFSET,
             this.endOffset ?: UNDEFINED_OFFSET,
             IrDeclarationOrigin.DEFINED,
-            this,
+            IrValueParameterSymbolImpl(this),
+            this.name,
+            this.index(),
             type.toIrType(),
-            (this as? ValueParameterDescriptor)?.varargElementType?.toIrType()
+            (this as? ValueParameterDescriptor)?.varargElementType?.toIrType(),
+            this.isCrossinline,
+            this.isNoinline
         ).also {
             it.parent = this@createParameterDeclarations
         }
@@ -422,6 +445,7 @@ abstract class AbstractComposeLowering(
         body: IrBlockBodyBuilder.(IrFunction) -> Unit
     ) = irLambdaExpression(this.startOffset, this.endOffset, descriptor, type, body)
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     protected fun IrBuilderWithScope.irLambdaExpression(
         startOffset: Int,
         endOffset: Int,
@@ -447,7 +471,8 @@ abstract class AbstractComposeLowering(
             isTailrec = descriptor.isTailrec,
             isSuspend = descriptor.isSuspend,
             isOperator = descriptor.isOperator,
-            isExpect = descriptor.isExpect
+            isExpect = descriptor.isExpect,
+            isInfix = descriptor.isInfix
         ).also {
             it.parent = scope.getLocalDeclarationParent()
             it.createParameterDeclarations()
@@ -474,6 +499,7 @@ abstract class AbstractComposeLowering(
         }
     }
 
+    @ObsoleteDescriptorBasedAPI
     protected fun IrBuilderWithScope.createFunctionDescriptor(
         type: IrType,
         owner: DeclarationDescriptor = scope.scopeOwner
@@ -514,7 +540,7 @@ abstract class AbstractComposeLowering(
                 },
                 kotlinType.getReturnTypeFromFunctionType(),
                 Modality.FINAL,
-                Visibilities.LOCAL,
+                DescriptorVisibilities.LOCAL,
                 null
             )
             isOperator = false
@@ -555,7 +581,7 @@ abstract class AbstractComposeLowering(
     }
 
     protected fun irSet(variable: IrVariable, value: IrExpression): IrExpression {
-        return IrSetVariableImpl(
+        return IrSetValueImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             context.irBuiltIns.unitType,
@@ -565,6 +591,7 @@ abstract class AbstractComposeLowering(
         )
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     protected fun irCall(
         symbol: IrFunctionSymbol,
         origin: IrStatementOrigin? = null,
@@ -576,7 +603,7 @@ abstract class AbstractComposeLowering(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             symbol.owner.returnType,
-            symbol,
+            symbol as IrSimpleFunctionSymbol,
             origin
         ).also {
             if (dispatchReceiver != null) it.dispatchReceiver = dispatchReceiver
@@ -587,9 +614,11 @@ abstract class AbstractComposeLowering(
         }
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     protected fun IrType.binaryOperator(name: Name, paramType: IrType): IrFunctionSymbol =
         context.symbols.getBinaryOperator(name, this.toKotlinType(), paramType.toKotlinType())
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     protected fun IrType.unaryOperator(name: Name): IrFunctionSymbol =
         context.symbols.getUnaryOperator(name, this.toKotlinType())
 
@@ -766,6 +795,7 @@ abstract class AbstractComposeLowering(
         null
     )
 
+    @ObsoleteDescriptorBasedAPI
     protected fun irForLoop(
         scope: DeclarationDescriptor,
         elementType: IrType,
@@ -854,6 +884,7 @@ abstract class AbstractComposeLowering(
         )
     }
 
+    @ObsoleteDescriptorBasedAPI
     protected fun irTemporary(
         containingDeclaration: DeclarationDescriptor,
         value: IrExpression,
@@ -872,10 +903,15 @@ abstract class AbstractComposeLowering(
             value.startOffset,
             value.endOffset,
             origin,
-            tempVarDescriptor,
+            IrVariableSymbolImpl(tempVarDescriptor),
+            tempVarDescriptor.name,
             irType,
-            value
-        )
+            isVar,
+            tempVarDescriptor.isConst,
+            tempVarDescriptor.isLateInit
+        ).apply {
+            initializer = value
+        }
     }
 
     protected fun irGet(type: IrType, symbol: IrValueSymbol): IrExpression {
@@ -964,6 +1000,7 @@ abstract class AbstractComposeLowering(
         )
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     protected fun irLambda(function: IrFunction, type: IrType): IrExpression {
         return irBlock(
             type,
@@ -984,15 +1021,16 @@ abstract class AbstractComposeLowering(
     }
 
     fun makeStabilityField(): IrField {
-        return buildField {
+        return context.irFactory.buildField {
             name = KtxNameConventions.STABILITY_FLAG
             isStatic = true
             isFinal = true
             type = context.irBuiltIns.intType
-            visibility = Visibilities.PUBLIC
+            visibility = DescriptorVisibilities.PUBLIC
         }
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun IrExpression.isStatic(): Boolean {
         return when (this) {
             // A constant by definition is static
@@ -1029,6 +1067,7 @@ abstract class AbstractComposeLowering(
         return false
     }
 
+    @ObsoleteDescriptorBasedAPI
     fun IrCall.isStatic(): Boolean {
         val function = symbol.owner
         val fqName = function.descriptor.fqNameSafe
@@ -1145,6 +1184,7 @@ fun IrFunction.composerParam(): IrValueParameter? {
     return null
 }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrValueParameter.isComposerParam(): Boolean =
     @Suppress("DEPRECATION")
     (descriptor as? ValueParameterDescriptor)?.isComposerParam() ?: false
@@ -1157,3 +1197,18 @@ fun IrPluginContext.function(arity: Int): IrClassSymbol =
     referenceClass(FqName("kotlin.Function$arity"))!!
 
 object COMPOSE_STATEMENT_ORIGIN : IrStatementOriginImpl("COMPOSE_STATEMENT_ORIGIN")
+
+@ObsoleteDescriptorBasedAPI
+val KotlinType.isFunctionOrKFunctionType: Boolean
+    get() {
+        val kind = constructor.declarationDescriptor?.getFunctionalClassKind()
+        return kind == FunctionClassKind.Function || kind == FunctionClassKind.KFunction
+    }
+
+@ObsoleteDescriptorBasedAPI
+val DeclarationDescriptorWithSource.startOffset: Int? get() =
+    (this.source as? PsiSourceElement)?.psi?.startOffset
+
+@ObsoleteDescriptorBasedAPI
+val DeclarationDescriptorWithSource.endOffset: Int? get() =
+    (this.source as? PsiSourceElement)?.psi?.endOffset
