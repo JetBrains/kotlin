@@ -23,14 +23,15 @@ import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.declarations.IrFunctionBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.addGetter
 import org.jetbrains.kotlin.ir.builders.declarations.addProperty
-import org.jetbrains.kotlin.ir.builders.declarations.addSetter
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
@@ -50,12 +51,16 @@ import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
+import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunction
+import org.jetbrains.kotlin.ir.descriptors.WrappedFunctionDescriptorWithContainerSource
+import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -71,7 +76,7 @@ import org.jetbrains.kotlin.ir.expressions.IrEnumConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrSetField
-import org.jetbrains.kotlin.ir.expressions.IrSetVariable
+import org.jetbrains.kotlin.ir.expressions.IrSetValue
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
 import org.jetbrains.kotlin.ir.expressions.IrTry
@@ -86,6 +91,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.makeNullable
@@ -232,6 +238,7 @@ open class LiveLiteralTransformer(
         putValueArgument(0, irConst(file))
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun irLiveLiteralGetter(
         key: String,
         literalValue: IrExpression,
@@ -242,13 +249,13 @@ open class LiveLiteralTransformer(
         val stateGetValue = stateInterface.getPropertyGetter("value")!!
         val defaultProp = clazz.addProperty {
             name = Name.identifier(key)
-            visibility = Visibilities.PRIVATE
+            visibility = DescriptorVisibilities.PRIVATE
         }.also { p ->
-            p.backingField = buildField {
+            p.backingField = context.irFactory.buildField {
                 name = Name.identifier(key)
                 isStatic = true
                 type = literalType
-                visibility = Visibilities.PRIVATE
+                visibility = DescriptorVisibilities.PRIVATE
             }.also { f ->
                 f.correspondingPropertySymbol = p.symbol
                 f.parent = clazz
@@ -260,7 +267,7 @@ open class LiveLiteralTransformer(
             }
             p.addGetter {
                 returnType = literalType
-                visibility = Visibilities.PRIVATE
+                visibility = DescriptorVisibilities.PRIVATE
                 origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
             }.also { fn ->
                 val thisParam = clazz.thisReceiver!!.copyTo(fn)
@@ -272,13 +279,13 @@ open class LiveLiteralTransformer(
         }
         val stateProp = clazz.addProperty {
             name = Name.identifier("State\$$key")
-            visibility = Visibilities.PRIVATE
+            visibility = DescriptorVisibilities.PRIVATE
             isVar = true
         }.also { p ->
-            p.backingField = buildField {
+            p.backingField = context.irFactory.buildField {
                 name = Name.identifier("State\$$key")
                 type = stateType
-                visibility = Visibilities.PRIVATE
+                visibility = DescriptorVisibilities.PRIVATE
                 isStatic = true
             }.also { f ->
                 f.correspondingPropertySymbol = p.symbol
@@ -286,7 +293,7 @@ open class LiveLiteralTransformer(
             }
             p.addGetter {
                 returnType = stateType
-                visibility = Visibilities.PRIVATE
+                visibility = DescriptorVisibilities.PRIVATE
                 origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
             }.also { fn ->
                 val thisParam = clazz.thisReceiver!!.copyTo(fn)
@@ -297,7 +304,7 @@ open class LiveLiteralTransformer(
             }
             p.addSetter {
                 returnType = context.irBuiltIns.unitType
-                visibility = Visibilities.PRIVATE
+                visibility = DescriptorVisibilities.PRIVATE
                 origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
             }.also { fn ->
                 val thisParam = clazz.thisReceiver!!.copyTo(fn)
@@ -376,6 +383,7 @@ open class LiveLiteralTransformer(
         }
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun <T> visitConst(expression: IrConst<T>): IrExpression {
         when (expression.kind) {
             IrConstKind.Null -> return expression
@@ -450,9 +458,9 @@ open class LiveLiteralTransformer(
         val keys = makeKeySet()
         return keyVisitor.root(keys) {
             val prevClass = liveLiteralsClass
-            val nextClass = buildClass {
+            val nextClass = context.irFactory.buildClass {
                 kind = ClassKind.OBJECT
-                visibility = Visibilities.INTERNAL
+                visibility = DescriptorVisibilities.INTERNAL
                 val shortName = PackagePartClassUtils.getFilePartShortName(fileName)
                 // the name of the LiveLiterals class is per-file, so we use the same name that
                 // the kotlin file class lowering produces, prefixed with `LiveLiterals$`.
@@ -745,7 +753,8 @@ open class LiveLiteralTransformer(
             // loops, so we avoid transforming the first statement in this case
             IrStatementOrigin.FOR_LOOP,
             IrStatementOrigin.FOR_LOOP_INNER_WHILE -> {
-                expression.statements[1] = expression.statements[1].transform(this, null)
+                expression.statements[1] =
+                    expression.statements[1].transform(this, null) as IrStatement
                 expression
             }
 //            IrStatementOrigin.SAFE_CALL
@@ -759,7 +768,7 @@ open class LiveLiteralTransformer(
         }
     }
 
-    override fun visitSetVariable(expression: IrSetVariable): IrExpression {
+    override fun visitSetValue(expression: IrSetValue): IrExpression {
         val owner = expression.symbol.owner
         val name = owner.name
         return when (owner.origin) {
@@ -768,7 +777,7 @@ open class LiveLiteralTransformer(
             IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE -> expression
             IrDeclarationOrigin.IR_TEMPORARY_VARIABLE -> expression
             IrDeclarationOrigin.FOR_LOOP_VARIABLE -> expression
-            else -> enter("set-$name") { super.visitSetVariable(expression) }
+            else -> enter("set-$name") { super.visitSetValue(expression) }
         }
     }
 
@@ -809,6 +818,32 @@ open class LiveLiteralTransformer(
                 setter?.transform(this, null) as? IrSimpleFunction
             }
             declaration
+        }
+    }
+
+    inline fun IrProperty.addSetter(builder: IrFunctionBuilder.() -> Unit = {}): IrSimpleFunction =
+        IrFunctionBuilder().run {
+            name = Name.special("<set-${this@addSetter.name}>")
+            builder()
+            context.irFactory.buildFunction(this).also { setter ->
+                this@addSetter.setter = setter
+                setter.parent = this@addSetter.parent
+            }
+        }
+
+    fun IrFactory.buildFunction(builder: IrFunctionBuilder): IrSimpleFunction = with(builder) {
+        val withContainerSource = originalDeclaration is IrLazyFunction || containerSource != null
+        val wrappedDescriptor = if (withContainerSource)
+            WrappedFunctionDescriptorWithContainerSource()
+        else WrappedSimpleFunctionDescriptor()
+        createFunction(
+            startOffset, endOffset, origin,
+            IrSimpleFunctionSymbolImpl(wrappedDescriptor),
+            name, visibility, modality, returnType,
+            isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect,
+            isFakeOverride, containerSource,
+        ).also {
+            wrappedDescriptor.bind(it)
         }
     }
 }
