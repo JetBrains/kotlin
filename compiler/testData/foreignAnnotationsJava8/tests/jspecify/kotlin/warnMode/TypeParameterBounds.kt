@@ -1,5 +1,4 @@
 // JAVA_SOURCES: TypeParameterBounds.java
-// JSPECIFY_STATE warn
 
 fun <T : Test> main(a1: A<Any?>, a2: A<Test>, b1: B<Any?>, b2: B<Test>, x: T): Unit {
     // jspecify_nullness_mismatch

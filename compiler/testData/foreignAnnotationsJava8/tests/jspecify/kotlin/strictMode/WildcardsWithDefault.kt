@@ -10,14 +10,14 @@ fun main(
 ): Unit {
     // jspecify_nullness_mismatch
     b.noBoundsNotNull(aNotNullNotNullNotNull)
-    b.noBoundsNotNull(aNotNullNotNullNull)
+    b.noBoundsNotNull(<!TYPE_MISMATCH!>aNotNullNotNullNull<!>)
     // jspecify_nullness_mismatch
     b.noBoundsNotNull(<!TYPE_MISMATCH!>aNotNullNullNotNull<!>)
     // jspecify_nullness_mismatch
     b.noBoundsNotNull(<!TYPE_MISMATCH!>aNotNullNullNull<!>)
 
     b.noBoundsNullable(aNotNullNotNullNotNull)
-    b.noBoundsNullable(aNotNullNotNullNull)
-    b.noBoundsNullable(aNotNullNullNotNull)
-    b.noBoundsNullable(aNotNullNullNull)
+    b.noBoundsNullable(<!TYPE_MISMATCH!>aNotNullNotNullNull<!>)
+    b.noBoundsNullable(<!TYPE_MISMATCH!>aNotNullNullNotNull<!>)
+    b.noBoundsNullable(<!TYPE_MISMATCH!>aNotNullNullNull<!>)
 }

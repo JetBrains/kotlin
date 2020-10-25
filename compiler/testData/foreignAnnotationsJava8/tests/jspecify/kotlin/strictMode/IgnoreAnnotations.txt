@@ -20,12 +20,12 @@ public open class Derived : Base {
 
 @org.jspecify.annotations.DefaultNonNull public open class IgnoreAnnotations {
     public constructor IgnoreAnnotations()
-    @org.jspecify.annotations.Nullable public final var field: @org.jspecify.annotations.Nullable Derived!
+    @org.jspecify.annotations.Nullable public final var field: @org.jspecify.annotations.Nullable Derived?
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open fun everythingNotNullable(/*0*/ x: Derived!): Derived!
-    @org.jspecify.annotations.Nullable public open fun everythingNullable(/*0*/ @org.jspecify.annotations.Nullable x: @org.jspecify.annotations.Nullable Derived!): @org.jspecify.annotations.Nullable Derived!
+    public open fun everythingNotNullable(/*0*/ x: Derived): Derived
+    @org.jspecify.annotations.Nullable public open fun everythingNullable(/*0*/ @org.jspecify.annotations.Nullable x: @org.jspecify.annotations.Nullable Derived?): @org.jspecify.annotations.Nullable Derived?
     @org.jspecify.annotations.NullnessUnspecified public open fun everythingUnknown(/*0*/ @org.jspecify.annotations.NullnessUnspecified x: @org.jspecify.annotations.NullnessUnspecified Derived!): @org.jspecify.annotations.NullnessUnspecified Derived!
-    @org.jspecify.annotations.Nullable public open fun foo(/*0*/ x: Derived!, /*1*/ @org.jspecify.annotations.NullnessUnspecified y: @org.jspecify.annotations.NullnessUnspecified Base!): @org.jspecify.annotations.Nullable Derived!
+    @org.jspecify.annotations.Nullable public open fun foo(/*0*/ x: Derived, /*1*/ @org.jspecify.annotations.NullnessUnspecified y: @org.jspecify.annotations.NullnessUnspecified Base!): @org.jspecify.annotations.Nullable Derived?
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

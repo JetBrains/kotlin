@@ -1,0 +1,128 @@
+package
+
+public interface SubKt : UnionTypeArgumentWithUseSite.Super<kotlin.Any> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ fun t(/*0*/ t: kotlin.Any): kotlin.Unit
+    public abstract override /*1*/ fun tUnionNull(/*0*/ t: kotlin.Any?): kotlin.Unit
+    public abstract override /*1*/ fun tUnspec(/*0*/ t: kotlin.Any): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface SubUnionNullKt : UnionTypeArgumentWithUseSite.Super<kotlin.Any?> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ fun t(/*0*/ t: kotlin.Any?): kotlin.Unit
+    public abstract override /*1*/ fun tUnionNull(/*0*/ t: kotlin.Any?): kotlin.Unit
+    public abstract override /*1*/ fun tUnspec(/*0*/ t: kotlin.Any?): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface SubUnspecKt : UnionTypeArgumentWithUseSite.Super<kotlin.Any> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ fun t(/*0*/ t: kotlin.Any): kotlin.Unit
+    public abstract override /*1*/ fun tUnionNull(/*0*/ t: kotlin.Any?): kotlin.Unit
+    public abstract override /*1*/ fun tUnspec(/*0*/ t: kotlin.Any): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface SubWeakerKt : UnionTypeArgumentWithUseSite.Super<kotlin.Any> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun t(/*0*/ t: kotlin.Any!): kotlin.Unit
+    public abstract override /*1*/ fun tUnionNull(/*0*/ t: kotlin.Any): kotlin.Unit
+    public abstract override /*1*/ fun tUnspec(/*0*/ t: kotlin.Any): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface SubWeakerUnionNullKt : UnionTypeArgumentWithUseSite.Super<kotlin.Any?> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun t(/*0*/ t: kotlin.Any): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun t(/*0*/ t: kotlin.Any?): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun tUnionNull(/*0*/ @org.jspecify.annotations.Nullable t: @org.jspecify.annotations.Nullable kotlin.Any?): kotlin.Unit
+    public abstract fun tUnionNull(/*0*/ t: kotlin.Any): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun tUnspec(/*0*/ @org.jspecify.annotations.NullnessUnspecified t: @org.jspecify.annotations.NullnessUnspecified kotlin.Any?): kotlin.Unit
+    public abstract fun tUnspec(/*0*/ t: kotlin.Any): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface SubWeakerUnspecKt : UnionTypeArgumentWithUseSite.Super<kotlin.Any> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ fun t(/*0*/ t: kotlin.Any): kotlin.Unit
+    public abstract override /*1*/ fun tUnionNull(/*0*/ t: kotlin.Any): kotlin.Unit
+    public abstract override /*1*/ fun tUnspec(/*0*/ t: kotlin.Any): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@org.jspecify.annotations.DefaultNonNull public open class UnionTypeArgumentWithUseSite {
+    public constructor UnionTypeArgumentWithUseSite()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public interface Sub : UnionTypeArgumentWithUseSite.Super<kotlin.Any!> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        @java.lang.Override public abstract override /*1*/ fun t(/*0*/ t: kotlin.Any!): kotlin.Unit
+        @java.lang.Override public abstract override /*1*/ fun tUnionNull(/*0*/ @org.jspecify.annotations.Nullable t: @org.jspecify.annotations.Nullable kotlin.Any!): kotlin.Unit
+        @java.lang.Override public abstract override /*1*/ fun tUnspec(/*0*/ @org.jspecify.annotations.NullnessUnspecified t: @org.jspecify.annotations.NullnessUnspecified kotlin.Any!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface SubUnionNull : UnionTypeArgumentWithUseSite.Super<@org.jspecify.annotations.Nullable kotlin.Any!> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        @java.lang.Override public abstract override /*1*/ fun t(/*0*/ @org.jspecify.annotations.Nullable t: @org.jspecify.annotations.Nullable kotlin.Any!): kotlin.Unit
+        @java.lang.Override public abstract override /*1*/ fun tUnionNull(/*0*/ @org.jspecify.annotations.Nullable t: @org.jspecify.annotations.Nullable kotlin.Any!): kotlin.Unit
+        @java.lang.Override public abstract override /*1*/ fun tUnspec(/*0*/ @org.jspecify.annotations.Nullable t: @org.jspecify.annotations.Nullable kotlin.Any!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface SubUnspec : UnionTypeArgumentWithUseSite.Super<@org.jspecify.annotations.NullnessUnspecified kotlin.Any!> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        @java.lang.Override public abstract override /*1*/ fun t(/*0*/ @org.jspecify.annotations.NullnessUnspecified t: @org.jspecify.annotations.NullnessUnspecified kotlin.Any!): kotlin.Unit
+        @java.lang.Override public abstract override /*1*/ fun tUnionNull(/*0*/ @org.jspecify.annotations.Nullable t: @org.jspecify.annotations.Nullable kotlin.Any!): kotlin.Unit
+        @java.lang.Override public abstract override /*1*/ fun tUnspec(/*0*/ @org.jspecify.annotations.NullnessUnspecified t: @org.jspecify.annotations.NullnessUnspecified kotlin.Any!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface SubWeaker : UnionTypeArgumentWithUseSite.Super<kotlin.Any!> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public abstract override /*1*/ /*fake_override*/ fun t(/*0*/ t: kotlin.Any!): kotlin.Unit
+        @java.lang.Override public abstract override /*1*/ fun tUnionNull(/*0*/ t: kotlin.Any!): kotlin.Unit
+        @java.lang.Override public abstract override /*1*/ fun tUnspec(/*0*/ t: kotlin.Any!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface SubWeakerUnionNull : UnionTypeArgumentWithUseSite.Super<@org.jspecify.annotations.Nullable kotlin.Any!> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        @java.lang.Override public abstract override /*1*/ fun t(/*0*/ t: kotlin.Any!): kotlin.Unit
+        @java.lang.Override public abstract override /*1*/ fun tUnionNull(/*0*/ t: kotlin.Any!): kotlin.Unit
+        @java.lang.Override public abstract override /*1*/ fun tUnspec(/*0*/ t: kotlin.Any!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface SubWeakerUnspec : UnionTypeArgumentWithUseSite.Super<@org.jspecify.annotations.NullnessUnspecified kotlin.Any!> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        @java.lang.Override public abstract override /*1*/ fun t(/*0*/ t: kotlin.Any!): kotlin.Unit
+        @java.lang.Override public abstract override /*1*/ fun tUnionNull(/*0*/ t: kotlin.Any!): kotlin.Unit
+        @java.lang.Override public abstract override /*1*/ fun tUnspec(/*0*/ t: kotlin.Any!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface Super</*0*/ T : @org.jspecify.annotations.Nullable kotlin.Any!> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public abstract fun t(/*0*/ t: T!): kotlin.Unit
+        public abstract fun tUnionNull(/*0*/ @org.jspecify.annotations.Nullable t: @org.jspecify.annotations.Nullable T!): kotlin.Unit
+        public abstract fun tUnspec(/*0*/ @org.jspecify.annotations.NullnessUnspecified t: @org.jspecify.annotations.NullnessUnspecified T!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

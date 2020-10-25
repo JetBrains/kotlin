@@ -108,6 +108,35 @@ public class LoadDescriptorUtil {
             @Nullable LanguageVersionSettings explicitLanguageVersionSettings,
             @NotNull List<File> additionalClasspath,
             @NotNull Consumer<KotlinCoreEnvironment> configureEnvironment
+            ) {
+        return loadTestPackageAndBindingContextFromJavaRoot(
+                javaRoot,
+                disposable,
+                testJdkKind,
+                configurationKind,
+                isBinaryRoot,
+                usePsiClassReading,
+                useJavacWrapper,
+                explicitLanguageVersionSettings,
+                additionalClasspath,
+                configureEnvironment,
+                TEST_PACKAGE_FQNAME
+        );
+    }
+
+    @NotNull
+    public static Pair<PackageViewDescriptor, BindingContext> loadTestPackageAndBindingContextFromJavaRoot(
+            @NotNull File javaRoot,
+            @NotNull Disposable disposable,
+            @NotNull TestJdkKind testJdkKind,
+            @NotNull ConfigurationKind configurationKind,
+            boolean isBinaryRoot,
+            boolean usePsiClassReading,
+            boolean useJavacWrapper,
+            @Nullable LanguageVersionSettings explicitLanguageVersionSettings,
+            @NotNull List<File> additionalClasspath,
+            @NotNull Consumer<KotlinCoreEnvironment> configureEnvironment,
+            @NotNull FqName testPackageName
     ) {
         List<File> javaBinaryRoots = new ArrayList<>();
         // TODO: use the same additional binary roots as those were used for compilation
@@ -138,7 +167,7 @@ public class LoadDescriptorUtil {
         }
         AnalysisResult analysisResult = JvmResolveUtil.analyze(environment);
 
-        PackageViewDescriptor packageView = analysisResult.getModuleDescriptor().getPackage(TEST_PACKAGE_FQNAME);
+        PackageViewDescriptor packageView = analysisResult.getModuleDescriptor().getPackage(testPackageName);
         return Pair.create(packageView, analysisResult.getBindingContext());
     }
 

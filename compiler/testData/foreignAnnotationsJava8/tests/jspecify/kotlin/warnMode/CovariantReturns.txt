@@ -1,0 +1,43 @@
+package
+
+@org.jspecify.annotations.DefaultNonNull public interface CovariantReturns {
+    public abstract fun checkLibOfObject(/*0*/ o: CovariantReturns.Lib<out kotlin.Any!>!): kotlin.Unit
+    public abstract fun checkObject(/*0*/ o: kotlin.Any!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun go(/*0*/ s: CovariantReturns.Subtype!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun makeExplicitlyObjectBounded(): CovariantReturns.Lib<out @org.jspecify.annotations.Nullable kotlin.Any!>!
+    public abstract fun makeImplicitlyObjectBounded(): CovariantReturns.Lib<*>!
+    @org.jspecify.annotations.Nullable public abstract fun makeObject(): @org.jspecify.annotations.Nullable kotlin.Any!
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public interface Lib</*0*/ T : @org.jspecify.annotations.Nullable kotlin.Any!> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface Subtype : CovariantReturns {
+        public abstract override /*1*/ /*fake_override*/ fun checkLibOfObject(/*0*/ o: CovariantReturns.Lib<out kotlin.Any!>!): kotlin.Unit
+        public abstract override /*1*/ /*fake_override*/ fun checkObject(/*0*/ o: kotlin.Any!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun go(/*0*/ s: CovariantReturns.Subtype!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        @java.lang.Override public abstract override /*1*/ fun makeExplicitlyObjectBounded(): CovariantReturns.Lib<out kotlin.Any!>!
+        @java.lang.Override public abstract override /*1*/ fun makeImplicitlyObjectBounded(): CovariantReturns.Lib<out kotlin.Any!>!
+        @java.lang.Override public abstract override /*1*/ fun makeObject(): kotlin.Any!
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public interface SubtypeKt : CovariantReturns {
+    public abstract override /*1*/ /*fake_override*/ fun checkLibOfObject(/*0*/ o: CovariantReturns.Lib<out kotlin.Any!>!): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun checkObject(/*0*/ o: kotlin.Any!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun go(/*0*/ s: CovariantReturns.Subtype!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ fun makeExplicitlyObjectBounded(): CovariantReturns.Lib<out kotlin.Any>
+    public abstract override /*1*/ fun makeImplicitlyObjectBounded(): CovariantReturns.Lib<out kotlin.Any>
+    public abstract override /*1*/ fun makeObject(): kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

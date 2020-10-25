@@ -1,5 +1,4 @@
 // JAVA_SOURCES: TypeArgumentsFromParameterBounds.java
-// JSPECIFY_STATE warn
 
 fun main(
             aNotNullNotNullNotNull: TypeArgumentsFromParameterBounds<Test, Test, Test>,

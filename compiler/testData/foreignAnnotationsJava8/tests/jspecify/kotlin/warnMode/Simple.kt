@@ -1,5 +1,4 @@
 // JAVA_SOURCES: Simple.java
-// JSPECIFY_STATE warn
 
 fun main(a: Simple, x: Derived): Unit {
     <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo(x, null)<!>.foo()

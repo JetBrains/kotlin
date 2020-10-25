@@ -45,6 +45,16 @@ public class JspecifyAnnotationsTestGenerated extends AbstractJspecifyAnnotation
             runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/strictMode/AnnotatedBoundsOfWildcard.kt");
         }
 
+        @TestMetadata("ContravariantReturns.kt")
+        public void testContravariantReturns() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/strictMode/ContravariantReturns.kt");
+        }
+
+        @TestMetadata("CovariantReturns.kt")
+        public void testCovariantReturns() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/strictMode/CovariantReturns.kt");
+        }
+
         @TestMetadata("Defaults.kt")
         public void testDefaults() throws Exception {
             runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/strictMode/Defaults.kt");
@@ -60,9 +70,19 @@ public class JspecifyAnnotationsTestGenerated extends AbstractJspecifyAnnotation
             runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/strictMode/NonPlatformTypeParameter.kt");
         }
 
+        @TestMetadata("NotNullAwareOverrides.kt")
+        public void testNotNullAwareOverrides() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/strictMode/NotNullAwareOverrides.kt");
+        }
+
         @TestMetadata("NullnessUnspecifiedTypeParameter.kt")
         public void testNullnessUnspecifiedTypeParameter() throws Exception {
             runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/strictMode/NullnessUnspecifiedTypeParameter.kt");
+        }
+
+        @TestMetadata("Overrides.kt")
+        public void testOverrides() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/strictMode/Overrides.kt");
         }
 
         @TestMetadata("SelfType.kt")
@@ -83,6 +103,11 @@ public class JspecifyAnnotationsTestGenerated extends AbstractJspecifyAnnotation
         @TestMetadata("TypeParameterBounds.kt")
         public void testTypeParameterBounds() throws Exception {
             runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/strictMode/TypeParameterBounds.kt");
+        }
+
+        @TestMetadata("UnionTypeArgumentWithUseSite.kt")
+        public void testUnionTypeArgumentWithUseSite() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/strictMode/UnionTypeArgumentWithUseSite.kt");
         }
 
         @TestMetadata("WildcardsWithDefault.kt")
@@ -108,6 +133,16 @@ public class JspecifyAnnotationsTestGenerated extends AbstractJspecifyAnnotation
             runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/warnMode/AnnotatedBoundsOfWildcard.kt");
         }
 
+        @TestMetadata("ContravariantReturns.kt")
+        public void testContravariantReturns() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/warnMode/ContravariantReturns.kt");
+        }
+
+        @TestMetadata("CovariantReturns.kt")
+        public void testCovariantReturns() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/warnMode/CovariantReturns.kt");
+        }
+
         @TestMetadata("Defaults.kt")
         public void testDefaults() throws Exception {
             runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/warnMode/Defaults.kt");
@@ -123,9 +158,19 @@ public class JspecifyAnnotationsTestGenerated extends AbstractJspecifyAnnotation
             runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/warnMode/NonPlatformTypeParameter.kt");
         }
 
+        @TestMetadata("NotNullAwareOverrides.kt")
+        public void testNotNullAwareOverrides() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/warnMode/NotNullAwareOverrides.kt");
+        }
+
         @TestMetadata("NullnessUnspecifiedTypeParameter.kt")
         public void testNullnessUnspecifiedTypeParameter() throws Exception {
             runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/warnMode/NullnessUnspecifiedTypeParameter.kt");
+        }
+
+        @TestMetadata("Overrides.kt")
+        public void testOverrides() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/warnMode/Overrides.kt");
         }
 
         @TestMetadata("SelfType.kt")
@@ -146,6 +191,11 @@ public class JspecifyAnnotationsTestGenerated extends AbstractJspecifyAnnotation
         @TestMetadata("TypeParameterBounds.kt")
         public void testTypeParameterBounds() throws Exception {
             runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/warnMode/TypeParameterBounds.kt");
+        }
+
+        @TestMetadata("UnionTypeArgumentWithUseSite.kt")
+        public void testUnionTypeArgumentWithUseSite() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/warnMode/UnionTypeArgumentWithUseSite.kt");
         }
 
         @TestMetadata("WildcardsWithDefault.kt")

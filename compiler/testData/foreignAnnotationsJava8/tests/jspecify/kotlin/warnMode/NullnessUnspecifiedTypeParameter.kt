@@ -1,5 +1,4 @@
 // JAVA_SOURCES: NullnessUnspecifiedTypeParameter.java
-// JSPECIFY_STATE warn
 
 fun main(a1: NullnessUnspecifiedTypeParameter<Any>, a2: NullnessUnspecifiedTypeParameter<Any?>, x: Test): Unit {
     a1.foo(null)

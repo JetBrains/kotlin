@@ -11,8 +11,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.diagnostics.Errors.NULL_FOR_NONNULL_TYPE
-import org.jetbrains.kotlin.diagnostics.Errors.TYPE_MISMATCH
+import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
 import org.jetbrains.kotlin.name.FqName
@@ -27,9 +26,11 @@ import java.util.*
 import java.util.regex.Pattern
 
 const val JSPECIFY_NULLNESS_MISMATCH_MARK = "jspecify_nullness_mismatch"
+const val JSPECIFY_NULLNESS_NOT_ENOUGH_INFORMATION_MARK = "jspecify_nullness_not_enough_information"
 
 const val JSPECIFY_NULLABLE_ANNOTATION = "@Nullable"
 const val JSPECIFY_NULLNESS_UNSPECIFIED_ANNOTATION = "@NullnessUnspecified"
+const val JSPECIFY_DEFAULT_NOT_NULL_ANNOTATION = "@DefaultNotNull"
 
 private const val JSPECIFY_STATE_SPECIAL_DIRECTIVE = "JSPECIFY_STATE"
 
@@ -128,22 +129,37 @@ abstract class AbstractJspecifyAnnotationsTest : AbstractDiagnosticsTest() {
         diagnosedRanges: List<DiagnosedRange>,
         lineIndexesByRanges: TreeMap<Int, Int>,
         textLines: List<String>,
-        compilerDiagnosticsToJspecifyMarksMap: Map<String, String>
+        compilerDiagnosticsToJspecifyMarksMap: Map<String, List<String>>
     ) {
-        for ((diagnostic, jspecifyMark) in compilerDiagnosticsToJspecifyMarksMap) {
-            val diagnosticRanges = diagnosedRanges.filter { diagnostics ->
-                diagnostic in diagnostics.getDiagnostics().map { it.name }
-            }.map { it.start }
+        for ((jspecifyMark, possibleDiagnostics) in compilerDiagnosticsToJspecifyMarksMap) {
+            val diagnosticRanges = diagnosedRanges.mapNotNull {
+                val relevantDiagnostics = it.getDiagnostics().filter { it.name in possibleDiagnostics }
+                if (relevantDiagnostics.isEmpty()) return@mapNotNull null
+                it.start
+            }
+
             val lineIndexesWithJspecifyMarks =
                 textLines.mapIndexedNotNull { index, it -> getJspecifyMarkRegex(jspecifyMark).find(it)?.let { index } }
 
+            if (diagnosticRanges.isEmpty()) {
+                if (lineIndexesWithJspecifyMarks.isEmpty()) {
+                    continue
+                } else {
+                    fail(
+                        "None of \"${possibleDiagnostics.joinToString(", ")}\" diagnostics not found " +
+                                "for jspecify mark '$jspecifyMark' at lines: ${lineIndexesWithJspecifyMarks.map { it + 1 }.joinToString()}"
+                    )
+                }
+            }
+
             for (lineIndex in lineIndexesWithJspecifyMarks) {
                 val lineStartPosition = lineIndexesByRanges.entries.find { (_, index) -> index == lineIndex + 1 }?.key
-                val errorMessage = "Diagnostic '$diagnostic' not found for jspecify mark '$jspecifyMark' at ${lineIndex + 1} line"
+                val errorMessage = "None of \"${possibleDiagnostics.joinToString()}\" diagnostics not found " +
+                        "for jspecify mark '$jspecifyMark' at ${lineIndex + 1} line"
 
                 assertNotNull(errorMessage, lineStartPosition)
 
-                val lineEndPosition = lineStartPosition!! + textLines[lineIndex].length
+                val lineEndPosition = lineStartPosition!! + textLines[lineIndex + 1].length
                 val isCorrespondingDiagnosticPresent = diagnosticRanges.any { it in lineStartPosition..lineEndPosition }
 
                 assertTrue(errorMessage, isCorrespondingDiagnosticPresent)
@@ -170,8 +186,13 @@ abstract class AbstractJspecifyAnnotationsTest : AbstractDiagnosticsTest() {
         val jspecifyMode = testFiles.getDirectiveValue(JSPECIFY_STATE_SPECIAL_DIRECTIVE)
             ?: JavaTypeEnhancementState.DEFAULT_REPORT_LEVEL_FOR_JSPECIFY
         val compilerDiagnosticsToJspecifyMarksMap = when (jspecifyMode) {
-            ReportLevel.WARN -> diagnosticsToJspecifyMarksMapForWarnMode
             ReportLevel.STRICT -> diagnosticsToJspecifyMarksMapForStrictMode
+            ReportLevel.WARN -> diagnosticsToJspecifyMarksMapForWarnMode
+            ReportLevel.IGNORE -> mapOf()
+        }
+        val jspecifyMarksToCompilerDiagnosticsMap = when (jspecifyMode) {
+            ReportLevel.STRICT -> jspecifyMarksToPossibleDiagnosticsForStrictMode
+            ReportLevel.WARN -> jspecifyMarksToPossibleDiagnosticsForWarnMode
             ReportLevel.IGNORE -> mapOf()
         }
 
@@ -187,7 +208,7 @@ abstract class AbstractJspecifyAnnotationsTest : AbstractDiagnosticsTest() {
             diagnosedRanges,
             lineIndexesByRanges,
             textLines,
-            compilerDiagnosticsToJspecifyMarksMap
+            jspecifyMarksToCompilerDiagnosticsMap
         )
     }
 
@@ -207,13 +228,21 @@ abstract class AbstractJspecifyAnnotationsTest : AbstractDiagnosticsTest() {
         private val javaSourcesPathRegex = Pattern.compile("""// JAVA_SOURCES: (.*?(?:\.java)?)\n""")
 
         val diagnosticsToJspecifyMarksMapForWarnMode = mapOf(
-            NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS.name to "jspecify_nullness_mismatch"
+            NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS.name to "jspecify_nullness_mismatch",
         )
+
+        val jspecifyMarksToPossibleDiagnosticsForWarnMode =
+            diagnosticsToJspecifyMarksMapForWarnMode.entries.groupBy({ it.value }, { it.key })
 
         val diagnosticsToJspecifyMarksMapForStrictMode = mapOf(
             TYPE_MISMATCH.name to "jspecify_nullness_mismatch",
             NULL_FOR_NONNULL_TYPE.name to "jspecify_nullness_mismatch",
+            NOTHING_TO_OVERRIDE.name to "jspecify_nullness_mismatch",
+            RETURN_TYPE_MISMATCH_ON_OVERRIDE.name to "jspecify_nullness_mismatch",
         )
+
+        val jspecifyMarksToPossibleDiagnosticsForStrictMode =
+            diagnosticsToJspecifyMarksMapForStrictMode.entries.groupBy({ it.value }, { it.key })
 
         private val importSectionRegex = Regex("""((?:import .*?;\n)+)""")
         private val classOrInterfaceRegex = Regex("""(class|interface)""")

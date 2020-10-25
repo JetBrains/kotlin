@@ -54,7 +54,7 @@ fun main(
     b.extendsNullable(aNotNullNullNull)
 
     b.noBounds(aNotNullNotNullNotNull)
-    b.noBounds(aNotNullNotNullNull)
-    b.noBounds(aNotNullNullNotNull)
-    b.noBounds(aNotNullNullNull)
+    b.noBounds(<!TYPE_MISMATCH!>aNotNullNotNullNull<!>)
+    b.noBounds(<!TYPE_MISMATCH!>aNotNullNullNotNull<!>)
+    b.noBounds(<!TYPE_MISMATCH!>aNotNullNullNull<!>)
 }

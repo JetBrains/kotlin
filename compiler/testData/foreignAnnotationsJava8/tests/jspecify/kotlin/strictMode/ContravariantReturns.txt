@@ -1,0 +1,34 @@
+package
+
+@org.jspecify.annotations.DefaultNonNull public interface ContravariantReturns {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun makeExplicitlyObjectBounded(): ContravariantReturns.Lib<out kotlin.Any>
+    public abstract fun makeImplicitlyObjectBounded(): ContravariantReturns.Lib<out kotlin.Any>
+    public abstract fun makeObject(): kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public interface Lib</*0*/ T> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface Subtype : ContravariantReturns {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        @java.lang.Override public abstract override /*1*/ fun makeExplicitlyObjectBounded(): ContravariantReturns.Lib<out @org.jspecify.annotations.Nullable kotlin.Any!>
+        @java.lang.Override public abstract override /*1*/ fun makeImplicitlyObjectBounded(): ContravariantReturns.Lib<*>
+        @java.lang.Override @org.jspecify.annotations.Nullable public abstract override /*1*/ fun makeObject(): @org.jspecify.annotations.Nullable kotlin.Any!
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public interface SubtypeKt : ContravariantReturns {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ fun makeExplicitlyObjectBounded(): ContravariantReturns.Lib<out kotlin.Any?>
+    public abstract override /*1*/ fun makeImplicitlyObjectBounded(): ContravariantReturns.Lib<*>
+    public abstract override /*1*/ fun makeObject(): kotlin.Any?
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

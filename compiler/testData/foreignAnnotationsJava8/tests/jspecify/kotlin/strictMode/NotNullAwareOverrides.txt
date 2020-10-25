@@ -1,0 +1,71 @@
+package
+
+public open class NotNullAwareOverrides {
+    public constructor NotNullAwareOverrides()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public interface SubObject : NotNullAwareOverrides.Super {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        @java.lang.Override public abstract override /*1*/ fun makeObject(): kotlin.Any!
+        @java.lang.Override public abstract override /*1*/ fun makeObjectUnionNull(): kotlin.Any?
+        @java.lang.Override public abstract override /*1*/ fun makeObjectUnspec(): kotlin.Any!
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface SubObjectUnionNull : NotNullAwareOverrides.Super {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        @java.lang.Override @org.jspecify.annotations.Nullable public abstract override /*1*/ fun makeObject(): @org.jspecify.annotations.Nullable kotlin.Any?
+        @java.lang.Override @org.jspecify.annotations.Nullable public abstract override /*1*/ fun makeObjectUnionNull(): @org.jspecify.annotations.Nullable kotlin.Any?
+        @java.lang.Override @org.jspecify.annotations.Nullable public abstract override /*1*/ fun makeObjectUnspec(): @org.jspecify.annotations.Nullable kotlin.Any?
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface SubObjectUnspec : NotNullAwareOverrides.Super {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        @java.lang.Override @org.jspecify.annotations.NullnessUnspecified public abstract override /*1*/ fun makeObject(): @org.jspecify.annotations.NullnessUnspecified kotlin.Any!
+        @java.lang.Override @org.jspecify.annotations.NullnessUnspecified public abstract override /*1*/ fun makeObjectUnionNull(): @org.jspecify.annotations.NullnessUnspecified kotlin.Any!
+        @java.lang.Override @org.jspecify.annotations.NullnessUnspecified public abstract override /*1*/ fun makeObjectUnspec(): @org.jspecify.annotations.NullnessUnspecified kotlin.Any!
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface Super {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public abstract fun makeObject(): kotlin.Any!
+        @org.jspecify.annotations.Nullable public abstract fun makeObjectUnionNull(): @org.jspecify.annotations.Nullable kotlin.Any?
+        @org.jspecify.annotations.NullnessUnspecified public abstract fun makeObjectUnspec(): @org.jspecify.annotations.NullnessUnspecified kotlin.Any!
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public interface SubObjectKt : NotNullAwareOverrides.Super {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ fun makeObject(): kotlin.Any
+    public abstract override /*1*/ fun makeObjectUnionNull(): kotlin.Any
+    public abstract override /*1*/ fun makeObjectUnspec(): kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface SubObjectUnionNullKt : NotNullAwareOverrides.Super {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ fun makeObject(): kotlin.Any?
+    public abstract override /*1*/ fun makeObjectUnionNull(): kotlin.Any?
+    public abstract override /*1*/ fun makeObjectUnspec(): kotlin.Any?
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface SubObjectUnspecKt : NotNullAwareOverrides.Super {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ fun makeObject(): kotlin.Any
+    public abstract override /*1*/ fun makeObjectUnionNull(): kotlin.Any
+    public abstract override /*1*/ fun makeObjectUnspec(): kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

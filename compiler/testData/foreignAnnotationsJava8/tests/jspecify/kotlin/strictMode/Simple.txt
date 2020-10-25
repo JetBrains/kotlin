@@ -19,10 +19,10 @@ public open class Derived : Base {
 
 @org.jspecify.annotations.DefaultNonNull public open class Simple {
     public constructor Simple()
-    @org.jspecify.annotations.Nullable public final var field: @org.jspecify.annotations.Nullable Derived!
-    public open fun bar(): Derived!
+    @org.jspecify.annotations.Nullable public final var field: @org.jspecify.annotations.Nullable Derived?
+    public open fun bar(): Derived
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @org.jspecify.annotations.Nullable public open fun foo(/*0*/ x: Derived!, /*1*/ @org.jspecify.annotations.NullnessUnspecified y: @org.jspecify.annotations.NullnessUnspecified Base!): @org.jspecify.annotations.Nullable Derived!
+    @org.jspecify.annotations.Nullable public open fun foo(/*0*/ x: Derived, /*1*/ @org.jspecify.annotations.NullnessUnspecified y: @org.jspecify.annotations.NullnessUnspecified Base!): @org.jspecify.annotations.Nullable Derived?
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
@@ -34,5 +34,5 @@ public open class Derived : Base {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public open fun main(/*0*/ a: Simple!, /*1*/ x: Derived!): kotlin.Unit
+    public open fun main(/*0*/ a: Simple, /*1*/ x: Derived): kotlin.Unit
 }
