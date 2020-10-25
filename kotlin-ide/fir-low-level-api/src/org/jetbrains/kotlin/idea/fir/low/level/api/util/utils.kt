@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.psi.KtDeclaration
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.locks.ReentrantLock
+import java.util.concurrent.locks.Lock
 
 
 internal inline fun <T> executeOrReturnDefaultValueOnPCE(defaultValue: T, action: () -> T): T =
@@ -31,7 +31,7 @@ internal inline fun <T : Any> executeWithoutPCE(crossinline action: () -> T): T 
     return result!!
 }
 
-internal inline fun <T : Any> ReentrantLock.lockWithPCECheck(lockingIntervalMs: Long, action: () -> T): T {
+internal inline fun <T : Any> Lock.lockWithPCECheck(lockingIntervalMs: Long, action: () -> T): T {
     var needToRun = true
     var result: T? = null
     while (needToRun) {
