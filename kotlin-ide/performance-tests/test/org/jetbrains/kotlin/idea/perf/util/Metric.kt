@@ -49,8 +49,10 @@ data class Benchmark(
         metrics.forEach { it.resetValue() }
     }
 
+    private fun String?.escapeName() = this?.replace(Regex("[^A-Za-z0-9_]"), "_")
+
     fun fileName(): String =
-        listOfNotNull(benchmark, name?.replace("[^A-Za-z0-9_]", ""), buildId?.toString()).joinToString(separator = "_")
+        listOfNotNull(benchmark?.escapeName(), name?.escapeName(), buildId?.toString()).joinToString(separator = "_")
 
     fun cleanUp() {
         metrics?.forEach { it.cleanUp() }
