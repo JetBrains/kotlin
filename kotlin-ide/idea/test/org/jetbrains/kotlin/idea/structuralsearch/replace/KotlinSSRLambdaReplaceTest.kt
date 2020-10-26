@@ -23,4 +23,46 @@ class KotlinSSRLambdaReplaceTest : KotlinSSRReplaceTest() {
             """.trimIndent()
         )
     }
+
+    fun testLambdaFullTemplate() {
+        doTest(
+            searchPattern = "{ '_LAMBDA }",
+            replacePattern = "{ '_LAMBDA }",
+            match = """
+                fun foo(bar: (Int) -> Unit)
+                
+                fun main() {
+                    foo { i -> println(i) }
+                }
+            """.trimIndent(),
+            """
+                fun foo(bar: (Int) -> Unit)
+                
+                fun main() {
+                    foo { i -> println(i) }
+                }
+            """.trimIndent()
+        )
+    }
+
+    fun testLambdaFullTemplateMultipleParameters() {
+        doTest(
+            searchPattern = "{ '_LAMBDA }",
+            replacePattern = "{ '_LAMBDA }",
+            match = """
+                fun foo(bar: (Int, String, Int) -> Unit)
+                
+                fun main() {
+                    foo { i,  s  ,  i -> println(i) }
+                }
+            """.trimIndent(),
+            """
+                fun foo(bar: (Int, String, Int) -> Unit)
+                
+                fun main() {
+                    foo { i,  s  ,  i -> println(i) }
+                }
+            """.trimIndent()
+        )
+    }
 }

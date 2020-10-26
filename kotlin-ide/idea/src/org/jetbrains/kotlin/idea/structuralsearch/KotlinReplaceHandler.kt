@@ -71,6 +71,18 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
                 }
             }
             if(this is KtLambdaExpression) {
+                if(searchTemplate is KtLambdaExpression && match is KtLambdaExpression) {
+                    if(valueParameters.isEmpty() && searchTemplate.valueParameters.isEmpty()) { // { $A$ } templates
+                        match.functionLiteral.valueParameterList?.let {
+                            functionLiteral.addAfter(it, functionLiteral.lBrace)
+                            functionLiteral.addAfter(match.functionLiteral.arrow!!, functionLiteral.valueParameterList!!)
+                            functionLiteral.addSurroundingWhiteSpace(
+                                functionLiteral.valueParameterList!!,
+                                match.functionLiteral.valueParameterList!!
+                            )
+                        }
+                    }
+                }
                 if(valueParameters.isEmpty()) {
                     findDescendantOfType<PsiElement> { it.elementType == KtTokens.ARROW }?.let {
                         it.deleteSurroundingWhitespace()
