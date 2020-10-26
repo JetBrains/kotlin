@@ -282,9 +282,9 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                                 project.tasks.named(target.toValidSDK.toBuildDependenciesTaskName(pod), PodBuildTask::class.java)
                             val buildSettings =
                                 podBuildTaskProvider.get().buildSettingsFile.get()
-                                    .inputStream()
+                                    .reader()
                                     .use {
-                                        PodBuildSettingsProperties.readSettingsFromStream(it)
+                                        PodBuildSettingsProperties.readSettingsFromReader(it)
                                     }
 
                             buildSettings.cflags?.let { args ->
