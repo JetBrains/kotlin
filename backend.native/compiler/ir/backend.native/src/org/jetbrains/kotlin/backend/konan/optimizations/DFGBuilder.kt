@@ -334,7 +334,9 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                 // Producer and job of executeImpl are called externally, we need to reflect this somehow.
                 val producerInvocation = IrCallImpl(expression.startOffset, expression.endOffset,
                         executeImplProducerInvoke.returnType,
-                        executeImplProducerInvoke.symbol)
+                        executeImplProducerInvoke.symbol,
+                        executeImplProducerInvoke.symbol.owner.typeParameters.size,
+                        executeImplProducerInvoke.symbol.owner.valueParameters.size)
                 producerInvocation.dispatchReceiver = expression.getValueArgument(2)
 
                 expressions += producerInvocation to currentLoop
@@ -343,7 +345,9 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                         ?: error("A function reference expected")
                 val jobInvocation = IrCallImpl(expression.startOffset, expression.endOffset,
                         jobFunctionReference.symbol.owner.returnType,
-                        jobFunctionReference.symbol as IrSimpleFunctionSymbol)
+                        jobFunctionReference.symbol as IrSimpleFunctionSymbol,
+                        jobFunctionReference.symbol.owner.typeParameters.size,
+                        jobFunctionReference.symbol.owner.valueParameters.size)
                 jobInvocation.putValueArgument(0, producerInvocation)
 
                 expressions += jobInvocation to currentLoop
@@ -355,7 +359,9 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                     && expression.typeOperand.isObjCObjectType()) {
                 val objcObjGetter = IrCallImpl(expression.startOffset, expression.endOffset,
                         objCObjectRawValueGetter.owner.returnType,
-                        objCObjectRawValueGetter
+                        objCObjectRawValueGetter,
+                        objCObjectRawValueGetter.owner.typeParameters.size,
+                        objCObjectRawValueGetter.owner.valueParameters.size
                 ).apply {
                     extensionReceiver = expression.argument
                 }

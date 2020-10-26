@@ -97,7 +97,9 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
                     startOffset,
                     endOffset,
                     symbols.getNativeNullPtr.owner.returnType,
-                    symbols.getNativeNullPtr
+                    symbols.getNativeNullPtr,
+                    symbols.getNativeNullPtr.owner.typeParameters.size,
+                    symbols.getNativeNullPtr.owner.valueParameters.size
             ).uncheckedCast(type)
         }
 
@@ -164,7 +166,8 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
             val parameter = conversion.owner.explicitParameters.single()
             val argument = this.uncheckedCast(parameter.type)
 
-            IrCallImpl(startOffset, endOffset, conversion.owner.returnType, conversion).apply {
+            IrCallImpl(startOffset, endOffset, conversion.owner.returnType, conversion,
+                    conversion.owner.typeParameters.size, conversion.owner.valueParameters.size).apply {
                 addArguments(mapOf(parameter to argument))
             }.uncheckedCast(this.type) // Try not to bring new type incompatibilities.
         }
@@ -273,7 +276,9 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
             IrBlockImpl(startOffset, endOffset, irBuiltIns.unitType).apply {
                 statements.addIfNotNull(expression.receiver)
                 statements += expression.value
-                statements += IrCallImpl(startOffset, endOffset, irBuiltIns.nothingType, symbols.throwNullPointerException)
+                statements += IrCallImpl(startOffset, endOffset, irBuiltIns.nothingType, symbols.throwNullPointerException,
+                        symbols.throwNullPointerException.owner.typeParameters.size,
+                        symbols.throwNullPointerException.owner.valueParameters.size)
                 statements += IrGetObjectValueImpl(startOffset, endOffset, irBuiltIns.unitType, irBuiltIns.unitClass)
             }
         } else {

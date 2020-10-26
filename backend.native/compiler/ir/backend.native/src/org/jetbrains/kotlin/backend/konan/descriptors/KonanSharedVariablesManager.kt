@@ -64,7 +64,8 @@ internal class KonanSharedVariablesManager(val context: KonanBackendContext) : S
 
         val sharedVariableInitialization =
                 IrCallImpl(initializer.startOffset, initializer.endOffset,
-                        context.irBuiltIns.unitType, elementProperty.setter!!.symbol)
+                        context.irBuiltIns.unitType, elementProperty.setter!!.symbol,
+                        elementProperty.setter!!.typeParameters.size, elementProperty.setter!!.valueParameters.size)
 
         sharedVariableInitialization.dispatchReceiver =
                 IrGetValueImpl(initializer.startOffset, initializer.endOffset,
@@ -80,7 +81,8 @@ internal class KonanSharedVariablesManager(val context: KonanBackendContext) : S
 
     override fun getSharedValue(sharedVariableSymbol: IrVariableSymbol, originalGet: IrGetValue) =
             IrCallImpl(originalGet.startOffset, originalGet.endOffset,
-                    originalGet.type, elementProperty.getter!!.symbol).apply {
+                    originalGet.type, elementProperty.getter!!.symbol,
+                    elementProperty.getter!!.typeParameters.size, elementProperty.getter!!.valueParameters.size).apply {
                 dispatchReceiver = IrGetValueImpl(
                         originalGet.startOffset, originalGet.endOffset,
                         sharedVariableSymbol.owner.type, sharedVariableSymbol
@@ -89,7 +91,8 @@ internal class KonanSharedVariablesManager(val context: KonanBackendContext) : S
 
     override fun setSharedValue(sharedVariableSymbol: IrVariableSymbol, originalSet: IrSetValue) =
             IrCallImpl(originalSet.startOffset, originalSet.endOffset, context.irBuiltIns.unitType,
-                    elementProperty.setter!!.symbol).apply {
+                    elementProperty.setter!!.symbol, elementProperty.setter!!.typeParameters.size,
+                    elementProperty.setter!!.valueParameters.size).apply {
                 dispatchReceiver = IrGetValueImpl(
                         originalSet.startOffset, originalSet.endOffset,
                         sharedVariableSymbol.owner.type, sharedVariableSymbol

@@ -64,7 +64,9 @@ internal class CStructVarClassGenerator(
             irConstructor.body = irBuilder(irBuiltIns, irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                 +IrDelegatingConstructorCallImpl(
                         startOffset, endOffset,
-                        context.irBuiltIns.unitType, enumVarConstructorSymbol
+                        context.irBuiltIns.unitType, enumVarConstructorSymbol,
+                        irConstructor.typeParameters.size,
+                        1
                 ).also {
                     it.putValueArgument(0, irGet(irConstructor.valueParameters[0]))
                 }

@@ -48,7 +48,9 @@ internal class CStructVarCompanionGenerator(
             irConstructor.body = irBuilder(irBuiltIns, irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                 +IrDelegatingConstructorCallImpl(
                         startOffset, endOffset, context.irBuiltIns.unitType,
-                        superConstructorSymbol
+                        superConstructorSymbol,
+                        irConstructor.typeParameters.size,
+                        2
                 ).also {
                     it.putValueArgument(0, irLong(size))
                     it.putValueArgument(1, irInt(align))

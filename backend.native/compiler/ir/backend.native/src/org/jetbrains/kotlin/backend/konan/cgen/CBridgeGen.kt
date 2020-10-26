@@ -553,6 +553,7 @@ internal fun KotlinStubs.generateCFunctionPointer(
             expression.type,
             fakeFunction.symbol,
             typeArgumentsCount = 0,
+            fakeFunction.valueParameters.size,
             reflectionTarget = null
     )
 }

@@ -188,7 +188,9 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
                                     val startOffset = it.startOffset
                                     val endOffset = it.endOffset
                                     listOf(IrCallImpl(startOffset, endOffset,
-                                            context.irBuiltIns.unitType, initializeMethodSymbol
+                                            context.irBuiltIns.unitType, initializeMethodSymbol,
+                                            initializeMethodSymbol.owner.typeParameters.size,
+                                            initializeMethodSymbol.owner.valueParameters.size
                                     ).apply {
                                         dispatchReceiver = IrGetValueImpl(
                                                 startOffset, endOffset,

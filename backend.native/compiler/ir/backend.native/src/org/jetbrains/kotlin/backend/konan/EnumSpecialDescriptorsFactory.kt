@@ -88,7 +88,7 @@ internal data class ExternalLoweredEnum(
         override val entriesMap: Map<Name, Int>
 ) : LoweredEnumAccess {
     override fun getValuesField(startOffset: Int, endOffset: Int): IrExpression =
-            IrCallImpl(startOffset, endOffset, valuesGetter.returnType, valuesGetter.symbol)
+            IrCallImpl(startOffset, endOffset, valuesGetter.returnType, valuesGetter.symbol, valuesGetter.typeParameters.size, valuesGetter.valueParameters.size)
 }
 
 internal class EnumSpecialDeclarationsFactory(val context: Context) {

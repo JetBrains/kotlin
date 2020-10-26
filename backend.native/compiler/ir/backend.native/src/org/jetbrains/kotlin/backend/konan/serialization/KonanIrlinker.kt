@@ -58,7 +58,7 @@ object KonanFakeOverrideClassFilter : FakeOverrideClassFilter {
     private fun IrClass.hasInteropSuperClass() = this.superTypes
         .mapNotNull { it.classOrNull }
         .filter { it is IrPublicSymbolBase<*> }
-        .any { it.signature.isInteropSignature() }
+        .any { it.signature?.isInteropSignature() ?: false }
 
     override fun needToConstructFakeOverrides(clazz: IrClass): Boolean {
         return !clazz.hasInteropSuperClass()

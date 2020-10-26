@@ -119,6 +119,7 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
                         type          = job.type,
                         symbol        = bridge.symbol,
                         typeArgumentsCount = 0,
+                        valueArgumentsCount = bridge.symbol.owner.valueParameters.size,
                         reflectionTarget = null)
                 )
                 return expression
@@ -238,6 +239,8 @@ private fun Context.buildBridge(startOffset: Int, endOffset: Int,
                 endOffset,
                 targetSymbol.owner.returnType,
                 targetSymbol,
+                typeArgumentsCount = targetSymbol.owner.typeParameters.size,
+                valueArgumentsCount = targetSymbol.owner.valueParameters.size,
                 superQualifierSymbol = superQualifierSymbol /* Call non-virtually */
         ).apply {
             bridge.dispatchReceiverParameter?.let {

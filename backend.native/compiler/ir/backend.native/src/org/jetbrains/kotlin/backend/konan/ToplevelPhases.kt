@@ -368,7 +368,7 @@ internal val useInternalAbiPhase = makeKonanModuleOpPhase(
                             context.internalAbi.reference(it, irClass.module)
                         }
                     }
-                    return IrCallImpl(expression.startOffset, expression.endOffset, expression.type, accessor.symbol)
+                    return IrCallImpl(expression.startOffset, expression.endOffset, expression.type, accessor.symbol, accessor.typeParameters.size, accessor.valueParameters.size)
                 }
             }
             module.transformChildrenVoid(transformer)

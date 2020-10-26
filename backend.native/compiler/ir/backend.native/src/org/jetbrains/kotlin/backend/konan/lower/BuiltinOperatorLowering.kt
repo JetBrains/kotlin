@@ -58,7 +58,9 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
 
             irBuiltins.noWhenBranchMatchedExceptionSymbol -> IrCallImpl(expression.startOffset, expression.endOffset,
                     context.ir.symbols.throwNoWhenBranchMatchedException.owner.returnType,
-                    context.ir.symbols.throwNoWhenBranchMatchedException)
+                    context.ir.symbols.throwNoWhenBranchMatchedException,
+                    context.ir.symbols.throwNoWhenBranchMatchedException.owner.typeParameters.size,
+                    context.ir.symbols.throwNoWhenBranchMatchedException.owner.valueParameters.size)
 
             else -> expression
         }

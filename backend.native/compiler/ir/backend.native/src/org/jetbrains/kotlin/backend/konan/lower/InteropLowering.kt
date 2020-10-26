@@ -655,7 +655,8 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
                         endOffset,
                         context.irBuiltIns.unitType,
                         superConstructor,
-                        0
+                        0,
+                        superConstructor.owner.valueParameters.size
                 )
 
                 +irCall(symbols.interopObjCObjectSuperInitCheck).apply {
@@ -1213,6 +1214,7 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
                             symbols.executeImpl.owner.valueParameters[3].type,
                             targetSymbol,
                             typeArgumentsCount = 0,
+                            targetSymbol.owner.valueParameters.size,
                             reflectionTarget = null)
 
                     builder.irCall(symbols.executeImpl).apply {
