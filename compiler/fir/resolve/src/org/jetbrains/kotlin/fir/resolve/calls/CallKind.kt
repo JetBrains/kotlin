@@ -60,7 +60,8 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CreateFreshTypeVariableSubstitutorStage,
         CheckReceivers.Dispatch,
         CheckReceivers.Extension,
-        CheckCallableReferenceExpectedType
+        CheckCallableReferenceExpectedType,
+        CheckLowPriorityInOverloadResolution
     )
 
     object SyntheticIdForCallableReferencesResolution : CallKind(
