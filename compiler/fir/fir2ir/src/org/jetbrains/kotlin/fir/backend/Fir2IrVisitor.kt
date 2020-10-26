@@ -53,7 +53,7 @@ class Fir2IrVisitor(
 
     private val annotationGenerator = AnnotationGenerator(this)
 
-    private val implicitCastInserter = Fir2IrImplicitCastInserter(components, this)
+    internal val implicitCastInserter = Fir2IrImplicitCastInserter(components, this)
 
     private val memberGenerator = ClassMemberGenerator(components, this, conversionScope)
 
@@ -64,7 +64,7 @@ class Fir2IrVisitor(
     private fun <T : IrDeclaration> applyParentFromStackTo(declaration: T): T = conversionScope.applyParentFromStackTo(declaration)
 
     override fun visitElement(element: FirElement, data: Any?): IrElement {
-        TODO("Should not be here: ${element.render()}")
+        TODO("Should not be here: ${element::class} ${element.render()}")
     }
 
     override fun visitField(field: FirField, data: Any?): IrField {
@@ -260,7 +260,10 @@ class Fir2IrVisitor(
             variable, conversionScope.parentFromStack(), if (isNextVariable) IrDeclarationOrigin.FOR_LOOP_VARIABLE else null
         )
         if (initializer != null) {
-            irVariable.initializer = convertToIrExpression(initializer)
+            irVariable.initializer =
+                with(implicitCastInserter) {
+                    convertToIrExpression(initializer).cast(initializer, initializer.typeRef, variable.returnTypeRef)
+                }
         }
         return irVariable
     }
@@ -288,6 +291,8 @@ class Fir2IrVisitor(
                 },
                 convertToIrExpression(result)
             )
+        }.let {
+            returnExpression.accept(implicitCastInserter, it)
         }
     }
 
@@ -470,10 +475,7 @@ class Fir2IrVisitor(
                 }
             }
         }.let {
-            // TODO: expression(implicitCastInserter, it) as IrExpression
-            with(implicitCastInserter) {
-                it.insertImplicitNotNullCastIfNeeded(expression)
-            }
+            expression.accept(implicitCastInserter, it) as IrExpression
         }
     }
 
@@ -563,11 +565,6 @@ class Fir2IrVisitor(
                     startOffset, endOffset, type, origin,
                     mapToIrStatements().filterNotNull()
                 )
-            }.also {
-                // TODO: can remove this once implicit cast inserter visits more expression kinds directly
-                with(implicitCastInserter) {
-                    it.insertImplicitCasts()
-                }
             }
         }
     }
@@ -655,7 +652,7 @@ class Fir2IrVisitor(
                 val irBranches = whenExpression.branches.mapNotNullTo(mutableListOf()) { branch ->
                     branch.takeIf {
                         it.condition !is FirElseIfTrueCondition || it.result.statements.isNotEmpty()
-                    }?.toIrWhenBranch()
+                    }?.toIrWhenBranch(whenExpression.typeRef)
                 }
                 if (whenExpression.isExhaustive && whenExpression.branches.none { it.condition is FirElseIfTrueCondition }) {
                     val irResult = IrCallImpl(
@@ -677,6 +674,8 @@ class Fir2IrVisitor(
                     ) whenExpression.typeRef.toIrType() else irBuiltIns.unitType
                 )
             }
+        }.also {
+            whenExpression.accept(implicitCastInserter, it)
         }
     }
 
@@ -708,10 +707,12 @@ class Fir2IrVisitor(
         }
     }
 
-    private fun FirWhenBranch.toIrWhenBranch(): IrBranch {
+    private fun FirWhenBranch.toIrWhenBranch(whenExpressionType: FirTypeRef): IrBranch {
         return convertWithOffsets { startOffset, endOffset ->
             val condition = condition
-            val irResult = convertToIrExpression(result)
+            val irResult = with(implicitCastInserter) {
+                convertToIrExpression(result).cast(result, result.typeRef, whenExpressionType)
+            }
             if (condition is FirElseIfTrueCondition) {
                 IrElseBranchImpl(IrConstImpl.boolean(irResult.startOffset, irResult.endOffset, irBuiltIns.booleanType, true), irResult)
             } else {
@@ -741,6 +742,8 @@ class Fir2IrVisitor(
                 condition = convertToIrExpression(doWhileLoop.condition)
                 loopMap.remove(doWhileLoop)
             }
+        }.also {
+            doWhileLoop.accept(implicitCastInserter, it)
         }
     }
 
@@ -756,6 +759,8 @@ class Fir2IrVisitor(
                 body = whileLoop.block.convertToIrExpressionOrBlock(origin.takeIf { it != IrStatementOrigin.WHILE_LOOP })
                 loopMap.remove(whileLoop)
             }
+        }.also {
+            whileLoop.accept(implicitCastInserter, it)
         }
     }
 
