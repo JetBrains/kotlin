@@ -76,7 +76,7 @@ abstract class LinkerFlags(val configurables: Configurables) {
                                    libraries: List<String>, linkerArgs: List<String>,
                                    optimize: Boolean, debug: Boolean,
                                    kind: LinkerOutputKind, outputDsymBundle: String,
-                                   needsProfileLibrary: Boolean): List<Command>
+                                   needsProfileLibrary: Boolean, mimallocEnabled: Boolean): List<Command>
 
     /**
      * Returns list of commands that link object files into a single one.
@@ -123,7 +123,7 @@ class AndroidLinker(targetProperties: AndroidConfigurables)
                                    libraries: List<String>, linkerArgs: List<String>,
                                    optimize: Boolean, debug: Boolean,
                                    kind: LinkerOutputKind, outputDsymBundle: String,
-                                   needsProfileLibrary: Boolean): List<Command> {
+                                   needsProfileLibrary: Boolean, mimallocEnabled: Boolean): List<Command> {
         if (kind == LinkerOutputKind.STATIC_LIBRARY)
             return staticGnuArCommands(ar, executable, objectFiles, libraries)
 
@@ -151,6 +151,7 @@ class AndroidLinker(targetProperties: AndroidConfigurables)
             if (dynamic) +linkerDynamicFlags
             if (dynamic) +"-Wl,-soname,${File(executable).name}"
             +linkerKonanFlags
+            if (mimallocEnabled) +mimallocLinkerDependencies
             +libraries
             +linkerArgs
         })
@@ -209,7 +210,7 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
                                    libraries: List<String>, linkerArgs: List<String>,
                                    optimize: Boolean, debug: Boolean, kind: LinkerOutputKind,
                                    outputDsymBundle: String,
-                                   needsProfileLibrary: Boolean): List<Command> {
+                                   needsProfileLibrary: Boolean, mimallocEnabled: Boolean): List<Command> {
         if (kind == LinkerOutputKind.STATIC_LIBRARY)
             return listOf(Command(libtool).apply {
                 +"-static"
@@ -231,6 +232,7 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
             if (!debug) +linkerNoDebugFlags
             if (dynamic) +linkerDynamicFlags
             +linkerKonanFlags
+            if (mimallocEnabled) +mimallocLinkerDependencies
             if (compilerRtLibrary != null) +compilerRtLibrary!!
             if (needsProfileLibrary) +profileLibrary!!
             +libraries
@@ -332,7 +334,7 @@ class GccBasedLinker(targetProperties: GccConfigurables)
                                    libraries: List<String>, linkerArgs: List<String>,
                                    optimize: Boolean, debug: Boolean,
                                    kind: LinkerOutputKind, outputDsymBundle: String,
-                                   needsProfileLibrary: Boolean): List<Command> {
+                                   needsProfileLibrary: Boolean, mimallocEnabled: Boolean): List<Command> {
         if (kind == LinkerOutputKind.STATIC_LIBRARY)
             return staticGnuArCommands(ar, executable, objectFiles, libraries)
 
@@ -373,6 +375,7 @@ class GccBasedLinker(targetProperties: GccConfigurables)
             +"$absoluteTargetSysRoot/$crtPrefix/crtn.o"
             +libraries
             +linkerArgs
+            if (mimallocEnabled) +mimallocLinkerDependencies
         })
     }
 }
@@ -400,7 +403,7 @@ class MingwLinker(targetProperties: MingwConfigurables)
                                    libraries: List<String>, linkerArgs: List<String>,
                                    optimize: Boolean, debug: Boolean,
                                    kind: LinkerOutputKind, outputDsymBundle: String,
-                                   needsProfileLibrary: Boolean): List<Command> {
+                                   needsProfileLibrary: Boolean, mimallocEnabled: Boolean): List<Command> {
         if (kind == LinkerOutputKind.STATIC_LIBRARY)
             return staticGnuArCommands(ar, executable, objectFiles, libraries)
 
@@ -421,6 +424,7 @@ class MingwLinker(targetProperties: MingwConfigurables)
             if (needsProfileLibrary) +profileLibrary!!
             +linkerArgs
             +linkerKonanFlags
+            if (mimallocEnabled) +mimallocLinkerDependencies
         })
     }
 }
@@ -436,7 +440,7 @@ class WasmLinker(targetProperties: WasmConfigurables)
                                    libraries: List<String>, linkerArgs: List<String>,
                                    optimize: Boolean, debug: Boolean,
                                    kind: LinkerOutputKind, outputDsymBundle: String,
-                                   needsProfileLibrary: Boolean): List<Command> {
+                                   needsProfileLibrary: Boolean, mimallocEnabled: Boolean): List<Command> {
         if (kind != LinkerOutputKind.EXECUTABLE) throw Error("Unsupported linker output kind")
 
         val linkage = Command("$llvmBin/wasm-ld").apply {
@@ -488,7 +492,7 @@ open class ZephyrLinker(targetProperties: ZephyrConfigurables)
                                    libraries: List<String>, linkerArgs: List<String>,
                                    optimize: Boolean, debug: Boolean,
                                    kind: LinkerOutputKind, outputDsymBundle: String,
-                                   needsProfileLibrary: Boolean): List<Command> {
+                                   needsProfileLibrary: Boolean, mimallocEnabled: Boolean): List<Command> {
         if (kind != LinkerOutputKind.EXECUTABLE) throw Error("Unsupported linker output kind: $kind")
         return listOf(Command(linker).apply {
             +listOf("-r", "--gc-sections", "--entry", "main")

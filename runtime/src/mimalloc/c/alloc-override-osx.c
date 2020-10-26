@@ -19,6 +19,12 @@ terms of the MIT license. A copy of the license can be found in the file
 /* ------------------------------------------------------
    Override system malloc on macOS
    This is done through the malloc zone interface.
+   It seems we also need to interpose (see `alloc-override.c`)
+   or otherwise we get zone errors as there are usually
+   already allocations done by the time we take over the
+   zone. Unfortunately, that means we need to replace
+   the `free` with a checked free (`cfree`) impacting
+   performance.
 ------------------------------------------------------ */
 
 #include <AvailabilityMacros.h>
@@ -37,34 +43,45 @@ extern malloc_zone_t* malloc_default_purgeable_zone(void) __attribute__((weak_im
 ------------------------------------------------------ */
 
 static size_t zone_size(malloc_zone_t* zone, const void* p) {
-  return 0; // as we cannot guarantee that `p` comes from us, just return 0
+  UNUSED(zone);
+  if (!mi_is_in_heap_region(p))
+    return 0; // not our pointer, bail out
+
+  return mi_usable_size(p);
 }
 
 static void* zone_malloc(malloc_zone_t* zone, size_t size) {
+  UNUSED(zone);
   return mi_malloc(size);
 }
 
 static void* zone_calloc(malloc_zone_t* zone, size_t count, size_t size) {
+  UNUSED(zone);
   return mi_calloc(count, size);
 }
 
 static void* zone_valloc(malloc_zone_t* zone, size_t size) {
+  UNUSED(zone);
   return mi_malloc_aligned(size, _mi_os_page_size());
 }
 
 static void zone_free(malloc_zone_t* zone, void* p) {
+  UNUSED(zone);
   return mi_free(p);
 }
 
 static void* zone_realloc(malloc_zone_t* zone, void* p, size_t newsize) {
+  UNUSED(zone);
   return mi_realloc(p, newsize);
 }
 
 static void* zone_memalign(malloc_zone_t* zone, size_t alignment, size_t size) {
+  UNUSED(zone);
   return mi_malloc_aligned(size,alignment);
 }
 
 static void zone_destroy(malloc_zone_t* zone) {
+  UNUSED(zone);
   // todo: ignore for now?
 }
 
@@ -85,11 +102,13 @@ static void zone_batch_free(malloc_zone_t* zone, void** ps, unsigned count) {
 }
 
 static size_t zone_pressure_relief(malloc_zone_t* zone, size_t size) {
+  UNUSED(zone); UNUSED(size);
   mi_collect(false);
   return 0;
 }
 
 static void zone_free_definite_size(malloc_zone_t* zone, void* p, size_t size) {
+  UNUSED(size);
   zone_free(zone,p);
 }
 
@@ -104,34 +123,43 @@ static kern_return_t intro_enumerator(task_t task, void* p,
                             vm_range_recorder_t recorder)
 {
   // todo: enumerate all memory
+  UNUSED(task); UNUSED(p); UNUSED(type_mask); UNUSED(zone_address);
+  UNUSED(reader); UNUSED(recorder);
   return KERN_SUCCESS;
 }
 
 static size_t intro_good_size(malloc_zone_t* zone, size_t size) {
+  UNUSED(zone);
   return mi_good_size(size);
 }
 
 static boolean_t intro_check(malloc_zone_t* zone) {
+  UNUSED(zone);
   return true;
 }
 
 static void intro_print(malloc_zone_t* zone, boolean_t verbose) {
+  UNUSED(zone); UNUSED(verbose);
   mi_stats_print(NULL);
 }
 
 static void intro_log(malloc_zone_t* zone, void* p) {
+  UNUSED(zone); UNUSED(p);
   // todo?
 }
 
 static void intro_force_lock(malloc_zone_t* zone) {
+  UNUSED(zone);
   // todo?
 }
 
 static void intro_force_unlock(malloc_zone_t* zone) {
+  UNUSED(zone);
   // todo?
 }
 
 static void intro_statistics(malloc_zone_t* zone, malloc_statistics_t* stats) {
+  UNUSED(zone);
   // todo...
   stats->blocks_in_use = 0;
   stats->size_in_use = 0;
@@ -140,6 +168,7 @@ static void intro_statistics(malloc_zone_t* zone, malloc_statistics_t* stats) {
 }
 
 static boolean_t intro_zone_locked(malloc_zone_t* zone) {
+  UNUSED(zone);
   return false;
 }
 
@@ -162,7 +191,6 @@ static malloc_zone_t* mi_get_default_zone()
     return malloc_default_zone();
   }
 }
-
 
 static void __attribute__((constructor)) _mi_macos_override_malloc()
 {
@@ -203,6 +231,7 @@ static void __attribute__((constructor)) _mi_macos_override_malloc()
   zone.free_definite_size = &zone_free_definite_size;
   zone.pressure_relief = &zone_pressure_relief;
   intro.zone_locked = &intro_zone_locked;
+  intro.statistics = &intro_statistics;
 
   // force the purgeable zone to exist to avoid strange bugs
   if (malloc_default_purgeable_zone) {

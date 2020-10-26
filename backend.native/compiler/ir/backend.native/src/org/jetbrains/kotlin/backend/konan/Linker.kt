@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 import org.jetbrains.kotlin.konan.library.KonanLibrary
+import org.jetbrains.kotlin.konan.target.supportsMimallocAllocator
 import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -137,6 +138,8 @@ internal class Linker(val context: Context) {
         }
 
         val needsProfileLibrary = context.coverage.enabled
+        val mimallocEnabled = config.get(KonanConfigKeys.ALLOCATION_MODE) == "mimalloc" &&
+                target.supportsMimallocAllocator()
 
         val linkerInput = determineLinkerInput(objectFiles, linkerOutput)
         try {
@@ -154,7 +157,8 @@ internal class Linker(val context: Context) {
                     debug = debug,
                     kind = linkerOutput,
                     outputDsymBundle = context.config.outputFiles.symbolicInfoFile,
-                    needsProfileLibrary = needsProfileLibrary)
+                    needsProfileLibrary = needsProfileLibrary,
+                    mimallocEnabled = mimallocEnabled)
             (linkerInput.preLinkCommands + finalOutputCommands).forEach {
                 it.logWith(context::log)
                 it.execute()

@@ -41,6 +41,7 @@ interface Configurables : TargetableExternalStorage {
     // TODO: Delegate to a map?
     val linkerOptimizationFlags get() = targetList("linkerOptimizationFlags")
     val linkerKonanFlags get() = targetList("linkerKonanFlags")
+    val mimallocLinkerDependencies get() = targetList("mimallocLinkerDependencies")
     val linkerNoDebugFlags get() = targetList("linkerNoDebugFlags")
     val linkerDynamicFlags get() = targetList("linkerDynamicFlags")
     val targetSysRoot get() = targetString("targetSysRoot")

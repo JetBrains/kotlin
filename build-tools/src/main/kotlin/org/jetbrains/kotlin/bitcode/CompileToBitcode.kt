@@ -69,8 +69,7 @@ open class CompileToBitcode @Inject constructor(
             val languageFlags = when (language) {
                 Language.C ->
                     // Used flags provided by original build of allocator C code.
-                    listOf("-std=gnu11", "-O3", "-Wall", "-Wextra", "-Wno-unknown-pragmas",
-                            "-Werror", "-ftls-model=initial-exec", "-Wno-unused-function")
+                    listOf("-std=gnu11", "-O3", "-Wall", "-Wextra", "-Werror")
                 Language.CPP ->
                     listOfNotNull("-std=c++14", "-Werror", "-O2",
                             "-Wall", "-Wextra",
