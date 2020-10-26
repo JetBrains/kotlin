@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedEnumEntryDescriptor
@@ -338,7 +339,7 @@ class Fir2IrClassifierStorage(
 
     internal fun getCachedIrTypeParameter(
         typeParameter: FirTypeParameter,
-        index: Int = -1,
+        index: Int = UNDEFINED_PARAMETER_INDEX,
         typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
     ): IrTypeParameter? {
         // Here transformation is a bit difficult because one FIR property type parameter
