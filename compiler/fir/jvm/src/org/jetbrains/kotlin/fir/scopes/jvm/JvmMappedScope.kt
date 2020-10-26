@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 class JvmMappedScope(
     private val declaredMemberScope: FirScope,
@@ -21,14 +22,23 @@ class JvmMappedScope(
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
         val visibleMethods = signatures.visibleMethodSignaturesByName[name]
             ?: return declaredMemberScope.processFunctionsByName(name, processor)
+
+        val declared = mutableListOf<FirNamedFunctionSymbol>()
+        declaredMemberScope.processFunctionsByName(name) { symbol ->
+            declared.addIfNotNull(symbol as FirNamedFunctionSymbol)
+            processor(symbol)
+        }
+
+        val declaredSignatures by lazy {
+            declared.mapTo(mutableSetOf()) { it.fir.computeJvmDescriptorReplacingKotlinToJava() }
+        }
+
         javaMappedClassUseSiteScope.processFunctionsByName(name) { symbol ->
             val jvmSignature = symbol.fir.computeJvmDescriptorReplacingKotlinToJava()
-            if (jvmSignature in visibleMethods) {
+            if (jvmSignature in visibleMethods && jvmSignature !in declaredSignatures) {
                 processor(symbol)
             }
         }
-
-        declaredMemberScope.processFunctionsByName(name, processor)
     }
 
     override fun processDirectOverriddenFunctionsWithBaseScope(
