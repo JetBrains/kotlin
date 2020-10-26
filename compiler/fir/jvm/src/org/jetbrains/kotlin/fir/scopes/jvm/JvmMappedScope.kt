@@ -114,12 +114,13 @@ class JvmMappedScope(
             ).mapTo(this) { arguments -> "java/lang/Throwable.<init>($arguments)V" }
         }
 
-        fun prepareSignatures(klass: FirRegularClass): Signatures {
+        fun prepareSignatures(klass: FirRegularClass, isMutable: Boolean): Signatures {
 
             val signaturePrefix = klass.symbol.classId.toString()
             val visibleMethodsByName = mutableMapOf<Name, MutableSet<String>>()
             JvmBuiltInsSignatures.VISIBLE_METHOD_SIGNATURES.filter { signature ->
-                signature.startsWith(signaturePrefix)
+                signature in JvmBuiltInsSignatures.MUTABLE_METHOD_SIGNATURES == isMutable &&
+                        signature.startsWith(signaturePrefix)
             }.map { signature ->
                 // +1 to delete dot before function name
                 signature.substring(signaturePrefix.length + 1)
