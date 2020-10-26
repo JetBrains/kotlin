@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -526,7 +528,13 @@ class CallAndReferenceGenerator(
                     if (parameter.isVararg && !argumentMapping.containsValue(parameter)) {
                         val elementType = parameter.returnTypeRef.toIrType()
                         putValueArgument(
-                            index, IrVarargImpl(-1, -1, elementType, elementType.toArrayOrPrimitiveArrayType(irBuiltIns))
+                            index,
+                            IrVarargImpl(
+                                UNDEFINED_OFFSET,
+                                UNDEFINED_OFFSET,
+                                elementType,
+                                elementType.toArrayOrPrimitiveArrayType(irBuiltIns)
+                            )
                         )
                     }
                 }
@@ -539,7 +547,7 @@ class CallAndReferenceGenerator(
         parametersInActualOrder: Collection<FirValueParameter>,
         valueParameters: List<FirValueParameter>
     ): Boolean {
-        var lastValueParameterIndex = -1
+        var lastValueParameterIndex = UNDEFINED_PARAMETER_INDEX
         for (parameter in parametersInActualOrder) {
             val index = valueParameters.indexOf(parameter)
             if (index < lastValueParameterIndex) {

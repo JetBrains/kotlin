@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
@@ -845,7 +846,7 @@ class Fir2IrDeclarationStorage(
 
     internal fun createIrParameter(
         valueParameter: FirValueParameter,
-        index: Int = -1,
+        index: Int = UNDEFINED_PARAMETER_INDEX,
         useStubForDefaultValueStub: Boolean = true,
         typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
     ): IrValueParameter {

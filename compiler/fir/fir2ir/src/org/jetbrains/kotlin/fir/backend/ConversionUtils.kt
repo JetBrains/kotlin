@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.WrappedReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConst
@@ -314,7 +315,7 @@ internal fun IrDeclarationParent.declareThisReceiverParameter(
     ) { symbol ->
         symbolTable.irFactory.createValueParameter(
             startOffset, endOffset, thisOrigin, symbol,
-            Name.special("<this>"), -1, thisType,
+            Name.special("<this>"), UNDEFINED_PARAMETER_INDEX, thisType,
             varargElementType = null, isCrossinline = false, isNoinline = false, isAssignable = false
         ).apply {
             this.parent = this@declareThisReceiverParameter
