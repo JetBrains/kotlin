@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.gradle
 
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiComment
-import com.intellij.psi.PsiReference
-import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.runInEdtAndGet
 import org.jetbrains.kotlin.idea.codeInsight.gradle.MasterPluginVersionGradleImportingTestCase
@@ -25,7 +23,7 @@ class ImportAndCheckNavigation : MasterPluginVersionGradleImportingTestCase() {
     @Test
     @PluginTargetVersions(gradleVersion = "6.0+", pluginVersion = "1.4+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testNavigationToCommonizedLibrary() {
-        val files = importProjectFromTestData()
+        val files = configureAndImportProject()
 
         files.forEach { vFile ->
             val referencesToTest = vFile.collectReferencesToTest()
@@ -49,6 +47,12 @@ class ImportAndCheckNavigation : MasterPluginVersionGradleImportingTestCase() {
     }
 
     override fun testDataDirName() = "importAndCheckNavigation"
+
+    private fun configureAndImportProject(): List<VirtualFile> {
+        val files = configureByFiles()
+        importProject(skipIndexing = false)
+        return files
+    }
 
     private fun VirtualFile.collectReferencesToTest(): Map<PsiReference, String> {
         if (extension != "kt") return emptyMap()

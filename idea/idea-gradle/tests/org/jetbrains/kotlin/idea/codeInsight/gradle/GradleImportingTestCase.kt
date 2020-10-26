@@ -219,12 +219,16 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
     override fun getExternalSystemConfigFileName(): String = "build.gradle"
 
     @Throws(IOException::class)
-    protected open fun importProjectUsingSingeModulePerGradleProject(config: String? = null) {
+    protected open fun importProjectUsingSingeModulePerGradleProject(config: String? = null, skipIndexing: Boolean? = null) {
         currentExternalProjectSettings.isResolveModulePerSourceSet = false
-        importProject(config)
+        importProject(config, skipIndexing)
     }
 
-    override fun importProject() {
+    open fun importProject() {
+        importProject(skipIndexing = null)
+    }
+
+    override fun importProject(skipIndexing: Boolean?) {
         ExternalSystemApiUtil.subscribe(
             myProject,
             GradleConstants.SYSTEM_ID,
@@ -236,14 +240,14 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
                     }
                 }
             })
-        super.importProject()
+        super.importProject(skipIndexing)
     }
 
     @Throws(IOException::class)
-    override fun importProject(@NonNls @Language("Groovy") config: String?) {
+    override fun importProject(@NonNls @Language("Groovy") config: String?, skipIndexing: Boolean?) {
         var config = config
         config = injectRepo(config)
-        super.importProject(config)
+        super.importProject(config, skipIndexing)
     }
 
     override fun handleImportFailure(errorMessage: String, errorDetails: String?) {
@@ -385,9 +389,9 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
         }.toList()
     }
 
-    protected fun importProjectFromTestData(): List<VirtualFile> {
+    protected fun importProjectFromTestData(skipIndexing: Boolean? = null): List<VirtualFile> {
         val files = configureByFiles()
-        importProject()
+        importProject(skipIndexing)
         return files
     }
 
