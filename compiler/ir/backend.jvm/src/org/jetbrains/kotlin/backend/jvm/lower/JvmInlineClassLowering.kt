@@ -277,15 +277,16 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         if (expression.origin == InlineClassAbi.UNMANGLED_FUNCTION_REFERENCE)
             return super.visitFunctionReference(expression)
 
-        val function = context.inlineClassReplacements.getReplacementFunction(expression.symbol.owner)
+        val function = expression.symbol.owner
+        val replacement = context.inlineClassReplacements.getReplacementFunction(function)
             ?: return super.visitFunctionReference(expression)
 
         return IrFunctionReferenceImpl(
             expression.startOffset, expression.endOffset, expression.type,
-            function.symbol, function.typeParameters.size,
-            function.valueParameters.size, expression.reflectionTarget, expression.origin
+            replacement.symbol, replacement.typeParameters.size,
+            replacement.valueParameters.size, expression.reflectionTarget, expression.origin
         ).apply {
-            buildReplacement(expression.symbol.owner, expression, function)
+            buildReplacement(function, expression, replacement)
         }.copyAttributes(expression)
     }
 
@@ -293,10 +294,14 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         val function = expression.symbol.owner
         val replacement = context.inlineClassReplacements.getReplacementFunction(function)
             ?: return super.visitFunctionAccess(expression)
-        return context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
-            .irCall(replacement, expression.origin, expression.safeAs<IrCall>()?.superQualifierSymbol).apply {
-                buildReplacement(function, expression, replacement)
-            }
+
+        return IrCallImpl(
+            expression.startOffset, expression.endOffset, function.returnType.substitute(expression.typeSubstitutionMap),
+            replacement.symbol, replacement.typeParameters.size, replacement.valueParameters.size,
+            expression.origin, (expression as? IrCall)?.superQualifierSymbol
+        ).apply {
+            buildReplacement(function, expression, replacement)
+        }
     }
 
     private fun coerceInlineClasses(argument: IrExpression, from: IrType, to: IrType) =

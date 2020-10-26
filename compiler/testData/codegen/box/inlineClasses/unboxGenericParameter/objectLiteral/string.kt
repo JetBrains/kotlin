@@ -1,6 +1,4 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND_FIR: JVM_IR
 
 fun <T> underlying(a: IC): T = bar(a, object : IFace<IC, T> {
     override fun call(ic: IC): T = ic.value as T
