@@ -14,6 +14,8 @@ import java.io.File
 open class KlibInstall: Exec() {
     @InputFile
     lateinit var klib: File
+
+    @Input
     var repo: File = project.rootDir
 
     val installDir: File
@@ -28,8 +30,7 @@ open class KlibInstall: Exec() {
 
     override fun configure(config: Closure<*>): Task {
         val result = super.configure(config)
-        val konanHomePath = project.findProperty("org.jetbrains.kotlin.native.home") ?: "dist"
-        val konanHome = project.rootProject.file(konanHomePath)
+        val konanHome = project.kotlinNativeDist
         val suffix = if (HostManager.host == KonanTarget.MINGW_X64) ".bat" else  ""
         val klibProgram = "$konanHome/bin/klib$suffix"
 
