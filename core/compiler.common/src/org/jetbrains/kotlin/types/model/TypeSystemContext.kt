@@ -144,9 +144,6 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
     fun KotlinTypeMarker.isBuiltinFunctionalTypeOrSubtype(): Boolean
 
-    fun KotlinTypeMarker.withNullability(nullable: Boolean): KotlinTypeMarker
-
-
     fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(): KotlinTypeMarker
     fun SimpleTypeMarker.makeSimpleTypeDefinitelyNotNullOrNotNull(): SimpleTypeMarker
 
@@ -241,7 +238,6 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun KotlinTypeMarker.isError(): Boolean
     fun TypeConstructorMarker.isError(): Boolean
     fun KotlinTypeMarker.isUninferredParameter(): Boolean
-
     fun FlexibleTypeMarker.asDynamicType(): DynamicTypeMarker?
 
     fun FlexibleTypeMarker.asRawType(): RawTypeMarker?
@@ -259,6 +255,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun SimpleTypeMarker.withNullability(nullable: Boolean): SimpleTypeMarker
     fun SimpleTypeMarker.typeConstructor(): TypeConstructorMarker
+    fun KotlinTypeMarker.withNullability(nullable: Boolean): KotlinTypeMarker
 
     fun CapturedTypeMarker.typeConstructor(): CapturedTypeConstructorMarker
     fun CapturedTypeMarker.captureStatus(): CaptureStatus

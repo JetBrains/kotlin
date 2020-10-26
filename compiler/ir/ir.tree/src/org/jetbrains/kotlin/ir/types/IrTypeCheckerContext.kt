@@ -39,6 +39,13 @@ open class IrTypeCheckerContext(override val irBuiltIns: IrBuiltIns) : IrTypeSys
     ): AbstractTypeCheckerContext = IrTypeCheckerContext(irBuiltIns)
 
     override fun KotlinTypeMarker.isUninferredParameter(): Boolean = false
+    override fun KotlinTypeMarker.withNullability(nullable: Boolean): KotlinTypeMarker {
+        if (this.isSimpleType()) {
+            return this.asSimpleType()!!.withNullability(nullable)
+        } else {
+            error("withNullability for non-simple types is not supported in IR")
+        }
+    }
 
     override fun captureFromExpression(type: KotlinTypeMarker): KotlinTypeMarker? =
         error("Captured type is unsupported in IR")

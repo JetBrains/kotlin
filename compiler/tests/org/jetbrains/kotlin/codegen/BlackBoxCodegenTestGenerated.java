@@ -17436,6 +17436,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/javaInterop/generics/javaNestedSamInterface.kt");
             }
 
+            @TestMetadata("kt42825.kt")
+            public void testKt42825() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/generics/kt42825.kt");
+            }
+
             @TestMetadata("propertyVarianceConflict.kt")
             public void testPropertyVarianceConflict() throws Exception {
                 runTest("compiler/testData/codegen/box/javaInterop/generics/propertyVarianceConflict.kt");
