@@ -19,4 +19,27 @@ class KotlinSSRQualifiedExpressionReplaceTest : KotlinSSRReplaceTest() {
             """.trimIndent()
         )
     }
+
+    fun testDoubleQualifiedExpression() {
+        doTest(
+            searchPattern = """
+                '_REC.foo = '_INIT
+                '_REC.bar = '_INIT
+            """.trimIndent(),
+            replacePattern = """
+                '_REC.fooBar = '_INIT
+            """.trimIndent(),
+            match = """
+                fun main() {
+                    x.foo = true
+                    x.bar = true
+                }
+            """.trimIndent(),
+            result = """
+                fun main() {
+                    x.fooBar = true
+                }
+            """.trimIndent()
+        )
+    }
 }

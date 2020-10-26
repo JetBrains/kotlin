@@ -12,9 +12,7 @@ import com.intellij.structuralsearch.impl.matcher.PatternTreeContext
 import com.intellij.structuralsearch.impl.matcher.compiler.PatternCompiler
 import com.intellij.structuralsearch.plugin.replace.ReplaceOptions
 import com.intellij.structuralsearch.plugin.replace.ReplacementInfo
-import org.jetbrains.kotlin.idea.core.ShortenReferences
-import org.jetbrains.kotlin.idea.core.addTypeParameter
-import org.jetbrains.kotlin.idea.core.setDefaultValue
+import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.js.translate.declaration.hasCustomGetter
 import org.jetbrains.kotlin.js.translate.declaration.hasCustomSetter
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -34,8 +32,9 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
         ).first()
         val match = StructuralSearchUtil.getPresentableElement(info.matchResult.match)
         replaceTemplate.structuralReplace(searchTemplate, match)
-        (0 until info.matchesCount).mapNotNull(info::getMatch).forEach {
-            StructuralSearchUtil.getPresentableElement(it).replace(replaceTemplate)
+        StructuralSearchUtil.getPresentableElement(info.getMatch(0)).replace(replaceTemplate)
+        (1 until info.matchesCount).mapNotNull(info::getMatch).forEach {
+            StructuralSearchUtil.getPresentableElement(it).deleteElementAndCleanParent()
         }
     }
 
