@@ -450,13 +450,7 @@ class CallAndReferenceGenerator(
                         }
                         for ((index, argument) in call.arguments.withIndex()) {
                             val valueParameter = valueParameters?.get(index)
-                            val argumentExpression =
-                                with(adapterGenerator) {
-                                    visitor.convertToIrExpression(argument)
-                                        .applySamConversionIfNeeded(argument, valueParameter)
-                                        .applySuspendConversionIfNeeded(argument, valueParameter)
-                                        .applyAssigningArrayElementsToVarargInNamedForm(argument, valueParameter)
-                                }
+                            val argumentExpression = convertArgument(argument, valueParameter)
                             putValueArgument(index, argumentExpression)
                         }
                     }
@@ -494,13 +488,7 @@ class CallAndReferenceGenerator(
             return IrBlockImpl(startOffset, endOffset, type, IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL).apply {
                 for ((argument, parameter) in argumentMapping) {
                     val parameterIndex = valueParameters.indexOf(parameter)
-                    val irArgument =
-                        with(adapterGenerator) {
-                            visitor.convertToIrExpression(argument)
-                                .applySamConversionIfNeeded(argument, parameter)
-                                .applySuspendConversionIfNeeded(argument, parameter)
-                                .applyAssigningArrayElementsToVarargInNamedForm(argument, parameter)
-                        }
+                    val irArgument = convertArgument(argument, parameter)
                     if (irArgument.hasNoSideEffects()) {
                         putValueArgument(parameterIndex, irArgument)
                     } else {
@@ -515,13 +503,7 @@ class CallAndReferenceGenerator(
             }
         } else {
             for ((argument, parameter) in argumentMapping) {
-                val argumentExpression =
-                    with(adapterGenerator) {
-                        visitor.convertToIrExpression(argument, annotationMode)
-                            .applySamConversionIfNeeded(argument, parameter)
-                            .applySuspendConversionIfNeeded(argument, parameter)
-                            .applyAssigningArrayElementsToVarargInNamedForm(argument, parameter)
-                    }
+                val argumentExpression = convertArgument(argument, parameter, annotationMode)
                 putValueArgument(valueParameters.indexOf(parameter), argumentExpression)
             }
             if (annotationMode) {
@@ -558,6 +540,18 @@ class CallAndReferenceGenerator(
         }
         return false
     }
+
+    private fun convertArgument(
+        argument: FirExpression,
+        parameter: FirValueParameter?,
+        annotationMode: Boolean = false
+    ): IrExpression =
+        with(adapterGenerator) {
+            visitor.convertToIrExpression(argument, annotationMode)
+                .applySamConversionIfNeeded(argument, parameter)
+                .applySuspendConversionIfNeeded(argument, parameter)
+                .applyAssigningArrayElementsToVarargInNamedForm(argument, parameter)
+        }
 
     private fun IrExpression.applySamConversionIfNeeded(
         argument: FirExpression,
