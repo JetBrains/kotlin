@@ -39,8 +39,8 @@ class ExecClang(private val project: Project) {
         return konanArgs(target)
     }
 
-    fun resolveExecutable(executable: String?): String {
-        val executable = executable ?: "clang"
+    fun resolveExecutable(executableOrNull: String?): String {
+        val executable = executableOrNull ?: "clang"
 
         if (listOf("clang", "clang++").contains(executable)) {
             val llvmDir = project.findProperty("llvmDir")

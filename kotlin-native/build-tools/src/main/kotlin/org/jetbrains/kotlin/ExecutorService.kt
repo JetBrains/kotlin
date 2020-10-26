@@ -179,10 +179,10 @@ val Project.executor: ExecutorService
  */
 fun ExecutorService.add(actionParameter: Action<in ExecSpec>) = object : ExecutorService {
     override fun execute(action: Action<in ExecSpec>): ExecResult? =
-            this@add.execute(Action {
+            this@add.execute {
                 action.execute(it)
                 actionParameter.execute(it)
-            })
+            }
 }
 
 /**
@@ -221,6 +221,7 @@ fun localExecutorService(project: Project): ExecutorService = object : ExecutorS
  * @param iosDevice an optional project property used to control simulator's device type
  *        Specify -PiosDevice=iPhone X to set it
  */
+@Suppress("KDocUnresolvedReference")
 private fun simulator(project: Project): ExecutorService = object : ExecutorService {
 
     private val target = project.testTarget
@@ -269,6 +270,7 @@ private fun simulator(project: Project): ExecutorService = object : ExecutorServ
  * @param remote makes binaries be executed on a remote host
  *        Specify it as -Premote=user@host
  */
+@Suppress("KDocUnresolvedReference")
 private fun sshExecutor(project: Project): ExecutorService = object : ExecutorService {
 
     private val remote: String = project.property("remote").toString()
@@ -332,14 +334,15 @@ private fun deviceLauncher(project: Project) = object : ExecutorService {
 
     private val deviceName = project.findProperty("device_name") as? String
 
+    private val bundleID = "org.jetbrains.kotlin.KonanTestLauncher"
+
     override fun execute(action: Action<in ExecSpec>): ExecResult? {
-        var result: ExecResult? = null
+        val result: ExecResult?
         try {
             val udid = targetUDID()
             println("Found device UDID: $udid")
             install(udid, xcProject.resolve("build/KonanTestLauncher.ipa").toString())
-            val bundleId = "org.jetbrains.kotlin.KonanTestLauncher"
-            val commands = startDebugServer(udid, bundleId)
+            val commands = startDebugServer(udid)
                     .split("\n")
                     .filter { it.isNotBlank() }
                     .flatMap { listOf("-o", it) }
@@ -377,7 +380,7 @@ private fun deviceLauncher(project: Project) = object : ExecutorService {
                         savedOut?.write(it.toByteArray())
                     }
 
-            uninstall(udid, bundleId)
+            uninstall(udid)
         } catch (exc: Exception) {
             throw RuntimeException("iOS-device execution failed", exc)
         } finally {
@@ -463,12 +466,12 @@ private fun deviceLauncher(project: Project) = object : ExecutorService {
         check(result.exitValue == 0) { "Installation of $bundlePath failed: $out" }
     }
 
-    private fun uninstall(udid: String, bundleId: String) {
+    private fun uninstall(udid: String) {
         val out = ByteArrayOutputStream()
 
         project.exec {
             it.workingDir = xcProject.toFile()
-            it.commandLine = listOf(idb, "uninstall", "--udid", udid, bundleId)
+            it.commandLine = listOf(idb, "uninstall", "--udid", udid, bundleID)
             it.standardOutput = out
             it.errorOutput = out
             it.isIgnoreExitValue = true
@@ -476,12 +479,12 @@ private fun deviceLauncher(project: Project) = object : ExecutorService {
         println(out.toString())
     }
 
-    private fun startDebugServer(udid: String, bundleId: String): String {
+    private fun startDebugServer(udid: String): String {
         val out = ByteArrayOutputStream()
 
         val result = project.exec {
             it.workingDir = xcProject.toFile()
-            it.commandLine = listOf(idb, "debugserver", "start", "--udid", udid, bundleId)
+            it.commandLine = listOf(idb, "debugserver", "start", "--udid", udid, bundleID)
             it.standardOutput = out
             it.errorOutput = out
             it.isIgnoreExitValue = true

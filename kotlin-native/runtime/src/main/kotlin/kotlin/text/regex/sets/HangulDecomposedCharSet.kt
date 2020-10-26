@@ -43,7 +43,7 @@ internal class HangulDecomposedCharSet(
      * String representing syllable
      */
     private val decomposedCharUTF16: String by lazy {
-        String(decomposedChar, 0, decomposedChar.size)
+        decomposedChar.concatToString(0, decomposedChar.size)
     }
 
     override val name: String

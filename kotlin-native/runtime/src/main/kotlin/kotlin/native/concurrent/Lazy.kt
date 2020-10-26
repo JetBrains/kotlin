@@ -41,8 +41,7 @@ internal class FreezeAwareLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
         }
         // Set value_ to actual one.
         value_.value = result
-        @Suppress("UNCHECKED_CAST")
-        return result as T
+        return result
     }
 
     override val value: T

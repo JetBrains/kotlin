@@ -457,7 +457,7 @@ internal class Lexer(val patternString: String, flags: Int) {
             // Word/whitespace/digit.
             'w', 's', 'd', 'W', 'S', 'D' -> {
                 lookAheadSpecialToken = AbstractCharClass.getPredefinedClass(
-                        String(pattern, prevNonWhitespaceIndex, 1),
+                        pattern.concatToString(prevNonWhitespaceIndex, prevNonWhitespaceIndex + 1),
                         false
                 )
                 lookAhead = 0
@@ -724,12 +724,12 @@ internal class Lexer(val patternString: String, flags: Int) {
         val CHAR_PREVIOUS_MATCH       = 0x80000000.toInt() or 'G'.toInt()
         val CHAR_END_OF_INPUT         = 0x80000000.toInt() or 'z'.toInt()
         val CHAR_END_OF_LINE          = 0x80000000.toInt() or 'Z'.toInt()
-        
+
         // Quantifier modes.
         val QMOD_GREEDY     = 0xe0000000.toInt()
         val QMOD_RELUCTANT  = 0xc0000000.toInt()
         val QMOD_POSSESSIVE = 0x80000000.toInt()
-        
+
         // Quantifiers.
         val QUANT_STAR   = QMOD_GREEDY or '*'.toInt()
         val QUANT_STAR_P = QMOD_POSSESSIVE or '*'.toInt()

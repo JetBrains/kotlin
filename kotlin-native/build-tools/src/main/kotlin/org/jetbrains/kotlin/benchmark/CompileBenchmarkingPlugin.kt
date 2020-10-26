@@ -110,9 +110,7 @@ open class CompileBenchmarkingPlugin : Plugin<Project> {
     private fun getCompilerFlags(benchmarkExtension: CompileBenchmarkExtension) =
             benchmarkExtension.compilerOpts
 
-    private fun Project.configureJvmRun(
-        benchmarkExtension: CompileBenchmarkExtension
-    ) {
+    private fun Project.configureJvmRun() {
         val jvmRun = tasks.create("jvmRun") {
             it.group = BenchmarkingPlugin.BENCHMARKING_GROUP
             it.description = "Runs the compile only benchmark for Kotlin/JVM."
@@ -139,7 +137,7 @@ open class CompileBenchmarkingPlugin : Plugin<Project> {
         // Create tasks.
         configureUtilityTasks()
         configureKonanRun(benchmarkExtension)
-        configureJvmRun(benchmarkExtension)
+        configureJvmRun()
     }
 
     companion object {

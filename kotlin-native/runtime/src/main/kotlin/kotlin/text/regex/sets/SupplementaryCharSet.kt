@@ -91,7 +91,7 @@ package kotlin.text.regex
  * Represents node accepting single supplementary codepoint.
  */
 internal class SupplementaryCharSet(val codePoint: Int, ignoreCase: Boolean)
-    : SequenceSet(String(Char.toChars(codePoint), 0, 2), ignoreCase) {
+    : SequenceSet(Char.toChars(codePoint).concatToString(0, 2), ignoreCase) {
 
     override val name: String
         get() = patternString

@@ -35,7 +35,7 @@ open class CompileToBitcodePlugin: Plugin<Project> {
 open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
 
     private val targetList = with(project) {
-        provider { rootProject.property("targetList") as List<String> } // TODO: Can we make it better?
+        provider { (rootProject.property("targetList") as? List<*>)?.filterIsInstance<String>() ?: emptyList() } // TODO: Can we make it better?
     }
 
     fun create(

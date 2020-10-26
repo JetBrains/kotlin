@@ -29,43 +29,43 @@ OBJ_GETTER(InitSharedInstance,
   RETURN_RESULT_OF(InitSharedInstanceStrict, location, typeInfo, ctor);
 }
 
-void ReleaseHeapRef(const ObjHeader* object) {
+RUNTIME_NOTHROW void ReleaseHeapRef(const ObjHeader* object) {
   ReleaseHeapRefStrict(object);
 }
 
-void ReleaseHeapRefNoCollect(const ObjHeader* object) {
+RUNTIME_NOTHROW void ReleaseHeapRefNoCollect(const ObjHeader* object) {
   ReleaseHeapRefNoCollectStrict(object);
 }
 
-void SetStackRef(ObjHeader** location, const ObjHeader* object) {
+RUNTIME_NOTHROW void SetStackRef(ObjHeader** location, const ObjHeader* object) {
   SetStackRefStrict(location, object);
 }
 
-void SetHeapRef(ObjHeader** location, const ObjHeader* object) {
+RUNTIME_NOTHROW void SetHeapRef(ObjHeader** location, const ObjHeader* object) {
   SetHeapRefStrict(location, object);
 }
 
-void ZeroStackRef(ObjHeader** location) {
+RUNTIME_NOTHROW void ZeroStackRef(ObjHeader** location) {
   ZeroStackRefStrict(location);
 }
 
-void UpdateHeapRef(ObjHeader** location, const ObjHeader* object) {
+RUNTIME_NOTHROW void UpdateHeapRef(ObjHeader** location, const ObjHeader* object) {
   UpdateHeapRefStrict(location, object);
 }
 
-void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) {
+RUNTIME_NOTHROW void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) {
   UpdateReturnRefStrict(returnSlot, object);
 }
 
-void EnterFrame(ObjHeader** start, int parameters, int count) {
+RUNTIME_NOTHROW void EnterFrame(ObjHeader** start, int parameters, int count) {
   EnterFrameStrict(start, parameters, count);
 }
 
-void LeaveFrame(ObjHeader** start, int parameters, int count) {
+RUNTIME_NOTHROW void LeaveFrame(ObjHeader** start, int parameters, int count) {
   LeaveFrameStrict(start, parameters, count);
 }
 
-void UpdateStackRef(ObjHeader** location, const ObjHeader* object) {
+RUNTIME_NOTHROW void UpdateStackRef(ObjHeader** location, const ObjHeader* object) {
     UpdateStackRefStrict(location, object);
 }
 

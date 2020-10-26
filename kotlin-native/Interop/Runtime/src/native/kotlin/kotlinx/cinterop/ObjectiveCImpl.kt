@@ -98,7 +98,7 @@ class ObjCNotImplementedVar<T : Any?>(rawPtr: NativePtr) : CVariable(rawPtr) {
 
 var <T : Any?> ObjCNotImplementedVar<T>.value: T
     get() = TODO()
-    set(value) = TODO()
+    set(_) = TODO()
 
 typealias ObjCStringVarOf<T> = ObjCNotImplementedVar<T>
 typealias ObjCBlockVar<T> = ObjCNotImplementedVar<T>

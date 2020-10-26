@@ -100,8 +100,7 @@ open class RegressionsReporter : DefaultTask() {
         val teamcityConfig = System.getenv("TEAMCITY_BUILD_PROPERTIES_FILE") ?:
             error("Can't load teamcity config!")
 
-        val buildProperties = Properties()
-        buildProperties.load(FileInputStream(teamcityConfig))
+        val buildProperties = Properties().apply { load(FileInputStream(teamcityConfig)) }
         val buildId = buildProperties.getProperty("teamcity.build.id")
         val buildTypeId = buildProperties.getProperty("teamcity.buildType.id")
         val buildNumber = buildProperties.getProperty("build.number")
@@ -115,7 +114,7 @@ open class RegressionsReporter : DefaultTask() {
         val testReportUrl = testReportUrl(buildId, buildTypeId)
 
         // Get previous build on branch.
-        val builds = getBuild(previousBuildLocator(buildTypeId,branch), user, password)
+        getBuild(previousBuildLocator(buildTypeId,branch), user, password)
 
         // Get changes description.
         val changesList = getCommits("id:$buildId", user, password)
@@ -135,7 +134,7 @@ open class RegressionsReporter : DefaultTask() {
         val target = System.getProperty("os.name").replace("\\s".toRegex(), "")
 
         // Generate comparison report.
-        val output = arrayOf("$analyzer", "-r", "html", "$currentBenchmarksReportFile", "artifactory:$compareToBuildNumber:$target:$artifactoryFileName", "-o", "$htmlReport")
+        val output = arrayOf(analyzer, "-r", "html", currentBenchmarksReportFile, "artifactory:$compareToBuildNumber:$target:$artifactoryFileName", "-o", htmlReport)
                 .runCommand()
 
         if (output.contains("Uncaught exception")) {

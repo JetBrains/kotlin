@@ -29,8 +29,16 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:$gradlePluginVersion"
     }
-    ext.useCustomDist = project.hasProperty("konan.home")
+    ext.useCustomDist = project.hasProperty("kotlin.native.home") ||
+            project.hasProperty("org.jetbrains.kotlin.native.home") ||
+            project.hasProperty("konan.home")
+    ext.kotlinNativeDist = project.findProperty("kotlin.native.home")
+            ?: project.findProperty("org.jetbrains.kotlin.native.home")
+            ?: project.findProperty("konan.home")
+            ?: distDir.absolutePath
     if (!useCustomDist) {
+        ext.setProperty("kotlin.native.home", distDir.absolutePath)
+        ext.setProperty("org.jetbrains.kotlin.native.home", distDir.absolutePath)
         ext.setProperty("konan.home", distDir.absolutePath)
     }
 }
@@ -96,7 +104,7 @@ externalStdlibTestsDir.mkdirs()
 ext.platformManager = project.rootProject.platformManager
 ext.target = platformManager.targetManager(project.testTarget).target
 
-ext.testLibraryDir = "${project.property("konan.home")}/klib/platform/${project.target.name}"
+ext.testLibraryDir = "${ext.kotlinNativeDist}/klib/platform/${project.target.name}"
 
 // Add executor to run tests depending on a target
 project.convention.plugins.executor = ExecutorServiceKt.create(project)

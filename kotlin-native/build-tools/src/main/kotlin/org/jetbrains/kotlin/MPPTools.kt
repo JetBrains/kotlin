@@ -98,14 +98,14 @@ fun createJsonReport(projectProperties: Map<String, Any>): String {
     val machine = Environment.Machine(getValue("cpu"), getValue("os"))
     val jdk = Environment.JDKInstance(getValue("jdkVersion"), getValue("jdkVendor"))
     val env = Environment(machine, jdk)
-    val flags = (projectProperties["flags"] ?: emptyList<String>()) as List<String>
+    val flags: List<String> = (projectProperties["flags"] as? List<*>)?.filterIsInstance<String>() ?: emptyList()
     val backend = Compiler.Backend(Compiler.backendTypeFromString(getValue("type"))!! ,
                                     getValue("compilerVersion"), flags)
     val kotlin = Compiler(backend, getValue("kotlinVersion"))
     val benchDesc = getValue("benchmarks")
     val benchmarksArray = JsonTreeParser.parse(benchDesc)
     val benchmarks = parseBenchmarksArray(benchmarksArray)
-            .union(projectProperties["compileTime"] as List<BenchmarkResult>).union(
+            .union((projectProperties["compileTime"] as? List<*>)?.filterIsInstance<BenchmarkResult>() ?: emptyList()).union(
                     listOf(projectProperties["codeSize"] as? BenchmarkResult).filterNotNull()).toList()
     val report = BenchmarksReport(env, benchmarks, kotlin)
     return report.toJson()
@@ -184,7 +184,6 @@ fun sendUploadRequest(url: String, fileName: String, username: String? = null, p
 }
 
 // A short-cut to add a Kotlin/Native run task.
-@JvmOverloads
 fun createRunTask(
         subproject: Project,
         name: String,

@@ -67,7 +67,7 @@ open internal class FSet(val groupIndex: Int) : SimpleSet() {
     }
 
     companion object {
-        var possessiveFSet = PossessiveFSet()
+        val possessiveFSet = PossessiveFSet()
     }
 }
 

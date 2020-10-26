@@ -143,7 +143,7 @@ public fun CPointer<UShortVar>.toKStringFromUtf16(): String {
         chars[index] = nativeBytes[index].toShort().toChar()
         ++index
     }
-    return String(chars)
+    return chars.concatToString()
 }
 
 public fun CPointer<ShortVar>.toKString(): String = this.toKStringFromUtf16()
