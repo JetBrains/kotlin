@@ -189,7 +189,6 @@ class ScopeTowerLevel(
         }
 
     private fun dispatchReceiverValue(candidate: FirCallableSymbol<*>): ReceiverValue? {
-        val lookupTag = candidate.dispatchReceiverClassOrNull()
         candidate.fir.importedFromObjectClassId?.let { objectClassId ->
             val symbol = session.firSymbolProvider.getClassLikeSymbolByFqName(objectClassId)
             if (symbol is FirRegularClassSymbol) {
@@ -203,6 +202,8 @@ class ScopeTowerLevel(
                 return ExpressionReceiverValue(resolvedQualifier)
             }
         }
+
+        val lookupTag = candidate.dispatchReceiverClassOrNull()
         return when {
             candidate !is FirBackingFieldSymbol -> null
             lookupTag != null -> {

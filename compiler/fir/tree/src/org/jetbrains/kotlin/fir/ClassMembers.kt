@@ -19,7 +19,7 @@ fun FirCallableSymbol<*>.dispatchReceiverClassOrNull(): ConeClassLikeLookupTag? 
 
 fun FirCallableDeclaration<*>.dispatchReceiverClassOrNull(): ConeClassLikeLookupTag? {
     if (this !is FirCallableMemberDeclaration<*>) return null
-    if (symbol.isIntersectionOverride && dispatchReceiverType is ConeIntersectionType) return symbol.overriddenSymbol!!.fir.dispatchReceiverClassOrNull()
+    if (dispatchReceiverType is ConeIntersectionType && symbol.isIntersectionOverride) return symbol.overriddenSymbol!!.fir.dispatchReceiverClassOrNull()
 
     return (dispatchReceiverType as? ConeClassLikeType)?.lookupTag
 }
