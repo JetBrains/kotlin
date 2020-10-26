@@ -65,4 +65,13 @@ class KotlinSSRFunctionReplaceTest : KotlinSSRReplaceTest() {
             result = "public fun foo(bar : Int = 0)  {}"
         )
     }
+
+    fun testFunctionMultiParamCountFilter() {
+        doTest(
+            searchPattern = "fun '_ID('_PARAM*)",
+            replacePattern = "fun '_ID('_PARAM)",
+            match = "fun foo(one: Int, two: Double) {}",
+            result = "fun foo(one: Int, two: Double) {}"
+        )
+    }
 }
