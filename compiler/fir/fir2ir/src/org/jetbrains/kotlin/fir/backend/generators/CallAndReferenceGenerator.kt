@@ -544,13 +544,20 @@ class CallAndReferenceGenerator(
         argument: FirExpression,
         parameter: FirValueParameter?,
         annotationMode: Boolean = false
-    ): IrExpression =
-        with(adapterGenerator) {
-            visitor.convertToIrExpression(argument, annotationMode)
-                .applySamConversionIfNeeded(argument, parameter)
-                .applySuspendConversionIfNeeded(argument, parameter)
-                .applyAssigningArrayElementsToVarargInNamedForm(argument, parameter)
+    ): IrExpression {
+        var irArgument = visitor.convertToIrExpression(argument, annotationMode)
+        if (parameter != null) {
+            with(visitor.implicitCastInserter) {
+                irArgument = irArgument.cast(argument, argument.typeRef, parameter.returnTypeRef)
+            }
         }
+        with(adapterGenerator) {
+            irArgument = irArgument.applySuspendConversionIfNeeded(argument, parameter)
+        }
+        return irArgument
+            .applySamConversionIfNeeded(argument, parameter)
+            .applyAssigningArrayElementsToVarargInNamedForm(argument, parameter)
+    }
 
     private fun IrExpression.applySamConversionIfNeeded(
         argument: FirExpression,

@@ -183,6 +183,9 @@ fun FirTypeRef.isUnsafeVarianceType(session: FirSession): Boolean {
     return coneTypeSafe<ConeKotlinType>()?.isUnsafeVarianceType(session) == true
 }
 
+fun FirTypeRef.hasEnhancedNullability(): Boolean =
+    coneTypeSafe<ConeKotlinType>()?.hasEnhancedNullability == true
+
 // Unlike other cases, return types may be implicit, i.e. unresolved
 // But in that cases newType should also be `null`
 fun FirTypeRef.withReplacedReturnType(newType: ConeKotlinType?): FirTypeRef {
