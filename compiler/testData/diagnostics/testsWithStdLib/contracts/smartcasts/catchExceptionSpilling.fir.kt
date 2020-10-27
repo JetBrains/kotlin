@@ -17,5 +17,5 @@ fun testWithCatch(x: Any?) {
         x.length
     } catch (e: java.lang.IllegalArgumentException) { }
 
-    x.length
+    x.<!UNRESOLVED_REFERENCE!>length<!>
 }
