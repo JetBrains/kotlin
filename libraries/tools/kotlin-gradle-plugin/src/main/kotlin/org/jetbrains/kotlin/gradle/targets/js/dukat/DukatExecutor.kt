@@ -40,7 +40,7 @@ class DukatExecutor(
         versionFile.delete()
 
         npmProject.externalsDirRoot.mkdirs()
-        val inputs = typeDefinitions.joinToString("\n") { it.inputKey }
+        val inputs = "$externalsOutputFormat: " + typeDefinitions.joinToString("\n") { it.inputKey }
 
         if (!compareInputs || !inputsFile.isFile || inputsFile.readText() != inputs) {
             // delete file to run visit on error even without package.json updates

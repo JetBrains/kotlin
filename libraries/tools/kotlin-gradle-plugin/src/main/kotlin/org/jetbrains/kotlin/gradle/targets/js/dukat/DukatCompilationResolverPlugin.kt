@@ -89,7 +89,9 @@ internal class DukatCompilationResolverPlugin(
 
         val target = compilation.target
         val externalsOutputFormat = compilation.externalsOutputFormat
-        if (target is KotlinJsTarget && externalsOutputFormat == ExternalsOutputFormat.SOURCE) {
+        val legacyTargetReuseIrTask =
+            target is KotlinJsTarget && (target.irTarget != null && externalsOutputFormat == ExternalsOutputFormat.SOURCE)
+        if (legacyTargetReuseIrTask) {
             return
         }
 
@@ -105,7 +107,7 @@ internal class DukatCompilationResolverPlugin(
     }
 
     companion object {
-        const val VERSION = "2"
+        const val VERSION = "3"
     }
 }
 
