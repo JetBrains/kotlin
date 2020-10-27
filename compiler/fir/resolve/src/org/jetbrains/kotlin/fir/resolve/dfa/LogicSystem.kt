@@ -28,8 +28,14 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
 
     abstract fun createEmptyFlow(): FLOW
     abstract fun forkFlow(flow: FLOW): FLOW
+
+    // Differential computation
     abstract fun joinFlow(flows: Collection<FLOW>): FLOW
     abstract fun unionFlow(flows: Collection<FLOW>): FLOW
+
+    // Comprehensive element-wise computation
+    abstract fun elementwiseJoinFlow(flows: Collection<FLOW>): FLOW
+    abstract fun elementwiseUnionFlow(flows: Collection<FLOW>): FLOW
 
     abstract fun addTypeStatement(flow: FLOW, statement: TypeStatement)
 
