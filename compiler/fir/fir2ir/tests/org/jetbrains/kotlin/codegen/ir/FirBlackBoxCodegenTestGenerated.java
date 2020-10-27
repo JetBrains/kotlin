@@ -16041,6 +16041,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 runTest("compiler/testData/codegen/box/javaInterop/generics/javaNestedSamInterface.kt");
             }
 
+            @TestMetadata("kt42824.kt")
+            public void testKt42824() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/generics/kt42824.kt");
+            }
+
             @TestMetadata("kt42825.kt")
             public void testKt42825() throws Exception {
                 runTest("compiler/testData/codegen/box/javaInterop/generics/kt42825.kt");
