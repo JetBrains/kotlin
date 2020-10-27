@@ -32,6 +32,6 @@ object ParcelizeAvailability {
         val path = ExternalSystemApiUtil.getExternalProjectPath(module) ?: return false
         val externalProjectInfo = ExternalSystemUtil.getExternalProjectInfo(module.project, GradleConstants.SYSTEM_ID, path) ?: return false
         val moduleData = GradleProjectResolverUtil.findModule(externalProjectInfo.externalProjectStructure, path) ?: return false
-        return moduleData.getCopyableUserData(ParcelizeProjectResolverExtension.KEY)?.isEnabled ?: false
+        return ExternalSystemApiUtil.find(moduleData, ParcelizeIdeModel.KEY)?.data?.isEnabled ?: false
     }
 }
