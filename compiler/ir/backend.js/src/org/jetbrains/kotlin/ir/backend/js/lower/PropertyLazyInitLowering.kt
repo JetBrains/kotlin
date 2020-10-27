@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.isTopLevel
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
@@ -167,6 +168,7 @@ private class PropertySearcher : IrElementTransformerVoid() {
 
         declaration.correspondingPropertySymbol
             ?.owner
+            ?.takeIf { it.isTopLevel }
             ?.takeIf { !it.isConst }
             ?.takeIf { it !in propertyToFunction }
             ?.let {
