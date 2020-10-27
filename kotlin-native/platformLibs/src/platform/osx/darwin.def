@@ -1,0 +1,42 @@
+depends = posix
+language = Objective-C
+package = platform.darwin
+headers = AppleTextureEncoder.h AssertMacros.h Availability.h AvailabilityInternal.h \
+    AvailabilityMacros.h Block.h ConditionalMacros.h MacTypes.h \
+    TargetConditionals.h __cxxabi_config.h _locale.h _types.h _wctype.h \
+    aio.h asl.h bitstring.h bzlib.h \
+    cache.h cache_callbacks.h checkint.h compression.h copyfile.h \
+    cpio.h cxxabi.h db.h \
+    dns.h dns_sd.h dns_util.h execinfo.h \
+    fmtmsg.h fstab.h \
+    gethostuuid.h glob.h ifaddrs.h inttypes.h iso646.h \
+    langinfo.h \
+    libgen.h libunwind.h \
+    membership.h monetary.h mpool.h \
+    nameser.h ndbm.h nl_types.h \
+    notify.h notify_keys.h ntsid.h \
+    printf.h \
+    readpassphrase.h removefile.h \
+    runetype.h sandbox.h standards.h \
+    stringlist.h sysdir.h sysexits.h tar.h \
+    ttyent.h \
+    unwind.h util.h utmpx.h vis.h wordexp.h xattr_flags.h \
+    bank/bank_types.h \
+    bsm/libbsm.h \
+    os/activity.h os/availability.h os/base.h os/lock.h \
+    os/log.h os/object.h os/overflow.h os/signpost.h os/trace.h \
+    simd/simd.h sys/sysctl.h sys/user.h \
+    net/if_media.h sys/disk.h sys/kernel_types.h
+
+headerFilter = **
+
+excludedFunctions = __tg_promote KERNEL_AUDIT_TOKEN KERNEL_SECURITY_TOKEN \
+                    asl_decode_buffer asl_encode_buffer asl_remove_index \
+                    averunnable dbm_forder pidlock ttyaction ttylock ttymsg ttyunlock uuid_generate_early_random \
+                    DebugStr Debugger SysBreak SysBreakFunc SysBreakStr clock_get_res clock_set_res \
+                    mach_vm_region_info mach_vm_region_info_64 os_trace_info_with_payload safe_gets \
+                    task_wire vm_map_64 vm_map_exec_lockdown vm_mapped_pages_info vm_region vm_region_recurse \
+                    xpc_debugger_api_misuse_info
+
+compilerOpts = -D_XOPEN_SOURCE -DSHARED_LIBBIND -D_DARWIN_NO_64_BIT_INODE -DSYSCTL_DEF_ENABLED
+linkerOpts = -ldl -lz -lcurses -lbz2 -lcompression -late -lbsm

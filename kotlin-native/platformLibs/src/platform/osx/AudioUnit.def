@@ -1,0 +1,9 @@
+depends = ApplicationServices AudioToolbox CFNetwork CoreAudioTypes CoreFoundation CoreGraphics CoreServices CoreText DiskArbitration Foundation IOKit ImageIO Security darwin libkern osx posix
+language = Objective-C
+package = platform.AudioUnit
+headers = AudioUnit/AudioUnit.h
+
+headerFilter = AudioUnit/**
+
+compilerOpts = -framework AudioUnit
+linkerOpts = -framework AudioUnit

@@ -1,0 +1,7 @@
+depends = ApplicationServices CFNetwork CoreFoundation CoreGraphics CoreServices CoreText DiskArbitration Foundation IOKit ImageIO Security darwin libkern osx posix
+language = Objective-C
+package = platform.ExecutionPolicy
+modules = ExecutionPolicy
+
+compilerOpts = -framework ExecutionPolicy
+linkerOpts = -framework ExecutionPolicy

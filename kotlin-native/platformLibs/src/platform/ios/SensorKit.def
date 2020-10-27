@@ -1,0 +1,6 @@
+depends = CFNetwork CoreFoundation CoreLocation Foundation Security darwin posix
+language = Objective-C
+package = platform.SensorKit
+modules = SensorKit
+compilerOpts = -framework SensorKit
+linkerOpts = -framework SensorKit

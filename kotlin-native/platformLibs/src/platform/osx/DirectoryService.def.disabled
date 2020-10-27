@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.DirectoryService
+modules = DirectoryService
+compilerOpts = -framework DirectoryService
+linkerOpts = -framework DirectoryService
+#Disabled: Unavailable

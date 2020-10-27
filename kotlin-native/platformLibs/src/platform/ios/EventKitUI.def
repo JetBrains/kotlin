@@ -1,0 +1,7 @@
+depends = AddressBook CFNetwork CoreFoundation CoreGraphics CoreImage CoreLocation CoreText CoreVideo EAGL EventKit FileProvider Foundation IOSurface ImageIO Metal OpenGLESCommon QuartzCore Security UIKit UserNotifications darwin posix
+language = Objective-C
+package = platform.EventKitUI
+modules = EventKitUI
+
+compilerOpts = -framework EventKitUI
+linkerOpts = -framework EventKitUI

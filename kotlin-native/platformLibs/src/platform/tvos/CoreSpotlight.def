@@ -1,0 +1,7 @@
+depends = CFNetwork CoreFoundation Foundation Security UniformTypeIdentifiers darwin posix
+language = Objective-C
+package = platform.CoreSpotlight
+modules = CoreSpotlight
+
+compilerOpts = -framework CoreSpotlight
+linkerOpts = -framework CoreSpotlight

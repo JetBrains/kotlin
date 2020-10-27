@@ -1,0 +1,173 @@
+/*
+ * Copyright 2010-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+buildscript {
+    ext.rootBuildDirectory = file('../..')
+
+    apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+        classpath "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
+    }
+}
+apply plugin: 'kotlin'
+apply plugin: org.jetbrains.kotlin.NativeInteropPlugin
+
+apply plugin: 'c'
+apply plugin: 'cpp'
+
+import org.jetbrains.kotlin.konan.target.ClangArgs
+
+final Project libclangextProject = project(":libclangext")
+final String libclangextTask = libclangextProject.path + ":build"
+File libclangextDir = new File(libclangextProject.buildDir, "libs/clangext/static")
+final boolean libclangextIsEnabled = libclangextProject.isEnabled
+
+final String libclang
+if (isWindows()) {
+    libclang = "bin/libclang.dll"
+} else {
+    libclang = "lib/${System.mapLibraryName("clang")}"
+}
+
+List<String> cflags = [
+        "-I$llvmDir/include",
+        "-I${project(":libclangext").projectDir.absolutePath + "/src/main/include"}"
+]*.toString()
+
+List<String> ldflags = ["$llvmDir/$libclang", "-L$libclangextDir.absolutePath", "-lclangext"]*.toString()
+
+if (libclangextIsEnabled) {
+    assert(isMac())
+    ldflags.addAll(['-Wl,--no-demangle', '-Wl,-search_paths_first', '-Wl,-headerpad_max_install_names', '-Wl,-U,_futimens',
+                   '-Wl,-U,__ZN4llvm7remarks11parseFormatENS_9StringRefE',
+                   '-Wl,-U,__ZN4llvm7remarks22createRemarkSerializerENS0_6FormatENS0_14SerializerModeERNS_11raw_ostreamE',
+                   '-Wl,-U,__ZN4llvm7remarks14YAMLSerializerC1ERNS_11raw_ostreamENS0_14UseStringTableE'])
+
+    List<String> llvmLibs = [
+            "clangAST", "clangASTMatchers", "clangAnalysis", "clangBasic", "clangDriver", "clangEdit",
+            "clangFrontend", "clangFrontendTool", "clangLex", "clangParse", "clangSema", "clangEdit",
+            "clangRewrite", "clangRewriteFrontend", "clangStaticAnalyzerFrontend",
+            "clangStaticAnalyzerCheckers", "clangStaticAnalyzerCore", "clangSerialization",
+            "clangToolingCore",
+            "clangTooling", "clangFormat", "LLVMTarget", "LLVMMC", "LLVMLinker", "LLVMTransformUtils",
+            "LLVMBitWriter", "LLVMBitReader", "LLVMAnalysis", "LLVMProfileData", "LLVMCore",
+            "LLVMSupport", "LLVMBinaryFormat", "LLVMDemangle"
+    ].collect { "$llvmDir/lib/lib${it}.a".toString() }
+
+    ldflags.addAll(llvmLibs)
+    ldflags.addAll(['-lpthread', '-lz', '-lm', '-lcurses'])
+}
+
+
+model {
+    components {
+        clangstubs(NativeLibrarySpec) {
+            sources {
+                c.source.srcDir 'prebuilt/nativeInteropStubs/c'
+                cpp.source.srcDir 'src/nativeInteropStubs/cpp'
+            }
+
+            binaries.all {
+                cCompiler.args hostPlatform.clang.hostCompilerArgsForJni
+                cCompiler.args.addAll(cflags)
+            }
+
+            binaries.withType(SharedLibraryBinarySpec) {
+                linker.args.addAll(ldflags)
+            }
+        }
+   }
+
+  toolChains {
+    clang(Clang) {
+      eachPlatform {
+        cppCompiler.withArguments(ClangArgs.&filterGradleNativeSoftwareFlags)
+        cCompiler.withArguments(ClangArgs.&filterGradleNativeSoftwareFlags)
+      }
+    }
+  }
+}
+
+sourceSets {
+    main {
+        kotlin {
+            srcDirs 'prebuilt/nativeInteropStubs/kotlin'
+        }
+    }
+}
+
+repositories {
+    maven {
+        url buildKotlinCompilerRepo
+    }
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    compile project(':Interop:Runtime')
+}
+
+task nativelibs(type: Copy) {
+    dependsOn 'clangstubsSharedLibrary'
+
+    from "$buildDir/libs/clangstubs/shared/"
+    into "$buildDir/nativelibs/"
+}
+
+classes.dependsOn nativelibs
+
+kotlinNativeInterop {
+    clang {
+        defFile 'clang.def'
+        compilerOpts cflags
+        linkerOpts ldflags
+        genTask.dependsOn libclangextTask
+        genTask.inputs.dir libclangextDir
+    }
+}
+
+compileKotlin {
+    kotlinOptions {
+        allWarningsAsErrors=true
+    }
+}
+
+tasks.matching { it.name == 'linkClangstubsSharedLibrary' }.all {
+    it.dependsOn libclangextTask
+    it.inputs.dir libclangextDir
+}
+
+task updatePrebuilt {
+    dependsOn genClangInteropStubs
+
+    doLast {
+        copy {
+            from("$buildDir/nativeInteropStubs/clang/kotlin") {
+                include 'clang/clang.kt'
+            }
+            into 'prebuilt/nativeInteropStubs/kotlin'
+        }
+
+        copy {
+            from("$buildDir/interopTemp") {
+                include 'clangstubs.c'
+            }
+            into 'prebuilt/nativeInteropStubs/c'
+        }
+    }
+}

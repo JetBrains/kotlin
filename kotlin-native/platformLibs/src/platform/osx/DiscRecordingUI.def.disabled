@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.DiscRecordingUI
+modules = DiscRecordingUI
+compilerOpts = -framework DiscRecordingUI
+linkerOpts = -framework DiscRecordingUI
+#Disabled: Unavailable

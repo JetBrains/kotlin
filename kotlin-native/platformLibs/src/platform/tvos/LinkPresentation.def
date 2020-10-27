@@ -1,0 +1,6 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL Foundation IOSurface ImageIO Metal OpenGLESCommon QuartzCore Security UIKit UserNotifications darwin posix
+language = Objective-C
+package = platform.LinkPresentation
+modules = LinkPresentation
+compilerOpts = -framework LinkPresentation
+linkerOpts = -framework LinkPresentation

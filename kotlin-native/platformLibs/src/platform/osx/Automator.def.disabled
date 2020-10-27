@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.Automator
+modules = Automator
+compilerOpts = -framework Automator
+linkerOpts = -framework Automator
+#Disabled: depends on Carbon.

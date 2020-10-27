@@ -1,0 +1,9 @@
+depends = darwin posix
+language = Objective-C
+package = platform.libkern
+headers = libkern/OSTypes.h libkern/OSReturn.h libkern/OSAtomic.h device/device_types.h device/device_types.h
+
+headerFilter = libkern/** device/**
+
+compilerOpts = -DIOKIT
+linkerOpts =

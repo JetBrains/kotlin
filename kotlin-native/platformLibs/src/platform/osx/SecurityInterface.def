@@ -1,0 +1,7 @@
+depends = AppKit ApplicationServices CFNetwork Cocoa CoreData CoreFoundation CoreGraphics CoreImage CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal OpenGLCommon QuartzCore Security SecurityFoundation darwin libkern osx posix
+language = Objective-C
+package = platform.SecurityInterface
+modules = SecurityInterface
+
+compilerOpts = -framework SecurityInterface
+linkerOpts = -framework SecurityInterface

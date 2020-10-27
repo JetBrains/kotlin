@@ -1,0 +1,162 @@
+import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
+import org.jetbrains.kotlin.KlibInstall
+import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.konan.util.*
+
+import static org.jetbrains.kotlin.konan.util.VisibleNamedKt.getVisibleName
+
+buildscript {
+    repositories {
+        maven {
+            url 'https://cache-redirector.jetbrains.com/maven-central'
+        }
+        mavenCentral()
+        maven {
+            url buildKotlinCompilerRepo
+        }
+        maven {
+            url kotlinCompilerRepo
+        }
+        maven {
+            url "https://kotlin.bintray.com/kotlinx"
+        }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:$gradlePluginVersion"
+        classpath "org.jetbrains.kotlin:kotlin-native-build-tools:$konanVersion"
+    }
+}
+// These properties are used by the 'konan' plugin, thus we set them before applying it.
+ext.konanHome = distDir.absolutePath
+def jvmArguments = [project.findProperty("platformLibsJvmArgs") ?: "-Xmx6G", *HostManager.defaultJvmArgs]
+ext.jvmArgs = jvmArguments.join(" ")
+ext.setProperty("org.jetbrains.kotlin.native.home", konanHome)
+ext.setProperty("konan.jvmArgs", jvmArgs)
+
+apply plugin: 'konan'
+
+//#region Util functions.
+private ArrayList<DefFile> targetDefFiles(KonanTarget  target) {
+    file("src/platform/${getVisibleName(target.family)}")
+            .listFiles()
+            .findAll { it.name.endsWith(".def") }
+            // The libz.a/libz.so and zlib.h are missing in MIPS sysroots.
+            // Just workaround it until we have sysroots corrected.
+            .findAll { ! ((target in targetsWithoutZlib) && it.name == 'zlib.def') }
+            .collect { DefFileKt.DefFile(it, target) }
+}
+
+private String defFileToLibName(String target, String name) {
+    return "$target-$name".toString()
+}
+//#endregion
+
+// TODO: I think most for the non-DSL language below can either be incorporated into DSL
+// or moved out of .gradle file.
+project.rootProject.ext.platformManager.enabled.each { target ->
+
+    def targetName = target.visibleName
+
+    ArrayList<Task> installTasks = []
+    ArrayList<Task> cacheTasks = []
+
+    if (target in cacheableTargets) {
+        task "${targetName}StdlibCache"(type: KonanCacheTask) {
+            it.target = targetName
+            originalKlib = file("$konanHome/klib/common/stdlib")
+            cacheRoot = file("$konanHome/klib/cache")
+
+            dependsOn ":${targetName}CrossDistRuntime"
+        }
+    }
+
+    targetDefFiles(target).each { df ->
+        def libName = defFileToLibName(targetName, df.name)
+        def fileNamePrefix = PlatformLibsInfo.namePrefix
+
+        konanArtifacts {
+            interop (libName, targets: [targetName]) {
+                defFile df.file
+                artifactName "${fileNamePrefix}${df.name}"
+                noDefaultLibs true
+                noEndorsedLibs true
+                libraries {
+                    klibs df.config.depends.collect {
+                        "${fileNamePrefix}${it}".toString()
+                    }
+                }
+                extraOpts '-Xpurge-user-libs', "-Xshort-module-name", df.name
+                compilerOpts "-fmodules-cache-path=${project.buildDir}/clangModulesCache"
+            }
+        }
+
+        def libTask = konanArtifacts."$libName"."$targetName"
+        libTask.dependsOn df.config.depends.collect{ defFileToLibName(targetName, it) }
+        libTask.dependsOn ":${targetName}CrossDist"
+        libTask.enableParallel = true
+
+        task "$libName"(type: KlibInstall) {
+            klib = libTask.artifact
+            repo = file("$konanHome/klib/platform/$targetName")
+            it.target = targetName
+            dependsOn libTask
+
+        }
+        installTasks.add(tasks[libName])
+
+        if (target in cacheableTargets) {
+            task "${libName}Cache"(type: KonanCacheTask) {
+                it.target = targetName
+                originalKlib = tasks[libName].installDir
+                cacheRoot = file("$konanHome/klib/cache")
+
+                dependsOn ":${targetName}StdlibCache"
+                dependsOn tasks[libName]
+                dependsOn df.config.depends.collect {
+                    def depName = defFileToLibName(targetName, it)
+                    "${depName}Cache"
+                }
+
+                cacheTasks.add(it)
+            }
+        }
+    }
+
+    task "${targetName}Install" {
+        dependsOn installTasks
+    }
+
+    if (target in cacheableTargets) {
+        task "${targetName}Cache" {
+            dependsOn cacheTasks
+
+            group = BasePlugin.BUILD_GROUP
+            description = "Builds the compilation cache for platform: ${targetName}"
+        }
+    }
+}
+
+// TODO: Don't install libraries here - copy them in the distPlatformLibs task
+task hostInstall {
+    dependsOn tasks.withType(KlibInstall.class).findAll {
+        it.target == HostManager.hostName
+    }
+}
+
+task hostCache {
+    dependsOn tasks.withType(KonanCacheTask.class).findAll {
+        it.target == HostManager.hostName
+    }
+}
+
+task install {
+    dependsOn tasks.withType(KlibInstall.class)
+}
+
+task cache {
+    dependsOn tasks.withType(KonanCacheTask.class)
+
+    group = BasePlugin.BUILD_GROUP
+    description = "Builds all the compilation caches"
+}

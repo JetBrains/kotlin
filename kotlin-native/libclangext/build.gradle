@@ -1,0 +1,63 @@
+/*
+ * Copyright 2010-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+apply plugin: "cpp"
+apply plugin: "c"
+buildscript {
+    ext.rootBuildDirectory = file('..')
+
+    apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+        classpath "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
+    }
+}
+import org.jetbrains.kotlin.konan.target.ClangArgs
+import org.jetbrains.kotlin.PlatformInfo
+ext.isEnabled = PlatformInfo.isMac()
+
+model {
+    components {
+        clangext(NativeLibrarySpec) {
+            sources {
+                cpp {
+                    source.srcDirs "src/main/cpp"
+                    exportedHeaders.srcDirs "src/main/include"
+                }
+            }
+            binaries.withType(StaticLibraryBinarySpec) { binary ->
+                if (!project.parent.convention.plugins.platformInfo.isWindows())
+                    cppCompiler.args "-fPIC"
+                cppCompiler.args "--std=c++11", "-g", "-I${llvmDir}/include"
+                if (isEnabled) {
+                    cppCompiler.args '-DLIBCLANGEXT_ENABLE=1'
+                }
+            }
+            binaries.withType(SharedLibraryBinarySpec) { binary ->
+                buildable = false
+            }
+        }
+    }
+
+  toolChains {
+    clang(Clang) {
+      eachPlatform {
+        cppCompiler.withArguments(ClangArgs.&filterGradleNativeSoftwareFlags)
+      }
+    }
+  }
+}

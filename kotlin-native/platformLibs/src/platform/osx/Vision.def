@@ -1,0 +1,7 @@
+depends = ApplicationServices CFNetwork CoreFoundation CoreGraphics CoreML CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal Security darwin libkern osx posix
+language = Objective-C
+package = platform.Vision
+modules = Vision
+
+compilerOpts = -framework Vision
+linkerOpts = -framework Vision

@@ -1,0 +1,9 @@
+depends = CoreFoundation CoreGraphics CoreText Foundation Security UIKit darwin posix
+language = Objective-C
+package = platform.ClockKit
+headers = ClockKit/ClockKit.h
+
+headerFilter = ClockKit/**
+
+compilerOpts = -framework ClockKit
+linkerOpts = -framework ClockKit

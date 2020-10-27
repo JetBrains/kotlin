@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.Ruby
+modules = Ruby
+compilerOpts = -framework Ruby
+linkerOpts = -framework Ruby
+#Disabled: Unavailable

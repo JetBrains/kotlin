@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.SyncServices
+modules = SyncServices
+compilerOpts = -framework SyncServices
+linkerOpts = -framework SyncServices
+#Disabled: Deprecated in 10.7

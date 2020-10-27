@@ -1,0 +1,14 @@
+depends = posix
+package = platform.linux
+headers = byteswap.h elf.h endian.h features.h lastlog.h link.h \
+    malloc.h mntent.h termio.h \
+    uchar.h \
+    sys/epoll.h sys/inotify.h sys/klog.h sys/sendfile.h \
+    sys/sysconf.h sys/sysinfo.h \
+    linux/if_ether.h linux/utime.h \
+    net/if_packet.h netinet/ether.h netinet/in6.h netpacket/packet.h
+headers.android_arm32 = time64.h
+
+headerFilter = **
+
+linkerOpts = -ldl

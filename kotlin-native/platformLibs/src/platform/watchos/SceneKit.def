@@ -1,0 +1,7 @@
+depends = CoreFoundation CoreGraphics Foundation Security darwin posix
+language = Objective-C
+package = platform.SceneKit
+modules = SceneKit
+
+compilerOpts = -framework SceneKit
+linkerOpts = -framework SceneKit

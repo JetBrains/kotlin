@@ -1,0 +1,30 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the LICENSE file.
+ */
+buildscript {
+    apply from: "$rootDir/gradle/kotlinGradlePlugin.gradle"
+}
+
+apply plugin: 'kotlin'
+
+repositories {
+    maven {
+        url buildKotlinCompilerRepo
+    }
+}
+
+compileKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ['-Xskip-metadata-version-check']
+    }
+}
+
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    implementation project(':backend.native')
+    implementation project(':Interop:StubGenerator')
+    implementation project(':klib')
+    implementation project(":utilities:basic-utils")
+}

@@ -1,0 +1,7 @@
+depends = CFNetwork CoreFoundation CoreGraphics Foundation Security darwin posix
+language = Objective-C
+package = platform.AssetsLibrary
+modules = AssetsLibrary
+
+compilerOpts = -framework AssetsLibrary
+linkerOpts = -framework AssetsLibrary

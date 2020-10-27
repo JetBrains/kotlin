@@ -1,0 +1,7 @@
+depends = ApplicationServices CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreGraphics CoreMedia CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal OpenGLCommon Security darwin libkern osx posix
+language = Objective-C
+package = platform.VideoToolbox
+modules = VideoToolbox
+
+compilerOpts = -framework VideoToolbox
+linkerOpts = -framework VideoToolbox

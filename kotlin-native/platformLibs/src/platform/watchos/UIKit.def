@@ -1,0 +1,7 @@
+depends = CoreFoundation CoreGraphics CoreText Foundation Security darwin posix
+language = Objective-C
+package = platform.UIKit
+modules = UIKit
+
+compilerOpts = -framework UIKit
+linkerOpts = -framework UIKit

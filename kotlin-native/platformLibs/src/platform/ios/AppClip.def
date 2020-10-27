@@ -1,0 +1,6 @@
+depends = CFNetwork CoreFoundation Foundation Security darwin posix
+language = Objective-C
+package = platform.AppClip
+modules = AppClip
+compilerOpts = -framework AppClip
+linkerOpts = -framework AppClip

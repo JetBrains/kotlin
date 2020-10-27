@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.AudioVideoBridging
+modules = AudioVideoBridging
+compilerOpts = -framework AudioVideoBridging
+linkerOpts = -framework AudioVideoBridging
+#Disabled: Unavailable

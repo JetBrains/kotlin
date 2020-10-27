@@ -1,0 +1,7 @@
+depends = CFNetwork CoreFoundation CoreGraphics Foundation Security darwin posix
+language = Objective-C
+package = platform.JavaScriptCore
+modules = JavaScriptCore
+
+compilerOpts = -framework JavaScriptCore
+linkerOpts = -framework JavaScriptCore

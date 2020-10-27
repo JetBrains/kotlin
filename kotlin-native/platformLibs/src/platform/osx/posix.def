@@ -1,0 +1,65 @@
+depends =
+package = platform.posix
+headers = alloca.h ar.h assert.h complex.h ctype.h dirent.h dlfcn.h err.h errno.h fcntl.h \
+    fenv.h float.h fnmatch.h fts.h ftw.h getopt.h grp.h inttypes.h libgen.h limits.h \
+    locale.h math.h memory.h netdb.h paths.h poll.h \
+    pthread.h pwd.h regex.h resolv.h sched.h search.h semaphore.h setjmp.h sgtty.h signal.h \
+    stdatomic.h stdint.h stdio.h stdlib.h string.h strings.h syslog.h termios.h \
+    time.h ucontext.h unistd.h utime.h utmp.h wchar.h wctype.h xlocale.h \
+    net/ethernet.h net/if.h net/if_arp.h net/route.h \
+    netinet/icmp6.h netinet/if_ether.h netinet/in.h netinet/in_systm.h \
+    netinet/ip.h netinet/ip6.h netinet/ip_icmp.h netinet/tcp.h netinet/udp.h \
+    sys/acl.h sys/ioctl.h sys/ipc.h sys/mman.h sys/poll.h sys/ptrace.h \
+    sys/queue.h sys/select.h sys/shm.h sys/socket.h sys/stat.h \
+    sys/syslimits.h sys/time.h sys/times.h sys/utsname.h sys/wait.h
+
+compilerOpts = -D_XOPEN_SOURCE -DSHARED_LIBBIND -D_DARWIN_NO_64_BIT_INODE -D_DARWIN_C_SOURCE
+# -D_ANSI_SOURCE, sigh, breaks user_addr_t
+excludedFunctions = KERNEL_AUDIT_TOKEN KERNEL_SECURITY_TOKEN add_profil             \
+                    addrsel_policy_init                                             \
+		    in6addr_linklocal_allv2routers                                  \
+		    pfctlinput regwnexec_l res_send_setqhook res_send_setrhook      \
+		    unwhiteout zopen profil openat acl_valid_link_np uuid_generate_early_random setgrfile
+linkerOpts = -ldl -lresolv
+
+---
+// Wrapper to access errno variable.
+static int posix_errno() {
+    return errno;
+}
+
+static void set_posix_errno(int value) {
+        errno = value;
+}
+
+// Wrapper to access h_errno variable.
+static int posix_h_errno() {
+    return h_errno;
+}
+
+static void set_posix_h_errno(int value) {
+        h_errno = value;
+}
+
+static short posix_htons(short x) {
+	return htons(x);
+}
+
+static void posix_FD_ZERO(fd_set *set) {
+	FD_ZERO(set);
+}
+
+static void posix_FD_SET(int bit, fd_set *set) {
+	FD_SET(bit, set);
+}
+
+static int posix_FD_ISSET(int bit, fd_set *set) {
+	return FD_ISSET(bit, set);
+}
+
+static int init_sockets() {
+        return 0;
+}
+
+static void deinit_sockets() {
+}

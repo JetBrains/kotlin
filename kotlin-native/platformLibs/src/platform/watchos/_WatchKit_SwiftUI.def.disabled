@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform._WatchKit_SwiftUI
+modules = _WatchKit_SwiftUI
+compilerOpts = -framework _WatchKit_SwiftUI
+linkerOpts = -framework _WatchKit_SwiftUI
+#Disabled: Unavailable

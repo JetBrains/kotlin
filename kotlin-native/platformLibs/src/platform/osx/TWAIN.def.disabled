@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.TWAIN
+modules = TWAIN
+compilerOpts = -framework TWAIN
+linkerOpts = -framework TWAIN
+#Disabled: Unavailable

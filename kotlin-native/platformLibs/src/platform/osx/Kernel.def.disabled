@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.Kernel
+modules = Kernel
+compilerOpts = -framework Kernel
+linkerOpts = -framework Kernel
+#Disabled: Framework without module

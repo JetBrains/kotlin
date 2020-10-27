@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.Kerberos
+modules = Kerberos
+compilerOpts = -framework Kerberos
+linkerOpts = -framework Kerberos
+#Disabled: Unavailable

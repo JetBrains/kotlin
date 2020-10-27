@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.InstallerPlugins
+modules = InstallerPlugins
+compilerOpts = -framework InstallerPlugins
+linkerOpts = -framework InstallerPlugins
+#Disabled: Unavailable

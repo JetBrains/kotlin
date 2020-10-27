@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.ExposureNotification
+modules = ExposureNotification
+compilerOpts = -framework ExposureNotification
+linkerOpts = -framework ExposureNotification
+#Disabled: Not officially available for tvos

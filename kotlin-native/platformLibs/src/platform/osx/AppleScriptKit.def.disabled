@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.AppleScriptKit
+modules = AppleScriptKit
+compilerOpts = -framework AppleScriptKit
+linkerOpts = -framework AppleScriptKit
+#Disabled: Unavailable

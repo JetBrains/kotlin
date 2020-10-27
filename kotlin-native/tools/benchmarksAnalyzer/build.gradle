@@ -1,0 +1,196 @@
+buildscript {
+    ext.rootBuildDirectory = file('../..')
+
+    apply from: "$rootBuildDirectory/gradle/loadRootProperties.gradle"
+    apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
+
+    repositories {
+        maven {
+            url 'https://cache-redirector.jetbrains.com/jcenter'
+        }
+        jcenter()
+        maven {
+            url kotlinCompilerRepo
+        }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
+}
+
+apply plugin: 'kotlin-multiplatform'
+
+repositories {
+    maven {
+        url 'https://cache-redirector.jetbrains.com/jcenter'
+    }
+    jcenter()
+    maven {
+        url kotlinCompilerRepo
+    }
+    maven {
+        url buildKotlinCompilerRepo
+    }
+}
+
+def getHostName() {
+    def target = System.getProperty("os.name")
+    if (target == 'Linux') return 'linux'
+    if (target.startsWith('Windows')) return 'windows'
+    if (target.startsWith('Mac')) return 'macos'
+    return 'unknown'
+}
+
+kotlin {
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
+            }
+            kotlin.srcDir '../benchmarks/shared/src'
+            kotlin.srcDir 'src/main/kotlin'
+            kotlin.srcDir '../../endorsedLibraries/kotlinx.cli/src/main/kotlin'
+        }
+        commonTest {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-test-common:$kotlinVersion"
+                implementation "org.jetbrains.kotlin:kotlin-test-annotations-common:$kotlinVersion"
+            }
+            kotlin.srcDir 'src/tests'
+        }
+        jvmTest {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
+                implementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
+            }
+        }
+        jsTest {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-test-js:$kotlinVersion"
+            }
+        }
+        nativeMain {
+            dependsOn commonMain
+            kotlin.srcDir 'src/main/kotlin-native'
+            kotlin.srcDir '../../endorsedLibraries/kotlinx.cli/src/main/kotlin-native'
+        }
+        jvmMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+            }
+            kotlin.srcDir 'src/main/kotlin-jvm'
+            kotlin.srcDir '../../endorsedLibraries/kotlinx.cli/src/main/kotlin-jvm'
+        }
+        jsMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion"
+            }
+            kotlin.srcDir 'src/main/kotlin-js'
+            kotlin.srcDir '../../endorsedLibraries/kotlinx.cli/src/main/kotlin-js'
+        }
+        linuxMain { dependsOn nativeMain }
+        windowsMain { dependsOn nativeMain }
+        macosMain {dependsOn nativeMain }
+    }
+
+    targets {
+        fromPreset(presets.jvm, 'jvm') {
+            compilations.all {
+                tasks[compileKotlinTaskName].kotlinOptions {
+                    jvmTarget = '1.8'
+                }
+                tasks[compileKotlinTaskName].kotlinOptions.suppressWarnings = true
+            }
+        }
+
+        fromPreset(presets.mingwX64, 'windows') {
+            binaries.all {
+                linkerOpts = ["-L${getMingwPath()}/lib".toString()]
+            }
+            compilations.main.cinterops {
+                libcurl {
+                    includeDirs.headerFilterOnly "${getMingwPath()}/include"
+                }
+            }
+        }
+
+        fromPreset(presets.linuxX64, 'linux') {
+            compilations.main.cinterops {
+                libcurl {
+                    includeDirs.headerFilterOnly '/usr/include', '/usr/include/x86_64-linux-gnu'
+                }
+            }
+        }
+        fromPreset(presets.macosX64, 'macos') {
+            compilations.main.cinterops {
+                libcurl {
+                    includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
+                }
+            }
+        }
+        fromPreset(presets.js, 'js') {
+            compilations.main.kotlinOptions {
+                main = "noCall"
+            }
+        }
+
+        configure([windows, linux, macos]) {
+            def isCurrentHost = (name == getHostName())
+            compilations.all {
+                cinterops.all {
+                    project.tasks[interopProcessingTaskName].enabled = isCurrentHost
+                }
+                compileKotlinTask.enabled = isCurrentHost
+            }
+            binaries.all {
+                linkTask.enabled = isCurrentHost
+            }
+
+            binaries {
+                executable('benchmarksAnalyzer', [RELEASE]) {
+                    if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+                        linkerOpts("-L${getMingwPath()}/lib")
+                    }
+                }
+            }
+        }
+    }
+
+    js {
+        browser {
+            distribution {
+                directory = new File("$projectDir/web/")
+            }
+            dceTask {
+                keep 'benchmarksAnalyzer.main_kand9s$'
+            }
+        }
+    }
+}
+
+def getMingwPath() {
+    def directory = System.getenv("MINGW64_DIR")
+    if (directory == null)
+        directory = "c:/msys64/mingw64"
+    return directory
+}
+
+task assembleWeb(type: Sync) {
+    def runtimeDependencies = kotlin.targets.js.compilations.main.runtimeDependencyFiles
+    from(files {
+        runtimeDependencies.collect { File file ->
+            zipTree(file.absolutePath)
+        }
+    }.builtBy(runtimeDependencies)) {
+        includeEmptyDirs = false
+        include { fileTreeElement ->
+            def path = fileTreeElement.path
+            path.endsWith(".js") && (path.startsWith("META-INF/resources/") ||
+                    !path.startsWith("META-INF/"))
+        }
+    }
+
+    from compileKotlinJs.destinationDir
+    into "${projectDir}/web"
+}

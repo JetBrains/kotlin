@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.LatentSemanticMapping
+modules = LatentSemanticMapping
+compilerOpts = -framework LatentSemanticMapping
+linkerOpts = -framework LatentSemanticMapping
+#Disabled: Framework without module

@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.DeveloperToolsSupport
+modules = DeveloperToolsSupport
+compilerOpts = -framework DeveloperToolsSupport
+linkerOpts = -framework DeveloperToolsSupport
+#Disabled: Swift-only framework

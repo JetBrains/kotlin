@@ -1,0 +1,11 @@
+depends = CFNetwork CoreFoundation Foundation IOSurface Metal Security darwin posix
+language = Objective-C
+package = platform.MLCompute
+
+modules.ios_arm32 = MLCompute
+compilerOpts.ios_arm32 = -framework MLCompute
+linkerOpts.ios_arm32 = -framework MLCompute
+
+modules.ios_arm64 = MLCompute
+compilerOpts.ios_arm64 = -framework MLCompute
+linkerOpts.ios_arm64 = -framework MLCompute

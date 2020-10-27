@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.Python
+modules = Python
+compilerOpts = -framework Python
+linkerOpts = -framework Python
+#Disabled: Unavailable

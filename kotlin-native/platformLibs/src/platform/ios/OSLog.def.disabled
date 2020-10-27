@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.OSLog
+modules = OSLog
+compilerOpts = -framework OSLog
+linkerOpts = -framework OSLog
+#Disabled: Not officially available for ios

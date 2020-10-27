@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.Carbon
+modules = Carbon
+compilerOpts = -framework Carbon
+linkerOpts = -framework Carbon
+#Disabled: Unavailable

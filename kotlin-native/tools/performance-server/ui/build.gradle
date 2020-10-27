@@ -1,0 +1,77 @@
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+
+buildscript {
+    ext.rootBuildDirectory = file('../../..')
+
+    apply from: "$rootBuildDirectory/gradle/loadRootProperties.gradle"
+    apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
+
+    repositories {
+        maven {
+            url 'https://cache-redirector.jetbrains.com/jcenter'
+        }
+        jcenter()
+        maven {
+            url kotlinCompilerRepo
+        }
+        maven {
+            url "http://dl.bintray.com/kotlin/kotlin-eap"
+        }
+        maven {
+            url "http://dl.bintray.com/kotlin/kotlin-dev"
+        }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
+}
+
+repositories {
+    maven {
+        url 'https://cache-redirector.jetbrains.com/jcenter'
+    }
+    jcenter()
+    maven {
+        url kotlinCompilerRepo
+    }
+    maven {
+        url buildKotlinCompilerRepo
+    }
+    maven {
+        url "http://dl.bintray.com/kotlin/kotlin-eap"
+    }
+    maven {
+        url "http://dl.bintray.com/kotlin/kotlin-dev"
+    }
+}
+
+apply plugin: 'kotlin-multiplatform'
+
+kotlin {
+    js {
+        browser {
+            binaries.executable()
+            distribution {
+                directory = new File("$projectDir/js/")
+            }
+        }
+    }
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
+            }
+            kotlin.srcDir '../../benchmarks/shared/src'
+        }
+        jsMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion"
+            }
+            kotlin.srcDir 'src/main/kotlin'
+            kotlin.srcDir '../shared/src/main/kotlin'
+            kotlin.srcDir '../src/main/kotlin-js'
+        }
+    }
+}

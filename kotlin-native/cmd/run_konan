@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+#
+# Copyright 2010-2017 JetBrains s.r.o.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+TOOL_NAME="$1"
+shift
+
+if [ -z "$JAVACMD" -a -n "$JAVA_HOME" -a -x "$JAVA_HOME/bin/java" ]; then
+    JAVACMD="$JAVA_HOME/bin/java"
+else
+    JAVACMD=java
+fi
+[ -n "$JAVACMD" ] || JAVACMD=java
+
+declare -a java_args
+declare -a java_opts
+declare -a konan_args
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -D*)
+      java_args=("${java_args[@]}" "$1")
+      shift
+      ;;
+    -J*)
+      java_args=("${java_args[@]}" "${1:2}")
+      shift
+      ;;
+    --time)
+      konan_args=("${konan_args[@]}" --time)
+      java_args=("${java_args[@]}" -Dkonan.profile=true)
+      TIMECMD=time
+      shift
+      ;;
+     *)
+      konan_args[${#konan_args[@]}]=$1
+      shift
+      ;;
+  esac
+done
+
+findHome() {
+    local source="${BASH_SOURCE[0]}"
+    while [ -h "$source" ] ; do
+        local linked="$(readlink "$source")"
+        local dir="$(cd -P $(dirname "$source") && cd -P $(dirname "$linked") && pwd)"
+        source="$dir/$(basename "$linked")"
+    done
+    (cd -P "$(dirname "$source")/.." && pwd)
+}
+KONAN_HOME="$(findHome)"
+
+java_opts=(-ea \
+            -Xmx3G \
+            -XX:TieredStopAtLevel=1 \
+            -Dfile.encoding=UTF-8 \
+            ${JAVA_OPTS})
+
+# Unset some environment variables which are set by XCode and may potentially affect the tool executed.
+while IFS=$'\r' read -r line || [[ -n "$line" ]]; do
+    unset $line
+done < "${KONAN_HOME}/tools/env_blacklist"
+
+KONAN_JAR="${KONAN_HOME}/konan/lib/kotlin-native.jar"
+TROVE_JAR="${KONAN_HOME}/konan/lib/trove4j.jar"
+KONAN_CLASSPATH="$KONAN_JAR:$TROVE_JAR"
+TOOL_CLASS=org.jetbrains.kotlin.cli.utilities.MainKt
+LIBCLANG_DISABLE_CRASH_RECOVERY=1 \
+$TIMECMD "$JAVACMD" "${java_opts[@]}" "${java_args[@]}" -cp "$KONAN_CLASSPATH" "$TOOL_CLASS" "$TOOL_NAME" "${konan_args[@]}"
+

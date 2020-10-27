@@ -1,0 +1,6 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO Metal OpenGLESCommon QuartzCore Security UIKit UserNotifications darwin posix
+language = Objective-C
+package = platform.ClockKit
+modules = ClockKit
+compilerOpts = -framework ClockKit
+linkerOpts = -framework ClockKit

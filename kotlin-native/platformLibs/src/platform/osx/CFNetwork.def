@@ -1,0 +1,10 @@
+depends = CoreFoundation darwin posix
+language = Objective-C
+package = platform.CFNetwork
+modules = CFNetwork
+
+excludedFunctions = kCFHTTPAuthenticationSchemeKerberos kCFHTTPAuthenticationSchemeOAuth1 kCFNetworkProxiesProxyAutoConfigJavaScript kCFProxyAutoConfigurationHTTPResponseKey
+
+
+compilerOpts = -framework CFNetwork
+linkerOpts = -framework CFNetwork

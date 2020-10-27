@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.NetworkingDriverKit
+modules = NetworkingDriverKit
+compilerOpts = -framework NetworkingDriverKit
+linkerOpts = -framework NetworkingDriverKit
+#Disabled: part of DriverKit

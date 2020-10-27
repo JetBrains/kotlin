@@ -1,0 +1,24 @@
+depends = posix
+package = platform.iconv
+headers = iconv.h
+headerFilter = NOTHING
+linkerOpts = -Wl,-Bstatic -liconv -Wl,-Bdynamic
+
+---
+#undef iconv_t
+typedef void *iconv_t;
+
+#undef iconv_open
+static inline iconv_t iconv_open(const char* tocode, const char* fromcode) {
+	return libiconv_open(tocode, fromcode);
+}
+
+#undef iconv
+static inline size_t iconv(iconv_t cd, char **inbuf, size_t *inbytesleft, char **outbuf, size_t *outbytesleft) {
+	return libiconv(cd, inbuf, inbytesleft, outbuf, outbytesleft);
+}
+
+#undef iconv_close
+static inline int iconv_close(iconv_t cd) {
+	return libiconv_close(cd);
+}

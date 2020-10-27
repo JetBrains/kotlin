@@ -1,0 +1,7 @@
+depends = AVFoundation AppKit ApplicationServices AudioToolbox CFNetwork Cocoa CoreAudio CoreAudioTypes CoreData CoreFoundation CoreGraphics CoreImage CoreMIDI CoreMedia CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO MediaToolbox Metal OpenGLCommon QuartzCore Security darwin libkern osx posix
+language = Objective-C
+package = platform.AVKit
+modules = AVKit
+
+compilerOpts = -framework AVKit
+linkerOpts = -framework AVKit

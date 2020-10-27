@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.HIDDriverKit
+modules = HIDDriverKit
+compilerOpts = -framework HIDDriverKit
+linkerOpts = -framework HIDDriverKit
+#Disabled: part of DriverKit

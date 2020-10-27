@@ -1,0 +1,9 @@
+depends = AppKit ApplicationServices CFNetwork Cocoa CoreData CoreFoundation CoreGraphics CoreImage CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageCaptureCore ImageIO Metal OpenGL OpenGLCommon PDFKit QuartzCore QuickLook Security darwin libkern osx posix
+language = Objective-C
+package = platform.Quartz
+modules = Quartz
+
+compilerOpts = -framework Quartz
+linkerOpts = -framework Quartz
+
+excludedFunctions = QCCompositionInputRSSArticleDurationKey QCCompositionInputRSSFeedURLKey QCCompositionProtocolRSSVisualizer

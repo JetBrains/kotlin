@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.CoreMIDIServer
+modules = CoreMIDIServer
+compilerOpts = -framework CoreMIDIServer
+linkerOpts = -framework CoreMIDIServer
+#Disabled: Unavailable

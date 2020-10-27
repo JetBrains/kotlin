@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.AudioUnit
+modules = AudioUnit
+compilerOpts = -framework AudioUnit
+linkerOpts = -framework AudioUnit
+#Disabled: part of AudioToolbox

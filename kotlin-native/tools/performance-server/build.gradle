@@ -1,0 +1,66 @@
+buildscript {
+    ext.rootBuildDirectory = file('../..')
+
+    apply from: "$rootBuildDirectory/gradle/loadRootProperties.gradle"
+    apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
+
+    repositories {
+        maven {
+            url 'https://cache-redirector.jetbrains.com/jcenter'
+        }
+        jcenter()
+        maven {
+            url kotlinCompilerRepo
+        }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
+}
+
+apply plugin: 'kotlin-multiplatform'
+
+repositories {
+    maven {
+        url 'https://cache-redirector.jetbrains.com/jcenter'
+    }
+    jcenter()
+    maven {
+        url kotlinCompilerRepo
+    }
+    maven {
+        url buildKotlinCompilerRepo
+    }
+}
+
+kotlin {
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
+            }
+            kotlin.srcDir '../benchmarks/shared/src'
+        }
+        jsMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion"
+                implementation(npm("aws-sdk", "~2.670.0"))
+            }
+            kotlin.srcDir 'src/main/kotlin'
+            kotlin.srcDir 'src/main/kotlin-js'
+            kotlin.srcDir 'shared/src/main/kotlin'
+        }
+    }
+
+    targets {
+        fromPreset(presets.js, 'js') {
+            nodejs()
+            compilations.main.kotlinOptions {
+                outputFile = "${projectDir}/server/app.js"
+                moduleKind = "commonjs"
+                sourceMap = true
+            }
+        }
+    }
+}

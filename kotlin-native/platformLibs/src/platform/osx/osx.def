@@ -1,0 +1,52 @@
+depends = darwin posix
+language = Objective-C
+package = platform.osx
+headers = NSSystemDirectories.h \
+    aliasdb.h bootparams.h bootstrap.h \
+    com_err.h \
+    crt_externs.h \
+    disktab.h dtrace.h \
+    emmintrin.h eti.h expat.h \
+    expat_external.h form.h fsproperties.h get_compat.h \
+    gssapi.h histedit.h \
+    krb5.h launch.h lber.h lber_types.h ldif.h libc.h libcharset.h \
+    libproc.h localcharset.h \
+    mmintrin.h monitor.h \
+    nc_tparm.h ncurses.h ncurses_dll.h \
+    nlist.h \
+    panel.h pcap-bpf.h pcap-namedb.h pcap.h printerdb.h \
+    profile.h ranlib.h rune.h \
+    stab.h strhash.h \
+    struct.h term.h \
+    term_entry.h termcap.h tic.h timeconv.h tzfile.h \
+    unctrl.h vproc.h \
+    xmmintrin.h \
+    atm/atm_types.h corpses/task_corpse.h \
+    hfs/hfs_format.h hfs/hfs_mount.h hfs/hfs_unistr.h \
+    sys/kauth.h
+
+headerFilter = **
+
+exportForwardDeclarations = objcnames.classes.NSObject objcnames.protocols.NSObjectProtocol
+
+compilerOpts = -D_XOPEN_SOURCE
+excludedFunctions = KERNEL_AUDIT_TOKEN KERNEL_SECURITY_TOKEN vm_map_64 vm_mapped_pages_info vm_region_recurse vm_region xpc_debugger_api_misuse_info \
+                    _dtrace_debug _dtrace_mangled _nc_progname _nc_trace_xnames _nc_tracebits _nc_tracef _traceattr2 _tracechar _tracedump _tracef \
+		    _tracemouse _traceattr _tracechtype _tracechtype2 trace DebugStr Debugger SysBreak SysBreakFunc SysBreakStr \
+		    asl_decode_buffer asl_encode_buffer asl_remove_index au_to_kevent ber_bvreplace ber_decode_oid ber_encode_oid \
+		    ber_flush2 ber_peek_element ber_skip_data ber_skip_element ber_sockbuf_io_debug ber_sockbuf_io_fd \
+		    ber_sockbuf_io_readahead ber_sockbuf_io_tcp ber_sockbuf_io_udp ber_strndup ber_strnlen clock_get_res \
+		    clock_set_res dbm_forder dns_search_list_domain_count dtrace_aggregate_walk_sorted dtrace_print \
+		    error_manager et_asn1_error_table et_k524_error_table et_kdb5_error_table et_krb5_error_table et_kv5m_error_table \
+		    et_prof_error_table gss_export_name_object gss_import_name_object initialize_asn1_error_table initialize_k524_error_table \
+		    initialize_kdb5_error_table initialize_krb5_error_table initialize_kv5m_error_table initialize_prof_error_table \
+		    krb5_c_keylengths krb5_c_prf krb5_c_prf_length krb5_c_random_to_key krb5_cc_get_flags krb5_get_fallback_host_realm \
+		    ldif_debug libcharset_set_relocation_prefix locale_charset mach_vm_region_info mach_vm_region_info_64 map_fd \
+		    nlist os_trace_info_with_payload safe_gets task_wire trace \
+            pcap_createsrcstr pcap_findalldevs_ex pcap_open pcap_parsesrcstr pcap_remoteact_accept pcap_remoteact_cleanup \
+            pcap_remoteact_close pcap_remoteact_list pcap_setsampling
+
+linkerOpts = -late -lbsm -lbz2 -lcompression -ledit -lexpat -lform -lkrb5 -llber -lldap -lncurses -lpanel -lpcap -ldtrace
+---
+
+// menu.h is excluded so far due to interop issues.
