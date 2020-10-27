@@ -13890,6 +13890,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             public void testAllFilesPresentInGenerics() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/generics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
+
+            @TestMetadata("kt42824.kt")
+            public void testKt42824() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/generics/kt42824.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions")

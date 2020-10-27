@@ -404,12 +404,16 @@ object AbstractTypeChecker {
 
         if (subType.isStubType() || superType.isStubType()) return isStubTypeEqualsToAnything
 
-        val superTypeCaptured = superType.asCapturedType()
+        // superType might be a definitely notNull type (see KT-42824)
+        val superOriginalType = superType.asDefinitelyNotNullType()?.original() ?: superType
+        val superTypeCaptured = superOriginalType.asCapturedType()
         val lowerType = superTypeCaptured?.lowerType()
         if (superTypeCaptured != null && lowerType != null) {
+            val lowerTypeWNullability =
+                if (superType.isDefinitelyNotNullType()) lowerType.makeDefinitelyNotNullOrNotNull() else lowerType
             when (getLowerCapturedTypePolicy(subType, superTypeCaptured)) {
-                CHECK_ONLY_LOWER -> return isSubtypeOf(this, subType, lowerType)
-                CHECK_SUBTYPE_AND_LOWER -> if (isSubtypeOf(this, subType, lowerType)) return true
+                CHECK_ONLY_LOWER -> return isSubtypeOf(this, subType, lowerTypeWNullability)
+                CHECK_SUBTYPE_AND_LOWER -> if (isSubtypeOf(this, subType, lowerTypeWNullability)) return true
                 SKIP_LOWER -> Unit
             }
         }
