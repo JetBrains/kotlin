@@ -68,6 +68,9 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
         context.defineFunctionType(declaration.symbol, wasmFunctionType)
 
         val isIntrinsic = declaration.hasWasmReinterpretAnnotation() || declaration.getWasmOpAnnotation() != null
+        if (isIntrinsic) {
+            return
+        }
 
         if (declaration is IrSimpleFunction) {
             if (declaration.modality == Modality.ABSTRACT) return
@@ -79,12 +82,6 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
                 // Register function as virtual, meaning this function
                 // will be stored Wasm table and could be called indirectly.
                 context.registerVirtualFunction(declaration.symbol)
-            }
-
-            if (!isVirtual && isIntrinsic) {
-                // Calls to non-virtual intrinsic functions are replaced with something else.
-                // No need to generate them.
-                return
             }
         }
 
@@ -143,6 +140,7 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
 
         // Add unreachable if function returns something but not as a last instruction.
         if (wasmFunctionType.resultTypes.isNotEmpty() && declaration.body is IrBlockBody) {
+            // TODO: Add unreachable only if needed
             exprGen.buildUnreachable()
         }
 

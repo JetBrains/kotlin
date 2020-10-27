@@ -38,6 +38,7 @@ class GenericReturnTypeLowering(val context: WasmBackendContext) : FileLoweringP
         })
     }
 
+    // TODO: Check for duplicates with IrTypeParameter.erasedUpperBound
     private fun IrType.eraseUpperBoundType(): IrType {
         val typeParameter = this.classifierOrNull?.owner as? IrTypeParameter
         if (typeParameter != null) {

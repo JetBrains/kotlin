@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
+// TODO: name
 class WasmCodeGenerator(
     backendContext: WasmBackendContext,
     wasmModuleFragment: WasmCompiledModuleFragment

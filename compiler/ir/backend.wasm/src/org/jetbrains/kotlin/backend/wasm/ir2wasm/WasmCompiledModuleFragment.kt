@@ -46,6 +46,7 @@ class WasmCompiledModuleFragment {
         ReferencableAndDefinable<IrClassSymbol, ConstantDataElement>()
     val exports = mutableListOf<WasmExport<*>>()
 
+    //
     var startFunction: WasmFunction? = null
 
     open class ReferencableElements<Ir, Wasm : Any> {

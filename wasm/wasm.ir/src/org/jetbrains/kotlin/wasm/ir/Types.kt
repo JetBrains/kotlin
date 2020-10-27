@@ -12,6 +12,7 @@ sealed class WasmType(
     override fun toString(): String = name
 }
 
+// TODO: Remove this type.
 object WasmUnreachableType : WasmType("unreachable", -0x40)
 object WasmI32 : WasmType("i32", -0x1)
 object WasmI1 : WasmType("i32", -0x1)
