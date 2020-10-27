@@ -47,7 +47,8 @@ class KotlinScopeProvider(
                         symbol.fir.scopeForSupertype(
                             substitutor(symbol, useSiteSuperType, useSiteSession),
                             useSiteSession, scopeSession, delegateField,
-                            subClass = klass
+                            subClass = klass,
+                            decoratedDeclaredMemberScope
                         ).let {
                             it as? FirTypeScope ?: error("$it is expected to be FirOverrideAwareScope")
                         }
@@ -122,7 +123,8 @@ private fun FirClass<*>.scopeForSupertype(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
     delegateField: FirField?,
-    subClass: FirClass<*>
+    subClass: FirClass<*>,
+    declaredMemberScope: FirScope,
 ): FirTypeScope = scopeForClassImpl(
     substitutor,
     useSiteSession,
@@ -133,7 +135,7 @@ private fun FirClass<*>.scopeForSupertype(
 ).let {
     if (delegateField != null) {
         scopeSession.getOrBuild(delegateField, DelegatedMemberScopeKey(delegateField.symbol.callableId)) {
-            FirDelegatedMemberScope(it, useSiteSession, subClass, delegateField)
+            FirDelegatedMemberScope(it, useSiteSession, subClass, delegateField, declaredMemberScope)
         }
     } else {
         it

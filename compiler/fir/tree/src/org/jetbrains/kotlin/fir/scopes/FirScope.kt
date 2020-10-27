@@ -35,6 +35,14 @@ abstract class FirScope {
     open fun mayContainName(name: Name) = true
 }
 
+fun FirScope.getFunctions(name: Name): List<FirFunctionSymbol<*>> = mutableListOf<FirFunctionSymbol<*>>().apply {
+    processFunctionsByName(name, this::add)
+}
+
+fun FirScope.getProperties(name: Name): List<FirVariableSymbol<*>> = mutableListOf<FirVariableSymbol<*>>().apply {
+    processPropertiesByName(name, this::add)
+}
+
 fun FirTypeScope.processOverriddenFunctionsAndSelf(
     functionSymbol: FirFunctionSymbol<*>,
     processor: (FirFunctionSymbol<*>) -> ProcessorAction
