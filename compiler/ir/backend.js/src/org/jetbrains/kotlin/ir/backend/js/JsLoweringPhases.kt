@@ -109,6 +109,16 @@ class ModuleLowering(
     override val modulePhase: NamedCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>>
 ) : Lowering(name)
 
+class FileLowering(
+    name: String,
+    description: String,
+    prerequisite: Set<NamedCompilerPhase<JsIrBackendContext, *>> = emptySet(),
+    private val factory: (JsIrBackendContext) -> FileLoweringPass
+) : Lowering(name) {
+    override val modulePhase: NamedCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>> =
+        makeJsModulePhase(factory, name, description, prerequisite)
+}
+
 private fun makeDeclarationTransformerPhase(
     lowering: (JsIrBackendContext) -> DeclarationTransformer,
     name: String,
@@ -122,6 +132,13 @@ private fun makeBodyLoweringPhase(
     description: String,
     prerequisite: Set<Lowering> = emptySet()
 ) = BodyLowering(name, description, prerequisite.map { it.modulePhase }.toSet(), lowering)
+
+private fun makeFileLoweringPhase(
+    lowering: (JsIrBackendContext) -> FileLoweringPass,
+    name: String,
+    description: String,
+    prerequisite: Set<Lowering> = emptySet()
+) = FileLowering(name, description, prerequisite.map { it.modulePhase }.toSet(), lowering)
 
 fun NamedCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>>.toModuleLowering() = ModuleLowering(this.name, this)
 
@@ -350,6 +367,12 @@ private val forLoopsLoweringPhase = makeBodyLoweringPhase(
     ::ForLoopsLowering,
     name = "ForLoopsLowering",
     description = "[Optimization] For loops lowering"
+)
+
+private val propertyLazyInitLoweringPhase = makeFileLoweringPhase(
+    ::PropertyLazyInitLowering,
+    name = "PropertyLazyInitLowering",
+    description = "Make property init as lazy"
 )
 
 private val propertyAccessorInlinerLoweringPhase = makeBodyLoweringPhase(
@@ -727,6 +750,7 @@ val loweringList = listOf<Lowering>(
     rangeContainsLoweringPhase,
     forLoopsLoweringPhase,
     primitiveCompanionLoweringPhase,
+    propertyLazyInitLoweringPhase,
     propertyAccessorInlinerLoweringPhase,
     foldConstantLoweringPhase,
     privateMembersLoweringPhase,
