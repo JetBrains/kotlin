@@ -167,8 +167,8 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
     }
     37 -> {38};
     38 -> {39};
-    39 -> {40};
-    40 -> {56 47 41};
+    39 -> {40 47};
+    40 -> {41};
     41 -> {42};
     42 -> {57};
     42 -> {43} [color=red];
@@ -176,7 +176,7 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
     43 -> {44};
     44 -> {45};
     45 -> {46};
-    46 -> {52};
+    46 -> {52 47};
     47 -> {56 48};
     48 -> {49};
     49 -> {50};
