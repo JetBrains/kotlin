@@ -183,6 +183,7 @@ def select_provider(lldb_val, tip, internal_dict):
     log(lambda : "select_provider: {:#x} : soa: {}".format(lldb_val.unsigned, soa))
     ret =   __FACTORY['string'](lldb_val, tip, internal_dict) if soa == 1 else __FACTORY['array'](lldb_val, tip, internal_dict) if soa == 2 \
         else __FACTORY['object'](lldb_val, tip, internal_dict)
+    log(lambda: f"select_provider({lldb_val.unsigned:#x}) = {ret}")
     bench(start, lambda: "select_provider({:#x})".format(lldb_val.unsigned))
     return ret
 
@@ -287,37 +288,43 @@ class KonanStringSyntheticProvider(KonanHelperProvider):
 class KonanObjectSyntheticProvider(KonanHelperProvider):
     def __init__(self, valobj, tip, internal_dict):
         # Save an extra call into the process
-
+        log(lambda: f"KonanObjectSyntheticProvider({valobj.unsigned:#x})")
         self._children_count = 0
         super(KonanObjectSyntheticProvider, self).__init__(valobj, False, internal_dict)
         self._children = [self._field_name(i) for i in range(self._children_count)]
 
     def _field_name(self, index):
+        log(lambda: f"KonanObjectSyntheticProvider::_field_name({self._valobj.unsigned:#x}, {index})")
         error = lldb.SBError()
         name =  self._read_string("(char *)Konan_DebugGetFieldName({:#x}, (int){})".format(self._valobj.unsigned, index), error)
         if not error.Success():
             raise DebuggerException()
+        log(lambda: f"KonanObjectSyntheticProvider::_field_name({self._valobj.unsigned:#x}, {index}) = {name}")
         return name
 
     def num_children(self):
+        log(lambda: f"KonanObjectSyntheticProvider::num_children({self._valobj.unsigned:#x}) = {self._children_count}")
         return self._children_count
 
     def has_children(self):
+        log(lambda: f"KonanObjectSyntheticProvider::has_children({self._valobj.unsigned:#x}) = {self._children_count > 0}")
         return self._children_count > 0
 
     def get_child_index(self, name):
+        log(lambda: f"KonanObjectSyntheticProvider::get_child_index({self._valobj.unsigned:#x}, {name})")
         index = self._children.index(name)
         return self._read_value(index)
 
     def get_child_at_index(self, index):
+        log(lambda: f"KonanObjectSyntheticProvider::get_child_at_index({self._valobj.unsigned:#x}, {index})")
         return self._read_value(index)
 
     def to_short_string(self):
-        log(f"to_short_string:{self._valobj.unsigned:#x}")
+        log(lambda: f"to_short_string:{self._valobj.unsigned:#x}")
         return super().to_string(lambda index: f"{self._field_name(index)}: ...")
 
     def to_string(self):
-        log(f"to_string:{self._valobj.unsigned:#x}")
+        log(lambda: f"to_string:{self._valobj.unsigned:#x}")
         return super().to_string(lambda index: f"{self._field_name(index)}: {self._deref_or_obj_summary(index)}")
 
 class KonanArraySyntheticProvider(KonanHelperProvider):
@@ -330,57 +337,66 @@ class KonanArraySyntheticProvider(KonanHelperProvider):
         valobj.SetSyntheticChildrenGenerated(True)
         type = self._field_type(0)
 
-    def cap_children_count(self):
+    def num_children(self):
+        log(lambda: f"KonanArraySyntheticProvider::num_children({self._valobj.unsigned:#x}) = {self._children_count}")
         return self._children_count
 
-    def num_children(self):
-        return self.cap_children_count()
-
     def has_children(self):
+        log(lambda: f"KonanArraySyntheticProvider::has_children({self._valobj.unsigned:#x}) = {self._children_count> 0}")
         return self._children_count > 0
 
     def get_child_index(self, name):
+        log(lambda: f"KonanArraySyntheticProvider::get_child_index({self._valobj.unsigned:#x}, {name})")
         index = int(name)
         return index if (0 <= index < self._children_count) else -1
 
     def get_child_at_index(self, index):
+        log(lambda: f"KonanArraySyntheticProvider::get_child_at_index({self._valobj.unsigned:#x}, {index})")
         return self._read_value(index)
 
     def _field_name(self, index):
+        log(lambda: f"KonanArraySyntheticProvider::_field_name({self._valobj.unsigned:#x}, {index})")
         return str(index)
 
     def to_short_string(self):
-        log(f"to_short_string:{self._valobj.unsigned:#x}")
+        log(lambda: f"to_short_string:{self._valobj.unsigned:#x}")
         return super().to_string(lambda index: f"...")
 
     def to_string(self):
-        log(f"to_string:{self._valobj.unsigned:#x}")
+        log(lambda: f"to_string:{self._valobj.unsigned:#x}")
         return super().to_string(lambda index: f"{self._deref_or_obj_summary(index)}")
 
-class KonanNullSyntheticProvider(KonanHelperProvider):
-    def __init__(self):
-        pass
+class KonanNullSyntheticProvider(lldb.SBSyntheticValueProvider):
+    def __init__(self, valobj):
+        log(lambda: f"KonanNullSyntheticProvider::__init__ {valobj.name}")
+
 
     def num_children(self):
+        log(lambda: "KonanNullSyntheticProvider::num_children")
         return 0
 
     def has_children(self):
+        log(lambda: "KonanNullSyntheticProvider::has_children")
         return False
 
     def get_child_index(self, name):
-        pass
+        log(lambda: "KonanNullSyntheticProvider::get_child_index")
+        return 0
 
     def get_child_at_index(self, index):
-        pass
-
-    def _field_name(self, index):
-        pass
-
-    def to_short_string(self):
-        return "null"
+        log(lambda: "KonanNullSyntheticProvider::get_child_at_index")
+        return None
 
     def to_string(self):
-        return "null"
+        log(lambda: "KonanNullSyntheticProvider::to_string")
+        return NULL
+
+    def to_short_string(self):
+        log(lambda: "KonanNullSyntheticProvider::to_short_string")
+        return NULL
+
+    def __getattr__(self, item):
+        pass
 
 
 class KonanProxyTypeProvider:
@@ -388,7 +404,7 @@ class KonanProxyTypeProvider:
         start = time.monotonic()
         log(lambda : "KonanProxyTypeProvider:{:#x}, name: {}".format(valobj.unsigned, valobj.name))
         if valobj.unsigned == 0:
-           log(lambda : "KonanProxyTypeProvider:{:#x}, name: {} NULL syntectic".format(valobj.unsigned, valobj.name))
+           log(lambda : "KonanProxyTypeProvider:{:#x}, name: {} NULL syntectic {}".format(valobj.unsigned, valobj.name, valobj.IsValid()))
            bench(start, lambda: "KonanProxyTypeProvider({:#x})".format(valobj.unsigned))
            self._proxy = KonanNullSyntheticProvider(valobj)
            return
@@ -402,8 +418,7 @@ class KonanProxyTypeProvider:
         log(lambda: "KonanProxyTypeProvider:{:#x} _proxy: {}".format(valobj.unsigned, self._proxy.__class__.__name__))
 
     def __getattr__(self, item):
-        log(lambda: f"__attr__({self.unsigned:#x}, {item})")
-        return getattr(self._proxy, item)
+       return getattr(self._proxy, item)
 
 
 def type_name_command(debugger, command, result, internal_dict):
@@ -489,6 +504,12 @@ def _excepthook(et, ev, tr):
     sys.__excepthook__(et, ev, tr)
 
 
+def _trace_calls(frame, event, arg):
+    if event != 'call':
+        return
+    code = frame.f_code
+    log(lambda: f"{code.co_filename}:{frame.f_lineno} {code.co_name}({str(arg)})")
+
 def __lldb_init_module(debugger, _):
     log(lambda: "init start")
     __FACTORY['object'] = lambda x, y, z: KonanObjectSyntheticProvider(x, y, z)
@@ -513,4 +534,5 @@ def __lldb_init_module(debugger, _):
     debugger.HandleCommand('command script add -f {}.type_by_address_command type_by_address'.format(__name__))
     debugger.HandleCommand('command script add -f {}.symbol_by_name_command symbol_by_name'.format(__name__))
     sys.excepthook = _excepthook
+    #sys.settrace(_trace_calls)
     log(lambda: "init end")
