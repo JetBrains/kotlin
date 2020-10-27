@@ -220,10 +220,10 @@ interface IrBuilderExtension {
     }
 
     fun generateSimplePropertyWithBackingField(
-        ownerSymbol: IrValueSymbol,
         propertyDescriptor: PropertyDescriptor,
         propertyParent: IrClass,
-        declare: Boolean
+        declare: Boolean,
+        fieldName: Name = propertyDescriptor.name,
     ): IrProperty {
         val irPropertySymbol = compilerContext.symbolTable.referenceProperty(propertyDescriptor)
         assert(irPropertySymbol.isBound || declare)
@@ -241,7 +241,7 @@ interface IrBuilderExtension {
         }
         val irProperty = irPropertySymbol.owner
 
-        irProperty.backingField = generatePropertyBackingField(propertyDescriptor, irProperty).apply {
+        irProperty.backingField = generatePropertyBackingField(propertyDescriptor, irProperty, fieldName).apply {
             parent = propertyParent
             correspondingPropertySymbol = irPropertySymbol
         }
@@ -255,7 +255,8 @@ interface IrBuilderExtension {
 
     private fun generatePropertyBackingField(
         descriptor: PropertyDescriptor,
-        originProperty: IrProperty
+        originProperty: IrProperty,
+        name: Name,
     ): IrField {
         val fieldSymbol = compilerContext.symbolTable.referenceField(descriptor)
         if (fieldSymbol.isBound) return fieldSymbol.owner

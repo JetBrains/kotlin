@@ -6,8 +6,8 @@
 package org.jetbrains.kotlinx.serialization.compiler.extensions
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerialInfoImplJvmIrGenerator
 import org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializableCompanionIrGenerator
 import org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializableIrGenerator
 import org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializerIrGenerator
@@ -48,10 +50,16 @@ private class SerializerClassLowering(
         SerializableIrGenerator.generate(irClass, context, context.bindingContext)
         SerializerIrGenerator.generate(irClass, context, context.bindingContext, metadataPlugin)
         SerializableCompanionIrGenerator.generate(irClass, context, context.bindingContext)
+
+        if (context.platform.isJvm()) {
+            SerialInfoImplJvmIrGenerator.generate(irClass, context)
+        }
     }
 }
 
-open class SerializationLoweringExtension @JvmOverloads constructor(val metadataPlugin: SerializationDescriptorSerializerPlugin? = null) : IrGenerationExtension {
+open class SerializationLoweringExtension @JvmOverloads constructor(
+    val metadataPlugin: SerializationDescriptorSerializerPlugin? = null
+) : IrGenerationExtension {
     override fun generate(
         moduleFragment: IrModuleFragment,
         pluginContext: IrPluginContext

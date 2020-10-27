@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.withReferenceScope
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializerCodegen
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.getSerialTypeInfo
@@ -42,8 +41,10 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ST
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.STRUCTURE_ENCODER_CLASS
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.UNKNOWN_FIELD_EXC
 
-// Is creating synthetic origin is a good idea or not?
 object SERIALIZABLE_PLUGIN_ORIGIN : IrDeclarationOriginImpl("SERIALIZER")
+
+// TODO: use in places where elements need to have ACC_SYNTHETIC on JVM
+object SERIALIZABLE_SYNTHETIC_ORIGIN : IrDeclarationOriginImpl("SERIALIZER")
 
 open class SerializerIrGenerator(
     val irClass: IrClass,
@@ -69,12 +70,11 @@ open class SerializerIrGenerator(
 
         // how to (auto)create backing field and getter/setter?
         compilerContext.symbolTable.withReferenceScope(irClass.descriptor) {
-
-            prop = generateSimplePropertyWithBackingField(thisAsReceiverParameter.symbol, desc, irClass, false)
+            prop = generateSimplePropertyWithBackingField(desc, irClass, false)
 
             // TODO: Do not use descriptors here
             localSerializersFieldsDescriptors.forEach {
-                generateSimplePropertyWithBackingField(thisAsReceiverParameter.symbol, it, irClass, true)
+                generateSimplePropertyWithBackingField(it, irClass, true)
             }
         }
 
