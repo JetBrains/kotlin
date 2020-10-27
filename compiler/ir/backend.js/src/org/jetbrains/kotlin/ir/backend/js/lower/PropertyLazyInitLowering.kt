@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import kotlin.collections.component1
 import kotlin.collections.component2
-import kotlin.collections.set
 
 class PropertyLazyInitLowering(private val context: JsIrBackendContext) : FileLoweringPass {
     private val irBuiltIns
@@ -35,9 +34,21 @@ class PropertyLazyInitLowering(private val context: JsIrBackendContext) : FileLo
         get() = context.irFactory
 
     override fun lower(irFile: IrFile) {
-        val initializers = PropertyInitializerMover(context).process(irFile)
+        val properties = PropertySearcher()
+            .search(irFile)
 
-        if (initializers.isEmpty()) return
+        val fieldToInitializer = properties
+            .asSequence()
+            .filterNot { it.isDelegated }
+            .mapNotNull { it.backingField }
+            .filter { it.initializer != null }
+            .map {
+                it to it.initializer!!.expression
+            }
+            .toMap()
+            .onEach { it.key.initializer = null }
+
+        if (fieldToInitializer.isEmpty()) return
 
         val fileName = irFile.name
         val initialisedField = irFactory.createInitialisationField(fileName)
@@ -52,7 +63,7 @@ class PropertyLazyInitLowering(private val context: JsIrBackendContext) : FileLo
             origin = JsIrBuilder.SYNTHESIZED_DECLARATION
         }.apply {
             buildPropertiesInitializationBody(
-                initializers,
+                fieldToInitializer,
                 initialisedField
             )
         }
@@ -120,30 +131,24 @@ class PropertyLazyInitLowering(private val context: JsIrBackendContext) : FileLo
     }
 }
 
-private class PropertyInitializerMover(
-    private val context: JsIrBackendContext
-) : IrElementTransformerVoid() {
+private class PropertySearcher : IrElementTransformerVoid() {
 
-    private val fieldToInitializers = mutableMapOf<IrField, IrExpression>()
+    private val propertyToFunction = mutableSetOf<IrProperty>()
 
-    fun process(irFile: IrFile): Map<IrField, IrExpression> {
+    fun search(irFile: IrFile): Set<IrProperty> {
         irFile.transformChildrenVoid(this)
-        return fieldToInitializers
+        return propertyToFunction
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
+
         declaration.correspondingPropertySymbol
             ?.owner
             ?.takeIf { !it.isConst }
-            ?.takeIf { !it.isDelegated }
-            ?.backingField
-            ?.takeIf { it !in fieldToInitializers }
-            ?.takeIf { it.initializer != null }
-            ?.let { field ->
-                fieldToInitializers[field] = field.initializer!!.expression
+            ?.takeIf { it !in propertyToFunction }
+            ?.let {
+                propertyToFunction.add(it)
             }
-
-        fieldToInitializers.forEach { it.key.initializer = null }
 
         return super.visitSimpleFunction(declaration)
     }
