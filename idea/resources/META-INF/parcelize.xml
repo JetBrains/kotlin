@@ -10,6 +10,10 @@
     <quickFixContributor implementation="org.jetbrains.kotlin.parcelize.ide.quickfixes.ParcelizeQuickFixContributor"/>
   </extensions>
 
+  <extensions defaultExtensionNs="com.intellij">
+    <externalProjectDataService implementation="org.jetbrains.kotlin.parcelize.ide.ParcelizeIdeModelDataService"/>
+  </extensions>
+
   <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
     <projectResolve implementation="org.jetbrains.kotlin.parcelize.ide.ParcelizeProjectResolverExtension" order="last"/>
   </extensions>

@@ -12,6 +12,7 @@ dependencies {
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:light-classes"))
     compile(project(":idea"))
+    compile(project(":idea:idea-gradle"))
     compile(project(":plugins:parcelize:parcelize-compiler"))
     compile(project(":plugins:parcelize:parcelize-runtime"))
 
