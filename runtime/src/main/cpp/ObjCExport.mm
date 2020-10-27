@@ -37,7 +37,7 @@
 #import "ObjCExport.h"
 #import "ObjCExportInit.h"
 #import "ObjCExportPrivate.h"
-#import "MemoryPrivate.hpp"
+#import "ObjCMMAPI.h"
 #import "Runtime.h"
 #import "Utils.h"
 #import "Exceptions.h"
@@ -122,7 +122,6 @@ extern "C" OBJ_GETTER(Kotlin_ObjCExport_AllocInstanceWithAssociatedObject,
 
 static Class getOrCreateClass(const TypeInfo* typeInfo);
 static void initializeClass(Class clazz);
-extern "C" ALWAYS_INLINE void Kotlin_ObjCExport_releaseAssociatedObject(void* associatedObject);
 
 extern "C" id objc_retainAutoreleaseReturnValue(id self);
 
@@ -158,7 +157,7 @@ extern "C" id Kotlin_ObjCExport_CreateNSStringFromKString(ObjHeader* str) {
       length:numBytes
       encoding:NSUTF16LittleEndianStringEncoding];
 
-    if (!str->container()->shareable()) {
+    if (!isShareable(str)) {
       SetAssociatedObject(str, candidate);
     } else {
       id old = AtomicCompareAndSwapAssociatedObject(str, nullptr, candidate);
@@ -485,11 +484,9 @@ template <bool retainAutorelease>
 static ALWAYS_INLINE id Kotlin_ObjCExport_refToObjCImpl(ObjHeader* obj) {
   if (obj == nullptr) return nullptr;
 
-  if (obj->has_meta_object()) {
-    id associatedObject = GetAssociatedObject(obj);
-    if (associatedObject != nullptr) {
-      return retainAutorelease ? objc_retainAutoreleaseReturnValue(associatedObject) : associatedObject;
-    }
+  id associatedObject = GetAssociatedObject(obj);
+  if (associatedObject != nullptr) {
+    return retainAutorelease ? objc_retainAutoreleaseReturnValue(associatedObject) : associatedObject;
   }
 
   // TODO: propagate [retainAutorelease] to the code below.

@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 #include "Memory.h"
-#include "MemoryPrivate.hpp"
+#include "../../legacymm/cpp/MemoryPrivate.hpp" // Fine, because this module is a part of legacy MM.
 
 // Note that only C++ part of the runtime goes via those functions, Kotlin uses specialized versions.
 
@@ -63,6 +63,10 @@ void EnterFrame(ObjHeader** start, int parameters, int count) {
 
 void LeaveFrame(ObjHeader** start, int parameters, int count) {
   LeaveFrameStrict(start, parameters, count);
+}
+
+void UpdateStackRef(ObjHeader** location, const ObjHeader* object) {
+    UpdateStackRefStrict(location, object);
 }
 
 }  // extern "C"

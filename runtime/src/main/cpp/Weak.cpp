@@ -13,6 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+#include "Weak.h"
+
 #include "Memory.h"
 #include "Types.h"
 
@@ -55,25 +58,24 @@ OBJ_GETTER(makePermanentWeakReferenceImpl, ObjHeader*);
 // See Weak.kt for implementation details.
 // Retrieve link on the counter object.
 OBJ_GETTER(Konan_getWeakReferenceImpl, ObjHeader* referred) {
-  if (referred->container() == nullptr) {
-    RETURN_RESULT_OF(makePermanentWeakReferenceImpl, referred);
-  }
-
-  MetaObjHeader* meta = referred->meta_object();
+    if (referred->permanent()) {
+        RETURN_RESULT_OF(makePermanentWeakReferenceImpl, referred);
+    }
 
 #if KONAN_OBJC_INTEROP
   if (IsInstance(referred, theObjCObjectWrapperTypeInfo)) {
-    RETURN_RESULT_OF(makeObjCWeakReferenceImpl, meta->associatedObject_);
+      RETURN_RESULT_OF(makeObjCWeakReferenceImpl, referred->GetAssociatedObject());
   }
 #endif // KONAN_OBJC_INTEROP
 
-  if (meta->WeakReference.counter_ == nullptr) {
-     ObjHolder counterHolder;
-     // Cast unneeded, just to emphasize we store an object reference as void*.
-     ObjHeader* counter = makeWeakReferenceCounter(reinterpret_cast<void*>(referred), counterHolder.slot());
-     UpdateHeapRefIfNull(&meta->WeakReference.counter_, counter);
+  ObjHeader** weakCounterLocation = referred->GetWeakCounterLocation();
+  if (*weakCounterLocation == nullptr) {
+      ObjHolder counterHolder;
+      // Cast unneeded, just to emphasize we store an object reference as void*.
+      ObjHeader* counter = makeWeakReferenceCounter(reinterpret_cast<void*>(referred), counterHolder.slot());
+      UpdateHeapRefIfNull(weakCounterLocation, counter);
   }
-  RETURN_OBJ(meta->WeakReference.counter_);
+  RETURN_OBJ(*weakCounterLocation);
 }
 
 // Materialize a weak reference to either null or the real reference.

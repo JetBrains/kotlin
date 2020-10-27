@@ -494,23 +494,20 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     }
 
     private fun importRtFunction(name: String) = importFunction(name, runtime.llvmModule)
-    private fun importModelSpecificRtFunction(name: String) =
-            importRtFunction(name + context.memoryModel.suffix)
 
     private fun importRtGlobal(name: String) = importGlobal(name, runtime.llvmModule)
 
-    val allocInstanceFunction = importModelSpecificRtFunction("AllocInstance")
-    val allocArrayFunction = importModelSpecificRtFunction("AllocArrayInstance")
-    val initInstanceFunction = importModelSpecificRtFunction("InitInstance")
-    val initSharedInstanceFunction = importModelSpecificRtFunction("InitSharedInstance")
-    val updateHeapRefFunction = importModelSpecificRtFunction("UpdateHeapRef")
-    val releaseHeapRefFunction = importModelSpecificRtFunction("ReleaseHeapRef")
-    val updateStackRefFunction = importModelSpecificRtFunction("UpdateStackRef")
-    val updateReturnRefFunction = importModelSpecificRtFunction("UpdateReturnRef")
+    val allocInstanceFunction = importRtFunction("AllocInstance")
+    val allocArrayFunction = importRtFunction("AllocArrayInstance")
+    val initInstanceFunction = importRtFunction("InitInstance")
+    val initSharedInstanceFunction = importRtFunction("InitSharedInstance")
+    val updateHeapRefFunction = importRtFunction("UpdateHeapRef")
+    val updateStackRefFunction = importRtFunction("UpdateStackRef")
+    val updateReturnRefFunction = importRtFunction("UpdateReturnRef")
     val zeroHeapRefFunction = importRtFunction("ZeroHeapRef")
     val zeroArrayRefsFunction = importRtFunction("ZeroArrayRefs")
-    val enterFrameFunction = importModelSpecificRtFunction("EnterFrame")
-    val leaveFrameFunction = importModelSpecificRtFunction("LeaveFrame")
+    val enterFrameFunction = importRtFunction("EnterFrame")
+    val leaveFrameFunction = importRtFunction("LeaveFrame")
     val lookupOpenMethodFunction = importRtFunction("LookupOpenMethod")
     val lookupInterfaceTableRecord = importRtFunction("LookupInterfaceTableRecord")
     val isInstanceFunction = importRtFunction("IsInstance")

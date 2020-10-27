@@ -37,7 +37,9 @@ bitcode {
             "${target}Relaxed",
             "${target}ProfileRuntime",
             "${target}Objc",
-            "${target}ExceptionsSupport"
+            "${target}ExceptionsSupport",
+            "${target}LegacyMemoryManager",
+            "${target}ExperimentalMemoryManager"
         )
         includeRuntime()
         linkerArgs.add(project.file("../common/build/bitcode/main/$target/hash.bc").path)
@@ -94,6 +96,14 @@ bitcode {
         dependsOn("downloadGoogleTest")
         headersDirs += googletest.headersDirs
     }
+
+    create("legacy_memory_manager", file("src/legacymm")) {
+        includeRuntime()
+    }
+
+    create("experimental_memory_manager", file("src/mm")) {
+        includeRuntime()
+    }
 }
 
 targetList.forEach { targetName ->
@@ -103,6 +113,7 @@ targetList.forEach { targetName ->
             "${targetName}StdAllocRuntimeTests",
             listOf(
                 "${targetName}Runtime",
+                "${targetName}LegacyMemoryManager",
                 "${targetName}Strict",
                 "${targetName}Release",
                 "${targetName}StdAlloc"
@@ -117,6 +128,7 @@ targetList.forEach { targetName ->
             "${targetName}MimallocRuntimeTests",
             listOf(
                 "${targetName}Runtime",
+                "${targetName}LegacyMemoryManager",
                 "${targetName}Strict",
                 "${targetName}Release",
                 "${targetName}Mimalloc",
@@ -126,9 +138,23 @@ targetList.forEach { targetName ->
         includeRuntime()
     }
 
+    createTestTask(
+            project,
+            "ExperimentalMM",
+            "${targetName}ExperimentalMMRuntimeTests",
+            listOf(
+                "${targetName}Runtime",
+                "${targetName}ExperimentalMemoryManager",
+                "${targetName}Release",
+                "${targetName}Mimalloc",
+                "${targetName}OptAlloc"
+            )
+    )
+
     tasks.register("${targetName}RuntimeTests") {
         dependsOn("${targetName}StdAllocRuntimeTests")
         dependsOn("${targetName}MimallocRuntimeTests")
+        dependsOn("${targetName}ExperimentalMMRuntimeTests")
     }
 }
 
@@ -146,6 +172,10 @@ val hostStdAllocRuntimeTests by tasks.registering {
 
 val hostMimallocRuntimeTests by tasks.registering {
     dependsOn("${hostName}MimallocRuntimeTests")
+}
+
+val hostExperimentalMMRuntimeTests by tasks.registering {
+    dependsOn("${hostName}ExperimentalMMRuntimeTests")
 }
 
 val assemble by tasks.registering {

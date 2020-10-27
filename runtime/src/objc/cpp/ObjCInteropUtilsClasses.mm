@@ -83,8 +83,7 @@ void objc_release(id obj);
 extern "C" OBJ_GETTER(Kotlin_Interop_refFromObjC, id obj);
 
 static OBJ_GETTER(Konan_ObjCInterop_getWeakReference, KRef ref) {
-  MetaObjHeader* meta = ref->meta_object();
-  KotlinObjCWeakReference* objcRef = (KotlinObjCWeakReference*)meta->associatedObject_;
+  KotlinObjCWeakReference* objcRef = (KotlinObjCWeakReference*)ref->GetAssociatedObject();
 
   id objcReferred = objc_loadWeakRetained(&objcRef->referred);
   KRef result = Kotlin_Interop_refFromObjC(objcReferred, OBJ_RESULT);
@@ -94,10 +93,9 @@ static OBJ_GETTER(Konan_ObjCInterop_getWeakReference, KRef ref) {
 }
 
 static void Konan_ObjCInterop_initWeakReference(KRef ref, id objcPtr) {
-  MetaObjHeader* meta = ref->meta_object();
   KotlinObjCWeakReference* objcRef = [KotlinObjCWeakReference new];
   objc_storeWeak(&objcRef->referred, objcPtr);
-  meta->associatedObject_ = objcRef;
+  ref->SetAssociatedObject(objcRef);
 }
 
 __attribute__((constructor))

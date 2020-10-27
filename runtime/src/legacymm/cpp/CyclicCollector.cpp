@@ -190,7 +190,7 @@ class CyclicCollector {
          sideRefCounts.clear();
          for (auto* root: rootset_) {
            // We only care about frozen values here, as only they could become part of shared cycles.
-           if (!root->container()->frozen()) continue;
+           if (!containerFor(root)->frozen()) continue;
            COLLECTOR_LOG("process root %p\n", root);
            toVisit.push_back(root);
            sideRefCounts[root] = 0;
@@ -204,7 +204,7 @@ class CyclicCollector {
            auto* obj = toVisit.front();
            toVisit.pop_front();
            COLLECTOR_LOG("visit %s%p\n", isAtomicReference(obj) ? "atomic " : "", obj);
-           auto* objContainer = obj->container();
+           auto* objContainer = containerFor(obj);
            if (objContainer == nullptr) continue;  // Permanent object.
            RuntimeCheck(objContainer->shareable(), "Must be shareable");
            if (visited.count(obj) == 0) {
@@ -216,7 +216,7 @@ class CyclicCollector {
                   int increment;
                   // We shall not account for edges inside the same frozen container, unless it originates
                   // from an atomic reference.
-                  if (isAtomicReference(obj) || (obj->container() != ref->container())) {
+                  if (isAtomicReference(obj) || (containerFor(obj) != containerFor(ref))) {
                     COLLECTOR_LOG("counting %p -> %p\n", obj, ref)
                     increment = 1;
                   } else {
@@ -234,7 +234,7 @@ class CyclicCollector {
          toVisit.clear();
          for (auto it: sideRefCounts) {
            auto* obj = it.first;
-           auto* objContainer = obj->container();
+           auto* objContainer = containerFor(obj);
            if (objContainer == nullptr) continue;  // Permanent object.
            int refCount;
            // If object is in aggregated container - sum up RC for all elements.
@@ -260,7 +260,7 @@ class CyclicCollector {
          while (toVisit.size() > 0)  {
            auto* obj = toVisit.front();
            toVisit.pop_front();
-           auto* objContainer = obj->container();
+           auto* objContainer = containerFor(obj);
            if (objContainer == nullptr) continue;  // Permanent object.
            RuntimeCheck(objContainer->shareable(), "Must be shareable");
            sideRefCounts[obj] = -1;
@@ -290,7 +290,7 @@ class CyclicCollector {
              restartCount++;
              goto restart;
            }
-           auto* objContainer = obj->container();
+           auto* objContainer = containerFor(obj);
            if (!objContainer->frozen()) continue;
            RuntimeAssert(objContainer->objectCount() == 1, "Must be single object");
            COLLECTOR_LOG("for %p inner %d actual %d\n", obj, it.second, objContainer->refCount());

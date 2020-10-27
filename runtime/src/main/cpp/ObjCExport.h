@@ -14,17 +14,17 @@ extern "C" id objc_retainBlock(id self);
 extern "C" void objc_release(id self);
 
 inline static id GetAssociatedObject(ObjHeader* obj) {
-  return (id)obj->meta_object()->associatedObject_;
+    return (id)obj->GetAssociatedObject();
 }
 
 // Note: this function shall not be used on shared objects.
 inline static void SetAssociatedObject(ObjHeader* obj, id value) {
-  obj->meta_object()->associatedObject_ = (void*)value;
+    obj->SetAssociatedObject((void*)value);
 }
 
 inline static id AtomicCompareAndSwapAssociatedObject(ObjHeader* obj, id expectedValue, id newValue) {
-  id* location = reinterpret_cast<id*>(&obj->meta_object()->associatedObject_);
-  return __sync_val_compare_and_swap(location, expectedValue, newValue);
+    id* location = reinterpret_cast<id*>(obj->GetAssociatedObjectLocation());
+    return __sync_val_compare_and_swap(location, expectedValue, newValue);
 }
 
 inline static OBJ_GETTER(AllocInstanceWithAssociatedObject, const TypeInfo* typeInfo, id associatedObject) {

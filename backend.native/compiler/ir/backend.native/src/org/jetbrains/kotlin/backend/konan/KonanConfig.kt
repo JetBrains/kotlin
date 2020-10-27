@@ -115,17 +115,53 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val runtimeNativeLibraries: List<String> = mutableListOf<String>().apply {
         add(if (debug) "debug.bc" else "release.bc")
-        add(if (memoryModel == MemoryModel.STRICT) "strict.bc" else "relaxed.bc")
-        if (shouldCoverLibraries || shouldCoverSources) add("profileRuntime.bc")
-        if (configuration.get(KonanConfigKeys.ALLOCATION_MODE) == "mimalloc") {
-            if (!target.supportsMimallocAllocator()) {
+        val effectiveMemoryModel = when (memoryModel) {
+            MemoryModel.STRICT -> MemoryModel.STRICT
+            MemoryModel.RELAXED -> MemoryModel.RELAXED
+            MemoryModel.EXPERIMENTAL -> {
+                if (!target.supportsMimallocAllocator()) {
+                    configuration.report(CompilerMessageSeverity.STRONG_WARNING,
+                            "Experimental memory model requires mimalloc allocator. Used strict memory model.")
+                    MemoryModel.STRICT
+                } else if (!target.supportsThreads()) {
+                    configuration.report(CompilerMessageSeverity.STRONG_WARNING,
+                            "Experimental memory model requires threads, which are not supported on target ${target.name}. Used strict memory model.")
+                    MemoryModel.STRICT
+                } else {
+                    MemoryModel.EXPERIMENTAL
+                }
+            }
+        }
+        val useMimalloc = if (effectiveMemoryModel == MemoryModel.EXPERIMENTAL) {
+            true // we already checked that target supports mimalloc.
+        } else if (configuration.get(KonanConfigKeys.ALLOCATION_MODE) == "mimalloc") {
+            if (target.supportsMimallocAllocator()) {
+                true
+            } else {
                 configuration.report(CompilerMessageSeverity.STRONG_WARNING,
                         "Mimalloc allocator isn't supported on target ${target.name}. Used standard mode.")
-                add("std_alloc.bc")
-            } else {
-                add("opt_alloc.bc")
-                add("mimalloc.bc")
+                false
             }
+        } else {
+            false
+        }
+        when (effectiveMemoryModel) {
+            MemoryModel.STRICT -> {
+                add("strict.bc")
+                add("legacy_memory_manager.bc")
+            }
+            MemoryModel.RELAXED -> {
+                add("relaxed.bc")
+                add("legacy_memory_manager.bc")
+            }
+            MemoryModel.EXPERIMENTAL -> {
+                add("experimental_memory_manager.bc")
+            }
+        }
+        if (shouldCoverLibraries || shouldCoverSources) add("profileRuntime.bc")
+        if (useMimalloc) {
+            add("opt_alloc.bc")
+            add("mimalloc.bc")
         } else {
             add("std_alloc.bc")
         }

@@ -202,6 +202,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                         MemoryModel.RELAXED
                     }
                     "strict" -> MemoryModel.STRICT
+                    "experimental" -> MemoryModel.EXPERIMENTAL
                     else -> {
                         configuration.report(ERROR, "Unsupported memory model ${arguments.memoryModel}")
                         MemoryModel.STRICT

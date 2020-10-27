@@ -55,11 +55,8 @@ id Kotlin_Interop_CreateNSStringFromKString(ObjHeader* str) {
     return nullptr;
   }
 
-  if (str->has_meta_object()) {
-    void* associatedObject = str->meta_object()->associatedObject_;
-    if (associatedObject != nullptr) {
-      return (id)associatedObject;
-    }
+  if (void* associatedObject = str->GetAssociatedObject()) {
+    return (id)associatedObject;
   }
 
   return Kotlin_ObjCExport_CreateNSStringFromKString(str);
@@ -79,7 +76,7 @@ OBJ_GETTER(Kotlin_Interop_CreateKStringFromNSString, NSString* str) {
 
   CFStringGetCharacters(immutableCopyOrSameStr, range, rawResult);
 
-  result->obj()->meta_object()->associatedObject_ = (void*)immutableCopyOrSameStr;
+  result->obj()->SetAssociatedObject((void*)immutableCopyOrSameStr);
 
   RETURN_OBJ(result->obj());
 }
