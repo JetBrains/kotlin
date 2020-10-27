@@ -37,8 +37,8 @@ fun case_3() {
     var x: Boolean? = true
     if (x != null) {
         false || when { else -> { x = null; true} }
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
     }
 }
 
@@ -64,7 +64,7 @@ fun case_4() {
 fun case_5() {
     var x: Boolean? = true
     if (x != null) {
-        when { else -> { x = null; false} } || <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
+        when { else -> { x = null; false} } || <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
     }
 }
 
@@ -88,7 +88,7 @@ fun case_6() {
 fun case_7() {
     var x: Boolean? = true
     if (x != null) {
-        (if (true) {x = null; null} else true) ?: <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean & kotlin.Boolean?")!>x<!>.not()
+        (if (true) {x = null; null} else true) ?: <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
     }
 }
 
@@ -96,7 +96,7 @@ fun case_7() {
 fun case_8(y: MutableList<Boolean>) {
     var x: Boolean? = true
     if (x != null) {
-        y[if (true) {x = null;0} else 0] = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean & kotlin.Boolean?")!>x<!>
+        <!INAPPLICABLE_CANDIDATE!>y[if (true) {x = null;0} else 0] = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!><!>
     }
 }
 
@@ -109,8 +109,8 @@ fun case_9() {
     var x: Boolean? = true
     if (x is Boolean) {
         funWithAnyArg(try { x = null; true } catch (e: Exception) { false })
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
     }
 }
 
@@ -122,7 +122,7 @@ fun case_9() {
 fun case_10() {
     var x: Boolean? = true
     if (x is Boolean) {
-        select(if (true) {x = null;Class()} else Class()).prop_9 = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean & kotlin.Boolean?")!>x<!>.not()
+        select(if (true) {x = null;Class()} else Class()).prop_9 = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
     }
 }
 
@@ -130,6 +130,6 @@ fun case_10() {
 fun case_11(y: MutableList<MutableList<Int>>) {
     var x: Int? = 10
     if (x != null) {
-        y[if (true) {x = null;0} else 0][x] = 10
+        <!INAPPLICABLE_CANDIDATE!>y[if (true) {x = null;0} else 0][x] = 10<!>
     }
 }
