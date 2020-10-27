@@ -134,6 +134,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         runTest("compiler/testData/codegen/bytecodeListing/noToArrayInJava.kt");
     }
 
+    @TestMetadata("privateCompanionFields.kt")
+    public void testPrivateCompanionFields() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/privateCompanionFields.kt");
+    }
+
     @TestMetadata("privateDefaultImpls.kt")
     public void testPrivateDefaultImpls() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/privateDefaultImpls.kt");
