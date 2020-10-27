@@ -5902,6 +5902,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertPrimaryConstructorToSecondary/caretOnClassName.kt");
         }
 
+        @TestMetadata("caretOnClassNameWithConstructorKeyword.kt")
+        public void testCaretOnClassNameWithConstructorKeyword() throws Exception {
+            runTest("idea/testData/intentions/convertPrimaryConstructorToSecondary/caretOnClassNameWithConstructorKeyword.kt");
+        }
+
         @TestMetadata("caretOnClassNameWithoutPrimaryConstructor.kt")
         public void testCaretOnClassNameWithoutPrimaryConstructor() throws Exception {
             runTest("idea/testData/intentions/convertPrimaryConstructorToSecondary/caretOnClassNameWithoutPrimaryConstructor.kt");

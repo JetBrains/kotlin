@@ -33,11 +33,12 @@ class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingRangeIntentio
     KotlinBundle.lazyMessage("convert.to.secondary.constructor")
 ) {
     override fun applicabilityRange(element: KtClass): TextRange? {
-        val nameIdentifier = element.nameIdentifier ?: return null
         val primaryCtor = element.primaryConstructor ?: return null
+        val startOffset =
+            (if (primaryCtor.getConstructorKeyword() != null) primaryCtor else element.nameIdentifier)?.startOffset ?: return null
         if (element.isAnnotation() || element.isData() || element.superTypeListEntries.any { it is KtDelegatedSuperTypeEntry }) return null
         if (primaryCtor.valueParameters.any { it.hasValOrVar() && (it.name == null || it.annotationEntries.isNotEmpty()) }) return null
-        return TextRange(nameIdentifier.startOffset, primaryCtor.endOffset)
+        return TextRange(startOffset, primaryCtor.endOffset)
     }
 
     private fun KtReferenceExpression.isIndependent(classDescriptor: ClassDescriptor, context: BindingContext): Boolean =
