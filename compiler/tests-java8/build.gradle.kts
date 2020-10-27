@@ -60,4 +60,18 @@ task<Test>("jspecifyTests") {
     include("**/*JspecifyAnnotationsTestGenerated*")
 }
 
+task<Test>("jspecifyTestsWithAutoApplying") {
+    workingDir(project.rootDir)
+    include("**/*JspecifyAnnotationsTestGenerated*")
+    systemProperty("autoApply", "true")
+    ignoreFailures = true
+    outputs.upToDateWhen { false }
+}
+
+task<Task>("generateKotlinUseSiteFromJavaOnesForJspecifyTestsWithAutoApplyingChanges") {
+    dependsOn("generateKotlinUseSiteFromJavaOnesForJspecifyTests")
+    dependsOn("jspecifyTestsWithAutoApplying")
+
+}
+
 testsJar()

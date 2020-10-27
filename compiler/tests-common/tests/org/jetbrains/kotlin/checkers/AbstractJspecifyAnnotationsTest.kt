@@ -9,15 +9,8 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
-import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
 import org.jetbrains.kotlin.utils.ReportLevel
@@ -35,6 +28,8 @@ const val JSPECIFY_DEFAULT_NOT_NULL_ANNOTATION = "@DefaultNotNull"
 private const val JSPECIFY_STATE_SPECIAL_DIRECTIVE = "JSPECIFY_STATE"
 
 abstract class AbstractJspecifyAnnotationsTest : AbstractDiagnosticsTest() {
+    open val shouldAutoApplyChanges = System.getProperty("autoApply") == "true" ?: false
+
     override fun doMultiFileTest(
         wholeFile: File,
         files: List<TestFile>
@@ -194,6 +189,10 @@ abstract class AbstractJspecifyAnnotationsTest : AbstractDiagnosticsTest() {
             ReportLevel.STRICT -> jspecifyMarksToPossibleDiagnosticsForStrictMode
             ReportLevel.WARN -> jspecifyMarksToPossibleDiagnosticsForWarnMode
             ReportLevel.IGNORE -> mapOf()
+        }
+
+        if (shouldAutoApplyChanges) {
+            File(mergedTestFilePath).writeText(textWithDiagnostics)
         }
 
         super.checkDiagnostics(textWithDiagnostics, File(mergedTestFilePath), testFiles)
