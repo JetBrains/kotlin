@@ -8,8 +8,8 @@ fun main(
             aNotNullNullNull: A<Any, Any?, Any?>,
             b: WildcardsWithDefault
 ): Unit {
-    // jspecify_nullness_mismatch
     b.noBoundsNotNull(aNotNullNotNullNotNull)
+    // jspecify_nullness_mismatch
     b.noBoundsNotNull(<!TYPE_MISMATCH!>aNotNullNotNullNull<!>)
     // jspecify_nullness_mismatch
     b.noBoundsNotNull(<!TYPE_MISMATCH!>aNotNullNullNotNull<!>)
@@ -17,7 +17,7 @@ fun main(
     b.noBoundsNotNull(<!TYPE_MISMATCH!>aNotNullNullNull<!>)
 
     b.noBoundsNullable(aNotNullNotNullNotNull)
-    b.noBoundsNullable(<!TYPE_MISMATCH!>aNotNullNotNullNull<!>)
-    b.noBoundsNullable(<!TYPE_MISMATCH!>aNotNullNullNotNull<!>)
-    b.noBoundsNullable(<!TYPE_MISMATCH!>aNotNullNullNull<!>)
+    b.noBoundsNullable(aNotNullNotNullNull)
+    b.noBoundsNullable(aNotNullNullNotNull)
+    b.noBoundsNullable(aNotNullNullNull)
 }

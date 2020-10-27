@@ -3,9 +3,10 @@ import org.jspecify.annotations.*;
 @DefaultNonNull
 public class WildcardsWithDefault {
     public void noBoundsNotNull(A<?, ?, ?> a) {}
-    public void noBoundsNullable(A<@Nullable ?, @Nullable ?, @Nullable ?> a) {}
+    public void noBoundsNullable(A<? extends @Nullable Object, ? extends @Nullable Object, ? extends @Nullable Object> a) {}
 }
 
+@DefaultNonNull
 class A <T extends Object, E extends @Nullable Object, F extends @NullnessUnspecified Object> {}
 
 @DefaultNonNull
@@ -17,8 +18,8 @@ class Use {
             A<Object, @Nullable Object, @Nullable Object> aNotNullNullNull,
             WildcardsWithDefault b
     ) {
-        // jspecify_nullness_mismatch
         b.noBoundsNotNull(aNotNullNotNullNotNull);
+        // jspecify_nullness_mismatch
         b.noBoundsNotNull(aNotNullNotNullNull);
         // jspecify_nullness_mismatch
         b.noBoundsNotNull(aNotNullNullNotNull);

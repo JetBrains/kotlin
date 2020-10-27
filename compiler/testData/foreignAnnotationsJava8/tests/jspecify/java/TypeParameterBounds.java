@@ -17,13 +17,11 @@ class Test {}
 @DefaultNonNull
 public class TypeParameterBounds {
     <T extends Test> void main(A<@Nullable Object> a1, A<Test> a2, B<@Nullable Object> b1, B<Test> b2, T x) {
-        // jspecify_nullness_mismatch
         a1.foo(null);
         // jspecify_nullness_mismatch
         a1.<@Nullable T>bar(null);
         a1.<T>bar(x);
 
-        // jspecify_nullness_mismatch
         a2.foo(null);
         // jspecify_nullness_mismatch
         a2.<@Nullable T>bar(null);
