@@ -14,10 +14,8 @@ import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetField
-import org.jetbrains.kotlin.ir.expressions.IrSetField
-import org.jetbrains.kotlin.ir.expressions.IrWhen
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -57,7 +55,7 @@ class PropertyLazyInitLowering(private val context: JsIrBackendContext) : FileLo
                 parent = irFile
             }
 
-        irFactory.addFunction(irFile) {
+        val initialiseFun = irFactory.addFunction(irFile) {
             name = Name.identifier("init properties $fileName")
             returnType = irBuiltIns.unitType
             origin = JsIrBuilder.SYNTHESIZED_DECLARATION
@@ -67,6 +65,17 @@ class PropertyLazyInitLowering(private val context: JsIrBackendContext) : FileLo
                 initialisedField
             )
         }
+
+        properties
+            .asSequence()
+            .flatMap { sequenceOf(it.getter, it.setter) }
+            .filterNotNull()
+            .forEach { function ->
+                val newBody = function.body?.let { body ->
+                    irFactory.bodyWithFunctionCall(body, initialiseFun)
+                }
+                function.body = newBody
+            }
     }
 
     private fun IrFactory.createInitialisationField(fileName: String): IrField =
@@ -113,23 +122,37 @@ class PropertyLazyInitLowering(private val context: JsIrBackendContext) : FileLo
             )
         ).let { listOf(it) }
     }
-
-    private fun createIrGetField(field: IrField): IrGetField {
-        return JsIrBuilder.buildGetField(
-            symbol = field.symbol,
-            receiver = null
-        )
-    }
-
-    private fun createIrSetField(field: IrField, expression: IrExpression): IrSetField {
-        return JsIrBuilder.buildSetField(
-            symbol = field.symbol,
-            receiver = null,
-            value = expression,
-            type = expression.type
-        )
-    }
 }
+
+private fun createIrGetField(field: IrField): IrGetField {
+    return JsIrBuilder.buildGetField(
+        symbol = field.symbol,
+        receiver = null
+    )
+}
+
+private fun createIrSetField(field: IrField, expression: IrExpression): IrSetField {
+    return JsIrBuilder.buildSetField(
+        symbol = field.symbol,
+        receiver = null,
+        value = expression,
+        type = expression.type
+    )
+}
+
+private fun IrFactory.bodyWithFunctionCall(
+    body: IrBody,
+    functionToCall: IrSimpleFunction
+): IrBody = createBlockBody(
+    body.startOffset,
+    body.endOffset,
+    mutableListOf<IrStatement>(
+        JsIrBuilder.buildCall(
+            target = functionToCall.symbol,
+            type = functionToCall.returnType
+        )
+    ).apply { addAll(body.statements) }
+)
 
 private class PropertySearcher : IrElementTransformerVoid() {
 
