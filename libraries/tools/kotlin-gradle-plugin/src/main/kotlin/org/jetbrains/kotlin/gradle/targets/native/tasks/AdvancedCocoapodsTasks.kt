@@ -352,6 +352,9 @@ open class PodGenTask : DefaultTask() {
     @get:InputFile
     internal lateinit var podspec: Provider<File>
 
+    @get:Input
+    internal lateinit var useLibraries: Provider<Boolean>
+
     @get:Internal
     lateinit var family: Family
 
@@ -379,6 +382,7 @@ open class PodGenTask : DefaultTask() {
 
         val podGenProcessArgs = listOfNotNull(
             "pod", "gen",
+            "--use-libraries".takeIf { useLibraries.get() },
             "--platforms=${family.platformLiteral}",
             "--gen-directory=${syntheticDir.absolutePath}",
             localPodspecPaths.takeIf { it.isNotEmpty() }?.joinToString(separator = ",")?.let { "--local-sources=$it" },

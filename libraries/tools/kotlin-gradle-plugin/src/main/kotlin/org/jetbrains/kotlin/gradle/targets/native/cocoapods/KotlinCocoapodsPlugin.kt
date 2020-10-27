@@ -407,6 +407,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             project.tasks.register(family.toPodGenTaskName, PodGenTask::class.java) {
                 it.description = "Сreates a synthetic Xcode project to retrieve CocoaPods dependencies"
                 it.podspec = podspecTaskProvider.map { task -> task.outputFileProvider.get() }
+                it.useLibraries = project.provider { cocoapodsExtension.useLibraries }
                 it.specRepos = project.provider { cocoapodsExtension.specRepos }
                 it.family = family
                 it.pods.set(cocoapodsExtension.pods)
