@@ -63,26 +63,23 @@ class IdeaModelInfosCache(
 }
 
 // Workaround for duplicated libraries, see KT-42607
-private class LibraryWrapper(val library: Library) {
+private class LibraryWrapper(val library: LibraryEx) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is LibraryWrapper) return false
 
-        if (library !is LibraryEx || other.library !is LibraryEx)
-            return library == other.library
-
         return library.equalsIgnoreNames(other.library)
     }
 
-    override fun hashCode(): Int {
-        return when(library) {
-            is LibraryEx -> library.rootBasedHashCode()
-            else -> library.hashCode()
-        }
-    }
+    override fun hashCode(): Int = library.rootBasedHashCode()
 }
 
-private fun Library.wrap() = LibraryWrapper(this)
+internal fun Library.asLibraryEx(): LibraryEx {
+    require(this is LibraryEx) { "Library '${name}' does not implement LibraryEx which is not expected" }
+    return this
+}
+
+private fun Library.wrap() = LibraryWrapper(this.asLibraryEx())
 
 internal val LibraryEx.allRootUrls: Set<String>
     get() = mutableSetOf<String>().apply {
