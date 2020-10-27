@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.core
 
 import com.intellij.psi.PsiElement
+import javaslang.Tuple2
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
@@ -23,9 +24,10 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
-import org.jetbrains.kotlin.util.javaslang.component1
-import org.jetbrains.kotlin.util.javaslang.component2
 import java.util.*
+
+private operator fun <T> Tuple2<T, *>.component1(): T = _1()
+private operator fun <T> Tuple2<*, T>.component2(): T = _2()
 
 class SmartCastCalculator(
     val bindingContext: BindingContext,
