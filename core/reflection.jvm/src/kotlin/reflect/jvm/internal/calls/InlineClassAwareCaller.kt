@@ -76,7 +76,8 @@ internal class InlineClassAwareCaller<out M : Member?>(
             else -> 0
         }
 
-        val extraArgumentsTail = if (isDefault) 2 else 0
+        val extraArgumentsTail = (if (isDefault) 2 else 0) +
+                (if (descriptor is FunctionDescriptor && descriptor.isSuspend) 1 else 0)
 
         val kotlinParameterTypes: List<KotlinType> = ArrayList<KotlinType>().also { kotlinParameterTypes ->
             val extensionReceiverType = descriptor.extensionReceiverParameter?.type
