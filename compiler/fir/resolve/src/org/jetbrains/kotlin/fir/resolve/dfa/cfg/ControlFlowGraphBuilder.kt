@@ -84,6 +84,7 @@ class ControlFlowGraphBuilder {
     private val binaryOrExitNodes: Stack<BinaryOrExitNode> = stackOf()
 
     private val tryExitNodes: NodeStorage<FirTryExpression, TryExpressionExitNode> = NodeStorage()
+    private val tryMainExitNodes: NodeStorage<FirTryExpression, TryMainBlockExitNode> = NodeStorage()
     private val catchNodeStorages: Stack<NodeStorage<FirCatch, CatchClauseEnterNode>> = stackOf()
     private val catchNodeStorage: NodeStorage<FirCatch, CatchClauseEnterNode> get() = catchNodeStorages.top()
     private val finallyEnterNodes: Stack<FinallyBlockEnterNode> = stackOf()
@@ -786,19 +787,21 @@ class ControlFlowGraphBuilder {
         levelCounter++
         val enterTryNodeBlock = createTryMainBlockEnterNode(tryExpression)
         addNewSimpleNode(enterTryNodeBlock)
-        addEdge(enterTryNodeBlock, exitTargetsForTry.top())
 
         for (catch in tryExpression.catches) {
             val catchNode = createCatchClauseEnterNode(catch)
             catchNodeStorage.push(catchNode)
-            addEdge(enterTryNodeBlock, catchNode)
+            // a flow where an exception of interest is thrown and caught before executing any of try-main block.
+            addEdge(enterTryExpressionNode, catchNode)
+            // TODO: Should go to the finally block w/ a label, and exit to the exit target w/ the same label.
             addEdge(catchNode, exitTargetsForTry.top())
         }
         levelCounter++
 
         if (tryExpression.finallyBlock != null) {
             val finallyEnterNode = createFinallyBlockEnterNode(tryExpression)
-            addEdge(enterTryNodeBlock, finallyEnterNode, label = UncaughtExceptionPath)
+            // a flow where an uncaught exception is thrown before executing any of try-main block.
+            addEdge(enterTryExpressionNode, finallyEnterNode, label = UncaughtExceptionPath)
             finallyEnterNodes.push(finallyEnterNode)
         }
 
@@ -808,6 +811,7 @@ class ControlFlowGraphBuilder {
     fun exitTryMainBlock(tryExpression: FirTryExpression): TryMainBlockExitNode {
         levelCounter--
         val node = createTryMainBlockExitNode(tryExpression)
+        tryMainExitNodes.push(node)
         popAndAddEdge(node)
         val finallyEnterNode = finallyEnterNodes.topOrNull()
         // NB: Check the level to avoid adding an edge to the finally block at an upper level.
@@ -820,7 +824,13 @@ class ControlFlowGraphBuilder {
     }
 
     fun enterCatchClause(catch: FirCatch): CatchClauseEnterNode {
-        return catchNodeStorage[catch]!!.also { lastNodes.push(it) }.also { levelCounter++ }
+        return catchNodeStorage[catch]!!.also {
+            val tryMainExitNode = tryMainExitNodes.top()
+            // a flow where an exception of interest is thrown and caught after executing all of try-main block.
+            addEdge(tryMainExitNode, it)
+            lastNodes.push(it)
+            levelCounter++
+        }
     }
 
     fun exitCatchClause(catch: FirCatch): CatchClauseExitNode {
@@ -847,7 +857,9 @@ class ControlFlowGraphBuilder {
         return createFinallyBlockExitNode(tryExpression).also {
             popAndAddEdge(it)
             val tryExitNode = tryExitNodes.top()
+            // a flow where either there wasn't any exception or caught if any.
             addEdge(it, tryExitNode)
+            // a flow that exits to the exit target while there was an uncaught exception.
             addEdge(it, exitTargetsForTry.top(), label = UncaughtExceptionPath)
         }
     }
@@ -857,6 +869,7 @@ class ControlFlowGraphBuilder {
     ): Pair<TryExpressionExitNode, UnionFunctionCallArgumentsNode?> {
         levelCounter--
         catchNodeStorages.pop()
+        tryMainExitNodes.pop()
         val node = tryExitNodes.pop()
         node.updateDeadStatus()
         lastNodes.push(node)
