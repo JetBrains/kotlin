@@ -172,6 +172,7 @@ object GenerateSteppedRangesCodegenTestData {
                 if (shouldIgnoreForJvmIR) {
                     println("// IGNORE_BACKEND: JVM_IR")
                 }
+                println("// DONT_TARGET_EXACT_BACKEND: WASM")
                 println("// KJS_WITH_FULL_RUNTIME")
                 println("// WITH_RUNTIME")
                 if (asLiteral && KT_34166_AFFECTED_FILENAMES.contains(fileName)) {
