@@ -637,7 +637,9 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     fun enterTryExpression(tryExpression: FirTryExpression) {
         val (tryExpressionEnterNode, tryMainBlockEnterNode) = graphBuilder.enterTryExpression(tryExpression)
         tryExpressionEnterNode.mergeIncomingFlow()
-        tryMainBlockEnterNode.mergeIncomingFlow()
+        // NB: fork to isolate effects inside the try main block
+        // Otherwise, changes in the try main block could affect the try expression enter node as well as its previous nodes.
+        tryMainBlockEnterNode.mergeIncomingFlow(shouldForkFlow = true)
     }
 
     fun exitTryMainBlock(tryExpression: FirTryExpression) {
@@ -645,7 +647,9 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     }
 
     fun enterCatchClause(catch: FirCatch) {
-        graphBuilder.enterCatchClause(catch).mergeIncomingFlow(updateReceivers = true)
+        // NB: fork to isolate effects inside the catch clause
+        // Otherwise, changes in the catch clause could affect the previous node: try main block.
+        graphBuilder.enterCatchClause(catch).mergeIncomingFlow(updateReceivers = true, shouldForkFlow = true)
     }
 
     fun exitCatchClause(catch: FirCatch) {
@@ -653,19 +657,20 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     }
 
     fun enterFinallyBlock() {
-        // TODO
-        graphBuilder.enterFinallyBlock().mergeIncomingFlow()
+        // NB: fork to isolate effects inside the finally block
+        // Otherwise, changes in the finally block could affect the previous nodes: try main block and catch clauses.
+        graphBuilder.enterFinallyBlock().mergeIncomingFlow(shouldForkFlow = true)
     }
 
     fun exitFinallyBlock(tryExpression: FirTryExpression) {
-        // TODO
         graphBuilder.exitFinallyBlock(tryExpression).mergeIncomingFlow()
     }
 
     fun exitTryExpression(callCompleted: Boolean) {
-        // TODO
         val (tryExpressionExitNode, unionNode) = graphBuilder.exitTryExpression(callCompleted)
-        tryExpressionExitNode.mergeIncomingFlow()
+        // NB: fork to prevent effects after the try expression from being flown into the try expression
+        // Otherwise, changes in any following nodes could affect the previous nodes, including try main block and finally block if any.
+        tryExpressionExitNode.mergeIncomingFlow(shouldForkFlow = true)
         unionNode?.let { unionFlowFromArguments(it) }
     }
 
