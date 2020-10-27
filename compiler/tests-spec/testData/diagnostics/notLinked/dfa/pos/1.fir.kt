@@ -1293,8 +1293,8 @@ open class Case29(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (w != null || this.w != null) this.w
 
         s = null
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>s<!>.hashCode()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>s<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>s<!>.hashCode()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>s<!>
         if (s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>s<!>
         if (this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>s<!>
         if (s != null || this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>s<!>
@@ -2337,8 +2337,8 @@ sealed class Case30(a: Int?, val b: Float?, private val c: Unit?, protected val 
         if (w != null || this.w != null) this.w
 
         s = null
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>s<!>.hashCode()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>s<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>s<!>.hashCode()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>s<!>
         if (s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>s<!>
         if (this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>s<!>
         if (s != null || this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>s<!>
@@ -3382,8 +3382,8 @@ enum class Case31(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (w != null || this.w != null) this.w
 
         s = null
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>s<!>.hashCode()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>s<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>s<!>.hashCode()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>s<!>
         if (s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>s<!>
         if (this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>s<!>
         if (s != null || this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>s<!>
@@ -4030,8 +4030,8 @@ object Case32 {
         if (w != null || this.w != null) this.w
 
         s = null
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>s<!>.hashCode()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>s<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>s<!>.hashCode()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>s<!>
         if (s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>s<!>
         if (this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>s<!>
         if (s != null || this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>s<!>
