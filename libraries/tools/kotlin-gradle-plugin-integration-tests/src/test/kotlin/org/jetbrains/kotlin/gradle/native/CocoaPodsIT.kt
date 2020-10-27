@@ -64,6 +64,7 @@ class CocoaPodsIT : BaseGradleIT() {
 
     private val defaultPodRepo = "https://github.com/AFNetworking/AFNetworking"
     private val defaultPodName = "AFNetworking"
+    private val defaultLibraryPodName = "YandexMapKit"
     private val downloadUrlPodName = "podspecWithFilesExample"
     private val downloadUrlRepoName = "https://github.com/alozhkin/podspecWithFilesExample/raw/master"
     private val defaultTarget = "IOS"
@@ -726,6 +727,15 @@ class CocoaPodsIT : BaseGradleIT() {
                 assertContains("Usage: cinterop options_list")
             }
             testWithWrapper("cinteropAFNetworkingIOS")
+        }
+    }
+
+    @Test
+    fun testUseLibrariesMode() {
+        with(project) {
+            gradleBuildScript().appendToCocoapodsBlock("useLibraries()")
+            gradleBuildScript().addPod(defaultLibraryPodName)
+            testImport()
         }
     }
 

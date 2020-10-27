@@ -46,6 +46,16 @@ open class CocoapodsExtension(private val project: Project) {
     }
 
     /**
+     * Setup cocoapods-generate to produce xcodeproj compatible with static libraries
+     */
+    fun useLibraries() {
+        useLibraries = true
+    }
+
+    @get:Input
+    internal var useLibraries: Boolean = false
+
+    /**
      * Configure license of the pod built from this project.
      */
     @Optional
