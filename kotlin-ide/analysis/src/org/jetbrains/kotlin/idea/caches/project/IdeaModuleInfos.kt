@@ -381,7 +381,7 @@ abstract class LibraryInfo(override val project: Project, val library: Library) 
         if (this === other) return true
         if (other !is LibraryInfo) return false
 
-        return library.asLibraryEx().equalsIgnoreNames(other.library.asLibraryEx())
+        return library.asLibraryEx().hasEqualRoots(other.library.asLibraryEx())
     }
 
     override fun hashCode(): Int = library.asLibraryEx().rootBasedHashCode()

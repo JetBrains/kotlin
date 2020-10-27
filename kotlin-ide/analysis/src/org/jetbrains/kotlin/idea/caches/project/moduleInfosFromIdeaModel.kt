@@ -68,7 +68,7 @@ private class LibraryWrapper(val library: LibraryEx) {
         if (this === other) return true
         if (other !is LibraryWrapper) return false
 
-        return library.equalsIgnoreNames(other.library)
+        return library.hasEqualRoots(other.library)
     }
 
     override fun hashCode(): Int = library.rootBasedHashCode()
@@ -88,10 +88,8 @@ internal val LibraryEx.allRootUrls: Set<String>
         }
     }
 
-internal fun LibraryEx.equalsIgnoreNames(other: LibraryEx): Boolean {
+internal fun LibraryEx.hasEqualRoots(other: LibraryEx): Boolean {
     if (allRootUrls != other.allRootUrls) return false
-    if (kind != other.kind) return false
-    if (properties != other.properties) return false
     return excludedRootUrls.contentEquals(other.excludedRootUrls)
 }
 
