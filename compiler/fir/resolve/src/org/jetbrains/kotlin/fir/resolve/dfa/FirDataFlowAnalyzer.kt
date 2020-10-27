@@ -649,7 +649,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     fun enterCatchClause(catch: FirCatch) {
         // NB: fork to isolate effects inside the catch clause
         // Otherwise, changes in the catch clause could affect the previous node: try main block.
-        graphBuilder.enterCatchClause(catch).mergeIncomingFlow(updateReceivers = true, shouldForkFlow = true)
+        // NB: element-wise join due to multiple incoming flows: try main enter and exit
+        graphBuilder.enterCatchClause(catch).mergeIncomingFlowElementwise(updateReceivers = true, shouldForkFlow = true)
     }
 
     fun exitCatchClause(catch: FirCatch) {
@@ -659,7 +660,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     fun enterFinallyBlock() {
         // NB: fork to isolate effects inside the finally block
         // Otherwise, changes in the finally block could affect the previous nodes: try main block and catch clauses.
-        graphBuilder.enterFinallyBlock().mergeIncomingFlow(shouldForkFlow = true)
+        // NB: element-wise join due to multiple incoming flows: try expression enter, try main exit, and catch exits
+        graphBuilder.enterFinallyBlock().mergeIncomingFlowElementwise(shouldForkFlow = true)
     }
 
     fun exitFinallyBlock(tryExpression: FirTryExpression) {
@@ -670,7 +672,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val (tryExpressionExitNode, unionNode) = graphBuilder.exitTryExpression(callCompleted)
         // NB: fork to prevent effects after the try expression from being flown into the try expression
         // Otherwise, changes in any following nodes could affect the previous nodes, including try main block and finally block if any.
-        tryExpressionExitNode.mergeIncomingFlow(shouldForkFlow = true)
+        // NB: element-wise join due to multiple incoming flows: try main exit and catch exits (if no finally exists)
+        tryExpressionExitNode.mergeIncomingFlowElementwise(shouldForkFlow = true)
         unionNode?.let { unionFlowFromArguments(it) }
     }
 
@@ -899,8 +902,11 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         }
 
         if (isAssignment) {
-            if (initializer is FirConstExpression<*> && initializer.kind == FirConstKind.Null) return
-            flow.addTypeStatement(propertyVariable typeEq initializer.typeRef.coneType)
+            if (initializer is FirConstExpression<*> && initializer.kind == FirConstKind.Null) {
+                flow.addTypeStatement(propertyVariable typeEq property.returnTypeRef.coneType.withNullability(ConeNullability.NULLABLE))
+            } else {
+                flow.addTypeStatement(propertyVariable typeEq initializer.typeRef.coneType)
+            }
         }
     }
 
@@ -1121,12 +1127,23 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     private fun <T : CFGNode<*>> T.mergeIncomingFlow(
         updateReceivers: Boolean = false,
         shouldForkFlow: Boolean = false
+    ): T = foldIncomingFlow(logicSystem::joinFlow, updateReceivers, shouldForkFlow)
+
+    private fun <T : CFGNode<*>> T.mergeIncomingFlowElementwise(
+        updateReceivers: Boolean = false,
+        shouldForkFlow: Boolean = false
+    ): T = foldIncomingFlow(logicSystem::elementwiseJoinFlow, updateReceivers, shouldForkFlow)
+
+    private inline fun <T : CFGNode<*>> T.foldIncomingFlow(
+        mergeOperation: (Collection<FLOW>) -> FLOW,
+        updateReceivers: Boolean = false,
+        shouldForkFlow: Boolean = false
     ): T = this.also { node ->
         val previousFlows = if (node.isDead)
             node.previousNodes.mapNotNull { runIf(!node.incomingEdges.getValue(it).kind.isBack) { it.flow } }
         else
             node.previousNodes.mapNotNull { prev -> prev.takeIf { node.incomingEdges.getValue(it).kind.usedInDfa }?.flow }
-        var flow = logicSystem.joinFlow(previousFlows)
+        var flow = mergeOperation.invoke(previousFlows)
         if (updateReceivers) {
             logicSystem.updateAllReceivers(flow)
         }

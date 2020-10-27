@@ -275,6 +275,75 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         }
     }
 
+    override fun elementwiseJoinFlow(flows: Collection<PersistentFlow>): PersistentFlow {
+        return elementwiseFoldFlow(
+            flows,
+            mergeOperation = { statements -> this.or(statements).takeIf { it.isNotEmpty } }
+        )
+    }
+
+    override fun elementwiseUnionFlow(flows: Collection<PersistentFlow>): PersistentFlow {
+        return elementwiseFoldFlow(
+            flows,
+            mergeOperation = this::and
+        )
+    }
+
+    private inline fun elementwiseFoldFlow(
+        flows: Collection<PersistentFlow>,
+        mergeOperation: (Collection<TypeStatement>) -> MutableTypeStatement?,
+    ): PersistentFlow {
+        if (flows.isEmpty()) return createEmptyFlow()
+        flows.singleOrNull()?.let { return it }
+
+        val aliasedVariablesThatDontChangeAlias = computeAliasesThatDontChange(flows)
+
+        val commonFlow = flows.reduce(::lowestCommonFlow)
+
+        // >>> comprehensive element-wise fold >>>
+        val variables = flows.flatMap { it.approvedTypeStatements.keys }.toSet()
+        for (variable in variables) {
+            val info = mergeOperation(flows.map { it.getApprovedTypeStatements(variable, commonFlow) }) ?: continue
+            removeAllAboutVariable(commonFlow, variable)
+            commonFlow.addApprovedStatements(info)
+        }
+        // <<< comprehensive element-wise fold <<<
+
+        commonFlow.addVariableAliases(aliasedVariablesThatDontChangeAlias)
+
+        updateAllReceivers(commonFlow)
+
+        return commonFlow
+    }
+
+    @OptIn(DfaInternals::class)
+    private fun PersistentFlow.getApprovedTypeStatements(variable: RealVariable, parentFlow: PersistentFlow): MutableTypeStatement {
+        var flow = this
+        val result = MutableTypeStatement(variable)
+        val variableUnderAlias = directAliasMap[variable]
+        if (variableUnderAlias == null) {
+            // >>> comprehensive element-wise fold >>>
+            // get approved type statement even though the starting flow == parent flow
+            if (flow == parentFlow) {
+                flow.approvedTypeStatements[variable]?.let {
+                    result += it
+                }
+            } else {
+                while (flow != parentFlow) {
+                    flow.approvedTypeStatements[variable]?.let {
+                        result += it
+                    }
+                    flow = flow.previousFlow!!
+                }
+            }
+            // <<< comprehensive element-wise fold <<<
+        } else {
+            result.exactType.addIfNotNull(variableUnderAlias.originalType)
+            flow.approvedTypeStatements[variableUnderAlias.variable]?.let { result += it }
+        }
+        return result
+    }
+
     override fun addTypeStatement(flow: PersistentFlow, statement: TypeStatement) {
         if (statement.isEmpty) return
         with(flow) {
