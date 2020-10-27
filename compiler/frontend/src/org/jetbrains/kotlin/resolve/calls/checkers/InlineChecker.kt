@@ -265,14 +265,21 @@ internal class InlineChecker(private val descriptor: FunctionDescriptor) : CallC
             checkPrivateClassMemberAccess(calledDescriptor, expression, context)
         }
 
-        if (calledDescriptor !is ConstructorDescriptor &&
+        val isConstructorCall = calledDescriptor is ConstructorDescriptor
+        if ((!isConstructorCall || expression !is KtConstructorCalleeExpression) &&
             isInlineFunPublicOrPublishedApi &&
             inlineFunEffectiveVisibility.toVisibility() !== Visibilities.Protected &&
             calledFunEffectiveVisibility.toVisibility() === Visibilities.Protected) {
-            if (prohibitProtectedCallFromInline) {
-                context.trace.report(PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR.on(expression, calledDescriptor))
-            } else {
-                context.trace.report(PROTECTED_CALL_FROM_PUBLIC_INLINE.on(expression, calledDescriptor))
+            when {
+                isConstructorCall -> {
+                    context.trace.report(PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE.on(expression, calledDescriptor))
+                }
+                prohibitProtectedCallFromInline -> {
+                    context.trace.report(PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR.on(expression, calledDescriptor))
+                }
+                else -> {
+                    context.trace.report(PROTECTED_CALL_FROM_PUBLIC_INLINE.on(expression, calledDescriptor))
+                }
             }
         }
     }
