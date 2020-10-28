@@ -15,17 +15,17 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
-import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 
 // This doesn't support annotation arguments of type KClass and Array<KClass> because the codegen doesn't compute JVM signatures for
 // such cases correctly (because inheriting from annotation classes is prohibited in Kotlin).
 // Currently it results in an "accidental override" error where a method with return type KClass conflicts with the one with Class.
 // TODO: support annotation properties of types KClass<...> and Array<KClass<...>>.
 class SerialInfoImplJvmIrGenerator(
-    private val irClass: IrClass,
     private val context: SerializationPluginContext,
 ) : IrBuilderExtension {
     override val compilerContext: SerializationPluginContext
@@ -33,7 +33,18 @@ class SerialInfoImplJvmIrGenerator(
 
     private val jvmNameClass = context.referenceClass(DescriptorUtils.JVM_NAME)!!.owner
 
-    private fun generate() {
+    private val implGenerated = mutableSetOf<IrClass>()
+    private val annotationToImpl = mutableMapOf<IrClass, IrClass>()
+
+    fun getImplClass(serialInfoAnnotationClass: IrClass): IrClass =
+        annotationToImpl.getOrPut(serialInfoAnnotationClass) {
+            val implClassSymbol = context.referenceClass(serialInfoAnnotationClass.kotlinFqName.child(SerialEntityNames.IMPL_NAME))
+            implClassSymbol!!.owner.apply(this::generate)
+        }
+
+    fun generate(irClass: IrClass) {
+        if (!implGenerated.add(irClass)) return
+
         val properties = irClass.declarations.filterIsInstance<IrProperty>()
         if (properties.isEmpty()) return
 
@@ -54,7 +65,7 @@ class SerialInfoImplJvmIrGenerator(
         ctor.body = ctorBody
 
         for (property in properties) {
-            generateSimplePropertyWithBackingField(property.descriptor, irClass, false, Name.identifier("_" + property.name.asString()))
+            generateSimplePropertyWithBackingField(property.descriptor, irClass, true, Name.identifier("_" + property.name.asString()))
 
             val getter = property.getter!!
             getter.origin = SERIALIZABLE_SYNTHETIC_ORIGIN
@@ -84,11 +95,4 @@ class SerialInfoImplJvmIrGenerator(
         ).apply {
             putValueArgument(0, IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.stringType, name))
         }
-
-    companion object {
-        fun generate(irClass: IrClass, context: SerializationPluginContext) {
-            if (KSerializerDescriptorResolver.isSerialInfoImpl(irClass.descriptor))
-                SerialInfoImplJvmIrGenerator(irClass, context).generate()
-        }
-    }
 }

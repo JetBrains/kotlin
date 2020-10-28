@@ -22,6 +22,7 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerialInfoImplJvm
 import org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializableCompanionIrGenerator
 import org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializableIrGenerator
 import org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializerIrGenerator
+import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver
 
 /**
  * Copy of [runOnFilePostfix], but this implementation first lowers declaration, then its children.
@@ -44,15 +45,16 @@ typealias SerializationPluginContext = IrPluginContext
 private class SerializerClassLowering(
     val context: SerializationPluginContext,
     val metadataPlugin: SerializationDescriptorSerializerPlugin?
-) :
-    IrElementTransformerVoid(), ClassLoweringPass {
+) : IrElementTransformerVoid(), ClassLoweringPass {
+    private val serialInfoJvmGenerator = SerialInfoImplJvmIrGenerator(context)
+
     override fun lower(irClass: IrClass) {
         SerializableIrGenerator.generate(irClass, context, context.bindingContext)
-        SerializerIrGenerator.generate(irClass, context, context.bindingContext, metadataPlugin)
+        SerializerIrGenerator.generate(irClass, context, context.bindingContext, metadataPlugin, serialInfoJvmGenerator)
         SerializableCompanionIrGenerator.generate(irClass, context, context.bindingContext)
 
-        if (context.platform.isJvm()) {
-            SerialInfoImplJvmIrGenerator.generate(irClass, context)
+        if (context.platform.isJvm() && KSerializerDescriptorResolver.isSerialInfoImpl(irClass.descriptor)) {
+            serialInfoJvmGenerator.generate(irClass)
         }
     }
 }

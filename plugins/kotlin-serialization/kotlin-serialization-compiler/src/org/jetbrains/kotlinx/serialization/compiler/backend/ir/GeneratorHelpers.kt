@@ -228,7 +228,7 @@ interface IrBuilderExtension {
         val irPropertySymbol = compilerContext.symbolTable.referenceProperty(propertyDescriptor)
         assert(irPropertySymbol.isBound || declare)
 
-        if (declare) {
+        if (!irPropertySymbol.isBound) {
             with(propertyDescriptor) {
                 propertyParent.factory.createProperty(
                     propertyParent.startOffset, propertyParent.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, irPropertySymbol,
@@ -270,7 +270,7 @@ interface IrBuilderExtension {
         }
     }
 
-    fun generatePropertyAccessor(
+    private fun generatePropertyAccessor(
         property: IrProperty,
         descriptor: PropertyAccessorDescriptor,
         fieldSymbol: IrFieldSymbol,
@@ -279,7 +279,7 @@ interface IrBuilderExtension {
         val symbol = compilerContext.symbolTable.referenceSimpleFunction(descriptor)
         assert(symbol.isBound || declare)
 
-        if (declare) {
+        if (!symbol.isBound) {
             with(descriptor) {
                 property.factory.createFunction(
                     fieldSymbol.owner.startOffset, fieldSymbol.owner.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, symbol,
