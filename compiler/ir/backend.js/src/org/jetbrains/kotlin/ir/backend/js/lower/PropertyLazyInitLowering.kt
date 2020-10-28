@@ -125,7 +125,6 @@ private fun calculateFieldToExpression(functions: Collection<IrSimpleFunction>):
         .filter { it.isTopLevel }
         .filterNot { it.isConst }
         .distinct()
-        .filterNot { it.isDelegated }
         .mapNotNull { it.backingField }
         .filter { it.initializer != null }
         .map { it to it.initializer!!.expression }
