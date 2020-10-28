@@ -14,6 +14,19 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
   <vendor url="http://www.jetbrains.com">JetBrains</vendor>
 
   <change-notes><![CDATA[
+    <h3>1.4.20</h3>
+    <ul>
+      <li>Kotlin/JS: New project templates, improved Gradle plugin, experimental <b>compilation with errors mode</b> in the IR compiler.</li>
+      <li>Kotlin/Native: New escape analysis mechanism, wrapping of Objective-C exceptions, various functional and performance improvements.</li>
+      <li>IDE: Experimental support for <a href="https://blog.jetbrains.com/idea/2020/03/intellij-idea-2020-1-beta2/">Code Vision</a>, the <b>Redirect input from</b> option in Kotlin run configurations, and more.</li>
+      <li>JEP 280 (invokedynamic) string concatenation is available on the JVM.</li>
+      <li>Changes to the layout of multiplatform projects.</li>
+      <li>Improved CocoaPods support.</li>
+      <li>Standard library improvements: Extensions for java.nio.file.Path and performance optimizations.</li>
+      <li>Deprecation of the kotlin-android-extensions compiler plugin. Parcelable implementation generator has moved to the new kotlin-parcelize plugin.</li>
+    </ul>
+    For more details, see <a href="https://kotlinlang.org/docs/reference/whatsnew1420.html?utm_source=product&utm_medium=link">What’s New in Kotlin 1.4.20</a> and <a href="https://blog.jetbrains.com/kotlin/2020/11/kotlin-1-4-20-released/?utm_source=product&utm_medium=link">this blog post</a>.
+    <br><br>
     <h3>1.4.0</h3>
     Released: <b>August 17, 2020</b>
     <ul>
