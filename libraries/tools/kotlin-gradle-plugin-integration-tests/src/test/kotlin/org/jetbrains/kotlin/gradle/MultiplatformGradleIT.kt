@@ -226,7 +226,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
             ${'\n'}
             task printCompileConfiguration(type: DefaultTask) {
                 doFirst {
-                    configurations.compile.resolvedConfiguration.resolvedArtifacts.each {
+                    configurations.getByName("api").dependencies.each {
                         println("Dependency: '" + it.name + "'")
                     }
                 }
