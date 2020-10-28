@@ -2740,6 +2740,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/callableReference/function/javaCollectionsStaticMethod.kt");
             }
 
+            @TestMetadata("jvmStatic.kt")
+            public void testJvmStatic() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/function/jvmStatic.kt");
+            }
+
             @TestMetadata("kt21787.kt")
             public void testKt21787() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/function/kt21787.kt");

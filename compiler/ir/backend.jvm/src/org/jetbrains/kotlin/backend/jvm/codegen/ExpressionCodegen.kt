@@ -1240,8 +1240,10 @@ class ExpressionCodegen(
         element: IrFunctionAccessExpression, data: BlockInfo, signature: JvmMethodSignature
     ): IrCallGenerator {
         if (!element.symbol.owner.isInlineFunctionCall(context) ||
+            // Java compatibility stubs, no point inlining into them:
             classCodegen.irClass.fileParent.fileEntry is MultifileFacadeFileEntry ||
-            irFunction.isInvokeSuspendOfContinuation()
+            irFunction.isInvokeSuspendOfContinuation() ||
+            irFunction.origin == JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER
         ) {
             return IrCallGenerator.DefaultCallGenerator
         }

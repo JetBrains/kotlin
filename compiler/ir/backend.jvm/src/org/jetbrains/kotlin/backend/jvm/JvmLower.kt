@@ -343,6 +343,7 @@ private val jvmFilePhases = listOf(
     interfaceSuperCallsPhase,
     interfaceDefaultCallsPhase,
     interfaceObjectCallsPhase,
+    jvmStaticAnnotationPhase,
 
     tailCallOptimizationPhase,
     addContinuationPhase,
@@ -359,7 +360,6 @@ private val jvmFilePhases = listOf(
     initializersPhase,
     initializersCleanupPhase,
     functionNVarargBridgePhase,
-    jvmStaticAnnotationPhase,
     staticDefaultFunctionPhase,
     bridgePhase,
     syntheticAccessorPhase,

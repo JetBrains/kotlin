@@ -966,6 +966,16 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/companion/floatingPointCompanionAccess.kt");
         }
 
+        @TestMetadata("inlineJvmStatic.kt")
+        public void testInlineJvmStatic() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/companion/inlineJvmStatic.kt");
+        }
+
+        @TestMetadata("inlineSuspendJvmStatic.kt")
+        public void testInlineSuspendJvmStatic() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/companion/inlineSuspendJvmStatic.kt");
+        }
+
         @TestMetadata("kt14258_1.kt")
         public void testKt14258_1() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/companion/kt14258_1.kt");

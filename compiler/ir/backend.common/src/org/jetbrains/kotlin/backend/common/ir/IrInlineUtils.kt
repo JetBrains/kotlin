@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnableBlockImpl
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
+import org.jetbrains.kotlin.ir.util.explicitParameters
+import org.jetbrains.kotlin.ir.util.explicitParametersCount
 import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.ir.util.statements
 
@@ -39,20 +41,15 @@ fun IrExpression.asSimpleLambda(): IrSimpleFunction? {
     return function
 }
 
-private fun createParameterMapping(source: IrFunction, target: IrFunction): Map<IrValueParameter, IrValueParameter> {
-    val sourceParameters = listOfNotNull(source.dispatchReceiverParameter, source.extensionReceiverParameter) + source.valueParameters
-    val targetParameters = listOfNotNull(target.dispatchReceiverParameter, target.extensionReceiverParameter) + target.valueParameters
-    assert(sourceParameters.size == targetParameters.size)
-    return sourceParameters.zip(targetParameters).toMap()
+fun IrFunction.moveBodyTo(target: IrFunction): IrBody? {
+    assert(explicitParametersCount == target.explicitParametersCount)
+    return moveBodyTo(target, explicitParameters.zip(target.explicitParameters).toMap())
 }
-
-fun IrFunction.moveBodyTo(target: IrFunction): IrBody? =
-    moveBodyTo(target, createParameterMapping(this, target))
 
 fun IrFunction.moveBodyTo(target: IrFunction, arguments: Map<IrValueParameter, IrValueDeclaration>): IrBody? =
     body?.move(this, target, target.symbol, arguments)
 
-private fun IrBody.move(
+fun IrBody.move(
     source: IrFunction,
     target: IrDeclarationParent,
     targetSymbol: IrReturnTargetSymbol,
