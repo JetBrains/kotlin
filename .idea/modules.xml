@@ -1617,6 +1617,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/maven-ext/intellij.maven.ext.iml" filepath="$PROJECT_DIR$/intellij/plugins/maven-ext/intellij.maven.ext.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/maven/jps-plugin/intellij.maven.jps.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/maven/jps-plugin/intellij.maven.jps.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/maven-model/intellij.maven.model.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/maven-model/intellij.maven.model.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/maven/remote-run/intellij.maven.remoteRun.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/maven/remote-run/intellij.maven.remoteRun.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/maven/maven-server-api/intellij.maven.server.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/maven/maven-server-api/intellij.maven.server.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/maven/maven-event-listener/intellij.maven.server.eventListener.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/maven/maven-event-listener/intellij.maven.server.eventListener.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/maven/maven2-server-impl/intellij.maven.server.m2.impl.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/maven/maven2-server-impl/intellij.maven.server.m2.impl.iml" />
