@@ -6,6 +6,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.checkNativeCommandLineArguments
 import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.containsSequentially
+import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.native.MPPNativeTargets
 import org.jetbrains.kotlin.gradle.native.configureMemoryInGradleProperties
 import org.jetbrains.kotlin.gradle.native.transformNativeTestProject
@@ -42,6 +43,10 @@ class NewMultiplatformIT : BaseGradleIT() {
 
     private fun Project.targetClassesDir(targetName: String, sourceSetName: String = "main") =
         classesDir(sourceSet = "$targetName/$sourceSetName")
+
+    override fun defaultBuildOptions(): BuildOptions {
+        return super.defaultBuildOptions().copy(warningMode = WarningMode.Summary)
+    }
 
     @Test
     fun testLibAndApp() = doTestLibAndApp(

@@ -2,6 +2,6 @@ apply plugin: 'kotlin-platform-jvm'
 
 dependencies {
     expectedBy project(":lib")
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile 'com.google.guava:guava:20.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'com.google.guava:guava:20.0'
 }

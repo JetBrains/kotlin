@@ -56,7 +56,7 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
     private val commonProjects = arrayListOf<Project>()
 
     protected open fun configurationsForCommonModuleDependency(project: Project): List<Configuration> =
-        listOf(project.configurations.getByName("compile"))
+        listOf(project.configurations.getByName("api"))
 
     override fun apply(project: Project) {
         warnAboutKotlin12xMppDeprecation(project)
@@ -238,10 +238,6 @@ open class KotlinPlatformAndroidPlugin : KotlinPlatformImplementationPluginBase(
         project.applyPlugin<KotlinAndroidPluginWrapper>()
         super.apply(project)
     }
-
-    override fun configurationsForCommonModuleDependency(project: Project): List<Configuration> =
-        (project.configurations.findByName("api"))?.let(::listOf)
-            ?: super.configurationsForCommonModuleDependency(project) // older Android plugins don't have api/implementation configs
 
     override fun namedSourceSetsContainer(project: Project): NamedDomainObjectContainer<*> =
         (project.extensions.getByName("android") as BaseExtension).sourceSets

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
@@ -18,7 +19,8 @@ class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
             androidHome = KotlinTestUtils.findAndroidSdk(),
             androidGradlePluginVersion = androidGradlePluginVersion,
             configurationCache = true,
-            configurationCacheProblems = ConfigurationCacheProblems.FAIL
+            configurationCacheProblems = ConfigurationCacheProblems.FAIL,
+            warningMode = WarningMode.Summary
         )
 
     @Test

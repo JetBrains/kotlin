@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import com.google.gson.Gson
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
@@ -22,6 +23,11 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
+
+    override fun defaultBuildOptions(): BuildOptions {
+        return super.defaultBuildOptions().copy(warningMode = WarningMode.Summary)
+    }
+
     @Test
     fun generateDts() {
         val project = Project("kotlin2JsIrDtsGeneration")
@@ -116,6 +122,11 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
 }
 
 class Kotlin2JsGradlePluginIT : AbstractKotlin2JsGradlePluginIT(false) {
+
+    override fun defaultBuildOptions(): BuildOptions {
+        return super.defaultBuildOptions().copy(warningMode = WarningMode.Summary)
+    }
+
     @Test
     fun testKotlinJsBuiltins() {
         val project = Project("kotlinBuiltins")
