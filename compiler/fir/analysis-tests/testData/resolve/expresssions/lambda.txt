@@ -27,12 +27,12 @@ FILE: lambda.kt
         lval s: R|kotlin/String| = fun <anonymous>(): R|kotlin/String| {
             ^ String(OK)
         }
-        .R|FakeOverride<kotlin/Function0.invoke: R|kotlin/String|>|()
+        .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()
         lval f: R|() -> kotlin/String| = fun <anonymous>(): R|kotlin/String| {
             ^ String(OK)
         }
 
-        lval ss: R|kotlin/String| = R|<local>/f|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/String|>|()
+        lval ss: R|kotlin/String| = R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()
         lval empty: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| {
             ^ Unit
         }

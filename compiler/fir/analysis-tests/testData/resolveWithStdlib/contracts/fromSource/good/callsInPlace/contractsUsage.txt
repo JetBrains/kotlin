@@ -6,7 +6,7 @@ FILE: contractsUsage.kt
         >
      {
         [StubStatement]
-        R|<local>/x|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
     @R|kotlin/contracts/ExperimentalContracts|() public final fun R|() -> kotlin/Unit|.baz(): R|kotlin/Unit|
         [R|Contract description]
@@ -17,7 +17,7 @@ FILE: contractsUsage.kt
         [StubStatement]
         when () {
             Boolean(true) ->  {
-                this@R|/baz|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+                this@R|/baz|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
             }
         }
 
@@ -32,7 +32,7 @@ FILE: contractsUsage.kt
         [StubStatement]
         when () {
             Boolean(true) ->  {
-                R|<local>/x|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+                R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
                 R|<local>/y|.R|/baz|()
                 ^foo Unit
             }

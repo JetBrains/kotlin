@@ -58,9 +58,9 @@ FILE: upperBoundViolated.kt
 
     }
     public final typealias NL<K> = R|NumColl<kotlin/collections/List<K>>|
-    public final val test7: R|NumColl<kotlin/collections/List<kotlin/Int>>| = R|/NumColl.NumColl|<R|kotlin/Int|>()
+    public final val test7: R|NumColl<kotlin/collections/List<kotlin/Int>>| = R|SubstitutionOverride</NumColl.NumColl>|<R|kotlin/Int|>()
         public get(): R|NumColl<kotlin/collections/List<kotlin/Int>>|
-    public final val test8: R|NumColl<kotlin/collections/List<kotlin/String>>| = R|/NumColl.NumColl|<R|kotlin/String|>()
+    public final val test8: R|NumColl<kotlin/collections/List<kotlin/String>>| = R|SubstitutionOverride</NumColl.NumColl>|<R|kotlin/String|>()
         public get(): R|NumColl<kotlin/collections/List<kotlin/String>>|
     public final class NumberPhile<T : R|kotlin/Number|> : R|kotlin/Any| {
         public constructor<T : R|kotlin/Number|>(x: R|T|): R|NumberPhile<T>| {

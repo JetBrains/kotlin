@@ -10,5 +10,5 @@ FILE: lambdaAsReturnOfLambda.kt
     public final fun bar(s: R|kotlin/String|): R|kotlin/Unit| {
     }
     public final fun <R> run(block: R|() -> R|): R|R| {
-        ^run R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|R|>|()
+        ^run R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()
     }

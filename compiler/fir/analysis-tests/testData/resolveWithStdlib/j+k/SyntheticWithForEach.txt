@@ -1,13 +1,13 @@
 FILE: test.kt
     public final fun <D : R|kotlin/Any|> R|Call<D>|.testForEach(): R|kotlin/Unit| {
-        this@R|/testForEach|.R|/Call.arguments|.R|FakeOverride<kotlin/collections/MutableMap.forEach: R|kotlin/Unit|>|(<L> = forEach@fun <anonymous>(key: R|ft<kotlin/String, kotlin/String?>!|, value: R|ft<kotlin/String, kotlin/String?>!|): R|kotlin/Unit| {
+        this@R|/testForEach|.R|/Call.arguments|.R|SubstitutionOverride<kotlin/collections/MutableMap.forEach: R|kotlin/Unit|>|(<L> = forEach@fun <anonymous>(key: R|ft<kotlin/String, kotlin/String?>!|, value: R|ft<kotlin/String, kotlin/String?>!|): R|kotlin/Unit| {
             R|<local>/key|.R|kotlin/String.length|
             R|<local>/value|.R|kotlin/String.length|
         }
         )
         this@R|/testForEach|.R|/Call.arguments|.R|kotlin/collections/forEach|<R|ft<kotlin/String, kotlin/String?>!|, R|ft<kotlin/String, kotlin/String?>!|>(<L> = forEach@fun <anonymous>(it: R|kotlin/collections/Map.Entry<ft<kotlin/String, kotlin/String?>!, ft<kotlin/String, kotlin/String?>!>|): R|kotlin/Unit| <kind=UNKNOWN>  {
-            R|<local>/it|.R|FakeOverride<kotlin/collections/Map.Entry.key: R|ft<kotlin/String, kotlin/String?>!|>|.R|kotlin/String.length|
-            R|<local>/it|.R|FakeOverride<kotlin/collections/Map.Entry.value: R|ft<kotlin/String, kotlin/String?>!|>|.R|kotlin/String.length|
+            R|<local>/it|.R|SubstitutionOverride<kotlin/collections/Map.Entry.key: R|ft<kotlin/String, kotlin/String?>!|>|.R|kotlin/String.length|
+            R|<local>/it|.R|SubstitutionOverride<kotlin/collections/Map.Entry.value: R|ft<kotlin/String, kotlin/String?>!|>|.R|kotlin/String.length|
         }
         )
     }

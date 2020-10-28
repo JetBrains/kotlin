@@ -29,7 +29,7 @@ FILE: repeatedModifier.kt
         }
 
         public final inline fun foo(f: R|(kotlin/Int) -> kotlin/Int|): R|kotlin/Int| {
-            ^foo R|<local>/f|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Int|>|(Int(8))
+            ^foo R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Int|>|(Int(8))
         }
 
         public final static fun values(): R|kotlin/Array<C>| {

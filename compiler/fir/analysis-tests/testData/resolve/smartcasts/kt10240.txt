@@ -16,7 +16,7 @@ FILE: kt10240.kt
         ^a R|<local>/c|
     }
     public final fun myRun(f: R|() -> kotlin/Unit|): R|kotlin/Unit| {
-        R|<local>/f|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
     public final fun println(arg: R|kotlin/Int|): R|kotlin/Unit| {
     }

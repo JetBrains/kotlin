@@ -12,7 +12,7 @@ FILE: test.kt
 
     }
     public final fun <D : R|Descriptor|> test(call: R|Call<D>|, resolvedCall: R|ResolvedCall<D>|): R|kotlin/Unit| {
-        R|<local>/call|.R|FakeOverride</Call.resultingDescriptor: R|D|>|.R|/name|
+        R|<local>/call|.R|SubstitutionOverride</Call.resultingDescriptor: R|D|>|.R|/name|
         R|<local>/resolvedCall|.R|/ResolvedCall.resultingDescriptor|.R|/name|
         lval resolvedDescriptor: R|D?| = R|<local>/resolvedCall|.R|/ResolvedCall.candidateDescriptor|
         when () {
@@ -24,6 +24,6 @@ FILE: test.kt
         R|<local>/resolvedDescriptor|.R|/foo|()
     }
     public final fun otherTest(call: R|Call<*>|, resolvedCall: R|ResolvedCall<*>|): R|kotlin/Unit| {
-        R|<local>/call|.R|FakeOverride</Call.resultingDescriptor: R|CapturedType(*)|>|.R|/name|
+        R|<local>/call|.R|SubstitutionOverride</Call.resultingDescriptor: R|CapturedType(*)|>|.R|/name|
         R|<local>/resolvedCall|.R|/ResolvedCall.resultingDescriptor|.R|/name|
     }

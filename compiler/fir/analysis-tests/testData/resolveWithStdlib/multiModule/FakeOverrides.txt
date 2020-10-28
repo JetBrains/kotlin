@@ -51,9 +51,9 @@ FILE: jvm.kt
         }
 
         public final fun test(): R|kotlin/Unit| {
-            this@R|/D|.R|FakeOverride</B.foo: R|kotlin/Unit|>|(String())
+            this@R|/D|.R|SubstitutionOverride</B.foo: R|kotlin/Unit|>|(String())
             this@R|/D|.R|/C.bar|(String())
-            this@R|/D|.R|FakeOverride</B.baz: R|kotlin/String|>|(String())
+            this@R|/D|.R|SubstitutionOverride</B.baz: R|kotlin/String|>|(String())
         }
 
     }

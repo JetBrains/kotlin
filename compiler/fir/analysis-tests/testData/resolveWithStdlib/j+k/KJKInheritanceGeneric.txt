@@ -16,7 +16,7 @@ FILE: K2.kt
         }
 
         public final fun bar(): R|kotlin/Unit| {
-            this@R|/K2|.R|FakeOverride</J1.foo: R|ft<kotlin/Int, kotlin/Int?>!|>|(Int(1))
+            this@R|/K2|.R|SubstitutionOverride</J1.foo: R|ft<kotlin/Int, kotlin/Int?>!|>|(Int(1))
             this@R|/K2|.R|/J1.baz|()
         }
 

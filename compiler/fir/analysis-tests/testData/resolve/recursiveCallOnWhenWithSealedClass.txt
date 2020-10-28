@@ -33,7 +33,7 @@ FILE: recursiveCallOnWhenWithSealedClass.kt
                     throw R|java/lang/Exception.Exception|(String())
                 }
                 ($subj$ is R|Maybe.Yeah<T>|) ->  {
-                    this@R|/Maybe|.R|FakeOverride</Maybe.Yeah.meat: R|T|>|
+                    this@R|/Maybe|.R|SubstitutionOverride</Maybe.Yeah.meat: R|T|>|
                 }
             }
 

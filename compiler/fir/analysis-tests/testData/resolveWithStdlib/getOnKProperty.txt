@@ -5,6 +5,6 @@ FILE: getOnKProperty.kt
         }
     public final fun test(): R|kotlin/Unit| {
         lval f: R|kotlin/reflect/KProperty1<kotlin/Any?, kotlin/Int>| = Q|kotlin/Any?|::R|/meaning|
-        R|<local>/f|.R|FakeOverride<kotlin/reflect/KProperty1.get: R|kotlin/Int|>|(Null(null))
-        R|<local>/f|.R|FakeOverride<kotlin/reflect/KProperty1.get: R|kotlin/Int|>|(String())
+        R|<local>/f|.R|SubstitutionOverride<kotlin/reflect/KProperty1.get: R|kotlin/Int|>|(Null(null))
+        R|<local>/f|.R|SubstitutionOverride<kotlin/reflect/KProperty1.get: R|kotlin/Int|>|(String())
     }

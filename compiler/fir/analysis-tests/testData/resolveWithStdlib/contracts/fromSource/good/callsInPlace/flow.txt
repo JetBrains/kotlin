@@ -8,7 +8,7 @@ FILE: flow.kt
         [StubStatement]
         when () {
             Boolean(true) ->  {
-                R|<local>/x|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+                R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
                 ^bar Unit
             }
         }
@@ -29,19 +29,19 @@ FILE: flow.kt
                 lval <iterator>: R|kotlin/collections/IntIterator| = Int(0).R|kotlin/Int.rangeTo|(Int(0)).R|kotlin/ranges/IntProgression.iterator|()
                 while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
                     lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()
-                    R|<local>/x|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+                    R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
                 }
 
-                R|<local>/y|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+                R|<local>/y|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
             }
             else ->  {
                 when () {
                     Boolean(false) ->  {
-                        R|<local>/y|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+                        R|<local>/y|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
                     }
                     else ->  {
-                        R|<local>/y|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
-                        R|<local>/z|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+                        R|<local>/y|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+                        R|<local>/z|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
                         ^foo Unit
                     }
                 }

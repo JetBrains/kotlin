@@ -1,5 +1,5 @@
 FILE: typeAliasDeserialization.kt
     public final fun main(): R|kotlin/Unit| {
-        lval a: R|java/util/LinkedHashSet<kotlin/String>| = R|java/util/LinkedHashSet.LinkedHashSet|<R|kotlin/String|>()
-        R|<local>/a|.R|FakeOverride<java/util/LinkedHashSet.add: R|kotlin/Boolean|>|(String())
+        lval a: R|java/util/LinkedHashSet<kotlin/String>| = R|SubstitutionOverride<java/util/LinkedHashSet.LinkedHashSet>|<R|kotlin/String|>()
+        R|<local>/a|.R|SubstitutionOverride<java/util/LinkedHashSet.add: R|kotlin/Boolean|>|(String())
     }

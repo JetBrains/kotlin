@@ -4,7 +4,7 @@ FILE: propertyFromParameter.kt
             super<R|kotlin/Any|>()
         }
 
-        public final val name: R|kotlin/String| = R|<local>/name|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/String|>|()
+        public final val name: R|kotlin/String| = R|<local>/name|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()
             public get(): R|kotlin/String|
 
     }

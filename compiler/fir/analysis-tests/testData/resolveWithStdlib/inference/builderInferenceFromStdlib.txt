@@ -1,20 +1,20 @@
 FILE: builderInferenceFromStdlib.kt
     public final fun test_1(): R|kotlin/Unit| {
         lval list: R|kotlin/collections/List<kotlin/String>| = R|kotlin/collections/buildList|<R|kotlin/String|>(<L> = buildList@fun R|kotlin/collections/MutableList<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
-            this@R|special/anonymous|.R|FakeOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String())
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String())
         }
         )
         R|/takeList|(R|<local>/list|)
     }
     public final fun test_2(): R|kotlin/Unit| {
         lval list: R|kotlin/collections/List<kotlin/String>| = R|/myBuildList|<R|kotlin/String|>(<L> = myBuildList@fun R|kotlin/collections/MutableList<kotlin/String>|.<anonymous>(): R|kotlin/Unit| {
-            this@R|special/anonymous|.R|FakeOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String())
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String())
         }
         )
         R|/takeList|(R|<local>/list|)
     }
     public final fun <E> myBuildList(@R|kotlin/BuilderInference|() builderAction: R|kotlin/collections/MutableList<E>.() -> kotlin/Unit|): R|kotlin/collections/List<E>| {
-        ^myBuildList R|java/util/ArrayList.ArrayList|<R|E|>().R|kotlin/apply|<R|java/util/ArrayList<E>|>(R|<local>/builderAction|)
+        ^myBuildList R|SubstitutionOverride<java/util/ArrayList.ArrayList>|<R|E|>().R|kotlin/apply|<R|java/util/ArrayList<E>|>(R|<local>/builderAction|)
     }
     public final fun takeList(list: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit| {
     }

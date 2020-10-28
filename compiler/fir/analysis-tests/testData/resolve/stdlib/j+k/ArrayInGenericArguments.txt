@@ -1,5 +1,5 @@
 FILE: main.kt
     public final fun main(): R|kotlin/Unit| {
-        Q|Keys|.R|/Keys.getData|<R|ft<kotlin/Array<ft<kotlin/String, kotlin/String?>!>, kotlin/Array<out ft<kotlin/String, kotlin/String?>!>?>!|>(Q|Keys|.R|/Keys.X|).R|FakeOverride<kotlin/Array.get: R|ft<kotlin/String, kotlin/String?>!|>|(Int(0)).R|kotlin/String.length|
+        Q|Keys|.R|/Keys.getData|<R|ft<kotlin/Array<ft<kotlin/String, kotlin/String?>!>, kotlin/Array<out ft<kotlin/String, kotlin/String?>!>?>!|>(Q|Keys|.R|/Keys.X|).R|SubstitutionOverride<kotlin/Array.get: R|ft<kotlin/String, kotlin/String?>!|>|(Int(0)).R|kotlin/String.length|
         Q|Keys|.R|/Keys.getData|<R|ft<kotlin/String, kotlin/String?>!|>(Q|Keys|.R|/Keys.Y|).R|kotlin/String.length|
     }

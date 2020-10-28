@@ -3,7 +3,7 @@ FILE: hashMapTypeAlias.kt
     public final fun <X> R|MyT<X>|.add(x: R|X|, y: R|kotlin/Int|): R|kotlin/Unit| {
     }
     public final fun main(): R|kotlin/Unit| {
-        R|java/util/HashMap.HashMap|<R|kotlin/String|>().R|kotlin/apply|<R|java/util/HashMap<kotlin/String, kotlin/Int>|>(<L> = apply@fun R|java/util/HashMap<kotlin/String, kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+        R|SubstitutionOverride<java/util/HashMap.HashMap>|<R|kotlin/String|>().R|kotlin/apply|<R|java/util/HashMap<kotlin/String, kotlin/Int>|>(<L> = apply@fun R|java/util/HashMap<kotlin/String, kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
             this@R|special/anonymous|.R|/add|<R|kotlin/String|>(String(1), Int(2))
         }
         )

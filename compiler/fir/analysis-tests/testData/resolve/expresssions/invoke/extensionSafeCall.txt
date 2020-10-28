@@ -1,5 +1,5 @@
 FILE: extensionSafeCall.kt
     public final fun bar(doIt: R|kotlin/Int.() -> kotlin/Int|): R|kotlin/Unit| {
         lval i: R|kotlin/Int?| = Int(1)
-        R|<local>/i|?.{ R|<local>/doIt|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Int|>|($subj$) }
+        R|<local>/i|?.{ R|<local>/doIt|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Int|>|($subj$) }
     }

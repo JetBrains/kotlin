@@ -7,11 +7,11 @@ FILE: receiverResolutionInLambda.kt
         public final fun foo(): R|kotlin/Unit| {
             lval x: R|kotlin/sequences/Sequence<kotlin/String>| = R|kotlin/sequences/sequence|<R|kotlin/String|>(<L> = sequence@fun R|kotlin/sequences/SequenceScope<kotlin/String>|.<anonymous>(): R|kotlin/Unit| {
                 lval y: R|kotlin/sequences/SequenceScope<kotlin/String>| = this@R|special/anonymous|
-                this@R|special/anonymous|.R|FakeOverride<kotlin/sequences/SequenceScope.yield: R|kotlin/Unit|>|(String())
-                this@R|special/anonymous|.R|FakeOverride<kotlin/sequences/SequenceScope.yield: R|kotlin/Unit|>|(String())
+                this@R|special/anonymous|.R|SubstitutionOverride<kotlin/sequences/SequenceScope.yield: R|kotlin/Unit|>|(String())
+                this@R|special/anonymous|.R|SubstitutionOverride<kotlin/sequences/SequenceScope.yield: R|kotlin/Unit|>|(String())
                 (this@R|special/anonymous| as R|kotlin/sequences/SequenceScope<kotlin/String>|)
-                this@R|special/anonymous|.R|FakeOverride<kotlin/sequences/SequenceScope.yield: R|kotlin/Unit|>|(String())
-                this@R|special/anonymous|.R|FakeOverride<kotlin/sequences/SequenceScope.yield: R|kotlin/Unit|>|(String())
+                this@R|special/anonymous|.R|SubstitutionOverride<kotlin/sequences/SequenceScope.yield: R|kotlin/Unit|>|(String())
+                this@R|special/anonymous|.R|SubstitutionOverride<kotlin/sequences/SequenceScope.yield: R|kotlin/Unit|>|(String())
             }
             )
         }
@@ -20,11 +20,11 @@ FILE: receiverResolutionInLambda.kt
     public final fun case2(): R|kotlin/Unit| {
         lval x: R|kotlin/sequences/Sequence<kotlin/String>| = R|kotlin/sequences/sequence|<R|kotlin/String|>(<L> = sequence@fun R|kotlin/sequences/SequenceScope<kotlin/String>|.<anonymous>(): R|kotlin/Unit| {
             lval y: R|kotlin/sequences/SequenceScope<kotlin/String>| = this@R|special/anonymous|
-            this@R|special/anonymous|.R|FakeOverride<kotlin/sequences/SequenceScope.yield: R|kotlin/Unit|>|(String())
-            this@R|special/anonymous|.R|FakeOverride<kotlin/sequences/SequenceScope.yield: R|kotlin/Unit|>|(String())
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/sequences/SequenceScope.yield: R|kotlin/Unit|>|(String())
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/sequences/SequenceScope.yield: R|kotlin/Unit|>|(String())
             (this@R|special/anonymous| as R|kotlin/sequences/SequenceScope<kotlin/String>|)
-            this@R|special/anonymous|.R|FakeOverride<kotlin/sequences/SequenceScope.yield: R|kotlin/Unit|>|(String())
-            this@R|special/anonymous|.R|FakeOverride<kotlin/sequences/SequenceScope.yield: R|kotlin/Unit|>|(String())
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/sequences/SequenceScope.yield: R|kotlin/Unit|>|(String())
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/sequences/SequenceScope.yield: R|kotlin/Unit|>|(String())
         }
         )
     }

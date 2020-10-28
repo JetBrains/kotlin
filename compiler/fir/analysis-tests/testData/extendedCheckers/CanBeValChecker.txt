@@ -37,31 +37,31 @@ FILE: CanBeValChecker.kt
     }
     public final fun destructuringDeclaration(): R|kotlin/Unit| {
         lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/String>| = R|/getPair|()
-        lvar v1: R|kotlin/Int| = R|<local>/<destruct>|.R|FakeOverride<kotlin/Pair.component1: R|kotlin/Int|>|()
-        lvar v2: R|kotlin/String| = R|<local>/<destruct>|.R|FakeOverride<kotlin/Pair.component2: R|kotlin/String|>|()
+        lvar v1: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component1: R|kotlin/Int|>|()
+        lvar v2: R|kotlin/String| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component2: R|kotlin/String|>|()
         R|kotlin/io/print|(R|<local>/v1|)
         lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/String>| = R|/getPair|()
-        lvar v3: R|kotlin/Int| = R|<local>/<destruct>|.R|FakeOverride<kotlin/Pair.component1: R|kotlin/Int|>|()
-        lvar v4: R|kotlin/String| = R|<local>/<destruct>|.R|FakeOverride<kotlin/Pair.component2: R|kotlin/String|>|()
+        lvar v3: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component1: R|kotlin/Int|>|()
+        lvar v4: R|kotlin/String| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component2: R|kotlin/String|>|()
         R|kotlin/io/print|(R|<local>/v3|)
         R|<local>/v4| = String()
         lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/String>| = R|/getPair|()
-        lvar v5: R|kotlin/Int| = R|<local>/<destruct>|.R|FakeOverride<kotlin/Pair.component1: R|kotlin/Int|>|()
-        lvar v6: R|kotlin/String| = R|<local>/<destruct>|.R|FakeOverride<kotlin/Pair.component2: R|kotlin/String|>|()
+        lvar v5: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component1: R|kotlin/Int|>|()
+        lvar v6: R|kotlin/String| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component2: R|kotlin/String|>|()
         R|<local>/v5| = Int(1)
         lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/String>| = R|/getPair|()
-        lvar v7: R|kotlin/Int| = R|<local>/<destruct>|.R|FakeOverride<kotlin/Pair.component1: R|kotlin/Int|>|()
-        lvar v8: R|kotlin/String| = R|<local>/<destruct>|.R|FakeOverride<kotlin/Pair.component2: R|kotlin/String|>|()
+        lvar v7: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component1: R|kotlin/Int|>|()
+        lvar v8: R|kotlin/String| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component2: R|kotlin/String|>|()
         R|<local>/v7| = Int(2)
         R|<local>/v8| = String(42)
         lval <destruct>: R|kotlin/Triple<kotlin/Int, kotlin/Int, kotlin/Int>| = R|kotlin/Triple.Triple|<R|kotlin/Int|, R|kotlin/Int|, R|kotlin/Int|>(Int(1), Int(1), Int(1))
-        lval a: R|kotlin/Int| = R|<local>/<destruct>|.R|FakeOverride<kotlin/Triple.component1: R|kotlin/Int|>|()
-        lval b: R|kotlin/Int| = R|<local>/<destruct>|.R|FakeOverride<kotlin/Triple.component2: R|kotlin/Int|>|()
-        lval c: R|kotlin/Int| = R|<local>/<destruct>|.R|FakeOverride<kotlin/Triple.component3: R|kotlin/Int|>|()
+        lval a: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Triple.component1: R|kotlin/Int|>|()
+        lval b: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Triple.component2: R|kotlin/Int|>|()
+        lval c: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Triple.component3: R|kotlin/Int|>|()
         lval <destruct>: R|kotlin/Triple<kotlin/Int, kotlin/Int, kotlin/Int>| = R|kotlin/Triple.Triple|<R|kotlin/Int|, R|kotlin/Int|, R|kotlin/Int|>(Int(1), Int(1), Int(1))
-        lvar x: R|kotlin/Int| = R|<local>/<destruct>|.R|FakeOverride<kotlin/Triple.component1: R|kotlin/Int|>|()
-        lvar y: R|kotlin/Int| = R|<local>/<destruct>|.R|FakeOverride<kotlin/Triple.component2: R|kotlin/Int|>|()
-        lvar z: R|kotlin/Int| = R|<local>/<destruct>|.R|FakeOverride<kotlin/Triple.component3: R|kotlin/Int|>|()
+        lvar x: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Triple.component1: R|kotlin/Int|>|()
+        lvar y: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Triple.component2: R|kotlin/Int|>|()
+        lvar z: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Triple.component3: R|kotlin/Int|>|()
     }
     public final fun stackOverflowBug(): R|kotlin/Unit| {
         lvar a: R|kotlin/Int|
@@ -169,7 +169,7 @@ FILE: CanBeValChecker.kt
         lval unused: R|kotlin/Int| = Int(0)
         when () {
             ==(R|<local>/args|.R|kotlin/Array.size|, Int(1)) ->  {
-                R|<local>/a| = R|<local>/args|.R|FakeOverride<kotlin/Array.get: R|kotlin/String?|>|(Int(0))
+                R|<local>/a| = R|<local>/args|.R|SubstitutionOverride<kotlin/Array.get: R|kotlin/String?|>|(Int(0))
             }
             else ->  {
                 R|<local>/a| = R|<local>/args|.R|kotlin/Any.toString|()
@@ -184,7 +184,7 @@ FILE: CanBeValChecker.kt
 
     }
     public final fun run(f: R|() -> kotlin/Unit|): R|kotlin/Unit| {
-        ^run R|<local>/f|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        ^run R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
     public final fun lambda(): R|kotlin/Unit| {
         lvar a: R|kotlin/Int|
