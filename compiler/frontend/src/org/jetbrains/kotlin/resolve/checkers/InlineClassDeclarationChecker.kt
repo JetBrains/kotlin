@@ -65,17 +65,6 @@ object InlineClassDeclarationChecker : DeclarationChecker {
             return
         }
 
-        val anonymousInitializers = declaration.getAnonymousInitializers()
-        if (anonymousInitializers.isNotEmpty()) {
-            for (anonymousInitializer in anonymousInitializers) {
-                if (anonymousInitializer is KtClassInitializer) {
-                    trace.report(Errors.INLINE_CLASS_WITH_INITIALIZER.on(anonymousInitializer.initKeyword))
-                }
-            }
-
-            return
-        }
-
         val baseParameterType = descriptor.safeAs<ClassDescriptor>()?.defaultType?.substitutedUnderlyingType()
         val baseParameterTypeReference = baseParameter.typeReference
         if (baseParameterType != null && baseParameterTypeReference != null) {

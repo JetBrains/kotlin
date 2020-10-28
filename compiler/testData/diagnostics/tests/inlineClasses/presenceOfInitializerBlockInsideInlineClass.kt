@@ -2,9 +2,9 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
 inline class Foo(val x: Int) {
-    <!INLINE_CLASS_WITH_INITIALIZER!>init<!> {}
+    init {}
 
-    <!INLINE_CLASS_WITH_INITIALIZER!>init<!> {
+    init {
         val f = 1
     }
 }

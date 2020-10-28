@@ -379,9 +379,13 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         when {
             // Getting the underlying field of an inline class merely changes the IR type,
             // since the underlying representations are the same.
-            expression.symbol.owner.isInlineClassFieldGetter -> {
-                val arg = expression.dispatchReceiver!!.transform(this, null)
-                coerceInlineClasses(arg, expression.symbol.owner.dispatchReceiverParameter!!.type, expression.type)
+            expression.symbol.owner.isInlineClassFieldGetter -> when (val ctor = findInitBlockOrConstructorImpl()) {
+                InitBlockOrConstructorImpl.InitBlock -> super.visitCall(expression)
+                is InitBlockOrConstructorImpl.ConstructorImpl -> getConstructorImplArgumentValue(ctor, expression.type)
+                else -> {
+                    val arg = expression.dispatchReceiver!!.transform(this, null)
+                    coerceInlineClasses(arg, expression.symbol.owner.dispatchReceiverParameter!!.type, expression.type)
+                }
             }
             // Specialize calls to equals when the left argument is a value of inline class type.
             expression.isSpecializedInlineClassEqEq -> {
@@ -393,6 +397,25 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
             else ->
                 super.visitCall(expression)
         }
+
+    private fun getConstructorImplArgumentValue(ctor: InitBlockOrConstructorImpl.ConstructorImpl, expectedType: IrType): IrExpression {
+        val arg: IrValueParameter = ctor.irElement.valueParameters.single()
+        return coerceInlineClasses(IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, arg.symbol), arg.type, expectedType)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun findInitBlockOrConstructorImpl(): InitBlockOrConstructorImpl? {
+        for (scope in allScopes.reversed()) {
+            val irElement = scope.irElement
+            when {
+                irElement is IrAnonymousInitializer -> return InitBlockOrConstructorImpl.InitBlock
+                irElement is IrClass && irElement.isInline -> return InitBlockOrConstructorImpl.InitBlock
+                irElement is IrFunction && irElement.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR ->
+                    return InitBlockOrConstructorImpl.ConstructorImpl(irElement)
+            }
+        }
+        return null
+    }
 
     private val IrCall.isSpecializedInlineClassEqEq: Boolean
         get() {
@@ -456,6 +479,13 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
                 it.type, it.symbol, expression.origin
             )
         }
+        val owner = expression.symbol.owner
+        if (owner is IrValueParameter && (owner.parent as? IrClass)?.isInline == true && owner.origin == IrDeclarationOrigin.INSTANCE_RECEIVER) {
+            val ctor = findInitBlockOrConstructorImpl()
+            if (ctor is InitBlockOrConstructorImpl.ConstructorImpl) {
+                return getConstructorImplArgumentValue(ctor, expression.type)
+            }
+        }
         return super.visitGetValue(expression)
     }
 
@@ -496,13 +526,24 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         // Add a static bridge method to the primary constructor.
         // This is a placeholder for null-checks and default arguments.
         val function = context.inlineClassReplacements.getReplacementFunction(irConstructor)!!
+
+        val initBlocks = irClass.declarations.filterIsInstance<IrAnonymousInitializer>()
+
         function.valueParameters.forEach { it.transformChildrenVoid() }
         with(context.createIrBuilder(function.symbol)) {
-            val argument = function.valueParameters[0]
-            function.body = irExprBody(
-                coerceInlineClasses(irGet(argument), argument.type, function.returnType)
-            )
+            val argument: IrValueParameter = function.valueParameters[0]
+            function.body = irBlockBody {
+                for (initBlock in initBlocks) {
+                    for (stmt in initBlock.body.statements) {
+                        +stmt
+                    }
+                }
+                +irReturn(coerceInlineClasses(irGet(argument), argument.type, function.returnType))
+            }
         }
+        function.accept(this, null)
+        irClass.declarations.removeAll(initBlocks)
+
         irClass.declarations += function
     }
 
@@ -548,4 +589,9 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
 
         irClass.declarations += function
     }
+}
+
+private sealed class InitBlockOrConstructorImpl {
+    object InitBlock : InitBlockOrConstructorImpl()
+    class ConstructorImpl(val irElement: IrFunction) : InitBlockOrConstructorImpl()
 }
