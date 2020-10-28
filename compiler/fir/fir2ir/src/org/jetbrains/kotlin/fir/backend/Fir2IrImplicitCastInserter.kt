@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.coerceToUnit
 import org.jetbrains.kotlin.ir.util.coerceToUnitIfNeeded
 import org.jetbrains.kotlin.name.Name
 
@@ -91,7 +90,7 @@ class Fir2IrImplicitCastInserter(
     // ==================================================================================
 
     override fun visitExpression(expression: FirExpression, data: IrElement): IrElement {
-        return when(expression) {
+        return when (expression) {
             is FirBlock -> (data as IrContainerExpression).insertImplicitCasts()
             is FirUnitExpression -> (data as IrExpression).let { it.coerceToUnitIfNeeded(it.type, irBuiltIns) }
             else -> data
@@ -120,7 +119,7 @@ class Fir2IrImplicitCastInserter(
         }
         val firBranchMap = irWhen.branches.zip(whenExpression.branches).toMap()
         irWhen.branches.replaceAll {
-            visitWhenBranch(firBranchMap[it]!!, it)
+            visitWhenBranch(firBranchMap.getValue(it), it)
         }
         return data
     }
@@ -233,9 +232,8 @@ class Fir2IrImplicitCastInserter(
             if (irStatement !is IrErrorCallExpression && irStatement is IrExpression) {
                 if (i != lastIndex) {
                     statements[i] = irStatement.coerceToUnitIfNeeded(irStatement.type, irBuiltIns)
-                } else {
-                    // TODO: for the last statement, need to cast to the return type if mismatched
                 }
+                // TODO: for the last statement, need to cast to the return type if mismatched
             }
         }
 
