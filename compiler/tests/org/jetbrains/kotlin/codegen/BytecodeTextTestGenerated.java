@@ -4425,6 +4425,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         public void testSamWrapperSyntheticFlags() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/sam/samWrapperSyntheticFlags.kt");
         }
+
+        @TestMetadata("samWrapperSyntheticImplementationMethod.kt")
+        public void testSamWrapperSyntheticImplementationMethod() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/sam/samWrapperSyntheticImplementationMethod.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/statements")
