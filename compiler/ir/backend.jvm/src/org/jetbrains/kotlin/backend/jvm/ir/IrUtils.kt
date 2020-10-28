@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
@@ -377,3 +378,19 @@ fun collectVisibleTypeParameters(scopeOwner: IrTypeParametersContainer): Set<IrT
     }
         .flatMap { it.typeParameters }
         .toSet()
+
+fun IrClassSymbol.rawType(context: JvmBackendContext): IrSimpleType {
+    // On the IR backend we represent raw types as star projected types with a special synthetic annotation.
+    // See `TypeTranslator.translateTypeAnnotations`.
+    val rawTypeAnnotation = IrConstructorCallImpl.fromSymbolOwner(
+        context.generatorExtensions.rawTypeAnnotationConstructor!!.constructedClassType,
+        context.generatorExtensions.rawTypeAnnotationConstructor.symbol
+    )
+
+    return IrSimpleTypeImpl(
+        this,
+        hasQuestionMark = false,
+        arguments = owner.typeParameters.map { IrStarProjectionImpl },
+        annotations = listOf(rawTypeAnnotation)
+    )
+}

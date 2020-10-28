@@ -136,7 +136,7 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
     ) {
         val context = JvmBackendContext(
             state, sourceManager, irModuleFragment.irBuiltins, irModuleFragment,
-            symbolTable, phaseConfig, extensions.classNameOverride, serializerFactory
+            symbolTable, phaseConfig, extensions, serializerFactory
         )
         /* JvmBackendContext creates new unbound symbols, have to resolve them. */
         ExternalDependenciesGenerator(symbolTable, irProviders, state.languageVersionSettings).generateUnboundSymbolsAsDependencies()

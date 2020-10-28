@@ -66,6 +66,9 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
 
     abstract fun getSuperTypeForWrapper(typeOperand: IrType): IrType
 
+    protected open fun getWrappedFunctionType(klass: IrClass): IrType =
+        klass.defaultType
+
     abstract val IrType.needEqualsHashCodeMethods: Boolean
 
     open val inInlineFunctionScope get() = allScopes.any { scope -> (scope.irElement as? IrFunction)?.isInline ?: false }
@@ -161,7 +164,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
                 context.ir.symbols.suspendFunctionN(superMethod.valueParameters.size + extensionReceiversCount).owner
             else
                 context.ir.symbols.functionN(superMethod.valueParameters.size + extensionReceiversCount).owner
-        val wrappedFunctionType = wrappedFunctionClass.defaultType
+        val wrappedFunctionType = getWrappedFunctionType(wrappedFunctionClass)
 
         val subclass = context.irFactory.buildClass {
             name = wrapperName
