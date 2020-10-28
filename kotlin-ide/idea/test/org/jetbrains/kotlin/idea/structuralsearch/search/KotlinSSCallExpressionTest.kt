@@ -68,4 +68,6 @@ class KotlinSSCallExpressionTest : KotlinSSResourceInspectionTest() {
     fun testFunTrailingLambda() { doTest("'_('_+)") }
 
     fun testFunTrailingLambdaMultiArg() { doTest("'_('_{2,2})") }
+
+    fun testFqCallExpression() { doTest("A.B()") }
 }
