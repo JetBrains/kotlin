@@ -3,7 +3,6 @@ package org.jetbrains.dokka.testApi.testRunner
 import com.intellij.openapi.application.PathManager
 import org.jetbrains.dokka.*
 import org.jetbrains.dokka.model.DModule
-import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
 import org.jetbrains.dokka.pages.RootPageNode
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.plugability.DokkaPlugin
@@ -21,8 +20,10 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 // TODO: take dokka configuration from file
-abstract class AbstractCoreTest(
-    protected val logger: TestLogger = TestLogger(DokkaConsoleLogger)
+open class AbstractTest< M: TestMethods, T : TestBuilder<M>, D: DokkaTestGenerator<M> >(
+    protected val testBuilder: () -> T,
+    protected val dokkaTestGenerator: (DokkaConfiguration, DokkaLogger, M, List<DokkaPlugin>) -> D,
+    protected val logger: TestLogger,
 ) {
     protected fun getTestDataDir(name: String) =
         File("src/test/resources/$name").takeIf { it.exists() }?.toPath()
@@ -32,9 +33,9 @@ abstract class AbstractCoreTest(
         configuration: DokkaConfigurationImpl,
         cleanupOutput: Boolean = true,
         pluginOverrides: List<DokkaPlugin> = emptyList(),
-        block: TestBuilder.() -> Unit
+        block: T.() -> Unit
     ) {
-        val testMethods = TestBuilder().apply(block).build()
+        val testMethods = testBuilder().apply(block).build()
         val tempDir = getTempDir(cleanupOutput)
         if (!cleanupOutput)
             logger.info("Output generated under: ${tempDir.root.absolutePath}")
@@ -42,7 +43,7 @@ abstract class AbstractCoreTest(
             configuration.copy(
                 outputDir = tempDir.root
             )
-        DokkaTestGenerator(
+        dokkaTestGenerator(
             newConfiguration,
             logger,
             testMethods,
@@ -56,9 +57,9 @@ abstract class AbstractCoreTest(
         cleanupOutput: Boolean = true,
         pluginOverrides: List<DokkaPlugin> = emptyList(),
         loggerForTest: DokkaLogger = logger,
-        block: TestBuilder.() -> Unit
+        block: T.() -> Unit
     ) {
-        val testMethods = TestBuilder().apply(block).build()
+        val testMethods = testBuilder().apply(block).build()
         val testDirPath = getTempDir(cleanupOutput).root.toPath()
         val fileMap = query.toFileMap()
         fileMap.materializeFiles(testDirPath.toAbsolutePath())
@@ -82,7 +83,7 @@ abstract class AbstractCoreTest(
                 )
             }
         )
-        DokkaTestGenerator(
+        dokkaTestGenerator(
             newConfiguration,
             loggerForTest,
             testMethods,
@@ -138,31 +139,6 @@ abstract class AbstractCoreTest(
         }.apply { create() }
     }
 
-    protected class TestBuilder {
-        var pluginsSetupStage: (DokkaContext) -> Unit = {}
-        var verificationStage: (() -> Unit) -> Unit = {}
-        var documentablesCreationStage: (List<DModule>) -> Unit = {}
-        var documentablesFirstTransformationStep: (List<DModule>) -> Unit = {}
-        var documentablesMergingStage: (DModule) -> Unit = {}
-        var documentablesTransformationStage: (DModule) -> Unit = {}
-        var pagesGenerationStage: (RootPageNode) -> Unit = {}
-        var pagesTransformationStage: (RootPageNode) -> Unit = {}
-        var renderingStage: (RootPageNode, DokkaContext) -> Unit = { a, b -> }
-
-        @PublishedApi
-        internal fun build() = TestMethods(
-            pluginsSetupStage,
-            verificationStage,
-            documentablesCreationStage,
-            documentablesFirstTransformationStep,
-            documentablesMergingStage,
-            documentablesTransformationStage,
-            pagesGenerationStage,
-            pagesTransformationStage,
-            renderingStage
-        )
-    }
-
     protected fun dokkaConfiguration(block: TestDokkaConfigurationBuilder.() -> Unit): DokkaConfigurationImpl =
         testApi.testRunner.dokkaConfiguration(block)
 
@@ -193,14 +169,26 @@ abstract class AbstractCoreTest(
     }
 }
 
-data class TestMethods(
-    val pluginsSetupStage: (DokkaContext) -> Unit,
-    val verificationStage: (() -> Unit) -> Unit,
-    val documentablesCreationStage: (List<DModule>) -> Unit,
-    val documentablesFirstTransformationStep: (List<DModule>) -> Unit,
-    val documentablesMergingStage: (DModule) -> Unit,
-    val documentablesTransformationStage: (DModule) -> Unit,
-    val pagesGenerationStage: (RootPageNode) -> Unit,
-    val pagesTransformationStage: (RootPageNode) -> Unit,
-    val renderingStage: (RootPageNode, DokkaContext) -> Unit
+open class TestMethods(
+    open val pluginsSetupStage: (DokkaContext) -> Unit,
+    open val verificationStage: (() -> Unit) -> Unit,
+    open val documentablesCreationStage: (List<DModule>) -> Unit,
+    open val documentablesMergingStage: (DModule) -> Unit,
+    open val documentablesTransformationStage: (DModule) -> Unit,
+    open val pagesGenerationStage: (RootPageNode) -> Unit,
+    open val pagesTransformationStage: (RootPageNode) -> Unit,
+    open val renderingStage: (RootPageNode, DokkaContext) -> Unit
 )
+
+abstract class TestBuilder<M: TestMethods> {
+    abstract fun build(): M
+}
+
+abstract class DokkaTestGenerator<T: TestMethods>(
+    protected val configuration: DokkaConfiguration,
+    protected val logger: DokkaLogger,
+    protected val testMethods: T,
+    protected val additionalPlugins: List<DokkaPlugin> = emptyList()
+) {
+    abstract fun generate()
+}
