@@ -28,7 +28,7 @@ import java.util.zip.ZipOutputStream
 
 class KotlinCompilerIde(
     private val file: KtFile,
-    private val configuration: CompilerConfiguration = getDefaultCompilerConfiguration(file),
+    private val initialConfiguration: CompilerConfiguration = getDefaultCompilerConfiguration(file),
     private val factory: ClassBuilderFactory = ClassBuilderFactories.BINARIES,
     private val resolutionFacadeProvider: (KtFile) -> ResolutionFacade? = ::getDefaultResolutionFacade,
     private val classFilesOnly: Boolean = false
@@ -101,6 +101,10 @@ class KotlinCompilerIde(
 
         val resolutionFacade = resolutionFacadeProvider(file) ?: return null
         val bindingContextForFiles = resolutionFacade.analyzeWithAllCompilerChecks(listOf(file)).bindingContext
+
+        val configuration = initialConfiguration.copy().apply {
+            put(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT, true)
+        }
 
         val (bindingContext, toProcess) = analyzeInlinedFunctions(
             resolutionFacade, file, configuration.getBoolean(CommonConfigurationKeys.DISABLE_INLINE),

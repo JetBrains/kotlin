@@ -268,8 +268,8 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
             return BytecodeGenerationResult.Bytecode(answer.toString())
         }
 
-        fun compileSingleFile(ktFile: KtFile, configuration: CompilerConfiguration): GenerationState? {
-            return KotlinCompilerIde(ktFile, configuration, ClassBuilderFactories.TEST).compile()
+        fun compileSingleFile(ktFile: KtFile, initialConfiguration: CompilerConfiguration): GenerationState? {
+            return KotlinCompilerIde(ktFile, initialConfiguration, ClassBuilderFactories.TEST).compile()
         }
 
         private fun mapLines(text: String, startLine: Int, endLine: Int): Pair<Int, Int> {
