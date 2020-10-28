@@ -177,8 +177,9 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
         val field = subclass.addField {
             name = Name.identifier(FUNCTION_FIELD_NAME)
             type = wrappedFunctionType
-            origin = subclass.origin
+            origin = IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION
             visibility = DescriptorVisibilities.PRIVATE
+            isFinal = true
             setSourceRange(createFor)
         }
 
