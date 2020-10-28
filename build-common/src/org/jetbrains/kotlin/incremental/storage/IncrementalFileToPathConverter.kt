@@ -27,6 +27,7 @@ open class IncrementalFileToPathConverter(val rootProjectDir: File?) : FileToPat
 
     private companion object {
         private const val PROJECT_DIR_PLACEHOLDER = "${'$'}PROJECT_DIR$"
+        //use only for prefix length because it OS dependent
         private const val PATH_PREFIX = "$PROJECT_DIR_PLACEHOLDER/"
 
     }

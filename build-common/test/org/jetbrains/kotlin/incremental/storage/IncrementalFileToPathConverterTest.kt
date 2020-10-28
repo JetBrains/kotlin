@@ -10,45 +10,46 @@ import org.junit.Test
 import java.io.File
 
 internal class IncrementalFileToPathConverterTest : TestWithWorkingDir() {
+    val separator: String = File.separator
 
     @Test
     fun testPathTransform() {
         val relativeFilePath = "testFile.txt"
         val transformedPath = testPathTransformation(workingDir.resolve("testDir"), relativeFilePath)
 
-        assertEquals("${'$'}PROJECT_DIR${'$'}/$relativeFilePath", transformedPath)
+        assertEquals("${'$'}PROJECT_DIR${'$'}$separator$relativeFilePath", transformedPath)
     }
 
     @Test
     fun testComplicatedProjectRootPath() {
         val relativeFilePath = "testFile.txt"
-        val transformedPath = testPathTransformation(workingDir.resolve("first/../testDir"), relativeFilePath)
+        val transformedPath = testPathTransformation(workingDir.resolve("first$separator..${separator}testDir"), relativeFilePath)
 
-        assertEquals("${'$'}PROJECT_DIR${'$'}/$relativeFilePath", transformedPath)
+        assertEquals("${'$'}PROJECT_DIR${'$'}$separator$relativeFilePath", transformedPath)
     }
 
     @Test
     fun testInccorectProjectRootPath() {
         val relativeFilePath = "testFile.txt"
-        val transformedPath = testPathTransformation(workingDir.resolve("testDir/"), relativeFilePath)
+        val transformedPath = testPathTransformation(workingDir.resolve("testDir$separator"), relativeFilePath)
 
-        assertEquals("${'$'}PROJECT_DIR${'$'}/$relativeFilePath", transformedPath)
+        assertEquals("${'$'}PROJECT_DIR${'$'}$separator$relativeFilePath", transformedPath)
     }
 
     @Test
     fun testFileOutOfProject() {
-        val relativeFilePath = "../testFile.txt"
+        val relativeFilePath = "..${separator}testFile.txt"
         val transformedPath = testPathTransformation(workingDir.resolve("testDir"), relativeFilePath)
 
-        assertEquals("${workingDir.absolutePath}/testFile.txt", transformedPath)
+        assertEquals("${workingDir.absolutePath}${separator}testFile.txt", transformedPath)
     }
 
     @Test
     fun testFileWithExtraSlash() {
-        val relativeFilePath = "testFile.txt/"
+        val relativeFilePath = "testFile.txt$separator"
         val transformedPath = testPathTransformation(workingDir.resolve("testDir"), relativeFilePath)
 
-        assertEquals("${'$'}PROJECT_DIR${'$'}/testFile.txt", transformedPath)
+        assertEquals("${'$'}PROJECT_DIR${'$'}${separator}testFile.txt", transformedPath)
     }
 
     private fun testPathTransformation(projectRoot: File, relativeFilePath: String): String {
