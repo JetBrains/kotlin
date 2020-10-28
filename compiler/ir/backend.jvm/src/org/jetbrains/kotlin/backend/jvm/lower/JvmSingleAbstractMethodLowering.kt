@@ -12,11 +12,13 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal val singleAbstractMethodPhase = makeIrFilePhase(
     ::JvmSingleAbstractMethodLowering,
@@ -25,6 +27,15 @@ internal val singleAbstractMethodPhase = makeIrFilePhase(
 )
 
 private class JvmSingleAbstractMethodLowering(context: JvmBackendContext) : SingleAbstractMethodLowering(context) {
+    // The JVM BE produces inline SAM wrappers both in the scope of an inline function as well as in the scope
+    // of an inline lambda. Compare with `SamWrapperClasses.getSamWrapperClass`.
+    override val inInlineFunctionScope: Boolean
+        get() = allScopes.any { scope ->
+            scope.irElement.safeAs<IrFunction>()?.let {
+                it.isInline || it.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
+            } ?: false
+        }
+
     override fun getWrapperVisibility(expression: IrTypeOperatorCall, scopes: List<ScopeWithIr>) =
         if (inInlineFunctionScope) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
 
