@@ -33,5 +33,5 @@ import kotlin.annotation.AnnotationTarget.*
     TYPEALIAS
 )
 @MustBeDocumented
-@SinceKotlin("1.3")
+@SinceKotlin("1.4")
 public annotation class ExperimentalPathApi
