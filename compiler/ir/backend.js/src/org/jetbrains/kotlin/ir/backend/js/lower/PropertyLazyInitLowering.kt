@@ -33,19 +33,12 @@ class PropertyLazyInitLowering(private val context: JsIrBackendContext) : FileLo
         get() = context.irFactory
 
     override fun lower(irFile: IrFile) {
-        val properties = PropertySearcher()
+        val functions = TopLevelFunsSearcher()
             .search(irFile)
 
-        val fieldToInitializer = properties
-            .asSequence()
-            .filterNot { it.isDelegated }
-            .mapNotNull { it.backingField }
-            .filter { it.initializer != null }
-            .map {
-                it to it.initializer!!.expression
-            }
-            .toMap()
-            .onEach { it.key.initializer = null }
+        val fieldToInitializer = calculateFieldToExpression(
+            functions
+        ).onEach { it.key.initializer = null }
 
         if (fieldToInitializer.isEmpty()) return
 
@@ -56,7 +49,7 @@ class PropertyLazyInitLowering(private val context: JsIrBackendContext) : FileLo
                 parent = irFile
             }
 
-        val initialiseFun = irFactory.addFunction(irFile) {
+        val initialisationFun = irFactory.addFunction(irFile) {
             name = Name.identifier("init properties $fileName")
             returnType = irBuiltIns.unitType
             origin = JsIrBuilder.SYNTHESIZED_DECLARATION
@@ -67,13 +60,12 @@ class PropertyLazyInitLowering(private val context: JsIrBackendContext) : FileLo
             )
         }
 
-        properties
+        functions
             .asSequence()
-            .flatMap { sequenceOf(it.getter, it.setter) }
             .filterNotNull()
             .forEach { function ->
                 val newBody = function.body?.let { body ->
-                    irFactory.bodyWithFunctionCall(body, initialiseFun)
+                    irFactory.bodyWithFunctionCall(body, initialisationFun)
                 }
                 function.body = newBody
             }
@@ -125,6 +117,20 @@ class PropertyLazyInitLowering(private val context: JsIrBackendContext) : FileLo
     }
 }
 
+private fun calculateFieldToExpression(functions: Collection<IrSimpleFunction>): Map<IrField, IrExpression> =
+    functions
+        .asSequence()
+        .mapNotNull { it.correspondingPropertySymbol }
+        .map { it.owner }
+        .filter { it.isTopLevel }
+        .filterNot { it.isConst }
+        .distinct()
+        .filterNot { it.isDelegated }
+        .mapNotNull { it.backingField }
+        .filter { it.initializer != null }
+        .map { it to it.initializer!!.expression }
+        .toMap()
+
 private fun createIrGetField(field: IrField): IrGetField {
     return JsIrBuilder.buildGetField(
         symbol = field.symbol,
@@ -155,25 +161,20 @@ private fun IrFactory.bodyWithFunctionCall(
     ).apply { addAll(body.statements) }
 )
 
-private class PropertySearcher : IrElementTransformerVoid() {
+private class TopLevelFunsSearcher : IrElementTransformerVoid() {
 
-    private val propertyToFunction = mutableSetOf<IrProperty>()
+    private val topLevelFuns = mutableSetOf<IrSimpleFunction>()
 
-    fun search(irFile: IrFile): Set<IrProperty> {
+    fun search(irFile: IrFile): Set<IrSimpleFunction> {
         irFile.transformChildrenVoid(this)
-        return propertyToFunction
+        return topLevelFuns
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
 
-        declaration.correspondingPropertySymbol
-            ?.owner
-            ?.takeIf { it.isTopLevel }
-            ?.takeIf { !it.isConst }
-            ?.takeIf { it !in propertyToFunction }
-            ?.let {
-                propertyToFunction.add(it)
-            }
+        if (declaration.isTopLevel) {
+            topLevelFuns.add(declaration)
+        }
 
         return super.visitSimpleFunction(declaration)
     }
