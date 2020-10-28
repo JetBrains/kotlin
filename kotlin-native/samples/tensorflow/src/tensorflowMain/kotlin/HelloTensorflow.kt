@@ -37,11 +37,15 @@ fun scalarTensor(value: Int): Tensor {
     val data = nativeHeap.allocArray<IntVar>(1)
     data[0] = value
 
-    return TF_NewTensor(TF_INT32,
-            dims = null, num_dims = 0,
-            data = data, len = IntVar.size.convert(),
-            deallocator = staticCFunction { dataToFree, _, _ -> nativeHeap.free(dataToFree!!.reinterpret<IntVar>()) },
-            deallocator_arg = null)!!
+    return TF_NewTensor(
+            TF_INT32,
+            /* dims = */ null,
+            /* num_dims = */ 0,
+            /* data = */ data,
+            /* len = */ IntVar.size.convert(),
+            /* deallocator = */ staticCFunction { dataToFree, _, _ -> nativeHeap.free(dataToFree!!.reinterpret<IntVar>()) },
+            /* deallocator_arg = */ null
+    )!!
 }
 
 val Tensor.scalarIntValue: Int get() {
