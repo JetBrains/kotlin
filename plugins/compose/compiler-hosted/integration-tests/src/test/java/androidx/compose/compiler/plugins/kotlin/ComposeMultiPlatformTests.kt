@@ -16,19 +16,13 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import org.junit.Ignore
+import org.junit.Test
 
 @Suppress("unused")
 class ComposeMultiPlatformTests : AbstractMultiPlatformIntegrationTest() {
-    // Give JUnit3 at least one test in this TestCase.
-    // Please remove when the other tests below are unignored again.
-    fun test() {
-        assertTrue(true)
-    }
 
-    @Ignore("b/171000611")
-    // @Test
-    fun basicMpp() = ensureSetup {
+    @Test
+    fun testBasicMpp() = ensureSetup {
         multiplatform(
             """
             expect val foo: String
@@ -46,9 +40,8 @@ class ComposeMultiPlatformTests : AbstractMultiPlatformIntegrationTest() {
         )
     }
 
-    @Ignore("b/171000611")
-    // @Test
-    fun basicComposable() = ensureSetup {
+    @Test
+    fun testBasicComposable() = ensureSetup {
         multiplatform(
             """
             import androidx.compose.runtime.Composable
