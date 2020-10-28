@@ -30,7 +30,6 @@ interface DokkaContext {
             pluginOverrides: List<DokkaPlugin>
         ): DokkaContext =
             DokkaContextConfigurationImpl(logger, configuration).apply {
-                CoreExtensions.installTo(this)
                 // File(it.path) is a workaround for an incorrect filesystem in a File instance returned by Gradle.
                 configuration.pluginsClasspath.map { File(it.path).toURI().toURL() }
                     .toTypedArray()
