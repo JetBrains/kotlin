@@ -1,6 +1,4 @@
-// IGNORE_BACKEND: JVM
 // IGNORE_BACKEND: JS_IR
-// IGNORE_LIGHT_ANALYSIS
 
 inline class IC(val i: Int) {
     init {

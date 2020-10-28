@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
+import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.jvm.InlineClassManglingRulesKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
@@ -192,6 +193,7 @@ public class ConstructorCodegen {
         markLineNumberForConstructor(constructorDescriptor, primaryConstructor, codegen);
 
         if (OwnerKind.ERASED_INLINE_CLASS == kind) {
+            memberCodegen.generateInitializers(() -> codegen);
             Type t = typeMapper.mapType(constructorDescriptor.getContainingDeclaration());
             iv.load(0, t);
             iv.areturn(t);
@@ -226,7 +228,7 @@ public class ConstructorCodegen {
         }
 
         //object initialization was moved to initializeObjects()
-        if (!isObject(descriptor)) {
+        if (!isObject(descriptor) && !InlineClassesUtilsKt.isInlineClass(descriptor)) {
             memberCodegen.generateInitializers(() -> codegen);
         }
         iv.visitInsn(RETURN);
