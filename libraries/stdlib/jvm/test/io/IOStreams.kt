@@ -12,7 +12,7 @@ import kotlin.random.Random
 
 class IOStreamsTest {
     @Test fun testGetStreamOfFile() {
-        val tmpFile = createTempFile()
+        val tmpFile = @Suppress("DEPRECATION") createTempFile()
         var writer: Writer? = null
         try {
             writer = tmpFile.outputStream().writer()
@@ -46,7 +46,7 @@ class IOStreamsTest {
     }
 
     @Test fun readWriteBytes() {
-        val file = createTempFile("temp", Random.nextLong().toString())
+        val file = @Suppress("DEPRECATION") createTempFile("temp", Random.nextLong().toString())
         try {
             val bytes = Random.nextBytes(256_000)
 
