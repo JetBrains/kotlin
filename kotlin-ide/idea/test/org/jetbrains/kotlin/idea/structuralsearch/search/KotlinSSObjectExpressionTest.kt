@@ -38,7 +38,7 @@ class KotlinSSObjectExpressionTest : KotlinSSResourceInspectionTest() {
     fun testObjectSuperType() {
         doTest(
             """
-                fun '_() = object : MouseAdapter() { }
+                fun '_() = object : '_() { }
             """
         )
     }

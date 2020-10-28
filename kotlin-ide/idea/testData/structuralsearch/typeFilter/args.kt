@@ -1,2 +1,2 @@
-<warning descr="SSR">val foo = listOf(1)</warning>
-val bar = listOf("1")
+<warning descr="SSR">val foo = Array(1, { 1 })</warning>
+val bar = Array(1, { "1" })

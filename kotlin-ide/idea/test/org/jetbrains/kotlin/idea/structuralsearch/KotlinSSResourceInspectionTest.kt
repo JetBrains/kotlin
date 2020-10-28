@@ -16,6 +16,7 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
+import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
 import org.jetbrains.kotlin.test.util.slashedPath
 
 abstract class KotlinSSResourceInspectionTest : BasePlatformTestCase() {
@@ -25,7 +26,7 @@ abstract class KotlinSSResourceInspectionTest : BasePlatformTestCase() {
         matchOptions.fileType = KotlinFileType.INSTANCE
     }
 
-    override fun getProjectDescriptor(): LightProjectDescriptor = KotlinLightProjectDescriptor()
+    override fun getProjectDescriptor(): LightProjectDescriptor = ProjectDescriptorWithStdlibSources.INSTANCE
 
     override fun setUp() {
         super.setUp()

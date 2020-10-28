@@ -1,12 +1,14 @@
+fun eat(vararg elements: Any) { elements.hashCode() }
+
 data class Person(val name: String, val age: Int)
 
-fun checkLambda(block: (Person) -> Unit) { print(block) }
+fun checkLambda(block: (Person) -> Unit) { block(Person("a", 1)) }
 
 fun main() {
     val person = Person("Bob", 2)
     val (name, age) = person
-    print("$name $age")
-    checkLambda { (n, a) -> print("$n $a") }
-    val personList = listOf(person)
-    <warning descr="SSR">for ((n, a) in personList) { print("$n $a") }</warning>
+    eat(name, age)
+    checkLambda { (n, a) -> eat(n, a) }
+    val personList = Array(1, { person })
+    <warning descr="SSR">for ((n, a) in personList) { eat(n, a) }</warning>
 }

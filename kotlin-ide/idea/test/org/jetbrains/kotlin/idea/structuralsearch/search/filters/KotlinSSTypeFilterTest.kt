@@ -23,7 +23,7 @@ class KotlinSSTypeFilterTest : KotlinSSResourceInspectionTest() {
     
     fun testNull() { doTest("'_('_:[exprtype(null)])") }
 
-    fun testArgs() { doTest("val '_:[exprtype(List<Int>)]") }
+    fun testArgs() { doTest("val '_:[exprtype(Array<Int>)]") }
 
     fun testFunctionType() { doTest("val '_:[exprtype( (String) -> Int )]") }
 
