@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.model.CaptureStatus
 
 abstract class SupertypeSupplier {
@@ -59,7 +60,11 @@ inline fun <reified ID : Any, reified FS : FirScope> scopeSessionKey(): ScopeSes
 
 val USE_SITE = scopeSessionKey<FirClassSymbol<*>, FirTypeScope>()
 
-data class SubstitutionScopeKey(val type: ConeClassLikeType) : ScopeSessionKey<FirClassLikeSymbol<*>, FirClassSubstitutionScope>()
+data class SubstitutionScopeKey(
+    val type: ConeClassLikeType,
+    // This property is necessary. Otherwise we may have accidental matching when two classes have the same supertype
+    val derivedClassId: ClassId
+) : ScopeSessionKey<FirClassLikeSymbol<*>, FirClassSubstitutionScope>()
 
 /* TODO REMOVE */
 fun createSubstitution(
@@ -93,7 +98,7 @@ fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
     derivedClass: FirRegularClass
 ): FirTypeScope {
     if (this.typeArguments.isEmpty()) return useSiteMemberScope
-    return builder.getOrBuild(declaration.symbol, SubstitutionScopeKey(this)) {
+    return builder.getOrBuild(declaration.symbol, SubstitutionScopeKey(this, derivedClass.symbol.classId)) {
         val typeParameters = (declaration as? FirTypeParameterRefsOwner)?.typeParameters.orEmpty()
         val originalSubstitution = createSubstitution(typeParameters, this, session)
         val platformClass = session.platformClassMapper.getCorrespondingPlatformClass(declaration)

@@ -1762,6 +1762,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/firProblems/DeepCopyIrTree.kt");
         }
 
+        @TestMetadata("DelegationAndInheritanceFromJava.kt")
+        public void testDelegationAndInheritanceFromJava() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/DelegationAndInheritanceFromJava.kt");
+        }
+
         @TestMetadata("deprecated.kt")
         public void testDeprecated() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/deprecated.kt");
