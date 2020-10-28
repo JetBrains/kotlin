@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.backend.common.lower.SingleAbstractMethodLowering
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
+import org.jetbrains.kotlin.backend.jvm.ir.rawType
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
@@ -41,6 +43,9 @@ private class JvmSingleAbstractMethodLowering(context: JvmBackendContext) : Sing
 
     override fun getSuperTypeForWrapper(typeOperand: IrType): IrType =
         typeOperand.erasedUpperBound.defaultType
+
+    override fun getWrappedFunctionType(klass: IrClass): IrType =
+        klass.symbol.rawType(context as JvmBackendContext)
 
     private val IrType.isKotlinFunInterface: Boolean
         get() = getClass()?.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB

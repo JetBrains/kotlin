@@ -51,11 +51,14 @@ class JvmBackendContext(
     irModuleFragment: IrModuleFragment,
     private val symbolTable: SymbolTable,
     val phaseConfig: PhaseConfig,
-    // If the JVM fqname of a class differs from what is implied by its parent, e.g. if it's a file class
-    // annotated with @JvmPackageName, the correct name is recorded here.
-    val classNameOverride: MutableMap<IrClass, JvmClassName>,
+    val generatorExtensions: JvmGeneratorExtensions,
     val serializerFactory: MetadataSerializerFactory
 ) : CommonBackendContext {
+    // If the JVM fqname of a class differs from what is implied by its parent, e.g. if it's a file class
+    // annotated with @JvmPackageName, the correct name is recorded here.
+    val classNameOverride: MutableMap<IrClass, JvmClassName>
+        get() = generatorExtensions.classNameOverride
+
     override val transformedFunction: MutableMap<IrFunctionSymbol, IrSimpleFunctionSymbol>
         get() = TODO("not implemented")
 
