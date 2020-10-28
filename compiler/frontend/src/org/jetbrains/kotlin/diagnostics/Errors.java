@@ -355,7 +355,6 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtElement> INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtParameter> INLINE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<PsiElement> INLINE_CLASS_WITH_INITIALIZER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtProperty> PROPERTY_WITH_BACKING_FIELD_INSIDE_INLINE_CLASS = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<PsiElement> DELEGATED_PROPERTY_INSIDE_INLINE_CLASS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<KtTypeReference, KotlinType> INLINE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE = DiagnosticFactory1.create(ERROR);

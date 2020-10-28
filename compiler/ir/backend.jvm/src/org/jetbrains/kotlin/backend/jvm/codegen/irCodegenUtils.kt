@@ -57,8 +57,8 @@ class IrFrameMap : FrameMapBase<IrSymbol>() {
         return super.leave(key)
     }
 
-    fun typeOf(symbol: IrSymbol): Type =
-        typeMap[symbol] ?: error("No mapping for symbol: ${symbol.owner.render()}")
+    fun typeOf(symbol: IrSymbol): Type = typeMap[symbol]
+        ?: error("No mapping for symbol: ${symbol.owner.render()}")
 }
 
 internal val IrFunction.isStatic
