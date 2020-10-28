@@ -54,9 +54,7 @@ internal class CEnumCompanionGenerator(
             it.body = irBuilder(irBuiltIns, it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                 +IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
                         startOffset, endOffset, context.irBuiltIns.unitType,
-                        superConstructorSymbol,
-                        superConstructorSymbol.owner.typeParameters.size,
-                        superConstructorSymbol.owner.valueParameters.size
+                        superConstructorSymbol
                 )
                 +irInstanceInitializer(symbolTable.referenceClass(companionObjectDescriptor))
             }

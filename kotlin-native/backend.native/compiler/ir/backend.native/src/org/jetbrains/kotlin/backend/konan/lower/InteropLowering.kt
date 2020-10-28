@@ -500,11 +500,8 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
                         startOffset,
                         endOffset,
                         context.irBuiltIns.unitType,
-                        superConstructor,
-                        0,
-                        superConstructor.owner.valueParameters.size
+                        superConstructor
                 )
-
                 +irCall(symbols.interopObjCObjectSuperInitCheck).apply {
                     extensionReceiver = irGet(constructedClass.thisReceiver!!)
                     putValueArgument(0, initCall)
