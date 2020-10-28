@@ -32,7 +32,11 @@ abstract class AbstractCodeMetaInfoRenderConfiguration(var renderParams: Boolean
     }
 
     protected fun sanitizeLineBreaks(originalText: String): String {
-        return StringUtil.replace(originalText, "\n", " ")
+        var sanitizedText = originalText
+        sanitizedText = StringUtil.replace(sanitizedText, "\r\n", " ")
+        sanitizedText = StringUtil.replace(sanitizedText, "\n", " ")
+        sanitizedText = StringUtil.replace(sanitizedText, "\r", " ")
+        return sanitizedText
     }
 
     protected fun getPlatformsString(codeMetaInfo: CodeMetaInfo): String {
