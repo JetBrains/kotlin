@@ -211,13 +211,13 @@ private class ReturnTypeCalculatorWithJump(
             return tryCalculateReturnType(declaration.getter.delegate)
         }
 
-        if (declaration.origin == FirDeclarationOrigin.IntersectionOverride) {
+        if (declaration.isIntersectionOverride) {
             val result = tryCalculateReturnType(declaration.symbol.overriddenSymbol!!.fir)
             declaration.replaceReturnTypeRef(result)
             return result
         }
 
-        runIf(declaration.origin == FirDeclarationOrigin.SubstitutionOverride) {
+        runIf(declaration.isSubstitutionOverride) {
             val possiblyFirFakeOverrideSymbol = declaration.symbol as PossiblyFirFakeOverrideSymbol<*, *>
             val overriddenDeclaration = possiblyFirFakeOverrideSymbol.overriddenSymbol?.fir as FirTypedDeclaration? ?: return@runIf
             tryCalculateReturnType(overriddenDeclaration)

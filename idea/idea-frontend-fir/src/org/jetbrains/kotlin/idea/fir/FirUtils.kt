@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.idea.fir
 
 import org.jetbrains.kotlin.fir.FirSymbolOwner
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.isIntersectionOverride
+import org.jetbrains.kotlin.fir.isSubstitutionOverride
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -50,6 +52,6 @@ internal inline fun <reified D> D.unrollFakeOverrides(): D where D : FirDeclarat
 
 private inline val FirBasedSymbol<*>.isFakeOrIntersectionOverride: Boolean
     get() {
-        val origin = (fir as? FirDeclaration)?.origin ?: return false
-        return origin == FirDeclarationOrigin.SubstitutionOverride || origin == FirDeclarationOrigin.IntersectionOverride
+        val declaration = fir as? FirCallableDeclaration<*> ?: return false
+        return declaration.isSubstitutionOverride || declaration.isIntersectionOverride
     }

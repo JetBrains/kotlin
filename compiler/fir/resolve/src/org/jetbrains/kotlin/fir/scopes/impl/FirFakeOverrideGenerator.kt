@@ -43,7 +43,7 @@ object FirFakeOverrideGenerator {
     ): FirNamedFunctionSymbol {
         val symbol = FirNamedFunctionSymbol(
             CallableId(derivedClassId ?: baseSymbol.callableId.classId!!, baseFunction.name),
-            isFakeOverride = true, overriddenSymbol = baseSymbol
+            overriddenSymbol = baseSymbol
         )
         createFakeOverrideFunction(
             symbol, session, baseFunction, newDispatchReceiverType, newReceiverType, newReturnType,
@@ -250,10 +250,10 @@ object FirFakeOverrideGenerator {
     ): FirPropertySymbol {
         val symbol = FirPropertySymbol(
             CallableId(derivedClassId ?: baseSymbol.callableId.classId!!, baseProperty.name),
-            isFakeOverride = true, overriddenSymbol = baseSymbol
+            overriddenSymbol = baseSymbol
         )
         createCopyForFirProperty(
-            symbol, baseProperty, session, isExpect,
+            symbol, baseProperty, session, FirDeclarationOrigin.SubstitutionOverride, isExpect,
             newDispatchReceiverType, newTypeParameters, newReceiverType, newReturnType,
             fakeOverrideSubstitution = fakeOverrideSubstitution
         )
@@ -264,6 +264,7 @@ object FirFakeOverrideGenerator {
         newSymbol: FirPropertySymbol,
         baseProperty: FirProperty,
         session: FirSession,
+        origin: FirDeclarationOrigin,
         isExpect: Boolean = baseProperty.isExpect,
         newDispatchReceiverType: ConeKotlinType?,
         newTypeParameters: List<FirTypeParameter>? = null,
@@ -276,7 +277,7 @@ object FirFakeOverrideGenerator {
         return buildProperty {
             source = baseProperty.source
             this.session = session
-            origin = FirDeclarationOrigin.SubstitutionOverride
+            this.origin = origin
             name = baseProperty.name
             isVar = baseProperty.isVar
             this.symbol = newSymbol

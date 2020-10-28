@@ -218,7 +218,7 @@ internal tailrec fun FirCallableSymbol<*>.deepestOverriddenSymbol(): FirCallable
 }
 
 internal tailrec fun FirCallableSymbol<*>.deepestMatchingOverriddenSymbol(root: FirCallableSymbol<*> = this): FirCallableSymbol<*> {
-    if (isIntersectionOverride) return this
+    if (fir.isIntersectionOverride) return this
     val overriddenSymbol = overriddenSymbol?.takeIf {
         it.containingClass() == root.containingClass()
     } ?: return this

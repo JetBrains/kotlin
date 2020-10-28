@@ -1033,8 +1033,8 @@ class Fir2IrDeclarationStorage(
                         val irFunction = firDeclaration.convertWithOffsets { startOffset, endOffset ->
                             symbolTable.declareSimpleFunction(signature, { symbol }) {
                                 val isFakeOverride =
-                                    firFunctionSymbol is FirNamedFunctionSymbol && firFunctionSymbol.isFakeOverride &&
-                                            firFunctionSymbol.callableId != firFunctionSymbol.overriddenSymbol?.callableId
+                                    firFunctionSymbol is FirNamedFunctionSymbol && firFunctionSymbol.fir.isSubstitutionOverride &&
+                                            firFunctionSymbol.dispatchReceiverClassOrNull() != firFunctionSymbol.overriddenSymbol?.dispatchReceiverClassOrNull()
                                 Fir2IrLazySimpleFunction(
                                     components, startOffset, endOffset, parentOrigin, firDeclaration, irParent.fir, symbol, isFakeOverride
                                 ).apply {
@@ -1065,7 +1065,7 @@ class Fir2IrDeclarationStorage(
         parentOrigin: IrDeclarationOrigin,
         irParent: IrDeclarationParent?
     ): IrDeclarationOrigin {
-        return if (irParent.isSourceClass() && symbol.isIntersectionOverride || (symbol.fir.origin as? PossiblyFirFakeOverrideSymbol<*, *>)?.isFakeOverride == true)
+        return if (irParent.isSourceClass() && symbol.fir.isIntersectionOverride)
             IrDeclarationOrigin.FAKE_OVERRIDE
         else
             parentOrigin
@@ -1100,7 +1100,7 @@ class Fir2IrDeclarationStorage(
                 val irProperty = fir.convertWithOffsets { startOffset, endOffset ->
                     symbolTable.declareProperty(signature, { symbol }) {
                         val isFakeOverride =
-                            firPropertySymbol.isFakeOverride &&
+                            firPropertySymbol.fir.isSubstitutionOverride &&
                                     firPropertySymbol.dispatchReceiverClassOrNull() != firPropertySymbol.overriddenSymbol?.dispatchReceiverClassOrNull()
                         Fir2IrLazyProperty(
                             components, startOffset, endOffset, declarationOrigin, fir, irParent.fir, symbol, isFakeOverride

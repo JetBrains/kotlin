@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir.backend.generators
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.isIntersectionOverride
+import org.jetbrains.kotlin.fir.isSubstitutionOverride
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -100,7 +102,7 @@ internal class DelegatedMemberGenerator(
         val wrappedSymbol = wrapped.symbol as? S ?: return null
 
         return when {
-            wrappedSymbol.isFakeOverride &&
+            wrappedSymbol.fir.isSubstitutionOverride &&
                     (wrappedSymbol.fir.dispatchReceiverType as? ConeClassLikeType)?.lookupTag == firSubClass.symbol.toLookupTag() ->
                 wrapped.symbol.overriddenSymbol!!.fir
             else -> wrapped
@@ -108,13 +110,13 @@ internal class DelegatedMemberGenerator(
     }
 
     private fun isJavaDefault(function: FirSimpleFunction): Boolean {
-        if (function.symbol.isIntersectionOverride) return isJavaDefault(function.symbol.overriddenSymbol!!.fir)
+        if (function.isIntersectionOverride) return isJavaDefault(function.symbol.overriddenSymbol!!.fir)
         return function.origin == FirDeclarationOrigin.Enhancement && function.modality == Modality.OPEN
     }
 
     private fun <S : FirCallableSymbol<*>> S.unwrapIntersectionOverride(directOverridden: S.() -> List<S>): S? {
         if (this !is PossiblyFirFakeOverrideSymbol<*, *>) return this
-        if (this.isIntersectionOverride) return directOverridden().firstOrNull { it.fir.delegatedWrapperData != null }
+        if (this.fir.isIntersectionOverride) return directOverridden().firstOrNull { it.fir.delegatedWrapperData != null }
         return this
     }
 

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
+import org.jetbrains.kotlin.fir.isIntersectionOverride
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -69,7 +70,7 @@ abstract class FirTypeScope : FirScope(), FirContainingNamesAwareScope {
                 ?: return baseScope.processDirectOverriddenCallables(callableSymbol, processor)
 
             for (overridden in directOverridden) {
-                if (overridden.isIntersectionOverride) {
+                if (overridden.fir.isIntersectionOverride) {
                     if (!baseScope.processDirectOverriddenCallables(overridden, processor)) return ProcessorAction.STOP
                 }
                 if (!processor(overridden, baseScope)) return ProcessorAction.STOP

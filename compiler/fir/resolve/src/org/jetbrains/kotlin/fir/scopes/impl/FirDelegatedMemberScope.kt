@@ -92,11 +92,11 @@ class FirDelegatedMemberScope(
             val delegatedSymbol = delegatedPropertyCache.getOrPut(propertySymbol) {
                 FirFakeOverrideGenerator.createCopyForFirProperty(
                     FirPropertySymbol(
-                        propertySymbol.callableId,
-                        overriddenSymbol = propertySymbol
+                        propertySymbol.callableId
                     ),
                     original,
                     session,
+                    FirDeclarationOrigin.Delegated,
                     newModality = Modality.OPEN,
                     newDispatchReceiverType = dispatchReceiverType,
                 ).apply {

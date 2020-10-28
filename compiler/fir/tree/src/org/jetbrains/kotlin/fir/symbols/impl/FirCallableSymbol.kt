@@ -17,8 +17,6 @@ abstract class FirCallableSymbol<D : FirCallableDeclaration<D>> : AbstractFirBas
 
     open val overriddenSymbol: FirCallableSymbol<D>?
         get() = null
-
-    open val isIntersectionOverride: Boolean get() = false
 }
 
 val FirCallableSymbol<*>.isStatic: Boolean get() = (fir as? FirMemberDeclaration)?.status?.isStatic == true

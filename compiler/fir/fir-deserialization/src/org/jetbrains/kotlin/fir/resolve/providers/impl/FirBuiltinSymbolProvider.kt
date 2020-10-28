@@ -208,7 +208,7 @@ class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: Kot
                                 symbol = FirNamedFunctionSymbol(
                                     CallableId(packageFqName, relativeClassName, name),
                                     // set overriddenSymbol for "invoke" of KFunction/KSuspendFunction
-                                    superKind != null, superKind?.getInvoke(arity)
+                                    superKind?.getInvoke(arity)
                                 )
                                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                                 valueParameters += typeArguments.dropLast(1).mapIndexed { index, typeArgument ->

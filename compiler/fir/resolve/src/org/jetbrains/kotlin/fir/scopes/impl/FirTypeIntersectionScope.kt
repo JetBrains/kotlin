@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.PossiblyFirFakeOverrideSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
@@ -187,7 +186,7 @@ class FirTypeIntersectionScope private constructor(
         processDirectOverridden: FirTypeScope.(D, (D, FirTypeScope) -> ProcessorAction) -> ProcessorAction,
     ) {
         if (!visited.add(symbol)) return
-        if (!symbol.isIntersectionOverride && !(symbol as PossiblyFirFakeOverrideSymbol<*, *>).isFakeOverride) {
+        if (!symbol.fir.origin.fromSupertypes) {
             result.add(MemberWithBaseScope(symbol, scope))
             return
         }
@@ -265,9 +264,7 @@ class FirTypeIntersectionScope private constructor(
                     dispatchReceiverType.classId ?: mostSpecific.dispatchReceiverClassOrNull()?.classId!!,
                     mostSpecific.fir.name
                 ),
-                mostSpecific.isFakeOverride,
-                mostSpecific,
-                isIntersectionOverride = true
+                mostSpecific
             )
         val mostSpecificFunction = mostSpecific.fir
         FirFakeOverrideGenerator.createCopyForFirFunction(
@@ -286,10 +283,10 @@ class FirTypeIntersectionScope private constructor(
         newModality: Modality,
         newVisibility: Visibility,
     ): FirPropertySymbol {
-        val newSymbol = FirPropertySymbol(mostSpecific.callableId, mostSpecific.isFakeOverride, mostSpecific, isIntersectionOverride = true)
+        val newSymbol = FirPropertySymbol(mostSpecific.callableId, mostSpecific)
         val mostSpecificProperty = mostSpecific.fir
         FirFakeOverrideGenerator.createCopyForFirProperty(
-            newSymbol, mostSpecificProperty, mostSpecificProperty.session,
+            newSymbol, mostSpecificProperty, mostSpecificProperty.session, FirDeclarationOrigin.IntersectionOverride,
             newModality = newModality,
             newVisibility = newVisibility,
             newDispatchReceiverType = dispatchReceiverType,

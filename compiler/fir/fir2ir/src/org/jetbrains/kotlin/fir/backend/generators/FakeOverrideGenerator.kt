@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
+import org.jetbrains.kotlin.fir.isSubstitutionOverride
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
@@ -157,9 +158,7 @@ class FakeOverrideGenerator(
         val origin = IrDeclarationOrigin.FAKE_OVERRIDE
         val baseSymbol = originalSymbol.deepestOverriddenSymbol() as S
 
-        if ((originalSymbol.isFakeOverride || originalSymbol.isIntersectionOverride) &&
-            originalSymbol.dispatchReceiverClassOrNull() == classLookupTag
-        ) {
+        if (originalSymbol.fir.origin.fromSupertypes && originalSymbol.dispatchReceiverClassOrNull() == classLookupTag) {
             // Substitution case
             // NB: see comment above about substituted function' parent
             val irDeclaration = cachedIrDeclaration(originalDeclaration)?.takeIf { it.parent == irClass }
@@ -201,10 +200,10 @@ class FakeOverrideGenerator(
         scope: FirTypeScope,
         containingClass: ConeClassLikeLookupTag,
     ): List<S> {
-        if (!symbol.isIntersectionOverride) return listOf(basedSymbol)
+        if (symbol.fir.origin != FirDeclarationOrigin.IntersectionOverride) return listOf(basedSymbol)
         return scope.directOverridden(symbol).map {
             @Suppress("UNCHECKED_CAST")
-            if (it is PossiblyFirFakeOverrideSymbol<*, *> && it.isFakeOverride && it.dispatchReceiverClassOrNull() == containingClass)
+            if (it is PossiblyFirFakeOverrideSymbol<*, *> && it.fir.isSubstitutionOverride && it.dispatchReceiverClassOrNull() == containingClass)
                 it.overriddenSymbol!! as S
             else
                 it
