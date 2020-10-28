@@ -31,6 +31,7 @@
 #include "Exceptions.h"
 #include "KAssert.h"
 #include "Memory.h"
+#include "ObjCMMAPI.h"
 #include "Runtime.h"
 #include "Types.h"
 #include "Worker.h"
@@ -956,6 +957,9 @@ JobKind Worker::processQueueElement(bool blocking) {
       ObjHolder operationHolder, dummyHolder;
       KRef obj = DerefStablePointer(job.executeAfter.operation, operationHolder.slot());
       try {
+#if KONAN_OBJC_INTEROP
+        konan::AutoreleasePool autoreleasePool;
+#endif
         WorkerLaunchpad(obj, dummyHolder.slot());
       } catch (ExceptionObjHolder& e) {
         if (errorReporting())
@@ -969,6 +973,9 @@ JobKind Worker::processQueueElement(bool blocking) {
       KNativePtr result = nullptr;
       bool ok = true;
       try {
+#if KONAN_OBJC_INTEROP
+        konan::AutoreleasePool autoreleasePool;
+#endif
         job.regularJob.function(argument, resultHolder.slot());
         argumentHolder.clear();
         // Transfer the result.

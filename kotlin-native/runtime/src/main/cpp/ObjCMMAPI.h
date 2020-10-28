@@ -12,6 +12,22 @@
 
 extern "C" ALWAYS_INLINE void Kotlin_ObjCExport_releaseAssociatedObject(void* associatedObject);
 
+namespace konan {
+class AutoreleasePool {
+ public:
+  AutoreleasePool();
+  ~AutoreleasePool();
+
+  AutoreleasePool(const AutoreleasePool&) = delete;
+  AutoreleasePool(AutoreleasePool&&) = delete;
+  AutoreleasePool& operator=(const AutoreleasePool&) = delete;
+  AutoreleasePool& operator=(AutoreleasePool&&) = delete;
+
+ private:
+  void* handle;
+};
+} // namespace konan
+
 #endif // KONAN_OBJC_INTEROP
 
 #endif // RUNTIME_OBJCMMAPI_H
