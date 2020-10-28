@@ -16,7 +16,6 @@ import org.jetbrains.dokka.base.resolvers.local.LocationProviderFactory
 import org.jetbrains.dokka.base.resolvers.shared.RecognizedLinkFormat
 import org.jetbrains.dokka.base.signatures.KotlinSignatureProvider
 import org.jetbrains.dokka.base.signatures.SignatureProvider
-import org.jetbrains.dokka.base.templating.Command
 import org.jetbrains.dokka.base.templating.ImmediateHtmlCommandConsumer
 import org.jetbrains.dokka.base.transformers.documentables.*
 import org.jetbrains.dokka.base.transformers.pages.annotations.SinceKotlinTransformer
@@ -28,10 +27,14 @@ import org.jetbrains.dokka.base.transformers.pages.sourcelinks.SourceLinksTransf
 import org.jetbrains.dokka.base.translators.descriptors.DefaultDescriptorToDocumentableTranslator
 import org.jetbrains.dokka.base.translators.documentables.DefaultDocumentableToPageTranslator
 import org.jetbrains.dokka.base.translators.psi.DefaultPsiToDocumentableTranslator
+import org.jetbrains.dokka.base.generation.SingleModuleGeneration
 import org.jetbrains.dokka.plugability.DokkaPlugin
+import org.jetbrains.dokka.transformers.documentation.PreMergeDocumentableTransformer
 import org.jetbrains.dokka.transformers.pages.PageTransformer
 
 class DokkaBase : DokkaPlugin() {
+
+    val preMergeDocumentableTransformer by extensionPoint<PreMergeDocumentableTransformer>()
     val pageMergerStrategy by extensionPoint<PageMergerStrategy>()
     val commentsToContentConverter by extensionPoint<CommentsToContentConverter>()
     val signatureProvider by extensionPoint<SignatureProvider>()
@@ -42,6 +45,10 @@ class DokkaBase : DokkaPlugin() {
     val kotlinAnalysis by extensionPoint<KotlinAnalysis>()
     val tabSortingStrategy by extensionPoint<TabSortingStrategy>()
     val immediateHtmlCommandConsumer by extensionPoint<ImmediateHtmlCommandConsumer>()
+
+    val singleGeneration by extending {
+        CoreExtensions.generation providing ::SingleModuleGeneration
+    }
 
     val descriptorToDocumentableTranslator by extending {
         CoreExtensions.sourceToDocumentableTranslator providing ::DefaultDescriptorToDocumentableTranslator
@@ -56,29 +63,29 @@ class DokkaBase : DokkaPlugin() {
     }
 
     val deprecatedDocumentableFilter by extending {
-        CoreExtensions.preMergeDocumentableTransformer providing ::DeprecatedDocumentableFilterTransformer
+        preMergeDocumentableTransformer providing ::DeprecatedDocumentableFilterTransformer
     }
 
     val suppressedDocumentableFilter by extending {
-        CoreExtensions.preMergeDocumentableTransformer providing ::SuppressedDocumentableFilterTransformer
+        preMergeDocumentableTransformer providing ::SuppressedDocumentableFilterTransformer
     }
 
     val documentableVisbilityFilter by extending {
-        CoreExtensions.preMergeDocumentableTransformer providing ::DocumentableVisibilityFilterTransformer
+        preMergeDocumentableTransformer providing ::DocumentableVisibilityFilterTransformer
     }
 
     val emptyPackagesFilter by extending {
-        CoreExtensions.preMergeDocumentableTransformer providing ::EmptyPackagesFilterTransformer order {
+        preMergeDocumentableTransformer providing ::EmptyPackagesFilterTransformer order {
             after(deprecatedDocumentableFilter, suppressedDocumentableFilter, documentableVisbilityFilter)
         }
     }
 
-    val actualTypealiasAdder by extending {
-        CoreExtensions.documentableTransformer with ActualTypealiasAdder()
+    val modulesAndPackagesDocumentation by extending {
+        preMergeDocumentableTransformer providing ::ModuleAndPackageDocumentationTransformer
     }
 
-    val modulesAndPackagesDocumentation by extending {
-        CoreExtensions.preMergeDocumentableTransformer providing ::ModuleAndPackageDocumentationTransformer
+    val actualTypealiasAdder by extending {
+        CoreExtensions.documentableTransformer with ActualTypealiasAdder()
     }
 
     val kotlinSignatureProvider by extending {
