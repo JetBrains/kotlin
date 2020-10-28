@@ -4338,6 +4338,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         public void testSamWrapperOfReference() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/sam/samWrapperOfReference.kt");
         }
+
+        @TestMetadata("samWrapperSyntheticFlags.kt")
+        public void testSamWrapperSyntheticFlags() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/sam/samWrapperSyntheticFlags.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/statements")
