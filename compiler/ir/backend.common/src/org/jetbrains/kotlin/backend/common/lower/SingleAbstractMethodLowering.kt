@@ -209,7 +209,8 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             name = superMethod.name
             returnType = superMethod.returnType
             visibility = superMethod.visibility
-            origin = subclass.origin
+            modality = Modality.FINAL
+            origin = IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION
             isSuspend = superMethod.isSuspend
             setSourceRange(createFor)
         }.apply {
