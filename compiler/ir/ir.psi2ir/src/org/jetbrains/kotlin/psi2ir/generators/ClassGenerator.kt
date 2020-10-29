@@ -75,7 +75,7 @@ class ClassGenerator(
 
         fun <T : DeclarationDescriptor> List<T>.sortedByRenderer(): List<T> {
             val rendered = map(DESCRIPTOR_RENDERER::render)
-            val sortedIndices = (0 until size).sortedWith(Comparator { i, j -> rendered[i].compareTo(rendered[j]) })
+            val sortedIndices = (0 until size).sortedWith { i, j -> rendered[i].compareTo(rendered[j]) }
             return sortedIndices.map { this[it] }
         }
     }

@@ -400,6 +400,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
                 runTest("compiler/testData/ir/irText/declarations/annotations/annotationsInAnnotationArguments.kt");
             }
 
+            @TestMetadata("annotationsOnDelegatedMembers.kt")
+            public void testAnnotationsOnDelegatedMembers() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/annotations/annotationsOnDelegatedMembers.kt");
+            }
+
             @TestMetadata("annotationsWithDefaultParameterValues.kt")
             public void testAnnotationsWithDefaultParameterValues() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/annotations/annotationsWithDefaultParameterValues.kt");

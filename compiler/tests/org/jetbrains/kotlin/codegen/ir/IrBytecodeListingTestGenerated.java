@@ -171,6 +171,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("annotationsOnDelegatedMembers.kt")
+        public void testAnnotationsOnDelegatedMembers() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/annotations/annotationsOnDelegatedMembers.kt");
+        }
+
         @TestMetadata("defaultTargets.kt")
         public void testDefaultTargets() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/annotations/defaultTargets.kt");

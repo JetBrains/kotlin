@@ -1,0 +1,34 @@
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class Ann {
+    // source: 'annotationsOnDelegatedMembers.kt'
+}
+
+@kotlin.Metadata
+public final class DFoo {
+    // source: 'annotationsOnDelegatedMembers.kt'
+    private synthetic final field $$delegate_0: IFoo
+    public method <init>(@org.jetbrains.annotations.NotNull p0: IFoo): void
+    public @org.jetbrains.annotations.NotNull method getTestExtVal(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public @org.jetbrains.annotations.NotNull method getTestVal(): java.lang.String
+    public @Ann method testExtFun(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public @Ann method testFun(): void
+}
+
+@kotlin.Metadata
+public final class IFoo$DefaultImpls {
+    // source: 'annotationsOnDelegatedMembers.kt'
+    public synthetic deprecated static @Ann method getTestExtVal$annotations(p0: java.lang.String): void
+    public synthetic deprecated static @Ann method getTestVal$annotations(): void
+    public final inner class IFoo$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface IFoo {
+    // source: 'annotationsOnDelegatedMembers.kt'
+    public abstract @org.jetbrains.annotations.NotNull method getTestExtVal(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public abstract @org.jetbrains.annotations.NotNull method getTestVal(): java.lang.String
+    public abstract @Ann method testExtFun(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public abstract @Ann method testFun(): void
+    public final inner class IFoo$DefaultImpls
+}
