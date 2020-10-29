@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.isTopLevel
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrArithBuilder
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.utils.isPure
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
@@ -52,6 +54,7 @@ class PropertyLazyInitLowering(private val context: JsIrBackendContext) : FileLo
         val initialisationFun = irFactory.addFunction(irFile) {
             name = Name.identifier("init properties $fileName")
             returnType = irBuiltIns.unitType
+            visibility = INTERNAL
             origin = JsIrBuilder.SYNTHESIZED_DECLARATION
         }.apply {
             buildPropertiesInitializationBody(
