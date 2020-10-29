@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCodeGenerator
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.generateStringLiteralsSupport
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -69,7 +69,7 @@ fun compileWasm(
     wasmPhases.invokeToplevel(phaseConfig, context, moduleFragment)
 
     val compiledWasmModule = WasmCompiledModuleFragment()
-    val codeGenerator = WasmCodeGenerator(context, compiledWasmModule)
+    val codeGenerator = WasmModuleFragmentGenerator(context, compiledWasmModule)
     codeGenerator.generateModule(moduleFragment)
 
     val linkedModule = compiledWasmModule.linkWasmCompiledFragments()
