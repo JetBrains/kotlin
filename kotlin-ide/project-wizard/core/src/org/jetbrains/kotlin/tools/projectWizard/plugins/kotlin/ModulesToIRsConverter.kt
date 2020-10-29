@@ -144,21 +144,7 @@ class ModulesToIRsConverter(
         state: ModulesToIrsState
     ): TaskResult<List<BuildFileIR>> = computeM {
         val modulePath = calculatePathForModule(module, state.parentPath)
-        val (moduleDependencies) = forModuleEachDependency(module) { from, to, dependencyType ->
-            with(dependencyType) {
-                @Suppress("DEPRECATION")
-                with(unsafeSettingWriter) {
-                    runArbitraryTask(
-                        module,
-                        to,
-                        to.path.considerSingleRootModuleMode(data.isSingleRootModuleMode).asPath(),
-                        data
-                    ).ensure()
-                }
-                irsToAddToModules.getOrPut(to) { mutableListOf() } += createToIRs(module, to, data).get()
-                createDependencyIrs(module, to, data).asSuccess()
-            }
-        }.map { it.flatten() }
+        val (moduleDependencies) = createModuleDependencies(module)
         mutateProjectStructureByModuleConfigurator(module, modulePath)
         val buildFileIR = run {
             if (!configurator.needCreateBuildFile) return@run null
@@ -214,50 +200,69 @@ class ModulesToIRsConverter(
     private fun Writer.createMultiplatformModule(
         module: Module,
         state: ModulesToIrsState
-    ): TaskResult<List<BuildFileIR>> = with(data) {
-        val modulePath = calculatePathForModule(module, state.parentPath)
-        mutateProjectStructureByModuleConfigurator(module, modulePath)
-        val targetIrs = module.subModules.flatMap { subModule ->
-            with(subModule.configurator as TargetConfigurator) { createTargetIrs(subModule) }
-        }
+    ): TaskResult<List<BuildFileIR>> = compute {
+        with(data) {
+            val modulePath = calculatePathForModule(module, state.parentPath)
+            mutateProjectStructureByModuleConfigurator(module, modulePath)
+            val targetIrs = module.subModules.flatMap { subModule ->
+                with(subModule.configurator as TargetConfigurator) { createTargetIrs(subModule) }
+            }
 
-        val targetModuleIrs = module.subModules.map { target ->
-            createTargetModule(target, modulePath)
-        }
+            val (targetModuleIrs) = module.subModules.mapSequence { target ->
+                createTargetModule(target, modulePath)
+            }
 
-        return BuildFileIR(
-            projectName,
-            modulePath,
-            MultiplatformModulesStructureIR(
-                targetIrs,
-                FakeMultiplatformModuleIR(
-                    module.name,
-                    modulePath,
-                    module.template,
+            BuildFileIR(
+                projectName,
+                modulePath,
+                MultiplatformModulesStructureIR(
+                    targetIrs,
+                    FakeMultiplatformModuleIR(
+                        module.name,
+                        modulePath,
+                        module.template,
+                        targetModuleIrs,
+                        module,
+                    ),
                     targetModuleIrs,
-                    module,
+                    persistentListOf()
                 ),
-                targetModuleIrs,
-                persistentListOf()
-            ),
-            module.subModules + module,
-            pomIr,
-            isRoot = false,
-            renderPomIr = StructurePlugin.renderPomIR.settingValue,
-            buildPersistenceList {
-                +createBuildFileIRs(module, state)
-                module.subModules.forEach { +createBuildFileIRs(it, state) }
-            }
-        ).also { buildFile ->
-            moduleToBuildFile[module] = buildFile
-            module.subModules.forEach { subModule ->
-                moduleToBuildFile[subModule] = buildFile
-            }
-        }.asSingletonList().asSuccess()
-
+                module.subModules + module,
+                pomIr,
+                isRoot = false,
+                renderPomIr = StructurePlugin.renderPomIR.settingValue,
+                buildPersistenceList {
+                    +createBuildFileIRs(module, state)
+                    module.subModules.forEach { +createBuildFileIRs(it, state) }
+                }
+            ).also { buildFile ->
+                moduleToBuildFile[module] = buildFile
+                module.subModules.forEach { subModule ->
+                    moduleToBuildFile[subModule] = buildFile
+                }
+            }.asSingletonList()
+        }
     }
 
-    private fun Writer.createTargetModule(target: Module, modulePath: Path): MultiplatformModuleIR {
+    private fun Writer.createModuleDependencies(module: Module): TaskResult<List<BuildSystemIR>> =
+        forModuleEachDependency(module) { from, to, dependencyType ->
+            with(dependencyType) {
+                @Suppress("DEPRECATION")
+                unsafeSettingWriter {
+                    runArbitraryTask(
+                        module,
+                        to,
+                        to.path.considerSingleRootModuleMode(data.isSingleRootModuleMode).asPath(),
+                        data
+                    ).ensure()
+                }
+                irsToAddToModules.getOrPut(to) { mutableListOf() } += createToIRs(module, to, data).get()
+                createDependencyIrs(module, to, data).asSuccess()
+            }
+        }.map { it.flatten() }
+
+    private fun Writer.createTargetModule(target: Module, modulePath: Path): TaskResult<MultiplatformModuleIR> = compute {
+        val (moduleDependencies) = createModuleDependencies(target)
         mutateProjectStructureByModuleConfigurator(target, modulePath)
         val sourcesetss = target.sourcesets.map { sourceset ->
             val sourcesetName = target.name + sourceset.sourcesetType.name.capitalize()
@@ -269,10 +274,13 @@ class ModulesToIRsConverter(
                 sourceset
             )
         }
-        return MultiplatformModuleIR(
+        MultiplatformModuleIR(
             target.name,
             modulePath,
-            with(target.configurator) { createModuleIRs(this@createTargetModule, data, target) }.toPersistentList(),
+            buildPersistenceList {
+                +moduleDependencies
+                with(target.configurator) { +createModuleIRs(this@createTargetModule, data, target) }
+            },
             target.template,
             target,
             sourcesetss
