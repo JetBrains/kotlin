@@ -2081,7 +2081,7 @@ public inline fun CharSequence.sumOf(selector: (Char) -> ULong): ULong {
 /**
  * Splits this char sequence into a list of strings each not exceeding the given [size].
  * 
- * The last string in the resulting list may have less characters than the given [size].
+ * The last string in the resulting list may have fewer characters than the given [size].
  * 
  * @param size the number of elements to take in each string, must be positive and can be greater than the number of elements in this char sequence.
  * 

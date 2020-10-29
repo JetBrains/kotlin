@@ -2908,7 +2908,7 @@ public fun <T : Any> List<T?>.requireNoNulls(): List<T> {
 /**
  * Splits this collection into a list of lists each not exceeding the given [size].
  * 
- * The last list in the resulting list may have less elements than the given [size].
+ * The last list in the resulting list may have fewer elements than the given [size].
  * 
  * @param size the number of elements to take in each list, must be positive and can be greater than the number of elements in this collection.
  * 
