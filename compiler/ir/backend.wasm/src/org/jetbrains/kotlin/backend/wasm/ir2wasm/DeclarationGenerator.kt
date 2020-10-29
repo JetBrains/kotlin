@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.isAnnotationClass
-import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.wasm.ir.*
@@ -45,6 +42,14 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
 
         val importedName = declaration.getWasmImportAnnotation()
 
+        val isIntrinsic = declaration.hasWasmReinterpretAnnotation() || declaration.getWasmOpAnnotation() != null
+        if (isIntrinsic) {
+            return
+        }
+
+        if (declaration.isFakeOverride)
+            return
+
         // Generate function type
         val watName = declaration.fqNameWhenAvailable.toString()
         val irParameters = declaration.getEffectiveValueParameters()
@@ -67,18 +72,9 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
             )
         context.defineFunctionType(declaration.symbol, wasmFunctionType)
 
-        val isIntrinsic = declaration.hasWasmReinterpretAnnotation() || declaration.getWasmOpAnnotation() != null
-        if (isIntrinsic) {
-            return
-        }
-
         if (declaration is IrSimpleFunction) {
             if (declaration.modality == Modality.ABSTRACT) return
-            if (declaration.isFakeOverride) return
-
-            val isVirtual = declaration.isOverridableOrOverrides
-
-            if (isVirtual) {
+            if (declaration.isOverridableOrOverrides) {
                 // Register function as virtual, meaning this function
                 // will be stored Wasm table and could be called indirectly.
                 context.registerVirtualFunction(declaration.symbol)
@@ -114,20 +110,16 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
         val exprGen = functionCodegenContext.bodyGen
         val bodyBuilder = BodyGenerator(functionCodegenContext)
 
-        if (isIntrinsic) {
-            bodyBuilder.tryToGenerateWasmOpIntrinsicCall(declaration)
-        } else {
-            when (val body = declaration.body) {
-                is IrBlockBody ->
-                    for (statement in body.statements) {
-                        bodyBuilder.statementToWasmInstruction(statement)
-                    }
+        when (val body = declaration.body) {
+            is IrBlockBody ->
+                for (statement in body.statements) {
+                    bodyBuilder.statementToWasmInstruction(statement)
+                }
 
-                is IrExpressionBody ->
-                    bodyBuilder.generateExpression(body.expression)
+            is IrExpressionBody ->
+                bodyBuilder.generateExpression(body.expression)
 
-                else -> error("Unexpected body $body")
-            }
+            else -> error("Unexpected body $body")
         }
 
         // Return implicit this from constructions to avoid extra tmp
@@ -153,6 +145,7 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
             context.addExport(
                 WasmExport.Function(
                     field = function,
+                    // TODO: Add ability to specify exported name.
                     name = declaration.name.identifier
                 )
             )
@@ -181,7 +174,7 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
             context.defineStructType(symbol, structType)
 
             var depth = 2
-            val metadata = context.getClassMetadata(declaration.symbol)
+            val metadata = context.getClassMetadata(symbol)
             var subMetadata = metadata
             while (true) {
                 subMetadata = subMetadata.superClass ?: break
@@ -212,7 +205,7 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
 
             context.defineRTT(symbol, rtt)
             context.registerClass(symbol)
-            context.generateTypeInfo(symbol, binaryDataStruct(context.getClassMetadata(symbol)))
+            context.generateTypeInfo(symbol, binaryDataStruct(metadata))
         }
 
         for (member in declaration.declarations) {
