@@ -31,7 +31,7 @@ class FirObjectImportedCallableScope(
                 origin = FirDeclarationOrigin.ImportedFromObject
                 this.symbol = FirNamedFunctionSymbol(CallableId(importedClassId, name), overriddenSymbol = symbol)
             }.apply {
-                importedFromObjectClassId = importedClassId
+                importedFromObjectData = ImportedFromObjectData(importedClassId, function)
             }
             processor(syntheticFunction.symbol)
         }
@@ -49,7 +49,7 @@ class FirObjectImportedCallableScope(
                 this.symbol = FirPropertySymbol(CallableId(importedClassId, name), overriddenSymbol = symbol)
                 this.delegateFieldSymbol = null
             }.apply {
-                importedFromObjectClassId = importedClassId
+                importedFromObjectData = ImportedFromObjectData(importedClassId, property)
             }
             processor(syntheticFunction.symbol)
         }
@@ -61,5 +61,11 @@ class FirObjectImportedCallableScope(
 }
 
 private object ImportedFromObjectClassIdKey : FirDeclarationDataKey()
+
+class ImportedFromObjectData<D : FirCallableDeclaration<*>>(
+    val objectClassId: ClassId,
+    val original: D,
+)
+
 var <D : FirCallableDeclaration<*>>
-        D.importedFromObjectClassId: ClassId? by FirDeclarationDataRegistry.data(ImportedFromObjectClassIdKey)
+        D.importedFromObjectData: ImportedFromObjectData<D>? by FirDeclarationDataRegistry.data(ImportedFromObjectClassIdKey)

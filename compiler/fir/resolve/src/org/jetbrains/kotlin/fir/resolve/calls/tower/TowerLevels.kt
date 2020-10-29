@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.resolve.calls.tower
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.isInner
 import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -17,7 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectClassId
+import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectData
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -189,7 +188,8 @@ class ScopeTowerLevel(
         }
 
     private fun dispatchReceiverValue(candidate: FirCallableSymbol<*>): ReceiverValue? {
-        candidate.fir.importedFromObjectClassId?.let { objectClassId ->
+        candidate.fir.importedFromObjectData?.let { data ->
+            val objectClassId = data.objectClassId
             val symbol = session.firSymbolProvider.getClassLikeSymbolByFqName(objectClassId)
             if (symbol is FirRegularClassSymbol) {
                 val resolvedQualifier = buildResolvedQualifier {
@@ -223,9 +223,7 @@ class ScopeTowerLevel(
     ) {
         if (candidate.hasConsistentReceivers(extensionReceiver)) {
             val dispatchReceiverValue = dispatchReceiverValue(candidate)
-            val unwrappedCandidate = if (candidate.fir.origin == FirDeclarationOrigin.ImportedFromObject) {
-                candidate.overriddenSymbol!!
-            } else candidate
+            val unwrappedCandidate = candidate.fir.importedFromObjectData?.original?.symbol ?: candidate
             @Suppress("UNCHECKED_CAST")
             processor.consumeCandidate(
                 unwrappedCandidate as T, dispatchReceiverValue,
