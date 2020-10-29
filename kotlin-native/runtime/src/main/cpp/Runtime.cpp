@@ -224,11 +224,6 @@ KBoolean Konan_Platform_isDebugBinary() {
   return KonanNeedDebugInfo ? true : false;
 }
 
-void Kotlin_zeroOutTLSGlobals() {
-  if (runtimeState != nullptr && runtimeState->memoryState != nullptr)
-    InitOrDeinitGlobalVariables(DEINIT_THREAD_LOCAL_GLOBALS, runtimeState->memoryState);
-}
-
 bool Kotlin_memoryLeakCheckerEnabled() {
   return g_checkLeaks;
 }

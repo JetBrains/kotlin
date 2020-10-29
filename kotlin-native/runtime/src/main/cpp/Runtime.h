@@ -31,9 +31,6 @@ void Kotlin_deinitRuntimeIfNeeded();
 // Appends given node to an initializer list.
 void AppendToInitializersTail(struct InitNode*);
 
-// Zero out all Kotlin thread local globals.
-void Kotlin_zeroOutTLSGlobals();
-
 bool Kotlin_memoryLeakCheckerEnabled();
 
 bool Kotlin_cleanersLeakCheckerEnabled();

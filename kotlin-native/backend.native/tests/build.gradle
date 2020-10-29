@@ -1044,6 +1044,12 @@ task worker11(type: KonanLocalTest) {
     source = "runtime/workers/worker11.kt"
 }
 
+standaloneTest("worker_threadlocal_no_leak") {
+    disabled = project.globalTestArgs.contains('-opt') || (project.testTarget == 'wasm32') // Needs debug build and pthreads.
+    source = "runtime/workers/worker_threadlocal_no_leak.kt"
+    flags = ['-g']
+}
+
 task freeze0(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // No workers on WASM.
     goldValue = "frozen bit is true\n" +

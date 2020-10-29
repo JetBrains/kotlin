@@ -815,10 +815,6 @@ void* workerRoutine(void* argument) {
     if (worker->processQueueElement(true) == JOB_TERMINATE) break;
   } while (true);
 
-  // Runtime deinit callback could be called when TLS is already zeroed out, so clear memory
-  // here explicitly. to make sure leak detector properly works.
-  Kotlin_zeroOutTLSGlobals();
-
   return nullptr;
 }
 
