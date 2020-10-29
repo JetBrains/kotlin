@@ -27,9 +27,6 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
-import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.FqName
@@ -85,7 +82,7 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext) {
     }
 
     private fun finalizeScriptClass(irScriptClass: IrClass, irScript: IrScript, symbolRemapper: ScriptsToClassesSymbolRemapper) {
-        val typeRemapper = ScriptTypeRemapper(symbolRemapper)
+        val typeRemapper = SimpleTypeRemapper(symbolRemapper)
         val scriptTransformer = ScriptToClassTransformer(irScript, irScriptClass, symbolRemapper, typeRemapper)
         irScriptClass.thisReceiver = irScript.thisReceiver.run {
             transform(scriptTransformer, null)
@@ -420,53 +417,6 @@ private class ScriptsToClassesSymbolRemapper(
 ) : SymbolRemapper.Empty() {
     override fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol =
         (symbol.owner as? IrScript)?.let { scriptsToClasses[it] }?.symbol ?: symbol
-}
-
-private class ScriptTypeRemapper(
-    private val symbolRemapper: SymbolRemapper
-) : TypeRemapper {
-
-    override fun enterScope(irTypeParametersContainer: IrTypeParametersContainer) {
-        // TODO
-    }
-
-    override fun leaveScope() {
-        // TODO
-    }
-
-    override fun remapType(type: IrType): IrType =
-        if (type !is IrSimpleType)
-            type
-        else {
-            val symbol = symbolRemapper.getReferencedClassifier(type.classifier)
-            val arguments = type.arguments.map { remapTypeArgument(it) }
-            if (symbol == type.classifier && arguments == type.arguments)
-                type
-            else {
-                IrSimpleTypeImpl(
-                    null,
-                    symbol,
-                    type.hasQuestionMark,
-                    arguments,
-                    type.annotations,
-                    type.abbreviation?.remapTypeAbbreviation()
-                )
-            }
-        }
-
-    private fun remapTypeArgument(typeArgument: IrTypeArgument): IrTypeArgument =
-        if (typeArgument is IrTypeProjection)
-            makeTypeProjection(this.remapType(typeArgument.type), typeArgument.variance)
-        else
-            typeArgument
-
-    private fun IrTypeAbbreviation.remapTypeAbbreviation() =
-        IrTypeAbbreviationImpl(
-            symbolRemapper.getReferencedTypeAlias(typeAlias),
-            hasQuestionMark,
-            arguments.map { remapTypeArgument(it) },
-            annotations
-        )
 }
 
 private inline fun IrClass.addAnonymousInitializer(builder: IrFunctionBuilder.() -> Unit = {}): IrAnonymousInitializer =
