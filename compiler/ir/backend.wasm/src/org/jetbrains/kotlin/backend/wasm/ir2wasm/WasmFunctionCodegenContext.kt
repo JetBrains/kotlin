@@ -21,8 +21,6 @@ interface WasmFunctionCodegenContext : WasmBaseCodegenContext {
     fun referenceLocal(irValueDeclaration: IrValueSymbol): WasmLocal
     fun referenceLocal(index: Int): WasmLocal
 
-    fun getNextLabelId(): Int
-
     fun defineLoopLevel(irLoop: IrLoop, labelType: LoopLabelType, level: Int)
     fun referenceLoopLevel(irLoop: IrLoop, labelType: LoopLabelType): Int
 

@@ -23,19 +23,15 @@ class WasmFunctionCodegenContextImpl(
     override val bodyGen: WasmExpressionBuilder =
         WasmIrExpressionBuilder(wasmFunction.instructions)
 
-    private var labelIds = 0
-    override fun getNextLabelId(): Int = labelIds++
-
     private val wasmLocals = LinkedHashMap<IrValueSymbol, WasmLocal>()
     private val loopLevels = LinkedHashMap<Pair<IrLoop, LoopLabelType>, Int>()
 
-    private var localIds: Int = 0
     override fun defineLocal(irValueDeclaration: IrValueSymbol) {
         assert(irValueDeclaration !in wasmLocals) { "Redefinition of local" }
 
         val owner = irValueDeclaration.owner
         val wasmLocal = WasmLocal(
-            localIds++,
+            wasmFunction.locals.size,
             owner.name.asString(),
             if (owner is IrValueParameter) transformValueParameterType(owner) else transformType(owner.type),
             isParameter = irValueDeclaration is IrValueParameterSymbol
