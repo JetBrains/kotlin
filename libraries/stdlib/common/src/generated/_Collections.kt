@@ -2908,7 +2908,7 @@ public fun <T : Any> List<T?>.requireNoNulls(): List<T> {
 /**
  * Splits this collection into a list of lists each not exceeding the given [size].
  * 
- * The last list in the resulting list may have less elements than the given [size].
+ * The last list in the resulting list may have fewer elements than the given [size].
  * 
  * @param size the number of elements to take in each list, must be positive and can be greater than the number of elements in this collection.
  * 
@@ -2927,7 +2927,7 @@ public fun <T> Iterable<T>.chunked(size: Int): List<List<T>> {
  * 
  * Note that the list passed to the [transform] function is ephemeral and is valid only inside that function.
  * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
- * The last list may have less elements than the given [size].
+ * The last list may have fewer elements than the given [size].
  * 
  * @param size the number of elements to take in each list, must be positive and can be greater than the number of elements in this collection.
  * 
@@ -3123,7 +3123,7 @@ public inline fun <T> Collection<T>.plusElement(element: T): List<T> {
  * sliding along this collection with the given [step], where each
  * snapshot is a list.
  * 
- * Several last lists may have less elements than the given [size].
+ * Several last lists may have fewer elements than the given [size].
  * 
  * Both [size] and [step] must be positive and can be greater than the number of elements in this collection.
  * @param size the number of elements to take in each window
@@ -3163,7 +3163,7 @@ public fun <T> Iterable<T>.windowed(size: Int, step: Int = 1, partialWindows: Bo
  * 
  * Note that the list passed to the [transform] function is ephemeral and is valid only inside that function.
  * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
- * Several last lists may have less elements than the given [size].
+ * Several last lists may have fewer elements than the given [size].
  * 
  * Both [size] and [step] must be positive and can be greater than the number of elements in this collection.
  * @param size the number of elements to take in each window

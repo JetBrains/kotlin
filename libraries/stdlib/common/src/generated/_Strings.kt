@@ -2081,7 +2081,7 @@ public inline fun CharSequence.sumOf(selector: (Char) -> ULong): ULong {
 /**
  * Splits this char sequence into a list of strings each not exceeding the given [size].
  * 
- * The last string in the resulting list may have less characters than the given [size].
+ * The last string in the resulting list may have fewer characters than the given [size].
  * 
  * @param size the number of elements to take in each string, must be positive and can be greater than the number of elements in this char sequence.
  * 
@@ -2100,7 +2100,7 @@ public fun CharSequence.chunked(size: Int): List<String> {
  * 
  * Note that the char sequence passed to the [transform] function is ephemeral and is valid only inside that function.
  * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
- * The last char sequence may have less characters than the given [size].
+ * The last char sequence may have fewer characters than the given [size].
  * 
  * @param size the number of elements to take in each char sequence, must be positive and can be greater than the number of elements in this char sequence.
  * 
@@ -2114,7 +2114,7 @@ public fun <R> CharSequence.chunked(size: Int, transform: (CharSequence) -> R): 
 /**
  * Splits this char sequence into a sequence of strings each not exceeding the given [size].
  * 
- * The last string in the resulting sequence may have less characters than the given [size].
+ * The last string in the resulting sequence may have fewer characters than the given [size].
  * 
  * @param size the number of elements to take in each string, must be positive and can be greater than the number of elements in this char sequence.
  * 
@@ -2133,7 +2133,7 @@ public fun CharSequence.chunkedSequence(size: Int): Sequence<String> {
  * 
  * Note that the char sequence passed to the [transform] function is ephemeral and is valid only inside that function.
  * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
- * The last char sequence may have less characters than the given [size].
+ * The last char sequence may have fewer characters than the given [size].
  * 
  * @param size the number of elements to take in each char sequence, must be positive and can be greater than the number of elements in this char sequence.
  * 
@@ -2189,7 +2189,7 @@ public inline fun String.partition(predicate: (Char) -> Boolean): Pair<String, S
  * sliding along this char sequence with the given [step], where each
  * snapshot is a string.
  * 
- * Several last strings may have less characters than the given [size].
+ * Several last strings may have fewer characters than the given [size].
  * 
  * Both [size] and [step] must be positive and can be greater than the number of elements in this char sequence.
  * @param size the number of elements to take in each window
@@ -2211,7 +2211,7 @@ public fun CharSequence.windowed(size: Int, step: Int = 1, partialWindows: Boole
  * 
  * Note that the char sequence passed to the [transform] function is ephemeral and is valid only inside that function.
  * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
- * Several last char sequences may have less characters than the given [size].
+ * Several last char sequences may have fewer characters than the given [size].
  * 
  * Both [size] and [step] must be positive and can be greater than the number of elements in this char sequence.
  * @param size the number of elements to take in each window
@@ -2242,7 +2242,7 @@ public fun <R> CharSequence.windowed(size: Int, step: Int = 1, partialWindows: B
  * sliding along this char sequence with the given [step], where each
  * snapshot is a string.
  * 
- * Several last strings may have less characters than the given [size].
+ * Several last strings may have fewer characters than the given [size].
  * 
  * Both [size] and [step] must be positive and can be greater than the number of elements in this char sequence.
  * @param size the number of elements to take in each window
@@ -2264,7 +2264,7 @@ public fun CharSequence.windowedSequence(size: Int, step: Int = 1, partialWindow
  * 
  * Note that the char sequence passed to the [transform] function is ephemeral and is valid only inside that function.
  * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
- * Several last char sequences may have less characters than the given [size].
+ * Several last char sequences may have fewer characters than the given [size].
  * 
  * Both [size] and [step] must be positive and can be greater than the number of elements in this char sequence.
  * @param size the number of elements to take in each window

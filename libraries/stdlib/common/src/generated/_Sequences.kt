@@ -2352,7 +2352,7 @@ public fun <T : Any> Sequence<T?>.requireNoNulls(): Sequence<T> {
 /**
  * Splits this sequence into a sequence of lists each not exceeding the given [size].
  * 
- * The last list in the resulting sequence may have less elements than the given [size].
+ * The last list in the resulting sequence may have fewer elements than the given [size].
  * 
  * @param size the number of elements to take in each list, must be positive and can be greater than the number of elements in this sequence.
  *
@@ -2373,7 +2373,7 @@ public fun <T> Sequence<T>.chunked(size: Int): Sequence<List<T>> {
  * 
  * Note that the list passed to the [transform] function is ephemeral and is valid only inside that function.
  * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
- * The last list may have less elements than the given [size].
+ * The last list may have fewer elements than the given [size].
  * 
  * @param size the number of elements to take in each list, must be positive and can be greater than the number of elements in this sequence.
  *
@@ -2559,7 +2559,7 @@ public inline fun <T> Sequence<T>.plusElement(element: T): Sequence<T> {
  * sliding along this sequence with the given [step], where each
  * snapshot is a list.
  * 
- * Several last lists may have less elements than the given [size].
+ * Several last lists may have fewer elements than the given [size].
  * 
  * Both [size] and [step] must be positive and can be greater than the number of elements in this sequence.
  * @param size the number of elements to take in each window
@@ -2581,7 +2581,7 @@ public fun <T> Sequence<T>.windowed(size: Int, step: Int = 1, partialWindows: Bo
  * 
  * Note that the list passed to the [transform] function is ephemeral and is valid only inside that function.
  * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
- * Several last lists may have less elements than the given [size].
+ * Several last lists may have fewer elements than the given [size].
  * 
  * Both [size] and [step] must be positive and can be greater than the number of elements in this sequence.
  * @param size the number of elements to take in each window
