@@ -27,7 +27,7 @@ object WasmExternRef : WasmType("externref", -0x11)
 object WasmAnyRef : WasmType("anyref", -0x12)
 object WasmEqRef : WasmType("eqref", -0x13)
 
-class WasmRefNullType(val heapType: WasmHeapType) : WasmType("optref", -0x14)
+class WasmRefNullType(val heapType: WasmHeapType) : WasmType("ref null", -0x14)
 class WasmRefType(val heapType: WasmHeapType) : WasmType("ref", -0x15)
 
 @Suppress("unused")
