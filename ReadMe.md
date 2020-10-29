@@ -104,13 +104,13 @@ Refer to [libraries/ReadMe.md](libraries/ReadMe.md) for details.
 
 ### Building for different versions of IntelliJ IDEA and Android Studio
 
-Kotlin plugin is intended to work with several recent versions of IntelliJ IDEA and Android Studio. Each platform is allowed to have a different set of features and might provide a slightly different API. Instead of using several parallel Git branches, project stores everything in a single branch, but files may have counterparts with version extensions (\*.as32, \*.172, \*.181). The primary file is expected to be replaced with its counterpart when targeting non-default platform.
+Kotlin plugin is intended to work with several recent versions of IntelliJ IDEA and Android Studio. Each platform is allowed to have a different set of features and might provide a slightly different API. Instead of using several parallel Git branches, the project stores everything in a single branch, but files may have counterparts with version extensions (\*.as32, \*.172, \*.181). The primary file is expected to be replaced with its counterpart when targeting a non-default platform.
 
-More detailed description of this scheme can be found at https://github.com/JetBrains/bunches/blob/master/ReadMe.md.
+A More detailed description of this scheme can be found at https://github.com/JetBrains/bunches/blob/master/ReadMe.md.
 
 Usually, there's no need to care about multiple platforms as all features are enabled everywhere by default. Additional counterparts should be created if there's an expected difference in behavior or an incompatible API usage is required **and** there's no reasonable workaround to save source compatibility. Kotlin plugin contains a pre-commit check that shows a warning if a file has been updated without its counterparts.
 
-Development for some particular platform is possible after 'switching' that can be done with [Bunch Tool](https://github.com/JetBrains/bunches/releases) from the command line.
+Development for some particular platform is possible after 'switching' that can be done with the [Bunch Tool](https://github.com/JetBrains/bunches/releases) from the command line.
 
 ```sh
 cd kotlin-project-dir
