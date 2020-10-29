@@ -116,15 +116,15 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
             }
         }
 
-        val nativeInvoke = isNativeInvoke(call)
-        if (nativeInvoke != null) {
-            return irCall(call, symbols.functionNInvokeMethods[nativeInvoke])
+        val nativeInvokeArity = getKotlinFunctionInvokeArity(call)
+        if (nativeInvokeArity != null) {
+            return irCall(call, symbols.functionNInvokeMethods[nativeInvokeArity])
         }
 
         return call
     }
 
-    private fun isNativeInvoke(call: IrCall): Int? {
+    private fun getKotlinFunctionInvokeArity(call: IrCall): Int? {
         val simpleFunction = call.symbol.owner as? IrSimpleFunction ?: return null
         val receiverType = simpleFunction.dispatchReceiverParameter?.type ?: return null
         if (simpleFunction.isSuspend) return null
