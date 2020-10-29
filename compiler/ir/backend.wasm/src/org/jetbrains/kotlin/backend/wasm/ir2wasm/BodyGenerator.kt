@@ -186,6 +186,8 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
             if (!klass.isInterface) {
                 val classMetadata = context.getClassMetadata(klass.symbol)
                 val vfSlot = classMetadata.virtualMethods.map { it.function }.indexOf(function)
+                // Dispatch receiver should be simple and without side effects at this point
+                // TODO: Verify
                 generateExpression(call.dispatchReceiver!!)
                 body.buildConstI32(vfSlot)
                 body.buildCall(context.referenceFunction(wasmSymbols.getVirtualMethodId))
@@ -221,6 +223,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
     }
 
     // Return true if generated.
+    // Assumes call arguments are already on the stack
     private fun tryToGenerateIntrinsicCall(
         call: IrFunctionAccessExpression,
         function: IrFunction
