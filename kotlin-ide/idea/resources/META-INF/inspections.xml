@@ -2518,7 +2518,7 @@
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.IncompleteDestructuringInspection"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
-                     enabledByDefault="true"
+                     enabledByDefault="false"
                      level="WARNING"
                      language="kotlin"
                      key="inspection.incomplete.destructuring.declaration.display.name" bundle="messages.KotlinBundle"/>
