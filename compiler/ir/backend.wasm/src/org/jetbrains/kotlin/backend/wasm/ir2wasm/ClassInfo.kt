@@ -32,10 +32,10 @@ class ClassMetadata(
     val interfaces: List<IrClass> = klass.allSuperInterfaces()
 
     // Virtual methods in Wasm order
+    // TODO: Collect interface methods separately
     val virtualMethods: List<VirtualMethodMetadata> = run {
         val virtualFunctions =
             klass.declarations
-                .filterIsInstance<IrSimpleFunction>()
                 .filterVirtualFunctions()
                 .map {
                     VirtualMethodMetadata(
@@ -46,7 +46,9 @@ class ClassMetadata(
 
         val signatureToVirtualFunction = virtualFunctions.associateBy { it.signature }
 
-        val newVirtualMethods = virtualFunctions.filter { it.signature !in superClass?.virtualMethodsSignatures.orEmpty() }
+        val superSignatures = superClass?.virtualMethodsSignatures.orEmpty()
+
+        val newVirtualMethods = virtualFunctions.filter { it.signature !in superSignatures }
         val superVirtualMethods = superClass?.virtualMethods.orEmpty().map {
             signatureToVirtualFunction[it.signature] ?: it
         }
@@ -56,16 +58,17 @@ class ClassMetadata(
     }
 
     init {
-        val vmToSignature = mutableMapOf<WasmSignature, MutableList<IrSimpleFunction>>()
+        val signatureToFunctions = mutableMapOf<WasmSignature, MutableList<IrSimpleFunction>>()
         for (vm in virtualMethods) {
-            vmToSignature.getOrPut(vm.signature) { mutableListOf() }.add(vm.function)
+            signatureToFunctions.getOrPut(vm.signature) { mutableListOf() }.add(vm.function)
         }
 
-        for ((sig, funcs) in vmToSignature) {
-            if (funcs.size > 1) {
-                val funcList = funcs.joinToString { " ---- ${it.fqNameWhenAvailable} \n" }
+        for ((sig, functions) in signatureToFunctions) {
+            if (functions.size > 1) {
+                val funcList = functions.joinToString { " ---- ${it.fqNameWhenAvailable} \n" }
+                // TODO: Check in FE
                 error(
-                    "Class ${klass.fqNameWhenAvailable} has ${funcs.size} methods with the same signature $sig\n $funcList"
+                    "Class ${klass.fqNameWhenAvailable} has ${functions.size} methods with the same signature $sig\n $funcList"
                 )
             }
         }
