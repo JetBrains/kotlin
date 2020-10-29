@@ -152,11 +152,9 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
     }
 
     private fun generateCall(call: IrFunctionAccessExpression) {
-        val function: IrFunction = call.symbol.owner.realOverrideTarget
-
         // Box intrinsic has an additional klass ID argument.
         // Processing it separately
-        if (function.symbol == wasmSymbols.boxIntrinsic) {
+        if (call.symbol == wasmSymbols.boxIntrinsic) {
             val toType = call.getTypeArgument(0)!!
             val klass = toType.erasedUpperBound!!
             val structTypeName = context.referenceStructType(klass.symbol)
@@ -174,6 +172,8 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         for (i in 0 until call.valueArgumentsCount) {
             generateExpression(call.getValueArgument(i)!!)
         }
+
+        val function: IrFunction = call.symbol.owner.realOverrideTarget
 
         if (tryToGenerateIntrinsicCall(call, function)) {
             return
