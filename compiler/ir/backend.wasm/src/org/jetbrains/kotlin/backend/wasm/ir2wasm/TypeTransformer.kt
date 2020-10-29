@@ -100,14 +100,12 @@ class WasmTypeTransformer(
 val IrTypeParameter.erasedUpperBound: IrClass?
     get() {
         // Pick the (necessarily unique) non-interface upper bound if it exists
-        // TODO check if it should be recursive
         for (type in superTypes) {
-            return type.classOrNull?.owner ?: continue
+            return type.erasedUpperBound ?: continue
         }
 
         return null
     }
-
 
 val IrType.erasedUpperBound: IrClass?
     get() = when (val classifier = classifierOrNull) {

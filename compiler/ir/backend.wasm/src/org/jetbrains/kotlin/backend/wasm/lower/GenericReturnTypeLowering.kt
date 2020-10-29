@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irComposite
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.erasedUpperBound
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.builders.irImplicitCast
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.util.isTypeParameter
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -38,22 +40,12 @@ class GenericReturnTypeLowering(val context: WasmBackendContext) : FileLoweringP
         })
     }
 
-    // TODO: Check for duplicates with IrTypeParameter.erasedUpperBound
     private fun IrType.eraseUpperBoundType(): IrType {
-        val typeParameter = this.classifierOrNull?.owner as? IrTypeParameter
-        if (typeParameter != null) {
-            val upperBoundType = typeParameter.eraseUpperBoundType()
-            return if (this.isMarkedNullable())
-                upperBoundType.makeNullable()
-            else
-                upperBoundType
-        }
-
-        return this
-    }
-
-    private fun IrTypeParameter.eraseUpperBoundType(): IrType {
-        return superTypes.firstOrNull()?.eraseUpperBoundType() ?: context.irBuiltIns.anyNType
+        val type = erasedUpperBound?.defaultType ?: return context.irBuiltIns.anyNType
+        return if (this.isNullable())
+            type.makeNullable()
+        else
+            type
     }
 
     private fun transformGenericCall(call: IrCall, scopeOwnerSymbol: IrSymbol): IrExpression {
