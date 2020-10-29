@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  */
 class VirtualDispatchReceiverExtraction(val context: CommonBackendContext) : FunctionLoweringPass {
     override fun lower(irFunction: IrFunction) {
-        val builder by lazy { context.createIrBuilder(irFunction.symbol) }
         irFunction.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid(this)
@@ -38,7 +37,7 @@ class VirtualDispatchReceiverExtraction(val context: CommonBackendContext) : Fun
                 // TODO: Keep other simple receivers without side effects
                 if (receiver is IrGetValue)
                     return expression
-                return with(builder) {
+                return with(context.createIrBuilder(irFunction.symbol)) {
                     irBlock(expression) {
                         val tmp = createTmpVariable(receiver)
                         expression.dispatchReceiver = irGet(tmp)
