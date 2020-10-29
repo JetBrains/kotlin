@@ -13,12 +13,6 @@ public abstract class Enum<E : Enum<E>>(
     override fun compareTo(other: E): Int =
         ordinal.compareTo(other.ordinal)
 
-    override fun equals(other: Any?): Boolean =
-        this === other
-
-    override fun hashCode(): Int =
-        10
-
     override fun toString(): String =
         name
 
