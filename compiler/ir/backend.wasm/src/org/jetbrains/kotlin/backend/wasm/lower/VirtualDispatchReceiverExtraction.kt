@@ -35,6 +35,7 @@ class VirtualDispatchReceiverExtraction(val context: CommonBackendContext) : Fun
                 if (receiver == null || !function.isOverridable)
                     return expression
                 // TODO: Keep other simple receivers without side effects
+                //       receiver.isPure(true) ?
                 if (receiver is IrGetValue)
                     return expression
                 return with(context.createIrBuilder(irFunction.symbol)) {
