@@ -72,7 +72,7 @@ class BuildSessionLogger(
      * - number of tracking files should not be more than maxProfileFiles (the earlier file created the earlier deleted)
      * - files with age (current time - last modified) more than maxFileAge should be deleted (if we trust lastModified returned by FS)
      * - files are ordered on the basis of name (creation timestamp)
-     * - if the last file has size less then maxFileSize, the next record will be append to it (new file created otherwise)
+     * - if the last file has size less than maxFileSize, the next record will be append to it (new file created otherwise)
      * -
      */
     @Synchronized

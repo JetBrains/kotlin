@@ -5,13 +5,13 @@
 // TESTCASE NUMBER: 1
 
 fun case1() {
-    //less then four hex digits
+    //less than four hex digits
     val c0 = <!ILLEGAL_CONST_EXPRESSION!>'\u'<!>
     val c1 = <!ILLEGAL_CONST_EXPRESSION!>'\uf'<!>
     val c2 = <!ILLEGAL_CONST_EXPRESSION!>'\u1f'<!>
     val c3 = <!ILLEGAL_CONST_EXPRESSION!>'\u1wf'<!>
 
-    //more then four hex digits
+    //more than four hex digits
     val c4 = <!ILLEGAL_CONST_EXPRESSION!>'\u1wF2f'<!>
 }
 

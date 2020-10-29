@@ -272,7 +272,7 @@ class UintMap implements Serializable {
         if (keys != null) {
             // Check if removing deleted entries would free enough space
             if (keyCount * 2 >= occupiedCount) {
-                // Need to grow: less then half of deleted entries
+                // Need to grow: less than half of deleted entries
                 ++power;
             }
         }

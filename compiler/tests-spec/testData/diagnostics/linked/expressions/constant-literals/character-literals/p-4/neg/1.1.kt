@@ -17,7 +17,7 @@
 // TESTCASE NUMBER: 1
 
 fun case1() {
-    //less then four hex digits
+    //less than four hex digits
     val c0 = '<!ILLEGAL_ESCAPE!>\u<!>'
     val c1 = '<!ILLEGAL_ESCAPE!>\uf<!>'
     val c2 = '<!ILLEGAL_ESCAPE!>\u1f<!>'
