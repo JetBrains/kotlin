@@ -56,7 +56,7 @@ class DeterministicOutputTest : KtUsefulTestCase() {
         val zis = JarInputStream(FileInputStream(jar))
         var entry: ZipEntry? = zis.nextEntry
         while (entry != null) {
-            assertEquals(entry.time, DOS_EPOCH, "timestamp should be default $entry")
+            assertEquals(entry.time, DOS_EPOCH, "$entry timestamp should be reset")
             entry = zis.nextEntry
         }
     }
