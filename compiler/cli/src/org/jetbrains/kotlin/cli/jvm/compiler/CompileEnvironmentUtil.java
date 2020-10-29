@@ -37,6 +37,9 @@ import java.util.jar.*;
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR;
 
 public class CompileEnvironmentUtil {
+
+    public static long DOS_EPOCH = new GregorianCalendar(1980, Calendar.JANUARY, 1, 0, 0, 0).getTimeInMillis();
+
     @NotNull
     public static ModuleChunk loadModuleChunk(File buildFile, MessageCollector messageCollector) {
         if (!buildFile.exists()) {
@@ -66,13 +69,13 @@ public class CompileEnvironmentUtil {
             JarOutputStream stream = new JarOutputStream(fos);
             JarEntry manifestEntry = new JarEntry(JarFile.MANIFEST_NAME);
             long dosEpoch = new GregorianCalendar(1980, Calendar.JANUARY, 1, 0, 0, 0).getTimeInMillis();
-            manifestEntry.setTime(dosEpoch);
+            manifestEntry.setTime(DOS_EPOCH);
             stream.putNextEntry(manifestEntry);
             manifest.write(new BufferedOutputStream(stream));
 
             for (OutputFile outputFile : outputFiles.asList()) {
                 JarEntry entry = new JarEntry(outputFile.getRelativePath());
-                entry.setTime(dosEpoch);
+                entry.setTime(DOS_EPOCH);
                 stream.putNextEntry(entry);
                 stream.write(outputFile.asByteArray());
             }
@@ -119,6 +122,7 @@ public class CompileEnvironmentUtil {
                 if (e == null) {
                     break;
                 }
+                e.setTime(DOS_EPOCH);
                 if (FileUtilRt.extensionEquals(e.getName(), "class")) {
                     stream.putNextEntry(e);
                     FileUtil.copy(jis, stream);
