@@ -2,7 +2,7 @@ import org.jetbrains.compose.compose
 
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.compose") version "0.1.0-build63"
+    id("org.jetbrains.compose") version "0.1.0-dev106"
     id("com.android.library")
     id("kotlin-android-extensions")
 }
@@ -18,7 +18,7 @@ kotlin {
     android()
     jvm("desktop") {
         compilations.all {
-            kotlinOptions.jvmTarget = "1.8"
+            kotlinOptions.jvmTarget = "11"
         }
     }
     sourceSets {
