@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 /**
  * This lowering erases dispatch receiver types of virtual functions down to Any.
  *
- * WebAssembly function types are covariant on their parameter types.
+ * WebAssembly function types are contravariant on their parameter types.
  * But since child classes are not supertypes of parents, in order for virtual method
  * reference to share the same v-table slot as parent's method, it's dispatch receiver type
  * has to be erased at least down to type of the parent class.
