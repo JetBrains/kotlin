@@ -44,6 +44,7 @@ dependencies {
     implementation(project(":kotlin-util-klib"))
     implementation(project(":native:kotlin-klib-commonizer-api"))
     implementation(project(":kotlin-tooling-metadata"))
+    implementation(project(":kotlin-project-model"))
     compileOnly(project(":native:kotlin-native-utils"))
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(project(":kotlin-android-extensions"))
