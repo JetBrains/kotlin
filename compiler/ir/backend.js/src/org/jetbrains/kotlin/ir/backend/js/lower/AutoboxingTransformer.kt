@@ -180,8 +180,11 @@ class AutoboxingTransformer(context: JsCommonBackendContext) : AbstractValueUsag
         resultType: IrType,
         call: (IrExpression) -> IrExpression
     ): IrExpression {
+        // Safe call is only needed if we cast from Nullable type to Nullable type.
+        // Otherwise, null value cannot occur.
         if (!actualType.isNullable() || !resultType.isNullable())
             return call(arg)
+
         return JsIrBuilder.run {
             // TODO: Set parent of local variables
             val tmp = buildVar(actualType, parent = null, initializer = arg)
