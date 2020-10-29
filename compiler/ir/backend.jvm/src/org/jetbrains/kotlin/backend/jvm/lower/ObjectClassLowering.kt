@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.builders.irGetField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 
 internal val objectClassPhase = makeIrFilePhase(
     ::ObjectClassLowering,
@@ -72,8 +73,9 @@ private class ObjectClassLowering(val context: JvmBackendContext) : IrElementTra
             (irClass.visibility == DescriptorVisibilities.PRIVATE || irClass.visibility == DescriptorVisibilities.PROTECTED)
         ) {
             context.createIrBuilder(irClass.symbol).run {
-                publicInstanceField.annotations +=
-                    irCall(this@ObjectClassLowering.context.ir.symbols.javaLangDeprecatedConstructor)
+                publicInstanceField.annotations =
+                    filterOutAnnotations(DeprecationResolver.JAVA_DEPRECATED, publicInstanceField.annotations) +
+                            irCall(this@ObjectClassLowering.context.ir.symbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
             }
         }
 

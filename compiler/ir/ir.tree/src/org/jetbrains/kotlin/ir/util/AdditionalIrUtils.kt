@@ -245,3 +245,7 @@ fun IrClassSymbol.getPropertySetter(name: String): IrSimpleFunctionSymbol? = own
 
 inline fun MemberScope.findFirstFunction(name: String, predicate: (CallableMemberDescriptor) -> Boolean) =
     getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).first(predicate)
+
+fun filterOutAnnotations(fqName: FqName, annotations: List<IrConstructorCall>): List<IrConstructorCall> {
+    return annotations.filterNot { it.annotationClass.hasEqualFqName(fqName) }
+}

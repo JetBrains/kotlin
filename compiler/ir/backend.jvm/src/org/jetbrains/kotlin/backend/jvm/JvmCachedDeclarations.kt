@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.jvm.codegen.MethodSignatureMapper
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.ir.copyCorrespondingPropertyFrom
+import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping
 import org.jetbrains.kotlin.builtins.isMappedIntrinsicCompanionObjectClassId
@@ -122,11 +123,21 @@ class JvmCachedDeclarations(
                 // It is an error to annotate only some of the fields of an interface companion with
                 // @JvmField, so checking the current field only should be enough.
                 val hasJvmField = oldField.hasAnnotation(JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME)
-                parent = if (oldParent.isCompanion && (!oldParent.parentAsClass.isJvmInterface || hasJvmField))
-                    oldParent.parentAsClass
-                else
-                    oldParent
-                annotations += oldField.annotations
+                if (oldParent.isCompanion && (!oldParent.parentAsClass.isJvmInterface || hasJvmField)) {
+                    parent = oldParent.parentAsClass
+                    annotations = if (DescriptorVisibilities.isPrivate(oldParent.visibility)) {
+                        context.createJvmIrBuilder(this.symbol).run {
+                            filterOutAnnotations(
+                                DeprecationResolver.JAVA_DEPRECATED,
+                                oldField.annotations
+                            ) + irCall(irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
+                        }
+                    } else oldField.annotations
+                } else {
+                    parent = oldParent
+                    annotations = oldField.annotations
+                }
+
                 initializer = oldField.initializer
                     ?.replaceThisByStaticReference(this@JvmCachedDeclarations, oldParent, oldParent.thisReceiver!!)
                     ?.patchDeclarationParents(this) as IrExpressionBody?
@@ -183,7 +194,7 @@ class JvmCachedDeclarations(
                     !it.annotations.hasAnnotation(DeprecationResolver.JAVA_DEPRECATED)
                 ) {
                     this@JvmCachedDeclarations.context.createIrBuilder(it.symbol).run {
-                        it.annotations += irCall(this@JvmCachedDeclarations.context.ir.symbols.javaLangDeprecatedConstructor)
+                        it.annotations += irCall(this@JvmCachedDeclarations.context.ir.symbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
                     }
                 }
 

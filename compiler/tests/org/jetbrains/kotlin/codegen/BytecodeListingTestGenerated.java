@@ -84,6 +84,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         runTest("compiler/testData/codegen/bytecodeListing/immutableCollection.kt");
     }
 
+    @TestMetadata("javaDeprecated.kt")
+    public void testJavaDeprecated() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/javaDeprecated.kt");
+    }
+
     @TestMetadata("jvmOverloadsAndParametersAnnotations.kt")
     public void testJvmOverloadsAndParametersAnnotations() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/jvmOverloadsAndParametersAnnotations.kt");

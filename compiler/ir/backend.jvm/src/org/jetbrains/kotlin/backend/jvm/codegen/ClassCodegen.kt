@@ -281,7 +281,7 @@ class ClassCodegen private constructor(
             if (field.origin == IrDeclarationOrigin.PROPERTY_DELEGATE) null
             else context.methodSignatureMapper.mapFieldSignature(field)
         val fieldName = field.name.asString()
-        val flags = field.computeFieldFlags(state.languageVersionSettings)
+        val flags = field.computeFieldFlags(context, state.languageVersionSettings)
         val fv = visitor.newField(
             field.descriptorOrigin, flags, fieldName, fieldType.descriptor,
             fieldSignature, (field.initializer?.expression as? IrConst<*>)?.value
@@ -455,10 +455,10 @@ private val IrClass.flags: Int
                 else -> Opcodes.ACC_SUPER or modality.flags
             }
 
-private fun IrField.computeFieldFlags(languageVersionSettings: LanguageVersionSettings): Int =
+private fun IrField.computeFieldFlags(context: JvmBackendContext, languageVersionSettings: LanguageVersionSettings): Int =
     origin.flags or visibility.flags or
             (correspondingPropertySymbol?.owner?.callableDeprecationFlags ?: 0) or
-            (if (shouldHaveSpecialDeprecationFlag()) Opcodes.ACC_DEPRECATED else 0) or
+            (if (shouldHaveSpecialDeprecationFlag(context)) Opcodes.ACC_DEPRECATED else 0) or
             (if (annotations.hasAnnotation(KOTLIN_DEPRECATED)) Opcodes.ACC_DEPRECATED else 0) or
             (if (isFinal) Opcodes.ACC_FINAL else 0) or
             (if (isStatic) Opcodes.ACC_STATIC else 0) or
@@ -474,12 +474,10 @@ private fun IrField.isPrivateCompanionFieldInInterface(languageVersionSettings: 
             parentAsClass.isJvmInterface &&
             DescriptorVisibilities.isPrivate(parentAsClass.companionObject()!!.visibility)
 
-private val JAVA_LANG_DEPRECATED = FqName("java.lang.Deprecated")
 private val KOTLIN_DEPRECATED = FqName("kotlin.Deprecated")
 
-fun IrField.shouldHaveSpecialDeprecationFlag(): Boolean {
-    return origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE &&
-            annotations.hasAnnotation(JAVA_LANG_DEPRECATED)
+fun IrField.shouldHaveSpecialDeprecationFlag(context: JvmBackendContext): Boolean {
+    return annotations.any { it.symbol == context.ir.symbols.javaLangDeprecatedConstructorWithDeprecatedFlag }
 }
 
 private val IrDeclarationOrigin.flags: Int
