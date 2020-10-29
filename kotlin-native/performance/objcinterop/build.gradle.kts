@@ -22,32 +22,17 @@ benchmark {
     nativeSrcDirs = listOf("src/main/kotlin-native", "../shared/src/main/kotlin-native/common")
     mingwSrcDirs = listOf("src/main/kotlin-native", "../shared/src/main/kotlin-native/mingw")
     posixSrcDirs = listOf("src/main/kotlin-native", "../shared/src/main/kotlin-native/posix")
-    linkerOpts = listOf("-L$buildDir", "-lcomplexnumbers")
     buildType = (findProperty("nativeBuildType") as String?)?.let { NativeBuildType.valueOf(it) } ?: defaultBuildType
-
-    dependencies.common(project(":endorsedLibraries:kotlinx.cli"))
 }
 
-val compileLibary by tasks.creating {
-    doFirst {
-        mkdir(buildDir)
-
-        project.withConvention(ExecClang::class) {
-            execKonanClang(HostManager.host) {
-                args("$projectDir/src/nativeInterop/cinterop/complexNumbers.m")
-                args("-lobjc", "-fobjc-arc")
-                args("-fPIC", "-shared", "-o", "$buildDir/libcomplexnumbers.dylib")
-            }
-        }
-    }
-}
 
 val native = kotlin.targets.getByName("native") as KotlinNativeTarget
 native.apply {
     compilations["main"].cinterops {
         create("classes") {
             headers("$projectDir/src/nativeInterop/cinterop/complexNumbers.h")
+            extraOpts("-Xcompile-source", "$projectDir/src/nativeInterop/cinterop/complexNumbers.m")
+            extraOpts("-Xsource-compiler-option", "-lobjc", "-Xsource-compiler-option", "-fobjc-arc")
         }
     }
-    binaries.getExecutable(BenchmarkingPlugin.NATIVE_EXECUTABLE_NAME, "RELEASE").linkTask.dependsOn(compileLibary)
 }

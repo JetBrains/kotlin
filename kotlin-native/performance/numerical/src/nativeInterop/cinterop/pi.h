@@ -11,6 +11,12 @@
 #ifndef _BELLARD_PI_H
 #define _BELLARD_PI_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 int pi_nth_digit(int n);
+#ifdef __cplusplus
+}
+#endif
 
 #endif /*_BELLARD_PI_H*/

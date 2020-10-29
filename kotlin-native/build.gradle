@@ -668,12 +668,6 @@ task samples {
     dependsOn 'samplesZip', 'samplesTar'
 }
 
-task performance {
-    dependsOn 'dist'
-    dependsOn ':performance:clean'
-    dependsOn ':performance:konanRun'
-}
-
 task samplesZip(type: Zip)
 task samplesTar(type: Tar) {
     extension = 'tar.gz'

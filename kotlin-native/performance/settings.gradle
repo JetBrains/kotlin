@@ -1,0 +1,23 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the LICENSE file.
+ */
+
+include ':ring'
+include ':cinterop'
+include ':helloworld'
+include ':numerical'
+include ':videoplayer'
+include ':framework'
+include ':startup'
+if (System.getProperty("os.name") == "Mac OS X") {
+    include ':objcinterop'
+    include ':swiftinterop'
+    if (hasProperty("runExcludedBenchmarks")) {
+        include ':KotlinVsSwift'
+        include ':KotlinVsSwift:ring'
+    }
+}
+
+includeBuild '../build-tools'
+

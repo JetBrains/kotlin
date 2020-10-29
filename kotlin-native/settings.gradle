@@ -33,23 +33,6 @@ include ':utilities:basic-utils'
 include ':utilities:cli-runner'
 include ':dependencyPacker'
 
-include ':performance'
-include ':performance:ring'
-include ':performance:cinterop'
-include ':performance:helloworld'
-include ':performance:numerical'
-include ':performance:videoplayer'
-include ':performance:framework'
-include ':performance:startup'
-if (System.getProperty("os.name") == "Mac OS X") {
-    include ':performance:objcinterop'
-    include ':performance:swiftinterop'
-    if (hasProperty("runExcludedBenchmarks")) {
-        include ':performance:KotlinVsSwift'
-        include ':performance:KotlinVsSwift:ring'
-    }
-}
-
 include ':platformLibs'
 include ':endorsedLibraries'
 include ':endorsedLibraries:kotlinx.cli'

@@ -19,6 +19,4 @@ benchmark {
     mingwSrcDirs = listOf("src/main/kotlin-native", "../shared/src/main/kotlin-native/mingw")
     posixSrcDirs = listOf("src/main/kotlin-native", "../shared/src/main/kotlin-native/posix")
     buildType = (findProperty("nativeBuildType") as String?)?.let { NativeBuildType.valueOf(it) } ?: defaultBuildType
-
-    dependencies.common(project(":endorsedLibraries:kotlinx.cli"))
 }

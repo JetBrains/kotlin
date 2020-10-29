@@ -18,5 +18,4 @@ swiftBenchmark {
     swiftSources = File("$projectDir/src").list().map { "$projectDir/src/$it" }.toList()
     compileTasks = listOf("buildSwift")
     useCodeSize = CodeSizeEntity.EXECUTABLE
-    dependencies.common(project(":endorsedLibraries:kotlinx.cli"))
 }

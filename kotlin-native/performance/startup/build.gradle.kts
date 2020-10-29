@@ -22,6 +22,4 @@ benchmark {
     posixSrcDirs = listOf("../shared/src/main/kotlin-native/posix")
     buildType = (findProperty("nativeBuildType") as String?)?.let { NativeBuildType.valueOf(it) } ?: defaultBuildType
     repeatingType = BenchmarkRepeatingType.EXTERNAL
-
-    dependencies.common(project(":endorsedLibraries:kotlinx.cli"))
 }

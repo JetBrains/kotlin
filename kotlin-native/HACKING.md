@@ -134,7 +134,8 @@ To use a local GTest copy instead of the downloaded one, add the following line 
     
  To measure performance of Kotlin/Native compiler on existing benchmarks:
  
-    ./gradlew :performance:konanRun
+    cd performance
+    ../gradlew :konanRun
 
  **NOTE**: **konanRun** task needs built compiler and libs. To test against working tree make sure to run
 
@@ -144,19 +145,23 @@ To use a local GTest copy instead of the downloaded one, add the following line 
     
  **konanRun** task can be run separately for one/several benchmark applications:
  
-    ./gradlew :performance:cinterop:konanRun
+    cd performance
+    ../gradlew :cinterop:konanRun
     
  **konanRun** task has parameter `filter` which allows to run only some subset of benchmarks:
  
-    ./gradlew :performance:cinterop:konanRun --filter=struct,macros
+    cd performance
+    ../gradlew :cinterop:konanRun --filter=struct,macros
     
  Or you can use `filterRegex` if you want to specify the filter as regexes:
  
-    ./gradlew :performance:ring:konanRun --filterRegex=String.*,Loop.*
+    cd performance
+    ../gradlew :ring:konanRun --filterRegex=String.*,Loop.*
     
  There us also verbose mode to follow progress of running benchmarks
  
-    ./gradlew :performance:cinterop:konanRun --verbose
+    cd performance
+    ../gradlew :cinterop:konanRun --verbose
     
     > Task :performance:cinterop:konanRun
     [DEBUG] Warm up iterations for benchmark macros
@@ -165,16 +170,19 @@ To use a local GTest copy instead of the downloaded one, add the following line 
     
  There are also tasks for running benchmarks on JVM (pay attention, some benchmarks e.g. cinterop benchmarks can't be run on JVM)
  
-    ./gradlew :performance:jvmRun
+    cd performance
+    ../gradlew :jvmRun
     
  Files with results of benchmarks run are saved in `performance/build/nativeReport.json` for konanRun and `jvmReport.json` for jvmRun.
  You can change the output filename by setting the `nativeJson` property for konanRun and `jvmJson` for jvmRun:
 
-    ./gradlew :performance:ring:konanRun --filter=String.*,Loop.* -PnativeJson=stringsAndLoops.json
+    cd performance
+    ../gradlew :ring:konanRun --filter=String.*,Loop.* -PnativeJson=stringsAndLoops.json
 
  You can use the `compilerArgs` property to pass flags to the compiler used to compile the benchmarks:
 
-    ./gradlew :performance:konanRun -PcompilerArgs="--time -g"
+    cd performance
+    ../gradlew :konanRun -PcompilerArgs="--time -g"
 
  To compare different results run benchmarksAnalyzer tool:
  

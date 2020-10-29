@@ -1,5 +1,5 @@
 buildscript {
-    apply from: "$rootProject.projectDir/gradle/kotlinGradlePlugin.gradle"
+    apply from: "$rootProject.projectDir/../gradle/kotlinGradlePlugin.gradle"
     repositories {
         maven {
             url 'https://cache-redirector.jetbrains.com/jcenter'

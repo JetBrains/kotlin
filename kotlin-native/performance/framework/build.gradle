@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.RunJvmTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 
 buildscript {
-    apply from: "$rootProject.projectDir/gradle/kotlinGradlePlugin.gradle"
+    apply from: "$rootProject.projectDir/../gradle/kotlinGradlePlugin.gradle"
 
     repositories {
         maven {
@@ -42,8 +42,8 @@ kotlin {
             }
             kotlin.srcDir "$toolsPath/benchmarks/shared/src"
             kotlin.srcDir "$toolsPath/benchmarksAnalyzer/src/main/kotlin"
-            kotlin.srcDir "$rootProject.projectDir/endorsedLibraries/kotlinx.cli/src/main/kotlin"
-            kotlin.srcDir "$rootProject.projectDir/endorsedLibraries/kotlinx.cli/src/main/kotlin-native"
+            kotlin.srcDir "$rootProject.projectDir/../endorsedLibraries/kotlinx.cli/src/main/kotlin"
+            kotlin.srcDir "$rootProject.projectDir/../endorsedLibraries/kotlinx.cli/src/main/kotlin-native"
             kotlin.srcDir "$toolsPath/benchmarksAnalyzer/src/main/kotlin-native"
         }
     }

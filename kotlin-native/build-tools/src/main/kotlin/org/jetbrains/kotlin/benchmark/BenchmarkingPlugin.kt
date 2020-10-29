@@ -71,6 +71,7 @@ open class BenchmarkExtension @Inject constructor(val project: Project) {
     var compilerOpts: List<String> = emptyList()
     var buildType: NativeBuildType = NativeBuildType.RELEASE
     var repeatingType: BenchmarkRepeatingType = BenchmarkRepeatingType.INTERNAL
+    var cleanBeforeRunTask: String? = "konanRun"
 
     val dependencies: BenchmarkDependencies = BenchmarkDependencies()
 
@@ -256,6 +257,11 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
 
         // JVM report task.
         configureJvmJsonTask(jvmRun)
+
+        project.afterEvaluate {
+            // Need to rebuild benchmark to collect compile time.
+            project.benchmark.cleanBeforeRunTask?.let { tasks.getByName(it).dependsOn("clean") }
+        }
     }
 
     override fun apply(target: Project) = with(target) {
