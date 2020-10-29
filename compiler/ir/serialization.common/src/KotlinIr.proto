@@ -588,3 +588,116 @@ message IrStatement {
     IrSyntheticBody synthetic_body = 7;
   }
 }
+
+/* ------- Persistent IR Carriers --------------------------------------------- */
+
+message PirAnonymousInitializerCarrier {
+    required int32 lastModified = 1;
+    optional int64 parentSymbol = 2;
+    optional int32 origin = 3;
+    optional int32 body = 4;
+}
+
+message PirClassCarrier {
+    required int32 lastModified = 1;
+    optional int64 parentSymbol = 2;
+    optional int32 origin = 3;
+    optional IrValueParameter thisReceiverField = 4;
+    repeated IrTypeParameter typeParameters = 5;
+    repeated int32 superTypes = 6;
+    optional int64 flags = 7 [default = 0];
+}
+
+message PirConstructorCarrier {
+    required int32 lastModified = 1;
+    optional int64 parentSymbol = 2;
+    optional int32 origin = 3;
+    optional IrType returnTypeField = 4;
+    optional IrValueParameter dispatchReceiverParameter = 5;
+    optional IrValueParameter extensionReceiverParameter = 6;
+    optional int32 body = 7;
+    repeated IrTypeParameter typeParameters = 8;
+    repeated IrValueParameter valueParameters = 9;
+    optional int64 flags = 10 [default = 0];
+}
+
+message PirEnumEntryCarrier {
+    required int32 lastModified = 1;
+    optional int64 parentSymbol = 2;
+    optional int32 origin = 3;
+    optional int64 correspondingClass = 4;
+    optional int32 initializerExpression = 5;
+}
+
+message PirErrorDeclarationCarrier {
+    required int32 lastModified = 1;
+    optional int64 parentSymbol = 2;
+    optional int32 origin = 3;
+}
+
+message PirFieldCarrier {
+    required int32 lastModified = 1;
+    optional int64 parentSymbol = 2;
+    optional int32 origin = 3;
+    optional IrType type = 4;
+    optional int32 initializer = 5;
+    optional int64 correspondingPropertySymbol = 6;
+}
+
+message PirFunctionCarrier {
+    required int32 lastModified = 1;
+    optional int64 parentSymbol = 2;
+    optional int32 origin = 3;
+    optional IrType returnType = 4;
+    optional IrValueParameter dispatchReceiverParameter = 5;
+    optional IrValueParameter extensionReceiverParameter = 6;
+    optional int32 body = 7;
+    repeated IrTypeParameter typeParameters = 8;
+    repeated IrValueParameter valueParameters = 9;
+    optional int64 correspondingPropertySymbol = 10;
+    repeated int64 overriddenSymbols = 11;
+    optional int64 flags = 12 [default = 0];
+}
+
+message PirLocalDelegatedPropertyCarrier {
+    required int32 lastModified = 1;
+    optional int64 parentSymbol = 2;
+    optional int32 origin = 3;
+    optional IrType type = 4;
+    optional IrVariable delegate = 5;
+    optional int64 getter = 6;
+    optional int64 setter = 7;
+}
+
+message PirPropertyCarrier {
+    required int32 lastModified = 1;
+    optional int64 parentSymbol = 2;
+    optional int32 origin = 3;
+    optional int64 backingField = 4;
+    optional int64 getter = 5;
+    optional int64 setter = 6;
+}
+
+message PirTypeAliasCarrier {
+    required int32 lastModified = 1;
+    optional int64 parentSymbol = 2;
+    optional int32 origin = 3;
+    repeated IrTypeParameter typeParameters = 4;
+    optional IrType expandedType = 5;
+}
+
+message PirTypeParameterCarrier {
+    required int32 lastModified = 1;
+    optional int64 parentSymbol = 2;
+    optional int32 origin = 3;
+    repeated int32 superTypes = 4;
+}
+
+message PirValueParameterCarrier {
+    required int32 lastModified = 1;
+    optional int64 parentSymbol = 2;
+    optional int32 origin = 3;
+    optional int32 defaultValue = 4;
+    optional IrType type = 5;
+    optional IrType varargElementType = 6;
+}
