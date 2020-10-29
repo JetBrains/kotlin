@@ -28,6 +28,14 @@ class GradleBuildFileHighlightingTest : KotlinGradleImportingTestCase() {
         checkHighlighting(buildGradleKts)
     }
 
+    @TargetVersions("4.8+")
+    @Test
+    fun testSimple() {
+        val buildGradleKts = configureByFiles().findBuildGradleKtsFile()
+        importProjectUsingSingeModulePerGradleProject()
+        checkHighlighting(buildGradleKts)
+    }
+
     @Ignore
     @TargetVersions("4.8+")
     @Test
