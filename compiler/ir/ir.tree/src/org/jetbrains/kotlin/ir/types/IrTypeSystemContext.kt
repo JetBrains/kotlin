@@ -389,7 +389,6 @@ fun extractTypeParameters(klass: IrDeclarationParent): List<IrTypeParameter> {
     val result = mutableListOf<IrTypeParameter>()
     var current: IrDeclarationParent? = klass
     while (current != null) {
-//        result += current.typeParameters
         (current as? IrTypeParametersContainer)?.let { result += it.typeParameters }
         current =
             when (current) {

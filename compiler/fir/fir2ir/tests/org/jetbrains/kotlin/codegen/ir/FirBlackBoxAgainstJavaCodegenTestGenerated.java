@@ -1066,6 +1066,34 @@ public class FirBlackBoxAgainstJavaCodegenTestGenerated extends AbstractFirBlack
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxAgainstJava/varargs")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Varargs extends AbstractFirBlackBoxAgainstJavaCodegenTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JVM_IR, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
+        }
+
+        public void testAllFilesPresentInVarargs() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxAgainstJava/varargs"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("varargsOverride.kt")
+        public void testVarargsOverride() throws Exception {
+            runTest("compiler/testData/codegen/boxAgainstJava/varargs/varargsOverride.kt");
+        }
+
+        @TestMetadata("varargsOverride2.kt")
+        public void testVarargsOverride2() throws Exception {
+            runTest("compiler/testData/codegen/boxAgainstJava/varargs/varargsOverride2.kt");
+        }
+
+        @TestMetadata("varargsOverride3.kt")
+        public void testVarargsOverride3() throws Exception {
+            runTest("compiler/testData/codegen/boxAgainstJava/varargs/varargsOverride3.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxAgainstJava/visibility")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
