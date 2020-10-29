@@ -12,11 +12,7 @@ import org.jetbrains.kotlin.test.KotlinRoot
 import java.io.File
 import java.security.MessageDigest
 
-/**
- * This is used via reflection in [KotlinArtifacts]
- */
-@Suppress("unused")
-private class TestKotlinArtifacts : KotlinArtifacts() {
+internal object TestKotlinArtifacts : KotlinArtifacts() {
     override val kotlincDistDir: File by lazy {
         val outDir = File(PathManager.getHomePath(), "out")
         val kotlincDistDir = outDir.resolve("kotlinc-dist")
