@@ -80,6 +80,7 @@ class WasmCompiledModuleFragment {
         val wasmToIr = mutableMapOf<Wasm, Ir>()
     }
 
+    @OptIn(ExperimentalUnsignedTypes::class)
     fun linkWasmCompiledFragments(): WasmModule {
         bind(functions.unbound, functions.defined)
         bind(globals.unbound, globals.defined)
