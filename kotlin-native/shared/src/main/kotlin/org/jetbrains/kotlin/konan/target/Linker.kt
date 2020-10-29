@@ -369,8 +369,7 @@ class GccBasedLinker(targetProperties: GccConfigurables)
             // https://github.com/llvm/llvm-project/blob/21e270a479a24738d641e641115bce6af6ed360a/llvm/lib/Transforms/Instrumentation/InstrProfiling.cpp#L930
             if (needsProfileLibrary) +listOf("-u__llvm_profile_runtime", profileLibrary!!)
             +linkerKonanFlags
-            +listOf("-lgcc", "--as-needed", "-lgcc_s", "--no-as-needed",
-                    "-lc", "-lgcc", "--as-needed", "-lgcc_s", "--no-as-needed")
+            +linkerGccFlags
             +if (dynamic) "$libGcc/crtendS.o" else "$libGcc/crtend.o"
             +"$absoluteTargetSysRoot/$crtPrefix/crtn.o"
             +libraries
