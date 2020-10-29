@@ -105,20 +105,12 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         return when {
             !isFromNullable -> instanceCheck
 
-            isToNullable ->
-                builder.irIfThenElse(
-                    type = builtIns.booleanType,
-                    condition = builder.irEqualsNull(valueProvider() as IrExpression),
-                    thenPart = builder.irTrue(),
-                    elsePart = instanceCheck
-                )
-
             else ->
                 builder.irIfThenElse(
                     type = builtIns.booleanType,
-                    condition = builder.irNot(builder.irEqualsNull(valueProvider() as IrExpression)),
-                    thenPart = instanceCheck,
-                    elsePart = builder.irFalse()
+                    condition = builder.irEqualsNull(valueProvider() as IrExpression),
+                    thenPart = builder.irBoolean(isToNullable),
+                    elsePart = instanceCheck
                 )
         }
     }
