@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassConstructorImpl
+import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
+import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMapNotNull
 
 object CirClassConstructorFactory {
     fun create(source: ClassConstructorDescriptor): CirClassConstructor {
@@ -18,14 +20,14 @@ object CirClassConstructorFactory {
         }
 
         return create(
-            annotations = source.annotations.map(CirAnnotationFactory::create),
-            typeParameters = source.typeParameters.mapNotNull { typeParameter ->
+            annotations = source.annotations.compactMap(CirAnnotationFactory::create),
+            typeParameters = source.typeParameters.compactMapNotNull { typeParameter ->
                 // save only type parameters that are contributed by the constructor itself
                 typeParameter.takeIf { it.containingDeclaration == source }?.let(CirTypeParameterFactory::create)
             },
             visibility = source.visibility,
             containingClassDetails = CirContainingClassDetailsFactory.create(source),
-            valueParameters = source.valueParameters.map(CirValueParameterFactory::create),
+            valueParameters = source.valueParameters.compactMap(CirValueParameterFactory::create),
             hasStableParameterNames = source.hasStableParameterNames(),
             isPrimary = source.isPrimary
         )

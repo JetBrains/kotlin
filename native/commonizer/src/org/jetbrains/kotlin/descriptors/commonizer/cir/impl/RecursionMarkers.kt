@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir.impl
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassifier
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirRecursionMarker
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
 import org.jetbrains.kotlin.name.Name
 
 object CirClassRecursionMarker : CirClass, CirRecursionMarker {
@@ -26,6 +27,7 @@ object CirClassRecursionMarker : CirClass, CirRecursionMarker {
     override val isInner get() = unsupported()
     override val isExternal get() = unsupported()
     override val supertypes get() = unsupported()
+    override fun setSupertypes(supertypes: Collection<CirType>) = unsupported()
 }
 
 object CirClassifierRecursionMarker : CirClassifier, CirRecursionMarker {

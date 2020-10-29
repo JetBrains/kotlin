@@ -8,4 +8,4 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir.impl
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirDeclaration
 
 @Suppress("unused", "NOTHING_TO_INLINE")
-internal inline fun CirDeclaration.unsupported(): Nothing = error("This method should never be called")
+internal inline fun CirDeclaration.unsupported(): Nothing = error("This method should never be called on ${this::class.java}, $this")

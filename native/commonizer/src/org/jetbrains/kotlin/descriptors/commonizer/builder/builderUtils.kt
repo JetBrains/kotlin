@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.descriptors.commonizer.builder
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
+import org.jetbrains.kotlin.descriptors.commonizer.utils.compact
+import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
+import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMapIndexed
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -21,7 +24,7 @@ internal fun List<CirTypeParameter>.buildDescriptorsAndTypeParameterResolver(
     containingDeclaration: DeclarationDescriptor,
     typeParametersIndexOffset: Int = 0
 ): Pair<List<TypeParameterDescriptor>, TypeParameterResolver> {
-    val ownTypeParameters = mutableListOf<TypeParameterDescriptor>()
+    val ownTypeParameters = ArrayList<TypeParameterDescriptor>(size)
 
     val typeParameterResolver = TypeParameterResolverImpl(
         ownTypeParameters = ownTypeParameters,
@@ -49,7 +52,7 @@ internal fun List<CirValueParameter>.buildDescriptors(
     targetComponents: TargetDeclarationsBuilderComponents,
     typeParameterResolver: TypeParameterResolver,
     containingDeclaration: CallableDescriptor
-): List<ValueParameterDescriptor> = mapIndexed { index, param ->
+): List<ValueParameterDescriptor> = compactMapIndexed { index, param ->
     ValueParameterDescriptorImpl(
         containingDeclaration,
         null,
@@ -66,10 +69,7 @@ internal fun List<CirValueParameter>.buildDescriptors(
 }
 
 internal fun List<CirAnnotation>.buildDescriptors(targetComponents: TargetDeclarationsBuilderComponents): Annotations =
-    if (isEmpty())
-        Annotations.EMPTY
-    else
-        Annotations.create(map { CommonizedAnnotationDescriptor(targetComponents, it) })
+    Annotations.create(compactMap { CommonizedAnnotationDescriptor(targetComponents, it) })
 
 internal fun CirExtensionReceiver.buildExtensionReceiver(
     targetComponents: TargetDeclarationsBuilderComponents,
@@ -108,7 +108,7 @@ internal fun CirSimpleType.buildType(
     )
     is CirTypeAliasType -> {
         val typeAliasDescriptor = targetComponents.findClassOrTypeAlias(classifierId).checkClassifierType<TypeAliasDescriptor>()
-        val arguments = this.arguments.map { it.buildArgument(targetComponents, typeParameterResolver, expandTypeAliases) }
+        val arguments = this.arguments.compactMap { it.buildArgument(targetComponents, typeParameterResolver, expandTypeAliases) }
 
         if (expandTypeAliases)
             buildExpandedType(typeAliasDescriptor, arguments, isMarkedNullable)
@@ -152,7 +152,7 @@ private fun CirClassType.collectArguments(
     expandTypeAliases: Boolean
 ): List<TypeProjection> {
     return if (outerType == null) {
-        arguments.map { it.buildArgument(targetComponents, typeParameterResolver, expandTypeAliases) }
+        arguments.compactMap { it.buildArgument(targetComponents, typeParameterResolver, expandTypeAliases) }
     } else {
         val allTypes = generateSequence(this) { it.outerType }.toList()
         val arguments = mutableListOf<TypeProjection>()
@@ -161,7 +161,7 @@ private fun CirClassType.collectArguments(
             allTypes[index].arguments.mapTo(arguments) { it.buildArgument(targetComponents, typeParameterResolver, expandTypeAliases) }
         }
 
-        arguments.toList()
+        arguments.compact()
     }
 }
 

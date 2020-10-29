@@ -27,5 +27,14 @@ data class CirClassImpl(
     override val isInline: Boolean,
     override val isInner: Boolean,
     override val isExternal: Boolean,
-    override val supertypes: MutableCollection<CirType>
-) : CirClass
+) : CirClass {
+    private var _supertypes: Collection<CirType>? = null
+
+    override val supertypes: Collection<CirType>
+        get() = _supertypes.orEmpty()
+
+    override fun setSupertypes(supertypes: Collection<CirType>) {
+        check(_supertypes == null)
+        _supertypes = supertypes
+    }
+}

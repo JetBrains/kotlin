@@ -9,14 +9,15 @@ import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirTypeAliasImpl
+import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
 import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 import org.jetbrains.kotlin.name.Name
 
 object CirTypeAliasFactory {
     fun create(source: TypeAliasDescriptor): CirTypeAlias = create(
-        annotations = source.annotations.map(CirAnnotationFactory::create),
+        annotations = source.annotations.compactMap(CirAnnotationFactory::create),
         name = source.name.intern(),
-        typeParameters = source.declaredTypeParameters.map(CirTypeParameterFactory::create),
+        typeParameters = source.declaredTypeParameters.compactMap(CirTypeParameterFactory::create),
         visibility = source.visibility,
         underlyingType = CirTypeFactory.create(source.underlyingType, useAbbreviation = true) as CirClassOrTypeAliasType,
         expandedType = CirTypeFactory.create(source.expandedType, useAbbreviation = false) as CirClassType

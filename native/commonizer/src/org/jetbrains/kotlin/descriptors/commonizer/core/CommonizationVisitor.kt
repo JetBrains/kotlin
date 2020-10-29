@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
+import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMapNotNull
 import org.jetbrains.kotlin.descriptors.commonizer.utils.internedClassId
 import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderStandardKotlinPackages
 
@@ -142,11 +143,11 @@ internal class CommonizationVisitor(
     }
 
     private fun CirClass.commonizeSupertypes(supertypesMap: Map<CirType, CommonizedGroup<CirType>>?) {
-        supertypesMap ?: return
-        for ((_, supertypesGroup) in supertypesMap) {
-            val commonSupertype = commonize(supertypesGroup, TypeCommonizer(root.cache))
-            if (commonSupertype != null)
-                supertypes.add(commonSupertype)
-        }
+        setSupertypes(
+            if (supertypesMap.isNullOrEmpty())
+                emptyList()
+            else
+                supertypesMap.values.compactMapNotNull { supertypesGroup -> commonize(supertypesGroup, TypeCommonizer(root.cache)) }
+        )
     }
 }

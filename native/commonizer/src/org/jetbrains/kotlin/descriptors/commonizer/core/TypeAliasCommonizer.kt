@@ -138,8 +138,7 @@ private class TypeAliasExpectClassCommonizer : AbstractStandardCommonizer<CirTyp
         isData = false,
         isInline = false,
         isInner = false,
-        isExternal = false,
-        supertypes = mutableListOf()
+        isExternal = false
     )
 
     override fun initialize(first: CirTypeAlias) {

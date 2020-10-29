@@ -10,8 +10,9 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassType
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirAnnotationImpl
-import org.jetbrains.kotlin.descriptors.commonizer.utils.Interner
+import org.jetbrains.kotlin.descriptors.commonizer.utils.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.checkConstantSupportedInCommonization
+import org.jetbrains.kotlin.descriptors.commonizer.utils.compact
 import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.AnnotationValue
@@ -27,8 +28,8 @@ object CirAnnotationFactory {
         if (allValueArguments.isEmpty())
             return create(type = type, constantValueArguments = emptyMap(), annotationValueArguments = emptyMap())
 
-        val constantValueArguments: MutableMap<Name, ConstantValue<*>> = THashMap()
-        val annotationValueArguments: MutableMap<Name, CirAnnotation> = THashMap()
+        val constantValueArguments: MutableMap<Name, ConstantValue<*>> = THashMap(allValueArguments.size)
+        val annotationValueArguments: MutableMap<Name, CirAnnotation> = THashMap(allValueArguments.size)
 
         allValueArguments.forEach { (name, constantValue) ->
             checkConstantSupportedInCommonization(
@@ -46,8 +47,8 @@ object CirAnnotationFactory {
 
         return create(
             type = type,
-            constantValueArguments = constantValueArguments,
-            annotationValueArguments = annotationValueArguments
+            constantValueArguments = constantValueArguments.compact(),
+            annotationValueArguments = annotationValueArguments.compact()
         )
     }
 

@@ -269,3 +269,10 @@
 }
 
 -dontwarn org.jetbrains.kotlin.fir.**
+
+# used in commonizer
+-keep class com.intellij.util.SmartFMap {
+    public static ** emptyMap();
+    public ** plus(java.lang.Object, java.lang.Object);
+    public ** plusAll(java.util.Map);
+}

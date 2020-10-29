@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirValueParameter
 import org.jetbrains.kotlin.descriptors.commonizer.core.CallableValueParametersCommonizer.CallableToPatch.Companion.doNothing
 import org.jetbrains.kotlin.descriptors.commonizer.core.CallableValueParametersCommonizer.CallableToPatch.Companion.patchCallables
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
+import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMapIndexed
 import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 import org.jetbrains.kotlin.descriptors.commonizer.utils.isObjCInteropCallableAnnotation
 import org.jetbrains.kotlin.name.Name
@@ -48,7 +49,7 @@ class CallableValueParametersCommonizer(
                     callablesToPatch.forEach { callableToPatch ->
                         val callable = callableToPatch.callable
                         callable.hasStableParameterNames = false
-                        callable.valueParameters = callable.valueParameters.mapIndexed { index, valueParameter ->
+                        callable.valueParameters = callable.valueParameters.compactMapIndexed { index, valueParameter ->
                             val newName = newNames[index]
                             if (valueParameter.name != newName) {
                                 CirValueParameterFactory.create(

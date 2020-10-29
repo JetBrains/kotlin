@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassTypeImpl
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirTypeAliasTypeImpl
-import org.jetbrains.kotlin.descriptors.commonizer.utils.Interner
+import org.jetbrains.kotlin.descriptors.commonizer.utils.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.declarationDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.utils.extractExpandedType
 import org.jetbrains.kotlin.descriptors.commonizer.utils.internedClassId
@@ -147,7 +147,7 @@ object CirTypeFactory {
 
     @Suppress("NOTHING_TO_INLINE")
     private inline fun createArguments(arguments: List<TypeProjection>, useAbbreviation: Boolean): List<CirTypeProjection> =
-        arguments.map { projection ->
+        arguments.compactMap { projection ->
             if (projection.isStarProjection)
                 CirStarTypeProjection
             else
