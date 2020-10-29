@@ -42,6 +42,7 @@ dependencies {
 
     compile(kotlinStdlib())
     compile(project(":kotlin-util-klib"))
+    compile(project(":kotlin-project-model"))
     compileOnly(project(":native:kotlin-native-utils"))
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(project(":kotlin-android-extensions"))
