@@ -12,16 +12,16 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.name.Name
 
 data class CirFunctionImpl(
-        override val annotations: List<CirAnnotation>,
-        override val name: Name,
-        override val typeParameters: List<CirTypeParameter>,
-        override val visibility: DescriptorVisibility,
-        override val modality: Modality,
-        override val containingClassDetails: CirContainingClassDetails?,
-        override var valueParameters: List<CirValueParameter>,
-        override var hasStableParameterNames: Boolean,
-        override val extensionReceiver: CirExtensionReceiver?,
-        override val returnType: CirType,
-        override val kind: CallableMemberDescriptor.Kind,
-        override val modifiers: CirFunctionModifiers
+    override val annotations: List<CirAnnotation>,
+    override val name: Name,
+    override val typeParameters: List<CirTypeParameter>,
+    override val visibility: DescriptorVisibility,
+    override val modality: Modality,
+    override val containingClassDetails: CirContainingClassDetails?,
+    override var valueParameters: List<CirValueParameter>,
+    override var hasStableParameterNames: Boolean,
+    override val extensionReceiver: CirExtensionReceiver?,
+    override val returnType: CirType,
+    override val kind: CallableMemberDescriptor.Kind,
+    override val modifiers: CirFunctionModifiers
 ) : CirFunction

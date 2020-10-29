@@ -13,25 +13,25 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 
 data class CirPropertyImpl(
-        override val annotations: List<CirAnnotation>,
-        override val name: Name,
-        override val typeParameters: List<CirTypeParameter>,
-        override val visibility: DescriptorVisibility,
-        override val modality: Modality,
-        override val containingClassDetails: CirContainingClassDetails?,
-        override val isExternal: Boolean,
-        override val extensionReceiver: CirExtensionReceiver?,
-        override val returnType: CirType,
-        override val kind: CallableMemberDescriptor.Kind,
-        override val isVar: Boolean,
-        override val isLateInit: Boolean,
-        override var isConst: Boolean,
-        override val isDelegate: Boolean,
-        override val getter: CirPropertyGetter?,
-        override val setter: CirPropertySetter?,
-        override val backingFieldAnnotations: List<CirAnnotation>?,
-        override val delegateFieldAnnotations: List<CirAnnotation>?,
-        override val compileTimeInitializer: ConstantValue<*>?
+    override val annotations: List<CirAnnotation>,
+    override val name: Name,
+    override val typeParameters: List<CirTypeParameter>,
+    override val visibility: DescriptorVisibility,
+    override val modality: Modality,
+    override val containingClassDetails: CirContainingClassDetails?,
+    override val isExternal: Boolean,
+    override val extensionReceiver: CirExtensionReceiver?,
+    override val returnType: CirType,
+    override val kind: CallableMemberDescriptor.Kind,
+    override val isVar: Boolean,
+    override val isLateInit: Boolean,
+    override var isConst: Boolean,
+    override val isDelegate: Boolean,
+    override val getter: CirPropertyGetter?,
+    override val setter: CirPropertySetter?,
+    override val backingFieldAnnotations: List<CirAnnotation>?,
+    override val delegateFieldAnnotations: List<CirAnnotation>?,
+    override val compileTimeInitializer: ConstantValue<*>?
 ) : CirProperty {
     // const property in "common" fragment is already lifted up
     override val isLiftedUp get() = isConst
