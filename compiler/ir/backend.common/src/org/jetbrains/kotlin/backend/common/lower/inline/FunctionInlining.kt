@@ -162,11 +162,17 @@ class FunctionInlining(
             callee: IrFunction,
             performRecursiveInline: Boolean
         ): IrReturnableBlock {
-            val copiedCallee = copyIrElement.copy(callee).let {
-                (it as IrFunction).parent = callee.parent
-                if (performRecursiveInline)
-                    visitElement(it) as IrFunction
-                else it
+            val copiedCallee = (copyIrElement.copy(callee) as IrFunction).apply {
+                parent = callee.parent
+                if (performRecursiveInline) {
+                    body?.transformChildrenVoid()
+                    valueParameters.forEachIndexed { index, param ->
+                        if (callSite.getValueArgument(index) == null) {
+                            // Default values can recursively reference [callee] - transform only needed.
+                            param.defaultValue = param.defaultValue?.transform(this@FunctionInlining, null)
+                        }
+                    }
+                }
             }
 
             val evaluationStatements = evaluateArguments(callSite, copiedCallee)
