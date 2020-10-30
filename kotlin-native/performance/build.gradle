@@ -59,7 +59,7 @@ private static String getAnalyzerTargetName() {
 }
 
 private String findAnalyzerBinary() {
-    String result = "${rootProject.projectDir}/${analyzerToolDirectory}/${getAnalyzerTargetName()}/" +
+    String result = "${projectDir}/../${analyzerToolDirectory}/${getAnalyzerTargetName()}/" +
             "${analyzerTool}ReleaseExecutable/${analyzerTool}${MPPTools.getNativeProgramExtension()}"
 
     if (file(result).exists()) return result
