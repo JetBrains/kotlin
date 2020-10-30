@@ -113,18 +113,27 @@ class FirSignatureEnhancement(
             is FirSyntheticProperty -> {
                 val accessorSymbol = firElement.symbol
                 val getterDelegate = firElement.getter.delegate
-                val enhancedFunctionSymbol = if (getterDelegate is FirJavaMethod) {
+                val enhancedGetterSymbol = if (getterDelegate is FirJavaMethod) {
                     enhanceMethod(
                         getterDelegate, accessorSymbol.accessorId, accessorSymbol.accessorId.callableName
                     )
                 } else {
                     getterDelegate.symbol
                 }
+                val setterDelegate = firElement.setter?.delegate
+                val enhancedSetterSymbol = if (setterDelegate is FirJavaMethod) {
+                    enhanceMethod(
+                        setterDelegate, accessorSymbol.accessorId, accessorSymbol.accessorId.callableName
+                    )
+                } else {
+                    setterDelegate?.symbol
+                }
                 return buildSyntheticProperty {
                     session = this@FirSignatureEnhancement.session
                     this.name = name
                     symbol = FirAccessorSymbol(accessorSymbol.callableId, accessorSymbol.accessorId)
-                    delegateGetter = enhancedFunctionSymbol.fir as FirSimpleFunction
+                    delegateGetter = enhancedGetterSymbol.fir as FirSimpleFunction
+                    delegateSetter = enhancedSetterSymbol?.fir as FirSimpleFunction?
                 }.symbol
             }
             else -> {
