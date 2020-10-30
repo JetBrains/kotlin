@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideSubstitution
 import org.jetbrains.kotlin.fir.scopes.fakeOverrideSubstitution
 import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
@@ -408,24 +409,38 @@ object FirFakeOverrideGenerator {
         return symbol
     }
 
-    fun createFakeOverrideAccessor(
+    fun createSubstitutionOverrideAccessor(
         session: FirSession,
         baseProperty: FirSyntheticProperty,
         baseSymbol: FirAccessorSymbol,
         newDispatchReceiverType: ConeKotlinType?,
         newReturnType: ConeKotlinType?,
-        newParameterTypes: List<ConeKotlinType?>?,
+        newGetterParameterTypes: List<ConeKotlinType?>?,
+        newSetterParameterTypes: List<ConeKotlinType?>?,
         fakeOverrideSubstitution: FakeOverrideSubstitution?
     ): FirAccessorSymbol {
-        val functionSymbol = FirNamedFunctionSymbol(baseSymbol.accessorId)
-        val function = createSubstitutionOverrideFunction(
-            functionSymbol,
+        val getterSymbol = FirNamedFunctionSymbol(baseSymbol.accessorId)
+        val getter = createSubstitutionOverrideFunction(
+            getterSymbol,
             session,
             baseProperty.getter.delegate,
             newDispatchReceiverType,
             newReceiverType = null,
             newReturnType,
-            newParameterTypes,
+            newGetterParameterTypes,
+            newTypeParameters = null,
+            fakeOverrideSubstitution = fakeOverrideSubstitution
+        )
+        val setterSymbol = FirNamedFunctionSymbol(baseSymbol.accessorId)
+        val baseSetter = baseProperty.setter
+        val setter = if (baseSetter == null) null else createSubstitutionOverrideFunction(
+            setterSymbol,
+            session,
+            baseSetter.delegate,
+            newDispatchReceiverType,
+            newReceiverType = null,
+            StandardClassIds.Unit.constructClassLikeType(emptyArray(), isNullable = false),
+            newSetterParameterTypes,
             newTypeParameters = null,
             fakeOverrideSubstitution = fakeOverrideSubstitution
         )
@@ -433,7 +448,8 @@ object FirFakeOverrideGenerator {
             this.session = session
             name = baseProperty.name
             symbol = FirAccessorSymbol(baseSymbol.callableId, baseSymbol.accessorId)
-            delegateGetter = function
+            delegateGetter = getter
+            delegateSetter = setter
         }.symbol
     }
 

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.chain
@@ -241,21 +240,28 @@ class FirClassSubstitutionScope(
         val fakeOverrideSubstitution = runIf(returnType == null) { FakeOverrideSubstitution(substitutor, original) }
         val newReturnType = returnType?.substitute()
 
-        val newParameterTypes = member.getter.valueParameters.map {
+        val newGetterParameterTypes = member.getter.valueParameters.map {
             it.returnTypeRef.coneType.substitute()
         }
+        val newSetterParameterTypes = member.setter?.valueParameters?.map {
+            it.returnTypeRef.coneType.substitute()
+        }.orEmpty()
 
-        if (newReturnType == null && newParameterTypes.all { it == null }) {
+        if (newReturnType == null &&
+            newGetterParameterTypes.all { it == null } &&
+            newSetterParameterTypes.all { it == null }
+        ) {
             return original
         }
 
-        return FirFakeOverrideGenerator.createFakeOverrideAccessor(
+        return FirFakeOverrideGenerator.createSubstitutionOverrideAccessor(
             session,
             member,
             original,
             dispatchReceiverTypeForSubstitutedMembers,
             newReturnType,
-            newParameterTypes,
+            newGetterParameterTypes,
+            newSetterParameterTypes,
             fakeOverrideSubstitution
         )
     }
