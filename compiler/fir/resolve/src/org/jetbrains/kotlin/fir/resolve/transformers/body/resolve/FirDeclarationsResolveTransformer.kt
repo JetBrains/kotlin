@@ -498,7 +498,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                     withExpectedType(
                         body.resultType.approximatedIfNeededOrSelf(
                             inferenceComponents.approximator, simpleFunction?.visibility, simpleFunction?.isInline == true
-                        )
+                        ).withReplacedDelegation(result.returnTypeRef)
                     )
                 )
             } else {
@@ -926,7 +926,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                     variable.transformReturnTypeRef(
                         transformer,
                         withExpectedType(
-                            expectedType.approximatedIfNeededOrSelf(inferenceComponents.approximator, (variable as? FirProperty)?.visibility)
+                            expectedType.approximatedIfNeededOrSelf(
+                                inferenceComponents.approximator, (variable as? FirProperty)?.visibility
+                            ).withReplacedDelegation(variable.returnTypeRef)
                         )
                     )
                 }
@@ -950,7 +952,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                     variable.transformReturnTypeRef(
                         transformer,
                         withExpectedType(
-                            expectedType?.approximatedIfNeededOrSelf(inferenceComponents.approximator, (variable as? FirProperty)?.visibility)
+                            expectedType?.approximatedIfNeededOrSelf(
+                                inferenceComponents.approximator, (variable as? FirProperty)?.visibility
+                            )?.withReplacedDelegation(variable.returnTypeRef)
                         )
                     )
                 }

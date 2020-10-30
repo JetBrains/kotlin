@@ -186,6 +186,22 @@ fun FirTypeRef.isUnsafeVarianceType(session: FirSession): Boolean {
 fun FirTypeRef.hasEnhancedNullability(): Boolean =
     coneTypeSafe<ConeKotlinType>()?.hasEnhancedNullability == true
 
+fun FirTypeRef.withReplacedDelegation(original: FirTypeRef): FirTypeRef {
+    require(this is FirResolvedTypeRef)
+    // NB: do not drop diagnostic in [FirErrorTypeRef]
+    // Unlike other utils to recreate resolved type ref with new type, this one is just adding a delegation.
+    // We should not create a resolved type ref from an error type ref accidentally.
+    if (this is FirErrorTypeRef) {
+        return this
+    }
+    return buildResolvedTypeRef {
+        source = this@withReplacedDelegation.source
+        type = coneType
+        annotations += this@withReplacedDelegation.annotations
+        delegatedTypeRef = original
+    }
+}
+
 // Unlike other cases, return types may be implicit, i.e. unresolved
 // But in that cases newType should also be `null`
 fun FirTypeRef.withReplacedReturnType(newType: ConeKotlinType?): FirTypeRef {
@@ -196,6 +212,7 @@ fun FirTypeRef.withReplacedReturnType(newType: ConeKotlinType?): FirTypeRef {
         source = this@withReplacedReturnType.source
         type = newType
         annotations += this@withReplacedReturnType.annotations
+        delegatedTypeRef = (this@withReplacedReturnType as? FirResolvedTypeRef)?.delegatedTypeRef
     }
 }
 
@@ -213,6 +230,7 @@ fun FirTypeRef.withReplacedConeType(
             this@withReplacedConeType.source
         type = newType
         annotations += this@withReplacedConeType.annotations
+        delegatedTypeRef = this@withReplacedConeType.delegatedTypeRef
     }
 }
 
