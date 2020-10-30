@@ -354,3 +354,8 @@ data class Var(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
+
+data class Caption(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
