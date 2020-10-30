@@ -8,11 +8,8 @@ package org.jetbrains.kotlin.idea.fir
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSession
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
@@ -53,7 +50,7 @@ object FirIdeDeserializedDeclarationSourceProvider {
                 .orEmpty()
         }
 
-        return function.unrollFakeOverrides().chooseCorrespondingPsi(candidates)
+        return function.unwrapFakeOverrides().chooseCorrespondingPsi(candidates)
     }
 
     private fun provideSourceForProperty(property: FirProperty, project: Project): PsiElement? {
@@ -91,7 +88,7 @@ object FirIdeDeserializedDeclarationSourceProvider {
         val containingKtClass = constructor.containingKtClass(project) ?: return null
         if (constructor.isPrimary) return containingKtClass.primaryConstructor
 
-        return constructor.unrollFakeOverrides().chooseCorrespondingPsi(containingKtClass.secondaryConstructors)
+        return constructor.unwrapFakeOverrides().chooseCorrespondingPsi(containingKtClass.secondaryConstructors)
     }
 
     private fun FirFunction<*>.chooseCorrespondingPsi(
@@ -117,7 +114,7 @@ object FirIdeDeserializedDeclarationSourceProvider {
     }
 
     private fun FirCallableDeclaration<*>.containingKtClass(project: Project): KtClassOrObject? =
-        unrollFakeOverrides().containingClass()?.classId?.let { classByClassId(it, scope(project), project) }
+        unwrapFakeOverrides().containingClass()?.classId?.let { classByClassId(it, scope(project), project) }
 
     private fun classByClassId(classId: ClassId, scope: GlobalSearchScope, project: Project): KtClassOrObject? {
         val fqName = classId.asStringForUsingInIndexes().let { classIdMapping[it] ?: it }

@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.originalIfFakeOverride
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.FirRefWithValidityCheck
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.overriddenDeclaration
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolOrigin
 
@@ -27,7 +28,8 @@ private tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (orig
     FirDeclarationOrigin.SamConstructor -> KtSymbolOrigin.SAM_CONSTRUCTOR
     FirDeclarationOrigin.Enhancement -> KtSymbolOrigin.JAVA
     else -> {
-        val overridden = overriddenDeclaration ?: throw InvalidFirDeclarationOriginForSymbol(origin)
+        val overridden =
+            (this as? FirCallableDeclaration<*>)?.originalIfFakeOverride() ?: throw InvalidFirDeclarationOriginForSymbol(origin)
         overridden.ktSymbolOrigin()
     }
 }
