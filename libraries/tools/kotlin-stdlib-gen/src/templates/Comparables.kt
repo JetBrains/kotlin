@@ -192,7 +192,7 @@ object ComparableOps : TemplateGroupBase() {
             }
             if (primitive in shortIntPrimitives) {
                 body { "return Math.min(a.toInt(), b.toInt()).$convertBack" }
-                on(Platform.Native, Platform.Wasm) {
+                on(Platform.Native) {
                     body { "return minOf(a.toInt(), b.toInt()).$convertBack" }
                 }
             }
@@ -396,7 +396,7 @@ object ComparableOps : TemplateGroupBase() {
             }
             if (primitive in shortIntPrimitives) {
                 body { "return Math.max(a.toInt(), b.toInt()).$convertBack" }
-                on(Platform.Native, Platform.Wasm) {
+                on(Platform.Native) {
                     body { "return maxOf(a.toInt(), b.toInt()).$convertBack" }
                 }
             }
