@@ -165,16 +165,6 @@ abstract class BasicWasmBoxTest(
         outputJsFile.write(runtime + "\n" + compilerResult.js + "\n" + testRunner)
     }
 
-    private fun createPsiFile(fileName: String): KtFile {
-        val psiManager = PsiManager.getInstance(project)
-        val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
-
-        val file = fileSystem.findFileByPath(fileName) ?: error("File not found: $fileName")
-
-        return psiManager.findFile(file) as KtFile
-    }
-
-    private fun createPsiFiles(fileNames: List<String>): List<KtFile> = fileNames.map(this::createPsiFile)
 
     private fun createConfig(languageVersionSettings: LanguageVersionSettings?): JsConfig {
         val configuration = environment.configuration.copy()
