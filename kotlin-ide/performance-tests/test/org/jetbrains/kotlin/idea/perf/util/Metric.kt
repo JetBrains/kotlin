@@ -13,6 +13,7 @@ import java.util.ArrayList
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class Benchmark(
+    val version: Int = 3,
     @set:JsonProperty("agentName")
     var agentName: String?,
     @set:JsonProperty("benchmark")
@@ -21,6 +22,10 @@ data class Benchmark(
     var name: String? = null,
     @set:JsonProperty("synthetic")
     var synthetic: Boolean? = null,
+    @set:JsonProperty("index")
+    var index: Int? = null,
+    @set:JsonProperty("warmUp")
+    var warmUp: Boolean? = null,
     @set:JsonProperty("buildTimestamp")
     var buildTimestamp: String,
     @set:JsonProperty("buildBranch")
@@ -51,8 +56,14 @@ data class Benchmark(
 
     private fun String?.escapeName() = this?.replace(Regex("[^A-Za-z0-9_]"), "_")
 
-    fun fileName(): String =
-        listOfNotNull(benchmark?.escapeName(), name?.escapeName(), buildId?.toString()).joinToString(separator = "_")
+    fun id(): String =
+        listOfNotNull(
+            benchmark?.escapeName(),
+            name?.escapeName(),
+            buildId?.toString(),
+            warmUp?.let { "warmUp" } ?: null,
+            index?.toString()
+        ).joinToString(separator = "_")
 
     fun cleanUp() {
         metrics?.forEach { it.cleanUp() }
@@ -86,6 +97,10 @@ data class Benchmark(
 data class Metric(
     @set:JsonProperty("metricName")
     var metricName: String,
+    @set:JsonProperty("index")
+    var index: Int? = null,
+    @set:JsonProperty("warmUp")
+    var warmUp: Boolean? = null,
     @set:JsonProperty("legacyName")
     var legacyName: String? = null,
     @set:JsonProperty("metricValue")

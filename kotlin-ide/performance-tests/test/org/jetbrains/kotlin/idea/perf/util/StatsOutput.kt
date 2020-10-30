@@ -62,7 +62,7 @@ internal val kotlinJsonMapper = jacksonObjectMapper()
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     .configure(SerializationFeature.INDENT_OUTPUT, true)
 
-internal fun Benchmark.statsFile() = statsFile(fileName(), "json")
+internal fun Benchmark.statsFile() = statsFile(id(), "json")
 
 internal fun Benchmark.writeJson() {
     val json = kotlinJsonMapper.writeValueAsString(this)
@@ -73,6 +73,8 @@ internal fun Benchmark.writeJson() {
         output.flush()
     }
 }
+
+internal fun File.loadBenchmark(): Benchmark = kotlinJsonMapper.readValue(this, object : TypeReference<Benchmark>() {})
 
 internal fun Benchmark.loadJson() {
     val statsFile = statsFile()
