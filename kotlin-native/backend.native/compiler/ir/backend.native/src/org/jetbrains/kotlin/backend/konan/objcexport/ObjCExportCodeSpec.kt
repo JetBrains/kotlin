@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.enumEntries
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 
@@ -67,6 +64,13 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
                 descriptor.enumEntries.mapTo(methods) {
                     ObjCGetterForKotlinEnumEntry(symbolTable.referenceEnumEntry(it))
                 }
+
+                descriptor.getEnumValuesFunctionDescriptor()?.let {
+                    methods += ObjCClassMethodForKotlinEnumValues(
+                            symbolTable.referenceSimpleFunction(it),
+                            namer.getEnumValuesSelector(it)
+                    )
+                }
             }
 
             val categoryMethods = categoryMembers[descriptor].orEmpty().toObjCMethods()
@@ -99,6 +103,11 @@ internal class ObjCFactoryMethodForKotlinArrayConstructor(
 ) : ObjCMethodSpec()
 
 internal class ObjCGetterForKotlinEnumEntry(val irEnumEntrySymbol: IrEnumEntrySymbol) : ObjCMethodSpec()
+
+internal class ObjCClassMethodForKotlinEnumValues(
+        val valuesFunctionSymbol: IrFunctionSymbol,
+        val selector: String
+) : ObjCMethodSpec()
 
 internal sealed class ObjCTypeSpec(val binaryName: String)
 

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.deprecation.Deprecation
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
@@ -180,6 +181,15 @@ internal fun ObjCExportMapper.isTopLevel(descriptor: CallableMemberDescriptor): 
 
 internal fun ObjCExportMapper.isObjCProperty(property: PropertyDescriptor): Boolean =
         property.extensionReceiverParameter == null || getClassIfCategory(property) != null
+
+internal fun ClassDescriptor.getEnumValuesFunctionDescriptor(): SimpleFunctionDescriptor? {
+    require(this.kind == ClassKind.ENUM_CLASS)
+
+    return this.staticScope.getContributedFunctions(
+            StandardNames.ENUM_VALUES,
+            NoLookupLocation.FROM_BACKEND
+    ).singleOrNull { it.extensionReceiverParameter == null && it.valueParameters.size == 0 }
+}
 
 internal fun ObjCExportMapper.doesThrow(method: FunctionDescriptor): Boolean = method.allOverriddenDescriptors.any {
     it.overriddenDescriptors.isEmpty() && it.annotations.hasAnnotation(KonanFqNames.throws)

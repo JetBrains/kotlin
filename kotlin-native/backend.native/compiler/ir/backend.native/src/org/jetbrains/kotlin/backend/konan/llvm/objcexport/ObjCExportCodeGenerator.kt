@@ -1229,6 +1229,9 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
             is ObjCGetterForKotlinEnumEntry -> {
                 classAdapters += createEnumEntryAdapter(it.irEnumEntrySymbol.owner)
             }
+            is ObjCClassMethodForKotlinEnumValues -> {
+                classAdapters += createEnumValuesAdapter(it.valuesFunctionSymbol.owner, it.selector)
+            }
             is ObjCMethodForKotlinMethod -> {} // Handled below.
         }.let {} // Force exhaustive.
     }
@@ -1471,6 +1474,21 @@ private fun ObjCExportCodeGenerator.createEnumEntryAdapter(
         val value = getEnumEntry(irEnumEntry, ExceptionHandler.Caller)
         ret(kotlinToObjC(value, ReferenceBridge))
     }
+}
+
+private fun ObjCExportCodeGenerator.createEnumValuesAdapter(
+        valuesFunction: IrFunction,
+        selector: String
+): ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter {
+    val methodBridge = MethodBridge(
+            returnBridge = MethodBridge.ReturnValue.Mapped(ReferenceBridge),
+            receiver = MethodBridgeReceiver.Static,
+            valueParameters = emptyList()
+    )
+
+    val imp = generateObjCImp(valuesFunction, valuesFunction, methodBridge, isVirtual = false)
+
+    return objCToKotlinMethodAdapter(selector, methodBridge, imp)
 }
 
 private fun List<CallableMemberDescriptor>.toMethods(): List<FunctionDescriptor> = this.flatMap {

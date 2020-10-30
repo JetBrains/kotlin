@@ -365,6 +365,14 @@ internal class ObjCExportTranslatorImpl(
                         +ObjCProperty(entryName, it, type, listOf("class", "readonly"),
                                 declarationAttributes = listOf(swiftNameAttribute(entryName)))
                     }
+
+                    // Note: it is possible to support this function through a common machinery,
+                    // but it is very special (static and synthetic), so apparently it is much easier
+                    // to keep this ad hoc here than to add special cases to the most complicated parts
+                    // of the machinery.
+                    descriptor.getEnumValuesFunctionDescriptor()?.let { enumValues ->
+                        +buildEnumValuesMethod(enumValues, genericExportScope)
+                    }
                 }
                 else -> {
                     // Nothing special.
@@ -401,6 +409,21 @@ internal class ObjCExportTranslatorImpl(
                 superProtocols = superProtocols,
                 members = members,
                 attributes = attributes
+        )
+    }
+
+    private fun buildEnumValuesMethod(
+            enumValues: SimpleFunctionDescriptor,
+            genericExportScope: ObjCExportScope
+    ): ObjCMethod {
+        val selector = namer.getEnumValuesSelector(enumValues)
+        return ObjCMethod(
+                enumValues,
+                isInstanceMethod = false,
+                returnType = mapReferenceType(enumValues.returnType!!, genericExportScope),
+                selectors = splitSelector(selector),
+                parameters = emptyList(),
+                attributes = listOf(swiftNameAttribute("$selector()"))
         )
     }
 
