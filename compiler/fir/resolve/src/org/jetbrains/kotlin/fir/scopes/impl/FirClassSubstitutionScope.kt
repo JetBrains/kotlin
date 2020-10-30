@@ -58,7 +58,7 @@ class FirClassSubstitutionScope(
         processDirectOverriddenCallablesWithBaseScope: FirTypeScope.(D, ((D, FirTypeScope) -> ProcessorAction)) -> ProcessorAction,
         fakeOverridesMap: Map<out FirCallableSymbol<*>, FirCallableSymbol<*>>
     ): ProcessorAction {
-        val original = (callableSymbol.overriddenSymbol as? D)?.takeIf { it in fakeOverridesMap }
+        val original = callableSymbol.originalForSubstitutionOverride?.takeIf { it in fakeOverridesMap }
             ?: return useSiteMemberScope.processDirectOverriddenCallablesWithBaseScope(callableSymbol, processor)
 
         if (!processor(original, useSiteMemberScope)) return ProcessorAction.STOP

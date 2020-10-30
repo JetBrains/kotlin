@@ -461,7 +461,7 @@ class Fir2IrDeclarationStorage(
             return created
         }
         if (function.symbol.callableId.isKFunctionInvoke()) {
-            (function.symbol.overriddenSymbol as? FirNamedFunctionSymbol)?.let {
+            (function.symbol.originalForSubstitutionOverride as? FirNamedFunctionSymbol)?.let {
                 created.overriddenSymbols += getIrFunctionSymbol(it) as IrSimpleFunctionSymbol
             }
         }
@@ -1034,7 +1034,7 @@ class Fir2IrDeclarationStorage(
                             symbolTable.declareSimpleFunction(signature, { symbol }) {
                                 val isFakeOverride =
                                     firFunctionSymbol is FirNamedFunctionSymbol && firFunctionSymbol.fir.isSubstitutionOverride &&
-                                            firFunctionSymbol.dispatchReceiverClassOrNull() != firFunctionSymbol.overriddenSymbol?.dispatchReceiverClassOrNull()
+                                            firFunctionSymbol.dispatchReceiverClassOrNull() != firFunctionSymbol.originalForSubstitutionOverride?.dispatchReceiverClassOrNull()
                                 Fir2IrLazySimpleFunction(
                                     components, startOffset, endOffset, parentOrigin, firDeclaration, irParent.fir, symbol, isFakeOverride
                                 ).apply {
@@ -1101,7 +1101,7 @@ class Fir2IrDeclarationStorage(
                     symbolTable.declareProperty(signature, { symbol }) {
                         val isFakeOverride =
                             firPropertySymbol.fir.isSubstitutionOverride &&
-                                    firPropertySymbol.dispatchReceiverClassOrNull() != firPropertySymbol.overriddenSymbol?.dispatchReceiverClassOrNull()
+                                    firPropertySymbol.dispatchReceiverClassOrNull() != firPropertySymbol.originalForSubstitutionOverride?.dispatchReceiverClassOrNull()
                         Fir2IrLazyProperty(
                             components, startOffset, endOffset, declarationOrigin, fir, irParent.fir, symbol, isFakeOverride
                         ).apply {

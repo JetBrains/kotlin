@@ -401,7 +401,7 @@ class Fir2IrVisitor(
                 }
             }
         } else if (boundSymbol is FirCallableSymbol) {
-            val receiverSymbol = calleeReference.toSymbol(session, classifierStorage, declarationStorage, conversionScope)
+            val receiverSymbol = calleeReference.toSymbolForCall(session, classifierStorage, declarationStorage, conversionScope)
             val receiver = (receiverSymbol?.owner as? IrSimpleFunction)?.extensionReceiverParameter
             if (receiver != null) {
                 return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->

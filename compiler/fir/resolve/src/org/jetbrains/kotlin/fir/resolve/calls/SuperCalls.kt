@@ -21,12 +21,12 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.SmartList
@@ -147,5 +147,5 @@ private fun BodyResolveComponents.isConcreteMember(supertype: ConeKotlinType, me
     val classSymbol =
         (supertype as? ConeClassLikeType)?.lookupTag?.toSymbol(session) as? FirRegularClassSymbol ?: return true
     if (classSymbol.fir.classKind != ClassKind.INTERFACE) return true
-    return member.symbol.unwrapSubstitutionOverrides().dispatchReceiverClassOrNull()?.classId != StandardClassIds.Any
+    return member.symbol.unwrapFakeOverrides().dispatchReceiverClassOrNull()?.classId != StandardClassIds.Any
 }

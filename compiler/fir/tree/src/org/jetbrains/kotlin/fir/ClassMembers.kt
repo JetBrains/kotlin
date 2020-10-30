@@ -16,7 +16,7 @@ fun FirCallableSymbol<*>.dispatchReceiverClassOrNull(): ConeClassLikeLookupTag? 
 
 fun FirCallableDeclaration<*>.dispatchReceiverClassOrNull(): ConeClassLikeLookupTag? {
     if (this !is FirCallableMemberDeclaration<*>) return null
-    if (dispatchReceiverType is ConeIntersectionType && isIntersectionOverride) return symbol.overriddenSymbol!!.fir.dispatchReceiverClassOrNull()
+    if (dispatchReceiverType is ConeIntersectionType && isIntersectionOverride) return symbol.baseForIntersectionOverride!!.fir.dispatchReceiverClassOrNull()
 
     return (dispatchReceiverType as? ConeClassLikeType)?.lookupTag
 }
@@ -32,3 +32,32 @@ var FirCallableDeclaration<*>.containingClassAttr: ConeClassLikeLookupTag? by Fi
 
 val FirCallableDeclaration<*>.isIntersectionOverride get() = origin == FirDeclarationOrigin.IntersectionOverride
 val FirCallableDeclaration<*>.isSubstitutionOverride get() = origin == FirDeclarationOrigin.SubstitutionOverride
+
+inline val <reified D : FirCallableDeclaration<*>> D.originalForSubstitutionOverride: D?
+    get() = if (isSubstitutionOverride) symbol.overriddenSymbol?.fir as D? else null
+
+inline val <reified S : FirCallableSymbol<*>> S.originalForSubstitutionOverride: S?
+    get() = fir.originalForSubstitutionOverride?.symbol as S?
+
+inline val <reified D : FirCallableDeclaration<*>> D.baseForIntersectionOverride: D?
+    get() = if (isIntersectionOverride) symbol.overriddenSymbol?.fir as D? else null
+
+inline val <reified S : FirCallableSymbol<*>> S.baseForIntersectionOverride: S?
+    get() = fir.baseForIntersectionOverride?.symbol as S?
+
+inline fun <reified D : FirCallableDeclaration<*>> D.originalIfFakeOverride(): D? =
+    originalForSubstitutionOverride ?: baseForIntersectionOverride
+
+inline fun <reified S : FirCallableSymbol<*>> S.originalIfFakeOverride(): S? =
+    fir.originalIfFakeOverride()?.symbol as S?
+
+inline fun <reified D : FirCallableDeclaration<*>> D.unwrapFakeOverrides(): D {
+    var current = this
+
+    do {
+        val next = current.originalIfFakeOverride() ?: return current
+        current = next
+    } while (true)
+}
+
+inline fun <reified S : FirCallableSymbol<*>> S.unwrapFakeOverrides(): S = fir.unwrapFakeOverrides().symbol as S

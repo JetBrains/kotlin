@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.PossiblyFirFakeOverrideSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -44,9 +43,9 @@ abstract class FirVisibilityChecker : FirSessionComponent {
     ): Boolean where T : FirMemberDeclaration, T : FirSymbolOwner<*> {
         val symbol = declaration.symbol
 
-        if (symbol is PossiblyFirFakeOverrideSymbol<*, *> && symbol.overriddenSymbol != null) {
+        if (declaration is FirCallableDeclaration<*> && (declaration.isIntersectionOverride || declaration.isSubstitutionOverride)) {
             @Suppress("UNCHECKED_CAST")
-            return isVisible(symbol.overriddenSymbol!!.fir as T, candidate)
+            return isVisible(declaration.originalIfFakeOverride() as T, candidate)
         }
 
         val callInfo = candidate.callInfo

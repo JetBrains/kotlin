@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.SyntheticPropertySymbol
+import org.jetbrains.kotlin.fir.resolve.calls.originalConstructorIfTypeAlias
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processDirectlyOverriddenFunctions
@@ -102,7 +103,7 @@ fun FirClassifierSymbol<*>.toSymbol(
     }
 }
 
-fun FirReference.toSymbol(
+fun FirReference.toSymbolForCall(
     session: FirSession,
     classifierStorage: Fir2IrClassifierStorage,
     declarationStorage: Fir2IrDeclarationStorage,
@@ -113,7 +114,7 @@ fun FirReference.toSymbol(
         is FirResolvedNamedReference -> {
             when (val resolvedSymbol = resolvedSymbol) {
                 is FirCallableSymbol<*> -> {
-                    resolvedSymbol.deepestMatchingOverriddenSymbol().toSymbol(declarationStorage, preferGetter)
+                    resolvedSymbol.unwrapCallRepresentative().toSymbolForCall(declarationStorage, preferGetter)
                 }
                 is FirClassifierSymbol<*> -> {
                     resolvedSymbol.toSymbol(session, classifierStorage)
@@ -138,7 +139,7 @@ fun FirReference.toSymbol(
     }
 }
 
-private fun FirCallableSymbol<*>.toSymbol(declarationStorage: Fir2IrDeclarationStorage, preferGetter: Boolean): IrSymbol? = when (this) {
+private fun FirCallableSymbol<*>.toSymbolForCall(declarationStorage: Fir2IrDeclarationStorage, preferGetter: Boolean): IrSymbol? = when (this) {
     is FirFunctionSymbol<*> -> declarationStorage.getIrFunctionSymbol(this)
     is SyntheticPropertySymbol -> {
         (fir as? FirSyntheticProperty)?.let { syntheticProperty ->
@@ -148,7 +149,7 @@ private fun FirCallableSymbol<*>.toSymbol(declarationStorage: Fir2IrDeclarationS
                 syntheticProperty.setter?.delegate?.symbol
                     ?: throw AssertionError("Written synthetic property must have a setter")
             }
-            delegateSymbol.deepestMatchingOverriddenSymbol().toSymbol(declarationStorage, preferGetter)
+            delegateSymbol.unwrapCallRepresentative().toSymbolForCall(declarationStorage, preferGetter)
         } ?: declarationStorage.getIrPropertySymbol(this)
     }
     is FirPropertySymbol -> declarationStorage.getIrPropertySymbol(this)
@@ -212,17 +213,25 @@ private fun FirConstKind<*>.toIrConstKind(): IrConstKind<*> = when (this) {
     FirConstKind.IntegerLiteral, FirConstKind.UnsignedIntegerLiteral -> throw IllegalArgumentException()
 }
 
-internal tailrec fun FirCallableSymbol<*>.deepestOverriddenSymbol(): FirCallableSymbol<*> {
-    val overriddenSymbol = overriddenSymbol ?: return this
-    return overriddenSymbol.deepestOverriddenSymbol()
+
+internal tailrec fun FirCallableSymbol<*>.unwrapSubstitutionAndIntersectionOverrides(): FirCallableSymbol<*> {
+    val originalForSubstitutionOverride = originalForSubstitutionOverride
+    if (originalForSubstitutionOverride != null) return originalForSubstitutionOverride.unwrapSubstitutionAndIntersectionOverrides()
+
+    val baseForIntersectionOverride = baseForIntersectionOverride
+    if (baseForIntersectionOverride != null) return baseForIntersectionOverride.unwrapSubstitutionAndIntersectionOverrides()
+
+    return this
 }
 
-internal tailrec fun FirCallableSymbol<*>.deepestMatchingOverriddenSymbol(root: FirCallableSymbol<*> = this): FirCallableSymbol<*> {
+internal tailrec fun FirCallableSymbol<*>.unwrapCallRepresentative(root: FirCallableSymbol<*> = this): FirCallableSymbol<*> {
     if (fir.isIntersectionOverride) return this
-    val overriddenSymbol = overriddenSymbol?.takeIf {
+
+    val overriddenSymbol = fir.originalForSubstitutionOverride?.takeIf {
         it.containingClass() == root.containingClass()
-    } ?: return this
-    return overriddenSymbol.deepestMatchingOverriddenSymbol(this)
+    }?.symbol ?: return this
+
+    return overriddenSymbol.unwrapCallRepresentative(this)
 }
 
 internal fun FirSimpleFunction.generateOverriddenFunctionSymbols(
@@ -239,7 +248,7 @@ internal fun FirSimpleFunction.generateOverriddenFunctionSymbols(
             return@processDirectlyOverriddenFunctions ProcessorAction.NEXT
         }
 
-        val overridden = declarationStorage.getIrFunctionSymbol(it.unwrapSubstitutionOverrides())
+        val overridden = declarationStorage.getIrFunctionSymbol(it.unwrapFakeOverrides())
         overriddenSet += overridden as IrSimpleFunctionSymbol
         ProcessorAction.NEXT
     }
@@ -260,7 +269,7 @@ internal fun FirProperty.generateOverriddenAccessorSymbols(
         if (it is FirAccessorSymbol || it.fir.visibility == Visibilities.Private) {
             return@processDirectlyOverriddenProperties ProcessorAction.NEXT
         }
-        val overriddenProperty = declarationStorage.getIrPropertySymbol(it.unwrapSubstitutionOverrides()) as IrPropertySymbol
+        val overriddenProperty = declarationStorage.getIrPropertySymbol(it.unwrapFakeOverrides()) as IrPropertySymbol
         val overriddenAccessor = if (isGetter) overriddenProperty.owner.getter?.symbol else overriddenProperty.owner.setter?.symbol
         if (overriddenAccessor != null) {
             overriddenSet += overriddenAccessor

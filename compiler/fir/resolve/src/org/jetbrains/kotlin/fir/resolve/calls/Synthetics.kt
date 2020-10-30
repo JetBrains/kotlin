@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.ConeNullability.NOT_NULL
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
@@ -123,7 +124,7 @@ class FirSyntheticPropertiesScope(
     private fun FirFunctionSymbol<*>.hasJavaOverridden(): Boolean {
         var result = false
         baseScope.processOverriddenFunctionsAndSelf(this) {
-            if (it.unwrapSubstitutionOverrides().fir.origin == FirDeclarationOrigin.Enhancement) {
+            if (it.unwrapFakeOverrides().fir.origin == FirDeclarationOrigin.Enhancement) {
                 result = true
                 ProcessorAction.STOP
             } else {

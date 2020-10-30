@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
+import org.jetbrains.kotlin.fir.originalIfFakeOverride
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -30,7 +31,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinSc
     override val symbolProvider: FirSymbolProvider = SymbolProvider()
 
     override fun getFirCallableContainerFile(symbol: FirCallableSymbol<*>): FirFile? {
-        symbol.overriddenSymbol?.let {
+        symbol.originalIfFakeOverride()?.let {
             return getFirCallableContainerFile(it)
         }
         if (symbol is FirAccessorSymbol) {

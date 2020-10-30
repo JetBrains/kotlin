@@ -272,7 +272,7 @@ internal class ClassMemberGenerator(
                     startOffset, endOffset, constructedIrType, "Cannot find delegated constructor call"
                 )
             }
-        val constructorSymbol = referencedSymbol.deepestMatchingOverriddenSymbol() as FirConstructorSymbol
+        val constructorSymbol = referencedSymbol.unwrapCallRepresentative() as FirConstructorSymbol
         val firDispatchReceiver = dispatchReceiver
         return convertWithOffsets { startOffset, endOffset ->
             val irConstructorSymbol = declarationStorage.getIrFunctionSymbol(constructorSymbol) as IrConstructorSymbol

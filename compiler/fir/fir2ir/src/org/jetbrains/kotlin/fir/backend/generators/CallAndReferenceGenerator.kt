@@ -55,7 +55,7 @@ class CallAndReferenceGenerator(
         callableReferenceAccess: FirCallableReferenceAccess,
         explicitReceiverExpression: IrExpression?
     ): IrExpression {
-        val symbol = callableReferenceAccess.calleeReference.toSymbol(session, classifierStorage, declarationStorage, conversionScope)
+        val symbol = callableReferenceAccess.calleeReference.toSymbolForCall(session, classifierStorage, declarationStorage, conversionScope)
         val type = callableReferenceAccess.typeRef.toIrType()
         fun propertyOrigin(): IrStatementOrigin? =
             when (callableReferenceAccess.source?.psi?.parent) {
@@ -197,7 +197,7 @@ class CallAndReferenceGenerator(
             val samConstructorCall = qualifiedAccess.tryConvertToSamConstructorCall(type)
             if (samConstructorCall != null) return samConstructorCall
 
-            val symbol = qualifiedAccess.calleeReference.toSymbol(
+            val symbol = qualifiedAccess.calleeReference.toSymbolForCall(
                 session,
                 classifierStorage,
                 declarationStorage,
@@ -277,7 +277,7 @@ class CallAndReferenceGenerator(
     fun convertToIrSetCall(variableAssignment: FirVariableAssignment, explicitReceiverExpression: IrExpression?): IrExpression {
         val type = irBuiltIns.unitType
         val calleeReference = variableAssignment.calleeReference
-        val symbol = calleeReference.toSymbol(session, classifierStorage, declarationStorage, conversionScope, preferGetter = false)
+        val symbol = calleeReference.toSymbolForCall(session, classifierStorage, declarationStorage, conversionScope, preferGetter = false)
         val origin = IrStatementOrigin.EQ
         return variableAssignment.convertWithOffsets { startOffset, endOffset ->
             val assignedValue = visitor.convertToIrExpression(variableAssignment.rValue)

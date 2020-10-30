@@ -6,12 +6,9 @@
 package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSymbolOwner
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
-import org.jetbrains.kotlin.fir.isSubstitutionOverride
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
@@ -25,7 +22,6 @@ import org.jetbrains.kotlin.fir.symbols.PossiblyFirFakeOverrideSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -156,7 +152,7 @@ class FakeOverrideGenerator(
         if (originalDeclaration.visibility == Visibilities.Private) return
 
         val origin = IrDeclarationOrigin.FAKE_OVERRIDE
-        val baseSymbol = originalSymbol.deepestOverriddenSymbol() as S
+        val baseSymbol = originalSymbol.unwrapSubstitutionAndIntersectionOverrides() as S
 
         if (originalSymbol.fir.origin.fromSupertypes && originalSymbol.dispatchReceiverClassOrNull() == classLookupTag) {
             // Substitution case
@@ -204,7 +200,7 @@ class FakeOverrideGenerator(
         return scope.directOverridden(symbol).map {
             @Suppress("UNCHECKED_CAST")
             if (it is PossiblyFirFakeOverrideSymbol<*, *> && it.fir.isSubstitutionOverride && it.dispatchReceiverClassOrNull() == containingClass)
-                it.overriddenSymbol!! as S
+                it.originalForSubstitutionOverride!!
             else
                 it
         }
@@ -234,7 +230,7 @@ class FakeOverrideGenerator(
 
     private fun IrProperty.discardAccessorsAccordingToBaseVisibility(baseSymbols: List<FirPropertySymbol>) {
         for (baseSymbol in baseSymbols) {
-            val unwrapped = baseSymbol.unwrapSubstitutionOverrides()
+            val unwrapped = baseSymbol.unwrapFakeOverrides()
             // Do not create fake overrides for accessors if not allowed to do so, e.g., private lateinit var.
             if (unwrapped.fir.getter?.allowsToHaveFakeOverride != true) {
                 getter = null

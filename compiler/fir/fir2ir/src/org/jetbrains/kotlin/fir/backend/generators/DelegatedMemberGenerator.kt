@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.fir.baseForIntersectionOverride
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.isIntersectionOverride
 import org.jetbrains.kotlin.fir.isSubstitutionOverride
+import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -104,13 +106,13 @@ internal class DelegatedMemberGenerator(
         return when {
             wrappedSymbol.fir.isSubstitutionOverride &&
                     (wrappedSymbol.fir.dispatchReceiverType as? ConeClassLikeType)?.lookupTag == firSubClass.symbol.toLookupTag() ->
-                wrapped.symbol.overriddenSymbol!!.fir
+                wrapped.originalForSubstitutionOverride
             else -> wrapped
         }
     }
 
     private fun isJavaDefault(function: FirSimpleFunction): Boolean {
-        if (function.isIntersectionOverride) return isJavaDefault(function.symbol.overriddenSymbol!!.fir)
+        if (function.isIntersectionOverride) return isJavaDefault(function.baseForIntersectionOverride!!)
         return function.origin == FirDeclarationOrigin.Enhancement && function.modality == Modality.OPEN
     }
 

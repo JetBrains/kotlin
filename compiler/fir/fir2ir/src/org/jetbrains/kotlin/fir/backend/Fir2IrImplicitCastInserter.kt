@@ -6,15 +6,23 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.baseForIntersectionOverride
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
+import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.*
-import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
+import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
+import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.ir.IrElement
@@ -273,7 +281,7 @@ class Fir2IrImplicitCastInserter(
         if (castTypeRef is FirResolvedTypeRef && originalTypeRef is FirResolvedTypeRef) {
             val castType = castTypeRef.type
             if (castType is ConeIntersectionType) {
-                val unwrappedSymbol = (referencedSymbol as? FirCallableSymbol)?.overriddenSymbol ?: referencedSymbol
+                val unwrappedSymbol = (referencedSymbol as? FirCallableSymbol)?.baseForIntersectionOverride ?: referencedSymbol
                 castType.intersectedTypes.forEach {
                     if (it.doesContainReferencedSymbolInScope(unwrappedSymbol, calleeReference.name)) {
                         return implicitCastOrExpression(value, it)

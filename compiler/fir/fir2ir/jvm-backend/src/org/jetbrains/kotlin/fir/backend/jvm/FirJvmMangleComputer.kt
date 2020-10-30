@@ -9,11 +9,8 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinMangleComp
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
 import org.jetbrains.kotlin.backend.common.serialization.mangle.collectForMangler
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -160,12 +157,9 @@ open class FirJvmMangleComputer(
                 return parent
             }
             if (parent is FirCallableDeclaration<*>) {
-                val overriddenSymbol = parent.symbol.overriddenSymbol
-                if (overriddenSymbol != null) {
-                    val fir = overriddenSymbol.fir
-                    if (fir is FirTypeParametersOwner && this in fir.typeParameters) {
-                        return parent
-                    }
+                val overriddenFir = parent.originalForSubstitutionOverride
+                if (overriddenFir is FirTypeParametersOwner && this in overriddenFir.typeParameters) {
+                    return parent
                 }
             }
         }

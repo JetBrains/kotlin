@@ -1008,7 +1008,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     }
 
     private fun AbstractFirBasedSymbol<*>.unwrapIntersectionOverrides(): AbstractFirBasedSymbol<*> {
-        if (this is FirCallableSymbol<*> && fir.isIntersectionOverride) return overriddenSymbol!!.unwrapIntersectionOverrides()
+        (this as? FirCallableSymbol<*>)?.baseForIntersectionOverride?.let { return it.unwrapIntersectionOverrides() }
         return this
     }
 

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -113,8 +114,7 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
         // substitution here
         val protoConstructor = functionCall.calleeReference.safeAs<FirResolvedNamedReference>()
             ?.resolvedSymbol.safeAs<FirConstructorSymbol>()
-            ?.overriddenSymbol
-            ?.fir.safeAs<FirConstructor>()
+            ?.fir?.originalForSubstitutionOverride
             ?: return
 
         // holds Collection<G> bound.
