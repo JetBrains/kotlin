@@ -192,7 +192,7 @@ object ComparableOps : TemplateGroupBase() {
             }
             if (primitive in shortIntPrimitives) {
                 body { "return Math.min(a.toInt(), b.toInt()).$convertBack" }
-                on(Platform.Native) {
+                on(Platform.Native, Platform.Wasm) {
                     body { "return minOf(a.toInt(), b.toInt()).$convertBack" }
                 }
             }
@@ -207,13 +207,6 @@ object ComparableOps : TemplateGroupBase() {
                         }
                         """
                     }
-                }
-            }
-            on(Platform.Wasm) {
-                body {
-                    """
-                    return TODO("Wasm stdlib: minOf")
-                    """
                 }
             }
         }
@@ -403,7 +396,7 @@ object ComparableOps : TemplateGroupBase() {
             }
             if (primitive in shortIntPrimitives) {
                 body { "return Math.max(a.toInt(), b.toInt()).$convertBack" }
-                on(Platform.Native) {
+                on(Platform.Native, Platform.Wasm) {
                     body { "return maxOf(a.toInt(), b.toInt()).$convertBack" }
                 }
             }
@@ -414,13 +407,6 @@ object ComparableOps : TemplateGroupBase() {
                         return if (a.compareTo(b) >= 0) a else b
                         """
                     }
-                }
-            }
-            on(Platform.Wasm) {
-                body {
-                    """
-                    return TODO("Wasm stdlib: maxOf")
-                    """
                 }
             }
         }

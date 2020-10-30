@@ -27,7 +27,7 @@ public actual fun <T : Comparable<T>> maxOf(a: T, b: T): T {
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public actual inline fun maxOf(a: Byte, b: Byte): Byte {
-    return TODO("Wasm stdlib: maxOf")
+    return maxOf(a.toInt(), b.toInt()).toByte()
 }
 
 /**
@@ -36,7 +36,7 @@ public actual inline fun maxOf(a: Byte, b: Byte): Byte {
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public actual inline fun maxOf(a: Short, b: Short): Short {
-    return TODO("Wasm stdlib: maxOf")
+    return maxOf(a.toInt(), b.toInt()).toShort()
 }
 
 /**
@@ -45,7 +45,7 @@ public actual inline fun maxOf(a: Short, b: Short): Short {
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public actual inline fun maxOf(a: Int, b: Int): Int {
-    return TODO("Wasm stdlib: maxOf")
+    return if (a >= b) a else b
 }
 
 /**
@@ -54,7 +54,7 @@ public actual inline fun maxOf(a: Int, b: Int): Int {
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public actual inline fun maxOf(a: Long, b: Long): Long {
-    return TODO("Wasm stdlib: maxOf")
+    return if (a >= b) a else b
 }
 
 /**
@@ -65,7 +65,7 @@ public actual inline fun maxOf(a: Long, b: Long): Long {
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public actual inline fun maxOf(a: Float, b: Float): Float {
-    return TODO("Wasm stdlib: maxOf")
+    return if (a >= b) a else b
 }
 
 /**
@@ -76,7 +76,7 @@ public actual inline fun maxOf(a: Float, b: Float): Float {
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public actual inline fun maxOf(a: Double, b: Double): Double {
-    return TODO("Wasm stdlib: maxOf")
+    return if (a >= b) a else b
 }
 
 /**
@@ -239,7 +239,7 @@ public actual fun <T : Comparable<T>> minOf(a: T, b: T): T {
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public actual inline fun minOf(a: Byte, b: Byte): Byte {
-    return TODO("Wasm stdlib: minOf")
+    return minOf(a.toInt(), b.toInt()).toByte()
 }
 
 /**
@@ -248,7 +248,7 @@ public actual inline fun minOf(a: Byte, b: Byte): Byte {
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public actual inline fun minOf(a: Short, b: Short): Short {
-    return TODO("Wasm stdlib: minOf")
+    return minOf(a.toInt(), b.toInt()).toShort()
 }
 
 /**
@@ -257,7 +257,7 @@ public actual inline fun minOf(a: Short, b: Short): Short {
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public actual inline fun minOf(a: Int, b: Int): Int {
-    return TODO("Wasm stdlib: minOf")
+    return if (a <= b) a else b
 }
 
 /**
@@ -266,7 +266,7 @@ public actual inline fun minOf(a: Int, b: Int): Int {
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public actual inline fun minOf(a: Long, b: Long): Long {
-    return TODO("Wasm stdlib: minOf")
+    return if (a <= b) a else b
 }
 
 /**
@@ -277,7 +277,7 @@ public actual inline fun minOf(a: Long, b: Long): Long {
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public actual inline fun minOf(a: Float, b: Float): Float {
-    return TODO("Wasm stdlib: minOf")
+    return if (a <= b) a else b
 }
 
 /**
@@ -288,7 +288,7 @@ public actual inline fun minOf(a: Float, b: Float): Float {
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public actual inline fun minOf(a: Double, b: Double): Double {
-    return TODO("Wasm stdlib: minOf")
+    return if (a <= b) a else b
 }
 
 /**
