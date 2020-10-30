@@ -23,7 +23,7 @@ fun case1() {
     val c2 = '<!ILLEGAL_ESCAPE!>\u1f<!>'
     val c3 = '<!ILLEGAL_ESCAPE!>\u1wf<!>'
 
-    //more then four hex digits
+    //more than four hex digits
     val c4 = '<!ILLEGAL_ESCAPE!>\u1wF2f<!>'
 }
 
