@@ -39,8 +39,7 @@ FILE fqName:<root> fileName:/enhancedNullability.kt
       CALL 'public open fun use (s: kotlin.String): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
         s: CALL 'public open fun nullString (): kotlin.String? declared in <root>.J' type=kotlin.String? origin=null
       CALL 'public open fun use (s: kotlin.String): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
-        s: TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          CALL 'public open fun notNullString (): kotlin.String declared in <root>.J' type=kotlin.String origin=null
+        s: CALL 'public open fun notNullString (): kotlin.String declared in <root>.J' type=kotlin.String origin=null
   FUN name:testLocalVarUse visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:ns type:kotlin.String? [val]
@@ -51,5 +50,4 @@ FILE fqName:<root> fileName:/enhancedNullability.kt
         TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
           CALL 'public open fun notNullString (): kotlin.String declared in <root>.J' type=kotlin.String origin=null
       CALL 'public open fun use (s: kotlin.String): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
-        s: TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          GET_VAR 'val nns: kotlin.String [val] declared in <root>.testLocalVarUse' type=kotlin.String origin=null
+        s: GET_VAR 'val nns: kotlin.String [val] declared in <root>.testLocalVarUse' type=kotlin.String origin=null

@@ -207,7 +207,7 @@ class Fir2IrImplicitCastInserter(
                 coerceToUnitIfNeeded(type, irBuiltIns)
             }
             // TODO: Not exactly matched with psi2ir yet...
-            valueType.hasEnhancedNullability() -> {
+            valueType.hasEnhancedNullability() && !expectedType.acceptsNullValues() -> {
                 insertImplicitNotNullCastIfNeeded(expression)
             }
             // TODO: coerceIntToAnotherIntegerType
@@ -215,6 +215,10 @@ class Fir2IrImplicitCastInserter(
             else -> this
         }
     }
+
+    private fun FirTypeRef.acceptsNullValues(): Boolean =
+        (this is FirResolvedTypeRef && this.delegatedTypeRef !is FirImplicitTypeRef) &&
+                (isMarkedNullable == true || hasEnhancedNullability())
 
     private fun IrExpression.insertImplicitNotNullCastIfNeeded(expression: FirExpression): IrExpression {
         // [TypeOperatorLowering] will retrieve the source (from start offset to end offset) as an assertion message.
