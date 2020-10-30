@@ -7,12 +7,9 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.classId
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.fakeElement
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLookupTagWithFixedSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -185,6 +182,18 @@ fun FirTypeRef.isUnsafeVarianceType(session: FirSession): Boolean {
 
 fun FirTypeRef.hasEnhancedNullability(): Boolean =
     coneTypeSafe<ConeKotlinType>()?.hasEnhancedNullability == true
+
+fun FirTypeRef.withReplacedSource(
+    knownSource: FirSourceElement
+): FirResolvedTypeRef {
+    require(this is FirResolvedTypeRef)
+
+    return buildResolvedTypeRef {
+        source = knownSource
+        type = coneType
+        annotations += this@withReplacedSource.annotations
+    }
+}
 
 // Unlike other cases, return types may be implicit, i.e. unresolved
 // But in that cases newType should also be `null`

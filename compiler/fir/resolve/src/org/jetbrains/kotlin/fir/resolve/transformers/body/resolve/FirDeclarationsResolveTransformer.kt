@@ -493,12 +493,20 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         if (result.returnTypeRef is FirImplicitTypeRef) {
             val simpleFunction = function as? FirSimpleFunction
             if (body != null) {
+                val source = result.returnTypeRef.source
+                val approximatedType =
+                    body.resultType.approximatedIfNeededOrSelf(
+                        inferenceComponents.approximator,
+                        simpleFunction?.visibility,
+                        simpleFunction?.isInline == true
+                    )
                 result.transformReturnTypeRef(
                     transformer,
                     withExpectedType(
-                        body.resultType.approximatedIfNeededOrSelf(
-                            inferenceComponents.approximator, simpleFunction?.visibility, simpleFunction?.isInline == true
-                        )
+                        if (source != null)
+                            approximatedType.withReplacedSource(source)
+                        else
+                            approximatedType
                     )
                 )
             } else {
@@ -919,6 +927,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                                 annotations.addAll(resultType.annotations)
                                 resultType.source?.fakeElement(FirFakeSourceElementKind.PropertyFromParameter)?.let {
                                     source = it
+                                } ?: run {
+                                    source = variable.returnTypeRef.source
                                 }
                             }
                         }
@@ -942,15 +952,23 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                                     annotations.addAll(resultType.annotations)
                                     resultType.source?.fakeElement(FirFakeSourceElementKind.PropertyFromParameter)?.let {
                                         source = it
+                                    } ?: run {
+                                        source = variable.returnTypeRef.source
                                     }
                                 }
                             }
                         }
                     }
+                    val source = variable.returnTypeRef.source
+                    val approximatedType =
+                        expectedType?.approximatedIfNeededOrSelf(inferenceComponents.approximator, (variable as? FirProperty)?.visibility)
                     variable.transformReturnTypeRef(
                         transformer,
                         withExpectedType(
-                            expectedType?.approximatedIfNeededOrSelf(inferenceComponents.approximator, (variable as? FirProperty)?.visibility)
+                            if (source != null && approximatedType != null)
+                                approximatedType.withReplacedSource(source)
+                            else
+                                approximatedType
                         )
                     )
                 }
