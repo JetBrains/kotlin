@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.baseForIntersectionOverride
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
@@ -207,7 +208,7 @@ class Fir2IrImplicitCastInserter(
                 coerceToUnitIfNeeded(type, irBuiltIns)
             }
             // TODO: Not exactly matched with psi2ir yet...
-            valueType.hasEnhancedNullability() -> {
+            valueType.hasEnhancedNullability() && !expectedType.acceptsNullValues() -> {
                 insertImplicitNotNullCastIfNeeded(expression)
             }
             // TODO: coerceIntToAnotherIntegerType
@@ -215,6 +216,10 @@ class Fir2IrImplicitCastInserter(
             else -> this
         }
     }
+
+    private fun FirTypeRef.acceptsNullValues(): Boolean =
+        source?.kind != FirFakeSourceElementKind.ImplicitTypeRef &&
+                (isMarkedNullable == true || hasEnhancedNullability())
 
     private fun IrExpression.insertImplicitNotNullCastIfNeeded(expression: FirExpression): IrExpression {
         // [TypeOperatorLowering] will retrieve the source (from start offset to end offset) as an assertion message.
