@@ -48,7 +48,7 @@ internal class KtFirPropertyGetterSymbol(
             }
         }
 
-    override val type: KtType = firRef.withFir(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) { builder.buildKtType(it.returnTypeRef) }
+    override val type: KtType by firRef.withFirAndCache { builder.buildKtType(it.returnTypeRef) }
     override val modality: KtCommonSymbolModality get() = firRef.withFir(FirResolvePhase.STATUS) { it.modality.getSymbolModality() }
     override val visibility: KtSymbolVisibility get() = firRef.withFir(FirResolvePhase.STATUS) { it.visibility.getSymbolVisibility() }
 
