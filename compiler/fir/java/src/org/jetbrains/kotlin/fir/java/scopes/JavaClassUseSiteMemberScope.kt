@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.java.scopes
 
+import com.intellij.lang.jvm.types.JvmPrimitiveTypeKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
@@ -21,6 +22,8 @@ import org.jetbrains.kotlin.fir.scopes.impl.AbstractFirUseSiteMemberScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.isUnit
+import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
+import org.jetbrains.kotlin.load.java.structure.impl.JavaPrimitiveTypeImpl
 import org.jetbrains.kotlin.name.Name
 
 class JavaClassUseSiteMemberScope(
@@ -101,8 +104,16 @@ class JavaClassUseSiteMemberScope(
                     declaredMemberScope.processFunctionsByName(setterName) { functionSymbol ->
                         if (setterSymbol == null && functionSymbol is FirNamedFunctionSymbol) {
                             val function = functionSymbol.fir
-                            if (!function.isStatic && function.returnTypeRef.isUnit && function.valueParameters.size == 1) {
-                                setterSymbol = functionSymbol
+                            if (!function.isStatic && function.valueParameters.size == 1) {
+                                val returnTypeRef = function.returnTypeRef
+                                if (returnTypeRef.isUnit) {
+                                    setterSymbol = functionSymbol
+                                } else if (returnTypeRef is FirJavaTypeRef) {
+                                    val primitiveType = returnTypeRef.type as? JavaPrimitiveTypeImpl
+                                    if (primitiveType?.psi?.kind == JvmPrimitiveTypeKind.VOID) {
+                                        setterSymbol = functionSymbol
+                                    }
+                                }
                             }
                         }
                     }
