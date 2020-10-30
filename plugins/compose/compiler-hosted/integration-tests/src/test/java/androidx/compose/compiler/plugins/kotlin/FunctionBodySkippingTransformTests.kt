@@ -215,8 +215,8 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
             }
         """,
         """
+            import androidx.compose.material.Text
             import androidx.compose.ui.graphics.Color
-            import androidx.compose.foundation.Text
 
             @Composable
             fun Button(colors: ButtonColors) {

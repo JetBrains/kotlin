@@ -5,8 +5,8 @@ Jetpack Compose makes it easy to write and manage an application's frontend by p
 A Compose application is comprised of `@Composable` functions, which are functions that transform application data into a UI hierarchy.  When the underlying data changes, the Composable functions can be re-invoked to generate an updated UI hierarchy.
 
 ```
+import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.foundation.*
 
 @Composable
 fun Greeting(name: String) {
