@@ -168,21 +168,16 @@ fun IrDeclarationWithVisibility.getVisibilityAccessFlag(kind: OwnerKind? = null)
 }
 
 private fun IrDeclarationWithVisibility.specialCaseVisibility(kind: OwnerKind?): Int? {
-//    if (JvmCodegenUtil.isNonIntrinsicPrivateCompanionObjectInInterface(memberDescriptor)) {
-//        return ACC_PUBLIC
-//    }
     if (this is IrClass && DescriptorVisibilities.isPrivate(visibility) && isCompanion && hasInterfaceParent()) {
         // TODO: non-intrinsic
         return Opcodes.ACC_PUBLIC
     }
 
-//    if (memberDescriptor is FunctionDescriptor && isInlineClassWrapperConstructor(memberDescriptor, kind))
     if (this is IrConstructor && parentAsClass.isInline && kind === OwnerKind.IMPLEMENTATION) {
         return Opcodes.ACC_PRIVATE
     }
 
-//    if (memberDescriptor.isEffectivelyInlineOnly()) {
-    if (this is IrFunction && isReifiable()) {
+    if (this is IrFunction && (isReifiable() || isBridge())) {
         return Opcodes.ACC_PUBLIC
     }
 
@@ -190,58 +185,20 @@ private fun IrDeclarationWithVisibility.specialCaseVisibility(kind: OwnerKind?):
         return Opcodes.ACC_PRIVATE
     }
 
-//    if (memberVisibility === Visibilities.LOCAL && memberDescriptor is CallableMemberDescriptor) {
     if (visibility === DescriptorVisibilities.LOCAL && this is IrFunction) {
         return Opcodes.ACC_PUBLIC
     }
 
-//    if (isEnumEntry(memberDescriptor)) {
     if (this is IrClass && this.kind === ClassKind.ENUM_ENTRY) {
         return AsmUtil.NO_FLAG_PACKAGE_PRIVATE
     }
 
-//    These ones should be public anyway after ToArrayLowering.
-//    if (memberDescriptor.isToArrayFromCollection()) {
-//        return ACC_PUBLIC
-//    }
-
-//    if (memberDescriptor is ConstructorDescriptor && isAnonymousObject(memberDescriptor.containingDeclaration)) {
-//        return getVisibilityAccessFlagForAnonymous(memberDescriptor.containingDeclaration as ClassDescriptor)
-//    }
-//    if (this is IrConstructor && parentAsClass.isAnonymousObject) {
-//        return parentAsClass.getVisibilityAccessFlagForAnonymous()
-//    }
-
-//    TODO: when is this applicable?
-//    if (memberDescriptor is SyntheticJavaPropertyDescriptor) {
-//        return getVisibilityAccessFlag((memberDescriptor as SyntheticJavaPropertyDescriptor).getMethod)
-//    }
-
-
-//    if (memberDescriptor is PropertyAccessorDescriptor) {
-//        val property = memberDescriptor.correspondingProperty
-//        if (property is SyntheticJavaPropertyDescriptor) {
-//            val method = (if (memberDescriptor === property.getGetter())
-//                (property as SyntheticJavaPropertyDescriptor).getMethod
-//            else
-//                (property as SyntheticJavaPropertyDescriptor).setMethod)
-//                ?: error("No get/set method in SyntheticJavaPropertyDescriptor: $property")
-//            return getVisibilityAccessFlag(method)
-//        }
-//    }
     if (this is IrField && correspondingPropertySymbol?.owner?.isExternal == true) {
         val method = correspondingPropertySymbol?.owner?.getter ?: correspondingPropertySymbol?.owner?.setter
         ?: error("No get/set method in SyntheticJavaPropertyDescriptor: ${ir2string(correspondingPropertySymbol?.owner)}")
         return method.getVisibilityAccessFlag()
     }
 
-//    if (memberDescriptor is CallableDescriptor && memberVisibility === Visibilities.PROTECTED) {
-//        for (overridden in DescriptorUtils.getAllOverriddenDescriptors(memberDescriptor as CallableDescriptor)) {
-//            if (isJvmInterface(overridden.containingDeclaration)) {
-//                return ACC_PUBLIC
-//            }
-//        }
-//    }
     if (this is IrSimpleFunction && visibility === DescriptorVisibilities.PROTECTED &&
         allOverridden().any { it.parentAsClass.isJvmInterface }
     ) {
@@ -256,14 +213,6 @@ private fun IrDeclarationWithVisibility.specialCaseVisibility(kind: OwnerKind?):
         return AsmUtil.NO_FLAG_PACKAGE_PRIVATE
     }
 
-//  Should be taken care of in IR
-//    if (memberDescriptor is AccessorForCompanionObjectInstanceFieldDescriptor) {
-//        return NO_FLAG_PACKAGE_PRIVATE
-//    }
-
-//    return if (memberDescriptor is ConstructorDescriptor && isEnumEntry(containingDeclaration)) {
-//        NO_FLAG_PACKAGE_PRIVATE
-//    } else null
     if (this is IrConstructor && parentAsClass.kind === ClassKind.ENUM_ENTRY) {
         return AsmUtil.NO_FLAG_PACKAGE_PRIVATE
     }
@@ -302,6 +251,8 @@ fun IrFunction.isInlineOnly() =
     isInline && hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)
 
 fun IrFunction.isReifiable() = typeParameters.any { it.isReified }
+
+internal fun IrFunction.isBridge() = origin == IrDeclarationOrigin.BRIDGE || origin == IrDeclarationOrigin.BRIDGE_SPECIAL
 
 // Borrowed with modifications from ImplementationBodyCodegen.java
 
