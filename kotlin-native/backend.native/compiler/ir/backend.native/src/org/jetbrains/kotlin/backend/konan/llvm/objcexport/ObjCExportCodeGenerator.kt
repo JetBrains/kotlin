@@ -1123,11 +1123,9 @@ private fun ObjCExportCodeGenerator.createMethodVirtualAdapter(
     val selector = namer.getSelector(baseMethod.descriptor)
 
     val methodBridge = mapper.bridgeMethod(baseMethod.descriptor)
-    val objCToKotlin = constPointer(generateObjCImp(baseMethod, baseMethod, methodBridge, isVirtual = true))
+    val imp = generateObjCImp(baseMethod, baseMethod, methodBridge, isVirtual = true)
 
-    selectorsToDefine[selector] = methodBridge
-
-    return ObjCToKotlinMethodAdapter(selector, getEncoding(methodBridge), objCToKotlin)
+    return objCToKotlinMethodAdapter(selector, methodBridge, imp)
 }
 
 private fun ObjCExportCodeGenerator.createMethodAdapter(
@@ -1148,12 +1146,10 @@ private fun ObjCExportCodeGenerator.createMethodAdapter(
 
     val selectorName = namer.getSelector(request.base.descriptor)
     val methodBridge = mapper.bridgeMethod(request.base.descriptor)
-    val objCEncoding = getEncoding(methodBridge)
-    val objCToKotlin = constPointer(generateObjCImp(request.implementation, request.base, methodBridge))
 
-    selectorsToDefine[selectorName] = methodBridge
+    val imp = generateObjCImp(request.implementation, request.base, methodBridge)
 
-    ObjCToKotlinMethodAdapter(selectorName, objCEncoding, objCToKotlin)
+    objCToKotlinMethodAdapter(selectorName, methodBridge, imp)
 }
 
 private fun ObjCExportCodeGenerator.createConstructorAdapter(
@@ -1165,12 +1161,9 @@ private fun ObjCExportCodeGenerator.createArrayConstructorAdapter(
 ): ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter {
     val selectorName = namer.getSelector(irConstructor.descriptor)
     val methodBridge = mapper.bridgeMethod(irConstructor.descriptor)
-    val objCEncoding = getEncoding(methodBridge)
-    val objCToKotlin = constPointer(generateObjCImpForArrayConstructor(irConstructor, methodBridge))
+    val imp = generateObjCImpForArrayConstructor(irConstructor, methodBridge)
 
-    selectorsToDefine[selectorName] = methodBridge
-
-    return ObjCToKotlinMethodAdapter(selectorName, objCEncoding, objCToKotlin)
+    return objCToKotlinMethodAdapter(selectorName, methodBridge, imp)
 }
 
 private fun ObjCExportCodeGenerator.vtableIndex(irFunction: IrSimpleFunction): Int? {
@@ -1424,16 +1417,23 @@ private inline fun ObjCExportCodeGenerator.generateObjCToKotlinSyntheticGetter(
             MethodBridgeReceiver.Static, valueParameters = emptyList()
     )
 
-    val encoding = getEncoding(methodBridge)
     val imp = generateFunction(codegen, objCFunctionType(context, methodBridge), "objc2kotlin") {
         block()
     }
 
     LLVMSetLinkage(imp, LLVMLinkage.LLVMPrivateLinkage)
 
+    return objCToKotlinMethodAdapter(selector, methodBridge, imp)
+}
+
+private fun ObjCExportCodeGenerator.objCToKotlinMethodAdapter(
+        selector: String,
+        methodBridge: MethodBridge,
+        imp: LLVMValueRef
+): ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter {
     selectorsToDefine[selector] = methodBridge
 
-    return ObjCToKotlinMethodAdapter(selector, encoding, constPointer(imp))
+    return ObjCToKotlinMethodAdapter(selector, getEncoding(methodBridge), constPointer(imp))
 }
 
 private fun ObjCExportCodeGenerator.createUnitInstanceAdapter() =
