@@ -586,11 +586,7 @@ class GradleFacetImportTest : KotlinGradleImportingTestCase() {
     @Ignore // android.sdk needed
     fun testAndroidGradleJsDetection() {
         configureByFiles()
-        createProjectSubFile(
-            "local.properties", """
-            sdk.dir=/${KotlinTestUtils.getAndroidSdkSystemIndependentPath()}
-        """
-        )
+        createLocalPropertiesSubFileForAndroid()
         importProject()
 
         with(facetSettings("js-module")) {
@@ -609,14 +605,9 @@ class GradleFacetImportTest : KotlinGradleImportingTestCase() {
     }
 
     @Test
-    @Ignore // android.sdk needed
     fun testKotlinAndroidPluginDetection() {
         configureByFiles()
-        createProjectSubFile(
-            "local.properties", """
-            sdk.dir=/${KotlinTestUtils.getAndroidSdkSystemIndependentPath()}
-        """
-        )
+        createLocalPropertiesSubFileForAndroid()
         importProject()
 
         assertNotNull(KotlinFacet.get(getModule("project")))

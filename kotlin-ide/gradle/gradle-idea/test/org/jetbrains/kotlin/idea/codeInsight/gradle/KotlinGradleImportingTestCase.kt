@@ -36,7 +36,7 @@ abstract class KotlinGradleImportingTestCase : GradleImportingTestCase() {
     protected fun configureKotlinVersionAndProperties(text: String, properties: Map<String, String>? = null): String {
         var result = text
         (properties ?: mapOf("kotlin_plugin_version" to LATEST_STABLE_GRADLE_PLUGIN_VERSION)).forEach { (key, value) ->
-            result = result.replace("{{${key}}}", value)
+            result = result.replace(Regex("""\{\s*\{\s*${key}\s*}\s*}"""), value)
         }
         return result
     }
@@ -50,9 +50,9 @@ abstract class KotlinGradleImportingTestCase : GradleImportingTestCase() {
                 it.isDirectory -> null
 
                 !it.name.endsWith(AFTER_SUFFIX) -> {
-                    var text = clearTextFromMarkup(FileUtil.loadFile(it, true))
-                    (properties ?: mapOf("kotlin_plugin_version" to LATEST_STABLE_GRADLE_PLUGIN_VERSION)).forEach { key, value ->
-                        text = text.replace("{{${key}}}", value)
+                    var text = clearTextFromMarkup(FileUtil.loadFile(it, /* convertLineSeparators = */ true))
+                    (properties ?: mapOf("kotlin_plugin_version" to LATEST_STABLE_GRADLE_PLUGIN_VERSION)).forEach { (key, value) ->
+                        text = text.replace(Regex("""\{\s*\{\s*${key}\s*}\s*}"""), value)
                     }
                     val virtualFile = createProjectSubFile(it.path.substringAfter(rootDir.path + File.separator), text)
 
@@ -66,6 +66,13 @@ abstract class KotlinGradleImportingTestCase : GradleImportingTestCase() {
                 else -> null
             }
         }.toList()
+    }
+
+    protected fun createLocalPropertiesSubFileForAndroid() {
+        createProjectSubFile(
+            "local.properties",
+            "sdk.dir=/${KotlinTestUtils.getAndroidSdkSystemIndependentPath()}"
+        )
     }
 
     protected fun checkFiles(files: List<VirtualFile>) {

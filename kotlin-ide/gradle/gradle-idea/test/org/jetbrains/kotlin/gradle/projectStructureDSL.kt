@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.utils.addToStdlib.filterIsInstanceWithChecker
+import kotlin.test.assertEquals
 
 class MessageCollector {
     private val builder = StringBuilder()
@@ -86,8 +87,10 @@ class ProjectInfo(
 class ModuleInfo(val module: Module, private val projectInfo: ProjectInfo) {
     private val rootModel = module.rootManager
     private val expectedDependencyNames = HashSet<String>()
+    private val expectedDependencies = HashSet<OrderEntry>()
     private val expectedSourceRoots = HashSet<String>()
     private val expectedExternalSystemTestTasks = ArrayList<ExternalSystemTestRunTask>()
+    private val assertions = mutableListOf<(ModuleInfo) -> Unit>()
 
     private val sourceFolderByPath by lazy {
         rootModel.contentEntries.asSequence()
@@ -99,7 +102,7 @@ class ModuleInfo(val module: Module, private val projectInfo: ProjectInfo) {
             .toMap()
     }
 
-    private fun report(text: String) {
+    fun report(text: String) {
         projectInfo.messageCollector.report("Module '${module.name}': $text")
     }
 
@@ -198,6 +201,7 @@ class ModuleInfo(val module: Module, private val projectInfo: ProjectInfo) {
         }
 
         checkDependencyScope(libraryEntry, scope)
+        expectedDependencies += libraryEntry
         expectedDependencyNames += libraryEntry.debugText
     }
 
@@ -222,6 +226,7 @@ class ModuleInfo(val module: Module, private val projectInfo: ProjectInfo) {
 
         checkDependencyScope(moduleEntry, scope)
         checkProductionOnTest(moduleEntry, productionOnTest)
+        expectedDependencies += moduleEntry
         expectedDependencyNames += moduleEntry.debugText
     }
 
@@ -269,10 +274,25 @@ class ModuleInfo(val module: Module, private val projectInfo: ProjectInfo) {
         checkReport("Output path", pathInProject, actualPathInProject)
     }
 
-    fun run(body: ModuleInfo.() -> Unit = {}) {
-        body()
+    fun assertExhaustiveModuleDependencyList() {
+        assertions += {
+            val expectedModuleDependencies = expectedDependencies.filterIsInstance<ModuleOrderEntry>()
+                .map { it.debugText }.sorted().distinct()
+            val actualModuleDependencies = rootModel.orderEntries.filterIsInstance<ModuleOrderEntry>()
+                .map { it.debugText }.sorted().distinct()
 
-        if (projectInfo.exhaustiveDependencyList) {
+            if (actualModuleDependencies != expectedModuleDependencies) {
+                report(
+                    "Bad Module dependency list for ${module.name}\n" +
+                            "Expected: $expectedModuleDependencies\n" +
+                            "Actual: $actualModuleDependencies"
+                )
+            }
+        }
+    }
+
+    fun assertExhaustiveDependencyList() {
+        assertions += {
             val actualDependencyNames = rootModel
                 .orderEntries.asList()
                 .filterIsInstanceWithChecker<ExportableOrderEntry> { it is ModuleOrderEntry || it is LibraryOrderEntry }
@@ -283,24 +303,34 @@ class ModuleInfo(val module: Module, private val projectInfo: ProjectInfo) {
             val expectedDependencyNames = expectedDependencyNames.sorted()
             checkReport("Dependency list", expectedDependencyNames, actualDependencyNames)
         }
+    }
 
-        val actualTasks = module.externalSystemTestRunTasks()
+    fun assertExhaustiveTestsList() {
+        assertions += {
+            val actualTasks = module.externalSystemTestRunTasks()
 
-        val containsAllTasks = actualTasks.containsAll(expectedExternalSystemTestTasks)
-        val containsSameTasks = actualTasks == expectedExternalSystemTestTasks
+            val containsAllTasks = actualTasks.containsAll(expectedExternalSystemTestTasks)
+            val containsSameTasks = actualTasks == expectedExternalSystemTestTasks
 
-        if ((!containsAllTasks) || (projectInfo.exhaustiveTestsList && !containsSameTasks)) {
-            report("Expected tests list $expectedExternalSystemTestTasks, got: $actualTasks")
+            if (!containsAllTasks || !containsSameTasks) {
+                report("Expected tests list $expectedExternalSystemTestTasks, got: $actualTasks")
+            }
         }
+    }
 
-        if (projectInfo.exhaustiveSourceSourceRootList) {
+    fun assertExhaustiveSourceRootList() {
+        assertions += {
             val actualSourceRoots = sourceFolderByPath.keys.sorted()
             val expectedSourceRoots = expectedSourceRoots.sorted()
             if (actualSourceRoots != expectedSourceRoots) {
                 report("Expected source root list $expectedSourceRoots, got: $actualSourceRoots")
             }
         }
+    }
 
+    fun run(body: ModuleInfo.() -> Unit = {}) {
+        body()
+        assertions.forEach { it.invoke(this) }
         if (rootModel.sdk == null) {
             report("No SDK defined")
         }
@@ -319,6 +349,18 @@ class ModuleInfo(val module: Module, private val projectInfo: ProjectInfo) {
             if (actualFlag != productionOnTest) {
                 report("Dependency '${library.presentableName}': expected productionOnTest '$productionOnTest', got '$actualFlag'")
             }
+        }
+    }
+
+    init {
+        if (projectInfo.exhaustiveDependencyList) {
+            assertExhaustiveDependencyList()
+        }
+        if (projectInfo.exhaustiveTestsList) {
+            assertExhaustiveTestsList()
+        }
+        if (projectInfo.exhaustiveSourceSourceRootList) {
+            assertExhaustiveSourceRootList()
         }
     }
 }

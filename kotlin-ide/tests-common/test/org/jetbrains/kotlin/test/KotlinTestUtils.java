@@ -109,7 +109,7 @@ public class KotlinTestUtils {
     }
 
     @NotNull
-    public static Ref<Disposable> allowRootAccess(@NotNull UsefulTestCase testCase, String ... roots) {
+    public static Ref<Disposable> allowRootAccess(@NotNull UsefulTestCase testCase, String... roots) {
         Disposable disposable = Disposer.newDisposable(testCase.getTestRootDisposable(), testCase.getClass().getName());
         VfsRootAccess.allowRootAccess(disposable, roots);
         return new Ref<>(disposable);
@@ -131,13 +131,20 @@ public class KotlinTestUtils {
     public static File findAndroidSdk() {
         String androidSdkProp = System.getProperty("android.sdk");
         File androidSdkDir = androidSdkProp == null ? null : new File(androidSdkProp);
-        if (androidSdkDir == null || !androidSdkDir.isDirectory()) {
+        String androidSdkEnv = System.getenv("ANDROID_HOME");
+        File androidSdkEnvDir = androidSdkEnv == null ? null : new File(androidSdkEnv);
+
+        if ((androidSdkDir == null || !androidSdkDir.isDirectory()) && (androidSdkEnvDir == null || !androidSdkEnvDir.isDirectory())) {
             throw new RuntimeException(
                     "Unable to get a valid path from 'android.sdk' property (" +
                     androidSdkProp +
                     "), please point it to the android SDK location");
         }
-        return androidSdkDir;
+
+        if (androidSdkDir != null) {
+            return androidSdkDir;
+        }
+        return androidSdkEnvDir;
     }
 
     public static String getAndroidSdkSystemIndependentPath() {
