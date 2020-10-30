@@ -65,6 +65,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/classes/classes.kt");
         }
 
+        @TestMetadata("cloneable.kt")
+        public void testCloneable() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/cloneable.kt");
+        }
+
         @TestMetadata("companionObject.kt")
         public void testCompanionObject() throws Exception {
             runTest("compiler/testData/ir/irText/classes/companionObject.kt");

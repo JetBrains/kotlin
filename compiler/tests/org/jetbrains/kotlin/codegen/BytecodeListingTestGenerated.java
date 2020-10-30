@@ -44,6 +44,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         runTest("compiler/testData/codegen/bytecodeListing/callableNameIntrinsic.kt");
     }
 
+    @TestMetadata("cloneable.kt")
+    public void testCloneable() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/cloneable.kt");
+    }
+
     @TestMetadata("companionObjectVisibility_after.kt")
     public void testCompanionObjectVisibility_after() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/companionObjectVisibility_after.kt");

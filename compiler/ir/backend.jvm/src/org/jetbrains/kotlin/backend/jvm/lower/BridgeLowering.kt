@@ -20,8 +20,10 @@ import org.jetbrains.kotlin.backend.jvm.ir.eraseTypeParameters
 import org.jetbrains.kotlin.backend.jvm.ir.isFromJava
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmAbstract
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -407,16 +409,31 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
             overriddenSymbols = irFunction.overriddenSymbols.toList()
         }
 
+    private fun getBridgeVisibility(bridge: Bridge): DescriptorVisibility {
+        // Even though kotlin.Cloneable#clone() is protected, corresponding bridge is 'public' in JVM.
+        if (bridge.overridden.name.asString() == "clone" &&
+            bridge.overridden.parentAsClass.hasEqualFqName(StandardNames.FqNames.cloneable.toSafe())
+        ) {
+            return DescriptorVisibilities.PUBLIC
+        }
+
+        val overriddenVisibility = bridge.overridden.visibility
+        // Internal functions can be overridden by non-internal functions, which changes their names since the names of internal
+        // functions are mangled. In order to avoid mangling the name twice we reset the visibility for bridges to internal
+        // functions to public and use the mangled name directly.
+        return if (overriddenVisibility == DescriptorVisibilities.INTERNAL)
+            DescriptorVisibilities.PUBLIC
+        else
+            overriddenVisibility
+    }
+
     private fun IrClass.addBridge(bridge: Bridge, target: IrSimpleFunction): IrSimpleFunction =
         addFunction {
             startOffset = this@addBridge.startOffset
             endOffset = this@addBridge.startOffset
             modality = Modality.OPEN
             origin = IrDeclarationOrigin.BRIDGE
-            // Internal functions can be overridden by non-internal functions, which changes their names since the names of internal
-            // functions are mangled. In order to avoid mangling the name twice we reset the visibility for bridges to internal
-            // functions to public and use the mangled name directly.
-            visibility = bridge.overridden.visibility.takeUnless { it == DescriptorVisibilities.INTERNAL } ?: DescriptorVisibilities.PUBLIC
+            visibility = getBridgeVisibility(bridge)
             name = Name.identifier(bridge.signature.name)
             returnType = bridge.overridden.returnType.eraseTypeParameters()
             isSuspend = bridge.overridden.isSuspend
