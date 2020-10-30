@@ -51,6 +51,7 @@ class FirSpecificTypeResolverTransformer(
                 source = functionTypeRef.source
                 type = resolvedType
                 annotations += functionTypeRef.annotations
+                delegatedTypeRef = functionTypeRef
             }
         } else {
             buildErrorTypeRef {
