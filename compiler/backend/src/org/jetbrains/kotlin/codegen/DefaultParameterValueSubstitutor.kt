@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil.getDispatchReceiverParameterForConstructorCall
+import org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -137,7 +138,7 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
         val generateAsFinal =
             (functionDescriptor.modality == Modality.FINAL ||
                     state.languageVersionSettings.supportsFeature(LanguageFeature.GenerateJvmOverloadsAsFinal)) &&
-                    !isInterface(functionDescriptor.containingDeclaration)
+                    !isJvmInterface(functionDescriptor.containingDeclaration)
         val flags =
             baseMethodFlags or
                     (if (isStatic) Opcodes.ACC_STATIC else 0) or

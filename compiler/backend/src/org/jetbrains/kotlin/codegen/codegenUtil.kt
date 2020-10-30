@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.UnsignedTypes
+import org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
@@ -244,7 +245,7 @@ fun CallableDescriptor.isJvmStaticInObjectOrClassOrInterface(): Boolean =
         DescriptorUtils.isNonCompanionObject(it) ||
                 // This is necessary because for generation of @JvmStatic methods from companion of class A
                 // we create a synthesized descriptor containing in class A
-                DescriptorUtils.isClassOrEnumClass(it) || DescriptorUtils.isInterface(it)
+                DescriptorUtils.isClassOrEnumClass(it) || isJvmInterface(it)
     }
 
 fun CallableDescriptor.isJvmStaticInCompanionObject(): Boolean =

@@ -188,8 +188,7 @@ public class DescriptorAsmUtil {
 
         if (functionDescriptor.getModality() == Modality.FINAL && !(functionDescriptor instanceof ConstructorDescriptor)) {
             DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
-            if (!(containingDeclaration instanceof ClassDescriptor) ||
-                ((ClassDescriptor) containingDeclaration).getKind() != ClassKind.INTERFACE) {
+            if (!isJvmInterface(containingDeclaration)) {
                 flags |= ACC_FINAL;
             }
         }

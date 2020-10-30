@@ -156,7 +156,7 @@ class FunctionCodegen(
                 origin == JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER -> 0
                 origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER -> 0
                 parentAsClass.isInterface && body != null -> 0
-                parentAsClass.isAnnotationClass && !isStatic -> Opcodes.ACC_ABSTRACT
+                parentAsClass.isAnnotationClass -> if (isStatic) 0 else Opcodes.ACC_ABSTRACT
                 else -> Opcodes.ACC_FINAL
             }
             Modality.ABSTRACT -> Opcodes.ACC_ABSTRACT
