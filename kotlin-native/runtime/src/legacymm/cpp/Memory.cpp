@@ -641,6 +641,8 @@ struct MemoryState {
   // A stack of initializing singletons.
   KStdVector<std::pair<ObjHeader**, ObjHeader*>> initializingSingletons;
 
+  bool isMainThread = false;
+
 #if COLLECT_STATISTIC
   #define CONTAINER_ALLOC_STAT(state, size, container) state->statistic.incAlloc(size, container);
   #define CONTAINER_DESTROY_STAT(state, container) \
@@ -2007,6 +2009,7 @@ MemoryState* initMemory() {
 #if USE_CYCLIC_GC
     cyclicInit();
 #endif  // USE_CYCLIC_GC
+    memoryState->isMainThread = true;
   }
   return memoryState;
 }
@@ -3606,6 +3609,11 @@ bool Kotlin_Any_isShareable(KRef thiz) {
 
 void PerformFullGC() {
     garbageCollect(::memoryState, true);
+}
+
+void CheckGlobalsAccessible() {
+    if (!::memoryState->isMainThread)
+        ThrowIncorrectDereferenceException();
 }
 
 } // extern "C"

@@ -69,7 +69,6 @@ KBoolean g_checkLeakedCleaners = KonanNeedDebugInfo;
 constexpr RuntimeState* kInvalidRuntime = nullptr;
 
 THREAD_LOCAL_VARIABLE RuntimeState* runtimeState = kInvalidRuntime;
-THREAD_LOCAL_VARIABLE int isMainThread = 0;
 
 inline bool isValidRuntime() {
   return ::runtimeState != kInvalidRuntime;
@@ -88,7 +87,6 @@ RuntimeState* initRuntime() {
   bool firstRuntime = atomicAdd(&aliveRuntimesCount, 1) == 1;
   // Keep global variables in state as well.
   if (firstRuntime) {
-    isMainThread = 1;
     konan::consoleInit();
 #if KONAN_OBJC_INTEROP
     Kotlin_ObjCExport_initialize();
@@ -149,11 +147,6 @@ void Kotlin_deinitRuntimeIfNeeded() {
     deinitRuntime(::runtimeState);
     ::runtimeState = kInvalidRuntime;
   }
-}
-
-void CheckIsMainThread() {
-  if (!isMainThread)
-    ThrowIncorrectDereferenceException();
 }
 
 KInt Konan_Platform_canAccessUnaligned() {

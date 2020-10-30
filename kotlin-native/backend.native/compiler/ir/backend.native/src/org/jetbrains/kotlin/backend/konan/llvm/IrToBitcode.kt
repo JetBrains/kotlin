@@ -38,8 +38,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 internal enum class FieldStorageKind {
-    MAIN_THREAD,
-    SHARED,
+    GLOBAL, // In the old memory model these are only accessible from the "main" thread.
+    SHARED_FROZEN,
     THREAD_LOCAL
 }
 
@@ -55,12 +55,12 @@ internal val IrField.storageKind: FieldStorageKind get() {
     val annotations = correspondingPropertySymbol?.owner?.annotations ?: annotations
     return when {
         annotations.hasAnnotation(KonanFqNames.threadLocal) -> FieldStorageKind.THREAD_LOCAL
-        !isFinal -> FieldStorageKind.MAIN_THREAD
-        annotations.hasAnnotation(KonanFqNames.sharedImmutable) -> FieldStorageKind.SHARED
+        !isFinal -> FieldStorageKind.GLOBAL
+        annotations.hasAnnotation(KonanFqNames.sharedImmutable) -> FieldStorageKind.SHARED_FROZEN
         // TODO: simplify, once IR types are fully there.
         (type.classifierOrNull?.owner as? IrAnnotationContainer)
-                ?.annotations?.hasAnnotation(KonanFqNames.frozen) == true -> FieldStorageKind.SHARED
-        else -> FieldStorageKind.MAIN_THREAD
+                ?.annotations?.hasAnnotation(KonanFqNames.frozen) == true -> FieldStorageKind.SHARED_FROZEN
+        else -> FieldStorageKind.GLOBAL
     }
 }
 
@@ -71,9 +71,9 @@ internal fun IrClass.storageKind(context: Context): ObjectStorageKind = when {
     else -> ObjectStorageKind.SHARED
 }
 
-val IrField.isMainOnlyNonPrimitive get() = when  {
+val IrField.isGlobalNonPrimitive get() = when  {
         type.computePrimitiveBinaryTypeOrNull() != null -> false
-        else -> storageKind == FieldStorageKind.MAIN_THREAD
+        else -> storageKind == FieldStorageKind.GLOBAL
     }
 
 internal class RTTIGeneratorVisitor(context: Context) : IrElementVisitorVoid {
@@ -423,7 +423,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                                         val address = context.llvmDeclarations.forStaticField(irField).storageAddressAccess.getAddress(
                                                 functionGenerationContext
                                         )
-                                        if (irField.storageKind == FieldStorageKind.SHARED)
+                                        if (irField.storageKind == FieldStorageKind.SHARED_FROZEN)
                                             freeze(initialization, currentCodeContext.exceptionHandler)
                                         storeAny(initialization, address, false)
                                     }
@@ -1573,8 +1573,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             if (value.symbol.owner.correspondingPropertySymbol?.owner?.isConst == true) {
                 evaluateConst(value.symbol.owner.initializer?.expression as IrConst<*>)
             } else {
-                if (context.config.threadsAreAllowed && value.symbol.owner.isMainOnlyNonPrimitive) {
-                    functionGenerationContext.checkMainThread(currentCodeContext.exceptionHandler)
+                if (context.config.threadsAreAllowed && value.symbol.owner.isGlobalNonPrimitive) {
+                    functionGenerationContext.checkGlobalsAccessible(currentCodeContext.exceptionHandler)
                 }
                 val ptr = context.llvmDeclarations.forStaticField(value.symbol.owner).storageAddressAccess.getAddress(
                         functionGenerationContext
@@ -1642,9 +1642,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             val globalAddress = context.llvmDeclarations.forStaticField(value.symbol.owner).storageAddressAccess.getAddress(
                     functionGenerationContext
             )
-            if (context.config.threadsAreAllowed && value.symbol.owner.storageKind == FieldStorageKind.MAIN_THREAD)
-                functionGenerationContext.checkMainThread(currentCodeContext.exceptionHandler)
-            if (value.symbol.owner.storageKind == FieldStorageKind.SHARED)
+            if (context.config.threadsAreAllowed && value.symbol.owner.storageKind == FieldStorageKind.GLOBAL)
+                functionGenerationContext.checkGlobalsAccessible(currentCodeContext.exceptionHandler)
+            if (value.symbol.owner.storageKind == FieldStorageKind.SHARED_FROZEN)
                 functionGenerationContext.freeze(valueToAssign, currentCodeContext.exceptionHandler)
             functionGenerationContext.storeAny(valueToAssign, globalAddress, false)
         }

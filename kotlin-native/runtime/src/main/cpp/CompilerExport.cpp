@@ -41,4 +41,5 @@ void EnsureDeclarationsEmitted() {
     ensureUsed(CheckLifetimesConstraint);
     ensureUsed(FreezeSubgraph);
     ensureUsed(FreezeSubgraph);
+    ensureUsed(CheckGlobalsAccessible);
 }
