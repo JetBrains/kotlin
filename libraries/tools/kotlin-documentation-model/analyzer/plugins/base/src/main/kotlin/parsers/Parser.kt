@@ -8,47 +8,44 @@ abstract class Parser {
 
     abstract fun preparse(text: String): String
 
-    fun parse(text: String): DocumentationNode {
+    open fun parse(text: String): DocumentationNode =
+        DocumentationNode(jkdocToListOfPairs(preparse(text)).map { (tag, content) -> parseTagWithBody(tag, content) })
 
-        val list = jkdocToListOfPairs(preparse(text))
-
-        val mappedList: List<TagWrapper> = list.map {
-            when (it.first) {
-                "description" -> Description(parseStringToDocNode(it.second))
-                "author" -> Author(parseStringToDocNode(it.second))
-                "version" -> Version(parseStringToDocNode(it.second))
-                "since" -> Since(parseStringToDocNode(it.second))
-                "see" -> See(
-                    parseStringToDocNode(it.second.substringAfter(' ')),
-                    it.second.substringBefore(' '),
-                    null
-                )
-                "param" -> Param(
-                    parseStringToDocNode(it.second.substringAfter(' ')),
-                    it.second.substringBefore(' ')
-                )
-                "property" -> Property(
-                    parseStringToDocNode(it.second.substringAfter(' ')),
-                    it.second.substringBefore(' ')
-                )
-                "return" -> Return(parseStringToDocNode(it.second))
-                "constructor" -> Constructor(parseStringToDocNode(it.second))
-                "receiver" -> Receiver(parseStringToDocNode(it.second))
-                "throws", "exception" -> Throws(
-                    parseStringToDocNode(it.second.substringAfter(' ')),
-                    it.second.substringBefore(' ')
-                )
-                "deprecated" -> Deprecated(parseStringToDocNode(it.second))
-                "sample" -> Sample(
-                    parseStringToDocNode(it.second.substringAfter(' ')),
-                    it.second.substringBefore(' ')
-                )
-                "suppress" -> Suppress(parseStringToDocNode(it.second))
-                else -> CustomTagWrapper(parseStringToDocNode(it.second), it.first)
-            }
+    open fun parseTagWithBody(tagName: String, content: String): TagWrapper =
+        when (tagName) {
+            "description" -> Description(parseStringToDocNode(content))
+            "author" -> Author(parseStringToDocNode(content))
+            "version" -> Version(parseStringToDocNode(content))
+            "since" -> Since(parseStringToDocNode(content))
+            "see" -> See(
+                parseStringToDocNode(content.substringAfter(' ')),
+                content.substringBefore(' '),
+                null
+            )
+            "param" -> Param(
+                parseStringToDocNode(content.substringAfter(' ')),
+                content.substringBefore(' ')
+            )
+            "property" -> Property(
+                parseStringToDocNode(content.substringAfter(' ')),
+                content.substringBefore(' ')
+            )
+            "return" -> Return(parseStringToDocNode(content))
+            "constructor" -> Constructor(parseStringToDocNode(content))
+            "receiver" -> Receiver(parseStringToDocNode(content))
+            "throws", "exception" -> Throws(
+                parseStringToDocNode(content.substringAfter(' ')),
+                content.substringBefore(' '),
+                null
+            )
+            "deprecated" -> Deprecated(parseStringToDocNode(content))
+            "sample" -> Sample(
+                parseStringToDocNode(content.substringAfter(' ')),
+                content.substringBefore(' ')
+            )
+            "suppress" -> Suppress(parseStringToDocNode(content))
+            else -> CustomTagWrapper(parseStringToDocNode(content), tagName)
         }
-        return DocumentationNode(mappedList)
-    }
 
     private fun jkdocToListOfPairs(javadoc: String): List<Pair<String, String>> =
         "description $javadoc"
