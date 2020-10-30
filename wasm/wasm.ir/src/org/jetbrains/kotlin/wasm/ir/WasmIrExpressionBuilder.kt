@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.wasm.ir
 
 class WasmIrExpressionBuilder(
     val expression: MutableList<WasmInstr>
-) : WasmExpressionBuilder {
+) : WasmExpressionBuilder() {
 
     override fun buildInstr(op: WasmOp, vararg immediates: WasmImmediate) {
         expression.add(WasmInstr(op, immediates.toList()))

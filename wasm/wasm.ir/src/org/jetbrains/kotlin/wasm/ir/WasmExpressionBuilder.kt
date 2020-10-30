@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.wasm.ir
 
-interface WasmExpressionBuilder {
-    fun buildInstr(op: WasmOp, vararg immediates: WasmImmediate)
-    var numberOfNestedBlocks: Int
+abstract class WasmExpressionBuilder {
+    abstract fun buildInstr(op: WasmOp, vararg immediates: WasmImmediate)
+    abstract var numberOfNestedBlocks: Int
 
     fun buildConstI32(value: Int) {
         buildInstr(WasmOp.I32_CONST, WasmImmediate.ConstI32(value))
