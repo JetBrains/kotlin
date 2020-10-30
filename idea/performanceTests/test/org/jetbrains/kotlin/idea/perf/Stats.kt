@@ -165,6 +165,7 @@ class Stats(
         statInfoArray: Array<StatInfos>,
         printOnlyErrors: Boolean = false,
         metricChildren: MutableList<Metric>,
+        warmUp: Boolean = false,
         attemptFn: (Int) -> String = { attempt -> "#$attempt" }
     ) {
         for (statInfoIndex in statInfoArray.withIndex()) {
@@ -191,7 +192,15 @@ class Stats(
                         }
                     }
                 }
-                metricChildren.add(Metric(attemptString, metricValue = durationMs, metrics = childrenMetrics))
+                metricChildren.add(
+                    Metric(
+                        metricName = attemptString,
+                        index = attempt,
+                        warmUp = if (warmUp) true else null,
+                        metricValue = durationMs,
+                        metrics = childrenMetrics
+                    )
+                )
             }
         }
     }
@@ -200,7 +209,7 @@ class Stats(
         prefix: String,
         warmUpStatInfosArray: Array<StatInfos>,
         metricChildren: MutableList<Metric>
-    ) = convertStatInfoIntoMetrics(prefix, warmUpStatInfosArray, metricChildren = metricChildren) { attempt -> "warm-up #$attempt" }
+    ) = convertStatInfoIntoMetrics(prefix, warmUpStatInfosArray, warmUp = true, metricChildren = metricChildren) { attempt -> "warm-up #$attempt" }
 
     fun processTimings(
         prefix: String,
@@ -224,6 +233,7 @@ class Stats(
                 phaseData.testName,
                 printOnlyErrors = true,
                 statInfoArray = warmUpStatInfosArray,
+                warmUp = true,
                 metricChildren = metricChildren
             ) { attempt -> "warm-up #$attempt" }
         }
@@ -376,36 +386,39 @@ class Stats(
                     metrics = it.metrics ?: emptyList()
                 )
 
-                if (benchmark.name == "ParameterNameAndType - TypeParameter") {
-                    println(benchmark)
-                }
-
                 benchmark.writeJson()
 
-                with(
-                    Benchmark(
-                        agentName = agentName,
-                        buildBranch = buildBranch,
-                        buildId = buildId,
-                        benchmark = name,
-                        synthetic = true,
-                        name = "geomMean",
-                        buildTimestamp = simpleDateFormat.format(Date())
-                    )
-                ) {
-                    loadJson()
-                    merge(benchmark)
-
-                    if (benchmark.name == "ParameterNameAndType - TypeParameter") {
-                        println(this)
-                    }
-                    writeJson()
-                }
+                //rebuildGeomMean(agentName, buildBranch, buildId, simpleDateFormat, benchmark)
             }
         } finally {
             metric = null
         }
         //metrics.writeCSV(name, header)
+    }
+
+    private fun rebuildGeomMean(
+        agentName: String?,
+        buildBranch: String?,
+        buildId: Int?,
+        simpleDateFormat: SimpleDateFormat,
+        benchmark: Benchmark
+    ) {
+        with(
+            Benchmark(
+                agentName = agentName,
+                buildBranch = buildBranch,
+                buildId = buildId,
+                benchmark = name,
+                synthetic = true,
+                name = "geomMean",
+                buildTimestamp = simpleDateFormat.format(Date())
+            )
+        ) {
+            loadJson()
+            merge(benchmark)
+
+            writeJson()
+        }
     }
 
     companion object {

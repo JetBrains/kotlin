@@ -781,9 +781,10 @@ tasks {
     }
 
     register("idea-plugin-performance-tests") {
-        dependsOn("dist")
         dependsOn(
-            ":idea:performanceTests:performanceTest"
+            "dist",
+            ":idea:performanceTests:performanceTest",
+            ":idea:performanceTests:aggregateResults"
         )
     }
 
