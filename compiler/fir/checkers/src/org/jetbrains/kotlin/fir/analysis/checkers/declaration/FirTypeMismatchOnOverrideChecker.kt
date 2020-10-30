@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
@@ -179,14 +180,26 @@ object FirTypeMismatchOnOverrideChecker : FirRegularClassChecker() {
     }
 
     private fun DiagnosticReporter.reportMismatchOnFunction(source: FirSourceElement?, type: String, declaration: FirMemberDeclaration) {
-        source?.let { report(FirErrors.RETURN_TYPE_MISMATCH_ON_OVERRIDE.on(it, type, declaration)) }
+        source?.let {
+            if (it.kind !is FirFakeSourceElementKind) {
+                report(FirErrors.RETURN_TYPE_MISMATCH_ON_OVERRIDE.on(it, type, declaration))
+            }
+        }
     }
 
     private fun DiagnosticReporter.reportMismatchOnProperty(source: FirSourceElement?, type: String, declaration: FirMemberDeclaration) {
-        source?.let { report(FirErrors.PROPERTY_TYPE_MISMATCH_ON_OVERRIDE.on(it, type, declaration)) }
+        source?.let {
+            if (it.kind !is FirFakeSourceElementKind) {
+                report(FirErrors.PROPERTY_TYPE_MISMATCH_ON_OVERRIDE.on(it, type, declaration))
+            }
+        }
     }
 
     private fun DiagnosticReporter.reportMismatchOnVariable(source: FirSourceElement?, type: String, declaration: FirMemberDeclaration) {
-        source?.let { report(FirErrors.VAR_TYPE_MISMATCH_ON_OVERRIDE.on(it, type, declaration)) }
+        source?.let {
+            if (it.kind !is FirFakeSourceElementKind) {
+                report(FirErrors.VAR_TYPE_MISMATCH_ON_OVERRIDE.on(it, type, declaration))
+            }
+        }
     }
 }
