@@ -29,7 +29,7 @@ class FirObjectImportedCallableScope(
             val function = symbol.fir
             val syntheticFunction = buildSimpleFunctionCopy(function) {
                 origin = FirDeclarationOrigin.ImportedFromObject
-                this.symbol = FirNamedFunctionSymbol(CallableId(importedClassId, name), overriddenSymbol = symbol)
+                this.symbol = FirNamedFunctionSymbol(CallableId(importedClassId, name))
             }.apply {
                 importedFromObjectData = ImportedFromObjectData(importedClassId, function)
             }
@@ -46,7 +46,7 @@ class FirObjectImportedCallableScope(
             val property = symbol.fir
             val syntheticFunction = buildPropertyCopy(property) {
                 origin = FirDeclarationOrigin.ImportedFromObject
-                this.symbol = FirPropertySymbol(CallableId(importedClassId, name), overriddenSymbol = symbol)
+                this.symbol = FirPropertySymbol(CallableId(importedClassId, name))
                 this.delegateFieldSymbol = null
             }.apply {
                 importedFromObjectData = ImportedFromObjectData(importedClassId, property)
