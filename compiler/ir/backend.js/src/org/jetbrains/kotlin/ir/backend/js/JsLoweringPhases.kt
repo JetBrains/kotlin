@@ -272,7 +272,6 @@ private val enumClassConstructorBodyLoweringPhase = makeBodyLoweringPhase(
     description = "Transform Enum Class into regular Class"
 )
 
-
 private val enumEntryInstancesLoweringPhase = makeDeclarationTransformerPhase(
     ::EnumEntryInstancesLowering,
     name = "EnumEntryInstancesLowering",
@@ -647,6 +646,13 @@ private val objectDeclarationLoweringPhase = makeDeclarationTransformerPhase(
     description = "Create lazy object instance generator functions"
 )
 
+private val invokeStaticInitializersPhase = makeBodyLoweringPhase(
+    ::InvokeStaticInitializersLowering,
+    name = "IntroduceStaticInitializersLowering",
+    description = "Invoke companion object's initializers from companion object in object constructor",
+    prerequisite = setOf(objectDeclarationLoweringPhase)
+)
+
 private val objectUsageLoweringPhase = makeBodyLoweringPhase(
     ::ObjectUsageLowering,
     name = "ObjectUsageLowering",
@@ -742,6 +748,7 @@ val loweringList = listOf<Lowering>(
     blockDecomposerLoweringPhase,
     constLoweringPhase,
     objectDeclarationLoweringPhase,
+    invokeStaticInitializersPhase,
     objectUsageLoweringPhase,
     captureStackTraceInThrowablesPhase,
     callsLoweringPhase,
