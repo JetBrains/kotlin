@@ -232,7 +232,7 @@ private fun prepareSubstitutingScopeForTypeAliasConstructors(
     typeAliasSymbol: FirTypeAliasSymbol,
     session: FirSession,
     delegatingScope: FirScope
-): FirScope? {
+): FirScope {
     val copyFactory2: ConstructorCopyFactory<FirConstructor> = factory@{ newReturnType, newParameterTypes, newTypeParameters ->
         buildConstructor {
             source = this@factory.source
@@ -329,7 +329,9 @@ private fun prepareCopyConstructorForTypealiasNestedClass(
                 val extCopy = buildConstructorCopy(originalSymbol.fir) {
                     origin = FirDeclarationOrigin.Synthetic
                     receiverTypeRef = innerTypeRef.withReplacedConeType(outerType)
-                    symbol = FirConstructorSymbol(originalSymbol.callableId, overriddenSymbol = originalSymbol)
+                    symbol = FirConstructorSymbol(originalSymbol.callableId)
+                }.apply {
+                    originalConstructorIfTypeAlias = originalSymbol.fir
                 }
                 return extCopy.symbol
             }
@@ -337,3 +339,6 @@ private fun prepareCopyConstructorForTypealiasNestedClass(
     }
     return null
 }
+
+private object TypeAliasConstructorKey : FirDeclarationDataKey()
+var FirConstructor.originalConstructorIfTypeAlias: FirConstructor? by FirDeclarationDataRegistry.data(TypeAliasConstructorKey)

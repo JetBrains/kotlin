@@ -225,6 +225,11 @@ internal tailrec fun FirCallableSymbol<*>.unwrapSubstitutionAndIntersectionOverr
 }
 
 internal tailrec fun FirCallableSymbol<*>.unwrapCallRepresentative(root: FirCallableSymbol<*> = this): FirCallableSymbol<*> {
+    val fir = fir
+    if (fir is FirConstructor) {
+        val originalForTypeAlias = fir.originalConstructorIfTypeAlias
+        if (originalForTypeAlias != null) return originalForTypeAlias.symbol.unwrapCallRepresentative(this)
+    }
     if (fir.isIntersectionOverride) return this
 
     val overriddenSymbol = fir.originalForSubstitutionOverride?.takeIf {
