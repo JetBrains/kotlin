@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.FirTransformerProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
-import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.withReadLock
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSourcesSession
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.ktDeclaration
 import org.jetbrains.kotlin.idea.util.getElementTextInContext

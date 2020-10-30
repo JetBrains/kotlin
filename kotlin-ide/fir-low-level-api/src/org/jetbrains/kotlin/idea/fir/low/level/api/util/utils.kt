@@ -32,7 +32,7 @@ internal inline fun <T : Any> executeWithoutPCE(crossinline action: () -> T): T 
     return result!!
 }
 
-internal inline fun <T : Any> Lock.lockWithPCECheck(lockingIntervalMs: Long, action: () -> T): T {
+internal inline fun <T> Lock.lockWithPCECheck(lockingIntervalMs: Long, action: () -> T): T {
     var needToRun = true
     var result: T? = null
     while (needToRun) {

@@ -51,7 +51,7 @@ internal abstract class ModuleFileCache {
 
     abstract fun getCachedFirFile(ktFile: KtFile): FirFile?
 
-    abstract val firFileLockProvider: LockProvider<FirFile, ReentrantReadWriteLock>
+    abstract val firFileLockProvider: LockProvider<FirFile>
 
     inline fun <D : FirDeclaration, R> withReadLockOn(declaration: D, action: (D) -> R): R {
         val file = getContainerFirFile(declaration)
@@ -76,5 +76,5 @@ internal class ModuleFileCacheImpl(override val session: FirSession) : ModuleFil
         return getCachedFirFile(ktFile)
     }
 
-    override val firFileLockProvider: LockProvider<FirFile, ReentrantReadWriteLock> = LockProvider { ReentrantReadWriteLock() }
+    override val firFileLockProvider: LockProvider<FirFile> = LockProvider()
 }
