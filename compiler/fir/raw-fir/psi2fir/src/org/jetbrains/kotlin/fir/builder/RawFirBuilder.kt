@@ -76,7 +76,7 @@ class RawFirBuilder(
     }
 
     private fun buildDeclaration(declaration: KtDeclaration): FirDeclaration {
-        assert(mode ==  RawFirBuilderMode.NORMAL) { "Building FIR declarations isn't supported in stub or lazy mode mode" }
+        assert(mode == RawFirBuilderMode.NORMAL) { "Building FIR declarations isn't supported in stub or lazy mode mode" }
         setupContextForPosition(declaration)
         return declaration.accept(Visitor(), Unit) as FirDeclaration
     }
@@ -175,10 +175,15 @@ class RawFirBuilder(
         private inline fun <reified R : FirElement> KtElement.convert(): R =
             this.accept(this@Visitor, Unit) as R
 
-        private fun KtTypeReference?.toFirOrImplicitType(): FirTypeRef =
-            convertSafe() ?: buildImplicitTypeRef {
-                source = this@toFirOrImplicitType?.toFirSourceElement(FirFakeSourceElementKind.ImplicitTypeRef)
+        private fun KtTypeReference?.toFirOrImplicitType(
+            targetDeclaration: KtDeclaration? = null,
+            knownSource: FirSourceElement? = null
+        ): FirTypeRef {
+            val psiElement = this@toFirOrImplicitType ?: targetDeclaration
+            return convertSafe() ?: buildImplicitTypeRef {
+                source = knownSource ?: psiElement?.toFirSourceElement(FirFakeSourceElementKind.ImplicitTypeRef)
             }
+        }
 
         private fun KtTypeReference?.toFirOrUnitType(): FirTypeRef =
             convertSafe() ?: implicitUnitType
@@ -393,14 +398,15 @@ class RawFirBuilder(
 
         private fun KtParameter.toFirValueParameter(defaultTypeRef: FirTypeRef? = null): FirValueParameter {
             val name = nameAsSafeName
+            val theSource = toFirSourceElement()
             return buildValueParameter {
-                source = toFirSourceElement()
+                source = theSource
                 session = baseSession
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = when {
                     typeReference != null -> typeReference.toFirOrErrorType()
                     defaultTypeRef != null -> defaultTypeRef
-                    else -> null.toFirOrImplicitType()
+                    else -> null.toFirOrImplicitType(this@toFirValueParameter)
                 }
                 this.name = name
                 symbol = FirVariableSymbol(name)
@@ -885,7 +891,7 @@ class RawFirBuilder(
                                     // just making a shallow copy isn't enough type ref may be a function type ref
                                     // and contain value parameters inside
                                     withDefaultSourceElementKind(newKind) {
-                                        (property.returnTypeRef.psi as KtTypeReference).toFirOrImplicitType()
+                                        (property.returnTypeRef.psi as KtTypeReference).toFirOrImplicitType(knownSource = property.source)
                                     }
                                 },
                             ).generate()
@@ -970,7 +976,7 @@ class RawFirBuilder(
             val returnType = if (function.hasBlockBody()) {
                 typeReference.toFirOrUnitType()
             } else {
-                typeReference.toFirOrImplicitType()
+                typeReference.toFirOrImplicitType(function)
             }
             val receiverType = function.receiverTypeReference.convertSafe<FirTypeRef>()
 
@@ -1101,7 +1107,7 @@ class RawFirBuilder(
                             multiParameter,
                             tmpVariable = false,
                             extractAnnotationsTo = { extractAnnotationsTo(it) },
-                        ) { toFirOrImplicitType() }
+                        ) { toFirOrImplicitType(valueParameter) }
                         multiParameter
                     } else {
                         val typeRef = buildImplicitTypeRef {
@@ -1215,7 +1221,7 @@ class RawFirBuilder(
         }
 
         private fun KtProperty.toFirProperty(ownerClassBuilder: FirClassBuilder?): FirProperty {
-            val propertyType = typeReference.toFirOrImplicitType()
+            val propertyType = typeReference.toFirOrImplicitType(this)
             val propertyName = nameAsSafeName
             val isVar = isVar
             val propertyInitializer = when {
@@ -1573,7 +1579,7 @@ class RawFirBuilder(
                         source = ktSubjectExpression.toFirSourceElement()
                         session = baseSession
                         origin = FirDeclarationOrigin.Source
-                        returnTypeRef = ktSubjectExpression.typeReference.toFirOrImplicitType()
+                        returnTypeRef = ktSubjectExpression.typeReference.toFirOrImplicitType(ktSubjectExpression)
                         receiverTypeRef = null
                         this.name = name
                         initializer = subjectExpression
@@ -1698,7 +1704,7 @@ class RawFirBuilder(
                                 }
                                 explicitReceiver = generateResolvedAccessExpression(fakeSource, iteratorVal)
                             },
-                            typeRef = ktParameter.typeReference.toFirOrImplicitType(),
+                            typeRef = ktParameter.typeReference.toFirOrImplicitType(ktParameter),
                         )
                         if (multiDeclaration != null) {
                             val destructuringBlock = generateDestructuringBlock(
@@ -1707,7 +1713,7 @@ class RawFirBuilder(
                                 container = firLoopParameter,
                                 tmpVariable = true,
                                 extractAnnotationsTo = { extractAnnotationsTo(it) },
-                            ) { toFirOrImplicitType() }
+                            ) { toFirOrImplicitType(multiDeclaration) }
                             if (destructuringBlock is FirBlock) {
                                 for ((index, statement) in destructuringBlock.statements.withIndex()) {
                                     blockBuilder.statements.add(index, statement)
@@ -1994,7 +2000,7 @@ class RawFirBuilder(
                 calleeReference = buildExplicitSuperReference {
                     source = theSource.fakeElement(FirFakeSourceElementKind.ExplicitThisOrSuperReference)
                     labelName = expression.getLabelName()
-                    superTypeRef = superType.toFirOrImplicitType()
+                    superTypeRef = superType.toFirOrImplicitType(knownSource = theSource)
                 }
             }
         }
@@ -2058,7 +2064,7 @@ class RawFirBuilder(
                 tmpVariable = true,
                 extractAnnotationsTo = { extractAnnotationsTo(it) },
             ) {
-                toFirOrImplicitType()
+                toFirOrImplicitType(multiDeclaration)
             }
         }
 

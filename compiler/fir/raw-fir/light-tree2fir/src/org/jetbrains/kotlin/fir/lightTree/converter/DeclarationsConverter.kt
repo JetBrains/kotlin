@@ -916,7 +916,7 @@ class DeclarationsConverter(
         var delegateExpression: LighterASTNode? = null
         var isVar = false
         var receiverType: FirTypeRef? = null
-        var returnType: FirTypeRef = implicitType
+        var returnType: FirTypeRef = property.toFirImplicitType()
         val typeConstraints = mutableListOf<TypeConstraint>()
         val accessors = mutableListOf<LighterASTNode>()
         var propertyInitializer: FirExpression? = null
@@ -1077,7 +1077,7 @@ class DeclarationsConverter(
             source = entry.toFirSourceElement()
             session = baseSession
             origin = FirDeclarationOrigin.Source
-            returnTypeRef = firType ?: implicitType
+            returnTypeRef = firType ?: entry.toFirImplicitType()
             this.name = name
             isVar = false
             symbol = FirPropertySymbol(name)
@@ -1221,7 +1221,7 @@ class DeclarationsConverter(
             source = setterParameter.toFirSourceElement()
             session = baseSession
             origin = FirDeclarationOrigin.Source
-            returnTypeRef = if (firValueParameter.returnTypeRef == implicitType) propertyTypeRef else firValueParameter.returnTypeRef
+            returnTypeRef = if (firValueParameter.returnTypeRef is FirImplicitTypeRef) propertyTypeRef else firValueParameter.returnTypeRef
             name = firValueParameter.name
             symbol = FirVariableSymbol(firValueParameter.name)
             defaultValue = firValueParameter.defaultValue
@@ -1269,7 +1269,7 @@ class DeclarationsConverter(
         if (returnType == null) {
             returnType =
                 if (block != null || !hasEqToken) implicitUnitType
-                else implicitType
+                else functionDeclaration.toFirImplicitType()
         }
 
         val parentNode = functionDeclaration.getParent()
@@ -1466,7 +1466,7 @@ class DeclarationsConverter(
      *   ;
      */
     private fun convertConstructorInvocation(constructorInvocation: LighterASTNode): Pair<FirTypeRef, List<FirExpression>> {
-        var firTypeRef: FirTypeRef = implicitType
+        var firTypeRef: FirTypeRef = constructorInvocation.toFirImplicitType()
         val firValueArguments = mutableListOf<FirExpression>()
         constructorInvocation.forEachChildren {
             when (it.tokenType) {
@@ -1815,7 +1815,7 @@ class DeclarationsConverter(
             source = valueParameter.toFirSourceElement()
             session = baseSession
             origin = FirDeclarationOrigin.Source
-            returnTypeRef = firType ?: implicitType
+            returnTypeRef = firType ?: valueParameter.toFirImplicitType()
             this.name = name
             symbol = FirVariableSymbol(name)
             defaultValue = firExpression

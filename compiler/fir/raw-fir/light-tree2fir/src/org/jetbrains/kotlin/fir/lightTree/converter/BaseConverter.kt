@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.BaseFirBuilder
 import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.builder.escapedStringToCharacter
+import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
@@ -27,7 +28,10 @@ open class BaseConverter(
     val offset: Int,
     context: Context<LighterASTNode> = Context()
 ) : BaseFirBuilder<LighterASTNode>(baseSession, context) {
-    protected val implicitType = buildImplicitTypeRef()
+    protected fun LighterASTNode.toFirImplicitType(): FirImplicitTypeRef =
+        buildImplicitTypeRef {
+            source = toFirSourceElement(FirFakeSourceElementKind.ImplicitTypeRef)
+        }
 
     override fun LighterASTNode.toFirSourceElement(kind: FirFakeSourceElementKind?): FirLightSourceElement {
         val startOffset = offset + tree.getStartOffset(this)

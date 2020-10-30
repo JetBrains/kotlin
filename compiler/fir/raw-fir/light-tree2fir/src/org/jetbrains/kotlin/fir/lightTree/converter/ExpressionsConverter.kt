@@ -130,6 +130,7 @@ class ExpressionsConverter(
 
         val expressionSource = lambdaExpression.toFirSourceElement()
         val target: FirFunctionTarget
+        val implicitType = lambdaExpression.toFirImplicitType()
         return buildAnonymousFunction {
             source = expressionSource
             session = baseSession
@@ -1167,7 +1168,7 @@ class ExpressionsConverter(
      */
     private fun convertSuperExpression(superExpression: LighterASTNode): FirQualifiedAccessExpression {
         val label: String? = superExpression.getLabelName()
-        var superTypeRef: FirTypeRef = implicitType
+        var superTypeRef: FirTypeRef = superExpression.toFirImplicitType()
         superExpression.forEachChildren {
             when (it.tokenType) {
                 TYPE_REFERENCE -> superTypeRef = declarationsConverter.convertType(it)
