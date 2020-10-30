@@ -362,7 +362,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
     private fun mapOverriddenSpecialBuiltinIfNeeded(caller: IrFunction, callee: IrFunction, superCall: Boolean): JvmMethodSignature? {
         // Do not remap special builtin methods when called from a bridge. The bridges are there to provide the
         // remapped name or signature and forward to the actually declared method.
-        if (caller.origin == IrDeclarationOrigin.BRIDGE || caller.origin == IrDeclarationOrigin.BRIDGE_SPECIAL) return null
+        if (caller.isBridge()) return null
         // Do not remap calls to static replacements of inline class methods, since they have completely different signatures.
         if (callee.isStaticInlineClassReplacement) return null
         val overriddenSpecialBuiltinFunction =

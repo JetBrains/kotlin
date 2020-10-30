@@ -179,6 +179,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         runTest("compiler/testData/codegen/bytecodeListing/samAdapterAndInlinedOne.kt");
     }
 
+    @TestMetadata("varargsBridge.kt")
+    public void testVarargsBridge() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/varargsBridge.kt");
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeListing/annotations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
