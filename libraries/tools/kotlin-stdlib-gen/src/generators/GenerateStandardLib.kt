@@ -66,6 +66,7 @@ fun main(args: Array<String>) {
         val targetDir = targetBaseDirs[target] ?: error("Target $target directory is not configured")
         val platformSuffix = when (val platform = target.platform) {
             Platform.Common -> ""
+            Platform.Native -> if (target.backend == Backend.Wasm) "Wasm" else "Native"
             else -> platform.name.toLowerCase().capitalize()
         }
         targetDir.resolve("_${source.name.capitalize()}$platformSuffix.kt")

@@ -149,11 +149,9 @@ class MemberBuilder(
     }
 
 
-    fun on(vararg platforms: Platform, action: () -> Unit) {
-        for (platform in platforms) {
-            require(platform in allowedPlatforms) { "Platform $platform is not in the list of allowed platforms $allowedPlatforms" }
-        }
-        if (target.platform in platforms)
+    fun on(platform: Platform, action: () -> Unit) {
+        require(platform in allowedPlatforms) { "Platform $platform is not in the list of allowed platforms $allowedPlatforms" }
+        if (target.platform == platform)
             action()
         else {
             hasPlatformSpecializations = true
@@ -161,7 +159,7 @@ class MemberBuilder(
     }
 
     fun on(backend: Backend, action: () -> Unit) {
-        require(target.platform == Platform.JS)
+        require(target.platform == Platform.JS || target.platform == Platform.Native)
         if (target.backend == backend) action()
     }
 

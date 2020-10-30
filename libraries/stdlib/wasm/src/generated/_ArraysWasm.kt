@@ -1015,9 +1015,9 @@ public actual fun CharArray?.contentToString(): String {
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
-@kotlin.internal.InlineOnly
-public actual inline fun <T> Array<out T>.copyInto(destination: Array<T>, destinationOffset: Int, startIndex: Int, endIndex: Int): Array<T> {
-    TODO("Wasm stdlib: copyInto(destination: Array<T>, destinationOffset: Int, startIndex: Int, endIndex: Int)")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun <T> Array<out T>.copyInto(destination: Array<T>, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): Array<T> {
+    TODO("Wasm stdlib: copyInto(destination: Array<T>, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size)")
 }
 
 /**
@@ -1037,9 +1037,9 @@ public actual inline fun <T> Array<out T>.copyInto(destination: Array<T>, destin
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
-@kotlin.internal.InlineOnly
-public actual inline fun ByteArray.copyInto(destination: ByteArray, destinationOffset: Int, startIndex: Int, endIndex: Int): ByteArray {
-    TODO("Wasm stdlib: copyInto(destination: ByteArray, destinationOffset: Int, startIndex: Int, endIndex: Int)")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun ByteArray.copyInto(destination: ByteArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): ByteArray {
+    TODO("Wasm stdlib: copyInto(destination: ByteArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size)")
 }
 
 /**
@@ -1059,9 +1059,9 @@ public actual inline fun ByteArray.copyInto(destination: ByteArray, destinationO
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
-@kotlin.internal.InlineOnly
-public actual inline fun ShortArray.copyInto(destination: ShortArray, destinationOffset: Int, startIndex: Int, endIndex: Int): ShortArray {
-    TODO("Wasm stdlib: copyInto(destination: ShortArray, destinationOffset: Int, startIndex: Int, endIndex: Int)")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun ShortArray.copyInto(destination: ShortArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): ShortArray {
+    TODO("Wasm stdlib: copyInto(destination: ShortArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size)")
 }
 
 /**
@@ -1081,9 +1081,9 @@ public actual inline fun ShortArray.copyInto(destination: ShortArray, destinatio
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
-@kotlin.internal.InlineOnly
-public actual inline fun IntArray.copyInto(destination: IntArray, destinationOffset: Int, startIndex: Int, endIndex: Int): IntArray {
-    TODO("Wasm stdlib: copyInto(destination: IntArray, destinationOffset: Int, startIndex: Int, endIndex: Int)")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun IntArray.copyInto(destination: IntArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): IntArray {
+    TODO("Wasm stdlib: copyInto(destination: IntArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size)")
 }
 
 /**
@@ -1103,9 +1103,9 @@ public actual inline fun IntArray.copyInto(destination: IntArray, destinationOff
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
-@kotlin.internal.InlineOnly
-public actual inline fun LongArray.copyInto(destination: LongArray, destinationOffset: Int, startIndex: Int, endIndex: Int): LongArray {
-    TODO("Wasm stdlib: copyInto(destination: LongArray, destinationOffset: Int, startIndex: Int, endIndex: Int)")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun LongArray.copyInto(destination: LongArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): LongArray {
+    TODO("Wasm stdlib: copyInto(destination: LongArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size)")
 }
 
 /**
@@ -1125,9 +1125,9 @@ public actual inline fun LongArray.copyInto(destination: LongArray, destinationO
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
-@kotlin.internal.InlineOnly
-public actual inline fun FloatArray.copyInto(destination: FloatArray, destinationOffset: Int, startIndex: Int, endIndex: Int): FloatArray {
-    TODO("Wasm stdlib: copyInto(destination: FloatArray, destinationOffset: Int, startIndex: Int, endIndex: Int)")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun FloatArray.copyInto(destination: FloatArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): FloatArray {
+    TODO("Wasm stdlib: copyInto(destination: FloatArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size)")
 }
 
 /**
@@ -1147,9 +1147,9 @@ public actual inline fun FloatArray.copyInto(destination: FloatArray, destinatio
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
-@kotlin.internal.InlineOnly
-public actual inline fun DoubleArray.copyInto(destination: DoubleArray, destinationOffset: Int, startIndex: Int, endIndex: Int): DoubleArray {
-    TODO("Wasm stdlib: copyInto(destination: DoubleArray, destinationOffset: Int, startIndex: Int, endIndex: Int)")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun DoubleArray.copyInto(destination: DoubleArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): DoubleArray {
+    TODO("Wasm stdlib: copyInto(destination: DoubleArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size)")
 }
 
 /**
@@ -1169,9 +1169,9 @@ public actual inline fun DoubleArray.copyInto(destination: DoubleArray, destinat
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
-@kotlin.internal.InlineOnly
-public actual inline fun BooleanArray.copyInto(destination: BooleanArray, destinationOffset: Int, startIndex: Int, endIndex: Int): BooleanArray {
-    TODO("Wasm stdlib: copyInto(destination: BooleanArray, destinationOffset: Int, startIndex: Int, endIndex: Int)")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun BooleanArray.copyInto(destination: BooleanArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): BooleanArray {
+    TODO("Wasm stdlib: copyInto(destination: BooleanArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size)")
 }
 
 /**
@@ -1191,9 +1191,9 @@ public actual inline fun BooleanArray.copyInto(destination: BooleanArray, destin
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
-@kotlin.internal.InlineOnly
-public actual inline fun CharArray.copyInto(destination: CharArray, destinationOffset: Int, startIndex: Int, endIndex: Int): CharArray {
-    TODO("Wasm stdlib: copyInto(destination: CharArray, destinationOffset: Int, startIndex: Int, endIndex: Int)")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun CharArray.copyInto(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): CharArray {
+    TODO("Wasm stdlib: copyInto(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size)")
 }
 
 /**
@@ -1202,7 +1202,7 @@ public actual inline fun CharArray.copyInto(destination: CharArray, destinationO
  * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
 public actual fun <T> Array<T>.copyOf(): Array<T> {
-    TODO("Wasm stdlib: copyOf()")
+    return this.copyOfUninitializedElements(size)
 }
 
 /**
@@ -1211,7 +1211,7 @@ public actual fun <T> Array<T>.copyOf(): Array<T> {
  * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
 public actual fun ByteArray.copyOf(): ByteArray {
-    TODO("Wasm stdlib: copyOf()")
+    return this.copyOfUninitializedElements(size)
 }
 
 /**
@@ -1220,7 +1220,7 @@ public actual fun ByteArray.copyOf(): ByteArray {
  * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
 public actual fun ShortArray.copyOf(): ShortArray {
-    TODO("Wasm stdlib: copyOf()")
+    return this.copyOfUninitializedElements(size)
 }
 
 /**
@@ -1229,7 +1229,7 @@ public actual fun ShortArray.copyOf(): ShortArray {
  * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
 public actual fun IntArray.copyOf(): IntArray {
-    TODO("Wasm stdlib: copyOf()")
+    return this.copyOfUninitializedElements(size)
 }
 
 /**
@@ -1238,7 +1238,7 @@ public actual fun IntArray.copyOf(): IntArray {
  * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
 public actual fun LongArray.copyOf(): LongArray {
-    TODO("Wasm stdlib: copyOf()")
+    return this.copyOfUninitializedElements(size)
 }
 
 /**
@@ -1247,7 +1247,7 @@ public actual fun LongArray.copyOf(): LongArray {
  * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
 public actual fun FloatArray.copyOf(): FloatArray {
-    TODO("Wasm stdlib: copyOf()")
+    return this.copyOfUninitializedElements(size)
 }
 
 /**
@@ -1256,7 +1256,7 @@ public actual fun FloatArray.copyOf(): FloatArray {
  * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
 public actual fun DoubleArray.copyOf(): DoubleArray {
-    TODO("Wasm stdlib: copyOf()")
+    return this.copyOfUninitializedElements(size)
 }
 
 /**
@@ -1265,7 +1265,7 @@ public actual fun DoubleArray.copyOf(): DoubleArray {
  * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
 public actual fun BooleanArray.copyOf(): BooleanArray {
-    TODO("Wasm stdlib: copyOf()")
+    return this.copyOfUninitializedElements(size)
 }
 
 /**
@@ -1274,7 +1274,7 @@ public actual fun BooleanArray.copyOf(): BooleanArray {
  * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
 public actual fun CharArray.copyOf(): CharArray {
-    TODO("Wasm stdlib: copyOf()")
+    return this.copyOfUninitializedElements(size)
 }
 
 /**
@@ -1287,7 +1287,7 @@ public actual fun CharArray.copyOf(): CharArray {
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun ByteArray.copyOf(newSize: Int): ByteArray {
-    TODO("Wasm stdlib: copyOf(newSize: Int)")
+    return this.copyOfUninitializedElements(newSize)
 }
 
 /**
@@ -1300,7 +1300,7 @@ public actual fun ByteArray.copyOf(newSize: Int): ByteArray {
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun ShortArray.copyOf(newSize: Int): ShortArray {
-    TODO("Wasm stdlib: copyOf(newSize: Int)")
+    return this.copyOfUninitializedElements(newSize)
 }
 
 /**
@@ -1313,7 +1313,7 @@ public actual fun ShortArray.copyOf(newSize: Int): ShortArray {
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun IntArray.copyOf(newSize: Int): IntArray {
-    TODO("Wasm stdlib: copyOf(newSize: Int)")
+    return this.copyOfUninitializedElements(newSize)
 }
 
 /**
@@ -1326,7 +1326,7 @@ public actual fun IntArray.copyOf(newSize: Int): IntArray {
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun LongArray.copyOf(newSize: Int): LongArray {
-    TODO("Wasm stdlib: copyOf(newSize: Int)")
+    return this.copyOfUninitializedElements(newSize)
 }
 
 /**
@@ -1339,7 +1339,7 @@ public actual fun LongArray.copyOf(newSize: Int): LongArray {
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun FloatArray.copyOf(newSize: Int): FloatArray {
-    TODO("Wasm stdlib: copyOf(newSize: Int)")
+    return this.copyOfUninitializedElements(newSize)
 }
 
 /**
@@ -1352,7 +1352,7 @@ public actual fun FloatArray.copyOf(newSize: Int): FloatArray {
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun DoubleArray.copyOf(newSize: Int): DoubleArray {
-    TODO("Wasm stdlib: copyOf(newSize: Int)")
+    return this.copyOfUninitializedElements(newSize)
 }
 
 /**
@@ -1365,7 +1365,7 @@ public actual fun DoubleArray.copyOf(newSize: Int): DoubleArray {
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun BooleanArray.copyOf(newSize: Int): BooleanArray {
-    TODO("Wasm stdlib: copyOf(newSize: Int)")
+    return this.copyOfUninitializedElements(newSize)
 }
 
 /**
@@ -1378,7 +1378,7 @@ public actual fun BooleanArray.copyOf(newSize: Int): BooleanArray {
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun CharArray.copyOf(newSize: Int): CharArray {
-    TODO("Wasm stdlib: copyOf(newSize: Int)")
+    return this.copyOfUninitializedElements(newSize)
 }
 
 /**
@@ -1404,7 +1404,8 @@ public actual fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
 public actual fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
-    TODO("Wasm stdlib: copyOfRange(fromIndex: Int, toIndex: Int)")
+    checkCopyOfRangeArguments(fromIndex, toIndex, size)
+    return copyOfUninitializedElements(fromIndex, toIndex)
 }
 
 /**
@@ -1417,7 +1418,8 @@ public actual fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
 public actual fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): ByteArray {
-    TODO("Wasm stdlib: copyOfRange(fromIndex: Int, toIndex: Int)")
+    checkCopyOfRangeArguments(fromIndex, toIndex, size)
+    return copyOfUninitializedElements(fromIndex, toIndex)
 }
 
 /**
@@ -1430,7 +1432,8 @@ public actual fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): ByteArray
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
 public actual fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArray {
-    TODO("Wasm stdlib: copyOfRange(fromIndex: Int, toIndex: Int)")
+    checkCopyOfRangeArguments(fromIndex, toIndex, size)
+    return copyOfUninitializedElements(fromIndex, toIndex)
 }
 
 /**
@@ -1443,7 +1446,8 @@ public actual fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArr
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
 public actual fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
-    TODO("Wasm stdlib: copyOfRange(fromIndex: Int, toIndex: Int)")
+    checkCopyOfRangeArguments(fromIndex, toIndex, size)
+    return copyOfUninitializedElements(fromIndex, toIndex)
 }
 
 /**
@@ -1456,7 +1460,8 @@ public actual fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
 public actual fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray {
-    TODO("Wasm stdlib: copyOfRange(fromIndex: Int, toIndex: Int)")
+    checkCopyOfRangeArguments(fromIndex, toIndex, size)
+    return copyOfUninitializedElements(fromIndex, toIndex)
 }
 
 /**
@@ -1469,7 +1474,8 @@ public actual fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
 public actual fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): FloatArray {
-    TODO("Wasm stdlib: copyOfRange(fromIndex: Int, toIndex: Int)")
+    checkCopyOfRangeArguments(fromIndex, toIndex, size)
+    return copyOfUninitializedElements(fromIndex, toIndex)
 }
 
 /**
@@ -1482,7 +1488,8 @@ public actual fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): FloatArr
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
 public actual fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): DoubleArray {
-    TODO("Wasm stdlib: copyOfRange(fromIndex: Int, toIndex: Int)")
+    checkCopyOfRangeArguments(fromIndex, toIndex, size)
+    return copyOfUninitializedElements(fromIndex, toIndex)
 }
 
 /**
@@ -1495,7 +1502,8 @@ public actual fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): DoubleA
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
 public actual fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): BooleanArray {
-    TODO("Wasm stdlib: copyOfRange(fromIndex: Int, toIndex: Int)")
+    checkCopyOfRangeArguments(fromIndex, toIndex, size)
+    return copyOfUninitializedElements(fromIndex, toIndex)
 }
 
 /**
@@ -1508,7 +1516,179 @@ public actual fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): Boolea
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
 public actual fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray {
-    TODO("Wasm stdlib: copyOfRange(fromIndex: Int, toIndex: Int)")
+    checkCopyOfRangeArguments(fromIndex, toIndex, size)
+    return copyOfUninitializedElements(fromIndex, toIndex)
+}
+
+/**
+ * Returns new array which is a copy of the original array's range between [fromIndex] (inclusive)
+ * and [toIndex] (exclusive) with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+internal fun <T> Array<T>.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): Array<T> {
+    TODO("Wasm stdlib: copyOfUninitializedElements(fromIndex: Int, toIndex: Int)")
+}
+
+/**
+ * Returns new array which is a copy of the original array's range between [fromIndex] (inclusive)
+ * and [toIndex] (exclusive) with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+internal fun ByteArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): ByteArray {
+    TODO("Wasm stdlib: copyOfUninitializedElements(fromIndex: Int, toIndex: Int)")
+}
+
+/**
+ * Returns new array which is a copy of the original array's range between [fromIndex] (inclusive)
+ * and [toIndex] (exclusive) with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+internal fun ShortArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): ShortArray {
+    TODO("Wasm stdlib: copyOfUninitializedElements(fromIndex: Int, toIndex: Int)")
+}
+
+/**
+ * Returns new array which is a copy of the original array's range between [fromIndex] (inclusive)
+ * and [toIndex] (exclusive) with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+internal fun IntArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): IntArray {
+    TODO("Wasm stdlib: copyOfUninitializedElements(fromIndex: Int, toIndex: Int)")
+}
+
+/**
+ * Returns new array which is a copy of the original array's range between [fromIndex] (inclusive)
+ * and [toIndex] (exclusive) with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+internal fun LongArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): LongArray {
+    TODO("Wasm stdlib: copyOfUninitializedElements(fromIndex: Int, toIndex: Int)")
+}
+
+/**
+ * Returns new array which is a copy of the original array's range between [fromIndex] (inclusive)
+ * and [toIndex] (exclusive) with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+internal fun FloatArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): FloatArray {
+    TODO("Wasm stdlib: copyOfUninitializedElements(fromIndex: Int, toIndex: Int)")
+}
+
+/**
+ * Returns new array which is a copy of the original array's range between [fromIndex] (inclusive)
+ * and [toIndex] (exclusive) with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+internal fun DoubleArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): DoubleArray {
+    TODO("Wasm stdlib: copyOfUninitializedElements(fromIndex: Int, toIndex: Int)")
+}
+
+/**
+ * Returns new array which is a copy of the original array's range between [fromIndex] (inclusive)
+ * and [toIndex] (exclusive) with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+internal fun BooleanArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): BooleanArray {
+    TODO("Wasm stdlib: copyOfUninitializedElements(fromIndex: Int, toIndex: Int)")
+}
+
+/**
+ * Returns new array which is a copy of the original array's range between [fromIndex] (inclusive)
+ * and [toIndex] (exclusive) with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+internal fun CharArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): CharArray {
+    TODO("Wasm stdlib: copyOfUninitializedElements(fromIndex: Int, toIndex: Int)")
+}
+
+/**
+ * Returns new array which is a copy of the original array with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+internal fun <T> Array<T>.copyOfUninitializedElements(newSize: Int): Array<T> {
+    return copyOfUninitializedElements(0, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+internal fun ByteArray.copyOfUninitializedElements(newSize: Int): ByteArray {
+    return copyOfUninitializedElements(0, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+internal fun ShortArray.copyOfUninitializedElements(newSize: Int): ShortArray {
+    return copyOfUninitializedElements(0, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+internal fun IntArray.copyOfUninitializedElements(newSize: Int): IntArray {
+    return copyOfUninitializedElements(0, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+internal fun LongArray.copyOfUninitializedElements(newSize: Int): LongArray {
+    return copyOfUninitializedElements(0, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+internal fun FloatArray.copyOfUninitializedElements(newSize: Int): FloatArray {
+    return copyOfUninitializedElements(0, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+internal fun DoubleArray.copyOfUninitializedElements(newSize: Int): DoubleArray {
+    return copyOfUninitializedElements(0, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+internal fun BooleanArray.copyOfUninitializedElements(newSize: Int): BooleanArray {
+    return copyOfUninitializedElements(0, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+internal fun CharArray.copyOfUninitializedElements(newSize: Int): CharArray {
+    return copyOfUninitializedElements(0, newSize)
 }
 
 /**
@@ -1650,196 +1830,287 @@ public actual fun CharArray.fill(element: Char, fromIndex: Int = 0, toIndex: Int
  * Returns an array containing all elements of the original array and then the given [element].
  */
 public actual operator fun <T> Array<T>.plus(element: T): Array<T> {
-    TODO("Wasm stdlib: plus(element: T)")
+    val index = size
+    val result = copyOfUninitializedElements(index + 1)
+    result[index] = element
+    return result
 }
 
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
 public actual operator fun ByteArray.plus(element: Byte): ByteArray {
-    TODO("Wasm stdlib: plus(element: Byte)")
+    val index = size
+    val result = copyOfUninitializedElements(index + 1)
+    result[index] = element
+    return result
 }
 
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
 public actual operator fun ShortArray.plus(element: Short): ShortArray {
-    TODO("Wasm stdlib: plus(element: Short)")
+    val index = size
+    val result = copyOfUninitializedElements(index + 1)
+    result[index] = element
+    return result
 }
 
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
 public actual operator fun IntArray.plus(element: Int): IntArray {
-    TODO("Wasm stdlib: plus(element: Int)")
+    val index = size
+    val result = copyOfUninitializedElements(index + 1)
+    result[index] = element
+    return result
 }
 
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
 public actual operator fun LongArray.plus(element: Long): LongArray {
-    TODO("Wasm stdlib: plus(element: Long)")
+    val index = size
+    val result = copyOfUninitializedElements(index + 1)
+    result[index] = element
+    return result
 }
 
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
 public actual operator fun FloatArray.plus(element: Float): FloatArray {
-    TODO("Wasm stdlib: plus(element: Float)")
+    val index = size
+    val result = copyOfUninitializedElements(index + 1)
+    result[index] = element
+    return result
 }
 
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
 public actual operator fun DoubleArray.plus(element: Double): DoubleArray {
-    TODO("Wasm stdlib: plus(element: Double)")
+    val index = size
+    val result = copyOfUninitializedElements(index + 1)
+    result[index] = element
+    return result
 }
 
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
 public actual operator fun BooleanArray.plus(element: Boolean): BooleanArray {
-    TODO("Wasm stdlib: plus(element: Boolean)")
+    val index = size
+    val result = copyOfUninitializedElements(index + 1)
+    result[index] = element
+    return result
 }
 
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
 public actual operator fun CharArray.plus(element: Char): CharArray {
-    TODO("Wasm stdlib: plus(element: Char)")
+    val index = size
+    val result = copyOfUninitializedElements(index + 1)
+    result[index] = element
+    return result
 }
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
 public actual operator fun <T> Array<T>.plus(elements: Collection<T>): Array<T> {
-    TODO("Wasm stdlib: plus(elements: Collection<T>)")
+    var index = size
+    val result = copyOfUninitializedElements(index + elements.size)
+    for (element in elements) result[index++] = element
+    return result
 }
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
 public actual operator fun ByteArray.plus(elements: Collection<Byte>): ByteArray {
-    TODO("Wasm stdlib: plus(elements: Collection<Byte>)")
+    var index = size
+    val result = copyOfUninitializedElements(index + elements.size)
+    for (element in elements) result[index++] = element
+    return result
 }
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
 public actual operator fun ShortArray.plus(elements: Collection<Short>): ShortArray {
-    TODO("Wasm stdlib: plus(elements: Collection<Short>)")
+    var index = size
+    val result = copyOfUninitializedElements(index + elements.size)
+    for (element in elements) result[index++] = element
+    return result
 }
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
 public actual operator fun IntArray.plus(elements: Collection<Int>): IntArray {
-    TODO("Wasm stdlib: plus(elements: Collection<Int>)")
+    var index = size
+    val result = copyOfUninitializedElements(index + elements.size)
+    for (element in elements) result[index++] = element
+    return result
 }
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
 public actual operator fun LongArray.plus(elements: Collection<Long>): LongArray {
-    TODO("Wasm stdlib: plus(elements: Collection<Long>)")
+    var index = size
+    val result = copyOfUninitializedElements(index + elements.size)
+    for (element in elements) result[index++] = element
+    return result
 }
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
 public actual operator fun FloatArray.plus(elements: Collection<Float>): FloatArray {
-    TODO("Wasm stdlib: plus(elements: Collection<Float>)")
+    var index = size
+    val result = copyOfUninitializedElements(index + elements.size)
+    for (element in elements) result[index++] = element
+    return result
 }
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
 public actual operator fun DoubleArray.plus(elements: Collection<Double>): DoubleArray {
-    TODO("Wasm stdlib: plus(elements: Collection<Double>)")
+    var index = size
+    val result = copyOfUninitializedElements(index + elements.size)
+    for (element in elements) result[index++] = element
+    return result
 }
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
 public actual operator fun BooleanArray.plus(elements: Collection<Boolean>): BooleanArray {
-    TODO("Wasm stdlib: plus(elements: Collection<Boolean>)")
+    var index = size
+    val result = copyOfUninitializedElements(index + elements.size)
+    for (element in elements) result[index++] = element
+    return result
 }
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
 public actual operator fun CharArray.plus(elements: Collection<Char>): CharArray {
-    TODO("Wasm stdlib: plus(elements: Collection<Char>)")
+    var index = size
+    val result = copyOfUninitializedElements(index + elements.size)
+    for (element in elements) result[index++] = element
+    return result
 }
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
  */
 public actual operator fun <T> Array<T>.plus(elements: Array<out T>): Array<T> {
-    TODO("Wasm stdlib: plus(elements: Array<out T>)")
+    val thisSize = size
+    val arraySize = elements.size
+    val result = copyOfUninitializedElements(thisSize + arraySize)
+    elements.copyInto(result, thisSize)
+    return result
 }
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
  */
 public actual operator fun ByteArray.plus(elements: ByteArray): ByteArray {
-    TODO("Wasm stdlib: plus(elements: ByteArray)")
+    val thisSize = size
+    val arraySize = elements.size
+    val result = copyOfUninitializedElements(thisSize + arraySize)
+    elements.copyInto(result, thisSize)
+    return result
 }
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
  */
 public actual operator fun ShortArray.plus(elements: ShortArray): ShortArray {
-    TODO("Wasm stdlib: plus(elements: ShortArray)")
+    val thisSize = size
+    val arraySize = elements.size
+    val result = copyOfUninitializedElements(thisSize + arraySize)
+    elements.copyInto(result, thisSize)
+    return result
 }
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
  */
 public actual operator fun IntArray.plus(elements: IntArray): IntArray {
-    TODO("Wasm stdlib: plus(elements: IntArray)")
+    val thisSize = size
+    val arraySize = elements.size
+    val result = copyOfUninitializedElements(thisSize + arraySize)
+    elements.copyInto(result, thisSize)
+    return result
 }
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
  */
 public actual operator fun LongArray.plus(elements: LongArray): LongArray {
-    TODO("Wasm stdlib: plus(elements: LongArray)")
+    val thisSize = size
+    val arraySize = elements.size
+    val result = copyOfUninitializedElements(thisSize + arraySize)
+    elements.copyInto(result, thisSize)
+    return result
 }
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
  */
 public actual operator fun FloatArray.plus(elements: FloatArray): FloatArray {
-    TODO("Wasm stdlib: plus(elements: FloatArray)")
+    val thisSize = size
+    val arraySize = elements.size
+    val result = copyOfUninitializedElements(thisSize + arraySize)
+    elements.copyInto(result, thisSize)
+    return result
 }
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
  */
 public actual operator fun DoubleArray.plus(elements: DoubleArray): DoubleArray {
-    TODO("Wasm stdlib: plus(elements: DoubleArray)")
+    val thisSize = size
+    val arraySize = elements.size
+    val result = copyOfUninitializedElements(thisSize + arraySize)
+    elements.copyInto(result, thisSize)
+    return result
 }
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
  */
 public actual operator fun BooleanArray.plus(elements: BooleanArray): BooleanArray {
-    TODO("Wasm stdlib: plus(elements: BooleanArray)")
+    val thisSize = size
+    val arraySize = elements.size
+    val result = copyOfUninitializedElements(thisSize + arraySize)
+    elements.copyInto(result, thisSize)
+    return result
 }
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
  */
 public actual operator fun CharArray.plus(elements: CharArray): CharArray {
-    TODO("Wasm stdlib: plus(elements: CharArray)")
+    val thisSize = size
+    val arraySize = elements.size
+    val result = copyOfUninitializedElements(thisSize + arraySize)
+    elements.copyInto(result, thisSize)
+    return result
 }
 
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-public actual fun <T> Array<T>.plusElement(element: T): Array<T> {
-    TODO("Wasm stdlib: plusElement(element: T)")
+@kotlin.internal.InlineOnly
+public actual inline fun <T> Array<T>.plusElement(element: T): Array<T> {
+    return plus(element)
 }
 
 /**
