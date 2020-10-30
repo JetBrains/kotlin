@@ -132,22 +132,28 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
         }
     }
 
-    override fun resolve(unresolved: UnresolvedLibrary, isDefaultLink: Boolean): L {
-        val givenPath = unresolved.path
-        try {
-            val fileSequence = resolutionSequence(givenPath)
-            val matching = fileSequence
-                .filterOutPre_1_4_libraries()
-                .flatMap { libraryComponentBuilder(it, isDefaultLink).asSequence() }
-                .map { it.takeIf { libraryMatch(it, unresolved) } }
-                .filterNotNull()
+    // Default libraries in K/N are resolved many times during findLibraries and resolveDependencies.
+    // Store already resolved libraries.
+    private val resolvedLibraries = HashMap<UnresolvedLibrary, L>()
 
-            return matching.firstOrNull() ?: run {
-                logger.fatal("Could not find \"$givenPath\" in ${searchRoots.map { it.absolutePath }}.")
+    override fun resolve(unresolved: UnresolvedLibrary, isDefaultLink: Boolean): L {
+        return resolvedLibraries.getOrPut(unresolved) {
+            val givenPath = unresolved.path
+            try {
+                val fileSequence = resolutionSequence(givenPath)
+                val matching = fileSequence
+                        .filterOutPre_1_4_libraries()
+                        .flatMap { libraryComponentBuilder(it, isDefaultLink).asSequence() }
+                        .map { it.takeIf { libraryMatch(it, unresolved) } }
+                        .filterNotNull()
+
+                matching.firstOrNull() ?: run {
+                    logger.fatal("Could not find \"$givenPath\" in ${searchRoots.map { it.absolutePath }}.")
+                }
+            } catch (e: Throwable) {
+                logger.error("Failed to resolve Kotlin library: $givenPath")
+                throw e
             }
-        } catch (e: Throwable) {
-            logger.error("Failed to resolve Kotlin library: $givenPath")
-            throw e
         }
     }
 
