@@ -132,7 +132,7 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
         }
     }
 
-    // Default libraries in K/N are resolved many times during findLibraries and resolveDependencies.
+    // Default libraries could be resolved several times during findLibraries and resolveDependencies.
     // Store already resolved libraries.
     private val resolvedLibraries = HashMap<UnresolvedLibrary, L>()
 
