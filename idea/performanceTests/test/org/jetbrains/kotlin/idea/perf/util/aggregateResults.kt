@@ -12,15 +12,14 @@ fun main(args: Array<String>) {
     val argFile = File(args[0])
     val groupBy = argFile.listFiles()
         .filter { it.length() > 0 && it.name.startsWith("stats-") && it.extension == "json" }
-        .groupBy { it.name.replace("stats-", "").split("_")[0] }
+        .map { it.loadBenchmark() }
+        .groupBy { it.benchmark }
 
-    groupBy.forEach { (k, v) ->
-        if (v.isEmpty()) return@forEach
-
-        val benchmarks = v.map { it.loadBenchmark() }
+    groupBy.forEach { (k, benchmarks) ->
+        if (benchmarks.isEmpty()) return@forEach
 
         benchmarks.forEach { benchmark ->
-            benchmark.metrics.firstOrNull { it.metricName == "" }?.let { metric ->
+            benchmark.metrics.firstOrNull { it.metricName == "_value" }?.let { metric ->
                 metric.rawMetrics?.firstOrNull { it.warmUp == true && it.index == 0 }?.let {
                     val warmUpBenchmark = Benchmark(
                         agentName = benchmark.agentName,
@@ -40,16 +39,15 @@ fun main(args: Array<String>) {
         }
 
         // build geom mean benchmark
-        val first = v.first()
-        val loadBenchmark = first.loadBenchmark()
+        val first = benchmarks.first()
         val geomMeanBenchmark = Benchmark(
-            agentName = loadBenchmark.agentName,
-            buildBranch = loadBenchmark.buildBranch,
-            buildId = loadBenchmark.buildId,
-            benchmark = loadBenchmark.benchmark,
+            agentName = first.agentName,
+            buildBranch = first.buildBranch,
+            buildId = first.buildId,
+            benchmark = first.benchmark,
             synthetic = true,
             name = "geomMean",
-            buildTimestamp = loadBenchmark.buildTimestamp
+            buildTimestamp = first.buildTimestamp
         )
 
         benchmarks
