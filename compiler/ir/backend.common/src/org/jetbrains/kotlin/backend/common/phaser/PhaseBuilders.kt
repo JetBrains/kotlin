@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import java.lang.IllegalStateException
 import kotlin.concurrent.thread
 
 // Phase composition.
@@ -145,7 +146,14 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
     private fun invokeParallel(
         phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment
     ): IrModuleFragment {
-        val threads = input.files.map { irFile ->
+        if (input.files.isEmpty()) return input
+
+        // We can only report one exception through ISE
+        var thrownFromThread: Throwable? = null
+
+        // Each thread needs its own copy of phaserState.alreadyDone
+        val filesAndStates = input.files.map { it to phaserState.clone() }
+        val threads = filesAndStates.map { (irFile, state) ->
             thread {
                 try {
                     val filePhaserState = state.changeType<IrModuleFragment, IrFile>()
@@ -153,12 +161,17 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
                         phase.invoke(phaseConfig, filePhaserState, context, irFile)
                     }
                 } catch (e: Throwable) {
-                    CodegenUtil.reportBackendException(e, "IR lowering", irFile.fileEntry.name)
+                    thrownFromThread = e
                 }
             }
         }
 
         threads.forEach { it.join() }
+
+        if (thrownFromThread != null) throw IllegalStateException("Exception in file lowering", thrownFromThread)
+
+        // Presumably each thread has run through the same list of phases.
+        phaserState.alreadyDone.addAll(filesAndStates[0].second.alreadyDone)
 
         // TODO: no guarantee that module identity is preserved by `lower`
         return input
