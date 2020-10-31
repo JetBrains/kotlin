@@ -53,7 +53,7 @@ class Stats(
 
         metricChildren.add(
             Metric(
-                "", metricValue = calcMean.mean.toLong(),
+                "_value", metricValue = calcMean.mean.toLong(),
                 hasError = hasError,
                 metricError = calcMean.stdDev.toLong(),
                 rawMetrics = rawMetricChildren
@@ -322,7 +322,7 @@ class Stats(
         phaseName: String,
         profilerConfig: ProfilerConfig
     ): PhaseProfiler {
-        profilerConfig.name = "$testName${if (phaseName.isEmpty()) "" else "-"+phaseName}"
+        profilerConfig.name = "$testName${if (phaseName.isEmpty()) "" else "-$phaseName"}"
         profilerConfig.path = pathToResource("profile/${plainname(name)}")
         val profilerHandler = if (profilerConfig.enabled && !profilerConfig.warmup)
             ProfilerHandler.getInstance(profilerConfig)
@@ -391,38 +391,11 @@ class Stats(
                 )
 
                 benchmark.writeJson()
-
-                //rebuildGeomMean(agentName, buildBranch, buildId, simpleDateFormat, benchmark)
             }
         } finally {
             metric = null
         }
         //metrics.writeCSV(name, header)
-    }
-
-    private fun rebuildGeomMean(
-        agentName: String?,
-        buildBranch: String?,
-        buildId: Int?,
-        simpleDateFormat: SimpleDateFormat,
-        benchmark: Benchmark
-    ) {
-        with(
-            Benchmark(
-                agentName = agentName,
-                buildBranch = buildBranch,
-                buildId = buildId,
-                benchmark = name,
-                synthetic = true,
-                name = "geomMean",
-                buildTimestamp = simpleDateFormat.format(Date())
-            )
-        ) {
-            loadJson()
-            merge(benchmark)
-
-            writeJson()
-        }
     }
 
     companion object {
@@ -432,7 +405,7 @@ class Stats(
         const val WARM_UP = "warm-up"
         const val GEOM_MEAN = "geomMean"
 
-        internal val extraMetricNames = setOf("", GEOM_MEAN, "mean", "stdDev")
+        internal val extraMetricNames = setOf("", "_value", GEOM_MEAN, "mean", "stdDev")
 
         inline fun runAndMeasure(note: String, block: () -> Unit) {
             val openProjectMillis = measureTimeMillis {

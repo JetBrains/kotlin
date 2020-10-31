@@ -13,7 +13,7 @@ import java.util.ArrayList
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class Benchmark(
-    val version: Int = 3,
+    val version: Int = 4,
     @set:JsonProperty("agentName")
     var agentName: String?,
     @set:JsonProperty("benchmark")
@@ -44,14 +44,6 @@ data class Benchmark(
 ) {
     init {
         hasError = if (metrics.any { it.ifHasError() == true }) true else null
-    }
-
-    fun resetValue() {
-        buildId = null
-        metricValue = null
-        metricError = null
-        buildBranch = null
-        metrics.forEach { it.resetValue() }
     }
 
     private fun String?.escapeName() = this?.replace(Regex("[^A-Za-z0-9_]"), "_")
