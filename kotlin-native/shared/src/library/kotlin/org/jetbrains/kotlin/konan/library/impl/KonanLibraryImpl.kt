@@ -42,9 +42,7 @@ open class TargetedLibraryImpl(
         }
 
     override val manifestProperties: Properties by lazy {
-        val properties = access.inPlace {
-            it.manifestFile.loadProperties()
-        }
+        val properties = base.manifestProperties
         target?.let { substitute(properties, defaultTargetSubstitutions(it)) }
         properties
     }
