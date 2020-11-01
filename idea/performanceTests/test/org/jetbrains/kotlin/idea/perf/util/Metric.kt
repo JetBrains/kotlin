@@ -46,7 +46,7 @@ data class Benchmark(
         hasError = if (metrics.any { it.ifHasError() == true }) true else null
     }
 
-    private fun String?.escapeName() = this?.replace(Regex("[^A-Za-z0-9_]"), "_")
+    private fun String?.escapeName() = this?.replace(Regex("[^A-Za-z0-9]"), "")
 
     fun id(): String =
         listOfNotNull(
