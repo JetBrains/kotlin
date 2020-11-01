@@ -8,16 +8,19 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.file.structure
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorDeclarationAction
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.FirIdeStructureElementDiagnosticsCollector
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.hasExplicitTypeOrUnit
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
+import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeProvider
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.ktDeclaration
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.replaceFirst
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfTypeTo
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal class FileStructureElementDiagnostics(
     private val map: Map<KtElement, List<Diagnostic>>
@@ -34,43 +37,90 @@ internal sealed class FileStructureElement {
     abstract val diagnostics: FileStructureElementDiagnostics
 }
 
-internal class WithInBlockModificationFileStructureElement(
-    override val firFile: FirFile,
-    override val psi: KtFunction,
-    val firSymbol: FirFunctionSymbol<*>,
-    val timestamp: Long
-) : FileStructureElement() {
+internal sealed class ReanalyzableStructureElement<KT : KtDeclaration> : FileStructureElement() {
+    abstract override val psi: KT
+    abstract val firSymbol: AbstractFirBasedSymbol<*>
+    abstract val timestamp: Long
 
-    override val mappings: Map<KtElement, FirElement> =
-        FirElementsRecorder.recordElementsFrom(firSymbol.fir, recorder)
+    /**
+     * Creates new declaration by [newKtDeclaration] which will serve as replacement of [firSymbol]
+     * Also, modify [firFile] & replace old version of declaration to a new one
+     */
+    abstract fun reanalyze(
+        newKtDeclaration: KtNamedFunction,
+        cache: ModuleFileCache,
+        firLazyDeclarationResolver: FirLazyDeclarationResolver,
+        firIdeProvider: FirIdeProvider,
+    ): ReanalyzableStructureElement<KT>
 
     fun isUpToDate(): Boolean = psi.getModificationStamp() == timestamp
 
     override val diagnostics: FileStructureElementDiagnostics by lazy {
-        var inCurrentDeclaration = false
-
-        FirIdeStructureElementDiagnosticsCollector.collectForStructureElement(
-            firFile,
-            onDeclarationEnter = { firDeclaration ->
-                when {
-                    firDeclaration == firSymbol.fir -> {
-                        inCurrentDeclaration = true
-                        DiagnosticCollectorDeclarationAction.CHECK_CURRENT_DECLARATION_AND_CHECK_NESTED
-                    }
-                    inCurrentDeclaration -> DiagnosticCollectorDeclarationAction.CHECK_CURRENT_DECLARATION_AND_CHECK_NESTED
-                    else -> DiagnosticCollectorDeclarationAction.SKIP_CURRENT_DECLARATION_AND_CHECK_NESTED
-                }
-            },
-            onDeclarationExit = { declaration ->
-                if (declaration == firSymbol.fir) {
-                    inCurrentDeclaration = false
-                }
-            }
-        )
+        FirIdeStructureElementDiagnosticsCollector.collectForSingleDeclaration(firFile, firSymbol.fir as FirDeclaration)
     }
 
     companion object {
-        private val recorder = FirElementsRecorder()
+        val recorder = FirElementsRecorder()
+    }
+}
+
+internal class IncrementallyReanalyzableFunction(
+    override val firFile: FirFile,
+    override val psi: KtNamedFunction,
+    override val firSymbol: FirFunctionSymbol<*>,
+    override val timestamp: Long
+) : ReanalyzableStructureElement<KtNamedFunction>() {
+    override val mappings: Map<KtElement, FirElement> =
+        FirElementsRecorder.recordElementsFrom(firSymbol.fir, recorder)
+
+    private fun replaceFunction(from: FirSimpleFunction, to: FirSimpleFunction) {
+        val declarations = if (from.symbol.callableId.className == null) {
+            firFile.declarations as MutableList<FirDeclaration>
+        } else {
+            val classLikeLookupTag = from.containingClass()
+                ?: error("Class name should not be null for non-top-level & non-local declarations")
+            val containingClass = classLikeLookupTag.toSymbol(firFile.session)?.fir as FirRegularClass
+            containingClass.declarations as MutableList<FirDeclaration>
+        }
+        declarations.replaceFirst(from, to)
+    }
+
+    override fun reanalyze(
+        newKtDeclaration: KtNamedFunction,
+        cache: ModuleFileCache,
+        firLazyDeclarationResolver: FirLazyDeclarationResolver,
+        firIdeProvider: FirIdeProvider,
+    ): IncrementallyReanalyzableFunction {
+        val newFunction = firIdeProvider.buildFunctionWithBody(newKtDeclaration) as FirSimpleFunction
+        val originalFunction = firSymbol.fir as FirSimpleFunction
+
+        cache.firFileLockProvider.withWriteLock(firFile) {
+            replaceFunction(originalFunction, newFunction)
+        }
+
+        //todo remap symbol under firFile write lock
+        try {
+            firLazyDeclarationResolver.lazyResolveDeclaration(
+                newFunction,
+                cache,
+                FirResolvePhase.BODY_RESOLVE,
+                checkPCE = true,
+                reresolveFile = true,
+            )
+            return cache.firFileLockProvider.withReadLock(firFile) {
+                IncrementallyReanalyzableFunction(
+                    firFile,
+                    newKtDeclaration,
+                    newFunction.symbol,
+                    newKtDeclaration.modificationStamp,
+                )
+            }
+        } catch (e: Throwable) {
+            cache.firFileLockProvider.withWriteLock(firFile) {
+                replaceFunction(newFunction, originalFunction)
+            }
+            throw e
+        }
     }
 }
 
@@ -92,7 +142,7 @@ internal class NonLocalDeclarationFileStructureElement(
                         inCurrentDeclaration = true
                         DiagnosticCollectorDeclarationAction.CHECK_CURRENT_DECLARATION_AND_CHECK_NESTED
                     }
-                    (firDeclaration.psi as? KtNamedFunction)?.hasExplicitTypeOrUnit == true -> {
+                    FileElementFactory.isReanalyzableContainer(firDeclaration.ktDeclaration) -> {
                         DiagnosticCollectorDeclarationAction.SKIP
                     }
                     inCurrentDeclaration -> {
@@ -113,7 +163,7 @@ internal class NonLocalDeclarationFileStructureElement(
         private val recorder = object : FirElementsRecorder() {
             override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: MutableMap<KtElement, FirElement>) {
                 val psi = simpleFunction.psi as? KtNamedFunction ?: return super.visitSimpleFunction(simpleFunction, data)
-                if (!psi.hasExplicitTypeOrUnit || KtPsiUtil.isLocal(psi)) {
+                if (!FileElementFactory.isReanalyzableContainer(psi) || KtPsiUtil.isLocal(psi)) {
                     super.visitSimpleFunction(simpleFunction, data)
                 }
             }

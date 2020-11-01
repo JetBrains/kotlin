@@ -51,5 +51,28 @@ internal class FirIdeStructureElementDiagnosticsCollector private constructor(
                 collector.collectDiagnostics(firFile)
                 FileStructureElementDiagnostics(collector.result)
             }
+
+        fun collectForSingleDeclaration(firFile: FirFile, declaration: FirDeclaration): FileStructureElementDiagnostics {
+            var inCurrentDeclaration = false
+
+            return collectForStructureElement(
+                firFile,
+                onDeclarationEnter = { firDeclaration ->
+                    when {
+                        firDeclaration == declaration -> {
+                            inCurrentDeclaration = true
+                            DiagnosticCollectorDeclarationAction.CHECK_CURRENT_DECLARATION_AND_CHECK_NESTED
+                        }
+                        inCurrentDeclaration -> DiagnosticCollectorDeclarationAction.CHECK_CURRENT_DECLARATION_AND_CHECK_NESTED
+                        else -> DiagnosticCollectorDeclarationAction.SKIP_CURRENT_DECLARATION_AND_CHECK_NESTED
+                    }
+                },
+                onDeclarationExit = { firDeclaration ->
+                    if (declaration == firDeclaration) {
+                        inCurrentDeclaration = false
+                    }
+                }
+            )
+        }
     }
 }
