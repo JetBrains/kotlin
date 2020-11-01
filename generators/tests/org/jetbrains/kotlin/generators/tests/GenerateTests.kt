@@ -83,6 +83,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirMultiModuleResolve
 import org.jetbrains.kotlin.idea.fir.AbstractKtDeclarationAndFirDeclarationEqualityChecker
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyDeclarationResolveTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirMultiModuleLazyResolveTest
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.AbstractFileStructureTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
 import org.jetbrains.kotlin.idea.frontend.api.fir.AbstractResolveCallTest
 import org.jetbrains.kotlin.idea.frontend.api.scopes.AbstractMemberScopeByFqNameTest
@@ -1035,6 +1036,9 @@ fun main(args: Array<String>) {
             }
             testClass<AbstractFirLazyDeclarationResolveTest> {
                 model("lazyResolve")
+            }
+            testClass<AbstractFileStructureTest> {
+                model("fileStructure")
             }
         }
 
