@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.pop
+import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.*
@@ -121,7 +123,9 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
 
     private fun transformSimpleFunctionFlat(function: IrSimpleFunction, replacement: IrSimpleFunction): List<IrDeclaration> {
         replacement.valueParameters.forEach { it.transformChildrenVoid() }
+        allScopes.push(createScope(function))
         replacement.body = function.body?.transform(this, null)?.patchDeclarationParents(replacement)
+        allScopes.pop()
         replacement.copyAttributes(function)
 
         // Don't create a wrapper for functions which are only used in an unboxed context
@@ -409,7 +413,6 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
             val irElement = scope.irElement
             when {
                 irElement is IrAnonymousInitializer -> return InitBlockOrConstructorImpl.InitBlock
-                irElement is IrClass && irElement.isInline -> return InitBlockOrConstructorImpl.InitBlock
                 irElement is IrFunction && irElement.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR ->
                     return InitBlockOrConstructorImpl.ConstructorImpl(irElement)
             }
