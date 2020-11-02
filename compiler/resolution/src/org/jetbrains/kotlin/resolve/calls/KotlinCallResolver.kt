@@ -6,16 +6,17 @@
 package org.jetbrains.kotlin.resolve.calls
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
-import org.jetbrains.kotlin.resolve.calls.components.*
+import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceResolver
+import org.jetbrains.kotlin.resolve.calls.components.KotlinCallCompleter
+import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
+import org.jetbrains.kotlin.resolve.calls.components.NewOverloadingConflictResolver
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.UnwrappedType
-import java.lang.UnsupportedOperationException
 
 
 class KotlinCallResolver(
@@ -25,10 +26,6 @@ class KotlinCallResolver(
     private val callableReferenceResolver: CallableReferenceResolver,
     private val callComponents: KotlinCallComponents
 ) {
-    companion object {
-        val OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION = FqName.fromSegments(listOf("kotlin", "OverloadResolutionByLambdaReturnType"))
-    }
-
     fun resolveCall(
         scopeTower: ImplicitScopeTower,
         resolutionCallbacks: KotlinResolutionCallbacks,
