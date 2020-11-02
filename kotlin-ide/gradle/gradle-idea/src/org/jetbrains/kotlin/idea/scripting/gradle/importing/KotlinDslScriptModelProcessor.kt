@@ -12,6 +12,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import org.gradle.tooling.model.kotlin.dsl.EditorReportSeverity
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslScriptsModel
 import org.jetbrains.kotlin.gradle.BrokenKotlinDslScriptsModel
+import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.scripting.gradle.getGradleScriptInputsStamp
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 import org.jetbrains.plugins.gradle.model.BuildScriptClasspathModel
@@ -72,7 +73,11 @@ fun processScriptModel(
                     it.failed = true
                 }
             }
-            handleError(project, errors)
+            throw IllegalStateException(
+                KotlinIdeaGradleBundle.message("title.kotlin.build.script")
+                        + ":\n"
+                        + errors.joinToString("\n") { it.text + "\n" + it.details }
+            )
         }
         errors.isEmpty()
     }
