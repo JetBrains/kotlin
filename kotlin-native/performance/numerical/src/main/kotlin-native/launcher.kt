@@ -22,6 +22,8 @@ fun konanBellardPi() {
 }
 
 fun clangBellardPi() {
-    for (n in 1 .. 1000 step 9)
-            cinterop.pi_nth_digit(n)
+    for (n in 1 .. 1000 step 9) {
+        val result = cinterop.pi_nth_digit(n)
+        Blackhole.consume(result)
+    }
 }
