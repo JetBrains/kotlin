@@ -11,6 +11,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.VfsTestUtil
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
+import org.jetbrains.kotlin.idea.test.GradleProcessOutputInterceptor
 import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.addToStdlib.filterIsInstanceWithChecker
@@ -98,6 +99,37 @@ abstract class KotlinGradleImportingTestCase : GradleImportingTestCase() {
                 sourceFolder.url.replace(projectPath, "") to sourceFolder.rootType
             }
         }
+    }
+
+    override fun setUp() {
+        super.setUp()
+        GradleProcessOutputInterceptor.install(testRootDisposable)
+    }
+
+    override fun handleImportFailure(errorMessage: String, errorDetails: String?) {
+        val gradleOutput = GradleProcessOutputInterceptor.getInstance()?.getOutput().orEmpty()
+
+        // Typically Gradle error message consists of a line with the description of the error followed by
+        // a multi-line stacktrace. The idea is to cut off the stacktrace if it is already contained in
+        // the intercepted Gradle process output to avoid unnecessary verbosity.
+        val compactErrorMessage = when (val indexOfNewLine = errorMessage.indexOf('\n')) {
+            -1 -> errorMessage
+            else -> {
+                val compactErrorMessage = errorMessage.substring(0, indexOfNewLine)
+                val theRest = errorMessage.substring(indexOfNewLine + 1)
+                if (theRest in gradleOutput) compactErrorMessage else errorMessage
+            }
+        }
+
+        val failureMessage = buildString {
+            append("Gradle import failed: ").append(compactErrorMessage).append('\n')
+            if (!errorDetails.isNullOrBlank()) append("Error details: ").append(errorDetails).append('\n')
+            append("Gradle process output (BEGIN):\n")
+            append(gradleOutput)
+            if (!gradleOutput.endsWith('\n')) append('\n')
+            append("Gradle process output (END)")
+        }
+        fail(failureMessage)
     }
 
     protected open fun assertNoModuleDepForModule(moduleName: String, depName: String) {
