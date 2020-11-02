@@ -43,6 +43,10 @@ fun FirScope.getProperties(name: Name): List<FirVariableSymbol<*>> = mutableList
     processPropertiesByName(name, this::add)
 }
 
+fun FirScope.getDeclaredConstructors(): List<FirConstructorSymbol> = mutableListOf<FirConstructorSymbol>().apply {
+    processDeclaredConstructors(this::add)
+}
+
 fun FirTypeScope.processOverriddenFunctionsAndSelf(
     functionSymbol: FirFunctionSymbol<*>,
     processor: (FirFunctionSymbol<*>) -> ProcessorAction
