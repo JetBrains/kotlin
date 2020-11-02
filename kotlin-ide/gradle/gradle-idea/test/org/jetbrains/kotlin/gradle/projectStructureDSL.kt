@@ -22,18 +22,19 @@ import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.utils.addToStdlib.filterIsInstanceWithChecker
 import kotlin.test.assertEquals
+import kotlin.test.fail
 
 class MessageCollector {
     private val builder = StringBuilder()
 
     fun report(message: String) {
-        builder.append(message).append('\n')
+        builder.append(message).append("\n\n")
     }
 
     fun check() {
         val message = builder.toString()
         if (message.isNotEmpty()) {
-            assert(false) { message }
+            fail("\n\n" + message)
         }
     }
 }
@@ -280,12 +281,14 @@ class ModuleInfo(val module: Module, private val projectInfo: ProjectInfo) {
                 .map { it.debugText }.sorted().distinct()
             val actualModuleDependencies = rootModel.orderEntries.filterIsInstance<ModuleOrderEntry>()
                 .map { it.debugText }.sorted().distinct()
+                // increasing readability of log outputs
+                .sortedBy { if (it in expectedModuleDependencies) 0 else 1 }
 
             if (actualModuleDependencies != expectedModuleDependencies) {
                 report(
                     "Bad Module dependency list for ${module.name}\n" +
                             "Expected: $expectedModuleDependencies\n" +
-                            "Actual: $actualModuleDependencies"
+                            "Actual:   $actualModuleDependencies"
                 )
             }
         }
@@ -293,14 +296,16 @@ class ModuleInfo(val module: Module, private val projectInfo: ProjectInfo) {
 
     fun assertExhaustiveDependencyList() {
         assertions += {
+            val expectedDependencyNames = expectedDependencyNames.sorted()
             val actualDependencyNames = rootModel
                 .orderEntries.asList()
                 .filterIsInstanceWithChecker<ExportableOrderEntry> { it is ModuleOrderEntry || it is LibraryOrderEntry }
                 .map { it.debugText }
                 .sorted()
                 .distinct()
+                // increasing readability of log outputs
+                .sortedBy { if (it in expectedDependencyNames) 0 else 1 }
 
-            val expectedDependencyNames = expectedDependencyNames.sorted()
             checkReport("Dependency list", expectedDependencyNames, actualDependencyNames)
         }
     }
