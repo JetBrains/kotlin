@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.backend.jvm.lower.isMultifileBridge
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.*
-import org.jetbrains.kotlin.codegen.DescriptorAsmUtil.*
+import org.jetbrains.kotlin.codegen.DescriptorAsmUtil.getNameForReceiverParameter
 import org.jetbrains.kotlin.codegen.coroutines.SuspensionPointKind
 import org.jetbrains.kotlin.codegen.coroutines.generateCoroutineSuspendedCheck
 import org.jetbrains.kotlin.codegen.inline.*
@@ -48,7 +48,8 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
@@ -285,7 +286,9 @@ class ExpressionCodegen(
             irFunction.origin.isSynthetic ||
             // TODO: refine this condition to not generate nullability assertions on parameters
             //       corresponding to captured variables and anonymous object super constructor arguments
-            (irFunction is IrConstructor && irFunction.parentAsClass.isAnonymousObject) ||
+            (irFunction is IrConstructor &&
+                    (irFunction.parentAsClass.isAnonymousObject ||
+                            irFunction.parentAsClass.origin == IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION)) ||
             // TODO: Implement this as a lowering, so that we can more easily exclude generated methods.
             irFunction.origin == JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD ||
             // Although these are accessible from Java, the functions they bridge to already have the assertions.
