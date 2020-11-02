@@ -69,7 +69,8 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
     override val pluginId = PLUGIN_ID
     override val pluginOptions = listOf(
         LIVE_LITERALS_ENABLED_OPTION,
-        SOURCE_INFORMATION_ENABLED_OPTION
+        SOURCE_INFORMATION_ENABLED_OPTION,
+        INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_OPTION
     )
 
     override fun processOption(
