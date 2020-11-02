@@ -541,10 +541,6 @@ fun main(args: Array<String>) {
                 model("codegen/box", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
             }
 
-            testClass<AbstractFirScriptCodegenTest> {
-                model("codegen/script", extension = "kts", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
-            }
-
             testClass<AbstractFirBlackBoxInlineCodegenTest> {
                 model("codegen/boxInline", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
             }
