@@ -317,7 +317,7 @@ private class BackendChecker(val context: Context, val irFile: IrFile) : IrEleme
             )
         }
 
-        if (callee.returnType.getInlinedClassNative()?.descriptor == interop.nativePointed)
+        if (callee.returnType.isNativePointed(symbols))
             reportError(expression, "Native interop types constructors must not be called directly")
     }
 
