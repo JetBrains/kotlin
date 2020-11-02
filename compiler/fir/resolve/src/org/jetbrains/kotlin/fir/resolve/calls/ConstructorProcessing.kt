@@ -142,72 +142,6 @@ private fun FirTypeAliasSymbol.findSAMConstructorForTypeAlias(
     ).fir
 }
 
-private fun processConstructors(
-    matchedSymbol: FirClassLikeSymbol<*>?,
-    substitutor: ConeSubstitutor,
-    processor: (FirFunctionSymbol<*>) -> Unit,
-    session: FirSession,
-    bodyResolveComponents: BodyResolveComponents,
-    includeInnerConstructors: Boolean
-) {
-    try {
-        if (matchedSymbol != null) {
-            val scope = when (matchedSymbol) {
-                is FirTypeAliasSymbol -> {
-                    matchedSymbol.ensureResolved(FirResolvePhase.TYPES, session)
-                    val type = matchedSymbol.fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>().fullyExpandedType(session)
-                    val basicScope = type.scope(session, bodyResolveComponents.scopeSession, FakeOverrideTypeCalculator.DoNothing)
-
-                    if (basicScope != null && type.typeArguments.isNotEmpty()) {
-                        TypeAliasConstructorsSubstitutingScope(
-                            matchedSymbol,
-                            basicScope
-                        )
-                    } else basicScope
-                }
-                is FirClassSymbol ->
-                    (matchedSymbol.fir as FirClass<*>).scopeForClass(
-                        substitutor, session, bodyResolveComponents.scopeSession
-                    )
-            }
-
-            //TODO: why don't we use declared member scope at this point?
-            scope?.processDeclaredConstructors {
-                if (includeInnerConstructors || !it.fir.isInner) {
-                    val constructorSymbolToProcess =
-                        prepareCopyConstructorForTypealiasNestedClass(matchedSymbol, it, session, bodyResolveComponents) ?: it
-                    processor(constructorSymbolToProcess)
-                }
-            }
-        }
-    } catch (e: Throwable) {
-        throw RuntimeException("While processing constructors", e)
-    }
-}
-
-private class TypeAliasConstructorsSubstitutingScope(
-    private val typeAliasSymbol: FirTypeAliasSymbol,
-    private val delegatingScope: FirScope
-) : FirScope() {
-
-    override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
-        delegatingScope.processDeclaredConstructors { originalConstructorSymbol ->
-
-            val typeParameters = typeAliasSymbol.fir.typeParameters
-            if (typeParameters.isEmpty()) processor(originalConstructorSymbol)
-            else {
-                processor(
-                    buildConstructorCopy(originalConstructorSymbol.fir) {
-                        symbol = FirConstructorSymbol(originalConstructorSymbol.callableId, overriddenSymbol = originalConstructorSymbol)
-                        origin = FirDeclarationOrigin.SubstitutionOverride
-                        this.typeParameters += typeParameters.map { buildConstructedClassTypeParameterRef { symbol = it.symbol } }
-                    }.symbol
-                )
-            }
-        }
-    }
-}
-
 private fun prepareSubstitutorForTypeAliasConstructors(
     expandedType: ConeClassLikeType,
     session: FirSession
@@ -224,46 +158,99 @@ private fun prepareSubstitutorForTypeAliasConstructors(
     )
 }
 
-private fun prepareCopyConstructorForTypealiasNestedClass(
-    matchedSymbol: FirClassLikeSymbol<*>,
-    originalSymbol: FirConstructorSymbol,
+private fun processConstructors(
+    matchedSymbol: FirClassLikeSymbol<*>?,
+    substitutor: ConeSubstitutor,
+    processor: (FirFunctionSymbol<*>) -> Unit,
     session: FirSession,
     bodyResolveComponents: BodyResolveComponents,
-): FirConstructorSymbol? {
-    // If the matched symbol is a type alias, and the expanded type is a nested class, e.g.,
-    //
-    //   class Outer {
-    //     inner class Inner
-    //   }
-    //   typealias OI = Outer.Inner
-    //   fun foo() { Outer().OI() }
-    //
-    // the chances are that `processor` belongs to [ScopeTowerLevel] (to resolve type aliases at top-level), which treats
-    // the explicit receiver (`Outer()`) as an extension receiver, whereas the constructor of the nested class may regard
-    // the same explicit receiver as a dispatch receiver (hence inconsistent receiver).
-    // Here, we add a copy of the nested class constructor, along with the outer type as an extension receiver, so that it
-    // can be seen as if resolving:
-    //
-    //   fun Outer.OI(): OI = ...
-    //
-    if (originalSymbol.callableId.classId?.isNestedClass == true && matchedSymbol is FirTypeAliasSymbol) {
-        val innerTypeRef = originalSymbol.fir.returnTypeRef
-        val innerType = innerTypeRef.coneType.fullyExpandedType(session) as? ConeClassLikeType
-        if (innerType != null) {
-            val outerType = bodyResolveComponents.outerClassManager.outerType(innerType)
-            if (outerType != null) {
-                val extCopy = buildConstructorCopy(originalSymbol.fir) {
-                    origin = FirDeclarationOrigin.Synthetic
-                    receiverTypeRef = innerTypeRef.withReplacedConeType(outerType)
-                    symbol = FirConstructorSymbol(originalSymbol.callableId)
-                }.apply {
-                    originalConstructorIfTypeAlias = originalSymbol.fir
+    includeInnerConstructors: Boolean
+) {
+    try {
+        if (matchedSymbol != null) {
+            val scope = when (matchedSymbol) {
+                is FirTypeAliasSymbol -> {
+                    matchedSymbol.ensureResolved(FirResolvePhase.TYPES, session)
+                    val type = matchedSymbol.fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>().fullyExpandedType(session)
+                    val basicScope = type.scope(session, bodyResolveComponents.scopeSession, FakeOverrideTypeCalculator.DoNothing)
+
+                    val outerType = bodyResolveComponents.outerClassManager.outerType(type)
+
+                    if (basicScope != null && (matchedSymbol.fir.typeParameters.isNotEmpty() || outerType != null)) {
+                        TypeAliasConstructorsSubstitutingScope(
+                            matchedSymbol,
+                            basicScope,
+                            outerType
+                        )
+                    } else basicScope
                 }
-                return extCopy.symbol
+                is FirClassSymbol ->
+                    (matchedSymbol.fir as FirClass<*>).scopeForClass(
+                        substitutor, session, bodyResolveComponents.scopeSession
+                    )
+            }
+
+            //TODO: why don't we use declared member scope at this point?
+            scope?.processDeclaredConstructors {
+                if (includeInnerConstructors || !it.fir.isInner) {
+                    processor(it)
+                }
             }
         }
+    } catch (e: Throwable) {
+        throw RuntimeException("While processing constructors", e)
     }
-    return null
+}
+
+private class TypeAliasConstructorsSubstitutingScope(
+    private val typeAliasSymbol: FirTypeAliasSymbol,
+    private val delegatingScope: FirScope,
+    private val outerType: ConeClassLikeType?,
+) : FirScope() {
+
+    init {
+        require(outerType != null || typeAliasSymbol.fir.typeParameters.isNotEmpty())
+    }
+
+    override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
+        delegatingScope.processDeclaredConstructors wrapper@{ originalConstructorSymbol ->
+            val typeParameters = typeAliasSymbol.fir.typeParameters
+
+            processor(
+                buildConstructorCopy(originalConstructorSymbol.fir) {
+                    symbol = FirConstructorSymbol(originalConstructorSymbol.callableId)
+                    origin = FirDeclarationOrigin.Synthetic
+
+                    this.typeParameters.clear()
+                    this.typeParameters += typeParameters.map { buildConstructedClassTypeParameterRef { symbol = it.symbol } }
+
+                    if (outerType != null) {
+                        // If the matched symbol is a type alias, and the expanded type is a nested class, e.g.,
+                        //
+                        //   class Outer {
+                        //     inner class Inner
+                        //   }
+                        //   typealias OI = Outer.Inner
+                        //   fun foo() { Outer().OI() }
+                        //
+                        // the chances are that `processor` belongs to [ScopeTowerLevel] (to resolve type aliases at top-level), which treats
+                        // the explicit receiver (`Outer()`) as an extension receiver, whereas the constructor of the nested class may regard
+                        // the same explicit receiver as a dispatch receiver (hence inconsistent receiver).
+                        // Here, we add a copy of the nested class constructor, along with the outer type as an extension receiver, so that it
+                        // can be seen as if resolving:
+                        //
+                        //   fun Outer.OI(): OI = ...
+                        //
+                        //
+                        receiverTypeRef = originalConstructorSymbol.fir.returnTypeRef.withReplacedConeType(outerType)
+                    }
+
+                }.apply {
+                    originalConstructorIfTypeAlias = originalConstructorSymbol.fir
+                }.symbol
+            )
+        }
+    }
 }
 
 private object TypeAliasConstructorKey : FirDeclarationDataKey()
