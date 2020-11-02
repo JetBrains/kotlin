@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.util.rootManager
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.plugins.gradle.tooling.annotation.PluginTargetVersions
 import org.junit.Test
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 
 class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTestCase() {
 
@@ -51,7 +52,9 @@ class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTe
     }
 
     private fun assertFileInModuleScope(file: VirtualFile, moduleName: String) {
-        assert(getModule(moduleName).getModuleWithDependenciesAndLibrariesScope(true).contains(file))
+        runReadAction {
+            assert(getModule(moduleName).getModuleWithDependenciesAndLibrariesScope(true).contains(file))
+        }
     }
 
     @Test
