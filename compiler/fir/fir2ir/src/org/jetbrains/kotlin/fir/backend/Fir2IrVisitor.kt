@@ -343,14 +343,7 @@ class Fir2IrVisitor(
 
         return conversionScope.withSafeCallSubject(receiverVariable) {
             val afterNotNullCheck = safeCallExpression.regularQualifiedAccess.accept(this, data) as IrExpression
-
-            val isReceiverNullable = with(components.session.typeContext) {
-                safeCallExpression.receiver.typeRef.coneType.isNullableType()
-            }
-
-            components.createSafeCallConstruction(
-                receiverVariable, variableSymbol, afterNotNullCheck, isReceiverNullable
-            )
+            components.createSafeCallConstruction(receiverVariable, variableSymbol, afterNotNullCheck)
         }
     }
 

@@ -345,7 +345,6 @@ fun Fir2IrComponents.createSafeCallConstruction(
     receiverVariable: IrVariable,
     receiverVariableSymbol: IrValueSymbol,
     expressionOnNotNull: IrExpression,
-    isReceiverNullable: Boolean
 ): IrExpression {
     val startOffset = expressionOnNotNull.startOffset
     val endOffset = expressionOnNotNull.endOffset

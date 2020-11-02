@@ -48,7 +48,6 @@ fun PackageFragmentProvider.collectPackageFragmentsOptimizedIfPossible(
 ) {
     when (this) {
         is PackageFragmentProviderOptimized -> collectPackageFragments(fqName, packageFragments)
-        else -> packageFragments.addAll(getPackageFragments(fqName))
+        else -> packageFragments.addAll(@Suppress("DEPRECATION") getPackageFragments(fqName))
     }
 }
-

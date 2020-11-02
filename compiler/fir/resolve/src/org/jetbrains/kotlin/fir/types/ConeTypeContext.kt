@@ -329,7 +329,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         }
 
         val substitutor = substitutorByMap((0 until argumentsCount).map { index ->
-            (typeConstructor.getParameter(index) as ConeTypeParameterLookupTag).toSymbol() to (newArguments[index] as ConeKotlinType)
+            (typeConstructor.getParameter(index) as ConeTypeParameterLookupTag).symbol to (newArguments[index] as ConeKotlinType)
         }.toMap())
 
         for (index in 0 until argumentsCount) {
@@ -561,8 +561,8 @@ class ConeTypeCheckerContext(
         }
     }
 
-    override fun areEqualTypeConstructors(a: TypeConstructorMarker, b: TypeConstructorMarker): Boolean {
-        return a == b
+    override fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean {
+        return c1 == c2
     }
 
     override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {

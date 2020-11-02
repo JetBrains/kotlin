@@ -173,7 +173,7 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
 
                             val irComponentProperty =
                                 PropertyGenerator(declarationGenerator).generateDestructuringDeclarationEntryAsPropertyDeclaration(
-                                    ktEntry, irComponentCall
+                                    ktEntry
                                 )
                             val irComponentBackingField = irComponentProperty.backingField!!
 

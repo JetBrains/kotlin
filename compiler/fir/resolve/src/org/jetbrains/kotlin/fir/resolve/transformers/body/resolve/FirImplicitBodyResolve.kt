@@ -234,8 +234,6 @@ private class ReturnTypeCalculatorWithJump(
 
     private fun computeReturnTypeRef(declaration: FirCallableMemberDeclaration<*>): FirResolvedTypeRef {
         val symbol = declaration.symbol
-        val id = symbol.callableId
-
         val provider = session.firProvider
 
         val (designation, outerBodyResolveContext) = if (declaration in designationMapForLocalClasses) {

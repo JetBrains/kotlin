@@ -94,7 +94,7 @@ interface IrBuilderExtension {
         irInvoke(
             dispatchReceiver,
             callee,
-            args = valueArguments.toTypedArray(),
+            *valueArguments.toTypedArray(),
             typeHint = returnTypeHint
         ).also { call -> typeArguments.forEachIndexed(call::putTypeArgument) }
 

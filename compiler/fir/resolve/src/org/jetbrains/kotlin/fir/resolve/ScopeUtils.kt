@@ -50,7 +50,7 @@ private fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: Scope
             fir.scopeForClass(substitutorByMap(substitution), useSiteSession, scopeSession)
         }
         is ConeTypeParameterType -> {
-            val symbol = lookupTag.toSymbol()
+            val symbol = lookupTag.symbol
             scopeSession.getOrBuild(symbol, TYPE_PARAMETER_SCOPE_KEY) {
                 val intersectionType = ConeTypeIntersector.intersectTypes(
                     useSiteSession.typeContext,

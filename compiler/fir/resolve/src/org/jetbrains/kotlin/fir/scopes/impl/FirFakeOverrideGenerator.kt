@@ -108,8 +108,7 @@ object FirFakeOverrideGenerator {
             dispatchReceiverType = newDispatchReceiverType
             attributes = baseFunction.attributes.copy()
             typeParameters += configureAnnotationsTypeParametersAndSignature(
-                session, baseFunction, newParameterTypes,
-                newTypeParameters, newReceiverType, newReturnType, fakeOverrideSubstitution
+                baseFunction, newParameterTypes, newTypeParameters, newReceiverType, newReturnType, fakeOverrideSubstitution
             ).filterIsInstance<FirTypeParameter>()
         }
     }
@@ -135,7 +134,7 @@ object FirFakeOverrideGenerator {
             symbol = fakeOverrideSymbol
 
             typeParameters += configureAnnotationsTypeParametersAndSignature(
-                session, baseConstructor, newParameterTypes, newTypeParameters, newReceiverType = null, newReturnType, fakeOverrideSubstitution
+                baseConstructor, newParameterTypes, newTypeParameters, newReceiverType = null, newReturnType, fakeOverrideSubstitution
             )
 
             dispatchReceiverType = newDispatchReceiverType
@@ -147,7 +146,6 @@ object FirFakeOverrideGenerator {
     }
 
     private fun FirFunctionBuilder.configureAnnotationsTypeParametersAndSignature(
-        session: FirSession,
         baseFunction: FirFunction<*>,
         newParameterTypes: List<ConeKotlinType?>?,
         newTypeParameters: List<FirTypeParameterRef>?,
@@ -158,7 +156,6 @@ object FirFakeOverrideGenerator {
         return when {
             baseFunction.typeParameters.isEmpty() -> {
                 configureAnnotationsAndSignature(
-                    session,
                     baseFunction,
                     newParameterTypes,
                     newReceiverType,
@@ -183,7 +180,6 @@ object FirFakeOverrideGenerator {
                     else -> null to FakeOverrideSubstitution(substitutor, symbol)
                 }
                 configureAnnotationsAndSignature(
-                    session,
                     baseFunction,
                     copiedParameterTypes,
                     copiedReceiverType,
@@ -194,7 +190,6 @@ object FirFakeOverrideGenerator {
             }
             else -> {
                 configureAnnotationsAndSignature(
-                    session,
                     baseFunction,
                     newParameterTypes,
                     newReceiverType,
@@ -207,7 +202,6 @@ object FirFakeOverrideGenerator {
     }
 
     private fun FirFunctionBuilder.configureAnnotationsAndSignature(
-        session: FirSession,
         baseFunction: FirFunction<*>,
         newParameterTypes: List<ConeKotlinType?>?,
         newReceiverType: ConeKotlinType?,

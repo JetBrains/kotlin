@@ -20,7 +20,7 @@ fun AbstractFirBasedSymbol<*>.ensureResolved(
     requiredPhase: FirResolvePhase,
     // TODO: Currently, the parameter is unused but it's needed to guarantee that all call-sites are able to supply use-site session
     // TODO: Decide which one session should be used and probably get rid of the parameter if use-site session is not needed
-    useSiteSession: FirSession,
+    @Suppress("UNUSED_PARAMETER") useSiteSession: FirSession,
 ) {
     val fir = fir as FirDeclaration
     val availablePhase = fir.resolvePhase

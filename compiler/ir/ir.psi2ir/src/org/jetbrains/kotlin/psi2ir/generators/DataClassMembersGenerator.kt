@@ -22,12 +22,10 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DataClassMembersGenerator
-import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
 /**
  * A generator that generates synthetic members of data class as well as part of inline class.
@@ -87,9 +85,6 @@ class DataClassMembersGenerator(
 
         override fun generateComponentFunction(function: FunctionDescriptor, parameter: ValueParameterDescriptor) {
             if (!irClass.isData) return
-
-            val ktParameter = DescriptorToSourceUtils.descriptorToDeclaration(parameter)
-                ?: throw AssertionError("No definition for data class constructor parameter $parameter")
 
             val backingField = irDataClassMembersGenerator.getBackingField(parameter, null) ?: return
             irDataClassMembersGenerator.generateComponentFunction(function, backingField)

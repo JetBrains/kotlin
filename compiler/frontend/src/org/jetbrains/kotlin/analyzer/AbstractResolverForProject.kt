@@ -239,9 +239,11 @@ private class DelegatingPackageFragmentProvider<M : ModuleInfo>(
 ) : PackageFragmentProviderOptimized {
     private val syntheticFilePackages = moduleContent.syntheticFiles.map { it.packageFqName }.toSet()
 
+    @Suppress("OverridingDeprecatedMember")
     override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> {
         if (certainlyDoesNotExist(fqName)) return emptyList()
 
+        @Suppress("DEPRECATION")
         return resolverForProject.resolverForModuleDescriptor(module).packageFragmentProvider.getPackageFragments(fqName)
     }
 

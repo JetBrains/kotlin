@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
@@ -42,7 +41,7 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             generateSimpleProperty(ktProperty, propertyDescriptor)
     }
 
-    fun generateDestructuringDeclarationEntryAsPropertyDeclaration(ktEntry: KtDestructuringDeclarationEntry, entryInitializer: IrExpression): IrProperty {
+    fun generateDestructuringDeclarationEntryAsPropertyDeclaration(ktEntry: KtDestructuringDeclarationEntry): IrProperty {
         val propertyDescriptor = getPropertyDescriptor(ktEntry)
         return context.symbolTable.declareProperty(
             ktEntry.startOffsetSkippingComments, ktEntry.endOffset,
