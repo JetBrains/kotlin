@@ -15807,6 +15807,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             runTest("compiler/testData/codegen/box/ir/simple.kt");
         }
 
+        @TestMetadata("suppressConflictingSignatureErrors.kt")
+        public void testSuppressConflictingSignatureErrors() throws Exception {
+            runTest("compiler/testData/codegen/box/ir/suppressConflictingSignatureErrors.kt");
+        }
+
         @TestMetadata("compiler/testData/codegen/box/ir/closureConversion")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

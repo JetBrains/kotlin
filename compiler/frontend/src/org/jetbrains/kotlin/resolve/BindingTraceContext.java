@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.resolve.diagnostics.BindingContextSuppressCache;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.diagnostics.MutableDiagnosticsWithSuppression;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -93,12 +94,12 @@ public class BindingTraceContext implements BindingTrace {
         this(TRACK_REWRITES && !allowSliceRewrite ? new TrackingSlicedMap(TRACK_WITH_STACK_TRACES) : new SlicedMapImpl(allowSliceRewrite), filter);
     }
 
-
     private BindingTraceContext(@NotNull MutableSlicedMap map, BindingTraceFilter filter) {
         this.map = map;
-        this.mutableDiagnostics = !filter.getIgnoreDiagnostics()
-                                  ? new MutableDiagnosticsWithSuppression(bindingContext, Diagnostics.Companion.getEMPTY())
-                                  : null;
+        this.mutableDiagnostics =
+                filter.getIgnoreDiagnostics()
+                ? null
+                : new MutableDiagnosticsWithSuppression(new BindingContextSuppressCache(bindingContext), Diagnostics.Companion.getEMPTY());
     }
 
     @TestOnly
