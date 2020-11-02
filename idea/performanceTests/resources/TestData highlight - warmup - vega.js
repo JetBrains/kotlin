@@ -6,8 +6,8 @@
 {
   "note": "May https://vega.github.io/vega/docs/ be with you",
   "$schema": "https://vega.github.io/schema/vega/v4.3.0.json",
-  "description": "TestData highlight",
-  "title": "TestData highlight",
+  "description": "TestData highlight - warmUp",
+  "title": "TestData highlight - warmUp",
   "width": 800,
   "height": 400,
   "padding": 5,
@@ -169,11 +169,11 @@
                 {
                   "bool": {
                     "must_not": [
-                       {"exists": {"field": "warmUp"}},
                        {"exists": {"field": "synthetic"}}
                      ]
                    }
                 },
+                {"exists": {"field": "warmUp"}},
                 {"term": {"benchmark.keyword": "highlight"}},
                 {"range": {"buildTimestamp": {"%timefilter%": true}}}
               ]
