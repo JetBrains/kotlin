@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.ir.AbstractIrSourceRangesTestCase
 import org.jetbrains.kotlin.ir.AbstractIrTextTestCase
 import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrCompileJavaAgainstKotlinTest
+import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrCompileKotlinAgainstJavaTest
 import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrLoadJavaTest
 import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJavaUsingJavacTest
 import org.jetbrains.kotlin.lexer.kdoc.AbstractKDocLexerTest
@@ -329,8 +330,18 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractCompileKotlinAgainstJavaTest> {
-                model("compileKotlinAgainstJava", testClassName = "WithAPT", testMethod = "doTestWithAPT")
-                model("compileKotlinAgainstJava", testClassName = "WithoutAPT", testMethod = "doTestWithoutAPT")
+                model(
+                    "compileKotlinAgainstJava",
+                    testClassName = "WithAPT",
+                    testMethod = "doTestWithAPT",
+                    targetBackend = TargetBackend.JVM
+                )
+                model(
+                    "compileKotlinAgainstJava",
+                    testClassName = "WithoutAPT",
+                    testMethod = "doTestWithoutAPT",
+                    targetBackend = TargetBackend.JVM
+                )
             }
 
             testClass<AbstractCompileKotlinAgainstKotlinTest> {
@@ -438,7 +449,27 @@ fun main(args: Array<String>) {
                     testMethod = "doTestWithoutJavac",
                     targetBackend = TargetBackend.JVM_IR
                 )
-                //model("compileJavaAgainstKotlin", testClassName = "WithJavac", testMethod = "doTestWithJavac", targetBackend = TargetBackend.JVM_IR)
+                model(
+                    "compileJavaAgainstKotlin",
+                    testClassName = "WithJavac",
+                    testMethod = "doTestWithJavac",
+                    targetBackend = TargetBackend.JVM_IR
+                )
+            }
+
+            testClass<AbstractIrCompileKotlinAgainstJavaTest> {
+                model(
+                    "compileKotlinAgainstJava",
+                    testClassName = "WithAPT",
+                    testMethod = "doTestWithAPT",
+                    targetBackend = TargetBackend.JVM_IR
+                )
+                model(
+                    "compileKotlinAgainstJava",
+                    testClassName = "WithoutAPT",
+                    testMethod = "doTestWithoutAPT",
+                    targetBackend = TargetBackend.JVM_IR
+                )
             }
 
             testClass<AbstractIrCompileKotlinAgainstKotlinTest> {

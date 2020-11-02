@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.GenerationUtils
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
@@ -90,6 +91,7 @@ abstract class AbstractCompileKotlinAgainstJavaTest : TestCaseWithTmpdir() {
         aptMode: Boolean
     ): Boolean {
         val environment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable)
+        updateConfiguration(environment.configuration)
         environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
         environment.configuration.put(JVMConfigurationKeys.COMPILE_JAVA, true)
         val ktFiles = kotlinFiles.map { kotlinFile: File ->
@@ -114,6 +116,8 @@ abstract class AbstractCompileKotlinAgainstJavaTest : TestCaseWithTmpdir() {
 
         return JavacWrapper.getInstance(environment.project).use { it.compile(outDir) }
     }
+
+    open fun updateConfiguration(configuration: CompilerConfiguration) {}
 
     companion object {
         // Do not render parameter names because there are test cases where classes inherit from JDK collections,
