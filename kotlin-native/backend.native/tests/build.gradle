@@ -4034,6 +4034,10 @@ task interop_convert(type: KonanLocalTest) {
     source = "codegen/intrinsics/interop_convert.kt"
 }
 
+task interop_sourceCodeStruct(type: KonanLocalTest) {
+    source = "codegen/intrinsics/interop_sourceCodeStruct.kt"
+}
+
 /*
 TODO: This test isn't run automatically
 task interop_echo_server(type: RunInteropKonanTest) {
