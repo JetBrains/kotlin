@@ -4,9 +4,9 @@ import org.jetbrains.dokka.model.DPackage
 import org.jetbrains.dokka.model.doc.DocumentationNode
 import org.jetbrains.dokka.pages.ModulePageNode
 import org.junit.jupiter.api.Assertions.*
-import org.jetbrains.dokka.testApi.testRunner.AbstractCoreTest
+import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 
-abstract class KDocTest : AbstractCoreTest() {
+abstract class KDocTest : BaseAbstractTest() {
 
     private val configuration = dokkaConfiguration {
         sourceSets {

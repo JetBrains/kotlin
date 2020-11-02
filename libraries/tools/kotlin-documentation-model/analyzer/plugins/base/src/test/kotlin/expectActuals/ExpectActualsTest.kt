@@ -3,12 +3,12 @@ package expectActuals
 import org.jetbrains.dokka.model.withDescendants
 import org.jetbrains.dokka.pages.ClasslikePageNode
 import org.jetbrains.dokka.pages.PageNode
-import org.jetbrains.dokka.testApi.testRunner.AbstractCoreTest
+import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertTrue
 
 
-class ExpectActualsTest : AbstractCoreTest() {
+class ExpectActualsTest : BaseAbstractTest() {
 
     @Test
     fun `three same named expect actual classes`() {

@@ -2,12 +2,12 @@ package translators
 
 import org.jetbrains.dokka.model.doc.Text
 import org.jetbrains.dokka.model.firstMemberOfType
-import org.jetbrains.dokka.testApi.testRunner.AbstractCoreTest
+import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-class DefaultPsiToDocumentableTranslatorTest : AbstractCoreTest() {
+class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
 
     @Test
     fun `method overriding two documented classes picks closest class documentation`() {

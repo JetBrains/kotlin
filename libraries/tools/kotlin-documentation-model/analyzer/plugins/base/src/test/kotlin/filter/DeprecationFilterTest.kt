@@ -1,11 +1,11 @@
 package filter
 
 import org.jetbrains.dokka.PackageOptionsImpl
-import org.jetbrains.dokka.testApi.testRunner.AbstractCoreTest
+import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-class DeprecationFilterTest : AbstractCoreTest() {
+class DeprecationFilterTest : BaseAbstractTest() {
     @Test
     fun `function with false global skipDeprecated`() {
         val configuration = dokkaConfiguration {
