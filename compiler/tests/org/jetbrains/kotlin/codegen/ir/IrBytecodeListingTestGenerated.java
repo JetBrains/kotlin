@@ -104,6 +104,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         runTest("compiler/testData/codegen/bytecodeListing/jvmStaticWithDefaultParameters.kt");
     }
 
+    @TestMetadata("kt42879.kt")
+    public void testKt42879() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/kt42879.kt");
+    }
+
     @TestMetadata("localFunctionInInitBlock.kt")
     public void testLocalFunctionInInitBlock() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/localFunctionInInitBlock.kt");
