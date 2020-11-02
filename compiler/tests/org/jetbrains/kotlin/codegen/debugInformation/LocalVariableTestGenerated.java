@@ -68,6 +68,12 @@ public class LocalVariableTestGenerated extends AbstractLocalVariableTest {
     }
 
     @Test
+    @TestMetadata("lambdaWithExtensionReceiver.kt")
+    public void testLambdaWithExtensionReceiver() throws Exception {
+        runTest("compiler/testData/debug/localVariables/lambdaWithExtensionReceiver.kt");
+    }
+
+    @Test
     @TestMetadata("localFun.kt")
     public void testLocalFun() throws Exception {
         runTest("compiler/testData/debug/localVariables/localFun.kt");
@@ -83,6 +89,26 @@ public class LocalVariableTestGenerated extends AbstractLocalVariableTest {
     @TestMetadata("underscoreNames.kt")
     public void testUnderscoreNames() throws Exception {
         runTest("compiler/testData/debug/localVariables/underscoreNames.kt");
+    }
+
+    @TestMetadata("compiler/testData/debug/localVariables/receiverMangling")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(BlockJUnit4ClassRunner.class)
+    public static class ReceiverMangling extends AbstractLocalVariableTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+        }
+
+        @Test
+        public void testAllFilesPresentInReceiverMangling() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/receiverMangling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+        }
+
+        @Test
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/simple.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/debug/localVariables/suspend")
