@@ -1459,7 +1459,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         } else {
             // E.g. when generating type operation with reified type parameter in the original body of inline function.
             kTrue
-            // TODO: this code should be unreachable, however [BridgesBuilding] generates IR with such type checks.
+            // TODO: this code should be unreachable, recheck.
         }
         functionGenerationContext.br(bbExit)
         val bbInstanceOfResult = functionGenerationContext.currentBlock

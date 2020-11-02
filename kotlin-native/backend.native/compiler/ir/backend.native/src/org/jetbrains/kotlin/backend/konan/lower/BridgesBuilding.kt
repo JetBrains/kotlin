@@ -207,7 +207,12 @@ private fun IrBlockBodyBuilder.buildTypeSafeBarrier(function: IrFunction,
     for (i in valueParameters.indices) {
         if (!typeSafeBarrierDescription.checkParameter(i))
             continue
-        val type = originalValueParameters[i].type
+
+        val type = originalValueParameters[i].type.erasureForTypeOperation()
+        // Note: erasing to single type is not entirely correct if type parameter has multiple upper bounds.
+        // In this case the compiler could generate multiple type checks, one for each upper bound.
+        // But let's keep it simple here for now; JVM backend doesn't do this anyway.
+
         if (!type.isNullableAny()) {
             +returnIfBadType(irGet(valueParameters[i]), type,
                     if (typeSafeBarrierDescription == SpecialGenericSignatures.TypeSafeBarrierDescription.MAP_GET_OR_DEFAULT)
