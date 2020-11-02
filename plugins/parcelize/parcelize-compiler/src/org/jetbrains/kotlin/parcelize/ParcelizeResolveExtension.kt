@@ -171,7 +171,7 @@ interface ParcelizeSyntheticComponent {
 
 val PARCELIZE_CLASS_FQ_NAMES: List<FqName> = listOf(
     FqName(kotlinx.parcelize.Parcelize::class.java.canonicalName),
-    FqName(kotlinx.android.parcel.Parcelize::class.java.canonicalName)
+    @Suppress("DEPRECATION") FqName(kotlinx.android.parcel.Parcelize::class.java.canonicalName)
 )
 
 internal val PARCELER_FQNAME = FqName(kotlinx.parcelize.Parceler::class.java.canonicalName)

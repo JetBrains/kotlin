@@ -38,7 +38,7 @@ class ParcelizeDeclarationChecker : DeclarationChecker {
     private companion object {
         private val IGNORED_ON_PARCEL_FQ_NAMES = listOf(
             FqName(kotlinx.parcelize.IgnoredOnParcel::class.java.canonicalName),
-            FqName(kotlinx.android.parcel.IgnoredOnParcel::class.java.canonicalName)
+            @Suppress("DEPRECATION") FqName(kotlinx.android.parcel.IgnoredOnParcel::class.java.canonicalName)
         )
     }
 

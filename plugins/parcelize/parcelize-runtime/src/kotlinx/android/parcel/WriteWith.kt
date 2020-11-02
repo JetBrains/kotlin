@@ -22,4 +22,4 @@ package kotlinx.android.parcel
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.TYPE)
 @Deprecated("Use kotlinx.parcelize.WriteWith instead.", ReplaceWith("kotlinx.parcelize.WriteWith"))
-annotation class WriteWith<P : @Suppress("DEPRECATION_ERROR") Parceler<*>>
+annotation class WriteWith<P : @Suppress("DEPRECATION") Parceler<*>>

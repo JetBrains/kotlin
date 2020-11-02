@@ -45,7 +45,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 val RAW_VALUE_ANNOTATION_FQ_NAMES = listOf(
     FqName(kotlinx.parcelize.RawValue::class.java.name),
-    FqName(kotlinx.android.parcel.RawValue::class.java.name)
+    @Suppress("DEPRECATION") FqName(kotlinx.android.parcel.RawValue::class.java.name)
 )
 
 internal typealias TypeParcelerMapping = Pair<KotlinType, KotlinType>
@@ -70,7 +70,7 @@ interface ParcelSerializer {
     companion object {
         private val WRITE_WITH_FQ_NAMES = listOf(
             FqName(kotlinx.parcelize.WriteWith::class.java.name),
-            FqName(kotlinx.android.parcel.WriteWith::class.java.name),
+            @Suppress("DEPRECATION") FqName(kotlinx.android.parcel.WriteWith::class.java.name),
         )
 
         private fun KotlinTypeMapper.mapTypeSafe(type: KotlinType, forceBoxed: Boolean) = when {
