@@ -122,7 +122,7 @@ abstract class AbstractMultiModuleIdeResolveTest : AbstractMultiModuleTest() {
 
     companion object {
         private const val DIAGNOSTICS_DIRECTIVE = "DIAGNOSTICS"
-        private const val RENDER_DIAGNOSTICS_MESSAGES = "RENDER_DIAGNOSTICS_MESSAGES"
+        const val RENDER_DIAGNOSTICS_MESSAGES = "RENDER_DIAGNOSTICS_MESSAGES"
         private val DIAGNOSTICS_PATTERN: Pattern = Pattern.compile("([+\\-!])(\\w+)\\s*")
         private val DIAGNOSTICS_TO_INCLUDE_ANYWAY: Set<DiagnosticFactory<*>> = setOf(
                 Errors.UNRESOLVED_REFERENCE,

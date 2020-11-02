@@ -28,7 +28,6 @@ import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.util.io.exists
 import gnu.trove.TIntArrayList
-import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest
 import org.jetbrains.kotlin.checkers.diagnostics.DebugInfoDiagnostic
 import org.jetbrains.kotlin.checkers.diagnostics.SyntaxErrorDiagnostic
 import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory0
@@ -38,6 +37,7 @@ import org.jetbrains.kotlin.daemon.common.OSKind
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.AbstractDiagnostic
 import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.idea.caches.resolve.AbstractMultiModuleIdeResolveTest
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeMetaInfo.models.*
 import org.jetbrains.kotlin.idea.codeMetaInfo.renderConfigurations.AbstractCodeMetaInfoRenderConfiguration
@@ -69,7 +69,7 @@ class CodeMetaInfoTestCase(
         val resolutionFacade = tempSourceKtFile.getResolutionFacade()
         val (bindingContext, moduleDescriptor) = resolutionFacade.analyzeWithAllCompilerChecks(listOf(tempSourceKtFile))
         val directives = KotlinTestUtils.parseDirectives(file.text)
-        val diagnosticsFilter = BaseDiagnosticsTest.parseDiagnosticFilterDirective(directives, allowUnderscoreUsage = false)
+        val diagnosticsFilter = AbstractMultiModuleIdeResolveTest.parseDiagnosticFilterDirective(directives, allowUnderscoreUsage = false)
         val diagnostics = CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(
             bindingContext,
             file,
@@ -83,7 +83,7 @@ class CodeMetaInfoTestCase(
             dataFlowValueFactory = resolutionFacade.getDataFlowValueFactory(),
             moduleDescriptor = moduleDescriptor as ModuleDescriptorImpl
         ).map { it.diagnostic }.filter { !parseDirective || diagnosticsFilter.value(it) }
-        configuration.renderParams = directives.contains(BaseDiagnosticsTest.RENDER_DIAGNOSTICS_MESSAGES)
+        configuration.renderParams = directives.contains(AbstractMultiModuleIdeResolveTest.RENDER_DIAGNOSTICS_MESSAGES)
         return getCodeMetaInfo(diagnostics, configuration)
     }
 
