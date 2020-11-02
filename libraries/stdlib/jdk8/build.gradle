@@ -70,8 +70,8 @@ compileKotlin {
             "-Xallow-kotlin-package",
             "-Xmultifile-parts-inherit",
             "-Xnormalize-constructor-calls=enable",
-            "-module-name", project.name
     ]
+    kotlinOptions.moduleName = project.name
 }
 
 compileTestKotlin {
