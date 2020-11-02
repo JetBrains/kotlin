@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 import java.io.File
+import java.nio.file.FileSystemException
 import java.nio.file.Files
 import java.util.zip.ZipFile
 import kotlin.test.assertEquals
@@ -692,7 +693,12 @@ class KotlinGradleIT : BaseGradleIT() {
         val buildDir = projectDir.resolve("build")
         buildDir.deleteRecursively()
         val externalBuildDir = Files.createTempDirectory(workingDir.toPath(), "externalBuild")
-        Files.createSymbolicLink(buildDir.toPath(), externalBuildDir)
+        try {
+            Files.createSymbolicLink(buildDir.toPath(), externalBuildDir)
+        } catch (_: FileSystemException) {
+            //Windows requires SeSymbolicLink privilege and we can't grant it
+            null
+        } ?: return@with
 
         build("build") {
             assertSuccessful()
