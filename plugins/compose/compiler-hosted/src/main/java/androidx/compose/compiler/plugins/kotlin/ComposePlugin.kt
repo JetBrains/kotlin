@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import androidx.compose.compiler.plugins.kotlin.lower.ClassStabilityFieldSerializationPlugin
 import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.compiler.plugin.CliOption
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor
+import org.jetbrains.kotlin.serialization.DescriptorSerializer
 
 object ComposeConfiguration {
     val LIVE_LITERALS_ENABLED_KEY =
@@ -148,6 +150,9 @@ class ComposeComponentRegistrar : ComponentRegistrar {
                     sourceInformationEnabled = sourceInformationEnabled,
                     intrinsicRememberEnabled = intrinsicRememberEnabled
                 )
+            )
+            DescriptorSerializer.registerSerializerPlugin(
+                ClassStabilityFieldSerializationPlugin()
             )
         }
     }

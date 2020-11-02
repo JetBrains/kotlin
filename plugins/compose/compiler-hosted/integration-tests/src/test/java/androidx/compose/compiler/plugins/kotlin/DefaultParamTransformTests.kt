@@ -96,10 +96,10 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               val foo = foo
               if (%default and 0b0001 !== 0) {
                 %dirty = %dirty or 0b0110
-              } else if (%changed and 0b0110 === 0) {
+              } else if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(foo.value)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                 if (%default and 0b0001 !== 0) {
                   foo = Foo(0)
                 }
@@ -143,8 +143,8 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
             fun Test(%composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test)<A(0,>,<A(a>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
-                A(0, 1, 2, 0, 0, %composer, 0b01111110, 0b00011000)
-                A(0, 0, 2, 0, 0, %composer, 0b01100110, 0b00011010)
+                A(0, 1, 2, 0, 0, %composer, 0b000110110110, 0b00011000)
+                A(0, 0, 2, 0, 0, %composer, 0b000110000110, 0b00011010)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -172,21 +172,21 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               %composer.startRestartGroup(<>, "C(Test):Test.kt")
               val %dirty = %changed
               val x = x
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%default and 0b0001 === 0 && %composer.changed(x)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
                   %composer.startDefaults()
                   if (%default and 0b0001 !== 0) {
                     x = makeInt()
-                    %dirty = %dirty and 0b0110.inv()
+                    %dirty = %dirty and 0b1110.inv()
                   }
                   %composer.endDefaults()
                 } else {
                   %composer.skipCurrentGroup()
                   if (%default and 0b0001 !== 0) {
-                    %dirty = %dirty and 0b0110.inv()
+                    %dirty = %dirty and 0b1110.inv()
                   }
                 }
               } else {
@@ -219,13 +219,13 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               val b = b
               if (%default and 0b0001 !== 0) {
                 %dirty = %dirty or 0b0110
-              } else if (%changed and 0b0110 === 0) {
+              } else if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%default and 0b0010 === 0 && %composer.changed(b)) 0b00010000 else 0b1000
+              if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%default and 0b0010 === 0 && %composer.changed(b)) 0b00100000 else 0b00010000
               }
-              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b01011011 xor 0b00010010 !== 0 || !%composer.skipping) {
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
                   %composer.startDefaults()
                   if (%default and 0b0001 !== 0) {
@@ -233,13 +233,13 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
                   }
                   if (%default and 0b0010 !== 0) {
                     b = a + 1
-                    %dirty = %dirty and 0b00011000.inv()
+                    %dirty = %dirty and 0b01110000.inv()
                   }
                   %composer.endDefaults()
                 } else {
                   %composer.skipCurrentGroup()
                   if (%default and 0b0010 !== 0) {
-                    %dirty = %dirty and 0b00011000.inv()
+                    %dirty = %dirty and 0b01110000.inv()
                   }
                 }
                 print(a)
@@ -298,11 +298,12 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Int, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, a15: Int, a16: Int, a17: Int, a18: Int, a19: Int, a20: Int, a21: Int, a22: Int, a23: Int, a24: Int, a25: Int, a26: Int, a27: Int, a28: Int, a29: Int, a30: Int, %composer: Composer<*>?, %changed: Int, %changed1: Int, %changed2: Int, %default: Int) {
+            fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Int, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, a15: Int, a16: Int, a17: Int, a18: Int, a19: Int, a20: Int, a21: Int, a22: Int, a23: Int, a24: Int, a25: Int, a26: Int, a27: Int, a28: Int, a29: Int, a30: Int, %composer: Composer<*>?, %changed: Int, %changed1: Int, %changed2: Int, %changed3: Int, %default: Int) {
               %composer.startRestartGroup(<>, "C(Example):Test.kt")
               val %dirty = %changed
               val %dirty1 = %changed1
               val %dirty2 = %changed2
+              val %dirty3 = %changed3
               val a00 = a00
               val a01 = a01
               val a02 = a02
@@ -336,160 +337,160 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               val a30 = a30
               if (%default and 0b0001 !== 0) {
                 %dirty = %dirty or 0b0110
-              } else if (%changed and 0b0110 === 0) {
+              } else if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(a00)) 0b0100 else 0b0010
               }
               if (%default and 0b0010 !== 0) {
-                %dirty = %dirty or 0b00011000
-              } else if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a01)) 0b00010000 else 0b1000
+                %dirty = %dirty or 0b00110000
+              } else if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a01)) 0b00100000 else 0b00010000
               }
               if (%default and 0b0100 !== 0) {
-                %dirty = %dirty or 0b01100000
-              } else if (%changed and 0b01100000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a02)) 0b01000000 else 0b00100000
+                %dirty = %dirty or 0b000110000000
+              } else if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a02)) 0b000100000000 else 0b10000000
               }
               if (%default and 0b1000 !== 0) {
-                %dirty = %dirty or 0b000110000000
-              } else if (%changed and 0b000110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a03)) 0b000100000000 else 0b10000000
+                %dirty = %dirty or 0b110000000000
+              } else if (%changed and 0b0001110000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a03)) 0b100000000000 else 0b010000000000
               }
               if (%default and 0b00010000 !== 0) {
-                %dirty = %dirty or 0b011000000000
-              } else if (%changed and 0b011000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a04)) 0b010000000000 else 0b001000000000
+                %dirty = %dirty or 0b0110000000000000
+              } else if (%changed and 0b1110000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a04)) 0b0100000000000000 else 0b0010000000000000
               }
               if (%default and 0b00100000 !== 0) {
-                %dirty = %dirty or 0b0001100000000000
-              } else if (%changed and 0b0001100000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a05)) 0b0001000000000000 else 0b100000000000
+                %dirty = %dirty or 0b00110000000000000000
+              } else if (%changed and 0b01110000000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a05)) 0b00100000000000000000 else 0b00010000000000000000
               }
               if (%default and 0b01000000 !== 0) {
-                %dirty = %dirty or 0b0110000000000000
-              } else if (%changed and 0b0110000000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a06)) 0b0100000000000000 else 0b0010000000000000
+                %dirty = %dirty or 0b000110000000000000000000
+              } else if (%changed and 0b001110000000000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a06)) 0b000100000000000000000000 else 0b10000000000000000000
               }
               if (%default and 0b10000000 !== 0) {
-                %dirty = %dirty or 0b00011000000000000000
-              } else if (%changed and 0b00011000000000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a07)) 0b00010000000000000000 else 0b1000000000000000
+                %dirty = %dirty or 0b110000000000000000000000
+              } else if (%changed and 0b0001110000000000000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a07)) 0b100000000000000000000000 else 0b010000000000000000000000
               }
               if (%default and 0b000100000000 !== 0) {
-                %dirty = %dirty or 0b01100000000000000000
-              } else if (%changed and 0b01100000000000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a08)) 0b01000000000000000000 else 0b00100000000000000000
+                %dirty = %dirty or 0b0110000000000000000000000000
+              } else if (%changed and 0b1110000000000000000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a08)) 0b0100000000000000000000000000 else 0b0010000000000000000000000000
               }
               if (%default and 0b001000000000 !== 0) {
-                %dirty = %dirty or 0b000110000000000000000000
-              } else if (%changed and 0b000110000000000000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a09)) 0b000100000000000000000000 else 0b10000000000000000000
+                %dirty = %dirty or 0b00110000000000000000000000000000
+              } else if (%changed and 0b01110000000000000000000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a09)) 0b00100000000000000000000000000000 else 0b00010000000000000000000000000000
               }
               if (%default and 0b010000000000 !== 0) {
-                %dirty = %dirty or 0b011000000000000000000000
-              } else if (%changed and 0b011000000000000000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a10)) 0b010000000000000000000000 else 0b001000000000000000000000
+                %dirty1 = %dirty1 or 0b0110
+              } else if (%changed1 and 0b1110 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a10)) 0b0100 else 0b0010
               }
               if (%default and 0b100000000000 !== 0) {
-                %dirty = %dirty or 0b0001100000000000000000000000
-              } else if (%changed and 0b0001100000000000000000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a11)) 0b0001000000000000000000000000 else 0b100000000000000000000000
+                %dirty1 = %dirty1 or 0b00110000
+              } else if (%changed1 and 0b01110000 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a11)) 0b00100000 else 0b00010000
               }
               if (%default and 0b0001000000000000 !== 0) {
-                %dirty = %dirty or 0b0110000000000000000000000000
-              } else if (%changed and 0b0110000000000000000000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a12)) 0b0100000000000000000000000000 else 0b0010000000000000000000000000
+                %dirty1 = %dirty1 or 0b000110000000
+              } else if (%changed1 and 0b001110000000 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a12)) 0b000100000000 else 0b10000000
               }
               if (%default and 0b0010000000000000 !== 0) {
-                %dirty = %dirty or 0b00011000000000000000000000000000
-              } else if (%changed and 0b00011000000000000000000000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a13)) 0b00010000000000000000000000000000 else 0b1000000000000000000000000000
+                %dirty1 = %dirty1 or 0b110000000000
+              } else if (%changed1 and 0b0001110000000000 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a13)) 0b100000000000 else 0b010000000000
               }
               if (%default and 0b0100000000000000 !== 0) {
-                %dirty = %dirty or 0b01100000000000000000000000000000
-              } else if (%changed and 0b01100000000000000000000000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a14)) 0b01000000000000000000000000000000 else 0b00100000000000000000000000000000
+                %dirty1 = %dirty1 or 0b0110000000000000
+              } else if (%changed1 and 0b1110000000000000 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a14)) 0b0100000000000000 else 0b0010000000000000
               }
               if (%default and 0b1000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b0110
-              } else if (%changed1 and 0b0110 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a15)) 0b0100 else 0b0010
+                %dirty1 = %dirty1 or 0b00110000000000000000
+              } else if (%changed1 and 0b01110000000000000000 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a15)) 0b00100000000000000000 else 0b00010000000000000000
               }
               if (%default and 0b00010000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b00011000
-              } else if (%changed1 and 0b00011000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a16)) 0b00010000 else 0b1000
+                %dirty1 = %dirty1 or 0b000110000000000000000000
+              } else if (%changed1 and 0b001110000000000000000000 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a16)) 0b000100000000000000000000 else 0b10000000000000000000
               }
               if (%default and 0b00100000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b01100000
-              } else if (%changed1 and 0b01100000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a17)) 0b01000000 else 0b00100000
+                %dirty1 = %dirty1 or 0b110000000000000000000000
+              } else if (%changed1 and 0b0001110000000000000000000000 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a17)) 0b100000000000000000000000 else 0b010000000000000000000000
               }
               if (%default and 0b01000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b000110000000
-              } else if (%changed1 and 0b000110000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a18)) 0b000100000000 else 0b10000000
+                %dirty1 = %dirty1 or 0b0110000000000000000000000000
+              } else if (%changed1 and 0b1110000000000000000000000000 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a18)) 0b0100000000000000000000000000 else 0b0010000000000000000000000000
               }
               if (%default and 0b10000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b011000000000
-              } else if (%changed1 and 0b011000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a19)) 0b010000000000 else 0b001000000000
+                %dirty1 = %dirty1 or 0b00110000000000000000000000000000
+              } else if (%changed1 and 0b01110000000000000000000000000000 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a19)) 0b00100000000000000000000000000000 else 0b00010000000000000000000000000000
               }
               if (%default and 0b000100000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b0001100000000000
-              } else if (%changed1 and 0b0001100000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a20)) 0b0001000000000000 else 0b100000000000
+                %dirty2 = %dirty2 or 0b0110
+              } else if (%changed2 and 0b1110 === 0) {
+                %dirty2 = %dirty2 or if (%composer.changed(a20)) 0b0100 else 0b0010
               }
               if (%default and 0b001000000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b0110000000000000
-              } else if (%changed1 and 0b0110000000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a21)) 0b0100000000000000 else 0b0010000000000000
+                %dirty2 = %dirty2 or 0b00110000
+              } else if (%changed2 and 0b01110000 === 0) {
+                %dirty2 = %dirty2 or if (%composer.changed(a21)) 0b00100000 else 0b00010000
               }
               if (%default and 0b010000000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b00011000000000000000
-              } else if (%changed1 and 0b00011000000000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a22)) 0b00010000000000000000 else 0b1000000000000000
+                %dirty2 = %dirty2 or 0b000110000000
+              } else if (%changed2 and 0b001110000000 === 0) {
+                %dirty2 = %dirty2 or if (%composer.changed(a22)) 0b000100000000 else 0b10000000
               }
               if (%default and 0b100000000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b01100000000000000000
-              } else if (%changed1 and 0b01100000000000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a23)) 0b01000000000000000000 else 0b00100000000000000000
+                %dirty2 = %dirty2 or 0b110000000000
+              } else if (%changed2 and 0b0001110000000000 === 0) {
+                %dirty2 = %dirty2 or if (%composer.changed(a23)) 0b100000000000 else 0b010000000000
               }
               if (%default and 0b0001000000000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b000110000000000000000000
-              } else if (%changed1 and 0b000110000000000000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a24)) 0b000100000000000000000000 else 0b10000000000000000000
+                %dirty2 = %dirty2 or 0b0110000000000000
+              } else if (%changed2 and 0b1110000000000000 === 0) {
+                %dirty2 = %dirty2 or if (%composer.changed(a24)) 0b0100000000000000 else 0b0010000000000000
               }
               if (%default and 0b0010000000000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b011000000000000000000000
-              } else if (%changed1 and 0b011000000000000000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a25)) 0b010000000000000000000000 else 0b001000000000000000000000
+                %dirty2 = %dirty2 or 0b00110000000000000000
+              } else if (%changed2 and 0b01110000000000000000 === 0) {
+                %dirty2 = %dirty2 or if (%composer.changed(a25)) 0b00100000000000000000 else 0b00010000000000000000
               }
               if (%default and 0b0100000000000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b0001100000000000000000000000
-              } else if (%changed1 and 0b0001100000000000000000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a26)) 0b0001000000000000000000000000 else 0b100000000000000000000000
+                %dirty2 = %dirty2 or 0b000110000000000000000000
+              } else if (%changed2 and 0b001110000000000000000000 === 0) {
+                %dirty2 = %dirty2 or if (%composer.changed(a26)) 0b000100000000000000000000 else 0b10000000000000000000
               }
               if (%default and 0b1000000000000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b0110000000000000000000000000
-              } else if (%changed1 and 0b0110000000000000000000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a27)) 0b0100000000000000000000000000 else 0b0010000000000000000000000000
+                %dirty2 = %dirty2 or 0b110000000000000000000000
+              } else if (%changed2 and 0b0001110000000000000000000000 === 0) {
+                %dirty2 = %dirty2 or if (%composer.changed(a27)) 0b100000000000000000000000 else 0b010000000000000000000000
               }
               if (%default and 0b00010000000000000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b00011000000000000000000000000000
-              } else if (%changed1 and 0b00011000000000000000000000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a28)) 0b00010000000000000000000000000000 else 0b1000000000000000000000000000
+                %dirty2 = %dirty2 or 0b0110000000000000000000000000
+              } else if (%changed2 and 0b1110000000000000000000000000 === 0) {
+                %dirty2 = %dirty2 or if (%composer.changed(a28)) 0b0100000000000000000000000000 else 0b0010000000000000000000000000
               }
               if (%default and 0b00100000000000000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b01100000000000000000000000000000
-              } else if (%changed1 and 0b01100000000000000000000000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a29)) 0b01000000000000000000000000000000 else 0b00100000000000000000000000000000
+                %dirty2 = %dirty2 or 0b00110000000000000000000000000000
+              } else if (%changed2 and 0b01110000000000000000000000000000 === 0) {
+                %dirty2 = %dirty2 or if (%composer.changed(a29)) 0b00100000000000000000000000000000 else 0b00010000000000000000000000000000
               }
               if (%default and 0b01000000000000000000000000000000 !== 0) {
-                %dirty2 = %dirty2 or 0b0110
-              } else if (%changed2 and 0b0110 === 0) {
-                %dirty2 = %dirty2 or if (%composer.changed(a30)) 0b0100 else 0b0010
+                %dirty3 = %dirty3 or 0b0110
+              } else if (%changed3 and 0b1110 === 0) {
+                %dirty3 = %dirty3 or if (%composer.changed(a30)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b00101010101010101010101010101011 xor 0b00101010101010101010101010101010 !== 0 || %dirty1 and 0b00101010101010101010101010101011 xor 0b00101010101010101010101010101010 !== 0 || %dirty2 and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b01011011011011011011011011011011 xor 0b00010010010010010010010010010010 !== 0 || %dirty1 and 0b01011011011011011011011011011011 xor 0b00010010010010010010010010010010 !== 0 || %dirty2 and 0b01011011011011011011011011011011 xor 0b00010010010010010010010010010010 !== 0 || %dirty3 and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                 if (%default and 0b0001 !== 0) {
                   a00 = 0
                 }
@@ -588,7 +589,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
-                Example(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20, a21, a22, a23, a24, a25, a26, a27, a28, a29, a30, %composer, %changed or 0b0001, %changed1, %changed2, %default)
+                Example(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20, a21, a22, a23, a24, a25, a26, a27, a28, a29, a30, %composer, %changed or 0b0001, %changed1, %changed2, %changed3, %default)
               }
             }
         """
@@ -639,11 +640,12 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Int, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, a15: Int, a16: Int, a17: Int, a18: Int, a19: Int, a20: Int, a21: Int, a22: Int, a23: Int, a24: Int, a25: Int, a26: Int, a27: Int, a28: Int, a29: Int, a30: Int, a31: Int, %composer: Composer<*>?, %changed: Int, %changed1: Int, %changed2: Int, %default: Int, %default1: Int) {
+            fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Int, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, a15: Int, a16: Int, a17: Int, a18: Int, a19: Int, a20: Int, a21: Int, a22: Int, a23: Int, a24: Int, a25: Int, a26: Int, a27: Int, a28: Int, a29: Int, a30: Int, a31: Int, %composer: Composer<*>?, %changed: Int, %changed1: Int, %changed2: Int, %changed3: Int, %default: Int, %default1: Int) {
               %composer.startRestartGroup(<>, "C(Example):Test.kt")
               val %dirty = %changed
               val %dirty1 = %changed1
               val %dirty2 = %changed2
+              val %dirty3 = %changed3
               val a00 = a00
               val a01 = a01
               val a02 = a02
@@ -678,165 +680,165 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               val a31 = a31
               if (%default and 0b0001 !== 0) {
                 %dirty = %dirty or 0b0110
-              } else if (%changed and 0b0110 === 0) {
+              } else if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(a00)) 0b0100 else 0b0010
               }
               if (%default and 0b0010 !== 0) {
-                %dirty = %dirty or 0b00011000
-              } else if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a01)) 0b00010000 else 0b1000
+                %dirty = %dirty or 0b00110000
+              } else if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a01)) 0b00100000 else 0b00010000
               }
               if (%default and 0b0100 !== 0) {
-                %dirty = %dirty or 0b01100000
-              } else if (%changed and 0b01100000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a02)) 0b01000000 else 0b00100000
+                %dirty = %dirty or 0b000110000000
+              } else if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a02)) 0b000100000000 else 0b10000000
               }
               if (%default and 0b1000 !== 0) {
-                %dirty = %dirty or 0b000110000000
-              } else if (%changed and 0b000110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a03)) 0b000100000000 else 0b10000000
+                %dirty = %dirty or 0b110000000000
+              } else if (%changed and 0b0001110000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a03)) 0b100000000000 else 0b010000000000
               }
               if (%default and 0b00010000 !== 0) {
-                %dirty = %dirty or 0b011000000000
-              } else if (%changed and 0b011000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a04)) 0b010000000000 else 0b001000000000
+                %dirty = %dirty or 0b0110000000000000
+              } else if (%changed and 0b1110000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a04)) 0b0100000000000000 else 0b0010000000000000
               }
               if (%default and 0b00100000 !== 0) {
-                %dirty = %dirty or 0b0001100000000000
-              } else if (%changed and 0b0001100000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a05)) 0b0001000000000000 else 0b100000000000
+                %dirty = %dirty or 0b00110000000000000000
+              } else if (%changed and 0b01110000000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a05)) 0b00100000000000000000 else 0b00010000000000000000
               }
               if (%default and 0b01000000 !== 0) {
-                %dirty = %dirty or 0b0110000000000000
-              } else if (%changed and 0b0110000000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a06)) 0b0100000000000000 else 0b0010000000000000
+                %dirty = %dirty or 0b000110000000000000000000
+              } else if (%changed and 0b001110000000000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a06)) 0b000100000000000000000000 else 0b10000000000000000000
               }
               if (%default and 0b10000000 !== 0) {
-                %dirty = %dirty or 0b00011000000000000000
-              } else if (%changed and 0b00011000000000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a07)) 0b00010000000000000000 else 0b1000000000000000
+                %dirty = %dirty or 0b110000000000000000000000
+              } else if (%changed and 0b0001110000000000000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a07)) 0b100000000000000000000000 else 0b010000000000000000000000
               }
               if (%default and 0b000100000000 !== 0) {
-                %dirty = %dirty or 0b01100000000000000000
-              } else if (%changed and 0b01100000000000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a08)) 0b01000000000000000000 else 0b00100000000000000000
+                %dirty = %dirty or 0b0110000000000000000000000000
+              } else if (%changed and 0b1110000000000000000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a08)) 0b0100000000000000000000000000 else 0b0010000000000000000000000000
               }
               if (%default and 0b001000000000 !== 0) {
-                %dirty = %dirty or 0b000110000000000000000000
-              } else if (%changed and 0b000110000000000000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a09)) 0b000100000000000000000000 else 0b10000000000000000000
+                %dirty = %dirty or 0b00110000000000000000000000000000
+              } else if (%changed and 0b01110000000000000000000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a09)) 0b00100000000000000000000000000000 else 0b00010000000000000000000000000000
               }
               if (%default and 0b010000000000 !== 0) {
-                %dirty = %dirty or 0b011000000000000000000000
-              } else if (%changed and 0b011000000000000000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a10)) 0b010000000000000000000000 else 0b001000000000000000000000
+                %dirty1 = %dirty1 or 0b0110
+              } else if (%changed1 and 0b1110 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a10)) 0b0100 else 0b0010
               }
               if (%default and 0b100000000000 !== 0) {
-                %dirty = %dirty or 0b0001100000000000000000000000
-              } else if (%changed and 0b0001100000000000000000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a11)) 0b0001000000000000000000000000 else 0b100000000000000000000000
+                %dirty1 = %dirty1 or 0b00110000
+              } else if (%changed1 and 0b01110000 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a11)) 0b00100000 else 0b00010000
               }
               if (%default and 0b0001000000000000 !== 0) {
-                %dirty = %dirty or 0b0110000000000000000000000000
-              } else if (%changed and 0b0110000000000000000000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a12)) 0b0100000000000000000000000000 else 0b0010000000000000000000000000
+                %dirty1 = %dirty1 or 0b000110000000
+              } else if (%changed1 and 0b001110000000 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a12)) 0b000100000000 else 0b10000000
               }
               if (%default and 0b0010000000000000 !== 0) {
-                %dirty = %dirty or 0b00011000000000000000000000000000
-              } else if (%changed and 0b00011000000000000000000000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a13)) 0b00010000000000000000000000000000 else 0b1000000000000000000000000000
+                %dirty1 = %dirty1 or 0b110000000000
+              } else if (%changed1 and 0b0001110000000000 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a13)) 0b100000000000 else 0b010000000000
               }
               if (%default and 0b0100000000000000 !== 0) {
-                %dirty = %dirty or 0b01100000000000000000000000000000
-              } else if (%changed and 0b01100000000000000000000000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a14)) 0b01000000000000000000000000000000 else 0b00100000000000000000000000000000
+                %dirty1 = %dirty1 or 0b0110000000000000
+              } else if (%changed1 and 0b1110000000000000 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a14)) 0b0100000000000000 else 0b0010000000000000
               }
               if (%default and 0b1000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b0110
-              } else if (%changed1 and 0b0110 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a15)) 0b0100 else 0b0010
+                %dirty1 = %dirty1 or 0b00110000000000000000
+              } else if (%changed1 and 0b01110000000000000000 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a15)) 0b00100000000000000000 else 0b00010000000000000000
               }
               if (%default and 0b00010000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b00011000
-              } else if (%changed1 and 0b00011000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a16)) 0b00010000 else 0b1000
+                %dirty1 = %dirty1 or 0b000110000000000000000000
+              } else if (%changed1 and 0b001110000000000000000000 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a16)) 0b000100000000000000000000 else 0b10000000000000000000
               }
               if (%default and 0b00100000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b01100000
-              } else if (%changed1 and 0b01100000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a17)) 0b01000000 else 0b00100000
+                %dirty1 = %dirty1 or 0b110000000000000000000000
+              } else if (%changed1 and 0b0001110000000000000000000000 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a17)) 0b100000000000000000000000 else 0b010000000000000000000000
               }
               if (%default and 0b01000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b000110000000
-              } else if (%changed1 and 0b000110000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a18)) 0b000100000000 else 0b10000000
+                %dirty1 = %dirty1 or 0b0110000000000000000000000000
+              } else if (%changed1 and 0b1110000000000000000000000000 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a18)) 0b0100000000000000000000000000 else 0b0010000000000000000000000000
               }
               if (%default and 0b10000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b011000000000
-              } else if (%changed1 and 0b011000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a19)) 0b010000000000 else 0b001000000000
+                %dirty1 = %dirty1 or 0b00110000000000000000000000000000
+              } else if (%changed1 and 0b01110000000000000000000000000000 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a19)) 0b00100000000000000000000000000000 else 0b00010000000000000000000000000000
               }
               if (%default and 0b000100000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b0001100000000000
-              } else if (%changed1 and 0b0001100000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a20)) 0b0001000000000000 else 0b100000000000
+                %dirty2 = %dirty2 or 0b0110
+              } else if (%changed2 and 0b1110 === 0) {
+                %dirty2 = %dirty2 or if (%composer.changed(a20)) 0b0100 else 0b0010
               }
               if (%default and 0b001000000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b0110000000000000
-              } else if (%changed1 and 0b0110000000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a21)) 0b0100000000000000 else 0b0010000000000000
+                %dirty2 = %dirty2 or 0b00110000
+              } else if (%changed2 and 0b01110000 === 0) {
+                %dirty2 = %dirty2 or if (%composer.changed(a21)) 0b00100000 else 0b00010000
               }
               if (%default and 0b010000000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b00011000000000000000
-              } else if (%changed1 and 0b00011000000000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a22)) 0b00010000000000000000 else 0b1000000000000000
+                %dirty2 = %dirty2 or 0b000110000000
+              } else if (%changed2 and 0b001110000000 === 0) {
+                %dirty2 = %dirty2 or if (%composer.changed(a22)) 0b000100000000 else 0b10000000
               }
               if (%default and 0b100000000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b01100000000000000000
-              } else if (%changed1 and 0b01100000000000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a23)) 0b01000000000000000000 else 0b00100000000000000000
+                %dirty2 = %dirty2 or 0b110000000000
+              } else if (%changed2 and 0b0001110000000000 === 0) {
+                %dirty2 = %dirty2 or if (%composer.changed(a23)) 0b100000000000 else 0b010000000000
               }
               if (%default and 0b0001000000000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b000110000000000000000000
-              } else if (%changed1 and 0b000110000000000000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a24)) 0b000100000000000000000000 else 0b10000000000000000000
+                %dirty2 = %dirty2 or 0b0110000000000000
+              } else if (%changed2 and 0b1110000000000000 === 0) {
+                %dirty2 = %dirty2 or if (%composer.changed(a24)) 0b0100000000000000 else 0b0010000000000000
               }
               if (%default and 0b0010000000000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b011000000000000000000000
-              } else if (%changed1 and 0b011000000000000000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a25)) 0b010000000000000000000000 else 0b001000000000000000000000
+                %dirty2 = %dirty2 or 0b00110000000000000000
+              } else if (%changed2 and 0b01110000000000000000 === 0) {
+                %dirty2 = %dirty2 or if (%composer.changed(a25)) 0b00100000000000000000 else 0b00010000000000000000
               }
               if (%default and 0b0100000000000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b0001100000000000000000000000
-              } else if (%changed1 and 0b0001100000000000000000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a26)) 0b0001000000000000000000000000 else 0b100000000000000000000000
+                %dirty2 = %dirty2 or 0b000110000000000000000000
+              } else if (%changed2 and 0b001110000000000000000000 === 0) {
+                %dirty2 = %dirty2 or if (%composer.changed(a26)) 0b000100000000000000000000 else 0b10000000000000000000
               }
               if (%default and 0b1000000000000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b0110000000000000000000000000
-              } else if (%changed1 and 0b0110000000000000000000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a27)) 0b0100000000000000000000000000 else 0b0010000000000000000000000000
+                %dirty2 = %dirty2 or 0b110000000000000000000000
+              } else if (%changed2 and 0b0001110000000000000000000000 === 0) {
+                %dirty2 = %dirty2 or if (%composer.changed(a27)) 0b100000000000000000000000 else 0b010000000000000000000000
               }
               if (%default and 0b00010000000000000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b00011000000000000000000000000000
-              } else if (%changed1 and 0b00011000000000000000000000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a28)) 0b00010000000000000000000000000000 else 0b1000000000000000000000000000
+                %dirty2 = %dirty2 or 0b0110000000000000000000000000
+              } else if (%changed2 and 0b1110000000000000000000000000 === 0) {
+                %dirty2 = %dirty2 or if (%composer.changed(a28)) 0b0100000000000000000000000000 else 0b0010000000000000000000000000
               }
               if (%default and 0b00100000000000000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b01100000000000000000000000000000
-              } else if (%changed1 and 0b01100000000000000000000000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a29)) 0b01000000000000000000000000000000 else 0b00100000000000000000000000000000
+                %dirty2 = %dirty2 or 0b00110000000000000000000000000000
+              } else if (%changed2 and 0b01110000000000000000000000000000 === 0) {
+                %dirty2 = %dirty2 or if (%composer.changed(a29)) 0b00100000000000000000000000000000 else 0b00010000000000000000000000000000
               }
               if (%default and 0b01000000000000000000000000000000 !== 0) {
-                %dirty2 = %dirty2 or 0b0110
-              } else if (%changed2 and 0b0110 === 0) {
-                %dirty2 = %dirty2 or if (%composer.changed(a30)) 0b0100 else 0b0010
+                %dirty3 = %dirty3 or 0b0110
+              } else if (%changed3 and 0b1110 === 0) {
+                %dirty3 = %dirty3 or if (%composer.changed(a30)) 0b0100 else 0b0010
               }
               if (%default1 and 0b0001 !== 0) {
-                %dirty2 = %dirty2 or 0b00011000
-              } else if (%changed2 and 0b00011000 === 0) {
-                %dirty2 = %dirty2 or if (%composer.changed(a31)) 0b00010000 else 0b1000
+                %dirty3 = %dirty3 or 0b00110000
+              } else if (%changed3 and 0b01110000 === 0) {
+                %dirty3 = %dirty3 or if (%composer.changed(a31)) 0b00100000 else 0b00010000
               }
-              if (%dirty and 0b00101010101010101010101010101011 xor 0b00101010101010101010101010101010 !== 0 || %dirty1 and 0b00101010101010101010101010101011 xor 0b00101010101010101010101010101010 !== 0 || %dirty2 and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b01011011011011011011011011011011 xor 0b00010010010010010010010010010010 !== 0 || %dirty1 and 0b01011011011011011011011011011011 xor 0b00010010010010010010010010010010 !== 0 || %dirty2 and 0b01011011011011011011011011011011 xor 0b00010010010010010010010010010010 !== 0 || %dirty3 and 0b01011011 xor 0b00010010 !== 0 || !%composer.skipping) {
                 if (%default and 0b0001 !== 0) {
                   a00 = 0
                 }
@@ -938,7 +940,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
-                Example(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20, a21, a22, a23, a24, a25, a26, a27, a28, a29, a30, a31, %composer, %changed or 0b0001, %changed1, %changed2, %default, %default1)
+                Example(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20, a21, a22, a23, a24, a25, a26, a27, a28, a29, a30, a31, %composer, %changed or 0b0001, %changed1, %changed2, %changed3, %default, %default1)
               }
             }
         """
@@ -990,11 +992,12 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Foo?, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, a15: Int, a16: Int, a17: Int, a18: Int, a19: Int, a20: Int, a21: Int, a22: Int, a23: Int, a24: Int, a25: Int, a26: Int, a27: Int, a28: Int, a29: Int, a30: Int, a31: Foo?, %composer: Composer<*>?, %changed: Int, %changed1: Int, %changed2: Int, %default: Int, %default1: Int) {
+            fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Foo?, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, a15: Int, a16: Int, a17: Int, a18: Int, a19: Int, a20: Int, a21: Int, a22: Int, a23: Int, a24: Int, a25: Int, a26: Int, a27: Int, a28: Int, a29: Int, a30: Int, a31: Foo?, %composer: Composer<*>?, %changed: Int, %changed1: Int, %changed2: Int, %changed3: Int, %default: Int, %default1: Int) {
               %composer.startRestartGroup(<>, "C(Example):Test.kt")
               val %dirty = %changed
               val %dirty1 = %changed1
               val %dirty2 = %changed2
+              val %dirty3 = %changed3
               val a00 = a00
               val a01 = a01
               val a02 = a02
@@ -1029,161 +1032,161 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               val a31 = a31
               if (%default and 0b0001 !== 0) {
                 %dirty = %dirty or 0b0110
-              } else if (%changed and 0b0110 === 0) {
+              } else if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(a00)) 0b0100 else 0b0010
               }
               if (%default and 0b0010 !== 0) {
-                %dirty = %dirty or 0b00011000
-              } else if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a01)) 0b00010000 else 0b1000
+                %dirty = %dirty or 0b00110000
+              } else if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a01)) 0b00100000 else 0b00010000
               }
               if (%default and 0b0100 !== 0) {
-                %dirty = %dirty or 0b01100000
-              } else if (%changed and 0b01100000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a02)) 0b01000000 else 0b00100000
+                %dirty = %dirty or 0b000110000000
+              } else if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a02)) 0b000100000000 else 0b10000000
               }
               if (%default and 0b1000 !== 0) {
-                %dirty = %dirty or 0b000110000000
-              } else if (%changed and 0b000110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a03)) 0b000100000000 else 0b10000000
+                %dirty = %dirty or 0b110000000000
+              } else if (%changed and 0b0001110000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a03)) 0b100000000000 else 0b010000000000
               }
               if (%default and 0b00010000 !== 0) {
-                %dirty = %dirty or 0b011000000000
-              } else if (%changed and 0b011000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a04)) 0b010000000000 else 0b001000000000
+                %dirty = %dirty or 0b0110000000000000
+              } else if (%changed and 0b1110000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a04)) 0b0100000000000000 else 0b0010000000000000
               }
               if (%default and 0b00100000 !== 0) {
-                %dirty = %dirty or 0b0001100000000000
-              } else if (%changed and 0b0001100000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a05)) 0b0001000000000000 else 0b100000000000
+                %dirty = %dirty or 0b00110000000000000000
+              } else if (%changed and 0b01110000000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a05)) 0b00100000000000000000 else 0b00010000000000000000
               }
               if (%default and 0b01000000 !== 0) {
-                %dirty = %dirty or 0b0110000000000000
-              } else if (%changed and 0b0110000000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a06)) 0b0100000000000000 else 0b0010000000000000
+                %dirty = %dirty or 0b000110000000000000000000
+              } else if (%changed and 0b001110000000000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a06)) 0b000100000000000000000000 else 0b10000000000000000000
               }
               if (%default and 0b10000000 !== 0) {
-                %dirty = %dirty or 0b00011000000000000000
-              } else if (%changed and 0b00011000000000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a07)) 0b00010000000000000000 else 0b1000000000000000
+                %dirty = %dirty or 0b110000000000000000000000
+              } else if (%changed and 0b0001110000000000000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a07)) 0b100000000000000000000000 else 0b010000000000000000000000
               }
               if (%default and 0b000100000000 !== 0) {
-                %dirty = %dirty or 0b01100000000000000000
-              } else if (%changed and 0b01100000000000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a08)) 0b01000000000000000000 else 0b00100000000000000000
+                %dirty = %dirty or 0b0110000000000000000000000000
+              } else if (%changed and 0b1110000000000000000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a08)) 0b0100000000000000000000000000 else 0b0010000000000000000000000000
               }
-              if (%default and 0b001000000000 !== 0) {
-                %dirty = %dirty or 0b10000000000000000000
+              if (%changed and 0b01110000000000000000000000000000 === 0) {
+                %dirty = %dirty or if (%default and 0b001000000000 === 0 && %composer.changed(a09)) 0b00100000000000000000000000000000 else 0b00010000000000000000000000000000
               }
               if (%default and 0b010000000000 !== 0) {
-                %dirty = %dirty or 0b011000000000000000000000
-              } else if (%changed and 0b011000000000000000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a10)) 0b010000000000000000000000 else 0b001000000000000000000000
+                %dirty1 = %dirty1 or 0b0110
+              } else if (%changed1 and 0b1110 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a10)) 0b0100 else 0b0010
               }
               if (%default and 0b100000000000 !== 0) {
-                %dirty = %dirty or 0b0001100000000000000000000000
-              } else if (%changed and 0b0001100000000000000000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a11)) 0b0001000000000000000000000000 else 0b100000000000000000000000
+                %dirty1 = %dirty1 or 0b00110000
+              } else if (%changed1 and 0b01110000 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a11)) 0b00100000 else 0b00010000
               }
               if (%default and 0b0001000000000000 !== 0) {
-                %dirty = %dirty or 0b0110000000000000000000000000
-              } else if (%changed and 0b0110000000000000000000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a12)) 0b0100000000000000000000000000 else 0b0010000000000000000000000000
+                %dirty1 = %dirty1 or 0b000110000000
+              } else if (%changed1 and 0b001110000000 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a12)) 0b000100000000 else 0b10000000
               }
               if (%default and 0b0010000000000000 !== 0) {
-                %dirty = %dirty or 0b00011000000000000000000000000000
-              } else if (%changed and 0b00011000000000000000000000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a13)) 0b00010000000000000000000000000000 else 0b1000000000000000000000000000
+                %dirty1 = %dirty1 or 0b110000000000
+              } else if (%changed1 and 0b0001110000000000 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a13)) 0b100000000000 else 0b010000000000
               }
               if (%default and 0b0100000000000000 !== 0) {
-                %dirty = %dirty or 0b01100000000000000000000000000000
-              } else if (%changed and 0b01100000000000000000000000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(a14)) 0b01000000000000000000000000000000 else 0b00100000000000000000000000000000
+                %dirty1 = %dirty1 or 0b0110000000000000
+              } else if (%changed1 and 0b1110000000000000 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a14)) 0b0100000000000000 else 0b0010000000000000
               }
               if (%default and 0b1000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b0110
-              } else if (%changed1 and 0b0110 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a15)) 0b0100 else 0b0010
+                %dirty1 = %dirty1 or 0b00110000000000000000
+              } else if (%changed1 and 0b01110000000000000000 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a15)) 0b00100000000000000000 else 0b00010000000000000000
               }
               if (%default and 0b00010000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b00011000
-              } else if (%changed1 and 0b00011000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a16)) 0b00010000 else 0b1000
+                %dirty1 = %dirty1 or 0b000110000000000000000000
+              } else if (%changed1 and 0b001110000000000000000000 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a16)) 0b000100000000000000000000 else 0b10000000000000000000
               }
               if (%default and 0b00100000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b01100000
-              } else if (%changed1 and 0b01100000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a17)) 0b01000000 else 0b00100000
+                %dirty1 = %dirty1 or 0b110000000000000000000000
+              } else if (%changed1 and 0b0001110000000000000000000000 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a17)) 0b100000000000000000000000 else 0b010000000000000000000000
               }
               if (%default and 0b01000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b000110000000
-              } else if (%changed1 and 0b000110000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a18)) 0b000100000000 else 0b10000000
+                %dirty1 = %dirty1 or 0b0110000000000000000000000000
+              } else if (%changed1 and 0b1110000000000000000000000000 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a18)) 0b0100000000000000000000000000 else 0b0010000000000000000000000000
               }
               if (%default and 0b10000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b011000000000
-              } else if (%changed1 and 0b011000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a19)) 0b010000000000 else 0b001000000000
+                %dirty1 = %dirty1 or 0b00110000000000000000000000000000
+              } else if (%changed1 and 0b01110000000000000000000000000000 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a19)) 0b00100000000000000000000000000000 else 0b00010000000000000000000000000000
               }
               if (%default and 0b000100000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b0001100000000000
-              } else if (%changed1 and 0b0001100000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a20)) 0b0001000000000000 else 0b100000000000
+                %dirty2 = %dirty2 or 0b0110
+              } else if (%changed2 and 0b1110 === 0) {
+                %dirty2 = %dirty2 or if (%composer.changed(a20)) 0b0100 else 0b0010
               }
               if (%default and 0b001000000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b0110000000000000
-              } else if (%changed1 and 0b0110000000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a21)) 0b0100000000000000 else 0b0010000000000000
+                %dirty2 = %dirty2 or 0b00110000
+              } else if (%changed2 and 0b01110000 === 0) {
+                %dirty2 = %dirty2 or if (%composer.changed(a21)) 0b00100000 else 0b00010000
               }
               if (%default and 0b010000000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b00011000000000000000
-              } else if (%changed1 and 0b00011000000000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a22)) 0b00010000000000000000 else 0b1000000000000000
+                %dirty2 = %dirty2 or 0b000110000000
+              } else if (%changed2 and 0b001110000000 === 0) {
+                %dirty2 = %dirty2 or if (%composer.changed(a22)) 0b000100000000 else 0b10000000
               }
               if (%default and 0b100000000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b01100000000000000000
-              } else if (%changed1 and 0b01100000000000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a23)) 0b01000000000000000000 else 0b00100000000000000000
+                %dirty2 = %dirty2 or 0b110000000000
+              } else if (%changed2 and 0b0001110000000000 === 0) {
+                %dirty2 = %dirty2 or if (%composer.changed(a23)) 0b100000000000 else 0b010000000000
               }
               if (%default and 0b0001000000000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b000110000000000000000000
-              } else if (%changed1 and 0b000110000000000000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a24)) 0b000100000000000000000000 else 0b10000000000000000000
+                %dirty2 = %dirty2 or 0b0110000000000000
+              } else if (%changed2 and 0b1110000000000000 === 0) {
+                %dirty2 = %dirty2 or if (%composer.changed(a24)) 0b0100000000000000 else 0b0010000000000000
               }
               if (%default and 0b0010000000000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b011000000000000000000000
-              } else if (%changed1 and 0b011000000000000000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a25)) 0b010000000000000000000000 else 0b001000000000000000000000
+                %dirty2 = %dirty2 or 0b00110000000000000000
+              } else if (%changed2 and 0b01110000000000000000 === 0) {
+                %dirty2 = %dirty2 or if (%composer.changed(a25)) 0b00100000000000000000 else 0b00010000000000000000
               }
               if (%default and 0b0100000000000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b0001100000000000000000000000
-              } else if (%changed1 and 0b0001100000000000000000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a26)) 0b0001000000000000000000000000 else 0b100000000000000000000000
+                %dirty2 = %dirty2 or 0b000110000000000000000000
+              } else if (%changed2 and 0b001110000000000000000000 === 0) {
+                %dirty2 = %dirty2 or if (%composer.changed(a26)) 0b000100000000000000000000 else 0b10000000000000000000
               }
               if (%default and 0b1000000000000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b0110000000000000000000000000
-              } else if (%changed1 and 0b0110000000000000000000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a27)) 0b0100000000000000000000000000 else 0b0010000000000000000000000000
+                %dirty2 = %dirty2 or 0b110000000000000000000000
+              } else if (%changed2 and 0b0001110000000000000000000000 === 0) {
+                %dirty2 = %dirty2 or if (%composer.changed(a27)) 0b100000000000000000000000 else 0b010000000000000000000000
               }
               if (%default and 0b00010000000000000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b00011000000000000000000000000000
-              } else if (%changed1 and 0b00011000000000000000000000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a28)) 0b00010000000000000000000000000000 else 0b1000000000000000000000000000
+                %dirty2 = %dirty2 or 0b0110000000000000000000000000
+              } else if (%changed2 and 0b1110000000000000000000000000 === 0) {
+                %dirty2 = %dirty2 or if (%composer.changed(a28)) 0b0100000000000000000000000000 else 0b0010000000000000000000000000
               }
               if (%default and 0b00100000000000000000000000000000 !== 0) {
-                %dirty1 = %dirty1 or 0b01100000000000000000000000000000
-              } else if (%changed1 and 0b01100000000000000000000000000000 === 0) {
-                %dirty1 = %dirty1 or if (%composer.changed(a29)) 0b01000000000000000000000000000000 else 0b00100000000000000000000000000000
+                %dirty2 = %dirty2 or 0b00110000000000000000000000000000
+              } else if (%changed2 and 0b01110000000000000000000000000000 === 0) {
+                %dirty2 = %dirty2 or if (%composer.changed(a29)) 0b00100000000000000000000000000000 else 0b00010000000000000000000000000000
               }
               if (%default and 0b01000000000000000000000000000000 !== 0) {
-                %dirty2 = %dirty2 or 0b0110
-              } else if (%changed2 and 0b0110 === 0) {
-                %dirty2 = %dirty2 or if (%composer.changed(a30)) 0b0100 else 0b0010
+                %dirty3 = %dirty3 or 0b0110
+              } else if (%changed3 and 0b1110 === 0) {
+                %dirty3 = %dirty3 or if (%composer.changed(a30)) 0b0100 else 0b0010
               }
-              if (%default1 and 0b0001 !== 0) {
-                %dirty2 = %dirty2 or 0b1000
+              if (%changed3 and 0b01110000 === 0) {
+                %dirty3 = %dirty3 or if (%default1 and 0b0001 === 0 && %composer.changed(a31)) 0b00100000 else 0b00010000
               }
-              if (%default.inv() and 0b001000000000 !== 0 || %default1.inv() and 0b0001 !== 0 || %dirty and 0b00101010101010101010101010101011 xor 0b00101010101010101010101010101010 !== 0 || %dirty1 and 0b00101010101010101010101010101011 xor 0b00101010101010101010101010101010 !== 0 || %dirty2 and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b01011011011011011011011011011011 xor 0b00010010010010010010010010010010 !== 0 || %dirty1 and 0b01011011011011011011011011011011 xor 0b00010010010010010010010010010010 !== 0 || %dirty2 and 0b01011011011011011011011011011011 xor 0b00010010010010010010010010010010 !== 0 || %dirty3 and 0b01011011 xor 0b00010010 !== 0 || !%composer.skipping) {
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
                   %composer.startDefaults()
                   if (%default and 0b0001 !== 0) {
@@ -1215,7 +1218,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
                   }
                   if (%default and 0b001000000000 !== 0) {
                     a09 = Foo()
-                    %dirty = %dirty and 0b000110000000000000000000.inv()
+                    %dirty = %dirty and 0b01110000000000000000000000000000.inv()
                   }
                   if (%default and 0b010000000000 !== 0) {
                     a10 = 0
@@ -1282,16 +1285,16 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
                   }
                   if (%default1 and 0b0001 !== 0) {
                     a31 = Foo()
-                    %dirty2 = %dirty2 and 0b00011000.inv()
+                    %dirty3 = %dirty3 and 0b01110000.inv()
                   }
                   %composer.endDefaults()
                 } else {
                   %composer.skipCurrentGroup()
                   if (%default and 0b001000000000 !== 0) {
-                    %dirty = %dirty and 0b000110000000000000000000.inv()
+                    %dirty = %dirty and 0b01110000000000000000000000000000.inv()
                   }
                   if (%default1 and 0b0001 !== 0) {
-                    %dirty2 = %dirty2 and 0b00011000.inv()
+                    %dirty3 = %dirty3 and 0b01110000.inv()
                   }
                 }
                 print("Hello world!")
@@ -1299,7 +1302,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
-                Example(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20, a21, a22, a23, a24, a25, a26, a27, a28, a29, a30, a31, %composer, %changed or 0b0001, %changed1, %changed2, %default, %default1)
+                Example(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20, a21, a22, a23, a24, a25, a26, a27, a28, a29, a30, a31, %composer, %changed or 0b0001, %changed1, %changed2, %changed3, %default, %default1)
               }
             }
         """
@@ -1320,6 +1323,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
             }
         """,
         """
+            @StabilityInferred(parameters = 0)
             open class Foo {
               @ComposableContract(restartable = false)
               @Composable
@@ -1328,7 +1332,9 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
                 val x = if (%default and 0b0001 !== 0) 0 else x
                 %composer.endReplaceableGroup()
               }
+              static val %stable: Int = 0
             }
+            @StabilityInferred(parameters = 0)
             class Bar : Foo {
               @ComposableContract(restartable = false)
               @Composable
@@ -1337,6 +1343,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
                 foo(0, %composer, 0, 0b0001)
                 %composer.endReplaceableGroup()
               }
+              static val %stable: Int = 0
             }
         """
     )

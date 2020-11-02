@@ -228,6 +228,20 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     }
 
     @Test
+    fun testBasicClassStaticTransform(): Unit = checkApi(
+        """
+            class Foo
+        """,
+        """
+            public final class Foo {
+              public <init>()V
+              public final static I %stable
+              static <clinit>()V
+            }
+        """
+    )
+
+    @Test
     fun testLambdaReorderedParameter(): Unit = checkApi(
         """
             @Composable fun Foo(a: String, b: () -> Unit) { }
@@ -334,15 +348,21 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
               public <init>()V
               public final makeA()LA;
               public final makeB()LA%B;
+              public final static I %stable
+              static <clinit>()V
               public final static INNERCLASS A%B A B
             }
             public final class A%B {
               public <init>()V
+              public final static I %stable
+              static <clinit>()V
               public final static INNERCLASS A%B A B
             }
             public final class C {
               public <init>()V
               public final useAB()V
+              public final static I %stable
+              static <clinit>()V
             }
         """
     )
@@ -766,6 +786,8 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
               public <init>()V
               final static INNERCLASS FooImpl%bar%1 null null
               public bar(Landroidx/compose/runtime/Composer;I)V
+              public final static I %stable
+              static <clinit>()V
             }
             final class FooImpl%bar%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
               <init>(LFooImpl;I)V
@@ -799,7 +821,9 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
               public static synthetic getCurrent%annotations()V
               final static INNERCLASS Ambient2%foo%1 null null
               public final foo(Landroidx/compose/runtime/Composer;I)V
+              public final static I %stable
               public synthetic <init>(Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+              static <clinit>()V
             }
             final class Ambient2%foo%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
               <init>(LAmbient2;I)V
@@ -812,12 +836,18 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
             }
             public abstract class ProvidableAmbient2 extends Ambient2 {
               public <init>()V
+              public final static I %stable
+              static <clinit>()V
             }
             public final class DynamicProvidableAmbient2 extends ProvidableAmbient2 {
               public <init>()V
+              public final static I %stable
+              static <clinit>()V
             }
             public final class StaticProvidableAmbient2 extends ProvidableAmbient2 {
               public <init>()V
+              public final static I %stable
+              static <clinit>()V
             }
         """
     )
@@ -847,6 +877,8 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
               public <init>()V
               public final getFoo(Landroidx/compose/runtime/Composer;I)I
               public static synthetic getFoo%annotations()V
+              public final static I %stable
+              static <clinit>()V
             }
         """
     )
@@ -949,11 +981,15 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
             public abstract class BaseFoo {
               public <init>()V
               public abstract bar(Landroidx/compose/runtime/Composer;I)V
+              public final static I %stable
+              static <clinit>()V
             }
             public final class FooImpl extends BaseFoo {
               public <init>()V
               final static INNERCLASS FooImpl%bar%1 null null
               public bar(Landroidx/compose/runtime/Composer;I)V
+              public final static I %stable
+              static <clinit>()V
             }
             final class FooImpl%bar%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
               <init>(LFooImpl;I)V
@@ -1216,6 +1252,8 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
               public <init>()V
               private final I foo
               public final getFoo()I
+              public final static I %stable
+              static <clinit>()V
               public final INNERCLASS C%D C D
             }
             public final class C%D implements A {

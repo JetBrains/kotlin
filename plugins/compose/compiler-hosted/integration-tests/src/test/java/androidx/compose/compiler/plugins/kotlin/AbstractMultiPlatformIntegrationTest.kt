@@ -28,10 +28,6 @@ import java.io.File
 import java.io.PrintStream
 import java.io.PrintWriter
 
-// KotlinTestUtils
-private fun tmpDir(name: String): File {
-    return FileUtil.createTempDirectory(name, "", false).canonicalFile
-}
 // AbstractCliTest
 private fun executeCompilerGrabOutput(
     compiler: CLITool<*>,

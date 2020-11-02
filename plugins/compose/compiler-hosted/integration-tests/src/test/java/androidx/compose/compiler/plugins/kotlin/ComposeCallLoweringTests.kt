@@ -2345,7 +2345,7 @@ fun <T> B(foo: T, bar: String) { }
 
             var output = ArrayList<String>()
 
-            class NotStable { val value = 10 }
+            class NotStable { var value = 10 }
 
             @Stable
             class StableClass {

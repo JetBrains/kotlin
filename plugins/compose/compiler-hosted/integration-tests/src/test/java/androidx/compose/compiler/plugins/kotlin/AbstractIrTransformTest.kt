@@ -18,6 +18,7 @@ package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.compiler.plugins.kotlin.lower.dumpSrc
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
@@ -63,37 +64,44 @@ abstract class ComposeIrTransformTest : AbstractIrTransformTest() {
         sourceInformationEnabled,
         intrinsicRememberEnabled
     )
+    // Some tests require the plugin context in order to perform assertions, for example, a
+    // context is required to determine the stability of a type using the StabilityInferencer.
+    var pluginContext: IrPluginContext? = null
     override fun postProcessingStep(
         module: IrModuleFragment,
         generatorContext: GeneratorContext,
         irLinker: IrDeserializer,
         symbols: BuiltinSymbolsBase
     ) {
+        val context = IrPluginContextImpl(
+            module = generatorContext.moduleDescriptor,
+            bindingContext = generatorContext.bindingContext,
+            languageVersionSettings = generatorContext.languageVersionSettings,
+            st = generatorContext.symbolTable,
+            typeTranslator = generatorContext.typeTranslator,
+            irBuiltIns = generatorContext.irBuiltIns,
+            linker = irLinker,
+            symbols = symbols
+        )
+        pluginContext = context
         extension.generate(
             module,
-            IrPluginContextImpl(
-                module = generatorContext.moduleDescriptor,
-                bindingContext = generatorContext.bindingContext,
-                languageVersionSettings = generatorContext.languageVersionSettings,
-                st = generatorContext.symbolTable,
-                typeTranslator = generatorContext.typeTranslator,
-                irBuiltIns = generatorContext.irBuiltIns,
-                linker = irLinker,
-                symbols = symbols
-            )
+            context
         )
+    }
+
+    override fun tearDown() {
+        pluginContext = null
+        super.tearDown()
     }
 }
 
-abstract class AbstractIrTransformTest : AbstractCompilerTest() {
-    protected fun sourceFile(name: String, source: String): KtFile {
-        val result = createFile(name, source, myEnvironment!!.project)
-        val ranges = AnalyzingUtils.getSyntaxErrorRanges(result)
-        assert(ranges.isEmpty()) { "Syntax errors found in $name: $ranges" }
-        return result
-    }
-
-    protected open val additionalPaths = emptyList<File>()
+abstract class AbstractIrTransformTest : AbstractCodegenTest() {
+    private var testLocalUnique = 0
+    protected var classesDirectory = tmpDir(
+        "kotlin-${testLocalUnique++}-classes"
+    )
+    override val additionalPaths: List<File> = listOf(classesDirectory)
 
     abstract fun postProcessingStep(
         module: IrModuleFragment,
@@ -101,6 +109,41 @@ abstract class AbstractIrTransformTest : AbstractCompilerTest() {
         irLinker: IrDeserializer,
         symbols: BuiltinSymbolsBase
     )
+
+    fun verifyCrossModuleComposeIrTransform(
+        dependencySource: String,
+        source: String,
+        expectedTransformed: String,
+        dumpTree: Boolean = false,
+        dumpClasses: Boolean = false,
+    ) {
+        // Setup for compile
+        this.classFileFactory = null
+        this.myEnvironment = null
+        setUp()
+
+        val dependencyFileName = "Test_REPLACEME_${uniqueNumber++}"
+
+        classLoader(dependencySource, dependencyFileName, dumpClasses)
+            .allGeneratedFiles
+            .also {
+                // Write the files to the class directory so they can be used by the next module
+                // and the application
+                it.writeToDir(classesDirectory)
+            }
+
+        // Setup for compile
+        this.classFileFactory = null
+        this.myEnvironment = null
+        setUp()
+
+        verifyComposeIrTransform(
+            source,
+            expectedTransformed,
+            "",
+            dumpTree
+        )
+    }
 
     fun verifyComposeIrTransform(
         source: String,

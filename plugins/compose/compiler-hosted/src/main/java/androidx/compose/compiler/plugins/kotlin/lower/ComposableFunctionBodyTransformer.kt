@@ -18,6 +18,9 @@ package androidx.compose.compiler.plugins.kotlin.lower
 
 import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
 import androidx.compose.compiler.plugins.kotlin.KtxNameConventions
+import androidx.compose.compiler.plugins.kotlin.analysis.Stability
+import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
+import androidx.compose.compiler.plugins.kotlin.analysis.knownUnstable
 import androidx.compose.compiler.plugins.kotlin.composableReadonlyContract
 import androidx.compose.compiler.plugins.kotlin.composableRestartableContract
 import androidx.compose.compiler.plugins.kotlin.composableTrackedContract
@@ -106,6 +109,7 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isBoolean
@@ -151,7 +155,7 @@ import kotlin.math.min
  * An enum of the different "states" a parameter of a composable function can have relating to
  * comparison propagation. Each state is represented by two bits in the `$changed` bitmask.
  */
-enum class ParamState(private val bits: Int) {
+enum class ParamState(val bits: Int) {
     /**
      * Indicates that nothing is certain about the current state of the parameter. It could be
      * different than it was during the last execution, or it could be the same, but it is not
@@ -159,36 +163,39 @@ enum class ParamState(private val bits: Int) {
      * This is the only state that can cause the function to spend slot table space in order to
      * look at it.
      */
-    Uncertain(0b00),
+    Uncertain(0b000),
     /**
      * This indicates that the value is known to be the same since the last time the function was
      * executed. There is no need to store the value in the slot table in this case because the
      * calling function will *always* know whether the value was the same or different as it was
      * in the previous execution.
      */
-    Same(0b01),
+    Same(0b001),
     /**
      * This indicates that the value is known to be different since the last time the function
      * was executed. There is no need to store the value in the slot table in this case because
      * the calling function will *always* know whether the value was the same or different as it
      * was in the previous execution.
      */
-    Different(0b10),
+    Different(0b010),
     /**
      * This indicates that the value is known to *never change* for the duration of the running
      * program.
      */
-    Static(0b11);
+    Static(0b011),
+    Unknown(0b100),
+    Mask(0b111);
 
     fun bitsForSlot(slot: Int): Int = bitsForSlot(bits, slot)
 }
 
 const val BITS_PER_INT = 31
-const val SLOTS_PER_INT = 15
+const val SLOTS_PER_INT = 10
+const val BITS_PER_SLOT = 3
 
 fun bitsForSlot(bits: Int, slot: Int): Int {
     val realSlot = slot.rem(SLOTS_PER_INT)
-    return bits shl (realSlot * 2 + 1)
+    return bits shl (realSlot * BITS_PER_SLOT + 1)
 }
 
 fun defaultsParamIndex(index: Int): Int = index / BITS_PER_INT
@@ -239,7 +246,7 @@ fun composeSyntheticParamCount(
 
 interface IrChangedBitMaskValue {
     fun irLowBit(): IrExpression
-    fun irIsolateBitsAtSlot(slot: Int): IrExpression
+    fun irIsolateBitsAtSlot(slot: Int, includeStableBit: Boolean): IrExpression
     fun irHasDifferences(): IrExpression
     fun irCopyToTemporary(
         nameHint: String? = null,
@@ -807,7 +814,7 @@ class ComposableFunctionBodyTransformer(
 
         // boolean array mapped to parameters. true indicates that the type is unstable
         val unstableMask = realParams.map {
-            !it.type.toKotlinType().isStable()
+            stabilityOf(it.type).knownUnstable()
         }.toBooleanArray()
 
         // we start off assuming that we *can* skip execution of the function
@@ -947,12 +954,15 @@ class ComposableFunctionBodyTransformer(
 
         // boolean array mapped to parameters. true indicates that the type is unstable
         val unstableMask = realParams.map {
-            val isStable = (it.varargElementType ?: it.type).toKotlinType().isStable()
-            if (!isStable && !it.hasDefaultValueSafe()) {
-                // if it has non-optional unstable params, the function can never skip
-                canSkipExecution = false
+            if (stabilityOf((it.varargElementType ?: it.type)).knownUnstable()) {
+                if (!it.hasDefaultValueSafe()) {
+                    // if it has non-optional unstable params, the function can never skip
+                    canSkipExecution = false
+                }
+                true
+            } else {
+                false
             }
-            !isStable
         }.toBooleanArray()
 
         // if the function can never skip, or there are no parameters to test, then we
@@ -1135,7 +1145,7 @@ class ComposableFunctionBodyTransformer(
         index: Int
     ): Boolean {
         val type = thisParam.type
-        val isStable = type.toKotlinType().isStable()
+        val isStable = stabilityOf(type).knownStable()
 
         return when {
             !isStable && isUsed -> false
@@ -1146,7 +1156,7 @@ class ComposableFunctionBodyTransformer(
                         // with an "Uncertain" state AND the value was provided. This is safe to do
                         // because this will remain true or false for *every* execution of the
                         // function, so we will never get a slot table misalignment as a result.
-                        condition = irIsUncertain(changedParam, index),
+                        condition = irIsUncertainAndStable(changedParam, index),
                         body = dirty.irOrSetBitsAtSlot(
                             index,
                             irIfThenElse(
@@ -1360,7 +1370,7 @@ class ComposableFunctionBodyTransformer(
                                 )
                             ),
                             irBranch(
-                                condition = irIsUncertain(changedParam, index),
+                                condition = irIsUncertainAndStable(changedParam, index),
                                 result = modifyDirtyFromChangedResult
                             )
                         )
@@ -1371,7 +1381,7 @@ class ComposableFunctionBodyTransformer(
                     // because this will remain true or false for *every* execution of the
                     // function, so we will never get a slot table misalignment as a result.
                     irIf(
-                        condition = irIsUncertain(changedParam, index),
+                        condition = irIsUncertainAndStable(changedParam, index),
                         body = modifyDirtyFromChangedResult
                     )
                 }
@@ -1439,7 +1449,7 @@ class ComposableFunctionBodyTransformer(
                 // }
                 skipPreamble.statements.add(
                     irIf(
-                        condition = irIsUncertain(dirty, index),
+                        condition = irIsUncertainAndStable(dirty, index),
                         body = dirty.irOrSetBitsAtSlot(
                             index,
                             irConst(ParamState.Same.bitsForSlot(index))
@@ -1677,9 +1687,9 @@ class ComposableFunctionBodyTransformer(
     private fun irIsProvided(default: IrDefaultBitMaskValue, slot: Int) =
         irEqual(default.irIsolateBitAtIndex(slot), irConst(0))
 
-    // %changed and 0b11 == 0
-    private fun irIsUncertain(changed: IrChangedBitMaskValue, slot: Int) = irEqual(
-        changed.irIsolateBitsAtSlot(slot),
+    // %changed and 0b111 == 0
+    private fun irIsUncertainAndStable(changed: IrChangedBitMaskValue, slot: Int) = irEqual(
+        changed.irIsolateBitsAtSlot(slot, includeStableBit = true),
         irConst(0)
     )
 
@@ -2299,6 +2309,7 @@ class ComposableFunctionBodyTransformer(
     }
 
     data class ParamMeta(
+        var stability: Stability = Stability.Unstable,
         var isVararg: Boolean = false,
         var isProvided: Boolean = false,
         var isStatic: Boolean = false,
@@ -2314,6 +2325,8 @@ class ComposableFunctionBodyTransformer(
     }
 
     private fun populateParamMeta(arg: IrExpression, meta: ParamMeta) {
+
+        meta.stability = stabilityOf(arg)
         when {
             arg.isStatic() -> meta.isStatic = true
             arg is IrGetValue -> {
@@ -2655,7 +2668,7 @@ class ComposableFunctionBodyTransformer(
                 //
                 // invalid = invalid or (mask == different)
                 irEqual(
-                    param.irIsolateBitsAtSlot(meta.maskSlot),
+                    param.irIsolateBitsAtSlot(meta.maskSlot, includeStableBit = true),
                     irConst(ParamState.Different.bitsForSlot(meta.maskSlot))
                 )
             }
@@ -2664,12 +2677,17 @@ class ComposableFunctionBodyTransformer(
                 // then we need to call changed. If it is uncertain here it will _always_ be
                 // uncertain here, so this is safe. If it is not uncertain, we can just check to
                 // see if its different
+                // TODO(lmr): IMPORTANT QUESTION - is unstable + something other than uncertain
+                //  possible?
+                //
                 //
                 //     invalid = invalid or ((mask == uncertain && changed()) || mask == different)
                 irOrOr(
                     irAndAnd(
                         irEqual(
-                            param.irIsolateBitsAtSlot(meta.maskSlot),
+                            // we do NOT include the stable bit here because we want to capture
+                            // both of the cases where the type is stable and unstable.
+                            param.irIsolateBitsAtSlot(meta.maskSlot, includeStableBit = false),
                             // NOTE: this is always "0", but i'm writing it out fully here to
                             // just make the code more clear
                             irConst(ParamState.Uncertain.bitsForSlot(meta.maskSlot))
@@ -2677,7 +2695,7 @@ class ComposableFunctionBodyTransformer(
                         irChanged(arg)
                     ),
                     irEqual(
-                        param.irIsolateBitsAtSlot(meta.maskSlot),
+                        param.irIsolateBitsAtSlot(meta.maskSlot, includeStableBit = true),
                         irConst(ParamState.Different.bitsForSlot(meta.maskSlot))
                     )
                 )
@@ -2805,6 +2823,45 @@ class ComposableFunctionBodyTransformer(
         val orExprs = mutableListOf<IrExpression>()
 
         params.forEachIndexed { slot, meta ->
+            val stability = meta.stability
+            when {
+                stability.knownUnstable() -> {
+                    bitMaskConstant = bitMaskConstant or StabilityBits.UNSTABLE.bitsForSlot(slot)
+                    // If it is known to be unstable, there's no purpose in propagating any
+                    // additional metadata _for this parameter_, but we still want to propagate
+                    // the other parameters.
+                    return@forEachIndexed
+                }
+                stability.knownStable() -> {
+                    bitMaskConstant = bitMaskConstant or StabilityBits.STABLE.bitsForSlot(slot)
+                }
+                else -> {
+                    stability.irStableExpression(
+                        resolve = {
+                            irTypeParameterStability(it)
+                        }
+                    )?.let {
+                        val expr = if (slot == 0) {
+                            it
+                        } else {
+                            val int = context.irBuiltIns.intType
+                            val bitsToShiftLeft = slot * BITS_PER_SLOT
+
+                            irCall(
+                                int.binaryOperator(
+                                    OperatorNames.SHL,
+                                    int
+                                ),
+                                null,
+                                it,
+                                null,
+                                irConst(bitsToShiftLeft)
+                            )
+                        }
+                        orExprs.add(expr)
+                    }
+                }
+            }
             if (meta.isVararg) {
                 bitMaskConstant = bitMaskConstant or ParamState.Uncertain.bitsForSlot(slot)
             } else if (!meta.isProvided) {
@@ -2821,7 +2878,7 @@ class ComposableFunctionBodyTransformer(
                 // if parentSlot is lower than slot, we shift left a positive amount of bits
                 orExprs.add(
                     irAnd(
-                        irConst(bitsForSlot(0b11, slot)),
+                        irConst(ParamState.Mask.bitsForSlot(slot)),
                         someMask.irShiftBits(parentSlot, slot)
                     )
                 )
@@ -2840,6 +2897,39 @@ class ComposableFunctionBodyTransformer(
                 irOr(lhs, rhs)
             }
         }
+    }
+
+    fun irTypeParameterStability(param: IrTypeParameter): IrExpression? {
+        var scope: Scope? = currentScope
+        loop@ while (scope != null) {
+            when (scope) {
+                is Scope.FunctionScope -> {
+                    if (scope.isComposable) {
+                        val fn = scope.function
+                        val maskParam = scope.dirty ?: scope.changedParameter
+                        if (maskParam != null && fn.typeParameters.isNotEmpty()) {
+                            for (it in fn.valueParameters) {
+                                val classifier = it.type.classifierOrNull
+                                if (classifier == param.symbol) {
+                                    val parentSlot = scope.paramsToSlots[it] ?: return null
+                                    return irAnd(
+                                        irConst(StabilityBits.UNSTABLE.bitsForSlot(0)),
+                                        maskParam.irShiftBits(parentSlot, 0)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+                is Scope.RootScope,
+                is Scope.FileScope,
+                is Scope.ClassScope -> {
+                    break@loop
+                }
+            }
+            scope = scope.parent
+        }
+        return null
     }
 
     override fun visitGetValue(expression: IrGetValue): IrExpression {
@@ -3550,11 +3640,17 @@ class ComposableFunctionBodyTransformer(
             )
         }
 
-        override fun irIsolateBitsAtSlot(slot: Int): IrExpression {
+        override fun irIsolateBitsAtSlot(slot: Int, includeStableBit: Boolean): IrExpression {
             // %changed and 0b11
             return irAnd(
                 irGet(params[paramIndexForSlot(slot)]),
-                irBitsForSlot(0b11, slot)
+                irBitsForSlot(
+                    if (includeStableBit)
+                        ParamState.Mask.bits
+                    else
+                        ParamState.Static.bits,
+                    slot
+                )
             )
         }
 
@@ -3577,8 +3673,12 @@ class ComposableFunctionBodyTransformer(
                 // so for 3 slots, we would get 0b 01 01 01 0.
                 // This pattern is useful because we can and + xor it with our $changed bitmask and it
                 // will only be non-zero if any of the slots were DIFFERENT or UNCERTAIN.
-                val bitPattern = (start until end).fold(0) { mask, slot ->
-                    mask or bitsForSlot(0b01, slot)
+                val lhs = (start until end).fold(0) { mask, slot ->
+                    mask or bitsForSlot(0b101, slot)
+                }
+
+                val rhs = (start until end).fold(0) { mask, slot ->
+                    mask or bitsForSlot(0b001, slot)
                 }
 
                 // we use this pattern with the low bit set to 1 in the "and", and the low bit set to 0
@@ -3591,9 +3691,9 @@ class ComposableFunctionBodyTransformer(
                     irXor(
                         irAnd(
                             irGet(param),
-                            irConst(bitPattern or 0b1)
+                            irConst(lhs or 0b1)
                         ),
-                        irConst(bitPattern or 0b0)
+                        irConst(rhs or 0b0)
                     ),
                     irConst(0) // anything non-zero means we have differences
                 )
@@ -3641,7 +3741,7 @@ class ComposableFunctionBodyTransformer(
         override fun irShiftBits(fromSlot: Int, toSlot: Int): IrExpression {
             val fromSlotAdjusted = fromSlot.rem(SLOTS_PER_INT)
             val toSlotAdjusted = toSlot.rem(SLOTS_PER_INT)
-            val bitsToShiftLeft = (toSlotAdjusted - fromSlotAdjusted) * 2
+            val bitsToShiftLeft = (toSlotAdjusted - fromSlotAdjusted) * BITS_PER_SLOT
             val value = irGet(params[paramIndexForSlot(fromSlot)])
 
             if (bitsToShiftLeft == 0) return value
@@ -3690,7 +3790,7 @@ class ComposableFunctionBodyTransformer(
                 temp,
                 irAnd(
                     irGet(temp),
-                    irInv(irConst(ParamState.Static.bitsForSlot(slot)))
+                    irInv(irConst(ParamState.Mask.bitsForSlot(slot)))
                 )
             )
         }
