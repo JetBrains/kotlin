@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCompositeConflictResolver
 import org.jetbrains.kotlin.fir.resolve.calls.ConeOverloadConflictResolver
+import org.jetbrains.kotlin.fir.resolve.calls.ConeOverloadResolutionByLambdaConflictResolve
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.jvm.JvmTypeSpecificityComparator
@@ -22,7 +23,8 @@ object JvmCallConflictResolverFactory : ConeCallConflictResolverFactory() {
         val specificityComparator = JvmTypeSpecificityComparator(components.ctx)
         return ConeCompositeConflictResolver(
             ConeOverloadConflictResolver(specificityComparator, components),
-            ConeEquivalentCallConflictResolver(specificityComparator, components)
+            ConeEquivalentCallConflictResolver(specificityComparator, components),
+            ConeOverloadResolutionByLambdaConflictResolve(components.session),
         )
     }
 }
