@@ -69,6 +69,10 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
     protected open fun getWrappedFunctionType(klass: IrClass): IrType =
         klass.defaultType
 
+    protected open fun IrFunctionBuilder.setConstructorSourceRange(createFor: IrElement) {
+        setSourceRange(createFor)
+    }
+
     abstract val IrType.needEqualsHashCodeMethods: Boolean
 
     open val inInlineFunctionScope get() = allScopes.any { scope -> (scope.irElement as? IrFunction)?.isInline ?: false }
@@ -187,10 +191,10 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
         }
 
         subclass.addConstructor {
-            origin = subclass.origin
+            origin = IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION
             isPrimary = true
             visibility = wrapperVisibility
-            setSourceRange(createFor)
+            setConstructorSourceRange(createFor)
         }.apply {
             val parameter = addValueParameter {
                 name = field.name

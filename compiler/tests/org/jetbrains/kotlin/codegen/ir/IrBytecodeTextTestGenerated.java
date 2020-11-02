@@ -4314,6 +4314,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/sam"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("samWrapperConstructorNonSynthetic.kt")
+        public void testSamWrapperConstructorNonSynthetic() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/sam/samWrapperConstructorNonSynthetic.kt");
+        }
+
         @TestMetadata("samWrapperForNullInitialization.kt")
         public void testSamWrapperForNullInitialization() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/sam/samWrapperForNullInitialization.kt");
